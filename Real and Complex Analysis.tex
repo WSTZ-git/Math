@@ -1,97 +1,839 @@
-\documentclass[11pt]{elegantbook}
+\documentclass[lang=cn,newtx,10pt,scheme=chinese]{elegantbook}
 
-\title{Real and Complex Analysis}
+\title{分析学技巧积累}
 \subtitle{\,\,}
 
-\author{Wenjie\,\,Zou}
-\institute{Elegant\LaTeX{} Program}
-\date{Oct. 23, 2024}
-\version{4.5}
-\bioinfo{Bio}{Information}
+\author{邹文杰}
+\institute{无}
+\date{2024/10/25}
+\version{ElegantBook-4.5}
+\bioinfo{自定义}{信息}
 
-
-\extrainfo{\,\,}
-
+\extrainfo{宠辱不惊,闲看庭前花开花落;
+\\
+去留无意,漫随天外云卷云舒.}
 
 \setcounter{tocdepth}{3}
 
 \logo{logo-blue.png}
 \cover{cover.png}
 
-% extract package and command
-\usepackage{mystyle-en}
+% 本文档额外使用的宏包和命令
+\usepackage{mystyle-cn}
 
 \begin{document}
 
 \maketitle
-
 \frontmatter
+
 \tableofcontents
 
 \mainmatter
-
 \everymath{\displaystyle} % 让全文的行内公式都显示行间公式效果
 
 
-\chapter{Prologue:The Exponential Function}
+\part{一元实变函数的Lebesgue积分}
 
-\begin{definition}[Exponential Function]\label{definition:Exponential Function}
-  Exponential function is defined , for every complex number z , by the formula
-  \begin{align}\label{equation:1.1}
-    \exp \left( z \right) =\sum_{n=0}^{\infty}{\frac{z^n}{n!}} .
-  \end{align}
-  We define the number $e$ to be $\exp(1)$,and shall usually replace $\exp(z)$ by the customary shorter expression $e^z$.Note that $e^0=\exp(0)=1$,by\eqref{equation:1.1}.
+\chapter{集合、映射与关系的预备知识}
+
+\section{集合的基本概念}
+
+\begin{definition}[集合的基本概念]\label{definition:集合的基本概念}
+\begin{enumerate}
+  \item 对于集合\(A\)，元素\(x\)是\(A\)的成员关系记为\(x\in A\)，而\(x\)不是\(A\)的成员关系记为\(x\notin A\)。我们常说\(A\)的一个成员属于\(A\)且称\(A\)的成员是\(A\)中的一个点。通常集合用花括号表示，因此\(\{x|关于x的陈述\}\)是使得关于\(x\)的陈述成立的所有元素\(x\)的集合。若两个集合有相同的成员，我们说它们相同.
+
+  \item 令\(A\)和\(B\)为集合。若\(A\)的每个成员也是\(B\)的成员，我们称\(A\)为\(B\)的\textbf{子集}，记之为\(A\subseteq B\)，也说\(A\)包含于\(B\)或\(B\)包含\(A\)。\(B\)的子集\(A\)称为\(B\)的\textbf{真子集}.
+
+  \item 若\(A\neq B\)。\(A\)和\(B\)的\textbf{并}，记为\(A\cup B\)，是所有或者属于\(A\)或者属于\(B\)的点的集合，即\(A\cup B = \{x|x\in A或x\in B\}\)。
+
+  \item \(A\)和\(B\)的\textbf{交}，记为\(A\cap B\)，是所有同时属于\(A\)和\(B\)的点的集合，即\(A\cap B = \{x|x\in A且x\in B\}\)。
+
+  \item \(A\)在\(B\)中的\textbf{补}，记为\(B - A\)，是\(B\)中那些不在\(A\)中的点的集合，即\(B - A=\{x\in B且x\notin A\}\)。若在特别的讨论中所有的集合是参考集\(X\)的子集，我们常简单地称\(X - A\)为\(A\)的补。
+
+  \item 没有任何成员的集合称为\textbf{空集}，记为\(\varnothing\)。不等于空集的集合称为非空的。
+
+  \item 我们称只有一个成员的集合为\textbf{单点集}。
+
+  \item 给定集合\(X\)，\(X\)的所有子集的集合记为\(\mathcal{P}(X)\)或\(2^X\)，称之为\(X\)的\textbf{幂集}。
+\end{enumerate}
+\end{definition}
+\begin{remark}
+  为了避免考虑集合的集合时可能产生混淆，我们常用词“族”或“簇”作为“集”的同义词。我通常称集合的集合为\textbf{集族}或\textbf{集簇}.
+\end{remark}
+
+\begin{definition}[集族的并和交]\label{definition:集族的并和交}
+  令\(\mathcal{F}\)为集族.
+  \begin{enumerate}
+    \item \(\mathcal{F}\)的并，记为\(\bigcup_{F\in\mathcal{F}}F\)，定义为属于\(\mathcal{F}\)中的至少一个集合的点的集合。
+
+    \item \(\mathcal{F}\)的交，记为\(\bigcap_{F\in\mathcal{F}}F\)，定义为属于\(\mathcal{F}\)中的每个集合的点的集合。
+    
+    \item 若集族\(\mathcal{F}\)中的任何两个集合的交是空的，集族\(\mathcal{F}\)称为是\textbf{不交的}.
+
+    \item 若集族\(\mathcal{F}\)是不交的,则\(\mathcal{F}\)的并称为是\textbf{无交并}或\textbf{没交并},记为$\bigsqcup_{F\in \mathcal{F}}{F}$.
+  \end{enumerate}
 \end{definition}
 
-\begin{property}\label{The properties of exponential function}
+\begin{theorem}[De Morgan等式]\label{theorem:De Morgan等式}
+  令$X$为集合,\(\mathcal{F}\)为集族,则一定有
+\[
+X-\left[\bigcup_{F\in\mathcal{F}}F\right]=\bigcap_{F\in\mathcal{F}}[X- F],\quad X-\left[\bigcap_{F\in\mathcal{F}}F\right]=\bigcup_{F\in\mathcal{F}}[X- F]
+\]
+即并的补是补的交，且交的补是补的并.
+\end{theorem}
 
-\textbf{(a)} The series \eqref{equation:1.1} converges absoultely for every z and converges uniformly on every bounded subset of the complex plane . Thus $\exp$ is a contionuous function .
+\begin{definition}[指标集]\label{definition:指标集}
+  对于集合\(\Lambda\)，假定对每个\(\lambda\in\Lambda\)，存在已定义的\(E_{\lambda}\)。令\(\mathcal{F}\)为集族\(\{E_{\lambda}|\lambda\in\Lambda\}\)。我们写作\(\mathcal{F}=\{E_{\lambda}\}_{\lambda\in\Lambda}\)且称$\Lambda$中的元素为\(\mathcal{F}\)的用\textbf{指标集}(或\textbf{参数集})\(\Lambda\)标记的\textbf{指标}(或\textbf{参数化}).
+\end{definition}
 
-\textbf{(b)} For all complex numbers a and b , we have
-\begin{align}
-  \exp(a)\exp(b)=\exp(a+b) .
-\end{align}
-\end{property}
-\begin{proof}
-  (a) is obvious . Next proof (b) .
+
+\section{集合之间的映射}
+
+\begin{definition}[映射的基本概念]\label{definition:映射的基本概念}
+  给定两个集合\(A\)和\(B\)，从\(A\)到\(B\)的映射或函数意味着对\(A\)的每个成员指派\(B\)的一个成员给它。在\(B\)是实数集的情形下，我们总是用“函数”这个词。一般我们记这样的映射为\(f:A\to B\)，而对\(A\)的每个成员\(x\)，我们记\(f(x)\)为\(B\)中指派给\(x\)的成员。
+  \begin{enumerate}
+    \item  对于\(A\)的子集\(A'\),我们定义\(f(A') = \{b|b = f(a), a\text{为}A'\text{的某个成员}\}\)：\(f(A')\)称为\(A'\)在\(f\)下的\textbf{象}.
+
+    \item 我们称集合\(A\)为函数\(f\)的\textbf{定义域}.
+
+    \item 我们称\(f(A)\)为\(f\)的\textbf{象或值域}。
+  \end{enumerate}
   
-  The absoulte convergence of \eqref{equation:1.1} and Cauchy's theorem shows that computation 
-\begin{align*}
-  &\exp \left( a \right) \exp \left( b \right) =\sum_{k=0}^{\infty}{\frac{a^k}{k!}}\sum_{m=0}^{\infty}{\frac{b^m}{m!}}\xlongequal[]{\text{Add them in square order}}\sum_{k=0}^{\infty}{\sum_{m=0}^{\infty}{\frac{a^kb^m}{k!m!}}}
-\\
-&\xlongequal[\text{Add them up in diagonal order}]{Cauchy's\,\,theorem\left( \text{华师大数分下册}P20 \right)}\sum_{n=0}^{\infty}{\sum_{\substack{
-	m+k=n\\
-	m,k\in \mathbb{N}\\
-}}{\frac{a^kb^m}{k!m!}}}=\sum_{n=0}^{\infty}{\sum_{k=0}^n{\frac{a^kb^{n-k}}{k!\left( n-k \right) !}}}
-\\
-&=\sum_{n=0}^{\infty}{\frac{1}{n!}\sum_{k=0}^n{\frac{n!a^kb^{n-k}}{k!\left( n-k \right) !}}}=\sum_{n=0}^{\infty}{\frac{1}{n!}\sum_{k=0}^n{\mathrm{C}_{n}^{k}a^kb^{n-k}}}
-\\
-&=\sum_{n=0}^{\infty}{\frac{\left( a+b \right) ^n}{n!}}=\exp \left( a+b \right) .
-\end{align*}
+\end{definition}
 
+\begin{definition}[满射、单射和双射]\label{definition:满射、单射和双射}
+\begin{enumerate}
+  \item 若\(f(A)=B\)，函数\(f\)称为是\textbf{映上的}或\textbf{满射}.
+
+  \item 若对\(f(A)\)的每个成员\(b\)恰有\(A\)的一个成员\(a\)使得\(b = f(a)\)，函数\(f\)称为是\textbf{一对一的}或\textbf{单射}.
+
+  \item 既是一对一又是映上的映射\(f:A\to B\)称为是\textbf{可逆的}或\textbf{双射},我们说该映射建立了集合\(A\)与\(B\)之间的一一对应.
+\end{enumerate}
+\end{definition}  
+
+\begin{definition}[可逆映射的逆]\label{definition:可逆映射的逆}
+  给定一个可逆映射\(f:A\to B\)，对\(B\)中的每个点\(b\)，恰好存在\(A\)中的一个成员\(a\)使得\(f(a)=b\)，它被记为\(f^{-1}(b)\)。这个指派定义了映射\(f^{-1}:B\to A\)，称之为\(f\)的\textbf{逆}.
+\end{definition}
+
+\begin{definition}[对等的集合]\label{definition:对等的集合}
+  两个集合\(A\)和\(B\)称为是\textbf{对等的},记为$A\sim B$,若存在从\(A\)映到\(B\)的可逆映射.
+\end{definition}
+\begin{remark}
+  从集合论的观点看，对等的两个集合是不可区分的.
+\end{remark}
+
+\begin{proposition}[可逆映射的复合是可逆的]\label{proposition:可逆映射的复合是可逆的}
+  给定两个映射\(f:A\to B\)和\(g:C\to D\)使得\(f(A)\subseteq C\)，则复合\(g\circ f:A\to D\)定义为对每个\(x\in A\)，\([g\circ f](x)=g(f(x))\)。不难看出\textbf{可逆映射的复合是可逆的}。
+\end{proposition}
+
+\begin{definition}[恒等映射]\label{definition:恒等映射}
+  对于集合\(D\)，定义\textbf{恒等映射}\(\text{id}_D:D\to D\)为对所有\(x\in D\)，\(\text{id}_D(x)=x\)。
+\end{definition}
+
+\begin{proposition}[可逆映射的充要条件]\label{proposition:可逆映射的充要条件1}
+映射\(f:A\to B\)是可逆的，当且仅当存在映射\(g:B\to A\)使得
+\[
+g\circ f = \text{id}_A且f\circ g = \text{id}_B.
+\]
+\end{proposition}
+
+\begin{definition}[原象]\label{definition:原象的定义}
+  即便映射\(f:A\to B\)不是可逆的，对于集合\(E\)，我们定义\(f^{-1}(E)\)为集合\(\{a\in A|f(a)\in E\}\)，称之为\(E\)在\(f\)下的\textbf{原象}.
+\end{definition}
+
+\begin{proposition}[原像的性质]\label{proposition:原像的性质}
+  我们有下面有用的性质：对于任何两个集合\(E_1\)和\(E_2\)，
+\[
+f^{-1}(E_1\cup E_2)=f^{-1}(E_1)\cup f^{-1}(E_2),\quad f^{-1}(E_1\cap E_2)=f^{-1}(E_1)\cap f^{-1}(E_2)
+\]
+与
+\[
+f^{-1}(E_1- E_2)=f^{-1}(E_1)- f^{-1}(E_2).
+\]
+\end{proposition}
+
+\begin{definition}[映射的限制]\label{definition:映射的限制}
+  对于映射\(f:A\to B\)和它的定义域\(A\)的一个子集\(A'\),\(f\)在\(A'\)上的\textbf{限制},记为\(f|_{A'}\)，是从\(A'\)到\(B\)的映射，它将\(f(x)\)指派给每个\(x\in A'\).
+\end{definition}
+
+
+
+\section{等价关系、选择公理以及Zorn引理}
+
+\begin{definition}[笛卡尔积]\label{}
+  给定两个非空集\(A\)和\(B\)，\(A\)和\(B\)的\textbf{笛卡尔积},记为\(A\times B\)，定义为所有有序对\((a, b)\)的族，其中\(a\in A\)而\(b\in B\)，且我们考虑\((a, b)=(a', b')\)当且仅当\(a = a'\)且\(b = b'\).
+\end{definition}
+
+\begin{definition}[关系及其自反性、对称性、传递性]\label{definition:关系及其自反性、对称性、传递性}
+  对于非空集合\(X\)，我们称\(X\times X\)的子集\(R\)为\(X\)上的一个\textbf{关系}，且写作\(xRx'\).
+  \begin{enumerate}
+    \item 若\((x, x')\)属于\(R\).关系\(R\)称为\textbf{自反的},若对所有\(x\in X\)有\(xRx\);
+
+    \item 若\((x, x')\)属于\(R\).关系\(R\)称为\textbf{对称的},若\(x'Rx\)则\(xRx'\);
+    
+    \item 若\((x, x')\)属于\(R\).关系\(R\)称为\textbf{传递的},若\(xRx'\)且\(x'Rx''\)则\(xRx''\).  
+  \end{enumerate}
+\end{definition}
+
+\begin{definition}[等价关系]\label{definition:等价关系}
+集合\(X\)上的关系\(R\)称为\textbf{等价关系},若它是自反的、对称的和传递的。
+\end{definition}
+
+\begin{definition}[等价类]\label{definition:等价类}
+给定集合\(X\)上的等价关系\(R\)，对每个\(x\in X\)，集合\(R_x = \{x'|x'\in X, xRx'\}\)称为\(x\)(关于\(R\))的\textbf{等价类}.
+
+集合$X$中所有元素(关于$R$)的等价类构成的集合称为$X$(关于$R$)的\textbf{等价类族},记为\(X/R\).
+\end{definition}
+
+\begin{proposition}[等价类的性质]\label{proposition:等价类的性质}
+  给定集合\(X\)上的等价关系\(R\),
+\begin{enumerate}[(1)]
+  \item\label{等价类的性质1} \(R_x = R_{x'}\)当且仅当\(xRx'\).
+
+  \item\label{等价类的性质2} 等价类族\(X/R\)是不交的.
+
+  \item\label{等价类的性质3} \(X/R\)是\(X\)的非空子集的不交族,其并是\(X\).即$X=\bigsqcup_{x\in X}{R_x}=\bigsqcup_{F\in X/R}{F}$.
+
+  \item (反过来)给定\(X\)的非空子集的不交族\(\mathcal{F}\)，其并是\(X\)，属于\(\mathcal{F}\)中的同一个集的关系是\(X\)上使得\(\mathcal{F}=X/R\)的等价关系\(R\).
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+\begin{enumerate}[(1)]
+  \item 由\(R\)是对称的和传递的\hyperref[等价类的性质1]{等价类的性质\ref{等价类的性质1}}容易验证.
+
+  \item 由关系\(R\)是自反的容易验证.
+
+  \item 
+\end{enumerate}
 \end{proof}
 
-\begin{theorem}[The conclusions of exponential function]\label{theorem:The conclusions of exponential function}
-  (a) For every complex z we have $e^z \ne 0$.
 
-  (b) $\exp$ is its own derivative : $\exp'(z)=\exp(z)$.
+\begin{definition}[集合的势]\label{definition:集合的势}
+  给定集合\(X\),对等关系是\(X\)的所有子集组成的族\(2^X\)上的等价关系.一个集合关于对等关系的等价类称为该集合的\textbf{势}或\textbf{基数}.
 
-  (c) The resticton of $\exp$ to the real axis is a monotonically increasing positive function , and 
-  \begin{align*}
-    e^x\rightarrow \infty\,\,as\,\, x\rightarrow \infty\,\,,\,\, e^x\rightarrow 0\,\,as\,\, x\rightarrow -\infty .
-  \end{align*}
+  换句话说,设集合$A$和$B$,若$A\sim B$,就可以称$A$与$B$具有相同\textbf{势}或\textbf{基数}.
+\end{definition}
 
-  (d)There exists a positive number $\pi$ such that $e^{\frac{\pi}{2}}=i$ and such that $e^z=1$ if and only if $z/(2\pi i)$ is an integer .
+\begin{definition}[选择函数]\label{definition:选择函数}
+  令\(\mathcal{F}\)为非空集的非空簇。\(\mathcal{F}\)上的一个\textbf{选择函数}\(f\)是从\(\mathcal{F}\)到\(\bigcup_{F\in\mathcal{F}}F\)的函数，它具有以下性质：对\(\mathcal{F}\)中的每个集合\(F\),\(f(F)\)是\(F\)的一个成员.
+\end{definition}
 
-  (e) $\exp$ is a periodic function , with period $2\pi i$ .
+\begin{axiom}[Zermelo选择公理]\label{axiom:Zermelo选择公理}
+  令\(\mathcal{F}\)为非空集的非空族,则\(\mathcal{F}\)上存在选择函数.
+\end{axiom}
 
-  (f) The mapping $t\to e^{iz}$ maps tha the real axis onto unit circle .
+\begin{definition}[序关系]\label{definition:序关系}
+  非空集合\(X\)上的关系\(R\)称为\textbf{偏序}，若它是自反的、传递的，且对\(X\)中的\(x\)，\(x'\) 
+若\(xRx'\)且\(x'Rx\),则\(x = x'\).
 
-  (g) If $w$ is a complex number and $w\ne 0$ , then $w=e^z$ for some z .
+\(X\)的子集\(E\)称为是\textbf{全序的}，若对\(E\)中的\(x\),\(x'\)，或者\(xRx'\)或者\(x'Rx\).
+\begin{enumerate}
+  \item \(X\)的成员\(x\)称为是\(X\)的子集\(E\)的一个\textbf{上界}，若对所有\(x'\in E\),都有\(x'Rx\)；
+  
+  \item \(X\)的成员\(x\)称为\textbf{最大的},若\(X\)中使得\(xRx'\)的唯一成员是\(x' = x\).
+\end{enumerate}
+\end{definition}
+\begin{note}
+对于集簇\(\mathcal{F}\)和\(A\)，\(B\in\mathcal{F}\)，定义\(ARB\)，若\(A\subseteq B\)。\textbf{集合的被包含关系}是\(\mathcal{F}\)的偏序。观察到\(\mathcal{F}\)中的集合\(F\)是\(\mathcal{F}\)的子簇\(\mathcal{F}'\)的一个上界，若\(\mathcal{F}'\)中的每个集合是\(F\)的子集；而\(\mathcal{F}\)中的集合\(F\)是最大的，若它不是\(\mathcal{F}\)中任何集合的真子集。
+
+类似地，给定集簇\(\mathcal{F}\)和\(A\)，\(B\in\mathcal{F}\)，定义\(ARB\)，若\(B\subseteq A\)。\textbf{集合的包含关系}是\(\mathcal{F}\)的偏序。观察到\(\mathcal{F}\)中的集合\(F\)是\(\mathcal{F}\)的子簇\(\mathcal{F}'\)的一个上界，若\(\mathcal{F}'\)的每个集合包含\(F\)；而\(\mathcal{F}\)中的集合\(F\)是最大的，若它不真包含\(\mathcal{F}\)中的任何集合。
+\end{note}
+
+
+
+\begin{lemma}[Zorn引理]\label{theorem:Zorn引理}
+  令\(X\)为偏序集.它的每个全序子集有一个上界.则\(X\)有一个最大元.
+\end{lemma}
+
+我们已定义了两个集合的笛卡尔积。对一般的参数化集族定义笛卡尔积是有用的。对于由集合\(\Lambda\)参数化的集族\(\{E_{\lambda}\}_{\lambda\in\Lambda}\)的笛卡尔积，记为\(\prod_{\lambda\in\Lambda}E_{\lambda}\)，定义为从\(\Lambda\)到\(\bigcup_{\lambda\in\Lambda}E_{\lambda}\)使得对每个\(\lambda\in\Lambda\)，\(f(\lambda)\)属于\(E_{\lambda}\)的函数\(f\)的集合。显然选择公理等价于非空集的非空簇的笛卡尔积是非空的这一断言。注意到笛卡尔积是对参数化的集簇定义的，而相同的簇的两个不同的参数化将有不同的笛卡尔积。笛卡尔积的这个一般定义与对两个集合给出的定义一致。事实上，考虑两个非空集\(A\)和\(B\)。定义\(\Lambda=\{\lambda_1,\lambda_2\}\)，其中\(\lambda_1\neq\lambda_2\)，接着定义\(E_{\lambda_1}=A\)与\(E_{\lambda_2}=B\)。该映射将有序对\((f(\lambda_1),f(\lambda_2))\)指派给函数\(f\in\prod_{\lambda\in\Lambda}E_{\lambda}\)是一个将笛卡尔积\(\prod_{\lambda\in\Lambda}E_{\lambda}\)映到有序对族\(A\times B\)的可逆映射，因此这两个集合是对等的。对于两个集合\(E\)和\(\Lambda\)，对所有\(\lambda\in\Lambda\)定义\(E_{\lambda}=E\)，则笛卡尔积\(\prod_{\lambda\in\Lambda}E_{\lambda}\)等于由所有从\(\Lambda\)到\(E\)的映射组成的集合且记为\(E^{\Lambda}\)。
+
+
+
+
+
+
+
+\chapter{实数集:集合、序列与函数}
+
+\section{域、正性以及完备性公理}
+
+假设给定实数集\(\mathbb{R}\)，使得对于每对实数\(a\)和\(b\)，存在有定义的实数\(a + b\)和\(ab\)，分别称为\(a\)和\(b\)的和与积。它们满足以下的域公理、正性公理与完备性公理。
+
+\begin{axiom}[域公理]\label{axiom:域公理}
+  \textbf{加法的交换性}：对所有实数\(a\)和\(b\)，
+\[a + b = b + a\]
+\textbf{加法的结合性}：对所有实数\(a\)，\(b\)和\(c\)，
+\[(a + b)+c = a+(b + c)\]
+\textbf{加法的单位元} ：存在实数，记为\(0\)，使得对所有实数\(a\)，
+\[0 + a = a + 0 = a\]
+\textbf{加法的逆元} ：对每个实数\(a\)，存在实数\(b\)使得
+\[a + b = 0\]
+\textbf{乘法的交换性} ：对所有实数\(a\)和\(b\)，
+\[ab = ba\]
+\textbf{乘法的结合性} ：对所有实数\(a\)，\(b\)和\(c\)，
+\[(ab)c = a(bc)\]
+\textbf{乘法的单位元} ：存在实数，记为\(1\)，使得
+对所有实数\(a\)，\(1a = a1 = a\)
+ 乘法的逆元 ：对每个实数\(a\neq0\)，存在实数\(b\)使得
+\[ab = 1\]
+\textbf{分配性} ：对所有实数\(a\)，\(b\)和\(c\)，
+\[a(b + c)=ab + ac\]
+\textbf{非平凡性假设}:
+\[1\neq0\]
+
+满足上述公理的任何集合称为\textbf{域}.从加法的交换性可以得出加法的单位元\(0\)是唯一的，从乘法的交换性得出乘法的单位元\(1\)也是唯一的。加法的逆元和乘法的逆元也是唯一的。我们记\(a\)的加法的逆为\(-a\)，且若\(a\neq0\)，记它的乘法逆为\(a^{-1}\)或\(1/a\).
+\end{axiom}
+\begin{remark}
+  若有一个域，我们能实施所有初等代数的运算，包括解线性方程组。我们不加声明地使用这些公理的多种推论.
+\end{remark}
+
+\begin{axiom}[正性公理]\label{axiom:正性公理}
+存在称为正数的实数集，记为\(\mathcal{P}\)。它有以下两个性质：
+\begin{enumerate}[(1)]
+  \item 若\(a\)和\(b\)是正的，则\(ab\)和\(a + b\)也是正的。
+
+  \item 对于实数\(a\)，以下三种情况恰有一种成立：
+\[a\text{是正的},\quad -a\text{是正的},\quad a = 0.\]
+\end{enumerate}
+\end{axiom}
+
+\begin{definition}[实数的序]\label{definition:实数的序}
+对于实数\(a\)和\(b\),
+\begin{enumerate}
+  \item 定义\(a>b\)意味着\(a - b\)是正的.
+  \item 定义\(a\geqslant b\)意味着\(a>b\)或\(a = b\).
+  \item 定义\(a<b\)意味着\(b>a\).
+  \item 定义\(a\leqslant b\)意味着\(b\geqslant a\).
+\end{enumerate}
+\end{definition}
+\begin{remark}
+  实数的序的定义是根据\hyperref[axiom:正性公理]{实数的正性公理}给出的.
+\end{remark}
+
+\begin{definition}[实数的区间]\label{definition:实数的区间}
+  给定实数\(a\)和\(b\)满足\(a<b\),我们定义\((a, b)=\{x|a<x<b\}\)，且说\((a, b)\)的点落在\(a\)与\(b\)之间.
+
+  我们称非空实数集\(I\)为\textbf{区间}，若对\(I\)中任意两点，所有落在这两点之间的点也属于\(I\)。当然,集合\((a, b)\)是区间。以下集合也是区间：
+  \begin{align}\label{equation:有界区间}
+    (a, b)=\{x|a<x<b\};[a,b] = \{x|a\leqslant x\leqslant b\};[a,b) = \{x|a\leqslant x<b\};(a,b] = \{x|a<x\leqslant b\}.
+  \end{align}
+\end{definition}
+\begin{note}
+  所有有界区间都是\eqref{equation:有界区间}式列出的形式.
+\end{note}
+
+\begin{definition}[上界和下界]\label{definition:上界和下界}
+\begin{enumerate}
+  \item 非空实数集\(E\)称为\textbf{有上界}，若存在实数\(b\)，使得对所有\(x\in E\)，\(x\leqslant b\)：数\(b\)称为\(E\)的\textbf{上界}.
+  \item 非空实数集\(E\)称为\textbf{有下界}，若存在实数\(b\)，使得对所有\(x\in E\)，\(x\geqslant b\)：数\(b\)称为\(E\)的\textbf{下界}.
+\end{enumerate}
+\end{definition}
+
+\begin{axiom}[完备性公理]\label{axiom:完备性公理}
+  令\(E\)为有上界的非空实数集。则在\(E\)的上界的集合中有一个最小的上界。
+\end{axiom}
+\begin{note}
+  有上界的集合未必有最大的成员。但完备性公理断言它一定有一个最小的上界.
+\end{note}
+
+\begin{definition}[上下确界]\label{definition:上下确界}
+\begin{enumerate}
+  \item 有上界的非空实数集\(E\)有\textbf{最小上界},记为\(\text{l.u.b. }E\)。\(E\)的最小上界通常称为\(E\)的\textbf{上确界}且记为\(\sup E\)。
+
+  \item 有下界的非空实数集\(E\)有\textbf{最大下界},记为\(\text{g.l.b. }E\)。\(E\)的最大下界通常称为\(E\)的\textbf{下确界}且记为\(\inf E\)。
+
+  \item 一个非空实数集称为\textbf{有界的}，若它既有下界又有上界。
+\end{enumerate}
+\end{definition}
+\begin{remark}
+  有上界的非空实数集\(E\)的最小上界和有下界的非空实数集\(E\)的最大下界的存在性由\hyperref[axiom:完备性公理]{完备性公理}保证,因此这个定义是良定义.
+\end{remark}
+
+\begin{definition}[实数的绝对值]\label{definition:绝对值}
+  定义实数\(x\)的绝对值\(\vert x\vert\)为：若\(x\geqslant0\)则等于\(x\)，若\(x<0\)则等于\(-x\)。
+\end{definition}
+
+\begin{theorem}[三角不等式]\label{theorem:三角不等式}
+对任何实数对\(a\)和\(b\),都有
+  \[
+    \left| a+b \right|\leqslant \left| a \right|+\left| b \right|.
+  \]
+\end{theorem}
+
+\begin{definition}[扩充的实数]\label{definition:扩充的实数}
+  引入符号\(\infty\)和\(-\infty\)并对所有实数\(x\)写\(-\infty<x<\infty\)是方便的。我们称集合\(\mathbb{R}\cup\{\pm\infty\}\)为\textbf{扩充的实数}.
+\end{definition}
+\begin{note}
+  我们将定义实数序列的极限,而允许极限是扩充的实数是方便的.
+\end{note}
+
+\begin{definition}[扩充的实数的上下确界]\label{definition:扩充的实数的上下确界}
+\begin{enumerate}
+  \item 若非空实数集\(E\)没有上界，我们定义它的上确界为\(\infty\)或$+\infty$。定义空集的上确界为\(-\infty\).
+  \item 若非空实数集\(E\)没有下界，我们定义它的下确界为$-\infty$.定义空集的下确界为\(+\infty\).
+\end{enumerate}
+\end{definition}
+\begin{note}
+  因此每个实数集有一个属于扩充的实数的上确界和下确界.
+\end{note}
+
+\begin{proposition}[扩充的实数关于和与积的性质]\label{proposition:扩充的实数关于和与积的性质}
+\begin{enumerate}
+  \item \(\infty+\infty=\infty\)，\(-\infty - \infty=-\infty\).
+  \item 对每个实数\(x\)，\(x+\infty=\infty\)而\(x - \infty=-\infty\).
+  \item 若\(x>0\)，\(x\cdot\infty=\infty\)而\(x\cdot(-\infty)=-\infty\).
+  \item 若\(x<0\)，\(x\cdot\infty=-\infty\)而\(x\cdot(-\infty)=\infty\)。
+\end{enumerate}
+\end{proposition}
+\begin{remark}
+  注意到收敛到实数的实数序列的许多性质在极限是\(\pm\infty\)时继续成立,例如,和的极限是极限的和且积的极限是极限的积.因此我们容易验证这些扩充的实数关于和与积的性质.
+\end{remark}
+
+\begin{definition}[无界区间]\label{definition:无界区间}
+  定义\((-\infty,\infty)=\mathbb{R}\)。对于\(a\)，\(b\in\mathbb{R}\)，定义
+\[
+(a,\infty)=\{x\in\mathbb{R}|a < x\},\quad (-\infty,b)=\{x\in\mathbb{R}|x < b\}
+\]
+与
+\[
+[a,\infty)=\{x\in\mathbb{R}|a\leqslant x\},\quad (-\infty,b]=\{x\in\mathbb{R}|x\leqslant b\}.
+\]
+\end{definition}
+\begin{note}
+  上面形式的集合是无界区间。从\(\mathbb{R}\)的完备性可以推出所有无界区间是上述形式的一种，而所有有界区间都是\eqref{equation:有界区间}式列出的形式.
+\end{note}
+
+\begin{example}\label{example:1.12311}
+令\(a\)和\(b\)为实数.
+\begin{enumerate}[(i)]
+  \item\label{example:1.12311-i} 证明：若\(ab = 0\)，则\(a = 0\)或\(b = 0\).
+  \item\label{example:1.12311-ii}  验证\(a^{2}-b^{2}=(a - b)(a + b)\)，并从(i)部分推出：若\(a^{2}=b^{2}\)，则\(a = b\)或\(a=-b\).
+  \item\label{example:1.12311-iii} 令\(c\)为正实数. 定义\(E = \{x\in\mathbb{R}|x^{2}<c\}\). 验证\(E\)是非空的且有上界. 定义\(x_0=\sup E\). 证明\(x_0^{2}=c\). 用(ii)部分证明存在唯一的\(x>0\)使得\(x^{2}=c\). 记之为\(\sqrt{c}\).
+\end{enumerate}
+\end{example}
+\begin{proof}
+  
+\end{proof}
+
+
+
+
+\section{自然数与有理数}
+
+\begin{definition}[归纳集]\label{definition:归纳集}
+实数集\(E\)称为是\textbf{归纳的}，若它包含\(1\)，且若实数\(x\)属于\(E\)，则数\(x + 1\)也属于\(E\)。
+\end{definition}
+\begin{note}
+  显然全体实数集\(\mathbb{R}\)是归纳的。从不等式\(1>0\)我们容易推出集合\(\{x\in\mathbb{R}|x\geqslant0\}\)和\(\{x\in\mathbb{R}|x\geqslant1\}\)是归纳的。
+\end{note}
+
+\begin{definition}[自然数集]\label{definition:自然数集}
+  \textbf{自然数集},记为\(\mathbb{N}\),定义为\(\mathbb{R}\)的所有归纳子集的交,即包含数1的最小归纳集.
+\end{definition}
+\begin{remark}
+  集合论中的自然数集一般是从0开始,但这里自然数集是从0开始的,也就是说$0\notin \mathbb{N}$.
+\end{remark}
+
+\begin{proposition}[自然数集是归纳的]\label{proposition:自然数集是归纳的}
+\(\mathbb{N}\)是归纳的.
+\end{proposition}
+\begin{proof}
+  观察到数\(1\)属于\(\mathbb{N}\)，这是由于\(1\)属于每个归纳集。此外，若数\(k\)属于\(\mathbb{N}\)，则\(k\)属于每个归纳集。因此，由归纳集的定义可知,\(k + 1\)属于每个归纳集，所以\(k + 1\)属于\(\mathbb{N}\).
+\end{proof}
+
+\begin{theorem}[数学归纳法原理]\label{theorem:数学归纳法原理}
+  对每个自然数\(n\)，令\(S(n)\)为某个数学断言。假定\(S(1)\)成立。也假定每当\(k\)是使得\(S(k)\)成立的自然数，则\(S(k + 1)\)也成立。那么，对每个自然数\(n\)，\(S(n)\)成立。
 \end{theorem}
 \begin{proof}
+  定义\(A = \{k\in\mathbb{N}|S(k)\)成立\(\}\)。假设恰好意味着\(A\)是一个归纳集。于是\(\mathbb{N}\subseteq A\)。因此对每个自然数\(n\)，\(S(n)\)成立。
+\end{proof}
+
+\begin{theorem}\label{theorem:每个非空自然数集有一个最小成员.}
+  每个非空自然数集有一个最小成员.
+\end{theorem}
+\begin{proof}
+  令\(E\)为自然数的非空集。由于集合\(\{x\in\mathbb{R}|x\geqslant1\}\)是归纳的，自然数有下界\(1\)。因此\(E\)有下界\(1\)。作为完备性公理的一个推论，\(E\)有下确界，定义\(c=\inf E\)。由于\(c + 1\)不是\(E\)的下界，存在\(m\in E\)使得\(m < c + 1\)。我们宣称\(m\)是\(E\)的最小成员。否则，存在\(n\in E\)使得\(n < m\)。由于\(n\in E\)，\(c\leqslant n\)。于是\(c\leqslant n < m < c + 1\)，且因此\(m - n < 1\)。因此自然数\(m\)属于区间\((n, n + 1)\)。\hyperref[example-1111]{例题\ref{example-1111}}表明对每个自然数\(n\)，\((n, n + 1)\cap\mathbb{N}=\varnothing\).这个矛盾证明了\(m\)是\(E\)的最小成员.
+\end{proof}
+
+\begin{theorem}[实数的Archimedeas性质]\label{theorem:实数的Archimedeas性质}
+  对于每对正实数\(a\)和\(b\)，存在自然数\(n\)使得\(na > b\)。
+\end{theorem}
+\begin{note}
+  我们经常重述\(\mathbb{R}\)的Archimedeas性质:对每个正实数\(\varepsilon\)，存在自然数\(n\)使得\(1/n<\varepsilon\)。$^{\ominus}$.
+\end{note}
+\begin{proof}
+  定义\(c = b/a>0\)。我们用反证法证明。若定理是错的，则\(c\)是自然数的一个上界。根据完备性公理，自然数有一个上确界，定义\(c_0=\sup\mathbb{N}\)。则\(c_0 - 1\)不是自然数的上界。选取自然数\(n\)使得\(n>c_0 - 1\)。因此\(n + 1>c_0\)。但自然数集是归纳的，因此\(n + 1\)是自然数。由于\(n + 1>c_0\)，而\(c_0\)不是自然数集的上界。这个矛盾完成了证明。
+\end{proof}
+
+\begin{definition}[整数集、有理数集和无理数]\label{definition:整数集、有理数集和无理数}
+\begin{enumerate}
+  \item 定义\textbf{整数集}(记为\(\mathbb{Z}\))为由自然数、它们的相反数和数\(0\)组成的数集。
+  \item \textbf{有理数集},记为\(\mathbb{Q}\)，定义为整数的商的集合，即形如\(x = m/n\)的数\(x\)，其中\(m\)和\(n\)是整数且\(n\neq0\).
+  \item 若一个实数不是有理的就称它为无理数.
+\end{enumerate}
+\end{definition}
+
+\begin{example}
+  正如我们在\hyperref[example:1.12311-iii]{例题\ref{example:1.12311}\ref{example:1.12311-iii}}证明的,存在唯一的正数\(x\)使得\(x^2 = 2\)，记之为\(\sqrt{2}\)。证明:\(\sqrt{2}\)这个数不是有理的.
+\end{example}
+\begin{proof}
+  事实上，假定\(p\)和\(q\)是自然数使得\((p/q)^2 = 2\)，则\(p^2 = 2q^2\)。素数分解定理$^{\ominus}$告诉我们\(2\)除\(p^2\)的次数正好是它除\(p\)的次数的两倍。因此\(2\)除\(p^2\)偶数次。类似地，\(2\)除\(2q^2\)奇数次。于是\(p^2\neq2q^2\)，且因此\(\sqrt{2}\)是无理的。
+\end{proof}
+
+\begin{definition}[稠密]\label{definition:稠密}
+  实数的集合\(E\)称为在\(\mathbb{R}\)中\textbf{稠密},若任何两个实数之间有\(E\)的成员.
+\end{definition}
+
+\begin{theorem}[有理数的稠密性]\label{theorem:有理数的稠密性}
+  有理数在\(\mathbb{R}\)中稠密.
+\end{theorem}
+\begin{proof}
+  令\(a\)和\(b\)为实数，满足\(a < b\)。首先假定\(a>0\)。根据 \hyperref[theorem:实数的Archimedeas性质]{\(\mathbb{R}\)的Archimedeas性质}可知，存在自然数\(q\)使得\((1/q)<b - a\)。再一次利用 \hyperref[theorem:实数的Archimedeas性质]{\(\mathbb{R}\)的Archimedeas性质}可知，自然数集\(S=\{n\in\mathbb{N}|n/q\geqslant b\}\)非空。根据\hyperref[theorem:每个非空自然数集有一个最小成员.]{定理\ref{theorem:每个非空自然数集有一个最小成员.}}可知,\(S\)具有最小成员\(p\)。观察到\(1/q<b - a<b\)，于是\(p>1\)。因此\(p - 1\)是自然数（见\hyperref[example-9]{例题\ref{example-9}}），因而根据\(p\)的选取的最小性，\((p - 1)/q<b\)。我们也有
+\[
+a = b-(b - a)<(p/q)-(1/q)=(p - 1)/q
+\]
+因此有理数\(r=(p - 1)/q\)落在\(a\)与\(b\)之间。若\(a<0\)，根据\hyperref[theorem:实数的Archimedeas性质]{\(\mathbb{R}\)的Archimedeas性质}可知，存在自然数\(n\)使得\(n>-a\)。我们从考虑过的第一种情形推出：存在有理数\(r\)落在\(n + a\)与\(n + b\)之间。因此有理数\(r - n\)落在\(a\)与\(b\)之间。
+\end{proof}
+
+\begin{example}\label{example-1111}
+  用归纳法证明：对每个自然数\(n\)，区间\((n, n + 1)\)不含任何自然数.
+\end{example}
+\begin{proof}
   
 \end{proof}
+
+\begin{example}\label{example-9}
+用归纳法证明：若\(n > 1\)是自然数，则\(n - 1\)也是一个自然数。接着用归纳法证明：若\(m\)和\(n\)是满足\(n>m\)的自然数，则\(n - m\)是自然数。
+\end{example}
+\begin{proof}
+  
+\end{proof}
+
+
+
+
+
+\section{可数集与不可数集}
+
+\begin{axiom}[良序原理]\label{theorem:良序原理}
+  自然数集的每个非空子集都有一个最小元素,即自然数在其标准的大小关系$<$下构成一良序集.
+\end{axiom}
+\begin{note}
+  \hyperref[theorem:良序原理]{良序原理}等价于\hyperref[axiom:Zermelo选择公理]{选择公理}.
+\end{note}
+
+\begin{proposition}\label{proposition:集合之间的对等是一个等价关系}
+  对等在集合间定义了一个等价关系，即它是自反的、对称的与传递的.
+\end{proposition}
+\begin{proof}
+  
+\end{proof}
+
+\begin{definition}[自然数]\label{definition:自然数}
+  定义自然数\(\{k\in\mathbb{N}|1\leqslant k\leqslant n\}\)为\(\{1, \cdots, n\}\).
+\end{definition}
+
+\begin{theorem}[鸽笼原理]\label{theorem:鸽笼原理}
+  对任何自然数\(n\)和\(m\),集合\(\{1, \cdots, n + m\}\)与集合\(\{1, \cdots, n\}\)不对等.
+\end{theorem}
+\begin{proof}
+  归纳可证.
+\end{proof}
+
+\begin{definition}[可数集与不可数集]\label{definition:可数集与不可数集}
+\begin{enumerate}
+  \item 集合\(E\)称为是\textbf{有限的}或\textbf{有限集}.若它或者是空集，或者存在自然数\(n\)使得\(E\)与\(\{1, \cdots, n\}\)对等.
+  \item 我们说\(E\)是\textbf{可数无穷的},若\(E\)与自然数集\(\mathbb{N}\)对等.
+  \item 有限或可数无穷的集合称为\textbf{可数集}.不是可数的集合称为\textbf{不可数集}.
+\end{enumerate}
+\end{definition}
+
+\begin{proposition}\label{proposition:与可数集对等的集合是可数集}
+  若一个集与可数集对等，则它是可数的.
+\end{proposition}
+\begin{proof}
+  
+\end{proof}
+
+\begin{theorem}\label{theorem:可数集的子集是可数的}
+  可数集的子集是可数的。特别是，每个自然数集是可数的.
+\end{theorem}
+\begin{proof}
+  令\(B\)为可数集而\(A\)是\(B\)的一个非空子集。首先考虑\(B\)是有限的情形。令\(f\)为\(\{1, \cdots, n\}\)与\(B\)之间的一一对应。定义\(g(1)\)为第一个使得\(f(j)\)属于\(A\)的自然数\(j\)，\(1\leqslant j\leqslant n\)。由于\(f\circ g\)是\(\{1\}\)与\(A\)之间的一一对应，若\(A = \{f(g(1))\}\)，证明完成。否则，定义\(g(2)\)为使得\(f(j)\)属于\(A\setminus\{f(g(1))\}\)的第一个自然数\(j\)，\(1\leqslant j\leqslant n\)。\hyperref[theorem:鸽笼原理]{鸽笼原理}告诉我们至多\(N\)步后该归纳选择过程终止，其中\(N\leqslant n\)。因此\(f\circ g\)是\(\{1, \cdots, N\}\)与\(A\)之间的一一对应。于是\(A\)有限。
+
+现在考虑\(B\)是可数无穷的情形。令\(f\)为\(\mathbb{N}\)与\(B\)之间的一一对应。定义\(g(1)\)为第一个使得\(f(j)\)属于\(A\)的自然数\(j\)。如同第一种情形的证明，我们看到若该选择过程终止，则\(A\)是有限的。否则，该选择过程不终止而\(g\)在所有的\(\mathbb{N}\)上恰当定义。显然\(f\circ g\)是一一映射，其中定义域是\(\mathbb{N}\)而象包含于\(A\)中。归纳论证表明对所有\(j\),\(g(j)\geqslant j\)。对每个\(x\in A\)，存在某个\(k\)使得\(x = f(k)\)。因此\(x\)属于集合\(\{f(g(1)), \cdots, f(g(k))\}\)。因此\(f\circ g\)的象是\(A\)。因此\(A\)是可数无穷。
+\end{proof}
+
+\begin{corollary}\label{corollary:自然数集的有限积是可数的、有理数集也是可数的}
+\begin{enumerate}[(i)]
+  \item 对每个自然数\(n\)，笛卡尔积\(\underbrace{\mathbb{N}\times\cdots\times\mathbb{N}}_{n\text{次}}\)是可数无穷的.即自然数集与其自身的有限次笛卡尔积是可数无穷的.
+
+  \item\label{corollary:有理数集也是可数的} 有理数集\(\mathbb{Q}\)是可数无穷的.
+\end{enumerate}
+\end{corollary}
+\begin{proof}
+\begin{enumerate}[(i)]
+  \item 我们对\(n = 2\)证明(i)，而一般情形留作归纳法的练习。定义从\(\mathbb{N}\times\mathbb{N}\)到\(\mathbb{N}\)的映射\(g\)为\(g(m, n)=(m + n)^2 + n\)。映射\(g\)是一对一的。事实上，若\(g(m, n)=g(m', n')\)，则\((m + n)^2-(m' + n')^2=n' - n\)，因此
+\[|m + n + m' + n'|\cdot|m + n - m' - n'|=|n' - n|\]
+若\(n\neq n'\)，则自然数\(m + n + m' + n'\)大于自然数\(\vert n' - n\vert\)，这是不可能的。于是\(n = n'\)，因而\(m = m'\)。因此\(\mathbb{N}\times\mathbb{N}\)与可数集\(\mathbb{N}\)的子集\(g(\mathbb{N}\times\mathbb{N})\)对等。我们从\hyperref[theorem:可数集的子集是可数的]{定理\ref{theorem:可数集的子集是可数的}}推出\(\mathbb{N}\times\mathbb{N}\)是可数的。
+
+  \item 为证明\(\mathbb{Q}\)的可数性，我们首先从素数分解定理推出每个正有理数\(x\)可唯一写成\(x = p/q\)，其中\(p\)和\(q\)是互素的自然数。对\(x = p/q>0\)定义从\(\mathbb{Q}\)到\(\mathbb{N}\)的映射\(g\)为\(g(x)=2((p + q)^2 + q)\)，其中\(p\)和\(q\)是互素的自然数，\(g(0)=1\)，而对\(x<0\)，\(g(x)=g(-x)+1\)。我们将证明\(g\)是一对一的留作练习。于是\(\mathbb{Q}\)与\(\mathbb{N}\)的一个子集对等，因此根据\hyperref[theorem:可数集的子集是可数的]{定理\ref{theorem:可数集的子集是可数的}}，是可数的。我们将用\hyperref[theorem:鸽笼原理]{鸽笼原理}证明\(\mathbb{N}\times\mathbb{N}\)和\(\mathbb{Q}\)都不是有限的留作练习。
+\end{enumerate}
+\end{proof}
+
+\begin{definition}[可数无穷集的列举]\label{definition:可数无穷集的列举}
+  对于可数无穷集\(X\)，我们说\(\{x_n|n\in\mathbb{N}\}\)是\(X\)的一个\textbf{列举},若
+\[X = \{x_n|n\in\mathbb{N}\}, \ x_n\neq x_m(\text{若 }n\neq m).\]
+\end{definition}
+
+\begin{theorem}\label{theorem:可数集关于映射的充要条件}
+  非空集是可数的当且仅当它是某个定义域为非空可数集的函数的象。
+\end{theorem}
+\begin{proof}
+  令\(A\)为非空可数集，而\(f\)为将\(A\)映上\(B\)的映射。假定\(A\)是可数无穷的，而将有限的情形留作练习。通过\(A\)与\(\mathbb{N}\)之间的一一对应的复合，我们可以假定\(A = \mathbb{N}\)。定义\(A\)中的两点\(x\)，\(x'\)为等价的，若\(f(x)=f(x')\)。这是一个等价关系，即它是自反的、对称的与传递的。令\(E\)为\(A\)的子集，它由每个等价类的一个成员组成。则\(f\)在\(E\)的限制是\(E\)与\(B\)之间的一一对应。但\(E\)是\(\mathbb{N}\)的子集，因此，根据\hyperref[theorem:可数集的子集是可数的]{定理\ref{theorem:可数集的子集是可数的}}，是可数的。集合\(B\)与\(E\)对等，因此\(B\)是可数的。逆断言是显然的，若\(B\)是非空可数集，则它或者与自然数的一个初始部分对等，或者与自然数全体对等。
+\end{proof}
+
+\begin{corollary}\label{corollary:可数集的可数并是可数的}
+  可数集的可数族的并是可数的。
+\end{corollary}
+\begin{proof}
+  令\(\Lambda\)为可数集且对每个\(\lambda\in\Lambda\)，令\(E_{\lambda}\)为可数集。我们将证明并\(E=\bigcup_{\lambda\in\Lambda}E_{\lambda}\)是可数的。若\(E\)是空集，则它是可数的。因此我们假设\(E\neq\varnothing\)。我们考虑\(\Lambda\)是可数无穷的情形，而将有限的情形留作练习。令\(\{\lambda_n|n\in\mathbb{N}\}\)为\(\Lambda\)的一个列举。固定\(n\in\mathbb{N}\)。若\(E_{\lambda_n}\)是有限且非空的，选取自然数\(N(n)\)与将\(\{1, \cdots, N(n)\}\)映上\(E_{\lambda_n}\)的一一映射\(f_n\)；若\(E_{\lambda_n}\)是可数无穷的，选取\(\mathbb{N}\)映上\(E_{\lambda_n}\)的一一映射\(f_n\)。定义
+\[E' = \{(n,k)\in\mathbb{N}\times\mathbb{N}|E_{\lambda_n}\text{ 是非空的，且若 }E_{\lambda_n}\text{ 也是有限的，}1\leqslant k\leqslant N(n)\}\]
+定义\(E'\)到\(E\)的映射\(f\)为\(f(n, k)=f_n(k)\)。则\(f\)是\(E'\)映上\(E\)的映射。然而，\(E'\)是可数集\(\mathbb{N}\times\mathbb{N}\)的子集，因此，根据\hyperref[theorem:可数集的子集是可数的]{定理\ref{theorem:可数集的子集是可数的}}，是可数的。定理5告诉我们\(E\)也是可数的。
+\end{proof}
+
+\begin{definition}[退化的区间]\label{definition:退化的区间}
+  我们称实数的区间为退化的，若它是空的或包含一个单独的成员.
+\end{definition}
+
+\begin{theorem}\label{theorem:非退化的实数区间是不可数的}
+  一个非退化实数区间是不可数的。
+\end{theorem}
+\begin{proof}
+  令\(I\)为实数的非退化区间。显然\(I\)不是有限的。我们用反证法证明\(I\)是不可数的。假定\(I\)是可数无穷的。令\(\{x_n|n\in\mathbb{N}\}\)为\(I\)的一个列举。令\([a_1, b_1]\)为\(I\)的不包含\(x_1\)的非退化的闭有界子区间。接着令\([a_2, b_2]\)为\([a_1, b_1]\)的非退化的闭有界子区间，它不包含\(x_2\)。我们归纳地选取非退化闭有界区间的可数族\(\{[a_n, b_n]\}_{n = 1}^{\infty}\)，对每个\(n\)，\([a_{n + 1}, b_{n + 1}]\subseteq[a_n, b_n]\)，并使得对每个\(n\)，\(x_n\notin[a_n, b_n]\)。非空集\(E = \{a_n|n\in\mathbb{N}\}\)有上界\(b_1\)。\hyperref[axiom:完备性公理]{完备性公理}告诉我们\(E\)有上确界。定义\(x^*=\sup E\)。由于\(x^*\)是\(E\)的一个上界，对所有\(n\)，\(a_n\leqslant x^*\)。另一方面，由于\(\{[a_n, b_n]\}_{n = 1}^{\infty}\)是下降的，对每个\(n\)，\(b_n\)是\(E\)的上界。于是，对每个\(n\)，\(x^*\leqslant b_n\)。因此对每个\(n\)，\(x^*\)属于\([a_n, b_n]\)。但\(x^*\)属于\([a_1, b_1]\subseteq I\)，因此存在自然数\(n_0\)使得\(x^* = x_{n_0}\)。由于\(x^* = x_{n_0}\)不属于\([a_{n_0}, b_{n_0}]\)，我们得到矛盾。因此，\(I\)是不可数的。
+\end{proof}
+
+
+
+
+
+
+
+
+
+\section{实数的开集、闭集和Borel集}
+
+\begin{definition}[实数的开集]\label{definition:实数的开集}
+一个实数的集合\(\mathcal{O}\)称为\textbf{开的}，若对每个\(x\in\mathcal{O}\)，存在\(r > 0\)使得区间\((x - r, x + r)\)包含于\(\mathcal{O}\).
+\end{definition}
+
+
+\begin{theorem}\label{theorem: 实数的开集就是开区间}
+  实数的开集就是开区间.
+\end{theorem}
+
+\begin{proposition}[实数的开区间]\label{proposition:实数的开区间}
+\begin{enumerate}[(1)]
+  \item 对于\(a < b\)，区间\((a, b)\)是一个开集,且每个开有界区间(有界开集)都是这种形式。
+
+  \item 对于\(a\),\(b\in\mathbb{R}\),区间
+\((a,\infty),(-\infty,b), (-\infty,\infty)\)都是开集,且每个开无界区间(无界开集)都是这三中形式之一.
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+\begin{enumerate}[(1)]
+  \item 事实上，令\(x\)属于\((a, b)\)。定义\(r=\min\{b - x, x - a\}\)。观察到\((x - r, x + r)\)包含于\((a, b)\)。因此\((a, b)\)是开有界区间.又因为实数的有界开集等价于有界开区间,而实数的有界开区间都是这种形式,所以每个开有界区间(有界开集)都是这种形式。
+
+  \item 观察到每个这样的集合是一个开区间。此外，不难看出，由于每个实数集在扩充实数集中有下确界与上确界，因此每个开无界区间(无界开集)都是这三中形式之一.
+\end{enumerate}
+\end{proof}
+
+\begin{proposition}[实数集的开集的性质]\label{proposition:实数集的开集的性质}
+实数集\(\mathbb{R}\)和空集\(\varnothing\)是开的，任何开集的有限族的交是开的，任何开集族的并是开的。
+\end{proposition}
+\begin{remark}
+  然而，任何开集族的交是开的不成立。例如，对每个自然数\(n\)，令\(\mathcal{O}_n\)为开区间\((-1/n, 1/n)\)。则根据\hyperref[theorem:实数的Archimedeas性质]{实数的Archimedeas性质}可知,\(\bigcap_{n = 1}^{\infty}\mathcal{O}_n=\{0\}\)，而\(\{0\}\)不是一个开集.
+\end{remark}
+\begin{proof}显然\(\mathbb{R}\)和\(\varnothing\)是开的，而任何开集族的并是开的。令\(\{\mathcal{O}_k\}_{k = 1}^{n}\)为\(\mathbb{R}\)的开子集的有限族。若该族的交是空的，则交是空集，因此是开的。否则，令\(x\)属于\(\bigcap_{k = 1}^{n}\mathcal{O}_k\)。对于\(1\leqslant k\leqslant n\)，选取\(r_k>0\)使得\((x - r_k, x + r_k)\subseteq\mathcal{O}_k\)。定义\(r = \min\{r_1, \cdots, r_n\}\)。则\(r>0\)且\((x - r, x + r)\subseteq\bigcap_{k = 1}^{n}\mathcal{O}_k\)。因此\(\bigcap_{k = 1}^{n}\mathcal{O}_k\)是开的
+\end{proof}
+
+\begin{proposition}\label{proposition:开集可以写成不交开区间族的并}
+每个非空开集是可数个不交开区间族的并。
+\end{proposition}
+\begin{proof}
+  令\(\mathcal{O}\)为\(\mathbb{R}\)的非空开子集。令\(x\)属于\(\mathcal{O}\)。存在\(y > x\)使得\((x, y)\subseteq\mathcal{O}\)，且存在\(z < x\)使得\((z, x)\subseteq\mathcal{O}\)。定义扩充的实数\(a_x\)和\(b_x\)为
+\[a_x=\inf\{z|(z,x)\subseteq\mathcal{O}\}\text{与}b_x=\sup\{y|(x,y)\subseteq\mathcal{O}\}\]
+则\(I_x=(a_x, b_x)\)是包含\(x\)的开区间。我们宣称
+\begin{align}\label{proposition2.7-equation:(2)}
+  I_x\subseteq\mathcal{O}\text{ 但 }a_x\notin\mathcal{O},\ b_x\notin\mathcal{O}.
+\end{align}
+事实上，令\(w\)属于\(I_x\)，比如\(x < w < b_x\)。根据\(b_x\)的定义，存在数\(y > w\)使得\((x, y)\subseteq\mathcal{O}\)，因而\(w\in\mathcal{O}\)。此外，\(b_x\notin\mathcal{O}\)，因为若\(b_x\in\mathcal{O}\)，则对某个\(r > 0\)我们有\((b_x - r, b_x + r)\subseteq\mathcal{O}\)。因此\((x, b_x + r)\subseteq\mathcal{O}\)，与\(b_x\)的定义矛盾。类似地，\(a_x\notin\mathcal{O}\)，考虑开区间族\(\{I_x\}_{x\in\mathcal{O}}\)。由于\(\mathcal{O}\)中的每个\(x\)是\(I_x\)的成员，而每个\(I_x\)包含于\(\mathcal{O}\)，我们有\(\mathcal{O}=\bigcup_{x\in\mathcal{O}}I_x\)。我们从\eqref{proposition2.7-equation:(2)}推出\(\{I_x\}_{x\in\mathcal{O}}\)是不交的。因此\(\mathcal{O}\)是不交的开区间族的并。剩下来要证明该族是可数的。根据\hyperref[theorem:有理数的稠密性]{有理数的稠密性}，这些开区间的每一个包含一个有理数。这建立了开区间族与有理数子集之间的一一对应。我们从\hyperref[theorem:可数集的子集是可数的]{定理\ref{theorem:可数集的子集是可数的}}和\hyperref[corollary:有理数集也是可数的]{推论\ref{corollary:自然数集的有限积是可数的、有理数集也是可数的}\ref{corollary:有理数集也是可数的}}推出任何有理数集是可数的。因此\(\mathcal{O}\)是可数个不交开区间族的并。
+\end{proof}
+
+\begin{definition}[闭包]\label{definition:闭包}
+  对于实数集\(E\)，\(x\)称为\(E\)的\textbf{闭包点}，若每个包含\(x\)的开区间也包含\(E\)的点。\(E\)的全体闭包点称为\(E\)的\textbf{闭包}且记为\(\overline{E}\)。
+\end{definition}
+
+\begin{proposition}
+  对于实数集\(E\),我们总是有\(E\subseteq\overline{E}\).
+\end{proposition}
+
+若\(E\)包含它的所有闭包点,即\(E = \overline{E}\)，则集合\(E\)称为\textbf{闭的}.
+
+命题10
+对于实数集\(E\)，它的闭包\(\overline{E}\)是闭的。此外，\(\overline{E}\)在以下意义下是包含\(E\)的最小闭集：若\(F\)是闭的且\(E\subseteq F\)，则\(\overline{E}\subseteq F\)。
+
+**证明**：集合\(\overline{E}\)是闭的，若它包含所有闭包点。令\(x\)为\(\overline{E}\)的闭包点。考虑包含\(x\)的开区间\(I_x\)。存在一个点\(x'\in\overline{E}\cap I_x\)。由于\(x'\)是\(E\)的闭包点，且开区间\(I_x\)包含\(x'\)，存在点\(x''\in E\cap I_x\)。因此每个包含\(x\)的开区间也包含\(E\)的点，且因此\(x\in\overline{E}\)。所以集合\(\overline{E}\)是闭的。显然，若\(A\subseteq B\)，则\(\overline{A}\subseteq\overline{B}\)，因此，若\(F\)是闭的且包含\(E\)，则\(\overline{E}\subseteq\overline{F}=F\)。
+
+命题11
+实数集是开的当且仅当它在\(\mathbb{R}\)中的补是闭的。
+
+**证明**：首先假定\(E\)是\(\mathbb{R}\)的一个开子集。令\(x\)为\(\mathbb{R}\setminus E\)的闭包点。则\(x\)不属于\(E\)，因为否则就会有一个包含\(x\)且包含于\(E\)的开区间，因而与\(\mathbb{R}\setminus E\)不交。于是\(x\)属于\(\mathbb{R}\setminus E\)且因此\(\mathbb{R}\setminus E\)是闭的。现在假定\(\mathbb{R}\setminus E\)是闭的。令\(x\)属于\(E\)。则必有包含\(x\)且包含于\(E\)的开区间，否则每个包含\(x\)的开区间包含\(\mathbb{R}\setminus E\)的点，且因此\(x\)是\(\mathbb{R}\setminus E\)的闭包点。由于\(\mathbb{R}\setminus E\)是闭的，\(x\)也属于\(\mathbb{R}\setminus E\)。这是一个矛盾。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{实数序列}
+
+
+\section{实变量的连续函数实值函数}
+
+
+
+
+
+
+
+\chapter{Lebesgue测度}
+
+\section{Lebesgue外测度}
+
+\section{Lebesgue可测集的$\sigma $代数}
+
+\section{Lebesgue可测集的外逼近和内逼近}
+
+\section{可数可加性、连续性以及Borel-Cantelli引理}
+
+\section{不可测集}
+
+\section{Cantor集和Cantor-Lebesgue函数}
+
+
+
+
+
+
+
+\chapter{Lebesgue可测函数}
+
+\section{和、积与复合}
+
+\section{序列的逐点连续与简单逼近}
+
+\section{Littlewood的三个原理、Egoroff定理以及Lusin定理}
+
+
+
+
+
+
+
+
+
+\chapter{Lebesgue积分}
+
+\section{Riemann积分}
+
+\section{有限测度集上的有界可测函数的Lebesgue积分}
+
+\section{非负可测函数的Lebesgue积分}
+
+\section{一般的Lebesgue积分}
+
+\section{积分的可数可加性与连续性}
+
+\section{一致可积性:Vitali收敛定理}
+
+\section{一致可积性和紧性:一般的Vitali收敛定理}
+
+\section{依测度收敛}
+
+\section{Riemann可积与Lebesgue可积的刻画}
+
+
+
+
+
+
+\chapter{微分与积分}
+
+
+\section{单调函数的连续性}
+
+\section{单调函数的可微性:Lebesgue定理}
+
+\section{有界变差函数:Jordan定理}
+
+\section{绝对连续函数}
+
+\section{导数的积分:微分不定积分}
+
+\section{凸函数}
+
+
+
+
+
+
+\chapter{$L^p$空间:完备性与逼近}
+
+\section{赋范线性空间}
+
+\section{Young、$\mathrm{H}\ddot{\mathrm{o}}\mathrm{lder}$与Minkowski不等式}
+
+\section{$L^p$是完备的:Riesz-Fischer定理}
+
+\section{逼近与可分性}
+
+
+
+
+
+\chapter{$L^p$空间:对偶与弱收敛}
+
+\section{关于$L^p(1\leqslant p<\infty)$的对偶的Riesz表示定理}
+
+\section{$L^p$中的弱序列收敛}
+
+\section{弱序列紧性}
+
+\section{凸泛函的最小化}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
