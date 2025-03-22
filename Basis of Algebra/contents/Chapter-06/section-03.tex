@@ -1,0 +1,800 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}} % 指定图片目录,后续可以直接使用图片文件名。
+
+% 例如:
+% \begin{figure}[h]
+% \centering
+% \includegraphics{image-01.01}
+% \label{fig:image-01.01}
+% \caption{图片标题}
+% \end{figure}
+
+\begin{document}
+
+\section{特征值与特征向量}
+
+\begin{definition}[线性变换的特征值和特征向量]
+设$\varphi$是数域$\mathbb{K}$上线性空间$V$上的线性变换,若$\lambda_0 \in \mathbb{K}, x \in V$且$x \neq 0$,使
+\begin{align*}
+\varphi(x) = \lambda_0 x,
+\end{align*}
+则称$\lambda_0$是线性变换$\varphi$的一个\textbf{特征值},向量$x$称为$\varphi$关于特征值$\lambda_0$的\textbf{特征向量}.
+\end{definition}
+\begin{note}
+显然$\varphi$的关于特征值$\lambda_0$的全体特征向量加上零向量构成$V$的子空间.
+\end{note}
+
+\begin{definition}[线性变换的特征子空间]
+设 $\lambda_0$ 是线性空间 $V$ 上的线性变换 $\varphi$ 的特征值, 令
+\begin{align*}
+V_{\lambda_0} = \{\alpha \in V \mid \varphi(\alpha) = \lambda_0 \alpha\} 
+= \{\alpha \in V \mid \alpha \text{是} \varphi \text{的属于} \lambda_0 \text{的特征向量}\} \cup \{0\},
+\end{align*}
+则显然$V_{\lambda_0}$ 是 $V$ 的子空间, 称为 $\varphi$ 的属于特征值 $\lambda_0$ 的\textbf{特征子空间}.
+\end{definition}
+\begin{note}
+显然$V_{\lambda_0}$是$\varphi$的不变子空间.
+\end{note}
+
+\begin{definition}[矩阵的特征值和特征向量]
+设$A$是数域$\mathbb{F}$上的$n$阶方阵,若存在$\lambda_0 \in \mathbb{F}$及$n$维非零列向量$\alpha$,使
+\begin{align*}
+A \alpha = \lambda_0 \alpha
+\end{align*}
+式成立,则称$\lambda_0$为矩阵$A$的一个\textbf{特征值},$\alpha$为$A$关于特征值$\lambda_0$的\textbf{特征向量}.
+\end{definition}
+
+\begin{definition}[矩阵的特征子空间]
+设 $\lambda_0$ 是 $\mathbb{F}$ 上的 $n$ 阶矩阵 $A$ 的特征值, 令
+\begin{align*}
+V_{\lambda_0} = \{x \in \mathbb{F}^n \mid Ax = \lambda_0 x\} 
+= \{x \in \mathbb{F}^n \mid x \text{是} A \text{的属于} \lambda_0 \text{的特征向量}\} \cup \{0\},
+\end{align*}
+则 $V_{\lambda_0}$ 是线性方程组 $(\lambda_0 I_n - A)x = 0$ 的解空间, 从而是 $\mathbb{F}^n$ 的子空间, 称为 $A$ 的属于特征值 $\lambda_0$ 的\textbf{特征子空间}。
+\end{definition}
+
+\begin{definition}[特征多项式]
+设$A$是$n$阶方阵,称$|\lambda I_n - A|$为$A$的\textbf{特征多项式}.
+\end{definition}
+
+\begin{theorem}[相似矩阵有相同的特征多项式与特征值]\label{theorem:相似矩阵有相同的特征多项式与特征值}
+若$B$与$A$相似,则$B$与$A$具有相同的特征多项式,从而具有相同的特征值(计重数).
+\end{theorem}
+\begin{proof}
+设$B=P^{-1}AP$,其中$P$是可逆矩阵,则
+\begin{align*}
+|\lambda I_n - B| = |P^{-1}(\lambda I_n - A)P| = |P^{-1}||\lambda I_n - A||P| = |\lambda I_n - A|.
+\end{align*}
+因此相似矩阵必有相同的特征多项式,从而必有相同的特征值(不计重数).
+\end{proof}
+
+\begin{theorem}[特征值的和与积]\label{theorem:特征值的和与积}
+矩阵$A$的$n$个特征值的和与积分别为
+\begin{align*}
+\lambda_1 + \lambda_2 + \cdots + \lambda_n &= \mathrm{tr}(A), \\
+\lambda_1 \lambda_2 \cdots \lambda_n &= |A|.
+\end{align*}
+\end{theorem}
+\begin{proof}
+设
+\begin{align*}
+|\lambda I_n - A| &= \lambda^n + a_1 \lambda^{n-1} + \cdots + a_{n-1} \lambda + a_n \\
+&= (\lambda - \lambda_1)(\lambda - \lambda_2) \cdots (\lambda - \lambda_n).
+\end{align*}
+由Vieta定理知$\lambda_1 + \lambda_2 + \cdots + \lambda_n = -a_1$,$\lambda_1 \lambda_2 \cdots \lambda_n = (-1)^n a_n$.由\hyperref[example:特征行列式写成多项式形式的系数]{例题\ref{example:特征行列式写成多项式形式的系数}}可知$a_1 = -(a_{11} + a_{22} + \cdots + a_{nn}) = -\mathrm{tr}(A)$,$a_n = (-1)^n |A|$.因此矩阵$A$的$n$个特征值的和与积分别为
+\begin{align*}
+\lambda_1 + \lambda_2 + \cdots + \lambda_n &= \mathrm{tr}(A), \\
+\lambda_1 \lambda_2 \cdots \lambda_n &= |A|.
+\end{align*}
+\end{proof}
+
+\begin{definition}[特征多项式]
+设$\varphi$是线性空间$V$上的线性变换,$\varphi$在$V$的某组基下的表示矩阵为$A$,由\hyperref[theorem:相似矩阵有相同特征值]{相似矩阵有相同特征值}知$|\lambda I_n - A|$与基或表示矩阵的选取无关,称$|\lambda I_n - A|$为$\varphi$的\textbf{特征多项式},记为$|\lambda I_V - \varphi|$.
+\end{definition}
+
+\begin{theorem}[复方阵必相似于上三角阵]\label{theorem:复方阵必相似于上三角阵}
+任何复方阵必相似于一个上三角阵,并且对角元素都是其特征值.
+\end{theorem}
+\begin{remark}
+一般数域$\mathbb{K}$上的矩阵未必相似于上三角阵.
+\end{remark}
+\begin{proof}
+设$A$是$n$阶复方阵,现对$n$用数学归纳法.当$n=1$时结论显然成立.假设对$n-1$阶矩阵结论成立,现对$n$阶矩阵$A$来证明.设$\lambda_1$是$A$的一个特征值,则存在非零列向量$\alpha_1$,使
+\begin{align*}
+A \alpha_1 = \lambda_1 \alpha_1.
+\end{align*}
+将$\alpha_1$作为$C_n$的一个基向量,并扩展为$C_n$的一组基$\{\alpha_1, \alpha_2, \cdots, \alpha_n\}$.将这些基向量按照列分块方式拼成矩阵$P = (\alpha_1, \alpha_2, \cdots, \alpha_n)$,则$P$为$n$阶非异阵,且
+\begin{align*}
+AP &= A(\alpha_1, \alpha_2, \cdots, \alpha_n) = (A\alpha_1, A\alpha_2, \cdots, A\alpha_n) \\
+&= (\alpha_1, \alpha_2, \cdots, \alpha_n) \begin{pmatrix}
+\lambda_1 & * \\
+O & A_1
+\end{pmatrix},
+\end{align*}
+其中$A_1$是一个$n-1$阶方阵.注意到$P = (\alpha_1, \alpha_2, \cdots, \alpha_n)$非异,上式即为
+\begin{align*}
+P^{-1}AP = \begin{pmatrix}
+\lambda_1 & * \\
+O & A_1
+\end{pmatrix}.
+\end{align*}
+因为$A_1$是一个$n-1$阶方阵,所以由归纳假设可知,存在$n-1$阶非异阵$Q$,使$Q^{-1}A_1Q$是一个上三角阵.令
+\begin{align*}
+R = \begin{pmatrix}
+1 & O \\
+O & Q
+\end{pmatrix},
+\end{align*}
+则$R$是$n$阶非异阵,且
+\begin{align*}
+R^{-1}P^{-1}APR &= \begin{pmatrix}
+1 & O \\
+O & Q
+\end{pmatrix}^{-1} \begin{pmatrix}
+\lambda_1 & * \\
+O & A_1
+\end{pmatrix} \begin{pmatrix}
+1 & O \\
+O & Q
+\end{pmatrix} \\
+&= \begin{pmatrix}
+1 & O \\
+O & Q^{-1}
+\end{pmatrix} \begin{pmatrix}
+\lambda_1 & * \\
+O & A_1
+\end{pmatrix} \begin{pmatrix}
+1 & O \\
+O & Q
+\end{pmatrix} \\
+&= \begin{pmatrix}
+\lambda_1 & * \\
+O & Q^{-1}A_1Q
+\end{pmatrix}.
+\end{align*}
+这是一个上三角阵,它与$A$相似,并且对角元素都是其特征值.
+\end{proof}
+
+\begin{corollary}\label{corollary:特征值全在矩阵元素的数域中则一定相似于上三角阵}
+若数域$\mathbb{K}$上的$n$阶方阵$A$的特征值全在$\mathbb{K}$中,则存在$\mathbb{K}$上的非异阵$P$,使$P^{-1}AP$是一个上三角阵.
+\end{corollary}
+\begin{proof}
+由\hyperref[theorem:复方阵必相似于上三角阵]{复方阵必相似于上三角阵的证明}类似可得.
+\end{proof}
+
+\subsection{直接利用定义计算和证明}
+
+\begin{example}
+设 $V$ 是 $n$ 阶矩阵全体组成的线性空间, $\varphi$ 是 $V$ 上的线性变换: $\varphi(X) = AX$, 其中 $A$ 是一个 $n$ 阶矩阵。求证: $\varphi$ 和 $A$ 具有相同的特征值 (重数可能不同)。
+\end{example}
+\begin{proof}
+设 $\lambda_0$ 是 $A$ 的特征值, $x_0$ 是对应的特征向量, 即 $Ax_0 = \lambda_0 x_0$。令 $X = (x_0, 0, \ldots, 0)$, 则 $\varphi(X) = AX = \lambda_0 X$ 且 $X \neq 0$, 因此 $\lambda_0$ 也是 $\varphi$ 的特征值.
+
+反之, 设 $\lambda_0$ 是 $\varphi$ 的特征值, $X$ 是对应的特征向量, 即 $\varphi(X) = AX = \lambda_0 X$。令 $X = (x_1, x_2, \ldots, x_n)$ 为列分块, 设第 $i$ 个列向量 $x_i \neq 0$, 则 $Ax_i = \lambda_0 x_i$, 因此 $\lambda_0$ 也是 $A$ 的特征值.
+\end{proof}
+
+\begin{example}
+设 $\lambda_1, \lambda_2$ 是矩阵 $A$ 的两个不同的特征值, $\alpha_1, \alpha_2$ 分别是 $\lambda_1, \lambda_2$ 的特征向量, 求证: $\alpha_1 + \alpha_2$ 必不是 $A$ 的特征向量。
+\end{example}
+\begin{proof}
+用反证法, 设 $A(\alpha_1 + \alpha_2) = \mu (\alpha_1 + \alpha_2)$, 又
+\begin{align*}
+A(\alpha_1 + \alpha_2) = A\alpha_1 + A\alpha_2 
+= \lambda_1 \alpha_1 + \lambda_2 \alpha_2,
+\end{align*}
+于是 $(\lambda_1 - \mu) \alpha_1 + (\lambda_2 - \mu) \alpha_2 = 0$。由于属于不同特征值的特征向量线性无关, 故有 $\lambda_1 = \mu, \lambda_2 = \mu$, 从而 $\lambda_1 = \lambda_2$, 引出矛盾.
+\end{proof}
+
+\begin{proposition}\label{proposition:线性变换不变子空间直和分解与特征值的关系}
+设 $\varphi$ 是线性空间 $V$ 上的线性变换, $V$ 有一个直和分解:
+\begin{align*}
+V = V_1 \oplus V_2 \oplus \cdots \oplus V_m,
+\end{align*}
+其中 $V_i$ 都是 $\varphi$-不变子空间。
+\begin{enumerate}[(1)]
+\item 设 $\varphi$ 限制在 $V_i$ 上的特征多项式为 $f_i(\lambda)$, 求证: $\varphi$ 的特征多项式
+\begin{align*}
+f(\lambda) = f_1(\lambda) f_2(\lambda) \cdots f_m(\lambda).
+\end{align*}
+
+\item  设 $\lambda_0$ 是 $\varphi$ 的特征值, $V_0 = \{v \in V \mid \varphi(v) = \lambda_0 v\}$ 为特征子空间, $V_{i,0} = V_i \cap V_0 = \{v \in V_i \mid \varphi(v) = \lambda_0 v\}$, 求证:
+\begin{align*}
+V_0 = V_{1,0} \oplus V_{2,0} \oplus \cdots \oplus V_{m,0}.
+\end{align*}
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item  取 $V_i$ 的一组基, 将它们拼成 $V$ 的一组基。记 $A_i$ 是 $\varphi$ 在 $V_i$ 上的限制在 $V_i$ 所取基下的表示矩阵, 则由\hyperref[theorem:在不变子空间基下的矩阵]{定理\ref{theorem:在不变子空间基下的矩阵}}可知 $\varphi$ 在 $V$ 的这组基下的表示矩阵为分块对角矩阵 $A = \operatorname{diag}(A_1, A_2, \cdots, A_m)$, 于是
+\begin{align*}
+f(\lambda) &= |\lambda I_n - A| = |\lambda I - A_1| |\lambda I - A_2| \cdots |\lambda I - A_m|,
+\end{align*}
+即 $f(\lambda) = f_1(\lambda) f_2(\lambda) \cdots f_m(\lambda)$.
+
+\item 任取 $\alpha \in V_0$, 设 $\alpha = \alpha_1 + \alpha_2 + \cdots + \alpha_m$, 其中 $\alpha_i \in V_i$, 则
+\begin{align*}
+\varphi(\alpha_1) + \varphi(\alpha_2) + \cdots + \varphi(\alpha_m) = \varphi(\alpha) = \lambda_0 \alpha = \lambda_0 \alpha_1 + \lambda_0 \alpha_2 + \cdots + \lambda_0 \alpha_m.
+\end{align*}
+注意到 $\varphi(\alpha_i) \in V_i,\varphi(\alpha) = \lambda_0 \alpha\in V$, 故由\hyperref[theorem:直和的等价条件]{直和的等价条件(5)}可得 $\varphi(\alpha_i) = \lambda_0 \alpha_i$, 即 $\alpha_i \in V_{i,0}$, 从而 $V_0 = V_{1,0} \oplus V_{2,0} \oplus \cdots \oplus V_{m,0}$。注意到 $V_{i,0} \subseteq V_i$, 故
+\begin{align*}
+V_{i,0} \cap (V_{1,0} + \cdots + V_{i-1,0}) \subseteq V_i \cap (V_1 + \cdots + V_{i-1}) = \{0\}, \quad 2 \leq i \leq m,
+\end{align*}
+于是由\hyperref[theorem:直和的等价条件]{直和的等价条件(2)}可知上述为直和。
+\end{enumerate}
+\end{proof}
+
+\begin{corollary}\label{corollary:分块准对角矩阵的任一特征值的代数重数与几何重数}
+对分块对角矩阵 $A = \operatorname{diag}\{A_1, A_2, \cdots, A_m\}$ 的任一特征值$\lambda_0$, 其代数重数等于每个分块的代数重数之和, 其几何重数等于每个分块的几何重数之和.
+\end{corollary}
+\begin{proof}
+将\hyperref[proposition:线性变换不变子空间直和分解与特征值的关系]{命题\ref{proposition:线性变换不变子空间直和分解与特征值的关系}}的条件和结论代数化之后,即可得到结论.
+\end{proof}
+
+\begin{proposition}[特征向量的延拓]\label{proposition:特征向量的延拓}
+设 $n$ 阶分块对角矩阵 $A = \operatorname{diag}\{A_1, A_2, \cdots, A_m\}$, 其中 $A_i$ 是 $n_i$ 阶矩阵。
+\begin{enumerate}[(1)]
+\item 任取 $A_i$ 的特征值 $\lambda_i$ 及其特征向量 $x_i \in \mathbb{C}^{n_i}$, 求证: 可在 $x_i$ 的上下添加适当多的零, 得到非零向量 $\tilde{x}_i \in \mathbb{C}^n$, 使得 $A \tilde{x}_i = \lambda_i \tilde{x}_i$, 即 $\tilde{x}_i$ 是 $A$ 关于特征值 $\lambda_i$ 的特征向量, 称为 $x_i$ 的\textbf{延拓}.
+
+\item 任取 $A$ 的特征值 $\lambda_0$, 并设 $\lambda_0$ 是 $A_{i_1}, \cdots, A_{i_r}$ 的特征值, 但不是其他 $A_j$ ($1 \leq j \leq m, j \neq i_1, \cdots, i_r$) 的特征值, 求证: $A$ 关于特征值 $\lambda_0$ 的特征子空间的一组基可取为 $A_{i_1} (1 \leq k \leq r)$ 关于特征值 $\lambda_0$ 的特征子空间的一组基的延拓的并集.
+\end{enumerate} 
+\end{proposition}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 令 $\tilde{x}_i = (0, \cdots, 0, x_i, 0, \cdots, 0)'$, 即 $\tilde{x}_i$ 的第 $i$ 块为 $x_i$, 其余块均为 $0$, 显然 $\tilde{x}_i \neq 0$。容易验证 $A \tilde{x}_i = \lambda_i \tilde{x}_i$, 故结论成立。
+
+\item 由\hyperref[proposition:线性变换不变子空间直和分解与特征值的关系]{命题\ref{proposition:线性变换不变子空间直和分解与特征值的关系}(2)}以及\hyperref[theorem:直和的等价条件]{直和的等价条件(5)}即得.
+\end{enumerate}
+\end{proof}
+
+\begin{example}
+设 $A$ 是 $n$ 阶整数矩阵, $p, q$ 为互素的整数且 $q > 1$。求证：矩阵方程 $Ax = \frac{p}{q} x$ 必无非零解。
+\end{example}
+\begin{proof}
+用反证法。设上述矩阵方程有非零解, 则 $\frac{p}{q}$ 为 $A$ 的特征值, 即为特征多项式 $f(\lambda) = \lambda^n + a_1 \lambda^{n-1} + \cdots + a_{n-1} \lambda + a_n$ 的根。由于 $A$ 是整数矩阵, 故 $f(\lambda)$ 为整数系数多项式。由\hyperref[theorem:整数系数多项式有有理根的必要条件]{整数系数多项式有有理根的必要条件}可知 $q \mid 1$, 从而 $q = \pm 1$,于是$q\mid p$,这与$p,q$互素矛盾。
+\end{proof}
+
+\begin{example}
+求下列 $n$ 阶矩阵的特征值:
+\[
+A = \begin{pmatrix}
+0 & a & \cdots & a & a \\
+b & 0 & \cdots & a & a \\
+\vdots & \vdots & \ddots & \vdots & \vdots \\
+b & b & \cdots & 0 & a \\
+b & b & \cdots & b & 0
+\end{pmatrix}.
+\]
+\end{example}
+\begin{solution}
+若 $a = 0$ 或 $b = 0$, 则 $A$ 是主对角元全为零的下三角或上三角矩阵, 故 $A$ 的特征值全为零. 设 $a \neq 0, b \neq 0$, 则由\hyperref[proposition:小拆分法经典例题]{命题\ref{proposition:小拆分法经典例题}}可知:
+若 $a \neq b$, 则 $|\lambda I_n-A|=\frac{a(\lambda +b)^n-b(\lambda +a)^n}{a-b}$. 设 $\frac{b}{a}$ 的 $n$ 次方根为 $\omega_i (1 \leq i \leq n)$, 则
+\begin{align*}
+&|\lambda I_n-A|=\frac{a(\lambda +b)^n-b(\lambda +a)^n}{a-b}=0\Rightarrow \left( \frac{\lambda +b}{\lambda +a} \right) ^n=\frac{b}{a}
+\\
+&\Rightarrow \frac{\lambda +b}{\lambda +a}=w_i\left( 1\le i\le n \right) \Rightarrow \lambda =\frac{a\omega _i-b}{1-\omega _i}(1\le i\le n).
+\end{align*}
+从而$A$ 的特征值为 $\frac{a \omega_i - b}{1 - \omega_i} (1 \leq i \leq n)$.
+
+若 $a = b$, 则 $|\lambda I_n - A| = (\lambda - (n - 1)a)(\lambda + a)^{n-1}$, 从而 $A$ 的特征值为 $(n - 1)a$ (1 重), $-a$ (n - 1 重). 
+\end{solution}
+
+\subsection{正向利用矩阵的多项式}
+
+\begin{definition}[矩阵多项式]
+若$A$是一个$n$阶矩阵,$f(x) = a_m x^m + a_{m-1} x^{m-1} + \cdots + a_1 x + a_0$是一个多项式,记
+\begin{align*}
+f(A) = a_m A^m + a_{m-1} A^{m-1} + \cdots + a_1 A + a_0 I_n.
+\end{align*}
+\end{definition}
+
+\begin{proposition}\label{proposition:矩阵多项式的特征值就是原特征值代入多项式得到的数}
+设$n$阶矩阵$A$的全部特征值为$\lambda_1, \lambda_2, \cdots, \lambda_n$, $f(x)$是一个多项式,则$f(A)$的全部特征值为$f(\lambda_1), f(\lambda_2), \cdots, f(\lambda_n)$.
+\end{proposition}
+\begin{remark}
+这个命题告诉我们:如果能够将一个复杂矩阵写成一个简单矩阵的多项式,那么就可以由简单矩阵的特征值得到复杂矩阵的特征值.
+\end{remark}
+\begin{proof}
+因为任一$n$阶矩阵均复相似于上三角阵,可设
+\begin{align*}
+P^{-1}AP = \begin{pmatrix}
+\lambda_1 & * & \cdots & * \\
+0 & \lambda_2 & \cdots & * \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \cdots & \lambda_n
+\end{pmatrix}.
+\end{align*}
+因为上三角阵的和、数乘及乘方仍是上三角阵,经计算不难得到
+\begin{align*}
+P^{-1}f(A)P &= f(P^{-1}AP) = \begin{pmatrix}
+f(\lambda_1) & * & \cdots & * \\
+0 & f(\lambda_2) & \cdots & * \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \cdots & f(\lambda_n)
+\end{pmatrix}.
+\end{align*}
+因此$f(A)$的全部特征值为$f(\lambda_1), f(\lambda_2), \cdots, f(\lambda_n)$.
+\end{proof}
+
+\begin{example}
+设 $n$ 阶矩阵 $A$ 的全体特征值为 $\lambda_1, \lambda_2, \cdots, \lambda_n$, 求 $2n$ 阶矩阵
+\[
+\begin{pmatrix}
+A^2 & A \\
+A^2 & A
+\end{pmatrix}
+\]
+的全体特征值。
+\end{example}
+\begin{proof}
+由\hyperref[proposition:对角相同分块矩阵行列式计算]{命题\ref{proposition:对角相同分块矩阵行列式计算}}可知
+\begin{align*}
+\left| \lambda I_{2n} - \begin{pmatrix}
+A^2 & A \\
+A^2 & A
+\end{pmatrix} \right| = \left| \begin{pmatrix}
+\lambda I_n - A & -A^2 \\
+-A^2 & \lambda I_n - A
+\end{pmatrix} \right| = |\lambda I_n - A - A^2||\lambda I_n - A + A^2|.
+\end{align*}
+由\hyperref[proposition:矩阵多项式的特征值就是原特征值代入多项式得到的数]{命题\ref{proposition:矩阵多项式的特征值就是原特征值代入多项式得到的数}}可知 $A + A^2$ 的全体特征值为 $\lambda_i + \lambda_i^2 (1 \leq i \leq n)$, $A - A^2$ 的全体特征值为 $\lambda_i - \lambda_i^2 (1 \leq i \leq n)$, 因此所求矩阵的全体特征值为
+\begin{align*}
+\lambda_1 + \lambda_1^2, \lambda_1 - \lambda_1^2, \lambda_2 + \lambda_2^2, \lambda_2 - \lambda_2^2, \cdots, \lambda_n + \lambda_n^2, \lambda_n - \lambda_n^2.
+\end{align*}
+\end{proof}
+
+\begin{proposition}[循环矩阵的特征值]\label{proposition:循环矩阵的特征值}
+求下列循环矩阵的特征值:
+\[
+A = \begin{pmatrix}
+a_1 & a_2 & a_3 & \cdots & a_n \\
+a_n & a_1 & a_2 & \cdots & a_{n-1} \\
+a_{n-1} & a_n & a_1 & \cdots & a_{n-2} \\
+\vdots & \vdots & \vdots & \ddots & \vdots \\
+a_2 & a_3 & a_4 & \cdots & a_1
+\end{pmatrix}.
+\]
+\end{proposition}
+\begin{solution}
+设 $J = \begin{pmatrix}
+O & I_{n-1} \\
+1 & O
+\end{pmatrix}$, $f(x) = a_1 + a_2 x + a_3 x^2 + \cdots + a_n x^{n-1}$, 则由\hyperref[proposition:循环矩阵的性质]{循环矩阵的性质2}可知 $A = f(J)$。经简单计算可得
+\begin{align*}
+|\lambda I_n-J|&=\left| \begin{matrix}
+\lambda&		-1&		0&		\cdots&		0&		0\\
+0&		\lambda&		-1&		\cdots&		0&		0\\
+\vdots&		\vdots&		\vdots&		&		\vdots&		\vdots\\
+0&		0&		0&		\cdots&		\lambda&		-1\\
+-1&		0&		0&		\cdots&		0&		\lambda\\
+\end{matrix} \right|\xlongequal{\text{按第一列展开}}\lambda \left| \begin{matrix}
+\lambda&		-1&		\cdots&		0&		0\\
+0&		\lambda&		\cdots&		0&		0\\
+\vdots&		\vdots&		&		\vdots&		\vdots\\
+0&		0&		\cdots&		\lambda&		-1\\
+0&		0&		\cdots&		0&		\lambda\\
+\end{matrix} \right|+\left( -1 \right) ^{n+1}\left( -1 \right) \left| \begin{matrix}
+-1&		0&		\cdots&		0&		0\\
+\lambda&		-1&		\cdots&		0&		0\\
+\vdots&		\vdots&		&		\vdots&		\vdots\\
+0&		0&		\cdots&		-1&		0\\
+0&		0&		\cdots&		\lambda&		-1\\
+\end{matrix} \right|
+\\
+&=\lambda ^n+\left( -1 \right) ^{n+2}\left( -1 \right) ^{n-1}=\lambda ^n-1,
+\end{align*}
+于是 $J$ 的特征值为
+\begin{align*}
+\omega_k = \cos \frac{2k\pi}{n} + i \sin \frac{2k\pi}{n}, \quad 0 \leq k \leq n - 1。
+\end{align*}
+因此 $A$ 的特征值为 $f(1), f(\omega_1), \cdots, f(\omega_{n-1})$。
+\end{solution}
+
+\begin{definition}[友矩阵]
+\begin{align*}
+\boldsymbol{A}=\left( \begin{matrix}
+0&		0&		0&		\cdots&		0&		-a_0\\
+1&		0&		0&		\cdots&		0&		-a_1\\
+0&		1&		0&		\cdots&		0&		-a_2\\
+\vdots&		\vdots&		\vdots&		&		\vdots&		\vdots\\
+0&		0&		0&		\cdots&		0&		-a_{n-2}\\
+0&		0&		0&		\cdots&		1&		-a_{n-1}\\
+\end{matrix} \right) 
+\end{align*}
+称为多项式$f\left( x \right) =x^n+a_{n-1}x^{n-1}+\cdots +a_1x+a_0$的
+\textbf{友矩阵}.
+\end{definition}
+
+\begin{proposition}[友矩阵的特征多项式及特征值]\label{proposition:多项式的友阵的特征多项式与特征值}
+设首一多项式 $f(x) = x^n + a_{n-1} x^{n-1} + \cdots + a_1 x + a_0$, $f(x)$ 的友矩阵
+\[
+C = \begin{pmatrix}
+0 & 0 & \cdots & 0 & -a_0 \\
+1 & 0 & \cdots & 0 & -a_1 \\
+0 & 1 & \cdots & 0 & -a_2 \\
+\vdots & \vdots & \ddots & \vdots & \vdots \\
+0 & 0 & \cdots & 1 & -a_{n-1}
+\end{pmatrix}.
+\]
+\begin{enumerate}[(1)]
+\item 求证：矩阵 $C$ 的特征多项式就是 $f(\lambda)$。
+
+\item 设 $f(x)$ 的根为 $\lambda_1, \lambda_2, \cdots, \lambda_n$，$g(x)$ 为任一多项式，求以 $g(\lambda_1), g(\lambda_2), \cdots, g(\lambda_n)$ 为根的 $n$ 次多项式。 
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item \begin{align*}
+&|xE-\boldsymbol{A}|=\left| \begin{matrix}
+x&		0&		0&		\cdots&		0&		a_0\\
+-1&		x&		0&		\cdots&		0&		a_1\\
+0&		-1&		x&		\cdots&		0&		a_2\\
+\vdots&		\vdots&		\vdots&		&		\vdots&		\vdots\\
+0&		0&		0&		\cdots&		x&		a_{n-2}\\
+0&		0&		0&		\cdots&		-1&		x+a_{n-1}\\
+\end{matrix} \right|\xlongequal[i=n,n-1,\cdots ,2]{xr_i+r_{i-1}}\left| \begin{matrix}
+0&		0&		0&		\cdots&		0&		x^n+a_{n-1}x^{n-1}+\cdots +a_1x+a_0\\
+-1&		0&		0&		\cdots&		0&		x^{n-1}+a_{n-1}x^{n-2}+\cdots +a_2x+a_1\\
+0&		-1&		0&		\cdots&		0&		x^{n-2}+a_{n-1}x^{n-3}+\cdots +a_3x+a_2\\
+\vdots&		\vdots&		\vdots&		&		\vdots&		\vdots\\
+0&		0&		0&		\cdots&		0&		x^2+a_{n-1}x+a_{n-2}\\
+0&		0&		0&		\cdots&		-1&		x+a_{n-1}\\
+\end{matrix} \right|
+\\
+&\xlongequal{\text{按第一行展开}}\left( x^n+a_{n-1}x^{n-1}+\cdots +a_1x+a \right) \left( -1 \right) ^{n+1}\left| \begin{matrix}
+-1&		0&		0&		\cdots&		0\\
+0&		-1&		0&		\cdots&		0\\
+\vdots&		\vdots&		\vdots&		&		\vdots\\
+0&		0&		0&		\cdots&		0\\
+0&		0&		0&		\cdots&		-1\\
+\end{matrix} \right|
+\\
+&=\left( x^n+a_{n-1}x^{n-1}+\cdots +a_1x+a \right) \left( -1 \right) ^{n+1}\left( -1 \right) ^{n-1}
+\\
+&=x^n+a_{n-1}x^{n-1}+\cdots +a_1x+a=f\left( x \right) .
+\end{align*}
+
+\item 由假设及(1)的结论可知 $\lambda_1, \lambda_2, \cdots, \lambda_n$ 是 $C$ 的全体特征值，故由\hyperref[proposition:矩阵多项式的特征值就是原特征值代入多项式得到的数]{命题\ref{proposition:矩阵多项式的特征值就是原特征值代入多项式得到的数}}可知$g(\lambda_1), g(\lambda_2), \cdots, g(\lambda_n)$ 是 $g(C)$ 的全体特征值，从而 $h(x) = |xI_n - g(C)|$ 即为所求的多项式。
+\end{enumerate}
+\end{proof}
+
+\subsection{反向利用矩阵的多项式}
+
+\begin{proposition}\label{proposition:矩阵适合的多项式其特征值也适合}
+设$n$阶矩阵$A$适合一个多项式$g(x)$,即$g(A) = O$,则$A$的任一特征值$\lambda_0$也必适合$g(x)$,即$g(\lambda_0) = 0$.
+\end{proposition}
+\begin{proof}
+设$\alpha$是$A$关于特征值$\lambda_0$的特征向量,经简单计算得
+\begin{align*}
+g(\lambda_0) \alpha = g(A) \alpha = 0.
+\end{align*}
+而$\alpha \neq 0$,因此$g(\lambda_0) = 0$.
+\end{proof}
+
+\begin{proposition}[幂零矩阵关于特征值的充要条件]\label{proposition:幂零矩阵关于特征值的充要条件}
+求证：$n$ 阶矩阵 $A$ 为幂零矩阵的充要条件是 $A$ 的特征值全为零。
+\end{proposition}
+\begin{proof}
+若 $A$ 为幂零矩阵, 即存在正整数 $k$, 使得 $A^k = O$, 则由\hyperref[proposition:矩阵适合的多项式其特征值也适合]{命题\ref{proposition:矩阵适合的多项式其特征值也适合}}可知$A$ 的任一特征值 $\lambda_0$ 也适合 $x^k$, 于是 $\lambda_0 = 0$。
+
+反之,
+{\color{blue}证法一:}若 $A$ 的特征值全为零, 则存在可逆矩阵 $P$, 使得 $P^{-1}AP = B$ 为上三角矩阵且主对角元素全为零。由\hyperref[proposition:上三角阵性质]{上三角阵性质(1)}可知 $B^n = O$, 于是 $A^n = (PBP^{-1})^n = PB^nP^{-1} = O$, 即 $A$ 为幂零矩阵。
+
+{\color{blue}证法二:}也可以利用 \hyperref[theorem:Cayley-Hamilton定理]{Cayley-Hamilton 定理}来证明, 由于 $A$ 的特征值全为零, 故其特征多项式为 $\lambda^n$, 从而 $A^n = O$.
+\end{proof}
+
+\begin{example}
+设 \( V \) 是数域 \( \mathbb{F} \) 上的 \( n \) 阶方阵全体构成的线性空间, \( n \) 阶方阵
+\[
+P=\left( \begin{matrix}
+0&		\cdots&		0&		1\\
+0&		\cdots&		1&		0\\
+\vdots&		&		\vdots&		\vdots\\
+1&		0&		\cdots&		0\\
+\end{matrix} \right) ,
+\]
+\( V \) 上的线性变换 \( \eta \) 定义为 \( \eta(X) = PX'P \). 试求 \( \eta \) 的全体特征值及其特征向量.
+\end{example}
+\begin{note}
+任意$n$阶矩阵$A$左乘$P$相当于行倒排,右乘$P$矩阵相当于列倒排.
+\end{note}
+\begin{solution}
+由 \( P = P', P^2 = I_n \) 容易验证 \( \eta^2(X) = P(PX'P)P = X \), 即 \( \eta^2 = I_V \), 于是 \( \eta \) 的特征值也适合多项式 \( x^2 - 1 \), 从而特征值只能是 \( \pm 1 \).
+
+设 \( \eta(X_0) = PX_0'P = \pm X_0 \), 这等价于 \( (PX_0')P = \pm PX_0 \), 即 \( PX_0 \) 为对称矩阵或反对称矩阵. 
+
+令 \( PX_0 = E_{ii}, E_{ij} + E_{ji} \) (对称矩阵空间的基向量), 容易证明 \( \eta \) 关于特征值 1 的线性无关的特征向量为 \( X_0 = PE_{ii} \ (1 \leq i \leq n), P(E_{ij} + E_{ji}) \ (1 \leq i < j \leq n) \).
+
+令 \( PX_0 = E_{ij} - E_{ji} \) (反对称矩阵空间的基向量), 容易证明 \( \eta \) 关于特征值 \( -1 \) 的线性无关的特征向量为 \( X_0 = P(E_{ij} - E_{ji}) \ (1 \leq i < j \leq n) \). 注意到这些特征向量恰好构成 \( V \) 的一组基, 故 \( \eta \) 的特征值为 1 \( \frac{n(n+1)}{2} \) 重, \( -1 \ \frac{n(n-1)}{2} \) 重.
+\end{solution}
+
+\begin{example}
+设 \( n \) 阶方阵 \( A \) 的每行每列只有一个元素非零, 并且那些非零元素为 1 或 -1, 证明: \( A \) 的特征值都是单位根.
+\end{example}
+\begin{proof}
+设 \( S \) 为由每行每列只有一个元素非零, 并且那些非零元素为 1 或 -1 的所有 \( n \) 阶方阵构成的集合, 由排列组合可得 \( \overline{\overline{S}} = 2^n n! \), 即 \( S \) 是一个有限集合. 注意到矩阵 \( M \in S \) 当且仅当 \( M = P_1 P_2 \cdots P_r \), 其中 \( P_k \) 是初等矩阵 \( P_{ij} \) 或 \( P_i(-1) \), 因此对任意的 \( M, N \in S \), \( MN \in S \). 特别地, 由 \( A \in S \) 可知 \( A^k \in S \ (k \geq 1) \), 即 \( \{A, A^2, A^3, \cdots\} \subseteq S \), 于是存在正整数 \( k > l \), 使得 \( A^k = A^l \). 注意到 \( |A| = \pm 1 \), 故 \( A \) 可逆, 于是 \( A^{k-l} = I_n \), 从而 \( A \) 的特征值适合多项式 \( x^{k-l} - 1 \), 即为单位根.
+\end{proof}
+
+\begin{example}
+设 \( A \) 是 \( n \) 阶实方阵, 又 \( I_n - A \) 的特征值的模长都小于 1, 求证: \( 0 < |A| < 2^n \).
+\end{example}
+\begin{proof}
+设 \( A \) 的特征值为 \( \lambda_1, \cdots, \lambda_n \), 则 \( I_n - A \) 的特征值为 \( 1 - \lambda_1, \cdots, 1 - \lambda_n \).
+由假设 \( |1 - \lambda_i| < 1 \), 若 \( \lambda_i \) 是实数, 则 \( 0 < \lambda_i < 2 \); 若 \( \lambda_i \) 是虚数, 则 \( \overline{\lambda_i} \) 也是 \( A \) 的特征值, 此时$1-\overline{\lambda_i}$也是$I_n-A$的特征值.从而$|1-\lambda_i|<1,|1-\overline{\lambda_i}|<1$,于是
+\[|1-\lambda_i^2|=|(1-\lambda_i)(1-\overline{\lambda_i})|=|1-\lambda_i||1-\overline{\lambda_i}|<1.\]
+因此$0<\lambda_i^2<2$,故此时$0<\lambda_i<\sqrt{2}$.
+
+综上,无论$\lambda_i$是实数还是虚数,都有 \( 0 < |\lambda_i| < 2 \). 由于 \( |A| \) 等于所有特征值之积, 故 \( 0 < |A| < 2^n \).
+\end{proof}
+
+\begin{proposition}[逆矩阵的特征值]\label{proposition:逆矩阵的特征值}
+设 $n$ 阶矩阵 $A$ 是可逆矩阵, 且 $A$ 的全部特征值为 $\lambda_1, \lambda_2, \cdots, \lambda_n$, 则 $A^{-1}$ 的全部特征值为 $\lambda_1^{-1}, \lambda_2^{-1}, \cdots, \lambda_n^{-1}$。
+\end{proposition}
+\begin{proof}
+首先注意到 $A$ 是可逆矩阵, $\lambda_1 \lambda_2 \cdots \lambda_n = |A| \neq 0$, 因此每个 $\lambda_i \neq 0$ (事实上, $A$ 可逆的充分必要条件是它的特征值全不为零)。由\hyperref[theorem:复方阵必相似于上三角阵]{复方阵必相似于上三角阵}可设
+\begin{align*}
+P^{-1}AP = \begin{pmatrix}
+\lambda_1 & * & \cdots & * \\
+0 & \lambda_2 & \cdots & * \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \cdots & \lambda_n
+\end{pmatrix}.
+\end{align*}
+因为\hyperref[proposition:上三角阵性质]{上三角矩阵的逆矩阵仍然是上三角矩阵}, 经过计算不难得到
+\begin{align*}
+P^{-1}A^{-1}P = (P^{-1}AP)^{-1} 
+= \begin{pmatrix}
+\lambda_1^{-1} & * & \cdots & * \\
+0 & \lambda_2^{-1} & \cdots & * \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \cdots & \lambda_n^{-1}
+\end{pmatrix}.
+\end{align*}
+因此 $A^{-1}$ 的全部特征值为 $\lambda_1^{-1}, \lambda_2^{-1}, \cdots, \lambda_n^{-1}$.
+\end{proof}
+
+\begin{proposition}[伴随矩阵的特征值]\label{proposition:伴随矩阵的特征值}
+设 \( n \) 阶矩阵 \( A \) 的全体特征值为 \( \lambda_1, \lambda_2, \cdots, \lambda_n \)，求证：\( A^* \) 的全体特征值为 
+\[
+\prod_{i \neq 1} \lambda_i, \prod_{i \neq 2} \lambda_i, \cdots, \prod_{i \neq n} \lambda_i.
+\]
+\end{proposition}
+\begin{proof}
+因为任一 \( n \) 阶矩阵均复相似于上三角矩阵，故可设
+\[
+P^{-1}AP = 
+\begin{pmatrix}
+\lambda_1 & * & \cdots & * \\
+0 & \lambda_2 & \cdots & * \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \cdots & \lambda_n
+\end{pmatrix}.
+\]
+注意到\hyperref[proposition:上三角阵性质]{上三角矩阵的伴随矩阵仍是上三角矩阵}，经计算可得
+\[
+P^{-1}A^*P = P^*A^*(P^{-1})^* = (P^{-1}AP)^* = 
+\begin{pmatrix}
+\prod_{i \neq 1} \lambda_i & * & \cdots & * \\
+0 & \prod_{i \neq 2} \lambda_i & \cdots & * \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \cdots & \prod_{i \neq n} \lambda_i
+\end{pmatrix}.
+\]
+因此 \( A^* \) 的全部特征值为
+\[
+\prod_{i \neq 1} \lambda_i, \prod_{i \neq 2} \lambda_i, \cdots, \prod_{i \neq n} \lambda_i.
+\]
+\end{proof}
+
+\subsection{特征值的降价公式}
+
+\begin{theorem}[特征值的降价公式]\label{theorem:特征值的降价公式}
+设 \( A \) 是 \( m \times n \) 矩阵，\( B \) 是 \( n \times m \) 矩阵，且 \( m \geq n \)。求证：
+\[
+|\lambda I_m - AB| = \lambda^{m-n} |\lambda I_n - BA|.
+\]
+特别地，若 \( A, B \) 都是 \( n \) 阶矩阵，则 \( AB \) 与 \( BA \) 有相同的特征多项式.
+\end{theorem}
+\begin{note}
+本质上就是打洞原理.
+\end{note}
+\begin{proof}
+{\color{blue}证法一(打洞原理):} 当 \(\lambda \neq 0\) 时, 考虑下列分块矩阵:
+\[
+\begin{pmatrix}
+\lambda I_m & A \\
+B & I_n
+\end{pmatrix},
+\]
+因为 \(\lambda I_m, I_n\) 都是可逆矩阵, 故由行列式的降阶公式可得
+\[
+|I_n| \cdot |\lambda I_m - A(I_n)^{-1}B| = |\lambda I_m| \cdot |I_n - B(\lambda I_m)^{-1}A|,
+\]
+即有
+\[
+|\lambda I_m - AB| = \lambda^{m-n} |\lambda I_n - BA|
+\]
+成立.
+
+当 \(\lambda = 0\) 时, 若 \(m > n\), 则 \(r(AB) \leq \min\{r(A), r(B)\} \leq \min\{m, n\} = n < m\), 故 \(|-AB| = 0\), 结论成立；若 \(m = n\), 则 \(|-AB| = (-1)^n |A||B| = |-BA|\), 结论也成立。
+
+事实上, \(\lambda = 0\) 的情形也可以用 \hyperref[theorem:Cauchy-Binet公式]{Cauchy-Binet 公式}来处理, 还可以通过\hyperref[proposition:摄动法基本命题]{摄动法}由 \(\lambda \neq 0\) 的情形来得到.
+
+{\color{blue}证法二(相抵标准型):} 设 \(A\) 的秩等于 \(r\), 则存在 \(m\) 阶可逆矩阵 \(P\) 和 \(n\) 阶可逆矩阵 \(Q\), 使得
+\[
+PAQ = \begin{pmatrix}
+I_r & O \\
+O & O
+\end{pmatrix}.
+\]
+令
+\[
+Q^{-1}BP ^{-1}= \begin{pmatrix}
+B_{11} & B_{12} \\
+B_{21} & B_{22}
+\end{pmatrix},
+\]
+其中 \(B_{11}\) 是 \(r \times r\) 矩阵, 则
+\[
+PABP^{-1} = \begin{pmatrix}
+B_{11} & B_{12} \\
+O & O
+\end{pmatrix}, \quad Q^{-1}BAQ = \begin{pmatrix}
+B_{11} & O \\
+B_{21} & O
+\end{pmatrix}.
+\]
+因此
+\[
+|\lambda I_m - AB| = \left| \begin{pmatrix}
+\lambda I_r - B_{11} & -B_{12} \\
+O & \lambda I_{m-r}
+\end{pmatrix} \right| = \lambda^{m-r} |\lambda I_r - B_{11}|,
+\]
+同理
+\[
+|\lambda I_n - BA| = \left| \begin{pmatrix}
+\lambda I_r - B_{11} & O \\
+-B_{21} & \lambda I_{n-r}
+\end{pmatrix} \right| = \lambda^{n-r} |\lambda I_r - B_{11}|.
+\]
+比较上面两个式子即可得出结论。
+
+{\color{blue}证法三(摄动法):} 先证明 \(m = n\) 的情形。若 \(A\) 可逆, 则 \(BA = A^{-1}(AB)A\), 即 \(AB\) 和 \(BA\) 相似, 因此它们的特征多项式相等。对于一般的方阵 \(A\), 可取到一列有理数 \(t_k \to 0\), 使得 \(t_k I_n + A\) 是可逆矩阵。由可逆情形的证明可得
+\[
+|\lambda I_n - (t_k I_n + A)B| = |\lambda I_n - B(t_k I_n + A)|.
+\]
+注意到上述两边的行列式都是 \( t_k \) 的多项式, 从而关于 \( t_k \) 连续. 上式两边同时取极限, 令 \( t_k \to 0 \), 即有
+\(
+|\lambda I_n - AB| = |\lambda I_n - BA|
+\)
+成立。
+
+再证明 \( m > n \) 的情形。令
+\[
+C = \begin{pmatrix}
+A & O
+\end{pmatrix}, \quad D = \begin{pmatrix}
+B \\
+O
+\end{pmatrix},
+\]
+其中 \( C, D \) 均为 \( m \times m \) 分块矩阵, 则
+\[
+CD = AB, \quad DC = \begin{pmatrix}
+BA & O \\
+O & O
+\end{pmatrix}.
+\]
+因此由方阵的情形可得
+\[
+|\lambda I_m - AB| = |\lambda I_m - CD| = |\lambda I_m - DC| = \lambda^{m-n} |\lambda I_n - BA|.
+\]
+\end{proof}
+
+\begin{example}
+设 $\alpha$ 是 $n$ 维实列向量且 $\alpha' \alpha = 1$，试求矩阵 $I_n - 2 \alpha \alpha'$ 的特征值。
+\end{example}
+\begin{proof}
+设 $A = I_n - 2 \alpha \alpha'$，则由\hyperref[theorem:特征值的降价公式]{特征值的降价公式}可得
+\begin{align*}
+| \lambda I_n - A | 
+= | (\lambda - 1) I_n + 2 \alpha \alpha' | 
+= (\lambda - 1)^{n-1} (\lambda - 1 + 2 \alpha' \alpha) 
+= (\lambda - 1)^{n-1} (\lambda + 1).
+\end{align*}
+因此,矩阵$A$的特征值为1(n-1)重,-1(1重).
+\end{proof}
+
+\begin{example}
+
+\end{example}
+\begin{proof}
+
+\end{proof}
+
+\begin{example}
+
+\end{example}
+\begin{proof}
+
+\end{proof}
+
+\begin{example}
+
+\end{example}
+\begin{proof}
+
+\end{proof}
+
+\begin{example}
+
+\end{example}
+\begin{proof}
+
+\end{proof}
+
+\begin{example}
+
+\end{example}
+\begin{proof}
+
+\end{proof}
+
+\begin{example}
+
+\end{example}
+\begin{proof}
+
+\end{proof}
+
+\begin{example}
+
+\end{example}
+\begin{proof}
+
+\end{proof}
+
+\begin{example}
+
+\end{example}
+\begin{proof}
+
+\end{proof}
+
+\begin{example}
+
+\end{example}
+\begin{proof}
+
+\end{proof}
+
+\begin{example}
+
+\end{example}
+\begin{proof}
+
+\end{proof}
+
+\begin{example}
+
+\end{example}
+\begin{proof}
+
+\end{proof}
+
+\begin{example}
+
+\end{example}
+\begin{proof}
+
+\end{proof}
+
+\begin{example}
+
+\end{example}
+\begin{proof}
+
+\end{proof}
+
+
+\end{document}

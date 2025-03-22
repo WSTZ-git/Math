@@ -1,0 +1,1042 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}} % 指定图片目录,后续可以直接使用图片文件名。
+
+% 例如:
+% \begin{figure}[h]
+% \centering
+% \includegraphics{image-01.01}
+% \label{fig:image-01.01}
+% \caption{图片标题}
+% \end{figure}
+
+\begin{document}
+
+\section{估计和式的常用方法}
+
+\subsection{强行替换(拟合法)和凑定积分}\label{强行替换(拟合法)和凑定积分}
+
+\begin{example}
+计算
+\[
+\lim_{n\rightarrow\infty}\sum_{i = 1}^{n}\frac{1}{n+\frac{i^{2}+1}{n}}.
+\]
+\end{example}
+\begin{note}
+证明的想法要么是凑定积分定义. 要么强行替换为自己熟悉的结构(拟合法), 无需猜测放缩手段.
+\end{note}
+\begin{remark}
+注意定积分定义是任意划分任意取点,而不只是等分取端点.
+\end{remark}
+\begin{solution}
+{\color{blue}解法一:}注意到
+\[
+\frac{i}{n}<\frac{\sqrt{i^{2}+1}}{n}<\frac{i + 1}{n},i = 1,2,\cdots,n,
+\]
+于是由定积分定义有
+\[
+\lim_{n\rightarrow\infty}\sum_{i = 1}^{n}\frac{1}{n+\frac{i^{2}+1}{n}}=\lim_{n\rightarrow\infty}\frac{1}{n}\sum_{i = 1}^{n}\frac{1}{1+\left(\frac{\sqrt{i^{2}+1}}{n}\right)^{2}}=\int_{0}^{1}\frac{1}{1 + x^{2}}dx=\frac{\pi}{4}.
+\]
+
+{\color{blue}解法二:}注意到
+\[
+0\leq\left|\sum_{i = 1}^{n}\frac{1}{n+\frac{i^{2}+1}{n}}-\sum_{i = 1}^{n}\frac{1}{n+\frac{i^{2}}{n}}\right|\leqslant\sum_{i = 1}^{n}\frac{1}{n\left(n+\frac{i^{2}+1}{n}\right)\left(n+\frac{i^{2}}{n}\right)}\leqslant\sum_{i = 1}^{n}\frac{1}{n^{3}}=\frac{1}{n^{2}}\rightarrow0,n\rightarrow\infty,
+\]
+故
+\[
+\lim_{n\rightarrow\infty}\sum_{i = 1}^{n}\frac{1}{n+\frac{i^{2}+1}{n}}=\lim_{n\rightarrow\infty}\sum_{i = 1}^{n}\frac{1}{n+\frac{i^{2}}{n}}=\lim_{n\rightarrow\infty}\frac{1}{n}\sum_{i = 1}^{n}\frac{1}{1+\frac{i^{2}}{n^{2}}}=\int_{0}^{1}\frac{1}{1 + x^{2}}dx=\frac{\pi}{4}.
+\]
+\end{solution}
+
+\begin{example}
+计算
+\[
+\lim_{n\rightarrow\infty}\sum_{i = 1}^{2n}\frac{i + 4}{n^{2}+\frac{1}{i}}\sin^{4}\frac{\pi i}{n}.
+\]
+\end{example}
+\begin{note}
+长得神似定积分定义且很容易观察到\(\frac{i + 4}{n^{2}+\frac{1}{i}}\)和\(\frac{i}{n^{2}}\)没有区别,懒得去寻求放缩方法,直接采用强行替换的方法,即做差\(\frac{i + 4}{n^{2}+\frac{1}{i}}-\frac{i}{n^{2}}\) 强估证明不影响极限.
+\end{note}
+\begin{proof}
+注意到
+\begin{align*}
+&\left|\sum_{i = 1}^{2n}\frac{i + 4}{n^{2}+\frac{1}{i}}\sin^{4}\frac{\pi i}{n}-\sum_{i = 1}^{2n}\frac{i}{n^{2}}\sin^{4}\frac{\pi i}{n}\right|=\left|\sum_{i = 1}^{2n}\left(\frac{i + 4}{n^{2}+\frac{1}{i}}-\frac{i}{n^{2}}\right)\sin^{4}\frac{\pi i}{n}\right|\\
+&\leqslant\sum_{i = 1}^{2n}\frac{4n^{2}-1}{n^{2}\left(n^{2}+\frac{1}{i}\right)}
+\leqslant\sum_{i = 1}^{2n}\frac{4n^{2}-1}{n^{4}}
+=\frac{2n(4n^{2}-1)}{n^{4}},
+\end{align*}
+于是
+\[
+0\leqslant\lim_{n\rightarrow\infty}\left|\sum_{i = 1}^{2n}\frac{i + 4}{n^{2}+\frac{1}{i}}\sin^{4}\frac{\pi i}{n}-\sum_{i = 1}^{2n}\frac{i}{n^{2}}\sin^{4}\frac{\pi i}{n}\right|\leqslant\lim_{n\rightarrow\infty}\frac{2n(4n^{2}-1)}{n^{4}} = 0.
+\]
+因此
+\begin{align*}
+&\lim_{n\rightarrow \infty} \sum_{i=1}^{2n}{\frac{i+4}{n^2+\frac{1}{i}}\sin ^4\frac{\pi i}{n}}=\lim_{n\rightarrow \infty} \frac{1}{n}\sum_{i=1}^{2n}{\frac{i}{n}\sin ^4\frac{\pi i}{n}}
+\\
+&=\int_0^2{x\sin ^4\pi xdx}\xlongequal[\text{令}x=2-y]{\text{区间再现}}\int_0^2{\left( 2-y \right) \sin ^4\pi \left( 2-y \right) dy}
+\\
+&=\int_0^2{\left( 2-y \right) \sin ^4\pi ydy}=\int_0^2{\sin ^4\pi xdx}=\frac{1}{\pi}\int_0^{2\pi}{\sin ^4xdx}
+\\
+&=\frac{4}{\pi}\int_0^{\frac{\pi}{2}}{\sin ^4xdx}=\frac{4}{\pi}\cdot \frac{3!!}{4!!}\cdot \frac{\pi}{2}=\frac{3}{4}.
+\end{align*}
+\end{proof}
+
+
+\subsection{和式内部对n可求极限(极限号与求和号可换序)}\label{section:和式内部对n可求极限(极限号与求和号可换序)}
+
+当和式内部对n可求极限时,极限号与求和号可以换序.(当和式内部对n求极限是$\frac{\infty}{\infty}$或$\frac{0}{0}$等都不能换序)
+
+本质上就是\textbf{控制收敛定理}的应用.
+
+\begin{remark}
+不能按照极限号与求和号可换序的想法书写过程,应该利用不等式放缩、夹逼准则和上下极限进行严谨地书写证明. 
+\end{remark}
+
+
+\begin{example}\label{example:和式极限例题1}
+求极限
+\begin{align*}
+\underset{n\rightarrow +\infty}{\lim}\sum\limits_{k=0}^n{\frac{\cos \sqrt{\frac{k}{n}}}{2^k}}.
+\end{align*}
+\end{example}
+\begin{note}\label{计算二元数列求和的极限的思路}
+求这种前$n$项和关于$n$的极限($n$既和求和号上限有关,又和通项有关)的思路是:先假设极限存在(这里极限号内是数列不是级数,所以这里是数列收敛).于是由数列收敛的柯西收敛准则可知,对$\forall \varepsilon>0$,存在$N_0\in \mathbb{N}_+$,使得对$\forall n>N_0$,都有
+\begin{align*}
+\varepsilon >\left| \sum\limits_{k=0}^n{\frac{\cos \sqrt{\frac{k}{n}}}{2^k}}-\sum\limits_{k=0}^{N_0+1}{\frac{\cos \sqrt{\frac{k}{N_0+1}}}{2^k}} \right|=\left| \sum\limits_{k>N_0}^n{\frac{\cos \sqrt{\frac{k}{n}}}{2^k}}+\sum\limits_{k=0}^{N_0+1}{\frac{\cos \sqrt{\frac{k}{n}}-\cos \sqrt{\frac{k}{N_0+1}}}{2^k}} \right|>\sum\limits_{k>N_0}^n{\frac{\cos \sqrt{\frac{k}{n}}}{2^k}}.
+\end{align*}
+从而由数列极限的定义,可知对$\forall N>N_0,$都有$\underset{n\rightarrow +\infty}{\lim}\sum\limits_{k>N}^n{\frac{\cos \sqrt{\frac{k}{n}}}{2^k}}=0.$
+
+因此对$\forall N>N_0$,我们有
+\begin{align*}
+\underset{n\rightarrow +\infty}{\lim}\sum\limits_{k=0}^n{\frac{\cos \sqrt{\frac{k}{n}}}{2^k}}=\underset{n\rightarrow +\infty}{\lim}\sum\limits_{k=0}^N{\frac{\cos \sqrt{\frac{k}{n}}}{2^k}}+\underset{n\rightarrow +\infty}{\lim}\sum\limits_{k>N}^n{\frac{\cos \sqrt{\frac{k}{n}}}{2^k}}=\underset{n\rightarrow +\infty}{\lim}\sum\limits_{k=0}^N{\frac{\cos \sqrt{\frac{k}{n}}}{2^k}}
+=\sum\limits_{k=0}^N{\underset{n\rightarrow +\infty}{\lim}\frac{\cos \sqrt{\frac{k}{n}}}{2^k}}=\sum\limits_{k=0}^N{\frac{1}{2^k}}.
+\end{align*}
+再令$N\to +\infty$,得到$\underset{n\rightarrow +\infty}{\lim}\sum\limits_{k=0}^n{\frac{\cos \sqrt{\frac{k}{n}}}{2^k}}=\underset{N\rightarrow +\infty}{\lim}\sum\limits_{k=0}^N{\frac{1}{2^k}}=2.$
+
+综上所述,我们在假设原极限收敛的前提下能够得到原极限就是2,因此我们可以凭借直觉不严谨地断言原极限实际上就是2(如果原极限不是2,那么原极限只能发散,否则与上述证明矛盾.而出题人要我们求解的极限一般都不发散,并且凭借直觉也能感觉到这个极限不发散).
+
+\textbf{注意:因为这里我们并不能严谨地证明原数列收敛,所以只凭借上述论证并不能严谨地得到原极限等于2.}
+
+(\textbf{上述论证实际上就是一种"猜测"这种极限的值的方法})
+
+虽然只凭借上述论证我们并不能直接得到原极限等于2的证明,但是我们可以得到一个重要的结果:原极限的值就是2.我们后续只需要证明这个结果是正确的即可.后续证明只需要适当放缩原本数列,再利用上下极限和夹逼定理即可(因为我们已经知道极限的值,放缩的时候就能更容易地把握放缩的“度”).并且我们根据上述论证可知(放缩的时候我们可以利用下述想法,即将不影响整体的阶的余项通过放缩去掉),原和式的极限等于其前$N$项的极限,原和式除前$N$项外的余项的极限趋于0,即余项并不影响原数列的极限,可以通过放缩将其忽略.我们只需要考虑前$N$项的极限即可.
+
+后续证明的套路一般都是:
+放大:可以直接通过一些常用不等式得到;
+放小:将原级数直接放缩成有限项再取下极限.
+
+\textbf{注:关键是如何利用上述想法直接计算出极限的值,后续的放缩证明只是为了保证其严谨性的形式上的证明.}
+\end{note}
+\begin{remark}
+上述思路本质上就是\textbf{控制收敛定理}的应用,也可以使用$Toplitz$定理的分段估计想法解决本题.于是我们今后遇到类似问题可以分别采取这两种思路解决.
+
+这里我们可以采取两种方法去书写证明过程(夹逼定理和$Toplitz$定理).
+\end{remark}
+\begin{solution}
+{\color{blue}解法一(夹逼定理):}
+
+一方面,注意到\(\sum\limits_{k = 0}^{n}\frac{\cos\sqrt{\frac{k}{n}}}{2^k} \leqslant \sum\limits_{k = 0}^{n}\frac{1}{2^k} = \frac{1 - \frac{1}{2^{n + 1}}}{1 - \frac{1}{2}}\),于是
+$\varlimsup_{n \to +\infty}\sum\limits_{k = 0}^{n}\frac{\cos\sqrt{\frac{k}{n}}}{2^k} \leqslant \varlimsup_{n \to +\infty}\frac{1 - \frac{1}{2^{n + 1}}}{1 - \frac{1}{2}} = 2$.
+
+另一方面,注意到对\(\forall N \in \mathbb{N}_+\),都有\(\sum\limits_{k = 0}^{n}\frac{\cos\sqrt{\frac{k}{n}}}{2^k} \geqslant \sum\limits_{k = 0}^{N}\frac{\cos\sqrt{\frac{k}{n}}}{2^k}\),$\forall n>N$.从而
+\begin{align*}
+\varliminf_{n \to +\infty}\sum\limits_{k = 0}^{n}\frac{\cos\sqrt{\frac{k}{n}}}{2^k} \geqslant \varliminf_{n \to +\infty}\sum\limits_{k = 0}^{N}\frac{\cos\sqrt{\frac{k}{n}}}{2^k} = \sum\limits_{k = 0}^{N}\varliminf_{n \to +\infty}\frac{\cos\sqrt{\frac{k}{n}}}{2^k} = \sum\limits_{k = 0}^{N}\lim_{n \to +\infty}\frac{\cos\sqrt{\frac{k}{n}}}{2^k} = \sum\limits_{k = 0}^{N}\frac{1}{2^k},\forall N \in \mathbb{N}_+.
+\end{align*}
+
+于是令\(N \to +\infty\),得到\(\varliminf_{n \to +\infty}\sum\limits_{k = 0}^{n}\frac{\cos\sqrt{\frac{k}{n}}}{2^k} \geqslant \lim_{N \to +\infty}\sum\limits_{k = 0}^{N}\frac{1}{2^k} = 2\).
+
+综上所述,我们有\(2 \leqslant \varliminf_{n \to +\infty}\sum\limits_{k = 0}^{n}\frac{\cos\sqrt{\frac{k}{n}}}{2^k} \leqslant \varlimsup_{n \to +\infty}\sum\limits_{k = 0}^{n}\frac{\cos\sqrt{\frac{k}{n}}}{2^k} \leqslant 2\).故\(\lim_{n \to +\infty}\sum\limits_{k = 0}^{n}\frac{\cos\sqrt{\frac{k}{n}}}{2^k} = 2\). 
+
+{\color{blue}解法二(Toplitz定理):}
+\end{solution}
+
+\begin{example}
+计算$\underset{n\rightarrow +\infty}{\lim}\sum\limits_{k=1}^n{\left( \frac{k}{n} \right) ^n}$.
+\end{example}
+\begin{remark}
+注意倒序求和与顺序求和相等.(看到求和号内部有两个变量,都可以尝试一下倒序求和)
+\end{remark}
+\begin{note}
+{\color{blue}解法一}的思路:
+我们利用\hyperref[计算二元数列求和的极限的思路]{上一题的想法}计算$\underset{n\rightarrow +\infty}{\lim}\sum\limits_{k=1}^n{e^{n\ln \left( 1-\frac{k-1}{n} \right)}}$.先假设级数$\sum\limits_{k=1}^n{\left( \frac{k}{n} \right) ^n}$收敛,则由$Cauchy$收敛准则可知,存在$N'>0$,使得
+\begin{align*}
+\underset{n\rightarrow +\infty}{\lim}\sum\limits_{k=1}^n{e^{n\ln \left( 1-\frac{k-1}{n} \right)}}=\underset{n\rightarrow +\infty}{\lim}\sum\limits_{k=1}^N{e^{n\ln \left( 1-\frac{k-1}{n} \right)}}=\sum\limits_{k=1}^N{\underset{n\rightarrow +\infty}{\lim}e^{n\ln \left( 1-\frac{k-1}{n} \right)}=\sum\limits_{k=1}^N{e^{1-k}},\forall N>N'}.
+\end{align*}
+令$N\to +\infty$,则$\underset{n\rightarrow +\infty}{\lim}\sum\limits_{k=1}^n{e^{n\ln \left( 1-\frac{k-1}{n} \right)}}=\underset{N\rightarrow +\infty}{\lim}\sum\limits_{k=1}^N{e^{1-k}}=\frac{e}{e-1}$.
+然后再根据计算出来的结果对原级数进行适当放缩,最后利用上下极限和夹逼准则得到完整的证明.
+\end{note}
+\begin{solution}
+{\color{blue}解法一:}
+注意到
+\[
+\sum\limits_{k = 1}^{n}\left(\frac{k}{n}\right)^n = \sum\limits_{k = 1}^{n}\left(\frac{n - k + 1}{n}\right)^n = \sum\limits_{k = 1}^{n}\left(1 - \frac{k - 1}{n}\right)^n = \sum\limits_{k = 1}^{n}e^{n\ln\left(1 - \frac{k - 1}{n}\right)},  \forall n \in \mathbb{N}_+.
+\]
+
+一方面,利用\(\ln(1 + x) \leq x\),\(\forall x \in \mathbb{R}\),我们有
+
+\[
+\sum\limits_{k = 1}^{n}\left(\frac{k}{n}\right)^n = \sum\limits_{k = 1}^{n}e^{n\ln\left(1 - \frac{k - 1}{n}\right)} \leq \sum\limits_{k = 1}^{n}e^{n\cdot\left(-\frac{k - 1}{n}\right)} = \sum\limits_{k = 1}^{n}e^{1 - k},  \forall n \in \mathbb{N}_+.
+\]
+
+令\(n \to +\infty\),则\(\varlimsup_{n \to +\infty}\sum\limits_{k = 1}^{n}\left(\frac{k}{n}\right)^n \leq \varlimsup_{n \to +\infty}\sum\limits_{k = 1}^{n}e^{1 - k} = \frac{e}{e - 1}\).
+
+另一方面,注意到\(\sum\limits_{k = 1}^{n}\left(\frac{k}{n}\right)^n = \sum\limits_{k = 1}^{n}e^{n\ln\left(1 - \frac{k - 1}{n}\right)} \geq \sum\limits_{k = 1}^{N}e^{n\ln\left(1 - \frac{k - 1}{n}\right)}\),\(\forall N \in \mathbb{N}_+\).两边同时对\(n\)取下极限,可得对\(\forall N \in \mathbb{N}_+\),都有
+\begin{align*}
+&\underset{n\rightarrow +\infty}{{\varliminf }}\sum\limits_{k=1}^n{\left( \frac{k}{n} \right) ^n}\geqslant \underset{n\rightarrow +\infty}{{\varliminf }}\sum\limits_{k=1}^N{e^{n\ln \left( 1-\frac{k-1}{n} \right)}}=\underset{n\rightarrow +\infty}{\lim}\sum\limits_{k=1}^N{e^{n\ln \left( 1-\frac{k-1}{n} \right)}}
+\\
+&=\sum\limits_{k=1}^N{\underset{n\rightarrow +\infty}{\lim}e^{n\ln \left( 1-\frac{k-1}{n} \right)}}=\sum\limits_{k=1}^N{\underset{n\rightarrow +\infty}{\lim}e^{n\cdot \left( -\frac{k-1}{n} \right)}}=\sum\limits_{k=1}^N{e^{1-k}}
+\end{align*}
+令\(N \to +\infty\),则\(\varliminf_{n \to +\infty}\sum\limits_{k = 1}^{n}\left(\frac{k}{n}\right)^n \geq \lim_{N \to +\infty}\sum\limits_{k = 1}^{N}e^{1 - k} = \frac{e}{e - 1}\).
+故\(\lim_{n \to +\infty}\sum\limits_{k = 1}^{n}\left(\frac{k}{n}\right)^n = \frac{e}{e - 1}\). 
+
+{\color{blue}解法二(单调有界定理):}
+因为
+\begin{align*}
+S_n&=\left(\frac{1}{n}\right)^n+\left(\frac{2}{n}\right)^n+\cdots+\left(\frac{n - 1}{n}\right)^n,\\
+S_{n + 1}&=\left(\frac{1}{n + 1}\right)^{n + 1}+\left(\frac{2}{n + 1}\right)^{n + 1}+\cdots+\left(\frac{n - 1}{n + 1}\right)^{n + 1}+\left(\frac{n}{n + 1}\right)^{n + 1}.
+\end{align*}
+所以证明\(\left(\frac{k}{n}\right)^n\leq\left(\frac{k + 1}{n + 1}\right)^{n + 1},1\leq k\leq n - 1\)即可，这等价于\(\frac{(n + 1)^{n + 1}}{n^n}\leq\frac{(k + 1)^{n + 1}}{k^n}\)。
+实际上\(a_k = \frac{(k + 1)^{n + 1}}{k^n},1\leq k\leq n\)是单调递减数列，因为
+\begin{align*}
+\frac{a_{k + 1}}{a_k}&=\frac{k^n(k + 2)^{n + 1}}{(k + 1)^{2n + 1}}=\frac{(x - 1)^n(x + 1)^{n + 1}}{x^{2n + 1}}=\left(1-\frac{1}{x^2}\right)^n\left(1+\frac{1}{x}\right),x = k + 1\in[2,n].
+\end{align*}
+又由于
+\begin{align*}
+n\ln\left(1-\frac{1}{x^2}\right)+\ln\left(1+\frac{1}{x}\right)&\leq-\frac{n}{x^2}+\frac{1}{x}=\frac{x - n}{x^2}\leq0,\forall x = k + 1\in[2,n].
+\end{align*}
+从而$\left( 1-\frac{1}{x^2} \right) ^n\left( 1+\frac{1}{x} \right) =e^{n\ln \left( 1-\frac{1}{x^2} \right) +\ln \left( 1+\frac{1}{x} \right)}\leqslant e^0=1,\forall x = k + 1\in[2,n]$,故$a_{k + 1}\leq a_k,\forall 1\leq k\leq n$.
+于是\(\frac{(k + 1)^{n + 1}}{k^n}=a_k\geq a_n=\frac{(n + 1)^{n + 1}}{n^n}\)，也即\(S_n\)单调递增。
+注意
+\begin{align*}
+S_n&=\sum_{k = 1}^{n - 1}\left(\frac{k}{n}\right)^n=\sum_{k = 1}^{n - 1}\left(1-\frac{k}{n}\right)^n=\sum_{k = 1}^{n - 1}e^{n\ln\left(1-\frac{k}{n}\right)}\leq\sum_{k = 1}^{n - 1}e^{-k}\leq\sum_{k = 1}^{\infty}e^{-k}=\frac{1}{e - 1}
+\end{align*}
+所以单调有界，极限一定存在，设为\(S\)。
+对任意正整数\(n>m\)，先固定\(m\)，对\(n\)取极限有
+\begin{align*}
+S_n&=\sum_{k = 1}^{n - 1}\left(1-\frac{k}{n}\right)^n\geq\sum_{k = 1}^{m}\left(1-\frac{k}{n}\right)^n\Rightarrow S=\lim_{n\rightarrow\infty}S_n\geq\sum_{k = 1}^{m}\lim_{n\rightarrow\infty}\left(1-\frac{k}{n}\right)^n=\sum_{k = 1}^{m}e^{-k}
+\end{align*}
+这对任意正整数\(m\)均成立，再令\(m\rightarrow\infty\)有\(S\geq\frac{1}{e - 1}\)，从而所求极限为\(\frac{1}{e - 1}\)。
+\end{solution}
+
+
+\subsection{利用Taylor公式计算和式极限(和式内部n,k不同阶)}
+
+只有当和式内部$n,k$不同阶时,我们才可以直接利用Taylor展开进行计算.但是书写过程不能用Taylor展开书写(关于o和O余项的求和估计不好说明),这样书写不严谨(见\hyperref[example-varepsilon-delta语言书写过程示例]{例题\ref{example-varepsilon-delta语言书写过程示例}证法一}).
+
+我们可以采用\textbf{拟合法}(见\hyperref[example-拟合法书写过程示例]{例题\ref{example-拟合法书写过程示例}})、\textbf{夹逼准则}(见\hyperref[example-夹逼准则书写过程示例]{例题\ref{example-夹逼准则书写过程示例}})、\textbf{$\varepsilon-\delta$语言}(见\hyperref[example-varepsilon-delta语言书写过程示例]{例题\ref{example-varepsilon-delta语言书写过程示例}证法二})严谨地书写过程
+
+\begin{note}
+虽然这三种方法都比较通用,但是更推荐\textbf{拟合法}和\textbf{夹逼准则},一般比较简便.
+
+虽然\textbf{$\varepsilon-\delta$语言}书写起来比较繁琐,但是当有些和式不容易放缩、拟合的时候,用这个方法更简单.
+\end{note}
+
+\textbf{这类和式内部$n,k$不同阶的问题的处理方式}:先利用Taylor展开计算极限(可以先不算出极限),并判断到底要展开多少项,然后根据具体问题综合运用\textbf{拟合法}、\textbf{夹逼准则}、\textbf{$\varepsilon-\delta$语言}严谨地书写过程(怎么书写简便就怎么写).
+
+\begin{remark}
+这类和式内部$n,k$不同阶的问题,Taylor公式是本质,\textbf{拟合法}、\textbf{夹逼准则}、\textbf{$\varepsilon-\delta$语言}只是形式上的过程.
+\end{remark}
+
+\begin{example}\label{example-varepsilon-delta语言书写过程示例}
+设\(f\)在\(0\)处可微,$f(0)=0$,证明:
+\[
+\lim_{n \to \infty} \sum\limits_{i = 1}^{n} f\left(\frac{i}{n^2}\right) = \frac{f^{\prime}(0)}{2}.
+\]
+\end{example}
+\begin{note}
+本题如果使用\hyperref[example:和式极限例题1]{例题\ref{example:和式极限例题1}}的方法求极限,那么我们将得到
+\begin{align*}
+\lim_{n\rightarrow \infty} \sum\limits_{i=1}^n{f\left( \frac{i}{n^2} \right)}=\lim_{N\rightarrow \infty} \lim_{n\rightarrow \infty} \sum\limits_{i=1}^N{f\left( \frac{i}{n^2} \right)}=\lim_{N\rightarrow \infty} \sum\limits_{i=1}^N{\lim_{n\rightarrow \infty} f\left( \frac{i}{n^2} \right)}=\lim_{N\rightarrow \infty} \sum\limits_{i=1}^N{f\left( 0 \right)}=\lim_{N\rightarrow \infty} \left( N\cdot 0 \right) =+\infty \cdot 0.
+\end{align*}
+而$+\infty \cdot 0$我们是无法确定其结果的,故本题并不适用这种方法.不过,我们也从上述论述结果发现我们需要更加精细地估计原级数的阶,才能确定出上述“$+\infty \cdot 0$”的值,进而得到原级数的极限.因此我们使用Taylor展开并引入余项方法和$\varepsilon-\delta$方法更加精细地估计原级数的阶.
+\end{note}
+\begin{remark}
+虽然使用余项证明这类问题并不严谨,但是在实际解题中,我们仍使用这种余项方法解决这类问题.因为严谨的$\varepsilon-\delta$语言证明比较繁琐.我们只在需要书写严谨证明的时候才使用严谨的$\varepsilon-\delta$语言进行证明.
+\end{remark}
+\begin{proof}
+{\color{blue}证法一(不严谨的余项方法):}
+由\(f\)在\(0\)处可微且$f(0)=0$和带$Peano$余项的$Taylor$公式,可知
+\begin{align*}
+f(x)=f'(0)x+o(x),x\to0.
+\end{align*}
+于是
+\begin{align*}
+&\sum\limits_{i = 1}^{n} f\left(\frac{i}{n^2}\right) = \sum\limits_{i = 1}^{n} \left[f^{\prime}(0) \cdot \frac{i}{n^2} + o\left(\frac{i}{n^2}\right)\right]
+= \frac{f^{\prime}(0)(n + 1)}{2n} + \sum\limits_{i = 1}^{n} o\left(\frac{i}{n^2}\right)\\
+&= \frac{f^{\prime}(0)(n + 1)}{2n} + \sum\limits_{i = 1}^{n} o\left(\frac{1}{n}\right)
+= \frac{f^{\prime}(0)(n + 1)}{2n} + n\cdot o\left(\frac{1}{n}\right) \to \frac{f^{\prime}(0)}{2},n\to+\infty.
+\end{align*}
+{\color{blue}证法二($\varepsilon-\delta$严谨的证明):}
+由$Taylor$定理,可知
+对\(\forall \varepsilon \in (0,1)\),\(\exists \delta > 0\),当\(\vert x \vert \leq \delta\)时,有\(\vert f(x) - f'(0)x \vert \leq \varepsilon \vert x \vert\).
+
+只要\(n > \frac{1}{\delta}\),有\(\left\vert \frac{i}{n^2} \right\vert \leq \delta\),\(\forall i = 1,2,\cdots,n\),故\(\left\vert f\left(\frac{i}{n^2}\right) - f'(0)\frac{i}{n^2} \right\vert \leq \varepsilon \frac{i}{n^2}\),\(i = 1,2,\cdots,n\).
+
+从而\begin{align*}
+f'(0)(1 - \varepsilon) \frac{i}{n^2} \leq f\left(\frac{i}{n^2}\right) \leq f'(0)(1 + \varepsilon) \frac{i}{n^2}.
+\end{align*}
+进而
+\begin{align*}
+\frac{f^{\prime}(0)}{2} (1 - \varepsilon) \cdot \frac{n + 1}{n}=f'(0)(1 - \varepsilon) \sum\limits_{i = 1}^{n} \frac{i}{n^2} \leq \sum\limits_{i = 1}^{n} f\left(\frac{i}{n^2}\right) \leq f'(0)(1 + \varepsilon) \sum\limits_{i = 1}^{n} \frac{i}{n^2}=\frac{f^{\prime}(0)}{2} (1 + \varepsilon) \cdot \frac{n + 1}{n}.
+\end{align*}
+于是
+\begin{align*}
+-\frac{\varepsilon f^{\prime}(0)}{2} \leq \frac{n}{n + 1} \sum\limits_{i = 1}^{n} f\left(\frac{i}{n^2}\right) - \frac{f^{\prime}(0)}{2} \leq \frac{f^{\prime}(0)\varepsilon}{2} .
+\end{align*}
+即\begin{align*}
+\left\vert \frac{n}{n + 1} \sum\limits_{i = 1}^{n} f\left(\frac{i}{n^2}\right) - \frac{f^{\prime}(0)}{2} \right\vert \leq \frac{\vert f^{\prime}(0) \vert}{2} \varepsilon.
+\end{align*}
+因此$\lim_{n\rightarrow \infty} \frac{n}{n+1}\sum\limits_{i=1}^n{f\left( \frac{i}{n^2} \right)}=\frac{f^{\prime}(0)}{2}
+$,故\(\lim_{n\rightarrow \infty} \sum\limits_{i=1}^n{f\left( \frac{i}{n^2} \right)}=\frac{\lim\limits_{n\rightarrow \infty} \frac{n}{n+1}\sum\limits_{i=1}^n{f\left( \frac{i}{n^2} \right)}}{\lim\limits_{n\rightarrow \infty} \frac{n}{n+1}}=\frac{f^{\prime}(0)}{2}\).
+\end{proof}
+
+\begin{example}\label{example-拟合法书写过程示例}
+求极限：\(\lim_{n\rightarrow\infty}\sqrt{n}\left(1 - \sum_{k = 1}^{n}\frac{1}{n + \sqrt{k}}\right)\).
+\end{example}
+\begin{note}
+本题采用\textbf{拟合法}书写过程.
+\end{note}
+\begin{solution}
+由于对$\forall k\in \mathbb{N}_+$,都有$\frac{\sqrt{k}}{n}\to +\infty,n\to \infty$,故由Taylor定理可得,对$\forall k\in \mathbb{N}_+$,都有
+\[
+\frac{1}{n + \sqrt{k}} = \frac{1}{n}\frac{1}{1 + \frac{\sqrt{k}}{n}} = \frac{1}{n}\left(1 - \frac{\sqrt{k}}{n} + \frac{k}{n^{2}} + \cdots\right),n\to \infty.
+\]
+于是考虑拟合
+\begin{align*}
+\lim_{n\rightarrow\infty}\sqrt{n}\left(1 - \sum_{k = 1}^{n}\frac{1}{n + \sqrt{k}}\right)=\lim_{n\rightarrow\infty}\sqrt{n}\left(1 - \frac{1}{n}\sum_{k = 1}^{n}\left(1 - \frac{\sqrt{k}}{n}\right) - \frac{1}{n}\sum_{k = 1}^{n}\left(\frac{1}{1 + \frac{\sqrt{k}}{n}} - 1 + \frac{\sqrt{k}}{n}\right)\right).
+\end{align*}
+又由于
+\begin{align*}
+\frac{1}{\sqrt{n}}\sum_{k = 1}^{n}\left(\frac{1}{1 + \frac{\sqrt{k}}{n}} - 1 + \frac{\sqrt{k}}{n}\right)=\frac{1}{\sqrt{n}}\sum_{k = 1}^{n}\frac{k}{n^{2}}\frac{1}{1 + \frac{\sqrt{k}}{n}}\leq\frac{1}{\sqrt{n}}\sum_{k = 1}^{n}\frac{k}{n^{2}}\leq\frac{1}{\sqrt{n}}\to0.
+\end{align*}
+因此
+\begin{align*}
+\lim_{n\rightarrow\infty}\sqrt{n}\left(1 - \sum_{k = 1}^{n}\frac{1}{n + \sqrt{k}}\right)=\lim_{n\rightarrow\infty}\sqrt{n}\left(1 - \frac{1}{n}\sum_{k = 1}^{n}\left(1 - \frac{\sqrt{k}}{n}\right)\right)=\lim_{n\rightarrow\infty}\frac{\sum\limits_{k = 1}^{n}\sqrt{k}}{n\sqrt{n}}\xlongequal{Stolz\text{公式或定积分定义}}\frac{2}{3}.
+\end{align*}
+\end{solution}
+
+\begin{example}\label{example-夹逼准则书写过程示例}
+求极限\(\lim_{n\rightarrow\infty}\sum_{k = 1}^{n}\left(\sqrt{1 + \frac{k}{n^{2}}} - 1\right)\)。
+\end{example}
+\begin{note}
+本题采用\textbf{夹逼准则}书写过程.注意\(n,k\)不同阶，因此有理化然后直接把无穷小量放缩掉,然后使用夹逼准则即可.
+\end{note}
+\begin{proof}
+注意到
+\[
+\frac{\frac{k}{n^{2}}}{\sqrt{1 + \frac{1}{n}} + 1}\leq\sqrt{1 + \frac{k}{n^{2}}} - 1 = \frac{\frac{k}{n^{2}}}{\sqrt{1 + \frac{k}{n^{2}}} + 1}\leq\frac{k}{2n^{2}},\forall k\in \mathbb{N}.
+\]
+所以
+\[
+\frac{n + 1}{2n\left(\sqrt{1 + \frac{1}{n}} + 1\right)}=\sum_{k = 1}^{n}\frac{\frac{k}{n^{2}}}{\sqrt{1 + \frac{1}{n}} + 1}\leq\sum_{k = 1}^{n}\left(\sqrt{1 + \frac{k}{n^{2}}} - 1\right)\leq\sum_{k = 1}^{n}\frac{k}{2n^{2}}=\frac{n + 1}{4n}
+\]
+根据夹逼准则可知所求极限是\(\frac{1}{4}\).
+\end{proof}
+
+\begin{example}
+计算$\lim_{n \to \infty} \left(\sum\limits_{k = 1}^{n} \frac{1}{\sqrt{n^2 + k}}\right)^n$.
+\end{example}
+\begin{note}
+{\color{blue}证法二}综合运用了拟合法和夹逼准则书写过程(只用其中一种方法的话,书写起来很麻烦).
+\end{note}
+\begin{solution}
+{\color{blue}证法一(不严谨的余项方法):}注意到
+\[
+\lim_{n \to \infty} \left(\sum\limits_{k = 1}^{n} \frac{1}{\sqrt{n^2 + k}}\right)^n=\lim_{n \to \infty} e^{n \ln \sum\limits_{k = 1}^{n} \frac{1}{\sqrt{n^2 + k}}} = \lim_{n \to \infty} e^{n \ln \left(\sum\limits_{k = 1}^{n} \frac{1}{n} \frac{1}{\sqrt{1 + \frac{k}{n^2}}}\right)}.
+\]
+由带$带Peano$余项的$Taylor$公式,可知
+\begin{align*}
+&\sum\limits_{k = 1}^{n} \frac{1}{\sqrt{n^2 + k}} = \frac{1}{n} \sum\limits_{k = 1}^{n} \frac{1}{\sqrt{1 + \frac{k}{n^2}}} = \frac{1}{n} \sum\limits_{k = 1}^{n} \left[1 - \frac{k}{2n^2} + O\left(\frac{k^2}{n^4}\right)\right]
+= \frac{1}{n} \left[n - \frac{\sum\limits_{k = 1}^{n} k}{2n^2} + \sum\limits_{k = 1}^{n} O\left(\frac{1}{n^2}\right)\right]
+\\
+&= 1 - \frac{n + 1}{4n^2} + O\left(\frac{1}{n^2}\right) = 1 - \frac{1}{4n} - \frac{1}{4n^2} + O\left(\frac{1}{n^2}\right) = 1 - \frac{1}{4n} + O\left(\frac{1}{n^2}\right),n\to+\infty.
+\end{align*}
+从而
+\begin{align*}
+\lim_{n \to \infty} \left(\sum\limits_{k = 1}^{n} \frac{1}{\sqrt{n^2 + k}}\right)^n=\lim_{n \to \infty} e^{n \ln \left(\sum\limits_{k = 1}^{n} \frac{1}{n} \frac{1}{\sqrt{1 + \frac{k}{n^2}}}\right)} = \lim_{n \to \infty} e^{n \ln \left(1 - \frac{1}{4n} + O\left(\frac{1}{n^2}\right)\right)}
+= \lim_{n \to \infty} e^{n \cdot \left(-\frac{1}{4n} + O\left(\frac{1}{n^2}\right)\right)}
+= \lim_{n \to \infty} e^{-\frac{1}{4} + O\left(\frac{1}{n}\right)} = e^{-\frac{1}{4}}.
+\end{align*}
+
+{\color{blue}证法二(严谨地书写过程):}
+注意到
+\begin{align}
+\lim_{n\rightarrow \infty} \left( \sum_{k=1}^n{\frac{1}{\sqrt{n^2+k}}} \right) ^n=\lim_{n\rightarrow \infty} e^{n\ln \sum_{k=1}^n{\frac{1}{\sqrt{n^2+k}}}}=\lim_{n\rightarrow \infty} e^{n\ln \left( \frac{1}{n}\sum_{k=1}^n{\frac{1}{\sqrt{1+\frac{k}{n^2}}}} \right)}. \label{example4.14-1.0}
+\end{align}
+因为对\(\forall k\in \mathbb{N}_+\)，有\(\frac{k}{n^2}\rightarrow 0\)，\(n\rightarrow \infty\)，所以利用Taylor公式可得
+\[
+\frac{1}{\sqrt{1+\frac{k}{n^2}}}=1-\frac{k}{2n^2}+\cdots ,n\rightarrow \infty.
+\]
+从而考虑拟合
+\[
+\lim_{n\rightarrow \infty} \frac{1}{n}\sum_{k=1}^n{\frac{1}{\sqrt{1+\frac{k}{n^2}}}}=\lim_{n\rightarrow \infty} \left[ \frac{1}{n}\sum_{k=1}^n{\left( \frac{1}{\sqrt{1+\frac{k}{n^2}}}-1+\frac{k}{2n^2} \right)}+\frac{1}{n}\sum_{k=1}^n{\left( 1-\frac{k}{2n^2} \right)} \right] .
+\]
+由于
+\[
+\frac{1}{n}\sum_{k=1}^n{\left( \frac{1}{\sqrt{1+\frac{k}{n^2}}}-1+\frac{k}{2n^2} \right)}=\sum_{k=1}^n{\left( \frac{1}{\sqrt{n^2+k}}+\frac{k}{2n^3} \right)}-1\leqslant \sum_{k=1}^n{\left( \frac{1}{n}+\frac{k}{2n^3} \right)}-1=\frac{n+1}{4n^2}\rightarrow 0,n\rightarrow \infty.
+\]
+因此
+\begin{align*}
+\lim_{n\rightarrow \infty} \sum_{k=1}^n{\frac{1}{\sqrt{n^2+k}}}=\lim_{n\rightarrow \infty} \frac{1}{n}\sum_{k=1}^n{\frac{1}{\sqrt{1+\frac{k}{n^2}}}}
+=\lim_{n\rightarrow \infty} \frac{1}{n}\sum_{k=1}^n{\left( 1-\frac{k}{2n^2} \right)}
+=1-\lim_{n\rightarrow \infty} \sum_{k=1}^n{\frac{k}{2n^3}}
+=1.
+\end{align*}
+于是
+\begin{align}
+\lim_{n\rightarrow \infty} n\ln \sum_{k=1}^n{\frac{1}{\sqrt{n^2+k}}}&=\lim_{n\rightarrow \infty} n\left( \sum_{k=1}^n{\frac{1}{\sqrt{n^2+k}}}-1 \right) =\lim_{n\rightarrow \infty} n\left( \frac{1}{n}\sum_{k=1}^n{\frac{1}{\sqrt{1+\frac{k}{n^2}}}}-1 \right) 
+\nonumber \\
+&=\lim_{n\rightarrow \infty} \left( \sum_{k=1}^n{\frac{1}{\sqrt{1+\frac{k}{n^2}}}}-n \right) =\lim_{n\rightarrow \infty} \sum_{k=1}^n{\left( \frac{1}{\sqrt{1+\frac{k}{n^2}}}-1 \right)}
+\nonumber \\
+&=\lim_{n\rightarrow \infty} \sum_{k=1}^n{\left( \frac{n}{\sqrt{n^2+k}}-1 \right)}=\lim_{n\rightarrow \infty} \sum_{k=1}^n{\frac{n-\sqrt{n^2+k}}{\sqrt{n^2+k}}}
+\nonumber \\
+&=\lim_{n\rightarrow \infty} \sum_{k=1}^n{\frac{-k}{\sqrt{n^2+k}\left( n+\sqrt{n^2+k} \right)}}=\lim_{n\rightarrow \infty} \sum_{k=1}^n{\frac{-k}{n^2+k+n\sqrt{n^2+k}}}.\label{example4.14-1.2}
+\end{align}
+注意到
+\[
+-\frac{n+1}{2\left( n+1+\sqrt{n^2+n} \right)}=\sum_{k=1}^n{\frac{-k}{n^2+n+n\sqrt{n^2+n}}}\leqslant \sum_{k=1}^n{\frac{-k}{n^2+k+n\sqrt{n^2+k}}}\leqslant \sum_{k=1}^n{\frac{-k}{2n^2}}=-\frac{n+1}{4n},\forall n\in \mathbb{N}_+.
+\]
+令\(n\rightarrow \infty\)，则由夹逼准则可得\(\lim_{n\rightarrow \infty} \sum_{k=1}^n{\frac{-k}{n^2+k+n\sqrt{n^2+k}}}=-\frac{1}{4}\)。再结合\eqref{example4.14-1.0}\eqref{example4.14-1.2}式可知
+\begin{align*}
+\lim_{n\rightarrow \infty} \left( \sum_{k=1}^n{\frac{1}{\sqrt{n^2+k}}} \right) ^n=\lim_{n\rightarrow \infty} e^{n\ln \sum\limits_{k=1}^n{\frac{1}{\sqrt{n^2+k}}}}
+=e^{\lim\limits_{n\rightarrow \infty} n\ln \sum\limits_{k=1}^n{\frac{1}{\sqrt{n^2+k}}}}
+=e^{\lim\limits_{n\rightarrow \infty} \sum\limits_{k=1}^n{\frac{-k}{n^2+k+n\sqrt{n^2+k}}}}
+=e^{-\frac{1}{4}}.
+\end{align*}
+\end{solution}
+
+
+\subsection{分段估计(Toeplitz定理)}
+
+对于估计级数或积分的极限或阶的问题,当问题难以直接处理时,我们可以尝试分段估计,分段点的选取可以直接根据级数或积分的性质选取,也可以根据我们的需要待定分段点$m$,然后再选取满足我们需要的$m$作为分段点.
+
+\begin{theorem}[Toeplitz定理]\label{theorem:Toeplitz定理}
+(a):设\(\{t_{nk}\}_{1\leqslant k\leqslant n} \subset [0, +\infty)\)满足\(\lim_{n \to \infty} \sum\limits_{k = 1}^{n} t_{nk} = 1\)和\(\lim_{n \to \infty} t_{nk} = 0\).若\(\lim_{n \to \infty} a_n = a \in \mathbb{R}\).证明
+\begin{align}\label{equation:2.5}
+\lim_{n \to \infty} \sum\limits_{k = 1}^{n} t_{nk}a_k = a.
+\end{align}
+(b):设\(\{t_{nk}\}_{n,k = 1}^{\infty} \subset [0, +\infty)\)满足\(\lim_{n \to \infty} \sum\limits_{k = 1}^{\infty} t_{nk} = 1\)和\(\lim_{n \to \infty} t_{nk} = 0\).若\(\lim_{n \to \infty} a_n = a \in \mathbb{R}\).证明
+\begin{align}\label{equation:2.6}
+\lim_{n \to \infty} \sum\limits_{k = 1}^{\infty} t_{nk}a_k = a.
+\end{align}
+\end{theorem}
+\begin{note}
+无需记忆$Toeplitz$定理的叙述,其证明的思想更为重要.一句话证明$Toeplitz$定理,即当\(n\)比较小的时候,用\(t_{nk}\)趋于\(0\)来控制,当\(n\)比较大的时候,用\(a_n\)趋于\(a\)来控制.
+
+我们需要熟悉蕴含在$Toeplitz$定理当中的一个关键想法:\textbf{分段估计}(分段的方式要合理才行).
+
+Toeplitz定理只是先对和式进行分段处理,将和式分成两部分,一部分是和式的前充分多项(前有限项/前N项),另一部分是余项(从N+1项开始包括后面的所有项).然后在这种分段估计的基础上,利用已知的极限条件,分别控制(放缩)和式的前充分多项(前有限项/前N项)和余项(从N+1项开始包括后面的所有项).
+\end{note}
+\begin{remark}
+注意区分(a),(b)两者的条件:$\underset{n\rightarrow +\infty}{\lim}\sum\limits_{k=1}^{\infty}{t_{nk}}=\underset{n\rightarrow +\infty}{\lim}\underset{m\rightarrow +\infty}{\lim}\sum\limits_{k=1}^m{t_{nk}}\ne \underset{n\rightarrow +\infty}{\lim}\sum\limits_{k=1}^n{t_{nk}}$.
+\end{remark}
+\begin{proof}
+(a):事实上,不妨设$a=0$,否则用$a_n-a$代替$a_n$即可.
+
+对$\forall N\in\mathbb{N}$,当$n>N$时,我们有
+\begin{align*}
+\left| \sum\limits_{k=1}^n{t_{nk}a_k} \right|=\left| \sum\limits_{k=1}^N{t_{nk}a_k}+\sum\limits_{k=N+1}^n{t_{nk}a_k} \right|\leqslant \left| \sum\limits_{k=1}^N{t_{nk}a_k} \right|+\sum\limits_{k=N+1}^n{\left| t_{nk}a_k \right|}.
+\end{align*}
+令$n\to+\infty$,得到
+\begin{align*}
+\underset{n\rightarrow +\infty}{{\varlimsup }}\left| \sum\limits_{k=1}^n{t_{nk}a_k} \right|\leqslant \underset{n\rightarrow +\infty}{{\varlimsup }}\left| \sum\limits_{k=1}^N{t_{nk}a_k} \right|+\underset{n\rightarrow +\infty}{{\varlimsup }}\sum\limits_{k=N+1}^n{\left| t_{nk}a_k \right|}\leqslant \mathop {\mathrm{sup}} \limits_{k\geqslant N+1}\left| a_k \right|\cdot \underset{n\rightarrow +\infty}{{\varlimsup }}\sum\limits_{k=1}^n{t_{nk}}=\mathop {\mathrm{sup}} \limits_{k\geqslant N+1}\left| a_k \right|,\forall N\in \mathbb{N} .
+\end{align*}
+由$N$的任意性,再令$N\to+\infty$,可得
+\begin{align*}
+\underset{n\rightarrow +\infty}{{\varlimsup }}\left| \sum\limits_{k=1}^n{t_{nk}a_k} \right|\leqslant \underset{N\rightarrow +\infty}{\lim}\mathop {\mathrm{sup}} \limits_{k\geqslant N+1}\left| a_k \right|=\underset{n\rightarrow +\infty}{{\varlimsup }}\left| a_n \right|=\underset{n\rightarrow +\infty}{{\varlimsup }}a_n=\underset{n\rightarrow +\infty}{\lim}a_n=0.
+\end{align*}
+故\eqref{equation:2.5}式成立.
+
+(b):事实上,不妨设$a=0$,否则用$a_n-a$代替$a_n$即可.
+
+对$\forall N\in\mathbb{N}$,我们有
+\begin{align*}
+\left| \sum\limits_{k=1}^{\infty}{t_{nk}a_k} \right|=\left| \sum\limits_{k=1}^N{t_{nk}a_k}+\sum\limits_{k=N+1}^{\infty}{t_{nk}a_k} \right|\leqslant \left| \sum\limits_{k=1}^N{t_{nk}a_k} \right|+\sum\limits_{k=N+1}^{\infty}{\left| t_{nk}a_k \right|}.
+\end{align*}
+令$n\to+\infty$,得到
+\begin{align*}
+\underset{n\rightarrow +\infty}{{\varlimsup }}\left| \sum\limits_{k=1}^{\infty}{t_{nk}a_k} \right|\leqslant \underset{n\rightarrow +\infty}{{\varlimsup }}\left| \sum\limits_{k=1}^N{t_{nk}a_k} \right|+\underset{n\rightarrow +\infty}{{\varlimsup }}\sum\limits_{k=N+1}^{\infty}{\left| t_{nk}a_k \right|}\leqslant \mathop {\mathrm{sup}} \limits_{k\geqslant N+1}\left| a_k \right|\cdot \underset{n\rightarrow +\infty}{{\varlimsup }}\sum\limits_{k=1}^{\infty}{t_{nk}}=\mathop {\mathrm{sup}} \limits_{k\geqslant N+1}\left| a_k \right|,\forall N\in \mathbb{N} .
+\end{align*}
+由$N$的任意性,再令$N\to+\infty$,可得
+\begin{align*}
+\underset{n\rightarrow +\infty}{{\varlimsup }}\left| \sum\limits_{k=1}^{\infty}{t_{nk}a_k} \right|\leqslant \underset{N\rightarrow +\infty}{\lim}\mathop {\mathrm{sup}} \limits_{k\geqslant N+1}\left| a_k \right|=\underset{n\rightarrow +\infty}{{\varlimsup }}\left| a_n \right|=\underset{n\rightarrow +\infty}{{\varlimsup }}a_n=\underset{n\rightarrow +\infty}{\lim}a_n=0.
+\end{align*}
+故\eqref{equation:2.6}式成立.
+\end{proof}
+
+\begin{example}
+设\(p_k > 0\),\(k = 1,2,\cdots,n\)且
+\begin{align*}
+\lim_{n \to \infty} \frac{p_n}{p_1 + p_2 + \cdots + p_n} = 0,\lim_{n \to \infty} a_n = a.
+\end{align*}
+证明
+\begin{align*}
+\lim_{n \to \infty} \frac{p_n a_1 + \cdots + p_1 a_n}{p_1 + p_2 + \cdots + p_n} = a.   
+\end{align*}
+\end{example}
+\begin{note}
+理解到本质之后不需要记忆\hyperref[theorem:Toeplitz定理]{Toeplitz定理},但是这里可以直接套用$Toeplitz$定理我们就引用了.今后我们不再直接套用$Toeplitz$定理,而是利用$Toeplitz$定理的证明方法解决问题.
+\end{note}
+\begin{proof}
+记\(t_{nk} = \frac{p_{n - k + 1}}{p_1 + p_2 + \cdots + p_n} \geq 0\),\(k = 1,2,\cdots,n\).则\(\sum\limits_{k = 1}^{n} t_{nk} = \frac{\sum\limits_{k = 1}^{n} p_{n - k + 1}}{p_1 + p_2 + \cdots + p_n} = 1\).
+又因为
+\begin{align*}
+0 \leq \lim_{n \to \infty} t_{nk} \leq \lim_{n \to \infty} \frac{p_{n - k + 1}}{p_1 + p_2 + \cdots + p_{n + k + 1}} = 0.
+\end{align*}
+所以由夹逼准则可知,$\lim_{n \to \infty} t_{nk}=0$.
+故由\hyperref[theorem:Toeplitz定理]{Toeplitz定理}得
+\begin{align*}
+\lim_{n \to \infty} \frac{p_n a_1 + \cdots + p_1 a_n}{p_1 + p_2 + \cdots + p_n}=\lim_{n \to \infty} \sum\limits_{k = 1}^{n} t_{nk} a_k = a .
+\end{align*}
+\end{proof}
+
+\begin{example}
+设\(\lim_{n \to \infty} a_n = a\)且\(b_n \geqslant 0\).记\(S_n = \sum\limits_{k = 1}^{n} b_k\),若\(\lim_{n \to \infty} S_n = S\).证明
+\begin{align*}
+\lim_{n \to \infty} (a_n b_1 + a_{n - 1} b_2 + \cdots + a_1 b_n) = aS.
+\end{align*}
+\end{example}
+\begin{proof}
+($i$)若$S=0$,则$b_n\equiv0$.此时结论显然成立.
+
+($ii$)若$S>0$,则令\(t_{nk} = \frac{1}{S} b_{n - k + 1}\),\(k = 1,2,\cdots,n\).从而
+\begin{align*}
+\sum\limits_{k=1}^{\infty}{t_{nk}}=\underset{n\rightarrow +\infty}{\lim}\sum\limits_{k=1}^n{t_{nk}}=\frac{1}{S}\underset{n\rightarrow +\infty}{\lim}\sum\limits_{k=1}^n{b_{n-k+1}}=\frac{1}{S}\underset{n\rightarrow +\infty}{\lim}S_n=1.
+\end{align*}
+又因为$\underset{n\rightarrow +\infty}{\lim}S_n$存在,所以$\underset{n\rightarrow +\infty}{\lim}b_n=\underset{n\rightarrow +\infty}{\lim}\left( S_n-S_{n-1} \right) =0
+$.故$\underset{n\rightarrow +\infty}{\lim}t_{nk}=0$.于是
+\begin{align*}
+\lim_{n\rightarrow \infty} \left( a_nb_1+a_{n-1}b_2+\cdots +a_1b_n \right) =\lim_{n\rightarrow \infty} \sum\limits_{k=1}^n{a_kb_{n-k+1}}=S\cdot \lim_{n\rightarrow \infty} \sum\limits_{k=1}^n{a_kt_{nk}}.
+\end{align*}
+不妨设$a=0$,则对$\forall N\in\mathbb{N}$,当$n>N$时,有
+\begin{align*}
+0\leqslant \left| \sum\limits_{k=1}^n{a_kt_{nk}} \right|\leqslant \left| \sum\limits_{k=1}^N{a_kt_{nk}} \right|+\left| \sum\limits_{k=N+1}^n{a_kt_{nk}} \right|\leqslant \left| \sum\limits_{k=1}^N{a_kt_{nk}} \right|+\underset{k\ge N+1}{\mathrm{sup}}\left| a_k \right|\sum\limits_{k=N+1}^n{t_{nk}}\leqslant \left| \sum\limits_{k=1}^N{a_kt_{nk}} \right|+\underset{k\ge N+1}{\mathrm{sup}}\left| a_k \right|\sum\limits_{k=1}^n{t_{nk}}.
+\end{align*}
+令$n\to+\infty$,则
+\begin{align*}
+\underset{n\rightarrow +\infty}{{\varlimsup }}\left| \sum\limits_{k=1}^n{a_kt_{nk}} \right|\leqslant \underset{n\rightarrow +\infty}{\lim}\left( \underset{k\ge N+1}{\mathrm{sup}}\left| a_k \right|\sum\limits_{k=1}^n{t_{nk}} \right) =\underset{k\ge N+1}{\mathrm{sup}}\left| a_k \right|,\forall N\in \mathbb{N} .
+\end{align*}
+再令$N\to +\infty$,可得
+\begin{align*}
+\underset{n\rightarrow +\infty}{{\varlimsup }}\left| \sum\limits_{k=1}^n{a_kt_{nk}} \right|\leqslant \underset{N\rightarrow +\infty}{\lim}\underset{k\ge N+1}{\mathrm{sup}}\left| a_k \right|=\underset{n\rightarrow +\infty}{{\varlimsup }}\left| a_k \right|=\underset{n\rightarrow +\infty}{\lim}\left| a_k \right|=\underset{n\rightarrow +\infty}{\lim}a_k=0.
+\end{align*}
+于是$\underset{n\rightarrow +\infty}{\lim}\sum\limits_{k=1}^n{a_kt_{nk}}=a$.故$\lim_{n\rightarrow \infty} \left( a_nb_1+a_{n-1}b_2+\cdots +a_1b_n \right) =S\cdot \lim_{n\rightarrow \infty} \sum\limits_{k=1}^n{a_kt_{nk}}=aS$.
+\end{proof}
+
+\begin{example}
+设$\lim_{n \to \infty} x_n = \lim_{n \to \infty} y_n = 0.$且存在常数\(K > 0\),使得\(\sum\limits_{j = 0}^{n} |y_i| \leq K\),\(\forall n \in \mathbb{N}\),证明
+\[
+\lim_{n \to \infty} \sum\limits_{i = 1}^{n} x_i y_{n - i} = 0.
+\]
+\end{example}
+\begin{proof}
+对\(\forall N\in \mathbb{N}\),当\(n > N\)时,有
+\begin{align*}
+\left|\sum\limits_{i = 1}^{n} x_i y_{n - i}\right| \leq \left|\sum\limits_{i = 1}^{N} x_i y_{n - i}\right| + \left|\sum\limits_{i = N + 1}^{n} x_i y_{n - i}\right|
+\leq \left|\sum\limits_{i = 1}^{N} x_i y_{n - i}\right| + \sup_{i\geq N + 1} |x_i| \cdot \sum\limits_{i = N + 1}^{n} |y_{n - i}|
+\leq \left|\sum\limits_{i = 1}^{N} x_i y_{n - i}\right| + K \cdot \sup_{i\geq N + 1} |x_i|.
+\end{align*}
+令$n\to+\infty$,则\(\varlimsup_{n \to \infty} \left|\sum\limits_{i = 1}^{n} x_i y_{n - i}\right| \leq K \cdot \sup_{i\geq N + 1} |x_i|\).
+
+由\(N\)任意性得
+\begin{align*}
+\lim_{n\rightarrow \infty} \sum\limits_{i=1}^n{x_iy_{n-i}}=\lim_{N\rightarrow \infty} \mathop {\mathrm{sup}} \limits_{i\ge N+1}|x_i|=\underset{n\rightarrow \infty}{{\varlimsup }}|x_n|=\lim_{n\rightarrow \infty} x_n=0.
+\end{align*}
+\end{proof}
+
+\begin{example}
+设\(\lim_{n \to \infty} a_n = a\),\(\lim_{n \to \infty} b_n = b\),证明
+\[
+\lim_{n \to \infty} \frac{a_1 b_n + a_2 b_{n - 1} + \cdots + a_n b_1}{n} = ab.
+\]
+\end{example}
+\begin{note}
+可以不妨设$a=b=0$的原因:假设当$a=b=0$时,结论成立.则当$a,b$至少有一个不为零时,我们有$\lim_{n \to \infty} \left(a_n-a\right)=0,\lim_{n \to \infty} \left(b_n-b\right)=0$.从而由假设可知
+\begin{gather*}
+\lim_{n\rightarrow \infty} \frac{\sum\limits_{k=1}^n{\left( a_k-a \right) \left( b_{n-k+1}-b \right)}}{n}=0.
+\\
+\Leftrightarrow \lim_{n\rightarrow \infty} \frac{\sum\limits_{k=1}^n{a_kb_{n-k+1}}}{n}+ab-a\cdot \lim_{n\rightarrow \infty} \frac{\sum\limits_{k=1}^n{b_{n-k+1}}}{n}-b\cdot \lim_{n\rightarrow \infty} \frac{\sum\limits_{k=1}^n{a_k}}{n}=0
+\end{gather*}
+又由\hyperref[theorem:Stolz定理]{Stolz定理}可知
+\begin{align*}
+\lim_{n\rightarrow \infty} \frac{\sum\limits_{k=1}^n{a_k}}{n}=\lim_{n\rightarrow \infty} a_n=a,\lim_{n\rightarrow \infty} \frac{\sum\limits_{k=1}^n{b_{n-k+1}}}{n}=\lim_{n\rightarrow \infty} b_n=b.
+\end{align*}
+故$\lim_{n\rightarrow \infty} \frac{\sum\limits_{k=1}^n{a_kb_{n-k+1}}}{n}=a\cdot \lim_{n\rightarrow \infty} \frac{\sum\limits_{k=1}^n{b_{n-k+1}}}{n}+b\cdot \lim_{n\rightarrow \infty} \frac{\sum\limits_{k=1}^n{a_k}}{n}-ab=ab$.
+\end{note}
+\begin{proof}
+不妨设$a=b=0$,否则用$a_n-a$代替$a_n$,用$b_n-b$代替$b_n$.
+对$\forall N\in \mathbb{N}$,当$n>N$时,有
+\begin{align*}
+&\left|\frac{\sum\limits_{k = 1}^{n} a_k b_{n - k + 1}}{n}\right| \leq \frac{\left|\sum\limits_{k = 1}^{N} a_k b_{n - k + 1}\right|}{n} + \frac{\left|\sum\limits_{k = N + 1}^{n} a_k b_{n - k + 1}\right|}{n}\\
+&\leq \frac{1}{n}\left|\sum\limits_{k = 1}^{N} a_k b_{n - k + 1}\right| + \sup_{k\geq N + 1} |a_k| \cdot \frac{1}{n}\sum\limits_{k = N + 1}^{n} |b_{n - k + 1}|\\
+&\leq \frac{1}{n}\left|\sum\limits_{k = 1}^{N} a_k b_{n - k + 1}\right| + \sup_{k\geq N + 1} |a_k| \cdot \frac{1}{n}\sum\limits_{k = 1}^{n} |b_k|.
+\end{align*}
+令$n\to+\infty$,则
+\begin{align*}
+\underset{n\rightarrow \infty}{{\varlimsup }}\left| \frac{1}{n}\sum\limits_{k=1}^n{a_kb_{n-k+1}} \right|\leqslant \mathop {\mathrm{sup}} \limits_{k\ge N+1}|a_k|\cdot \underset{n\rightarrow \infty}{{\varlimsup }}\frac{\sum\limits_{k=1}^n{\left| b_k \right|}}{n}\leqslant \mathop {\mathrm{sup}} \limits_{k\ge N+1}|a_k|\cdot \underset{n\rightarrow \infty}{{\varlimsup }}b_n=0.
+\end{align*}
+故$\underset{n\rightarrow \infty}{{\varlimsup }} \frac{1}{n}\sum\limits_{k=1}^n{a_kb_{n-k+1}} =0$.
+\end{proof}
+
+\begin{example}
+求 \(\lim_{n\rightarrow \infty}\sum_{k = 1}^n\frac{n^{\frac{1}{k}}}{n}\)。
+
+
+\end{example}
+\begin{remark}
+\hypertarget{取m的原因}{取 \(m = [\sqrt{\sqrt{n}\ln n}]+1\) 的原因:}我们希望找到一个合适的分段点 \(m\)，使得 \(\lim_{n\rightarrow \infty}\sum_{k = m}^n\frac{n^{\frac{1}{k}}}{n}=1\)，\(\lim_{n\rightarrow \infty}\sum_{k = 2}^m\frac{n^{\frac{1}{k}}}{n}=0\)。由 \(\sum_{k = 2}^m\frac{n^{\frac{1}{k}}}{n}\leqslant \frac{(m - 1)\sqrt{n}}{n}=\frac{(m - 1)}{\sqrt{n}}\) 可知，我们可以希望 \(\frac{(m - 1)}{\sqrt{n}}\rightarrow 0\)，即 \(m = o(\sqrt{n})\)。又由上述证明的积分放缩可知，\(\lim_{n\rightarrow \infty}\sum_{k = 2}^m\frac{n^{\frac{1}{k}}}{n}=\lim_{n\rightarrow \infty}\frac{n^{\frac{1}{m}}}{n}(n - m + 1)=\lim_{n\rightarrow \infty}n^{\frac{1}{m}}\)，从而我们希望 \(\lim_{n\rightarrow \infty}n^{\frac{1}{m}}=1\)，即 \(\lim_{n\rightarrow \infty}n^{\frac{1}{m}}=\lim_{n\rightarrow \infty}e^{\frac{\ln n}{m}}=1\)，也即 \(\lim_{n\rightarrow \infty}\frac{\ln n}{m}=0\)。
+
+综上，我们希望当 \(n\rightarrow \infty\) 时，\(m\) 的阶比 \(\sqrt{n}\) 低但比 \(\ln n\) 高，于是我们考虑 \(\ln n\) 和 \(\sqrt{n}\) 的几何平均，即令 \(m=\sqrt{\sqrt{n}\ln n}\)，恰好满足需要。又由于 \(m\) 表示求和项数，因此取整保证严谨性。
+\end{remark}
+\begin{note}
+本题核心想法是:\textbf{分段估计}.分段后的估计方式和分段点的选取方法较多.(清疏讲义上有另一种分段估计的做法)
+
+注意:本题使用Stolz定理解决不了,直接放缩也不行.
+\end{note}
+\begin{proof}
+\hyperlink{取m的原因}{取 \(m = [\sqrt{\sqrt{n}\ln n}]+1\)}，考虑 \(\sum_{k = 1}^n\frac{n^{\frac{1}{k}}}{n}=1+\sum_{k = 2}^m\frac{n^{\frac{1}{k}}}{n}+\sum_{k = m}^n\frac{n^{\frac{1}{k}}}{n}\)。不难发现
+\[
+\frac{m}{n}\leqslant \frac{\sqrt{\sqrt{n}\ln n}}{n}\rightarrow 0,n\rightarrow \infty.
+\]
+\[
+\sum_{k = 2}^m\frac{n^{\frac{1}{k}}}{n}\leqslant \frac{(m - 1)\sqrt{n}}{n}\leqslant \frac{\sqrt{\sqrt{n}\ln n}}{\sqrt{n}}=\sqrt{\frac{\ln n}{\sqrt{n}}}\rightarrow 0,n\rightarrow \infty.
+\]
+因此 \(\lim_{n\rightarrow \infty}\frac{m}{n}=\lim_{n\rightarrow \infty}\sum_{k = 2}^m\frac{n^{\frac{1}{k}}}{n}=0\)。并且一方面，我们有
+\begin{align*}
+\sum_{k=m}^n{\frac{n^{\frac{1}{k}}}{n}}&=\frac{1}{n}\sum_{k=m}^n{\int_{k-1}^k{n^{\frac{1}{k}}dx}}\leqslant \frac{1}{n}\sum_{k=m}^n{\int_{k-1}^k{n^{\frac{1}{x}}dx}}=\frac{1}{n}\int_{m-1}^n{n^{\frac{1}{x}}dx}
+\\
+&=\frac{1}{n}\int_{\frac{1}{n}}^{\frac{1}{m-1}}{\frac{n^x}{x^2}dx}\leqslant \frac{n^{\frac{1}{m-1}}}{n}\int_{\frac{1}{n}}^{\frac{1}{m-1}}{\frac{1}{x^2}dx}=\frac{n^{\frac{1}{m-1}}}{n}\left( n-m+1 \right) .
+\end{align*}
+另一方面，我们有
+\begin{align*}
+\sum_{k=m}^n{\frac{n^{\frac{1}{k}}}{n}}&=\frac{1}{n}\sum_{k=m}^n{\int_k^{k+1}{n^{\frac{1}{k}}dx}}\geqslant \frac{1}{n}\sum_{k=m}^n{\int_k^{k+1}{n^{\frac{1}{x}}dx}}=\frac{1}{n}\int_m^{n+1}{n^{\frac{1}{x}}dx}
+\\
+&=\frac{1}{n}\int_{\frac{1}{n+1}}^{\frac{1}{m}}{\frac{n^x}{x^2}dx}\leqslant \frac{n^{\frac{1}{m}}}{n}\int_{\frac{1}{n+1}}^{\frac{1}{m}}{\frac{1}{x^2}dx}=\frac{n^{\frac{1}{m}}}{n}\left( n-m+1 \right) .
+\end{align*}
+又注意到
+\begin{align*}
+\lim_{n\rightarrow \infty}n^{\frac{1}{m - 1}}=\lim_{n\rightarrow \infty}e^{\frac{\ln n}{\sqrt{\sqrt{n}\ln n}}}
+=\lim_{n\rightarrow \infty}e^{\frac{1}{\sqrt{\frac{\sqrt{n}}{\ln n}}}}
+=1,
+\end{align*}
+\begin{align*}
+\lim_{n\rightarrow \infty}n^{\frac{1}{m}}=\lim_{n\rightarrow \infty}e^{\frac{\ln n}{\sqrt{\sqrt{n}\ln n}}}
+=\lim_{n\rightarrow \infty}e^{\frac{1}{\sqrt{\frac{\sqrt{n}}{\ln n}}}}
+=1.
+\end{align*}
+故
+\[
+1=\varliminf_{n\rightarrow \infty}\frac{n^{\frac{1}{m}}}{n}(n - m + 1)\leqslant \varliminf_{n\rightarrow \infty}\sum_{k = m}^n\frac{n^{\frac{1}{k}}}{n}\leqslant \varlimsup_{n\rightarrow \infty}\sum_{k = m}^n\frac{n^{\frac{1}{k}}}{n}\leqslant \varlimsup_{n\rightarrow \infty}\frac{n^{\frac{1}{m - 1}}}{n}(n - m + 1)=1.
+\]
+因此 \(\lim_{n\rightarrow \infty}\sum_{k = m}^n\frac{n^{\frac{1}{k}}}{n}=1\)。于是 \(\lim_{n\rightarrow \infty}\sum_{k = 1}^n\frac{n^{\frac{1}{k}}}{n}=\lim_{n\rightarrow \infty}\left(1+\sum_{k = 2}^m\frac{n^{\frac{1}{k}}}{n}+\sum_{k = m}^n\frac{n^{\frac{1}{k}}}{n}\right)=1 + 0+1 = 2\)。
+\end{proof}
+
+
+
+\subsection{欧拉麦克劳林公式(E-M公式)}
+
+
+\begin{proposition}[0阶欧拉麦克劳林公式(0阶E-M公式)]\label{proposition:0阶欧拉麦克劳林公式(0阶E-M公式)}
+设\(a,b\in\mathbb{Z}, f\in D[a,b], f'\in L^1[a,b]\),让我们有
+\[
+\sum_{k = a}^{b}f(k)=\int_{a}^{b}f(x)dx+\frac{f(a)+f(b)}{2}+\int_{a}^{b}\left(x - [x]-\frac{1}{2}\right)f'(x)dx.
+\]
+\end{proposition}
+\begin{remark}
+如果考试中要使用0阶欧拉麦克劳林公式,则一定要先证明0阶欧拉麦克劳林公式(按照下面的证明书写即可),再使用.
+
+E-M公式求和通项与求和号上限无关.
+\end{remark}
+\begin{note}
+在\([0,1)\)上\(x - [x]-\frac{1}{2}=x - \frac{1}{2}\),它也是\(x - \frac{1}{2}\)做周期\(1\)延拓得到的函数.故$-\frac{1}{2}\leqslant x-[x]-\frac{1}{2}\leqslant \frac{1}{2},\forall x\in \mathbb{R} .$
+\end{note}
+\begin{proof}
+\begin{align*}
+&\int_a^b{\left( x-[x]-\frac{1}{2} \right) f'(x)dx}=\sum_{k=a}^{b-1}{\int_k^{k+1}{\left( x-[x]-\frac{1}{2} \right) f'(x)dx}}
+\\
+&=\sum_{k=a}^{b-1}{\int_k^{k+1}{\left( x-k-\frac{1}{2} \right) f'(x)dx}}=\sum_{k=a}^{b-1}{\int_0^1{\left( x-\frac{1}{2} \right) f'(x}}+k)dx
+\\
+&=\sum_{k=a}^{b-1}{\left[ \frac{1}{2}f(1+k)+\frac{1}{2}f(k)-\int_0^1{f(x}+k)dx \right]}
+\\
+&=\sum_{k=a}^{b-1}{\left[ \frac{f(k)+f(k+1)}{2}-\int_k^{k+1}{f(x)dx} \right]}
+\\
+&=\frac{1}{2}\sum_{k=a}^{b-1}{[f(k)}+f(k+1)]-\int_a^b{f(x)dx}
+\\
+&=-\frac{f(a)+f(b)}{2}+\sum_{k=a}^b{f(k)}-\int_a^b{f(x)dx}.
+\end{align*}
+\end{proof}
+\begin{remark}
+\hypertarget{remark:利用0阶E-M公式精细估阶的构造}{假设已知}$f'(x)$在$\mathbb{R}$上连续,记\(b_1(x)=x - [x]-\frac{1}{2}\),使用0阶E-M公式后,由于$-\frac{1}{2}\leqslant x-[x]-\frac{1}{2}\leqslant \frac{1}{2},\forall x\in \mathbb{R}$,因此直接将$b_1(x)$放大成$\frac{1}{2}$就可以得到原级数的一个较为粗略的估计.具体例题见\hyperref[example:4.461111]{例题\ref{example:4.461111}}.
+
+但是如果我们想要得到原级数更加精确的估计,就需要对$b_1(x)$使用分部积分.但是由于\(b_1\)并非连续函数,为了把\(\int_{a}^{b}(x - [x]-\frac{1}{2})f'(x)dx\)继续分部积分,我们需要寻求\(b_1\)的原函数\(b_2\)使得
+\[
+\int_{a}^{b}b_1(x)f'(x)dx=\int_{a}^{b}f'(x)db_2(x),
+\]
+即期望\(b_2(x)\)是$b_1(x)$的一个原函数并且仍然有周期\(1\)(因为求导不改变周期性,又由于$b_1(x)$周期为1,故原函数$b_2(x)$的周期也必须为1).相当于需要
+\[
+b_2(x)=\int_0^x{b_1(y)dy},b_2(x+1)=b_2(x),\forall x\in \mathbb{R} .
+\]
+(构造$b_2(x)$的想法:先找到$x\in [0,1)$这个特殊情况下的$b_2(x)$,再由此构造出$x\in \mathbb{R}$这个一般情况下的$b_2(x)$,即\textbf{由特殊推广到一般})
+
+先考虑$x\in [0,1)$的情况(因为此时$[x]\equiv0$,方便后续计算得到原函数$b_2(x)$),于是就需要\(\int_0^1{b_1(x)dx}=b_2\left( 1 \right) =b_2\left( 0 \right) =0\).显然
+\[
+b_2(1)=\int_{0}^{1}b_1(x)dx=\int_{0}^{1}\left(x-\frac{1}{2}\right)dx = 0 =b_2(0)
+\]
+是自带条件.
+并且还需要\(b_2(x)=\int_0^x{b_1\left( y \right) dy}=\int_0^x{\left( y-\frac{1}{2} \right) dy}=\frac{1}{2}x^2-\frac{1}{2}x + c(\text{其中}c\text{为任意常数}),x\in[0,1)\).又因为我们需要$b_2(x)$在$\mathbb{R}$上连续且周期为1,所以再将$\frac{1}{2}x^2-\frac{1}{2}x + c$做周期1延拓到$\mathbb{R}$上,得到在$\mathbb{R}$上连续且周期为1的$b_2(x)$(易知此时$b_2(x)$在$\mathbb{R}$上只有至多可数个不可导点).
+由此我们可以得到$b_2(x)$在$\mathbb{R}$上的表达式为
+\begin{align*}
+b_2\left( x \right) =b_2\left( x-\left[ x \right] \right) =\int_0^{x-\left[ x \right]}{b_1\left( y \right) dy}=\int_0^{x-\left[ x \right]}{\left( y-\frac{1}{2} \right) dy}=\frac{1}{2}\left( x-\left[ x \right] \right) ^2-\frac{1}{2}\left( x-\left[ x \right] \right) +c,\forall x\in \mathbb{R} .
+\end{align*}
+此时又由$\int_0^1{b_1\left( y \right) dy}=0$可得
+\begin{align*}
+b_2\left( x \right) &=b_2\left( x-\left[ x \right] \right) =\int_0^{x-\left[ x \right]}{b_1\left( y \right) dy}=\int_{\left[ x \right]}^x{b_1\left( y-\left[ x \right] \right) dy}=\int_{\left[ x \right]}^x{b_1\left( y \right) dy}
+\\
+&=\sum_{k=0}^{\left[ x \right] -1}{\int_0^1{b_1\left( y \right) dy}}+\int_{\left[ x \right]}^x{b_1\left( y \right) dy}=\sum_{k=0}^{\left[ x \right] -1}{\int_0^1{b_1\left( y+k \right) dy}}+\int_{\left[ x \right]}^x{b_1\left( y \right) dy}
+\\
+&=\sum_{k=0}^{\left[ x \right] -1}{\int_k^{k+1}{b_1\left( y \right) dy}}+\int_{\left[ x \right]}^x{b_1\left( y \right) dy}=\int_0^{\left[ x \right]}{b_1\left( y \right) dy}+\int_{\left[ x \right]}^x{b_1\left( y \right) dy}
+\\
+&=\int_0^x{b_1\left( y \right) dy},\forall x\in \mathbb{R}.
+\end{align*}
+故此时周期延拓得到的$b_2(x)$恰好就是$b_1(x)$的一个原函数.即$b_1(x)$在$\mathbb{R}$上有连续且周期为1的原函数$b_2(x)$,$f'(x)$在$\mathbb{R}$上连续.
+因此我们可以对$b_1(x)$进行分部积分.即此时
+\[
+\int_{a}^{b}b_1(x)f'(x)dx=\int_{a}^{b}f'(x)db_2(x)
+\]
+成立.并且此时$ b_2\left( x \right)=\frac{1}{2}\left( x-\left[ x \right] \right) ^2-\frac{1}{2}\left( x-\left[ x \right] \right) +c,\forall x\in \mathbb{R}$.其中$c$为任意常数.
+
+如果我们想要继续分部积分,就需要$b_3(x)$是$b_2(x)$的一个原函数.按照上述构造的想法,实际上,我们只需期望\(b_3(1)=b_3(0)\)和$b_3(x)=\int_0^x{b_2\left( y \right) dy},\forall x\in \left[ 0,1 \right) $.即
+\begin{gather*}
+\int_{0}^{1}b_2(x)dx =b_3(1)=b_3(0)= 0,
+\\
+b_3(x)=\int_0^x{b_2\left( y \right) dy},\forall x\in \left[ 0,1 \right).
+\end{gather*}
+然后以此构造出$[0,1)$上的$b_3(x)$,再对其做周期1延拓,就能得到$\mathbb{R}$上的$b_3(x)$,并且$b_3(x)$满足在$\mathbb{R}$上连续且周期为1.进而可以利用这个$b_3(x)$继续对原积分进行分部积分,得到更加精细的估计.
+
+而由\(\int_{0}^{1}b_2(x)dx =b_3(1)=b_3(0)= 0\)可知
+\[
+\int_{0}^{1}b_2(x)dx=\int_{0}^{1}\left(\frac{1}{2}x^2-\frac{1}{2}x + c\right)dx = 0\Rightarrow c=\frac{1}{12}.
+\]
+于是如果我们还需要继续分部积分的话,此时$b_1(x)$的原函数\(b_2(x)\)就被唯一确定了(如果只进行一次分部积分,那么$c$可以任取.但是一般情况下,无论是否还需要继续分部积分,我们都会先取定这里的$c=\frac{1}{12}$).此时这个唯一确定的$b_2(x)$在$\mathbb{R}$上连续且周期为1,\hypertarget{b2性质}{并且}
+\begin{gather*}
+b_2(x)=\frac{1}{2}x^2-\frac{1}{2}x + \frac{1}{12},x\in[0,1);
+\\
+b_2(x)=\frac{1}{2}\left( x-\left[ x \right] \right) ^2-\frac{1}{2}\left( x-\left[ x \right] \right) +\frac{1}{12},b_2\left( x \right) =\int_0^x{b_1\left( y \right) dy},\left| b_2\left( x \right) \right|\leqslant \frac{1}{12},\forall x\in \mathbb{R}.
+\end{gather*}
+依次下去我们给出计算\(b_n,n\in\mathbb{N}\)的算法.
+\end{remark}
+
+\begin{definition}[\(b_n(x)\)定义和算法]\label{definition:b_n(x)定义和算法}
+我们令\(b_1(x)\)为\(x-\frac{1}{2},x\in[0,1)\)的周期\(1\)延拓. 对所有\(n=2,3,\cdots,b_n(x)\)是\(b_{n - 1}(x)\)的一个原函数.
+\end{definition}
+\begin{note}
+\textbf{\(b_n(x)\)的算法:}
+
+根据\hyperlink{remark:利用0阶E-M公式精细估阶的构造}{上述构造$b_2(x),b_3(x)$的想法}可知,我们只需期望\(b_n(1)=b_n(0)\)和$b_n(x)=\int_0^x{b_{n-1}\left( y \right) dy},\forall x\in \left[ 0,1 \right) $.即
+\begin{gather*}
+\int_{0}^{1}b_{n-1}(x)dx =b_n(1)=b_n(0)= 0,
+\\
+b_n(x)=\int_0^x{b_{n-1}\left( y \right) dy},\forall x\in \left[ 0,1 \right).
+\end{gather*}
+然后以此构造出$[0,1)$上的$b_n(x)$,再对其做周期1延拓,就能得到$\mathbb{R}$上的$b_n(x)$,并且$b_n(x)$满足在$\mathbb{R}$上连续且周期为1.并且根据$\int_{0}^{1}b_{n-1}(x)dx =b_n(1)=b_n(0)= 0$我们可唯一确定\(b_{n-1}(x)\)在\([0,1)\)上的表达式.从而可以唯一确定$b_n(x)$之前的所有\(b_{n-1}(x)\)在\(\mathbb{R}\)上的表达式.又因为这个过程可以无限地进行下去,所以我们其实可以唯一确定所有的\(b_n(x)\)在\(\mathbb{R}\)上的表达式,方便我们后续可按照我们的需要对原积分进行多次分部积分.
+
+根据上述$b_n(x)$的定义和算法,可知$b_n(x)$是连续且周期为1的函数.而连续的周期函数一定有界,故一定存在$M_n>0$,使得对$\forall x\in \mathbb{R}$,有$\left| b_n(x) \right|\leqslant M_n$.
+\end{note}
+\begin{remark}
+我们可以利用这些$b_n(x)$不断地对原积分进行分部积分,得到更加精细的估计,而且这个过程可以一直进行下去.因此无论我们需要多么精确的估计,都可以通过这样的分部积分方式来得到.具体例题见\hyperref[theorem:Stirling公式]{例题\ref{theorem:Stirling公式}},\hyperref[example:4.461111]{例题\ref{example:4.461111}}.
+\end{remark}
+\begin{conclusion}\label{conclusion:b_n(x)的初等表达式}
+我们计算一些$b_n(x)$以备用:
+\begin{gather*}
+b_1\left( x \right) =x-\frac{1}{2},x\in \left[ 0,1 \right) .
+\\
+b_1\left( x \right) =x-\left[ x \right] -\frac{1}{2},\left| b_1\left( x \right) \right|\leqslant \frac{1}{2},x\in \mathbb{R} .
+\\
+\\
+b_2\left( x \right) =\frac{1}{2}x^2-\frac{1}{2}x+\frac{1}{12},x\in \left[ 0,1 \right) .
+\\
+b_2\left( x \right) =\frac{1}{2}\left( x-\left[ x \right] \right) ^2-\frac{1}{2}\left( x-\left[ x \right] \right) +\frac{1}{12},\left| b_2\left( x \right) \right|\leqslant \frac{1}{12},x\in \mathbb{R} .
+\\
+\\
+b_3\left( x \right) =\frac{x^3}{6}-\frac{x^2}{4}+\frac{x}{12},x\in \left[ 0,1 \right) .
+\\
+b_3\left( x \right) =\frac{\left( x-\left[ x \right] \right) ^3}{6}-\frac{\left( x-\left[ x \right] \right) ^2}{4}+\frac{\left( x-\left[ x \right] \right)}{12},\left| b_3\left( x \right) \right|\leqslant \frac{2\sqrt{3}-3}{36},x\in \mathbb{R} .
+\\
+\\
+b_4\left( x \right) =\frac{x^4}{24}-\frac{x^3}{12}+\frac{x^2}{24}-\frac{1}{720},x\in \left[ 0,1 \right) .
+\\
+b_4\left( x \right) =\frac{\left( x-\left[ x \right] \right) ^4}{24}-\frac{\left( x-\left[ x \right] \right) ^3}{12}+\frac{\left( x-\left[ x \right] \right) ^2}{24}-\frac{1}{720},\left| b_4\left( x \right) \right|\leqslant \frac{1}{720},x\in \mathbb{R} .
+\end{gather*}
+\end{conclusion}
+
+\begin{example}\label{example:4.461111}
+估计$\sum_{k=1}^n{\frac{1}{k}},n\rightarrow \infty $.
+\end{example}
+\begin{solution}
+{\color{blue}解法一:}
+一方面,对\(\forall n\in\mathbb{N}\)我们有
+\[
+\sum_{k = 1}^n\frac{1}{k}=\sum_{k = 1}^n\int_{k}^{k + 1}\frac{1}{k}dx\geqslant\sum_{k = 1}^n\int_{k}^{k + 1}\frac{1}{x}dx=\int_{1}^{n + 1}\frac{1}{x}dx=\ln(n + 1).
+\]
+另一方面,对\(\forall n\in\mathbb{N}\)我们也有
+\[
+\sum_{k = 1}^n\frac{1}{k}=1+\sum_{k = 2}^n\int_{k - 1}^{k}\frac{1}{k}dx\leqslant1+\sum_{k = 2}^n\int_{k - 1}^{k}\frac{1}{x}dx=1+\int_{1}^{n}\frac{1}{x}dx=1+\ln n.
+\]
+于是对\(\forall n\in\mathbb{N}\)都有
+\[
+\ln(n + 1)\leqslant\sum_{k = 1}^n\frac{1}{k}\leqslant1+\ln n.
+\]
+从而对\(\forall n\in\mathbb{N}\)都有
+\[
+\frac{\ln(n + 1)}{\ln n}\leqslant\frac{\sum\limits_{k = 1}^n\frac{1}{k}}{\ln n}\leqslant\frac{1}{\ln n}+1.
+\]
+令\(n\rightarrow\infty\),由夹逼准则可知\(\lim_{n\rightarrow\infty}\frac{\sum\limits_{k = 1}^n\frac{1}{k}}{\ln n}=1\).即\(\sum_{k = 1}^n\frac{1}{k}\sim\ln n\),\(n\rightarrow\infty\).
+
+{\color{blue}解法二(\hyperref[proposition:0阶欧拉麦克劳林公式(0阶E-M公式)]{E-M公式}):}
+由\hyperref[proposition:0阶欧拉麦克劳林公式(0阶E-M公式)]{E-M公式}可得
+\begin{align}\label{equation:4.4617}
+\sum_{k = 1}^n\frac{1}{k}=\int_1^n\frac{1}{x}dx+\frac{1+\frac{1}{n}}{2}-\int_1^n\left(x - [x]-\frac{1}{2}\right)\frac{1}{x^2}dx
+=\ln n+\frac{1}{2n}+\frac{1}{2}-\int_1^n\left(x - [x]-\frac{1}{2}\right)\frac{1}{x^2}dx.
+\end{align}
+因为\(\int_1^n\left(x - [x]-\frac{1}{2}\right)\frac{1}{x^2}dx\leqslant\int_1^n\frac{1}{2x^2}dx\),而\(\lim_{n\rightarrow\infty}\int_1^n\frac{1}{2x^2}dx\)存在,所以可设
+\[
+\lim_{n\rightarrow\infty}\int_1^n\left(x - [x]-\frac{1}{2}\right)\frac{1}{x^2}dx=\int_1^{+\infty}\left(x - [x]-\frac{1}{2}\right)\frac{1}{x^2}dx\triangleq C<\infty.
+\]
+于是\(\int_1^n\left(x - [x]-\frac{1}{2}\right)\frac{1}{x^2}dx = C-\int_n^{+\infty}\left(x - [x]-\frac{1}{2}\right)\frac{1}{x^2}dx\).从而
+\begin{align*}
+\sum_{k = 1}^n\frac{1}{k}&=\ln n+\frac{1}{2n}+\frac{1}{2}-\int_1^n\left(x - [x]-\frac{1}{2}\right)\frac{1}{x^2}dx\\
+&=\ln n+\frac{1}{2n}+\frac{1}{2}-\left[C-\int_n^{+\infty}\left(x - [x]-\frac{1}{2}\right)\frac{1}{x^2}dx\right]\\
+&=\ln n+\frac{1}{2n}+\frac{1}{2}-C+\int_n^{+\infty}\left(x - [x]-\frac{1}{2}\right)\frac{1}{x^2}dx\\
+&\leqslant\ln n+\frac{1}{2n}+\frac{1}{2}-C+\int_n^{+\infty}\frac{1}{2x^2}dx\\
+&=\ln n+\frac{1}{2n}+\frac{1}{2}-C+\frac{1}{2n}.
+\end{align*}
+故\(\sum_{k=1}^n{\frac{1}{k}}=\ln n+\frac{1}{2}-C+\frac{1}{2n}+O\left( \frac{1}{n} \right) =\ln n+\frac{1}{2}-C++O\left( \frac{1}{n} \right)\),\(\forall n\in\mathbb{N}\).此时令\(\frac{1}{2}-C=\frac{1}{2}-\int_1^{+\infty}\left(x - [x]-\frac{1}{2}\right)\frac{1}{x^2}dx\triangleq\gamma\)(欧拉常数).则
+\begin{align}\label{equation:4.461888}
+\sum_{k=1}^n{\frac{1}{k}}=\ln n+\gamma+O\left( \frac{1}{n} \right),\forall n\in\mathbb{N}.
+\end{align}
+由\hyperlink{remark:利用0阶E-M公式精细估阶的构造}{$b_n(x)$的构造和分部积分}可知,上述结果只是对$\sum_{k=1}^n{\frac{1}{k}}$的一个最粗糙的估计.实际上,我们可以利用分部积分得到更加精细的估计.记$b_1(x)=x-[x]-\frac{1}{2},b_2\left( x \right) =\frac{1}{2}\left( x-\left[ x \right] \right) ^2-\frac{1}{2}\left( x-\left[ x \right] \right) +\frac{1}{12}$.则\hyperlink{b2性质}{不难发现}$b_2(x)$是连续且周期为1的函数,$b_2(x)$是$b_1(x)$在$\mathbb{R}$上的一个原函数,并且$|b_2(x)|\leq \frac{1}{12},x\in \mathbb{R}$.
+而由Dirichlet判别法可知$\int_1^{+\infty}{\frac{b_1\left( x \right)}{x^2}dx}$收敛,于是设$\int_1^{+\infty}{\frac{b_1\left( x \right)}{x^2}dx}\triangleq C$.从而
+再对\eqref{equation:4.4617}分部积分得到
+\begin{align}
+\sum_{k=1}^n{\frac{1}{k}}&=\ln n+\frac{1}{2n}+\frac{1}{2}-\int_1^n{\frac{b_1\left( x \right)}{x^2}dx}=\ln n+\frac{1}{2n}+\frac{1}{2}-\left( \int_1^{+\infty}{\frac{b_1\left( x \right)}{x^2}dx}-\int_n^{+\infty}{\frac{b_1\left( x \right)}{x^2}dx} \right) 
+\nonumber
+\\
+&=\ln n+\frac{1}{2n}+\frac{1}{2}-C+\int_n^{+\infty}{\frac{b_1\left( x \right)}{x^2}dx}=\ln n+\frac{1}{2n}+\frac{1}{2}-C+\int_n^{+\infty}{\frac{1}{x^2}db_2\left( x \right)}
+\nonumber
+\\
+&=\ln n+\frac{1}{2n}+\frac{1}{2}-C+\frac{b_2\left( x \right)}{x^2}\Big|_{n}^{+\infty}+2\int_n^{+\infty}{\frac{b_2\left( x \right)}{x^3}dx}
+\nonumber
+\\
+&=\ln n+\frac{1}{2n}+\frac{1}{2}-C+2\int_n^{+\infty}{\frac{b_2\left( x \right)}{x^3}dx}-\frac{b_2\left( n \right)}{n^2}.再对\eqref{equation:4.4617}分部积分得到
+\label{equation:4.4616}
+\end{align}
+又由$\left| b_2\left( x \right) \right|\leqslant \frac{1}{12},\forall x\in \mathbb{R} $可知
+\begin{align*}
+\left| 2\int_n^{+\infty}{\frac{b_2\left( x \right)}{x^3}dx}-\frac{b_2\left( n \right)}{n^2} \right|\leqslant 2\left| \int_n^{+\infty}{\frac{b_2\left( x \right)}{x^3}dx} \right|+\frac{\left| b_2\left( n \right) \right|}{n^2}\leqslant \frac{1}{6}\left| \int_n^{+\infty}{\frac{1}{x^3}dx} \right|+\frac{1}{12n^2}=\frac{1}{6n^2},\forall n\in \mathbb{N} .
+\end{align*}
+即
+\begin{align}\label{equation:4.4618}
+2\int_n^{+\infty}{\frac{b_2\left( x \right)}{x^3}dx}-\frac{b_2\left( n \right)}{n^2}=O\left( \frac{1}{n^2} \right) ,\forall n\in \mathbb{N} .
+\end{align}
+再结合\eqref{equation:4.4616}和\eqref{equation:4.4618}式可得
+\begin{align*}
+\sum_{k=1}^n{\frac{1}{k}}=\ln n+\frac{1}{2n}+\frac{1}{2}-C+O\left( \frac{1}{n^2} \right) ,\forall n\in \mathbb{N} .
+\end{align*}
+记$\gamma \triangleq=\frac{1}{2}-C$($\gamma$为欧拉常数),则我们就得到了比\eqref{equation:4.461888}式更加精细的估计:
+\begin{align*}
+\sum_{k=1}^n{\frac{1}{k}}=\ln n+\gamma +\frac{1}{2n}+O\left( \frac{1}{n^2} \right) ,\forall n\in \mathbb{N} .
+\end{align*}
+\end{solution}
+
+\begin{example}
+计算
+\[
+\lim_{m\rightarrow \infty} \sum_{n=1}^m{\left( -1 \right) ^{n-1}\frac{\ln n}{n}}.
+\]
+\end{example}
+\begin{note}
+\textbf{估计交错级数的想法:将原交错级数分奇偶子列,观察奇偶子列的关系(一般奇偶子列的阶相同),再估计奇子列或偶子列,进而得到原级数的估计.}
+\end{note}
+\begin{solution}
+注意到原级数的奇子列有
+\[
+\sum_{n = 1}^{2m - 1}(-1)^{n - 1}\frac{\ln n}{n}=\sum_{n = 1}^{2m - 2}(-1)^{n - 1}\frac{\ln n}{n}+(-1)^{2m - 2}\frac{\ln(2m - 1)}{2m - 1}=\sum_{n = 1}^{2m - 2}(-1)^{n - 1}\frac{\ln n}{n}+\frac{\ln(2m - 1)}{2m - 1}, \forall m\in\mathbb{N}.
+\]
+从而
+\begin{align}\label{equation:4.473.1}
+\sum_{n = 1}^{2m - 1}(-1)^{n - 1}\frac{\ln n}{n}=\sum_{n = 1}^{2m - 2}(-1)^{n - 1}\frac{\ln n}{n}+o(1), m\rightarrow +\infty.
+\end{align}
+因此我们只需要估计原级数的偶子列\(\sum_{n = 1}^{2m}(-1)^{n - 1}\frac{\ln n}{n}\)即可.又注意到
+\begin{align}
+\sum_{n = 1}^{2m}(-1)^{n - 1}\frac{\ln n}{n}&=\sum_{n = 1}^{m}\left[(-1)^{2n - 2}\frac{\ln(2n - 1)}{2n - 1}+(-1)^{2n - 1}\frac{\ln 2n}{2n}\right]
+=\sum_{n = 1}^{m}\left[\frac{\ln(2n - 1)}{2n - 1}-\frac{\ln 2n}{2n}\right]
+\nonumber
+\\
+&=\sum_{n = 1}^{2m}\frac{\ln n}{n}-\sum_{n = 1}^{m}\frac{\ln 2n}{2n}-\sum_{n = 1}^{m}\frac{\ln 2n}{2n}
+=\sum_{n = 1}^{2m}\frac{\ln n}{n}-\sum_{n = 1}^{m}\frac{\ln 2n}{n}
+\nonumber
+\\
+&=\sum_{n = 1}^{2m}\frac{\ln n}{n}-\sum_{n = 1}^{m}\frac{\ln 2 + \ln n}{n}.\label{equation:4.471.1}
+\end{align}
+由例题\hyperref[example:4.461111]{例题\ref{example:4.461111}}可知
+\begin{align}\label{equation:4.471.2}
+\sum_{n = 1}^{m}\frac{\ln 2}{n}=\ln 2(\ln m + \gamma + o(1))=\ln 2\cdot\ln m + \gamma\ln 2 + o(1), m\rightarrow +\infty.
+\end{align}
+又由\hyperref[proposition:0阶欧拉麦克劳林公式(0阶E-M公式)]{E-M公式}可知
+\begin{align}
+\sum_{n = 1}^{m}\frac{\ln n}{n}&=\frac{\ln m}{2m}+\int_{1}^{m}\frac{\ln x}{x}dx+\int_{1}^{m}\left(x - [x] - \frac{1}{2}\right)\frac{1 - \ln x}{x^2}dx
+\nonumber
+\\
+&=\frac{\ln m}{2m}+\frac{1}{2}\ln^2m+\int_{1}^{m}\left(x - [x] - \frac{1}{2}\right)\frac{1 - \ln x}{x^2}dx.\label{equation:4.472.1}
+\end{align}
+因为
+\[
+\left|\int_{1}^{m}\left(x - [x] - \frac{1}{2}\right)\frac{1 - \ln x}{x^2}dx\right|\leqslant\frac{1}{2}\left|\int_{1}^{m}\frac{1 - \ln x}{x^2}dx\right|, \forall m\in\mathbb{N}.
+\]
+并且\(\int_{1}^{m}\frac{1 - \ln x}{x^2}dx\)收敛,所以\(\lim_{m\rightarrow +\infty}\int_{1}^{m}\left(x - [x] - \frac{1}{2}\right)\frac{1 - \ln x}{x^2}dx=\int_{1}^{+\infty}\left(x - [x] - \frac{1}{2}\right)\frac{1 - \ln x}{x^2}dx = C < \infty\).即
+\begin{align}\label{equation:4.472.2}
+\int_{1}^{m}\left(x - [x] - \frac{1}{2}\right)\frac{1 - \ln x}{x^2}dx = C + o(1), m\rightarrow +\infty. 
+\end{align}
+于是结合\eqref{equation:4.472.1}\eqref{equation:4.472.2}式可得
+\begin{align}
+\sum_{n = 1}^{m}\frac{\ln n}{n}&=\frac{\ln m}{2m}+\frac{1}{2}\ln^2m+\int_{1}^{m}\left(x - [x] - \frac{1}{2}\right)\frac{1 - \ln x}{x^2}dx
+\nonumber
+\\
+&= o(1)+\frac{1}{2}\ln^2m + C + o(1)
+\nonumber
+\\
+&=\frac{1}{2}\ln^2m + C + o(1), m\rightarrow +\infty.\label{equation:4.471.3}
+\end{align}
+因此由\eqref{equation:4.471.1}\eqref{equation:4.471.2}\eqref{equation:4.471.3}式可得
+\begin{align*}
+\sum_{n = 1}^{2m}(-1)^{n - 1}\frac{\ln n}{n}&=\sum_{n = 1}^{2m}\frac{\ln n}{n}-\sum_{n = 1}^{m}\frac{\ln 2 + \ln n}{n}
+=\frac{1}{2}\ln^22m + C + o(1)-\left[\ln 2\cdot\ln m + \gamma\ln 2 + o(1)+\frac{1}{2}\ln^2m + C + o(1)\right]\\
+&=\frac{1}{2}\ln^22m - \frac{1}{2}\ln^2m - \ln 2\cdot\ln m - \gamma\ln 2 + o(1)
+=\frac{1}{2}(\ln 2 + \ln m)^2 - \frac{1}{2}\ln^2m - \ln 2\cdot\ln m - \gamma\ln 2 + o(1)\\
+&=\frac{\ln^22}{2}-\gamma\ln 2 + o(1), m\rightarrow +\infty.
+\end{align*}
+即\(\lim_{m\rightarrow +\infty}\sum_{n = 1}^{2m}(-1)^{n - 1}\frac{\ln n}{n}=\frac{\ln^22}{2}-\gamma\ln 2\).再结合\eqref{equation:4.473.1}式可得
+\[
+\lim_{m\rightarrow +\infty}\sum_{n = 1}^{2m - 1}(-1)^{n - 1}\frac{\ln n}{n}=\lim_{m\rightarrow +\infty}\sum_{n = 1}^{2m - 2}(-1)^{n - 1}\frac{\ln n}{n}=\frac{\ln^22}{2}-\gamma\ln 2.
+\]
+故\(\lim_{m\rightarrow +\infty}\sum_{n = 1}^{m}(-1)^{n - 1}\frac{\ln n}{n}=\frac{\ln^22}{2}-\gamma\ln 2\).
+\end{solution}
+
+\begin{example}
+设\(f\in C^1[1,+\infty)\)且\(\int_{1}^{\infty}|f'(x)|dx<\infty\),证明\(\int_{1}^{\infty}f(x)dx\)收敛等价于\(\lim_{n\rightarrow\infty}\sum_{k = 1}^{n}f(k)\)存在.
+\end{example}
+\begin{note}
+关键想法参考:\hyperref[proposition:0阶欧拉麦克劳林公式(0阶E-M公式)]{E-M公式}和\hyperref[proposition:反常积分与其子列极限存在命题]{命题\ref{proposition:反常积分与其子列极限存在命题}}.
+\end{note}
+\begin{proof}
+由\hyperref[proposition:0阶欧拉麦克劳林公式(0阶E-M公式)]{E-M公式}可知
+\begin{align}\label{equation:4.481.1}
+\sum_{k = 1}^n f(k)=\frac{f(1) + f(n)}{2}+\int_1^n f(x)dx+\int_1^n\left(x - [x] - \frac{1}{2}\right)f^\prime(x)dx.
+\end{align}
+注意到\(0\leqslant\left|\left(x - [x] - \frac{1}{2}\right)f^\prime(x)\right|\leqslant\frac{1}{2}\left|f^\prime(x)\right|\),并且\(\int_1^{\infty}\left|f^\prime(x)\right|dx\)收敛,因此\(\int_1^{\infty}\left|\left(x - [x] - \frac{1}{2}\right)f^\prime(x)\right|dx\)也收敛.从而\(\int_1^{\infty}\left(x - [x] - \frac{1}{2}\right)f^\prime(x)dx\)也收敛,故由\(Henie\)归结原则可知\(\lim_{n\rightarrow +\infty}\int_1^n\left(x - [x] - \frac{1}{2}\right)f^\prime(x)dx\)存在.
+
+\((1)\)若\(\int_1^{\infty}f(x)dx\)存在,则由\(Henie\)归结原则可知\(\lim_{n\rightarrow +\infty}\int_1^n f(x)dx\)存在.又由\(\int_1^{\infty}\left|f^\prime(x)\right|dx < \infty\)可知\(\int_1^{\infty}f^\prime(x)dx\)收敛.于是
+\[
+\lim_{x\rightarrow +\infty}[f(x) - f(1)]=\lim_{x\rightarrow +\infty}\int_1^x f^\prime(y)dy=\int_1^{\infty}f^\prime(x)dx < \infty.
+\]
+由此可知\(\lim_{x\rightarrow +\infty}f(x)\)存在.从而由\(Henie\)归结原则可知\(\lim_{n\rightarrow +\infty}f(n)\)也存在.又由\(\lim_{n\rightarrow +\infty}\int_1^n\left(x - [x] - \frac{1}{2}\right)f^\prime(x)dx\)存在,再结合\eqref{equation:4.481.1}式可知\(\lim_{n\rightarrow +\infty}\sum_{k = 1}^n f(k)\)存在.
+
+\((2)\)若\(\lim_{n\rightarrow +\infty}\sum_{k = 1}^n f(k)\)存在,则\(\lim_{x\rightarrow +\infty}f(x)=\lim_{n\rightarrow +\infty}f(n)=0\).又由\(\lim_{n\rightarrow +\infty}\int_1^n\left(x - [x] - \frac{1}{2}\right)f^\prime(x)dx\)存在,再结合\eqref{equation:4.481.1}式可知\(\lim_{n\rightarrow +\infty}\int_1^n f(x)dx\)也存在.
+于是对\(\forall x\geqslant1\),一定存在\(n\in\mathbb{N}\),使得\(n\leqslant x < n + 1\).从而可得
+\begin{align}\label{equation:4.481.3}
+\int_1^x f(x)dx=\int_1^n f(x)dx+\int_n^x f(x)dx. 
+\end{align}
+并且
+\begin{align}\label{equation:4.481.2}
+\int_n^x f(x)dx\leqslant\int_n^x\left|f(x)\right|dx\leqslant\int_n^{n + 1}\left|f(x)\right|dx\leqslant\sup_{y\geqslant n}\left|f(y)\right|.
+\end{align}
+对\eqref{equation:4.481.2}式两边同时令\(x\rightarrow +\infty\),则\(n\rightarrow +\infty\).进而可得
+\[
+\lim_{x\rightarrow +\infty}\int_n^x f(x)dx\leqslant\lim_{n\rightarrow +\infty}\sup_{y\geqslant n}\left|f(y)\right|={\varlimsup_{x\rightarrow +\infty}}\left|f(x)\right|.
+\]
+由于此时\(\lim_{x\rightarrow +\infty}f(x)=0\),因此\({\varlimsup_{x\rightarrow +\infty}}\left|f(x)\right|=\lim_{x\rightarrow +\infty}\left|f(x)\right|=\lim_{x\rightarrow +\infty}f(x)=0\).从而
+\[
+\lim_{x\rightarrow +\infty}\int_n^x f(x)dx\leqslant{\varlimsup_{x\rightarrow +\infty}}\left|f(x)\right|=0.
+\]
+故\(\lim_{x\rightarrow +\infty}\int_n^x f(x)dx = 0\).于是再对\eqref{equation:4.481.3}式两边同时令\(x\rightarrow +\infty\),则\(n\rightarrow +\infty\).从而可得
+\[
+\int_1^{\infty}f(x)dx=\lim_{x\rightarrow +\infty}\int_1^x f(x)dx=\lim_{n\rightarrow +\infty}\int_1^n f(x)dx+\lim_{x\rightarrow +\infty}\int_n^x f(x)dx=\lim_{n\rightarrow +\infty}\int_1^n f(x)dx.
+\]
+又因为此时\(\lim_{n\rightarrow +\infty}\int_1^n f(x)dx\)存在,所以\(\int_1^{\infty}f(x)dx\)也存在.
+\end{proof}
+
+\begin{example}
+用积分放缩法得到\(\sum_{k = 2}^{n}\frac{1}{k\ln k},n\to\infty\)的等价无穷大.
+\end{example}
+\begin{proof}
+注意到对\(\forall n\geqslant 2\)且\(n\in\mathbb{N}\),都有
+\begin{align}\label{equation:4.471}
+\sum_{k = 2}^n\frac{1}{k\ln k}&=\sum_{k = 2}^n\int_{k}^{k + 1}\frac{1}{k\ln k}dx
+\geqslant\sum_{k = 2}^n\int_{k}^{k + 1}\frac{1}{x\ln x}dx
+=\int_{2}^{n + 1}\frac{1}{x\ln x}dx
+=\ln\ln(n + 1) - \ln\ln 2.
+\end{align}
+同时,也有
+\begin{align}\label{equation:4.472}
+\sum_{k = 2}^n\frac{1}{k\ln k}&=\sum_{k = 2}^n\int_{k - 1}^{k}\frac{1}{k\ln k}dx
+\leqslant\sum_{k = 2}^n\int_{k - 1}^{k}\frac{1}{x\ln x}dx
+=\int_{1}^{n}\frac{1}{x\ln x}dx
+=\ln\ln n.
+\end{align}
+从而对\(\forall n\geqslant 2\)且\(n\in\mathbb{N}\),由\eqref{equation:4.471}\eqref{equation:4.472}式可得
+\[
+\ln\ln(n + 1) - \ln\ln 2\leqslant\sum_{k = 2}^n\frac{1}{k\ln k}\leqslant\ln\ln n.
+\]
+于是对\(\forall n\geqslant 2\)且\(n\in\mathbb{N}\),我们有
+\[
+\frac{\ln\ln(n + 1) - \ln\ln 2}{\ln\ln n}\leqslant\frac{\sum\limits_{k = 2}^n\frac{1}{k\ln k}}{\ln\ln n}\leqslant 1.
+\]
+令\(n\rightarrow\infty\),由夹逼准则可得\(\lim_{n\rightarrow\infty}\frac{\sum\limits_{k = 2}^n\frac{1}{k\ln k}}{\ln\ln n}=1\).即\(\sum_{k = 2}^n\frac{1}{k\ln k}\sim\ln\ln n\),\(n\rightarrow\infty\).
+\end{proof}
+
+\begin{example}
+用积分放缩法得到\(\sum_{n = 1}^{\infty}x^{n^{2}},x\to1^{-}\)的等价无穷大.
+\end{example}
+\begin{proof}
+注意到对\(\forall x\in(0,1)\),固定\(x\),都有
+\begin{align}\label{equation:4.481}
+\sum_{n = 1}^{\infty}x^{n^2}&=-1 + \sum_{n = 0}^{\infty}x^{n^2}
+=-1 + \sum_{n = 0}^{\infty}\int_{n}^{n + 1}x^{n^2}dt
+\geqslant -1 + \sum_{n = 0}^{\infty}\int_{n}^{n + 1}x^{t^2}dt
+=-1 + \lim_{n\rightarrow\infty}\int_{0}^{n}x^{t^2}dt.
+\end{align}
+同时也有
+\begin{align}\label{equation:4.482}
+\sum_{n = 1}^{\infty}x^{n^2}&=\sum_{n = 1}^{\infty}\int_{n - 1}^{n}x^{n^2}dt
+\leqslant\sum_{n = 1}^{\infty}\int_{n - 1}^{n}x^{t^2}dt
+=\lim_{n\rightarrow\infty}\int_{0}^{n}x^{t^2}dt.
+\end{align}
+又由于\(x\in(0,1)\),因此\(\ln x\in(-\infty,0)\).从而
+\begin{align*}
+\int_{0}^{\infty}x^{t^2}dt=\int_{0}^{\infty}e^{t^2\ln x}dt
+\xlongequal{\text{令}y = t\sqrt{-\ln x}}\frac{1}{\sqrt{-\ln x}}\int_{0}^{\infty}e^{-y^2}dy
+=\frac{\sqrt{\pi}}{2\sqrt{-\ln x}}.
+\end{align*}
+故$\int_{0}^{\infty}x^{t^2}dt=\frac{\sqrt{\pi}}{2\sqrt{-\ln x}}$收敛.于是由Henie归结原则可知
+\begin{align}\label{equation:4.483}
+\lim_{n\rightarrow\infty}\int_{0}^{n}x^{t^2}dt
+=\int_{0}^{\infty}x^{t^2}dt
+=\frac{\sqrt{\pi}}{2\sqrt{-\ln x}}.
+\end{align}
+从而对\(\forall x\in(0,1)\),结合\eqref{equation:4.481}\eqref{equation:4.482}\eqref{equation:4.483}式可得
+\begin{align*}
+-1+\frac{\sqrt{\pi}}{2\sqrt{-\ln x}}=-1+\lim_{n\rightarrow \infty} \int_1^n{x^{t^2}dt}\leqslant \sum_{n=1}^{\infty}{x^{n^2}}\leqslant \lim_{n\rightarrow \infty} \int_0^n{x^{t^2}dt}=\frac{\sqrt{\pi}}{2\sqrt{-\ln x}}.
+\end{align*}
+即
+\[
+-\sqrt{-\ln x}+\frac{\sqrt{\pi}}{2}\leqslant\sqrt{-\ln x}\sum_{n = 1}^{\infty}x^{n^2}\leqslant\frac{\sqrt{\pi}}{2},\forall x\in(0,1).
+\]
+令\(x\rightarrow 1^-\),则\(\lim_{x\rightarrow 1^-}\sqrt{-\ln x}\sum_{n = 1}^{\infty}x^{n^2}=\frac{\sqrt{\pi}}{2}\).即\(\sum_{n = 1}^{\infty}x^{n^2}\sim\frac{\sqrt{\pi}}{2\sqrt{-\ln x}}\),\(x\rightarrow 1^-\).
+
+又由$ln(1+x)\sim x,x \to 0$可知$-\ln x=-\ln \left( 1+x-1 \right) \sim 1-x,x\rightarrow 1^-$.因此
+\begin{align*}
+\sum_{n=1}^{\infty}{x^{n^2}}\sim \frac{\sqrt{\pi}}{2\sqrt{-\ln x}}\sim \frac{\sqrt{\pi}}{2\sqrt{1-x}},x\rightarrow 1^-.
+\end{align*}
+\end{proof}
+
+
+\end{document}

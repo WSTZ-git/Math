@@ -1,0 +1,118 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}} % 指定图片目录,后续可以直接使用图片文件名。
+
+% 例如:
+% \begin{figure}[h]
+% \centering
+% \includegraphics{image-01.01}
+% \label{fig:image-01.01}
+% \caption{图片标题}
+% \end{figure}
+
+\begin{document}
+
+\section{Stirling公式}
+
+对于阶乘问题,最好用的估计工具就是Stirling公式.与组合数相关的极限问题,都可以尝试将其全部转化为阶乘然后估计大小.
+
+\begin{theorem}[Stirling公式]\label{theorem:Stirling公式}
+\[
+n!\sim\sqrt{2\pi n}\left(\frac{n}{e}\right)^{n},n\to\infty.
+\]
+\end{theorem}
+\begin{note}
+提示:用欧拉麦克劳林公式估计\(\sum_{k = 1}^{n}\ln k,n\to\infty\)的渐近展开式, 以此结合 \hyperref[theorem:Wallis公式]{Wallis 公式}:\(\frac{(2n)!!}{(2n - 1)!!}\sim\sqrt{\pi n},n\to\infty\)证明.
+\end{note}
+\begin{proof}
+由\hyperref[proposition:0阶欧拉麦克劳林公式(0阶E-M公式)]{E-M公式}可知,对\(\forall n\in\mathbb{N}\),都有
+\begin{align}\label{equation:4.4911}
+\sum_{k = 1}^n\ln k&=\frac{\ln n}{2}+\int_1^n\ln xdx+\int_1^n\left(x - [x] - \frac{1}{2}\right)\frac{1}{x}dx
+=\frac{\ln n}{2}+n\ln n - n + 1+\int_1^n\left(x - [x] - \frac{1}{2}\right)\frac{1}{x}dx.
+\end{align}
+由Dirichlet判别法可知,\(\int_1^{+\infty}\left(x - [x] - \frac{1}{2}\right)\frac{1}{x}dx\)收敛.则可设\(\lim_{n\rightarrow\infty}\int_1^n\left(x - [x] - \frac{1}{2}\right)\frac{1}{x}dx=\int_1^{+\infty}\left(x - [x] - \frac{1}{2}\right)\frac{1}{x}dx\triangleq C_0<\infty\).
+记\(b_1(x)=x - [x] - \frac{1}{2}\),再令\(b_2(x)=\frac{1}{2}(x - [x])^2 - \frac{1}{2}(x - [x]) + \frac{1}{12}\),\(x\in\mathbb{R}\).则\hyperlink{b2性质}{不难发现}\(b_2(x)\)在\(\mathbb{R}\)上连续且周期为\(1\),并且
+\[
+b_2(x)=\int_0^x{b_1(y)dy}, \quad |b_2(x)|\leqslant\frac{1}{12}, \forall x\in\mathbb{R}.
+\]
+从而对\eqref{equation:4.4911}式使用分部积分可得
+\begin{align*}
+\sum_{k=1}^n{\ln k}&=\frac{\ln n}{2}+n\ln n-n+1+\int_1^n{\frac{b_1\left( x \right)}{x}dx}=\frac{\ln n}{2}+n\ln n-n+1+\int_1^{+\infty}{\frac{b_1\left( x \right)}{x}dx}-\int_n^{+\infty}{\frac{b_1\left( x \right)}{x}dx}
+\\
+&=\frac{\ln n}{2}+n\ln n-n+1+C_0-\int_n^{+\infty}{\frac{1}{x}db_2\left( x \right)}=\frac{\ln n}{2}+n\ln n-n+1+C_0-\frac{b_2\left( x \right)}{x}\Big|_{n}^{+\infty}-\int_n^{+\infty}{\frac{b_2\left( x \right)}{x^2}dx}
+\\
+&=\left( n+\frac{1}{2} \right) \ln n-n+1+C_0+\frac{b_2\left( n \right)}{n}-\int_n^{+\infty}{\frac{b_2\left( x \right)}{x^2}dx},\forall n\in\mathbb{N}.
+\end{align*}
+又因为\(|b_2(x)|\leqslant\frac{1}{12}\),\(\forall x\in\mathbb{R}\).所以对\(\forall n\in\mathbb{N}\),我们有
+\[
+\left|\frac{b_2(n)}{n} - \int_n^{+\infty}\frac{b_2(x)}{x^2}dx\right|\leqslant\frac{1}{12}\left(\frac{1}{n}+\int_n^{+\infty}\frac{1}{x^2}dx\right)=\frac{1}{6n}.
+\]
+故\(\frac{b_2(n)}{n} - \int_n^{+\infty}\frac{b_2(x)}{x^2}dx = O\left(\frac{1}{n}\right)\),\(\forall n\in\mathbb{N}\).于是再记\(C = 1 + C_0\),则
+\begin{align}\label{equation:4491}
+\sum_{k = 1}^n\ln k=\left(n + \frac{1}{2}\right)\ln n - n + C + O\left(\frac{1}{n}\right),\forall n\in\mathbb{N} .
+\end{align}
+注意到
+\begin{align}\label{equation:4492}
+(2n)!! = 2^n n!, n = 0,1,2,\cdots.
+\end{align}
+于是由\(Wallis\)公式:\(\frac{(2n)!!}{(2n - 1)!!}\sim\sqrt{\pi n}\),\(n\rightarrow\infty\).再结合\eqref{equation:4491}\eqref{equation:4492}可得
+\begin{align*}
+\sqrt{\pi}&=\underset{n\rightarrow \infty}{\lim}\frac{\left( 2n \right) !!}{\left( 2n-1 \right) !!\sqrt{n}}=\underset{n\rightarrow \infty}{\lim}\frac{\left[ \left( 2n \right) !! \right] ^2}{\left( 2n \right) !\sqrt{n}}=\underset{n\rightarrow \infty}{\lim}\frac{\left( 2^nn! \right) ^2}{\left( 2n \right) !\sqrt{n}}=\underset{n\rightarrow \infty}{\lim}\frac{4^nn!\cdot n!}{\left( 2n \right) !\sqrt{n}}
+\\
+&=\underset{n\rightarrow \infty}{\lim}\frac{4^nn!\prod\limits_{k=1}^n{k}}{\sqrt{n}\prod\limits_{k=n+1}^{2n}{k}}=\underset{n\rightarrow \infty}{\lim}\frac{4^nn!e^{\sum\limits_{k=1}^n{\ln k}}}{\sqrt{n}e^{\sum\limits_{k=1}^{2n}{\ln k}}}=\underset{n\rightarrow \infty}{\lim}\frac{4^nn!e^{\left( n+\frac{1}{2} \right) \ln n-n+C+O\left( \frac{1}{n} \right)}}{\sqrt{n}e^{\left( 2n+\frac{1}{2} \right) \ln 2n-2n+C+O\left( \frac{1}{n} \right)}}
+\\
+&=\underset{n\rightarrow \infty}{\lim}\frac{4^nn!e^{\left( n+\frac{1}{2} \right) \ln n-n+C+O\left( \frac{1}{n} \right) -\left[ \left( 2n+\frac{1}{2} \right) \ln 2n-2n+C+O\left( \frac{1}{n} \right) \right]}}{\sqrt{n}}=\underset{n\rightarrow \infty}{\lim}\frac{4^nn!e^{-n\ln n+n-\left( 2n+\frac{1}{2} \right) \ln 2+O\left( \frac{1}{n} \right)}}{\sqrt{n}}
+\\
+&=\underset{n\rightarrow \infty}{\lim}\frac{4^nn!2^{-2n-\frac{1}{2}}e^n}{n^n\sqrt{n}}e^{O\left( \frac{1}{n} \right)}=\underset{n\rightarrow \infty}{\lim}\frac{n!e^n}{n^n\sqrt{2n}}e^{O\left( \frac{1}{n} \right)}.
+\end{align*}
+从而\(\lim_{n\rightarrow\infty}\frac{n!e^n}{n^n\sqrt{2n}}=\frac{\sqrt{\pi}}{\lim\limits_{n\rightarrow\infty}e^{O\left(\frac{1}{n}\right)}}=\sqrt{\pi}\).因此\(\lim_{n\rightarrow\infty}\frac{n!}{\sqrt{n}\left(\frac{n}{e}\right)^n}=\lim_{n\rightarrow\infty}\frac{n!e^n}{n^n\sqrt{n}}=\sqrt{2\pi}\).故\(n!\sim\sqrt{2\pi n}\left(\frac{n}{e}\right)^n\),\(n\rightarrow\infty\).
+\end{proof}
+
+\begin{example}
+设\(n,v\)为正整数且\(1 < v < n\)，满足\(\lim_{n\rightarrow\infty}\frac{v-\frac{n}{2}}{\sqrt{n}}=\lambda>0\)，证明：\(\lim_{n\rightarrow\infty}\frac{\sqrt{n}}{2^n}C_n^v=\sqrt{\frac{2}{\pi}}e^{-2\lambda^2}\)。
+\end{example}
+\begin{proof}
+根据条件，显然在\(n\rightarrow\infty\)时\(v\)也会趋于无穷，设\(v = \frac{n}{2}+w\sqrt{n}\),则$w=\frac{v-\frac{n}{2}}{\sqrt{n}}$,从而\(\lim_{n\rightarrow\infty}w=\lambda>0\)，则有
+\begin{align*}
+\frac{\sqrt{n}}{2^n}C_n^v=\frac{\sqrt{n}}{2^n}\frac{n!}{v!(n - v)!},n!\sim\sqrt{2\pi n}\left(\frac{n}{e}\right)^n,n\to \infty.
+\end{align*}
+从而
+\begin{align*}
+\lim_{n\rightarrow \infty} \frac{\sqrt{n}}{2^n}C_{n}^{v}&=\underset{n\rightarrow \infty}{\lim}\frac{\sqrt{n}}{2^n}\frac{n!}{v!\left( n-v \right) !}=\lim_{n\rightarrow \infty} \frac{\sqrt{n}}{2^n}\frac{\sqrt{2\pi n}\left( \frac{n}{e} \right) ^n}{\sqrt{2\pi v}\left( \frac{v}{e} \right) ^v\sqrt{2\pi (n-v)}\left( \frac{n-v}{e} \right) ^{n-v}}
+\\
+&=\frac{1}{\sqrt{2\pi}}\lim_{n\rightarrow \infty} \frac{n^n}{2^nv^v(n-v)^{n-v}}\frac{n}{\sqrt{v(n-v)}}=\sqrt{\frac{2}{\pi}}e^{-2\lambda ^2}
+\\
+\Leftrightarrow &\lim_{n\rightarrow \infty} \frac{n^n}{2^n\left( \frac{n}{2}+w\sqrt{n} \right) ^v\left( \frac{n}{2}-w\sqrt{n} \right) ^{n-v}}\frac{n}{2\sqrt{v(n-v)}}=e^{-2\lambda ^2}.
+\end{align*}
+又
+\begin{align*}
+\lim_{n\rightarrow \infty} \frac{n}{2\sqrt{v(n-v)}}=\lim_{n\rightarrow \infty} \frac{n}{2\sqrt{\left( \frac{n}{2}+w\sqrt{n} \right) \left( \frac{n}{2}-w\sqrt{n} \right)}}=\lim_{n\rightarrow \infty} \frac{1}{\sqrt{1-\frac{4w^2}{\sqrt{n}}}}=1,
+\end{align*}
+故
+\begin{align}
+&\lim_{n\rightarrow \infty} \frac{n^n}{2^n\left( \frac{n}{2}+w\sqrt{n} \right) ^v\left( \frac{n}{2}-w\sqrt{n} \right) ^{n-v}}\frac{n}{2\sqrt{v(n-v)}}=e^{-2\lambda ^2}
+\nonumber
+\\
+&\Leftrightarrow \lim_{n\rightarrow \infty} \frac{n^{\left( \frac{n}{2}+w\sqrt{n} \right) +\left( \frac{n}{2}-w\sqrt{n} \right)}}{2^{\left( \frac{n}{2}+w\sqrt{n} \right) +\left( \frac{n}{2}-w\sqrt{n} \right)}\left( \frac{n}{2}+w\sqrt{n} \right) ^{\frac{n}{2}+w\sqrt{n}}\left( \frac{n}{2}-w\sqrt{n} \right) ^{\frac{n}{2}-w\sqrt{n}}}=e^{-2\lambda ^2}
+\nonumber
+\\
+&\Leftrightarrow \lim_{n\rightarrow \infty} \frac{n^{\left( \frac{n}{2}+w\sqrt{n} \right) +\left( \frac{n}{2}-w\sqrt{n} \right)}}{(n+2w\sqrt{n})^{\frac{n}{2}+w\sqrt{n}}(n-2w\sqrt{n})^{\frac{n}{2}-w\sqrt{n}}}=e^{-2\lambda ^2}
+\nonumber
+\\
+&\Leftrightarrow \lim_{n\rightarrow \infty} \frac{1}{\left( 1+\frac{2w}{\sqrt{n}} \right) ^{\frac{n}{2}+w\sqrt{n}}\left( 1-\frac{2w}{\sqrt{n}} \right) ^{\frac{n}{2}-w\sqrt{n}}}=e^{-2\lambda ^2}
+\nonumber
+\\
+&\Leftrightarrow \lim_{n\rightarrow \infty} \left[ \left( \frac{n}{2}+w\sqrt{n} \right) \ln \left( 1+\frac{2w}{\sqrt{n}} \right) +\left( \frac{n}{2}-w\sqrt{n} \right) \ln \left( 1-\frac{2w}{\sqrt{n}} \right) \right] =2\lambda ^2.\label{15641891651}
+\end{align}
+又由Taylor公式可得
+\begin{align*}
+&\left( \frac{n}{2}+w\sqrt{n} \right) \ln \left( 1+\frac{2w}{\sqrt{n}} \right) +\left( \frac{n}{2}-w\sqrt{n} \right) \ln \left( 1-\frac{2w}{\sqrt{n}} \right) 
+\\
+&=\left( \frac{n}{2}+w\sqrt{n} \right) \left( \frac{2w}{\sqrt{n}}-\frac{2w^2}{n}+O\left( \frac{1}{n\sqrt{n}} \right) \right) +\left( \frac{n}{2}-w\sqrt{n} \right) \left( -\frac{2w}{\sqrt{n}}-\frac{2w^2}{n}+O\left( \frac{1}{n\sqrt{n}} \right) \right) 
+\\
+&=w\sqrt{n}+w^2+O\left( \frac{1}{\sqrt{n}} \right) -w\sqrt{n}+w^2+O\left( \frac{1}{\sqrt{n}} \right) =2w^2+O\left( \frac{1}{\sqrt{n}} \right) ,n\to \infty.
+\end{align*}
+再结合$\underset{n\rightarrow \infty}{\lim}w=\lambda$可知\eqref{15641891651}式成立,因此结论得证.
+\end{proof}
+
+
+\end{document}

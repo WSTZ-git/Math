@@ -1,0 +1,789 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}} % 指定图片目录,后续可以直接使用图片文件名。
+
+% 例如:
+% \begin{figure}[h]
+% \centering
+% \includegraphics{image-01.01}
+% \label{fig:image-01.01}
+% \caption{图片标题}
+% \end{figure}
+
+\begin{document}
+
+\section{基本的渐进估计与求极限方法}
+
+\subsection{基本极限计算}
+
+\subsubsection{基本想法}
+
+\textbf{裂项}、\textbf{作差}、\textbf{作商}的想法是解决极限问题的基本想法.
+
+\begin{example}
+对正整数\(v\)，求极限\(\lim_{n\rightarrow\infty}\sum_{k = 1}^{n}\frac{1}{k(k + 1)\cdots(k + v)}\).
+\end{example}
+\begin{note}
+直接裂项即可.
+\end{note}
+\begin{solution}
+\begin{align*}
+\lim_{n\rightarrow \infty} \sum_{k=1}^n{\frac{1}{k(k+1)\cdots (k+v)}}&=\lim_{n\rightarrow \infty} \sum_{k=1}^n{\frac{1}{v}\left[ \frac{1}{k\left( k+1 \right) \cdots \left( k+v-1 \right)}-\frac{1}{\left( k+1 \right) \left( k+2 \right) \cdots \left( k+v \right)} \right]}
+\\
+&=\lim_{n\rightarrow \infty} \frac{1}{v}\left[ \frac{1}{v!}-\frac{1}{n\left( n+1 \right) \cdots \left( n+v \right)} \right] =\frac{1}{v!v}.
+\end{align*}
+\end{solution}
+
+\begin{example}
+设\(p_0 = 0,0\leq p_j\leq1,j = 1,2,\cdots\)。求\(\sum_{j = 1}^{\infty}\left(p_j\prod_{i = 0}^{j - 1}(1 - p_i)\right)+\prod_{j = 1}^{\infty}(1 - p_j)\)的值.
+\end{example}
+\begin{note}
+遇到求和问题,可以先观察是否存在裂项的结构.
+\end{note}
+\begin{solution}
+记$q_i=1-p_i$,则有
+\begin{align*}
+\sum_{j=1}^{\infty}{p_j\prod_{i=0}^{j-1}{\left( 1-p_i \right)}}+\prod_{j=1}^{\infty}{\left( 1-p_j \right)}=\sum_{j=1}^n{\left( 1-q_j \right) \prod_{i=0}^{j-1}{q_i}}+\prod_{i=0}^{\infty}{q_i}=\sum_{j=1}^{\infty}{\left( \prod_{i=0}^{j-1}{q_i}-\prod_{i=0}^j{q_i} \right)}+\prod_{i=0}^{\infty}{q_i}=q_0-\prod_{i=0}^{\infty}{q_i}+\prod_{i=0}^{\infty}{q_i}=q_0.
+\end{align*}
+\end{solution}
+
+
+\begin{example}
+设\(\vert x\vert < 1\)，求极限\(\lim_{n\rightarrow\infty}(1 + x)(1 + x^2)\cdots(1 + x^{2^n})\).
+\end{example}
+\begin{remark}
+如果把幂次\(1,2,2^2,\cdots\)改成\(1,2,3,\cdots\)，那么显然极限存在，但是并不能求出来，要引入别的特殊函数，省流就是：钓鱼题.
+\end{remark}
+\begin{note}
+平方差公式即可
+\end{note}
+\begin{solution}
+\begin{align*}
+\lim_{n\rightarrow \infty} (1+x)(1+x^2)\cdots (1+x^{2^n})&=\lim_{n\rightarrow \infty} \frac{(1-x)(1+x)(1+x^2)\cdots (1+x^{2^n})}{1-x}
+\\
+&=\lim_{n\rightarrow \infty} \frac{(1-x^2)(1+x^2)\cdots (1+x^{2^n})}{1-x}\\
+&=\cdots =\lim_{n\rightarrow \infty} \frac{1-x^{2^{n+1}}}{1-x}=\frac{1}{1-x}.
+\end{align*}
+\end{solution}
+
+\begin{example}
+对正整数\(n\)，方程\(\left(1 + \frac{1}{n}\right)^{n + t}=e\)的解记为\(t = t(n)\)，证明\(t(n)\)关于\(n\)递增并求极限\((t\to +\infty)\).
+\end{example}
+\begin{solution}
+解方程得到
+\begin{align*}
+\left(1 + \frac{1}{n}\right)^{n + t}=e\Leftrightarrow(n + t)\ln\left(1 + \frac{1}{n}\right)=1\Leftrightarrow t=\frac{1}{\ln\left(1 + \frac{1}{n}\right)}-n.
+\end{align*}
+设$f(x)=\frac{1}{\ln\left(1 + \frac{1}{x}\right)}-x,x>0$,则
+\begin{align*}
+f^\prime(x)=\frac{1}{\ln^{2}\left(1 + \frac{1}{x}\right)}\frac{1}{x^{2}+x}-1>0
+\Leftrightarrow\ln^{2}\left(1 + \frac{1}{x}\right)<\frac{1}{x^{2}+x}\Leftrightarrow\ln\mathrm{(}1+t)<\frac{t}{\sqrt{1+t}},t=\frac{1}{x}\in \left( 0,1 \right) .
+\end{align*}
+最后的不等式由\hyperref[proposition:关于ln的常用不等式1]{关于ln的常用不等式}可知显然成立,于是$f(x)$单调递增,故$t(n)=f(n)$也单调递增.再来求极限
+\[
+\lim_{n\rightarrow \infty} t\left( n \right) =\lim_{n\rightarrow \infty} \left( \frac{1}{\ln \left( 1+\frac{1}{n} \right)}-n \right) =\lim_{n\rightarrow \infty} \frac{1-n\ln \left( 1+\frac{1}{n} \right)}{\ln \left( 1+\frac{1}{n} \right)}=\lim_{x\rightarrow +\infty} \frac{1-x\ln \left( 1+\frac{1}{x} \right)}{\ln \left( 1+\frac{1}{x} \right)}=\lim_{x\rightarrow +\infty} \frac{1-x\ln \left( 1+\frac{1}{x} \right)}{\frac{1}{x}}=\frac{1}{2}.
+\]
+\end{solution}
+
+
+\begin{proposition}[数列常见的转型方式]\label{proposition:数列收敛的级数与累乘形式}
+数列常见的转型方式:
+
+(1) $\quad a_n = a_1 + \sum_{k=1}^{n-1} \left( a_{k+1} - a_k \right); $
+
+(2)$ \quad a_n = a_1 \prod_{k=1}^{n-1} \frac{a_{k+1}}{a_k}$; 
+
+(3) $\quad a_n = S_n - S_{n-1}, \text{其中} S_n = \sum_{k=1}^n a_k.$
+
+从而我们可以得到
+\begin{enumerate}
+\item 数列$\left\{ a_n \right\} _{n=1}^{\infty}$收敛的充要条件是$\sum\limits_{n=1}^{\infty}{\left( a_{n+1}-a_n \right)}$收敛.
+
+\item 数列 \(\{ a_n \}_{n = 1}^{\infty}\) (\(a_n\neq 0\))收敛的充要条件是 \(\prod_{n = 1}^{\infty} \frac{a_{n + 1}}{a_n}\) 收敛.
+\end{enumerate}
+\end{proposition}
+\begin{remark}
+在关于数列的问题中,\textbf{将原数列的等式或不等式条件转化为相邻两项的差或商的等式或不等式条件}的想法是非常常用的.
+\end{remark}
+\begin{note}
+这个命题给我们证明数列极限的存在性提供了一种想法:
+我们可以将数列的收敛性转化为级数的收敛性,或者将数列的收敛性转化为累乘的收敛性.而累乘可以通过取对数的方式转化成级数的形式,这样就可以利用级数的相关理论来证明数列的收敛性.
+
+这种想法的\textbf{具体操作方式:}
+
+(i)先令数列相邻两项作差或作商,将数列的极限写成其相邻两项的差的级数或其相邻两项的商的累乘形式.(如果是累乘的形式,那么可以通过取对数的方式将其转化成级数的形式.)
+
+(ii)若能直接证明累乘或级数收敛,就直接证明即可.若不能,则再利用级数的相关理论来证明上述构造的级数的收敛性,从而得到数列的极限的存在性.
+此时,我们一般会考虑这个级数的通项,然后去找一个通项能够控制住所求级数通项的收敛级数(几何级数等),最后利用级数的比较判别法来证明级数收敛
+\end{note}
+\begin{proof}
+\begin{enumerate}
+\item 必要性($\Rightarrow$)和充分性($\Leftarrow$)都可由$\underset{n\rightarrow \infty}{\lim}a_n=a_1+\underset{n\rightarrow \infty}{\lim}\sum_{k=1}^{n-1}{\left( a_{k+1}-a_k \right)}$直接得到.
+
+\item 必要性($\Rightarrow$)和充分性($\Leftarrow$)都可由$\underset{n\rightarrow \infty}{\lim}a_n=\underset{n\rightarrow \infty}{\lim}a_1\prod_{k=1}^{n-1}{\frac{a_{k+1}}{a_k}}$直接得到.
+\end{enumerate}
+\end{proof}
+
+\begin{example}
+设\(a_n=\left(\frac{(2n)!!}{(2n - 1)!!}\right)^2\frac{1}{2n + 1}\)，证明：数列\(a_n\)收敛到一个正数。
+\end{example}
+\begin{proof}
+由条件可得 \(\forall n\in \mathbb{N}_+\)，都有
+\begin{align*}
+\frac{a_{n+1}}{a_n}=\frac{\left( \frac{(2n+2)!!}{(2n+1)!!} \right) ^2\frac{1}{2n+3}}{\left( \frac{(2n)!!}{(2n-1)!!} \right) ^2\frac{1}{2n+1}}=\frac{\left( 2n+2 \right) ^2}{\left( 2n+1 \right) ^2}\cdot \frac{2n+1}{2n+3}=\frac{\left( 2n+2 \right) ^2}{\left( 2n+1 \right) \left( 2n+3 \right)}=1+\frac{1}{\left( 2n+1 \right) \left( 2n+3 \right)}>1.
+\end{align*}
+从而 \(\forall n\in \mathbb{N}_+\)，都有
+\begin{align}
+a_n=\prod_{k = 1}^{n - 1}\left[1+\frac{1}{(2k + 1)(2k + 3)}\right]=e^{\sum\limits_{k = 1}^{n - 1}\ln\left[1+\frac{1}{(2k + 1)(2k + 3)}\right]}. \label{example60-1.1}
+\end{align}
+注意到
+\[
+\ln\left[1+\frac{1}{(2n + 1)(2n + 3)}\right]\sim\frac{1}{(2n + 1)(2n + 3)},n\rightarrow\infty.
+\]
+而 \(\sum_{n = 1}^{\infty}\frac{1}{(2n + 1)(2n + 3)}\) 收敛，故 \(\lim_{n\rightarrow\infty}\sum_{k = 1}^{n - 1}\ln\left[1+\frac{1}{(2k + 1)(2k + 3)}\right]\) 存在。于是由 \eqref{example60-1.1}式可知
+\[
+\lim_{n\rightarrow\infty}a_n=\lim_{n\rightarrow\infty}e^{\sum\limits_{k = 1}^{n - 1}\ln\left[1+\frac{1}{(2k + 1)(2k + 3)}\right]}=e^{\lim\limits_{n\rightarrow\infty}\sum\limits_{k = 1}^{n - 1}\ln\left[1+\frac{1}{(2k + 1)(2k + 3)}\right]}
+\]
+也存在。
+\end{proof}
+
+
+\subsubsection{带ln的极限计算}
+通常，带着一堆\(\ln\)的极限算起来都非常烦人，并不是简单的一个泰勒就秒杀的，比如这种题.这种题不建议用泰勒，很多时候等价无穷小替换、拆项和加一项减一项会方便不少.
+
+\begin{remark}
+另外,做这种题一定要严格处理余项，不要想当然.
+\end{remark}
+\begin{example}
+求极限\(\lim_{x\rightarrow +\infty}\left(\frac{(2x^2 + 3x + 1)\ln x}{x\ln(1 + x)}\arctan x-\pi x\right)\)。
+\end{example}
+\begin{remark}
+做这种题一定要严格处理余项，不要想当然，比如下面的做法就是错的（过程和答案都不对）
+\[\frac{(2x^2 + 3x + 1)\ln x}{x\ln(1 + x)}\arctan x-\pi x\approx(2x + 3)\frac{\ln x}{\ln(1 + x)}\arctan x-\pi x\approx(2x + 3)\cdot1\cdot\frac{\pi}{2}-\pi x=\frac{3\pi}{2}.\]
+\end{remark}
+\begin{solution}
+根据洛必达法则，显然\(\lim_{x\rightarrow +\infty}\frac{\ln x}{\ln(1 + x)}=\lim_{x\rightarrow +\infty}\frac{\frac{1}{x}}{\frac{1}{1 + x}} = 1\)，拆分一下有
+\begin{align*}
+&\lim_{x\rightarrow +\infty}\left(\frac{(2x^2 + 3x + 1)\ln x}{x\ln(1 + x)}\arctan x-\pi x\right)\\
+=&\lim_{x\rightarrow +\infty}\left((2x + 3)\frac{\ln x}{\ln(1 + x)}\arctan x-\pi x\right)+\lim_{x\rightarrow +\infty}\frac{\ln x}{x\ln(1 + x)}\arctan x\\
+=&\lim_{x\rightarrow +\infty}\left(\frac{2x\ln x}{\ln(1 + x)}\arctan x-\pi x\right)+3\lim_{x\rightarrow +\infty}\frac{\ln x}{\ln(1 + x)}\arctan x\\
+=&2\lim_{x\rightarrow +\infty}x\left(\frac{\ln x}{\ln(1 + x)}\arctan x-\frac{\pi}{2}\right)+\frac{3}{2}\pi\\
+=&2\left(\lim_{x\rightarrow +\infty}\frac{x\ln x}{\ln(1 + x)}\left(\arctan x-\frac{\pi}{2}\right)+\frac{\pi}{2}\lim_{x\rightarrow +\infty}x\left(\frac{\ln x}{\ln(1 + x)}-1\right)\right)+\frac{3}{2}\pi\\
+=&2\left(\lim_{x\rightarrow +\infty}x\left(\arctan x-\frac{\pi}{2}\right)-\frac{\pi}{2}\lim_{x\rightarrow +\infty}\frac{x\ln(1 + \frac{1}{x})}{\ln(1 + x)}\right)+\frac{3}{2}\pi\\
+=&2\left(\lim_{x\rightarrow +\infty}\frac{\arctan x-\frac{\pi}{2}}{\frac{1}{x}}-\frac{\pi}{2}\lim_{x\rightarrow +\infty}\frac{1}{\ln(1 + x)}\right)+\frac{3}{2}\pi\\
+=&2\lim_{x\rightarrow +\infty}\frac{\frac{-1}{1 + x^2}}{-\frac{1}{x^2}}+\frac{3}{2}\pi=\frac{3}{2}\pi - 2.
+\end{align*}
+\end{solution}
+
+\subsubsection{幂指函数的极限问题}
+幂指函数的极限问题，一律写成\(e^{\ln}\)形式，并利用等价无穷小替换和加一项减一项去解决，方便.
+
+\begin{remark}
+不要用泰勒做这个题，因为你需要分别展开好几项直到余项是高阶无穷小才可以，等价无穷小替换则只需要看Taylor展开的第一项并且是严谨的，泰勒则需要展开好几项,计算量爆炸.  
+\end{remark}
+\begin{example}
+求极限\(\lim_{x\rightarrow0^{+}}\frac{x^{\sin x}-(\sin x)^{x}}{x^{3}\ln x}\)。
+\end{example}
+\begin{remark}
+不要用泰勒做这个题，因为你需要分别展开好几项直到余项是高阶无穷小才可以，等价无穷小替换则只需要看第一项并且是严谨的，泰勒则至少需要展开三项，计算量爆炸，大致如下
+\begin{align*}
+x^{\sin x}&=e^{\sin x\ln x}=1+\sin x\ln x+\frac{1}{2}\sin^{2}x\ln^{2}x+\frac{1}{6}\sin^{3}x\ln^{3}x+O(x^{4}\ln^{4}x)\\
+(\sin x)^{x}&=e^{x\ln\sin x}=1 + x\ln\sin x+\frac{1}{2}x^{2}\ln^{2}\sin x+\frac{1}{6}x^{3}\ln^{3}\sin x+O(x^{4}\ln^{4}\sin x)
+\end{align*}
+然后你不仅需要看第一项，还要检查并验证平方项，三次方项作差后对应的极限是零，麻烦. 
+\end{remark}
+\begin{note}
+先说明写成\(e^{\ln}\)形式后，指数部分都是趋于零的，然后等价无穷小替换即可.
+\end{note}
+\begin{solution}
+注意到\begin{align*}
+\lim_{x\rightarrow0^{+}}\sin x\ln x=\lim_{x\rightarrow0^{+}}x\ln x = 0, \lim_{x\rightarrow0^{+}}x\ln\sin x=\lim_{x\rightarrow0^{+}}\sin x\ln\sin x=\lim_{x\rightarrow0^{+}}x\ln x = 0.
+\end{align*}
+从而
+\begin{align*}
+\lim_{x\rightarrow 0^+} (\sin x)^x=\lim_{x\rightarrow 0^+} e^{x\ln\sin x}=1.
+\end{align*}
+于是我们有
+\begin{align*}
+&\lim_{x\rightarrow0^{+}}\frac{x^{\sin x}-(\sin x)^{x}}{x^{3}\ln x}=\lim_{x\rightarrow0^{+}}(\sin x)^{x}\frac{e^{\sin x\ln x - x\ln\sin x}-1}{x^{3}\ln x}=\lim_{x\rightarrow0^{+}}\frac{e^{\sin x\ln x - x\ln\sin x}-1}{x^{3}\ln x}\\
+=&\lim_{x\rightarrow0^{+}}\frac{\sin x\ln x - x\ln\sin x}{x^{3}\ln x}=\lim_{x\rightarrow0^{+}}\frac{\sin x\ln x - x\ln x + x\ln x - x\ln\sin x}{x^{3}\ln x}\\
+=&\lim_{x\rightarrow0^{+}}\frac{\sin x - x}{x^{3}}+\lim_{x\rightarrow0^{+}}\frac{\ln x - \ln\sin x}{x^{2}\ln x}=-\frac{1}{6}-\lim_{x\rightarrow0^{+}}\frac{\ln\frac{\sin x}{x}}{x^{2}\ln x}(\frac{\sin x}{x}\sim1 - \frac{1}{6}x^{2},x\to 0^+)\\
+=&-\frac{1}{6}-\lim_{x\rightarrow0^{+}}\frac{\ln(1 + \frac{\sin x - x}{x})}{x^{2}\ln x}=-\frac{1}{6}-\lim_{x\rightarrow0^{+}}\frac{\sin x - x}{x^{3}\ln x}=-\frac{1}{6}+\frac{1}{6}\lim_{x\rightarrow0^{+}}\frac{1}{\ln x}=-\frac{1}{6}.
+\end{align*}
+\end{solution}
+
+\begin{example}
+求极限\(\lim_{x\rightarrow\infty}x^{2}\left(e^{(1 + \frac{1}{x})^{x}} - \left(1 + \frac{1}{x}\right)^{ex}\right)\).
+\end{example}
+\begin{solution}
+注意到
+\begin{align*}
+\lim_{x\rightarrow\infty}\left(1 + \frac{1}{x}\right)^{x}=e,\lim_{x\rightarrow\infty}ex\ln\left(1 + \frac{1}{x}\right)=e.
+\end{align*}
+从而
+\begin{align*}
+\lim_{x\rightarrow 0^+} \left( 1+\frac{1}{x} \right) ^{ex}=\lim_{x\rightarrow 0^+} e^{ex\ln \left( 1+\frac{1}{x} \right)}=e^e.
+\end{align*}
+于是我们有
+\begin{align*}
+&\lim_{x\rightarrow\infty}x^{2}\left(e^{(1 + \frac{1}{x})^{x}} - \left(1 + \frac{1}{x}\right)^{ex}\right)=\lim_{x\rightarrow\infty}x^{2}\left(1 + \frac{1}{x}\right)^{ex}\left(e^{(1 + \frac{1}{x})^{x}-ex\ln(1 + \frac{1}{x})}-1\right)\\
+&=e^{e}\lim_{x\rightarrow\infty}x^{2}\left(e^{(1 + \frac{1}{x})^{x}-ex\ln(1 + \frac{1}{x})}-1\right)=e^{e}\lim_{x\rightarrow\infty}x^{2}\left(\left(1 + \frac{1}{x}\right)^{x}-ex\ln\left(1 + \frac{1}{x}\right)\right)\\
+&=e^{e}\lim_{x\rightarrow\infty}x^{2}\left(e^{x\ln(1 + \frac{1}{x})}-ex\ln\left(1 + \frac{1}{x}\right)\right)=e^{e + 1}\lim_{x\rightarrow\infty}x^{2}\left(e^{x\ln(1 + \frac{1}{x})-1}-x\ln\left(1 + \frac{1}{x}\right)\right)\\
+&\xlongequal{Taylor\text{展开}}e^{e + 1}\lim_{x\rightarrow\infty}x^{2}\frac{1}{2}\left(x\ln\left(1 + \frac{1}{x}\right)-1\right)^{2}=\frac{e^{e + 1}}{2}\lim_{x\rightarrow\infty}\left(x^{2}\ln\left(1 + \frac{1}{x}\right)-x\right)^{2}=\frac{e^{e + 1}}{8}
+\end{align*}
+\end{solution}
+
+
+
+\subsubsection{拟合法求极限}
+
+\begin{example}
+求极限\(\lim_{n\rightarrow\infty}\frac{\ln^3n}{\sqrt{n}}\sum_{k = 2}^{n - 2}\frac{1}{\ln k\ln(n - k)\ln(n + k)\sqrt{n + k}}\)。
+\end{example}
+\begin{note}
+核心想法是\textbf{拟合法},但是最后的极限估计用到了\textbf{分段估计}的想法.
+\end{note}
+\begin{proof}
+注意到\(\frac{\ln n}{\ln(2n)}\to1\)，所以
+\[
+\lim_{n\rightarrow\infty}\frac{\ln^3n}{\sqrt{n}}\sum_{k = 2}^{n - 2}\frac{1}{\ln k\ln(n - k)\ln(n + k)\sqrt{n + k}}=\lim_{n\rightarrow\infty}\frac{\ln^2n}{\sqrt{n}}\sum_{k = 2}^{n - 2}\frac{1}{\ln k\ln(n - k)\sqrt{n + k}}
+\]
+显然
+\[
+\lim_{n\rightarrow\infty}\frac{1}{\sqrt{n}}\sum_{k = 2}^{n - 2}\frac{1}{\sqrt{n + k}}=\lim_{n\rightarrow\infty}\frac{1}{n}\sum_{k = 2}^{n - 2}\frac{1}{\sqrt{1+\frac{k}{n}}}=\lim_{n\rightarrow\infty}\frac{1}{n}\sum_{k = 0}^{n - 1}\frac{1}{\sqrt{1+\frac{k}{n}}}=\int_{0}^{1}\frac{1}{\sqrt{1 + x}}dx=2\sqrt{2}-2
+\]
+我们用上面的东西来拟合，所以尝试证明
+\[
+\lim_{n\rightarrow\infty}\frac{1}{\sqrt{n}}\sum_{k = 2}^{n - 2}\frac{1}{\sqrt{n + k}}\left(\frac{\ln^2n}{\ln k\ln(n - k)}-1\right)=\lim_{n\rightarrow\infty}\frac{1}{n}\sum_{k = 2}^{n - 2}\frac{1}{\sqrt{1+\frac{k}{n}}}\left(\frac{\ln^2n}{\ln k\ln(n - k)}-1\right)=0
+\]
+注意求和里面的每一项都是正的，并且\(\frac{1}{\sqrt{1+\frac{k}{n}}}\in\left[\frac{1}{\sqrt{2}},1\right]\)，所以只需证
+\[
+\lim_{n\rightarrow\infty}\frac{1}{n}\sum_{k = 2}^{n - 2}\left(\frac{\ln^2n}{\ln k\ln(n - k)}-1\right)=0
+\]
+注意对称性，证明\(\lim_{n\rightarrow\infty}\frac{1}{n}\sum_{k = 2}^{\frac{n}{2}}\left(\frac{\ln^2n}{\ln k\ln(n - k)}-1\right)=0\)即可，待定一个\(m\)来分段放缩。
+首先容易看出数列\(\ln k\ln(n - k)\)在\(2\leq k\leq\frac{n}{2}\)时是单调递增的，这是因为
+\begin{align*}
+f(x)&=\ln x\ln(n - x),f^\prime(x)=\frac{\ln(n - x)}{x}-\frac{\ln x}{n - x}>0\\
+&\Leftrightarrow(n - x)\ln(n - x)>x\ln x,\forall x\in\left(2,\frac{n}{2}\right)
+\end{align*}
+显然成立，所以待定$m\in[2,\frac{n}{2}]$,于是
+\begin{align*}
+\frac{1}{n}\sum_{k = 2}^{m}\left(\frac{\ln^2n}{\ln k\ln(n - k)}-1\right)&\leq\frac{1}{n}\sum_{k = 2}^{m}\left(\frac{\ln^2n}{\ln 2\ln(n - 2)}-1\right)=\frac{m}{n}\left(\frac{\ln^2n}{\ln 2\ln(n - 2)}-1\right)\\
+\frac{1}{n}\sum_{k = m}^{\frac{n}{2}}\left(\frac{\ln^2n}{\ln k\ln(n - k)}-1\right)&\leq\frac{1}{n}\sum_{k = m}^{\frac{n}{2}}\left(\frac{\ln^2n}{\ln m\ln(n - m)}-1\right)\leq\frac{\ln^2n}{\ln m\ln(n - m)}-1
+\end{align*}
+为了让第一个趋于零，可以取\(m = \frac{n}{2\ln^2n}\)，然后代入检查第二个极限
+\[
+\lim_{n\rightarrow\infty}\frac{\ln^2n}{\ln m\ln(n - m)}-1=\lim_{n\rightarrow\infty}\frac{\ln^2n}{\ln\frac{n}{2\ln^2n}\ln\left(n-\frac{n}{2\ln^2n}\right)}-1 = 0
+\]
+所以结论得证（过程中严格来讲应补上取整符号，这里方便起见省略了）。
+\end{proof}
+
+
+
+
+\subsection{Taylor公式}
+
+\begin{theorem}[带Peano余项的Taylor公式]\label{theorem:带Peano余项的Taylor公式}
+设\(f\)在\(x = a\)是\(n\)阶右可微的,则
+\begin{gather}
+f(x)=\sum\limits_{k = 0}^{n}\frac{f^{(k)}(a)}{k!}(x - a)^{k}+o((x - a)^{n}),x \to a^{+}.
+\label{Taylor:eq1}
+\\
+f(x)=\sum\limits_{k = 0}^{n - 1}\frac{f^{(k)}(a)}{k!}(x - a)^{k}+O((x - a)^{n}),x \to a^{+}.\label{Taylor:eq2}
+\end{gather}
+\end{theorem}
+\begin{note}
+用Taylor公式计算极限,如果展开$n$项还是不方便计算,那么就多展开一项或几项即可.
+\end{note}
+\begin{proof}
+(1)要证明\eqref{Taylor:eq1}式等价于证明
+\begin{align*}
+\underset{x\rightarrow a^+}{\lim}\frac{f\left( x \right) -\sum\limits_{k=0}^n{\frac{f^{(k)}\left( a \right)}{k!}\left( x-a \right) ^k}}{\left( x-a \right) ^n}=0.
+\end{align*}
+对上式左边反复使用$n-1$次$L'Hospital'rules$,可得
+\begin{align*}
+&\underset{x\rightarrow a^+}{\lim}\frac{f\left( x \right) -\sum\limits_{k=0}^n{\frac{f^{(k)}\left( a \right)}{k!}\left( x-a \right) ^k}}{\left( x-a \right) ^n}\xlongequal{L'Hospital'rules}\underset{x\rightarrow a^+}{\lim}\frac{f'\left( x \right) -\sum\limits\limits_{k=1}^n{\frac{f^{(k)}\left( a \right)}{\left( k-1 \right) !}\left( x-a \right) ^{k-1}}}{n\left( x-a \right) ^{n-1}}
+\\
+&\xlongequal{L'Hospital'rules}\underset{x\rightarrow a^+}{\lim}\frac{f''\left( x \right) -\sum\limits_{k=2}^n{\frac{f^{(k)}\left( a \right)}{\left( k-2 \right) !}\left( x-a \right) ^{k-2}}}{n\left( n-1 \right) \left( x-a \right) ^{n-2}}
+\\
+&\xlongequal{L'Hospital'rules}\cdots \xlongequal{L'Hospital'rules}\underset{x\rightarrow a^+}{\lim}\frac{f^{\left( n-1 \right)}\left( x \right) -f^{\left( n-1 \right)}\left( a \right) -f^{\left( n \right)}\left( a \right) \left( x-a \right)}{n!\left( x-a \right)}
+\\
+&=\frac{1}{n!}\underset{x\rightarrow a^+}{\lim}\frac{f^{\left( n-1 \right)}\left( x \right) -f^{\left( n-1 \right)}\left( a \right)}{x-a}-\frac{f^{\left( n \right)}\left( a \right)}{n!}\xlongequal{n\text{阶导数定义}}0
+\end{align*}
+故\eqref{Taylor:eq1}式成立.
+
+(2)要证明\eqref{Taylor:eq2}式等价于证明:存在$C>0$和$\delta>0$,使得
+\begin{align*}
+\left| \frac{f\left( x \right) -\sum\limits_{k=0}^n{\frac{f^{(k)}\left( a \right)}{k!}\left( x-a \right) ^k}}{\left( x-a \right) ^n} \right|\leqslant C,\forall x\in \left[ a,a+\delta \right].
+\end{align*}
+
+\end{proof}
+
+
+\subsubsection{直接利用Taylor公式计算极限}
+
+
+\begin{example}
+设$\underset{n\rightarrow +\infty}{\lim}\frac{f\left( n \right)}{n}=1$,计算
+\begin{align*}
+\underset{n\rightarrow +\infty}{\lim}\left( 1+\frac{1}{f\left( n \right)} \right) ^n.
+\end{align*}
+\end{example}
+\begin{note}
+由$\frac{f\left( n \right)}{n}=1+o\left( 1 \right) ,n\rightarrow +\infty$,可得$f\left( n \right) =n+o\left( n \right) ,n\rightarrow +\infty$.这个等式的意思是:$f(n)=n+o(n)$对$\forall n\in \mathbb{N}_+$都成立.并且当$n\to +\infty$时,有$\underset{n\rightarrow +\infty}{\lim}\frac{f\left( n \right)}{n}=\underset{n\rightarrow +\infty}{\lim}\frac{n+o\left( n \right)}{n}=1+\underset{n\rightarrow +\infty}{\lim}\frac{o\left( n \right)}{n}=1
+$.其中$o(n)$表示一个(类)数列,只不过这个(类)数列具有$\underset{n\rightarrow +\infty}{\lim}\frac{o\left( n \right)}{n}=0$的性质.
+\end{note}
+\begin{solution}
+{\color{blue}解法一(一般解法):}
+\begin{align*}
+\underset{n\rightarrow +\infty}{\lim}\left( 1+\frac{1}{f\left( n \right)} \right) ^n=\underset{n\rightarrow +\infty}{\lim}e^{n\ln \left( 1+\frac{1}{f\left( n \right)} \right)}=e^{\underset{n\rightarrow +\infty}{\lim}n\ln \left( 1+\frac{1}{f\left( n \right)} \right)}=e^{\underset{n\rightarrow +\infty}{\lim}\frac{n}{f\left( n \right)}}=e.
+\end{align*}
+{\color{blue}解法二(渐进估计):}
+
+由$\underset{n\rightarrow +\infty}{\lim}\frac{f\left( n \right)}{n}=1$,可知
+\begin{align*}
+\frac{f\left( n \right)}{n}=1+o\left( 1 \right) ,n\rightarrow +\infty .
+\end{align*}
+从而
+\begin{align*}
+\left( 1+\frac{1}{f\left( n \right)} \right) ^n=\left[ 1+\frac{1}{n}\cdot \frac{1}{1+o\left( 1 \right)} \right] ^n=\left[ 1+\frac{1}{n}\left( 1+o\left( 1 \right) \right) \right] ^n=\left[ 1+\frac{1}{n}+o\left( \frac{1}{n} \right) \right] ^n=e^{n\ln \left[ 1+\frac{1}{n}+o\left( \frac{1}{n} \right) \right]},n\to +\infty.
+\end{align*}
+于是
+\begin{align*}
+\underset{n\rightarrow +\infty}{\lim}\left( 1+\frac{1}{f\left( n \right)} \right) ^n=\underset{n\rightarrow +\infty}{\lim}e^{n\ln \left[ 1+\frac{1}{n}+o\left( \frac{1}{n} \right) \right]}=\underset{n\rightarrow +\infty}{\lim}e^{n\left[ \frac{1}{n}+o\left( \frac{1}{n} \right) \right]}=\underset{n\rightarrow +\infty}{\lim}e^{1+o\left( 1 \right)}=e.
+\end{align*}
+\end{solution}
+
+\begin{example}
+计算:
+
+1.\(
+\lim_{x \to 0} \frac{\cos \sin x - \cos x}{x^4}.
+\)
+
+2.\(
+\lim_{x \to +\infty} \left[\left(x^3 - x^2 + \frac{x}{2}\right) e^{\frac{1}{x}} - \sqrt{1 + x^6}\right].
+\)
+\end{example}
+\begin{solution}
+
+\end{solution}
+
+\begin{example}
+计算$(1+\frac{1}{x})^x,x\to+\infty$的渐进估计.
+\end{example}
+\begin{solution}
+由带$Peano$余项的$Taylor$公式,可得
+\begin{align*}
+&\left( 1+\frac{1}{x} \right) ^x=e^{x\ln \left( 1+\frac{1}{x} \right)}=e^{x\left[ \frac{1}{x}-\frac{1}{2x^2}+\frac{1}{3x^3}+o\left( \frac{1}{x^3} \right) \right]}=e^{1-\frac{1}{2x}+\frac{1}{3x^2}+o\left( \frac{1}{x^2} \right)}=e\cdot e^{-\frac{1}{2x}+\frac{1}{3x^2}+o\left( \frac{1}{x^2} \right)}
+\\
+&=e\left[ 1-\frac{1}{2x}+\frac{1}{3x^2}+o\left( \frac{1}{x^2} \right) +\frac{1}{2}\left( -\frac{1}{2x}+\frac{1}{3x^2}+o\left( \frac{1}{x^2} \right) \right) ^2+o\left( -\frac{1}{2x}+\frac{1}{3x^2}+o\left( \frac{1}{x^2} \right) \right) ^2 \right] 
+\\
+&=e\left[ 1-\frac{1}{2x}+\frac{1}{3x^2}+\frac{1}{8x^2}+o\left( \frac{1}{x^2} \right) \right] 
+\\
+&e-\frac{e}{2x}+\frac{11e}{24x^2}+o\left( \frac{1}{x^2} \right) 
+\end{align*}
+故\begin{align*}
+\left( 1+\frac{1}{x} \right) ^x=e-\frac{e}{2x}+\frac{11e}{24x^2}+o\left( \frac{1}{x^2} \right) ,x\rightarrow +\infty .
+\end{align*}
+于是
+\begin{align}\label{equation:12345}
+\underset{x\rightarrow +\infty}{\lim}x\left[ e-\left( 1+\frac{1}{x} \right) ^x \right] =\frac{e}{2},\underset{x\rightarrow +\infty}{\lim}x\left[ x\left( e-\left( 1+\frac{1}{x} \right) ^x \right) -\frac{e}{2} \right] =-\frac{11e}{24}.
+\end{align}
+\end{solution}
+\begin{remark}
+反复利用上述\eqref{equation:12345}式构造极限的方法,再求出相应极限,就能得到$e$的更精确的渐进估计.这也是计算渐进估计的一般方法.
+\end{remark}
+
+\begin{example}
+计算
+\[
+\lim_{x \to 0} \frac{1 - \cos x \cos(2x) \cdots \cos(nx)}{x^2}.
+\]
+\end{example}
+\begin{solution}
+记$I=\lim_{x \to 0} \frac{1 - \cos x \cos(2x) \cdots \cos(nx)}{x^2}$,则由带$Peano$余项的$Taylor$公式,可得
+\begin{align*}
+&\cos x \cos(2x) \cdots \cos(nx)
+=\left[1 - \frac{1}{2}x^2 + o(x^2)\right]\left[1 - \frac{(2x)^2}{2} + o(x^2)\right] \cdots \left[1 - \frac{(nx)^2}{2} + o(x^2)\right]
+\\
+&= 1 - \frac{1^2 + 2^2 + \cdots + n^2}{2}x^2 + o(x^2)
+= 1 - \frac{n(n + 1)(2n + 1)}{2 \cdot 6}x^2 + o(x^2),x\to0.
+\end{align*}
+故\(I = \frac{n(n + 1)(2n + 1)}{12}\).
+\end{solution}
+
+\begin{example}
+计算
+\[
+\lim_{x\rightarrow 0} \frac{x-\overset{n\text{次复合}}{\overbrace{\sin\sin \cdots \sin x}}}{x^3}.
+\]
+\end{example}
+\begin{solution}
+先证明\(\underbrace{\sin(\sin(\sin(\cdots (\sin x))\cdots))}_{n\text{次复合}} = x - \frac{n}{6}x^3 + o(x^3),x\to0\).
+
+当\(n = 1\)时,由$Taylor$公式结论显然成立.假设\(n=k\)时,结论成立.则当\(n=k + 1\)时,我们有
+\begin{align*}
+&\sin\left(x - \frac{n}{6}x^3 + o(x^3)\right)
+\\
+&= x - \frac{n}{6}x^3 + o(x^3) - \frac{1}{6}\left(x - \frac{n}{6}x^3 + o(x^3)\right)^3 + o\left(\left(x - \frac{n}{6}x^3 + o(x^3)\right)^3\right)
+\\
+&= x - \frac{n + 1}{6}x^3 + o(x^3),x\to0.
+\end{align*}
+由数学归纳法得\(\underbrace{\sin(\sin(\sin(\cdots (\sin x))\cdots))}_{n\text{次复合}} = x - \frac{n}{6}x^3 + o(x^3)\),$x\to0$.
+故$\lim_{x\rightarrow 0} \frac{x-\overset{n\text{次复合}}{\overbrace{\sin\sin \cdots \sin x}}}{x^3}=\frac{n}{6}.$
+\end{solution}
+
+
+\begin{example}
+计算
+\[
+\lim_{n\rightarrow \infty}n\sin(2\pi en!).
+\]
+\end{example}
+\begin{solution}
+由带Lagrange余项的Taylor展开式可知
+\[
+e^x = \sum_{k = 0}^{n + 1}\frac{x^k}{k!} + \frac{e^{\theta}x^{n + 2}}{(n + 2)!}, \theta \in (0, x).
+\]
+从而
+\[
+e = \sum_{k = 0}^{n + 1}\frac{1}{k!} + \frac{e^{\theta}}{(n + 2)!}, \theta \in (0, 1).
+\]
+于是
+\[
+2\pi en! = 2\pi n!\sum_{k = 0}^{n + 1}\frac{1}{k!} + \frac{2\pi n!e^{\theta}}{(n + 2)!}, \theta \in (0, 1).
+\]
+而\(n!\sum_{k = 0}^n\frac{1}{k!} \in \mathbb{N}\)，因此
+\begin{align*}
+n\sin(2\pi en!)&=n\sin\left(2\pi n!\sum_{k = 0}^{n + 1}\frac{1}{k!} + \frac{2\pi n!e^{\theta}}{(n + 2)!}\right)
+=n\sin\left(\frac{2\pi n!}{(n + 1)!} + \frac{2\pi n!e^{\theta}}{(n + 2)!}\right)\\
+&=n\sin\left(\frac{2\pi}{n + 1} + \frac{2\pi e^{\theta}}{(n + 1)(n + 2)}\right)
+\sim n\left[\frac{2\pi}{n + 1} + \frac{2\pi e^{\theta}}{(n + 1)(n + 2)}\right] \to 2\pi, n \to +\infty.
+\end{align*} 
+\end{solution}
+
+
+\subsection{利用Lagrange中值定理求极限}
+Lagrange中值定理不会改变原数列或函数的阶,但是可以更加精细地估计原数列或函数的阶.以后利用Lagrange中值定理处理数列或函数的阶的过程都会直接省略.
+
+\begin{example}
+计算
+\begin{align*}
+\lim_{n \to \infty} [\sin(\sqrt{n + 1}) - \sin(\sqrt{n})].
+\end{align*}
+\end{example}
+\begin{solution}
+由Lagrange中值定理,可知对$\forall n\in\mathbb{N}_+$,存在$\theta_n \in(\sqrt{n+1},\sqrt{n})$,使得
+\begin{align*}
+\sin(\sqrt{n+1})-\sin(\sqrt{n})=(\sqrt{n+1}-\sqrt{n})\cos\theta_n=\frac{1}{\sqrt{n+1}+\sqrt{n}}\cdot \cos\theta_n.
+\end{align*}
+从而当$n\to +\infty$时,有$\theta_n \to +\infty$.于是
+\begin{align*}
+\lim_{n \to \infty} [\sin(\sqrt{n + 1}) - \sin(\sqrt{n})]=\lim_{n \to \infty} [\frac{1}{\sqrt{n+1}+\sqrt{n}}\cdot \cos\theta_n]=0.
+\end{align*}
+\end{solution}
+
+\begin{example}
+计算
+\begin{align*}
+\lim_{n \to \infty} n^2 \left(\arctan\frac{2024}{n} - \arctan\frac{2024}{n + 1}\right).
+\end{align*}
+\end{example}
+\begin{proof}
+由Lagrange中值定理,可知对$\forall n\in\mathbb{N}$,存在$\theta_n\in(\frac{2024}{n},\frac{2024}{n + 1})$,使得
+\begin{align*}
+\arctan\frac{2024}{n} - \arctan\frac{2024}{n + 1} = \frac{1}{1+\theta _{n}^{2}}\cdot \left( \frac{2024}{n}-\frac{2024}{n+1} \right).
+\end{align*}
+并且$\underset{n\rightarrow +\infty}{\lim}\theta _n=0$.故
+\begin{align*}
+\lim_{n\rightarrow \infty} n^2\left( \mathrm{arc}\tan \frac{2024}{n}-\mathrm{arc}\tan \frac{2024}{n+1} \right) =\lim_{n\rightarrow \infty} \frac{n^2}{1+\theta _{n}^{2}}\cdot \left( \frac{2024}{n}-\frac{2024}{n+1} \right) =2024\lim_{n\rightarrow \infty} \frac{n^2}{n\left( n+1 \right)}=2024.
+\end{align*}
+\end{proof}
+
+\begin{example}
+
+1. 对\(\alpha \neq 0\),求\((n + 1)^{\alpha} - n^{\alpha}, n \to \infty\)的等价量;
+
+2. 求\(n \ln n - (n - 1) \ln (n - 1), n \to \infty\)的等价量.
+\end{example}
+\begin{note}
+熟练这种利用Lagrange中值定理求极限的方法以后,这类数列或函数的等价量我们应该做到能够快速口算出来.因此,以后利用Lagrange中值定理计算数列或函数的等价量的具体过程我们不再书写,而是直接写出相应的等价量.
+\end{note}
+\begin{remark}
+不难发现利用Lagrange中值定理计算数列或函数的等价量,并不改变原数列或函数的阶.
+\end{remark}
+\begin{solution}
+1.根据Lagrange中值定理,可知对$n\in\mathbb{N}$,都有
+\begin{align*}
+(n + 1)^{\alpha} - n^{\alpha}=\alpha\cdot\theta _{n}^{\alpha -1},\theta _{n}\in(n,n+1).
+\end{align*}
+不妨设$\alpha>1$,则有$\alpha n^{\alpha -1}\leqslant \alpha \theta _{n}^{\alpha -1}\leqslant \alpha \left( n+1 \right) ^{\alpha -1}$(若$\alpha\leq1$,则有$\alpha \left( n+1 \right) ^{\alpha -1}\leqslant \alpha \theta _{n}^{\alpha -1}\leqslant \alpha n^{\alpha -1}$).故
+\begin{align*}
+\alpha =\lim_{n\rightarrow \infty} \frac{\alpha n^{\alpha -1}}{n^{\alpha -1}}\leqslant \lim_{n\rightarrow \infty} \frac{\alpha \theta _{n}^{\alpha -1}}{n^{a-1}}\leqslant \lim_{n\rightarrow \infty} \frac{\alpha (n+1)^{\alpha -1}}{n^{a-1}}=\alpha.
+\end{align*}
+因此$(n+1)^{\alpha}-n^{\alpha}\sim \alpha n^{\alpha -1},n\rightarrow \infty$.
+
+2.由Lagrange中值定理,可知对$n\in\mathbb{N}$,都有
+\begin{align*}
+\lim_{n \to \infty} \frac{n \ln n - (n - 1) \ln (n - 1)}{\ln n} = \lim_{n \to \infty} \frac{(n - (n - 1)) \cdot (1 + \ln \theta_n)}{\ln n}= \lim_{n \to \infty} \frac{1}{\ln n} + \lim_{n \to \infty} \frac{\ln \theta_n}{\ln n}=\lim_{n \to \infty} \frac{\ln \theta_n}{\ln n}, n - 1 < \theta_n < n.
+\end{align*}
+又\(\frac{\ln (n - 1)}{\ln n} < \frac{\ln \theta_n}{\ln n} < \frac{\ln n}{\ln n} = 1\),故\(\lim_{n \to \infty} \frac{\ln \theta_n}{\ln n} = 1\),从而
+\begin{align*}
+\lim_{n \to \infty} \frac{n \ln n - (n - 1) \ln (n - 1)}{\ln n} = \lim_{n \to \infty} \frac{\ln \theta_n}{\ln n}=1.
+\end{align*}
+于是\(n \ln n - (n - 1) \ln (n - 1) \sim \ln n,n\to+\infty\).
+\end{solution}
+
+\begin{example}
+计算
+\begin{align*}
+\lim_{x \to 0} \frac{\cos(\sin x) - \cos x}{(1 - \cos x)\sin^{2}x}.
+\end{align*}
+\end{example}
+\begin{proof}
+由Lagrange中值定理,可知对$\forall x\in U\left( 0 \right)$,都有
+\begin{align*}
+\cos \left( \sin x \right) -\cos x=\left( x-\sin x \right) \sin \theta ,\theta \in \left( \sin x,x \right) .
+\end{align*}
+从而
+\begin{align*}
+\lim_{x\rightarrow 0} \frac{\mathrm{cos(}\sin x)-\cos x}{(1-\cos x)\sin ^2x}=\lim_{x\rightarrow 0} \frac{\left( x-\sin x \right) \sin \theta}{\frac{1}{2}x^2\cdot x^2}=\lim_{x\rightarrow 0} \frac{\frac{1}{6}x^3\cdot \sin \theta}{\frac{1}{2}x^4}=\frac{1}{3}\lim_{x\rightarrow 0} \frac{\sin \theta}{x}.
+\end{align*}
+又由$\sin x<\theta <x,\forall x\in U\left( 0 \right)$可知
+\begin{align*}
+1=\lim_{x\rightarrow 0} \frac{\sin x}{x}=\lim_{x\rightarrow 0} \frac{\sin \left( \sin x \right)}{x}<\lim_{x\rightarrow 0} \frac{\sin \theta}{x}\leqslant \lim_{x\rightarrow 0} \frac{\theta}{x}<\lim_{x\rightarrow 0} \frac{x}{x}=1.
+\end{align*}
+故$\sin \theta \sim \theta \sim x,x\rightarrow 0$.因此$\lim_{x\rightarrow 0} \frac{\mathrm{cos(}\sin x)-\cos x}{(1-\cos x)\sin ^2x}=\frac{1}{3}\lim_{x\rightarrow 0} \frac{\sin \theta}{x}=\frac{1}{3}\lim_{x\rightarrow 0} \frac{x}{x}=\frac{1}{3}$.
+\end{proof}
+
+
+
+\subsection{L'Hospital'rules}
+
+\begin{theorem}[上下极限L'Hospital法则]\label{theorem:上下极限L'Hospital法则}
+设\(f, g\)满足洛必达法则的适用条件，则有
+\begin{align}\label{theorem4.2-13.26}
+\varliminf \frac{f'}{g'} \leqslant \varliminf \frac{f}{g} \leqslant \varlimsup \frac{f}{g} \leqslant \varlimsup \frac{f'}{g'}. 
+\end{align}
+且
+\begin{align}\label{theorem4.2-13.27}
+\varliminf \left|\frac{f'}{g'}\right| \leqslant \varliminf \left|\frac{f}{g}\right| \leqslant \varlimsup \left|\frac{f}{g}\right| \leqslant \varlimsup \left|\frac{f'}{g'}\right|.
+\end{align}
+\end{theorem}
+\begin{note}
+此定理第一部分\eqref{theorem4.2-13.26}可以直接使用且以后可以不必再担心分子分母同时求导之后极限不存在而不能使用洛必达法则的情况. 但\eqref{theorem4.2-13.27}一般是不能直接用的, 需要给证明.
+\end{note}
+\begin{proof}
+以\(\to +\infty\)为例, 事实上, 固定\(x\), 由Cauchy中值定理, 我们有
+\[
+\frac{f(y)-f(x)}{g(y)-g(x)}=\frac{f'(\xi)}{g'(\xi)},x < \xi < y.
+\]
+我们断言对\(A \in \mathbb{R} \cup \{+\infty\}\), 必有
+\begin{align}\label{theorem4.2-13.28}
+\lim_{n\rightarrow\infty}\left|\frac{f(y_n)}{g(y_n)}\right| = A \Leftrightarrow \lim_{n\rightarrow\infty}\left|\frac{f(y_n)-f(x)}{g(y_n)-g(x)}\right| = A.
+\end{align}
+若\(\lim_{n\rightarrow\infty}\left|\frac{f(y_n)}{g(y_n)}\right| = A\). 首先利用极限的四则运算, 我们有
+\[
+\lim_{n\rightarrow\infty}\left|\frac{f(y_n)-f(x)}{g(y_n)-g(x)}\right|=\lim_{n\rightarrow\infty}\left|\frac{\frac{f(y_n)}{g(y_n)}-\frac{f(x)}{g(y_n)}}{1 - \frac{g(x)}{g(y_n)}}\right|=\lim_{n\rightarrow\infty}\left|\frac{1}{1 - \frac{g(x)}{g(y_n)}}\right|\cdot\lim_{n\rightarrow\infty}\left|\frac{f(y_n)}{g(y_n)}-\frac{f(x)}{g(y_n)}\right|=\lim_{n\rightarrow\infty}\left|\frac{f(y_n)}{g(y_n)}-\frac{f(x)}{g(y_n)}\right|.
+\]
+利用
+\[
+\left|\frac{f(y_n)}{g(y_n)}\right|-\left|\frac{f(x)}{g(y_n)}\right|\leqslant\left|\frac{f(y_n)}{g(y_n)}-\frac{f(x)}{g(y_n)}\right|\leqslant\left|\frac{f(y_n)}{g(y_n)}\right|+\left|\frac{f(x)}{g(y_n)}\right|, \lim_{n\rightarrow\infty} g(y_n) = \infty,
+\]
+我们知道
+\[
+\lim_{n\rightarrow\infty}\left|\frac{f(y_n)-f(x)}{g(y_n)-g(x)}\right|=\lim_{n\rightarrow\infty}\left|\frac{f(y_n)}{g(y_n)}-\frac{f(x)}{g(y_n)}\right| = A.
+\]
+反之设\(\lim_{n\rightarrow\infty}\left|\frac{f(y_n)-f(x)}{g(y_n)-g(x)}\right| = A\), 同样的由四则运算, 我们有
+\[
+\lim_{n\rightarrow\infty}\left|\frac{f(y_n)}{g(y_n)}-\frac{f(x)}{g(y_n)}\right| = A.
+\]
+于是由
+\[
+\left|\frac{f(y_n)}{g(y_n)}-\frac{f(x)}{g(y_n)}\right|-\left|\frac{f(x)}{g(y_n)}\right|\leqslant\left|\frac{f(y_n)}{g(y_n)}\right|\leqslant\left|\frac{f(y_n)}{g(y_n)}-\frac{f(x)}{g(y_n)}\right|+\left|\frac{f(x)}{g(y_n)}\right|, \lim_{n\rightarrow\infty}|g(y_n)| = \infty,
+\]
+我们知道
+\[
+\lim_{n\rightarrow\infty}\left|\frac{f(y_n)}{g(y_n)}\right| = A.
+\]
+现在就证明了\eqref{theorem4.2-13.28}.
+
+于是结合\(x \to +\infty\), 我们容易得到⁷
+\begin{align*}
+&\varlimsup_{y\rightarrow+\infty}\left|\frac{f(y)}{g(y)}\right|=\varlimsup_{y\rightarrow+\infty}\left|\frac{f(y)-f(x)}{g(y)-g(x)}\right|=\varlimsup_{y\rightarrow+\infty}\left|\frac{f'(\xi)}{g'(\xi)}\right|\leqslant\varlimsup_{y\rightarrow+\infty}\left|\frac{f'(y)}{g'(y)}\right|\\
+&\varliminf_{y\rightarrow+\infty}\left|\frac{f(y)}{g(y)}\right|=\varliminf_{y\rightarrow+\infty}\left|\frac{f(y)-f(x)}{g(y)-g(x)}\right|=\varliminf_{y\rightarrow+\infty}\left|\frac{f'(\xi)}{g'(\xi)}\right|\geqslant\varliminf_{y\rightarrow+\infty}\left|\frac{f'(y)}{g'(y)}\right|
+\end{align*}
+这就完成了证明.
+\end{proof}
+
+
+
+\begin{example}
+若\(f\in D^1[0,+\infty)\).
+\begin{enumerate}[(1)]
+\item 设
+\[
+\lim_{x\rightarrow +\infty}[f(x)+f'(x)] = s\in\mathbb{R},
+\]
+证明\(\lim_{x\rightarrow +\infty}f(x)=s\).
+
+\item 设
+\[
+\lim_{x\rightarrow +\infty}\left[f'(x)+\frac{2x}{\sqrt[3]{1 + x^{3}}}f(x)\right]=s\in\mathbb{R},
+\]
+证明\(\lim_{x\rightarrow +\infty}f(x)=\frac{s}{2}\).
+\end{enumerate}
+\end{example}
+\begin{note}
+(2)中的构造思路:根据条件构造相应的微分方程,然后求解这个微分方程,再常数变易得到我们需要构造的函数. 具体步骤如下:
+
+构造微分方程:\(y'+\frac{2x}{\sqrt[3]{1 + x^3}}y = 0\),整理可得\(\frac{y'}{y}=-\frac{2x}{\sqrt[3]{1 + x^3}}\),再对其两边同时积分得到\(\ln y = -\int_{0}^{x}\frac{2x}{\sqrt[3]{1 + x^3}}dx + C_0\).从而\(y = Ce^{-\int_{0}^{x}\frac{2x}{\sqrt[3]{1 + x^3}}dx}\),于是\(C = ye^{\int_{0}^{x}\frac{2x}{\sqrt[3]{1 + x^3}}dx}\).
+故我们要构造的函数就是\(C(x) = f(x)e^{\int_{0}^{x}\frac{2x}{\sqrt[3]{1 + x^3}}dx}\).并且此时$C(x)$满足$C'\left( x \right) =f'\left( x \right) +\frac{2x}{\sqrt[3]{1+x^3}}f\left( x \right)$.
+\end{note}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item $\lim_{x\rightarrow +\infty}f(x) = \lim_{x\rightarrow +\infty}\frac{e^{x}f(x)}{e^{x}}
+=\lim_{x\rightarrow +\infty}\frac{e^{x}[f(x)+f'(x)]}{e^{x}}
+=\lim_{x\rightarrow +\infty}[f + f']
+=s$.
+
+\item 注意到$\lim_{x\rightarrow +\infty} e^{\int_0^x{\frac{2t}{\sqrt[3]{1+t^3}}dt}}=+\infty$,从而由$\mathrm{L}'\mathrm{Hospital}'\mathrm{rules}$可得
+\begin{align*}
+\lim_{x\rightarrow +\infty} f(x)&=\lim_{x\rightarrow +\infty} \frac{f(x)\cdot e^{\int_0^x{\frac{2t}{\sqrt[3]{1+t^3}}dt}}}{e^{\int_0^x{\frac{2t}{\sqrt[3]{1+t^3}}dt}}}\xlongequal[]{\mathrm{L}'\mathrm{Hospital}'\mathrm{rules}}\lim_{x\rightarrow +\infty} \frac{\left[ f'(x)+\frac{2x}{\sqrt[3]{1+x^3}}f(x) \right] e^{\int_0^x{\frac{2t}{\sqrt[3]{1+t^3}}dt}}}{\frac{2x}{\sqrt[3]{1+x^3}}e^{\int_0^x{\frac{2t}{\sqrt[3]{1+t^3}}dt}}}
+\\
+&=\lim_{x\rightarrow +\infty} \frac{\sqrt[3]{1+x^3}}{2x}\left[ f(x)+\frac{2x}{\sqrt[3]{1+x^3}}f'(x) \right] =\frac{s}{2}.
+\end{align*}
+\end{enumerate}
+\end{proof}
+
+
+
+\subsection{与方程的根有关的渐近估计}
+
+\subsubsection{可以解出n的类型}
+
+\begin{example}
+设\(x^{2n + 1}+e^{x}=0\)的根记为\(x_n\),计算
+\[
+\lim_{n\rightarrow\infty}x_n,\lim_{n\rightarrow\infty}n(1 + x_n).
+\]
+\end{example}
+\begin{solution}
+注意到\(0^{2n + 1}+e^{0}>0,(-1)^{2n + 1}+e^{-1}<0\)且\(x^{2n + 1}+e^{x}\)严格单调递增,所以由零点存在定理可知,对每个\(n\in\mathbb{N}\),存在唯一的\(x_n\in(-1,0)\),使得
+\[
+x_n^{2n + 1}+e^{x_n}=0\Rightarrow\frac{x_n}{\ln(-x_n)} = 2n + 1\rightarrow +\infty,n\to +\infty.
+\]
+任取$\{x_n\}$的一个收敛子列$\{x_{n_k}\}$,又$x_n\in(-1,0)$,因此可设\(\lim_{k\rightarrow\infty}x_{n_k}=c\in[-1,0]\),则$\underset{k\rightarrow +\infty}{\lim}\frac{x_{n_k}}{\ln \left( -x_{n_k} \right)}=\frac{c}{\ln \left( -c \right)}$.又因为$\underset{n\rightarrow +\infty}{\lim}\frac{x_n}{\ln \left( -x_n \right)}=+\infty$,所以由Heine归结原则可知$\underset{k\rightarrow +\infty}{\lim}\frac{x_{n_k}}{\ln \left( -x_{n_k} \right)}=+\infty$.从而
+\[
+\underset{k\rightarrow +\infty}{\lim}\frac{x_{n_k}}{\ln \left( -x_{n_k} \right)}=\frac{c}{\ln(-c)}=+\infty,
+\]
+故$c = - 1$.
+于是由\hyperref[proposition:子列极限命题]{子列极限命题(a)}知\(\lim_{n\rightarrow\infty}x_n=-1\).因此
+\begin{align*}
+\lim_{n\rightarrow\infty}n(1 + x_n)=\frac{1}{2}\lim_{n\rightarrow\infty}(2n + 1)(1 + x_n)
+=\frac{1}{2}\lim_{n\rightarrow\infty}\frac{x_n(1 + x_n)}{\ln(-x_n)}
+=\frac{1}{2}\lim_{x\rightarrow - 1^+}\frac{x(1 + x)}{\ln(-x)}
+=\frac{1}{2}.
+\end{align*}
+\end{solution}
+
+\begin{example}
+设\(a_n\in(0,1)\)是\(x^n + x = 1\)的根,证明
+\[
+a_n=1-\frac{\ln n}{n}+o\left(\frac{\ln n}{n}\right).
+\]
+\end{example}
+\begin{proof}
+注意到\(0^n + 0 - 1 < 0\),\(1^n + 1 - 1 > 0\),且\(x^n + x - 1\)在\((0, 1)\)上严格单调递增,所以由零点存在定理可知,对\(\forall n\in \mathbb{N}_+\),存在唯一的\(a_n\in (0, 1)\),使得
+\begin{align}\label{example4.16-1.1}
+a_{n}^{n} + a_n = 1 \Rightarrow \frac{\ln(1 - a_n)}{\ln a_n} = n \rightarrow +\infty, n \rightarrow +\infty.  
+\end{align}
+任取\(\{ a_n \}\)的一个收敛子列\(\{ a_{n_k} \}\),又\(a_n\in (0, 1)\),因此可设\(\lim_{k\rightarrow +\infty}a_{n_k} = c\in [0, 1]\),则\(\lim_{k\rightarrow +\infty}\frac{\ln(1 - a_{n_k})}{\ln a_{n_k}} = \frac{\ln(1 - c)}{\ln c}\).又由\((1.1)\)式可知\(\lim_{n\rightarrow +\infty}\frac{\ln(1 - a_n)}{\ln a_n} = +\infty\),所以由Heine归结原则可知\(\lim_{k\rightarrow +\infty}\frac{\ln(1 - a_{n_k})}{\ln a_{n_k}} = +\infty\).从而
+\[
+\lim_{k\rightarrow +\infty}\frac{\ln(1 - a_{n_k})}{\ln a_{n_k}} = \frac{\ln(1 - c)}{\ln c} = +\infty.
+\]
+故\(c = 1\),于是由\hyperref[proposition:子列极限命题]{子列极限命题(a)}可知
+\begin{align}\label{example4.16-1.2}
+\lim_{n\rightarrow +\infty}a_n = c = 1.  
+\end{align}
+而要证\(a_n = 1 - \frac{\ln n}{n} + o\left(\frac{\ln n}{n}\right), n \rightarrow +\infty\),等价于证明\(\lim_{n\rightarrow +\infty}\frac{a_n - 1 + \frac{\ln n}{n}}{\frac{\ln n}{n}} = \lim_{n\rightarrow +\infty}\frac{na_n - n + \ln n}{\ln n} = 0\).利用\eqref{example4.16-1.1}\eqref{example4.16-1.2}式可得
+\begin{align}
+\underset{n\rightarrow +\infty}{\lim}\frac{na_n-n+\ln n}{\ln n}&=\underset{n\rightarrow +\infty}{\lim}\left[ \frac{\frac{\ln \left( 1-a_n \right)}{\ln a_n}\cdot a_n-\frac{\ln \left( 1-a_n \right)}{\ln a_n}}{\ln \frac{\ln \left( 1-a_n \right)}{\ln a_n}}+1 \right] =\underset{n\rightarrow +\infty}{\lim}\left[ \frac{\left( a_n-1 \right) \ln \left( 1-a_n \right)}{\ln a_n\left( \ln \frac{\ln \left( 1-a_n \right)}{\ln a_n} \right)}+1 \right] \nonumber
+\\
+&=\underset{x\rightarrow 1^-}{\lim}\left[ \frac{\left( x-1 \right) \ln \left( 1-x \right)}{\ln x\left( \ln \frac{\ln \left( 1-x \right)}{\ln x} \right)}+1 \right] =\underset{x\rightarrow 0^-}{\lim}\left[ \frac{x\ln \left( -x \right)}{\ln \left( 1+x \right) \left( \ln \frac{\ln \left( -x \right)}{\ln \left( 1+x \right)} \right)}+1 \right] .
+\label{example4.16-1.3}
+\end{align}
+由L'Hospital's rules可得
+\begin{align}
+\underset{x\rightarrow 0^-}{\lim}\frac{x\ln \left( -x \right)}{\ln \left( 1+x \right) \left( \ln \frac{\ln \left( -x \right)}{\ln \left( 1+x \right)} \right)}&=\underset{x\rightarrow 0^-}{\lim}\frac{\ln \left( -x \right)}{\ln \frac{\ln \left( -x \right)}{\ln \left( 1+x \right)}}\xlongequal{\text{L'Hospital's rules}}\underset{x\rightarrow 0^-}{\lim}\frac{\frac{1}{x}}{\frac{\ln \left( 1+x \right)}{\ln \left( -x \right)}\cdot \frac{\frac{1}{x}\ln \left( 1+x \right) -\frac{1}{1+x}\ln \left( -x \right)}{\ln ^2\left( 1+x \right)}}\nonumber
+\\
+&=\underset{x\rightarrow 0^-}{\lim}\frac{\ln \left( -x \right) \cdot \ln \left( 1+x \right)}{\ln \left( 1+x \right) -\frac{x}{1+x}\ln \left( -x \right)}=\underset{x\rightarrow 0^-}{\lim}\frac{x\ln \left( -x \right)}{\ln \left( 1+x \right) -\frac{x}{1+x}\ln \left( -x \right)}\nonumber
+\\
+&=\underset{x\rightarrow 0^-}{\lim}\frac{x}{\frac{\ln \left( 1+x \right)}{\ln \left( -x \right)}-\frac{x}{1+x}}=\underset{x\rightarrow 0^-}{\lim}\frac{x}{-\frac{x}{1+x}}=-1.
+\label{example4.16-1.4}
+\end{align}
+于是结合\eqref{example4.16-1.3}\eqref{example4.16-1.4}式可得
+\[
+\lim_{n\rightarrow +\infty}\frac{na_n - n + \ln n}{\ln n} = \lim_{x\rightarrow 0^-}\left[ \frac{x\ln(-x)}{\ln(1 + x)\left(\ln \frac{\ln(-x)}{\ln(1 + x)}\right)} + 1 \right] = -1 + 1 = 0.
+\]
+故\(a_n = 1 - \frac{\ln n}{n} + o\left(\frac{\ln n}{n}\right), n \rightarrow +\infty\).
+\end{proof}
+
+\begin{example}
+设\(f_n(x)=x + x^2+\cdots+x^n,n\in\mathbb{N}\),\(f_n(x)=1\)在\([0,1]\)的根为\(x_n\).求\(\lim_{n\rightarrow\infty}x_n\).
+\end{example}
+\begin{solution}
+注意到\(f_n(x) - 1\)严格单调递增，且\(f_n(0) - 1 = -1 < 0\)，\(f_n(1) - 1 = n - 1 > 0\)，\(\forall n\geqslant 2\)。故由零点存在定理可知，当\(n\geqslant 2\)时，存在唯一的\(x_n\in(0, 1)\)，使得\(f_n(x_n) = 1\)。
+从而
+\begin{align}\label{example4.17-1.1}
+f_n(x_n)=\frac{x_n - x_{n}^{n + 1}}{1 - x_n}=1\Rightarrow x_n - x_{n}^{n + 1}=1 - x_n\Rightarrow x_{n}^{n + 1}=2x_n - 1\Rightarrow n + 1=\frac{\ln(2x_n - 1)}{\ln x_n}.  
+\end{align}
+由上式\eqref{example4.17-1.1}可知\(x_{n}^{n + 1}=2x_n - 1\)且\(x_n\in(0, 1)\)，因此
+\[
+0\leqslant x_{n}^{n + 1}=2x_n - 1\leqslant 1\Rightarrow x_n\in\left(\frac{1}{2}, 1\right).
+\]
+任取\(\{x_n\}\)的收敛子列\(\{x_{n_k}\}\)，设\(\lim_{k\rightarrow +\infty}x_{n_k}=a\in\left[\frac{1}{2}, 1\right]\)，则由\((1.1)\)式和Heine归结原则可知
+\[
+\lim_{k\rightarrow +\infty}\frac{\ln(2x_{n_k} - 1)}{\ln x_{n_k}}=\frac{\ln(2a - 1)}{\ln a}=+\infty.
+\]
+故\(a = \frac{1}{2}\)，再由\hyperref[proposition:子列极限命题]{子列极限命题(a)}可知\(\lim_{n\rightarrow +\infty}x_n=a=\frac{1}{2}\)。
+\end{solution}
+
+\subsubsection{迭代方法}
+
+\begin{example}
+设\(x_n\)是\(x = \tan x\)从小到大排列的全部正根，设
+\[
+\lim_{n\rightarrow\infty}n(x_n - An - B)=C,
+\]
+求\(A,B,C\)。
+\end{example}
+\begin{note}
+主要想法是结合$\arctan x$的性质:\(\arctan x + \arctan\frac{1}{x} = \frac{\pi}{2}\)，\(x > 0\),再利用迭代法计算渐近展开.
+\end{note}
+\begin{solution}
+令\(f(x)=\tan x - x\)，\(x\in(n\pi, n\pi + \frac{\pi}{2})\)，\(n = 1, 2, \cdots\)，则\(f^\prime(x)=\tan^2 x > 0\)，\(\forall x\in(n\pi, n\pi + \frac{\pi}{2})\)，\(n = 1, 2, \cdots\)。因此\(f(x)\)在\((n\pi, n\pi + \frac{\pi}{2})\)上严格单调递增，其中\(n = 1, 2, \cdots\)。又注意到\(\lim_{x\rightarrow (n\pi)^+}(\tan x - x)= -n\pi < 0\)，\(\lim_{x\rightarrow (n\pi + \frac{\pi}{2})^+}(\tan x - x)= +\infty > 0\)。故由零点存在定理可知，存在唯一的\(x_n\in(n\pi, n\pi + \frac{\pi}{2})\)，\(n = 1, 2, \cdots\)，使得
+\[
+\tan x_n = x_n.
+\]
+从而\(x_n - n\pi\in(0, \frac{\pi}{2})\)，于是
+\begin{align}\label{example4.19-1.1}
+x_n = \tan x_n = \tan(x_n - n\pi) \Rightarrow x_n = \arctan x_n + n\pi.  
+\end{align}
+又因为\(x_n\in(n\pi, n\pi + \frac{\pi}{2})\)，\(n = 1, 2, \cdots\)，所以当\(n\rightarrow +\infty\)时，有\(x_n\rightarrow +\infty\)。再结合\eqref{example4.19-1.1}式可得
+\begin{align}\label{example4.19-1.2}
+x_n = \arctan x_n + n\pi = n\pi + \frac{\pi}{2} + o(1), n\rightarrow +\infty.
+\end{align}
+注意到\(\arctan x + \arctan\frac{1}{x} = \frac{\pi}{2}\)，\(x > 0\)，从而\(\arctan x = \frac{\pi}{2} - \arctan\frac{1}{x}\)。于是利用\eqref{example4.19-1.2}式可得
+\begin{align*}
+x_n&=\mathrm{arc}\tan x_n+n\pi =\frac{\pi}{2}+n\pi -\mathrm{arc}\tan \frac{1}{x_n}=\frac{\pi}{2}+n\pi -\mathrm{arc}\tan \frac{1}{n\pi +\frac{\pi}{2}+o(1)}
+\\
+&=\frac{\pi}{2}+n\pi -\mathrm{arc}\tan \left( \frac{1}{n\pi}\frac{1}{1+\frac{1}{2n}+o(\frac{1}{n})} \right) =\frac{\pi}{2}+n\pi -\mathrm{arc}\tan \left[ \frac{1}{n\pi}\left( 1+O(\frac{1}{n}) \right) \right] 
+\\
+&=\frac{\pi}{2}+n\pi -\mathrm{arc}\tan \left[ \frac{1}{n\pi}+O(\frac{1}{n^2}) \right] =\frac{\pi}{2}+n\pi -\frac{1}{n\pi}+O(\frac{1}{n^2}),n\rightarrow +\infty .
+\end{align*}
+因此\(\lim_{n\rightarrow +\infty}n\left(x_n - \frac{\pi}{2} - n\pi\right)= -\frac{1}{\pi}\)。
+\end{solution}
+
+
+\end{document}
