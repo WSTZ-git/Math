@@ -386,10 +386,10 @@
 
 
 \RequirePackage{graphicx}
-%\RequirePackage{enumerate}
+\RequirePackage{enumerate}
 \RequirePackage{amsmath,mathrsfs,amsfonts,amssymb}
-% \providecommand\qed{}
-% \renewcommand{\qed}{\hfill\ensuremath{\square}}
+\providecommand\qed{}
+\renewcommand{\qed}{\hfill\ensuremath{\square}}
 \RequirePackage{booktabs}
 \RequirePackage{multicol,multirow}
 
@@ -1192,7 +1192,7 @@
 \newenvironment{proof}{
   \par\noindent\textbf{\color{second}\proofname\;}
   \color{black!90}\cfs}{
-  % \hfill$\Box$\quad
+  \hfill$\Box$\quad
   \par}
 
 \newenvironment{solution}{\par\noindent\textbf{\color{main}\solutionname} \citshape}{\par}
