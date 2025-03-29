@@ -1195,7 +1195,9 @@
   \hfill$\Box$\quad
   \par}
 
-\newenvironment{solution}{\par\noindent\textbf{\color{main}\solutionname} \citshape}{\par}
+\newenvironment{solution}{\par\noindent\textbf{\color{main}\solutionname} \citshape}{
+  \hfill$\Box$\quad
+  \par}
 \newenvironment{remark}{\noindent\textbf{\color{second}\remarkname}}{\par}
 \newenvironment{assumption}{\par\noindent\textbf{\color{third}\assumptionname} \citshape}{\par}
 \newenvironment{conclusion}{\par\noindent\textbf{\color{third}\conclusionname} \citshape}{\par}
