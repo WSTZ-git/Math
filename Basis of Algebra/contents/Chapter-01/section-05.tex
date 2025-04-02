@@ -11,6 +11,710 @@
 
 \begin{document}
 
+\section{降阶法}
+
+\begin{definition}[组合数定义的扩充]\label{definition:组合数定义的扩充}
+$ \mathrm{C}_{n}^{k}\triangleq \begin{cases}
+0&,k<0,\\
+\frac{n!}{k!\left( n-k \right) !}&,0\leqslant k\leqslant n,\\
+0&,k>n,\\
+\end{cases}.$
+\end{definition}
+
+\begin{theorem}[Vandermode恒等式]\label{theorem:Vandermode恒等式}
+$\mathrm{C}_{p+q}^{l}=\sum_{k=0}^{p+q}{\mathrm{C}_{p}^{k}\mathrm{C}_{q}^{l-k}},\quad l=1,2,\cdots,p+q.$
+\end{theorem}
+\begin{proof}
+注意到
+\[
+\left( x+1 \right) ^p\left( x+1 \right) ^q=\left( x+1 \right) ^{p+q}.
+\]
+由二项式定理可得
+\[
+\sum_{r=0}^p{\mathrm{C}_{p}^{r}x^r}\cdot \sum_{r=0}^p{\mathrm{C}_{q}^{r}x^r}=\sum_{r=0}^{p+q}{\mathrm{C}_{p+q}^{r}x^r}.
+\]
+对$\forall l=\left\{ 1,2,\cdots ,p+q \right\}$, 考虑上式$x^l$的系数, 就有
+\[
+\mathrm{C}_{p+q}^{l}=\mathrm{C}_{p}^{0}\mathrm{C}_{q}^{l}+\mathrm{C}_{p}^{1}\mathrm{C}_{q}^{l-1}+\cdots +\mathrm{C}_{p}^{l}\mathrm{C}_{q}^{0}.
+\]
+\end{proof}
+
+\begin{example}
+计算$n$阶行列式:
+\begin{align*}
+|\boldsymbol{A}|=\left| \begin{matrix}
+1&		1&		\cdots&		1\\
+1&		\mathrm{C}_{2}^{1}&		\cdots&		\mathrm{C}_{n}^{1}\\
+1&		\mathrm{C}_{3}^{2}&		\cdots&		\mathrm{C}_{n+1}^{2}\\
+\vdots&		\vdots&		&		\vdots\\
+1&		\mathrm{C}_{n}^{n-1}&		\cdots&		\mathrm{C}_{2n-2}^{n-1}\\
+\end{matrix} \right|.
+\end{align*}
+\end{example}
+\begin{note}
+{\color{blue}解法一}的关键就是
+组合数公式:
+$\mathrm{C}_{m}^{k-1}+\mathrm{C}_{m}^{k}=\mathrm{C}_{m+1}^{k}$.
+
+于是有
+\begin{gather*}
+\mathrm{C}_{m}^{k}=\mathrm{C}_{m+1}^{k}-\mathrm{C}_{m}^{k-1}
+\\
+\mathrm{C}_{m}^{k-1}=\mathrm{C}_{m+1}^{k}-\mathrm{C}_{m}^{k}
+\end{gather*}
+
+{\color{blue}解法二}的核心想法就是:将\hyperref[theorem:Vandermode恒等式]{Vandermode恒等式}与矩阵乘法的定义联系起来.
+\end{note}
+\begin{solution}
+{\color{blue}解法一:}
+\begin{align*}
+|\boldsymbol{A}|&=\left| \begin{matrix}
+1&		1&		\cdots&		1\\
+1&		\mathrm{C}_{2}^{1}&		\cdots&		\mathrm{C}_{n}^{1}\\
+1&		\mathrm{C}_{3}^{2}&		\cdots&		\mathrm{C}_{n+1}^{2}\\
+\vdots&		\vdots&		&		\vdots\\
+1&		\mathrm{C}_{n}^{n-1}&		\cdots&		\mathrm{C}_{2n-2}^{n-1}\\
+\end{matrix} \right|\xlongequal[i=n,\cdots ,2]{\left( -1 \right) \cdot r_{i-1}+r_i}\left| \begin{matrix}
+\mathrm{C}_{0}^{0}&		\mathrm{C}_{1}^{0}&		\cdots&		\mathrm{C}_{\mathrm{n}-1}^{0}\\
+0&		\mathrm{C}_{2}^{1}-\mathrm{C}_{1}^{0}&		\cdots&		\mathrm{C}_{n}^{1}-\mathrm{C}_{\mathrm{n}-1}^{0}\\
+0&		\mathrm{C}_{3}^{2}-\mathrm{C}_{2}^{1}&		\cdots&		\mathrm{C}_{n+1}^{2}-\mathrm{C}_{n}^{1}\\
+\vdots&		\vdots&		&		\vdots\\
+0&		\mathrm{C}_{n}^{n-1}-\mathrm{C}_{\mathrm{n}-1}^{\mathrm{n}-2}&		\cdots&		\mathrm{C}_{2n-2}^{n-1}-\mathrm{C}_{2\mathrm{n}-3}^{\mathrm{n}-2}\\
+\end{matrix} \right|
+\\
+&=\left| \begin{matrix}
+\mathrm{C}_{0}^{0}&		\mathrm{C}_{1}^{0}&		\cdots&		\mathrm{C}_{\mathrm{n}-1}^{0}\\
+0&		\mathrm{C}_{1}^{1}&		\cdots&		\mathrm{C}_{\mathrm{n}-1}^{1}\\
+0&		\mathrm{C}_{2}^{2}&		\cdots&		\mathrm{C}_{n}^{2}\\
+\vdots&		\vdots&		&		\vdots\\
+0&		\mathrm{C}_{\mathrm{n}-1}^{\mathrm{n}-1}&		\cdots&		\mathrm{C}_{2\mathrm{n}-3}^{\mathrm{n}-1}\\
+\end{matrix} \right|\xlongequal{\text{按第一列展开}}\left| \begin{matrix}
+\mathrm{C}_{1}^{1}&		\mathrm{C}_{2}^{1}&		\cdots&		\mathrm{C}_{\mathrm{n}-1}^{1}\\
+\mathrm{C}_{2}^{2}&		\mathrm{C}_{3}^{2}&		\cdots&		\mathrm{C}_{n}^{2}\\
+\vdots&		\vdots&		&		\vdots\\
+\mathrm{C}_{\mathrm{n}-1}^{\mathrm{n}-1}&		\mathrm{C}_{\mathrm{n}}^{\mathrm{n}-1}&		\cdots&		\mathrm{C}_{2\mathrm{n}-3}^{\mathrm{n}-1}\\
+\end{matrix} \right|
+\\
+&\xlongequal[i=n,\cdots ,2]{\left( -1 \right) \cdot j_{i-1}+j_i}\left| \begin{matrix}
+\mathrm{C}_{1}^{1}&		\mathrm{C}_{2}^{1}-\mathrm{C}_{1}^{1}&		\cdots&		\mathrm{C}_{\mathrm{n}-1}^{1}-\mathrm{C}_{\mathrm{n}-2}^{1}\\
+\mathrm{C}_{2}^{2}&		\mathrm{C}_{3}^{2}-\mathrm{C}_{2}^{2}&		\cdots&		\mathrm{C}_{n}^{2}-\mathrm{C}_{\mathrm{n}-1}^{2}\\
+\vdots&		\vdots&		&		\vdots\\
+\mathrm{C}_{\mathrm{n}-1}^{\mathrm{n}-1}&		\mathrm{C}_{\mathrm{n}}^{\mathrm{n}-1}-\mathrm{C}_{\mathrm{n}-1}^{\mathrm{n}-1}&		\cdots&		\mathrm{C}_{2\mathrm{n}-3}^{\mathrm{n}-1}-\mathrm{C}_{2\mathrm{n}-4}^{\mathrm{n}-1}\\
+\end{matrix} \right|=\left| \begin{matrix}
+\mathrm{C}_{1}^{1}&		\mathrm{C}_{1}^{0}&		\cdots&		\mathrm{C}_{\mathrm{n}-2}^{0}\\
+\mathrm{C}_{2}^{2}&		\mathrm{C}_{2}^{1}&		\cdots&		\mathrm{C}_{\mathrm{n}-1}^{1}\\
+\vdots&		\vdots&		&		\vdots\\
+\mathrm{C}_{\mathrm{n}-1}^{\mathrm{n}-1}&		\mathrm{C}_{\mathrm{n}-1}^{\mathrm{n}-2}&		\cdots&		\mathrm{C}_{2\mathrm{n}-4}^{\mathrm{n}-2}\\
+\end{matrix} \right|
+\\
+&=\left| \begin{matrix}
+1&		1&		\cdots&		1\\
+1&		\mathrm{C}_{2}^{1}&		\cdots&		\mathrm{C}_{\mathrm{n}-1}^{1}\\
+\vdots&		\vdots&		&		\vdots\\
+1&		\mathrm{C}_{\mathrm{n}-1}^{\mathrm{n}-2}&		\cdots&		\mathrm{C}_{2\mathrm{n}-4}^{\mathrm{n}-2}\\
+\end{matrix} \right|.
+\end{align*}
+此时得到的行列式恰好是原行列式的左上角部分,并具有相同的规律.
+不断这样做下去,最后可得$|\boldsymbol{A}|=1$
+
+{\color{blue}解法二:}设$A=(a_{ij})_{n\times n}$,则$a_{ij}=\mathrm{C}_{i+j-2}^{i-1} , i,j=1,2,\cdots,n$.
+从而由\hyperref[theorem:Vandermode恒等式]{Vandermode恒等式}及\hyperref[definition:组合数定义的扩充]{组合数定义的扩充}可得
+\[
+a_{ij}=\mathrm{C}_{i+j-2}^{i-1}=\sum_{k=0}^{i+j-2}{\mathrm{C}_{i-1}^{i-1-k}\mathrm{C}_{j-1}^{k}}=\sum_{k=1}^{i+j-1}{\mathrm{C}_{i-1}^{i-k}\mathrm{C}_{j-1}^{k-1}}
+\]
+\[
+=\sum_{k=1}^n{\mathrm{C}_{i-1}^{i-k}\mathrm{C}_{j-1}^{k-1}}=\sum_{k=1}^n{\mathrm{C}_{i-1}^{k-1}\mathrm{C}_{j-1}^{k-1}}=\sum_{k=1}^n{l_{ik}l_{jk}},
+\]
+其中$l_{ij}=\begin{cases}
+\mathrm{C}_{i-1}^{j-1}, & 1\leqslant j\leqslant i\leqslant n, \\
+0, & 1\leqslant i<j\leqslant n, \\
+\end{cases}$.记$L=\left( l_{ij} \right) _{n\times n}$,则根据矩阵乘法的定义可知
+\[
+A=LL^T\Rightarrow \left| A \right|=\left| L \right|^2.
+\]
+因为当$1\leqslant i<j\leqslant n$时,$l_{ij}=0$,所以$L$是上三角矩阵.于是
+\[
+\left| L \right|=\prod_{i=1}^n{l_{ii}}=\prod_{i=1}^n{\mathrm{C}_{i-1}^{i-1}}=1.
+\]
+故$\left| A \right|=\left| L \right|^2=1$.
+\end{solution}
+
+
+\begin{example}
+计算$n$阶行列式:
+\begin{gather}
+|\boldsymbol{A}|=\left| \begin{matrix}
+1&		2&		3&		\cdots&		n\\
+-1&		0&		3&		\cdots&		n\\
+-1&		-2&		0&		\cdots&		n\\
+\vdots&		\vdots&		\vdots&		&		\vdots\\
+-1&		-2&		-3&		\cdots&		0\\
+\end{matrix} \right|
+\nonumber
+\end{gather}
+\begin{solution}
+\begin{equation}
+\begin{split}
+|\boldsymbol{A}|=\left| \begin{matrix}
+1&		2&		3&		\cdots&		n\\
+-1&		0&		3&		\cdots&		n\\
+-1&		-2&		0&		\cdots&		n\\
+\vdots&		\vdots&		\vdots&		&		\vdots\\
+-1&		-2&		-3&		\cdots&		0\\
+\end{matrix} \right|
+\xlongequal[i=2,\cdots ,n]{r_1+r_i}\left| \begin{matrix}
+1&		2&		3&		\cdots&		n\\
+0&		2&		*&		\cdots&		*\\
+0&		0&		3&		\cdots&		*\\
+\vdots&		\vdots&		\vdots&		&		\vdots\\
+0&		0&		0&		\cdots&		n\\
+\end{matrix} \right|=n!
+\end{split}
+\nonumber
+\end{equation}
+\end{solution}
+\end{example}
+
+\begin{example}
+计算$n$阶行列式:
+\begin{gather}
+|\boldsymbol{A}|=\left| \begin{matrix}
+a_1b_1&		a_1b_2&		a_1b_3&		\cdots&		a_1b_n\\
+a_1b_2&		a_2b_2&		a_2b_3&		\cdots&		a_2b_n\\
+a_1b_3&		a_2b_3&		a_3b_3&		\cdots&		a_3b_n\\
+\vdots&		\vdots&		\vdots&		&		\vdots\\
+a_1b_n&		a_2b_n&		a_3b_n&		\cdots&		a_nb_n\\
+\end{matrix} \right|.
+\nonumber
+\end{gather}
+\begin{solution}
+\begin{equation}
+\begin{split}
+|\boldsymbol{A}|&=\left| \begin{matrix}
+a_1b_1&		a_1b_2&		a_1b_3&		\cdots&		a_1b_n\\
+a_1b_2&		a_2b_2&		a_2b_3&		\cdots&		a_2b_n\\
+a_1b_3&		a_2b_3&		a_3b_3&		\cdots&		a_3b_n\\
+\vdots&		\vdots&		\vdots&		&		\vdots\\
+a_1b_n&		a_2b_n&		a_3b_n&		\cdots&		a_nb_n\\
+\end{matrix} \right|=a_1\left| \begin{matrix}
+b_1&		b_2&		b_3&		\cdots&		b_n\\
+a_1b_2&		a_2b_2&		a_2b_3&		\cdots&		a_2b_n\\
+a_1b_3&		a_2b_3&		a_3b_3&		\cdots&		a_3b_n\\
+\vdots&		\vdots&		\vdots&		&		\vdots\\
+a_1b_n&		a_2b_n&		a_3b_n&		\cdots&		a_nb_n\\
+\end{matrix} \right|
+\\
+&\xlongequal[i=2,\cdots ,n]{\left( -a_i \right) r_1+r_i}a_1\left| \begin{matrix}
+b_1&		b_2&		b_3&		\cdots&		b_n\\
+a_1b_2-a_2b_1&		0&		0&		\cdots&		0\\
+a_1b_3-a_3b_1&		a_2b_3-a_3b_2&		0&		\cdots&		0\\
+\vdots&		\vdots&		\vdots&		&		\vdots\\
+a_1b_n-a_nb_1&		a_2b_n-a_nb_2&		a_3b_n-a_nb_3&		\cdots&		0\\
+\end{matrix} \right|
+\\
+&\xlongequal{\text{按第}n\text{列展开}}\left( -1 \right) ^{n+1}a_1b_n\left| \begin{matrix}
+a_1b_2-a_2b_1&		0&		\cdots&		0\\
+a_1b_3-a_3b_1&		a_2b_3-a_3b_2&		\cdots&		0\\
+\vdots&		\vdots&		&		\vdots\\
+a_1b_n-a_nb_1&		a_2b_n-a_nb_2&		\cdots&		a_{n-1}b_n-a_nb_{n-1}\\
+\end{matrix} \right|
+\\
+&=\left( -1 \right) ^{n-1}a_1b_n\prod\limits_{i=1}^{n-1}{\left( a_ib_{i+1}-a_{i+1}b_i \right)}
+\\
+&=a_1b_n\prod\limits_{i=1}^{n-1}{\left( a_{i+1}b_i-a_ib_{i+1} \right)}.
+\end{split}
+\nonumber
+\end{equation}
+\end{solution}
+\end{example}
+
+\begin{proposition}[\hypertarget{"爪"型行列式}{"爪"型行列式}]\label{"爪"型行列式}
+证明$n$阶行列式:
+\begin{gather}
+|\boldsymbol{A}|=\left| \begin{matrix}
+a_1&		b_2&		\cdots&		b_n\\
+c_2&		a_2&		&		\\
+\vdots&		&		\ddots&		\\
+c_n&		&		&		a_n\\
+\end{matrix} \right|
+=a_1a_2\cdots a_n-\sum_{i=2}^n{a_2}\cdots \widehat{a_i}\cdots a_nb_ic_i.
+\nonumber
+\end{gather}
+\end{proposition}
+\begin{note}
+记忆"爪"型行列式的计算方法和结论.
+\end{note}
+\begin{proof}
+当$a_i\ne 0\left( \forall i\in \left[ 2,n \right] \cap \mathbb{N}  \right)$时,我们有
+\begin{align*}
+&|\boldsymbol{A}|=\left| \begin{matrix}
+a_1&		b_2&		\cdots&		b_n\\
+c_2&		a_2&		&		\\
+\vdots&		&		\ddots&		\\
+c_n&		&		&		a_n\\
+\end{matrix} \right|\xlongequal[i=2,\cdots ,n]{\left( -\frac{c_i}{a_i} \right) j_i+j_1}\left| \begin{matrix}
+a_1-\sum_{i=2}^n{\frac{b_ic_i}{a_i}}&		b_2&		\cdots&		b_n\\
+0&		a_2&		&		\\
+\vdots&		&		\ddots&		\\
+0&		&		&		a_n\\
+\end{matrix} \right|
+\\
+&=\left( a_1-\sum_{i=2}^n{\frac{b_ic_i}{a_i}} \right) \prod\limits_{i=2}^n{a_i}
+=a_1a_2\cdots a_n-\sum_{i=2}^n{a_2}\cdots \widehat{a_i}\cdots a_nb_ic_i.
+\end{align*}
+当$\exists i\in \left[ 2,n \right] \cap \mathbb{N} \,\,s.t. \,\,a_i=0$时,则
+$a_1a_2\cdots a_n-\sum_{i=2}^n{a_2}\cdots \widehat{a_i}\cdots a_nb_ic_i=-a_2\cdots \widehat{a_i}\cdots a_nb_ic_i$
+.此时,我们有
+\begin{align*}
+|\boldsymbol{A}| &= \left| \begin{matrix}
+a_1 & b_2 & \cdots & b_{i-1} & b_i & b_{i+1} & \cdots & b_n \\
+c_2 & a_2 & & & & & & \\
+\vdots & & \ddots & & & & & \\
+c_{i-1} & & & a_{i-1} & & & & \\
+c_i & & & & 0 & & & \\
+c_{i+1} & & & & & a_{i+1} & & \\
+\vdots & & & & & & \ddots & \\
+c_n & & & & & & & a_n \\
+\end{matrix} \right|
+\xlongequal[(\text{按}c_i\text{所在行展开})]{\text{按第}i\text{行展开}} (-1)^{i+1}c_i \left| \begin{matrix}
+b_2 & \cdots & b_{i-1} & b_i & b_{i+1} & \cdots & b_n \\
+a_2 & & & & & & & \\
+& \ddots & & & & & & \\
+& & a_{i-1} & 0 & 0 & & & \\
+& & 0 & 0 & a_{i+1} & & & \\
+& & & & & \ddots & & \\
+& & & & & & a_n \\
+\end{matrix} \right| \\
+&\xlongequal[(\text{按}b_i\text{所在列展开})]{\text{按第}i-1\text{列展开}} (-1)^{i+1}(-1)^{i}b_ic_i \left| \begin{matrix}
+a_2 & & & & & \\
+& \ddots & & & & \\
+& & a_{i-1} & & & \\
+& & & a_{i+1} & & \\
+& & & & \ddots & \\
+& & & & & a_n \\
+\end{matrix} \right|      
+= -a_2 \cdots \widehat{a_i} \cdots a_nb_ic_i.
+\end{align*}
+综上所述,原命题得证.
+\end{proof}
+
+\begin{proposition}[分块"爪"型行列式]\label{proposition:分块"爪"型行列式}
+计算$n$阶行列式($a_{ii}\ne 0,i=k+1,k+2,\cdots,n$):
+\begin{align*}
+|\boldsymbol{A}|=\left| \begin{matrix}
+a_{11}&		\cdots&		a_{1k}&		a_{1,k+1}&		\cdots&		a_{1n}\\
+\vdots&		&		\vdots&		\vdots&		&		\vdots\\
+a_{k1}&		\cdots&		a_{kk}&		a_{k,k+1}&		\cdots&		a_{kn}\\
+a_{k+1,1}&		\cdots&		a_{k+1,k}&		a_{k+1,k+1}&		&		\\
+\vdots&		&		\vdots&		&		\ddots&		\\
+a_{n1}&		\cdots&		a_{nk}&		&		&		a_{nn}\\
+\end{matrix} \right|.
+\end{align*}
+\end{proposition}
+\begin{note}
+记忆分块"爪"型行列式的计算方法即可,计算方法和"爪"型行列式的计算方法类似.
+\end{note}
+\begin{solution}
+\begin{align*}
+&|\boldsymbol{A}|=\left| \begin{matrix}
+a_{11}&		\cdots&		a_{1k}&		a_{1,k+1}&		\cdots&		a_{1n}\\
+\vdots&		&		\vdots&		\vdots&		&		\vdots\\
+a_{k1}&		\cdots&		a_{kk}&		a_{k,k+1}&		\cdots&		a_{kn}\\
+a_{k+1,1}&		\cdots&		a_{k+1,k}&		a_{k+1,k+1}&		&		\\
+\vdots&		&		\vdots&		&		\ddots&		\\
+a_{n1}&		\cdots&		a_{nk}&		&		&		a_{nn}\\
+\end{matrix} \right|
+\\
+&\xlongequal[i=k+1,k+2,\cdots ,n]{-\frac{a_{i1}}{a_{ii}}j_i+j_1,-\frac{a_{i2}}{a_{ii}}j_i+j_2,\cdots ,-\frac{a_{in}}{a_{ii}}j_i+j_k}\left| \begin{matrix}
+c_{11}&		\cdots&		c_{1k}&		a_{1,k+1}&		\cdots&		a_{1n}\\
+\vdots&		&		\vdots&		\vdots&		&		\vdots\\
+c_{k1}&		\cdots&		c_{kk}&		a_{k,k+1}&		\cdots&		a_{kn}\\
+0&		\cdots&		0&		a_{k+1,k+1}&		&		\\
+\vdots&		&		\vdots&		&		\ddots&		\\
+0&		\cdots&		0&		&		&		a_{nn}\\
+\end{matrix} \right|
+\\
+&=\left| \begin{matrix}
+C&		B\\
+O&		\Lambda\\
+\end{matrix} \right|=|C|\cdot |\Lambda |=|C|\prod_{i=k+1}^n{a_{ii}}.
+\end{align*}
+其中$C=\left( \begin{matrix}
+c_{11}&		\cdots&		c_{1k}\\
+\vdots&		&		\vdots\\
+c_{k1}&		\cdots&		c_{kk}\\
+\end{matrix} \right) ,B=\left( \begin{matrix}
+a_{1,k+1}&		\cdots&		a_{1n}\\
+\vdots&		&		\vdots\\
+a_{k,k+1}&		\cdots&		a_{kn}\\
+\end{matrix} \right) ,\Lambda =\left( \begin{matrix}
+a_{k+1}&		&		\\
+&		\ddots&		\\
+&		&		a_n\\
+\end{matrix} \right).$
+并且$c_{pq}=a_{pq}-\sum_{i=k+1}^n{\frac{a_{iq}a_{pi}}{a_{ii}}},p,q=1,2,\cdots ,n$.
+\end{solution}
+
+\begin{corollary}[\hypertarget{"爪"型行列式的推广}{"爪"型行列式的推广}]\label{"爪"型行列式的推广}
+计算$n$阶行列式:
+\begin{equation}
+|\boldsymbol{A}|=\left| \begin{matrix}
+x_1-a_1&		x_2&		x_3&		\cdots&		x_n\\
+x_1&		x_2-a_2&		x_3&		\cdots&		x_n\\
+x_1&		x_2&		x_3-a_3&		\cdots&		x_n\\
+\vdots&		\vdots&		\vdots&		&		\vdots\\
+x_1&		x_2&		x_3&		\cdots&		x_n-a_n\\
+\end{matrix} \right|.
+\nonumber
+\end{equation}
+\end{corollary}
+\begin{note}
+这是一个有用的模板(即\textbf{行列式除了主对角元素外,每行都一样}).
+
+记忆该命题的计算方法即可.即先化为"爪"型行列式,再利用"爪"型行列式的计算结果.
+\end{note}
+\begin{solution}
+当$a_i\ne 0\left( \forall i\in \left[ 2,n \right] \cap \mathbb{N}  \right)$时,我们有
+\begin{equation}
+\begin{split}
+|\boldsymbol{A}|&=\left| \begin{matrix}
+x_1-a_1&		x_2&		x_3&		\cdots&		x_n\\
+x_1&		x_2-a_2&		x_3&		\cdots&		x_n\\
+x_1&		x_2&		x_3-a_3&		\cdots&		x_n\\
+\vdots&		\vdots&		\vdots&		&		\vdots\\
+x_1&		x_2&		x_3&		\cdots&		x_n-a_n\\
+\end{matrix} \right|\xlongequal[i=2,\cdots ,n]{\left( -1 \right) r_1+r_i}\left| \begin{matrix}
+x_1-a_1&		x_2&		x_3&		\cdots&		x_n\\
+a_1&		-a_2&		0&		\cdots&		0\\
+a_1&		0&		-a_3&		\cdots&		0\\
+\vdots&		\vdots&		\vdots&		&		\vdots\\
+a_1&		0&		0&		\cdots&		-a_n\\
+\end{matrix} \right|
+\\
+&\xlongequal{\text{命题}\ref{"爪"型行列式}}\left[ \left( x_1-a_1 \right) +\sum_{i=2}^n{\frac{a_1x_i}{a_i}} \right] \prod\limits_{i=2}^n{\left( -a_i \right)}=\left( -1 \right) ^{n-1}\left[ \left( x_1-a_1 \right) +\sum_{i=2}^n{\frac{a_1x_i}{a_i}} \right] \prod\limits_{i=2}^n{a_i}
+\\
+&=\left( -1 \right) ^{n-1}\left[ \left( x_1-a_1 \right) \prod\limits_{i=2}^n{a_i}+\sum_{i=2}^n{a_1a_2\cdots \widehat{a_i}\cdots a_n}x_i \right] .
+\end{split}
+\nonumber
+\end{equation}
+
+当$\exists i\in \left[ 2,n \right] \cap \mathbb{N}\,\,s.t.\,\, a_i=0$时,我们有
+\begin{equation}
+\begin{split}
+|\boldsymbol{A}|&=\left| \begin{matrix}
+x_1-a_1&		x_2&		x_3&		\cdots&		x_n\\
+x_1&		x_2-a_2&		x_3&		\cdots&		x_n\\
+x_1&		x_2&		x_3-a_3&		\cdots&		x_n\\
+\vdots&		\vdots&		\vdots&		&		\vdots\\
+x_1&		x_2&		x_3&		\cdots&		x_n-a_n\\
+\end{matrix} \right|\xlongequal[i=2,\cdots ,n]{\left( -1 \right) r_1+r_i}\left| \begin{matrix}
+x_1-a_1&		x_2&		x_3&		\cdots&		x_n\\
+a_1&		-a_2&		0&		\cdots&		0\\
+a_1&		0&		-a_3&		\cdots&		0\\
+\vdots&		\vdots&		\vdots&		&		\vdots\\
+a_1&		0&		0&		\cdots&		-a_n\\
+\end{matrix} \right|
+\\
+&\xlongequal{\text{命题}\ref{"爪"型行列式}}\left( x_1-a_1 \right) \left( -a_2 \right) \left( -a_3 \right) \cdots \left( -a_n \right) -\sum_{i=2}^n{\left( -a_2 \right) \cdots \widehat{\left( -a_i \right) }\cdots \left( -a_n \right)}a_1x_i
+\\
+&=\left( -1 \right) ^{n-1}\left( x_1-a_1 \right) \prod\limits_{i=2}^n{a_i}+\left( -1 \right) ^{n-1}\sum_{i=2}^n{a_1a_2\cdots \widehat{a_i}\cdots a_n}x_i
+\\
+&=\left( -1 \right) ^{n-1}\left[ \left( x_1-a_1 \right) \prod\limits_{i=2}^n{a_i}+\sum_{i=2}^n{a_1a_2\cdots \widehat{a_i}\cdots a_n}x_i \right] .            
+\end{split}
+\nonumber
+\end{equation}
+综上所述,$|\boldsymbol{A}|=\left( -1 \right) ^{n-1}\left[ \left( x_1-a_1 \right) \prod\limits_{i=2}^n{a_i}+\sum_{i=2}^n{a_1a_2\cdots \widehat{a_i}\cdots a_nx_i} \right]$.
+\end{solution}
+
+\begin{example}
+计算$n$阶行列式:
+\begin{equation}
+|\boldsymbol{A}|=\left| \begin{matrix}
+a&		0&		\cdots&		0&		1\\
+0&		a&		\cdots&		0&		0\\
+\vdots&		\vdots&		&		\vdots&		\vdots\\
+0&		0&		\cdots&		a&		0\\
+1&		0&		\cdots&		0&		a\\
+\end{matrix} \right|.
+\nonumber
+\end{equation}
+\end{example}
+\begin{solution}
+\begin{equation}
+\begin{split}
+|\boldsymbol{A}|=\left| \begin{matrix}
+a&		0&		\cdots&		0&		1\\
+0&		a&		\cdots&		0&		0\\
+\vdots&		\vdots&		&		\vdots&		\vdots\\
+0&		0&		\cdots&		a&		0\\
+1&		0&		\cdots&		0&		a\\
+\end{matrix} \right|\xlongequal{\text{按第一列展开}}a^n+\left( -1 \right) ^{n+1}\left| \begin{matrix}
+0&		0&		\cdots&		0&		1\\
+a&		0&		\cdots&		0&		0\\
+\vdots&		\vdots&		&		\vdots&		\vdots\\
+0&		0&		\cdots&		a&		0\\
+\end{matrix} \right|=a^n+\left( -1 \right) ^{n+1+n}a^{n-2}=a^n-a^{n-2}.
+\end{split}
+\nonumber
+\end{equation}
+\end{solution}
+\begin{remark}
+本题也可由命题\ref{"爪"型行列式}直接得到,$|\boldsymbol{A}|=a^n-a^{n-2}$.
+\end{remark}
+
+
+\begin{proposition}\label{根据行列式代数余子式构造行列式}
+设\(\vert A\vert=\vert a_{i}\vert\)是一个\(n\)阶行列式,\(A_{ij}\)是它的第\((i,j)\)元素的代数余子式,$X=(x_1,x_2,\cdots,x_n)^T,Y=(y_1,y_2,\cdots,y_n)^T$,$z$是任意常数,求证:
+\begin{gather*}
+\left| \begin{matrix}
+A&		X\\
+Y^T&		z\\
+\end{matrix} \right|=\left| \begin{matrix}
+a_{11}&		a_{12}&		\cdots&		a_{1n}&		x_1\\
+a_{21}&		a_{22}&		\cdots&		a_{2n}&		x_2\\
+\vdots&		\vdots&		&		\vdots&		\vdots\\
+a_{n1}&		a_{n2}&		\cdots&		a_{nn}&		x_n\\
+y_1&		y_2&		\cdots&		y_n&		z\\
+\end{matrix} \right|=z|\boldsymbol{A}|-\sum_{i=1}^n{\sum_{j=1}^n{A_{ij}x_iy_j}.}
+\end{gather*}
+进而得到
+\begin{align*}
+\left| \begin{matrix}
+A&		X\\
+Y^T&		0\\
+\end{matrix} \right|=-Y^TA^*X.
+\end{align*}
+\end{proposition}
+\begin{note}\label{关于行列式|A|所有代数余子式求和的构造}
+根据这个命题可以得到一个\textbf{关于行列式$|\boldsymbol{A}|$的所有代数余子式求和的构造}:
+
+\begin{align*}
+-\sum_{i,j=1}^n{A_{ij}}=\left| \begin{matrix}
+\boldsymbol{A}&		\mathbf{1}\\
+\mathbf{1}'&		0\\
+\end{matrix} \right|=\left| \begin{matrix}
+\boldsymbol{\alpha }_{\mathbf{1}}&		\boldsymbol{\alpha }_{\mathbf{2}}&		\cdots&		\boldsymbol{\alpha }_{\boldsymbol{n}}&		\mathbf{1}\\
+1&		1&		\cdots&		1&		0\\
+\end{matrix} \right|=\left| \begin{matrix}
+\boldsymbol{\beta }_{\mathbf{1}}&		1\\
+\boldsymbol{\beta }_{\mathbf{2}}&		1\\
+\vdots&		\vdots\\
+\boldsymbol{\beta }_{\boldsymbol{n}}&		1\\
+\mathbf{1}'&		0\\
+\end{matrix} \right|.
+\end{align*}
+其中$|\boldsymbol{A}|$的列向量依次为$\boldsymbol{\alpha }_{\mathbf{1}},\boldsymbol{\alpha }_{\mathbf{2}},\cdots ,\boldsymbol{\alpha }_{\boldsymbol{n}}$,$|\boldsymbol{A}|$的行向量依次为$\boldsymbol{\beta }_{\mathbf{1}},\boldsymbol{\beta }_{\mathbf{2}},\cdots ,\boldsymbol{\beta }_{\boldsymbol{n}}$.并且$\mathbf{1}$表示元素均为1的列向量,$\mathbf{1}'$表示$\mathbf{1}$的转置.
+(令上述命题中的$z=0,x_i=y_i=1,i=1,2,\cdots,n$即可得到.)
+\end{note}
+\begin{remark}
+如果需要证明的是矩阵的代数余子式的相关命题,我们可以考虑一下这种构造,即令上述命题中的$z=0$并且待定/任取$x_i,y_i$.
+\end{remark}
+\begin{proof}
+{\color{blue}证法一:}
+将上述行列式先按最后一列展开,展开式的第一项为
+\begin{equation}
+\begin{split}
+\left( -1 \right) ^{n+2}x_1\left| \begin{matrix}
+a_{21}&		a_{22}&		\cdots&		a_{2n}\\
+\vdots&		\vdots&		&		\vdots\\
+a_{n1}&		a_{n2}&		\cdots&		a_{nn}\\
+y_1&		y_2&		\cdots&		y_n\\
+\end{matrix} \right|.
+\end{split}
+\nonumber
+\end{equation}
+再将上式按最后一行展开得到
+\begin{equation}
+\begin{split}
+&\left( -1 \right) ^{n+2}x_1\left[ \left( -1 \right) ^{n+1}\left( -1 \right) ^{1+1}y_1A_{11}+\left( -1 \right) ^{n+2}\left( -1 \right) ^{1+2}y_2A_{12}+\cdots +\left( -1 \right) ^{n+n}\left( -1 \right) ^{1+n}y_nA_{1n} \right]
+\\
+&=\left( -1 \right) ^{n+2}x_1\left( -1 \right) ^{n+1}\left[ \left( -1 \right) ^2y_1A_{11}+\left( -1 \right) ^4y_2A_{12}+\cdots +\left( -1 \right) ^{2n}y_nA_{1n} \right] 
+\\
+&=-x_1\left( y_1A_{11}+y_2A_{12}+\cdots +y_nA_{1n} \right)
+\\
+&=-x_1\sum_{j=1}^n{y_jA_{1j}}.            
+\end{split}
+\nonumber
+\end{equation}
+同理可得原行列式展开式的第$i(i=1,2,\cdots,n-1)$项为
+\begin{equation}
+\begin{split}
+\left( -1 \right) ^{n+1+i}x_i\left| \begin{matrix}
+a_{11}&		a_{12}&		\cdots&		a_{1n}\\
+\vdots&		\vdots&		&		\vdots\\
+a_{i-1,1}&		a_{i-1,2}&		\cdots&		a_{i-1,n}\\
+a_{i+1,1}&		a_{i+1,2}&		\cdots&		a_{i+1,n}\\
+\vdots&		\vdots&		&		\vdots\\
+a_{n1}&		a_{n2}&		\cdots&		a_{nn}\\
+y_1&		y_2&		\cdots&		y_n\\
+\end{matrix} \right|.
+\end{split}
+\nonumber
+\end{equation}
+将上式按最后一行展开得到$z\left|\boldsymbol{A}\right|$.
+\begin{equation}
+\begin{split}
+&\left( -1 \right) ^{n+1+i}x_i\left[ \left( -1 \right) ^{n+1}\left( -1 \right) ^{i+1}y_1A_{i1}+\left( -1 \right) ^{n+2}\left( -1 \right) ^{i+2}y_2A_{i2}+\cdots +\left( -1 \right) ^{n+n}\left( -1 \right) ^{i+n}y_nA_{in} \right] 
+\\
+&=\left( -1 \right) ^{n+1+i}x_i\left( -1 \right) ^{n+1}\left[ \left( -1 \right) ^{i+1}y_1A_{i1}+\left( -1 \right) ^{i+2+1}y_2A_{i2}+\cdots +\left( -1 \right) ^{i+n+n-1}y_nA_{in} \right] 
+\\
+&=\left( -1 \right) ^{2i+1}y_1A_{i1}+\left( -1 \right) ^{2i+3}y_2A_{i2}+\cdots +\left( -1 \right) ^{2i+2n-1}y_nA_{in}
+\\
+&=-x_i\left( y_1A_{i1}+y_2A_{i2}+\cdots +y_nA_{in} \right) 
+\\
+&=-x_i\sum_{j=1}^n{y_jA_{ij}.}
+\end{split}
+\nonumber
+\end{equation}
+而展开式的最后一项为$z\left|\boldsymbol{A}\right|$.
+
+因此,原行列式的值为
+\begin{equation}
+z|\boldsymbol{A}|-\sum_{i=1}^n{\sum_{j=1}^n{A_{ij}x_iy_j.}}
+\nonumber
+\end{equation}
+
+{\color{blue}证法二:}设\(\boldsymbol{x}=(x_1,x_2,\cdots,x_n)',\boldsymbol{y}=(y_1,y_2,\cdots,y_n)'\). 若\(A\)是非异阵,则由降阶公式可得
+\[
+\begin{vmatrix}
+A & \boldsymbol{x}\\
+\boldsymbol{y}' & z
+\end{vmatrix}=|A|(z - \boldsymbol{y}'A^{-1}\boldsymbol{x})=z|A| - \boldsymbol{y}'A^*\boldsymbol{x}.
+\]
+
+对于一般的方阵\(A\),可取到一列有理数\(t_k\rightarrow0\),使得\(t_kI_n + A\)为非异阵. 由非异阵情形的证明可得
+\[
+\begin{vmatrix}
+t_kI_n + A & \boldsymbol{x}\\
+\boldsymbol{y}' & z
+\end{vmatrix}=z|t_kI_n + A| - \boldsymbol{y}'(t_kI_n + A)^*\boldsymbol{x}.
+\]
+
+注意到上式两边都是关于\(t_k\)的多项式,从而关于\(t_k\)连续. 上式两边同时取极限,令\(t_k\rightarrow0\),即有
+\[
+\begin{vmatrix}
+A & \boldsymbol{x}\\
+\boldsymbol{y}' & z
+\end{vmatrix}=z|A| - \boldsymbol{y}'A^*\boldsymbol{x}=z|A|-\sum_{i = 1}^{n}\sum_{j = 1}^{n}A_{ij}x_iy_j.
+\]
+\end{proof}
+
+\begin{example}\label{example:求矩阵代数余子式和的方法1}
+设\(n\)阶行列式\(\vert \boldsymbol{A} \vert=\vert a_{ij}\vert\),\(A_{ij}\)是元素\(a_{ij}\)的代数余子式,求证:
+\[
+\vert B \vert = 
+\begin{vmatrix}
+a_{11}-a_{12} & a_{12}-a_{13} & \cdots & a_{1,n - 1}-a_{1n} & 1\\
+a_{21}-a_{22} & a_{22}-a_{23} & \cdots & a_{2,n - 1}-a_{2n} & 1\\
+a_{31}-a_{32} & a_{32}-a_{33} & \cdots & a_{3,n - 1}-a_{3n} & 1\\
+\vdots & \vdots & \ddots & \vdots & \vdots\\
+a_{n1}-a_{n2} & a_{n2}-a_{n3} & \cdots & a_{n,n - 1}-a_{nn} & 1
+\end{vmatrix}
+= \sum_{i,j = 1}^{n}A_{ij}.
+\]
+\end{example}
+\begin{proof}
+{\color{blue}证法一:}设\(|\boldsymbol{A}|\)的列向量依次为\(\boldsymbol{\alpha }_{\mathbf{1}},\boldsymbol{\alpha }_{\mathbf{2}},\cdots ,\boldsymbol{\alpha }_{\boldsymbol{n}}\),并且\(\mathbf{1}\)表示元素均为\(1\)的列向量.则
+\begin{align*}
+|\boldsymbol{B}|=|\boldsymbol{\alpha }_{\mathbf{1}}-\boldsymbol{\alpha }_{\mathbf{2}},\boldsymbol{\alpha }_{\mathbf{2}}-\boldsymbol{\alpha }_{\mathbf{3}},\cdots ,\boldsymbol{\alpha }_{\boldsymbol{n}-\mathbf{1}}-\boldsymbol{\alpha }_{\boldsymbol{n}},1|\xlongequal[i=n-1,n-2,\cdots ,2]{j_i+j_{i-1}}|\boldsymbol{\alpha }_{\mathbf{1}}-\boldsymbol{\alpha }_{\boldsymbol{n}},\boldsymbol{\alpha }_{\mathbf{2}}-\boldsymbol{\alpha }_{\boldsymbol{n}},\cdots ,\boldsymbol{\alpha }_{\boldsymbol{n}-\mathbf{1}}-\boldsymbol{\alpha }_{\boldsymbol{n}},1|.        
+\end{align*}
+将最后一列写成\((\boldsymbol{\alpha}_{\boldsymbol{n}} + \mathbf{1}) - \boldsymbol{\alpha}_{\boldsymbol{n}}\),进行拆分可得
+\begin{align*}
+&|\boldsymbol{B}| = |\boldsymbol{\alpha}_{\boldsymbol{1}} - \boldsymbol{\alpha}_{\boldsymbol{n}},\boldsymbol{\alpha}_{\boldsymbol{2}} - \boldsymbol{\alpha}_{\boldsymbol{n}},\cdots,\boldsymbol{\alpha}_{\boldsymbol{n - 1}} - \boldsymbol{\alpha}_n,(\boldsymbol{\alpha}_{\boldsymbol{n}} + \mathbf{1}) - \boldsymbol{\alpha}_{\boldsymbol{n}}|
+\\
+&= |\boldsymbol{\alpha}_{\boldsymbol{1}} - \boldsymbol{\alpha}_{\boldsymbol{n}},\boldsymbol{\alpha}_{\boldsymbol{2}} - \boldsymbol{\alpha}_{\boldsymbol{n}},\cdots,\boldsymbol{\alpha}_{\boldsymbol{n - 1}} - \boldsymbol{\alpha}_{\boldsymbol{n}},\boldsymbol{\alpha}_{\boldsymbol{n}} + \mathbf{1}| - |\boldsymbol{\alpha}_{\boldsymbol{1}} - \boldsymbol{\alpha}_{\boldsymbol{n}},\boldsymbol{\alpha}_{\boldsymbol{2}} - \boldsymbol{\alpha}_{\boldsymbol{n}},\cdots,\boldsymbol{\alpha}_{\boldsymbol{n - 1}} - \boldsymbol{\alpha}_{\boldsymbol{n}},\boldsymbol{\alpha}_{\boldsymbol{n}}|
+\\
+&= |\boldsymbol{\alpha}_{\boldsymbol{1}} + \mathbf{1},\boldsymbol{\alpha}_{\boldsymbol{2}} + \mathbf{1},\cdots,\boldsymbol{\alpha}_{\boldsymbol{n - 1}} + \mathbf{1},\boldsymbol{\alpha}_{\boldsymbol{n}} + \mathbf{1}| - |\boldsymbol{\alpha}_{\boldsymbol{1}},\boldsymbol{\alpha}_{\boldsymbol{2}},\cdots,\boldsymbol{\alpha}_{\boldsymbol{n-1}},\boldsymbol{\alpha}_{\boldsymbol{n}}|.
+\end{align*}
+根据行列式的性质将\(|\boldsymbol{\alpha}_{\boldsymbol{1}} + \mathbf{1},\boldsymbol{\alpha}_{\boldsymbol{2}} + \mathbf{1},\cdots,\boldsymbol{\alpha}_{\boldsymbol{n-1}} + \mathbf{1},\boldsymbol{\alpha}_{\boldsymbol{n}} + \mathbf{1}|\)每一列都拆分成两列,然后按\(1\)所在的列展开得到
+\begin{align*}
+&|\boldsymbol{B}| = |\boldsymbol{\alpha}_{\boldsymbol{1}} + \mathbf{1},\boldsymbol{\alpha}_{\boldsymbol{2}} + \mathbf{1},\cdots,\boldsymbol{\alpha}_{\boldsymbol{n-1}} + \mathbf{1},\boldsymbol{\alpha}_{\boldsymbol{n}} + \mathbf{1}| - |\boldsymbol{\alpha}_{\boldsymbol{1}},\boldsymbol{\alpha}_{\boldsymbol{2}},\cdots,\boldsymbol{\alpha}_{\boldsymbol{n-1}},\boldsymbol{\alpha}_{\boldsymbol{n}}|
+\\
+&= |\boldsymbol{\alpha}_{\boldsymbol{1}},\boldsymbol{\alpha}_{\boldsymbol{2}},\cdots,\boldsymbol{\alpha}_{\boldsymbol{n-1}},\boldsymbol{\alpha}_{\boldsymbol{n}}| + \sum_{i,j = 1}^{n}A_{ij} - |\boldsymbol{\alpha}_{\boldsymbol{1}},\boldsymbol{\alpha}_2,\cdots,\boldsymbol{\alpha}_{\boldsymbol{n-1}},\boldsymbol{\alpha}_{\boldsymbol{n}}| = \sum_{i,j = 1}^{n}A_{ij}.
+\end{align*}
+
+{\color{blue}证法二:}设\(|\boldsymbol{A}|\)的列向量依次为\(\boldsymbol{\alpha}_{\boldsymbol{1}},\boldsymbol{\alpha}_{\boldsymbol{2}},\cdots,\boldsymbol{\alpha}_{\boldsymbol{n}}\),并且\(\mathbf{1}\)表示元素均为\(1\)的列向量.\hyperref[关于行列式|A|所有代数余子式求和的构造]{注意到}
+\begin{align*}
+-\sum_{i,j=1}^n{A_{ij}}=\left| \begin{matrix}
+\boldsymbol{\alpha }_{\mathbf{1}}&		\boldsymbol{\alpha }_{\mathbf{2}}&		\cdots&		\boldsymbol{\alpha }_{\boldsymbol{n}}&		\mathbf{1}\\
+1&		1&		\cdots&		1&		0\\
+\end{matrix} \right|.
+\end{align*}
+依次将第$i$列乘以$-1$加到第$i-1$列上去$(i=2,3,\cdots,n)$,再按第$n+1$行展开可得
+\begin{align*}
+-\sum_{i,j=1}^n{A_{ij}=\left| \begin{matrix}
+\boldsymbol{\alpha }_{\mathbf{1}}-\boldsymbol{\alpha }_{\mathbf{2}}&		\boldsymbol{\alpha }_{\mathbf{2}}-\boldsymbol{\alpha }_{\mathbf{3}}&		\cdots&		\boldsymbol{\alpha }_{\boldsymbol{n}-\mathbf{1}}-\boldsymbol{\alpha }_{\boldsymbol{n}}&		\boldsymbol{\alpha }_{\boldsymbol{n}}&		1\\
+0&		0&		\cdots&		0&		1&		0\\
+\end{matrix} \right|}
+\\
+=-|\boldsymbol{\alpha }_{\mathbf{1}}-\boldsymbol{\alpha }_{\mathbf{2}},\boldsymbol{\alpha }_{\mathbf{2}}-\boldsymbol{\alpha }_{\mathbf{3}},\cdots ,\boldsymbol{\alpha }_{\boldsymbol{n}-\mathbf{1}}-\boldsymbol{\alpha }_{\boldsymbol{n}},1|=-|\boldsymbol{B}|.
+\end{align*}
+结论得证.
+\end{proof}
+
+\begin{example}
+设\(n\)阶矩阵\(A\)的每一行、每一列的元素之和都为零,证明:\(A\)的每个元素的代数余子式都相等.
+\end{example}
+\begin{proof}
+{\color{blue}证法一:}设\(A=(a_{ij})\),\(\boldsymbol{x}=(x_1,x_2,\cdots,x_n)'\),\(\boldsymbol{y}=(y_1,y_2,\cdots,y_n)'\),不妨设$x_iy_j$均不相同,$i,j=1,2,\cdots,n$.考虑如下\(n + 1\)阶矩阵的行列式求值:
+\[
+B=\begin{pmatrix}
+A & \boldsymbol{x}\\
+\boldsymbol{y}' & 0
+\end{pmatrix}
+\]
+一方面,由\hyperref[根据行列式代数余子式构造行列式]{命题\ref{根据行列式代数余子式构造行列式}}可得\(|B|=-\sum_{i = 1}^{n}\sum_{j = 1}^{n}A_{ij}x_iy_j\). 另一方面,先把行列式\(|B|\)的第二行,\(\cdots\),第\(n\)行全部加到第一行上;再将第二列,\(\cdots\),第\(n\)列全部加到第一列上,可得
+\[
+\begin{vmatrix}
+a_{11}&a_{12}&\cdots&a_{1n}&x_1\\
+a_{21}&a_{22}&\cdots&a_{2n}&x_2\\
+\vdots&\vdots&&\vdots&\vdots\\
+a_{n1}&a_{n2}&\cdots&a_{nn}&x_n\\
+y_1&y_2&\cdots&y_n&0
+\end{vmatrix}=
+\begin{vmatrix}
+0&0&\cdots&0&\sum_{i = 1}^{n}x_i\\
+a_{21}&a_{22}&\cdots&a_{2n}&x_2\\
+\vdots&\vdots&&\vdots&\vdots\\
+a_{n1}&a_{n2}&\cdots&a_{nn}&x_n\\
+y_1&y_2&\cdots&y_n&0
+\end{vmatrix}=
+\begin{vmatrix}
+0&0&\cdots&0&\sum_{i = 1}^{n}x_i\\
+0&a_{22}&\cdots&a_{2n}&x_2\\
+\vdots&\vdots&&\vdots&\vdots\\
+0&a_{n2}&\cdots&a_{nn}&x_n\\
+\sum_{j = 1}^{n}y_j&y_2&\cdots&y_n&0
+\end{vmatrix}
+\]
+依次按照第一行和第一列进行展开,可得\(|B|=-A_{11}\sum_{i = 1}^{n}\sum_{j = 1}^{n}x_iy_j\). 比较上述两个结果,又由于$x_iy_j$均不
+相同,因此可得\(A\)的所有代数余子式都相等.
+
+{\color{blue}证法二:}由假设可知$\left| \boldsymbol{A} \right|=0$(每行元素全部加到第一行即得),从而\(\boldsymbol{A}\)是奇异矩阵. 若\(\boldsymbol{A}\)的秩小于\(n - 1\),则\(\boldsymbol{A}\)的任意一个代数余子式\(A_{ij}\)都等于零,结论显然成立. 若\(\boldsymbol{A}\)的秩等于\(n - 1\),则线性方程组\(\boldsymbol{A}\boldsymbol{x}=\boldsymbol{0}\)的基础解系只含一个向量. 又因为\(\boldsymbol{A}\)的每一行元素之和都等于零,所以由\hyperref[proposition:对矩阵行和和列和的一种刻画]{命题\ref{proposition:对矩阵行和和列和的一种刻画}}可知,我们可以选取\(\boldsymbol{\alpha}=(1,1,\cdots,1)'\)作为\(\boldsymbol{A}\boldsymbol{x}=\boldsymbol{0}\)的基础解系. 由\hyperref[proposition:奇异系数矩阵Ax=0的解空间]{命题\ref{proposition:奇异系数矩阵Ax=0的解空间}的证明}可知\(\boldsymbol{A}^*\)的每一列都是$\boldsymbol{A}\boldsymbol{x}=\boldsymbol{0}$的解,从而\(\boldsymbol{A}^*\)的每一列与\(\boldsymbol{\alpha}\)成比例,特别地,\(\boldsymbol{A}^*\)的每一行都相等. 对\(\boldsymbol{A}'\)重复上面的讨论,可得\((\boldsymbol{A}')^*\)的每一行都相等.注意到\((\boldsymbol{A}')^*=(\boldsymbol{A}^*)'\),从而\(\boldsymbol{A}^*\)的每一列都相等,于是\(\boldsymbol{A}\)的所有代数余子式\(A_{ij}\)都相等.
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 \end{document}
