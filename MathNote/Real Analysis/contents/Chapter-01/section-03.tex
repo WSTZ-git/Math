@@ -5,13 +5,171 @@
 % \begin{figure}[h]
 % \centering
 % \includegraphics{image-01.01}
-% \label{fig:image-01.01}
 % \caption{图片标题}
+% \label{fig:image-01.01}
 % \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
 
 \begin{document}
 
-\section{}
+\section{一维开集的构造与Cantor集}
+
+\subsection{一维开集的构造}
+
+\begin{definition}[构成区间]
+设 $G \subset \mathbb{R}$ 为开集, 若区间 $(\alpha, \beta)$ 满足:
+\begin{enumerate}[(i)]
+\item $(\alpha, \beta) \subset G$;
+\item $\alpha \notin G$, $\beta \notin G$.
+\end{enumerate}
+则称 $(\alpha, \beta)$ 为 $G$ 的一个\textbf{构成区间}.
+\end{definition}
+
+\begin{proposition}
+设 $G_1, G_2$ 为 $\mathbb{R}$ 中的开集, 若 $G_1 \subset G_2$, 则 $G_1$ 的每个构成区间都含于 $G_2$ 的某个构成区间.
+\end{proposition}
+\begin{proof}
+ 设 $(\alpha_1, \beta_1)$ 为 $G_1$ 的构成区间, 取 $x \in (\alpha_1, \beta_1)$, 则 $x \in G_2$. 记 $G_2$ 中包含 $x$ 的构成区间为 $(\alpha_2, \beta_2)$. 往证 $(\alpha_1, \beta_1) \subset (\alpha_2, \beta_2)$, 即 $\alpha_2 \leqslant \alpha_1$, $\beta_1 \leqslant \beta_2$.
+
+若 $\alpha_2 > \alpha_1$, 又 $x > \alpha_2$, 故
+\begin{align*}
+\alpha_2 \in (\alpha_1, x) \subset (\alpha_1, \beta_1) \subset G_1 \subset G_2
+\end{align*}
+这与 $\alpha_2 \notin G_2$ 矛盾. 故 $\alpha_2 \leqslant \alpha_1$. 类似可证 $\beta_1 \leqslant \beta_2$.
+\end{proof}
+
+\begin{theorem}[开集构造定理]\label{theorem:开集构造定理}
+$\mathbb{R}$ 上每个非空开集都可表示为至多可列个互不相交的构成区间的并集.
+\end{theorem}
+\begin{note}
+由于闭集是开集的余集, 由开集构造定理知, $\mathbb{R}$ 上的闭集或者是全直线, 或者是从直线上挖去有限个或可列个互不相交的开区间所得到的集合. 而后者恰好就是直线上挖去那些开区间所剩下的孤立点和闭区间. 注意, 这些孤立点和闭区间不一定是可列个. 
+\end{note}
+\begin{proof}
+分三个步骤. 设 $G$ 为 $\mathbb{R}$ 中的非空开集.
+
+(1) 对 $\forall x_0 \in G$, 存在 $G$ 的一个构成区间 $(\alpha, \beta)$, 使得 $x_0 \in (\alpha, \beta)$.
+
+由于 $G$ 是开集, 故存在 $\delta > 0$ 使得 $(x_0 - \delta, x_0 + \delta) \subset G$. 令
+\begin{align*}
+\alpha &= \inf\{x \in \mathbb{R} : (x, x_0) \subset G\}\\
+\beta &= \sup\{x \in \mathbb{R} : (x_0, x) \subset G\}
+\end{align*}
+($\alpha$ 可以是 $-\infty$, $\beta$ 可以是 $+\infty$). 显然, $x_0 \in (\alpha, \beta)$. 下面证 $(\alpha, \beta)$ 为 $G$ 的构成区间.
+
+设 $x' \in (\alpha, \beta)$, 不妨设 $\alpha < x' < x_0$. 由 $\alpha$ 的定义, 存在 $z$ 满足 $\alpha < z < x'$ 且 $(z, x_0) \subset G$, 故 $x' \in (z, x_0) \subset G$. 因此 $(\alpha, \beta) \subset G$.
+
+若 $\alpha \in G$, 由于 $G$ 是开集, 则存在 $\eta > 0$ 使得 $(\alpha - \eta, \alpha + \eta) \subset G$, 从而 $(\alpha - \eta, x_0) \subset G$. 这与 $\alpha$ 的定义矛盾, 故 $\alpha \notin G$. 类似地, $\beta \notin G$.
+
+(2) 设 $(\alpha_1, \beta_1)$ 和 $(\alpha_2, \beta_2)$ 是 $G$ 的两个构成区间, 则或者 $(\alpha_1, \beta_1) = (\alpha_2, \beta_2)$ 或者 $(\alpha_1, \beta_1) \cap (\alpha_2, \beta_2) = \varnothing$.
+
+假设存在 $x \in (\alpha_1, \beta_1) \cap (\alpha_2, \beta_2)$, 则
+\begin{align*}
+\alpha_1 < x < \beta_1, \quad \alpha_2 < x < \beta_2
+\end{align*}
+若 $\beta_1 < \beta_2$, 则 $\beta_1 \in (x, \beta_2) \subset (\alpha_2, \beta_2) \subset G$, 这与 $\beta_1 \notin G$ 矛盾, 故 $\beta_1 \geqslant \beta_2$. 同理, $\beta_2 \geqslant \beta_1$. 因此, $\beta_1 = \beta_2$. 类似地, $\alpha_1 = \alpha_2$. 即 $(\alpha_1, \beta_1) = (\alpha_2, \beta_2)$.
+
+(3) $G = \bigcup_{k}(\alpha_k, \beta_k)$.
+
+由于 $\mathbb{R}$ 上互不相交的开区间至多有可列个, 故 $G$ 的构成区间至多有可列个, 记为 $(\alpha_k, \beta_k)$, $k = 1, 2, \cdots$, 下面证 $G = \bigcup_{k}(\alpha_k, \beta_k)$.
+
+注意到构成区间的定义, 任取 $x \in \bigcup_{k}(\alpha_k, \beta_k)$, 则存在某个构成区间使得 $x \in (\alpha_{k_0}, \beta_{k_0}) \subset G$. 另一方面, 对 $\forall x \in G$, 由 (1) 知存在一个构成区间 $(\alpha_{k_0}, \beta_{k_0})$ 使得
+\begin{align*}
+x \in (\alpha_{k_0}, \beta_{k_0}) \subset \bigcup_{k}(\alpha_k, \beta_k)
+\end{align*}
+故 $G \subset \bigcup_{k}(\alpha_k, \beta_k)$. 因此, $G = \bigcup_{k}(\alpha_k, \beta_k)$.
+\end{proof}
+
+
+
+\subsection{Cantor集}
+
+\begin{definition}[稠密集与疏朗集]
+设$X$为非空集合,$A\subset X$,若 $\overline{A}=X$，则称 $A$ 为 $X$ 中的\textbf{稠密集}. 若 $X$ 存在可数稠密集，则称 $X$ 是可分的. 若 $(\overline{A})^\circ=\varnothing$，则称 $A$ 为\textbf{疏朗集} (闭包中不包含任何邻域).
+\end{definition}
+
+
+康托尔 (三分) 集在举反例时经常用到，下面给出康托尔集的构造.
+记 $C_0 = [0,1]$. 第 1 步: 将 $C_0$ 三等分，去掉中间的开区间 $(1/3,2/3)$，剩下的部分记为 $C_1$，即
+\begin{align*}
+C_1 = \left[0,\frac{1}{3}\right]\cup\left[\frac{2}{3},1\right]
+\end{align*}
+第 2 步: 将 $C_1$ 中每个闭区间都三等分，再去掉各自中间的开区间 $(1/9,2/9)$ 和 $(7/9,8/9)$，剩下的部分记为 $C_2$，即
+\begin{align*}
+C_2 = \left[0,\frac{1}{9}\right]\cup\left[\frac{2}{9},\frac{3}{9}\right]\cup\left[\frac{6}{9},\frac{7}{9}\right]\cup\left[\frac{8}{9},1\right]
+\end{align*}
+依次做下去$\cdots\cdots$，得到一集列 $\{C_n\}$，其中 $C_n$ 是 $2^n$ 个互不相交的闭区间的并，每个闭区间的长度为 $1/3^n$.
+
+令 $C = \bigcap_{n = 1}^{\infty}C_n$，称为康托尔集. 康托尔集具有以下性质:
+
+(1) 康托尔集是闭的疏朗集 (康托尔集无内点).
+\begin{proof}
+由闭集的性质易知康托尔集 $C$ 是闭集. 为证 $C$ 为疏朗集，只需证明 $C^{\circ}=\varnothing$，即任意 $C$ 中的点都不是内点. 假设存在 $x\in C^{\circ}$，则 $\exists\varepsilon_0>0$，使得 $(x - \varepsilon_0,x + \varepsilon_0)\subset C$. 取足够大的 $n_0$ 使得 $1/3^{n_0}<\varepsilon_0$，则 $(x - \varepsilon_0,x + \varepsilon_0)$ 中必含有不属于 $C_{n_0}$ 的点，这与 $(x - \varepsilon_0,x + \varepsilon_0)\subset C = \bigcap_{n = 1}^{\infty}C_n$ 矛盾.
+\end{proof}
+
+(2) 构造康托尔集从 $[0,1]$ 中去掉的开区间长度之和为 $1$.
+\begin{proof}
+第 $n$ 步，去掉了 $2^{n - 1}$ 个长度为 $1/3^n$ 的区间. 因此，去掉的开区间长度之和为
+\begin{align*}
+\sum_{n = 1}^{\infty}\frac{2^{n - 1}}{3^n}=\frac{1}{3}\sum_{n = 1}^{\infty}\left(\frac{2}{3}\right)^{n - 1}=1
+\end{align*}
+\end{proof}
+
+(3) 康托尔集是完全集 (康托尔集每个点都是聚点).
+\begin{proof}
+设 $x\in C$，则 $x\in C_n$，$n = 1,2,\cdots$，故对每个 $n\in\mathbb{N}$，$x$ 属于长度为 $1/3^n$ 的闭区间中的某一个，记为 $F_n$. 于是，对 $\forall\varepsilon>0$，存在足够大的 $n_0$ 使得 $1/3^{n_0}<\varepsilon$，故 $F_{n_0}\subset U(x,\varepsilon)$. 又 $F_{n_0}$ 的两个端点都属于 $C$，故至少有一个端点不是 $x$，记为 $x'$，从而 $x'\in U(x,\varepsilon)\cap (C - \{x\})\neq\varnothing$，即 $x\in C'$. 
+\end{proof}
+
+(4) $\overline{C} = \overline{[0,1]}$.
+\begin{proof}
+考虑 $[0,1]$ 中的点用三进制小数表示. 去掉的开区间 $(1/3,2/3)$ 中的每个点 $x$ 可表示为
+\begin{gather*}
+x = 0.1x_2x_3\cdots,\text{其中}x_2,x_3,\cdots\in\{0,1,2\}.
+\end{gather*}
+区间端点 $1/3$ 和 $2/3$ (属于 $C$) 作特殊处理，两种表示
+\begin{gather*}
+\frac{1}{3}=0.100\cdots = 0.022\cdots,\frac{2}{3}=0.122\cdots = 0.200\cdots.
+\end{gather*}
+都采用后一种表示 (不出现 “1”). 去掉的开区间 $(1/9,2/9)$ 和 $(7/9,8/9)$ 中的点 $x$ 可表示为
+\begin{gather*}
+x = 0.01x_3x_4\cdots \text{或} x = 0.21x_3x_4\cdots
+\end{gather*}
+其中，$x_3,x_4,\cdots\in\{0,1,2\}$. 区间端点 $1/9,2/9,7/9,8/9$ (属于 $C$) 采用如下表示
+\begin{gather*}
+\frac{1}{9}=0.0022\cdots,\frac{2}{9}=0.0200\cdots,
+\\
+\frac{7}{9}=0.2022\cdots,\frac{8}{9}=0.2200\cdots.   
+\end{gather*}
+依此类推，去掉的开区间中的点必出现 “1”,而 $C$ 则与所有不出现 “1” 的小数一一对应，即
+\[C\sim\{0.x_1x_2x_3\cdots:x_k\in\{0,2\}\}.\]
+而
+\begin{gather*}
+\{0.x_1x_2x_3\cdots:x_k\in\{0,2\}\}\sim\{0.x_1x_2x_3\cdots:x_k\in\{0,1\}\}.
+\end{gather*}
+上式右端即为 $[0,1]$ 的二进制小数表示，故与 $[0,1]$ 对等. 因此，$\overline{C} = \overline{[0,1]}$.
+\end{proof}
+
+\begin{definition}[Cantor函数]
+定义如下函数
+\[
+C(x)=
+\begin{cases}
+0, & x = 0\\
+\frac{2k - 1}{2^n}, & x\in I_{n,k}\\
+1, & x = 1
+\end{cases}
+\]
+其中，$I_{n,k}(n = 1,2,\cdots;k = 1,\cdots,2^{n - 1})$ 为康托尔集在构造过程中第 $n$ 步挖去的三分开区间，该函数称为康托尔函数.
+\end{definition}
+\begin{note}
+Cantor函数 $C(x)$ 是 $[0,1]$ 上的单调递增的连续函数. 
+\end{note}
+
+
+
+
+
+
+
 
 
 
