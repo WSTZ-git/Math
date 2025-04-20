@@ -1,0 +1,182 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}} % 指定图片目录,后续可以直接使用图片文件名。
+
+% 例如:
+% \begin{figure}[h]
+% \centering
+% \includegraphics{image-01.01}
+% \label{fig:image-01.01}
+% \caption{图片标题}
+% \end{figure}
+
+\begin{document}
+
+\section{重积分方法}
+
+\begin{theorem}[\hypertarget{Chebeshev不等式积分形式}{Chebeshev不等式积分形式}]\label{Chebeshev不等式积分形式}
+设 \( p \in R[a,b] \) 且非负,\( f,g \) 在 \([a,b]\) 上是单调函数,则
+\begin{align*}
+\left( \int_{a}^{b} p(x) f(x) \,dx \right) \left( \int_{a}^{b} p(x) g(x) \,dx \right) \leq \left( \int_{a}^{b} p(x) \,dx \right) \left( \int_{a}^{b} p(x) f(x) g(x) \,dx \right), & f,g\text{单调性相同} \\
+\\
+\left( \int_{a}^{b} p(x) f(x) \,dx \right) \left( \int_{a}^{b} p(x) g(x) \,dx \right) \geq \left( \int_{a}^{b} p(x) \,dx \right) \left( \int_{a}^{b} p(x) f(x) g(x) \,dx \right), & f,g\text{单调性相反}
+\nonumber
+\end{align*}
+\end{theorem}
+\begin{note}
+本不等式要牢记于心,它是很多不等式的基本模型,其特征就是出现单调性.
+\end{note}
+\begin{remark}
+{\color{blue}证法二}中的$d\mu$应该看作测度.
+\end{remark}
+\begin{proof}
+{\color{blue}证法一:}
+\begin{align*}
+& \left( \int_{a}^{b} p(x) f(x) dx \right) \left( \int_{a}^{b} p(x) g(x) dx \right) - \left( \int_{a}^{b} p(x) dx \right) \left( \int_{a}^{b} p(x) f(x) g(x) dx \right) \\
+& = \left( \int_{a}^{b} p(x) f(x) dx \right) \left( \int_{a}^{b} p(y) g(y) dy \right) - \left( \int_{a}^{b} p(x) dx \right) \left( \int_{a}^{b} p(y) f(y) g(y) dy \right) \\
+& = \iint_{[a,b]^2} p(x) p(y) g(y) [f(x) - f(y)] dx dy \\
+& \xlongequal{\text{对称性}} \iint_{[a,b]^2} p(y) p(x) g(x) [f(y) - f(x)] dx dy \\
+& = \frac{1}{2} \iint_{[a,b]^2} p(x) p(y) [g(y) - g(x)] [f(x) - f(y)] dx dy,
+\end{align*}
+故结论得证.
+
+{\color{blue}证法二:}
+令$\frac{p\left( x \right)}{\int_a^b{p\left( x \right) \mathrm{d}x}}\mathrm{d}x=\mathrm{d}\mu $,则$\int_a^b{\mathrm{d}\mu}=\int_a^b{\frac{p\left( x \right)}{\int_a^b{p\left( x \right) \mathrm{d}x}}\mathrm{d}x}=1.$于是原不等式等价于
+\begin{align*}
+&\int_a^b f(x)d\mu \int_a^b g(x)d\mu - \int_a^b f(x)g(x)d\mu \\
+=&\int_a^b f(x)d\mu \int_a^b g(y)d\mu - \int_a^b \int_a^b f(y)g(y)d\mu(y)d\mu(x) \\
+=&\int_a^b \int_a^b [f(x) - f(y)]g(y)d\mu(y)d\mu(x) \\
+=&\int_a^b \int_a^b [f(y) - f(x)]g(x)d\mu(y)d\mu(x) \\
+=&\frac{1}{2}\int_a^b \int_a^b [f(x) - f(y)][g(y) - g(x)]
+\end{align*} 
+故结论得证.
+\end{proof}
+
+\begin{example}
+设 $f \in C[0,1]$ 递减恒正, 证明
+\begin{align*}
+\frac{\int_0^1 f^2(x)dx}{\int_0^1 f(x)dx} \geqslant \frac{\int_0^1 xf^2(x)dx}{\int_0^1 xf(x)dx}.
+\end{align*}
+\end{example}
+\begin{proof}
+\begin{align*}
+\frac{\int_0^1 f^2(x)dx}{\int_0^1 f(x)dx} \geqslant \frac{\int_0^1 xf^2(x)dx}{\int_0^1 xf(x)dx}.
+\end{align*}
+原不等式等价于
+\begin{align*}
+\left(\int_0^1 f^2(x)dx\right)\left(\int_0^1 xf(x)dx\right) \geqslant \left(\int_0^1 xf^2(x)dx\right)\left(\int_0^1 f(x)dx\right).
+\end{align*}
+令 $\frac{f(x)}{\int_0^1 f(x)dx}dx = d\mu$, 则上式等价于
+\begin{align*}
+\int_0^1 f(x)d\mu \int_0^1 xd\mu \geqslant \int_0^1 xf(x)d\mu.
+\end{align*}
+上式由\hyperref[Chebeshev不等式积分形式]{Chebeshev不等式积分形式}可直接得到. 
+\end{proof}
+
+\begin{proposition}[反向切比雪夫不等式]\label{proposition:反向切比雪夫不等式}
+设 $f,g \in R[a,b]$ 且 $m_1 \leq f(x) \leq M_1$, $m_2 \leq g(x) \leq M_2$, 证明
+\begin{align*}
+\left|\frac{1}{b - a}\int_{a}^{b}f(x)g(x)dx - \frac{1}{(b - a)^2}\int_{a}^{b}f(x)dx\int_{a}^{b}g(x)dx\right| \leq \frac{(M_2 - m_2)(M_1 - m_1)}{4}.
+\end{align*}
+\end{proposition}
+\begin{remark}
+不妨设 $a = 0$, $b = 1$的原因:假设当 $a = 0$, $b = 1$ 时,
+\begin{align*}
+\left|\int_0^1{f(x)g(x) \mathrm{d}x}-\int_0^1{f(x) \mathrm{d}x}\int_0^1{g(x) \mathrm{d}x}\right| &\leqslant \frac{(M_2 - m_2)(M_1 - m_1)}{4}
+\end{align*}
+成立. 则对一般的 $[a,b]$, 原不等式等价于
+\begin{align}\label{equation:反向切比雪夫不等式-1.1}
+\left|\int_0^1{f(a + (b - a)x)g(a + (b - a)x) \mathrm{d}x}-\int_0^1{f(a + (b - a)x) \mathrm{d}x}\int_0^1{g(a + (b - a)x) \mathrm{d}x}\right| &\leqslant \frac{(M_2 - m_2)(M_1 - m_1)}{4}.
+\end{align}
+又注意到 $f(a + (b - a)x),g(a + (b - a)x) \in R[0,1]$, 且 $f(x) \in [m_1,M_1]$, $g(x) \in [m_2,M_2]$.
+故由假设可知\eqref{equation:反向切比雪夫不等式-1.1}式成立. 因此不妨设也成立. 
+\end{remark}
+\begin{note}
+积累本题的想法.
+\end{note}
+\begin{proof}
+不妨设 $a = 0$, $b = 1$, 则记 $A = \int_{0}^{1}f(x)dx$, $B = \int_{0}^{1}g(x)dx$. 于是
+\begin{align*}
+&\left|\int_{0}^{1}f(x)g(x)dx - \int_{0}^{1}f(x)dx\int_{0}^{1}g(x)dx\right|^2 = \left|\int_{0}^{1}(f(x) - A)(g(x) - B)dx\right|^2
+\\
+&\stackrel{\hyperref[theorem:Cauchy不等式(一般版本)]{Cauchy\text{不等式}}}{\leq} \int_{0}^{1}|f(x) - A|^2dx \cdot \int_{0}^{1}|g(x) - B|^2dx
+\\
+&= \left(\int_{0}^{1}|f(x)|^2dx - \left(\int_{0}^{1}f(x)dx\right)^2\right) \cdot \left(\int_{0}^{1}|g(x)|^2dx - \left(\int_{0}^{1}g(x)dx\right)^2\right).
+\end{align*}
+注意到
+\[
+\int_{0}^{1}(M_1 - f)(f - m_1)dx = M_1A + m_1A - M_1m_1 - \int_{0}^{1}|f(x)|^2dx,
+\]
+于是我们有
+\begin{align*}
+\int_{0}^{1}|f(x)|^2dx - \left(\int_{0}^{1}f(x)dx\right)^2 &=\int_{0}^{1}|f(x)|^2dx -A^2
+\\
+&= (M_1 - A)(A - m_1) - \int_{0}^{1}(M_1 - f)(f - m_1)dx\\
+&\leq (M_1-A)(A-m_1)\leq \frac{(M_1-m_1)^2}{4}.
+\end{align*}
+最后一个不等号可由均值不等式或看出二次函数取最值得到.
+类似的有
+\[
+\int_{0}^{1}|g(x)|^2dx - \left(\int_{0}^{1}g(x)dx\right)^2 \leq \frac{(M_2 - m_2)^2}{4},
+\]
+这就证明了
+\[
+\left|\int_{0}^{1}f(x)g(x)dx - \int_{0}^{1}f(x)dx\int_{0}^{1}g(x)dx\right|^2 \leq \frac{(M_1 - m_1)^2}{4}\frac{(M_2 - m_2)^2}{4},
+\]
+即原不等式成立. 
+\end{proof}
+
+\begin{example}
+设 $f \in C[a,b]$ 且
+\[0 \leqslant f(x) \leqslant M, \forall x \in [a,b].\]
+证明
+\begin{align}\label{example:::::16.20}
+\left(\int_{a}^{b}f(x)\cos xdx\right)^2 + \left(\int_{a}^{b}f(x)\sin xdx\right)^2 + \frac{M^2(b - a)^4}{12} &\geqslant \left(\int_{a}^{b}f(x)dx\right)^2.
+\end{align}
+\end{example}
+\begin{remark}
+由Taylor公式可得不等式：
+\begin{align}\label{cos放小成幂函数}
+\cos x\geq 1-\frac{x^2}{2},\forall x\in \mathbb{R}.
+\end{align}
+\end{remark}
+\begin{proof}
+一方面
+\begin{align*}
+&\left( \int_a^b{f(x)\cos x\mathrm{d}x} \right) ^2+\left( \int_a^b{f(x)\sin x\mathrm{d}x} \right) ^2=\int_a^b{f(x)\cos x\mathrm{d}x}\int_a^b{f(y)\cos y\mathrm{d}y}+\int_a^b{f(x)\sin x\mathrm{d}x}\int_a^b{f(y)\sin y\mathrm{d}y}
+\\
+&=\iint_{[a,b]^2}{f(x)f(y)[\cos x\cos y}+\sin x\sin y]\mathrm{d}x\mathrm{d}y=\iint_{[a,b]^2}{f(x)f(y)\cos\mathrm{(}x}-y)\mathrm{d}x\mathrm{d}y.
+\end{align*}
+另外一方面
+\begin{align*}
+\left( \int_a^b{f(x)dx} \right) ^2=\int_a^b{f(x)\cos x\mathrm{d}x}\int_a^b{f(y)\cos y\mathrm{d}y}=\iint_{[a,b]^2}{f(x)f(y)dxdy.}
+\end{align*}
+于是不等式\eqref{example:::::16.20}变为
+\begin{align}\label{example:::::16.21}
+\iint_{[a,b]^2}f(x)f(y)[1 - \cos(x - y)]dxdy &\leqslant \frac{M^2(b - a)^4}{12}.
+\end{align}
+事实上
+\begin{align*}
+\iint_{[a,b]^2}{f(x)f(y)[1}-\cos\mathrm{(}x-y)]dxdy\overset{\eqref{cos放小成幂函数}}{\leqslant}M^2\iint_{[a,b]^2}{\frac{(x-y)^2}{2}dxdy}=\frac{M^2(b-a)^4}{12},
+\end{align*}
+这就得到了不等式\eqref{example:::::16.21}. 
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}
