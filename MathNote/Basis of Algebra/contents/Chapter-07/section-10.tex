@@ -22,7 +22,7 @@ P^{-1}AP = J = \mathrm{diag}\{J_1,J_2,\cdots,J_k\}
 是\(A\)的 Jordan 标准型,其中$J_i$是$A$的特征值$\lambda_i$的$r$阶Jordan块.
 若$f(x)=a_0+a_1x+\cdots+a_px^p,$则
 \begin{align*}
-f(A)=P\mathrm{diag}\left\{ f\left( J_1 \right) ,f\left( J_2 \right) ,\cdots ,f\left( J_k \right) \right\} P^{-1},
+f(A)=P^{-1}f(J)P=P\mathrm{diag}\left\{ f\left( J_1 \right) ,f\left( J_2 \right) ,\cdots ,f\left( J_k \right) \right\} P^{-1},
 \end{align*}
 其中
 \begin{align*}
@@ -116,6 +116,32 @@ f(A) = a_0I + a_1A + a_2A^2 + \cdots .
 f(X) = a_0I + a_1X + a_2X^2 + \cdots. 
 \end{align*} 
 \end{definition}
+
+\begin{proposition}\label{proposition:矩阵方幂极限存在的充要条件及极限矩阵}
+设$A$是$n$阶矩阵,证明:$\lim_{k \to \infty} A^k$存在的充要条件是$A$的特征值的模长小于$1$, 或者特征值等于$1$并且$A$关于特征值$1$的Jordan块都是一阶的. 此时, 极限矩阵为
+\begin{align*}
+\lim_{k \to \infty} A^k = P\mathrm{diag}\{1,\cdots,1,0,\cdots,0\}P^{-1},
+\end{align*}
+其中$1$的个数等于$A$的特征值$1$的代数重数.
+\end{proposition}
+\begin{proof}
+设$P$为非异阵, 使得$P^{-1}AP = J=\mathrm{diag}\{J_{r_1}(\lambda_1),J_{r_2}(\lambda_2),\cdots,J_{r_s}(\lambda_s)\}$为$A$的Jordan标准型, 则
+\begin{align*}
+A^k = PJ^kP^{-1}=P\mathrm{diag}\{J_{r_1}(\lambda_1)^k,J_{r_2}(\lambda_2)^k,\cdots,J_{r_s}(\lambda_s)^k\}P^{-1},
+\end{align*}
+因此$\lim_{k \to \infty} A^k$存在当且仅当$\lim_{k \to \infty} J_{r_i}(\lambda_i)^k (1\leqslant i \leqslant s)$都存在. 不妨取$k > n$, 由\reflemma{lemma:利用Jordan标准型计算复矩阵的多项式}计算可得Jordan块$J_{r_i}(\lambda_i)$的$k$次幂为
+\begin{align*}
+J_{r_i}(\lambda_i)^k = 
+\begin{pmatrix}
+\lambda_i^k & \mathrm{C}_{k}^{1}\lambda_i^{k - 1} & \mathrm{C}_{k}^{2}\lambda_i^{k - 2} & \cdots & \mathrm{C}_{k}^{r_i - 1}\lambda_i^{k - r_i + 1} \\
+ & \lambda_i^k & \mathrm{C}_{k}^{1}\lambda_i^{k - 1} & \cdots & \mathrm{C}_{k}^{r_i - 2}\lambda_i^{k - r_i + 2} \\
+ & & \lambda_i^k & \cdots & \mathrm{C}_{k}^{r_i - 3}\lambda_i^{k - r_i + 3} \\
+ & & & \ddots & \vdots \\
+ & & & & \lambda_i^k
+\end{pmatrix},
+\end{align*}
+故当$|\lambda_i|\geqslant 1$且$\lambda_i\neq 1$时, $\lim_{k \to \infty} \lambda_i^k$发散; 当$\lambda_i = 1$且$r_i\geqslant 2$时, $\lim_{k \to \infty} \mathrm{C}_{k}^{1}\lambda_i^{k - 1}$发散; 当$\lambda_i = 1$且$r_1 = 1$时, $\lim_{k \to \infty} J_{r_i}(\lambda_i)^k = J_1(1)$; 当$|\lambda_i| < 1$时, $\lim_{k \to \infty} J_{r_i}(\lambda_i)^k = O$. 因此, $\lim_{k \to \infty} A^k$存在的充要条件是$A$的特征值的模长小于$1$, 或者特征值等于$1$并且$A$关于特征值$1$的Jordan块都是一阶的. 此时, 极限矩阵$\lim_{k \to \infty} A^k = $ $P$ $\mathrm{diag}$ $\{$ $1,\cdots,1$,$0$,$\cdots$,$0$ $\}$ $P^{-1}$, 其中$1$的个数等于$A$的特征值$1$的代数重数.
+\end{proof}
 
 \begin{theorem}\label{theorem:方阵幂级数收敛的条件}
 设\(f(z)=\sum_{i = 0}^{\infty}a_{i}z^{i}\)是复幂级数, 则
@@ -248,13 +274,29 @@ f(\lambda_1), f(\lambda_2), \cdots, f(\lambda_n).
 故上述定义是良定义的.
 \end{remark}
 
-\begin{proposition}\label{proposition:矩阵乘法可交换必成立e^A乘e^B=e^A+B}
-如果 $\boldsymbol{A}$ 与 $\boldsymbol{B}$ 乘法可交换，即 $\boldsymbol{A}\boldsymbol{B}=\boldsymbol{B}\boldsymbol{A}$，则 $\mathrm{e}^{\boldsymbol{A}}\cdot\mathrm{e}^{\boldsymbol{B}}=\mathrm{e}^{\boldsymbol{A}+\boldsymbol{B}}$ 必成立.
+\begin{theorem}\label{theorem:矩阵三角函数的一般表达式}
+证明:$\cos A = \frac{e^{\mathrm{i}A}+e^{-\mathrm{i}A}}{2}$,$\quad$ $\sin A = \frac{e^{\mathrm{i}A}-e^{-\mathrm{i}A}}{2\mathrm{i}}$.
+\end{theorem}
+\begin{proof}
+由\refdefinition{definition:矩阵函数}可知
+\begin{align*}
+e^{\mathrm{i}A}&=I+\frac{1}{1!}\mathrm{i}A-\frac{1}{2!}A^2-\frac{1}{3!}\mathrm{i}A^3-\cdots +\frac{\left( -1 \right) ^k}{2k!}A^{2k}+\frac{\left( -1 \right) ^k}{\left( 2k+1 \right) !}\mathrm{i}A^{2k+1}+\cdots,\\
+e^{-\mathrm{i}A}&=I-\frac{1}{1!}\mathrm{i}A-\frac{1}{2!}A^2+\frac{1}{3!}\mathrm{i}A^3-\cdots +\frac{\left( -1 \right) ^k}{2k!}A^{2k}+\frac{\left( -1 \right) ^{k+1}}{\left( 2k+1 \right) !}\mathrm{i}A^{2k+1}+\cdots.
+\end{align*}
+从而
+\begin{align*}
+\frac{e^{\mathrm{i}A}+e^{-\mathrm{i}A}}{2}&=I-\frac{1}{2!}A^2+\cdots +\frac{\left( -1 \right) ^k}{2k!}A^{2k}+\cdots =\cos A,\\
+\frac{e^{\mathrm{i}A}-e^{-\mathrm{i}A}}{2\mathrm{i}}&=\frac{1}{1!}A-\frac{1}{3!}A^3+\cdots +\frac{\left( -1 \right) ^k}{\left( 2k+1 \right) !}A^{2k+1}\cdots =\sin A.
+\end{align*}
+\end{proof}
+
+\begin{proposition}\label{proposition:若A,B乘法可交换,则e^A,e^B也乘法可交换}
+求证：若 $n$ 阶矩阵 $A$, $B$ 乘法可交换，则 $\mathrm{e}^A\cdot\mathrm{e}^B = \mathrm{e}^B\cdot\mathrm{e}^A$。
 \end{proposition}
 \begin{remark}
 对一般来说对矩阵 $\boldsymbol{A},\boldsymbol{B}$，下面的等式并不一定成立:
 \begin{align*}
-\mathrm{e}^{\boldsymbol{A}}\cdot\mathrm{e}^{\boldsymbol{B}}=\mathrm{e}^{\boldsymbol{A}+\boldsymbol{B}}.
+\mathrm{e}^{\boldsymbol{A}}\cdot\mathrm{e}^{\boldsymbol{B}}=\mathrm{e}^{\boldsymbol{A}+\boldsymbol{B}}=\mathrm{e}^{\boldsymbol{B}}\cdot\mathrm{e}^{\boldsymbol{A}}.
 \end{align*}
 如对
 \[
@@ -266,10 +308,131 @@ f(\lambda_1), f(\lambda_2), \cdots, f(\lambda_n).
 1 & 1
 \end{pmatrix},
 \]
-不难验证 $\mathrm{e}^{\boldsymbol{A}}\cdot\mathrm{e}^{\boldsymbol{B}}\neq\mathrm{e}^{\boldsymbol{A}+\boldsymbol{B}}$. 
+通过计算不难验证 $AB = A$, $BA = B$，并且
+\begin{align*}
+\mathrm{e}^A &= 
+\begin{pmatrix}
+\mathrm{e} & \mathrm{e} - 1 \\
+0 & 1
+\end{pmatrix}, \quad
+\mathrm{e}^B = 
+\begin{pmatrix}
+1 & 0 \\
+\mathrm{e} - 1 & \mathrm{e}
+\end{pmatrix}, \quad
+\mathrm{e}^{A + B} = 
+\begin{pmatrix}
+\frac{\mathrm{e}^2 + 1}{2} & \frac{\mathrm{e}^2 - 1}{2} \\
+\frac{\mathrm{e}^2 - 1}{2} & \frac{\mathrm{e}^2 + 1}{2}
+\end{pmatrix}
+\end{align*} 
+故
+$\mathrm{e}^{\boldsymbol{A}}\cdot\mathrm{e}^{\boldsymbol{B}}\neq\mathrm{e}^{\boldsymbol{A}+\boldsymbol{B}}$. 
 \end{remark}
 \begin{proof}
+设 $f(z)=\mathrm{e}^z$，并且 $f_p(z)=1+\frac{1}{1!}z+\frac{1}{2!}z^2+\cdots+\frac{1}{p!}z^p$ 为 $f(z)$ 的部分和，因为 $f(z)$ 的收敛半径为 $+\infty$，所以对任一矩阵 $A$，$\lim_{p\to\infty}f_p(A)=f(A)=\mathrm{e}^A$。由于 $AB = BA$，故对任意的正整数 $p$, $q$，成立 $f_p(A)f_q(B)=f_q(B)f_p(A)$。先固定 $p$，令 $q\to\infty$，则可得
+\begin{align*}
+f_p(A)f(B) &= f_p(A)\left(\lim_{q\to\infty}f_q(B)\right)=\lim_{q\to\infty}\left(f_p(A)f_q(B)\right)=\lim_{q\to\infty}\left(f_q(B)f_p(A)\right)\\
+&=\left(\lim_{q\to\infty}f_q(B)\right)f_p(A)=f(B)f_p(A)
+\end{align*}
+同理，再对上式令 $p\to\infty$，则可得 $f(A)f(B)=f(B)f(A)$，即结论成立。 
+\end{proof}
 
+\begin{corollary}\label{corollary:矩阵幂级数乘法可交换}
+若 $f(z)$, $g(z)$ 是两个收敛半径都是 $+\infty$ 的复幂级数，则对任意乘法可交换的 $A$, $B$，均有 $f(A)g(B)=g(B)f(A)$。 
+\end{corollary}
+\begin{proof}
+由\refproposition{proposition:若A,B乘法可交换,则e^A,e^B也乘法可交换}类似的讨论可证明.
+\end{proof}
+
+\begin{definition}[矩阵的范数]\label{definition:矩阵的范数}
+设 $A=(a_{ij})$ 是 $n$ 阶复矩阵，定义 $A$ 的\textbf{范数}为其所有元素模长的平方和的算术平方根，即 $\|A\| = \sqrt{\sum_{i,j = 1}^{n}|a_{ij}|^2}$.
+\end{definition}
+
+\begin{proposition}[矩阵的范数的基本性质]\label{proposition:矩阵的范数的基本性质}
+设 $A=(a_{ij})$ 是 $n$ 阶复矩阵，$B=(b_{ij})$ 也是 $n$ 阶复矩阵，求证：
+
+(1) $\|A\|\geq 0$，等号成立当且仅当 $A = O$；
+
+(2) $\|A + B\|\leq \|A\| + \|B\|$；
+
+(3) $\|AB\|\leq \|A\|\cdot\|B\|$.
+\end{proposition}
+\begin{proof}
+(1) 显然成立。
+
+(2)注意到
+\begin{align*}
+\left\| A+B \right\| ^2&=\sum_{i,j=1}^n{\left| a_{ij}+b_{ij} \right|^2}=\sum_{i,j=1}^n{\left( \left| a_{ij} \right|^2+\left| b_{ij} \right|^2+2\left| a_{ij}b_{ij} \right| \right)}\\
+&=\sum_{i,j=1}^n{\left| a_{ij} \right|^2}+\sum_{i,j=1}^n{\left| b_{ij} \right|^2}+2\sum_{i,j=1}^n{\left| a_{ij}b_{ij} \right|}
+\end{align*}
+于是
+\begin{align*}
+\left( \left\| A \right\| +\left\| B \right\| \right) ^2&=\left\| A \right\| ^2+\left\| B \right\| ^2+2\left\| A \right\| \cdot \left\| B \right\| \\
+&=\sum_{i,j=1}^n{\left| a_{ij} \right|^2}+\sum_{i,j=1}^n{\left| b_{ij} \right|^2}+2\sqrt{\left( \sum_{i,j=1}^n{\left| a_{ij} \right|^2} \right) \left( \sum_{i,j=1}^n{\left| b_{ij} \right|^2} \right)}\\
+&\overset{\text{Cauchy-Schwarz不等式}}{\geqslant}\sum_{i,j=1}^n{\left| a_{ij} \right|^2}+\sum_{i,j=1}^n{\left| b_{ij} \right|^2}+2\sqrt{\left( \sum_{i,j=1}^n{\left| a_{ij}b_{ij} \right|} \right) ^2}\\
+&=\sum_{i,j=1}^n{\left| a_{ij} \right|^2}+\sum_{i,j=1}^n{\left| b_{ij} \right|^2}+2\sum_{i,j=1}^n{\left| a_{ij}b_{ij} \right|}\\
+&=\left\| A+B \right\| ^2.
+\end{align*}
+故结论得证.
+
+(3) 注意到 $\|AB\|^2 = \sum_{i,j = 1}^{n}\left|\sum_{k = 1}^{n}a_{ik}b_{kj}\right|^2$，$\|A\|^2\cdot\|B\|^2 = \left(\sum_{i,k = 1}^{n}|a_{ik}|^2\right)\cdot\left(\sum_{k,j = 1}^{n}|b_{kj}|^2\right)$，任取$i,j\in \left\{ 1,2,\cdots ,n \right\}$,固定$i$和$j$,由Cauchy-Schwarz不等式可知
+\begin{align*}
+\left| \sum_{k=1}^n{a_{ik}b_{kj}} \right|^2\leqslant \left( \sum_{k=1}^n{a_{ik}^{2}} \right) \cdot \left( \sum_{k=1}^n{b_{kj}^{2}} \right) .
+\end{align*}
+从而先对$i$求和可得
+\begin{align*}
+\sum_{i=1}^n{\left| \sum_{k=1}^n{a_{ik}b_{kj}} \right|^2}\leqslant \sum_{i=1}^n{\left( \sum_{k=1}^n{a_{ik}^{2}} \right) \cdot \left( \sum_{k=1}^n{b_{kj}^{2}} \right)}=\left( \sum_{k=1}^n{b_{kj}^{2}} \right) \left( \sum_{i=1}^n{\left( \sum_{k=1}^n{a_{ik}^{2}} \right)} \right) .
+\end{align*}
+再对$j$求和可得
+\begin{align*}
+\sum_{i,j=1}^n{\left| \sum_{k=1}^n{a_{ik}b_{kj}} \right|^2}&\leqslant \sum_{j=1}^n{\left[ \left( \sum_{k=1}^n{b_{kj}^{2}} \right) \left( \sum_{i=1}^n{\left( \sum_{k=1}^n{a_{ik}^{2}} \right)} \right) \right]}\\
+&=\left( \sum_{i=1}^n{\left( \sum_{k=1}^n{a_{ik}^{2}} \right)} \right) \left( \sum_{j=1}^n{\left( \sum_{k=1}^n{b_{kj}^{2}} \right)} \right) \\
+&=\left( \sum_{i,k=1}^n{|a_{ik}|^2} \right) \cdot \left( \sum_{k,j=1}^n{|b_{kj}|^2} \right) .
+\end{align*}
+由此即得结论.
+\end{proof}
+
+\begin{proposition}\label{proposition:矩阵乘法可交换必成立e^A乘e^B=e^A+B}
+如果 $\boldsymbol{A}$ 与 $\boldsymbol{B}$ 乘法可交换，即 $\boldsymbol{A}\boldsymbol{B}=\boldsymbol{B}\boldsymbol{A}$，则 $\mathrm{e}^{\boldsymbol{A}}\cdot\mathrm{e}^{\boldsymbol{B}}=\mathrm{e}^{\boldsymbol{A}+\boldsymbol{B}}$ 必成立.
+\end{proposition}
+\begin{remark}
+利用这个命题也可给出\refproposition{proposition:若A,B乘法可交换,则e^A,e^B也乘法可交换}的另一证明。 
+\end{remark}
+\begin{proof}
+设 $f(z)=\mathrm{e}^z$，并且 $f_p(z)=1+\frac{1}{1!}z+\frac{1}{2!}z^2+\cdots+\frac{1}{p!}z^p$ 为 $f(z)$ 的部分和。注意到 $AB = BA$，经简单的计算可知，$f_p(A)f_p(B)$ 展开后的单项包含 $f_p(A + B)$ 展开后的所有单项，且剩余单项可表示为 $\frac{A^i}{i!}\frac{B^j}{j!}$ 的形式，其中 $i + j>p$，故由\hyperref[proposition:矩阵的范数的基本性质]{矩阵的范数的基本性质(3)}可得
+\begin{align*}
+\parallel f_p(A)f_p(B)-f_p(A+B)\parallel &\le \sum_{k>p}{\left( \sum_{i+j=k}{\frac{\parallel A\parallel ^i}{i!}\frac{\parallel B\parallel ^j}{j!}} \right)}=\sum_{k>p}{\left( \sum_{i=0}^k{\frac{\parallel A\parallel ^i}{i!}\frac{\parallel B\parallel ^{k-i}}{\left( k-i \right) !}} \right)}
+\\
+&=\sum_{k>p}{\left( \sum_{i=0}^k{\frac{k!}{i!\left( k-i \right) !}\frac{\parallel A\parallel ^i\parallel B\parallel ^{k-i}}{k!}} \right)}=\sum_{k>p}{\left( \sum_{i=0}^k{\mathrm{C}_{k}^{i}\frac{\parallel A\parallel ^i\parallel B\parallel ^{k-i}}{k!}} \right)}
+\\
+&=\sum_{k>p}{\frac{(\parallel A\parallel +\parallel B\parallel )^k}{k!}}.
+\end{align*}
+由于数项级数 $\sum_{k = 0}^{\infty}\frac{1}{k!}(\|A\|+\|B\|)^k$ 收敛到 $\mathrm{e}^{\|A\|+\|B\|}$，故当 $p$ 充分大时，上式右边趋于零。令 $p\to\infty$，则由上式即得 $\|f(A)f(B)-f(A + B)\| = 0$，再次由\hyperref[proposition:矩阵的范数的基本性质]{矩阵的范数的基本性质(1)}可得 $\mathrm{e}^A\cdot\mathrm{e}^B = \mathrm{e}^{A + B}$.
+\end{proof}
+
+\begin{corollary}\label{corollary:矩阵幂级数的绝对收敛性保证了Cauchy乘积的收敛性}
+若矩阵幂级数 $\mathrm{e}^A$ 绝对收敛,则矩阵级数的 Cauchy 乘积
+\begin{align*}
+\mathrm{e}^{A + B}=\sum_{p = 0}^{\infty}\left(\sum_{i + j = p}\frac{A^i}{i!}\frac{B^j}{j!}\right)
+\end{align*}
+收敛到
+\begin{align*}
+\left(\sum_{i = 0}^{\infty}\frac{A^i}{i!}\right)\cdot\left(\sum_{j = 0}^{\infty}\frac{B^j}{j!}\right)=\mathrm{e}^A\cdot\mathrm{e}^B.
+\end{align*}
+\end{corollary}
+\begin{remark}
+注意矩阵级数的Cauchy积有
+\begin{align*}
+\mathrm{e}^{A+B}&=\sum_{p=0}^{\infty}{\frac{\left( A+B \right) ^p}{p!}}=\sum_{p=0}^{\infty}{\left( \sum_{i=0}^p{\mathrm{C}_{p}^{i}\frac{A^iB^{p-i}}{p!}} \right)}
+\\
+&=\sum_{p=0}^{\infty}{\left( \sum_{i=0}^p{\frac{p!}{i!\left( p-i \right) !}\frac{A^iB^{p-i}}{p!}} \right)}=\sum_{p=0}^{\infty}{\left( \sum_{i=0}^p{\frac{A^i}{i!}\frac{B^{p-i}}{\left( p-i \right)}} \right)}
+\\
+&=\sum_{p=0}^{\infty}{\left( \sum_{i+j=p}{\frac{A^i}{i!}\frac{B^j}{j!}} \right)}.
+\end{align*}
+\end{remark}
+\begin{proof}
+由\refproposition{proposition:矩阵乘法可交换必成立e^A乘e^B=e^A+B}立得.
 \end{proof}
 
 \begin{proposition}\label{proposition:计算e^tA}
@@ -348,9 +511,76 @@ $\boldsymbol{P}^{-1}\boldsymbol{A}\boldsymbol{P}=\boldsymbol{J}=\mathrm{diag}\{\
 于是将 $\mathrm{e}^{t\boldsymbol{J}_i}$ 的式子代入上面的式子即可求出 $\mathrm{e}^{t\boldsymbol{A}}$. 
 \end{proof}
 
+\begin{proposition}[矩阵三角函数的性质]\label{proposition:矩阵三角函数的性质}
+设$A$是$n$阶矩阵,求证:
+\begin{enumerate}[(1)]
+\item  $\sin^2 A+\cos^2 A = I_n$.
 
+\item $\sin 2A = 2\sin A\cos A$.
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+由\reftheorem{theorem:矩阵三角函数的一般表达式}可知
+\begin{align}\label{equation--::1}
+\cos A = \frac{1}{2}(e^{\mathrm{i}A}+e^{-\mathrm{i}A}),
+\quad
+\sin A = \frac{1}{2\mathrm{i}}(e^{\mathrm{i}A}-e^{-\mathrm{i}A}).
+\end{align}
+由\refproposition{proposition:若A,B乘法可交换,则e^A,e^B也乘法可交换}和\refproposition{proposition:矩阵乘法可交换必成立e^A乘e^B=e^A+B}可知
+\begin{align}\label{equation--::2}
+e^{\mathrm{i}A}e^{-\mathrm{i}A}=e^{-\mathrm{i}A}e^{\mathrm{i}A}=e^{\mathrm{i}A - \mathrm{i}A}=I_n,(e^{\mathrm{i}A})^2 = e^{2\mathrm{i}A},(e^{-\mathrm{i}A})^2 = e^{-2\mathrm{i}A}.
+\end{align}
+\begin{enumerate}[(1)]
+\item 由\eqref{equation--::1}和\eqref{equation--::2}式可得
+\begin{align*}
+\sin^2 A+\cos^2 A &= \frac{1}{4}(e^{2\mathrm{i}A}+2I_n + e^{-2\mathrm{i}A}) - \frac{1}{4}(e^{2\mathrm{i}A}-2I_n + e^{-2\mathrm{i}A}) = I_n.
+\end{align*}
 
+\item 由\eqref{equation--::1}和\eqref{equation--::2}式可得
+\begin{align*}
+2\sin A\cos A=\frac{1}{2}\left( e^{\mathrm{i}A}-e^{-\mathrm{i}A} \right) \left( e^{\mathrm{i}A}+e^{-\mathrm{i}A} \right) =\frac{1}{2}\left( e^{\mathrm{i}2A}-e^{-\mathrm{i}2A} \right) =\sin 2A.    
+\end{align*}
+\end{enumerate}
+\end{proof}
 
+\begin{example}
+计算 $\sin(e^{cI})$ 及 $\cos(e^{cI})$, 其中 $c$ 是非零常数.
+\end{example}
+\begin{solution}
+由指数矩阵函数的定义可得
+\begin{align*}
+e^{cI}&=I+\frac{1}{1!}(cI)+\frac{1}{2!}(cI)^2+\frac{1}{3!}(cI)^3+\cdots\\
+&=\left( 1+\frac{1}{1!}c+\frac{1}{2!}c^2+\frac{1}{3!}c^3+\cdots \right) I = e^cI.
+\end{align*}
+因此
+\begin{align*}
+\sin(e^{cI})&=\sin(e^cI)=e^cI-\frac{1}{3!}(e^cI)^3+\frac{1}{5!}(e^cI)^5-\frac{1}{7!}(e^cI)^7+\cdots\\
+&=\left( e^c-\frac{1}{3!}(e^c)^3+\frac{1}{5!}(e^c)^5-\frac{1}{7!}(e^c)^7+\cdots \right) I = (\sin e^c)I,\\
+\cos(e^{cI})&=\cos(e^cI)=I-\frac{1}{2!}(e^cI)^2+\frac{1}{4!}(e^cI)^4-\frac{1}{6!}(e^cI)^6+\cdots\\
+&=\left( 1-\frac{1}{2!}(e^c)^2+\frac{1}{4!}(e^c)^4-\frac{1}{6!}(e^c)^6+\cdots \right) I = (\cos e^c)I. 
+\end{align*} 
+\end{solution}
+
+\begin{proposition}\label{proposition:矩阵函数e^A的行列式}
+设$A$是$n$阶方阵,证明:$e^A$的行列式为$e^{\mathrm{tr}(A)}$.
+\end{proposition}
+\begin{proof}
+设$A$的特征值为$\lambda_1,\lambda_2,\cdots,\lambda_n$, 则由\refproposition{proposition:矩阵多项式的特征值就是原特征值代入多项式得到的数}可知$e^A$的特征值为$e^{\lambda_1},e^{\lambda_2},\cdots,e^{\lambda_n}$, 因此
+\begin{align*}
+|e^A| = e^{\lambda_1}e^{\lambda_2}\cdots e^{\lambda_n}=e^{\lambda_1 + \lambda_2 + \cdots + \lambda_n}=e^{\mathrm{tr}(A)}.
+\end{align*} 
+\end{proof}
+
+\begin{corollary}
+求证: 对任一$n$阶方阵$A$,$e^A$总是非异阵.
+\end{corollary}
+\begin{proof}
+由\refproposition{proposition:矩阵函数e^A的行列式}可知$|e^A| = e^{\mathrm{tr}(A)}\neq 0$, 从而$e^A$非异. 也可由\refproposition{proposition:矩阵乘法可交换必成立e^A乘e^B=e^A+B}得到
+\begin{align*}
+e^Ae^{-A}=e^{A - A}=I_n,
+\end{align*}
+于是$e^A$非异且$(e^A)^{-1}=e^{-A}$. \qed 
+\end{proof}
 
 
 

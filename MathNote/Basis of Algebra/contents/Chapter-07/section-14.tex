@@ -12,7 +12,267 @@
 
 \begin{document}
 
-\section{}
+\section{过渡矩阵的求法}\label{section:过渡矩阵的求法}
+
+\subsection{方法1:计算特征矩阵之间的相抵变换}
+
+\begin{corollary}\label{proposition:两个数字矩阵相似当且仅当它们的特征矩阵作为}
+设 $A$ 是 $n$ 阶数字矩阵, $P(\lambda)$ 及 $Q(\lambda)$ 是同阶可逆 $\lambda$-矩阵, 且
+\[
+Q(\lambda)(\lambda I_n - A)P(\lambda) = \lambda I_n - J,
+\]
+其中 $J$ 是 $A$ 的 Jordan 标准型. 又由\hyperref[lemma:lambda-矩阵的性质1]{引理\ref{lemma:lambda-矩阵的性质1}}可知,存在$\lambda$矩阵$T(\lambda)$和数字矩阵$P$,使得
+\[
+P(\lambda) = T(\lambda)(\lambda I_n - J) + P,
+\]
+其中 $P$ 是数字矩阵, 求证: $P^{-1}AP = J$.
+\end{corollary}
+\begin{remark}
+这个结论就是\reftheorem{theorem:矩阵相似的充要条件是对应的lamda-矩阵相抵}的推论. 因此我们可以先计算出特征矩阵之间的相抵变换的过渡矩阵,再由\hyperref[lemma:lambda-矩阵的性质1]{引理\ref{lemma:lambda-矩阵的性质1}}算出我们需要的数字矩阵的相似变换的过渡矩阵.
+\end{remark}
+\begin{proof}
+由已知可得 $(\lambda I_n - A)P(\lambda) = Q(\lambda)^{-1}(\lambda I_n - J)$. 代入 $P(\lambda)$, 可得
+\[
+(\lambda I_n - A)(T(\lambda)(\lambda I_n - J) + P) = Q(\lambda)^{-1}(\lambda I_n - J).
+\]
+整理可得
+\begin{align*}
+(\lambda I_n - A)P &= \left(Q(\lambda)^{-1} - (\lambda I_n - A)T(\lambda)\right)(\lambda I_n - J).
+\end{align*}
+比较 $\lambda$ 的次数可知, $Q(\lambda)^{-1} - (\lambda I_n - A)T(\lambda)$ 必须是数字矩阵, 记之为 $R$, 于是
+\[
+(\lambda I_n - A)P = R(\lambda I_n - J).
+\]
+去括号再次比较次数可得 $P = R$, $AP = RJ$. 若可证明 $P$ 是可逆矩阵, 即有 $P^{-1}AP = J$. 由 $Q(\lambda)^{-1} - (\lambda I_n - A)T(\lambda) = R$ 可得
+\[
+I_n = Q(\lambda)(\lambda I_n - A)T(\lambda) + Q(\lambda)R.
+\]
+注意到 $Q(\lambda)(\lambda I_n - A) = (\lambda I_n - J)P(\lambda)^{-1}$, 故
+\[
+I_n = (\lambda I_n - J)P(\lambda)^{-1}T(\lambda) + Q(\lambda)R.
+\]
+由\hyperref[lemma:lambda-矩阵的性质1]{引理\ref{lemma:lambda-矩阵的性质1}}可知,存在$\lambda$矩阵$M(\lambda)$和数字矩阵$N$,使得
+\begin{align*}
+Q(\lambda) = (\lambda I_n - J)M(\lambda) + N,
+\end{align*}
+于是
+\[
+I_n = (\lambda I_n - J)\left(P(\lambda)^{-1}T(\lambda) + M(\lambda)R\right) + NR.
+\]
+比较次数可得 $NR = I_n$, 即 $R$ 可逆, 也即 $P$ 可逆. 
+\end{proof}
+
+\subsection{方法2:计算特征向量和广义特征向量}
+
+在\refexample{example:7.59}中，任取 $(A - I)x = 0$ 的两个线性无关的解作为特征向量 $\alpha_1,\alpha_3$，都可以解出对应的广义特征向量 $\alpha_2,\alpha_4$，即线性方程组 $(A - I)x = \alpha_1$ 和 $(A - I)x = \alpha_3$ 的可解性不依赖于 $\alpha_1,\alpha_3$ 的选取（请读者自行思考其中的原因），但这并非是普遍的情形。一般来说，我们总可以取到 $(A - \lambda_0I)x = 0$ 的一个非零解 $\alpha_1$（即特征值 $\lambda_0$ 的特征向量），但若 $\alpha_1$ 选取不当，线性方程组 $(A - \lambda_0I)x = \alpha_1$ 有可能是无解的（即求不出对应的广义特征向量）。因此在选取特征向量时，需要我们仔细观察或设立参数，这样才能保证最终得到正确的结果。让我们来看下面两个例题中的具体分析.
+
+\begin{example}\label{example:7.59}
+设复四维空间上的线性变换 $\varphi$ 在基 $\{e_1,e_2,e_3,e_4\}$ 下的表示矩阵为
+\[
+A = \begin{pmatrix}
+4 & -1 & 1 & -7 \\
+9 & -2 & -7 & -1 \\
+0 & 0 & 5 & -8 \\
+0 & 0 & 2 & -3
+\end{pmatrix}
+\]
+求一组新基，使 $\varphi$ 在这组新基下的表示矩阵是 $A$ 的 Jordan 标准型，并求过渡矩阵。
+\end{example}
+\begin{solution}
+{\color{blue}解法一:}
+通过计算可知 $\lambda I_4 - A$ 的法式为 $\mathrm{diag}\{1,1,(\lambda - 1)^2,(\lambda - 1)^2\}$，故 $A$ 的初等因子组为 $(\lambda - 1)^2,(\lambda - 1)^2$，从而 $A$ 的 Jordan 标准型为
+\begin{align*}
+J = \begin{pmatrix}
+1 & 1 & 0 & 0 \\
+0 & 1 & 0 & 0 \\
+0 & 0 & 1 & 1 \\
+0 & 0 & 0 & 1
+\end{pmatrix}
+\end{align*}
+设过渡矩阵为 $P = (\alpha_1,\alpha_2,\alpha_3,\alpha_4)$，则 $P^{-1}AP = J$，即
+\[AP = (A\alpha_1,A\alpha_2,A\alpha_3,A\alpha_4) = PJ = (\alpha_1,\alpha_2,\alpha_3,\alpha_4)J\]
+从而得到线性方程组：
+\[(A - I)\alpha_1 = 0,\ (A - I)\alpha_2 = \alpha_1,\ (A - I)\alpha_3 = 0,\ (A - I)\alpha_4 = \alpha_3\]
+
+求解 $(A - I)x = 0$ 得到两个线性无关的解，将它们分别作为 $\alpha_1$ 和 $\alpha_3$：
+\[\alpha_1 = (1,3,0,0)',\ \alpha_3 = (5,0,6,3)'\]
+
+再求解方程组 $(A - I)x = \alpha_1$，$(A - I)x = \alpha_3$，得到
+\[\alpha_2 = (\frac{1}{3},0,0,0)',\ \alpha_4 = (\frac{7}{6},0,\frac{3}{2},0)'\]
+
+因此过渡矩阵
+\[
+P = \begin{pmatrix}
+1 & \frac{1}{3} & 5 & \frac{7}{6} \\
+3 & 0 & 0 & 0 \\
+0 & 0 & 6 & \frac{3}{2} \\
+0 & 0 & 3 & 0
+\end{pmatrix}
+\]
+
+新基为 $(f_1,f_2,f_3,f_4) = (e_1,e_2,e_3,e_4)P$，即
+\[f_1 = e_1 + 3e_2,\ f_2 = \frac{1}{3}e_1,\ f_3 = 5e_1 + 6e_3 + 3e_4,\ f_4 = \frac{7}{6}e_1 + \frac{3}{2}e_3\] 
+
+{\color{blue}解法二:}
+$A$ 的初等因子组的计算同解法一，可得 $A$ 的 Jordan 标准型 $J = \mathrm{diag}\{J_2(1),J_2(1)\}$。注意到 $(A - I_4)^2 = O$ 且 $\mathrm{r}(A - I_4) = 2$，故可取 $A - I_4$ 的第 1 列和第 3 列作为其列向量的极大无关组。因此 $e_1 = (1,0,0,0)'$，$e_3 = (0,0,1,0)'$ 为广义特征向量，使得 $(A - I_4)e_1 = (3,9,0,0)'$，$(A - I_4)e_3 = (1,-7,4,2)'$ 为线性无关的特征向量，则过渡矩阵 $P = ((A - I_4)e_1,e_1,(A - I_4)e_3,e_3)$ 满足 $P^{-1}AP = J$.
+\end{solution}
+
+\begin{example}\label{example:2235890789}
+设 
+\[
+A = \begin{pmatrix}
+2 & 6 & -15 \\
+1 & 1 & -5 \\
+1 & 2 & -6
+\end{pmatrix}
+\]
+求非异阵 $P$，使 $P^{-1}AP$ 为 Jordan 标准型。
+\end{example}
+\begin{solution}
+{\color{blue}解法一:}
+通过计算可知 $\lambda I_3 - A$ 的法式为 $\mathrm{diag}\{1,\lambda + 1,(\lambda + 1)^2\}$，故 $A$ 的初等因子组为 $\lambda + 1,(\lambda + 1)^2$，从而 $A$ 的 Jordan 标准型为
+\begin{align*}
+J = \begin{pmatrix}
+-1 & 0 & 0 \\
+0 & -1 & 1 \\
+0 & 0 & -1
+\end{pmatrix}
+\end{align*}
+
+设非异阵 $P = (\alpha_1,\alpha_2,\alpha_3)$，使 $P^{-1}AP = J$，则 $AP = (A\alpha_1,A\alpha_2,A\alpha_3) = PJ = (\alpha_1,\alpha_2,\alpha_3)J$，从而得到线性方程组：
+\[(A + I_3)\alpha_1 = 0,\ (A + I_3)\alpha_2 = 0,\ (A + I_3)\alpha_3 = \alpha_2\]
+
+求解 $(A + I_3)x = 0$ 得到两个线性无关的解 $\beta_1 = (-2,1,0)'$ 和 $\beta_2 = (5,0,1)'$。注意到 $(A + I_3)x = \beta_i\ (i = 1,2)$ 都是无解的，故不能将 $\beta_1$ 或 $\beta_2$ 直接作为 $\alpha_2$ 来求广义特征向量 $\alpha_3$。一般地，可设 $\alpha_2 = k_1\beta_1 + k_2\beta_2 = (-2k_1 + 5k_2,k_1,k_2)'$，代入 $(A + I_3)x = \alpha_2$ 中，利用 $\mathrm{r}(A + I_3,\alpha_2) = \mathrm{r}(A + I_3)$ 可得 $k_1 = k_2$。因此，可取 $\alpha_1 = \beta_1 = (-2,1,0)'$，$\alpha_2 = \beta_1 + \beta_2 = (3,1,1)'$，此时可解出 $\alpha_3 = (1,0,0)'$，于是
+\[
+P = \begin{pmatrix}
+-2 & 3 & 1 \\
+1 & 1 & 0 \\
+0 & 1 & 0
+\end{pmatrix}
+\]
+
+{\color{blue}解法二:}$A$ 的初等因子组的计算同解法一，可得 $A$ 的 Jordan 标准型 $J = \mathrm{diag}\{-1,J_2(-1)\}$。注意到 $(A + I_3)^2 = O$ 且 $\mathrm{r}(A + I_3) = 1$，故可取 $A + I_3$ 的第 1 列作为其列向量的极大无关组。因此 $e_1 = (1,0,0)'$ 为循环向量（即广义特征向量），使得 $e_1,(A + I_3)e_1 = (3,1,1)'$ 构成了 $J_2(-1)$ 的循环轨道。再取线性无关的特征向量 $\xi_1 = (-2,1,0)'$，则过渡矩阵 $P = (\xi_1,(A + I_3)e_1,e_1)$ 满足 $P^{-1}AP = J$。
+\end{solution}
+
+\begin{example}
+设
+\[
+A = \begin{pmatrix}
+1 & -1 & 0 & 1 \\
+1 & 1 & 1 & 0 \\
+0 & -1 & 1 & 1 \\
+1 & 0 & 1 & 1
+\end{pmatrix}
+\]
+求非异阵 $P$，使 $P^{-1}AP$ 为 Jordan 标准型.
+\end{example}
+\begin{solution}
+{\color{blue}解法一:}
+通过计算可知 $\lambda I_4 - A$ 的法式为 $\mathrm{diag}\{1,1,\lambda - 1,(\lambda - 1)^3\}$，故 $A$ 的初等因子组为 $\lambda - 1,(\lambda - 1)^3$，从而 $A$ 的 Jordan 标准型为 $J = \mathrm{diag}\{1,J_3(1)\}$。设非异阵 $P = (\alpha_1,\alpha_2,\alpha_3,\alpha_4)$，使 $P^{-1}AP = J$，则 $AP = (A\alpha_1,A\alpha_2,A\alpha_3,A\alpha_4) = PJ = (\alpha_1,\alpha_2,\alpha_3,\alpha_4)J$，从而得到线性方程组:
+\[(A - I_4)\alpha_1 = 0,\ (A - I_4)\alpha_2 = 0,\ (A - I_4)\alpha_3 = \alpha_2,\ (A - I_4)\alpha_4 = \alpha_3.\]
+
+求解 $(A - I_4)x = 0$ 得到两个线性无关的解$\beta_1 = (-1,0,1,0)'$ 和 $\beta_2 = (0,1,0,1)'$。设 $\alpha_2 = k_1\beta_1 + k_2\beta_2$，代入 $(A - I_4)x = \alpha_2$ 中，利用 $\mathrm{r}(A - I_4,\alpha_2) = \mathrm{r}(A - I_4)$ 可得 $k_1 = 0$。于是可取 $\alpha_2 = k_2\beta_2$，解出 $\alpha_3 = k_2e_1 + k_3\beta_1 + k_4\beta_2$，其中 $e_1 = (1,0,0,0)'$。再代入 $(A - I_4)x = \alpha_3$ 中，利用 $\mathrm{r}(A - I_4,\alpha_3) = \mathrm{r}(A - I_4)$ 可得 $k_2 = 2k_3$。于是可取 $k_2 = 2$，$k_3 = 1$，$k_4 = 0$，最终得到特征向量 $\alpha_1 = \beta_1 = (-1,0,1,0)'$，$\alpha_2 = 2\beta_2 = (0,2,0,2)'$，1 级广义特征向量 $\alpha_3 = 2e_1 + \beta_1 = (1,0,1,0)'$，2 级广义特征向量 $\alpha_4 = (0,0,0,1)'$，从而
+\[
+P = \begin{pmatrix}
+-1 & 0 & 1 & 0 \\
+0 & 2 & 0 & 0 \\
+1 & 0 & 1 & 0 \\
+0 & 2 & 0 & 1
+\end{pmatrix}
+\]
+
+{\color{blue}解法二:}$A$ 的初等因子组的计算同解法一，可得 $A$ 的 Jordan 标准型 $J = \mathrm{diag}\{1,J_3(1)\}$。注意到 $(A - I_4)^3 = O$ 且 $\mathrm{r}((A - I_4)^2) = 1$，故可取 $(A - I_4)^2$ 的第 4 列作为其列向量的极大无关组。因此 $e_4 = (0,0,0,1)'$ 为循环向量（即 2 级广义特征向量），使得 $e_4,(A - I_4)e_4 = (1,0,1,0)'$，$(A - I_4)^2e_4 = (0,2,0,2)'$ 构成了 $J_3(1)$ 的循环轨道。再取线性无关的特征向量 $\xi_1 = (-1,0,1,0)'$，则过渡矩阵 $P = (\xi_1,(A - I_4)^2e_4,(A - I_4)e_4,e_4)$ 满足 $P^{-1}AP = J$。
+\end{solution}
+
+\subsection{方法3:计算循环子空间的循环向量}
+
+根据 \hyperref[theorem:Jordan标准型的几何意义]{Jordan 标准型的几何意义}，全空间可分解为不同特征值的根子空间的直和，每个根子空间可分解为若干个循环子空间的直和，每个循环子空间对应于一条循环轨道，这条轨道由循环向量（即最高级的广义特征向量）生成。下面以幂零根子空间为例，说明如何确定所有的循环向量，从而确定所有的基向量（等价于求过渡矩阵 $P$）。
+
+\vspace{0.5cm}
+
+\begin{example}
+设 9 阶幂零矩阵 $A$ 的 Jordan 标准型 $J = \mathrm{diag}\{0,J_2(0),J_3(0),J_3(0)\}$，求非异阵 $P$，使 $P^{-1}AP = J$。
+\end{example}
+\begin{remark}
+这个例题采用的方法可以推广到一般的情形，其原理是：设 $n$ 阶幂零矩阵 $A$ 的极小多项式为 $\lambda^k$，则依次选取第 $i$ 级广义特征向量 $\xi_i\ (i = k - 1,\cdots,0)$，使得所有的 $A^i\xi_i\ (i = k - 1,\cdots,0)$ 在 $\mathrm{Ker}\,A$ 中线性无关即可。
+\end{remark}
+\begin{solution}
+由已知条件 $A^3 = O$，$\mathrm{r}(A^2) = 2$ 且 $\mathrm{r}(A) = 5$，可设 $A^2x = 0$ 的基础解系为 $\{\eta_i,1 \leq i \leq 7\}$。由于 $A^2$ 的列秩为 2，故不妨设 $A^2$ 的第 1 列和第 2 列是 $A^2$ 列向量的极大无关组，即 $A^2e_1,A^2e_2$ 线性无关，其中 $e_1,e_2$ 是 9 维标准单位列向量的前两个。考虑限制映射 $A|_{\mathrm{Ker} A^2}:\mathrm{Ker} A^2 \to \mathrm{Ker} A$，容易验证 $\mathrm{Ker}(A|_{\mathrm{Ker} A^2}) = \mathrm{Ker} A$，$\mathrm{Im}(A|_{\mathrm{Ker} A^2}) = \mathrm{Ker} A \cap \mathrm{Im} A$。由 $\mathrm{dim}\,\mathrm{Ker} A^2 = 7$，$\mathrm{dim}\,\mathrm{Ker} A = 4$ 及\hyperref[proposition:值域和核空间维数之和等于原像空间维数]{线性映射的维数公式}可知 $\mathrm{dim}(\mathrm{Ker} A \cap \mathrm{Im} A) = 3$，且 $\mathrm{Ker} A \cap \mathrm{Im} A = L(A\eta_i,1 \leq i \leq 7)$。注意到 $A^2e_1,A^2e_2$ 是 $\mathrm{Ker} A \cap \mathrm{Im} A$ 中两个线性无关的向量，故可从其生成元中取出一个向量，不妨设为 $A\eta_1$，使得 $A^2e_1,A^2e_2,A\eta_1$ 线性无关。再次注意到 $\mathrm{dim}\,\mathrm{Ker} A = 4$，且 $A^2e_1,A^2e_2,A\eta_1$ 是 $\mathrm{Ker} A$ 中 3 个线性无关的向量，故可从其一组基（即 $Ax = 0$ 的基础解系）中取出一个向量 $\xi_1$，使得 $A^2e_1,A^2e_2,A\eta_1,\xi_1$ 线性无关。
+
+下面证明：$\{e_1,Ae_1,A^2e_1,e_2,Ae_2,A^2e_2,\eta_1,A\eta_1,\xi_1\}$ 构成 $\mathbb{C}^9$ 的一组基。只要证明它们线性无关即可。设 $c_1$,$\cdots$,$c_9$ $\in$ $\mathbb{C}$，使得
+\begin{align}
+c_1e_1 + c_2Ae_1 + c_3A^2e_1 + c_4e_2 + c_5Ae_2 + c_6A^2e_2 + c_7\eta_1 + c_8A\eta_1 + c_9\xi_1 = 0\label{equation::::------7.10}
+\end{align}
+将\eqref{equation::::------7.10}式作用 $A^2$ 可得
+\[c_1A^2e_1 + c_4A^2e_2 = 0\]
+由 $A^2e_1,A^2e_2$ 线性无关可知 $c_1 = c_4 = 0$。将\eqref{equation::::------7.10}式作用 $A$ 可得
+\[c_2A^2e_1 + c_5A^2e_2 + c_7A\eta_1 = 0\]
+由 $A^2e_1,A^2e_2,A\eta_1$ 线性无关可知 $c_2 = c_5 = c_7 = 0$。\eqref{equation::::------7.10}式最后变成
+\[c_3A^2e_1 + c_6A^2e_2 + c_8A\eta_1 + c_9\xi_1 = 0\]
+由 $A^2e_1,A^2e_2,A\eta_1,\xi_1$ 线性无关可知 $c_3 = c_6 = c_8 = c_9 = 0$。有了上面这组基，我们可以把4个循环子空间的循环轨道全部确定如下：
+\begin{align*}
+\begin{matrix}
+\text{轨道}1&		&		\text{轨道}2&		&		\text{轨道}3&		&		\text{轨道}4&		&		\\
+&		&		&		&		e_1&		------&		e_2&		------&		2\text{级广义特征向量}\\
+&		&		&		&		\downarrow&		&		\downarrow&		&		\\
+&		&		\eta _1&		------&		Ae_1&		------&		Ae_2&		------&		1\text{级广义特征向量}\\
+&		&		\downarrow&		&		\downarrow&		&		\downarrow&		&		\\
+\xi _1&		------&		A\eta _1&		------&		A^2e_1&		------&		A^2e_2&		------&		0\text{级广义特征向量}\\
+\downarrow&		&		\downarrow&		&		\downarrow&		&		\downarrow&		&		\\
+0&		&		0&		&		0&		&		0&		&		\\
+\end{matrix}
+\end{align*}
+最后，令 $P = (\xi_1,A\eta_1,\eta_1,A^2e_1,Ae_1,e_1,A^2e_2,Ae_2,e_2)$ 即为所求.
+\end{solution}
+
+\begin{example}
+设
+\[
+A = \begin{pmatrix}
+3 & -4 & 0 & 2 \\
+4 & -5 & -2 & 4 \\
+0 & 0 & 3 & -2 \\
+0 & 0 & 2 & -1
+\end{pmatrix}
+\]
+求非异阵 $P$，使 $P^{-1}AP$ 为 Jordan 标准型。
+\end{example}
+\begin{remark}
+下面的例题也与过渡矩阵有关，它告诉我们：满足基础矩阵乘法性质的矩阵类与基础矩阵类之间存在着一个相似变换。利用这一结论可以证明：\textbf{$n$ 阶矩阵环 $M_n(\mathbb{K})$ 的任一自同构都是内自同构.}
+\end{remark}
+\begin{solution}
+经计算可知 $A$ 的初等因子组为 $(\lambda + 1)^2,(\lambda - 1)^2$，于是 $A$ 的 Jordan 标准型为 $J = \mathrm{diag}\{J_2(-1),J_2(1)\}$。由\refproposition{proposition:Cayley-Hamilton定理诱导直和分解(互素多项式命题推广)}可知，$\mathbb{C}^4 = \mathrm{Ker}(A + I_4)^2 \oplus \mathrm{Ker}(A - I_4)^2$，且 $\mathrm{Ker}(A + I_4)^2 = \mathrm{Im}(A - I_4)^2$，$\mathrm{Ker}(A - I_4)^2 = \mathrm{Im}(A + I_4)^2$。经计算可取 $(A - I_4)^2$ 的第二列 $\alpha = (A - I_4)^2e_2 = (16,20,0,0)'$ 作为根子空间 $\mathrm{Ker}(A + I_4)^2$ 中的循环向量（即广义特征向量），于是 $\alpha,(A + I_4)\alpha = (-16,-16,0,0)'$ 构成根子空间 $\mathrm{Ker}(A + I_4)^2$ 中的循环轨道。经计算可取 $(A + I_4)^2$ 的第三列 $\beta = (A + I_4)^2e_3 = (12,8,12,8)'$ 作为根子空间 $\mathrm{Ker}(A - I_4)^2$ 中的循环向量（即广义特征向量），于是 $\beta,(A - I_4)\beta = (8,8,8,8)'$ 构成根子空间 $\mathrm{Ker}(A - I_4)^2$ 中的循环轨道。因此，过渡矩阵 $P = ((A + I_4)\alpha,\alpha,(A - I_4)\beta,\beta)$ 满足 $P^{-1}AP = J$。
+\end{solution}
+
+\begin{theorem}\label{theorem:非零相似于基础矩阵}
+设有 $n^2$ 个 $n$ 阶非零矩阵 $A_{ij}\ (1 \leq i,j \leq n)$，适合
+\[
+A_{ij}A_{jk} = A_{ik},\ A_{ij}A_{lk} = O\ (j \neq l).
+\]
+求证：存在可逆矩阵 $P$，使得对任意的 $i,j$，$P^{-1}A_{ij}P = E_{ij}$，其中 $E_{ij}$ 是基础矩阵。
+\end{theorem}
+\begin{proof}
+因为 $A_{11} \neq O$，故存在 $\alpha$，使得 $A_{11}\alpha \neq 0$。令 $\alpha_1 = A_{11}\alpha$，由 $A_{11}A_{11} = A_{11}$ 可得 $A_{11}\alpha_1 = \alpha_1$。再令 $\alpha_i = A_{i1}\alpha_1$，由 $A_{i1}A_{i1} = A_{11}$ 可知 $\alpha_i \neq 0$。我们得到了 $n$ 个非零向量 $\alpha_1,\alpha_2,\cdots,\alpha_n$，由已知条件容易验证这 $n$ 个向量适合下列性质：
+\[A_{ij}\alpha_j = \alpha_i,\ A_{ij}\alpha_k = 0\ (j \neq k)\]
+由此不难证明这 $n$ 个向量线性无关。令 $P = (\alpha_1,\alpha_2,\cdots,\alpha_n)$，则 $P$ 是可逆矩阵，且
+\[
+A_{ij}P = (A_{ij}\alpha_1,A_{ij}\alpha_2,\cdots,A_{ij}\alpha_n) = (0,\cdots,0,\alpha_i,0,\cdots,0).
+\]
+其中上式中的 $\alpha_i$ 在第 $j$ 列。另一方面，有
+\[
+PE_{ij} = (\alpha_1,\alpha_2,\cdots,\alpha_n)E_{ij} = (0,\cdots,0,\alpha_i,0,\cdots,0).
+\]
+因此，对任意的 $i,j$，$A_{ij}P = PE_{ij}$，即 $P^{-1}A_{ij}P = E_{ij}$.
+\end{proof}
+
+
+
+
+
+
+
+
+
 
 
 
