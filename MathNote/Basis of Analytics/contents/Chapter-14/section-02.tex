@@ -11,7 +11,231 @@
 
 \begin{document}
 
-\section{}
+\subsection{定积分}
+
+\subsection{建立积分递推}
+
+\begin{example}
+计算\(\int_{0}^{\frac{\pi}{2}} \cos^{n}x\sin(nx)dx\)，\(n \in \mathbb{N}\)。 
+\end{example}
+\begin{proof}
+利用分部积分和和差化积公式可得
+\begin{align*}
+I_n&=\int_0^{\frac{\pi}{2}}\cos ^nx\sin(nx) \mathrm{d}x=\int_0^{\frac{\pi}{2}}\cos ^{n - 1}x\cdot\cos x\sin(nx) \mathrm{d}x\\
+&=\frac{1}{2}\int_0^{\frac{\pi}{2}}\cos ^{n - 1}x\cdot[\sin((n + 1)x)+\sin((n - 1)x)] \mathrm{d}x\\
+&=\frac{I_{n - 1}}{2}+\frac{1}{2}\int_0^{\frac{\pi}{2}}\cos ^{n - 1}x[\sin(nx)\cos x+\cos(nx)\sin x] \mathrm{d}x\\
+&=\frac{I_{n - 1}}{2}+\frac{I_n}{2}-\frac{1}{2}\int_0^{\frac{\pi}{2}}\cos ^{n - 1}x\cos(nx) \mathrm{d}\cos x\\
+&=\frac{I_{n - 1}+I_n}{2}-\frac{1}{2n}\int_0^{\frac{\pi}{2}}\cos(nx) \mathrm{d}\cos ^nx\\
+&=\frac{I_{n - 1}+I_n}{2}+\frac{1}{2n}-\frac{1}{2}\int_0^{\frac{\pi}{2}}\cos ^nx\sin(nx) \mathrm{d}x\\
+&=\frac{I_{n - 1}+I_n}{2}+\frac{1}{2n}-\frac{I_n}{2}\\
+&=\frac{I_{n - 1}}{2}+\frac{1}{2n}.
+\end{align*}
+故\(I_n=\frac{I_{n - 1}}{2}+\frac{1}{2n}\)，则两边同乘\(2^n\)（强行裂项）
+\begin{align*}
+2^nI_n = 2^{n - 1}I_{n - 1}+\frac{2^{n - 1}}{n},n = 1,2,\cdots
+\end{align*}
+又注意到\(I_0 = 0\)，从而
+\begin{align*}
+2^nI_n = 0+\sum_{k = 1}^n\frac{2^{k - 1}}{k}\Rightarrow I_n=\frac{1}{2^n}\sum_{k = 1}^n\frac{2^{k - 1}}{k}.
+\end{align*}
+\end{proof}
+
+\begin{example}\label{example:经典定积分(必记)}
+\begin{enumerate}
+\item $\int_0^{\pi}{\frac{\sin \left( nx \right)}{\sin x}\mathrm{d}x}= 
+\begin{cases}
+0, & n\text{为偶数} \\
+\pi, & n\text{为奇数}
+\end{cases}.$
+
+\item 
+\end{enumerate}
+\end{example}
+\begin{proof}
+\begin{enumerate}
+\item 记\(I_n = \int_0^{\pi} \frac{\sin(nx)}{\sin x} \, dx\)，则
+\begin{align*}
+I_{n+2} - I_n = \int_0^{\pi} \frac{\sin((n+2)x) - \sin(nx)}{\sin x} \, dx 
+= \int_0^{\pi} \frac{2\cos((n+1)x) \sin x}{\sin x} \, dx 
+= 2\int_0^{\pi} \cos((n+1)x) \, dx 
+= 0.
+\end{align*}
+于是
+\begin{align*}
+\int_0^{\pi} \frac{\sin(nx)}{\sin x} \, dx = I_n = I_{n-2} = \cdots = 
+\begin{cases}
+I_0, & n\text{为偶数} \\
+I_1, & n\text{为奇数}
+\end{cases} = 
+\begin{cases}
+0, & n\text{为偶数} \\
+\pi, & n\text{为奇数}
+\end{cases}.
+\end{align*}
+
+\item 
+\end{enumerate}
+\end{proof}
+
+\subsection{区间再现}
+
+\begin{theorem}[区间再现恒等式]\label{theorem:区间再现恒等式}
+当下述积分有意义时，我们有
+\begin{enumerate}
+\item \begin{align*}
+\int_{a}^{b} f(x)\mathrm{d}x = \int_{a}^{b} f(a + b - x)\mathrm{d}x
+=\frac{1}{2}\int_{a}^{b} [f(x)+f(a + b - x)]\mathrm{d}x
+=\int_{a}^{\frac{a + b}{2}} [f(x)+f(a + b - x)]\mathrm{d}x.
+\end{align*}
+
+\item \begin{align*}
+\int_{0}^{\infty} f(x)\mathrm{d}x = \int_{0}^{1} f(x)\mathrm{d}x+\int_{1}^{\infty} f(x)\mathrm{d}x
+=\int_{0}^{1} \left[f(x)+\frac{f(\frac{1}{x})}{x^2}\right]\mathrm{d}x.
+\end{align*}
+\end{enumerate}
+\end{theorem}
+\begin{note}
+注意:倒代换具有将$[0,1]$转化为$[1,+\infty)$的功能.
+\end{note}
+\begin{proof}
+证明是显然.
+\end{proof}
+
+\begin{example}\label{example:常见积分1}
+证明
+\begin{enumerate}
+\item \(\int_{0}^{\frac{\pi}{2}} \ln\sin xdx=-\frac{\pi}{2}\ln 2.\)
+
+\item \(\int_{0}^{\frac{\pi}{2}} \ln\cos xdx-\frac{\pi}{2}\ln 2.\)
+
+\item \(\int_{0}^{1} \frac{\ln(1 + x)}{1 + x^2}dx=\frac{\pi}{8}\ln 2.\)
+\end{enumerate}
+\end{example}
+\begin{proof}
+\begin{enumerate}
+\item \begin{align*}
+I&=\int_0^{\frac{\pi}{2}}{\ln\sin x\mathrm{d}x}=\int_0^{\frac{\pi}{4}}{\left[ \ln\cos x+\ln \left( \frac{\pi}{2}-x \right) \right] \mathrm{d}x}
+\\
+&=\int_0^{\frac{\pi}{4}}{\ln \left( \cos x\sin x \right) \mathrm{d}x}=\int_0^{\frac{\pi}{4}}{\ln \frac{1}{2}\mathrm{d}x}+\int_0^{\frac{\pi}{4}}{\ln \left( \sin 2x \right) \mathrm{d}x}
+\\
+&=-\frac{\pi}{4}\ln 2+\frac{1}{2}\int_0^{\frac{\pi}{2}}{\ln\sin x\mathrm{d}x}=-\frac{\pi}{4}\ln 2+\frac{1}{2}I
+\\
+&\Longrightarrow I=\int_0^{\frac{\pi}{2}}{\ln\cos x\mathrm{d}x}=-\frac{\pi}{2}\ln 2.
+\end{align*}
+
+\item \begin{align*}
+I&=\int_0^{\frac{\pi}{2}}{\ln\cos x\mathrm{d}x}=\int_0^{\frac{\pi}{2}}{\ln\sin x\mathrm{d}x}=\int_0^{\frac{\pi}{4}}{\left[ \ln\cos x+\ln \left( \frac{\pi}{2}-x \right) \right] \mathrm{d}x}
+\\
+&=\int_0^{\frac{\pi}{4}}{\ln \left( \cos x\sin x \right) \mathrm{d}x}=\int_0^{\frac{\pi}{4}}{\ln \frac{1}{2}\mathrm{d}x}+\int_0^{\frac{\pi}{4}}{\ln \left( \sin 2x \right) \mathrm{d}x}
+\\
+&=-\frac{\pi}{4}\ln 2+\frac{1}{2}\int_0^{\frac{\pi}{2}}{\ln\sin x\mathrm{d}x}=-\frac{\pi}{4}\ln 2+\frac{1}{2}I
+\\
+&\Longrightarrow I=\int_0^{\frac{\pi}{2}}{\ln\cos x\mathrm{d}x}=-\frac{\pi}{2}\ln 2.
+\end{align*}
+
+\item \begin{align*}
+\int_0^1{\frac{\ln \left( 1+x \right)}{1+x^2}\mathrm{d}x}&\xlongequal{x=\tan \theta}\int_0^{\frac{\pi}{4}}{\frac{\ln \left( 1+\tan \theta \right)}{1+\tan \theta ^2}\mathrm{d}\tan \theta}=\int_0^{\frac{\pi}{4}}{\frac{\sec ^2\theta \cdot \ln \left( 1+\tan \theta \right)}{\sec ^2\theta}\mathrm{d}\theta}
+\\
+&=\int_0^{\frac{\pi}{4}}{\ln \left( 1+\tan \theta \right) \mathrm{d}\theta}=\int_0^{\frac{\pi}{8}}{\left[ \ln \left( 1+\tan \theta \right) +\ln \left( 1+\tan \left( \frac{\pi}{4}-\theta \right) \right) \right] \mathrm{d}\theta}
+\\
+&=\int_0^{\frac{\pi}{8}}{\left[ \ln \left( 1+\tan \theta \right) +\ln \left( 1+\frac{1-\tan \theta}{1+\tan \theta} \right) \right] \mathrm{d}\theta}
+\\
+&=\int_0^{\frac{\pi}{8}}{\left[ \ln \left( 1+\tan \theta \right) +\ln \frac{2}{1+\tan \theta} \right] \mathrm{d}\theta}
+\\
+&=\int_0^{\frac{\pi}{8}}{\ln 2\mathrm{d}\theta}=\frac{\pi}{8}\ln 2.
+\end{align*} 
+\end{enumerate}
+\end{proof}
+
+\begin{example}
+计算
+\begin{enumerate}
+\item \(\int_{0}^{\infty} \frac{\ln x}{x^{2}+a^{2}}\mathrm{d}x\),$a>0$.
+
+\item \(\int_{0}^{\infty} \frac{\ln x}{x^{2}+x + 1}\mathrm{d}x\).
+
+\item\(\int_{0}^{1} \frac{\ln x}{\sqrt{x - x^{2}}}\mathrm{d}x\).
+\end{enumerate}
+\end{example}
+\begin{solution}
+\begin{enumerate}
+\item 注意到
+\begin{align}
+\int_0^{+\infty}\frac{\ln x}{x^2+a^2}\mathrm{d}x\xlongequal{x=at}\frac{1}{a}\int_0^{+\infty}\frac{\ln (at)}{1+t^2}\mathrm{d}t
+=\frac{1}{a}\int_0^{+\infty}\frac{\ln a}{1+t^2}\mathrm{d}t+\frac{1}{a}\int_0^{+\infty}\frac{\ln t}{1+t^2}\mathrm{d}t
+=\frac{\pi \ln a}{2a}+\frac{1}{a}\int_0^{+\infty}\frac{\ln t}{1+t^2}\mathrm{d}t.\label{eq:1.1}
+\end{align}
+又注意到
+\begin{align*}
+\int_0^{+\infty}\frac{\ln t}{1+t^2}\mathrm{d}t\xlongequal{t=\frac{1}{x}}\int_0^{+\infty}\frac{\ln \frac{1}{x}}{1+\frac{1}{x^2}}\frac{1}{x^2}\mathrm{d}x=\int_0^{+\infty}\frac{-\ln x}{1+x^2}\mathrm{d}x\Longrightarrow \int_0^{+\infty}\frac{\ln t}{1+t^2}\mathrm{d}t=0.
+\end{align*}
+于是再结合\eqref{eq:1.1}式可得
+\begin{align*}
+\int_0^{+\infty}\frac{\ln x}{x^2+a^2}\mathrm{d}x=\frac{\pi \ln a}{2a}.
+\end{align*}
+
+\item \begin{align*}
+\int_0^{\infty}{\frac{\ln x}{x^2+x+1}\mathrm{d}x}\xlongequal{x=\frac{1}{t}}\int_0^{\infty}{\frac{-\ln t}{1+\frac{1}{t}+\frac{1}{t^2}}\mathrm{d}\frac{1}{t}}=\int_0^{+\infty}{\frac{-\ln t}{1+t+t^2}\mathrm{d}t}\Longrightarrow \int_0^{\infty}{\frac{\ln x}{x^2+x+1}\mathrm{d}x}=0.
+\end{align*}
+
+\item\begin{align*}
+\int_{0}^{1} \frac{\ln x}{\sqrt{x - x^{2}}}\mathrm{d}x &\xlongequal{x = \sin^{2}y} \int_{0}^{\frac{\pi}{2}} \frac{\ln \sin^{2}y}{\sqrt{\sin^{2}y(1 - \sin^{2}y)}}\mathrm{d}\sin^{2}y\\
+&= 4\int_{0}^{\frac{\pi}{2}} \ln \sin y\mathrm{d}y \xlongequal{\text{\refexa{example:常见积分1}}}4\cdot\left(-\frac{\pi}{2}\ln 2\right)= -2\pi\ln 2.
+\end{align*} 
+\end{enumerate}
+\end{solution}
+
+\begin{example}
+\begin{enumerate}
+\item 对\(n \in \mathbb{N}\)，计算\(\int_{-\pi}^{\pi} \frac{\sin(nx)}{(1 + 2^{x})\sin x}dx\)。
+
+\item \(\int_{-\pi}^{\pi} \frac{x\sin x\arctan e^{x}}{1 + \cos^{2}x}dx\)。
+
+\item 对\(n \in \mathbb{N}\)，计算\(\int_{0}^{2\pi} \sin(\sin x + nx)dx\).
+\end{enumerate}
+\end{example}
+\begin{solution}
+\begin{enumerate}
+\item \begin{align*}
+&\int_{-\pi}^{\pi}{\frac{\sin \left( nx \right)}{\left( 1+2^x \right) \sin x}\mathrm{d}x}=\int_{-\pi}^0{\left[ \frac{\sin \left( nx \right)}{\left( 1+2^x \right) \sin x}+\frac{\sin \left( nx \right)}{\left( 1+2^{-x} \right) \sin x} \right] \mathrm{d}x}=\int_{-\pi}^0{\frac{\sin \left( nx \right)}{\sin x}\left( \frac{1}{1+2^x}+\frac{1}{1+2^{-x}} \right) \mathrm{d}x}
+\\
+&=\int_{-\pi}^0{\frac{\sin \left( nx \right)}{\sin x}\cdot \frac{2+2^x+2^{-x}}{2+2^x+2^{-x}}\mathrm{d}x}=\int_{-\pi}^0{\frac{\sin \left( nx \right)}{\sin x}\mathrm{d}x}
+=\int_0^{\pi}{\frac{\sin \left( nx \right)}{\sin x}\mathrm{d}x}\xlongequal{\text{\refexa{example:经典定积分(必记)}}}\begin{cases}
+0,n\text{为偶数}\\
+\pi ,n\text{为奇数}\\
+\end{cases}.
+\end{align*}
+
+\item \begin{align*}
+\int_{-\pi}^{\pi} \frac{x\sin x\arctan e^{x}}{1 + \cos^{2}x}dx &\stackrel{\text{区间再现}}{=} \int_{-\pi}^{0} \frac{x\sin x[\arctan e^{x}+\arctan e^{-x}]}{1 + \cos^{2}x}dx = \frac{\pi}{2}\int_{-\pi}^{0} \frac{x\sin x}{1 + \cos^{2}x}dx\\
+&= \frac{\pi}{2}\int_{0}^{\pi} \frac{x\sin x}{1 + \cos^{2}x}dx \stackrel{\text{区间再现}}{=} \frac{\pi}{2}\int_{0}^{\frac{\pi}{2}} \frac{\pi\sin x}{1 + \cos^{2}x}dx = \frac{\pi^{2}}{2}\int_{0}^{1} \frac{1}{1 + t^{2}}dx = \frac{\pi^{3}}{8}.
+\end{align*}
+
+\item\begin{align*}
+\int_{0}^{2\pi} \sin(\sin x + nx)dx &\stackrel{\text{区间再现}}{=} \int_{0}^{2\pi} \sin(\sin(2\pi - x)+n(2\pi - x))dx = -\int_{0}^{2\pi} \sin(\sin x + nx)dx = 0.
+\end{align*} 
+\end{enumerate}
+\end{solution}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
