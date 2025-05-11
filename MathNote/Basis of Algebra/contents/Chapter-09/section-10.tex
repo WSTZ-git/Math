@@ -12,6 +12,494 @@
 
 \begin{document}
 
+\section{保积同构、正交变换和正交矩阵}
+
+\subsection{保积同构和几何问题代数化}
+
+在欧氏空间（酉空间）\(V\) 中取定一组标准正交基，容易验证将任一向量映射为它在这组基下的坐标向量的线性同构 \(\varphi:V\rightarrow\mathbb{R}^n\)（\(\varphi:V\rightarrow\mathbb{C}^n\)）实际上也是一个保积同构。因此我们可以把抽象的欧氏空间（酉空间）\(V\) 上的问题转化为具体的取标准内积的列向量空间 \(\mathbb{R}^n\)（\(\mathbb{C}^n\)）上的问题来解决，这就是内积空间版本的 “几何问题代数化” 技巧.
+
+\begin{example}\label{example:例9.32}
+设 \(V\) 是 \(n\) 维欧氏空间，\(\alpha_1,\alpha_2,\cdots,\alpha_n,\beta_1,\beta_2,\cdots,\beta_n\in V\)。证明：若存在非零向量 \(\alpha\in V\)，使得 \(\sum_{i = 1}^{n}(\alpha,\alpha_i)\beta_i = 0\)，则必存在非零向量 \(\beta\in V\)，使得 \(\sum_{i = 1}^{n}(\beta,\beta_i)\alpha_i = 0\).
+\end{example}
+\begin{proof}
+取 \(V\) 的一组标准正交基 \(e_1,e_2,\cdots,e_n\)，设 \(\alpha,\beta\) 的坐标向量分别为 \(x,y\);$\,$\(\alpha_i\) 的坐标向量为 \(x_i\ (1\leq i\leq n)\);$\,$\(\beta_i\) 的坐标向量为 \(y_i\ (1\leq i\leq n)\)；\(n\) 阶实矩阵 \(A=(x_1,x_2,\cdots,x_n)\)，\(B=(y_1,y_2,\cdots,y_n)\)，则由抽象向量映射到坐标向量的保积同构 \(\varphi:V\rightarrow\mathbb{R}^n\)，可把本题化为如下矩阵问题：若存在非零列向量 \(x\)，使得
+\begin{align}
+\sum_{i = 1}^{n}(x'x_i)y_i = x'\sum_{i = 1}^{n}(x_iy_i) = x'(AB') =0 \Rightarrow BA'x = 0\label{eq:9.8}
+\end{align}
+则必存在非零列向量 \(y\)，使得
+\begin{align}
+\sum_{i = 1}^{n}(y'y_i)x_i = y'\sum_{i = 1}^{n}(y_ix_i) = y'(B'A) =0 \Rightarrow AB'y = 0\label{eq:9.9}
+\end{align}
+事实上，由齐次线性方程组 \eqref{eq:9.8} 有非零解可得 \(\mathrm{r}(BA') < n\)，注意到 \(AB'=(BA')'\)，故 \(\mathrm{r}(AB') < n\)，于是齐次线性方程组 \eqref{eq:9.9} 也有非零解，结论得证. 
+\end{proof}
+
+\begin{proposition}\label{proposition:Gram阵的秩与其生成向量的秩相同-例9.33}
+设 \(V\) 是 \(n\) 维欧氏空间，\(\{\alpha_1,\alpha_2,\cdots,\alpha_m\}\) 是一组向量，\(G = G(\alpha_1,\alpha_2,\cdots,\alpha_m)\) 是其 Gram 矩阵，求证：\(\mathrm{r}(\alpha_1,\alpha_2,\cdots,\alpha_m)=\mathrm{r}(G)\)。
+\end{proposition}
+\begin{proof}
+取 \(V\) 的一组标准正交基 \(e_1,e_2,\cdots,e_n\)，设 \(\alpha_i\) 的坐标向量为 \(x_i\ (1\leq i\leq m)\)，\(A=(x_1,x_2,\cdots,x_m)\) 为 \(n\times m\) 实矩阵，则由抽象向量映射到坐标向量的保积同构 \(\varphi:V\rightarrow\mathbb{R}^n\) 可知 \(G = A'A\)，于是只要证明 \(\mathrm{r}(A)=\mathrm{r}(A'A)\) 成立即可，而这由\refpro{proposition:r(AA')=r(A)}即得.
+\end{proof}
+
+
+\subsection{保积同构的判定及其应用}
+
+\begin{example}\label{example:例9.34}
+试构造下列内积空间之间的保积同构：
+\begin{enumerate}
+\item \(M_n(\mathbb{R})\)（取 Frobenius 内积）与 \(\mathbb{R}^{n^2}\)（取标准内积）；
+\item \(M_n(\mathbb{C})\)（取 Frobenius 内积）与 \(\mathbb{C}^{n^2}\)（取标准内积）；
+\item \(V = \mathbb{R}[x]\)（取 \([0,1]\) 区间的积分内积）与 \(U = \mathbb{R}[x]\)（取\nrefexa{example:常见内积和内积空间-例9.1}{(6)}中的内积）。
+\end{enumerate}
+\end{example}
+\begin{remark}
+通过本例的(3) 可以把\nrefpro{proposition:例9.31}{(2)} 中的线性算子 \(\varphi\) 从 \(U\) 拉回到 \(V\) 上，即有 \(V\) 上的线性算子 \(\psi^{-1}\varphi\psi\)，它在 \([0,1]\) 区间的积分内积下不存在伴随算子. 
+\end{remark}
+\begin{solution}
+\begin{enumerate}
+\item 取 \(M_n(\mathbb{R})\) 中基础矩阵 \(\{E_{ij}\}\) 构成的标准正交基，则将任一 \(A=(a_{ij})\) 映射为在上述基下的坐标向量 $(a_{11}$, $a_{12}$,$\cdots$,$a_{1n}$,$\cdots$,$a_{n1}$,$a_{n2}$,$\cdots$,$a_{nn})'$ 的线性映射 \(\psi:M_n(\mathbb{R})\rightarrow\mathbb{R}^{n^2}\) 是线性同构. 对任意的 \(B=(b_{ij})\in M_n(\mathbb{R})\)，有
+\begin{align*}
+(\psi(A),\psi(B))&=\sum_{i,j = 1}^{n}a_{ij}b_{ij}= \mathrm{tr}\left( AB'\right) =(A,B).
+\end{align*}
+故 \(\psi:M_n(\mathbb{R})\rightarrow\mathbb{R}^{n^2}\) 是保积同构.
+
+\item 同理可证复矩阵的情形.
+
+\item 设线性无关向量组 \(\{1,x,\cdots,x^n\}\) 在 \([0,1]\) 区间的积分内积下的 Gram 矩阵为 \(A=(a_{ij})\)，其中 \(a_{ij}=\frac{1}{i + j - 1}\ (1\leq i,j\leq n + 1)\)。由\refpro{proposition:欧氏空间中Gram阵的性质-例9.5}可知，\(A\) 是正定阵，取其 \hyperref[proposition:正定阵的3个充要条件]{Cholesky分解} \(A = C'C\)，其中 \(C=(c_{ij})\) 是主对角元全大于零的上三角矩阵。我们先构造一个线性同构 \(\psi:V\rightarrow U\)，对任意的 \(f(x)=a_0 + a_1x+\cdots + a_nx^n\)，定义
+\[
+\psi(f(x))=a_0c_{11}+a_1(c_{12}+c_{22}x)+\cdots + a_n(c_{1,n + 1}+c_{2,n + 1}x+\cdots + c_{n + 1,n + 1}x^n),
+\]
+即 \((\psi(1),\psi(x),\cdots,\psi(x^n))=(1,x,\cdots,x^n)C\)。容易证明 \(A\) 的第 \(r\) 个顺序主子阵的  \hyperref[proposition:正定阵的3个充要条件]{Cholesky分解}恰由 \(C\) 的第 \(r\) 个顺序主子阵决定（这仍然是一个上三角矩阵）。若取线性无关向量组 \(\{1,x,\cdots,x^m\}\)，则按照上述方法定义出来的 \(\psi(1),\psi(x),\cdots,\psi(x^m)\) 与已定义的 \(\psi(1),\psi(x),\cdots,\psi(x^n)\) 的前面部分总是相同的。因此 \(\psi\) 的定义不依赖于 \(n\) 的选取，并且容易验证 \(\psi\) 是 \(V\rightarrow U\) 的线性映射。再由 \(C\) 的非异性容易证明 \(\psi:V\rightarrow U\) 是线性同构。任取 \(f(x),g(x)\in V\)，若设某些系数为零，则可将它们都写成统一的形式：\(f(x)=a_0 + a_1x+\cdots + a_nx^n\)，\(g(x)=b_0 + b_1x+\cdots + b_nx^n\)。记 \(\alpha=(a_0,a_1,\cdots,a_n)'\)，\(\beta=(b_0,b_1,\cdots,b_n)'\)，则由内积的定义可得
+\begin{align*}
+(\psi(f(x)),\psi(g(x)))&=(C\alpha)'(C\beta)=\alpha'(C'C)\beta=\alpha'A\beta=(f(x),g(x)),
+\end{align*}
+因此 \(\psi:V\rightarrow U\) 是保积同构.
+\end{enumerate}
+\end{solution}
+
+\begin{proposition}\label{proposition:例9.35}
+设 \(V,U\) 都是 \(n\) 维欧氏空间，\(\{e_1,e_2,\cdots,e_n\}\) 和 \(\{f_1,f_2,\cdots,f_n\}\) 分别是 \(V\) 和 \(U\) 的一组基（不一定是标准正交基），线性映射 \(\varphi:V\rightarrow U\) 满足 \(\varphi(e_i)=f_i\ (1\leq i\leq n)\)。求证：\(\varphi\) 是保积同构的充要条件是这两组基的 Gram 矩阵相等，即
+\[
+G(e_1,e_2,\cdots,e_n)=G(f_1,f_2,\cdots,f_n).
+\]
+\end{proposition}
+\begin{proof}
+\(\varphi\) 把 \(V\) 的一组基映为 \(U\) 的一组基保证了 \(\varphi\) 是线性同构. 若 \(\varphi\) 保持内积，则 \((e_i,e_j)=(\varphi(e_i),\varphi(e_j))=(f_i,f_j)\)，从而它们的 Gram 矩阵相同. 反之，若它们的 Gram 矩阵相同，任取 \(\alpha,\beta\in V\)，设它们在基 \(\{e_1,e_2,\cdots,e_n\}\) 下的坐标向量分别为 \(x,y\)，则由\(\varphi\) 是线性同构可知 \(\varphi(\alpha),\varphi(\beta)\) 在基 \(\{f_1,f_2,\cdots,f_n\}\) 下的坐标向量也分别为 \(x,y\)，于是
+\begin{align*}
+(\varphi(\alpha),\varphi(\beta))&=x'G(f_1,f_2,\cdots,f_n)y=x'G(e_1,e_2,\cdots,e_n)y=(\alpha,\beta),
+\end{align*}
+故 \(\varphi:V\rightarrow U\) 是保积同构. 
+\end{proof}
+
+\begin{proposition}\label{proposition:例9.36}
+设 \(V\) 是 \(n\) 维欧氏空间，\(\{\alpha_1,\alpha_2,\cdots,\alpha_m\}\) 是一组向量，\(G = G(\alpha_1,\alpha_2,\cdots,\alpha_m)\) 是其 Gram 矩阵。
+
+(1) 求证：\(\{\alpha_{i_1},\alpha_{i_2},\cdots,\alpha_{i_r}\}\) 是极大无关组的充要条件是 \(G\) 的第 \(i_1,i_2,\cdots,i_r\) 行和列构成的主子式非零，且对任意的 \(i\neq i_1,i_2,\cdots,i_r\)，\(G\) 的第 \(i_1,i_2,\cdots,i_r,i\) 行和列构成的主子式等于零。
+
+(2) \(R = \{(c_1,c_2,\cdots,c_m)'\in\mathbb{R}^m\mid c_1\alpha_1 + c_2\alpha_2 + \cdots + c_m\alpha_m = 0\}\) 称为向量组 \(\{\alpha_1,\alpha_2,\cdots,\alpha_m\}\) 的线性关系集合，容易验证它是 \(\mathbb{R}^m\) 的线性子空间。求证：\(R\) 是线性方程组 \(Gx = 0\) 的解空间。
+
+(3) 设 \(\{\alpha_1,\alpha_2,\cdots,\alpha_m\}\) 线性无关，\(\{\gamma_1,\gamma_2,\cdots,\gamma_m\}\) 是由 Gram - Schmidt 方法得到的标准正交向量组。设上述两组向量之间的线性关系由可逆矩阵 \(P\) 定义，即 \((\gamma_1,\gamma_2,\cdots,\gamma_m)=(\alpha_1,\alpha_2,\cdots,\alpha_m)P\)，求证：\(P\) 由 \(G\) 唯一确定。
+\end{proposition}
+\begin{proof}
+(1) \(\{\alpha_{i_1},\alpha_{i_2},\cdots,\alpha_{i_r}\}\) 是极大无关组当且仅当 \(\{\alpha_{i_1},\alpha_{i_2},\cdots,\alpha_{i_r}\}\) 线性无关，且对任意的 $i\neq i_1,i_2,\cdots,i_r$，$\{$ $\alpha_{i_1}$,$\alpha_{i_2}$,$\cdots$,$\alpha_{i_r}$,$\alpha_i$ $\}$线性相关，故由\nrefpro{proposition:欧氏空间中Gram阵的性质-例9.5}{(2)}即知结论成立。
+
+(2) 由内积的正定性可知，\(\beta=(c_1,c_2,\cdots,c_m)'\in R\)当且仅当$\sum_{i = 1}^{m}c_i\alpha_i=0$ 当且仅当 \((\sum_{i = 1}^{m}c_i\alpha_i,\sum_{i = 1}^{m}c_i\alpha_i)=0\)，即 \(\beta'G\beta = 0\)，再由\refpro{proposition:半正/负定阵关于线性方程的充要条件} 可知，这也当且仅当 \(G\beta = 0\)，即 \(\beta=(c_1,c_2,\cdots,c_m)'\) 是线性方程组 \(Gx = 0\) 的解。 
+
+(3) 由\refcor{corollary:例9.3的推论}可得
+\begin{align*}
+I_m &= G(\gamma_1,\gamma_2,\cdots,\gamma_m)=P'G(\alpha_1,\alpha_2,\cdots,\alpha_m)P = P'GP\\
+\end{align*}
+从而 \(G=(P^{-1})'P^{-1}\) 为 \hyperref[proposition:正定阵的3个充要条件]{Cholesky分解}。由 \hyperref[proposition:正定阵的3个充要条件]{Cholesky分解}的唯一性可知，\(P\) 由 \(G\) 唯一确定。
+\end{proof}
+
+\begin{example}\label{example:例9.37}
+设 \(\{\alpha_1,\alpha_2,\alpha_3,\alpha_4\}\) 是欧氏空间 \(V\) 中的向量，其 Gram 矩阵为 \(G = A'A\)，其中
+\[
+A = 
+\begin{pmatrix}
+1 & 4 & 5 & 3 \\
+1 & 1 & -1 & 3 \\
+1 & 7 & 11 & 9 \\
+1 & 0 & -3 & 1
+\end{pmatrix}
+\]
+
+试求 \(\{\alpha_1,\alpha_2,\alpha_3,\alpha_4\}\) 的一组极大无关组，以及由这一极大无关组通过 Gram - Schmidt 方法得到的标准正交向量组。
+\end{example}
+\begin{solution}
+{\color{blue}解法一:}
+设 \(A=(u_1,u_2,u_3,u_4)\) 为列分块，利用初等行变换容易验证 \(\{u_1,u_2,u_4\}\) 是 \(A\) 的列向量的极大无关组，再利用 Cauchy - Binet 公式可得 \(G\begin{pmatrix}1&2&4\\1&2&4\end{pmatrix}>0\)，但 \(|G| = |A|^2 = 0\)，故由\nrefpro{proposition:例9.36}{(1)}可知 \(\{\alpha_1,\alpha_2,\alpha_4\}\) 是一组极大无关组，其 Gram 矩阵为
+\begin{align*}
+G(\alpha_1,\alpha_2,\alpha_4)&=
+\left( \begin{matrix}
+1&		1&		1&		1\\
+4&		1&		7&		0\\
+3&		3&		9&		1\\
+\end{matrix} \right) 
+\begin{pmatrix}
+1 & 4 & 3 \\
+1 & 1 & 3 \\
+1 & 7 & 9 \\
+1 & 0 & 1
+\end{pmatrix}
+=
+\begin{pmatrix}
+4 & 12 & 16 \\
+12 & 66 & 78 \\
+16 & 78 & 100
+\end{pmatrix}
+\end{align*}
+经计算可得 \(G\) 的 Cholesky 分解为
+\begin{align*}
+G(\alpha_1,\alpha_2,\alpha_4)&=
+\begin{pmatrix}
+4 & 12 & 16 \\
+12 & 66 & 78 \\
+16 & 78 & 100
+\end{pmatrix}
+=
+\begin{pmatrix}
+2 & 0 & 0 \\
+6 & \sqrt{30} & 0 \\
+8 & \sqrt{30} & \sqrt{6}
+\end{pmatrix}
+\begin{pmatrix}
+2 & 6 & 8 \\
+0 & \sqrt{30} & \sqrt{30} \\
+0 & 0 & \sqrt{6}
+\end{pmatrix}
+\end{align*}
+故由\nrefpro{proposition:例9.36}{(3)的证明过程}可知，经 Gram - Schmidt 正交化方法从 \(\{\alpha_1,\alpha_2,\alpha_4\}\) 得到的正交标准向量组 \(\{\gamma_1,\gamma_2,\gamma_4\}\) 之间的线性关系为
+\[
+(\gamma_1,\gamma_2,\gamma_4)=(\alpha_1,\alpha_2,\alpha_4)P,\quad 
+P = 
+\begin{pmatrix}
+2 & 6 & 8 \\
+0 & \sqrt{30} & \sqrt{30} \\
+0 & 0 & \sqrt{6}
+\end{pmatrix}^{-1}
+=
+\begin{pmatrix}
+\frac{1}{2} & -\frac{3}{\sqrt{30}} & -\frac{1}{\sqrt{6}} \\
+0 & \frac{1}{\sqrt{30}} & -\frac{1}{\sqrt{6}} \\
+0 & 0 & \frac{1}{\sqrt{6}}
+\end{pmatrix}
+\]
+
+{\color{blue}解法二:}
+设 \(A = (u_1,u_2,u_3,u_4)\) 为列分块，容易验证 \(\{u_1,u_2,u_4\}\) 是 \(A\) 的列向量的极大无关组。设 $U = $L($u_1$,$u_2$,$u_3$,$u_4)$，则 \(U\) 是 \(\mathbb{R}^4\)（取标准内积）的三维子空间，并且 \(A'A\) 就是列向量组 \(\{u_1,u_2,u_3,u_4\}\) 的 Gram 矩阵。由假设 $G$ $(\alpha_1$,$\alpha_2$,$\alpha_3$,$\alpha_4)$ $=$ $G(u_1,u_2,u_3,u_4)$，故由\refpro{proposition:例9.38}可知，存在一个从 \(V\) 的三维子空间 \(W\) 到 \(U\) 上的保积同构 \(\varphi\)，使得 \(\varphi(\alpha_i) = u_i\ (1\leq i \leq 4)\)。由于保积同构保持极大无关组的下指标，并且保持对应向量在 Gram - Schmidt 正交化和标准化过程中出现的所有系数（参考\nrefpro{proposition:例9.36}{(3)}），故 \(\{\alpha_1,\alpha_2,\alpha_4\}\) 就是向量组 \(\{\alpha_1,\alpha_2,\alpha_3,\alpha_4\}\) 的极大无关组，并且 \(\{\alpha_1,\alpha_2,\alpha_4\}\) 与 Gram - Schmidt 正交化方法得到的标准正交向量组 \(\{\gamma_1,\gamma_2,\gamma_4\}\) 之间的线性关系等价于求 \(\{u_1,u_2,u_4\}\) 与 Gram - Schmidt 正交化方法得到的标准正交向量组 \(\{w_1,w_2,w_4\}\) 之间的线性关系。经计算可得
+\begin{align*}
+(w_1,w_2,w_4) &= (u_1,u_2,u_4)P,\quad P = 
+\begin{pmatrix}
+\frac{1}{2} & -\frac{3}{\sqrt{30}} & -\frac{1}{\sqrt{6}} \\
+0 & \frac{1}{\sqrt{30}} & -\frac{1}{\sqrt{6}} \\
+0 & 0 & \frac{1}{\sqrt{6}}
+\end{pmatrix}
+\end{align*}
+因此 \((\gamma_1,\gamma_2,\gamma_4) = (\alpha_1,\alpha_2,\alpha_4)P\).
+\end{solution}
+
+\begin{proposition}\label{proposition:例9.38}
+设 \(V,U\) 都是 \(n\) 维欧氏空间，\(\{\alpha_1,\alpha_2,\cdots,\alpha_m\}\) 和 \(\{\beta_1,\beta_2,\cdots,\beta_m\}\) 分别是 \(V\) 和 \(U\) 中的向量组。证明：存在保积同构 \(\varphi:V \to U\)，使得
+\begin{align*}
+\varphi(\alpha_i) = \beta_i\quad (1\leq i \leq m)
+\end{align*}
+成立的充要条件是这两组向量的 Gram 矩阵相等。
+\end{proposition}
+\begin{remark}
+若设 \(\{\alpha_{i_1},\alpha_{i_2},\cdots,\alpha_{i_r}\}\) 是向量组 \(\{\alpha_1,\alpha_2,\cdots,\alpha_m\}\) 的极大无关组，则由\nrefpro{proposition:例9.36}{(1)}可以直接得到 \(\{\beta_{i_1},\beta_{i_2},\cdots,\beta_{i_r}\}\) 也是向量组 \(\{\beta_1,\beta_2,\cdots,\beta_m\}\) 的极大无关组。 
+\end{remark}
+\begin{proof}
+必要性类似于\refpro{proposition:例9.35}的必要性的证明，下证充分性。设向量组 \(\{\alpha_1,\alpha_2,\cdots,\alpha_m\}\) 和 \(\{\beta_1,\beta_2,\cdots,\beta_m\}\) 有相同的 Gram 矩阵，\(V_1 = L(\alpha_1,\alpha_2,\cdots,\alpha_m)\)，\(U_1 = L(\beta_1,\beta_2,\cdots,\beta_m)\)。设 \(\{\alpha_{i_1},\alpha_{i_2},\cdots,\alpha_{i_r}\}\) 是向量组 \(\{\alpha_1,\alpha_2,\cdots,\alpha_m\}\) 的极大无关组，若设 \(c_1\beta_{i_1} + c_2\beta_{i_2} + \cdots + c_r\beta_{i_r} = \mathbf{0}\)，则令
+\begin{align*}
+R_1=\{(c_1,c_2,\cdots ,c_r)' \in \mathbb{R} ^m\mid c_1\beta _{i_1}+c_2\beta _{i_2}+\cdots +c_r\beta _{i_r}=0\},
+\\
+R_2=\{(c_1,c_2,\cdots ,c_r)' \in \mathbb{R} ^m\mid c_1\alpha _{i_1}+c_2\alpha _{i_2}+\cdots +c_r\alpha _{i_r}=0\},
+\end{align*}
+由\nrefpro{proposition:例9.36}{(2)}可得 $R_1$是$G\left( \beta _{i_1},\beta _{i_2},\cdots ,\beta _{i_r} \right) \boldsymbol{x}=\boldsymbol{O}$的解空间,
+$R_2$是$G\left( \alpha _{i_1},\alpha _{i_2},\cdots ,\alpha _{i_r} \right) \boldsymbol{x}=\boldsymbol{O}$的解空间,
+又因为$G\left( \alpha _{i_1},\alpha _{i_2},\cdots ,\alpha _{i_r} \right) =G\left( \beta _{i_1},\beta _{i_2},\cdots ,\beta _{i_r} \right)$,所以$R_1=R_2$.故\(c_1\alpha_{i_1} + c_2\alpha_{i_2} + \cdots + c_r\alpha_{i_r} = \mathbf{0}\)，从而 \(c_1 = c_2 = \cdots = c_r = 0\)，即 \(\beta_{i_1},\beta_{i_2},\cdots,\beta_{i_r}\) 线性无关；又对任意的 \(i \neq i_1,i_2,\cdots,i_r\)，若设 \(\alpha_i = a_1\alpha_{i_1} + a_2\alpha_{i_2} + \cdots + a_r\alpha_{i_r}\)，则由\nrefpro{proposition:例9.36}{(2)}同理可得 \(\beta_i = a_1\beta_{i_1} + a_2\beta_{i_2} + \cdots + a_r\beta_{i_r}\)，于是 \(\{\beta_{i_1},\beta_{i_2},\cdots,\beta_{i_r}\}\) 也是向量组 \(\{\beta_1,\beta_2,\cdots,\beta_m\}\) 的极大无关组，从而 \(\{\alpha_{i_1},\alpha_{i_2},\cdots,\alpha_{i_r}\}\) 和 \(\{\beta_{i_1},\beta_{i_2},\cdots,\beta_{i_r}\}\) 分别是 \(V_1,U_1\) 的一组基。定义线性映射 \(\varphi_1:V_1 \to U_1\) 为 \(\varphi_1(\alpha_{i_k}) = \beta_{i_k}\ (1\leq k \leq r)\)，则由\refpro{proposition:例9.35}的充分性可知，\(\varphi_1:V_1 \to U_1\) 是保积同构。对任意的 \(i \neq i_1,i_2,\cdots,i_r\)，
+\begin{align*}
+\varphi_1(\alpha_i) &= \varphi_1\left(\sum_{k = 1}^{r}a_k\alpha_{i_k}\right) = \sum_{k = 1}^{r}a_k\varphi_1(\alpha_{i_k}) = \sum_{k = 1}^{r}a_k\beta_{i_k} = \beta_i
+\end{align*}
+从而 \(\varphi_1(\alpha_i) = \beta_i\ (1\leq i \leq m)\)。注意到 \(V = V_1 \perp V_1^{\perp}\)，\(U = U_1 \perp U_1^{\perp}\)，故可取 \(V_1^{\perp}\) 的一组标准正交基 \(\gamma_{r + 1},\cdots,\gamma_n\)，\(U_1^{\perp}\) 的一组标准正交基 \(\delta_{r + 1},\cdots,\delta_n\)，定义线性映射 \(\varphi_2:V_1^{\perp} \to U_1^{\perp}\) 为 \(\varphi_2(\gamma_j) = \delta_j\ (r + 1\leq j \leq n)\)，则 \(\varphi_2:V_1^{\perp} \to U_1^{\perp}\) 也是保积同构。下面定义线性映射 \(\varphi:V \to U\)，对任一 \(v = \alpha + \gamma \in V\)，其中 \(\alpha \in V_1\)，\(\gamma \in V_1^{\perp}\)，定义 \(\varphi(v) = \varphi_1(\alpha) + \varphi_2(\gamma)\)，容易验证 \(\varphi:V \to U\) 是线性同构。我们还有
+\begin{align*}
+(\varphi(v),\varphi(v)) &= (\varphi_1(\alpha) + \varphi_2(\gamma),\varphi_1(\alpha) + \varphi_2(\gamma)) = (\varphi_1(\alpha),\varphi_1(\alpha)) + (\varphi_2(\gamma),\varphi_2(\gamma))\\
+&= (\alpha,\alpha) + (\gamma,\gamma) = (\alpha + \gamma,\alpha + \gamma) = (v,v)
+\end{align*}
+故 \(\varphi:V \to U\) 保持范数，从而由\refthe{theorem:保范线性映射一定保持内积}可知$\varphi$是满足题目条件的保积同构。
+\end{proof}
+
+
+\subsection{正交变换与镜像变换}
+
+回顾\hyperref[theorem:正交变换和酉变换的基本性质]{正交变换相关性质}.
+
+\begin{proposition}\label{proposition:例9.39}
+设 \(A,B\) 是 \(m\times n\) 实矩阵，求证：\(A'A = B'B\) 的充要条件是存在 \(m\) 阶正交矩阵 \(Q\)，使得 \(A = QB\)。
+\end{proposition}
+\begin{proof}
+充分性显然成立，下证必要性。取 \(V = \mathbb{R}^m\) 上的标准内积，设 \(A = (\alpha_1,\alpha_2,\cdots,\alpha_n)\)，\(B = (\beta_1,\beta_2,\cdots,\beta_n)\) 为列分块，则由 \(A'A = B'B\) 可得 \(G(\alpha_1,\alpha_2,\cdots,\alpha_n) = G(\beta_1,\beta_2,\cdots,\beta_n)\)，再由\refpro{proposition:例9.38}可知，存在 \(V\) 上的正交变换 \(\varphi\)，使得 \(\varphi(\beta_i) = \alpha_i\ (1\leq i \leq n)\)。设 \(\varphi\) 在 \(V\) 的标准单位列向量构成的标准正交基下的表示矩阵为 \(Q\)，则 \(Q\) 为正交矩阵且 \(Q\beta_i = \alpha_i\ (1\leq i \leq n)\)，因此
+\begin{align*}
+QB &= (Q\beta_1,Q\beta_2,\cdots,Q\beta_n) = (\alpha_1,\alpha_2,\cdots,\alpha_n) = A.
+\end{align*}
+\end{proof}
+
+\begin{definition}[镜像变换]
+设 \(v\) 是 \(n\) 维欧氏空间 \(V\) 中长度为 \(1\) 的向量，定义线性变换：
+\begin{align*}
+\varphi(x) = x - 2(v,x)v,
+\end{align*}
+我们称线性变换$\varphi$为\textbf{镜像变换}.
+\end{definition}
+\begin{remark}
+镜像变换的几何意义是：它将某个向量（如\refpro{proposition:例9.40}的向量 \(v\)）变为其反向向量，而和该向量正交的向量保持不动。更加直观的描述是：镜像变换就是关于某个 \(n - 1\) 维超平面（如\refpro{proposition:例9.40}的 \(L(v)^{\perp}\)）的镜像对称。
+\end{remark}
+
+\begin{proposition}[镜像变换的基本性质]\label{proposition:例9.40}
+(1) 设 \(v\) 是 \(n\) 维欧氏空间 \(V\) 中长度为 \(1\) 的向量，定义线性变换：
+\begin{align*}
+\varphi(x) = x - 2(v,x)v
+\end{align*}
+证明：\(\varphi\) 是正交变换且 \(\det\varphi = -1\)；
+
+(2) 设 \(\psi\) 是 \(n\) 维欧氏空间 \(V\) 中的正交变换，\(1\) 是 \(\psi\) 的特征值且几何重数等于 \(n - 1\)，证明：必存在 \(V\) 中长度为 \(1\) 的向量 \(v\)，使得
+\begin{align*}
+\psi(x) = x - 2(v,x)v
+\end{align*}
+\end{proposition}
+\begin{proof}
+(1) 取 \(e_1 = v\)，并将它扩张为 \(V\) 的一组标准正交基 \(e_1,e_2,\cdots,e_n\)，则 \(\varphi(e_1) = -e_1\)，\(\varphi(e_i) = e_i\ (i > 1)\)，于是 \(\varphi\) 在这组标准正交基下的表示矩阵为 \(\mathrm{diag}\{-1,1,\cdots,1\}\)。这是一个正交矩阵，因此 \(\varphi\) 是正交变换且行列式值为 \(-1\)。
+
+(2) 设 \(\psi\) 的属于特征值 \(1\) 的特征子空间为 \(V_1\)，由假设 \(\dim V_1 = n - 1\)，取 \(V_1\) 的一组标准正交基 \(e_2,\cdots,e_n\)，则 \(\psi(e_i) = e_i\ (2\leq i \leq n)\)。设 \(V_1^{\perp} = L(e_1)\)，其中 \(e_1\) 是单位向量，则 \(e_1,e_2,\cdots,e_n\) 是 \(V\) 的一组标准正交基。注意到 \(V_1\) 是 \(\psi\) 的不变子空间，故由\nrefpro{proposition:线性算子的正交补空间就是伴随算子的不变子空间}{(1)}可知，\(V_1^{\perp} = L(e_1)\) 是 \(\psi^* = \psi^{-1}\) 的不变子空间，从而也是 \(\psi\) 的不变子空间，于是 \(e_1\) 是 \(\psi\) 的特征向量。设 \(\psi(e_1) = \lambda_1e_1\)，其中特征值 \(\lambda_1\) 为实数。由于 \(\psi\) 是正交变换，故 \(\lambda_1\) 等于 \(1\) 或 \(-1\)。若 \(\lambda_1 = 1\)，则 \(\psi(e_1) = e_1\)，从而 \(\psi\) 的属于特征值 \(1\) 的特征子空间将是 \(V\)，这与假设矛盾。因此 \(\lambda_1 = -1\)，即有 \(\psi(e_1) = -e_1\)。令 \(v = e_1\)，作线性变换
+\begin{align*}
+\varphi(x) = x - 2(v,x)v
+\end{align*}
+不难验证 \(\psi(e_i) = \varphi(e_i)\ (1\leq i \leq n)\) 成立，故 \(\psi = \varphi\)。
+\end{proof}
+
+\begin{definition}[镜像矩阵]
+设 \(n\) 阶矩阵 \(M = I_n - 2\alpha\alpha'\)，其中 \(\alpha\) 是 \(n\) 维实列向量且 \(\alpha'\alpha = 1\)，这样的 \(M\) 称为\textbf{镜像矩阵}。
+\end{definition}
+\begin{remark}
+由\refpro{proposition:例9.40}可知镜像变换都是正交变换,故\textbf{镜像矩阵也都是正交矩阵}.实际上,不难发现$M'M=I_n$.
+\end{remark}
+
+\begin{proposition}\label{proposition:例9.41}
+设 \(\varphi\) 是 \(n\) 维欧氏空间 \(V\) 上的线性变换，求证：\(\varphi\) 是镜像变换的充要条件是 \(\varphi\) 在 \(V\) 的某一组（任一组）标准正交基下的表示矩阵为镜像矩阵。
+\end{proposition}
+\begin{proof}
+先证必要性. 设 \(\varphi\) 是镜像变换，则由\refpro{proposition:例9.40}可知，\(\varphi\) 在 \(V\) 的某一组标准正交基下的表示矩阵为 $A$ $=$ $\mathrm{diag}$ $\{$ $-1$,$1$,$\cdots$,$1$ $\}$ $=$ $I_n$ $-$ $2\beta\beta'$，其中 \(\beta = (1,0,\cdots,0)'\)。设 \(\varphi\) 在 \(V\) 的任一组标准正交基下的表示矩阵为 \(M\)，则 \(M\) 和 \(A\) 正交相似，即存在正交矩阵 \(P\)，使得 \(M = PAP'\)，于是
+\begin{align*}
+M &= P(I_n - 2\beta\beta')P' = I_n - 2(P\beta)(P\beta)'
+\end{align*}
+令 \(\alpha = P\beta\)，则 \(\alpha\) 的长度为 \(1\) 且 \(M = I_n - 2\alpha\alpha'\)。
+
+再证充分性. 设 \(\varphi\) 在 \(V\) 的某一组标准正交基 \(e_1,e_2,\cdots,e_n\) 下的表示矩阵为 \(M = I_n - 2\alpha\alpha'\)，其中 \(\alpha'\alpha = 1\)。设 \(\alpha = (a_1,a_2,\cdots,a_n)'\)，令 \(v = a_1e_1 + a_2e_2 + \cdots + a_ne_n\)。对 \(V\) 中任一向量 \(x = b_1e_1 + b_2e_2 + \cdots + b_ne_n\)，记 \(\beta = (b_1,b_2,\cdots,b_n)'\)，则
+\begin{align*}
+M\beta &= \beta - 2\alpha\alpha'\beta = \beta - 2(\alpha,\beta)\alpha
+\end{align*}
+由线性变换和表示矩阵的一一对应可得
+\begin{align*}
+\varphi (x)=Mx=M\beta \left( \begin{array}{c}
+e_1\\
+e_2\\
+\vdots\\
+e_n\\
+\end{array} \right) =x-2(v,x)v.
+\end{align*}
+注意到 \(v\) 的长度为 \(1\)，故 \(\varphi\) 是镜像变换。
+\end{proof}
+
+\begin{proposition}\label{proposition:例9.42}
+设 \(u,v\) 是欧氏空间中两个长度相等的不同向量，求证：必存在镜像变换 \(\varphi\)，使得 \(\varphi(u) = v\)。
+\end{proposition}
+\begin{proof}
+令
+\begin{align*}
+e = \frac{u - v}{\|u - v\|}
+\end{align*}
+定义 \(\varphi\) 如下：
+\begin{align*}
+\varphi(x) = x - 2(e,x)e
+\end{align*}
+则 \(\varphi\) 是镜像变换，注意 \((u,u) = (v,v)\)，我们有
+\begin{align*}
+\|u - v\|^2 &= (u - v,u - v) = (u,u) + (v,v) - 2(u,v) = 2(u,u) - 2(u,v) = 2(u,u - v)\\
+\varphi(u) &= u - 2(e,u)e = u - 2\left(\frac{u - v}{\|u - v\|},u\right)\frac{u - v}{\|u - v\|} = u - 2\frac{(u,u - v)}{\|u - v\|^2}(u - v) = v
+\end{align*}
+\end{proof}
+
+\begin{proposition}\label{proposition:例9.43}
+\(n\) 维欧氏空间中任一正交变换均可表示为不超过 \(n\) 个镜像变换之积。
+\end{proposition}
+\begin{proof}
+对 \(n\) 进行归纳. 当 \(n = 1\) 时，正交变换 \(\varphi\) 或是恒等变换，或是 \(\varphi(x) = -x\)，后者已是镜像变换，而恒等变换可看成是零个镜像变换之积，故结论成立. 假设结论对 \(n - 1\) 成立，现设 \(V\) 是 \(n\) 维欧氏空间，\(\varphi\) 是 \(V\) 上的正交变换. 若 \(\varphi\) 是恒等变换，则可看成是零个镜像变换之积，故结论成立. 下设 \(\varphi\) 不是恒等变换，取 \(V\) 的一组标准正交基 \(e_1,e_2,\cdots,e_n\)，则存在某个 \(i\)，使得 \(\varphi(e_i) \neq e_i\). 不失一般性，可设 \(\varphi(e_1) \neq e_1\)，因为 \(\|\varphi(e_1)\| = \|e_1\| = 1\)，故由\refpro{proposition:例9.42}可知，存在镜像变换 \(\psi\)，使得 \(\psi\varphi(e_1) = e_1\). 注意到 \(\psi\varphi\) 也是正交变换，故 \((\psi\varphi)^*(e_1) = (\psi\varphi)^{-1}(e_1) = e_1\)，于是 \(V_1 = L(e_1)^{\perp}\) 是 \(\psi\varphi\) 的不变子空间. 由归纳假设，\(\psi\varphi|_{V_1} = \psi_1\psi_2\cdots\psi_k\)，其中 \(k \leq n - 1\)，且每个 \(\psi_i\) 都是 \(V_1\) 上的镜像变换. 我们可将 \(\psi_i\) 扩张到全空间 \(V\) 上，满足 \(\psi_i(e_1) = e_1\)，不难验证得到的线性变换都是 \(V\) 上的镜像变换（仍记为 \(\psi_i\)）. 注意到 \(\psi^{-1} = \psi^* = \psi\)，故
+\begin{align*}
+\varphi = \psi^{-1}\psi_1\cdots\psi_k = \psi\psi_1\cdots\psi_k
+\end{align*}
+可表示为不超过 \(n\) 个镜像变换之积，结论得证. 
+\end{proof}
+
+\begin{proposition}\label{proposition:例9.44}
+设 \(Q\) 为 \(n\) 阶正交矩阵，\(1\) 不是 \(Q\) 的特征值. 设 \(P = I_n - 2\alpha\alpha'\)，其中 \(\alpha\) 是 \(n\) 维实列向量且 \(\alpha'\alpha = 1\). 求证：\(1\) 是 \(PQ\) 的特征值.
+\end{proposition}
+\begin{proof}
+由于 \(1\) 不是 \(Q\) 的特征值，故 \(Q - I_n\) 为可逆矩阵，令 \(x = (Q - I_n)^{-1}\alpha\)，则非零实列向量 \(x\) 满足 \(Qx - x = \alpha\)。取 \(\mathbb{R}^n\) 的标准内积，由 \(Q\) 为正交矩阵可知 \(\|Qx\| = \|x\|\)，并且 \(P\) 是关于 \(n - 1\) 维超平面 \(L(\alpha)^{\perp}\) 的镜像对称，故由 \(Qx - x = \alpha\) 以及\refpro{proposition:例9.42}可知 \(P(Qx) = x\)，即 \(x\) 是 \(PQ\) 关于特征值 \(1\) 的特征向量，结论得证。
+\end{proof}
+
+
+\subsection{正交矩阵的性质}
+
+回顾\hyperref[theorem:正交矩阵的基本性质1]{正交矩阵的性质}.
+
+\begin{proposition}\label{proposition:例9.44的推广}
+设 \(Q\) 为 \(n\) 阶正交矩阵，\(1\) 不是 \(Q\) 的特征值. 设 \(P\) 为 \(n\) 阶正交矩阵，\(\vert P\vert = - 1\). 求证：\(1\) 是 \(PQ\) 的特征值.
+\end{proposition}
+\begin{remark}
+这个\refpro{proposition:例9.44的推广}是\refpro{proposition:例9.44}的推广.
+\end{remark}
+\begin{proof}
+若 \(A\) 为正交矩阵，则可设 \(A\) 的全体特征值为 \(1,\cdots,1,-1,\cdots,-1,\cos\theta_i\pm\mathrm{i}\sin\theta_i\ (1\leq i \leq r)\)，其中 \(\sin\theta_i\neq0\)。若 \(1\) 不是 \(A\) 的特征值，则特征值 \(-1\) 有 \(n - 2r\) 个，从而 \(\vert A\vert = (-1)^{n - 2r}=(-1)^n\)。回到本题，由条件可知 \(\vert P\vert = - 1\)，\(\vert Q\vert = (-1)^n\)，从而 \(\vert PQ\vert = (-1)^{n + 1}\neq(-1)^n\)。注意到 \(PQ\) 仍为正交阵，从而 \(1\) 必为 \(PQ\) 的特征值。
+\end{proof}
+
+\begin{proposition}\label{proposition:正交阵元素的性质}
+设正交矩阵 \(A = (a_{ij})\)，则\(a_{ij} = \vert A\vert^{-1}A_{ij} = \pm A_{ij}\)，其中 \(A_{ij}\) 是元素 \(a_{ij}\) 的代数余子式。
+\end{proposition}
+\begin{proof}
+由$A$是正交矩阵可知\(A' = A^{-1} = \vert A\vert^{-1}A^*\)，于是\(a_{ij} = \vert A\vert^{-1}A_{ij} = \pm A_{ij}\)，其中 \(A_{ij}\) 是元素 \(a_{ij}\) 的代数余子式。
+\end{proof}
+
+\begin{proposition}\label{proposition:例9.45}
+设 \(A\) 是 \(n\) 阶正交矩阵，求证：\(A\) 的任一 \(k\) 阶子式 \(A\begin{pmatrix}
+i_1 & i_2 & \cdots & i_k \\
+j_1 & j_2 & \cdots & j_k
+\end{pmatrix}\) 的值等于 \(\vert A\vert^{-1}\) 乘以其代数余子式的值。
+\end{proposition}
+\begin{remark}
+这个\refpro{proposition:例9.45}是\refpro{proposition:正交阵元素的性质}的推广.
+\end{remark}
+\begin{proof}
+先对特殊情形 \(A\begin{pmatrix}
+1 & 2 & \cdots & k \\
+1 & 2 & \cdots & k
+\end{pmatrix}\) 进行证明. 设 \(A = \begin{pmatrix}
+A_{11} & A_{12} \\
+A_{21} & A_{22}
+\end{pmatrix}\)，其中 \(\vert A_{11}\vert = A\begin{pmatrix}
+1 & 2 & \cdots & k \\
+1 & 2 & \cdots & k
+\end{pmatrix}\)，\(\vert A_{22}\vert\) 就是 \(\vert A_{11}\vert\) 的代数余子式. 注意到 \(A' = \begin{pmatrix}
+A_{11}' & A_{21}' \\
+A_{12}' & A_{22}'
+\end{pmatrix}\)，故由 \(AA' = I_n\) 可得
+\begin{align*}
+\begin{pmatrix}
+A_{11}A_{11}' + A_{12}A_{12}' & A_{11}A_{21}' + A_{12}A_{22}' \\
+A_{21}A_{11}' + A_{22}A_{12}' & A_{21}A_{21}' + A_{22}A_{22}'
+\end{pmatrix} = \begin{pmatrix}
+I_k & O \\
+O & I_{n - k}
+\end{pmatrix}
+\end{align*}
+于是
+\(A_{11}A_{11}' + A_{12}A_{12}' = I_k\)，\(A_{21}A_{21}' + A_{22}A_{22}' = I_{n - k}\)，\(A_{21}A_{11}' + A_{22}A_{12}' = O\)。
+令 \(C = \begin{pmatrix}
+A_{11}' & O \\
+A_{12}' & I_{n - k}
+\end{pmatrix}\)，则 \(\vert C\vert = \vert A_{11}'\vert = \vert A_{11}\vert\)。又
+\begin{align*}
+AC = \begin{pmatrix}
+A_{11}A_{11}' + A_{12}A_{12}' & A_{12} \\
+A_{21}A_{11}' + A_{22}A_{12}' & A_{22}
+\end{pmatrix} = \begin{pmatrix}
+I_k & A_{12} \\
+O & A_{22}
+\end{pmatrix}
+\end{align*}
+故 \(\vert AC\vert = \vert A\vert\vert C\vert = \vert A_{22}\vert\)，即 \(\vert A\vert\vert A_{11}\vert = \vert A_{22}\vert\)，从而 \(\vert A_{11}\vert = \vert A\vert^{-1}\vert A_{22}\vert\)。
+
+对一般情形，将矩阵 \(A\) 的第 \(i_1,i_2,\cdots,i_k\) 行经过 \((i_1 - 1)+(i_2 - 2)+\cdots+(i_k - k)=i_1 + i_2 + \cdots + i_k - \frac{1}{2}k(k + 1)\) 次相邻对换移至第 \(1,2,\cdots,k\) 行；再将 \(j_1,j_2,\cdots,j_k\) 列经过 \((j_1 - 1)+(j_2 - 2)+\cdots+(j_k - k)=j_1 + j_2 + \cdots + j_k - \frac{1}{2}k(k + 1)\) 次相邻对换移至第 \(1,2,\cdots,k\) 列；得到的矩阵记为 \(B\)。因为第一类初等矩阵 \(P_{ij}\) 也是正交矩阵，故矩阵 \(B\) 仍是正交矩阵。记 \(p = i_1 + i_2 + \cdots + i_k\)，\(q = j_1 + j_2 + \cdots + j_k\)，则 \(\vert B\vert = (-1)^{p + q}\vert A\vert\)。注意到
+\[A\begin{pmatrix}
+i_1 & i_2 & \cdots & i_k \\
+j_1 & j_2 & \cdots & j_k
+\end{pmatrix} = B\begin{pmatrix}
+1 & 2 & \cdots & k \\
+1 & 2 & \cdots & k
+\end{pmatrix}\]
+\[\widehat{A}\begin{pmatrix}
+i_1 & i_2 & \cdots & i_k \\
+j_1 & j_2 & \cdots & j_k
+\end{pmatrix} = (-1)^{p + q}\widehat{B}\begin{pmatrix}
+1 & 2 & \cdots & k \\
+1 & 2 & \cdots & k
+\end{pmatrix}\]
+并由特殊情形可得 \(B\begin{pmatrix}
+1 & 2 & \cdots & k \\
+1 & 2 & \cdots & k
+\end{pmatrix} = \vert B\vert^{-1}\widehat{B}\begin{pmatrix}
+1 & 2 & \cdots & k \\
+1 & 2 & \cdots & k
+\end{pmatrix}\)，因此
+\[A\begin{pmatrix}
+i_1 & i_2 & \cdots & i_k \\
+j_1 & j_2 & \cdots & j_k
+\end{pmatrix} = \vert A\vert^{-1}\widehat{A}\begin{pmatrix}
+i_1 & i_2 & \cdots & i_k \\
+j_1 & j_2 & \cdots & j_k
+\end{pmatrix}\] 
+\end{proof}
+
+\begin{proposition}\label{proposition:例9.46}
+证明：正交矩阵任一 \(k\) 阶子阵的特征值的模长都不超过 1.
+\end{proposition}
+\begin{remark}
+这个\refpro{proposition:例9.46}是\nrefthe{theorem:正交矩阵的行列式和特征值}{(2)}的推广.
+\end{remark}
+\begin{proof}
+设 \(A\) 为 \(n\) 阶正交矩阵，先对特殊情形 \(A\begin{pmatrix}
+1 & 2 & \cdots & k \\
+1 & 2 & \cdots & k
+\end{pmatrix}\) 进行证明. 设 \(A = \begin{pmatrix}
+A_{11} & A_{12} \\
+A_{21} & A_{22}
+\end{pmatrix}\)，其中 \(A_{11} = A\begin{pmatrix}
+1 & 2 & \cdots & k \\
+1 & 2 & \cdots & k
+\end{pmatrix}\). 由 \(A'A = I_n\) 可得 \(A_{11}'A_{11} + A_{21}'A_{21} = I_k\). 任取 \(A_{11}\) 的一个特征值 \(\lambda \in \mathbb{C}\) 以及对应的特征向量 \(\alpha \in \mathbb{C}^k\)，则将上式左乘 \(\overline{\alpha}'\)，右乘 \(\alpha\) 可得
+\begin{align*}
+\overline{(A_{11}\alpha)}'(A_{11}\alpha) + \overline{(A_{21}\alpha)}'(A_{21}\alpha) = \overline{\alpha}'\alpha
+\end{align*}
+即有 \(|\lambda|^2\overline{\alpha}'\alpha + \overline{(A_{21}\alpha)}'(A_{21}\alpha) = \overline{\alpha}'\alpha\)，从而 \((1 - |\lambda|^2)\overline{\alpha}'\alpha = \overline{(A_{21}\alpha)}'(A_{21}\alpha) \geq 0\). 由 \(\alpha \neq \mathbf{0}\) 可得 \(\overline{\alpha}'\alpha > 0\)，于是 \(1 - |\lambda|^2 \geq 0\)，即有 \(|\lambda| \leq 1\). 
+
+对一般情形，经过行对换与列对换，总可将正交矩阵 \(A\) 的 \(k\) 阶子阵换到左上角. 因为第一类初等矩阵 \(P_{ij}\) 也是正交矩阵，故变换后的矩阵 \(B\) 仍是正交矩阵，从而由特殊情形即得结论成立.
+\end{proof}
+
+\begin{proposition}\label{proposition:例9.47}
+设 \(P\) 是 \(n\) 阶正交矩阵，\(D = \mathrm{diag}\{d_1,d_2,\cdots,d_n\}\) 是实对角矩阵，记 \(m\) 和 \(M\) 分别是诸 \(|d_i|\) 中的最小者和最大者. 求证：若 \(\lambda\) 是矩阵 \(PD\) 的特征值，则 \(m \leq |\lambda| \leq M\).
+\end{proposition}
+\begin{remark}
+这个\refpro{proposition:例9.47}是\nrefthe{theorem:正交矩阵的行列式和特征值}{(2)}的推广.
+\end{remark}
+\begin{proof}
+设特征值 \(\lambda\) 对应的特征向量为 \(\alpha = (a_1,a_2,\cdots,a_n)' \in \mathbb{C}^n\)，即有 \(PD\alpha = \lambda\alpha\)，上式共轭转置后可得 \(\overline{\alpha}'D P' = \overline{\lambda}\overline{\alpha}'\). 将这两个等式相乘后可得 \(\overline{\alpha}'DP'PD\alpha = \overline{\lambda}\lambda\overline{\alpha}'\alpha\)，即有 \(\overline{\alpha}'D^2\alpha = |\lambda|^2\overline{\alpha}'\alpha\). 由假设可得
+\begin{align*}
+m^2\sum_{i = 1}^{n}|a_i|^2 \leq \sum_{i = 1}^{n}d_i^2|a_i|^2 = |\lambda|^2\sum_{i = 1}^{n}|a_i|^2 \leq M^2\sum_{i = 1}^{n}|a_i|^2
+\end{align*}
+由此即得 \(m \leq |\lambda| \leq M\). 
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 \end{document}
