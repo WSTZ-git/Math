@@ -2,18 +2,19 @@
 \graphicspath{{\subfix{../../image/}}} % 指定图片目录,后续可以直接使用图片文件名。
 
 % 例如:
-% \begin{figure}[h]
+% \begin{figure}[H]
 % \centering
 % \includegraphics{image-01.01}
-% \label{fig:image-01.01}
 % \caption{图片标题}
+% \label{figure:image-01.01}
 % \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
 
 \begin{document}
 
 \section{Fourier积分不等式}
 
-\begin{theorem}[Fourier积分不等式]\label{theorem:Fourier积分不等式}
+\begin{theorem}[Fourier型积分不等式]\label{theorem:Fourier型积分不等式}
 若$f(x)\in C^1[a,b]$，则
 \begin{enumerate}[(1)]
 \item \begin{align*}
@@ -43,9 +44,16 @@ f(x) = c \sin\left( \frac{\pi (x - a)}{b - a} \right), c \in \mathbb{R}.
 \end{align*} 
 \end{enumerate}
 \end{theorem}
+\begin{remark}
+(1)中对$f$进行偶延拓的原因是:使延拓后的区间端点函数值相等,从而就能利用\hyperref[theorem:Fourier级数的逐项微分定理]{Fourier级数的逐项微分定理}.
+
+(2)已经有区间端点函数值相等的条件了,所以不需要进行延拓.
+
+(3)中对$f$进行奇延拓的原因是:$f$满足$f(a)=f(b)=0$,此时对$f$做奇延拓后能使得$f\in C^1[2a-b,b]$,进而就能得到更好的结论.(如果只有$f(a)=f(b)\ne0$,那么$f$奇延拓后在$x=a$处间断.)
+\end{remark}
 \begin{proof}
 \begin{enumerate}[(1)]
-\item 把$f(x)$延拓到$[2a - b,b]$，使得$f(x)=f(2a - x)$，$x\in[a,b)$，则$f(b)=f(2a - b)$，$f\in C[2a - b,b]$且分段可微，因此设$f(x)$有傅立叶级数
+\item 把$f(x)$延拓到$[2a - b,b]$，使得$f(x)=f(2a - x)$，$x\in[a,b)$，则$f(b)=f(2a - b)$，$f\in C[2a - b,b]$且分段可微,并且此时$f$关于$x=a$轴对称.因此设$f(x)$有傅立叶级数
 \begin{align*}
 f(x) &\sim \frac{a_0}{2}+\sum_{n = 1}^{\infty}a_n\cos\left(\frac{\pi n(x - a)}{b - a}\right),
 \end{align*}
@@ -57,16 +65,18 @@ f^{\prime}(x) &\sim -\frac{\pi}{b - a}\sum_{n = 1}^{\infty}[na_n\sin\left(\frac{
 \begin{align*}
 a_n=\frac{1}{b - a}\int_{2a - b}^{b}f(x)\cos\left(\frac{\pi n(x - a)}{b - a}\right)\mathrm{d}x, n\in\mathbb{N}_0.
 \end{align*}
-我们由\hyperref[theorem:Parseval等式]{Parseval等式}可得
+我们由\hyperref[theorem:Parseval恒等式]{Parseval恒等式}可得
 \begin{align*}
 \int_{2a - b}^{b}|f(x)|^2\mathrm{d}x&=(b - a)\left[\frac{a_0^2}{2}+\sum_{n = 1}^{\infty}a_n^2\right],\\
 \int_{2a - b}^{b}|f^{\prime}(x)|^2\mathrm{d}x&=\frac{\pi^2}{b - a}\sum_{n = 1}^{\infty}n^2a_n^2.
 \end{align*}
 从而有
-\begin{align*}
-\int_{2a - b}^{b}|f(x)|^2\mathrm{d}x-\frac{1}{2(b - a)}\left(\int_{2a - b}^{b}f(x)\mathrm{d}x\right)^2\leq\frac{(b - a)^2}{\pi^2}\int_{2b - a}^{b}|f^{\prime}(x)|^2\mathrm{d}x.
-\end{align*}
-利用对称，就有
+\begin{gather*}
+\int_{2a-b}^b{|f(x)|^2\mathrm{d}x}-\left( b-a \right) \frac{a_{0}^{2}}{2}=\left( b-a \right) \sum_{n=1}^{\infty}{a_{n}^{2}}\leqslant \left( b-a \right) \sum_{n=1}^{\infty}{n^2a_{n}^{2}}=\frac{(b-a)^2}{\pi ^2}\int_{2b-a}^b{|f^{\prime}(x)|^2\mathrm{d}x}
+\\
+\iff \int_{2a-b}^b{|f(x)|^2\mathrm{d}x}-\frac{1}{2(b-a)}\left( \int_{2a-b}^b{f(x)\mathrm{d}x} \right) ^2\le \frac{(b-a)^2}{\pi ^2}\int_{2b-a}^b{|f^{\prime}(x)|^2\mathrm{d}x}.
+\end{gather*}
+利用对称性，就有
 \begin{align*}
 \int_{a}^{b}|f(x)|^2\mathrm{d}x-\frac{1}{(b - a)}\left(\int_{a}^{b}f(x)\mathrm{d}x\right)^2\leq\frac{(b - a)^2}{\pi^2}\int_{a}^{b}|f^{\prime}(x)|^2\mathrm{d}x,
 \end{align*}
@@ -77,23 +87,28 @@ f(x)=c_1 + c_2\cos\left(\frac{\pi(x - a)}{b - a}\right), c_1,c_2\in\mathbb{R}.
 
 \item 设
 \begin{align*}
-f(x) &\sim \frac{a_0}{2}+\sum_{n = 1}^{\infty}\left(a_n\cos\left(\frac{2\pi nx}{b - a}\right)+b_n\sin\left(\frac{2\pi nx}{b - a}\right)\right),\\
-f^{\prime}(x) &\sim \frac{2\pi}{b - a}\sum_{n = 1}^{\infty}\left(-na_n\sin\left(\frac{2\pi nx}{b - a}\right)+nb_n\cos\left(\frac{2\pi nx}{b - a}\right)\right),
+f(x) &\sim \frac{a_0}{2}+\sum_{n = 1}^{\infty}\left(a_n\cos\left(\frac{2\pi nx}{b - a}\right)+b_n\sin\left(\frac{2\pi nx}{b - a}\right)\right),
+\end{align*}
+由\hyperref[theorem:Fourier级数的逐项微分定理]{Fourier级数的逐项微分定理}可得
+\begin{align*}
+f^{\prime}(x) &\sim \frac{2\pi}{b - a}\sum_{n = 1}^{\infty}\left(-na_n\sin\left(\frac{2\pi nx}{b - a}\right)+nb_n\cos\left(\frac{2\pi nx}{b - a}\right)\right).
 \end{align*}
 这里
 \begin{align*}
 a_n&=\frac{2}{b - a}\int_{a}^{b}f(x)\cos\left(\frac{2\pi nx}{b - a}\right)\mathrm{d}x,\\
 b_n&=\frac{2}{b - a}\int_{a}^{b}f(x)\sin\left(\frac{2\pi nx}{b - a}\right)\mathrm{d}x.
 \end{align*}
-由\hyperref[theorem:Parseval等式]{Parseval等式}，我们有
+由\hyperref[theorem:Parseval恒等式]{Parseval恒等式}，我们有
 \begin{align*}
 \int_{a}^{b}|f(x)|^2\mathrm{d}x&=\frac{b - a}{2}\left[\frac{a_0^2}{2}+\sum_{n = 1}^{\infty}(a_n^2 + b_n^2)\right],\\
 \int_{a}^{b}|f^{\prime}(x)|^2\mathrm{d}x&=\frac{2\pi^2}{b - a}\sum_{n = 1}^{\infty}n^2(a_n^2 + b_n^2).
 \end{align*}
 因此
-\begin{align*}
-\int_{a}^{b}|f(x)|^2\mathrm{d}x-\frac{1}{b - a}\left(\int_{a}^{b}f(x)\mathrm{d}x\right)^2\leq\frac{(b - a)^2}{4\pi^2}\int_{a}^{b}|f^{\prime}(x)|^2\mathrm{d}x,
-\end{align*}
+\begin{gather*}
+\int_a^b{|f(x)|^2\mathrm{d}x}-\frac{\left( b-a \right) a_{0}^{2}}{4}=\frac{b-a}{2}\sum_{n=1}^{\infty}{\left( a_{n}^{2}+b_{n}^{2} \right)}\leqslant \frac{b-a}{2}\sum_{n=1}^{\infty}{n^2\left( a_{n}^{2}+b_{n}^{2} \right)}=\frac{(b-a)^2}{4\pi ^2}\int_a^b{|f^{\prime}(x)|^2\mathrm{d}x}
+\\
+\Longleftrightarrow \int_a^b{|f(x)|^2\mathrm{d}x}-\frac{1}{b-a}\left( \int_a^b{f(x)\mathrm{d}x} \right) ^2\le \frac{(b-a)^2}{4\pi ^2}\int_a^b{|f^{\prime}(x)|^2\mathrm{d}x},
+\end{gather*}
 等号成立条件是
 \begin{align*}
 f(x)=c_1 + c_2\cos\left(\frac{2\pi x}{b - a}\right)+c_3\sin\left(\frac{2\pi x}{b - a}\right).
@@ -103,26 +118,31 @@ f(x)=c_1 + c_2\cos\left(\frac{2\pi x}{b - a}\right)+c_3\sin\left(\frac{2\pi x}{b
 \begin{align*}
 f(x)=-f(2a - x), x\in[2a - b,a),
 \end{align*}
-则$f(x)\in C^1[2a - b,b]$.
+则$f(x)\in C^1[2a - b,b]$,并且此时$f$关于$(a,0)$点中心对称.
 设$f(x)$有傅立叶级数
 \begin{align*}
-f(x) &\sim \sum_{n = 1}^{\infty}b_n\sin\left(\frac{\pi n(x - a)}{b - a}\right),\\
-f^{\prime}(x) &\sim \frac{\pi}{b - a}\sum_{n = 1}^{\infty}nb_n\cos\left(\frac{\pi n(x - a)}{b - a}\right),
+f(x) &\sim \sum_{n = 1}^{\infty}b_n\sin\left(\frac{\pi n(x - a)}{b - a}\right),
+\end{align*}
+由\hyperref[theorem:Fourier级数的逐项微分定理]{Fourier级数的逐项微分定理}可得
+\begin{align*}
+f^{\prime}(x) &\sim \frac{\pi}{b - a}\sum_{n = 1}^{\infty}nb_n\cos\left(\frac{\pi n(x - a)}{b - a}\right).
 \end{align*}
 这里
 \begin{align*}
 b_n=\frac{1}{b - a}\int_{2a - b}^{b}f(x)\sin\left(\frac{\pi n(x - a)}{b - a}\right)\mathrm{d}x, n\in\mathbb{N}_0.
 \end{align*}
-我们由\hyperref[theorem:Parseval等式]{Parseval等式}可得
+我们由\hyperref[theorem:Parseval恒等式]{Parseval恒等式}可得
 \begin{align*}
 \int_{2a - b}^{b}|f(x)|^2\mathrm{d}x&=(b - a)\sum_{n = 1}^{\infty}b_n^2,\\
 \int_{2a - b}^{b}|f^{\prime}(x)|^2\mathrm{d}x&=\frac{\pi^2}{b - a}\sum_{n = 1}^{\infty}n^2b_n^2.
 \end{align*}
 从而有
-\begin{align*}
-\int_{2a - b}^{b}|f(x)|^2\mathrm{d}x\leq\frac{(b - a)^2}{\pi^2}\int_{2b - a}^{b}|f^{\prime}(x)|^2\mathrm{d}x.
-\end{align*}
-利用对称，我们有
+\begin{gather*}
+\int_{2a-b}^b{|f(x)|^2\mathrm{d}x}=\left( b-a \right) \sum_{n=1}^{\infty}{b_{n}^{2}}\leqslant \left( b-a \right) \sum_{n=1}^{\infty}{n^2b_{n}^{2}}=\frac{(b-a)^2}{\pi ^2}\int_{2b-a}^b{|f^{\prime}(x)|^2\mathrm{d}x}
+\\
+\Longleftrightarrow \int_{2a-b}^b{|f(x)|^2\mathrm{d}x}\leqslant \frac{(b-a)^2}{\pi ^2}\int_{2b-a}^b{|f^{\prime}(x)|^2\mathrm{d}x}.
+\end{gather*}
+利用对称性，我们有
 \begin{align*}
 \int_{a}^{b}|f(x)|^2\mathrm{d}x\leq\frac{(b - a)^2}{\pi^2}\int_{a}^{b}|f^{\prime}(x)|^2\mathrm{d}x,
 \end{align*}
@@ -132,9 +152,6 @@ f(x)=c\sin\left(\frac{\pi(x - a)}{b - a}\right).
 \end{align*} 
 \end{enumerate}
 \end{proof}
-
-
-
 
 
 

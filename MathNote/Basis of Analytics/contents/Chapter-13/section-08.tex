@@ -2,16 +2,305 @@
 \graphicspath{{\subfix{../../image/}}} % 指定图片目录,后续可以直接使用图片文件名。
 
 % 例如:
-% \begin{figure}[h]
+% \begin{figure}[H]
 % \centering
 % \includegraphics{image-01.01}
-% \label{fig:image-01.01}
 % \caption{图片标题}
+% \label{figure:image-01.01}
 % \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
 
 \begin{document}
 
+\section{其他}
 
+\begin{example}
+设$f:[0,1]\to(0,+\infty)$是连续递增函数，记$s = \frac{\int_{0}^{1}xf(x)\mathrm{d}x}{\int_{0}^{1}f(x)\mathrm{d}x}$。证明
+\begin{align*}
+\int_{0}^{s}f(x)\mathrm{d}x&\leqslant\int_{s}^{1}f(x)\mathrm{d}x\leqslant\frac{s}{1 - s}\int_{0}^{s}f(x)\mathrm{d}x.
+\end{align*}
+\end{example}
+\begin{note}
+看到函数复合积分就联想Jensen不等式(积分形式),不过Jensen不等式(积分形式)考试中不能直接使用.因此仍需要利用函数的凸性相关不等式进行证明.
+\end{note}
+\begin{proof}
+令$F(t) = \int_0^t f(x) \, \mathrm{d}x$，则$F'(t) = f(t)$连续递增，故$F$是下凸的。显然$s \in [0,1]$，于是
+\begin{align*}
+F(x) \geq F(s) + F'(s)(x - s) = F(s) + f(s)(x - s), \quad \forall x \in [0,1].
+\end{align*}
+从而
+\begin{align*}
+\int_0^1 F(x) f(x) \, \mathrm{d}x &\geq \int_0^1 \left[ F(s) f(x) + f(s) f(x)(x - s) \right] \, \mathrm{d}x \\
+&= F(s) \int_0^1 f(x) \, \mathrm{d}x + f(s) \int_0^1 \left[ x f(x) - s f(x) \right] \, \mathrm{d}x \\
+&= F(s) \int_0^1 f(x) \, \mathrm{d}x + f(s) \left[ \int_0^1 x f(x) \, \mathrm{d}x - \frac{\int_0^1 x f(x) \, \mathrm{d}x}{\int_0^1 f(x) \, \mathrm{d}x} \int_0^1 f(x) \, \mathrm{d}x \right] \\
+&= F(s) \int_0^1 f(x) \, \mathrm{d}x.
+\end{align*}
+又注意到
+\begin{align*}
+\int_0^1 F(x) f(x) \, \mathrm{d}x = \int_0^1 F(x) \, \mathrm{d}F(x) = \frac{1}{2} \left( \int_0^1 f(x) \, \mathrm{d}x \right)^2.
+\end{align*}
+故
+\begin{align*}
+&\frac{1}{2} \left( \int_0^1 f(x) \, \mathrm{d}x \right)^2 \geq F(s) \int_0^1 f(x) \, \mathrm{d}x \implies \frac{1}{2} \int_0^1 f(x) \, \mathrm{d}x \geq F(s) = \int_0^s f(x) \, \mathrm{d}x \\
+&\implies \int_0^s f(x) \, \mathrm{d}x + \int_s^1 f(x) \, \mathrm{d}x = \int_0^1 f(x) \, \mathrm{d}x \geq 2 \int_0^s f(x) \, \mathrm{d}x \\
+&\implies \int_0^s f(x) \, \mathrm{d}x \leq \int_s^1 f(x) \, \mathrm{d}x.
+\end{align*}
+由分部积分可得
+\begin{align*}
+s = \frac{\int_0^1 x f(x) \, \mathrm{d}x}{\int_0^1 f(x) \, \mathrm{d}x} = \frac{\int_0^1 x \, \mathrm{d}F(x)}{F(1)} = 1 - \frac{\int_0^1 F(x) \, \mathrm{d}x}{F(1)},
+\end{align*}
+即$\int_0^1 F(x) \, \mathrm{d}x = (1 - s) F(1)$。又由$F$的下凸性可知
+\begin{align*}
+F(x) \leq 
+\begin{cases}
+\frac{F(1) - F(s)}{1 - s}(x - s) + F(s), & x \in [s,1] \\
+\frac{F(s) - F(0)}{s}x + F(0), & x \in [0,s]
+\end{cases}.
+\end{align*}
+于是
+\begin{align*}
+(1 - s) F(1) = \int_0^1 F(x) \, \mathrm{d}x &\leq \int_0^s \left[ \frac{F(1) - F(s)}{1 - s}(x - s) + F(s) \right] \, \mathrm{d}x + \int_s^1 \left[ \frac{F(s) - F(0)}{s}x + F(0) \right] \, \mathrm{d}x \\
+&= \frac{1}{2} F(s) + \frac{1 - s}{2} F(1).
+\end{align*}
+因此
+\begin{align*}
+\frac{1 - s}{2} F(1) \leq \frac{1}{2} F(s) \implies F(1) \leq \frac{1}{1 - s} F(s),
+\end{align*}
+故
+\begin{align*}
+\int_s^1 f(x) \, \mathrm{d}x = F(1) - F(s) \leq \left( \frac{1}{1 - s} - 1 \right) F(s) = \frac{s}{1 - s} F(s) = \frac{s}{1 - s} \int_0^s f(x) \, \mathrm{d}x.
+\end{align*}
+\end{proof}
+
+\begin{example}
+求最小实数$C$，使得对一切满足$\int_{0}^{1}|f(x)|\mathrm{d}x = 1$的连续函数$f$，都有
+\begin{align*}
+\int_{0}^{1}|f(\sqrt{x})|\mathrm{d}x \leqslant C.
+\end{align*}
+\end{example}
+\begin{remark}
+这类证明最佳系数的问题,我们一般只需要找一个函数列,是其达到逼近取等即可.
+
+本题将要找的函数列需要满足其积分值集中在$x=1$处,联想到Laplace方法章节具有类似性质的被积函数(即指数部分是$n$的函数),类似进行构造函数列即可.
+\end{remark}
+\begin{proof}
+显然有
+\begin{align*}
+\int_0^1 |f(\sqrt{x})| \, \mathrm{d}x = 2 \int_0^1 t |f(t)| \, dt \leqslant 2 \int_0^1 |f(t)| \, dt = 2.
+\end{align*}
+令$f_n(t) = (n+1) t^n$，则$\int_0^1 f_n(t) \, dt = 1$。于是
+\begin{align*}
+\int_0^1 |f_n(\sqrt{x})| \, \mathrm{d}x &= 2 \int_0^1 t |f(t)| \, dt = 2 \int_0^1 t (n+1) t^n \, dt 
+= 2 (n+1) \int_0^1 t^{n+1} \, dt = \frac{2(n+1)}{n+2} \to 2, n \to \infty.
+\end{align*}
+因此若$C < 2$，都存在$N \in \mathbb{N}$，使得$\int_0^1 |f_N(\sqrt{x})| \, \mathrm{d}x > C$。故$C = 2$就是最佳上界.
+\end{proof}
+
+\begin{lemma}[Hilbert矩阵逆矩阵元素和]\label{lemma:Hilbert矩阵逆矩阵元素和}
+设
+\[
+H = 
+\begin{pmatrix}
+1 & \frac{1}{2} & \cdots & \frac{1}{n} \\
+\frac{1}{2} & \frac{1}{3} & \cdots & \frac{1}{n + 1} \\
+\vdots & \vdots & \ddots & \vdots \\
+\frac{1}{n} & \frac{1}{n + 1} & \cdots & \frac{1}{2n - 1}
+\end{pmatrix}
+\]
+, 这里 $H$ 是 $n$ 阶矩阵. 证明 $H^{-1}$ 所有元素和为 $n^{2}$.
+\end{lemma}
+\begin{note}
+这里涉及经典技巧, 即分解 $J = AH + HB$, 需要积累.
+\end{note}
+\begin{proof}
+取 $n$ 阶矩阵
+\[
+J = 
+\begin{pmatrix}
+1 & 1 & \cdots & 1 \\
+1 & 1 & \cdots & 1 \\
+\vdots & \vdots & \ddots & \vdots \\
+1 & 1 & \cdots & 1
+\end{pmatrix}
+,
+A = 
+\begin{pmatrix}
+1 & 0 & \cdots & 0 \\
+0 & 2 & \cdots & 0 \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \cdots & n
+\end{pmatrix}
+,
+B = 
+\begin{pmatrix}
+0 & 0 & \cdots & 0 \\
+0 & 1 & \cdots & 0 \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \cdots & n - 1
+\end{pmatrix}
+\]
+,
+则 $AH + HB = J = \mathbf{1}_{n}\mathbf{1}_{n}^{T}$. 于是
+\begin{align*}
+\mathbf{1}_{n}^{T}H^{-1}\mathbf{1}_{n} &= \mathrm{tr}\left(\mathbf{1}_{n}^{T}H^{-1}\mathbf{1}_{n}\right) = \mathrm{tr}\left(H^{-1}\mathbf{1}_{n}\mathbf{1}_{n}^{T}\right) = \mathrm{tr}\left(H^{-1}J\right) = \mathrm{tr}\left(H^{-1}(AH + HB)\right) \\
+&= \mathrm{tr}\left(H^{-1}AH + B\right) = \mathrm{tr}(A) + \mathrm{tr}(B) = \frac{n(n + 1)}{2} + \frac{n(n - 1)}{2} = n^{2}.
+\end{align*} 
+\end{proof}
+
+\begin{example}
+设$f\in C[0,1]$使得$\int_{0}^{1}x^{k}f(x)\mathrm{d}x = 1$，$k = 0,1,2,\cdots,n - 1$. 证明
+\begin{align*}
+\int_{0}^{1}|f(x)|^{2}\mathrm{d}x\geqslant n^{2}.
+\end{align*}
+\end{example}
+\begin{proof}
+设$a=(a_0,a_1,\cdots,a_{n-1})^T\in\mathbb{R}^n\setminus\{0\}$. 由Cauchy不等式及条件可知
+\begin{align*}
+\int_0^1 |f(x)|^2\mathrm{d}x \int_0^1 (a_0 + a_1x + \cdots + a_{n-1}x^{n-1})^2\mathrm{d}x &\geqslant \left[ \int_0^1 f(x)(a_0 + a_1x + \cdots + a_{n-1}x^{n-1})\mathrm{d}x \right]^2 \\
+&= (a_0 + a_1 + \cdots + a_{n-1})^2 = \left( \sum_{j=0}^{n-1}a_j \right)^2.
+\end{align*}
+注意到
+\begin{align*}
+\int_0^1 (a_0 + a_1x + \cdots + a_{n-1}x^{n-1})^2\mathrm{d}x &= \int_0^1 \left( \sum_{j=0}^{n-1}a_jx^j \right)^2\mathrm{d}x = \int_0^1 \sum_{j=0}^{n-1}\sum_{i=0}^{n-1}a_ja_ix^{i+j}\mathrm{d}x \\
+&= \sum_{j=0}^{n-1}\sum_{i=0}^{n-1}a_ja_i \int_0^1 x^{i+j}\mathrm{d}x = \sum_{j=0}^{n-1}\sum_{i=0}^{n-1}\frac{a_ja_i}{i+j+1}.
+\end{align*}
+因此
+\begin{align*}
+\int_0^1 |f(x)|^2\mathrm{d}x \geqslant \frac{\left( \sum\limits_{j=0}^{n-1}a_j \right)^2}{\sum\limits_{j=0}^{n-1}\sum\limits_{i=0}^{n-1}\frac{a_ja_i}{i+j+1}} = \frac{a^TJa}{a^THa},
+\end{align*}
+其中$J=\begin{pmatrix}1 & 1 & \cdots & 1 \\ 1 & 1 & \cdots & 1 \\ \vdots & \vdots & \ddots & \vdots \\ 1 & 1 & \cdots & 1\end{pmatrix}_{n\times n}$，$H=\left( \frac{1}{i+j+1} \right)_{n\times n}$. 于是我们只需求$\sup_{a\neq 0}\frac{a^TJa}{a^THa}$. 设$\lambda$为$\frac{a^TJa}{a^THa}$的一个大于$0$的上界，由\nrefexa{Basis of Algebra-example:例8.48}{(3)}可知$H$正定，则
+\begin{align*}
+\lambda \text{为}\frac{a^TJa}{a^THa}\text{的一个上界} &\Longleftrightarrow \lambda \geqslant \frac{a^TJa}{a^THa}, \forall a\in\mathbb{R}^n \\
+&\Longleftrightarrow a^TJa \leqslant \lambda a^THa, \forall a\in\mathbb{R}^n \\
+&\Longleftrightarrow a^T(\lambda H - J)a \geqslant 0, \forall a\in\mathbb{R}^n \\
+&\Longleftrightarrow \lambda H - J\text{半正定}.
+\end{align*}
+因此$\sup_{a\neq 0}\frac{a^TJa}{a^THa} = \min\{\lambda \mid \lambda H - J\text{半正定}\} = \inf\{\lambda \mid \lambda H - J\text{半正定}\}$. 设$H_k,J_k$分别为$H,J$的$k$阶顺序主子阵，再根据\hyperref[Basis of Algebra-corollary:打洞原理推论]{打洞原理}及\nrefexa{Basis of Algebra-proposition:一些能写成两个向量乘积的矩阵}{(1)}可得
+\begin{align*}
+|\lambda H_k - J_k| &= |H_k| |\lambda I_k - H_k^{-1}J_k| = |H_k| |\lambda I_k - H_k^{-1}\mathbf{1}_k\mathbf{1}_k^T| \\
+&= \lambda^{k-1} |H_k| (\lambda - \mathbf{1}_k^T H_k^{-1}\mathbf{1}_k).
+\end{align*}
+其中$\mathbf{1}_k^T = (1,1,\cdots,1)_{1\times k}$. 由$H$正定可知$|H_k| > 0$，又因为$\lambda > 0$，所以再由\reflem{lemma:Hilbert矩阵逆矩阵元素和}可得
+\begin{align*}
+|\lambda H_k - J_k| > 0 \Longleftrightarrow \lambda > \mathbf{1}_k^T H_k^{-1}\mathbf{1}_k \xlongequal{\text{\reflem{lemma:Hilbert矩阵逆矩阵元素和}}} n^2.
+\end{align*}
+因此对$\forall \lambda > n^2$，都有$\lambda H - J$的顺序主子式都大于$0$，故此时$\lambda H - J$正定. 于是对$\forall a\in\mathbb{R}^n\setminus\{0\}$，固定$a$，都有
+\begin{align*}
+a^T(\lambda H - J)a > 0, \forall \lambda > n^2.
+\end{align*}
+令$\lambda \to n^2$，则由$a^T(\lambda H - J)a$的连续性可知
+\begin{align*}
+a^T(n^2 H - J)a \geqslant 0.
+\end{align*}
+故$n^2 H - J$半正定. 因此$n^2 = \inf\{\lambda \mid \lambda H - J\text{半正定}\} = \sup_{a\neq 0}\frac{a^TJa}{a^THa}$. 结论得证.
+\end{proof}
+
+\begin{example}
+设$A,B$都是$n$级实对称矩阵，若$B$正定，证明
+\begin{align*}
+\max_{\alpha\in\mathbb{R}^n\setminus\{0\}} \frac{\alpha^TA\alpha}{\alpha^TB\alpha} = \lambda_{\max}(AB^{-1}).
+\end{align*}
+\end{example}
+\begin{proof}
+
+\end{proof}
+
+\begin{lemma}\label{lemma:g'(x)的Hölder连续相关结论}
+设$\alpha>0, g\in C^1(\mathbb{R})$. 存在$a\in\mathbb{R}$使得$g(a)=\min_{x\in\mathbb{R}}g(x)$，如果
+\begin{align}
+|g'(x) - g'(y)| \leqslant M|x - y|^{\alpha}, \forall x,y\in\mathbb{R}, \label{17.39}
+\end{align}
+证明
+\begin{align}
+|g'(x)|^{\alpha + 1} \leqslant \left(\frac{\alpha + 1}{\alpha}\right)^{\alpha}[g(x) - g(a)]^{\alpha}M, \forall x\in\mathbb{R}. \label{17.40}
+\end{align}
+\end{lemma}
+\begin{proof}
+不妨设$g(a)=0$，否则用$g(x) - g(a)$代替$g(x)$. 当$M = 0$，则不等式\eqref{17.40}显然成立. 当$M\neq0$可以不妨设$M = 1$.
+
+现在对非负函数$g$，现在我们正式开始我们的证明，当$g'(x_0)=0$，不等式\eqref{17.40}显然成立. 当$g'(x_0)>0$，则利用\eqref{17.39}有
+\begin{align*}
+g(x_0) &\geqslant g(x_0) - g(h)=\int_{h}^{x_0}g'(t)\mathrm{d}t \\
+&\geqslant \int_{h}^{x_0}[g'(x_0) - |t - x_0|^{\alpha}]\mathrm{d}t \\
+&= g'(x_0)(x_0 - h)-\frac{(x_0 - h)^{\alpha + 1}}{\alpha + 1},
+\end{align*}
+取$h = x_0 - |g'(x_0)|^{\frac{1}{\alpha}}$，就得到了$g(x_0)>\frac{\alpha}{\alpha + 1}|g'(x_0)|^{1 + \frac{1}{\alpha}}$，即不等式\eqref{17.40}成立. 类似的考虑$g'(x_0)<0$可得\eqref{17.40}.
+
+当$g'(x_0)<0$，则利用\eqref{17.39}有
+\begin{align*}
+g(x_0) &\geqslant -g(h) + g(x_0)=-\int_{x_0}^{h}g'(t)\mathrm{d}t \\
+&\geqslant -\int_{x_0}^{h}[g'(x_0) + |t - x_0|^{\alpha}]\mathrm{d}t \\
+&= -g'(x_0)(h - x_0)-\frac{(h - x_0)^{\alpha + 1}}{\alpha + 1},
+\end{align*}
+取$h = x_0 + |g'(x_0)|^{\frac{1}{\alpha}}$，就得到了$g(x_0)>\frac{\alpha}{\alpha + 1}|g'(x_0)|^{1 + \frac{1}{\alpha}}$，即不等式\eqref{17.40}成立. 
+\end{proof}
+
+\begin{proposition}[Heisenberg(海森堡)不等式]\label{proposition:Heisenberg不等式}
+设$f\in C^1(\mathbb{R})$，证明不等式
+\begin{align}\label{17.29}
+\left( \int_{\mathbb{R}}|f(x)|^2\mathrm{d}x \right)^2 \leqslant 4\int_{\mathbb{R}}x^2|f(x)|^2\mathrm{d}x\cdot\int_{\mathbb{R}}|f'(x)|^2\mathrm{d}x.
+\end{align} 
+\end{proposition}
+\begin{remark}
+直观上，直接Cauchy不等式，我们有
+\begin{align*}
+\left( \int_{\mathbb{R}}|f(x)|^2\mathrm{d}x \right)^2 \xlongequal{\textbf{分部积分}} 4\left( \int_{\mathbb{R}}xf(x)f'(x)\mathrm{d}x \right)^2 \leqslant 4\int_{\mathbb{R}}x^2|f(x)|^2\mathrm{d}x\cdot\int_{\mathbb{R}}|f'(x)|^2\mathrm{d}x.
+\end{align*}
+但是上述\textbf{分部积分}部分需要零边界条件. 但是其实专业数学知识告诉我们在$\mathbb{R}$上只要可积其实就可以分部积分的. 且看我们两种操作.
+\end{remark}
+\begin{proof}
+{\heiti Method 1专业技术:}注意到对$f\in C_0^{\infty}(\mathbb{R})$，我们有
+\begin{align*}
+\left( \int_{\mathbb{R}}|f(x)|^2\mathrm{d}x \right)^2 \xlongequal{\text{分部积分}} 4\left( \int_{\mathbb{R}}xf(x)f'(x)\mathrm{d}x \right)^2 \leqslant 4\int_{\mathbb{R}}x^2|f(x)|^2\mathrm{d}x\cdot\int_{\mathbb{R}}|f'(x)|^2\mathrm{d}x,
+\end{align*}
+即不等式\eqref{17.29}成立.
+
+对一般的$f\in C^1(\mathbb{R})$，假定
+\begin{align*}
+4\int_{\mathbb{R}}x^2|f(x)|^2\mathrm{d}x\cdot\int_{\mathbb{R}}|f'(x)|^2\mathrm{d}x < \infty.
+\end{align*}
+取紧化序列 $h_n, n\in\mathbb{N}$，则对每一个$n\in\mathbb{N}$，都有
+\begin{align*}
+\left( \int_{\mathbb{R}}|h_n(x)f(x)|^2\mathrm{d}x \right)^2 &\leqslant 4\int_{\mathbb{R}}x^2|h_n(x)f(x)|^2\mathrm{d}x\cdot\int_{\mathbb{R}}|(h_nf)'(x)|^2\mathrm{d}x \\
+&= 4\int_{\mathbb{R}}x^2|h_n(x)f(x)|^2\mathrm{d}x\cdot\int_{\mathbb{R}}|h_n'(x)f(x) + h_n(x)f'(x)|^2\mathrm{d}x.
+\end{align*}
+右边让$n\to +\infty$，就有
+\begin{align*}
+&\lim_{n\to\infty}\left[4\int_{\mathbb{R}}x^2|h_n(x)f(x)|^2\mathrm{d}x\cdot\int_{\mathbb{R}}|h_n'(x)f(x) + h_n(x)f'(x)|^2\mathrm{d}x\right] \\
+&=\left[4\int_{\mathbb{R}}x^2|f(x)|^2\mathrm{d}x\cdot\int_{\mathbb{R}}|f'(x)|^2\mathrm{d}x\right].
+\end{align*}
+但是左边暂时不知道是否有$\left(\int_{\mathbb{R}}|f(x)|^2\mathrm{d}x\right)^2 < \infty$，因此不能直接换序. 但是法图引理告诉我们
+\begin{align*}
+\left( \int_{\mathbb{R}}|f(x)|^2\mathrm{d}x \right)^2 &= \left( \int_{\mathbb{R}}\lim_{n\to\infty}|h_n(x)f(x)|^2\mathrm{d}x \right)^2 \leqslant \lim_{n\to\infty}\left( \int_{\mathbb{R}}|h_n(x)f(x)|^2\mathrm{d}x \right)^2 \\
+&\leqslant 4\int_{\mathbb{R}}x^2|f(x)|^2\mathrm{d}x\cdot\int_{\mathbb{R}}|f'(x)|^2\mathrm{d}x,
+\end{align*}
+从而不等式\eqref{17.29}成立.
+
+{\heiti Method 2正常技术:}对一般的$f\in C^1(\mathbb{R})$，假定
+\begin{align*}
+4\int_{\mathbb{R}}x^2|f(x)|^2\mathrm{d}x\cdot\int_{\mathbb{R}}|f'(x)|^2\mathrm{d}x < \infty.
+\end{align*}
+从分部积分需要看到，我们只需证明
+\begin{align*}
+\lim_{x\to\infty}x|f(x)|^2 = 0.
+\end{align*}
+我们以正无穷为例. 注意到
+\begin{align}
+\infty >\sqrt{\int_{x}^{\infty}y^2f^2(y)\mathrm{d}y\cdot\int_{x}^{\infty}|f'(y)|^2\mathrm{d}y} \stackrel{\text{Cauchy不等式}}{\geqslant} \int_{x}^{\infty}y|f'(y)f(y)|\mathrm{d}y \geqslant x\int_{x}^{\infty}|f'(y)f(y)|\mathrm{d}y, \label{17.30}
+\end{align}
+于是$\int_{x}^{\infty}f(y)f'(y)\mathrm{d}y=\lim_{y\to +\infty}\frac{1}{2}|f(y)|^2-\frac{1}{2}|f(x)|^2$收敛. 因此$\lim_{y\to +\infty}\frac{1}{2}|f(y)|^2$存在. 注意
+$\int_{\mathbb{R}}x^2|f(x)|^2\mathrm{d}x < \infty$,因此由\hyperref[proposition:积分收敛必有子列趋于0]{积分收敛必有子列趋于0}可知, 存在$x_n\to \infty$，使得$\lim_{n\to\infty}x_n|f(x_n)| = 0$，
+于是再结合$\lim_{y\to +\infty}\frac{1}{2}|f(y)|^2$存在可得
+\begin{align*}
+\lim_{n\to\infty}f(x_n) = 0 \Rightarrow \lim_{y\to +\infty}f(y) = 0.
+\end{align*}
+现在继续用\eqref{17.30}，我们知道
+\begin{align*}
+\sqrt{\int_{x}^{\infty}y^2f^2(y)\mathrm{d}y\cdot\int_{x}^{\infty}|f'(y)|^2\mathrm{d}y} \geqslant x\int_{x}^{\infty}f'(y)f(y)\mathrm{d}y = \frac{x}{2}|f(x)|^2,
+\end{align*}
+令$x\to +\infty$,由Cauchy收敛准则即得$\sqrt{\int_{x}^{\infty}y^2f^2(y)\mathrm{d}y\cdot\int_{x}^{\infty}|f'(y)|^2\mathrm{d}y}\to 0$,
+从而$\lim_{x\to +\infty}x|f(x)|^2 = 0$，这就完成了证明. 
+\end{proof}
 
 
 \end{document}

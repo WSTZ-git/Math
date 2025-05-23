@@ -2,17 +2,167 @@
 \graphicspath{{\subfix{../../image/}}} % 指定图片目录,后续可以直接使用图片文件名。
 
 % 例如:
-% \begin{figure}[h]
+% \begin{figure}[H]
 % \centering
 % \includegraphics{image-01.01}
 % \caption{图片标题}
-% \label{fig:image-01.01}
+% \label{figure:image-01.01}
 % \end{figure}
 % 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
 
 \begin{document}
 
-\section{}
+\section{Lebesgue外测度}
+
+\begin{definition}[区间的长度]\label{definitionL:区间的长度}
+设$I$为实数的非空区间,若$I$是无界的,则定义它的长度$\ell(I)$为$\infty$,否则定义它的长度为端点的差.
+\end{definition}
+\begin{note}
+设$I$为实数的非空区间,显然$I$的长度满足
+\begin{enumerate}[(1)]
+\item $\ell(I)\geqslant0$.
+
+\item $\ell(I)$满足平移不变性,即$\ell(I)=\ell(I+y),\forall y\in \mathbb{R}$.
+\end{enumerate}
+\end{note}
+
+\begin{definition}[Lebesgue外测度]\label{definition:Lebesgue外测度}
+  设覆盖$A$的非空开有界区间的可数集族$\{I_k\}_{k=1}^\infty$,即使得$A\subseteq\bigcup_{k=1}^\infty I_k$.定义$A$的\textbf{Lebesgue外测度}$m^*(A)$为这些区间长度之和的下确界,即
+  \begin{align*}
+    m^*(A)=\inf\left\{\sum_{k=1}^\infty\ell(I_k)\middle|A\subseteq\bigcup_{k=1}^\infty I_k\right\}.
+  \end{align*}
+\end{definition}
+
+\begin{proposition}[常见集合的Lebesgue外测度]\label{proposition:常见集合的Lebesgue外测度}
+\begin{enumerate}[(1)]
+  \item 外测度是非负的.
+
+  \item 空集的外测度为0.
+
+  \item 由可数个点构成的集合的外测度等于0.
+
+  \item 区间的外测度等于区间的长度.
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+\begin{enumerate}[(1)]
+  \item 由区间长度的非负性立得.
+
+  \item 注意到\((0,\frac{1}{n})\supset\varnothing\)，则
+  \[
+  0\leq m^*(\varnothing)\leq\inf_{n\in\mathbb{N}}\frac{1}{n}=0
+  \]
+  因此\(m^*(\varnothing)=0\)。
+
+  \item 设\(a_1,\cdots,a_m,\cdots\in\mathbb{R},A = \{a_m:m\in\mathbb{N}\}\)。
+  任取\(n\in\mathbb{N}\)，则
+  \[
+  \bigcup_{1\leq m\leq n}\left(a_i - \frac{1}{2n2^m},a_i + \frac{1}{2n2^m}\right)\supset A
+  \]
+  于是
+  \[
+  m^*(A)\leq\sum_{m = 1}^{\infty}\frac{1}{n2^m}=\frac{1}{n}
+  \]
+  令\(n\rightarrow\infty\),得到
+  \[
+  0\leq m^*(A)\leq0.
+  \]
+  因此\(m^*(A)=0\).
+
+  \item 我们从闭有界区间\([a, b]\)的情形开始。令\(\varepsilon>0\)。由于开区间\((a - \varepsilon, b+\varepsilon)\)包含\([a, b]\)，我们有\(m^*([a, b])\leqslant\ell((a - \varepsilon, b+\varepsilon))=b - a + 2\varepsilon\)。这对任何\(\varepsilon>0\)成立。因此\(m^*([a, b])\leqslant b - a\)。接下来要证明\(m^*([a, b])\geqslant b - a\)。而这等价于证明：若\(\{I_k\}_{k = 1}^{\infty}\)是任何覆盖\([a, b]\)的可数开有界区间族，则
+  \begin{align}
+    \sum_{k = 1}^{\infty}\ell(I_k)\geqslant b - a \label{equation:Lebesgue外测度的性质3-1}
+  \end{align}
+  根据\hyperref[theorem:Heine - Borel定理]{Heine - Borel定理}，任何覆盖\([a, b]\)的开区间族有一个覆盖\([a, b]\)的有限子族。选取自然数\(n\)使得\(\{I_k\}_{k = 1}^{n}\)覆盖\([a, b]\)。我们将证明
+  \begin{align}
+    \sum_{k = 1}^{n}\ell(I_k)\geqslant b - a \label{equation:Lebesgue外测度的性质3-2}
+  \end{align}
+  从而\eqref{equation:Lebesgue外测度的性质3-1}成立。由于\(a\)属于\(\bigcup_{k = 1}^{n}I_k\)，这些\(I_k\)中必有一个包含\(a\)。选取这样的一个区间且记为\((a_1, b_1)\)。我们有\(a_1 < a < b_1\)。若\(b_1\geqslant b\)，不等式\eqref{equation:Lebesgue外测度的性质3-2}得证，这是因为
+  \[
+  \sum_{k = 1}^{n}\ell(I_k)\geqslant b_1 - a_1>b - a
+  \]
+  否则，\(b_1\in[a, b]\)，且由于\(b_1\notin(a_1, b_1)\)，族\(\{I_k\}_{k = 1}^{n}\)中存在一个区间，记为\((a_2, b_2)\)以区分于\((a_1, b_1)\)，使得\(b_1\in(a_2, b_2)\)，即\(a_2 < b_1 < b_2\)。若\(b_2\geqslant b\)，不等式\eqref{equation:Lebesgue外测度的性质3-2}得证，这是因为
+  \[
+  \sum_{k = 1}^{n}\ell(I_k)\geqslant(b_1 - a_1)+(b_2 - a_2)=b_2-(a_2 - b_1)-a_1>b_2 - a_1>b - a
+  \]
+  我们继续这一选取程序直至它终止，而它必须终止，因为族\(\{I_k\}_{k = 1}^{n}\)中仅有\(n\)个区间。因此我们得到\(\{I_k\}_{k = 1}^{n}\)的一个子族\(\{(a_k, b_k)\}_{k = 1}^{N}\)使得
+  \[
+  a_1 < a
+  \]
+  而对\(1\leqslant k\leqslant N - 1\)，
+  \[
+  a_{k + 1} < b_k
+  \]
+  且由于选取过程终止，
+  \[
+  b_N>b
+  \]
+  因此
+  \begin{align*}
+  \sum_{k = 1}^{n}\ell(I_k)&\geqslant(b_N - a_N)+(b_{N - 1} - a_{N - 1})+\cdots+(b_1 - a_1)\\
+  &=b_N-(a_N - b_{N - 1})-\cdots-(a_2 - b_1)-a_1\\
+  &>b_N - a_1>b - a
+  \end{align*}
+  因而不等式\eqref{equation:Lebesgue外测度的性质3-2}成立。
+  
+  若\(I\)是任意有界区间，则给定\(\varepsilon>0\)，存在两个闭有界区间\(J_1\)和\(J_2\)使得
+  \[
+  J_1\subseteq I\subseteq J_2
+  \]
+  而
+  \[
+  \ell(I)-\varepsilon<\ell(J_1)\text{ 且 }\ell(J_2)<\ell(I)+\varepsilon
+  \]
+  根据对闭有界区间的外测度与长度的相等性，以及外测度的单调性，有
+  \[
+  \ell(I)-\varepsilon<\ell(J_1)=m^*(J_1)\leqslant m^*(I)\leqslant m^*(J_2)=\ell(J_2)<\ell(I)+\varepsilon
+  \]
+  这对每个\(\varepsilon>0\)成立。因此\(\ell(I)=m^*(I)\)。
+  
+  若\(I\)是无界区间，则对每个自然数\(n\)，存在区间\(J\subseteq I\)满足\(\ell(J)=n\)。因此\(m^*(I)\geqslant m^*(J)=\ell(J)=n\)。这对每个自然数\(n\)成立，因此\(m^*(I)=\infty\)。
+\end{enumerate}
+\end{proof}
+
+\begin{proposition}[Lebesgue外测度的平移不变性]\label{proposition:Lebesgue外测度的平移不变性}
+外测度是平移不变的，即对任意集合\(A\)与数\(y\),
+\[m^*(A + y)=m^*(A)\]
+\end{proposition}
+\begin{proof}
+  观察到若\(\{I_k\}_{k = 1}^{\infty}\)是任意可数集族，则\(\{I_k\}_{k = 1}^{\infty}\)覆盖\(A\)当且仅当\(\{I_k + y\}_{k = 1}^{\infty}\)覆盖\(A + y\)。此外，若每个\(I_k\)是一个开区间，则每个\(I_k + y\)是一个相同长度的开区间，因而
+\[
+\sum_{k = 1}^{\infty}\ell(I_k)=\sum_{k = 1}^{\infty}\ell(I_k + y)
+\]
+结论从这两个观察可以得到。
+\end{proof}
+
+\begin{proposition}[Lebesgue外测度的可数次可加性]\label{proposition:Lebesgue外测度的可数次可加性}
+  外测度是可数次可加的，即若\(\{E_k\}_{k = 1}^{\infty}\)是任意可数集族，互不相交或相交，则
+\[
+m^*\left(\bigcup_{k = 1}^{\infty}E_k\right)\leqslant\sum_{k = 1}^{\infty}m^*(E_k)
+\]
+\end{proposition}
+\begin{remark}
+  外测度不是可数可加的,它甚至不是有限可加的.
+\end{remark}
+\begin{proof}
+  若这些\(E_k\)中的一个有无穷的外测度，则不等式平凡地成立。我们因此假定每个\(E_k\)有有限的外测度。令\(\varepsilon>0\)。对每个自然数\(k\)，存在开有界区间的可数族\(\{I_{k,i}\}_{i = 1}^{\infty}\)使得
+\[
+E_k\subseteq\bigcup_{i = 1}^{\infty}I_{k,i}\text{ 且 }\sum_{i = 1}^{\infty}l(I_{k,i})<m^*(E_k)+\varepsilon/2^k
+\]
+现在\(\{I_{k,i}\}_{1\leqslant k,i\leqslant\infty}\)是一个覆盖\(\bigcup_{k = 1}^{\infty}E_k\)的开有界区间的可数族：由于该族是可数族组成的可数族，它是可数的。因此，根据外测度的定义，
+\begin{align*}
+m^*\left(\bigcup_{k = 1}^{\infty}E_k\right)&\leqslant\sum_{1\leqslant k,i<\infty}\ell(I_{k,i})=\sum_{k = 1}^{\infty}\left[\sum_{i = 1}^{\infty}\ell(I_{k,i})\right]\\
+&<\sum_{k = 1}^{\infty}\left[m^*(E_k)+\varepsilon/2^k\right]=\left[\sum_{k = 1}^{\infty}m^*(E_k)\right]+\varepsilon
+\end{align*}
+由于这对每个\(\varepsilon>0\)成立，它对\(\varepsilon = 0\)也成立。证明完毕。
+
+若\(\{E_k\}_{k = 1}^{n}\)是任何有限集族，互不相交或相交，则
+\[
+m^*\left(\bigcup_{k = 1}^{\infty}E_k\right)\leqslant\sum_{k = 1}^{n}m^*(E_k)
+\]
+通过对\(k>n\)设\(E_k=\varnothing\)，有限次可加性从可数次可加性得到。
+\end{proof}
+
 
 
 

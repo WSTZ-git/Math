@@ -2,14 +2,189 @@
 \graphicspath{{\subfix{../../image/}}} % 指定图片目录,后续可以直接使用图片文件名。
 
 % 例如:
-% \begin{figure}[h]
+% \begin{figure}[H]
 % \centering
 % \includegraphics{image-01.01}
-% \label{fig:image-01.01}
 % \caption{图片标题}
+% \label{figure:image-01.01}
 % \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
 
 \begin{document}
+
+\section{点集间的距离}
+
+\begin{definition}
+设 \(x\in\mathbb{R}^n\)，\(E\) 是 \(\mathbb{R}^n\) 中的非空点集，称
+\begin{align*}
+d(x,E)=\inf\{|x - y|: y\in E\}
+\end{align*}
+为点 \(x\) 到 \(E\) 的\textbf{距离}；若 \(E_1\)，\(E_2\) 是 \(\mathbb{R}^n\) 中的非空点集，称
+\begin{align*}
+d(E_1,E_2)=\inf\{|x - y|: x\in E_1, y\in E_2\}
+\end{align*}
+为 \(E_1\) 与 \(E_2\) 之间的\textbf{距离}。也可等价地定义为
+\[
+\inf\{d(x,E_2): x\in E_1\} \quad \text{或} \quad \inf\{d(E_1,y): y\in E_2\}.
+\] 
+\end{definition}
+
+\begin{example}
+在 \(\mathbb{R}^2\) 中作点集
+\begin{align*}
+E_1 &= \{x = (\xi,\eta): -\infty < \xi < +\infty, \eta = 0\},\\
+E_2 &= \{y = (\xi,\eta): \xi\cdot\eta = 1\},
+\end{align*}
+则 \(d(E_1,E_2) = 0\)。
+\end{example}
+\begin{proof}
+事实上，当我们取 \(x = (\xi,0)\in E_1\) 且 \(y = (\xi,\eta)\in E_2\) 时，由
+\begin{align*}
+d(E_1,E_2) \leqslant d(x,y) = |\eta| = \frac{1}{|\xi|}
+\end{align*}
+可知，对任给的 \(\varepsilon > 0\)，只需 \(|\xi|\) 充分大，就有 \(d(E_1,E_2) < \varepsilon\)。由此得
+\begin{align*}
+d(E_1,E_2) = 0.
+\end{align*}
+
+显然，若 \(x\in E\)，则 \(d(x,E) = 0\)。但反之，若 \(d(x,E) = 0\)，则 \(x\) 不一定属于 \(E\)。不过在 \(x\notin E\) 时，必有 \(x\in E'\)。 
+\end{proof}
+
+\begin{theorem}
+若 \(F\subset\mathbb{R}^n\) 是非空闭集，且 \(x_0\in\mathbb{R}^n\)，则存在 \(y_0\in F\)，有
+\[
+|x_0 - y_0| = d(x_0,F).
+\]
+\end{theorem}
+\begin{proof}
+作闭球 \(\overline{B}=\overline{B}(x_0,\delta)\)，使得 \(\overline{B}\cap F\) 不是空集。显然
+\[
+d(x_0,F)=d(x_0,\overline{B}\cap F).
+\]
+\(\overline{B}\cap F\) 是有界闭集，而 \(|x_0 - y|\) 看作定义在 \(\overline{B}\cap F\) 上的 \(y\) 的函数是连续的，故它在 \(\overline{B}\cap F\) 上达到最小值，即存在 \(y_0\in\overline{B}\cap F\)，使得
+\[
+|x_0 - y_0| = \inf\{|x_0 - y|: y\in\overline{B}\cap F\},
+\]
+从而有 \(|x_0 - y_0| = d(x_0,F)\)。
+\end{proof}
+
+\begin{theorem}
+若 \(E\) 是 \(\mathbb{R}^n\) 中非空点集，则 \(d(x,E)\) 作为 \(x\) 的函数在 \(\mathbb{R}^n\) 上是一致连续的。
+\end{theorem}
+\begin{proof}
+考虑 \(\mathbb{R}^n\) 中的两点 \(x,y\)。根据 \(d(y,E)\) 的定义，对任给的 \(\varepsilon>0\)，必存在 \(z\in E\)，使得 \(|y - z|<d(y,E)+\varepsilon\)，从而有
+\begin{align*}
+d(x,E)&\leqslant|x - z|\leqslant|x - y|+|y - z|\\
+&<|x - y|+d(y,E)+\varepsilon.
+\end{align*}
+由 \(\varepsilon\) 的任意性可知
+\[
+d(x,E)-d(y,E)\leqslant|x - y|.
+\]
+同理可证 \(d(y,E)-d(x,E)\leqslant|x - y|\)。这说明
+\[
+|d(x,E)-d(y,E)|\leqslant|x - y|.
+\]
+\end{proof}
+
+\begin{corollary}
+若 \(F_1,F_2\) 是 \(\mathbb{R}^n\) 中的两个非空闭集且其中至少有一个是有界的，则存在 \(x_1\in F_1\)，\(x_2\in F_2\)，使得
+\[
+|x_1 - x_2| = d(F_1,F_2).
+\] 
+\end{corollary}
+
+\begin{lemma}
+若 \(F_1,F_2\) 是 \(\mathbb{R}^n\) 中两个互不相交的非空闭集，则存在 \(\mathbb{R}^n\) 上的连续函数 \(f(x)\)，使得
+
+(i) \(0\leqslant f(x)\leqslant 1\) \((x\in\mathbb{R}^n)\)；
+
+(ii) \(F_1 = \{x: f(x) = 1\}\)，\(F_2 = \{x: f(x) = 0\}\)。
+\end{lemma}
+\begin{proof}
+构造函数 \(f(x)\)：
+\begin{align*}
+f(x)=\frac{d(x,F_2)}{d(x,F_1)+d(x,F_2)}, \quad x\in\mathbb{R}^n,
+\end{align*}
+它就是所求的函数。 
+\end{proof}
+
+\begin{theorem}[连续延拓定理]\label{theorem:连续函数延拓定理}
+若 \(F\) 是 \(\mathbb{R}^n\) 中的闭集，\(f(x)\) 是定义在 \(F\) 上的连续函数，且 \(|f(x)|\leqslant M\) \((x\in F)\)，则存在 \(\mathbb{R}^n\) 上的连续函数 \(g(x)\) 满足
+\[
+|g(x)|\leqslant M, \quad g(x)=f(x), \quad x\in F.
+\]
+\end{theorem}
+\begin{remark}
+1. 上述定理在 \(f(x)\) 无界时也成立（研究 \(\arctan f(x)\)）。
+
+2. \(\mathbb{R}^2\) 中存在由某些有理点构成的稠密集，其中任意两点的距离为无理数。 
+\end{remark}
+\begin{proof}
+把 \(F\) 分成三个点集：
+\begin{align*}
+A&=\left\{x\in F:\frac{M}{3}\leqslant f(x)\leqslant M\right\},\\
+B&=\left\{x\in F:-M\leqslant f(x)\leqslant\frac{-M}{3}\right\},\\
+C&=\left\{x\in F:\frac{-M}{3}<f(x)<\frac{M}{3}\right\},
+\end{align*}
+并作函数
+\[
+g_1(x)=\frac{M}{3}\cdot\frac{d(x,B)-d(x,A)}{d(x,B)+d(x,A)}, \quad x\in\mathbb{R}^n.
+\]
+因为 \(A\) 与 \(B\) 是互不相交的闭集，所以 \(g_1(x)\) 处处有定义且在 \(\mathbb{R}^n\) 上处处连续。此外，还有
+\[
+|g_1(x)|\leqslant\frac{M}{3}, \quad x\in\mathbb{R}^n,
+\]
+\[
+|f(x)-g_1(x)|\leqslant\frac{2}{3}M, \quad x\in F.
+\]
+再在 \(F\) 上来考查 \(f(x)-g_1(x)\)（相当于上述之 \(f(x)\)），并用类似的方法作 \(\mathbb{R}^n\) 上的连续函数 \(g_2(x)\)。此时由于 \(f(x)-g_1(x)\) 的界是 \(2M/3\)，故 \(g_2(x)\) 应满足
+\[
+|g_2(x)|\leqslant\frac{1}{3}\cdot\frac{2M}{3}, \quad x\in\mathbb{R}^n,
+\]
+\[
+|(f(x)-g_1(x))-g_2(x)|\leqslant\frac{2}{3}\cdot\frac{2M}{3}=\left(\frac{2}{3}\right)^2M, \quad x\in F.
+\]
+
+继续这一过程，可得在 \(\mathbb{R}^n\) 上的连续函数列 \(\{g_k(x)\}\)，使得
+\[
+|g_k(x)|\leqslant\frac{1}{3}\cdot\left(\frac{2}{3}\right)^{k - 1}M, \quad x\in\mathbb{R}^n \quad (k = 1,2,\cdots),
+\]
+\[
+\left|f(x)-\sum_{i = 1}^{k}g_i(x)\right|\leqslant\left(\frac{2}{3}\right)^kM, \quad x\in F \quad (k = 1,2,\cdots).
+\]
+上面的第一式表明 \(\sum_{k = 1}^{\infty}g_k(x)\) 是一致收敛的。若记其和函数为 \(g(x)\)，则 \(g(x)\) 是 \(\mathbb{R}^n\) 上的连续函数。上面的第二式表明
+\[
+g(x)=\sum_{k = 1}^{\infty}g_k(x)=f(x), \quad x\in F.
+\]
+最后，对于任意的 \(x\in\mathbb{R}^n\)，得到
+\begin{align*}
+|g(x)|&\leqslant\sum_{k = 1}^{\infty}|g_k(x)|\leqslant\frac{M}{3}\left(1+\frac{2}{3}+\left(\frac{2}{3}\right)^2+\cdots\right)\\
+&\leqslant\frac{M}{3}\cdot\frac{1}{1 - \frac{2}{3}}=M.
+\end{align*}
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -2,11 +2,11 @@
 \graphicspath{{\subfix{../../image/}}} % 指定图片目录,后续可以直接使用图片文件名。
 
 % 例如:
-% \begin{figure}[h]
+% \begin{figure}[H]
 % \centering
 % \includegraphics{image-01.01}
 % \caption{图片标题}
-% \label{fig:image-01.01}
+% \label{figure:image-01.01}
 % \end{figure}
 % 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
 
@@ -217,6 +217,17 @@ J_i = \begin{pmatrix}
 \item 设$J_0=J_n(0)$,则$J_0$是基础幂零阵,且$J_0^n=0.$
 
 \item 设 $J = J_n(\lambda_0)$ 是特征值为 $\lambda_0$ 的 $n$ 阶 Jordan 块，则和 $J$ 乘法可交换的 $n$ 阶矩阵必可表示为 $J$ 的次数不超过 $n - 1$ 的多项式。
+
+\item 4. 当$\lambda\neq 0$，有
+\[
+J_n^{-1}(\lambda)=
+\begin{pmatrix}
+\frac{1}{\lambda} & -\frac{1}{\lambda^2} & \cdots & (-1)^{n - 1}\frac{1}{\lambda^n} \\
+ & \frac{1}{\lambda} & \ddots & \vdots \\
+ &  & \ddots & -\frac{1}{\lambda^2} \\
+ &  &  & \frac{1}{\lambda}
+\end{pmatrix}.
+\]
 \end{enumerate}
 \end{proposition}
 \begin{proof}
@@ -257,6 +268,8 @@ a_1 & a_2 & \cdots & a_n \\
 A = a_1I_n + a_2J_0 + \cdots + a_nJ_0^{n - 1} = a_1I_n + a_2(J - \lambda_0I_n) + \cdots + a_n(J - \lambda_0I_n)^{n - 1}
 \end{align*}
 可表示为 $J$ 的次数不超过 $n - 1$ 的多项式。 
+
+\item 证明显然的.
 \end{enumerate}
 \end{proof}
 
@@ -431,7 +444,243 @@ P = \begin{pmatrix}
 \] 
 \end{solution}
 
+\begin{example}
+计算矩阵$A=\begin{pmatrix}2 & 3 & 2 \\ 1 & 8 & 2 \\ -2 & -14 & -3\end{pmatrix}$的Jordan标准型，并求一个可逆矩阵$P\in\mathbb{C}^{n\times n}$使得$P^{-1}AP$为Jordan标准型. 
+\end{example}
+\begin{proof}
+利用初等变换把$\lambda I - A$化为对角$\lambda$-矩阵得
+\begin{align*}
+&\begin{pmatrix}
+\lambda - 2 & -3 & -2 \\
+-1 & \lambda - 8 & -2 \\
+2 & 14 & \lambda + 3
+\end{pmatrix}
+\xrightarrow[-1 \cdot r_1]{r_1 \longleftrightarrow r_2}
+\begin{pmatrix}
+1 & 8 - \lambda & 2 \\
+\lambda - 2 & -3 & -2 \\
+2 & 14 & \lambda + 3
+\end{pmatrix}
+\xrightarrow[r_3 - 2r_1]{r_2 - (\lambda - 2)r_1}
+\begin{pmatrix}
+1 & 8 - \lambda & 2 \\
+0 & \lambda^2 - 10\lambda + 13 & 2 - 2\lambda \\
+0 & 2\lambda - 2 & \lambda - 1
+\end{pmatrix} \\
+&\longrightarrow
+\begin{pmatrix}
+1 & 0 & 0 \\
+0 & \lambda^2 - 10\lambda + 13 & 2 - 2\lambda \\
+0 & 2\lambda - 2 & \lambda - 1
+\end{pmatrix}
+\xrightarrow[]{j_2 - 2j_3}
+\begin{pmatrix}
+1 & 0 & 0 \\
+0 & (\lambda - 3)^2 & 2 - 2\lambda \\
+0 & 0 & \lambda - 1
+\end{pmatrix}
+\longrightarrow
+\begin{pmatrix}
+1 & 0 & 0 \\
+0 & (\lambda - 3)^2 & 0 \\
+0 & 0 & \lambda - 1
+\end{pmatrix} \\
+&\longrightarrow
+\begin{pmatrix}
+1 & 0 & 0 \\
+0 & \lambda - 1 & 0 \\
+0 & 0 & (\lambda - 3)^2
+\end{pmatrix}.
+\end{align*}
+于是$\lambda I - A$的行列式因子组为$1, 1, (\lambda - 1)(\lambda - 3)^2$，从而不变因子组为$1, 1, (\lambda - 1)(\lambda - 3)^2$，进而初等因子组为$\lambda - 1, (\lambda - 3)^2$.
+故$A$的Jordan标准型为
+\[
+J = 
+\begin{pmatrix}
+1 & & \\
+& 3 & 1 \\
+& & 3
+\end{pmatrix}.
+\]
+于是设3阶可逆矩阵$P$，满足
+\[
+P^{-1}AP = J \Longleftrightarrow AP = PJ.
+\]
+再设$P = (\alpha_1, \alpha_2, \alpha_3)$，其中$\alpha_i \in \mathbb{R}^3$，将其代入上式得
+\[
+(A\alpha_1, A\alpha_2, A\alpha_3) = (\alpha_1, \alpha_2, \alpha_3)
+\begin{pmatrix}
+1 & & \\
+& 3 & 1 \\
+& & 3
+\end{pmatrix}.
+\]
+化成方程组为
+\begin{align*}
+(A - I)\alpha_1 &= 0, \\
+(A - 3I)\alpha_2 &= 0, \\
+(A - 3I)\alpha_3 &= \alpha_2.
+\end{align*}
+因此解$(A - I)x = 0$得$x = (-2k_1, 0, k_1)^T, \forall k_1 \in \mathbb{R}$. 故可取$\alpha_1 = (-2, 0, 1)^T$. 解$(A - 3I)x = 0$得$x = (k_2, -k_2, 2k_2)^T, \forall k_2 \in \mathbb{R}$. 故可取$\alpha_2 = (1, -1, 2)^T$，并将其代入$(A - 3I)x = \alpha_2$解得$x = (k_3 + 1, -k_3, 2k_3)^T, \forall k_3 \in \mathbb{R}$. 故可取$\alpha_3 = (2, -1, 2)^T$.
+综上可知
+\[
+P = 
+\begin{pmatrix}
+-2 & 1 & 2 \\
+0 & -1 & -1 \\
+1 & 2 & 2
+\end{pmatrix}.
+\]
+\end{proof}
 
+\begin{proposition}\label{proposition:与J_n(0)可交换的的矩阵}
+设$n,m\in\mathbb{N}$，计算$J_n(0)X = XJ_m(0)$的解矩阵. 
+\end{proposition}
+\begin{solution}
+设$X=(x_{ij})_{n\times m}$，则
+\begin{align*}
+\begin{pmatrix}
+0 & 1 &  &  \\
+ & 0 & \ddots &  \\
+ &  & \ddots & 1 \\
+ &  &  & 0
+\end{pmatrix}
+\begin{pmatrix}
+x_{11} & x_{12} & \cdots & x_{1m} \\
+x_{21} & x_{22} & \cdots & x_{2m} \\
+\vdots & \vdots & \ddots & \vdots \\
+x_{n1} & x_{n2} & \cdots & x_{nm}
+\end{pmatrix}
+&=
+\begin{pmatrix}
+x_{11} & x_{12} & \cdots & x_{1m} \\
+x_{21} & x_{22} & \cdots & x_{2m} \\
+\vdots & \vdots & \ddots & \vdots \\
+x_{n1} & x_{n2} & \cdots & x_{nm}
+\end{pmatrix}
+\begin{pmatrix}
+0 & 1 &  &  \\
+ & 0 & \ddots &  \\
+ &  & \ddots & 1 \\
+ &  &  & 0
+\end{pmatrix} \\
+\Longleftrightarrow
+\begin{pmatrix}
+x_{21} & x_{22} & \cdots & x_{2m} \\
+x_{31} & x_{32} & \cdots & x_{3m} \\
+\vdots & \vdots &  & \vdots \\
+x_{n1} & x_{n2} & \cdots & x_{nm} \\
+0 & 0 & \cdots & 0
+\end{pmatrix}
+&=
+\begin{pmatrix}
+0 & x_{11} & \cdots & x_{1,m - 1} \\
+0 & x_{21} & \cdots & x_{2,m - 1} \\
+\vdots & \vdots &  & \vdots \\
+0 & x_{n - 1,1} & \cdots & x_{n - 1,m - 1} \\
+0 & x_{n1} & \cdots & x_{n,m - 1}
+\end{pmatrix}
+\end{align*}
+比较上述等式两边矩阵的各个元素可得
+\begin{align*}
+x_{i1}&=x_{nj}=0, \forall i\in\{2,\cdots,n\}, j\in\{1,\cdots,m - 1\}; \\
+x_{ij}&=x_{i - 1,j - 1}, \forall i\in\{2,\cdots,n\}, j\in\{2,\cdots,m\}.
+\end{align*}
+故原方程的解矩阵为
+
+(i)当$n=m$时,
+\[
+X=\left( \begin{matrix}
+x_{nn}&		x_{n-1,n}&		\cdots&		x_{2n}&		x_{1n}\\
+&		x_{nn}&		x_{n-1,n}&		\cdots&		x_{2n}\\
+&		&		\ddots&		\ddots&		\vdots\\
+&		&		&		x_{nn}&		x_{n-1,n}\\
+&		&		&		&		x_{nn}\\
+\end{matrix} \right) .
+\] 
+此时原方程组的解空间维数为$n=m$.
+
+(ii)当$n>m$时,
+\[
+X=\left( \begin{matrix}
+x_{mm}&		x_{m-1,m}&		\cdots&		x_{2m}&		x_{1m}\\
+&		x_{mm}&		x_{m-1,m}&		\cdots&		x_{2m}\\
+&		&		\ddots&		\ddots&		\vdots\\
+&		&		&		x_{mm}&		x_{m-1,m}\\
+&		&		&		&		x_{mm}\\
+&		&		&		&		\\
+&		&		&		&		\\
+\end{matrix} \right) .
+\] 
+此时原方程组的解空间维数为$m$.
+
+(iii)当$n<m$时,
+\[
+X=\left( \begin{matrix}
+	&		&		x_{nm}&		x_{n-1,m}&		\cdots&		x_{2m}&		x_{1m}\\
+	&		&		&		x_{nm}&		x_{n-1,m}&		\cdots&		x_{2m}\\
+	&		&		&		&		\ddots&		\ddots&		\vdots\\
+	&		&		&		&		&		x_{nm}&		x_{n-1,m}\\
+	&		&		&		&		&		&		x_{nm}\\
+\end{matrix} \right) .
+\] 
+此时原方程组的解空间维数为$n $.
+
+综上可知,原方程组的解空间维数为$\min \left\{ n,m \right\} $.
+\end{solution}
+
+\begin{corollary}\label{corollary:与Jordan块J_n(lambda)可交换的矩阵}
+设$n,m\in\mathbb{N}$,计算$J_n(\lambda)X = XJ_m(\lambda)$的解矩阵. 
+\end{corollary}
+\begin{solution}
+设$X=(x_{ij})$,注意到
+\begin{gather*}
+J_n\left( \lambda \right) X=XJ_m\left( \lambda \right) \Longleftrightarrow \left[ \lambda I_n+J_n\left( 0 \right) \right] X=X\left[ \lambda I_m+J_m\left( 0 \right) \right] 
+\\
+\Longleftrightarrow \lambda X+J_n\left( 0 \right) X=XJ_m\left( 0 \right) +\lambda X\Longleftrightarrow J_n\left( 0 \right) X=XJ_m\left( 0 \right) .
+\end{gather*}
+故由\refpro{proposition:与J_n(0)可交换的的矩阵}可知原矩阵方程的解为
+
+(i)当$n=m$时,
+\[
+X=\left( \begin{matrix}
+x_{nn}&		x_{n-1,n}&		\cdots&		x_{2n}&		x_{1n}\\
+&		x_{nn}&		x_{n-1,n}&		\cdots&		x_{2n}\\
+&		&		\ddots&		\ddots&		\vdots\\
+&		&		&		x_{nn}&		x_{n-1,n}\\
+&		&		&		&		x_{nn}\\
+\end{matrix} \right) .
+\] 
+此时原方程组的解空间维数为$n=m$.
+
+(ii)当$n>m$时,
+\[
+X=\left( \begin{matrix}
+x_{mm}&		x_{m-1,m}&		\cdots&		x_{2m}&		x_{1m}\\
+&		x_{mm}&		x_{m-1,m}&		\cdots&		x_{2m}\\
+&		&		\ddots&		\ddots&		\vdots\\
+&		&		&		x_{mm}&		x_{m-1,m}\\
+&		&		&		&		x_{mm}\\
+&		&		&		&		\\
+&		&		&		&		\\
+\end{matrix} \right) .
+\] 
+此时原方程组的解空间维数为$m$.
+
+(iii)当$n<m$时,
+\[
+X=\left( \begin{matrix}
+	&		&		x_{nm}&		x_{n-1,m}&		\cdots&		x_{2m}&		x_{1m}\\
+	&		&		&		x_{nm}&		x_{n-1,m}&		\cdots&		x_{2m}\\
+	&		&		&		&		\ddots&		\ddots&		\vdots\\
+	&		&		&		&		&		x_{nm}&		x_{n-1,m}\\
+	&		&		&		&		&		&		x_{nm}\\
+\end{matrix} \right) .
+\] 
+此时原方程组的解空间维数为$n $.
+
+综上可知,原方程组的解空间维数为$\min \left\{ n,m \right\} $.
+\end{solution}
 
 
 

@@ -2,165 +2,247 @@
 \graphicspath{{\subfix{../../image/}}} % 指定图片目录,后续可以直接使用图片文件名。
 
 % 例如:
-% \begin{figure}[h]
+% \begin{figure}[H]
 % \centering
 % \includegraphics{image-01.01}
-% \label{fig:image-01.01}
 % \caption{图片标题}
+% \label{figure:image-01.01}
 % \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
 
 \begin{document}
 
-\section{Lebesgue外测度}
+\section{点集的Lebesgue外测度}
 
-\begin{definition}[区间的长度]\label{definitionL:区间的长度}
-  设$I$为实数的非空区间,若$I$是无界的,则定义它的长度$\ell(I)$为$\infty$,否则定义它的长度为端点的差.
+\begin{definition}[Lebesgue外测度]
+设 \(E \subset \mathbb{R}^n\). 若 \(\{I_k\}\) 是 \(\mathbb{R}^n\) 中的可数个开矩体, 且有
+\begin{align*}
+E \subset \bigcup_{k \geq 1} I_k,
+\end{align*}
+则称 \(\{I_k\}\) 为 \(E\) 的一个 \textbf{L-覆盖}(显然, 这样的覆盖有很多, 且每一个 \(L -\)覆盖 \(\{I_k\}\) 确定一个非负广义实值 \(\sum_{k \geq 1} |I_k|\) (可以是 \(+ \infty\), \(|I_k|\) 表示 \(I_k\) 的体积)). 称
+\begin{align*}
+m^*(E) = \inf \left\{ \sum_{k \geq 1} |I_k| : \{I_k\} \text{ 为 } E \text{ 的 } L-\text{覆盖} \right\}
+\end{align*}
+为点集 \(E\) 的 \textbf{Lebesgue 外测度}, 简称\textbf{外测度}.
 \end{definition}
-\begin{note}
-  设$I$为实数的非空区间,显然$I$的长度满足
-\begin{enumerate}[(1)]
-  \item $\ell(I)\geqslant0$.
-  
-  \item $\ell(I)$满足平移不变性,即$\ell(I)=\ell(I+y),\forall y\in \mathbb{R}$.
-\end{enumerate}
-\end{note}
-
-\begin{definition}[Lebesgue外测度]\label{definition:Lebesgue外测度}
-  设覆盖$A$的非空开有界区间的可数集族$\{I_k\}_{k=1}^\infty$,即使得$A\subseteq\bigcup_{k=1}^\infty I_k$.定义$A$的\textbf{Lebesgue外测度}$m^*(A)$为这些区间长度之和的下确界,即
-  \begin{align*}
-    m^*(A)=\inf\left\{\sum_{k=1}^\infty\ell(I_k)\middle|A\subseteq\bigcup_{k=1}^\infty I_k\right\}.
-  \end{align*}
-\end{definition}
-
-\begin{proposition}[常见集合的Lebesgue外测度]\label{proposition:常见集合的Lebesgue外测度}
-\begin{enumerate}[(1)]
-  \item 外测度是非负的.
-
-  \item 空集的外测度为0.
-
-  \item 由可数个点构成的集合的外测度等于0.
-
-  \item 区间的外测度等于区间的长度.
-\end{enumerate}
-\end{proposition}
-\begin{proof}
-\begin{enumerate}[(1)]
-  \item 由区间长度的非负性立得.
-
-  \item 注意到\((0,\frac{1}{n})\supset\varnothing\)，则
-  \[
-  0\leq m^*(\varnothing)\leq\inf_{n\in\mathbb{N}}\frac{1}{n}=0
-  \]
-  因此\(m^*(\varnothing)=0\)。
-
-  \item 设\(a_1,\cdots,a_m,\cdots\in\mathbb{R},A = \{a_m:m\in\mathbb{N}\}\)。
-  任取\(n\in\mathbb{N}\)，则
-  \[
-  \bigcup_{1\leq m\leq n}\left(a_i - \frac{1}{2n2^m},a_i + \frac{1}{2n2^m}\right)\supset A
-  \]
-  于是
-  \[
-  m^*(A)\leq\sum_{m = 1}^{\infty}\frac{1}{n2^m}=\frac{1}{n}
-  \]
-  令\(n\rightarrow\infty\),得到
-  \[
-  0\leq m^*(A)\leq0.
-  \]
-  因此\(m^*(A)=0\).
-
-  \item 我们从闭有界区间\([a, b]\)的情形开始。令\(\varepsilon>0\)。由于开区间\((a - \varepsilon, b+\varepsilon)\)包含\([a, b]\)，我们有\(m^*([a, b])\leqslant\ell((a - \varepsilon, b+\varepsilon))=b - a + 2\varepsilon\)。这对任何\(\varepsilon>0\)成立。因此\(m^*([a, b])\leqslant b - a\)。接下来要证明\(m^*([a, b])\geqslant b - a\)。而这等价于证明：若\(\{I_k\}_{k = 1}^{\infty}\)是任何覆盖\([a, b]\)的可数开有界区间族，则
-  \begin{align}
-    \sum_{k = 1}^{\infty}\ell(I_k)\geqslant b - a \label{equation:Lebesgue外测度的性质3-1}
-  \end{align}
-  根据\hyperref[theorem:Heine - Borel定理]{Heine - Borel定理}，任何覆盖\([a, b]\)的开区间族有一个覆盖\([a, b]\)的有限子族。选取自然数\(n\)使得\(\{I_k\}_{k = 1}^{n}\)覆盖\([a, b]\)。我们将证明
-  \begin{align}
-    \sum_{k = 1}^{n}\ell(I_k)\geqslant b - a \label{equation:Lebesgue外测度的性质3-2}
-  \end{align}
-  从而\eqref{equation:Lebesgue外测度的性质3-1}成立。由于\(a\)属于\(\bigcup_{k = 1}^{n}I_k\)，这些\(I_k\)中必有一个包含\(a\)。选取这样的一个区间且记为\((a_1, b_1)\)。我们有\(a_1 < a < b_1\)。若\(b_1\geqslant b\)，不等式\eqref{equation:Lebesgue外测度的性质3-2}得证，这是因为
-  \[
-  \sum_{k = 1}^{n}\ell(I_k)\geqslant b_1 - a_1>b - a
-  \]
-  否则，\(b_1\in[a, b]\)，且由于\(b_1\notin(a_1, b_1)\)，族\(\{I_k\}_{k = 1}^{n}\)中存在一个区间，记为\((a_2, b_2)\)以区分于\((a_1, b_1)\)，使得\(b_1\in(a_2, b_2)\)，即\(a_2 < b_1 < b_2\)。若\(b_2\geqslant b\)，不等式\eqref{equation:Lebesgue外测度的性质3-2}得证，这是因为
-  \[
-  \sum_{k = 1}^{n}\ell(I_k)\geqslant(b_1 - a_1)+(b_2 - a_2)=b_2-(a_2 - b_1)-a_1>b_2 - a_1>b - a
-  \]
-  我们继续这一选取程序直至它终止，而它必须终止，因为族\(\{I_k\}_{k = 1}^{n}\)中仅有\(n\)个区间。因此我们得到\(\{I_k\}_{k = 1}^{n}\)的一个子族\(\{(a_k, b_k)\}_{k = 1}^{N}\)使得
-  \[
-  a_1 < a
-  \]
-  而对\(1\leqslant k\leqslant N - 1\)，
-  \[
-  a_{k + 1} < b_k
-  \]
-  且由于选取过程终止，
-  \[
-  b_N>b
-  \]
-  因此
-  \begin{align*}
-  \sum_{k = 1}^{n}\ell(I_k)&\geqslant(b_N - a_N)+(b_{N - 1} - a_{N - 1})+\cdots+(b_1 - a_1)\\
-  &=b_N-(a_N - b_{N - 1})-\cdots-(a_2 - b_1)-a_1\\
-  &>b_N - a_1>b - a
-  \end{align*}
-  因而不等式\eqref{equation:Lebesgue外测度的性质3-2}成立。
-  
-  若\(I\)是任意有界区间，则给定\(\varepsilon>0\)，存在两个闭有界区间\(J_1\)和\(J_2\)使得
-  \[
-  J_1\subseteq I\subseteq J_2
-  \]
-  而
-  \[
-  \ell(I)-\varepsilon<\ell(J_1)\text{ 且 }\ell(J_2)<\ell(I)+\varepsilon
-  \]
-  根据对闭有界区间的外测度与长度的相等性，以及外测度的单调性，有
-  \[
-  \ell(I)-\varepsilon<\ell(J_1)=m^*(J_1)\leqslant m^*(I)\leqslant m^*(J_2)=\ell(J_2)<\ell(I)+\varepsilon
-  \]
-  这对每个\(\varepsilon>0\)成立。因此\(\ell(I)=m^*(I)\)。
-  
-  若\(I\)是无界区间，则对每个自然数\(n\)，存在区间\(J\subseteq I\)满足\(\ell(J)=n\)。因此\(m^*(I)\geqslant m^*(J)=\ell(J)=n\)。这对每个自然数\(n\)成立，因此\(m^*(I)=\infty\)。
-\end{enumerate}
-\end{proof}
-
-\begin{proposition}[Lebesgue外测度的平移不变性]\label{proposition:Lebesgue外测度的平移不变性}
-外测度是平移不变的，即对任意集合\(A\)与数\(y\),
-\[m^*(A + y)=m^*(A)\]
-\end{proposition}
-\begin{proof}
-  观察到若\(\{I_k\}_{k = 1}^{\infty}\)是任意可数集族，则\(\{I_k\}_{k = 1}^{\infty}\)覆盖\(A\)当且仅当\(\{I_k + y\}_{k = 1}^{\infty}\)覆盖\(A + y\)。此外，若每个\(I_k\)是一个开区间，则每个\(I_k + y\)是一个相同长度的开区间，因而
-\[
-\sum_{k = 1}^{\infty}\ell(I_k)=\sum_{k = 1}^{\infty}\ell(I_k + y)
-\]
-结论从这两个观察可以得到。
-\end{proof}
-
-\begin{proposition}[Lebesgue外测度的可数次可加性]\label{proposition:Lebesgue外测度的可数次可加性}
-  外测度是可数次可加的，即若\(\{E_k\}_{k = 1}^{\infty}\)是任意可数集族，互不相交或相交，则
-\[
-m^*\left(\bigcup_{k = 1}^{\infty}E_k\right)\leqslant\sum_{k = 1}^{\infty}m^*(E_k)
-\]
-\end{proposition}
 \begin{remark}
-  外测度不是可数可加的,它甚至不是有限可加的.
+显然, 若 \(E\) 的任意的 \(L -\)覆盖 \(\{I_k\}\) 均有
+\begin{align*}
+\sum_{k \geq 1} |I_k| = + \infty,
+\end{align*}
+则 \(m^*(E) = + \infty\), 否则 \(m^*(E) < + \infty\). 
+\end{remark}
+
+\begin{theorem}[\(\mathbb{R}^n\) 中点集的外测度性质]\label{theorem:R^n 中点集的外测度性质}
+\begin{enumerate}[(1)]
+\item 非负性: \(m^*(E) \geq 0\), \(m^*(\varnothing)=0\);
+\item 单调性: 若 \(E_1 \subset E_2\), 则 \(m^*(E_1) \leq m^*(E_2)\);
+\item 次可加性: \(m^*\left(\bigcup_{k = 1}^{\infty} E_k\right) \leq \sum_{k = 1}^{\infty} m^*(E_k)\).
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 这可从定义直接得出.
+\item 这是因为 \(E_2\) 的任一个 \(L -\)覆盖都是 \(E_1\) 的 \(L -\)覆盖.
+\item 不妨设 \(\sum_{k = 1}^{\infty} m^*(E_k) < + \infty\). 对任意的 \(\varepsilon > 0\) 以及每个自然数 \(k\), 存在 \(E_k\) 的 \(L -\)覆盖 \(\{I_{k, l}\}\), 使得
+\begin{align*}
+E_k \subset \bigcup_{l = 1}^{\infty} I_{k, l}, \quad \sum_{l = 1}^{\infty} |I_{k, l}| < m^*(E_k) + \frac{\varepsilon}{2^k}.
+\end{align*}
+由此可知
+\begin{align*}
+\bigcup_{k = 1}^{\infty} E_k \subset \bigcup_{k, l = 1}^{\infty} I_{k, l}, \quad \sum_{k, l = 1}^{\infty} |I_{k, l}| \leq \sum_{k = 1}^{\infty} m^*(E_k) + \varepsilon.
+\end{align*}
+显然, \(\{I_{k, l} : k, l = 1, 2, \cdots\}\) 是 \(\bigcup_{k = 1}^{\infty} E_k\) 的 \(L -\)覆盖, 从而有
+\begin{align*}
+m^*\left(\bigcup_{k = 1}^{\infty} E_k\right) \leq \sum_{k = 1}^{\infty} m^*(E_k) + \varepsilon.
+\end{align*}
+由 \(\varepsilon\) 的任意性可知结论成立.
+\end{enumerate}
+\end{proof}
+
+\begin{proposition}\label{proposition-R^n中的单点集的外测度为零}
+\(\mathbb{R}^n\) 中的单点集的外测度为零, 即 \(m^*(\{x_0\}) = 0\), \(x_0 \in \mathbb{R}^n\).  同理, \(\mathbb{R}^n\) 中的点集
+\[
+\left\{ x = (\xi_1, \xi_2, \cdots, \xi_{i - 1}, t_0, \xi_i, \cdots, \xi_n) : a_j \leq \xi_j \leq b_j, j \neq i \right\}
+\]
+(\(n - 1\) 维超平面块)的外测度也为零.
+\end{proposition}
+\begin{proof}
+这是因为可作一开矩体 \(I\), 使得 \(x_0 \in I\) 且 \(|I|\) 可任意地小.
+\end{proof}
+
+\begin{corollary}
+若 \(E \subset \mathbb{R}^n\) 为可数点集, 则 \(m^*(E) = 0\).
+\end{corollary}
+\begin{remark}
+由此可知有理点集的外测度 \(m^*(\mathbb{Q}^n)=0\). 这里我们看到了一个虽然处处稠密但外测度为零的可列点集.
 \end{remark}
 \begin{proof}
-  若这些\(E_k\)中的一个有无穷的外测度，则不等式平凡地成立。我们因此假定每个\(E_k\)有有限的外测度。令\(\varepsilon>0\)。对每个自然数\(k\)，存在开有界区间的可数族\(\{I_{k,i}\}_{i = 1}^{\infty}\)使得
-\[
-E_k\subseteq\bigcup_{i = 1}^{\infty}I_{k,i}\text{ 且 }\sum_{i = 1}^{\infty}l(I_{k,i})<m^*(E_k)+\varepsilon/2^k
-\]
-现在\(\{I_{k,i}\}_{1\leqslant k,i\leqslant\infty}\)是一个覆盖\(\bigcup_{k = 1}^{\infty}E_k\)的开有界区间的可数族：由于该族是可数族组成的可数族，它是可数的。因此，根据外测度的定义，
-\begin{align*}
-m^*\left(\bigcup_{k = 1}^{\infty}E_k\right)&\leqslant\sum_{1\leqslant k,i<\infty}\ell(I_{k,i})=\sum_{k = 1}^{\infty}\left[\sum_{i = 1}^{\infty}\ell(I_{k,i})\right]\\
-&<\sum_{k = 1}^{\infty}\left[m^*(E_k)+\varepsilon/2^k\right]=\left[\sum_{k = 1}^{\infty}m^*(E_k)\right]+\varepsilon
-\end{align*}
-由于这对每个\(\varepsilon>0\)成立，它对\(\varepsilon = 0\)也成立。证明完毕。
-
-若\(\{E_k\}_{k = 1}^{n}\)是任何有限集族，互不相交或相交，则
-\[
-m^*\left(\bigcup_{k = 1}^{\infty}E_k\right)\leqslant\sum_{k = 1}^{n}m^*(E_k)
-\]
-通过对\(k>n\)设\(E_k=\varnothing\)，有限次可加性从可数次可加性得到。
+由外测度的次可加性不难证明.
 \end{proof}
+
+\begin{proposition}\label{proposition:Cantor集的外测度是零}
+\([0,1]\) 中的 Cantor 集 \(C\) 的外测度是零.
+\end{proposition}
+\begin{remark}
+这个\refpro{proposition:Cantor集的外测度是零}说明外测度为零的点集不一定是可列集.
+\end{remark}
+\begin{proof}
+事实上, 因为 \(C = \bigcap_{n = 1}^{\infty} F_n\), 其中的 \(F_n\) (在构造 \(C\) 的过程中第 \(n\) 步所留存下来的) 是 \(2^n\) 个长度为 \(3^{-n}\) 的闭区间的并集, 所以我们有
+\begin{align*}
+m^*(C) \leq m^*(F_n) \leq 2^n \cdot 3^{-n},
+\end{align*}
+从而得知 \(m^*(C)=0\). 
+\end{proof}
+
+\begin{proposition}
+设 \(I\) 是 \(\mathbb{R}^n\) 中的开矩体, \(\overline{I}\) 是闭矩体, 则 \(m^*(I) = m^*(\overline{I}) = |I|\). 
+\end{proposition}
+\begin{proof}
+对任给的 \(\varepsilon > 0\), 作一开矩体 \(J\), 使得 \(J \supset \overline{I}\) 且 \(|J| < |I| + \varepsilon\), 从而由外测度的单调性有
+\begin{align*}
+m^*(\overline{I}) \leq |J| < |I| + \varepsilon.
+\end{align*}
+由 \(\varepsilon\) 的任意性可知 \(m^*(\overline{I}) \leq |I|\). 现在设 \(\{I_k\}\) 是 \(\overline{I}\) 的任意的 \(L -\)覆盖, 则因为 \(\overline{I}\) 是有界闭集, 所以存在 \(\{I_k\}\) 的有限子覆盖
+\[
+\{I_{i_1}, I_{i_2}, \cdots, I_{i_l}\}, \quad \bigcup_{j = 1}^l I_{i_j} \supset \overline{I}.
+\]
+由外测度的单调性和次可加性可得
+\begin{align*}
+|I| \leq \sum_{j = 1}^l |I_{i_j}| \leq \sum_{k = 1}^{\infty} |I_k|,
+\end{align*}
+再由下确界是最大的下界可得 \(|I| \leq m^*(\overline{I})\), 从而我们有 \(m^*(\overline{I}) = |I|\). 
+
+又因为$I\subset \overline{I}$,所以由外测度的单调性可得$m^*(I)\leq m^*(\overline{I})=|I|$.同理可证\(|I| \leq m^*(I)\),故$m^*(I)=|I|=m^*(\overline{I})$.
+\end{proof}
+
+\begin{lemma}
+设 \(E \subset \mathbb{R}^n\) 以及 \(\delta > 0\). 令
+\begin{align*}
+m^*_{\delta}(E) = \inf\left\{ \sum_{k = 1}^{\infty} |I_k| : \bigcup_{k = 1}^{\infty} I_k \supset E, \text{每个开矩体 } I_k \text{ 的边长} < \delta \right\},
+\end{align*}
+则 \(m^*_{\delta}(E)=m^*(E)\).
+\end{lemma}
+\begin{proof}
+显然有 \(m^*_{\delta}(E) \geq m^*(E)\). 为证明其反向不等式也成立，不妨设 \(m^*(E)< + \infty\). 由外测度的定义可知，对于任给的 \(\varepsilon > 0\)，存在 \(E\) 的 \(L -\)覆盖 \(\{I_k\}\)，使得
+\begin{align*}
+\sum_{k = 1}^{\infty} |I_k| \leq m^*(E) + \varepsilon.
+\end{align*}
+对于每个 \(k\)，我们把 \(I_k\) 分割成 \(l(k)\) 个开矩体：
+\[
+I_{k,1}, I_{k,2}, \cdots, I_{k,l(k)},
+\]
+它们互不相交且每个开矩体的边长都小于 \(\delta/2\). 现在保持每个 \(I_{k,i}\) 的中心不动，边长扩大 \(\lambda(1 < \lambda < 2)\) 倍做出开矩体，并记为 \(\lambda I_{k,i}\)，显然，对每个 \(k\)，有
+\begin{align*}
+\bigcup_{i = 1}^{l(k)} \lambda I_{k,i} \supset I_k, \quad \sum_{i = 1}^{l(k)} |\lambda I_{k,i}| = \lambda^n \sum_{i = 1}^{l(k)} |I_{k,i}| = \lambda^n |I_k|.
+\end{align*}
+易知 \(\{\lambda I_{k,i} : i = 1,2,\cdots, l(k); k = 1,2,\cdots\}\) 是 \(E\) 的边长小于 \(\delta\) 的 \(L -\)覆盖，且有
+\begin{align*}
+\sum_{k = 1}^{\infty} \sum_{i = 1}^{l(k)} |\lambda I_{k,i}| = \lambda^n \sum_{k = 1}^{\infty} |I_k| \leq \lambda^n (m^*(E) + \varepsilon),
+\end{align*}
+从而可知 \(m^*_{\delta}(E) \leq \lambda^n (m^*(E) + \varepsilon)\). 令 \(\lambda \to 1\) 并注意到 \(\varepsilon\) 的任意性，我们得到 \(m^*_{\delta}(E) \leq m^*(E)\). 这说明 \(m^*_{\delta}(E)=m^*(E)\).
+\end{proof}
+
+\begin{theorem}
+设 \(E_1, E_2\) 是 \(\mathbb{R}^n\) 中的两个点集. 若 \(d(E_1, E_2)>0\)，则
+\begin{align*}
+m^*(E_1 \cup E_2) = m^*(E_1) + m^*(E_2).
+\end{align*}
+\end{theorem}
+\begin{proof}
+只需证明 \(m^*(E_1 \cup E_2) \geq m^*(E_1) + m^*(E_2)\) 即可. 为此，不妨设 \(m^*(E_1 \cup E_2)< + \infty\). 对任给的 \(\varepsilon > 0\)，作 \(E_1 \cup E_2\) 的 \(L -\)覆盖 \(\{I_k\}\)，使得
+\begin{align*}
+\sum_{k = 1}^{\infty} |I_k| < m^*(E_1 \cup E_2) + \varepsilon,
+\end{align*}
+其中 \(I_k\) 的边长都小于 \(d(E_1, E_2)/\sqrt{n}\). 现在将 \(\{I_k\}\) 分为如下两组：
+\begin{align*}
+(\text{i})J_{i_1}, J_{i_2}, \cdots,\bigcup_{k \geq 1} J_{i_k} \supset E_1 ; \quad (\text{ii})J_{l_1}, J_{l_2}, \cdots,\bigcup_{k \geq 1} J_{l_k} \supset E_2.
+\end{align*}
+且其中任一矩体皆不能同时含有 \(E_1\) 与 \(E_2\) 中的点，从而得
+\begin{align*}
+m^*(E_1 \cup E_2) + \varepsilon &> \sum_{k \geq 1} |I_k| = \sum_{k \geq 1} |J_{i_k}| + \sum_{k \geq 1} |J_{l_k}| \\
+&\geq m^*(E_1) + m^*(E_2).
+\end{align*}
+再由 \(\varepsilon\) 的任意性可知 \(m^*(E_1 \cup E_2) \geq m^*(E_1) + m^*(E_2)\). 
+\end{proof}
+
+\begin{proposition}
+设 \(E \subset [a,b]\), \(m^*(E)>0\), \(0 < c < m^*(E)\), 则存在 \(E\) 的子集 \(A\), 使得 \(m^*(A)=c\).
+\end{proposition}
+\begin{proof}
+记 \(f(x)=m^*([a,x) \cap E)\), \(a \leq x \leq b\), 则 \(f(a)=0\), \(f(b)=m^*(E)\). 考查 \(x\) 与 \(x + \Delta x\). 不妨设 \(a \leq x < x + \Delta x \leq b\), 则由
+\[
+[a,x + \Delta x) \cap E = ([a,x) \cap E) \cup ([x,x + \Delta x) \cap E)
+\]
+可知 \(f(x + \Delta x) \leq f(x) + \Delta x\), 即
+\begin{align*}
+f(x + \Delta x) - f(x) \leq \Delta x.
+\end{align*}
+对 \(\Delta x < 0\) 也可证得类似不等式. 总之, 我们有
+\[
+|f(x + \Delta x) - f(x)| \leq |\Delta x|, \quad a \leq x \leq b.
+\]
+这说明 \(f \in C([a,b])\). 根据连续函数中值定理, 对 \(f(a) < c < f(b)\), 存在 \(\xi \in (a,b)\), 使得 \(f(\xi)=c\). 取 \(A = [a,\xi) \cap E\), 即得证.
+\end{proof}
+
+\begin{theorem}[外测度的平移不变性]\label{theorem:外测度的平移不变性}
+设 \(E \subset \mathbb{R}^n\), \(x_0 \in \mathbb{R}^n\). 记 \(E + \{x_0\} = \{x + x_0, x \in E\}\), 则
+\begin{align}
+m^*(E + \{x_0\}) = m^*(E). \label{eq:2.1}
+\end{align}
+\end{theorem}
+\begin{proof}
+首先, 对于 \(\mathbb{R}^n\) 中的开矩体 \(I\), 易知 \(I + \{x_0\}\) 仍是一个开矩体且其相应边长均相等, \(|I| = |I + \{x_0\}|\). 其次, 对 \(E\) 的任意的 \(L -\)覆盖 \(\{I_k\}\), \(\{I_k + \{x_0\}\}\) 仍是 \(E + \{x_0\}\) 的 \(L -\)覆盖. 从而由
+\begin{align*}
+m^*(E + \{x_0\}) \leq \sum_{k = 1}^{\infty} |I_k + \{x_0\}| = \sum_{k = 1}^{\infty} |I_k|
+\end{align*}
+可知(对一切 \(L -\)覆盖取下确界)
+\begin{align*}
+m^*(E + \{x_0\}) \leq m^*(E).
+\end{align*}
+反之, 考虑对 \(E + x_0\) 作向量 \(-x_0\) 的平移, 可得原点集 \(E\). 同理又有
+\begin{align*}
+m^*(E) \leq m^*(E + \{x_0\}).
+\end{align*} 
+\end{proof}
+
+\begin{theorem}[外测度的数乘]\label{theorem:外测度的数乘}
+设 \(E \subset \mathbb{R}\), \(\lambda \in \mathbb{R}\), 记 \(\lambda E = \{ \lambda x : x \in E\}\), 则
+\begin{align*}
+m^*(\lambda E) = |\lambda| m^*(E).
+\end{align*}
+\end{theorem}
+\begin{proof}
+因为 \(E \subset \bigcup_{n \geq 1} (a_n, b_n)\) 等价于 \(\lambda E \subset \bigcup_{n \geq 1} \lambda (a_n, b_n)\), \(m^*([a_n, b_n]) = m^*((a_n, b_n))\), 且对任一区间 \((\alpha, \beta)\), 有
+\begin{align*}
+m^*(\lambda (\alpha, \beta)) = |\lambda| m^*((\alpha, \beta)) = |\lambda| (\beta - \alpha),
+\end{align*}
+所以按外测度定义可得 \(m^*(\lambda E) = |\lambda| m^*(E)\). 
+\end{proof}
+
+\begin{definition}[集合上的外测度]
+设 \(X\) 是一个非空集合, \(\mu^*\) 是定义在幂集 \(\mathcal{P}(X)\) 上的一个取广义实值的集合函数, 且满足：
+\begin{enumerate}[(i)]
+\item \(\mu^*(\varnothing)=0\), \(\mu^*(E) \geq 0\) (\(E \subset X\));
+\item 若 \(E_1, E_2 \subset X\), \(E_1 \subset E_2\), 则 \(\mu^*(E_1) \leq \mu^*(E_2)\);
+\item 若 \(\{E_n\}\) 是 \(X\) 的子集列, 则有
+\begin{align*}
+\mu^*\left( \bigcup_{n = 1}^{\infty} E_n \right) \leq \sum_{n = 1}^{\infty} \mu^*(E_n),
+\end{align*}
+\end{enumerate}
+那么称 \(\mu^*\) 是 \(X\) 上的一个\textbf{外测度}.
+
+若 \((X, d)\) 是一个距离空间, 且其上的外测度 \(\mu^*\) 还满足\textbf{距离外测度性质}:当 \(d(E_1, E_2)>0\) 时, 有
+\begin{align*}
+\mu^*(E_1 \cup E_2) = \mu^*(E_1) + \mu^*(E_2),
+\end{align*}
+那么称 \(\mu^*\) 是 \(X\) 上的一个\textbf{距离外测度}(利用距离外测度性质可以证明开集的可测性). 
+\end{definition}
+
+
+
+
+
 
 
 

@@ -2,64 +2,270 @@
 \graphicspath{{\subfix{../../image/}}} % 指定图片目录,后续可以直接使用图片文件名。
 
 % 例如:
-% \begin{figure}[h]
+% \begin{figure}[H]
 % \centering
 % \includegraphics{image-01.01}
-% \label{fig:image-01.01}
 % \caption{图片标题}
+% \label{figure:image-01.01}
 % \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
 
 \begin{document}
 
-\section{Lebesgue可测集的$\sigma $代数}
+\section{可测集与测度}
 
-
-\begin{definition}[可测]\label{definition:可测}
-集合\(E\)称为在$\mathbb{R}$中是\textbf{可测的}或是$\mathbb{R}$中的一个\textbf{可测集},或称$E$满足卡拉西奥多里(Carathéodory)条件,若对任意集合\(A\),
-\[m^*(A)=m^*(A\cap E)+m^*(A\cap E^C)=m^*(A\cap E)+m^*(A - E).\] 
+\begin{definition}[可测集]
+设 \(E \subset \mathbb{R}^n\). 若对任意的点集 \(T \subset \mathbb{R}^n\), 有
+\begin{align*}
+m^*(T)=m^*(T \cap E)+m^*(T \cap E^c), 
+\end{align*}
+则称 \(E\) 为 \textbf{Lebesgue 可测集}(或 \textbf{\(m^*\)-可测集})或$E$\textbf{可测}, 简称为\textbf{可测集}, 其中 \(T\) 称为\textbf{试验集}(这一定义可测集的等式也称为 \textbf{Carathéodory条件}). 可测集的全体称为\textbf{可测集类}, 简记为 \(\mathscr{M}\). 
 \end{definition}
 
-\begin{proposition}[可测的充要条件]\label{proposition:可测的充要条件1}
-  设\(E\subset\mathbb{R}\)，则\(E\)是可测集当且仅当对任意\(A\subset\mathbb{R}\)有
-\[m^*(A)\geq m^*(A\cap E)+m^*(A - E).\]
-\end{proposition}
+\begin{theorem}[集合可测的充要条件]\label{theorem:可测的充要条件}
+设\(E\subset \mathbb{R}^n\), 则$E\in \mathscr{M}$的充要条件是对任一点集 \(T \subset \mathbb{R}^n\)且\(m^*(T)< + \infty\),都有
+\begin{align}
+m^*(T) \geq m^*(T \cap E)+m^*(T \cap E^c) \label{eq:2.3}
+\end{align}
+成立. 
+\end{theorem}
+\begin{remark}
+往后经常利用这个定理的充分性来证明一个集合可测.但这个定理的必要性要弱于可测集的定义.
+\end{remark}
 \begin{proof}
-  由\hyperref[definition:可测]{可测的定义}可知,我们只须证明小于等于号的关系恒成立.注意到\(A=(A\cap E)\cup(A - E)\),由于\hyperref[proposition:Lebesgue外测度的可数次可加性]{Lebesgue外测度的可数次可加性},我们有
-  \[m^*(A)=m^*((A\cap E)\cup(A - E))\leq m^*(A\cap E)+m^*(A - E)\]
-  此即得证. 
+必要性由可测集的定义立得.下证充分性.
+由外测度的次可加性可得
+\[
+m^*(T)=m^*\left( T\cap \mathbb{R} ^n \right) =m^*\left( T\cap \left( E\cup E^c \right) \right) =m^*\left( \left( T\cap E \right) \cap \left( T\cup E^c \right) \right)  \leq m^*(T \cap E)+m^*(T \cap E^c)
+\]
+总是成立的. 又因为在 \(m^*(T)=\infty\) 时 \eqref{eq:2.3} 式总成立,故对任意的点集 \(T \subset \mathbb{R}^n\),都有
+\begin{align*}
+m^*(T)=m^*(T \cap E)+m^*(T \cap E^c), 
+\end{align*}
+即$E\in \mathscr{M}$.
 \end{proof}
 
-\begin{proposition}[可测集的性质]\label{proposition:可测集的性质}
-\begin{enumerate}[(1)]
-  \item 空集与$\mathbb{R}$是可测的.
-  
-  \item 可测集的补是可测的.
+\begin{definition}[零测集]
+外测度为零的点集称为\textbf{零测集}. 
+\end{definition}
+\begin{remark}
+显然, \(\mathbb{R}^n\) 中由单个点组成的点集是零测集. 从而根据外测度的次可加性知道 \(\mathbb{R}^n\) 中的有理点集 \(\mathbb{Q}^n\) 是零测集.
+\end{remark}
 
-  \item 任何外测度为零的集合是可测的。特别地，任何可数集是可测的。
- 
-  \item 可数个可测集的并是可测的.
+\begin{proposition}
+\begin{enumerate}
+\item 零测集的任一子集是零测集.
+
+\item 零测集一定可测,即若 \(m^*(E)=0\), 则 \(E \in \mathscr{M}\). 
 \end{enumerate}
 \end{proposition}
 \begin{proof}
-\begin{enumerate}[(1)]
-  \item 由可测的定义易得.
+\begin{enumerate}
+\item 由外测度的单调性立得.
 
-  \item 由可测的定义易得.
-
-  \item  令集合\(E\)的外测度为零.令\(A\)为任意集合。由于
-  \[A\cap E\subseteq E\text{ 且 }A\cap E^C\subseteq A\]
-  根据外测度的单调性，
-  \[m^*(A\cap E)\leqslant m^*(E)=0\text{ 且 }m^*(A\cap E^C)\leqslant m^*(A)\]
-  因此
-  \begin{align*}
-  m^*(A)&\geqslant m^*(A\cap E^C)=0 + m^*(A\cap E^C)\\
-  &=m^*(A\cap E)+m^*(A\cap E^C)
-  \end{align*}
-  从而由\hyperref[proposition:可测的充要条件1]{可测的充要条件}可知,\(E\)是可测的。
-
-  \item 
+\item 事实上, 此时我们有
+\begin{align*}
+m^*(T \cap E)+m^*(T \cap E^c) \leq m^*(E)+m^*(T)=m^*(T).
+\end{align*}
 \end{enumerate}
 \end{proof}
+
+\begin{proposition}\label{proposition:外测度的可加性的条件}
+若 \(E_1 \subset S\), \(E_2 \subset S^c\), \(S \in \mathscr{M}\), 则有
+\begin{align*}
+m^*(E_1 \cup E_2) = m^*(E_1) + m^*(E_2).
+\end{align*}
+\end{proposition}
+\begin{remark}
+这个命题表明:当两个集合由一个可测集分离开时, 其外测度就有可加性.
+\end{remark}
+\begin{proof}
+事实上, 此时取试验集 \(T = E_1 \cup E_2\), 从 \(S\) 是可测集的定义得
+\begin{align*}
+m^*(E_1 \cup E_2) = m^*((E_1 \cup E_2) \cap S) + m^*((E_1 \cup E_2) \cap S^c) = m^*(E_1) + m^*(E_2).
+\end{align*}
+\end{proof}
+
+\begin{corollary}
+当 \(E_1\) 与 \(E_2\) 是互不相交的可测集时, 对任一集合 \(T\) 有
+\begin{align*}
+m^*(T \cap (E_1 \cup E_2)) = m^*(T \cap E_1) + m^*(T \cap E_2).
+\end{align*} 
+\end{corollary}
+\begin{proof}
+注意到$T\cap E_1\in E_1$,$T\cap E_2\in E_1^c$,而$E_1\in \mathscr{M}$,故由\refpro{proposition:外测度的可加性的条件}可知
+\begin{align*}
+m^*(T \cap (E_1 \cup E_2))=m^*((T\cap E_1)\cup (T\cap E_2)) = m^*(T \cap E_1) + m^*(T \cap E_2).
+\end{align*} 
+\end{proof}
+
+\begin{theorem}[可测集的性质]\label{theorem:可测集的性质}
+\begin{enumerate}[(1)]
+\item \(\varnothing \in \mathscr{M}\).
+\item 若 \(E \in \mathscr{M}\), 则 \(E^c \in \mathscr{M}\).
+\item 若 \(E_1 \in \mathscr{M}\), \(E_2 \in \mathscr{M}\), 则 \(E_1 \cup E_2\), \(E_1 \cap E_2\) 以及 \(E_1 \setminus E_2\) 皆属于 \(\mathscr{M}\). (由此知, 可测集任何有限次取交、并运算后所得的集皆为可测集. )
+\item 若 \(E_i \in \mathscr{M}\) (\(i = 1,2,\cdots\)), 则其并集也属于 \(\mathscr{M}\). 若进一步有 \(E_i \cap E_j = \varnothing\) (\(i \neq j\)), 则
+\begin{align*}
+m^*\left(\bigcup_{i = 1}^{\infty} E_i\right) = \sum_{i = 1}^{\infty} m^*(E_i),
+\end{align*}
+即 \(m^*\) 在 \(\mathscr{M}\) 上满足可数可加性(或称为 \(\sigma -\)可加性).
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 显然成立.
+\item 注意到 \((E^c)^c = E\), 从定义可立即得出结论.
+\item 对于任一集 \(T \subset \mathbb{R}^n\), 根据集合分解(参阅\hyperref[figure:集合关系示意图1]{图\ref{figure:集合关系示意图1}})与外测度的次可加性, 我们有
+\begin{align*}
+m^*(T) &\leq m^*(T \cap (E_1 \cup E_2)) + m^*(T \cap (E_1 \cup E_2)^c) \\
+&= m^*(T \cap (E_1 \cup E_2)) + m^*((T \cap E_1^c) \cap E_2^c) \\
+&\leq m^*((T \cap E_1) \cap E_2) + m^*((T \cap E_1) \cap E_2^c) \\
+&\quad + m^*((T \cap E_1^c) \cap E_2) + m^*((T \cap E_1^c) \cap E_2^c).
+\end{align*}
+又由 \(E_1\), \(E_2\) 的可测性知, 上式右端就是
+\begin{align*}
+m^*(T \cap E_1) + m^*(T \cap E_1^c) = m^*(T).
+\end{align*}
+这说明
+\begin{align*}
+m^*(T) = m^*(T \cap (E_1 \cup E_2)) + m^*(T \cap (E_1 \cup E_2)^c).
+\end{align*}
+也就是说 \(E_1 \cup E_2\) 是可测集.
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.35]{集合关系示意图1}
+\caption{}
+\label{figure:集合关系示意图1}
+\end{figure}
+为证 \(E_1 \cap E_2\) 是可测集, 只需注意 \(E_1 \cap E_2 = (E_1^c \cup E_2^c)^c\) 即可. 又由 \(E_1 \setminus E_2 = E_1 \cap E_2^c\) 可知, \(E_1 \setminus E_2\) 是可测集. 
+\item 首先, 设 \(E_1\), \(E_2\), \(\cdots\), \(E_i\), \(\cdots\) 皆互不相交, 并令
+\[
+S = \bigcup_{i = 1}^{\infty} E_i, \quad S_k = \bigcup_{i = 1}^k E_i, \quad k = 1,2,\cdots.
+\]
+由(3)知每个 \(S_k\) 都是可测集, 从而对任一集 \(T\), 我们有
+\begin{align*}
+m^*(T) &= m^*(T \cap S_k) + m^*(T \cap S_k^c) \\
+&= m^*\left(\bigcup_{i = 1}^k (T \cap E_i)\right) + m^*(T \cap S_k^c) \\
+&= \sum_{i = 1}^k m^*(T \cap E_i) + m^*(T \cap S_k^c).
+\end{align*}
+由于 \(T \cap S_k^c \supset T \cap S^c\), 可知
+\begin{align*}
+m^*(T) \geq \sum_{i = 1}^k m^*(T \cap E_i) + m^*(T \cap S^c).
+\end{align*}
+令 \(k \to \infty\), 就有
+\begin{align*}
+m^*(T) \geq \sum_{i = 1}^{\infty} m^*(T \cap E_i) + m^*(T \cap S^c).
+\end{align*}
+由此可得
+\begin{align*}
+m^*(T) \geq m^*(T \cap S) + m^*(T \cap S^c).
+\end{align*}
+这说明 \(S \in \mathscr{M}\).
+
+此外, 在公式
+\begin{align*}
+m^*(T) \geq \sum_{i = 1}^{\infty} m^*(T \cap E_i) + m^*(T \cap S^c)
+\end{align*}
+中以 \(T \cap S\) 替换 \(T\), 则又可得
+\begin{align*}
+m^*(T \cap S) \geq \sum_{i = 1}^{\infty} m^*(T \cap E_i).
+\end{align*}
+但反向不等式总是成立的, 因而实际上有
+\begin{align*}
+m^*(T \cap S) = \sum_{i = 1}^{\infty} m^*(T \cap E_i).
+\end{align*}
+在这里再取 \(T\) 为全空间 \(\mathbb{R}^n\), 就可证明可数可加性质:
+\begin{align*}
+m^*(S) = m^*\left(\bigcup_{i = 1}^{\infty} E_i\right) = \sum_{i = 1}^{\infty} m^*(E_i).
+\end{align*}
+
+其次, 对于一般的可测集列 \(\{E_i\}\), 我们令
+\[
+S_1 = E_1, \quad S_k = E_k \setminus \left(\bigcup_{i = 1}^{k - 1} E_i\right), \quad k \geq 2,
+\]
+则 \(\{S_k\}\) 是互不相交的可测集列. 而由 \(\bigcup_{i = 1}^{\infty} E_i = \bigcup_{k = 1}^{\infty} S_k\) 可知, \(\bigcup_{i = 1}^{\infty} E_i\) 是可测集.
+\end{enumerate} 
+\end{proof}
+
+\begin{corollary}\label{corollary:可测集类是sigma-代数}
+$\mathscr{M}$是$\mathbb{R}^n$上的一个$\sigma$-代数.
+\end{corollary}
+\begin{proof}
+由\hyperref[theorem:可测集的性质]{可测集的性质(1)(2)(4)}立得.
+\end{proof}
+
+
+\begin{proposition}\label{proposition:Cantor集可测且测度为0}
+证明:Cantor集C是可测的,并且$m(C)=0$.
+\end{proposition}
+\begin{proof}
+开区间是可测的. 由\hyperref[theorem:开集构造定理]{开集构造定理}, 我们知道 \(\mathbb{R}\) 中的开集是开区间的可数并, 因此也可测. 因此, 闭集也是可测的. 显然, 每个 \(C_n\) 都是闭集. 并且
+\begin{align*}
+C = \bigcap_{n = 1}^{\infty} C_n
+\end{align*}
+于是 \(C\) 也是闭集. 因此 \(C\) 是可测的.
+
+下面, 我们用两种方法计算康托集的测度.
+
+{\color{blue}法一:}根据我们的构造, \(C_{n + 1}\) 的测度刚好是去掉了 \(1/3\) 的 \(C_n\) 的测度. 换言之,
+\begin{align*}
+m(C_{n + 1}) = \left(1 - \frac{1}{3}\right)m(C_n) = \frac{2}{3}m(C_n)
+\end{align*}
+递归地, 对任意 \(n \in \mathbb{N}\), 我们有
+\begin{align*}
+m(C_n) = \left(\frac{2}{3}\right)^n m(C_0) = \left(\frac{2}{3}\right)^n
+\end{align*}
+注意到
+\begin{align*}
+m(C_0) = 1 < \infty
+\end{align*}
+因此由测度的第二单调收敛定理,
+\begin{align*}
+m(C) = m\left(\bigcap_{n = 1}^{\infty} C_n\right) = \lim_{n \to \infty} m(C_n) = \lim_{n \to \infty} \left(\frac{2}{3}\right)^n = 0
+\end{align*}
+此即得证.
+
+{\color{blue}法二:}设 \(n \geq 2\). \(C_n\) 比 \(C_{n - 1}\) 减少了 \(2^{n - 1}\) 个区间, 每个区间长度为 \(\frac{1}{3^n}\). 因此 \(C_n\) 比 \(C_{n - 1}\) 减少的长度为
+\begin{align*}
+2^{n - 1}\frac{1}{3^n} = \frac{1}{3}\left(\frac{2}{3}\right)^{n - 1}
+\end{align*}
+总共减少的长度为
+\begin{align*}
+\sum_{n = 1}^{\infty} \frac{1}{3}\left(\frac{2}{3}\right)^{n - 1} = \frac{1}{3} \frac{1}{1 - \frac{2}{3}} = \frac{1}{3} \cdot 3 = 1
+\end{align*}
+因此
+\begin{align*}
+m(C) = 1 - 1 = 0.
+\end{align*} 
+\end{proof}
+
+\begin{proposition}\label{proposition:可测集类的基数是2^c}
+\(\mathscr{M}\) 的基数是 \(2^c\).
+\end{proposition}
+\begin{proof}
+由\refpro{proposition:Cantor集可测且测度为0}可知Cantor集是零测集,不难推断 \(\mathscr{M}\) 的基数大于或等于 \(2^c\), 但 \(\mathscr{M}\) 的基数又不会超过 \(2^c\), 于是 \(\mathscr{M}\) 的基数实际上是 \(2^c\). 
+\end{proof}
+
+\begin{definition}[Lebesgue测度]
+对于可测集 \(E\), 其外测度称为\textbf{测度}, 记为 \(m(E)\). 这就是通常所说的 \(\mathbb{R}^n\) 上的 \textbf{Lebesgue测度}.
+\end{definition}
+
+\begin{definition}[测度]
+设 \(X\) 是非空集合, \(\mathscr{A}\) 是 \(X\) 的一些子集构成的 \(\sigma -\)代数. 若 \(\mu\) 是定义在 \(\mathscr{A}\) 上的一个集合函数, 且满足：
+\begin{enumerate}[(i)]
+\item \(0 \leq \mu(E) \leq +\infty\) (\(E \in \mathscr{A}\));
+\item \(\mu(\varnothing)=0\);
+\item \(\mu\) 在 \(\mathscr{A}\) 上是可数可加的,
+\end{enumerate}
+则称 \(\mu\) 是 \(\mathscr{A}\) 上的(非负)\textbf{测度}. \(\mathscr{A}\) 中的元素称为(\(\mu\))\textbf{可测集}, 有序组 \((X, \mathscr{A}, \mu)\) 称为\textbf{测度空间}. 
+\end{definition}
+\begin{remark}
+由\refcor{corollary:可测集类是sigma-代数}可知$\mathscr{M}$就是$\mathbb{R}^n$上的一个$\sigma$-代数,故本节所建立的测度空间就是 \((\mathbb{R}^n, \mathscr{M}, m)\). 
+\end{remark}
+
+
+
+
 
 
 
