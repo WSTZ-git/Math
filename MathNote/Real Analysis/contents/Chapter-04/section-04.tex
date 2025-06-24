@@ -14,7 +14,7 @@
 
 \section{Lebesgue积分和Riemann积分的关系}
 
-\begin{definition}[Riemann积分相关定义]
+\begin{definition}[Riemann积分相关定义]\label{definition:Riemann积分相关定义}
 设 \( f(x) \) 是定义在 \( I = [a,b] \) 上的有界函数，\(\{ \Delta^{(n)} \}\) 是对 \([a,b]\) 所做的分划序列：
 
 \[
@@ -38,37 +38,265 @@ m_i^{(n)} = \inf \{ f(x) : x_{i - 1}^{(n)} \leqslant x \leqslant x_i^{(n)} \},
 则关于 \( f(x) \) 的 Darboux 上、下积分，下述等式成立：
 
 \[
-\bar{\int_a^b} f(x) \, dx = \lim_{n \to \infty} \sum_{i = 1}^{k_n} M_i^{(n)} (x_i^{(n)} - x_{i - 1}^{(n)}),
+\overline{\int_a^b} f(x) \, \mathrm{d}x = \lim_{n \to \infty} \sum_{i = 1}^{k_n} M_i^{(n)} (x_i^{(n)} - x_{i - 1}^{(n)}),
 \]
 
 \[
-\underline{\int_a^b} f(x) \, dx = \lim_{n \to \infty} \sum_{i = 1}^{k_n} m_i^{(n)} (x_i^{(n)} - x_{i - 1}^{(n)}).
+\underline{\int_a^b} f(x) \, \mathrm{d}x = \lim_{n \to \infty} \sum_{i = 1}^{k_n} m_i^{(n)} (x_i^{(n)} - x_{i - 1}^{(n)}).
 \]
 \end{definition}
 
-\ul{abc}
-
-\begin{lemma}
-
+\begin{lemma}\label{lemma:引理4.23}
+设 \( f(x) \) 是定义在 \( I = [a,b] \) 上的有界函数，记 \( \omega(x) \) 是 \( f(x) \) 在 \( [a,b] \) 上的振幅（函数），则有
+\begin{align*}
+\int_I \omega(x) \, \mathrm{d}x &= \overline{\int_a^b} f(x) \, \mathrm{d}x - \underline{\int_a^b} f(x) \, \mathrm{d}x,
+\end{align*}
+其中左端是 \( \omega(x) \) 在 \( I \) 上的 Lebesgue 积分.
 \end{lemma}
+\begin{proof}
+因为 \( f(x) \) 在 \( [a,b] \) 上是有界的，所以 \( \omega(x) \) 是 \( [a,b] \) 上的有界函数. 由\refpro{proposition:振幅函数可测}可知，\( \omega(x) \) 是 \( [a,b] \) 上的可测函数，因此 \( \omega \in L([a,b]) \).
+
+对于\refdef{Riemann积分相关定义}所说的分划序列 \( \{\Delta^{(n)}\} \)，作函数列
+\[
+\omega_{\Delta^{(n)}}(x) = 
+\begin{cases} 
+M_i^{(n)} - m_i^{(n)} &, x \in (x_{i-1}^{(n)}, x_i^{(n)}), \\
+0 & ,x \text{ 是 } \Delta^{(n)} \text{ 的分点},
+\end{cases}
+\quad (i = 1,2,\cdots,k_n,\, n = 1,2,\cdots).
+\]
+\( E = \{ x \in [a,b] : x \text{ 是 } \Delta^{(n)} \, (n = 1,2,\cdots) \text{ 的分点} \} \).
+
+显然 \( m(E) = 0 \)，且有
+\[
+\lim_{n \to \infty} \omega_{\Delta^{(n)}}(x) = \omega(x), \quad x \in [a,b] \setminus E.
+\]
+现在记 \( A,B \) 各为 \( f(x) \) 在 \( [a,b] \) 上的上、下确界，由于对一切 \( n \)，有 \( \omega_{\Delta^{(n)}}(x) \leq A - B \)，故根据\hyperref[theorem:控制收敛定理]{控制收敛定理}（控制函数是常数函数）可知，
+\[
+\lim_{n \to \infty} \int_I \omega_{\Delta^{(n)}}(x) \, \mathrm{d}x = \int_I \omega(x) \, \mathrm{d}x.
+\]
+
+另一方面，因为
+\begin{align*}
+\int_I \omega_{\Delta^{(n)}}(x) \, \mathrm{d}x &= \sum_{i=1}^{k_n} (M_i^{(n)} - m_i^{(n)})(x_i^{(n)} - x_{i-1}^{(n)}) \\
+&= \sum_{i=1}^{k_n} M_i^{(n)}(x_i^{(n)} - x_{i-1}^{(n)}) - \sum_{i=1}^{k_n} m_i^{(n)}(x_i^{(n)} - x_{i-1}^{(n)}),
+\end{align*}
+所以得到
+\[
+\int_I \omega(x) \, \mathrm{d}x = \lim_{n \to \infty} \int_I \omega_{\Delta^{(n)}}(x) \, \mathrm{d}x = \overline{\int_a^b} f(x) \, \mathrm{d}x - \underline{\int_a^b} f(x) \, \mathrm{d}x.
+\]
+\end{proof}
+
+\begin{theorem}\label{theorem:定理4.24}
+若 \( f(x) \) 是定义在 \( [a,b] \) 上的有界函数，则 \( f(x) \) 在 \( [a,b] \) 上 Riemann 可积的充分必要条件是 \( f(x) \) 在 \( [a,b] \) 上的不连续点集是零测集.
+\end{theorem}
+\begin{note}
+上述定理指出，对于 \( [a,b] \) 上的有界函数而言，其 Riemann 可积性并非由该函数在不连续点处的性态所致，而是取决于它的不连续点集的测度.
+\end{note}
+\begin{proof}
+必要性,若 \( f(x) \) 在 \( [a,b] \) 上是 Riemann 可积的，则 \( f(x) \) 的 Darboux 上、下积分相等，从而由\reflem{lemma:引理4.23}可知 \( \int_I \omega(x) \, \mathrm{d}x = 0 \). 因为 \( \omega(x) \geq 0 \)，所以由\refcor{corollary:非负可测函数积分为0则几乎处处为0}可知\( \omega(x) = 0 \)，\(\text{a. e.}\) \( x \in [a,b] \). 从而
+\begin{align*}
+\underset{\delta \rightarrow 0}{\lim}\underset{x\in B\left( x_0,\delta \right)}{\mathrm{sup}}|f(x)-f(x_0)|\leqslant \underset{\delta \rightarrow 0}{\lim}\underset{x',x'' \in B\left( x_0,\delta \right)}{\mathrm{sup}}|f\left( x' \right) -f\left( x'' \right) |=w(x_0)=0,\mathrm{a}.\mathrm{e}.\,x_0\in \left[ a,b \right] .
+\end{align*}
+这说明 \( f(x) \) 在 \( [a,b] \) 上是几乎处处连续的.
+
+充分性,若 \( f(x) \) 在 \( [a,b] \) 上的不连续点集是零测集，则
+\begin{align*}
+&w(x_0)=\underset{\delta \rightarrow 0}{\lim}\underset{x‘,x'' \in B\left( x_0,\delta \right)}{\mathrm{sup}}|f\left( x‘\right) -f\left( x'' \right) |
+\\
+&\leqslant \underset{\delta \rightarrow 0}{\lim}\underset{x‘\in B\left( x_0,\delta \right)}{\mathrm{sup}}|f(x‘)-f(x_0)|+\underset{\delta \rightarrow 0}{\lim}\underset{x'' \in B\left( x_0,\delta \right)}{\mathrm{sup}}|f(x'' )-f(x_0)|
+\\
+&=0,\mathrm{a}.\mathrm{e}.\,x_0\in \left[ a,b \right] .
+\end{align*}
+因此\( f(x) \) 的振幅函数 \( \omega(x) \) 几乎处处等于零，从而由\reflem{lemma:引理4.23}可知
+\[
+\overline{\int_a^b} f(x) \, \mathrm{d}x - \underline{\int_a^b} f(x) \, \mathrm{d}x = \int_I \omega(x) \, \mathrm{d}x = 0,
+\]
+即 \( f(x) \) 的 Darboux 上、下积分相等，\( f(x) \) 在 \( [a,b] \) 上是 Riemann 可积的.
+\end{proof}
+
+\begin{theorem}\label{theorem:定理4.25}
+若 \( f(x) \) 在 \( I = [a,b] \) 上是 Riemann 可积的，则 \( f(x) \) 在 \( [a,b] \) 上是 Lebesgue 可积的，且其积分值相同.
+\end{theorem}
+\begin{remark}
+今后，为整合起见，对 \( f(x) \) 在 \( [a,b] \) 上的 Lebesgue 积分，也记为$\int_a^b f(x) \, \mathrm{d}x.$
+\end{remark}
+\begin{proof}
+首先，根据题设以及\refthe{theorem:定理4.24}，\( f(x) \) 在 \( [a,b] \) 上是几乎处处连续的. 因此 \( f(x) \) 是 \( [a,b] \) 上的有界可测函数，\( f \in L(I) \).
+
+其次，对 \( [a,b] \) 的任一分划
+\[
+\Delta: a = x_0 < x_1 < \cdots < x_n = b,
+\]
+根据\hyperref[theorem:积分对定义域的可数可加性]{Lebesgue 积分对积分区域的可加性}，我们有
+\[
+\int_I f(x) \, \mathrm{d}x = \sum_{i=1}^n \int_{[x_{i-1}, x_i]} f(x) \, \mathrm{d}x.
+\]
+记 \( M_i, m_i \) 分别为 \( f(x) \) 在 \( [x_{i-1}, x_i] \) 上的上、下确界，则得
+\[
+m_i (x_i - x_{i-1}) \leq \int_{[x_{i-1}, x_i]} f(x) \, \mathrm{d}x \leq M_i (x_i - x_{i-1})
+\]
+\( (i = 1,2,\cdots,n) \)，从而可知
+\[
+\sum_{i=1}^n m_i (x_i - x_{i-1}) \leq \int_I f(x) \, \mathrm{d}x \leq \sum_{i=1}^n M_i (x_i - x_{i-1}).
+\]
+于是，在上式左、右两端对一切分划 \( \Delta \) 各取上、下确界，立即得到
+\[
+\int_I f(x) \, \mathrm{d}x = \overline{\int_a^b} f(x) \, \mathrm{d}x = \underline{\int_a^b} f(x) \, \mathrm{d}x.
+\]
+这说明 \( f(x) \) 在 \( [a,b] \) 上的 Lebesgue 积分与 Riemann 积分是相等的.
+\end{proof}
+
+\begin{proposition}
+设 \( f(x) \) 是 \( \mathbb{R} \) 上的有界可测函数，且不恒为零. 若有
+\[
+f(x + y) = f(x) \cdot f(y) \quad (x, y \in \mathbb{R}),
+\]
+则 \( f(x) = \mathrm{e}^{\alpha x} (x \in \mathbb{R}) \).
+\end{proposition}
+\begin{proof}
+由题设知 \( f(x) = f(x)f(0) \)，故 \( f(0) = 1 \). 注意到 \( f(x) \not\equiv 0 (x \in \mathbb{R}) \)，令 \( F(x) = \int_0^x f(t) \, \mathrm{d}t (x \in \mathbb{R}) \)，且选 \( a \in \mathbb{R} \)，使得 \( F(a) \neq 0 \)，则有
+\begin{align*}
+F(x + a) - F(x) = \int_x^{x + a} f(t) \, \mathrm{d}t = \int_0^a f(x + t) \, \mathrm{d}t 
+= \int_0^a f(x)f(t) \, \mathrm{d}t = f(x)F(a),
+\end{align*}
+\[
+f(x) = \frac{F(x + a) - F(x)}{F(a)}.
+\]
+这说明 \( f(x) \) 是连续函数，因此 \( F \in C^{(1)}(\mathbb{R}) \)，从而可得 \( f'(x + y) = f(x)f'(y) \). 取 \( y = 0 \)，即得 \( f'(x) = f(x)f'(0) \). 记 \( \alpha = f'(0) \)，可知 \( (f(x)\mathrm{e}^{-\alpha x})' \equiv 0 \)，而 \( f(0) = 1 \)，故又有 \( f(x)\mathrm{e}^{-\alpha x} \equiv 1 \)，即得所证.
+\end{proof}
+
+\begin{theorem}
+设 \( \{ E_k \} \) 是递增可测集列，其并集是 \( E \)，又
+\[
+f \in L(E_k) \quad (k = 1, 2, \cdots).
+\]
+若极限 \( \lim_{k \to \infty} \int_{E_k} |f(x)| \, \mathrm{d}x \) 存在，则 \( f \in L(E) \)，且有
+\[
+\int_E f(x) \, \mathrm{d}x = \lim_{k \to \infty} \int_{E_k} f(x) \, \mathrm{d}x.
+\]
+\end{theorem}
+\begin{remark}
+在上述定理中，特别当 \( E_k \) 是矩体 \( I_k \)（如 \( \mathbb{R} \) 中的 \( E_k = [0, k] \) \( (k = 1, 2, \cdots) \)，\( E = [0, +\infty) \)），且 \( f(x) \) 在每个 \( I_k \) 上都是 Riemann 可积函数，以及条件
+\[
+\lim_{k \to \infty} \int_{I_k} |f(x)| \, \mathrm{d}x < +\infty
+\]
+成立时，我们就可以通过计算 Riemann 积分 \( \int_{I_k} f(x) \, \mathrm{d}x \) 而得到 Lebesgue 积分
+\[
+\int_E f(x) \, \mathrm{d}x = \lim_{k \to \infty} \int_{I_k} f(x) \, \mathrm{d}x
+\]
+的值.
+
+还应指出的是，上述计算方法与 \( \{ I_k \} \) 的选择无关，只要保证它递增到并集 \( E \).
+\end{remark}
+\begin{proof}
+因为 \( \{ |f(x)| \chi_{E_k}(x) \} \) 是非负渐升列，且有
+\[
+\lim_{k \to \infty} |f(x)| \chi_{E_k}(x) = |f(x)|, \quad x \in E,
+\]
+所以由\hyperref[theorem:Beppo Levi非负渐升列积分定理]{Beppo Levi 非负渐升列积分定理}可知
+\begin{align*}
+\int_E |f(x)| \, \mathrm{d}x = \lim_{k \to \infty} \int_E |f(x)| \chi_{E_k}(x) \, \mathrm{d}x = \lim_{k \to \infty} \int_{E_k} |f(x)| \, \mathrm{d}x < +\infty,
+\end{align*}
+即 \( f \in L(E) \). 又由于在 \( E \) 上有 \( (k = 1, 2, \cdots) \)，
+\[
+\lim_{k \to \infty} f(x) \chi_{E_k}(x) = f(x), \quad |f(x) \chi_{E_k}(x)| \leqslant |f(x)|,
+\]
+故根据\hyperref[theorem:控制收敛定理]{控制收敛定理}可得
+\[
+\int_E{f(x)\,\mathrm{d}x}=\lim_{k\rightarrow \infty} \int_E{f(x)\chi _{E_k}\left( x \right) \,\mathrm{d}x}=\lim_{k\rightarrow \infty} \int_{E_k}{f(x)\,\mathrm{d}x}.
+\]
+\end{proof}
+
+\begin{example}
+设 \( f(x) = \frac{\sin x}{x} \)，则它在 \( [0, +\infty) \) 上的反常积分为
+\[
+\int_0^{+\infty} \frac{\sin x}{x} \, dx = \frac{\pi}{2}.
+\]
+但我们有
+\[
+\int_0^{+\infty} \left| \frac{\sin x}{x} \right| \, dx = +\infty.
+\]
+这说明 \( f \notin L([0, +\infty)) \).
+\end{example}
 \begin{proof}
 
 \end{proof}
 
+\begin{example}
+设 \( f(x) = x^{\alpha} \sin(1/x) \) \( (x \in [0, 1]) \)，
 
+(i) 若 \( \alpha \geq 0 \)，则 \( f \in R([0, 1]) \)；
 
+(ii) 若 \( \alpha \geq -2 \)，则 \( f(x) \) 在 \( [0, 1] \) 上的反常积分存在；
 
+(iii) 若 \( \alpha > -1 \)，则 \( f \in L([0, 1]) \).
+\end{example}
+\begin{proof}
 
+\end{proof}
 
+\begin{example}
+求 \( I = \int_0^1 \frac{\ln x}{1 - x} \, dx \).
+\end{example}
+\begin{solution}
+由于当 \( 0 < x < 1 \) 时，有 \( -\frac{\ln x}{1 - x} = \sum_{n = 0}^{\infty} -x^n \ln x \)，且
+\begin{align*}
+\int_0^1 x^n \ln x \, dx = -\int_0^{+\infty} t e^{-(n + 1)t} \, dt = -\frac{1}{(n + 1)^2} \int_0^{+\infty} t e^{-t} \, dt = -\frac{1}{(n + 1)^2}.
+\end{align*}
+故得
+\[
+\int_0^1 \left( -\frac{\ln x}{1 - x} \right) \, dx = \sum_{n = 0}^{\infty} \int_0^1 -x^n \ln x \, dx = \sum_{n = 0}^{\infty} \frac{1}{(n + 1)^2} = \frac{\pi^2}{6}.
+\]
+由此可知 \( I = -\frac{\pi^2}{6} \).
+\end{solution}
+\begin{remark}
+1. 设 \( f \in L(E) \)，且 \( E = \bigcup_{n = 1}^{\infty} E_n \)，\( E_i \cap E_j = \varnothing \) \( (i \neq j) \)，其中每个 \( E_n \) 均为可测集，则
+\[
+\int_E f(x) \, dx = \sum_{n = 1}^{\infty} \int_{E_n} f(x) \, dx.
+\]
+但此结论对反常积分不一定真. 例如：对收敛级数 \( \sum_{n = 1}^{\infty} \frac{(-1)^n}{n} \)（非绝对收敛）以及 \( \alpha \neq -\ln 2 \)，将 \( \sum_{n = 1}^{\infty} \frac{(-1)^n}{n} \) 的项作重新排列使新级数收敛到 \( \alpha \)，并令
+\[
+E_n = [n - 1, n), \quad f(x) = \frac{(-1)^n}{n} \quad (n - 1 \leq x < n, n \in \mathbb{N}),
+\]
+我们有
+\[
+-\ln 2 = \int_0^{+\infty} f(x) \, dx \neq \sum_{n = 1}^{\infty} \int_{E_n} f(x) \, dx = \alpha.
+\]
 
+这说明在一种积分理论中，如果反常积分存在的函数总是可积的，那么此种积分理论就不具备对区域的可数可加性. 因此，我们不能期望有这样一种积分理论，它同时是反常积分和 Lebesgue 积分的推广. 如果放弃对积分区域可数可加性的要求，那么这种积分理论是存在的.
 
+2. 对于定义在 \( [a, b] \) 上的函数 \( f(x) \)，\( g(x) \)，令 \( F(x) = \max_{[a, b]} \{ f(x), g(x) \} \). 若 \( f, g \in L([a, b]) \)，则 \( F \in L([a, b]) \)；若 \( f, g \in R([a, b]) \)，则 \( F \in R([a, b]) \). 但若 \( f(x), g(x) \) 在 \( [a, b] \) 上反常可积，则 \( F(x) \) 在 \( [a, b] \) 上不一定反常可积.
 
+3. 设 \( f \in R([a, b]) \)，\( g(x) \) 在 \( [a, b] \) 上有界，且有
+\[
+m(\{ x \in [a, b] : f(x) \neq g(x) \}) = 0,
+\]
+但 \( g(x) \) 在 \( [a, b] \) 上不一定 Riemann 可积，例如
+\[
+f(x) = 1, \quad g(x) = 
+\begin{cases} 
+1, & x \in \mathbb{Q}, \\
+0, & x \notin \mathbb{Q}
+\end{cases} \quad (x \in [0, 1]).
+\]
 
+4. 设 \( f \in L([0, 1]) \) 且有界，不一定存在 \( g \in R([0, 1]) \)，使得 \( g(x) = f(x) \)，\(\text{a.e.}\, x \in [0, 1] \). 例如，取 \( [0, 1] \) 中一个无处稠密的正测集 \( E \)，且令 \( f(x) = \chi_E(x) \) \( (0 \leq x \leq 1) \)，则
+\[
+\int_0^1 f(x) \, dx = m(E) > 0.
+\]
+此时，如果存在 \( g \in R([0, 1]) \)，且有 \( g(x) = f(x) \)，\(\text{a.e.}\, x \in [0, 1] \)，那么点集 \( \{ x \in [0, 1] : g(x) = 0 \} \) 在 \( [0, 1] \) 中稠密，而使 \( \int_0^1 g(x) \, dx = 0 \).
 
+5. \( [a, b] \) 中存在零测集 \( E \)，对于任意的 \( f \in R([a, b]) \)，\( E \) 中必有 \( f(x) \) 的连续点.
 
+证明 记 \( [a, b] \cap \mathbb{Q} = \{ r_n \} \)，且作点集
+\[
+E_m = \bigcup_{n = 1}^{\infty} \left( r_n - 2^{-(n + m)}, r_n + 2^{-(n + m)} \right) \quad (m \in \mathbb{N}), \quad E = \bigcap_{m = 1}^{\infty} E_m,
+\]
+则 \( m(E_m) \leq 2^{-(n + 1)} \)，且 \( m(E) = 0 \). 注意到 \( f(x) \) 的连续点集 \( \mathrm{cont}(f) \) 是稠密 \( G_{\delta} \) 集，且 \( m([a, b] \setminus \mathrm{cont}(f)) = 0 \). 根据 Baire 纲定理，可知 \( \mathrm{cont}(f) \) 是第二纲集.
 
-
-
+\( [a, b] \setminus E_m \) \( (m \in \mathbb{N}) \) 是无处稠密集，\( E \) 是 \( G_{\delta} \) 集，\( [a, b] \setminus E = \bigcup_{m = 1}^{\infty} ([a, b] \setminus E_m) \) 是第一纲集. 从而得到 \( \mathrm{cont}(f) \not\subset [a, b] \setminus E \)，即 \( \mathrm{cont}(f) \cap E \neq \varnothing \).
+\end{remark}
 
 
 
