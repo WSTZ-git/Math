@@ -12,6 +12,269 @@
 
 \begin{document}
 
+\section{微分学计算}
+
+\subsection{单变量微分学计算}
+
+\begin{example}
+\begin{enumerate}[(1)]
+\item 设 \( f(x) = \prod_{k=0}^{n} (x - k) \)。对整数 \( 0 \leqslant j \leqslant n \)，求导数 \( f'(j) \)。
+
+\item 设 \( g(x) = \prod_{k=0}^{n} (e^x - k) \)，求 \( g'(\ln j) \)，\( j = 0, 1, 2, \cdots, n \)。
+\end{enumerate}
+\end{example}
+\begin{solution}
+\begin{enumerate}[(1)]
+\item {\color{blue} 解法一:}注意到 \( f'(x) = \sum_{i=0}^{n} \prod_{\substack{k=0 \\ k \neq i}}^{n} (x - k) \)，故
+\begin{align*}
+f'(j) &= \sum_{i=0}^{n} \prod_{\substack{k=0 \\ k \neq i}}^{n} (j - k) = \prod_{\substack{k=0 \\ k \neq j}}^{n} (j - k) + \sum_{\substack{i=0 \\ i \neq j}}^{n} \prod_{\substack{k=0 \\ k \neq i}}^{n} (j - k) \\
+&= (-1)^{n - j} j! (n - j)! + \sum_{\substack{i=0 \\ i \neq j}}^{n} (j - j) \prod_{\substack{k=0 \\ k \neq i, j}}^{n} (j - k) \\
+&= (-1)^{n - j} j! (n - j)!
+\end{align*}
+
+{\color{blue} 解法二:}\begin{align*}
+f'(j) &= \lim_{x \to j} \frac{f(x) - f(j)}{x - j} = \lim_{x \to j} \frac{\prod\limits_{k=0}^{n} (x - k) - \prod\limits_{k=0}^{n} (j - k)}{x - j} \\
+&= \prod_{\substack{k=0 \\ k \neq j}}^{n} (j - k) + \lim_{x \to j} \frac{(j - j) \prod\limits_{\substack{k=0 \\ k \neq j}}^{n} (j - k)}{x - j} \\
+&= \prod_{\substack{k=0 \\ k \neq j}}^{n} (j - k) = (-1)^{n - j} j! (n - j)!
+\end{align*}
+
+\item 记 \( f(x) = \prod_{i=0}^{n} (x - k) \)，则 \( g(x) = f(e^x) \)。从而 \( g'(x) = e^x f'(e^x) \)，于是由 (1) 可知
+\begin{align*}
+g'(\ln j) = j f'(j) = j \cdot (-1)^{n - j} j! (n - j)!
+\end{align*}
+\end{enumerate}
+\end{solution}
+
+\begin{example}
+对 \( n \in \mathbb{N} \),
+\begin{enumerate}[(1)]
+\item 设 \( f(x) = \sin(ax) \)，\( a \in \mathbb{R} \)，求 \( f^{(n)} \)。
+
+\item 设 \( f(x) = e^x \cos x \)，求 \( f^{(n)} \)。
+
+\item 设 \( f(x) = \frac{\ln x}{x} \)，求 \( f^{(n)} \)。
+
+\item 设 \( f(x) = \frac{1}{1 - x^2} \)，求 \( f^{(n)} \)。
+
+\item 设 \( f(x) = \arctan x \)，\( x > 0 \)，求 \( f^{(n)} \)。
+\end{enumerate}
+\end{example}
+\begin{solution}
+\begin{enumerate}[(1)]
+\item 我们断言
+\begin{align}\label{100.116}
+f^{(n)}(x) = a^n \sin\left(ax + \frac{n}{2}\pi\right), \quad \forall n \in \mathbb{N}. 
+\end{align}
+当 \( n = 0 \) 时，上式显然成立。假设当 \( n = k \) 时上式成立，则
+\[
+f^{(k+1)}(x) = a^{k+1} \cos\left(ax + \frac{k}{2}\pi\right) = a^{k+1} \sin\left(ax + \frac{k+1}{2}\pi\right).
+\]
+故由数学归纳法可知 \eqref{100.116} 式成立。
+
+\item 由Euler公式可知，\(\cos x = \mathrm{Re}(e^{\mathrm{i}x})\)，从而\(f(x) = \mathrm{Re}[e^{(1+\mathrm{i})x}]\)。于是
+\[
+f^{(n)}(x) = \mathrm{Re}[(1+\mathrm{i})^n e^{(1+\mathrm{i})x}], \quad \forall n \in \mathbb{N}.
+\]
+注意到
+\[
+1+\mathrm{i} = \sqrt{2}\left(\frac{\sqrt{2}}{2} + \frac{\sqrt{2}}{2}\mathrm{i}\right) = \sqrt{2}e^{\frac{\pi}{4}\mathrm{i}},
+\]
+进而\((1+\mathrm{i})^n = 2^{\frac{n}{2}}e^{\frac{n\pi}{4}\mathrm{i}}\)。故
+\[
+f^{(n)}(x) = \mathrm{Re}\left[2^{\frac{n}{2}}e^{\frac{n\pi}{4}\mathrm{i} + (1+\mathrm{i})x}\right] = 2^{\frac{n}{2}}e^x \mathrm{Re}\left[e^{\left(x + \frac{n\pi}{4}\right)\mathrm{i}}\right] = 2^{\frac{n}{2}}e^x \cos\left(x + \frac{n\pi}{4}\right).
+\]
+
+\item 令 \( y = f(x) = \frac{\ln x}{x} \)，则 \( \ln x = xy \)。对 \( \forall n \in \mathbb{N} \)，两边同时对 \( x \) 求 \( n \) 阶导，得
+\[
+(\ln x)^{(n)} = (xy)^{(n)} \Longleftrightarrow \frac{(-1)^{n - 1}(n - 1)!}{x^n} = \sum_{k=0}^{n} x^{(k)} y^{(n - k)} = xy^{(n)} + n y^{(n - 1)}.
+\]
+从而对 \( \forall n \in \mathbb{N} \)，都有
+\begin{align*}
+&\quad \quad xy^{\left( n \right)}+ny^{\left( n-1 \right)}=\frac{\left( -1 \right) ^{n-1}\left( n-1 \right) !}{x^n}
+\\
+&\Longleftrightarrow \left( -1 \right) ^nx^{n+1}y^{\left( n \right)}-\left( -1 \right) ^{n-1}nx^ny^{\left( n-1 \right)}=-\left( n-1 \right) !
+\\
+&\Longleftrightarrow \frac{\left( -1 \right) ^nx^{n+1}y^{\left( n \right)}}{n!}-\frac{\left( -1 \right) ^{n-1}x^ny^{\left( n-1 \right)}}{\left( n-1 \right) !}=-\frac{1}{n}.
+\end{align*}
+于是
+\[
+\frac{(-1)^n x^{n + 1} y^{(n)}}{n!} - xy = \sum_{k=1}^{n} \left( -\frac{1}{k} \right).
+\]
+故
+\[
+f^{(n)}(x) = y^{(n)} = \frac{(-1)^n n!}{x^{n + 1}} \left( \sum_{k=1}^{n} \left( -\frac{1}{k} \right) - \ln x \right).
+\]
+
+\item 注意到$f\left( x \right) =\frac{1}{2}\left( \frac{1}{1-x}+\frac{1}{1+x} \right) ,$则$f^{\left( n \right)}\left( x \right) =\frac{n!}{2}\left( \frac{1}{\left( 1-x \right) ^{n+1}}+\frac{\left( -1 \right) ^n}{\left( 1+x \right) ^{n+1}} \right) .$
+
+\item 注意到$f' \left( x \right) =\frac{1}{1+x^2}=\frac{1}{2\mathrm{i}}\left( \frac{1}{x-\mathrm{i}}-\frac{1}{x+\mathrm{i}} \right) ,$故
+\begin{align*}
+f^{\left( n \right)}\left( x \right) &=\left( \frac{1}{1+x^2} \right) ^{\left( n-1 \right)}=\frac{\left( -1 \right) ^{n-1}\left( n-1 \right) !}{2\mathrm{i}}\left[ \frac{1}{\left( x-\mathrm{i} \right) ^n}-\frac{1}{\left( x+\mathrm{i} \right) ^{\mathrm{n}}} \right] =\frac{\left( -1 \right) ^{n-1}\left( n-1 \right) !}{2\mathrm{i}\left( x^2+1 \right) ^{\mathrm{n}}}\left[ \left( x+\mathrm{i} \right) ^{\mathrm{n}}-\left( x-\mathrm{i} \right) ^n \right] 
+\\
+&=\frac{\left( -1 \right) ^{n-1}\left( n-1 \right) !}{2\mathrm{i}\left( x^2+1 \right) ^{\mathrm{n}}}\left[ \left( \sqrt{1+x^2}e^{\mathrm{iarc}\tan \frac{1}{x}} \right) ^{\mathrm{n}}-\left( \sqrt{1+x^2}e^{-\mathrm{iarc}\tan \frac{1}{x}} \right) ^n \right] 
+\\
+&=\frac{\left( -1 \right) ^{n-1}\left( n-1 \right) !}{2\mathrm{i}\left( x^2+1 \right) ^{\frac{n}{2}}}\left( e^{\mathrm{i}n\mathrm{arc}\tan \frac{1}{x}}-e^{-\mathrm{i}n\mathrm{arc}\tan \frac{1}{x}} \right) =\frac{\left( -1 \right) ^{n-1}\left( n-1 \right) !}{2\mathrm{i}\left( x^2+1 \right) ^{\frac{n}{2}}}\cdot 2\mathrm{i}\cdot \sin \left( n\mathrm{arc}\tan \frac{1}{x} \right) 
+\\
+&=\frac{\left( -1 \right) ^{n-1}\left( n-1 \right) !}{\left( x^2+1 \right) ^{\frac{n}{2}}}\sin \left( n\mathrm{arc}\tan \frac{1}{x} \right) .
+\end{align*}
+\end{enumerate}
+\end{solution}
+
+\begin{example}
+设 \( f(x) = x^2 \ln(x + \sqrt{1 + x^2}) \)，计算 \( f^{(n)}(0) \)，\( n \in \mathbb{N} \)。
+\end{example}
+\begin{note}
+此类问题都是通过背Taylor公式之后通过拼凑来得到 \( f^{(n)}(0) \)，这是因为
+\[
+f(x) \sim \sum_{n=0}^{\infty} \frac{f^{(n)}(0)}{n!} x^n.
+\]
+\end{note}
+\begin{solution}
+注意到
+\begin{align*}
+\left[ \ln\left(x + \sqrt{1 + x^2}\right) \right]' &= \left[ \mathrm{arc}\sinh x \right]' = \frac{1}{\sqrt{1 + x^2}} = \left(1 + x^2\right)^{-\frac{1}{2}} \\
+&\xlongequal{\text{广义二项式定理}} \sum_{n=0}^{\infty} \mathrm{C}_{-\frac{1}{2}}^{n} x^{2n},
+\end{align*}
+于是
+\begin{align*}
+\ln\left(x + \sqrt{1 + x^2}\right) &= \sum_{n=0}^{\infty} \frac{\mathrm{C}_{-\frac{1}{2}}^{n}}{2n + 1} x^{2n + 1} = x + \sum_{n=0}^{\infty} \frac{\mathrm{C}_{-\frac{1}{2}}^{n}}{2n + 1} x^{2n + 1} \\
+&= x + \sum_{n=0}^{\infty} \frac{\left(-\frac{1}{2}\right)\left(-\frac{1}{2} - 1\right) \cdots \left(-\frac{1}{2} - n + 1\right)}{(2n + 1) \cdot n!} x^{2n + 1} \\
+&= x + \sum_{n=0}^{\infty} \frac{(-1)^n (2n - 1)!!}{(2n + 1) \cdot n!} x^{2n + 1}.
+\end{align*}
+从而 \( f(x) = x^3 + \sum_{n=0}^{\infty} \frac{(-1)^n (2n - 1)!!}{(2n + 1) \cdot n!} x^{2n + 3} \)，因此
+\[
+f^{(n)}(0) = \begin{cases}
+6, & n = 3 \\
+\frac{(-1)^m (2m - 1)!! (2m + 3)!}{m! \cdot 2^m (2m + 1)}, & n = 2m + 3, \, m = 1, 2, \cdots \\
+0, & \text{其他}
+\end{cases}
+\]
+\end{solution}
+
+\begin{proposition}
+\[
+\arcsin^2 x = \sum_{n=1}^{\infty} \frac{2^{2n - 1} ((n - 1)!)^2}{(2n)!} x^{2n}, \, x \in (-1, 1).
+\]
+\end{proposition}
+
+\begin{example}[生成级数或者建立递推法求解高阶导数值]
+对 \( n \in \mathbb{N}_0 \),
+\begin{enumerate}[(1)]
+\item 设 \( f(x) = \arcsin^2 x \)，求 \( f^{(n)}(0) \)。
+
+\item 设 \( f(x) = \arcsin x \cdot \arccos x \)，求 \( f^{(n)}(0) \)。
+
+\item 设 \( f(x) = (x + \sqrt{x^2 + 1})^m \)，\( m \in \mathbb{N} \)，求 \( f^{(n)}(0) \)。
+
+\item 设 \( f(x) = \arctan^2 x \)，求 \( f^{(n)}(0) \)。
+\end{enumerate}
+\end{example}
+\begin{note}
+此类问一般是先建立函数满足的微分方程，然后用乘积求导法则或者形式幂级数对比系数来得到导数的递推，从而完成了证明。
+\end{note}
+\begin{solution}
+\begin{enumerate}[(1)]
+\item {\color{blue}解法一:}注意到
+\[
+f'(x) = \frac{2\arcsin x}{\sqrt{1 - x^2}} \Longleftrightarrow \sqrt{1 - x^2} f' = 2\arcsin x,
+\]
+令 \( y = f(x) \)，则对上式两边同时求导得
+\[
+-\frac{x}{\sqrt{1 - x^2}} f' + \sqrt{1 - x^2} f'' = \frac{2}{\sqrt{1 - x^2}} \Longleftrightarrow -x y' + (1 - x^2) y'' = 2.
+\]
+再对上式两边同时对 \( x \) 求 \( n \ (n \geqslant 2) \) 阶导，得
+\[
+\left[ -x y' + (1 - x^2) y'' \right]^{(n)} = 2^{(n)}
+\]
+\[
+\Longleftrightarrow -\left[ n y^{(n)} + x y^{(n + 1)} \right] + \left[ \dbinom{n}{2} \cdot (-2) y^{(n)} + \dbinom{n}{1} (-2x) y^{(n + 1)} + (1 - x^2) y^{(n + 2)} \right] = 0
+\]
+将 \( x = 0 \) 代入上式得
+\begin{align}\label{100.117}
+f^{(n + 2)}(0) = n^2 f^{(n)}(0), \forall n \geqslant 2. 
+\end{align}
+显然上式对 \( n = 1 \) 也成立。又注意到 \( f''(0) = 2 \)，因此对 \( \forall n \in \mathbb{N}_1 \)，由\eqref{100.117} 式可得
+\[
+\frac{f^{(2n + 2)}(0)}{f^{(2n)}(0)} = 4n^2 \Rightarrow \frac{f^{(2n + 2)}(0)}{f^{(2)}(0)} = \prod_{i = 1}^n 4i^2 \Rightarrow f^{(2n + 2)}(0) = 2^{2n + 1} (n!)^2.
+\]
+显然上式对 \( n = 0 \) 也成立。故
+\[
+f^{(2n + 2)}(0) = 2^{2n + 1} (n!)^2, \forall n \in \mathbb{N}_0.
+\]
+又 \( f'''(0) = 0 \)，故由\eqref{100.117}式可得
+\[
+f^{(2n - 1)}(0) = (2n - 1)^2 f^{(2n - 3)}(0) = \cdots = \left[ (2n - 1)!! \right]^2 f^{(3)}(0) = 0, \forall n \in \mathbb{N}_1.
+\]
+
+{\color{blue}解法二:}注意到
+\[
+f'(x) = \frac{2\arcsin x}{\sqrt{1 - x^2}} \Longleftrightarrow \sqrt{1 - x^2} f' = 2\arcsin x,
+\]
+令 \( y = f(x) \)，则对上式两边同时求导得
+\begin{align}\label{100.118}
+-\frac{x}{\sqrt{1 - x^2}} f' + \sqrt{1 - x^2} f'' = \frac{2}{\sqrt{1 - x^2}} \Longleftrightarrow -x y' + (1 - x^2) y'' = 2.
+\end{align}
+因为 \( f \in C^{\infty}(\mathbb{R}) \)，所以由 Taylor 公式可知
+\[
+y = \sum_{n=0}^{\infty} a_n x^n, \quad y' = \sum_{n=1}^{\infty} n a_n x^{n - 1}, \quad y'' = \sum_{n=2}^{\infty} n(n - 1) a_n x^{n - 2},
+\]
+其中 \( a_n = \frac{f^{(n)}(0)}{n!}, n \in \mathbb{N}_0 \)。再将上式代入\eqref{100.118} 式可得
+\begin{align*}
+2 &= -\sum_{n=1}^{\infty} n a_n x^n + \sum_{n=2}^{\infty} n(n - 1) a_n x^{n - 2} - \sum_{n=2}^{\infty} n(n - 1) a_n x^n
+\\
+&= -\sum_{n=0}^{\infty} n a_n x^n + \sum_{n=0}^{\infty} (n + 2)(n + 1) a_{n + 2} x^n - \sum_{n=0}^{\infty} n(n - 1) a_n x^n
+\\
+&= \sum_{n=0}^{\infty} \left[ (n + 2)(n + 1) a_{n + 2} - n a_n - n(n - 1) a_n \right] x^n.
+\end{align*}
+比较上式两边系数，得对 \( \forall n \in \mathbb{N}_1 \)，都有
+\begin{align}
+&\quad \quad \left( n+2 \right) \left( n+1 \right) a_{n+2}-na_n-n\left( n-1 \right) a_n=0
+\nonumber
+\\
+&\Longleftrightarrow \left( n+2 \right) \left( n+1 \right) \cdot \frac{f^{\left( n+2 \right)}\left( 0 \right)}{\left( n+2 \right) !}-n\cdot \frac{f^{\left( n \right)}\left( 0 \right)}{n!}-n\left( n-1 \right) \cdot \frac{f^{\left( n \right)}\left( 0 \right)}{n!}=0
+\nonumber
+\\
+&\Longleftrightarrow f^{\left( n+2 \right)}\left( 0 \right) =n^2f^{\left( n \right)}\left( 0 \right) .\label{100.119}
+\end{align}
+又 \( f''(0) = 2 \)，因此对 \( \forall n \in \mathbb{N}_1 \)，由 \eqref{100.119}式可得
+\[
+\frac{f^{(2n + 2)}(0)}{f^{(2n)}(0)} = 4n^2 \Rightarrow \frac{f^{(2n + 2)}(0)}{f^{(2)}(0)} = \prod_{i = 1}^n 4i^2 \Rightarrow f^{(2n + 2)}(0) = 2^{2n + 1} (n!)^2.
+\]
+显然上式对 \( n = 0 \) 也成立。故
+\[
+f^{(2n + 2)}(0) = 2^{2n + 1} (n!)^2, \forall n \in \mathbb{N}_0.
+\]
+又 \( f'''(0) = 0 \)，故由\eqref{100.119}式可得
+\[
+f^{(2n - 1)}(0) = (2n - 1)^2 f^{(2n - 3)}(0) = \cdots = \left[ (2n - 1)!! \right]^2 f^{(3)}(0) = 0, \forall n \in \mathbb{N}_1.
+\]
+
+\item 
+
+\item 
+
+\item 
+\end{enumerate}
+\end{solution}
+
+\begin{example}
+设 \( f \) 在 \( a \) 处 \( n + 1 \) 阶连续可导的，证明：
+\[
+\lim_{x \to a} \frac{\mathrm{d}^n}{\mathrm{d}x^n} \left[ \frac{f(x) - f(a)}{x - a} \right] = \frac{f^{(n + 1)}(a)}{n + 1}.
+\]
+\end{example}
+\begin{proof}
+
+\end{proof}
+
+
+
+
+
+
+
+
+
 
 
 \end{document}
