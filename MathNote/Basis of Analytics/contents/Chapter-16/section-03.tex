@@ -12,6 +12,291 @@
 
 \begin{document}
 
+\section{级数计算}
+
+\subsection{裂项方法}
+
+\begin{example}
+计算$\sum_{n=1}^{\infty} \frac{1}{2^n (1 + \sqrt[2^n]{2})}.$
+\end{example}
+\begin{note}
+继续采用强行裂项的想法,猜出裂项之后的模样之后还原看看差什么.
+\end{note}
+\begin{proof}
+注意到
+\begin{align*}
+\frac{1}{2^{n-1}\left( 2^{\frac{1}{2^{n-1}}}-1 \right)}-\frac{1}{2^n\left( 2^{\frac{1}{2^n}}-1 \right)}&=\frac{2}{2^n\left( 2^{\frac{1}{2^{n-1}}}-1 \right)}-\frac{2^{\frac{1}{2^n}}+1}{2^n\left( 2^{\frac{1}{2^{n-1}}}-1 \right)}=-\frac{2^{\frac{1}{2^n}}-1}{2^n\left( 2^{\frac{1}{2^{n-1}}}-1 \right)}
+\\
+&=-\frac{2^{\frac{1}{2^n}}-1}{2^n\left( 2^{\frac{1}{2^n}}+1 \right) \left( 2^{\frac{1}{2^n}}-1 \right)}=-\frac{1}{2^n\left( 2^{\frac{1}{2^n}}+1 \right)},
+\end{align*}
+我们有
+\begin{align*}
+\sum_{n=1}^{\infty} \frac{1}{2^n \left(2^{\frac{1}{2^n}} + 1\right)} = \lim_{n \to \infty} \left( \frac{1}{2^n \left(2^{\frac{1}{2^n}} - 1\right)} \right) - 1 = \frac{1}{\ln 2} - 1.
+\end{align*}
+\end{proof}
+
+\begin{example}
+计算
+\begin{align*}
+\sum_{k=1}^{\infty} \frac{1}{k(k + 1)(k + 1)!}
+\end{align*}
+\end{example}
+\begin{note}
+想法的关键是强行裂项.
+\end{note}
+\begin{proof}
+\begin{align*}
+\sum_{k=1}^{\infty} \frac{1}{k(k + 1)(k + 1)!} &= \sum_{k=1}^{\infty} \left( \frac{1}{k} - \frac{1}{k + 1} \right) \frac{1}{(k + 1)!} = \sum_{k=1}^{\infty} \left( \frac{1}{k(k + 1)!} - \frac{1}{(k + 1)(k + 1)!} \right) \\
+&= \sum_{k=1}^{\infty} \left( \frac{1}{k(k + 1)!} - \frac{1}{(k + 1)(k + 2)!} \right) + \sum_{k=1}^{\infty} \left( \frac{1}{(k + 1)(k + 2)!} - \frac{1}{(k + 1)(k + 1)!} \right) \\
+&= \frac{1}{2} - \sum_{k=1}^{\infty} \frac{1}{(k + 2)!} \xlongequal{e\text{的Taylor展开}} \frac{1}{2} - \left( e - 1-1 - \frac{1}{2} \right) = 3 - e.
+\end{align*}
+\end{proof}
+
+\begin{example}
+计算级数
+\begin{align*}
+\sum_{n=1}^{\infty} (-1)^{n - 1} \frac{\ln n}{n}
+\end{align*}
+\end{example}
+\begin{note}
+此类问题化部分和之后估阶.
+\end{note}
+\begin{proof}
+注意到
+\begin{align*}
+\sum_{n=1}^{2m+1}{\left( -1 \right) ^{n-1}\frac{\ln n}{n}}=\sum_{n=1}^{2m}{\left( -1 \right) ^{n-1}\frac{\ln n}{n}}+\frac{\ln \left( 2m+1 \right)}{2m+1}.
+\end{align*}
+令$m\rightarrow \infty ,$得
+\begin{align*}
+\underset{m\rightarrow \infty}{\lim}\sum_{n=1}^{2m+1}{\left( -1 \right) ^{n-1}\frac{\ln n}{n}}=\underset{m\rightarrow \infty}{\lim}\sum_{n=1}^{2m}{\left( -1 \right) ^{n-1}\frac{\ln n}{n}}.
+\end{align*}
+于是由\hyperref[proposition:子列极限命题]{子列极限命题(b)}可得
+\begin{align*}
+&\sum_{n=1}^{\infty} (-1)^{n - 1} \frac{\ln n}{n} = \lim_{m \to \infty} \sum_{n=1}^{2m} (-1)^{n - 1} \frac{\ln n}{n} = \lim_{m \to \infty} \sum_{n=1}^{m} \left( \frac{\ln(2n - 1)}{2n - 1} - \frac{\ln(2n)}{2n} \right) \\
+&= \lim_{m \to \infty} \left( \sum_{n=1}^{2m} \frac{\ln n}{n} - \sum_{n=1}^{m} \frac{\ln(2n)}{2n} - \sum_{n=1}^{m} \frac{\ln(2n)}{2n} \right) = \lim_{m \to \infty} \left( \sum_{n=1}^{2m} \frac{\ln n}{n} - \sum_{n=1}^{m} \frac{\ln n}{n} - \sum_{n=1}^{m} \frac{\ln 2}{n} \right)
+\end{align*}
+利用\nrefexa{example:8.61846546}{(2)},我们知道
+\begin{align*}
+\sum_{n=1}^{m} \frac{\ln 2}{n} = \ln 2 \cdot \ln m + \ln 2 \cdot \gamma + o(1), m \to \infty
+\end{align*}
+由\hyperref[proposition:0阶欧拉麦克劳林公式(0阶E-M公式)]{0阶E-M公式}知道
+\begin{align*}
+\sum_{n=1}^{m} \frac{\ln n}{n} = \frac{\ln m}{2m} + \int_{1}^{m} \frac{\ln x}{x} \mathrm{d}x + \int_{1}^{m} \left( x - [x] - \frac{1}{2} \right) \left( \frac{\ln x}{x} \right)' \mathrm{d}x
+\end{align*}
+注意到$\int_{1}^{m} \frac{\ln x}{x} \mathrm{d}x = \frac{1}{2} \ln^2 m$以及
+\begin{align*}
+\left| \int_{1}^{m} \left( x - [x] - \frac{1}{2} \right) \left( \frac{\ln x}{x} \right)' \mathrm{d}x \right| = \left| \int_{1}^{m} \left( x - [x] - \frac{1}{2} \right) \frac{1 - \ln x}{x^2} \mathrm{d}x \right| \leqslant \frac{1}{2} \int_{1}^{\infty} \frac{|1 - \ln x|}{x^2} \mathrm{d}x < \infty
+\end{align*}
+于是我们有
+\begin{align*}
+\sum_{n=1}^{m} \frac{\ln n}{n} = \frac{1}{2} \ln^2 m + C + o(1), m \to \infty
+\end{align*}
+这里$C = \int_{1}^{\infty} \left( x - [x] - \frac{1}{2} \right) \left( \frac{\ln x}{x} \right)' \mathrm{d}x$. 现在结合上述渐近估计式就有
+\begin{align*}
+\sum_{n=1}^{\infty} (-1)^{n - 1} \frac{\ln n}{n} = \lim_{m \to \infty} \left[ \frac{1}{2} \ln^2 (2m) - \frac{1}{2} \ln^2 m - \ln 2 \cdot \ln m - \ln 2 \cdot \gamma + o(1) \right] = \frac{\ln^2 2}{2} - \ln 2 \cdot \gamma
+\end{align*}
+\end{proof}
+
+\begin{example}
+\begin{enumerate}
+\item 计算
+\begin{align*}
+\sum_{n=1}^{\infty} \frac{1 + \frac{1}{2} + \cdots + \frac{1}{n}}{(n + 1)(n + 2)}
+\end{align*}
+
+\item 计算
+\begin{align*}
+\sum_{n=1}^{\infty} \frac{1 + \frac{1}{2} + \cdots + \frac{1}{n}}{n(n + 1)}
+\end{align*}
+\end{enumerate}
+\end{example}
+\begin{note}
+证明的想法即强行裂项.
+\end{note}
+\begin{proof}
+\begin{enumerate}
+\item 记$H_n \triangleq 1 + \frac{1}{2} + \cdots + \frac{1}{n}$, 我们有
+\begin{align*}
+&\sum_{n=1}^{\infty} \frac{1 + \frac{1}{2} + \cdots + \frac{1}{n}}{(n + 1)(n + 2)} = \lim_{m \to \infty} \left( \sum_{n=1}^{m} \frac{H_n}{n + 1} - \sum_{n=1}^{m} \frac{H_n}{n + 2} \right) \\
+&= \lim_{m \to \infty} \left( \sum_{n=1}^{m} \frac{H_n}{n + 1} - \sum_{n=1}^{m} \frac{H_{n + 1}}{n + 2} \right) + \lim_{m \to \infty} \left( \sum_{n=1}^{m} \frac{H_{n + 1}}{n + 2} - \sum_{n=1}^{m} \frac{H_n}{n + 2} \right) \\
+&= \lim_{m \to \infty} \left( \frac{H_1}{2} - \frac{H_{m + 1}}{m + 2} \right) + \sum_{n=1}^{\infty} \frac{1}{(n + 1)(n + 2)} = \frac{1}{2} + \sum_{n=1}^{\infty} \left( \frac{1}{n + 1} - \frac{1}{n + 2} \right) = 1.
+\end{align*}
+
+\item 我们有
+\begin{align*}
+&\sum_{n=1}^{\infty} \frac{1 + \frac{1}{2} + \cdots + \frac{1}{n}}{n(n + 1)} = \sum_{n=1}^{\infty} \left( \frac{H_n}{n} - \frac{H_n}{n + 1} \right) \\
+&= \sum_{n=1}^{\infty} \left( \frac{H_n}{n} - \frac{H_{n + 1}}{n + 1} \right) + \sum_{n=1}^{\infty} \left( \frac{H_{n + 1}}{n + 1} - \frac{H_n}{n + 1} \right) \\
+&= H_1 + \sum_{n=1}^{\infty} \frac{1}{(n + 1)^2} = \frac{\pi^2}{6}.
+\end{align*}
+\end{enumerate}
+\end{proof}
+
+\begin{example}
+计算
+\begin{align*}
+\sum_{n=1}^{\infty} \arctan \frac{1}{2n^2}
+\end{align*}
+\end{example}
+\begin{note}
+证明的想法即利用合适范围内都成立的恒等式
+\begin{align*}
+\arctan x - \arctan y = \arctan \frac{x - y}{1 + xy}
+\end{align*}
+来裂项.
+\end{note}
+\begin{proof}
+我们有
+\begin{align*}
+\sum_{n=1}^{\infty} \arctan \frac{1}{2n^2} = \sum_{n=1}^{\infty} \left( \arctan \frac{n}{n + 1} - \arctan \frac{n - 1}{n} \right) = \lim_{n \to \infty} \arctan \frac{n}{n + 1} = \frac{\pi}{4}.
+\end{align*}
+\end{proof}
+
+
+
+\subsection{凑已知函数}
+
+\begin{example}
+对 \(|x| < 1\), 计算
+\begin{align*}
+\sum_{n=0}^{\infty} \frac{4n^2 + 4n + 3}{2n + 1} x^{2n}
+\end{align*}
+\end{example}
+\begin{proof}
+我们有
+\begin{align*}
+\sum_{n=0}^{\infty} \frac{4n^2 + 4n + 3}{2n + 1} x^{2n} &= \sum_{n=0}^{\infty} (2n + 1) x^{2n} + 2 \sum_{n=0}^{\infty} \frac{x^{2n}}{2n + 1} \\
+&= \left( \sum_{n=0}^{\infty} x^{2n + 1} \right)' + \frac{2}{x} \int_{0}^{x} \sum_{n=0}^{\infty} y^{2n} dy \\
+&= \left( \frac{x}{1 - x^2} \right)' + \frac{2}{x} \int_{0}^{x} \frac{1}{1 - y^2} dy \\
+&=\begin{cases}
+\frac{1+x^2}{(1-x^2)^2}+\frac{1}{x}\ln \frac{1+x}{1-x}&,x\ne 0\\
+3&,x=0\\
+\end{cases}.
+\end{align*}
+\end{proof}
+
+\begin{example}
+计算
+\[
+1 - \frac{1}{6} - \sum_{k=2}^{\infty} \frac{(3k - 4)(3k - 7) \cdots 5 \cdot 2}{6^k k!}.
+\]
+\end{example}
+\begin{proof}
+我们有
+\begin{align*}
+&1 - \frac{1}{6} - \sum_{k=2}^{\infty} \frac{(3k - 4)(3k - 7) \cdots 5 \cdot 2}{6^k k!}= 1 - \frac{1}{6} - \sum_{k=2}^{\infty} \frac{3^{k - 1} \prod\limits_{j=2}^{k} \left(j - \frac{4}{3}\right)}{6^k k!}\\
+&= 1 - \sum_{k=1}^{\infty} \frac{(-3)^{k - 1} 3 \prod\limits_{j=1}^{k} \left(\frac{1}{3} - j + 1\right)}{6^k k!}= 1 + \sum_{k=1}^{\infty} \binom{\frac{1}{3}}{k} \left(-\frac{1}{2}\right)^k = \left(1 - \frac{1}{2}\right)^{\frac{1}{3}} = 2^{-\frac{1}{3}}.
+\end{align*}
+\end{proof}
+
+\begin{example}
+对 \(|x| < 1\)，计算
+\[
+\sum_{k=1}^{\infty} \frac{1}{2^k} \tan \frac{x}{2^k}.
+\]
+\end{example}
+\begin{proof}
+相似\refexa{example:例题3.82}的计算，我们有恒等式
+\[
+\frac{\sin x}{2^n \sin \frac{x}{2^n}} = \prod_{k=1}^{n} \cos \frac{x}{2^k}.
+\]
+于是
+\[
+\sum_{k=1}^{n} \ln \cos \frac{x}{2^k}=\ln \sin x - n \ln 2 - \ln \sin \frac{x}{2^n}.
+\]
+两边求导有
+\[
+- \sum_{k=1}^{n} \frac{1}{2^k} \tan \frac{x}{2^k} = \frac{\cos x}{\sin x} - \frac{\cos \frac{x}{2^n}}{2^n \sin \frac{x}{2^n}}.
+\]
+于是就有
+\[
+\sum_{k=1}^{\infty} \frac{1}{2^k} \tan \frac{x}{2^k} = - \frac{\cos x}{\sin x} + \lim_{n \to \infty} \frac{\cos \frac{x}{2^n}}{2^n \sin \frac{x}{2^n}} = 
+\begin{cases} 
+- \frac{\cos x}{\sin x} + \frac{1}{x}, & 0 < |x| < 1 \\
+0, & x = 0 
+\end{cases}.
+\]
+\end{proof}
+
+
+
+\subsection{生成函数和幂级数计算方法}
+
+\begin{example}
+计算
+\[
+\sum_{n=1}^{\infty} \left(1 + \frac{1}{2} + \cdots + \frac{1}{n}\right) x^n.
+\]
+\end{example}
+\begin{note}
+使用 \hyperref[definition:Cauchy积]{Cauchy积}计算幂级数有一个特点，即系数往往出现求和结构.
+\end{note}
+\begin{proof}
+考虑 \(a_n = 1, n \in \mathbb{N}_0\)，\(b_n = \begin{cases} \frac{1}{n}, & n \in \mathbb{N} \\ 0 & n = 0 \end{cases}\). 注意到
+\[
+\sum_{n=0}^{\infty} a_n x^n = \frac{1}{1 - x}, \sum_{n=0}^{\infty} b_n x^n = -\ln (1 - x),
+\]
+于是
+\[
+\sum_{n=1}^{\infty} \left(1 + \frac{1}{2} + \cdots + \frac{1}{n}\right) x^n = -\frac{\ln (1 - x)}{1 - x}, |x| < 1.
+\]
+收敛域可以直接注意到
+\[
+\lim_{n \to \infty} \frac{1 + \frac{1}{2} + \cdots + \frac{1}{n} + \frac{1}{n + 1}}{1 + \frac{1}{2} + \cdots + \frac{1}{n}} = 1,
+\]
+以及
+\[
+\lim_{n \to \infty} \left(1 + \frac{1}{2} + \cdots + \frac{1}{n}\right) 1^n = \infty, \lim_{n \to \infty} \left(1 + \frac{1}{2} + \cdots + \frac{1}{n}\right) (-1)^n = \infty
+\]
+来得到.
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

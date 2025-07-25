@@ -12,6 +12,412 @@
 
 \begin{document}
 
+\section{具体级数敛散性判断}
+
+\subsection{估阶法}
+
+\begin{example}
+判断下述级数收敛性.
+\begin{enumerate}
+\item \( \sum_{n = 2}^{\infty} \frac{\ln \left( e^n + n^2 \right)}{\sqrt[4]{n^8 + n^2 + 1} \cdot \ln^2 (n + 1)} \);
+
+\item \( \sum_{n = 2}^{\infty} \frac{\sum\limits_{k = 1}^{n} \ln^2 k}{n^p} \);
+
+\item \( \sum_{n = 1}^{\infty} \frac{1}{n} \int_{0}^{1} \frac{\mathrm{d}t}{\left( 1 + t^4 \right)^n} \).
+\end{enumerate}
+\end{example}
+\begin{proof}
+\begin{enumerate}
+\item 注意到
+\begin{align*}
+\frac{\ln \left( e^n + n^2 \right)}{\sqrt[4]{n^8 + n^2 + 1} \cdot \ln^2 (n + 1)} = \frac{\ln \left( e^n \right) + \ln \left( 1 + \frac{n^2}{e^n} \right)}{\sqrt[4]{n^8 + n^2 + 1} \cdot \ln^2 (n + 1)} \sim \frac{n}{n^2 \cdot \ln^2 n} = \frac{1}{n \ln^2 n}, n \to \infty.
+\end{align*}
+由\hyperref[theorem:积分判别法]{积分判别法}，我们有
+\[
+\sum \frac{1}{n \ln^2 n} \sim \int_{2}^{\infty} \frac{1}{x \ln^2 x} \mathrm{d}x = \int_{\ln 2}^{\infty} \frac{1}{y^2} \mathrm{d}y < \infty,
+\]
+故原级数收敛。
+
+\item 注意到运用Stolz定理，我们有
+\begin{align*}
+\lim_{n \to \infty} \frac{1}{n \ln^2 n} \sum_{k = 1}^{n} \ln^2 k = \lim_{n \to \infty} \frac{\ln^2 n}{n \ln^2 n - (n - 1) \ln^2 (n - 1)} \xlongequal{\text{拉中保持阶不变}}\lim_{n \to \infty} \frac{\ln^2 n}{\ln^2 n + 2 \ln n} = 1.
+\end{align*}
+于是
+\[
+\sum_{n = 2}^{\infty} \frac{\sum\limits_{k = 1}^{n} \ln^2 k}{n^p} \sim \sum_{n = 2}^{\infty} \frac{n \ln^2 n}{n^p} = \sum_{n = 2}^{\infty} \frac{\ln^2 n}{n^{p - 1}}.
+\]
+当$p>2$时,
+取$\delta>0,$使得$p-1-\delta>1$.又$\underset{n\rightarrow \infty}{\lim}\frac{\ln ^2n}{n^{\delta}}=0,$故
+\begin{align*}
+\sum_{n=2}^{\infty}{\frac{\ln ^2n}{n^{p-1}}}=\sum_{n=2}^{\infty}{\frac{1}{n^{p-1-\delta}}}\cdot \frac{\ln ^2n}{n^{\delta}}<\sum_{n=2}^{\infty}{\frac{C}{n^{p-1-\delta}}}<+\infty.
+\end{align*}
+当$p\leqslant2$时,有
+\begin{align*}
+\sum_{n=2}^{\infty}{\frac{\ln ^2n}{n^{p-1}}}>\sum_{n=2}^{\infty}{\frac{\ln ^22}{n^{p-1}}}=+\infty.
+\end{align*}
+因此原级数收敛等价于 \( p > 2 \)。
+
+\item 由Laplace方法，我们有
+\[
+\int_{0}^{1} \frac{\mathrm{d}t}{\left( 1 + t^4 \right)^n} = \int_{0}^{1} e^{-n \ln \left( 1 + t^4 \right)} \mathrm{d}t \sim \int_{0}^{\infty} e^{-n t^4} \mathrm{d}t = \frac{1}{\sqrt[4]{n}} \int_{0}^{\infty} e^{-x^4} \mathrm{d}x, n \to \infty.
+\]
+现在
+\[
+\frac{1}{n} \int_{0}^{1} \frac{\mathrm{d}t}{\left( 1 + t^4 \right)^n} \sim \frac{C}{n^{\frac{5}{4}}}, n \to \infty,
+\]
+故原级数收敛。
+\end{enumerate}
+\end{proof}
+
+\begin{example}
+设 \( a_n = \int_{0}^{\frac{\pi}{2}} t \left| \frac{\sin^3 (nt)}{\sin^3 t} \right| \mathrm{d}t, n \in \mathbb{N} \)，判断 \( \sum_{n = 1}^{\infty} \frac{1}{a_n} \) 收敛性。
+\end{example}
+\begin{note}
+如果需要$a_n$的一个精确的上界，那么(就是证法一)我们可以先待定分段点$\theta$，利用不等式（这个不等式可用数学归纳法证明）
+\[
+|\sin(nt)| \leqslant n|\sin t|, \forall n \in \mathbb{N}, t \in \mathbb{R},
+\]
+再结合Jordan不等式可得
+\begin{align*}
+\int_0^{\frac{\pi}{2}} t \left| \frac{\sin^3(nt)}{\sin^3 t} \right| \mathrm{d}t &= \int_0^{\theta} t \left| \frac{\sin^3(nt)}{\sin^3 t} \right| \mathrm{d}t + \int_{\theta}^{\frac{\pi}{2}} t \left| \frac{\sin^3(nt)}{\sin^3 t} \right| \mathrm{d}t \\
+&\leqslant \int_0^{\theta} \frac{t n^3 \sin^3 t}{\sin^3 t} \mathrm{d}t + \int_{\theta}^{\frac{\pi}{2}} \frac{t}{\left( \frac{2}{\pi} t \right)^3} \mathrm{d}t \\
+&= \frac{\theta^2 n^3}{2} + \frac{\pi^3}{8 \theta} - \frac{\pi^2}{4} = g(\theta), \forall n \in \mathbb{N}.
+\end{align*}
+此时再求出$g(\theta)$的最小值点，就能确定$\theta$的取值，进而得到一个较为精确的上界。求导易知$g(\theta) \geqslant g\left( \frac{\pi}{2n} \right) = \frac{3\pi^2}{8} n$，即
+\[
+\theta = \frac{\pi}{2n}, a_n \leqslant \frac{3\pi^2}{8} n, \forall n \in \mathbb{N}.
+\]
+\end{note}
+\begin{proof}
+{\color{blue}证法一:}
+利用不等式
+\[
+|\sin (nt)| \leqslant n |\sin t|, \forall n \in \mathbb{N}, t \in \mathbb{R},
+\]
+我们有
+\[
+\int_{0}^{\frac{\pi}{2n}} t \left| \frac{\sin^3 (nt)}{\sin^3 t} \right| \mathrm{d}t \leqslant \int_{0}^{\frac{\pi}{2n}} \frac{t n^3 \sin^3 t}{\sin^3 t} \mathrm{d}t = \frac{n^3}{2} \cdot \frac{\pi^2}{4n^2} = \frac{\pi^2}{8} n.
+\]
+利用不等式 \( \sin t \geqslant \frac{2}{\pi} t, \forall t \in \left[ 0, \frac{\pi}{2} \right] \)，我们有
+\[
+\int_{\frac{\pi}{2n}}^{\frac{\pi}{2}} t \left| \frac{\sin^3 (nt)}{\sin^3 t} \right| \mathrm{d}t \leqslant \int_{\frac{\pi}{2n}}^{\frac{\pi}{2}} \frac{t}{\left( \frac{2}{\pi} t \right)^3} \mathrm{d}t \leqslant \frac{\pi^3}{8} \int_{\frac{\pi}{2n}}^{\infty} \frac{1}{t^2} \mathrm{d}t = \frac{\pi^3}{8} \cdot \frac{2n}{\pi} = \frac{\pi^2}{4} n, \forall n \in \mathbb{N}.
+\]
+现在
+\[
+\int_{0}^{\frac{\pi}{2}} t \left| \frac{\sin^3 (nt)}{\sin^3 t} \right| \mathrm{d}t \leqslant \frac{\pi^2}{8} n + \frac{\pi^2}{4} n = \frac{3\pi^2}{8} n, \forall n \in \mathbb{N},
+\]
+因此
+\[
+\sum_{n = 1}^{\infty} \frac{1}{a_n} \geqslant \frac{8}{3\pi^2} \sum_{n = 1}^{\infty} \frac{1}{n} = +\infty.
+\]
+
+{\color{blue}证法二:}
+注意到$\lim_{x\rightarrow 0}\frac{\sin ^3x}{x^3}=1$，故存在$c>0$，使得
+\[
+|\sin^3 x| \geqslant c x^3, \, x \in \left[ 0, \frac{\pi}{2} \right].
+\]
+从而
+\begin{align*}
+a_n \leqslant \frac{1}{c} \int_0^{\frac{\pi}{2}} \frac{|\sin^3 (nt)|}{t^2} \mathrm{d}t = \frac{n}{c} \int_0^{\frac{n\pi}{2}} \frac{|\sin^3 y|}{y^2} \mathrm{d}y \leqslant \frac{n}{c} \int_0^{\frac{n\pi}{2}} \frac{1}{y^2} \mathrm{d}y \leqslant Kn, \, \forall n \in \mathbb{N}.
+\end{align*}
+其中$K$为某个常数。于是
+\[
+\sum_{n=1}^{\infty} \frac{1}{a_n} \geqslant \sum_{n=1}^{\infty} \frac{1}{Kn} = +\infty.
+\]
+\end{proof}
+
+\begin{example}
+对 \( x > 0 \)，判断级数 \( \sum_{n = 1}^{\infty} \left[ (2 - x) \left( 2 - x^{\frac{1}{2}} \right) \cdots \left( 2 - x^{\frac{1}{n}} \right) \right] \) 收敛性。
+\end{example}
+\begin{proof}
+当 \( x = 2^m, m \in \mathbb{N} \)，我们知道级数末项在 \( n \) 充分大时恒为 0，因此原本的级数收敛。下设 \( x \neq 2^m, \forall m \in \mathbb{N} \)。此时由
+\begin{align*}
+\lim_{n \to \infty} n \left( \frac{(2 - x) \left( 2 - x^{\frac{1}{2}} \right) \cdots \left( 2 - x^{\frac{1}{n}} \right)}{(2 - x) \left( 2 - x^{\frac{1}{2}} \right) \cdots \left( 2 - x^{\frac{1}{n + 1}} \right)} - 1 \right) = \lim_{n \to \infty} n \left( \frac{1}{2 - x^{\frac{1}{n + 1}}} - 1 \right)= \lim_{n \to \infty} \frac{n \left( x^{\frac{1}{n + 1}} - 1 \right)}{2 - x^{\frac{1}{n + 1}}} = \lim_{n \to \infty} n \frac{\ln x}{n + 1} = \ln x,
+\end{align*}
+以及\hyperref[theorem:拉比判别法]{拉比判别法}，我们就有 \( x > e \) 时级数收敛，\( x < e \) 时级数发散。当 \( x = e \) 时，计算Taylor展开式得
+\[
+\ln \frac{1}{2 - e^{\frac{1}{n + 1}}} = \frac{1}{n} + \frac{1}{12 n^4} + o \left( \frac{1}{n^4} \right), n \to \infty,
+\]
+然后
+\[
+\lim_{n \to \infty} \ln n \left[ n \ln \frac{1}{2 - e^{\frac{1}{n + 1}}} - 1 \right] = 0.
+\]
+运用\hyperref[theorem:较为广泛的判别法]{较为广泛的判别法(极限版2)}，我们知道原级数发散。
+\end{proof}
+
+\begin{example}
+判断级数 $\sum_{n=1}^{\infty} x^{\sin 1 + \sin \frac{1}{2} + \cdots + \sin \frac{1}{n}}, x \in (0,1)$ 收敛性.
+\end{example}
+\begin{proof}
+注意到
+\begin{align*}
+&\lim_{n \to \infty} n \left( \frac{x^{\sin 1 + \sin \frac{1}{2} + \cdots + \sin \frac{1}{n}}}{x^{\sin 1 + \sin \frac{1}{2} + \cdots + \sin \frac{1}{n+1}}} - 1 \right) = \lim_{n \to \infty} n \left( \frac{1}{x^{\sin \frac{1}{n+1}}} - 1 \right) \\
+&= \lim_{n \to \infty} n \left( e^{-\sin \frac{1}{n+1} \cdot \ln x} - 1 \right) = -\ln x \lim_{n \to \infty} n \sin \frac{1}{n+1} = -\ln x.
+\end{align*}
+由\hyperref[theorem:拉比判别法]{拉比判别法}, 我们有 $0 < x < \frac{1}{e}$ 时原级数收敛, $\frac{1}{e} < x < 1$ 时原级数发散. 当 $x = \frac{1}{e}$, 由\hyperref[theorem:较为广泛的判别法]{较为广泛的判别法(极限版2)}和
+\begin{align*}
+&\lim_{n \to \infty} \ln n \left( n \ln \frac{x^{\sin 1 + \sin \frac{1}{2} + \cdots + \sin \frac{1}{n}}}{x^{\sin 1 + \sin \frac{1}{2} + \cdots + \sin \frac{1}{n+1}}} - 1 \right) = \lim_{n \to \infty} \ln n \left( n \ln \frac{1}{x^{\sin \frac{1}{n+1}}} - 1 \right) \\
+&= \lim_{n \to \infty} \ln n \left( n \ln e^{-\sin \frac{1}{n+1} \ln x} - 1 \right) = \lim_{n \to \infty} \ln n \left( n \left[ e^{-\sin \frac{1}{n+1} \ln x} - 1 + O \left( \left( e^{-\sin \frac{1}{n+1} \ln x} - 1 \right)^2 \right) \right] - 1 \right) \\
+&= \lim_{n \to \infty} \ln n \left( n \left[ -\sin \frac{1}{n+1} \ln x + O \left( \left( -\sin \frac{1}{n+1} \ln x \right)^2 \right) + O \left( \frac{1}{n^2} \right) \right] - 1 \right) \\
+&= \lim_{n \to \infty} \ln n \left( \left[ n \sin \frac{1}{n+1} + O \left( \frac{1}{n} \right) \right] - 1 \right) = \lim_{n \to \infty} \left[ \ln n \cdot O \left( \frac{1}{n} \right) \right] = 0,
+\end{align*}
+我们有原级数在 $x = \frac{1}{e}$ 发散.
+\end{proof}
+
+
+
+\subsection{带对数换底法}
+
+\begin{example}
+判断下列级数收敛性.
+\begin{enumerate}
+\item $\sum_{n=2}^{\infty} \frac{1}{r^{\ln n}}\ (r > 0)$;
+
+\item $\sum_{n=2}^{\infty} \frac{1}{\ln^{\ln n} n}$;
+
+\item $\sum_{n=3}^{\infty} \frac{1}{(\ln \ln n)^{\ln n}}$;
+
+\item $\sum_{n=3}^{\infty} \frac{1}{(\ln n)^{\ln \ln n}}$;
+
+\item $\sum_{n=2}^{\infty} \frac{1}{n^{1 + \frac{1}{\sqrt{\ln n}}}}$;
+
+\item $\sum_{n=3}^{\infty} \frac{1}{n^{1 + \frac{1}{\ln \ln n}} \ln n}$
+\end{enumerate}
+\end{example}
+\begin{proof}
+\begin{enumerate}
+\item 注意到
+\[
+\sum_{n=2}^{\infty} \frac{1}{r^{\ln n}} = \sum_{n=2}^{\infty} \frac{1}{e^{\ln n \cdot \ln r}} = \sum_{n=2}^{\infty} \frac{1}{n^{\ln r}},
+\]
+我们有原级数收敛等价于 $r > e$.
+
+\item 注意到
+\[
+\sum_{n=100}^{\infty} \frac{1}{\ln^{\ln n} n} = \sum_{n=100}^{\infty} \frac{1}{e^{\ln n \cdot \ln \ln n}} = \sum_{n=100}^{\infty} \frac{1}{n^{\ln \ln n}} \leqslant \sum_{n=100}^{\infty} \frac{1}{n^{\ln \ln 100}} < \infty,
+\]
+我们有原级数收敛.
+
+\item 注意到
+\[
+\sum_{n=[e^{e^e}] + 1}^{\infty} \frac{1}{(\ln \ln n)^{\ln n}} = \sum_{n=[e^{e^e}] + 1}^{\infty} \frac{1}{e^{\ln n \cdot \ln \ln \ln n}} \leqslant \sum_{n=[e^{e^e}] + 1}^{\infty} \frac{1}{e^{\ln n \cdot \ln \ln \ln (e^{e^e} + 1)}} = \sum_{n=[e^{e^e}] + 1}^{\infty} \frac{1}{n^{\ln \ln \ln (e^{e^e} + 1)}} < \infty,
+\]
+我们有原级数收敛.
+
+\item 由\hyperref[theorem:积分判别法]{积分判别法}, 我们有
+\[
+\sum_{n=3}^{\infty} \frac{1}{(\ln n)^{\ln \ln n}} = \sum_{n=3}^{\infty} \frac{1}{e^{\ln^2 \ln n}} \sim \int_{3}^{\infty} \frac{1}{e^{\ln^2 \ln x}} \mathrm{d}x \stackrel{x = e^y}{=} \int_{\ln 3}^{\infty} e^{y - \ln^2 y} \mathrm{d}y = \infty,
+\]
+故原级数发散.
+
+\item 首先
+\[
+\sum_{n=2}^{\infty} \frac{1}{n^{1 + \frac{1}{\sqrt{\ln n}}}} = \sum_{n=2}^{\infty} \frac{1}{n e^{\sqrt{\ln n}}},
+\]
+于是我们结合
+\[
+\sum_{n=2}^{\infty} \frac{1}{n e^{\sqrt{\ln n}}} \leqslant \sum_{n=2}^{\infty} \int_{n - 1}^{n} \frac{1}{x e^{\sqrt{\ln x}}} \mathrm{d}x = \int_{1}^{\infty} \frac{1}{x e^{\sqrt{\ln x}}} \mathrm{d}x = \int_{0}^{\infty} \frac{1}{e^{\sqrt{t}}} \mathrm{d}t < \infty
+\]
+知原级数收敛.
+
+\item 当 $n$ 充分大有
+\[
+\frac{1}{n^{1 + \frac{1}{\ln \ln n}} \ln n} = \frac{1}{e^{\left(1 + \frac{1}{\ln \ln n}\right) \ln n} \ln n} = \frac{1}{n \ln n e^{\frac{\ln n}{\ln \ln n}}} \leqslant \frac{1}{n \ln n e^{\frac{(\ln \ln n)^2}{\ln \ln n}}} = \frac{1}{n \ln n e^{\ln \ln n}} = \frac{1}{n \ln^2 n}.
+\]
+由\hyperref[theorem:积分判别法]{积分判别法}知
+\[
+\sum \frac{1}{n \ln^2 n} \sim \int_{2}^{\infty} \frac{1}{x \ln^2 x} \mathrm{d}x = \int_{\ln 2}^{\infty} \frac{1}{y^2} \mathrm{d}y < \infty,
+\]
+因此 $\sum_{n=3}^{\infty} \frac{1}{n^{1 + \frac{1}{\ln \ln n}} \ln n}$ 收敛.
+\end{enumerate}
+\end{proof}
+
+
+\subsection{Taylor公式法}
+
+\begin{example}
+判断 $\sum_{n=1}^{\infty} \frac{(-1)^n}{(-1)^{n - 1} + \sqrt[3]{n}}$ 收敛性.
+\end{example}
+\begin{note}
+此类问题可采用 Taylor 公式的 peano 余项方法,主要要展开到余项的级数绝对收敛.注意积累绝对 $\pm$ 绝对 $=$ 绝对,绝对 $\pm$ 条件 $=$ 条件的结论.
+\end{note}
+\begin{proof}
+注意到
+\[
+\sum_{n=1}^{\infty} \frac{(-1)^n}{(-1)^{n - 1} + \sqrt[3]{n}} = \sum_{n=1}^{\infty} \frac{\frac{(-1)^n}{\sqrt[3]{n}}}{1 - \frac{(-1)^n}{\sqrt[3]{n}}} = \sum_{n=1}^{\infty} \left( \frac{(-1)^n}{\sqrt[3]{n}} + \frac{1}{n^{\frac{2}{3}}} + \frac{(-1)^n}{n} + O \left( \frac{1}{n^{\frac{4}{3}}} \right) \right).
+\]
+于是由 $\sum_{n=1}^{\infty} \left( \frac{(-1)^n}{\sqrt[3]{n}} + \frac{(-1)^n}{n} + O \left( \frac{1}{n^{\frac{4}{3}}} \right) \right)$ 收敛, $\sum_{n=1}^{\infty} \frac{1}{n^{\frac{2}{3}}}$ 发散知原级数发散.
+\end{proof}
+
+
+
+\subsection{分组判别法}
+
+\begin{example}
+设 $a_n > 0$, $\sum_{n=1}^{\infty} a_n$ 收敛, 证明级数 $\sum_{n=1}^{\infty} a_n^{\frac{n}{n + 1}}$ 收敛.
+\end{example}
+\begin{note}
+待定常数$c$,记
+\[
+M\triangleq \left\{ n\in \mathbb{N} :a_n\leqslant ca_{n}^{\frac{n}{n+1}} \right\} ,N\triangleq \left\{ n\in \mathbb{N} :a_n>ca_{n}^{\frac{n}{n+1}} \right\} .
+\]
+则对$\forall n\in \mathbb{N}$,有
+\begin{align*}
+a_n>ca_{n}^{\frac{n}{n+1}}\Rightarrow \frac{1}{c}>a_{n}^{\frac{1}{n+1}} \Rightarrow a_n<\left( \frac{1}{c} \right) ^{n+1}.
+\end{align*}
+现在我们想要利用几何级数将原级数进行分组,故只需任取$c>1$即可,不妨取$c=2$,就有下述证明.
+\end{note}
+\begin{proof}
+记
+\[
+M \triangleq \left\{ n \in \mathbb{N} : a_n \leqslant \frac{1}{2} a_n^{\frac{n}{n + 1}} \right\}, N \triangleq \left\{ n \in \mathbb{N} : a_n > \frac{1}{2} a_n^{\frac{n}{n + 1}} \right\}.
+\]
+现在
+\[
+a_n^{\frac{1}{n + 1}} \leqslant \frac{1}{2} \Rightarrow a_n \leqslant \left( \frac{1}{2} \right)^{n + 1} \Rightarrow a_n^{\frac{n}{n + 1}} \leqslant \left( \frac{1}{2} \right)^n, \forall n \in M,
+\]
+我们有
+\[
+\sum_{n=1}^{\infty} a_n^{\frac{n}{n + 1}} = \sum_{n \in M} a_n^{\frac{n}{n + 1}} + \sum_{n \in N} a_n^{\frac{n}{n + 1}} \leqslant \sum_{n \in M} \left( \frac{1}{2} \right)^n + 2 \sum_{n \in N} a_n < \infty,
+\]
+这就完成了证明.
+\end{proof}
+
+\begin{example}
+设 $a_n > 0$, $\sum_{n=1}^{\infty} a_n$ 收敛, 证明级数 $\sum_{n=1}^{\infty} \frac{a_n^{\frac{1}{p}}}{n^s}, s > 1 - \frac{1}{p}, p > 1$ 收敛.
+\end{example}
+\begin{remark}
+本题也可用分组判别法进行证明.
+\end{remark}
+\begin{proof}
+利用\hyperref[theorem:Young不等式]{Young不等式}, 我们有
+\[
+\sum_{n=1}^{\infty} \frac{a_n^{\frac{1}{p}}}{n^s} \leqslant \sum_{n=1}^{\infty} \left( \frac{a_n}{p} + \frac{1}{q n^{s q}} \right) < \infty, s q = \frac{s}{1 - \frac{1}{p}} > 1,
+\]
+这就完成了证明.
+\end{proof}
+
+
+
+\subsection{杂题}
+
+\begin{example}
+证明: $\sum_{n=1}^{\infty} \frac{\sin n}{n}, \sum_{n=1}^{\infty} \frac{\cos n}{n}$ 条件收敛.
+\end{example}
+\begin{proof}
+相似\eqref{eq:--------::24--18.25}式的计算, 我们有
+\begin{align*}
+\left| \sum_{j=1}^n{\sin j} \right|&=\left| \sum_{j=1}^n{\frac{\sin j\cdot \sin \frac{1}{2}}{\sin \frac{1}{2}}} \right|=\left| \sum_{j=1}^n{\frac{\cos \left( j-\frac{1}{2} \right) -\cos \left( j+\frac{1}{2} \right)}{2\sin \frac{1}{2}}} \right|
+\\
+&=\left| \frac{\cos \frac{1}{2}-\cos \left( n+\frac{1}{2} \right)}{2\sin \frac{1}{2}} \right|=\frac{1}{2}\left| \sin n-\cot \frac{1}{2}\cos n+\cot \frac{1}{2} \right|
+\\
+&\leqslant \frac{2}{2\sin \frac{1}{2}}=\frac{1}{\sin \frac{1}{2}},
+\end{align*}
+\begin{align*}
+\left| \sum_{j=1}^n{\cos j} \right|&=\left| \sum_{j=1}^n{\frac{\cos j\cdot \sin \frac{1}{2}}{\sin \frac{1}{2}}} \right|=\left| \sum_{j=1}^n{\frac{\sin \left( j+\frac{1}{2} \right) -\sin \left( j-\frac{1}{2} \right)}{2\sin \frac{1}{2}}} \right|
+\\
+&=\left| \frac{\sin \left( n+\frac{1}{2} \right) -\sin \frac{1}{2}}{2\sin \frac{1}{2}} \right|=\frac{1}{2}\left| \cos n+\cot \frac{1}{2}\sin n-1 \right|
+\\
+&\leqslant \frac{2}{2\sin \frac{1}{2}}=\frac{1}{\sin \frac{1}{2}},
+\end{align*}
+都是有界的. 又 $\frac{1}{n}$ 递减到 0, 我们由\hyperref[theorem:A-D判别法]{A-D判别法}得 $\sum_{n=1}^{\infty} \frac{\sin n}{n}, \sum_{n=1}^{\infty} \frac{\cos n}{n}$ 收敛.
+
+又
+\[
+\sum_{n=1}^{\infty} \frac{|\sin n|}{n} \geqslant \sum_{n=1}^{\infty} \frac{|\sin n|^2}{n} = \sum_{n=1}^{\infty} \frac{1 - \cos (2n)}{2n} = \text{发散} - \text{收敛} = \text{发散};
+\]
+\[
+\sum_{n=1}^{\infty} \frac{|\cos n|}{n} \geqslant \sum_{n=1}^{\infty} \frac{|\cos n|^2}{n} = \sum_{n=1}^{\infty} \frac{1 + \cos (2n)}{2n} = \text{发散} + \text{收敛} = \text{发散}.
+\]
+故 $\sum_{n=1}^{\infty} \frac{\sin n}{n}, \sum_{n=1}^{\infty} \frac{\cos n}{n}$ 条件收敛.
+\end{proof}
+
+\begin{example}
+证明 $\sum_{n=1}^{\infty} \frac{(-1)^{\lfloor \sqrt{n} \rfloor}}{n}$ 收敛.
+\end{example}
+\begin{remark}
+实际上,对$\forall n\in \mathbb{N}$,都存在$t\in \mathbb{N}$,使得$$t\leqslant \sqrt{n}<t+1\iff t^2\leqslant n\leqslant (t+1)^2-1.$$
+因此
+\begin{align*}
+(-1)^{\lfloor \sqrt{k} \rfloor}=(-1)^t,\forall k\in [t^2,(t+1)^2-1].
+\end{align*}
+\end{remark}
+\begin{remark}
+$\ln \left( 1+x \right) \leqslant x\Rightarrow \ln \left( 1-\frac{1}{k} \right) \leqslant -\frac{1}{k}\Rightarrow \frac{1}{k}\geqslant \ln \left( \frac{k}{k-1} \right) .$
+\end{remark}
+\begin{proof}
+{\color{blue}证法一:}由\hyperref[theorem:级数加括号的理解]{级数加括号的理解}得
+\[
+\sum_{n=1}^{\infty}{\frac{(-1)^{\lfloor \sqrt{n} \rfloor}}{n}}=\sum_{t=1}^{\infty}{\sum_{k=t^2}^{(t+1)^2-1}{\frac{\left( -1 \right) ^{\lfloor \sqrt{k} \rfloor}}{k}}}=\sum_{t=1}^{\infty}{\left( -1 \right) ^t\sum_{k=t^2}^{(t+1)^2-1}{\frac{1}{k}}}.
+\]
+我们来证明上式右边级数符合莱布尼兹判别法.
+
+首先
+\[
+0 \leqslant \lim_{t \to \infty} \sum_{k=t^2}^{(t + 1)^2 - 1} \frac{1}{k} \leqslant \lim_{t \to \infty} \sum_{k=t^2}^{(t + 1)^2 - 1} \ln \frac{k}{k - 1} = \lim_{t \to \infty} \ln \frac{(t + 1)^2 - 1}{t^2 - 1} = 0,
+\]
+即
+\[
+\lim_{t \to \infty} \sum_{k=t^2}^{(t + 1)^2 - 1} \frac{1}{k} = 0.
+\]
+
+然后对 $t \in \mathbb{N}, t \geqslant 3$, 我们有
+\begin{align*}
+&\sum_{k=t^2}^{(t + 1)^2 - 1} \frac{1}{k} - \sum_{k=(t + 1)^2}^{(t + 2)^2 - 1} \frac{1}{k} = \sum_{k=0}^{2t} \frac{1}{k + t^2} - \sum_{k=0}^{2t + 2} \frac{1}{k + t^2 + 2t + 1} \\
+&= \sum_{k=0}^{2t} \left( \frac{1}{k + t^2} - \frac{1}{k + t^2 + 2t + 1} \right) - \frac{1}{t^2 + 4t + 2} - \frac{1}{t^2 + 4t + 3} \\
+&= \sum_{k=0}^{2t} \frac{2t + 1}{(k + t^2)(k + t^2 + 2t + 1)} - \frac{2t^2 + 8t + 5}{(t^2 + 4t + 2)(t^2 + 4t + 3)} \\
+& \geqslant \frac{(2t + 1)^2}{(2t + t^2)(2t + t^2 + 2t + 1)} - \frac{2t^2 + 8t + 5}{(t^2 + 4t + 2)(t^2 + 4t + 3)} \\
+& \geqslant \frac{(2t + 1)^2}{(t^2 + 2t + 2)(t^2 + 4t + 3)} - \frac{2t^2 + 8t + 5}{(t^2 + 4t + 2)(t^2 + 4t + 3)} \\
+&= \frac{2t^2 - 4t - 4}{(t^2 + 4t + 2)(t^2 + 4t + 3)} \geqslant \frac{6t - 4t - 4}{(t^2 + 4t + 2)(t^2 + 4t + 3)} > 0,
+\end{align*}
+这就证明了 $\sum_{k=t^2}^{(t + 1)^2 - 1} \frac{1}{k}$ 单调递减!
+现在由莱布尼兹判别法得 $\sum_{n=1}^{\infty} \frac{(-1)^{\lfloor \sqrt{n} \rfloor}}{n}$ 收敛.
+
+{\color{blue}证法二:}由\hyperref[theorem:级数加括号的理解]{级数加括号的理解}得
+\[
+\sum_{n=1}^{\infty}{\frac{(-1)^{\lfloor \sqrt{n} \rfloor}}{n}}=\sum_{t=1}^{\infty}{\sum_{k=t^2}^{(t+1)^2-1}{\frac{\left( -1 \right) ^{\lfloor \sqrt{k} \rfloor}}{k}}}=\sum_{t=1}^{\infty}{\left( -1 \right) ^t\sum_{k=t^2}^{(t+1)^2-1}{\frac{1}{k}}}.
+\]
+我们用估阶方法进行证明.由\nrefexa{example:8.61846546}{(2)}可知
+\begin{align*}
+\sum_{k=1}^n{\frac{1}{k}}=\ln n+\gamma +O\left( \frac{1}{n} \right) .
+\end{align*}
+从而
+\begin{align*}
+\sum_{k=1}^{t^2-1}{\frac{1}{k}}=\ln \left( t^2-1 \right) +\gamma +O\left( \frac{1}{t^2} \right) ,
+\end{align*}
+\begin{align*}
+\sum_{k=1}^{\left( t+1 \right) ^2-1}{\frac{1}{k}}=\ln \left[ \left( t+1 \right) ^2-1 \right] +\gamma +O\left( \frac{1}{t^2} \right) .
+\end{align*}
+于是
+\begin{align*}
+\sum_{k=t^2}^{\left( t+1 \right) ^2-1}{\frac{1}{k}}=\ln \frac{t^2+2t}{t^2-1}+O\left( \frac{1}{t^2} \right) =\ln \left( 1+\frac{2t+1}{t^2-1} \right) +O\left( \frac{1}{t^2} \right) .
+\end{align*}
+进而
+\begin{align*}
+\sum_{t=1}^{\infty}{\left( -1 \right) ^t\sum_{k=t^2}^{(t+1)^2-1}{\frac{1}{k}}}=\sum_{t=1}^{\infty}{\left( -1 \right) ^t\left[ \ln \left( 1+\frac{2t+1}{t^2-1} \right) +O\left( \frac{1}{t^2} \right) \right]}.
+\end{align*}
+显然$\ln \left( 1+\frac{2t+1}{t^2-1} \right) +O\left( \frac{1}{t^2} \right)$单调递减趋于$0$,故由莱布尼兹判别法可知原级数收敛.
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -12,6 +12,842 @@
 
 \begin{document}
 
+\section{矩阵分解}
+
+\begin{theorem}[Jordan分解]\label{theorem:矩阵分解-Jordan分解}
+设 \( \mathbb{F} \) 是一代数闭域\( ^* \), \( n \in \mathbb{N} \)
+1. 对 \( A \in \mathbb{F}^{n \times n} \), 存在 \( C, B \in \mathbb{F}^{n \times n} \) 使得:
+
+(1): \( A = C + B \);
+
+(2): \( C \) 是幂零矩阵, \( B \) 是可对角化矩阵;
+
+(3): \( BC = CB \);
+
+(4): 存在没有常数项的多项式 \( p(x), q(x) \in \mathbb{F}[x] \), 使得 \( C = q(A), B = p(A) \). 且满足 (1)-(3) 的分解 \( B, C \) 是唯一的.
+
+2. 对可逆矩阵 \( A \in \mathbb{F}^{n \times n} \), 存在 \( C, B \in \mathbb{F}^{n \times n} \) 使得:
+
+(1): \( A = CB \);
+
+(2): \( C \) 是特征值全为单位元的矩阵, \( B \) 是可对角化的可逆矩阵;
+
+(3): \( BC = CB \);
+
+(4): 存在没有常数项的多项式 \( p(x), q(x) \in \mathbb{F}[x] \), 使得 \( C = q(A), B = p(A) \). 且满足 (1)-(3) 的分解 \( B, C \) 是唯一的.
+\end{theorem}
+\begin{remark}
+要证满足条件 (1)(2)(3) 的分解是唯一的等价于:设$B,C$满足$(1)(2)(3)(4)$,再设$B',C'$满足(1)(2)(3),只要证明$b=B',C=C'$即可.
+\end{remark}
+\begin{proof}
+1. {\heiti 存在性:} 注意到相似变换是同一线性变换在不同基下的表示罢了, 因此不妨设
+\begin{align}
+A = \begin{pmatrix}
+J_1 & 0 & \cdots & 0 \\
+0 & J_2 & \cdots & 0 \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \cdots & J_s
+\end{pmatrix}, \label{eq:23.27854186861--897786123}
+\end{align}
+其中 \( J_i, i = 1, 2, \cdots, s \) 是同一个特征值对应所有 Jordan 块排在一起的分块对角矩阵, 设其对应特征值为 \( \lambda_i, i = 1, 2, \cdots, s \).
+
+我们有
+\[
+A = {\color{red} \begin{pmatrix}
+J_1 - \lambda_1 I & 0 & \cdots & 0 \\
+0 & J_2 - \lambda_2 I & \cdots & 0 \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \cdots & J_s - \lambda_s I
+\end{pmatrix}} + {\color{blue} \begin{pmatrix}
+\lambda_1 I & 0 & \cdots & 0 \\
+0 & \lambda_2 I & \cdots & 0 \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \cdots & \lambda_s I
+\end{pmatrix}} = {\color{red} C} + {\color{blue} B}.
+\]
+由\hyperref[theorem:中国剩余定理(多项式版)]{中国剩余定理}, 取 \( s_i \in \mathbb{N} \) 是 \( J_i \) 的阶数, 则存在 \( p \in \mathbb{F}[\lambda] \), 使得
+\begin{align}
+p(\lambda) \equiv \lambda_i \pmod{(\lambda - \lambda_i)^{s_i}},\ i = 1, 2, \cdots, s. \label{eq:23.27854186861}
+\end{align}
+如果式\(\eqref{eq:23.27854186861}\)中某个 \( \lambda_i = 0 \), 此时显然有解 \( p \), 从而 \( p \) 没有常数项. 如果 \( \lambda_i \neq 0, i = 1, 2, \cdots, s \), 我们可以在\(\eqref{eq:23.27854186861}\)中补一个方程 \( p(0) = 0 \pmod{\lambda} \) 使得 \( p(0) = 0 \), 从而 \( p \) 没有常数项.
+
+令 \( q = x - p \), 于是注意到
+\begin{align*}
+\left( J_i-\lambda _iI \right) ^{s_i}=\left( \begin{matrix}
+0&		1&		&		\\
+&		0&		\ddots&		\\
+&		&		\ddots&		1\\
+&		&		&		0\\
+\end{matrix} \right) _{s_i\times s_i}^{s_i}=O.
+\end{align*}
+于是$p(J_i)=k_i\left( J_i \right) \left( J_i-\lambda _iI \right) ^{s_i}+\lambda _iI=\lambda _iI,i=1,2,\cdots ,s.$因此 \( p(A) = B, q(A) = C \). 这就证明了存在性.
+
+{\heiti 唯一性:} 若还有 \( A = C' + B' \) 且满足条件 (1)-(3), 则 \( C' - C = B - B' \), 又 \( C' \) 和 \( C' \), \( B' \) 可交换, 所以 \( C' \) 和 \( A \) 可交换,又$C=q(A)$, 所以 \( C' \) 和 \( C \) 可交换. 类似的 \( B, B' \) 可交换, 因此对充分大的 \( n \), 利用$C,C'$为幂零矩阵和\hyperref[proposition:一族两两可交换的可对角化矩阵可同时相似对角化]{可交换的矩阵同时对角化}, 我们有
+\[
+0 = \sum_{k=0}^{n} C_n^k (C')^k C^{n - k} = (C' - C)^n = (B - B')^n \implies B = B', C = C',
+\]
+这就证明了唯一性.
+
+2. {\heiti 存在性:} 当 \( A \) 可逆时, 不妨继续设\(\eqref{eq:23.27854186861--897786123}\)成立, 于是我们有
+\[
+A = \begin{pmatrix}
+\frac{J_1}{\lambda_1} & 0 & \cdots & 0 \\
+0 & \frac{J_2}{\lambda_2} & \cdots & 0 \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \cdots & \frac{J_s}{\lambda_s}
+\end{pmatrix} \begin{pmatrix}
+\lambda_1 I & 0 & \cdots & 0 \\
+0 & \lambda_2 I & \cdots & 0 \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \cdots & \lambda_s I
+\end{pmatrix} = CB.
+\]
+
+取和第一问同样的 \( p \), 然后因为\hyperref[proposition:矩阵的逆可以用其多项式表示]{逆矩阵是原矩阵的多项式}, 我们得 \( (p(A))^{-1} = h(A), h \in \mathbb{F}[\lambda] \). 然后令 \( q = x \cdot h \in \mathbb{F}[\lambda] \), 就证明了存在性.
+
+{\heiti 唯一性:} 对 \( A = C'B' \) 且满足条件 (1)-(3), 我们有 \( C^{-1}C' = B(B')^{-1} \), 同样的 \( C, C' \) 和 \( B, B' \) 可交换, 因此对充分大的 \( n \), 利用 \( C, C' \) \hyperref[proposition:一族两两可交换的一般域上的矩阵可同时上三角化]{可同时上三角化}, 因此 \( C^{-1}C' \) 特征值全部是 1, 故 \( B(B')^{-1} \) 特征值全为 1. 利用 \( B, B' \) \hyperref[proposition:一族两两可交换的可对角化矩阵可同时相似对角化]{可同时对角化}, 因此 \( B(B')^{-1} = E \), 于是 \( B = B', C = C' \), 这就证明了唯一性.
+\end{proof}
+
+\begin{theorem}[LU分解]\label{theorem:LU分解}
+设\(\mathbb{F}\)是一域,则对\(A \in \mathbb{F}^{n \times n}\),存在\(C,B \in \mathbb{F}^{n \times n}\)使得\(A = BC\)且\(B\)为主对角元都为1的下三角矩阵,\(C\)为可逆上三角矩阵的充要条件是\(A\)的顺序主子式全不为0.并且这种分解是唯一的.
+\end{theorem}
+\begin{proof}
+{\heiti 充分性:} 当\(n = 1\)问题是显然的.设命题对\(n - 1\)时成立,当\(n\)时,设
+\[
+A = \begin{pmatrix}
+A_{n - 1} & \alpha \\
+\beta^T & a_{nn}
+\end{pmatrix}, A_{n - 1} \in \mathbb{F}^{(n - 1) \times (n - 1)}, \alpha, \beta \in \mathbb{F}^{n - 1}, a_{nn} \in \mathbb{F}.
+\]
+利用归纳假设,存在\(C_{n - 1}, B_{n - 1} \in \mathbb{F}^{(n - 1) \times (n - 1)}\)使得\(A_{n - 1} = B_{n - 1}C_{n - 1}\)且\(B_{n - 1}\)为主对角元都为1的下三角矩阵,\(C_{n - 1}\)为可逆上三角矩阵.注意到
+\[
+A = \begin{pmatrix}
+A_{n - 1} & \alpha \\
+\beta^T & a_{nn}
+\end{pmatrix} = \begin{pmatrix}
+B_{n - 1}C_{n - 1} & \alpha \\
+\beta^T & a_{nn}
+\end{pmatrix} \to \begin{pmatrix}
+B_{n - 1}C_{n - 1} & \alpha \\
+0 & a_{nn} - \beta^T C_{n - 1}^{-1} B_{n - 1}^{-1} \alpha
+\end{pmatrix},
+\]
+于是
+\[
+\begin{pmatrix}
+E_{n - 1} & 0 \\
+-\beta^T C_{n - 1}^{-1} B_{n - 1}^{-1} & 1
+\end{pmatrix} A = \begin{pmatrix}
+B_{n - 1}C_{n - 1} & \alpha \\
+0 & a_{nn} - \beta^T C_{n - 1}^{-1} B_{n - 1}^{-1} \alpha
+\end{pmatrix}.
+\]
+于是我们有
+\[
+A = {\color{red} \begin{pmatrix}
+E_{n - 1} & 0 \\
+-\beta^T C_{n - 1}^{-1} B_{n - 1}^{-1} & 1
+\end{pmatrix}^{-1} \begin{pmatrix}
+B_{n - 1} & 0 \\
+0 & 1
+\end{pmatrix}} {\color{blue} \begin{pmatrix}
+C_{n - 1} & B_{n - 1}^{-1} \alpha \\
+0 & a_{nn} - \beta^T C_{n - 1}^{-1} B_{n - 1}^{-1} \alpha
+\end{pmatrix}} = {\color{red} B}{\color{blue} C},
+\]
+因为\(\det A \neq 0\),所以\(C\)是可逆矩阵.这样我们就完成了\(n\)时的证明,从而由数学归纳法即证.
+
+{\heiti 必要性:} 当\(n = 1\)命题显然成立,假设命题对\(n - 1\)时成立,则当\(n\)时,设\(A = BC\)且\(B\)为主对角元都为1的下三角矩阵,\(C\)为可逆上三角矩阵.
+
+假设
+\[
+B = \begin{pmatrix}
+B_{n - 1}' & 0 \\
+\gamma^T & 1
+\end{pmatrix}, C = \begin{pmatrix}
+C_{n - 1}' & \eta \\
+0 & c_{nn}
+\end{pmatrix}, B_{n - 1}', C_{n - 1}' \in \mathbb{F}^{(n - 1) \times (n - 1)}, c_{nn} \in \mathbb{F} \setminus \{0\}.
+\]
+现在就有
+\[
+A = BC = \begin{pmatrix}
+B_{n - 1}' C_{n - 1}' & B_{n - 1}' \eta + c_{nn} \\
+\gamma^T C_{n - 1}' & \gamma^T \eta + c_{nn}
+\end{pmatrix}.
+\]
+由归纳假设知\(B_{n - 1}' C_{n - 1}'\)顺序主子式不为0.显然\(\det A \neq 0\),这就证明了\(n\)的情况,从而由数学归纳法即证.
+
+{\heiti 唯一性:} 若还有\(A = BC = B'C'\),这里\(B'\)为主对角元都为1的下三角矩阵,\(C'\)为可逆上三角矩阵.于是
+\[
+C (C')^{-1} = B^{-1} B'.
+\]
+注意到上式左边是上三角矩阵,右边是对角线全为1的下三角矩阵,故
+\[
+C (C')^{-1} = B^{-1} B' = E_n,
+\]
+从而\(C = C', B = B'\),这就完成了证明.
+\end{proof}
+
+\begin{theorem}[奇异值分解]\label{theorem:奇异值分解}
+设\( A \in \mathbb{R}^{m \times n} (\mathbb{C}^{m \times n}) \), 则存在实正交矩阵 (酉矩阵) \( U \in \mathbb{R}^{m \times m} (\mathbb{C}^{m \times m}) \) 和 \( V \in \mathbb{R}^{n \times n} (\mathbb{C}^{n \times n}) \), 使得
+\[
+U^T A V = \begin{pmatrix}
+\Lambda & 0 \\
+0 & 0
+\end{pmatrix},
+\]
+这里\( \Lambda \)是\( r(A) \)阶对角矩阵且对角元都为正数.
+\end{theorem}
+\begin{note}
+如果这个定理已经被证明,那么
+\[
+(U^T A V)^T U^T A V = V^T A^T A V = \begin{pmatrix}
+\Lambda^2 & 0 \\
+0 & 0
+\end{pmatrix}.
+\]
+由于\( A^T A \)半正定,所以\( \Lambda \)的对角线元素是\( A^T A \)的非0特征值的算数平方根.由\hyperref[theorem:AB和BA的非0特征值的Jordan块完全一致]{\( CD \)和\( DC \)有完全一样(包括重数)的非0特征值},我们知道\( \Lambda \)的对角线元素也是\( AA^T \)的非0特征值的算数平方根.
+\end{note}
+\begin{remark}
+奇异值分解证明过程也是其计算过程.
+\end{remark}
+\begin{proof}
+仅证明实矩阵的情形,因为\( A^T A \)半正定,所以存在正交矩阵\( V \in \mathbb{R}^{n \times n} \)使得
+\begin{align}
+V^T A^T A V = \begin{pmatrix}
+\Lambda^2 & 0 \\
+0 & 0
+\end{pmatrix}. \label{eq:23.27854186861-86123}
+\end{align}
+我们设
+\[
+V = (V_1\ V_2), V_1 \in \mathbb{R}^{n \times r}, V_2 \in \mathbb{R}^{n \times (n - r)},
+\]
+则有
+\begin{align}
+V^T A^T A V = \begin{pmatrix}
+V_1^T A^T A V_1 & V_1^T A^T A V_2 \\
+V_2^T A^T A V_1 & V_2^T A^T A V_2
+\end{pmatrix}. \label{eq:23.278541823486123}
+\end{align}
+对比\(\eqref{eq:23.27854186861-86123}\)和\(\eqref{eq:23.278541823486123}\)得
+\[
+0 = V_2^T A^T A V_2 = (A V_2)^T (A V_2) \stackrel{\text{\refpro{proposition:r(AA')=r(A)}}}{\Longrightarrow } A V_2 = 0, V_1^T A^T A V_1 = \Lambda^2.
+\]
+待定
+\[
+U = (U_1\ U_2), U_1 \in \mathbb{R}^{m \times r}, U_2 \in \mathbb{R}^{m \times (m - r)},
+\]
+则
+\[
+U^T A V = \begin{pmatrix}
+U_1^T A V_1 & U_1^T A V_2 \\
+U_2^T A V_1 & U_2^T A V_2
+\end{pmatrix} = \begin{pmatrix}
+U_1^T A V_1 & 0 \\
+U_2^T A V_1 & 0
+\end{pmatrix}.
+\]
+目标是
+\[
+U_1^T A V_1 = \Lambda \iff U_1 = A V_1 \Lambda^{-1}.
+\]
+现在取定满足上述条件的\( U_1 \),则
+\[
+U_1^T U_1 = \Lambda^{-1} V_1^T A^T A V_1 \Lambda^{-1} = E.
+\]
+现在\( U_1 \)列向量组是标准正交向量组,我们可以把\( U_1 \)扩充为正交矩阵,此时
+\[
+U_2^T A V_1 = U_2^T U_1 \Lambda = 0,
+\]
+这就完成了证明.
+\end{proof}
+
+\begin{theorem}[半正定矩阵开方唯一]\label{theorem:半正定矩阵开方唯一}
+设\( A \)是实\( n \)阶半正定矩阵,则存在唯一的实\( n \)阶半正定矩阵\( B \),使得\( A = B^2 \).
+\end{theorem}
+\begin{note}
+当然,对于复版本的半正定Hermite矩阵,这个结果也是对的.显然,证明的方法就是不妨设标准技巧,即实对称矩阵的正交相似对角化.
+\end{note}
+\begin{remark}
+对于这个定理中的\( B \),存在至多\( n - 1 \)次多项式\( p \in \mathbb{R}[x] \)使得\( B = p(A) \).这是因为由Lagrange插值定理,存在至多\( n - 1 \)次多项式使得
+\[
+p(\lambda_i) = \sqrt{\lambda_i}, i = 1, 2, \cdots, n.
+\]
+\end{remark}
+\begin{proof}
+取正交矩阵\( T \),使得
+\[
+T^T A T = \text{diag}\{\lambda_1, \lambda_2, \cdots, \lambda_n\}, \lambda_i \geq 0, i = 1, 2, \cdots, n.
+\]
+直接取半正定矩阵\( B = T \text{diag}\{\sqrt{\lambda_1}, \sqrt{\lambda_2}, \cdots, \sqrt{\lambda_n}\} T^T \),直接验证就有\( A = B^2 \).
+
+下面证明最为困难的唯一性.事实上,若还有半正定矩阵\( C \),有\( A = C^2 = B^2 \).再取正交矩阵\( S, Q \),使得
+\[
+K \triangleq S^T B S = \text{diag}\{\sqrt{\lambda_1}, \sqrt{\lambda_2}, \cdots, \sqrt{\lambda_n}\} = Q^T C Q,
+\]
+于是
+\[
+B = S K S^T, C = Q K Q^T \implies S K^2 S^T =B^2=C^2= Q K^2 Q^T \implies Q^T S K^2 = K^2 Q^T S.
+\]
+现在假设
+\[
+K = \begin{pmatrix}
+\mu_1 E \\
+& \mu_2 E \\
+& & \ddots \\
+& & & \mu_s E
+\end{pmatrix}, \text{这里}\ \mu_i\ \text{互不相同}(\mu_i\in \{\lambda_1,\cdots,\lambda_n\}).
+\]
+于是把\( Q^T S \)对应分块为\( (X_{ij}) \),那么就有
+\[
+\mu_j^2 X_{ij} = X_{ij} \mu_i^2.
+\]
+于是对任何\( i \neq j \)都有\( X_{ij} = 0 \).现在
+\[
+Q^T S = \text{diag}\{X_{11}, X_{22}, \cdots, X_{ss}\} \implies Q^T S K = K Q^T S \implies B = S K S^T = Q K Q^T = C,
+\]
+这就完成了证明.
+\end{proof}
+
+\begin{proposition}\label{proposition:半正定矩阵开方唯一推论1}
+设\( A \in \mathbb{R}^{n \times n} \)是半正定的.若\( \alpha \in \mathbb{R}^n \)使得\( \alpha^T A \alpha = 0 \),则\( A \alpha = 0 \).
+\end{proposition}
+\begin{proof}
+由\hyperref[theorem:半正定矩阵开方唯一]{半正定矩阵开方唯一}得半正定矩阵\( C \in \mathbb{R}^{n \times n} \)使得\( A = C^2 \).于是
+\[
+0 = \alpha^T A \alpha = (C \alpha)^T (C \alpha) = 0 \implies C \alpha = 0 \implies A \alpha = C^2 \alpha = 0.
+\]
+\end{proof}
+
+\begin{theorem}[极分解]\label{theorem:极分解}
+\begin{enumerate}
+\item 设\( A \in \mathbb{R}^{n \times n} (\mathbb{C}^{n \times n}) \), 则存在正交矩阵 (酉矩阵) \( Q \in \mathbb{R}^{n \times n} (\mathbb{C}^{n \times n}) \) 和半正定矩阵 (Hermite 半正定矩阵) \( T \in \mathbb{R}^{n \times n} (\mathbb{C}^{n \times n}) \) 使得\( A = QT \)且\( T \)是唯一的. 特别的当\( A \)可逆, 则\( Q \)也是唯一的.
+
+\item 设\( A \in \mathbb{R}^{n \times n} (\mathbb{C}^{n \times n}) \), 则存在正交矩阵 (酉矩阵) \( Q \in \mathbb{R}^{n \times n} (\mathbb{C}^{n \times n}) \) 和半正定矩阵 (Hermite 半正定矩阵) \( T \in \mathbb{R}^{n \times n} (\mathbb{C}^{n \times n}) \) 使得\( A = TQ \)且\( T \)是唯一的. 特别的当\( A \)可逆, 则\( Q \)也是唯一的.
+\end{enumerate}
+\end{theorem}
+\begin{note}
+极分解对非方阵也有结果,此时要用不完全的正交矩阵来代替,因为不常用,我们略去.
+\end{note}
+\begin{proof}
+只证明实的情况,复的情况类似.
+\begin{enumerate}
+\item 由\hyperref[theorem:奇异值分解]{奇异值分解},我们知道存在正交矩阵\( U, V \in \mathbb{R}^{n \times n} \)和奇异标准型\( \Lambda \),使得\( A = U \Lambda V \).现在
+\[
+A = {\color{red} UV} \cdot {\color{blue} V^T \Lambda V} = {\color{red} Q} \cdot {\color{blue} T}.
+\]
+若还有\( A = Q'T' \),这里\( Q', T' \in \mathbb{R}^{n \times n} \)分别为正交矩阵和半正定矩阵.则
+\[
+A^T A = (T')^2 = T^2.
+\]
+由\nrefpro{proposition:正定和半正定阵的判定准则}{(2)}可知$A^TA$是半正定阵.又由\hyperref[theorem:半正定矩阵开方唯一]{半正定矩阵开方唯一}知\( T = T' \).
+
+当\( A \)可逆,由于\( T \)正定且唯一,故
+\[
+A = Q'T' =Q'T= QT \implies Q' = Q.
+\]
+
+\item 和第一问类似.
+\end{enumerate}
+\end{proof}
+
+\begin{theorem}[满秩分解]\label{theorem:满秩分解}
+设\( \mathbb{F} \)是域,则
+\begin{enumerate}
+\item 设\( A \in \mathbb{F}^{m \times n} \)且秩为\( r \in \mathbb{N}_0 \),证明存在列满秩矩阵\( P \)和行满秩矩阵\( Q \),使得\( A = PQ \).
+
+\item 设\( A \in \mathbb{F}^{m \times n} \)且秩为\( n \),证明存在可逆矩阵\( P \in \mathbb{F}^{m \times m} \),使得\( PA = \begin{pmatrix} E_n \\ 0 \end{pmatrix} \).
+
+\item 设\( A \in \mathbb{F}^{m \times n} \)且秩为\( m \),证明存在可逆矩阵\( Q \in \mathbb{F}^{n \times n} \),使得\( AQ = (E_m\ 0) \).
+
+\item 设\( A, B \in \mathbb{F}^{m \times n} \)是列满秩矩阵,则存在可逆矩阵\( C \in \mathbb{F}^{m \times m} \)使得\( A = CB \).
+
+\item 设\( A, B \in \mathbb{F}^{m \times n} \)是行满秩矩阵,则存在可逆矩阵\( C \in \mathbb{F}^{n \times n} \)使得\( A = BC \).
+\end{enumerate}
+\end{theorem}
+\begin{note}
+本定理的二三条可以直接使用.
+\end{note}
+\begin{proof}
+\begin{enumerate}
+\item 设可逆矩阵\( P_1 \in \mathbb{F}^{m \times m}, Q_1 \in \mathbb{F}^{n \times n} \)使得
+\[
+P_1 A Q_1 = \begin{pmatrix} E_r & 0 \\ 0 & 0 \end{pmatrix}.
+\]
+注意到
+\[
+A = P_1^{-1} \begin{pmatrix} E_r & 0 \\ 0 & 0 \end{pmatrix} Q_1^{-1} = P_1^{-1} \begin{pmatrix} E_r \\ 0 \end{pmatrix} \cdot \begin{pmatrix} E_r & 0 \end{pmatrix} Q_1^{-1} = P \cdot Q,
+\]
+这就证明了第一问.
+
+\item 这是课本定理,通过行变换化阶梯得到的.
+
+\item 对\( A^T \)用第二问的结论即可得到行的结论.
+
+\item 由第二问结论,设可逆矩阵\( P_A, P_B \in \mathbb{F}^{m \times m} \)使得\( P_B B = P_A A = \begin{pmatrix} E_n \\ 0 \end{pmatrix} \),则
+\[
+A = P_A^{-1} P_B B = CB.
+\]
+这就证明了第四问.
+
+\item 和第四问同理.
+\end{enumerate}
+\end{proof}
+
+\begin{theorem}[幂等分解]\label{theorem:幂等分解}
+设\( \mathbb{F} \)是域,\( A \in \mathbb{F}^{n \times n} \),证明存在幂等矩阵\( T_1, T_2 \in \mathbb{F}^{n \times n} \),可逆矩阵\( S_1, S_2 \in \mathbb{F}^{n \times n} \),使得\( A = T_1 S_1 = S_2 T_2 \).
+\end{theorem}
+\begin{proof}
+注意到
+\[
+A = P \begin{pmatrix} E_r & 0 \\ 0 & 0 \end{pmatrix} Q = P \begin{pmatrix} E_r & 0 \\ 0 & 0 \end{pmatrix} P^{-1} PQ = T_1 S_1,
+\]
+这里\( P, Q \in \mathbb{F}^{n \times n} \)是可逆矩阵.类似的可得另一分解.
+\end{proof}
+
+\begin{theorem}[秩一分解]\label{theorem:秩一分解}
+设\( \mathbb{F} \)是域,\( r \in \mathbb{N} \),则秩\( r \)矩阵\( A \in \mathbb{F}^{m \times n} \)可以分解为\( r \)个\( \mathbb{F}^{m \times n} \)中秩1矩阵之和.
+\end{theorem}
+\begin{proof}
+设可逆矩阵\( P_1 \in \mathbb{F}^{m \times m}, Q_1 \in \mathbb{F}^{n \times n} \)使得
+\[
+P_1 A Q_1 = \begin{pmatrix} E_r & 0 \\ 0 & 0 \end{pmatrix}.
+\]
+注意到
+\[
+A = P_1^{-1} \begin{pmatrix} E_r & 0 \\ 0 & 0 \end{pmatrix} Q_1^{-1} = \underbrace{P_1^{-1} \begin{pmatrix} 1 & & \\ & 0 & \\ & & \ddots \\ & & & 0 \end{pmatrix} Q_1^{-1} + P_1^{-1} \begin{pmatrix} 0 & & \\ & 1 & \\ & & 0 \\ & & & \ddots \end{pmatrix} Q_1^{-1} + \cdots}_{\text{合计} r \text{个}},
+\]
+这就完成了证明.
+\end{proof}
+
+\begin{theorem}[施密特正交化对应的矩阵分解,QR分解]\label{theorem:施密特正交化对应的矩阵分解,QR分解}
+1. 设列满秩矩阵\( A \in \mathbb{R}^{m \times n}, m \geq n \),则存在唯一的列向量为正交单位向量组的\( Q \in \mathbb{R}^{m \times n} \),主对角元都为正数的上三角矩阵\( R \in \mathbb{R}^{n \times n} \),使得\( A = QR \).
+
+2. 此外,在标准内积下,对任何\( \beta \in \mathbb{R}^n, R^{-1} Q^T \beta \)是矩阵方程\( A^T A x = A^T \beta \)的唯一解.
+
+3. 设矩阵\( A \in \mathbb{R}^{m \times n}, m \geq n \),则存在列向量为正交单位向量组的\( Q \in \mathbb{R}^{m \times n} \),主对角元都为非负数的上三角矩阵\( R \in \mathbb{R}^{n \times n} \),使得\( A = QR \).
+\end{theorem}
+\begin{note}
+本结果对复列满秩矩阵,则正交矩阵改为酉矩阵,实上三角矩阵改为复上三角矩阵之后命题也对.此外注意这里是任一个内积而不只是标准内积.
+\end{note}
+\begin{proof}
+不妨设就是标准内积,一般情况可类似讨论.
+
+1. 先证明存在性: 设\( A = (\alpha_1\ \alpha_2\ \cdots\ \alpha_n) \).因为\( A \)列满秩,所以对\( A \)列向量组做施密特正交化得
+\[
+\begin{cases}
+\beta_1 = \alpha_1 \\
+\beta_2 = \alpha_2 - \frac{(\alpha_2, \beta_1)}{(\beta_1, \beta_1)} \beta_1 \\
+\beta_3 = \alpha_3 - \frac{(\alpha_3, \beta_1)}{(\beta_1, \beta_1)} \beta_1 - \frac{(\alpha_3, \beta_2)}{(\beta_2, \beta_2)} \beta_2 \\
+\vdots
+\end{cases}.
+\]
+于是有
+\begin{align*}
+(\alpha _1\,\,\alpha _2\,\,\cdots \,\,\alpha _n)&={\color{blue} \left( \frac{\beta _1}{\parallel \beta _1\parallel}\,\,\frac{\beta _2}{\parallel \beta _2\parallel}\,\,\cdots \,\,\frac{\beta _n}{\parallel \beta _n\parallel} \right) {\color{red} \left( \begin{matrix}
+\parallel \beta _1\parallel&		\frac{\left( \alpha _2,\beta _1 \right)}{\left( \beta _1,\beta _1 \right)}&		\cdots&		\frac{\left( \alpha _n,\beta _1 \right)}{\left( \beta _1,\beta _1 \right)}\\
+&		\parallel \beta _2\parallel&		\cdots&		\frac{\left( \alpha _n,\beta _2 \right)}{\left( \beta _2,\beta _2 \right)}\\
+&		&		\ddots&		\vdots\\
+&		&		&		\parallel \beta _n\parallel\\
+\end{matrix} \right)}}
+\\
+&={\color{blue} \left( \frac{\beta _1}{\parallel \beta _1\parallel}\,\,\frac{\beta _2}{\parallel \beta _2\parallel}\,\,\cdots \,\,\frac{\beta _n}{\parallel \beta _n\parallel} \right) }{\color{red} R}={\color{blue} Q}{\color{red} R}.
+\end{align*}
+再证明唯一性: 若还有另外一种分解\( A = QR = Q' R' \),则
+\[
+Q = Q' \cdot {\color{blue} R' R^{-1}} = Q' \cdot {\color{blue} T},
+\]
+这里\( T \)是主对角元都为正数的上三角矩阵.从而\( Q, Q' \)的列向量组等价,于是\( Q, Q' \)的列向量张成空间的是一致的,并考虑这个空间的正交补空间,即得
+\[
+(Q\ \widetilde{Q}) = (Q'\ \widetilde{Q}) \begin{pmatrix} T & 0 \\ 0 & E_{m - n} \end{pmatrix}
+\]
+且\( (Q\ \widetilde{Q}), (Q'\ \widetilde{Q}) \)都是\( m \)阶正交矩阵.现在
+\[
+(Q'\ \widetilde{Q})^{-1} (Q\ \widetilde{Q}) = \begin{pmatrix} T & 0 \\ 0 & E_{m - n} \end{pmatrix}
+\]
+且左边是正交矩阵.直接计算矩阵列向量的内积我们知道上三角的正交矩阵一定是单位矩阵.因此
+\[
+(Q'\ \widetilde{Q})^{-1} (Q\ \widetilde{Q}) = E_m \implies \begin{cases} Q' = Q \\ T = E_n \end{cases} \implies \begin{cases} Q' = Q \\ R' = R \end{cases},
+\]
+这就证明了第一问.
+
+2. 注意到
+\[
+r(A) = r(A^T) \stackrel{\text{\nrefpro{proposition:矩阵秩的基本公式}{(2)}}}{\geqslant} r\left(A^T\begin{pmatrix} A & \beta \end{pmatrix}\right)=r\left( \begin{pmatrix} A^T A & A^T \beta \end{pmatrix} \right) \geqslant r(A^T A) \xlongequal{\text{\refpro{proposition:r(AA')=r(A)}}} r(A),
+\]
+我们知道\( r\left( \begin{pmatrix} A^T A & A^T \beta \end{pmatrix} \right) = r(A^T A) \),从而线性方程\( A^T A x = A^T \beta \)有唯一解.显然
+\[
+A^T A R^{-1} Q^T \beta = A^T Q R R^{-1} Q^T \beta = A^T \beta,
+\]
+这就完成了第二问的证明.
+
+3. 第三问和第一问整体是类似的,但需要细微的修改施密特正交化过程.事实上,设\( A = (\alpha_1\ \alpha_2\ \cdots\ \alpha_n) \),定义
+\[
+\begin{cases}
+\beta_1 = \frac{\alpha_1}{\|\alpha_1\|}, & \alpha_1 \neq 0 \\
+\beta_1 = 0, & \alpha_1 = 0
+\end{cases},
+\]
+然后假设\( \beta_1, \beta_2, \cdots, \beta_{k - 1} \)已定义好.我们定义
+\[
+\beta_k = \begin{cases}
+\frac{\alpha_k - \sum\limits_{j=1}^{k - 1} (\alpha_k, \beta_j) \beta_j}{\left\| \alpha_k - \sum\limits_{j=1}^{k - 1} (\alpha_k, \beta_j) \beta_j \right\|}, & \alpha_k - \sum_{j=1}^{k - 1} (\alpha_k, \beta_j) \beta_j \neq 0 \\
+0, & \alpha_k - \sum_{j=1}^{k - 1} (\alpha_k, \beta_j) \beta_j = 0
+\end{cases}.
+\]
+于是有
+\[
+\alpha_k = \sum_{j=1}^{k - 1} (\alpha_k, \beta_j) \beta_j + \left\| \alpha_k - \sum_{j=1}^{k - 1} (\alpha_k, \beta_j) \beta_j \right\| \beta_k, k = 1, 2, \cdots, n,
+\]
+这给出了一个矩阵表示
+\begin{align}
+A = (\beta_1, \beta_2, \cdots, \beta_n) R. \label{eq:23.271823486123}
+\end{align}
+将\( \beta_1, \beta_2, \cdots, \beta_n \)中不为0的全部拿出来扩充为\( n \)个标准正交单位向量,并把为0的\( \beta_k \)替换成扩充时加入的新向量.此时得标准正交向量组\( \widetilde{\beta_1}, \widetilde{\beta_2}, \cdots, \widetilde{\beta_n} \)且等式\(\eqref{eq:23.271823486123}\)变成
+\[
+A = {\color{red} (\widetilde{\beta_1}, \widetilde{\beta_2}, \cdots, \widetilde{\beta_n})} R = {\color{red} Q}R,
+\]
+这里\( R \)没有变换.这就完成了证明.
+
+我们知道正定矩阵\( A \)总能做\( A = C^T C \).我们现在可以给\( C \)一个更好的刻画.
+\end{proof}
+
+\begin{theorem}[正定矩阵分解为上三角]\label{theorem:正定矩阵分解为上三角}
+\begin{enumerate}
+\item 设\( A \in \mathbb{R}^{n \times n} \)是正定矩阵,则存在对角元都为正数的可逆上三角矩阵\( C \in \mathbb{R}^{n \times n} \)使得\( A = C^T C \).
+
+\item 设\( A \in \mathbb{R}^{n \times n} \)是半正定矩阵,则存在对角元都为非负数的上三角矩阵\( C \in \mathbb{R}^{n \times n} \)使得\( A = C^T C \).
+\end{enumerate}
+\end{theorem}
+\begin{note}
+本结果对Hermite正定矩阵也对,此时\( C \in \mathbb{C}^{n \times n} \).
+\end{note}
+\begin{proof}
+\begin{enumerate}
+\item 由\( A \)正定,存在可逆\( D \in \mathbb{R}^{n \times n} \)使得\( A = D^T D \).由定理23.10,我们知道存在实\( n \)阶正交矩阵\( T \)和主对角元都为正数的实\( n \)阶上三角矩阵\( C \)使得\( D = TC \),于是
+\[
+A = C^T T^T T C = C^T C,
+\]
+这就完成了证明.
+
+\item 由\( A \)半正定,存在\( D \in \mathbb{R}^{n \times n} \)使得\( A = D^T D \).由\refthe{theorem:施密特正交化对应的矩阵分解,QR分解},我们知道存在实\( n \)阶正交矩阵\( T \)和主对角元都为非负数的实\( n \)阶上三角矩阵\( C \)使得\( D = TC \),于是
+\[
+A = C^T T^T T C = C^T C,
+\]
+这就完成了证明.
+\end{enumerate}
+\end{proof}
+
+\begin{theorem}\label{theorem:定理1354846135}
+设\( A \in \mathbb{C}^{n \times n} \)满足\( A \overline{A} = I_n \),则存在可逆复矩阵\( B \in \mathbb{C}^{n \times n} \),使得\( A = B (\overline{B})^{-1} \).
+\end{theorem}
+\begin{proof}
+首先设\( A \)的所有单位圆周上互不相同的特征值为
+\[
+-e^{i\theta_j}, \theta_j \in [0, 2\pi), j = 1, 2, \cdots, s.
+\]
+取\( \theta \in [0, 2\pi) \)使得\( \theta \neq \frac{\theta_j}{2} + k\pi, j = 0, 1, 2, \cdots, s, k \in \mathbb{Z} \).
+
+现在考虑\( B = e^{i\theta} I + e^{-i\theta} A \),则对任何\( A \)的特征值\( \lambda \),若\( e^{i\theta} + e^{-i\theta} \lambda = 0 \),则\( e^{i2\theta} = -\lambda \),两边取模知\( \lambda = -e^{i\theta_j}, j \in \{1, 2, \cdots, s\} \),所以存在\( k \in \mathbb{Z} \),使得\( \theta = \frac{\theta_j}{2} + k\pi \),这和\( \theta \)定义矛盾!因此\( B \)可逆,此时
+\[
+A \overline{B} = A \left( e^{-i\theta} I + e^{i\theta} \overline{A} \right) = e^{i\theta} I + e^{-i\theta} A = B,
+\]
+因此我们证明了存在可逆复矩阵\( B \),使得\( A = B (\overline{B})^{-1} \).
+\end{proof}
+
+\begin{proposition}
+设\( A \in \mathbb{C}^{n \times n} \)是对称酉矩阵,证明存在可逆矩阵\( Q \in \mathbb{C}^{n \times n} \)使得\( A = \overline{Q} Q^{-1} \).
+\end{proposition}
+\begin{proof}
+注意到\( \overline{A} \)满足\refthe{theorem:定理1354846135},所以存在可逆复矩阵\( Q \in \mathbb{C}^{n \times n} \),使得\( A = Q (\overline{Q})^{-1} \),从而\( A = \overline{Q} Q^{-1} \).
+\end{proof}
+
+\begin{theorem}[]\label{theorem:}
+设\( A \)是\( n \)阶可逆复矩阵,则\( A^{-1} \sim A^* \)的充要条件是存在可逆\( n \)阶复矩阵\( B \)使得\( A = B^{-1} B^* \).
+\end{theorem}
+\begin{proof}
+{\heiti 充分性:} 若存在可逆\( n \)阶复矩阵\( B \)使得\( A = B^{-1} B^* \),则
+\[
+A^{-1} = (B^{-1})^* B \sim B^* (B^{-1})^* B (B^{-1})^* = B (B^{-1})^* = A^*.
+\]
+
+{\heiti 必要性:} 设可逆\( n \)阶复矩阵\( P \)使得\( A^{-1} = P^{-1} A^* P \).因为\( |A^* P + \lambda^2 P^*| \)在\( \lambda = 0 \)不为0,所以不是0多项式,所以\( |A^* P + \lambda^2 P^*| \)在单位圆周上不能处处为0,因此设
+\[
+|A^* P + \lambda_0^2 P^*| \neq 0, |\lambda_0| = 1, \lambda_0 \in \mathbb{C},
+\]
+于是利用\( \lambda_0^{-1} = \overline{\lambda_0} \),我们有
+\[
+\begin{aligned}
+& (\lambda_0^{-1} A^* P + \lambda_0 P^*)^{-1} (\lambda_0^{-1} A^* P + \lambda_0 P^*)^* = A \\
+\Leftrightarrow & \lambda_0 P^* A + \overline{\lambda_0} P = \lambda_0^{-1} A^* P A + \lambda_0 P^* A \\
+\Leftrightarrow & \lambda_0 P^* A + \overline{\lambda_0} P = \lambda_0^{-1} P A^{-1} A + \lambda_0 P^* A \\
+\Leftrightarrow & \lambda_0 P^* A + \overline{\lambda_0} P = \lambda_0^{-1} P + \lambda_0 P^* A,
+\end{aligned}
+\]
+故可取\( B \triangleq \lambda_0^{-1} A^* P + \lambda_0 P^* \).
+\end{proof}
+
+\begin{proposition}
+任何复矩阵都能分解为两个对称矩阵之积且其中一个可逆.
+\end{proposition}
+\begin{note}
+证明的想法即利用\hyperref[lemma:使得Jordan转置的矩阵]{使得Jordan转置的矩阵}.
+\end{note}
+\begin{proof}
+对复矩阵\( A \in \mathbb{C}^{n \times n} \),取可逆复矩阵\( P \in \mathbb{C}^{n \times n} \)使得\( A = P J P^{-1} \),\( J \)是\( A \)的Jordan标准型.注意到若\( J = H_1 H_2 \)使得\( H_1, H_2 \in \mathbb{C}^{n \times n} \)且对称,并且其中一个可逆,则
+\[
+A = {\color{blue} P H_1 P^T} \cdot {\color{red} (P^T)^{-1} H_2 P^{-1}}
+\]
+为所求分解.
+
+我们设
+\[
+J = \text{diag}\{J_1, J_2, \cdots, J_s\}, J_i \text{是一个 Jordan 块}, i = 1, 2, \cdots, s,
+\]
+则回忆矩阵$H$(\reflem{lemma:使得Jordan转置的矩阵}),我们有
+\[
+\begin{aligned}
+J &= \text{diag}\{J_1, J_2, \cdots, J_s\} = \text{diag}\{HHJ_1, HHJ_2, \cdots, HHJ_s\} \\
+&= \text{diag}\{H, H, \cdots, H\} \cdot \text{diag}\{HJ_1, HJ_2, \cdots, HJ_s\}.
+\end{aligned}
+\]
+注意到\( \text{diag}\{H, H, \cdots, H\} \)可逆以及
+\[
+(\text{diag}\{HJ_1, HJ_2, \cdots, HJ_s\})^T = \text{diag}\{J_1^T H, J_2^T H, \cdots, J_s^T H\} = \text{diag}\{HJ_1, HJ_2, \cdots, HJ_s\},
+\]
+我们就完成了证明.
+\end{proof}
+
+\begin{theorem}\label{theorem:定理23......4654}
+设域\( \mathbb{F} \)上对称\( n \)阶矩阵\( A \)顺序主子式全不为0,那么存在\( \mathbb{F} \)上主对角元全为1的\( n \)阶上三角矩阵\( B \),主对角元全不为0的对角矩阵\( D \),使得\( A = B^T D B \),并且这种分解是唯一的.
+\end{theorem}
+\begin{proof}
+{\heiti 存在性:} 当\( n = 1 \)命题显然成立,假设命题对\( n - 1 \)成立,当\( n \)时,设
+\[
+A = \begin{pmatrix}
+A_{n - 1} & \alpha \\
+\alpha^T & c
+\end{pmatrix}, A_{n - 1} \in \mathbb{F}^{(n - 1) \times (n - 1)}, c \in \mathbb{F}, \alpha \in \mathbb{F}^{n - 1},
+\]
+且\( A_{n - 1} \)是对称矩阵.注意到
+\[
+\begin{pmatrix}
+E_{n - 1} & 0 \\
+-\alpha^T A_{n - 1}^{-1} & 1
+\end{pmatrix} \begin{pmatrix}
+A_{n - 1} & \alpha \\
+\alpha^T & c
+\end{pmatrix} \begin{pmatrix}
+E_{n - 1} & -A_{n - 1}^{-1} \alpha \\
+0 & 1
+\end{pmatrix} = \begin{pmatrix}
+A_{n - 1} & 0 \\
+0 & c - \alpha^T A_{n - 1}^{-1} \alpha
+\end{pmatrix}.
+\]
+由\( \det A \neq 0 \)知\( c - \alpha^T A_{n - 1}^{-1} \alpha \neq 0 \).利用归纳假设,我们有
+\[
+A_{n - 1} = K^T D_{n - 1} K, K, D_{n - 1} \in \mathbb{F}^{(n - 1) \times (n - 1)},
+\]
+且\( K \)是主对角元全为1的上三角矩阵,\( D_{n - 1} \)是主对角元不为0的对角矩阵.于是
+\[
+\begin{aligned}
+\begin{pmatrix}
+A_{n - 1} & \alpha \\
+\beta^T & c
+\end{pmatrix} &= \begin{pmatrix}
+E_{n - 1} & 0 \\
+-\alpha^T A_{n - 1}^{-1} & 1
+\end{pmatrix}^{-1} \begin{pmatrix}
+K^T D_{n - 1} K & 0 \\
+0 & c - \alpha^T A_{n - 1}^{-1} \alpha
+\end{pmatrix} \begin{pmatrix}
+E_{n - 1} & -A_{n - 1}^{-1} \alpha \\
+0 & 1
+\end{pmatrix}^{-1} \\
+&= \begin{pmatrix}
+E_{n - 1} & 0 \\
+\alpha^T A_{n - 1}^{-1} & 1
+\end{pmatrix} \begin{pmatrix}
+K^T D_{n - 1} K & 0 \\
+0 & c - \alpha^T A_{n - 1}^{-1} \alpha
+\end{pmatrix} \begin{pmatrix}
+E_{n - 1} & A_{n - 1}^{-1} \alpha \\
+0 & 1
+\end{pmatrix} \\
+&= \begin{pmatrix}
+E_{n - 1} & 0 \\
+\alpha^T A_{n - 1}^{-1} & 1
+\end{pmatrix} \begin{pmatrix}
+K^T & 0 \\
+0 & 1
+\end{pmatrix} \begin{pmatrix}
+D_{n - 1} & 0 \\
+0 & c - \alpha^T A_{n - 1}^{-1} \alpha
+\end{pmatrix} \begin{pmatrix}
+K & 0 \\
+0 & 1
+\end{pmatrix} \begin{pmatrix}
+E_{n - 1} & A_{n - 1}^{-1} \alpha \\
+0 & 1
+\end{pmatrix},
+\end{aligned}
+\]
+取
+\[
+B = \begin{pmatrix}
+K & 0 \\
+0 & 1
+\end{pmatrix} \begin{pmatrix}
+E_{n - 1} & A_{n - 1}^{-1} \alpha \\
+0 & 1
+\end{pmatrix}, D = \begin{pmatrix}
+D_{n - 1} & 0 \\
+0 & c - \alpha^T A_{n - 1}^{-1} \alpha
+\end{pmatrix},
+\]
+则有\( A = B^T D B \),这就证明了存在性.
+
+{\heiti 唯一性:} 若还有满足条件的分解\( A = B_2^T D_2 B_2 \),则
+\[
+B^T D B = B_2^T D_2 B_2 \implies (B_2^T)^{-1} B^T D = D_2 B_2 B^{-1}.
+\]
+又\( (B_2^T)^{-1} B^T \)主对角元全为1的下三角矩阵,\( B_2 B^{-1} \)主对角全为1的上三角矩阵.设
+\[
+(B_2^T)^{-1} B^T = (b_{ij}), B_2 B^{-1} = (b_{ij}'), D = \text{diag}\{a_1, a_2, \cdots, a_n\}, D_2 = \text{diag}\{a_1', a_2', \cdots, a_n'\},
+\]
+则
+\[
+b_{ij} a_j = a_i b_{ij}', \forall 1 \leq i, j \leq n.
+\]
+当\( i < j \),我们有\( 0 = a_i b_{ij}' \implies b_{ij}' = 0 \),故\( B_2 B^{-1} \)只能为对角矩阵,因此只能有
+\[
+B_2 B^{-1} = E \implies B_2 = B \implies D = D_2,
+\]
+这就证明了唯一性.
+\end{proof}
+
+\begin{theorem}[CS分解]\label{theorem:CS分解}
+设\( Q_1 \in \mathbb{R}^{m_1 \times n_1}, Q_2 \in \mathbb{R}^{m_2 \times n_1}, Q_1^T Q_1 + Q_2^T Q_2 = I_{n_1} \),这里\( \min\{m_1, m_2\} \geq n_1 \).则存在正交矩阵\( V_1 \in \mathbb{R}^{n_1 \times n_1}, U_1 \in \mathbb{R}^{m_1 \times m_1}, U_2 \in \mathbb{R}^{m_2 \times m_2} \)和\( 0 \leq \theta_1 \leq \theta_2 \leq \cdots \leq \theta_{n_1} \leq \frac{\pi}{2} \)使得
+\begin{align}
+\begin{pmatrix}
+U_1 & 0 \\
+0 & U_2
+\end{pmatrix}^T \begin{pmatrix}
+Q_1 \\
+Q_2
+\end{pmatrix} V_1 = \begin{pmatrix}
+C \\
+S
+\end{pmatrix}, \label{eq:23.27182342343}
+\end{align}
+这里\( C \in \mathbb{R}^{m_1 \times n_1}, S \in \mathbb{R}^{m_2 \times n_1} \).且
+\[
+C = \begin{pmatrix}
+\cos \theta_1 & & \\
+& \cos \theta_2 & \\
+& & \ddots \\
+& & & \cos \theta_{n_1}
+\end{pmatrix}, S = \begin{pmatrix}
+\sin \theta_1 & & \\
+& \sin \theta_2 & \\
+& & \ddots \\
+& & & \sin \theta_{n_1}
+\end{pmatrix}.
+\]
+\end{theorem}
+\begin{remark}
+我们把上述\( C, S \)的\( \cos, \sin \)分别称为\( C, S \)的对角线,并记作(即使不是方阵)
+\[
+C = \text{diag}\{\cos \theta_1, \cdots, \cos \theta_{n_1}\}, S = \text{diag}\{\sin \theta_1, \cdots, \sin \theta_{n_1}\}.
+\]
+\end{remark}
+\begin{proof}
+由\( Q_1^T Q_1 + Q_2^T Q_2 = I_{n_1} \)知\( Q_1, Q_2 \)的\hyperref[theorem:奇异值分解]{奇异值分解}的非0元都在\([0, 1]\)之间.假设
+\[
+C \triangleq U_1^T Q_1 V_1 = \begin{pmatrix}
+I_t & 0 \\
+0 & \Sigma
+\end{pmatrix}.
+\]
+再设\( U_1^T Q_1 V_1 \)的对角线为
+\[
+1 = c_1 = c_2 = \cdots = c_t > c_{t + 1} \geq \cdots \geq c_{n_1} \geq 0.
+\]
+再设\( Q_2 V_1 = (W_1\ W_2), W_1 \in \mathbb{R}^{m_2 \times t} \),我们有
+\[
+\begin{pmatrix}
+U_1 & 0 \\
+0 & I_{m_2}
+\end{pmatrix}^T \begin{pmatrix}
+Q_1 \\
+Q_2
+\end{pmatrix} V_1 = \begin{pmatrix}
+U_1^T Q_1 V_1 \\
+Q_2 V_1
+\end{pmatrix} = \begin{pmatrix}
+I_t & 0 \\
+0 & \Sigma \\
+W_1 & W_2
+\end{pmatrix}.
+\]
+注意到
+\[
+\begin{pmatrix}
+U_1^T Q_1 V_1 \\
+Q_2 V_1
+\end{pmatrix}^T \begin{pmatrix}
+U_1^T Q_1 V_1 \\
+Q_2 V_1
+\end{pmatrix} = V_1^T Q_1^T Q_1 V_1 + V_1^T Q_2^T Q_2 V_1 = I_{n_1},
+\]
+即\( \begin{pmatrix}
+I_t & 0 \\
+0 & \Sigma \\
+W_1 & W_2
+\end{pmatrix} \)的列向量应该是单位向量,从而\( W_1 = 0 \)且\( W_2 \)的列非0并满足
+\[
+W_2^T W_2 = I_{n_1 - t} - \Sigma^T \Sigma = \text{diag}\{1 - c_{t + 1}^2, \cdots, 1 - c_{n_1}^2\}
+\]
+是可逆矩阵.
+
+设\( s_k = \sqrt{1 - c_k^2}, k = 1, 2, \cdots, n_1 \).然后矩阵\( Z = W_2 \text{diag}\left\{ \frac{1}{s_{t + 1}}, \cdots, \frac{1}{s_{n_1}} \right\} = W_2 D \)的列向量是正交规范向量组,因此我们可以把\( Z \)扩充为正交矩阵\( U_2 = (Z\ Z') \in \mathbb{R}^{m_2 \times m_2} \).现在注意到
+\[
+(Z')^T Z = 0 \implies (Z')^T W_2 D = 0 \implies (Z')^T W_2 = 0,
+\]
+于是我们有
+\[
+\begin{aligned}
+S \triangleq U_2^T Q_2 V_1 &= (0, U_2^T W_2) = \begin{pmatrix}
+0 & D^T W_2^T W_2 \\
+0 & (Z')^T W_2
+\end{pmatrix} \\
+&= \begin{pmatrix}
+0 & D^T W_2^T W_2 \\
+0 & 0
+\end{pmatrix} = \text{diag}\{s_1, \cdots, s_{n_1}\}
+\end{aligned}
+\]
+满足要求,于是我们完成了证明.
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 \end{document}

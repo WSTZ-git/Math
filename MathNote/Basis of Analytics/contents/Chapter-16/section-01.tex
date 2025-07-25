@@ -12,7 +12,9 @@
 
 \begin{document}
 
-\section{级数常用结论}
+\section{级数基本结论}
+
+\subsection{级数的敛散性}
 
 \begin{theorem}[交错级数不等式]\label{theorem:交错级数不等式}
 设\(\{a_n\}\)递减非负数列，则对\(m,p\in \mathbb{N}_0\)，必有
@@ -44,6 +46,794 @@ a_0 - (a_1 - a_2) - (a_3 - a_4) - \cdots - (a_{p - 2} - a_{p - 1}) - a_p &, p\te
 \end{align*}
 这就证明了不等式\eqref{eq:18.7}.
 \end{proof}
+
+\begin{theorem}[A-D判别法]
+级数 \( \sum_{n=1}^\infty a_n b_n \) 满足下列条件之一时收敛.
+\begin{enumerate}
+\item \( \left\{ \sum_{k=1}^n a_k \right\}_{n=1}^\infty \) 有界, \( b_n \) 递减到 \( 0 \);
+
+\item \( \sum_{n=1}^\infty a_n \) 收敛, \( b_n \) 单调有界.
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+由 \hyperref[theorem:Abel变换]{Abel变换}, 注意到
+\[
+\sum_{k=n}^m a_k b_k = \sum_{k=n}^{m - 1} (b_k - b_{k + 1}) \sum_{j=n}^k a_j + b_m \sum_{k=n}^m a_k.
+\]
+于是对于第一种情况, 设
+\[
+M = 2 \sup_{n \geqslant 1} \left| \sum_{k=1}^n a_k \right|,
+\]
+我们有
+\[
+\left| \sum_{k=n}^m a_k b_k \right| \leqslant M \sum_{k=n}^{m - 1} |b_k - b_{k + 1}| + M |b_m| = M b_n \to 0, \text{当} n, m \to \infty.
+\]
+对于第二种情况, 因为 \( \sum_{n=1}^\infty a_n \) 收敛, 故对任何 \( \varepsilon > 0 \), 当 \( n \) 充分大, 对任何 \( p \in \mathbb{N}_0 \), 必有
+\[
+\left| \sum_{k=n}^{n + p} a_k \right| \leqslant \varepsilon.
+\]
+于是当 \( n, m \) 充分大, 我们有
+\[
+\left| \sum_{k=n}^m a_k b_k \right| \leqslant \varepsilon \sum_{k=n}^{m - 1} |b_k - b_{k + 1}| + \varepsilon |b_m| = \varepsilon |b_m - b_n| + \varepsilon |b_m| \leqslant 3 \varepsilon \sup_{n \geqslant 1} |b_n|.
+\]
+因此无论如何都有级数 \( \sum_{n=1}^\infty a_n b_n \) 收敛.
+\end{proof}
+
+\begin{theorem}[积分判别法]\label{theorem:积分判别法}
+若 \( f \) 是 \( [1, +\infty) \) 的单调不变号函数, 则 \( \sum_{n=1}^\infty f(n) \) 和 \( \int_1^\infty f(x) \, dx \) 同敛散.
+\end{theorem}
+\begin{note}
+注意有限项不影响级数收敛性, 有限区间不影响积分收敛性. 方法是我们之前已经反复训练的.
+\end{note}
+\begin{proof}
+不妨设 \( f \) 非负递减, 注意到
+\[
+\int_1^\infty f(x) \, dx = \sum_{n=1}^\infty \int_n^{n + 1} f(x) \, dx \leqslant \sum_{n=1}^\infty f(n) \leqslant f(1) + \sum_{n=2}^\infty \int_{n - 1}^n f(x) \, dx = f(1) + \int_1^\infty f(x) \, dx.
+\]
+由夹逼准则即证.
+\end{proof}
+
+\begin{theorem}[比值判别法]\label{theorem:级数-比值判别法}
+对级数 \( \sum_{n=1}^\infty a_n, a_n > 0, \forall n \in \mathbb{N} \), 有如下判别法:
+
+极限版:
+\begin{enumerate}
+\item 若 \( \varlimsup_{n \to \infty} \frac{a_{n + 1}}{a_n} < 1 \), 则 \( \sum_{n=1}^\infty a_n \) 收敛;
+
+\item 若 \( \varliminf_{n \to \infty} \frac{a_{n + 1}}{a_n} > 1 \), 则 \( \sum_{n=1}^\infty a_n \) 发散.
+\end{enumerate}
+
+不等式版:
+\begin{enumerate}
+\item 若存在 \( N \in \mathbb{N}, \delta \in (0, 1) \) 使得 \( \frac{a_{n + 1}}{a_n} \leqslant \delta, \forall n \geqslant N \), 则 \( \sum_{n=1}^\infty a_n \) 收敛;
+
+\item 若存在 \( N \in \mathbb{N} \) 使得 \( \frac{a_{n + 1}}{a_n} \geqslant 1, \forall n \geqslant N \), 则 \( \sum_{n=1}^\infty a_n \) 发散.
+\end{enumerate}
+\end{theorem}
+\begin{remark}
+极限版的1和不等式版的1是等价的,极限版的2能推出不等式版的2,但不等式版的2不能推出极限版的2.
+\end{remark}
+
+\begin{theorem}[Cauchy链]\label{theorem:Cauchy链}
+设正值递增函数 \( F \in C^1[a, +\infty) \)，\(\frac{F'}{F}\) 在 \([a, +\infty)\) 递减。若满足 \(\sum_{n=1}^\infty F'(n)\) 发散，则对正项级数 \(\sum_{n=1}^\infty a_n, a_n > 0, \forall n \in \mathbb{N}\) 有如下判别法：
+
+极限版：
+\begin{enumerate}
+\item 若
+\begin{align}
+\varliminf_{n \to \infty} \frac{\ln \frac{F'(n)}{a_n}}{\ln F(n)} > 1, \label{eq::18.9--1}
+\end{align}
+则 \(\sum_{n=1}^\infty a_n\) 收敛；
+
+\item 若
+\begin{align}
+\varlimsup_{n \to \infty} \frac{\ln \frac{F'(n)}{a_n}}{\ln F(n)} < 1, \label{eq::18.10--1}
+\end{align}
+则 \(\sum_{n=1}^\infty a_n\) 发散。
+\end{enumerate}
+
+不等式版：
+\begin{enumerate}
+\item 若存在 \( c > 1, N \in \mathbb{N} \) 使得
+\[
+\frac{\ln \frac{F'(n)}{a_n}}{\ln F(n)} \geqslant c, \forall n \geqslant N,
+\]
+则 \(\sum_{n=1}^\infty a_n\) 收敛；
+
+\item 若存在 \( c \leqslant 1, N \in \mathbb{N} \) 使得
+\[
+\frac{\ln \frac{F'(n)}{a_n}}{\ln F(n)} \leqslant c, \forall n \geqslant N,
+\]
+则 \(\sum_{n=1}^\infty a_n\) 发散。
+\end{enumerate}
+\end{theorem}
+\begin{note}
+极限版和不等式版的第 1 个结果的条件是等价的，第 2 个结果不等式版条件要更弱，因为如果改 \eqref{eq::18.10--1}为 \(\varliminf_{n \to \infty} \frac{\ln \frac{F'(n)}{a_n}}{\ln F(n)} \leqslant 1\)，则 \(\frac{\ln \frac{F'(n)}{a_n}}{\ln F(n)}\) 仍然可能在 \( n \) 充分大严格超过 1。
+\end{note}
+\begin{remark}
+取 \( F(x) = e^x \)，则
+\[
+\frac{\ln \frac{F'(n)}{a_n}}{\ln F(n)} = \frac{n - \ln a_n}{n} = 1 - \ln \sqrt[n]{a_n},
+\]
+这恰好是\hyperref[theorem:级数-根值判别法]{根值判别法}。
+
+取 \( F(x) = x \)，则
+\[
+\frac{\ln \frac{F'(n)}{a_n}}{\ln F(n)} = \frac{-\ln a_n}{\ln n},
+\]
+这恰好是\hyperref[theorem:级数-对数判别法]{对数判别法}。
+\end{remark}
+\begin{proof}
+$\mathbf{Step}\,\,\mathbf{1}$先证明
+\begin{align}
+\lim_{x \to +\infty} F(x) = +\infty. \label{eq:::18.11---11}
+\end{align}
+设 \(\lim_{x \to +\infty} F(x) = A\)，则\hyperref[theorem:积分判别法]{积分判别法}表明
+\[
+\sum_{n=1}^\infty \frac{F'(n)}{F(n)} \sim \int_a^\infty \frac{F'(x)}{F(x)} \, dx = \ln F(x) \big|_a^\infty,
+\]
+即 \(\sum_{n=1}^\infty \frac{F'(n)}{F(n)}\) 收敛。但 \(\sum_{n=1}^\infty \frac{F'(n)}{F(n)} \geqslant \sum_{n=1}^\infty \frac{F'(n)}{A}\)，这就和 \(\sum_{n=1}^\infty F'(n)\) 发散矛盾！故我们证明了 \(\eqref{eq:::18.11---11}\)。
+
+$\mathbf{Step}\,\,\mathbf{2}$ 当 \(\eqref{eq::18.9--1}\) 成立，再利用\eqref{eq:::18.11---11}式,存在 \( c > 1, N \in \mathbb{N} \) 使得
+\[
+\frac{\ln \frac{F'(n)}{a_n}}{\ln F(n)} \geqslant c,F(N)>1, \forall n \geqslant N.
+\]
+因此
+\[
+\frac{F'(n)}{a_n} \geqslant e^{c \ln F(n)} \Rightarrow \frac{F'(n)}{F^c(n)} \geqslant a_n, \forall n \geqslant N.
+\]
+结合 \(\frac{F'(n)}{F^c(n)} = \frac{F'(n)}{F(n)} \cdot \frac{1}{F^{c - 1}(n)}\) 递减，由\hyperref[theorem:积分判别法]{积分判别法}，我们有
+\[
+\sum_{n=1}^\infty \frac{F'(n)}{F^c(n)} \sim \int_N^\infty \frac{F'(x)}{F^c(x)} \, dx = \int_{F(N)}^\infty \frac{1}{y^c} \, dy < \infty,
+\]
+因此 \(\sum_{n=1}^\infty a_n\) 收敛。
+
+$\mathbf{Step}\,\,\mathbf{3}$ 若存在 \( c \leqslant 1, N \in \mathbb{N} \) 使得
+\[
+\frac{\ln \frac{F'(n)}{a_n}}{\ln F(n)} \leqslant c, F(n) \geqslant 1, \forall n \geqslant N.
+\]
+根据$\mathbf{Step}\,\,\mathbf{2}$，同样的我们有 \(\frac{F'(n)}{F(n)} \leqslant \frac{F'(n)}{F^c(n)} \leqslant a_n, \forall n \geqslant N\) 以及由\hyperref[theorem:积分判别法]{积分判别法}有
+\[
+\sum_{n=1}^\infty \frac{F'(n)}{F(n)} \sim \int_N^\infty \frac{F'(x)}{F(x)} \, dx = \int_{F(N)}^\infty \frac{1}{y} \, dy = \infty,
+\]
+因此 \(\sum_{n=1}^\infty a_n\) 发散。
+\end{proof}
+
+\begin{theorem}[对数判别法]\label{theorem:级数-对数判别法}
+对正项级数 \( \sum_{n=1}^\infty a_n, a_n > 0, \forall n \in \mathbb{N} \), 则有如下判别法:
+
+极限版:
+\begin{enumerate}
+\item 若 \( \lim_{n \to \infty} \frac{\ln \frac{1}{a_n}}{\ln n} > 1 \), 则 \( \sum_{n=1}^\infty a_n \) 收敛;
+
+\item 若 \( \varlimsup_{n \to \infty} \frac{\ln \frac{1}{a_n}}{\ln n} < 1 \), 则 \( \sum_{n=1}^\infty a_n \) 发散.
+\end{enumerate}
+
+不等式版:
+\begin{enumerate}
+\item 若存在 \( c > 1, N \in \mathbb{N} \) 使得
+\[
+\frac{\ln \frac{1}{a_n}}{\ln n} \geqslant c, \forall n \geqslant N,
+\]
+则 \( \sum_{n=1}^\infty a_n \) 收敛;
+
+\item 若存在 \( c \leqslant 1, N \in \mathbb{N} \) 使得
+\[
+\frac{\ln \frac{1}{a_n}}{\ln n} \leqslant c, \forall n \geqslant N,
+\]
+则 \( \sum_{n=1}^\infty a_n \) 发散.
+\end{enumerate}
+\end{theorem}
+
+\begin{theorem}[根值判别法]\label{theorem:级数-根值判别法}
+对正项级数 \(\sum_{n=1}^\infty a_n\)，则有如下判别法：
+
+极限版：
+\begin{enumerate}
+\item 若 \(\varlimsup_{n \to \infty} \sqrt[n]{a_n} < 1\)，则 \(\sum_{n=1}^\infty a_n\) 收敛；
+
+\item 若 \(\varliminf_{n \to \infty} \sqrt[n]{a_n} > 1\)，则 \(\sum_{n=1}^\infty a_n\) 发散。
+\end{enumerate}
+
+不等式版：
+\begin{enumerate}
+\item 若存在 \( c < 1, N \in \mathbb{N} \) 使得
+\[
+\sqrt[n]{a_n} \leqslant c, \forall n \geqslant N,
+\]
+则 \(\sum_{n=1}^\infty a_n\) 收敛；
+
+\item 若存在 \( c \geqslant 1 \) 和无穷多个 \( n \) 使得
+\[
+\sqrt[n]{a_n} \geqslant c,
+\]
+则 \(\sum_{n=1}^\infty a_n\) 发散。
+\end{enumerate}
+\end{theorem}
+\begin{remark}
+值得注意的是，对于\hyperref[theorem:级数-根值判别法]{根值判别法}，这里通过 \hyperref[theorem:Cauchy链]{Cauchy 链}的叙述，不应该是 \(\varlimsup_{n \to \infty} \sqrt[n]{a_n} > 1\)，而应该是 \(\varliminf_{n \to \infty} \sqrt[n]{a_n} > 1\)。也不应是无穷多个 \( n \)，而是任何 \( n \geqslant N \)。所以我们需要一些加强的证明。
+\end{remark}
+\begin{proof}
+若存在 \( c \geqslant 1 \) 和无穷多个 \( n \) 使得
+\[
+\sqrt[n]{a_n} \geqslant c,
+\]
+则存在 \( n_k \to \infty \)，使得
+\[
+\sqrt[n_k]{|a_{n_k}|} \geqslant c \geqslant 1 \Rightarrow |a_{n_k}| \geqslant 1 \Rightarrow \lim_{k \to \infty} |a_{n_k}| \neq 0,
+\]
+于是 \(\sum_{n=1}^\infty a_n\) 发散。
+\end{proof}
+ 
+\begin{theorem}[Kummer链]\label{theorem:Kummer链}
+对正项级数 \( \sum_{n=1}^\infty a_n, a_n > 0, \forall n \in \mathbb{N} \), 设
+\[
+K_n = \frac{1}{d_n} \cdot \frac{a_n}{a_{n + 1}} - \frac{1}{d_{n + 1}}, n = 1, 2, \cdots, d_n > 0, \sum_{n=1}^\infty d_n = +\infty,
+\]
+有如下判别法:
+
+极限版:
+\begin{enumerate}
+\item 若 \( \varliminf_{n \to \infty} K_n > 0 \), 则 \( \sum_{n=1}^\infty a_n \) 收敛;
+\item 若 \( \varlimsup_{n \to \infty} K_n < 0 \), 则 \( \sum_{n=1}^\infty a_n \) 发散.
+\end{enumerate}
+
+不等式版:
+\begin{enumerate}
+\item 若存在 \( N \in \mathbb{N}, \delta > 0 \) 使得 \( K_n \geqslant \delta, \forall n \geqslant N \), 则 \( \sum_{n=1}^\infty a_n \) 收敛;
+
+\item 若存在 \( N \in \mathbb{N} \) 使得 \( K_n \leqslant 0, \forall n \geqslant N \), 则 \( \sum_{n=1}^\infty a_n \) 发散.
+\end{enumerate}
+\end{theorem}
+\begin{note}
+极限版和不等式版的第 1 个结果的条件是等价的, 第 2 个结果不等式版条件要更弱.从证明可以看到, 无论是极限版还是不等式版的1, 没用到条件 \( \sum_{n=1}^\infty d_n = +\infty \).
+\end{note}
+\begin{remark}
+当 \( d_n = 1, n \in \mathbb{N} \). 我们有 \( K_n = \frac{a_n}{a_{n + 1}} - 1 \), 这恰好就是\hyperref[theorem:级数-比值判别法]{比值判别法}.
+
+当 \( d_n = \frac{1}{n}, n \in \mathbb{N} \), 我们有 \( K_n = n \frac{a_n}{a_{n + 1}} - (n + 1) \), 这恰好是\hyperref[theorem:拉比判别法]{拉比判别法}.
+
+当 \( d_n = \frac{1}{n \ln n}, n \in \mathbb{N} \), 我们有
+\begin{align*}
+K_n &= n \ln n \cdot \frac{a_n}{a_{n + 1}} - (n + 1) \ln (n + 1)
+\\
+&= n \ln n \cdot \frac{a_n}{a_{n + 1}} - (n + 1) \ln n - (n + 1) \ln \left( 1 + \frac{1}{n} \right)
+\\
+&= \ln n \cdot \left[ n \left( \frac{a_n}{a_{n + 1}} - 1 \right) - 1 \right] - (n + 1) \ln \left( 1 + \frac{1}{n} \right),
+\end{align*}
+即得一个\hyperref[theorem:较为广泛的判别法]{较为广泛的判别法}. 要注意我们在阶的层面对 \( K_n \) 做了变形, 因此不再给出不等式版本的\hyperref[theorem:较为广泛的判别法]{较为广泛的判别法}.
+\end{remark}
+\begin{proof}
+若存在 \( N \in \mathbb{N}, \delta > 0 \) 使得 \( K_n \geqslant \delta, \forall n \geqslant N \), 则
+\[
+\frac{1}{\delta} \left( \frac{a_n}{d_n} - \frac{a_{n + 1}}{d_{n + 1}} \right) \geqslant a_{n + 1}, \forall n \geqslant N.
+\]
+现在
+\[
+\sum_{k=N}^m a_{k + 1} \leqslant \sum_{k=N}^m \frac{1}{\delta} \left( \frac{a_k}{d_k} - \frac{a_{k + 1}}{d_{k + 1}} \right) = \frac{1}{\delta} \left( \frac{a_N}{d_N} - \frac{a_{m + 1}}{d_{m + 1}} \right) \leqslant \frac{1}{\delta} \cdot \frac{a_N}{d_N},
+\]
+所以 \( \sum_{n=1}^\infty a_n \) 收敛.
+
+若存在 \( N \in \mathbb{N} \) 使得 \( K_n \leqslant 0, \forall n \geqslant N \). 则 \( \frac{a_{n + 1}}{d_{n + 1}} \geqslant \frac{a_n}{d_n}, \forall n \geqslant N \). 现在
+\[
+a_{n + 1} \geqslant \frac{a_N}{d_N} d_{n + 1}, \forall n \geqslant N, \sum_{n=1}^\infty d_n = +\infty \Rightarrow \sum_{n=1}^\infty a_n = +\infty,
+\]
+这就完成了证明.
+\end{proof}
+
+\begin{theorem}[拉比判别法]\label{theorem:拉比判别法}
+对正项级数 \( \sum_{n=1}^\infty a_n, a_n > 0, \forall n \in \mathbb{N} \), 有如下判别法:
+
+极限版:
+\begin{enumerate}
+\item 若 \( \varliminf_{n \to \infty} n \left( \frac{a_n}{a_{n + 1}} - 1 \right) > 1 \), 则 \( \sum_{n=1}^\infty a_n \) 收敛;
+\item 若 \( \varlimsup_{n \to \infty} n \left( \frac{a_n}{a_{n + 1}} - 1 \right) < 1 \), 则 \( \sum_{n=1}^\infty a_n \) 发散.
+\end{enumerate}
+
+不等式版:
+\begin{enumerate}
+\item 若存在 \( N \in \mathbb{N}, \delta > 1 \) 使得 \( n \left( \frac{a_n}{a_{n + 1}} - 1 \right) \geqslant \delta, \forall n \geqslant N \), 则 \( \sum_{n=1}^\infty a_n \) 收敛;
+\item 若存在 \( N \in \mathbb{N} \) 使得 \( n \left( \frac{a_n}{a_{n + 1}} - 1 \right) \leqslant 1, \forall n \geqslant N \), 则 \( \sum_{n=1}^\infty a_n \) 发散.
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+
+\end{proof}
+
+\begin{theorem}[较为广泛的判别法]\label{theorem:较为广泛的判别法}
+对正项级数 \( \sum_{n=1}^\infty a_n, a_n > 0, \forall n \in \mathbb{N} \), 有如下判别法:
+
+极限版 1:
+\begin{enumerate}
+\item 若 \( \varliminf_{n \to \infty} \ln n \cdot \left[ n \left( \frac{a_n}{a_{n + 1}} - 1 \right) - 1 \right] > 1 \), 则 \( \sum_{n=1}^\infty a_n \) 收敛;
+
+\item 若 \( \varlimsup_{n \to \infty} \ln n \cdot \left[ n \left( \frac{a_n}{a_{n + 1}} - 1 \right) - 1 \right] < 1 \), 则 \( \sum_{n=1}^\infty a_n \) 发散.
+\end{enumerate}
+
+极限版 2:
+\begin{enumerate}
+\item 若 \( \varliminf_{n \to \infty} \ln n \left[ n \ln \frac{a_n}{a_{n + 1}} - 1 \right] > 1 \), 则 \( \sum_{n=1}^\infty a_n \) 收敛;
+\item 若 \( \varlimsup_{n \to \infty} \ln n \left[ n \ln \frac{a_n}{a_{n + 1}} - 1 \right] < 1 \), 则 \( \sum_{n=1}^\infty a_n \) 发散.
+\end{enumerate}
+\end{theorem}
+\begin{note}
+极限版 2 和极限版 1 在很多情况下是等价的, 极限版 1 就是\hyperref[theorem:Kummer链]{Kummer链}的 \( d_n = \frac{1}{n \ln n} \) 的情况. 我们这里以大家更熟悉的主流方法来书写一遍判别法证明, 以极限版 2 为例, 考场会更优先使用这种做法.
+\end{note}
+\begin{proof}
+\begin{enumerate}
+\item 设 \( t > 1, N \in \mathbb{N} \) 使得
+\[
+\ln n \left[ n \ln \frac{a_n}{a_{n + 1}} - 1 \right] > t, \forall n \geqslant N.
+\]
+然后
+\[
+\ln \frac{a_n}{a_{n + 1}} > \frac{1}{n} + \frac{t}{n \ln n}, \forall n \geqslant N.
+\]
+现在求和得
+\[
+\ln \frac{a_N}{a_{n + 1}} > \sum_{k=N}^n \left( \frac{1}{k} + \frac{t}{k \ln k} \right), \forall n \geqslant N.
+\]
+于是
+\[
+a_{n + 1} < a_N e^{-\sum\limits_{k=N}^n \left( \frac{1}{k} + \frac{t}{k \ln k} \right)}, \forall n \geqslant N.
+\]
+现在由\nrefexa{example:8.61846546}{(2)}和\refexa{example:例题8.5021514}, 我们有
+\[
+\sum_{k=N}^n \frac{1}{k} = \ln n + O(1), \sum_{k=N}^n \frac{1}{k \ln k} = \ln \ln n + O(1), n \to \infty.
+\]
+于是
+\[
+e^{-\sum\limits_{k=N}^n \left( \frac{1}{k} + \frac{t}{k \ln k} \right)} = e^{-\ln n - \ln \ln n + O(1)} = \frac{e^{O(1)}}{n \ln^t n}.
+\]
+结合\hyperref[theorem:积分判别法]{积分判别法}有
+\[
+\sum_{n=N}^\infty \frac{1}{n \ln^t n} \sim \int_{10}^\infty \frac{1}{x \ln^t x} \, dx = \int_{\ln 10}^\infty \frac{1}{y^t} \, dy < \infty,
+\]
+我们知道 \( \sum_{n=1}^\infty a_n \) 收敛.
+
+\item 设 \( 0 < t < 1, N \in \mathbb{N} \) 使得
+\[
+\ln n \left[ n \ln \frac{a_n}{a_{n + 1}} - 1 \right] < t, \forall n \geqslant N.
+\]
+然后相似第 1 问的证明和
+\[
+\sum_{n=N}^\infty \frac{1}{n \ln^t n} \sim \int_{10}^\infty \frac{1}{x \ln^t x} \, dx = \int_{\ln 10}^\infty \frac{1}{y^t} \, dy = +\infty,
+\]
+我们有 \( \sum_{n=1}^\infty a_n \) 发散.
+\end{enumerate}
+\end{proof}
+
+\begin{theorem}[Herschfeld判别法]\label{theorem:Herschfeld判别法}
+设 \( p > 1 \) 且 \( \{a_n\}_{n = 1}^{\infty} \subset [0, +\infty) \)。定义
+\[
+t_n = \sqrt[p]{a_1 + \sqrt[p]{a_2 + \cdots + \sqrt[p]{a_n}}}, \, n \in \mathbb{N},
+\]
+然后 \( \{t_n\}_{n = 1}^{\infty} \) 收敛的充要条件是 \( a_n^{\frac{1}{p^n}} \) 有界。
+
+显然 \( \{t_n\}_{n = 1}^{\infty} \) 单调递增。
+\end{theorem}
+\begin{proof}
+{\heiti 必要性:} 若 \( \{t_n\}_{n = 1}^{\infty} \) 收敛, 则由
+\[
+t_n = \sqrt[p]{a_1 + \sqrt[p]{a_2 + \cdots + \sqrt[p]{a_n}}} \geqslant \sqrt[p]{0 + \sqrt[p]{0 + \cdots + \sqrt[p]{a_n}}} = a_n^{\frac{1}{p^n}}
+\]
+和 \( \{t_n\}_{n = 1}^{\infty} \) 有界知 \( a_n^{\frac{1}{p^n}} \) 有界。
+
+{\heiti 充分性:} 若 \( a_n^{\frac{1}{p^n}} \) 有界, 则设 \( a_n^{\frac{1}{p^n}} \leqslant M, \, \forall n \in \mathbb{N} \), 于是我们有 \( a_n \leqslant M^{p^n}, \, \forall n \in \mathbb{N} \)。因此
+\begin{align*}
+t_n &= \sqrt[p]{a_1 + \sqrt[p]{a_2 + \cdots + \sqrt[p]{a_n}}} \leqslant \sqrt[p]{M^{p} + \sqrt[p]{M^{p^2} + \cdots + \sqrt[p]{M^{p^n}}}} \\
+&= M\sqrt[p]{1 + \sqrt[p]{1 + \cdots + \sqrt[p]{1}}} \leqslant M \lim_{n \to \infty} \underbrace{\sqrt[p]{1 + \sqrt[p]{1 + \cdots + \sqrt[p]{1}}}}_{n \text{ 个根号}},
+\end{align*}
+其中最后一个等号的极限存在性可以考虑递增函数确定的递推
+\[
+x_1 = \sqrt[p]{1}, \, x_{n + 1} = \sqrt[p]{1 + x_n}, \, n \in \mathbb{N}.
+\]
+注意到 \( x_2 = \sqrt[p]{2} > 1 = x_1 \), 不动点 \( x_0 > 1 \) 满足 \( x_0^p - x_0 - 1 = 0 \)。因此由\refpro{proposition:递增函数递推数列}知 \( \{x_n\}_{n = 1}^{\infty} \) 递增有上界, 从而极限存在。
+\end{proof}
+
+\begin{proposition}\label{proposition:级数收敛平均级数必收敛}
+若$\sum_{n=1}^{\infty}a_n$收敛，则$\lim_{n\rightarrow \infty}\frac{\sum\limits_{k=1}^n{ka_k}}{n}=0$.
+\end{proposition}
+\begin{proof}
+记$s_k=\sum_{i=1}^k{a_i}$，则由Abel变换及Stolz公式可得
+\begin{align*}
+\lim_{n\rightarrow \infty}\frac{\sum\limits_{k=1}^n{ka_k}}{n}&=\lim_{n\rightarrow \infty}\frac{\sum\limits_{k=1}^{n-1}\left[ k-\left( k+1 \right) \right] s_k+ns_n}{n}\\
+&=\lim_{n\rightarrow \infty}\left( s_n-\frac{\sum\limits_{k=1}^{n-1}s_k}{n} \right)\\
+&=\lim_{n\rightarrow \infty}s_n-\lim_{n\rightarrow \infty}s_n=0.
+\end{align*}
+\end{proof}
+
+\begin{proposition}\label{proposition:单调收敛级数的阶}
+设 \( \sum_{n = 1}^{\infty} a_n \) 收敛, 则
+\begin{enumerate}
+\item 若 \( a_n \) 单调, 则 \( \lim_{n \to \infty} n a_n = 0 \)。
+
+\item 若 \( n a_n \) 单调, 则 \( \lim_{n \to \infty} n \ln n \cdot a_n = 0 \)。
+
+\item 若 \( n \ln n \cdot a_n \) 单调, 则 \( \lim_{n \to \infty} n \ln n \cdot \ln \ln n \cdot a_n = 0 \)。
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+\begin{enumerate}
+\item 不妨设 \( a_n \) 递减, 否则考虑 \( -a_n \) 即可. 因为收敛级数末项趋于 0, 所以我们知道 \( a_n \) 递减到 0. 注意到由 \( a_n \) 递减知
+\[
+0 \leqslant 2n a_{2n} \leqslant 2 \sum_{k = n + 1}^{2n} a_k, \, 0 \leqslant (2n - 1) a_{2n - 1} \leqslant 2n a_{2n - 1} \leqslant 2 \sum_{k = n}^{2n - 1} a_k.
+\]
+现在由 Cauchy 收敛准则知
+\[
+\lim_{n \to \infty} 2n a_{2n} = \lim_{n \to \infty} (2n - 1) a_{2n - 1} = 0.
+\]
+由\refpro{proposition:子列极限命题}知 \( \lim_{n \to \infty} n a_n = 0 \)。
+
+\item 不妨设 \( n a_n \) 递减, 否则考虑 \( -a_n \) 即可. 因为 \( \lim_{n \to \infty} n a_n = c \neq 0 \) 会导致$a_n\sim \frac{c}{n}$,进而\( \sum_{n = 1}^{\infty} a_n \) 发散, 所以我们知道 \( n a_n \) 递减到 0.
+
+我们有
+\begin{align*}
+\sum_{\sqrt{n} - 1 \leqslant k \leqslant n - 1} a_k &= \sum_{\sqrt{n} - 1 \leqslant k \leqslant n - 1} \frac{k a_k}{k} \geqslant n a_n \sum_{\sqrt{n} - 1 \leqslant k \leqslant n - 1} \frac{1}{k} \geqslant n a_n \sum_{\sqrt{n} - 1 \leqslant k \leqslant n - 1} \int_{k}^{k + 1} \frac{1}{x} dx \\
+&= n a_n \int_{\lfloor \sqrt{n} \rfloor}^{n} \frac{1}{x} dx = n a_n \ln \frac{n}{\lfloor \sqrt{n} \rfloor} \geqslant n a_n \ln \frac{n}{\sqrt{n}} = \frac{1}{2} n a_n \ln n \geqslant 0,
+\end{align*}
+利用 Cauchy 收敛准则和夹逼准则我们得到 \( \lim_{n \to \infty} n \ln n \cdot a_n = 0 \)。
+
+\item 不妨设 \( n \ln n \cdot a_n \) 递减, 否则考虑 \( -a_n \) 即可. 若 \( \lim_{n \to \infty} (n \ln n \cdot a_n) = c \neq 0 \). 注意到 \( \sum_{n = 2}^{\infty} \frac{1}{n \ln n} \) 发散, \( \sum_{n = 2}^{\infty} a_n \) 收敛, 这就和比较判别法矛盾! 因此 \( \lim_{n \to \infty} (n \ln n \cdot a_n) = 0 \), 从而 \( a_n \geqslant 0 \)。
+
+注意到
+\begin{align*}
+\sum_{[\ln n] \leqslant k \leqslant n} a_k &= \sum_{[\ln n] \leqslant k \leqslant n} \frac{k \ln k \cdot a_k}{k \ln k} \geqslant n \ln n \cdot a_n \sum_{[\ln n] \leqslant k \leqslant n} \frac{1}{k \ln k} \\
+&\geqslant n \ln n \cdot a_n \sum_{[\ln n] \leqslant k \leqslant n} \int_{k}^{k + 1} \frac{1}{x \ln x} dx = n \ln n \cdot a_n \int_{[\ln n]}^{n + 1} \frac{1}{x \ln x} dx \\
+&= n \ln n \cdot a_n \cdot \ln \frac{\ln (n + 1)}{\ln [\ln n]} \geqslant n \ln n \cdot a_n \cdot \ln \frac{\ln n}{\ln \ln n} \sim n \ln n \cdot \ln \ln n \cdot a_n,
+\end{align*}
+利用 Cauchy 收敛准则就证明了 \( \lim_{n \to \infty} n \ln n \cdot \ln \ln n \cdot a_n = 0 \)。
+\end{enumerate}
+\end{proof}
+
+\begin{theorem}[级数的控制收敛定理]\label{theorem:级数的控制收敛定理}
+设 \( a_n(s), n = 1, 2, \cdots \) 满足
+\[
+|a_n(s)| \leqslant c_n, \sum_{n = 1}^{\infty} c_n < \infty,
+\]
+以及 \( \lim_{s} a_n(s) = b_n \in \mathbb{R} \)。
+
+则
+\[
+\lim_{s} \sum_{n = 1}^{\infty} a_n(s) = \sum_{n = 1}^{\infty} b_n,
+\]
+这里 \( \lim_{s} \) 表示 \( s \) 趋于某个 \( s_0 \in \mathbb{R} \cup \{-\infty, +\infty\} \)。
+\end{theorem}
+\begin{proof}
+事实上由极限保号性，我们知道 \( |b_n| \leqslant c_n, n = 1, 2, \cdots \)，因此 \( \sum_{n = 1}^{\infty} b_n \) 绝对收敛，从而
+\begin{align*}
+\left| \sum_{n = 1}^{\infty} a_n(s) - \sum_{n = 1}^{\infty} b_n \right| &\leqslant \left| \sum_{n = 1}^{m} (a_n(s) - b_n) \right| + \sum_{n = m + 1}^{\infty} |a_n(s) - b_n| \\
+&\leqslant \left| \sum_{n = 1}^{m} (a_n(s) - b_n) \right| + 2 \sum_{n = m + 1}^{\infty} c_n.
+\end{align*}
+对 \( s \) 取极限得
+\[
+\lim_{s} \left| \sum_{n = 1}^{\infty} a_n(s) - \sum_{n = 1}^{\infty} b_n \right| \leqslant 2 \sum_{n = m + 1}^{\infty} c_n.
+\]
+由 \( m \) 任意性及$\sum_{n=1}^{\infty}{c_n}$收敛的Cauchy收敛准则得
+\[
+\lim_{s} \left| \sum_{n = 1}^{\infty} a_n(s) - \sum_{n = 1}^{\infty} b_n \right| = 0.
+\]
+我们完成了级数控制收敛定理的证明。
+\end{proof}
+
+\begin{example}
+求$\lim_{n\rightarrow \infty}\sum_{k=1}^{n-1}\left( \frac{k}{n} \right) ^n$.
+\end{example}
+\begin{solution}
+注意到
+\begin{align}
+\lim_{n\rightarrow \infty}\sum_{k=1}^{n-1}\left( \frac{k}{n} \right) ^n=\lim_{n\rightarrow \infty}\sum_{k=1}^{n-1}\left( \frac{n-k}{n} \right) ^n\nonumber=\lim_{n\rightarrow \infty}\sum_{k=1}^{\infty}\left( 1-\frac{k}{n} \right) ^n\chi _{\{1,2,\cdots ,n-1\}}(k),\label{eq:101.678}
+\end{align}
+并且
+\[
+\left| \left( 1-\frac{k}{n} \right) ^n\chi _{\{1,2,\cdots ,n-1\}}(k) \right|\leqslant e^{n\ln \left( 1-\frac{k}{n} \right)}\leqslant e^{n\cdot \left( -\frac{k}{n} \right)}=e^{-k}.
+\]
+又$\sum_{k=1}^{\infty}e^{-k}<\infty$，故由\hyperref[theorem:级数的控制收敛定理]{级数的控制收敛定理}及\eqref{eq:101.678}式可知
+\begin{align*}
+\lim_{n\rightarrow \infty}\sum_{k=1}^{n-1}\left( \frac{k}{n} \right) ^n&=\sum_{k=1}^{\infty}\lim_{n\rightarrow \infty}\left( 1-\frac{k}{n} \right) ^n\chi _{\{1,2,\cdots ,n-1\}}(k)=\sum_{k=1}^{\infty}e^{-k}
+\\
+&=\frac{e^{-1}}{1-e^{-1}}=\frac{1}{e-1}.
+\end{align*}
+\end{solution}
+
+\begin{theorem}[级数的Levi定理]\label{theorem:级数的Levi定理}
+若非负 \( a_n(s), n = 1, 2, \cdots \) 满足 \( a_n(s) \) 是 \( s \) 的关于趋近方向的递增函数 (注意如果取极限的方式是 \( s \to s_0^+ \)，那么应该是关于 \( s \) 的递减函数) 且
+\[
+\lim_{s} a_n(s) = b_n \in \mathbb{R} \bigcup \{+\infty\}.
+\]
+证明
+\[
+\lim_{s} \sum_{n = 1}^{\infty} a_n(s) = \sum_{n = 1}^{\infty} b_n.
+\]
+\end{theorem}
+\begin{note}
+本定理即使级数发散，极限数列发散，也能使用。
+\end{note}
+\begin{proof}
+若 \( \sum_{n = 1}^{\infty} b_n \) 收敛，那么由于 \( 0 \leqslant a_n(s) \leqslant b_n \)，取控制级数 \( \sum_{n = 1}^{\infty} b_n \) 即可使用\hyperref[theorem:级数的控制收敛定理]{控制收敛定理}得到
+\[
+\lim_{s} \sum_{n = 1}^{\infty} a_n(s) = \sum_{n = 1}^{\infty} b_n.
+\]
+
+若 \( \sum_{n = 1}^{\infty} b_n \) 发散，由于$\sum_{n = 1}^{\infty} a_n(s)$也单调递增,故$\lim_{s} \sum_{n = 1}^{\infty} a_n(s) $广义存在.假设
+\[
+\lim_{s} \sum_{n = 1}^{\infty} a_n(s) = m < \infty,
+\]
+此时对任何 \( N \in \mathbb{N} \)，都有
+\[
+\sum_{n = 1}^{N} b_n = \lim_{s} \sum_{n = 1}^{N} a_n(s) \leqslant \lim_{s} \sum_{n = 1}^{\infty} a_n(s) = m < \infty,
+\]
+矛盾！我们完成了Levi定理的证明。
+\end{proof}
+
+\begin{lemma}[级数的Fatou引理]\label{lemma:级数的Fatou引理}
+设非负数列 \( a_n(s), n = 1, 2, \cdots \)，则
+\[
+\sum_{n = 1}^{\infty} \varliminf_{s} a_n(s) \leqslant \varliminf_{s} \sum_{n = 1}^{\infty} a_n(s).
+\]
+\end{lemma}
+\begin{note}
+本定理即使级数发散，极限数列发散，也能使用。
+\end{note}
+\begin{proof}
+不妨设 \( s \to +\infty \)，考虑 \( g_n(s) \triangleq \inf_{t \geqslant s} a_n(t) \)，则 \( g_n \) 关于趋于方向递增非负，所以由\hyperref[theorem:级数的Levi定理]{级数的Levi定理}知
+\[
+\sum_{n = 1}^{\infty} \varliminf_{s} a_n(s) = \sum_{n = 1}^{\infty} \lim_{s} g_n(s) = \lim_{s} \sum_{n = 1}^{\infty} g_n(s) = \lim_{s} \sum_{n = 1}^{\infty} \inf_{t \geqslant s} a_k(t) \leqslant \varliminf_{s} \sum_{n = 1}^{\infty} a_k(s),
+\]
+这就完成了证明。
+\end{proof}
+
+\begin{theorem}[级数的Fubini定理]\label{theorem:级数的Fubini定理}
+满足下述条件之一时，必有
+\begin{align}
+\sum_{m = 1}^{\infty} \sum_{n = 1}^{\infty} a_{m,n} = \sum_{n = 1}^{\infty} \sum_{m = 1}^{\infty} a_{m,n}. \label{eq:::---12380-18.13}
+\end{align}
+\begin{enumerate}
+\item \( a_{m,n} \geqslant 0, 
+\forall m, n \in \mathbb{N} \)；
+
+\item \[
+\sum_{m = 1}^{\infty} \sum_{n = 1}^{\infty} |a_{m,n}| < \infty.
+\]
+\end{enumerate}
+\end{theorem}
+\begin{note}
+第一个条件级数发散也能用，再一次体现思想：非负级数无脑换。
+\end{note}
+\begin{proof}
+\begin{enumerate}
+\item 由\hyperref[theorem:级数的Levi定理]{级数的 Levi 定理}.我们注意到 \( \{\sum_{n = 1}^{N} a_{m,n} \}\) 关于 \( N \) 非负递增，于是有
+\begin{align}
+\sum_{m = 1}^{\infty} \lim_{N \to \infty} \sum_{n = 1}^{N} a_{m,n} = \lim_{N \to \infty} \sum_{m = 1}^{\infty} \sum_{n = 1}^{N} a_{m,n} = \lim_{N \to \infty} \sum_{n = 1}^{N} \sum_{m = 1}^{\infty} a_{m,n} = \sum_{n = 1}^{\infty} \sum_{m = 1}^{\infty} a_{m,n}, \label{eq:::---12380-18.14}
+\end{align}
+这就是 \eqref{eq:::---12380-18.13}。
+
+\item 注意到
+\[
+\sum_{m = 1}^{\infty} \left| \sum_{n = 1}^{N} a_{m,n} \right| \leqslant \sum_{m = 1}^{\infty} \sum_{n = 1}^{\infty} |a_{m,n}| < \infty,
+\]
+于是由\hyperref[theorem:级数的控制收敛定理]{级数的控制收敛定理}知 \eqref{eq:::---12380-18.14} 仍然成立，这就是 \eqref{eq:::---12380-18.13}。
+\end{enumerate}
+\end{proof}
+
+\begin{theorem}[级数加括号的理解]\label{theorem:级数加括号的理解}
+\begin{enumerate}
+\item 收敛级数任意加括号也收敛且收敛到同一个值。
+
+\item 级数加括号之后收敛，且括号内每个元素符号相同，则原级数收敛，且级数值和如此加括号后一致。
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+\begin{enumerate}
+\item 设加括号后新的级数是 \( \sum_{k = 1}^{\infty} \sum_{j = n_k + 1}^{n_{k + 1}} a_j \)，其中$n_k$递增趋于$+\infty.$则
+\[
+\sum_{k = 1}^{\infty} \sum_{j = n_k + 1}^{n_{k + 1}} a_j = \lim_{m \to \infty} \sum_{k = 1}^{m} \sum_{j = n_k + 1}^{n_{k + 1}} a_j = \lim_{m \to \infty} \sum_{j = n_1 + 1}^{n_{m + 1}} a_j = \sum_{j = n_1 + 1}^{\infty} a_j,
+\]
+这就完成了证明。
+
+\item 即证明对严格递增的 \( \{n_k\}_{k = 1}^{\infty} \subset \mathbb{N}, n_1 = 0 \)，如果 \( \sum_{k = 1}^{\infty} \sum_{j = n_k + 1}^{n_{k + 1}} a_j \) 收敛且对任何 \( k \in \mathbb{N} \) 都有 \( a_{n_k + 1}, a_{n_k + 2}, \cdots, a_{n_{k + 1}} \) 将符号相同，则 \( \sum_{j = 1}^{\infty} a_j \) 收敛且
+\begin{align}
+\sum_{j = 1}^{\infty} a_j = \sum_{k = 1}^{\infty} \sum_{j = n_k + 1}^{n_{k + 1}} a_j. \label{eq:::---12380-18.15}
+\end{align}
+事实上，对每个 \( n \in \mathbb{N} \)，存在唯一的 \( m \in \mathbb{N} \)，使得 \( n_m < n \leqslant n_{m + 1} \)，此时
+\[
+\sum_{j = 1}^{n} a_j = \sum_{k = 1}^{m - 1} \sum_{j = n_k + 1}^{n_{k + 1}} a_j + \sum_{j = n_m + 1}^{n} a_j.
+\]
+则当 \( a_j \geqslant 0, n_m < j \leqslant n_{m + 1} \)，我们有
+\begin{align}
+\sum_{j = 1}^{n} a_j \geqslant \sum_{k = 1}^{m - 1} \sum_{j = n_k + 1}^{n_{k + 1}} a_j, \sum_{j = 1}^{n} a_j = \sum_{k = 1}^{m} \sum_{j = n_k + 1}^{n_{k + 1}} a_j - \sum_{j = n + 1}^{n_{m + 1}} a_j \leqslant \sum_{k = 1}^{m} \sum_{j = n_k + 1}^{n_{k + 1}} a_j. \label{eq:::---12380-18.16}
+\end{align}
+若 \( a_j \leqslant 0, n_m < j \leqslant n_{m + 1} \)，可得 \eqref{eq:::---12380-18.16} 的类似式
+\begin{align}
+\sum_{k = 1}^{m} \sum_{j = n_k + 1}^{n_{k + 1}} a_j \leqslant \sum_{j = 1}^{n} a_j \leqslant \sum_{k = 1}^{m - 1} \sum_{j = n_k + 1}^{n_{k + 1}} a_j. \label{eq:::---12380-18.17}
+\end{align}
+让 \( n \to +\infty \)，我们由 \eqref{eq:::---12380-18.16}，\eqref{eq:::---12380-18.17} 和夹逼准则得 \eqref{eq:::---12380-18.15}。这就完成了证明。
+\end{enumerate}
+\end{proof}
+
+\begin{proposition}
+设 \( \{a_n\}_{n = 1}^{\infty} \subset [0, +\infty) \)，\( S_n = \sum_{k = 1}^{n} a_k, n \in \mathbb{N} \)。若 \( \{a_n\}_{n = 1}^{\infty} \) 不恒为 0，不妨设 \( a_1 \neq 0 \)，则有
+\begin{align*}
+\sum_{n = 1}^{\infty} \frac{a_n}{S_n^p}
+\begin{cases} 
+\text{收敛}, & p > 1 \\
+\text{和} \sum_{n = 1}^{\infty} a_n \text{同敛散}, & 0 < p \leqslant 1 
+\end{cases}. 
+\end{align*}
+\end{proposition}
+\begin{note}
+本结果虽然不能直接使用，但连同证明方法却要记住！并且要学会联想和转化到本题的样子，例如
+\[
+\sum \left( 1 - \frac{a_{n + 1}}{a_n} \right), \sum \left( \frac{\ln \frac{a_n}{a_{n + 1}}}{\ln a_n} \right)
+\]
+等结构。
+\end{note}
+\begin{proof}
+当 \( p > 1 \)，注意到
+\[
+\sum_{n = 2}^{\infty} \frac{a_n}{S_n^p} = \sum_{n = 2}^{\infty} \frac{S_n - S_{n - 1}}{S_n^p} = \sum_{n = 2}^{\infty} \int_{S_{n - 1}}^{S_n} \frac{1}{S_n^p} \mathrm{d}x \leqslant \sum_{n = 2}^{\infty} \int_{S_{n - 1}}^{S_n} \frac{1}{x^p} \mathrm{d}x = \int_{S_1}^{\sum\limits_{n = 1}^{\infty} a_n} \frac{1}{x^p} \mathrm{d}x,
+\]
+可以看到无论 \( \sum_{n = 1}^{\infty} a_n \) 收敛性如何都有 \( \sum_{n = 1}^{\infty} \frac{a_n}{S_n^p} \) 收敛。
+
+当 \( 0 < p \leqslant 1 \)，若 \( \sum_{n = 1}^{\infty} a_n \) 收敛，则有 \( \frac{a_n}{S_n^p} \sim \frac{a_n}{\left( \sum\limits_{n = 1}^{\infty} a_n \right)^p}=ca_n, n \to \infty \)，其中$c$是某个常数,故 \( \sum_{n = 1}^{\infty} \frac{a_n}{S_n^p} \) 收敛。当 \( \sum_{n = 1}^{\infty} a_n \) 发散，我们对任何充分大的 \( m, k \in \mathbb{N} \) 都有
+\[
+1 - \frac{S_k}{S_{k + m}} = \frac{S_{k + m} - S_k}{S_{k + m}} = \sum_{n = k + 1}^{k + m} \frac{a_n}{S_{k + m}} \leqslant \sum_{n = k + 1}^{k + m} \frac{a_n}{S_n} \leqslant \sum_{n = k + 1}^{k + m} \frac{a_n}{S_n^p}.
+\]
+让 \( m \to +\infty \)，利用 \( S_{k + m} \to +\infty \)，于是我们有余项不能任意小，因此由 Cauchy 收敛准则知 \( \sum_{n = 1}^{\infty} \frac{a_n}{S_n^p} \) 发散。这就完成了证明。
+\end{proof}
+
+\subsection{幂级数阶与系数阶的关系}
+
+\begin{theorem}[幂级数系数的阶蕴含幂级数和函数的阶]\label{theorem:幂级数系数的阶蕴含幂级数和函数的阶}
+\begin{enumerate}[(1)]
+\item 设
+\begin{align}
+f(x) = \sum_{n=0}^{\infty} a_n x^n, g(x) = \sum_{n=0}^{\infty} b_n x^n, x \in (-1,1)
+\end{align}
+满足
+\begin{align}
+b_n > 0, \lim_{n \to \infty} \frac{a_n}{b_n} = 0, \lim_{x \to 1^-} g(x) = +\infty, \label{eq::::--::--12301749-19.1}
+\end{align}
+则
+\begin{align}
+\lim_{x \to 1^-} \frac{f(x)}{g(x)} = 0. \label{eq::::--::--12301349-19.1}
+\end{align}
+
+\item 设
+\[
+f(x) = \sum_{n=0}^{\infty} a_n x^n, g(x) = \sum_{n=0}^{\infty} b_n x^n, x \in (-1,1)
+\]
+满足
+\begin{align}
+b_n > 0, \lim_{n \to \infty} \frac{a_n}{b_n} = 1, \lim_{x \to 1^-} g(x) = +\infty, \label{eq::::--::--123349-19.1}
+\end{align}
+则
+\begin{align}
+\lim_{x \to 1^-} \frac{f(x)}{g(x)} = 1. \label{eq::::--::--1233241449-19.1}
+\end{align}
+
+\item 设
+\begin{align}
+f(x) = \sum_{n=0}^{\infty} a_n x^n, g(x) = \sum_{n=0}^{\infty} b_n x^n, x \in \mathbb{R}
+\end{align}
+满足
+\begin{align}
+b_n > 0, \lim_{n \to \infty} \frac{a_n}{b_n} = 1, \label{eq::::--::-2341233241449-19.1}
+\end{align}
+则
+\begin{align}
+\lim_{x \to +\infty} \frac{f(x)}{g(x)} = 1. \label{eq::::--::-233241449-19.1}
+\end{align}
+\end{enumerate}
+\end{theorem}
+\begin{remark}
+一句话总结本结论: 即幂级数系数的阶蕴含幂级数和函数的阶.
+\end{remark}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 注意到
+\[
+\frac{f(x)}{g(x)} = \sum_{n=0}^{\infty} \frac{a_n}{b_n} \frac{b_n x^n}{\sum\limits_{k=0}^{\infty} b_k x^k}.
+\]
+我们有
+\[
+0 \leqslant \lim_{x \to 1^-} \frac{b_n x^n}{\sum\limits_{k=0}^{\infty} b_k x^k} = \lim_{x \to 1^-} \frac{b_n x^n}{g(x)} = 0.
+\]
+由\hyperref[theorem:Toeplitz定理]{Toeplitz定理(b)}以及\(\eqref{eq::::--::--12301749-19.1}\)即得\(\eqref{eq::::--::--12301349-19.1}\).
+
+\item 由\(\lim_{n \to \infty} \frac{a_n - b_n}{b_n} = 0\)和1问知
+\[
+\lim_{x \to 1^-} \frac{f(x) - g(x)}{g(x)} = 0,
+\]
+即得\(\eqref{eq::::--::--1233241449-19.1}\).
+
+\item 注意到
+\[
+\frac{f(x)}{g(x)} = \sum_{n=0}^{\infty} \frac{a_n}{b_n} \frac{b_n x^n}{\sum_{k=0}^{\infty} b_k x^k}.
+\]
+我们有
+\[
+0 \leqslant \frac{b_n x^n}{\sum\limits_{k=0}^{\infty} b_k x^k} \leqslant \frac{b_n x^n}{b_n x^n + b_{n+1} x^{n+1}} = \frac{b_n}{b_n + b_{n+1} x},
+\]
+即\(\lim_{x \to +\infty} \frac{b_n x^n}{\sum\limits_{k=0}^{\infty} b_k x^k} = 0\). 由\hyperref[theorem:Toeplitz定理]{Toeplitz定理(b)}以及\(\eqref{eq::::--::-2341233241449-19.1}\)我们就得到\(\eqref{eq::::--::-233241449-19.1}\).
+\end{enumerate}
+\end{proof}
+
+\begin{example}
+设\(p\)是\(\mathbb{R}\)上实解析函数且\(0 < \prod_{n=0}^{\infty} p^{(n)}(0) < \infty\)，求\(\lim_{x \to +\infty} \frac{p'(x)}{p(x)}\).
+\end{example}
+\begin{proof}
+注意到\(\lim_{n \to \infty} p^{(n)}(0) = 1\)，所以\(\{p^{(n)}(0)\}_{n=0}^{\infty}\)是有界数列，故
+\[
+p(x) = \sum_{n=0}^{\infty} \frac{p^{(n)}(0)}{n!} x^n, p'(x) = \sum_{n=0}^{\infty} \frac{p^{(n+1)}(0)}{n!} x^n, \forall x \in \mathbb{R}.
+\]
+由\hyperref[theorem:幂级数系数的阶蕴含幂级数和函数的阶]{幂级数系数的阶蕴含和函数的阶(3)}，我们有
+\[
+\lim_{n \to \infty} \frac{\frac{p^{(n)}(0)}{n!}}{\frac{p^{(n+1)}(0)}{n!}} = 1 \Rightarrow \lim_{x \to +\infty} \frac{f'(x)}{f(x)} = 1.
+\]
+\end{proof}
+
+
+
+\subsection{Cauchy积}
+
+\begin{definition}[Cauchy积]\label{definition:Cauchy积}
+设\(\sum_{n = 0}^{\infty} a_n\)，\(\sum_{n = 0}^{\infty} b_n\)是两个收敛级数，我们称
+\[
+\sum_{n = 0}^{\infty} c_n, c_n = \sum_{k = 0}^{n} a_k b_{n - k}
+\]
+为\(\sum_{n = 0}^{\infty} a_n\)，\(\sum_{n = 0}^{\infty} b_n\)的 \textbf{Cauchy(乘)积}. 我们记
+\[
+A_n = \sum_{k = 0}^{n} a_k, B_n = \sum_{k = 0}^{n} b_k, S_n = \sum_{k = 0}^{n} c_k.
+\]
+\end{definition}
+\begin{remark}
+我们暂时并不清楚\(\sum_{n = 0}^{\infty} c_n\)是否收敛，更不知道是否有
+\[
+\sum_{n = 0}^{\infty} c_n = \sum_{n = 0}^{\infty} a_n \cdot \sum_{n = 0}^{\infty} b_n. 
+\]
+\end{remark}
+
+\begin{example}
+设\(a_n = b_n = \frac{(-1)^n}{\sqrt{n + 1}}, n = 0,1,\cdots\)，则
+\[
+\sum_{n = 0}^{\infty} \sum_{k = 0}^{n} \frac{(-1)^n}{\sqrt{(n - k + 1)(k + 1)}}
+\]
+发散.
+\end{example}
+\begin{remark}
+这是一组Cauchy积不收敛的反例.
+\end{remark}
+\begin{proof}
+事实上，我们有
+\[
+\left| \sum_{k = 0}^{n} \frac{(-1)^n}{\sqrt{(n - k + 1)(k + 1)}} \right| = \sum_{k = 0}^{n} \frac{1}{\sqrt{(n - k + 1)(k + 1)}} \geqslant \sum_{k = 0}^{n} \frac{1}{\sqrt{\left(n - \frac{n}{2} + 1\right)\left(\frac{n}{2} + 1\right)}} = \frac{n + 1}{\frac{n}{2} + 1} \to 2,
+\]
+这就证明了
+\[
+\sum_{n = 0}^{\infty} \sum_{k = 0}^{n} \frac{(-1)^n}{\sqrt{(n - k + 1)(k + 1)}}
+\]
+发散.
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
