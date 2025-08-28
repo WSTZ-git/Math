@@ -1,0 +1,273 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}} % 指定图片目录,后续可以直接使用图片文件名。
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[scale=0.4]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{数值计算的误差}
+
+用计算机解决科学计算问题首先要建立数学模型，它是对被描述的实际问题进行抽象、简化而得到的，因而是近似的。我们把数学模型与实际问题之间出现的这种误差称为\textbf{模型误差}。只有实际问题提法正确，建立数学模型时又抽象、简化得合理，才能得到好的结果。
+
+由于这种误差难于用数量表示，通常都假定数学模型是合理的，这种误差可忽略不计，在“数值分析”中不予讨论。在数学模型中往往还有一些根据观测得到的物理量，如温度、长度、电压等，这些参量显然也包含误差。这种由观测产生的误差称为\textbf{观测误差}，在“数值分析”中也不讨论这种误差。数值分析只研究用数值方法求解数学模型产生的误差。
+
+当数学模型不能得到精确解时，通常要用数值方法求它的近似解，其近似解与精确解之间的误差称为\textbf{截断误差}或\textbf{方法误差}.
+
+\begin{definition}[误差和误差限]
+设 $x$ 为准确值，$x^*$ 为 $x$ 的一个近似值，称 $e^* = x^* - x$ 为近似值的\textbf{绝对误差}，简称\textbf{误差}。
+
+误差$e^*$绝对值的一个上界。$\varepsilon^*$ 叫做近似值的\textbf{绝对误差限}或\textbf{误差限}，它总是正数。
+
+对于一般情形，$|x^* - x| \leqslant \varepsilon^*$，即 
+\[
+x^* - \varepsilon^* \leqslant x \leqslant x^* + \varepsilon^*
+\]
+这个不等式有时也表示为 $x = x^* \pm \varepsilon^*$。
+\end{definition}
+
+\begin{definition}[相对误差和相对误差限]
+$x$ 本身的大小。我们把近似值的误差 $e^*$ 与准确值 $x$ 的比值 
+\[
+\frac{e^*}{x} = \frac{x^* - x}{x}
+\]
+称为近似值 $x^*$ 的\textbf{相对误差}，记作 $e_r^*$。在实际计算中,通常取 
+\[
+e_r^* = \frac{e^*}{x^*} = \frac{x^* - x}{x^*}.
+\]
+
+相对误差也可正可负，它的绝对值上界叫做\textbf{相对误差限}，记作 $\varepsilon_r^*$，即 $\varepsilon_r^* = \frac{\varepsilon^*}{|x^*|}$。
+\end{definition}
+\begin{remark}
+相对误差与相对误差限是无量纲的，而绝对误差与误差限是有量纲的。
+\end{remark}
+\begin{remark}
+相对误差$e_r^*$取$\frac{e^*}{x^*}$的原因:在实际计算中，由于真值 $x$ 总是不知道的，通常取 
+\[
+e_r^* = \frac{e^*}{x^*} = \frac{x^* - x}{x^*}
+\]
+作为 $x^*$ 的相对误差，条件是 $e_r^* = \frac{e^*}{x^*}$ 较小，此时 
+\[
+\frac{e^*}{x} - \frac{e^*}{x^*} = \frac{e^* (x^* - x)}{x^* x} = \frac{(e^*)^2}{x^* (x^* - e^*)} = \frac{(e^*/x^*)^2}{1 - (e^*/x^*)}
+\]
+是 $e_r^*$ 的平方项级，故可忽略不计。
+\end{remark}
+
+\begin{example}
+当准确值 $x$ 有多位数时，常常按四舍五入的原则得到 $x$ 的前几位近似值 $x^*$，例如 
+\[
+x = \pi = 3.14159265\cdots
+\]
+
+取 3 位  $x_3^* = 3.14$，$\varepsilon_3^* \leqslant 0.002$，
+
+取 5 位  $x_5^* = 3.1416$，$\varepsilon_5^* \leqslant 0.000008$，
+\end{example}
+
+\begin{definition}[有效数字]
+若近似值 $x^*$ 的误差限是某一位的半个单位，该位到 $x^*$ 的第一位非零数字共有 $n$ 位，就说 $x^*$ 有 $n$ 位\textbf{有效数字}。它可表示为 
+\begin{align}
+x^* = \pm 10^m \times (a_1 + a_2 \times 10^{-1} + \cdots + a_n \times 10^{-(n - 1)}),\label{eq::--2.....111111241}
+\end{align}
+其中 $a_i (i = 1, 2, \cdots, n)$ 是 0 到 9 中的一个数字，$a_1 \neq 0$，$m$ 为整数，且 
+\begin{align}
+| x - x^* | \leqslant \frac{1}{2} \times 10^{m - n + 1}.\label{eq::--2.....111111242}
+\end{align}
+\end{definition}
+
+\begin{example}
+按四舍五入原则写出下列各数的具有 5 位有效数字的近似数：187.9325，0.03785551，8.000033，2.7182818。
+\end{example}
+\begin{solution}
+按定义，上述各数的具有 5 位有效数字的近似数分别是 
+\[
+187.93, 0.037856, 8.0000, 2.7183
+\]
+
+注意 $x = 8.000033$ 的 5 位有效数字近似数是 8.0000 而不是 8，因为 8 只有 1 位有效数字。
+\end{solution}
+
+\begin{example}
+如果以 $\mathrm{m/s^2}$ 为单位，重力常数 $g \approx 9.80\ \mathrm{m/s^2}$；若以 $\mathrm{km/s^2}$ 为单位，$g \approx 0.00980\ \mathrm{km/s^2}$，它们都具有 3 位有效数字，因为按第一种写法 
+\[
+| g - 9.80 | \leqslant \frac{1}{2} \times 10^{-2}
+\]
+根据 \eqref{eq::--2.....111111241} 式，这里 $m = 0$，$n = 3$；按第二种写法 
+\[
+| g - 0.00980 | \leqslant \frac{1}{2} \times 10^{-5}
+\]
+这里 $m = -3$，$n = 3$。它们虽然写法不同，但都具有 3 位有效数字。至于绝对误差限，由于单位不同结果也不同，$\varepsilon_1^* = \frac{1}{2} \times 10^{-2}\ \mathrm{m/s^2}$，$\varepsilon_2^* = \frac{1}{2} \times 10^{-5}\ \mathrm{km/s^2}$。而相对误差相同，因为 
+\[
+\varepsilon_r^* = 0.005 / 9.80 = 0.000005 / 0.00980.
+\]
+\end{example}
+\begin{note}
+这个例题说明有效位数与小数点后有多少位数无关。
+\end{note}
+
+\begin{theorem}
+设近似数 $x^*$ 表示为 
+\[
+x^* = \pm 10^m \times (a_1 + a_2 \times 10^{-1} + \cdots + a_l \times 10^{-(l - 1)}) \label{eq::::::----2487-2.1'}
+\]
+其中 $a_i (i = 1, 2, \cdots, l)$ 是 0 到 9 中的一个数字，$a_1 \neq 0$，$m$ 为整数。若 $x^*$ 具有 $n$ 位有效数字，则其绝对误差限
+\[
+\varepsilon^* = \frac{1}{2} \times 10^{m - n + 1}.
+\]
+反之，若 $x^*$ 的绝对误差限 $\varepsilon^* = \frac{1}{2} \times 10^{m - n + 1}$，则 $x^*$具有 $n$ 位有效数字。
+\end{theorem}
+\begin{note}
+这个定理说明,在 $m$ 相同的情况下，$n$ 越大则 $10^{m - n + 1}$ 越小，故有效位数越多，绝对误差限越小。
+\end{note}
+\begin{proof}
+从 \eqref{eq::--2.....111111242} 式可得到具有 $n$ 位有效数字的近似数 $x^*$，其绝对误差限为 
+\[
+\varepsilon^* = \frac{1}{2} \times 10^{m - n + 1}.
+\]
+反之,若 $x^*$ 的绝对误差限 $\varepsilon^* = \frac{1}{2} \times 10^{m - n + 1}$，则
+\begin{align*}
+|x-x^*|=\varepsilon^*=\frac{1}{2} \times 10^{m - n + 1}.
+\end{align*}
+故$x^*$ 具有 $n$ 位有效数字.
+\end{proof}
+
+\begin{theorem}
+设近似数 $x^*$ 表示为
+\begin{align}
+x^* = \pm 10^m \times (a_1 + a_2 \times 10^{-1} + \cdots + a_l \times 10^{-(l - 1)}), \label{eq::::::----2487-2.1'}
+\end{align}
+其中 $a_i (i = 1, 2, \cdots, l)$ 是 0 到 9 中的一个数字，$a_1 \neq 0$，$m$ 为整数。若 $x^*$ 具有 $n$ 位有效数字，则其相对误差限 
+\[
+\varepsilon_r^* \leqslant \frac{1}{2a_1} \times 10^{-(n - 1)}.
+\]
+反之，若 $x^*$ 的相对误差限 $\varepsilon_r^* \leqslant \frac{1}{2(a_1 + 1)} \times 10^{-(n - 1)}$，则 $x^*$ 至少具有 $n$ 位有效数字。
+\end{theorem}
+\begin{note}
+这个定理说明，有效位数越多，相对误差限越小。
+\end{note}
+\begin{proof}
+由 \eqref{eq::::::----2487-2.1'} 式可得 
+\[
+a_1 \times 10^m \leqslant | x^* | < (a_1 + 1) \times 10^m
+\]
+当 $x^*$ 具有 $n$ 位有效数字时 
+\[
+\varepsilon_r^* = \frac{| x - x^* |}{| x^* |} \leqslant \frac{0.5 \times 10^{m - n + 1}}{a_1 \times 10^m} = \frac{1}{2a_1} \times 10^{-n + 1}
+\]
+反之，由 
+\[
+| x - x^* | = | x^* | \varepsilon_r^* < (a_1 + 1) \times 10^m \times \frac{1}{2(a_1 + 1)} \times 10^{-n + 1} = 0.5 \times 10^{m - n + 1}
+\]
+故 $x^*$ 至少具有 $n$ 位有效数字。证毕。
+\end{proof}
+
+\begin{theorem}
+设两个近似数 $x_1^*$ 与 $x_2^*$ 的误差限分别为 $\varepsilon(x_1^*)$ 及 $\varepsilon(x_2^*)$，则它们进行加、减、乘、除运算得到的误差限分别满足不等式 
+\[
+\varepsilon(x_1^* \pm x_2^*) \leqslant \varepsilon(x_1^*) + \varepsilon(x_2^*),
+\]
+\[
+\varepsilon(x_1^* x_2^*) \leqslant | x_1^* | \varepsilon(x_2^*) + | x_2^* | \varepsilon(x_1^*),
+\]
+\[
+\varepsilon(x_1^* / x_2^*) \leqslant \frac{| x_1^* | \varepsilon(x_2^*) + | x_2^* | \varepsilon(x_1^*)}{| x_2^* |^2}, \quad x_2^* \neq 0.
+\]
+\end{theorem}
+\begin{proof}
+
+\end{proof}
+
+\begin{theorem}
+\begin{enumerate}
+\item 设 $f(x)$ 是一元可微函数，$x$ 的近似值为 $x^*$，以 $f(x^*)$ 近似 $f(x)$，其误差界记作 $\varepsilon(f(x^*))$，则函数的误差限 
+\[
+\varepsilon(f(x^*)) \approx | f'(x^*) | \varepsilon(x^*).
+\]
+
+\item 设$f$ 为多元函数时，令$A = f(x_1, x_2, \cdots, x_n)$。如果 $x_1, x_2, \cdots, x_n$ 的近似值为 $x_1^*, x_2^*, \cdots, x_n^*$，记$A$ 的近似值为 $A^* = f(x_1^*, x_2^*, \cdots, x_n^*)$，则$A^*$ 的误差 $e(A^*)$ 为 
+\[
+e(A^*) =\sum_{k=1}^n \left( \frac{\partial f}{\partial x_k} \right)^* e_k^*.
+\]
+$A^*$ 的误差限 
+\begin{align}
+\varepsilon(A^*) \approx \sum_{k=1}^n \left| \left( \frac{\partial f}{\partial x_k} \right)^* \right| \varepsilon(x_k^*) .\label{eq:::---20...3}
+\end{align}
+而 $A^*$ 的相对误差限为 
+\[
+\varepsilon_r^* = \varepsilon_r(A^*) = \frac{\varepsilon(A^*)}{| A^* |} \approx \sum_{k=1}^n \left| \left( \frac{\partial f}{\partial x_k} \right)^* \right| \frac{\varepsilon(x_k^*)}{| A^* |} .
+\]
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+\begin{enumerate}
+\item 由泰勒展开 
+\[
+f(x) - f(x^*) = f'(x^*)(x - x^*) + \frac{f''(\xi)}{2}(x - x^*)^2, \quad \xi \text{ 介于 } x, x^* \text{ 之间},
+\]
+取绝对值得 
+\[
+| f(x) - f(x^*) | \leqslant | f'(x^*) | \varepsilon(x^*) + \frac{| f''(\xi) |}{2} \varepsilon^2(x^*).
+\]
+假定 $f'(x^*)$ 与 $f''(x^*)$ 的比值不太大，可忽略 $\varepsilon(x^*)$ 的高阶项，于是可得计算函数的误差限 
+\[
+\varepsilon(f(x^*)) \approx | f'(x^*) | \varepsilon(x^*).
+\]
+
+\item 由泰勒展开得函数值 $A^*$ 的误差 $e(A^*)$ 为 
+\begin{align*}
+e(A^*)&=A^*-A=f(x_{1}^{*},x_{2}^{*},\cdots ,x_{n}^{*})-f(x_1,x_2,\cdots ,x_n)
+\\
+&\approx \sum_{k=1}^n{\left( \frac{\partial f(x_{1}^{*},x_{2}^{*},\cdots ,x_{n}^{*})}{\partial x_k} \right) (x_{k}^{*}}-x_k)=\sum_{k=1}^n{\left( \frac{\partial f}{\partial x_k} \right) ^*e_{k}^{*}},
+\end{align*}
+于是误差限 
+\[
+\varepsilon(A^*) \approx \sum_{k=1}^n \left| \left( \frac{\partial f}{\partial x_k} \right)^* \right| \varepsilon(x_k^*) ,
+\]
+而 $A^*$ 的相对误差限为 
+\[
+\varepsilon_r^* = \varepsilon_r(A^*) = \frac{\varepsilon(A^*)}{| A^* |} \approx \sum_{k=1}^n \left| \left( \frac{\partial f}{\partial x_k} \right)^* \right| \frac{\varepsilon(x_k^*)}{| A^* |} .
+\]
+\end{enumerate}
+\end{proof}
+
+\begin{example}
+已测得某场地长 $l$ 的值为 $l^* = 110\ \mathrm{m}$，宽 $d$ 的值为 $d^* = 80\ \mathrm{m}$，已知 $| l - l^* | \leqslant 0.2\ \mathrm{m}$，$| d - d^* | \leqslant 0.1\ \mathrm{m}$。试求面积 $s = ld$ 的绝对误差限与相对误差限。
+\end{example}
+\begin{solution}
+因 $s = ld$，$\frac{\partial s}{\partial l} = d$，$\frac{\partial s}{\partial d} = l$，由 \eqref{eq:::---20...3} 式知 
+\[
+\varepsilon(s^*) \approx \left| \left( \frac{\partial s}{\partial l} \right)^* \right| \varepsilon(l^*) + \left| \left( \frac{\partial s}{\partial d} \right)^* \right| \varepsilon(d^*),
+\]
+其中 
+\[
+\left( \frac{\partial s}{\partial l} \right)^* = d^* = 80\ \mathrm{m}, \quad \left( \frac{\partial s}{\partial d} \right)^* = l^* = 110\ \mathrm{m}.
+\]
+而 $\varepsilon(l^*) = 0.2\ \mathrm{m}$，$\varepsilon(d^*) = 0.1\ \mathrm{m}$，于是绝对误差限 
+\[
+\varepsilon(s^*) \approx 80 \times (0.2) + 110 \times (0.1) = 27\ (\mathrm{m^2}),
+\]
+相对误差限 
+\[
+\varepsilon_r(s^*) = \frac{\varepsilon(s^*)}{| s^* |} = \frac{\varepsilon(s^*)}{l^* d^*} \approx \frac{27}{8800} = 0.31\%.
+\]
+\end{solution}
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}
