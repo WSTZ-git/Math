@@ -12,7 +12,9 @@
 
 \begin{document}
 
-\section{均差与牛顿插值多项式}
+\section{牛顿插值多项式}
+
+\subsection{牛顿均差插值多项式}
 
 \begin{definition}[均差]
 称 $f[x_0, x_k] = \frac{f(x_k) - f(x_0)}{x_k - x_0}$ 为函数 $f(x)$ 关于点 $x_0, x_k$ 的\textbf{一阶均差}。$f[x_0, x_1, x_k] = \frac{f[x_0, x_k] - f[x_0, x_1]}{x_k - x_1}$ 称为 $f(x)$ 的\textbf{二阶均差}。一般地，称 
@@ -38,9 +40,9 @@ f[x_0, x_1, \cdots, x_k] = \frac{f[x_1, x_2, \cdots, x_k] - f[x_0, x_1, \cdots, 
 \end{align}
 
 \item 若 $f(x)$ 在 $[a, b]$ 上存在 $n$ 阶导数，且节点 $x_0, x_1, \cdots, x_n \in [a, b]$，则 $n$ 阶均差与导数的关系为 
-\[
-f[x_0, x_1, \cdots, x_n] = \frac{f^{(n)}(\xi)}{n!}, \quad \xi \in [a, b].
-\]
+\begin{align}
+f[x_0, x_1, \cdots, x_n] = \frac{f^{(n)}(\xi)}{n!}, \quad \xi \in [a, b].\label{eq:数值分析-3.5}
+\end{align}
 \end{enumerate}
 \end{theorem}
 \begin{proof}
@@ -52,6 +54,357 @@ f[x_0, x_1, \cdots, x_n] = \frac{f^{(n)}(\xi)}{n!}, \quad \xi \in [a, b].
 \item 反复使用Rolle定理证明即可。
 \end{enumerate}
 \end{proof}
+\begin{table}[H]
+\centering
+\caption{均差表}
+\label{table:均差表}
+\begin{tabular}{c|c|c|c|c|c}
+\hline
+$x_k$ & $f(x_k)$ & 一阶均差 & 二阶均差 & 三阶均差 & 四阶均差 \\
+\hline
+$x_0$ & $\underline{f(x_0)}$ &  &  &  &  \\
+$x_1$ & $f(x_1)$ & $\underline{f[x_0, x_1]}$ &  &  &  \\
+$x_2$ & $f(x_2)$ & $f[x_1, x_2]$ & $\underline{f[x_0, x_1, x_2]}$ &  &  \\
+$x_3$ & $f(x_3)$ & $f[x_2, x_3]$ & $f[x_1, x_2, x_3]$ & $\underline{f[x_0, x_1, x_2, x_3]}$ &  \\
+$x_4$ & $f(x_4)$ & $f[x_3, x_4]$ & $f[x_2, x_3, x_4]$ & $f[x_1, x_2, x_3, x_4]$ & $\underline{f[x_0, x_1, x_2, x_3, x_4]}$ \\
+$\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{theorem}[牛顿均差插值多项式]\label{theorem:牛顿均差插值多项式}
+若已知 $f$ 在插值点 $x_i$ ($i = 0, 1, \cdots, n$) 上的值为 $f(x_i)$ ($i = 0, 1, \cdots, n$),记$f$的 $n$ 次插值多项式为$P_n(x)$,且满足条件
+\begin{align}
+P_n(x_i) = f(x_i), \quad i = 0, 1, \cdots, n. \label{eq:数值分析-3.1}
+\end{align}
+则一次插值多项式可表示为
+\begin{align*}
+P_1(x) = f(x_0) + f[x_0, x_1](x - x_0),
+\end{align*}
+二次插值多项式可表示为
+\begin{align*}
+P_2(x) = f(x_0) + f[x_0, x_1](x - x_0) + f[x_0, x_1, x_2](x - x_0)(x - x_1).
+\end{align*}
+将 $x$ 看成 $[a, b]$ 上一点,可得
+\begin{align*}
+f(x) &= f(x_0) + f[x_0, x_1](x - x_0) + f[x_0, x_1, x_2](x - x_0)(x - x_1) + \cdots \\
+&\quad + f[x_0, x_1, \cdots, x_n](x - x_0) \cdots (x - x_{n-1}) \\
+&\quad + f[x, x_0, \cdots, x_n]\omega_{n+1}(x) = P_n(x) + R_n(x),
+\end{align*}
+其中$n$次插值多项式和余项分别为
+\begin{align}
+P_n(x) &= f(x_0) + f[x_0, x_1](x - x_0) + f[x_0, x_1, x_2](x - x_0)(x - x_1) + \cdots \nonumber  \\
+&\quad + f[x_0, x_1, \cdots, x_n](x - x_0) \cdots (x - x_{n-1}),\label{eq:数值分析-3.6} \\
+R_n(x) &= f(x) - P_n(x) = f[x, x_0, \cdots, x_n]\omega_{n+1}(x),\label{eq:数值分析-3.7}
+\end{align}
+其中 $\omega_{n+1}(x)$ 由\eqref{eq:数值分析-2.10} 式定义.我们称 $P_n(x)$ 为\textbf{牛顿均差插值多项式}. 系数就是\hyperref[table:均差表]{均差表}中加横线的各阶均差.
+\end{theorem}
+\begin{remark}
+\eqref{eq:数值分析-3.7} 式为插值余项,由插值多项式唯一性知,它与\eqref{eq:数值分析-2.12}式是等价的,事实上,利用均差与导数关系式 \eqref{eq:数值分析-3.5} 可由 \eqref{eq:数值分析-3.7} 式推出\eqref{eq:数值分析-2.12}式. 但 \eqref{eq:数值分析-3.7} 式更有一般性,它对 $f$ 是由离散点给出的情形或 $f$ 导数不存在时均适用.
+\end{remark}
+\begin{remark}
+牛顿插值比拉格朗日插值计算量省,且便于程序设计.
+\end{remark}
+\begin{proof}
+借助均差的定义,一次插值多项式可表示为
+\begin{align*}
+P_1(x) &= P_0(x) + f[x_0, x_1](x - x_0) = f(x_0) + f[x_0, x_1](x - x_0),
+\end{align*}
+而二次插值多项式可表示为
+\begin{align*}
+P_2(x) &= P_1(x) + f[x_0, x_1, x_2](x - x_0)(x - x_1) \\
+&= f(x_0) + f[x_0, x_1](x - x_0) + f[x_0, x_1, x_2](x - x_0)(x - x_1).
+\end{align*}
+实际上,根据均差定义,将 $x$ 看成 $[a, b]$ 上一点,可得
+\begin{align*}
+f(x) &= f(x_0) + f[x, x_0](x - x_0), \\
+f[x, x_0] &= f[x_0, x_1] + f[x, x_0, x_1](x - x_1), \\
+&\vdots \\
+f[x, x_0, \cdots, x_{n-1}] &= f[x_0, x_1, \cdots, x_n] + f[x, x_0, \cdots, x_n](x - x_n).
+\end{align*}
+只要把后一式依次代入前一式,就得到
+\begin{align*}
+f(x) &= f(x_0) + f[x_0, x_1](x - x_0) + f[x_0, x_1, x_2](x - x_0)(x - x_1) + \cdots \\
+&\quad + f[x_0, x_1, \cdots, x_n](x - x_0) \cdots (x - x_{n-1}) \\
+&\quad + f[x, x_0, \cdots, x_n]\omega_{n+1}(x) = P_n(x) + R_n(x),
+\end{align*}
+其中
+\begin{align}
+P_n(x) &= f(x_0) + f[x_0, x_1](x - x_0) + f[x_0, x_1, x_2](x - x_0)(x - x_1) + \cdots \nonumber \\
+&\quad + f[x_0, x_1, \cdots, x_n](x - x_0) \cdots (x - x_{n-1}),\label{eq:数值分析-3..6} \\
+R_n(x) &= f(x) - P_n(x) = f[x, x_0, \cdots, x_n]\omega_{n+1}(x), \nonumber 
+\end{align}
+其中 $\omega_{n+1}(x)$ 由\eqref{eq:数值分析-2.10} 式定义.
+
+由 \eqref{eq:数值分析-3..6} 式确定的多项式 $P_n(x)$ 显然满足插值条件 \eqref{eq:数值分析-3.1},且次数不超过 $n$,若记
+\begin{align*}
+P_n(x)=a_0+a_1(x-x_0)+a_2(x-x_0)(x-x_1)+\cdots+a_n(x-x_0)\cdots(x-x_{n-1}),
+\end{align*}
+则其系数为
+\begin{align*}
+a_k = f[x_0, x_1, \cdots, x_k], \quad k = 0, 1, \cdots, n.
+\end{align*}
+\end{proof}
+
+\begin{example}
+给出 $f(x)$ 的函数表(见表 2-2),求 4 次牛顿插值多项式,并由此计算 $f(0.596)$ 的近似值.
+\end{example}
+\begin{solution}
+首先根据给定函数表造出均差表.
+\begin{table}[H]
+\centering
+\caption{函数及均差表}
+\label{table:例题1均差表}
+\begin{tabular}{c|c|c|c|c|c|c}
+\hline
+0.40  & \underline{0.410 75} &          &          &          &          &          \\
+0.55  & 0.578 15          & \underline{1.116 00} &          &          &          &          \\
+0.65  & 0.696 75          & 1.186 00          & \underline{0.280 00} &          &          &          \\
+0.80  & 0.888 11          & 1.275 73          & 0.358 93          & \underline{0.197 33} &          &          \\
+0.90  & 1.026 52          & 1.384 10          & 0.433 48          & 0.213 00          & \underline{0.031 34} &          \\
+1.05  & 1.253 82          & 1.515 33          & 0.524 93          & 0.228 63          & 0.031 26          & $-0.000 12$ \\
+\hline
+\end{tabular}
+\end{table}
+从均差表看到 4 阶均差近似常数,故取 4 次插值多项式 $P_4(x)$ 做近似即可.
+\begin{align*}
+P_4(x) &= 0.41075 + 1.116(x - 0.4) + 0.28(x - 0.4)(x - 0.55) \\
+&\quad + 0.19733(x - 0.4)(x - 0.55)(x - 0.65) \\
+&\quad + 0.03134(x - 0.4)(x - 0.55)(x - 0.65)(x - 0.8),
+\end{align*}
+于是
+\[
+f(0.596) \approx P_4(0.596) = 0.63192,
+\]
+截断误差
+\[
+|R_4(x)| \approx |f[x_0, x_1, \cdots, x_5]\omega_5(0.596)| \leqslant 3.63 \times 10^{-9}.
+\]
+这说明截断误差很小,可忽略不计.
+
+此例的截断误差估计中,5 阶均差 $f[x, x_0, \cdots, x_4]$ 用 $f[x_0, x_1, \cdots, x_5] = -0.00012$ 近似. 另一种方法是取 $x = 0.596$,由 $f(0.596) \approx 0.63192$,可求得 $f[x, x_0, \cdots, x_4]$ 的近似值,再根据均差的定义,可求得 $|R_4(x)|$ 的近似.
+\end{solution}
+
+
+\subsection{差分形式的牛顿插值多项式}
+
+\begin{definition}\label{definition:差分定义}
+$n$个节点$x_0,x_1,\cdots,x_n$称为\textbf{等距节点},即$x_k = x_0 + kh$ ($k = 0, 1, \cdots, n$),这里的 $h$ 称为\textbf{步长}.
+
+设 $x_k$ 点的函数值为 $f_k = f(x_k)$ ($k = 0, 1, \cdots, n$),称 $\Delta f_k = f_{k+1} - f_k$ 为 $x_k$ 处以 $h$ 为步长的\textbf{一阶(向前)差分}. 类似地称 $\Delta^2 f_k = \Delta f_{k+1} - \Delta f_k$ 为 $x_k$ 处的\textbf{二阶差分}. 一般地,称
+\begin{align}
+\Delta^n f_k = \Delta^{n-1} f_{k+1} - \Delta^{n-1} f_k \label{eq:数值分析-3.8}
+\end{align}
+为 $x_k$ 处的 $\boldsymbol{n}$ \textbf{阶差分}. 为了表示方便,再引入两个常用算子符号:
+\[
+\mathrm{I}f_k = f_k, \quad \mathrm{E}f_k = f_{k+1},
+\]
+$\mathrm{I}$ 称为\textbf{不变算子},$\mathrm{E}$ 称为步长为 $h$ 的\textbf{位移算子}.
+\end{definition}
+
+由给定函数表计算各阶差分可由以下形式差分表给出.
+\begin{table}[H]
+\scriptsize
+\centering
+\caption{}
+\label{table:差分表}
+\begin{tikzcd}
+{f_0} \\
+&& {\Delta f_0} \\
+{f_1} &&&& {\Delta^2 f_0} \\
+&& {\Delta f_1} &&&& {\Delta^3 f_0} \\
+{f_2} &&&& {\Delta^2 f_1} \\
+&& {\Delta f_2} \\
+{f_3}
+\arrow[from=1-1, to=2-3]
+\arrow[from=2-3, to=3-5]
+\arrow[from=3-1, to=2-3]
+\arrow[from=3-1, to=4-3]
+\arrow[from=3-5, to=4-7]
+\arrow[from=4-3, to=3-5]
+\arrow[from=4-3, to=5-5]
+\arrow[from=5-1, to=4-3]
+\arrow[from=5-1, to=6-3]
+\arrow[from=5-5, to=4-7]
+\arrow[from=6-3, to=5-5]
+\arrow[from=7-1, to=6-3]
+\end{tikzcd}
+\end{table}
+
+\begin{theorem}\label{theorem:差分的基本性质}
+设$n$个节点$x_0,x_1,\cdots,x_n$,步长为$h$,$x_k$ 点的函数值为 $f_k = f(x_k)$ ($k = 0, 1, \cdots, n$),则
+\[
+\Delta f_k = f_{k+1} - f_k = \mathrm{E}f_k - \mathrm{I}f_k = (\mathrm{E} - \mathrm{I})f_k,
+\]
+\begin{align}
+\Delta^n f_k = (\mathrm{E} - \mathrm{I})^n f_k = \sum_{j=0}^n (-1)^j \binom{n}{j} \mathrm{E}^{n-j} f_k = \sum_{j=0}^n (-1)^j \binom{n}{j} f_{n+k-j}, \label{eq:数值分析-3.9}
+\end{align}
+\eqref{eq:数值分析-3.9} 式表示各阶差分均可用函数值给出.
+
+反之也可用各阶差分表示函数值如下
+\begin{align}
+f_{n+k} = \sum_{j=0}^n \binom{n}{j} \Delta^j f_k. \label{eq:数值分析-3.10}
+\end{align}
+还可导出均差与差分的关系:
+\begin{align}
+f[x_k, \cdots, x_{k+m}] = \frac{1}{m!} \frac{1}{h^m} \Delta^m f_k, \quad m = 1, 2, \cdots, n. \label{eq:数值分析-3.11}
+\end{align}
+还可得到差分与导数的关系:
+\begin{align}
+\Delta^n f_k = h^n f^{(n)}(\xi), \quad \text{其中 } \xi \in (x_k, x_{k+n}). \label{eq:数值分析-3.12}
+\end{align}
+\end{theorem}
+\begin{proof}
+由\refdef{definition:差分定义}可推出:
+\[
+\Delta f_k = f_{k+1} - f_k = \mathrm{E}f_k - \mathrm{I}f_k = (\mathrm{E} - \mathrm{I})f_k,
+\]
+\begin{align*}
+\Delta^n f_k = (\mathrm{E} - \mathrm{I})^n f_k = \sum_{j=0}^n (-1)^j \binom{n}{j} \mathrm{E}^{n-j} f_k = \sum_{j=0}^n (-1)^j \binom{n}{j} f_{n+k-j},
+\end{align*}
+其中 $\binom{n}{j} = \frac{n(n-1)\cdots(n-j+1)}{j!}$ 为二项式展开系数.
+
+由\refdef{definition:差分定义}可推出:
+\begin{gather*}
+\Delta f_k=f_{k+1}-f_k=f_{k+1}-\mathrm{I}f_k\Longrightarrow f_{k+1}=\mathrm{E}f_k=(\mathrm{I}+\Delta )f_k,
+\\
+f_{n+k}=\mathrm{E}^nf_k=(\mathrm{I}+\Delta )^nf_k=\left[ \sum_{j=0}^n{\left( \begin{array}{c}
+n\\
+j\\
+\end{array} \right) \Delta ^j} \right] f_k,
+\end{gather*}
+于是
+\begin{align*}
+f_{n+k} = \sum_{j=0}^n \binom{n}{j} \Delta^j f_k.
+\end{align*}
+根据均差的定义就可导出均差与差分的关系:
+\[
+f[x_k, x_{k+1}] = \frac{f_{k+1} - f_k}{x_{k+1} - x_k} = \frac{\Delta f_k}{h},
+\]
+\[
+f[x_k, x_{k+1}, x_{k+2}] = \frac{f[x_{k+1}, x_{k+2}] - f[x_k, x_{k+1}]}{x_{k+2} - x_k} = \frac{1}{2h^2} \Delta^2 f_k.
+\]
+一般地,有
+\begin{align*}
+f[x_k, \cdots, x_{k+m}] = \frac{1}{m!} \frac{1}{h^m} \Delta^m f_k, \quad m = 1, 2, \cdots, n. 
+\end{align*}
+由 \eqref{eq:数值分析-3.11} 式及\eqref{eq:数值分析-3.5}式就可得到差分与导数的关系:
+\begin{align*}
+\Delta^n f_k = h^n f^{(n)}(\xi), \quad \text{其中 } \xi \in (x_k, x_{k+n}).
+\end{align*}
+\end{proof}
+
+\begin{theorem}
+若已知$n+1$阶可导函数$f$ 在步长为$h$的等距插值点 $x_i$ ($i = 0, 1, \cdots, n$) 上的值为 $f(x_i)$ ($i = 0, 1, \cdots, n$),记 $n$ 次插值多项式 $P_n(x)$ 满足条件
+\begin{align*}
+P_n(x_i) = f(x_i), \quad i = 0, 1, \cdots, n. 
+\end{align*}
+令$x=x_0+th$,则插值多项式可表示为
+\begin{align}
+P_n(x_0 + th) &= f_0 + t\Delta f_0 + \frac{t(t - 1)}{2!} \Delta^2 f_0 + \cdots + \frac{t(t - 1) \cdots (t - n + 1)}{n!} \Delta^n f_0, \label{eq:数值分析-3.13}
+\end{align}
+\eqref{eq:数值分析-3.13}式称为\textbf{牛顿前插公式}.其余项为
+\begin{align}
+R_n(x) = \frac{t(t - 1) \cdots (t - n)}{(n + 1)!} h^{n+1} f^{(n+1)}(\xi), \quad \xi \in (x_0, x_n). \label{eq:数值分析-3.14}
+\end{align}
+\end{theorem}
+\begin{proof}
+在牛顿插值公式 \eqref{eq:数值分析-3.6} 中,用 \eqref{eq:数值分析-3.11} 式的差分代替均差,并令 $x = x_0 + th$,则得
+\begin{align*}
+P_n(x_0 + th) &= f_0 + t\Delta f_0 + \frac{t(t - 1)}{2!} \Delta^2 f_0 + \cdots + \frac{t(t - 1) \cdots (t - n + 1)}{n!} \Delta^n f_0,
+\end{align*}
+由 \eqref{eq:数值分析-3.7} 式和\eqref{eq:数值分析-3.5}式得其余项为
+\begin{align*}
+R_n(x) = \frac{t(t - 1) \cdots (t - n)}{(n + 1)!} h^{n+1} f^{(n+1)}(\xi), \quad \xi \in (x_0, x_n). 
+\end{align*}
+\end{proof}
+
+\begin{example}
+给出 $f(x) = \cos x$ 在 $x_k = kh$, $k = 0, 1, \cdots, 5$, $h = 0.1$ 处的函数值,试用 4 次牛顿前插公式计算 $f(0.048)$ 的近似值并估计误差.
+\end{example}
+\begin{solution}
+先构造差分表(见\reftab{table:差分表})并用牛顿前插公式 \eqref{eq:数值分析-3.13} 求 $f(0.048)$ 的近似值.
+\begin{table}[H]
+\centering
+\caption{差分表}
+\label{tab:difference-table12312344343452345634456}
+\begin{tabular}{c c c c c c c}
+\toprule
+$x_k$ & $f(x_k)$ & $\Delta f$ & $\Delta^2 f$ & $\Delta^3 f$ & $\Delta^4 f$ & $\Delta^5 f$ \\
+\midrule
+0.00 & 1.00000 &  &  &  &  &  \\
+&  & $-0.00500$ &  &  &  &  \\
+0.10 & 0.99500 &  & $-0.00993$ &  &  &  \\
+&  & $-0.01493$ &  & $0.00013$ &  &  \\
+0.20 & 0.98007 &  & $-0.00980$ &  & $0.00012$ &  \\
+&  & $-0.02473$ &  & $0.00025$ &  & $-0.00002$ \\
+0.30 & 0.95534 &  & $-0.00955$ &  & $0.00010$ &  \\
+&  & $-0.03428$ &  & $0.00035$ &  &  \\
+0.40 & 0.92106 &  & $-0.00920$ &  &  &  \\
+&  & $-0.04348$ &  &  &  &  \\
+0.50 & 0.87758 &  &  &  &  &  \\
+\bottomrule
+\end{tabular}
+\end{table}
+取 $x = 0.048$, $h = 0.1$, $t = \frac{x - 0}{h} = 0.48$, 得
+\begin{align*}
+P_4(0.048) &= 1.00000 + 0.48 \times (-0.00500) + \frac{(0.48)(0.48 - 1)}{2}(-0.00993) \\
+&\quad + \frac{1}{3!}(0.48)(0.48 - 1)(0.48 - 2)(0.00013) \\
+&\quad + \frac{1}{4!}(0.48)(0.48 - 1)(0.48 - 2)(0.48 - 3)(0.00012) \\
+&= 0.99885 \approx \cos 0.048,
+\end{align*}
+由 \eqref{eq:数值分析-3.14} 式可得误差估计为
+\[
+|R_4(0.048)| \leqslant \frac{M_5}{5!} | t(t - 1)(t - 2)(t - 3)(t - 4) | h^5 \leqslant 1.5845 \times 10^{-7},
+\]
+其中 $M_5 = |\sin 0.6| \leqslant 0.565$.
+\end{solution}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

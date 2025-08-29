@@ -12,6 +12,291 @@
 
 \begin{document}
 
+\section{Hermite(埃尔米特)插值}
+
+\subsection{重节点均差与Taylor(泰勒)插值}
+
+\begin{theorem}
+设 $f \in C^n[a, b]$, $x_0, x_1, \cdots, x_n$ 为 $[a, b]$ 上的相异节点,则 $f[x_0, x_1, \cdots, x_n]$ 是其变量的连续函数.
+\end{theorem}
+
+\begin{definition}[重节点均差]
+如果 $[a, b]$ 上的节点$x_0,x_1,\cdots,x_n$互异,根据均差定义,若 $f \in C^1[a, b]$,则有
+\[
+\lim_{x \to x_0} f[x_0, x] = \lim_{x \to x_0} \frac{f(x) - f(x_0)}{x - x_0} = f'(x_0).
+\]
+由此定义\textbf{重节点均差}
+\[
+f[x_0, x_0] = \lim_{x \to x_0} f[x_0, x] = f'(x_0).
+\]
+类似地可定义\textbf{重节点的二阶均差},当 $x_1 \neq x_0$ 时,有
+\[
+f[x_0, x_0, x_1] = \frac{f[x_0, x_1] - f[x_0, x_0]}{x_1 - x_0}.
+\]
+当 $x_1 \to x_0$ 时,有
+\[
+f[x_0, x_0, x_0] = \lim_{\substack{x_1 \to x_0 \\ x_2 \to x_0}} f[x_0, x_1, x_2] = \frac{1}{2} f''(x_0).
+\]
+一般地,可定义 $\boldsymbol{n}$ \textbf{阶重节点的均差},由\eqref{eq:数值分析-3.5}式则得
+\begin{align}
+f[x_0, x_0, \cdots, x_0] = \lim_{\substack{x_1 \to x_0 \\ \vdots \\ x_n \to x_0}} f[x_0, x_1, \cdots, x_n] = \frac{1}{n!} f^{(n)}(x_0). \label{eq:数值分析-4.1}
+\end{align}
+\end{definition}
+
+\begin{theorem}
+设 $f(x)$ 在 $[a, b]$ 上存在 $n$ 阶连续导数，且 $(a, b)$ 上存在 $n + 1$ 阶导数，$x_0$ 为 $[a, b]$ 内一定点,
+则对于任意的 $x \in [a, b]$，在 $x, x_0$ 之间存在一个数 $\xi$ 使得
+\begin{align*}
+f(x) = P_n(x)+R_n(x),
+\end{align*}
+其中
+\begin{gather}
+P_n(x) = f(x_0) + f'(x_0)(x - x_0) + \cdots + \frac{f^{(n)}(x_0)}{n!}(x - x_0)^n,\label{eq:数值分析-4.2}
+\\
+R_n(x) = \frac{f^{(n+1)}(\xi)}{(n+1)!}(x - x_0)^{n+1}, \quad \xi \in (a, b).\label{eq:数值分析-4.4}
+\end{gather}
+称 \eqref{eq:数值分析-4.2} 式为$\mathbf{Taylor}$\textbf{(泰勒)插值多项式},它就是一个$\mathbf{Hermite}$\textbf{(埃尔米特)插值多项式}.
+\end{theorem}
+\begin{remark}
+实际上,上述Taylor插值多项式和余项之和就是\hyperref[Basis of Analytics-theorem:带各种余项的Taylor公式]{$f$在$x_0$点带Lagrange余项的Taylor展开式}.
+\end{remark}
+\begin{remark}
+$P_n(x)$实际上是在点 $x_0$ 附近逼近 $f(x)$ 的一个带导数的插值多项式,它满足条件
+\begin{align}
+P_n^{(k)}(x_0) = f^{(k)}(x_0), \quad k = 0, 1, \cdots, n. \label{eq:数值分析-4.3}
+\end{align}
+实际上Taylor(泰勒)插值是牛顿插值的极限形式,是只在一点 $x_0$ 处给出 $n + 1$ 个插值条件 \eqref{eq:数值分析-4.3} 得到的 $n$ 次埃尔米特插值多项式.
+
+一般地只要给出 $m + 1$ 个插值条件(含函数值和导数值)就可造出次数不超过 $m$ 次的埃尔米特插值多项式,由于导数条件各不相同,这里就不给出一般的埃尔米特插值公式.
+\end{remark}
+\begin{proof}
+任取$x_0$邻域中$n+1$个互异点$x_0,x_1,\cdots,x_n$作为插值点,根据\refthe{theorem:牛顿均差插值多项式}可得到相应的牛顿均差插值多项式
+\begin{align*}
+P_n(x) &= f(x_0) + f[x_0, x_1](x - x_0) + f[x_0, x_1, x_2](x - x_0)(x - x_1) + \cdots  \\
+&\quad + f[x_0, x_1, \cdots, x_n](x - x_0) \cdots (x - x_{n-1}),\\
+R_n(x) &= f(x) - P_n(x) = f[x, x_0, \cdots, x_n]\omega_{n+1}(x),
+\end{align*}
+在上述牛顿均差插值多项式中,若令 $x_i \to x_0$ ($i = 1, 2, \cdots, n$),则由 \eqref{eq:数值分析-4.1} 式可得Taylor(泰勒)多项式
+\begin{align*}
+P_n(x) = f(x_0) + f'(x_0)(x - x_0) + \cdots + \frac{f^{(n)}(x_0)}{n!}(x - x_0)^n, 
+\end{align*}
+其余项为
+\begin{align*}
+R_n(x) = \frac{f^{(n+1)}(\xi)}{(n+1)!}(x - x_0)^{n+1}, \quad \xi \in (a, b). 
+\end{align*}
+\end{proof}
+
+
+\subsection{两个典型的Hermite插值}
+
+\begin{theorem}
+若已知四阶可导函数$f$在插值点 $x_i$ ($i = 0, 1, 2$) 上的值为 $f(x_i)$ ($i = 0, 1, 2$)及一个导数值$f'(x_1)$,记$f$的三次插值多项式为$P(x)$,且满足条件
+\begin{align*}
+P(x_i) = f(x_i), \quad i = 0, 1,2\text{及}P'(x_1)=f'(x_1).
+\end{align*}
+则插值多项式可表示为
+\begin{align*}
+P(x) = f(x_0) + f[x_0, x_1](x - x_0) + f[x_0, x_1, x_2](x - x_0)(x - x_1) + A(x - x_0)(x - x_1)(x - x_2),
+\end{align*}
+其中\[
+A = \frac{f'(x_1) - f[x_0, x_1] - (x_1 - x_0)f[x_0, x_1, x_2]}{(x_1 - x_0)(x_1 - x_2)}.
+\]
+余项表达式为
+\begin{align}
+R(x) = \frac{1}{4!}f^{(4)}(\xi)(x - x_0)(x - x_1)^2(x - x_2), \label{eq:数值分析-4.5}
+\end{align}
+式中 $\xi$ 位于 $x_0, x_1, x_2$ 和 $x$ 所界定的范围内.
+\end{theorem}
+\begin{remark}
+一般上述插值多项式的系数$A$都是用待定系数法求解,并不直接套用上述$A$的公式.即先待定$A$,得到插值多项式$P(x)$,再代入$P'(x_1)=f'(x_1)$中解出$A$.
+\end{remark}
+\begin{proof}
+由给定条件及\hyperref[theorem:牛顿均差插值多项式]{牛顿均差插值多项式},可确定次数不超过 3 的插值多项式. 由于此多项式通过点 $(x_0, f(x_0))$, $(x_1, f(x_1))$ 及 $(x_2, f(x_2))$, 故其形式为
+\begin{align*}
+P(x) = f(x_0) + f[x_0, x_1](x - x_0) + f[x_0, x_1, x_2](x - x_0)(x - x_1) + A(x - x_0)(x - x_1)(x - x_2),
+\end{align*}
+其中 $A$ 为待定常数,可由条件 $P'(x_1) = f'(x_1)$ 确定,通过计算可得
+\[
+A = \frac{f'(x_1) - f[x_0, x_1] - (x_1 - x_0)f[x_0, x_1, x_2]}{(x_1 - x_0)(x_1 - x_2)}.
+\]
+为了求出余项 $R(x) = f(x) - P(x)$ 的表达式,可设
+\[
+R(x) = f(x) - P(x) = k(x)(x - x_0)(x - x_1)^2(x - x_2),
+\]
+其中 $k(x)$ 为待定函数. 构造
+\[
+\varphi(t) = f(t) - P(t) - k(x)(t - x_0)(t - x_1)^2(t - x_2),
+\]
+显然 $\varphi(x_j) = 0$ ($j = 0, 1, 2$), 且 $\varphi'(x_1) = 0$, $\varphi(x) = 0$. 故 $\varphi(t)$ 在 $(a, b)$ 内有 5 个零点(二重根算两个). 假设 $f$ 具有较好的可微性,反复应用罗尔定理,得 $\varphi^{(4)}(t)$ 在 $(a, b)$ 内至少有一个零点 $\xi$, 故
+\[
+\varphi^{(4)}(\xi) = f^{(4)}(\xi) - 4!k(x) = 0,
+\]
+于是
+\[
+k(x) = \frac{1}{4!}f^{(4)}(\xi),
+\]
+余项表达式为
+\begin{align*}
+R(x) = \frac{1}{4!}f^{(4)}(\xi)(x - x_0)(x - x_1)^2(x - x_2),
+\end{align*}
+式中 $\xi$ 位于 $x_0, x_1, x_2$ 和 $x$ 所界定的范围内.
+\end{proof}
+
+\begin{example}
+给定 $f(x) = x^{3/2}$, $x_0 = \frac{1}{4}$, $x_1 = 1$, $x_2 = \frac{9}{4}$, 试求 $f(x)$ 在 $\left[ \frac{1}{4}, \frac{9}{4} \right]$ 上的三次埃尔米特插值多项式 $P(x)$, 使它满足 $P(x_i) = f(x_i)$ ($i = 0, 1, 2$), $P'(x_1) = f'(x_1)$, 并写出余项表达式.
+\end{example}
+\begin{solution}
+由所给节点可求出
+\[
+f_0 = f\left( \frac{1}{4} \right) = \frac{1}{8}, \quad f_1 = f(1) = 1, \quad f_2 = f\left( \frac{9}{4} \right) = \frac{27}{8},
+\]
+\[
+f'(x) = \frac{3}{2} x^{1/2}, \quad f'(1) = \frac{3}{2}.
+\]
+利用牛顿均差插值,先求均差表如\reftab{table:均差表111}.
+\begin{table}[H]
+\centering
+\caption{均差表}
+\label{table:均差表111}
+\begin{tabular}{c c c c}
+\toprule
+$x_i$ & $f_i$ &  &  \\
+\midrule
+$\frac{1}{4}$ & $\frac{1}{8}$ &  &  \\
+$1$ & $1$ & $\frac{7}{6}$ & $\frac{11}{30}$ \\
+$\frac{9}{4}$ & $\frac{27}{8}$ & $\frac{19}{10}$ &  \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+于是有 $f[x_0, x_1] = \frac{7}{6}$, $f[x_0, x_1, x_2] = \frac{11}{30}$.
+故可令
+\begin{align*}
+P(x) &= \frac{1}{8} + \frac{7}{6} \left( x - \frac{1}{4} \right) + \frac{11}{30} \left( x - \frac{1}{4} \right)(x - 1) \\
+&\quad + A \left( x - \frac{1}{4} \right)(x - 1) \left( x - \frac{9}{4} \right).
+\end{align*}
+再由条件 $P'(1) = f'(1) = \frac{3}{2}$ 可得
+\[
+P'(1) = \frac{7}{6} + \frac{11}{30} \cdot \frac{3}{4} + A \cdot \frac{3}{4} \left( -\frac{5}{4} \right) = \frac{3}{2},
+\]
+解出
+\[
+A = -\frac{16}{15} \left( \frac{3}{2} - \frac{7}{6} - \frac{11}{40} \right) = -\frac{14}{225}.
+\]
+于是所求的三次埃尔米特多项式为
+\begin{align*}
+P(x) &= \frac{1}{8} + \frac{7}{6} \left( x - \frac{1}{4} \right) + \frac{11}{30} \left( x - \frac{1}{4} \right)(x - 1) - \frac{14}{225} \left( x - \frac{1}{4} \right)(x - 1) \left( x - \frac{9}{4} \right) \\
+&= -\frac{14}{225} x^3 + \frac{263}{450} x^2 + \frac{233}{450} x - \frac{1}{25},
+\end{align*}
+余项为
+\begin{align*}
+R(x) &= f(x) - P(x) = \frac{f^{(4)}(\xi)}{4!} \left( x - \frac{1}{4} \right)(x - 1)^2 \left( x - \frac{9}{4} \right) \\
+&= \frac{1}{4!} \cdot \frac{9}{16} \xi^{-5/2} \left( x - \frac{1}{4} \right)(x - 1)^2 \left( x - \frac{9}{4} \right), \quad \xi \in \left( \frac{1}{4}, \frac{9}{4} \right).
+\end{align*}
+\end{solution}
+
+\begin{theorem}[两点三次插值多项式]
+若已知四阶可导函数${\textstyle f}$在插值点 ${\textstyle x_k,x_{k+1}}$上的值为 ${\textstyle y_k=f(x_k),\,\, y_{k+1}=f(x_{k+1})}$及导数值为${\textstyle m_k=f'(x_k),\,\, m_{k+1}=f'(x_{k+1})}$,记$f$的三次插值多项式为$H_3(x)$,且满足条件
+\begin{align}
+\left. \begin{array}{r}
+H_3(x_k)=y_k,\quad H_3(x_{k+1})=y_{k+1},\\
+H_3'(x_k)=m_k,\quad H_3' (x_{k+1})=m_{k+1}.\\
+\end{array} \right\} \label{eq:数值分析-4.6}
+\end{align}
+则插值多项式可表示为
+\begin{align}
+H_3(x) &= \left( 1 + 2 \frac{x - x_k}{x_{k+1} - x_k} \right) \left( \frac{x - x_{k+1}}{x_k - x_{k+1}} \right)^2 y_k + \left( 1 + 2 \frac{x - x_{k+1}}{x_k - x_{k+1}} \right) \left( \frac{x - x_k}{x_{k+1} - x_k} \right)^2 y_{k+1} \nonumber \\
+&\quad + (x - x_k) \left( \frac{x - x_{k+1}}{x_k - x_{k+1}} \right)^2 m_k + (x - x_{k+1}) \left( \frac{x - x_k}{x_{k+1} - x_k} \right)^2 m_{k+1}, \label{eq:数值分析-4.12}
+\end{align}
+其余项 $R_3(x) = f(x) - H_3(x)$可表示为
+\begin{align}
+R_3(x) = \frac{1}{4!} f^{(4)}(\xi) (x - x_k)^2 (x - x_{k+1})^2, \quad \xi \in (x_k, x_{k+1}). \label{eq:数值分析-4.13}
+\end{align}
+\end{theorem}
+\begin{proof}
+令
+\begin{align}
+H_3(x) = \alpha_k(x)y_k + \alpha_{k+1}(x)y_{k+1} + \beta_k(x)m_k + \beta_{k+1}(x)m_{k+1}, \label{eq:数值分析-4.7}
+\end{align}
+其中 $\alpha_k(x), \alpha_{k+1}(x), \beta_k(x), \beta_{k+1}(x)$ 是关于节点 $x_k$ 及 $x_{k+1}$ 的三次埃尔米特插值基函数,它们应分别满足条件
+\[
+\alpha_k(x_k) = 1, \quad \alpha_k(x_{k+1}) = 0, \quad \alpha_k'(x_k) = \alpha_k'(x_{k+1}) = 0;
+\]
+\[
+\alpha_{k+1}(x_k) = 0, \quad \alpha_{k+1}(x_{k+1}) = 1, \quad \alpha_{k+1}'(x_k) = \alpha_{k+1}'(x_{k+1}) = 0;
+\]
+\[
+\beta_k(x_k) = \beta_k(x_{k+1}) = 0, \quad \beta_k'(x_k) = 1, \quad \beta_k'(x_{k+1}) = 0;
+\]
+\[
+\beta_{k+1}(x_k) = \beta_{k+1}(x_{k+1}) = 0, \quad \beta_{k+1}'(x_k) = 0, \quad \beta_{k+1}'(x_{k+1}) = 1.
+\]
+根据给定条件可令
+\[
+\alpha_k(x) = (ax + b) \left( \frac{x - x_{k+1}}{x_k - x_{k+1}} \right)^2,
+\]
+显然
+\[
+\alpha_k(x_{k+1}) = \alpha_k'(x_{k+1}) = 0.
+\]
+再利用
+\[
+\alpha_k(x_k) = ax_k + b = 1,
+\]
+及
+\[
+\alpha_k'(x_k) = 2 \frac{ax_k + b}{x_k - x_{k+1}} + a = 0,
+\]
+解得
+\[
+a = -\frac{2}{x_k - x_{k+1}}, \quad b = 1 + \frac{2x_k}{x_k - x_{k+1}},
+\]
+于是求得
+\begin{align}
+\alpha_k(x) = \left( 1 + 2 \frac{x - x_k}{x_{k+1} - x_k} \right) \left( \frac{x - x_{k+1}}{x_k - x_{k+1}} \right)^2. \label{eq:数值分析-4.8}
+\end{align}
+同理可求得
+\begin{align}
+\alpha_{k+1}(x) = \left( 1 + 2 \frac{x - x_{k+1}}{x_k - x_{k+1}} \right) \left( \frac{x - x_k}{x_{k+1} - x_k} \right)^2. \label{eq:数值分析-4.9}
+\end{align}
+为求 $\beta_k(x)$, 由给定条件可令
+\[
+\beta_k(x) = a(x - x_k) \left( \frac{x - x_{k+1}}{x_k - x_{k+1}} \right)^2,
+\]
+直接由 $\beta_k'(x_k) = a = 1$ 得到
+\begin{align}
+\beta_k(x) = (x - x_k) \left( \frac{x - x_{k+1}}{x_k - x_{k+1}} \right)^2. \label{eq:数值分析-4.10}
+\end{align}
+同理有
+\begin{align}
+\beta_{k+1}(x) = (x - x_{k+1}) \left( \frac{x - x_k}{x_{k+1} - x_k} \right)^2. \label{eq:数值分析-4.11}
+\end{align}
+将 \eqref{eq:数值分析-4.8} 式~ \eqref{eq:数值分析-4.11} 式的结果代入 \eqref{eq:数值分析-4.7} 式得
+\begin{align*}
+H_3(x) &= \left( 1 + 2 \frac{x - x_k}{x_{k+1} - x_k} \right) \left( \frac{x - x_{k+1}}{x_k - x_{k+1}} \right)^2 y_k + \left( 1 + 2 \frac{x - x_{k+1}}{x_k - x_{k+1}} \right) \left( \frac{x - x_k}{x_{k+1} - x_k} \right)^2 y_{k+1} \\
+&\quad + (x - x_k) \left( \frac{x - x_{k+1}}{x_k - x_{k+1}} \right)^2 m_k + (x - x_{k+1}) \left( \frac{x - x_k}{x_{k+1} - x_k} \right)^2 m_{k+1}, 
+\end{align*}
+其余项 $R_3(x) = f(x) - H_3(x)$. 类似 \eqref{eq:数值分析-4.5} 式可得
+\begin{align*}
+R_3(x) = \frac{1}{4!} f^{(4)}(\xi) (x - x_k)^2 (x - x_{k+1})^2, \quad \xi \in (x_k, x_{k+1}). 
+\end{align*}
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
