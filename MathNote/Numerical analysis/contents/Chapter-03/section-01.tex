@@ -12,6 +12,290 @@
 
 \begin{document}
 
+\section{函数逼近的基本概念}
+
+\begin{definition}
+设集合 \( S \) 是数域 \( P \) 上的线性空间，元素 \( x_1, x_2, \cdots, x_n \in S \)，如果存在不全为零的数 \( \alpha_1, \alpha_2, \cdots, \alpha_n \in P \)，使得
+\begin{align}
+\alpha_1 x_1 + \alpha_2 x_2 + \cdots + \alpha_n x_n = 0, \label{eq:数值分析-3-1.1}
+\end{align}
+则称 \( x_1, x_2, \cdots, x_n \) 线性相关。否则，若等式 \eqref{eq:数值分析-3-1.1} 只对 \( \alpha_1 = \alpha_2 = \cdots = \alpha_n = 0 \) 成立，则称 \( x_1, x_2, \cdots, x_n \) \textbf{线性无关}。
+
+若线性空间 \( S \) 是由 \( n \) 个线性无关元素 \( x_1, x_2, \cdots, x_n \) 生成的，即对 \( \forall x \in S \) 都有
+\[
+x = \alpha_1 x_1 + \alpha_2 x_2 + \cdots + \alpha_n x_n,
+\]
+则 \( x_1, x_2, \cdots, x_n \) 称为空间 \( S \) 的一组\textbf{基}，记为 \( S = \text{span}\{x_1, x_2, \cdots, x_n\} \)，并称空间 \( S \) 为 \( n \) 维空间，系数 \( \alpha_1, \alpha_2, \cdots, \alpha_n \) 称为 \( x \) 在基 \( x_1, x_2, \cdots, x_n \) 下的\textbf{坐标}，记作 \( (\alpha_1, \alpha_2, \cdots, \alpha_n) \)，如果 \( S \) 中有无限个线性无关元素 \( x_1, x_2, \cdots, x_n, \cdots \)，则称 \( S \) 为\textbf{无限维线性空间}。
+\end{definition}
+
+\begin{theorem}
+设 \( f(x) \in C[a,b] \)，则对任何 \( \varepsilon > 0 \)，总存在一个代数多项式 \( p(x) \)，使
+\[
+\max_{a \leqslant x \leqslant b} | f(x) - p(x) | < \varepsilon
+\]
+在 \([a,b]\) 上一致成立.
+\end{theorem}
+\begin{proof}
+见\refthe{theorem:多项式逼近有限阶光滑函数}.
+\end{proof}
+\begin{remark}
+这个定理有多种证明方法.这里需要说明的是在许多证明方法中,Bernstein(伯恩斯坦)1912 年给出的证明是一种构造性证明(即上述证明).他根据函数整体逼近的特性构造出\hyperref[definition:一维Bernstein多项式]{Bernstein多项式}
+\begin{align}
+B_n(f,x)=\sum_{k=0}^n f\left(\frac{k}{n}\right)P_k(x), \label{eq:数值分析-3-1.3}
+\end{align}
+其中
+\[
+P_k(x)=\binom{n}{k}x^k(1-x)^{n-k},
+\]
+$\binom{n}{k}=\frac{n(n-1)\cdots(n-k+1)}{k!}$为二项式展开系数,并证明了(见\hyperref[theorem:Bernstein多项式的性质]{Bernstein多项式的性质})$\lim\limits_{n\to\infty} B_n(f,x)=f(x)$在$[0,1]$上一致成立;若$f(x)$在$[0,1]$上$m$阶导数连续,则
+\[
+\lim\limits_{n\to\infty} B_n^{(m)}(f,x)=f^{(m)}(x).
+\]
+由\eqref{eq:数值分析-3-1.3}式给出的$B_n(f,x)$也是$f(x)$在$[0,1]$上的一个逼近多项式,但它收敛太慢,实际中很少使用.
+
+更一般地,可用一组在$C[a,b]$上线性无关的函数集合$\{\varphi_i(x)\}_{i=0}^n$来逼近$f(x)\in C[a,b]$,元素$\varphi(x)\in \Phi=\text{span}\{\varphi_0(x),\varphi_1(x),\cdots,\varphi_n(x)\}\subset C[a,b]$,表示为
+\begin{align}
+\varphi(x)=a_0\varphi_0(x)+a_1\varphi_1(x)+\cdots+a_n\varphi_n(x). \label{eq:数值分析-3-1.4}
+\end{align}
+函数逼近问题就是对任何$f\in C[a,b]$,在子空间$\Phi$中找一个元素$\varphi^*(x)\in \Phi$,使$f(x)-\varphi^*(x)$在某种意义下最小.
+\end{remark}
+
+\begin{definition}[范数]
+设 \( S \) 为线性空间，\( x \in S \)，若存在唯一实数 \( \|\cdot\| \)，满足条件：
+
+(1) \( \|x\| \geqslant 0 \)，当且仅当 \( x = 0 \) 时，\( \|x\| = 0 \)；（正定性）
+
+(2) \( \|\alpha x\| = |\alpha| \|x\| \)，\( \alpha \in \mathbb{R} \)；（齐次性）
+
+(3) \( \|x + y\| \leqslant \|x\| + \|y\| \)，\( x, y \in S \)．（三角不等式）
+
+则称 \( \|\cdot\| \) 为线性空间 \( S \) 上的\textbf{范数}，\( S \) 与 \( \|\cdot\| \) 一起称为\textbf{赋范线性空间}，记为 \( X \)．
+\end{definition}
+\begin{note}
+例如，对于在 \( \mathbb{R}^n \) 上的向量 \( x = (x_1, x_2, \cdots, x_n)^{\mathrm{T}} \in \mathbb{R}^n \)，有三种常用范数：
+
+\( \|x\|_{\infty} = \max\limits_{1 \leqslant i \leqslant n} |x_i| \)，称为 \( \mathbf{\infty } \)\textbf{-范数或最大范数}，
+
+\( \|x\|_1 = \sum\limits_{i=1}^n |x_i| \)，称为 $\mathbf{1}$\textbf{-范数}，
+
+\( \|x\|_2 = \left( \sum\limits_{i=1}^n x_i^2 \right)^{\frac{1}{2}} \)，称为 $\mathbf{2}$\textbf{-范数}．
+
+类似地对连续函数空间 \( C[a,b] \)，若 \( f \in C[a,b] \) 可定义三种常用范数如下：
+
+\( \|f\|_{\infty} = \max\limits_{a \leqslant x \leqslant b} |f(x)| \)，称为 \( \mathbf{\infty }\)\textbf{-范数}，
+
+\( \|f\|_1 = \int_a^b |f(x)| \, \mathrm{d}x \)，称为 $\mathbf{1}$\textbf{-范数}，
+
+\( \|f\|_2 = \left( \int_a^b f^2(x) \, \mathrm{d}x \right)^{\frac{1}{2}} \)，称为 $\mathbf{2}$\textbf{-范数}．
+
+可以验证这样定义的范数均满足定义 2 中的三个条件．
+\end{note}
+
+\begin{definition}
+设 \( X \) 是数域 \( K(\mathbb{R} \) 或 \( \mathbb{C}) \) 上的线性空间，对 \( \forall u, v \in X \)，有 \( K \) 中一个数与之对应，记为 \( (u, v) \)，它满足以下条件：
+
+(1) \( (u, v) = \overline{(v, u)} \)，\( \forall u, v \in X \)；
+
+(2) \( (\alpha u, v) = \alpha (u, v) \)，\( \alpha \in K \)，\( u, v \in X \)；
+
+(3) \( (u + v, w) = (u, w) + (v, w) \)，\( \forall u, v, w \in X \)；
+
+(4) \( (u, u) \geqslant 0 \)，当且仅当 \( u = 0 \) 时，\( (u, u) = 0 \)．
+
+则称 \( (u, v) \) 为 \( X \) 上 \( u \) 与 \( v \) 的\textbf{内积}．定义了内积的线性空间称为\textbf{内积空间}．定义中条件(1)的右端 \( \overline{(u, v)} \) 称为 \( (u, v) \) 的\textbf{共轭}，当 \( K \) 为实数域 \( \mathbb{R} \) 时，条件(1)为 \( (u, v) = (v, u) \)．
+
+如果 \( (u, v) = 0 \)，则称 \( u \) 与 \( v \)\textbf{正交}，这是向量相互垂直概念的推广．
+\end{definition}
+
+\begin{theorem}\label{theorem:数值分析-3-定理-2}
+设 \( X \) 为一个内积空间，对 \( \forall u, v \in X \)，有
+\begin{align}
+|(u, v)|^2 \leqslant (u, u)(v, v).\label{eq:数值分析-3-1.6}
+\end{align}
+称其为柯西-施瓦茨(Cauchy-Schwarz)不等式．
+\end{theorem}
+\begin{proof}
+当 \( v = 0 \) 时，\eqref{eq:数值分析-3-1.6}式显然成立．现设 \( v \neq 0 \)，则 \( (v, v) > 0 \)，且对任何数 \( \lambda \) 有
+\[
+0 \leqslant (u + \lambda v, u + \lambda v) = (u, u) + 2\lambda (u, v) + \lambda^2 (v, v).
+\]
+取 \( \lambda = -(u, v)/(v, v) \)，代入上式右端，得
+\[
+(u, u) - 2\frac{|(u, v)|^2}{(v, v)} + \frac{|(u, v)|^2}{(v, v)} \geqslant 0,
+\]
+由此即得 \( v \neq 0 \) 时
+\[
+|(u, v)|^2 \leqslant (u, u)(v, v).
+\]
+证毕．
+\end{proof}
+\begin{remark}
+在内积空间 \( X \) 上可以由内积导出一种范数，即对于 \( u \in X \)，记
+\begin{align}
+\| u \| = \sqrt{(u, u)}, \label{eq:数值分析-3-1.10}
+\end{align}
+容易验证它满足范数定义的三条性质，其中三角不等式
+\begin{align}
+\| u + v \| \leqslant \| u \| + \| v \| \label{eq:数值分析-3-1.11}
+\end{align}
+可由\refthe{theorem:数值分析-3-定理-2}直接得出，即
+\begin{align*}
+(\parallel u\parallel +\parallel v\parallel )^2&=\parallel u\parallel ^2+2\parallel u\parallel \parallel v\parallel +\parallel v\parallel ^2
+\\
+&\geqslant (u,u)+2(u,v)+(v,v)
+\\
+&=(u+v,u+v)=\parallel u+v\parallel ^2,
+\end{align*}
+两端开方即得\eqref{eq:数值分析-3-1.11}式.
+\end{remark}
+
+\begin{theorem}\label{theorem:数值分析-3-定理3}
+设 \( X \) 为一个内积空间，\( u_1, u_2, \cdots, u_n \in X \)，矩阵
+\begin{align}
+G = \begin{pmatrix}
+(u_1, u_1) & (u_2, u_1) & \cdots & (u_n, u_1) \\
+(u_1, u_2) & (u_2, u_2) & \cdots & (u_n, u_2) \\
+\vdots & \vdots & & \vdots \\
+(u_1, u_n) & (u_2, u_n) & \cdots & (u_n, u_n)
+\end{pmatrix} \label{eq:数值分析-3-1.7}
+\end{align}
+称为\textbf{格拉姆(Gram)矩阵}．矩阵 \( G\) 非奇异的充分必要条件是 \( u_1, u_2, \cdots, u_n \) 线性无关．
+\end{theorem}
+\begin{proof}
+\(G \) 非奇异等价于 \( \det G \neq 0 \)，其充分必要条件是关于 \( \alpha_1, \alpha_2, \cdots, \alpha_n \) 的齐次线性方程组
+\begin{align}
+\left( \sum_{j=1}^n \alpha_j u_j, u_k \right) = \sum_{j=1}^n (u_j, u_k) \alpha_j = 0, \quad k = 1, 2, \cdots, n \label{eq:数值分析-3-1.8}
+\end{align}
+只有零解；而
+\begin{align}
+&\qquad \sum_{j=1}^n \alpha_j u_j = \alpha_1 u_1 + \alpha_2 u_2 + \cdots + \alpha_n u_n = 0 \label{eq:数值分析-3-1.9}\\
+&\Leftrightarrow \left( \sum_{j=1}^n{\alpha _ju_j,\sum_{j=1}^n{\alpha _ju_j}} \right) =0 \nonumber
+\\
+&\Leftrightarrow \left( \sum_{j=1}^n{\alpha _ju_j,u_k} \right) =0,\quad k=1,2,\cdots ,n.\nonumber
+\end{align}
+从以上等价关系可知，\( \det G \neq 0 \) 等价于从方程\eqref{eq:数值分析-3-1.8}推出 \( \alpha_1 = \alpha_2 = \cdots = \alpha_n = 0 \)，而后者等价于从方程\(\eqref{eq:数值分析-3-1.9}\)推出 \( \alpha_1 = \alpha_2 = \cdots = \alpha_n = 0 \)，即 \( u_1, u_2, \cdots, u_n \) 线性无关．
+证毕．
+\end{proof}
+
+\begin{definition}[\( \mathbb{R}^n \)与\( \mathbb{C}^n \)的内积]
+设\( x,y \in \mathbb{R}^n \)，\( x=(x_1,x_2,\cdots,x_n)^{\mathrm{T}} \)，\( y=(y_1,y_2,\cdots,y_n)^{\mathrm{T}} \)，则其内积定义为
+\begin{align}
+(x,y)=\sum_{i=1}^n x_i y_i. \label{eq:数值分析-3-1.12}
+\end{align}
+由此导出的向量2-范数为
+\[
+\|x\|_2=(x,x)^{\frac{1}{2}}=\left( \sum_{i=1}^n x_i^2 \right)^{\frac{1}{2}}.
+\]
+若给定实数\( \omega_i>0(i=1,2,\cdots,n) \)，称\( \{\omega_i\} \)为\textbf{权系数}，则在\( \mathbb{R}^n \)上可定义\textbf{加权内积}为
+\begin{align}
+(x,y)=\sum_{i=1}^n \omega_i x_i y_i, \label{eq:数值分析-3-1.13}
+\end{align}
+相应的范数为
+\[
+\|x\|_2=\left( \sum_{i=1}^n \omega_i x_i^2 \right)^{\frac{1}{2}}.
+\]
+
+如果\( x,y \in \mathbb{C}^n \)，\textbf{带权内积}定义为
+\begin{align}
+(x,y)=\sum_{i=1}^n \omega_i x_i \overline{y}_i, \label{eq:数值分析-3-1.14}
+\end{align}
+这里\( \{\omega_i\} \)仍为正实数序列，\( \overline{y}_i \)为\( y_i \)的共轭复数.
+\end{definition}
+\begin{remark}
+不难验证\(\eqref{eq:数值分析-3-1.13}\)式给出的\( (x,y) \)满足内积定义的四条性质.当\( \omega_i=1 \ (i=1,2,\cdots,n) \)时，\(\eqref{eq:数值分析-3-1.13}\)式就是\(\eqref{eq:数值分析-3-1.12}\)式.
+\end{remark}
+
+\begin{definition}[权函数]
+设\([a,b]\)是有限或无限区间，在\([a,b]\)上的非负函数\(\rho(x)\)满足条件：
+
+(1) \(\int_a^b x^k \rho(x) \, \mathrm{d}x\)存在且为有限值\((k=0,1,\cdots)\)；
+
+(2) 对\([a,b]\)上的非负连续函数\(g(x)\)，如果\(\int_a^b g(x) \rho(x) \, \mathrm{d}x = 0\)，则\(g(x) \equiv 0\)．
+
+则称\(\rho(x)\)为\([a,b]\)上的一个\textbf{权函数}．
+\end{definition}
+
+\begin{definition}[\( C[a,b] \)上的内积]
+设\( f(x),g(x) \in C[a,b] \)，\(\rho(x)\)是\([a,b]\)上给定的权函数，则可定义内积
+\begin{align}
+(f(x),g(x)) = \int_a^b \rho(x) f(x) g(x) \, \mathrm{d}x. \label{eq:数值分析-3-1.15}
+\end{align}
+由此内积导出的范数为
+\begin{align}
+\| f(x) \|_2 = (f(x),f(x))^{\frac{1}{2}} = \left[ \int_a^b \rho(x) f^2(x) \, \mathrm{d}x \right]^{\frac{1}{2}}. \label{eq:数值分析-3-1.16}
+\end{align}
+称\(\eqref{eq:数值分析-3-1.15}\)式和\(\eqref{eq:数值分析-3-1.16}\)式分别为\textbf{带权\(\boldsymbol{\rho }\mathbf{(}\boldsymbol{x}\mathbf{)}\)的内积和范数}，特别常用的是\(\rho(x) \equiv 1\)的情形，即
+\[
+(f(x),g(x)) = \int_a^b f(x) g(x) \, \mathrm{d}x,
+\]
+\[
+\| f(x) \|_2 = \left( \int_a^b f^2(x) \, \mathrm{d}x \right)^{\frac{1}{2}}.
+\]
+\end{definition}
+\begin{remark}
+容易验证\eqref{eq:数值分析-3-1.15}式满足内积定义的四条性质
+\end{remark}
+
+\begin{example}
+
+若\(\varphi_0, \varphi_1, \cdots, \varphi_n\)是\(C[a,b]\)中的线性无关函数族，记\(\varphi = \text{span}\{\varphi_0, \varphi_1, \cdots, \varphi_n\}\)，它的格拉姆矩阵为
+\begin{align}
+G = G(\varphi_0, \varphi_1, \cdots, \varphi_n) = \begin{pmatrix}
+(\varphi_0, \varphi_0) & (\varphi_0, \varphi_1) & \cdots & (\varphi_0, \varphi_n) \\
+(\varphi_1, \varphi_0) & (\varphi_1, \varphi_1) & \cdots & (\varphi_1, \varphi_n) \\
+\vdots & \vdots & & \vdots \\
+(\varphi_n, \varphi_0) & (\varphi_n, \varphi_1) & \cdots & (\varphi_n, \varphi_n)
+\end{pmatrix}, \label{eq:数值分析-3-1.17}
+\end{align}
+则\(\varphi_0, \varphi_1, \cdots, \varphi_n\)线性无关的充要条件是\(\det G(\varphi_0, \varphi_1, \cdots, \varphi_n) \neq 0\).
+\end{example}
+\begin{proof}
+根据\refthe{theorem:数值分析-3-定理3}立得.
+\end{proof}
+
+\begin{definition}
+若\( P^*(x) \in H_n \)使误差
+\[
+\| f(x) - P^* (x) \| = \min_{P \in H_n} \| f(x) - P(x) \|,
+\]
+则称\( P^*(x) \)是\( f(x) \)在\([a,b]\)上的\textbf{最佳逼近多项式}．如果\( P(x) \in \Phi = \text{span}\{\varphi_0, \varphi_1, \cdots, \varphi_n\} \)，则称相应的\( P^*(x) \)为\textbf{最佳逼近函数}．通常范数\( \|\cdot\| \)取为\( \|\cdot\|_\infty \)或\( \|\cdot\|_2 \)．若取\( \|\cdot\|_\infty \)，即
+\begin{align}
+\| f(x) - P^* (x) \|_\infty = \min_{P \in H_n} \| f(x) - P(x) \|_\infty = \min_{P \in H_n} \max_{a \leqslant x \leqslant b} | f(x) - P(x) |, \label{eq:数值分析-3-1.18}
+\end{align}
+则称\( P^*(x) \)为\( f(x) \)在\([a,b]\)上的\textbf{最优(最佳)一致逼近多项式}．这时求\( P^*(x) \)就是求\([a,b]\)上使最大误差\( \max_{a \leqslant x \leqslant b} | f(x) - P(x) | \)最小的多项式．
+
+如果范数\( \|\cdot\| \)取为\( \|\cdot\|_2 \)，即
+\begin{align}
+\| f(x) - P^* (x) \|_2^2 = \min_{P \in H_n} \| f(x) - P(x) \|_2^2 = \min_{P \in H_n} \int_a^b [f(x) - P(x)]^2 \, \mathrm{d}x, \label{eq:数值分析-3-1.19}
+\end{align}
+则称\( P^*(x) \)为\( f(x) \)在\([a,b]\)上的\textbf{最佳平方逼近多项式}．
+
+若\( f(x) \)是\([a,b]\)上的一个列表函数，在\( a \leqslant x_0 < x_1 < \cdots < x_m \leqslant b \)上给出\( f(x_i)(i=0,1,\cdots,m) \)，要求\( P^* \in \Phi \)使
+\begin{align}
+\| f - P^* \|_2 &= \min_{P \in \Phi} \| f - P \|_2 = \min_{P \in \Phi} \sum_{i=0}^m [f(x_i) - P(x_i)]^2, \label{eq:数值分析-3-1.20}
+\end{align}
+则称\( P^*(x) \)为\( f(x) \)的\textbf{最小二乘拟合}．
+\end{definition}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
