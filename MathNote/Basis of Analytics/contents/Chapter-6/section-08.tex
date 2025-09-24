@@ -463,7 +463,7 @@ f(x) = p_N(x) + c, \forall x\in \mathbb{R}.
 \[
 \sum_{i = 1}^{n} w_i(f)(x_i - x_{i - 1}) \leqslant \varepsilon, w_i(f) \text{ 表示 } f \text{ 在 } [x_{i - 1},x_i], i = 1,2,\cdots,n \text{ 的振幅}.
 \]
-构造$[a,b]$ 上的连续函数 $g$ 使得它的图像就是连接各点 $(x_{i - 1}, f(x_{i - 1}))$ 的折线，即
+构造$[a,b]$ 上的连续函数(分段线性函数) $g$ 使得它的图像就是连接各点 $(x_{i - 1}, f(x_{i - 1}))$ 的折线，即
 \[
 g(x)=\frac{f\left( x_i \right) -f\left( x_{i-1} \right)}{x_i-x_{i-1}}\left( x-x_{i-1} \right) +f\left( x_{i-1} \right) =\frac{x-x_{i-1}}{x_i-x_{i-1}}f(x_i)+\frac{x_i-x}{x_i-x_{i-1}}f(x_{i-1}),\quad x\in [x_{i-1},x_i],
 \]
@@ -542,6 +542,56 @@ g(x)=\frac{f\left( x_i \right) -f\left( x_{i-1} \right)}{x_i-x_{i-1}}\left( x-x_
 \end{align*}
 这就完成了证明. 
 \end{enumerate}
+\end{proof}
+
+\begin{example}
+设\( f \)在区间\( [0,1] \)上 Riemann 可积，\( 0 \leqslant f \leqslant 1 \)．求证：对任何\( \varepsilon > 0 \)，存在只取值为 0 和 1 的分段（段数有限）常值函数\( g(x) \)，使得\( \forall [\alpha, \beta] \subseteq [0,1] \)，
+\[
+\left| \int_{\alpha}^{\beta} (f(x) - g(x)) \mathrm{d}x \right| < \varepsilon.
+\]
+\end{example}
+\begin{proof}
+对\(\forall \varepsilon > 0\)，由\hyperref[theorem:可积被连续函数逼近]{可积函数可被分段线性函数逼近}知，存在一个划分
+\begin{align}
+0 = x_0 < x_1 < \cdots < x_n = 1, \quad \Delta x_i = x_i - x_{i-1} < \frac{\varepsilon}{8}, \label{eq::::190482345475325456367343082-..1}
+\end{align}
+使得
+\begin{align}
+\int_0^1 \left| f(x) - h(x) \right| \mathrm{d}x < \frac{\varepsilon}{2}. \label{eq::::190482345475325456367343082-..3}
+\end{align}
+其中\( h(x) \)为分段线性函数，定义为
+\[
+h(x) = \frac{f(x_i) - f(x_{i-1})}{x_i - x_{i-1}} \left( x - x_{i-1} \right) + f(x_{i-1}), \ i = 1,2,\cdots,n.
+\]
+记
+\begin{align}
+x_i' = x_i - \frac{f(x_i) + f(x_{i-1})}{2} \left( x_i - x_{i-1} \right), \label{eq::::190482345475325456367343082-..2}
+\end{align}
+并取
+\[
+g(x) \triangleq \begin{cases}
+0, & x \in \left[ x_{i-1}, x_i' \right), \\
+1, & x \in \left[ x_i', x_i \right].
+\end{cases}
+\]
+显然\( g \in R[0,1] \)，从而对\(\forall [\alpha, \beta] \subseteq [0,1] \)，都存在\( n_1, n_2 \in [1, n-1] \cap \mathbb{N} \)，使得
+\[
+\alpha \in \left[ x_{n_1 - 1}, x_{n_1} \right], \quad \beta \in \left[ x_{n_2}, x_{n_2 + 1} \right].
+\]
+于是利用\(\eqref{eq::::190482345475325456367343082-..1}\)\(\eqref{eq::::190482345475325456367343082-..2}\)式可得
+\begin{align*}
+&\left| \int_{\alpha}^{\beta}{\left[ h\left( x \right) -g\left( x \right) \right] \mathrm{d}x} \right|=\left| \int_{\alpha}^{\beta}{h\left( x \right) \mathrm{d}x}-\int_{\alpha}^{\beta}{g\left( x \right) \mathrm{d}x} \right|
+\\
+&=\left| \int_{\alpha}^{x_{n_1}}{h\left( x \right) \mathrm{d}x}-\int_{\alpha}^{x_{n_1}}{g\left( x \right) \mathrm{d}x}+\int_{x_{n_2}}^{\beta}{h\left( x \right) \mathrm{d}x}-\int_{x_{n_2}}^{\beta}{g\left( x \right) \mathrm{d}x}+\sum_{i=n_1}^{n_2}{\left[ \int_{x_{i-1}}^{x_i}{h\left( x \right) \mathrm{d}x}-\int_{x_{i-1}}^{x_i}{g\left( x \right) \mathrm{d}x} \right]} \right|
+\\
+&\leqslant \left| 2\left( x_{n_1}-\alpha \right) +2\left( \beta -x_{n_2} \right) +\sum_{i=1}^n{\left[ \frac{f\left( x_i \right) +f\left( x_{i-1} \right)}{2}\left( x_i-x_{i-1} \right) -\left( x_i-x_{i}^{\prime} \right) \right]} \right|
+\\
+&\leqslant 2\left( x_{n_1}-x_{n_1-1} \right) +2\left( x_{n_2+1}-x_{n_2} \right) <\frac{\varepsilon}{2}.
+\end{align*}
+故再由\(\eqref{eq::::190482345475325456367343082-..3}\)式可得
+\[
+\left| \int_{\alpha}^{\beta} \left[ f(x) - g(x) \right] \mathrm{d}x \right| \leqslant \int_0^1 \left| f(x) - h(x) \right| \mathrm{d}x + \left| \int_{\alpha}^{\beta} \left[ h(x) - g(x) \right] \mathrm{d}x \right| < \varepsilon.
+\]
 \end{proof}
 
 \begin{example}
