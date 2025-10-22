@@ -12,7 +12,587 @@
 
 \begin{document}
 
-\subsection{齐次微分不等式问题}
+\section{微分不等式问题}
+
+\subsection{一阶/二阶构造类}
+
+\begin{proposition}[Gronwall不等式]\label{proposition:Gronwall不等式}
+设 $\alpha,\beta,\mu\in C[a,b]$ 且 $\beta$ 非负，若还有
+\begin{align}
+\mu(t)\leqslant\alpha(t)+\int_{a}^{t}\beta(s)\mu(s)\mathrm{d}s,\forall t\in[a,b].
+\label{equation---12.6}
+\end{align}
+证明:
+\begin{align*}
+\mu(t)\leqslant\alpha(t)+\int_{a}^{t}\beta(s)\alpha(s)e^{\int_{s}^{t}\beta(u)\mathrm{d}u}\mathrm{d}s,\forall t\in[a,b].
+\end{align*}
+若还有 $\alpha$ 递增，我们有
+\begin{align*}
+\mu(t)\leqslant\alpha(t)e^{\int_{a}^{t}\beta(s)\mathrm{d}s},\forall t\in[a,b].
+\end{align*}
+\end{proposition}
+\begin{note}
+解微分方程即得构造函数. 参考\hyperref[section单中值点问题]{单中值点问题}. 考虑 $F(t)=\int_{a}^{t}\beta(s)\mu(s)\mathrm{d}s$，则
+\begin{align*}
+F'(t)=\beta(t)\mu(t)\leqslant\beta(t)\alpha(t)+\beta(t)F(t).
+\end{align*}
+于是考虑微分方程
+\begin{align*}
+y'=\beta(t)\alpha(t)+\beta(t)y\Rightarrow y=ce^{\int_{a}^{t}\beta(s)\mathrm{d}s}+\int_{a}^{t}\beta(s)\alpha(s)e^{\int_{s}^{t}\beta(u)\mathrm{d}u}\mathrm{d}s.
+\end{align*}
+故得到构造函数
+\begin{align*}
+c(t)=\frac{F(t)-\int_{a}^{t}\beta(s)\alpha(s)e^{\int_{s}^{t}\beta(u)\mathrm{d}u}\mathrm{d}s}{e^{\int_{a}^{t}\beta(s)\mathrm{d}s}}=F(t)e^{-\int_{a}^{t}\beta(s)\mathrm{d}s}-\int_{a}^{t}\beta(s)\alpha(s)e^{\int_{s}^{a}\beta(u)\mathrm{d}u}\mathrm{d}s,t\in[a,b].
+\end{align*} 
+\end{note}
+\begin{proof}
+令
+\begin{align}
+c(t)=F(t)e^{-\int_{a}^{t}\beta(s)\mathrm{d}s}-\int_{a}^{t}\beta(s)\alpha(s)e^{\int_{s}^{a}\beta(u)\mathrm{d}u}\mathrm{d}s,t\in[a,b],\label{equation---12.001}
+\end{align}
+这里 $F(t)=\int_{a}^{t}\beta(s)\mu(s)\mathrm{d}s$. 由不等式\eqref{equation---12.6}知
+\begin{align}
+F'(t)\leqslant\alpha(t)\beta(t)+F(t)\beta(t),\forall t\in[a,b].\label{equation---12.17}
+\end{align}
+于是由\eqref{equation---12.001}和\eqref{equation---12.17}可知
+\begin{align*}
+c'(t)=[F'(t)-\alpha(t)\beta(t)-\beta(t)F(t)]e^{\int_{t}^{a}\beta(s)\mathrm{d}s}\leqslant0,
+\end{align*}
+因此$c(t)$在$[a,b]$上单调递减,从而
+\begin{align*}
+c(t)\leqslant c(a)=0,
+\end{align*}
+这就得到了
+\begin{align*}
+F(t)e^{-\int_{a}^{t}\beta(s)\mathrm{d}s}\leqslant\int_{a}^{t}\beta(s)\alpha(s)e^{\int_{s}^{a}\beta(u)\mathrm{d}u}\mathrm{d}s.
+\end{align*}
+再用一次不等式\eqref{equation---12.6}，即得
+\begin{align*}
+\mu(t)\leqslant\alpha(t)+F(t)\leqslant\alpha(t)+\int_{a}^{t}\beta(s)\alpha(s)e^{\int_{s}^{t}\beta(u)\mathrm{d}u}\mathrm{d}s,\forall t\in[a,b].
+\end{align*}
+特别的，当 $\alpha$ 递增，对$\forall t\in [a,b]$,固定$t$,记$G(s)=\int_s^t{\beta (u)\mathrm{d}u}$，我们有不等式
+\begin{align*}
+\mu (t)&\leqslant \alpha (t)+\alpha (t)\int_a^t{\beta (s)e^{\int_s^t{\beta (u)\mathrm{d}u}}\mathrm{d}s}=\alpha (t)+\alpha (t)\int_a^t{-G' \left( s \right) e^{G\left( s \right)}\mathrm{d}s}
+\\
+&=\alpha (t)-\alpha (t)\int_a^t{e^{G\left( s \right)}\mathrm{d}G\left( s \right)}=\alpha (t)+\alpha (t)\left[ e^{G\left( a \right)}-1 \right] =\alpha (t)e^{\int_a^t{\beta (s)\mathrm{d}s}}.
+\end{align*} 
+
+\end{proof}
+
+\begin{example}
+设
+\begin{align*}
+E \triangleq \left\{ u \in C[0,1] : u^2(t) \leqslant 1 + 4 \int_0^t s|u(s)| \, \mathrm{d}s, \forall t \in [0,1] \right\},
+\end{align*}
+计算
+\begin{align*}
+\max_{u \in E} \int_0^1 \left[ u^2(s) - u(s) \right] \mathrm{d}s.
+\end{align*}
+\end{example}
+\begin{note}
+$g(x)$的构造思路:解微分方程常数变易法.具体如下
+\begin{align*}
+F'(x) \leqslant 4x\sqrt{F(x)} \Longrightarrow \frac{F'(x)}{2\sqrt{F(x)}} \leqslant 2x,
+\end{align*}
+两边同时积分得
+\begin{align*}
+\sqrt{F(x)} \leqslant x^2 + C \Longrightarrow C \geqslant \sqrt{F(x)} - x^2.
+\end{align*}
+故取$g(x) \triangleq \sqrt{F(x)} - x^2.$
+\end{note}
+\begin{proof}
+记$F(x) = 1 + 4\int_0^x s|u(s)|\mathrm{d}s,$则
+\begin{align*}
+F'(x) = 4x|u(x)| \Longrightarrow |u(x)| = \frac{F'(x)}{4x}.
+\end{align*}
+由条件可得,当$u(x) \in E$时,对$\forall x \in [0,1]$,有
+\begin{align*}
+u^2(x) \leqslant F(x) \Longleftrightarrow |u(x)| \leqslant \sqrt{F(x)} \Longleftrightarrow \frac{F'(x)}{4x} \leqslant \sqrt{F(x)} \Longleftrightarrow F'(x) \leqslant 4x\sqrt{F(x)}.
+\end{align*}
+令$g(x) \triangleq \sqrt{F(x)} - x^2,$则
+\begin{align*}
+g'(x) = \frac{F'(x) - 4x\sqrt{F(x)}}{2\sqrt{F(x)}} \leqslant 0, \quad \forall x \in [0,1].
+\end{align*}
+故对$\forall x \in [0,1]$,有
+\begin{align*}
+g(x) \leqslant g(0) = 1 \Longrightarrow \sqrt{F(x)} \leqslant 1 + x^2.
+\end{align*}
+因此利用$|u(x)| \leqslant \sqrt{F(x)}$和上式可得
+\begin{align*}
+\int_0^1 \left[ u^2(x) - u(x) \right] \mathrm{d}x &\leqslant \int_0^1 u(x) \left[ u(x) - 1 \right] \mathrm{d}x \leqslant \int_0^1 |u(x)| \left( |u(x)| + 1 \right) \mathrm{d}x \\
+&\leqslant \int_0^1 \sqrt{F(x)} \left( \sqrt{F(x)} + 1 \right) \mathrm{d}x \leqslant \int_0^1 \left( 1 + x^2 \right) \left( 2 + x^2 \right) \mathrm{d}x = \frac{16}{5}.
+\end{align*}
+当且仅当$u(x) = -1 - x^2$等号成立.故
+\begin{align*}
+\max_{u \in E} \int_0^1 \left[ u^2(x) - u(x) \right] \mathrm{d}x = \frac{16}{5}.
+\end{align*}
+
+\end{proof}
+
+\begin{example}
+设 $f$ 在 $[0,+\infty)$ 二阶可微且
+\begin{align}
+f(0),f'(0)\geqslant0,f''(x)\geqslant f(x),\forall x\geqslant0.
+\label{equation12.19}
+\end{align}
+证明:
+\begin{align}
+f(x)\geqslant f(0)+f'(0)x,\forall x\geqslant0.
+\label{equation12.20}
+\end{align}
+\end{example}
+\begin{note}
+通过 $f'' - f' = f - f'$ 视为一阶构造类来构造函数. (也可以尝试考虑$f''f'=ff'$,但是这样得到的构造函数处理本题可能不太方便)注意双曲三角函数和三角函数有着类似的不等式关系.
+\end{note}
+\begin{proof}
+令 $h(x)=[f'(x)-f(x)]e^x$, 由\eqref{equation12.19}知
+\begin{align*}
+h' \left( x \right) =\left( f'' \left( x \right) -f' \left( x \right) +f' \left( x \right) -f\left( x \right) \right) e^x=\left( f'' \left( x \right) -f\left( x \right) \right) e^x \geqslant 0.
+\end{align*}
+故
+\begin{align*}
+h(x)\geqslant  h(0)=f'(0)-f(0)\Rightarrow [f'(x)-f(x)]e^x\geqslant  f'(0)-f(0)=h(0).
+\end{align*}
+继视为一阶构造类可得
+\begin{align*}
+c(x)=\frac{f(x)+\frac{1}{2}e^{-x}h(0)}{e^{x}},c'(x)=\frac{[f'(x)-f(x)]e^x-h(0)}{e^{3x}}\geqslant0.
+\end{align*}
+于是
+\begin{align*}
+\frac{f(x)+\frac{1}{2}e^{-x}h(0)}{e^{x}}\geqslant f(0)+\frac{1}{2}h(0)=\frac{f'(0)+f(0)}{2}.
+\end{align*}
+继续利用\eqref{equation12.19}即得
+\begin{align*}
+f(x)\geqslant\frac{e^{x}+e^{-x}}{2}f(0)+\frac{e^{x}-e^{-x}}{2}f'(0)\geqslant f(0)+f'(0)x,
+\end{align*}
+这里
+\begin{align*}
+\cosh x=\frac{e^{x}+e^{-x}}{2}\geqslant1,\sinh x=\frac{e^{x}-e^{-x}}{2}\geqslant x.
+\end{align*}
+可以分别了利用均值不等式和求导进行证明. 
+
+\end{proof}
+
+\begin{example}
+设 $f\in C^1[0,+\infty)\cap D^2(0,+\infty)$ 且满足
+\begin{align}
+f''(x)-5f'(x)+6f(x)\geqslant0,f(0)=1,f'(0)=0.
+\label{equation:::::12.23}
+\end{align}
+证明:
+\begin{align}
+f(x)\geqslant3e^{2x}-2e^{3x},\forall x\geqslant0.
+\label{equation:::::12.24}
+\end{align}
+\end{example}
+\begin{note}
+显然如果把式\eqref{equation:::::12.23}得不等号改为等号, 则微分方程的解为 $3e^{2x}-2e^{3x}$. 现在对于不等号, 自然应该期望有不等式\eqref{equation:::::12.24}成立. 我们一阶一阶的视为一阶微分不等式来证明即可. 注意到 2,3 是微分方程的特征值根来改写命题. 本结果可以视为微分方程比较定理.
+\end{note}
+\begin{proof}
+把不等式\eqref{equation:::::12.23}改写为
+\begin{align*}
+f''(x)-2f'(x)\geqslant3(f'(x)-2f(x)).
+\end{align*}
+考虑$g_1(x)=f'(x)-2f(x)$,则上式可化为
+\begin{align*}
+g_1'(x)\geqslant 3g_1(x).
+\end{align*}
+视为一阶构造类来构造函数,解得构造函数为$g_2(x)=\frac{g_1(x)}{e^{3x}}$.
+于是有
+\begin{align*}
+g_2'(x)\geqslant0\Rightarrow g_2(x)\geqslant g_1(0)=-2\Rightarrow f'(x)-2f(x)\geqslant -2e^{3x}.
+\end{align*}
+进一步视为一阶构造类来构造函数,解得构造函数:
+\begin{align*}
+g_3(x)=\frac{f(x)}{e^{2x}}+2e^{x},g_3'(x)=\frac{f'(x)-2f(x)+2e^{3x}}{e^{2x}}\geqslant0,
+\end{align*}
+于是
+\begin{align*}
+g_3(x)\geqslant g_3(0)=3\Rightarrow f(x)\geqslant3e^{2x}-2e^{3x}.
+\end{align*}
+我们完成了证明. 
+
+\end{proof}
+
+\begin{example}
+设 $f$ 在 $\mathbb{R}$ 上二阶可导且满足等式
+\begin{align}\label{equation-----12.26}
+f(x)+f''(x)=-xg(x)f'(x),g(x)\geqslant0.
+\end{align}
+证明 $f$ 在 $\mathbb{R}$ 上有界.
+\end{example}
+\begin{note}
+$f + f''$ 的出现暗示我们构造 $|f(x)|^2 + |f'(x)|^2$, 这已是频繁出现的事实.因为等式右边有一个未知函数$g(x)$,所以我们考虑局部的微分方程,即只考虑等式左边,以此来得到构造函数.考虑$f+f''=0\Leftrightarrow ff'=-f''f'$,两边同时积分得到$\frac{1}{2}f^2=-\frac{1}{2}(f')^2+C$.由此得到构造函数$C(x)=|f(x)|^2+|f'(x)|^2$.
+\end{note}
+\begin{proof}
+构造$h(x)=|f(x)|^2 + |f'(x)|^2$, 则由\eqref{equation-----12.26}知
+\begin{align*}
+h'(x)=2f'(x)[f(x)+f''(x)]=-2xg(x)[f'(x)]^2.
+\end{align*}
+于是 $h$ 在 $(-\infty,0]$ 递增，$[0,+\infty)$ 递减.
+现在我们有
+\begin{align*}
+h(x)\leqslant h(0)\Longrightarrow |f(x)|^2\leqslant |f(x)|^2+|f' (x)|^2\leqslant h(0),
+\end{align*}
+即 $f$ 有界. 
+
+\end{proof}
+
+\begin{example}
+设\(f \in C^{2}[0, +\infty)\)，\(g \in C^{1}[0, +\infty)\)且存在\(\lambda > 0\)使得\(g(x) \geqslant \lambda\)，\(\forall x \geqslant 0\)。若\(g'\)至多只有有限个零点且
+\begin{align*}
+f''(x)+g(x)f(x) = 0,\quad\forall x \geqslant 0,
+\end{align*}
+证明：\(f\)在\([0, +\infty)\)有界。
+\end{example}
+\begin{note}
+形式计算分析需要的构造函数：由条件解微分方程可得
+\begin{align*}
+y' y'' =-gyy' \Longrightarrow \frac{(y' )^2}{2}=-\int{gyy' \mathrm{d}x}=-\frac{1}{2}\int{g\mathrm{d}y^2}=-\frac{1}{2}gy^2+\frac{1}{2}\int{y^2\mathrm{d}g}\Longrightarrow (y' )^2+gy^2=\int{y^2\mathrm{d}g};
+\end{align*}
+\begin{align*}
+&y' y'' =-gyy' \Longrightarrow \frac{y' y''}{g}=-yy' \Longrightarrow \int{\frac{y' y''}{g}\mathrm{d}x}=-\int{yy' \mathrm{d}x}\Longrightarrow \int{\frac{1}{2g}\mathrm{d(}y' )^2}=-\frac{1}{2}y^2
+\\
+&\Longrightarrow \frac{(y' )^2}{2g}-\frac{1}{2}\int{(y' )^2\left( \frac{1}{g} \right) ' \mathrm{d}x}=-\frac{1}{2}y^2\Longrightarrow \frac{(y' )^2}{g}+y^2=\int{(y' )^2\left( \frac{1}{g} \right) ' \mathrm{d}x}.
+\end{align*}
+于是考虑构造函数\(F_1( x ) \triangleq \frac{| f'( x ) |^2}{g( x )}+f^2( x )\)，\(F_2( x ) \triangleq | f'( x ) |^2+g( x ) f^2( x )\)。
+\end{note}
+\begin{proof}
+因为\(g'\)至多只有有限个零点，所以存在\(X>0\)，使得\(g'( x ) \ne 0\)，\(\forall x\geqslant X\)。从而由导数介值性可知，\(g'\)在\([ X,+\infty )\)上要么恒大于\(0\)，要么恒小于\(0\)。
+令\(F_1( x ) \triangleq \frac{| f'( x ) |^2}{g( x )}+f^2( x )\)，\(x\geqslant X\)，则结合条件\(f'' =-gf\)可得
+\begin{align}
+F_{1}'( x ) =\frac{2f'f'' g-g'( f' )^2+2ff' g^2}{g^2}=\frac{-2f'fg^2-g'( f' )^2+2ff'g^2}{g^2}=-\frac{g'( f' )^2}{g^2}. \label{6.7}
+\end{align}
+
+(i) 若\(g'( x ) >0\)，\(\forall x\geqslant X\)，则由\eqref{6.7}式可知\(F'( x ) \leqslant 0\)，即\(F( x )\)在\([ X,+\infty )\)上递减。
+于是再结合\(g( x ) >\lambda >0\)，\(\forall x>0\)可知，存在\(C>0\)，使得
+\[
+f^2( x ) \leqslant F_1( x ) \leqslant C,\quad\forall x\geqslant X.
+\]
+故\(f( x )\)在\([ X,+\infty )\)上有界。又\(f\in C[ 0,+\infty )\)，故\(f\)在\([ 0,X ]\)上必有界。因此\(f\)在\([ 0,+\infty )\)上有界。
+
+(ii) 若\(g'( x ) <0\)，\(\forall x\geqslant X\)，令\(F_2( x ) \triangleq | f'( x ) |^2+g( x ) f^2( x )\)，则结合条件\(f'' =-gf\)可得
+\begin{align}
+F_{2}'( x ) =2f'f'' +g'f^2+2gff' =-2f'fg+g'f^2+2gff' =g'f^2\leqslant 0. \label{6.8}
+\end{align}
+从而\(F_2( x )\)在\([ X,+\infty )\)上递减，于是存在\(C'>0\)，使得
+\[
+g( x ) f^2( x ) \leqslant F_2( x ) \leqslant C,\quad\forall x\geqslant X.
+\]
+进而由\(g( x ) >\lambda >0\)，\(\forall x>0\)可得
+\[
+f^2( x ) \leqslant \frac{C}{g( x )}\leqslant \frac{C}{\lambda},\quad\forall x\geqslant X.
+\]
+故\(f( x )\)在\([ X,+\infty )\)上有界。又\(f\in C[ 0,+\infty )\)，故\(f\)在\([ 0,X ]\)上必有界。因此\(f\)在\([ 0,+\infty )\)上有界。
+
+\end{proof}
+
+\begin{example}
+设 $f \in C^2(\mathbb{R})$ 且 $f, f', f''$ 都是正值函数. 若存在 $a, b > 0$ 使得
+\begin{align*}
+f''(x) \leqslant a f(x) + b f'(x), \quad \forall x \in \mathbb{R}.
+\end{align*}
+求 $f'(x) \leqslant c f(x)$ 恒成立的最小的 $c$.
+\end{example}
+\begin{remark}
+若存在$c < x_1$，使得$f'(x) \leqslant c f(x)$，$\forall x \in \mathbb{R}$，则
+\begin{align*}
+f'(x) \leqslant c f(x) < x_1 f(x), \quad \forall x \in \mathbb{R}.
+\end{align*}
+但是取当$f(x) = e^{x_1 x}$时，从而$f'(x) =cf(x)= x_1 f(x)$,于是$c=x_1$矛盾！故$c_{\min} = x_1$。
+\end{remark}
+\begin{proof}
+考虑微分方程$y'' = ay + by'$，其特征方程为
+\begin{align*}
+x^2 - bx - a = 0 \Rightarrow x_1 = \frac{b + \sqrt{b^2 + 4a}}{2} > 0, \quad x_2 = \frac{b - \sqrt{b^2 + 4a}}{2} < 0.
+\end{align*}
+于是
+\begin{align*}
+f''(x) \leqslant a f(x) + b f'(x) \Longleftrightarrow f''(x) - x_1 f'(x) \leqslant x_2 \left[ f'(x) - x_1 f(x) \right].
+\end{align*}
+令$g(x) \triangleq f'(x) - x_1 f(x)$，则$g'(x) \leqslant x_2 g(x)$。再令$c(x) \triangleq \frac{g(x)}{e^{x_2 x}}$，则
+\begin{align*}
+c'(x) = \frac{g'(x) - x_2 g(x)}{e^{x_2 x}} \leqslant 0 \Rightarrow c(x) \leqslant \lim_{x \rightarrow -\infty} c(x) = \lim_{x \rightarrow -\infty} \frac{f'(x) - x_1 f(x)}{e^{x_2 x}}, \quad \forall x \in \mathbb{R}.
+\end{align*}
+由$f''$, $f'$, $f > 0$可知$f, f'$递增有下界。故$\lim_{x \rightarrow -\infty} f(x)$和$\lim_{x \rightarrow -\infty} f'(x)$都存在。从而$\lim_{x \rightarrow -\infty} f'(x)=0$,否则由\refpro{proposition:导数有正增长率则函数爆炸}知$\lim_{x \rightarrow -\infty} f(x)=-\infty$矛盾!再结合$x_1,f>0,x_2<0$可得
+\begin{align*}
+c(x)\leqslant \lim_{x\rightarrow -\infty} \frac{f' (x)-x_1f(x)}{e^{x_2x}}\leqslant \lim_{x\rightarrow -\infty} \frac{f' (x)}{e^{x_2x}}=0,\quad \forall x\in \mathbb{R} .
+\end{align*}
+即
+\begin{align*}
+f'(x) \leqslant x_1 f(x), \quad \forall x \in \mathbb{R}.
+\end{align*}
+取$f(x) = e^{x_1 x}$，此时等号成立。故$c_{\min} = x_1 = \frac{b + \sqrt{b^2 + 4a}}{2}$。
+
+\end{proof}
+
+\begin{example}
+设 \( f \in C[0,+\infty) \bigcap D^1(0,+\infty) \) 满足
+\[
+f(0) \geqslant 0, f'(x) \geqslant f^3(x), \forall x > 0.
+\]
+证明:
+\[
+f(x) = 0, \forall x \geqslant 0.
+\]
+\end{example}
+\begin{note}
+$y' = y^3$这个微分方程有三种解法得到三个不同的构造函数，即分别考虑$\frac{y'}{y^3}=1,\frac{y'}'{y^2}=y,\frac{y'}{y}=y^2$得到
+\begin{align*}
+\int{\frac{\mathrm{d}y}{y^3}}=\int{\mathrm{d}x}\Longrightarrow -\frac{1}{2y^2}=x+C_1\Longrightarrow C=x+\frac{1}{2y^2};
+\end{align*}
+\begin{align*}
+\int{\frac{y\prime}{y^2}\mathrm{d}x}=\int{y\mathrm{d}x}\Longrightarrow \int{\frac{1}{y^2}\mathrm{d}y}=\int{y\mathrm{d}x}\Longrightarrow C-\frac{1}{y}=\int{y\mathrm{d}x}\Longrightarrow C=\frac{1}{y}+\int{y\mathrm{d}x};
+\end{align*}
+\begin{align*}
+\int{\frac{y'}{y}\mathrm{d}x}=\int{y^2\mathrm{d}x}\Longrightarrow \ln y=\int{y^2\mathrm{d}x}\Longrightarrow y=Ce^{\int{y^2\mathrm{d}x}}\Longrightarrow C=\frac{y}{e^{\int{y^2\mathrm{d}x}}}.
+\end{align*}
+第二个构造函数实际上在本题中没发挥作用.
+\end{note}
+\begin{proof}
+由条件可知
+\begin{align*}
+\left[ \frac{f\left( x \right)}{e^{\int_0^x{f^2\left( y \right) \mathrm{d}y}}} \right]' =\frac{f' \left( x \right) -f^3\left( x \right)}{e^{\int_0^x{f^2\left( y \right) \mathrm{d}y}}}\geqslant 0.
+\end{align*}
+从而
+\begin{align*}
+\frac{f\left( x \right)}{e^{\int_0^x{f^2\left( y \right) \mathrm{d}y}}}\geqslant \frac{f\left( 0 \right)}{1}\geqslant 0\Longrightarrow f\left( x \right) \geqslant 0,\forall x\geqslant 0.
+\end{align*}
+于是
+\begin{align*}
+f' \left( x \right) \geqslant f^3\left( x \right) \geqslant 0,\forall x\geqslant 0.
+\end{align*}
+若存在$a\geqslant 0$，使得$f\left( a \right) >0$，则由$f' \geqslant 0$知
+\begin{align}
+f\left( x \right) \geqslant f\left( a \right) >0,\forall x>a. \label{100.12836}
+\end{align}
+注意到对$\forall x\in \left( a,A \right)$，有
+\begin{align*}
+\left[ x+\frac{1}{f^2\left( x \right)} \right]' =\frac{f^3\left( x \right) -f' \left( x \right)}{f^3\left( x \right)}\leqslant 0.
+\end{align*}
+故
+\begin{align}
+\lim_{x\rightarrow +\infty}\left[ x+\frac{1}{f^2\left( x \right)} \right] \leqslant a+\frac{1}{2f^2\left( a \right)}<+\infty . \label{100.1212123}
+\end{align}
+而由$f' \geqslant 0$可知$f$递增，再结合\eqref{100.12836}式和\refpro{proposition:导数有正增长率则函数爆炸}知$\lim_{x\rightarrow +\infty} f\left( x \right) =+\infty $，从而$\lim_{x\rightarrow +\infty}\frac{1}{f^2\left( x \right)}=0 .$
+于是$\lim_{x\rightarrow +\infty}\left[ x+\frac{1}{f^2\left( x \right)} \right] =+\infty$，这与\eqref{100.1212123}式矛盾！
+
+\end{proof}
+
+\begin{example}
+设可导函数$f:[0,+\infty)\to\mathbb{R}$满足$\int_0^1 f(x)\mathrm{d}x = f(1)$且 $x f'(x) + f(x - 1) = 0, \forall x \geqslant 1$. 证明：$\lim\limits_{x\to+\infty} f(x) = 0$.
+\end{example}
+\begin{note}
+本题关键是由$f\left( x \right) =\frac{\int_{x-1}^x{f\left( t \right) \mathrm{d}t}}{x}$看出只需证$f$有界,然后由
+\begin{align*}
+f\left( x \right) =\frac{\int_{x-1}^x{f\left( t \right) \mathrm{d}t}}{x}\leqslant \frac{\underset{y\in \left[ x-1,x \right]}{\max}f\left( y \right)}{x}<\frac{\underset{y\in \left[ 0,x \right]}{\max}f\left( y \right)}{x}\leqslant \underset{y\in \left[ 0,x \right]}{\max}f\left( y \right) ,\forall x>1.
+\end{align*}
+发现$f$的最大值就在在某个有限区间内取到.
+\end{note}
+\begin{proof}
+注意到
+\begin{align*}
+\left( xf\left( x \right) -\int_{x-1}^x{f\left( t \right) \mathrm{d}t} \right) ' &= xf'\left( x \right) +f\left( x-1 \right) =0,\forall x\geqslant 1. 
+\end{align*}
+故
+\begin{align}
+xf\left( x \right) -\int_{x-1}^x{f\left( t \right) \mathrm{d}t} &= 1\cdot f\left( 1 \right) -\int_0^1{f\left( t \right) \mathrm{d}t}=0,\forall x\geqslant 1. \label{eq::24080129824890280180873590238508239072052352}
+\end{align}
+下面不妨设$f$不恒为$0$，否则结论是平凡的。
+对$\forall x\geqslant 1$，都有
+\begin{align}
+\left| f\left( x \right) \right| &\leqslant \max_{y\in \left[ 0,x \right]} \left| f\left( y \right) \right|. \label{eq::2408012982489028018087359023850823907205235235}
+\end{align}
+设$x^*\geqslant 1$，满足
+\[
+\left| f\left( x^* \right) \right|=\max_{y\in \left[ 0,x^* \right]} \left| f\left( y \right) \right|.
+\]
+由\eqref{eq::24080129824890280180873590238508239072052352}式可得
+\[
+\max_{y\in \left[ 0,x^* \right]} \left| f\left( y \right) \right|=\left| f\left( x^* \right) \right|=\frac{\int_{x^*-1}^{x^*}{f\left( t \right) \mathrm{d}t}}{x^*}\leqslant \frac{\max\limits_{y\in \left[ 0,x^* \right]} \left| f\left( y \right) \right|}{x^*}\leqslant \max_{y\in \left[ 0,x^* \right]} \left| f\left( y \right) \right|,
+\]
+故$\frac{\max\limits_{y\in \left[ 0,x^* \right]} \left| f\left( y \right) \right|}{x^*}=\max\limits_{y\in \left[ 0,x^* \right]} \left| f\left( y \right) \right|=\frac{\int_{x^*-1}^{x^*}{f\left( t \right) \mathrm{d}t}}{x^*}$，进而要么$x^*=1$，要么$\max_{y\in \left[ 0,x^* \right]} \left| f\left( y \right) \right|=0$。显然若$\max_{y\in \left[ 0,x^* \right]} \left| f\left( y \right) \right|=0$，则$f\left( x \right) =0,\forall x\in \left[ 0,x^* \right]$。
+即\eqref{eq::2408012982489028018087359023850823907205235235}式等号成立的充要条件就是$x^*=1$或$f\left( x \right) =0,\forall x\in \left[ 0,x^* \right]$。又$f$不恒为0,故存在$X> 1$，使得对$\forall x\geqslant X$，都有
+\begin{align}
+\left| f\left( x \right) \right| &< \max_{y\in \left[ 0,x \right]} \left| f\left( y \right) \right|. \label{eq::2408012982489028018087359023850823907205235236}
+\end{align}
+我们断言
+\begin{align}
+\left| f\left( x \right) \right| &\leqslant \max_{y\in \left[ 0,X \right]} \left| f\left( y \right) \right|,\forall x>1. \label{eq::2408012982489028018087359023850823907205235237}
+\end{align}
+否则，存在$x_0>1$，使得
+\[
+\left| f\left( x_0 \right) \right|>\max_{y\in \left[ 0,X \right]} \left| f\left( y \right) \right|.
+\]
+记
+\[
+x_1\triangleq \inf\left\{ x\in \left[ X,x_0 \right] \mid \left| f\left( x \right) \right|>\max_{y\in \left[ 0,X \right]} \left| f\left( y \right) \right| \right\},
+\]
+则由$f$的连续性和\eqref{eq::2408012982489028018087359023850823907205235236}式知
+\[
+\max_{y\in \left[ 0,X \right]} \left| f\left( y \right) \right|\leqslant \left| f\left( x_1 \right) \right|<\max_{y\in \left[ 0,x_1 \right]} \left| f\left( y \right) \right|.
+\]
+于是再由$f$的连续性知，存在$x_2\in \left( X,x_1 \right)$，使得
+\[
+\max_{y\in \left[ 0,X \right]} \left| f\left( y \right) \right|\leqslant \left| f\left( x_1 \right) \right|<\max_{y\in \left[ 0,x_1 \right]} \left| f\left( y \right) \right|=\left| f\left( x_2 \right) \right|.
+\]
+这与$x_1$的下确界定义矛盾！故\eqref{eq::2408012982489028018087359023850823907205235237}式成立，即$f$在$\left[ 0,+\infty \right)$上有界。因此再由\eqref{eq::24080129824890280180873590238508239072052352}式可得
+\[
+\lim_{x\rightarrow +\infty} f\left( x \right) =\lim_{x\rightarrow +\infty} \frac{\int_{x-1}^x{f\left( t \right) \mathrm{d}t}}{x}\leqslant \lim_{x\rightarrow +\infty} \frac{\sup\limits_{x\in \left[ 0,+\infty \right)} \left| \,f\left( x \right) \right|}{x}=0.
+\]
+
+\end{proof}
+
+
+\subsection{双绝对值微分不等式问题}\label{subsection:双绝对值问题}
+
+注意区分齐次微分不等式问题和双绝对值问题.
+
+\begin{example}\label{example:双绝对值经典问题}
+对某个 $D > 0$,
+\begin{enumerate}
+\item 设 $f\in D(\mathbb{R}),f(0)=0$, 使得
+\begin{align}\label{equation-----1229}
+|f'(x)|\leqslant D|f(x)|,\forall x\in\mathbb{R}.
+\end{align}
+证明 $f\equiv0$.
+
+\item 设 $f\in C^\infty(\mathbb{R}),f^{(j)}(0)=0,\forall j\in\mathbb{N}_0$, 使得
+\begin{align}\label{equation-----1230}
+|xf'(x)|\leqslant D|f(x)|,\forall x\in\mathbb{R}.
+\end{align}
+证明 $f(x)=0,\forall x\geqslant0$.
+\end{enumerate}
+\end{example}
+\begin{note}
+双绝对值技巧除了正常解微分方程构造函数外, 还需要对构造函数平方进行处理. 对于第一题, 解微分方程 $y' = Dy,y' = -Dy$ 得构造函数
+\begin{align*}
+C_1(x)=\frac{y(x)}{e^{Dx}},C_2(x)=y(x)e^{Dx}.
+\end{align*}
+但我们还要手动平方一下. 第二题是类似的.
+\end{note}
+\begin{proof}
+\begin{enumerate}
+\item 构造 $C_1(x)=\frac{f^2(x)}{e^{2Dx}},C_2(x)=f^2(x)e^{2Dx}$, 我们有
+\begin{align*}
+C_1'(x)=\frac{2f(x)f'(x)-2Df^2(x)}{e^{2Dx}},C_2'(x)=[2f(x)f'(x)+2Df^2(x)]e^{2Dx}.
+\end{align*}
+由条件\eqref{equation-----1229}, 我们知道
+\begin{align*}
+\pm f'(x)f(x)\leqslant|f'(x)||f(x)|\leqslant D|f(x)|^2,
+\end{align*}
+于是 $C_1$ 递减, $C_2$ 递增, 故
+\begin{align*}
+\frac{f^2(x)}{e^{2Dx}}\leqslant\frac{f^2(0)}{e^{20}}=0,\forall x\geqslant0,f^2(x)e^{2Dx}\leqslant f^2(0)e^{20}=0,\forall x\leqslant0,
+\end{align*}
+于是就得到了 $f\equiv0$,$\forall x\in \mathbb{R}$.
+
+\item 构造 $C(x)=\frac{f^2(x)}{x^{2D}},x>0$(因为只需证明$f(x)=0,\forall x\geqslant0$,所以我们只考虑一边), 则
+\begin{align*}
+C'(x)=\frac{2f(x)f'(x)x - 2Df^2(x)}{x^{2D + 1}}.
+\end{align*}
+由\eqref{equation-----1230}, 我们有
+\begin{align*}
+xf'(x)f(x)\leqslant x|f'(x)||f(x)|\leqslant D|f(x)|^2,
+\end{align*}
+即 $C$ 递减. 由 Taylor 公式的 Peano 余项, 我们有 $f(x)=o(x^m),\forall m\in\mathbb{N}\cap (2D,+\infty)$, 于是 
+\begin{align*}
+C(x)\leqslant \lim_{x\rightarrow 0^+} \frac{f^2(x)}{x^{2D}}=\lim_{x\rightarrow 0^+} \frac{o\left( x^m \right)}{x^{2D}}=0,
+\end{align*}
+故 $f(x)=0,\forall x\geqslant0$. 
+\end{enumerate}
+
+\end{proof}
+
+\begin{example}\label{example:齐次微分不等式}
+设 $f\in D^2[0,+\infty)$ 满足 $f(0)=f'(0)=0$ 以及
+\begin{align*}
+|f''(x)|^2\leqslant|f(x)f'(x)|,\forall x\geqslant0.
+\end{align*}
+证明 $f(x)=0,\forall x\geqslant0$.
+\end{example}
+\begin{note}
+本题的加强版本见\refpro{proposition:齐次化方法/关于导数乘积不等式问题}.
+\end{note}
+\begin{proof}
+令$M=3$,考虑
+\begin{align*}
+g(x)=e^{-Mx}\left[|f(x)|^2+|f'(x)|^2\right],x\geqslant0.
+\end{align*}
+利用 $1 + t^2\geqslant\sqrt{t},\forall t\geqslant0$, 我们有
+\begin{align}
+1+\frac{|f|^2}{|f'|^2}\geqslant\sqrt{\frac{|f|}{|f'|}}\Rightarrow|f'|^2+|f|^2\geqslant|f|^{\frac{1}{2}}|f'|^{\frac{M}{2}}=|f'|\sqrt{|ff'|}.\label{equation-89574592387}
+\end{align}
+于是
+\begin{align*}
+g'(x)&=e^{-Mx}\left[2ff'+2f'f''-Mf^2-M(f')^2\right]\\
+&\leqslant e^{-Mx}\left[2|ff'|+2|f'|\sqrt{|ff'|}-Mf^2-M(f')^2\right]\\
+&\stackrel{\eqref{equation-89574592387}}{\leqslant}e^{-Mx}\left[2|ff'|+2|f'|^2+2|f|^2-Mf^2-M(f')^2\right]\\
+&\stackrel{\text{均值不等式}}{\leqslant}e^{-Mx}\left[|f|^2+|f'|^2+2|f'|^2+2|f|^2-Mf^2-M(f')^2\right]=0.
+\end{align*}
+于是 $g$ 递减，从而 $0\leqslant g(x)\leqslant g(0)=0$, 故 $f(x)\equiv0$. 
+
+\end{proof}
+
+\begin{example}
+设 $f\in D^2(\mathbb{R})$ 满足 $f(0)=f'(0)=0$ 且
+\begin{align*}
+|f''(x)|\leqslant|f'(x)|+|f(x)|,\forall x\in\mathbb{R}.
+\end{align*}
+证明:
+\begin{align*}
+f(x)=0,\forall x\in\mathbb{R}.
+\end{align*} 
+\end{example}
+\begin{note}
+本题的加强版本见\refpro{proposition:关于导数求和不等式问题}.
+\end{note}
+\begin{proof}
+令 $g(x)=e^{-Mx}\left[|f(x)|^2+|f'(x)|^2\right]$, 则
+\begin{align*}
+g'(x)&=e^{-Mx}\left[2ff'+2f'f''-Mf^2-M(f')^2\right]\\
+&\leqslant e^{-Mx}\left[f^2+(f')^2+2f'\left(|f|+|f'|\right)-Mf^2-M(f')^2\right]\\
+&\leqslant e^{-Mx}\left[f^2+(f')^2+2(f')^2+f^2+(f')^2-Mf^2-M(f')^2\right]\\
+&=e^{-Mx}\left[(2 - M)f^2+(4 - M)(f')^2\right].
+\end{align*}
+取充分大的 $M$, 就有 $g'(x)\leqslant0$. 于是 $g(x)\leqslant g(0)=0,\forall x\geqslant0$.
+又注意到 $g(x)=e^{-Mx}\left[|f(x)|^2+|f'(x)|^2\right]\geqslant0$, 因此 $g(x)\equiv0,\forall x\geqslant0$.
+故 $f(x)=0,\forall x\geqslant0$. 
+
+\end{proof}
+
+\begin{example}
+设 $f\in D^2(\mathbb{R})$ 满足 $f(0)=f'(0)=0$ 且
+\begin{align*}
+|f''(x)|\leqslant|f'(x)f(x)|,\forall x\in\mathbb{R}.
+\end{align*}
+证明:
+\begin{align*}
+f(x)=0,\forall x\geqslant 0.
+\end{align*} 
+\end{example}
+\begin{remark}
+与\refexa{example:齐次微分不等式}不同的是,本题的不等式左右两边并不齐次,如果还使用\refexa{example:齐次微分不等式}的方法,那么在放缩过程中会使得系数不含$M$的项的次数大于系数含$M$的项,从而无法直接通过控制$M$的取值,使得$g'(x)\leqslant 0$.因此本题我们需要使用另外的方法.
+
+这里我们将本题与\refexa{example:双绝对值经典问题}类比,采用同样的方法. 因为只需证明$f(x)=0,\forall x\geqslant 0$,所以将原不等式视为(等式)函数构造类.此时需要考虑的微分方程是$f''=ff'$.我们将其中的$f$看作已知函数,考虑的微分方程转化为$y''=fy'$,则
+\begin{align*}
+y'' =fy' \Rightarrow \frac{y''}{y'}=f\Rightarrow \ln y' =\int_0^x{f\left( t \right) \mathrm{d}t}+C\Rightarrow y' =Ce^{\int_0^x{f\left( t \right) \mathrm{d}t}}.
+\end{align*}
+于是常数变易,再开平方得到构造函数$C\left( x \right) =\frac{\left[ f'\left( x \right) \right] ^2}{e^{2\int_0^x{|f\left( t \right)| \mathrm{d}t}}}.$
+\end{remark}
+\begin{proof}
+令 $C(x)=\frac{[f'(x)]^2}{e^{2\int_0^x{|f(t)|\mathrm{d}t}}}$, 则
+\begin{align*}
+C'(x)=\frac{2f'(x)f''(x)-2|f(x)|[f'(x)]^2}{e^{2\int_0^x{|f(t)|\mathrm{d}t}}}.
+\end{align*}
+又因为
+\begin{align*}
+f'f''\leqslant|f'f''|\leqslant|f|(f')^2.
+\end{align*}
+所以 $C'(x)\leqslant0$, 故 $C(x)\leqslant C(0)=0$. 又注意到 $C(x)=\frac{[f'(x)]^2}{e^{2\int_0^x{|f(t)|\mathrm{d}t}}}\geqslant0$, 故 $C(x)\equiv0$. 于是 $f'(x)=0,\forall x\geqslant0$.
+进而 $f$ 就是常值函数, 又 $f(0)=0$, 故 $f(x)=0,\forall x\geqslant0$. 
+
+\end{proof}
 
 \begin{proposition}\label{proposition:齐次化方法/关于导数乘积不等式问题}
 设 $f \in D^s(0,+\infty) \cap C[0,+\infty)$，$s \in \mathbb{N}$ 且满足
@@ -66,6 +646,47 @@ $f\left( x \right) =f'\left( x \right) =\cdots =f^{\left( s-1 \right)}\left( x \
 
 \end{proof}
 
+\begin{example}
+设 $f \in C^n(\mathbb{R}), n \in \mathbb{N}, f^{(k)}(x_0) = 0, k = 0, 1, 2, \cdots, n - 1$. 若对某个 $M > 0$ 和 $\lambda_0, \lambda_1, \cdots, \lambda_{n - 2} \geqslant  0, \lambda_{n - 1} \geqslant  1$ 有不等式
+\begin{align*}
+|f^{(n)}(x)| \leqslant  M \prod_{k = 0}^{n - 1} |f^{(k)}(x)|^{\lambda_k}, \forall x \in \mathbb{R}.
+\end{align*}
+证明 $f(x) \equiv 0$.
+\end{example}
+\begin{note}
+因为原不等式是绝对值不等式，所以考虑两个微分方程
+\begin{align*}
+f^{(n)} &= f^{(n-1)} \cdot g \Rightarrow \frac{f^{(n)}}{f^{(n-1)}} = g \Rightarrow \ln f^{(n-1)} = \int_{x_0}^x g(y) \mathrm{d}y + C \Rightarrow f^{(n-1)} = C e^{\int_{x_0}^x g(y) \mathrm{d}y}.
+\end{align*}
+\begin{align*}
+f^{(n)} &= -f^{(n-1)} \cdot g \Rightarrow \frac{f^{(n)}}{f^{(n-1)}} = -g \Rightarrow \ln f^{(n-1)} = -\int_{x_0}^x g(y) \mathrm{d}y + C \Rightarrow f^{(n-1)} = C e^{-\int_{x_0}^x g(y) \mathrm{d}y}.
+\end{align*}
+分离常量得到构造函数 $c_1(x) \triangleq \frac{f^{(n-1)}(x)}{e^{\int_{x_0}^x g(y) \mathrm{d}y}}$, $c_2(x) \triangleq f^{(n-1)}(x) e^{\int_{x_0}^x g(y) \mathrm{d}y}$.
+回顾\hyperref[subsection:双绝对值问题]{双绝对值问题}的构造函数，我们需要的构造函数应是 $C_1(x) \triangleq c_1^2(x) = \frac{[f^{(n-1)}(x)]^2}{e^{2\int_{x_0}^x g(y) \mathrm{d}y}}$, $C_2(x) \triangleq c_2^2(x) = [f^{(n-1)}(x)]^2 e^{2\int_{x_0}^x g(y) \mathrm{d}y}$.
+\end{note}
+\begin{proof}
+由条件可知
+\begin{align*}
+|f^{(n)}(x)| \leqslant |f^{(n-1)}(x)| \cdot g(x),
+\end{align*}
+其中 $g(x) = M \prod_{k=1}^{n-1} |f^{(k)}(x)|^{\lambda_k - 1}$. 从而 $f^{(n)}(x) f^{(n-1)}(x) \leqslant |f^{(n)}(x) f^{(n-1)}(x)| \leqslant |f^{(n-1)}(x)|^2 \cdot g(x)$.
+\begin{align}
+\label{eq:10001.13131}
+\end{align}
+令 $C_1(x) \triangleq \frac{[f^{(n-1)}(x)]^2}{e^{2\int_{x_0}^x g(y) \mathrm{d}y}}$, 则由 \eqref{eq:10001.13131} 式可知
+\begin{align*}
+C_1'(x) = \frac{2f^{(n-1)}(x) f^{(n)}(x) - 2g(x) [f^{(n-1)}(x)]^2}{e^{2\int_{x_0}^x g(y) \mathrm{d}y}} \leqslant 0.
+\end{align*}
+故 $C_1(x) \leqslant C_1(x_0) = 0, \forall x \geqslant x_0$. 因此 $C_1(x) = 0, \forall x \geqslant x_0$. 进而 $f^{(n-1)}(x) = 0, \forall x \geqslant x_0$.
+令 $C_2(x) \triangleq [f^{(n-1)}(x)]^2 e^{2\int_{x_0}^x g(y) \mathrm{d}y}$, 则由 \eqref{eq:10001.13131} 式可知
+\begin{align*}
+C_2'(x) = \left[ 2f^{(n-1)}(x) f^{(n)}(x) + 2g(x) (f^{(n-1)}(x))^2 \right] e^{2\int_{x_0}^x g(y) \mathrm{d}y} \geqslant 0.
+\end{align*}
+故 $C_2(x) \leqslant C_2(x_0) = 0, \forall x \leqslant x_0$. 因此 $C_2(x) = 0, \forall x \leqslant x_0$. 进而 $f^{(n-1)}(x) = 0, \forall x \leqslant x_0$.
+综上, $f^{(n-1)}(x) \equiv 0, x \in \mathbb{R}$.从而$f^{(n-2)}(x)=K,K\in \mathbb{R}$, 又 $f^{(n-2)}(x_0) = 0$,故$f^{(n-2)}(x) \equiv 0$. 又 $f^{(k)}(x_0) = 0, k = 0, 1, \cdots, n-1$, 依此类推可得 $f(x) \equiv 0$.
+
+\end{proof}
+
 \begin{proposition}\label{proposition:关于导数求和不等式问题}
 设 $f \in D^s(0,+\infty) \cap C[0,+\infty)$,$s \in \mathbb{N}$ 且满足
 \begin{align*}
@@ -111,6 +732,86 @@ g'\left( x \right) &\leqslant e^{-Mx}\left[ \left( 1-M \right) f^2+\left( 2-M \r
 于是任取 $M>K+2$，利用上式就有 $g'\left( x \right) \leqslant 0,\forall x\geqslant 0$。故 $g\left( x \right) $ 在 $[0,+\infty )$ 上单调递减，因此 $g\left( x \right) \leqslant g\left( 0 \right) =0$。又因为 $g\left( x \right) \geqslant 0,\forall x\geqslant 0$，所以 $g\left( x \right) =0,\forall x\geqslant 0$。故 $f\left( x \right) =f'\left( x \right) =\cdots =f^{\left( s-1 \right)}\left( x \right) =0,\forall x\geqslant 0$.
 
 \end{proof}
+
+
+
+\subsection{极值原理}
+
+\begin{example}
+设 $f\in C^2[0,1]$ 且 $f(0)=f(1)=0$, 若还有
+\begin{align}
+f''(x)-g(x)f'(x)=f(x).
+\label{equation---12.3445}
+\end{align}
+证明:
+$f(x)=0,\forall x\in[0,1]$.
+\end{example}
+\begin{proof}
+如果 $f$ 在 $(0,1)$ 取得在 $[0,1]$ 上的正的最大值，设最大值点为 $c$ 且 $f(c)>0,f'(c)=0,c\in(0,1)$, 代入\eqref{equation---12.3445}式知 $f''(c)=f(c)>0$. 又由极值的充分条件，我们知道 $c$ 是严格极小值点，这就是一个矛盾!
+
+同样的考虑 $f$ 在 $(0,1)$ 取得在 $[0,1]$ 上的负的最小值，设最小值点为 $c$ 且 $f(c)<0,f'(c)=0,c\in(0,1)$, 代入\eqref{equation---12.3445}式知 $f''(c)=f(c)<0$. 又由极值的充分条件，我们知道 $c$ 是严格极大值点，这就是一个矛盾!
+
+综上，$f$在$(0,1)$上没有正的最大值,也没有负的最小值.即
+\begin{align*}
+0\leqslant f(x)\leqslant0.
+\end{align*}
+故$f(x)=0,\forall x\in[0,1]$. 
+
+\end{proof}
+
+\begin{example}
+令 $f:[0,1] \to \mathbb{R}$ 为连续的, 满足 $f(0) = f(1) = 0$. 假设 $f''$ 在 $(0,1)$ 内存在, 且具有 $f''+2f'+f \geqslant 0$. 证明对所有 $0 \leqslant x \leqslant 1$, 有 $f(x) \leqslant 0$ 成立.
+\end{example}
+\begin{proof}
+反证，假设$f$存在正的最大值，记
+\begin{align*}
+f(x_0) = \max_{x \in [0,1]} f(x),
+\end{align*}
+由$f(0) = f(1) = 0$知$x_0 \in (0,1)$。再记
+\begin{align*}
+x_1 = \inf \{ x \in (x_0,1] : f(x) = 0 \}.
+\end{align*}
+由$f \in C[0,1]$知$f(x_1) = 0$。并且
+\begin{align*}
+f(x) > 0, \forall x \in (x_0, x_1).
+\end{align*}
+否则，存在$x_2 \in (x_0, x_1)$，使得$f(x_2) = 0$，这与$x_1$的下确界定义矛盾！于是
+\begin{align*}
+\frac{f(x) - f(x_1)}{x - x_1} = \frac{f(x)}{x - x_1} \leqslant 0, \quad \forall x \in (x_0, x_1).
+\end{align*}
+令$x \to x_1^-$得
+\begin{align}
+f'(x_1) = \lim_{x \to x_1^-} \frac{f(x) - f(x_1)}{x - x_1} \leqslant 0. \label{eq:222342rdffg234341.1}
+\end{align}
+注意到
+\begin{align*}
+f'' + f' \geqslant -(f' + f),
+\end{align*}
+令$g(x) = f'(x) + f(x)$，则
+\begin{align*}
+g'(x) + g(x) \geqslant 0.
+\end{align*}
+再令$C(x) = e^x g(x)$，则
+\begin{align*}
+C'(x) = e^x [g'(x) + g(x)] \geqslant 0.
+\end{align*}
+从而$C(x)$递增。由\eqref{eq:222342rdffg234341.1}式知$f'(x_1) \leqslant 0$，故
+\begin{align*}
+0 < e^{x_0} f(x_0) = C(x_0) \leqslant C(x_1) = e^{x_1} [f'(x_1) + f(x_1)] = e^{x_1} f'(x_1) \leqslant 0
+\end{align*}
+显然矛盾！
+
+\end{proof}
+
+
+
+
+
+
+
+
+
+
 
 
 

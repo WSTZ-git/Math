@@ -620,7 +620,7 @@ g(x) \triangleq \begin{cases}
 \eqref{eq:::::::---481}式实际上就是凹函数的割线放缩,用凹函数的定义表示了而已.
 \end{remark}
 \begin{note}
-构造$f_\delta$的想法就是将端点与其邻域内一点连接,其余点的值不变,使得$f_\delta\in C[0,1]$.但后续分部积分需要$f_\delta$二阶连续可微,于是再用Berstein多项式$B(f_\delta,n)$逼近$f_\delta$,从而$B(f_{\delta},n)\rightrightarrows f_{\delta}$,并且Berstein多项式$B(f_\delta,n)$任意阶连续可微,端点值不变.但是注意此时不一定有$B^k(f_{\delta},n)\rightrightarrows f_{\delta}^{k}$,因为$f_\delta$不可导!
+构造$f_\delta$的想法就是将端点与其邻域内一点连接(线性连接既凹又凸从而保持凸性),其余点的值不变,使得$f_\delta\in C[0,1]$.但后续分部积分需要$f_\delta$二阶连续可微,于是再用Berstein多项式$B(f_\delta,n)$逼近$f_\delta$,从而$B(f_{\delta},n)\rightrightarrows f_{\delta}$,并且Berstein多项式$B(f_\delta,n)$任意阶连续可微,端点值不变.但是注意此时不一定有$B^k(f_{\delta},n)\rightrightarrows f_{\delta}^{k}$,因为$f_\delta$不可导!
 \end{note}
 \begin{proof}
 (1)由\refthe{theorem:开区间下凸函数左右导数处处存在}知,凹函数在定义域内部是连续的, 且在两个端点的单边极限存在, 修改 \( f \) 在 \( 0 \) 的值为 \( \lim_{x \to 0^+} f(x) \), 这不改变积分的值, 此时 \( f \) 在 \( 0 \) 处连续,故可不妨设$f\in C[0,1)$. 对于给定的 \( \delta \in (0,1) \) 以及 \( x \in (\delta,1) \), 有
@@ -703,82 +703,52 @@ f(x), & 0 \leqslant x \leqslant \delta, \\
 
 \end{proof}
 
-\begin{lemma}\label{lemma:K(x,t)的性质}
-二元函数 \( K(x, t) \) 定义为
-\[
-K(x, t) = \begin{cases} 
-t(1 - x), & 0 \leqslant t \leqslant x \leqslant 1 \\
-x(1 - t), & 0 \leqslant x \leqslant t \leqslant 1
-\end{cases}.
-\]
-\begin{enumerate}[(1)]
-\item 对$\forall p\in \mathbb{Z}$,都有
-\begin{gather*}
-\int_0^1{K^p\left( x,t \right) \mathrm{d}x}=\frac{t^p\left( 1-t \right) ^p}{p+1},
-\quad 
-\int_0^1{K^p\left( x,t \right) \mathrm{d}t}=\frac{x^p\left( 1-x \right) ^p}{p+1}.
-\end{gather*}
-
-\item 设 \( f\in C^2[0,1] \),且$f(0)=f(1)=0$,则
-\[
-f(x)=\int_{0}^{1} K(x, t)(-f''(t)) \, \mathrm{d}t,\forall x\in [0,1].
-\]
-\end{enumerate}
-\end{lemma}
-\begin{proof}
-\begin{enumerate}[(1)]
-\item \begin{align*}
-\int_0^1{K^p\left( x,t \right) \mathrm{d}x}&=\int_0^t{x^p\left( 1-t \right) ^p\mathrm{d}x}+\int_t^1{t^p\left( 1-x \right) ^p\mathrm{d}x}
-\\
-&=\frac{t^{p+1}\left( 1-t \right) ^p}{p+1}+\frac{t^p\left( 1-t \right) ^{p+1}}{p+1}
-\\
-&=\frac{t^p\left( 1-t \right) ^p}{p+1}.
-\end{align*}
+\begin{definition}[Green函数]
+定义在$[a,b]\times [a,b]$上的二元函数
 \begin{align*}
-\int_0^1{K^p\left( x,t \right) \mathrm{d}t}&=\int_0^x{t^p\left( 1-x \right) ^p\mathrm{d}t}+\int_x^1{x^p\left( 1-t \right) ^p\mathrm{d}t}
-\\
-&=\frac{x^{p+1}\left( 1-x \right) ^p}{p+1}+\frac{x^p\left( 1-x \right) ^{p+1}}{p+1}
-\\
-&=\frac{x^p\left( 1-x \right) ^p}{p+1}.
+k(x,y) = 
+\begin{cases}
+\frac{x-a}{b-a} (y-b), & b \geqslant  y \geqslant  x \geqslant  a, \\
+\frac{b-x}{b-a} (a-y), & b \geqslant  x \geqslant  y \geqslant  a.
+\end{cases}
+\end{align*}
+称为\textbf{Green函数}.
+\end{definition}
+
+\begin{theorem}[Green函数的性质]\label{theorem:Green函数的性质}
+设$k(x,y)$为定义在$[a,b]\times [a,b]$上的Green函数.
+\begin{enumerate}[(1)]
+\item $|k(x,y)|\leqslant |k(x,x)|.$
+
+\item 设$f\in C^2[a,b]$,若还有$f(a) = f(b) = 0$, 则有
+\begin{align*}
+f(x) = \int_{a}^{b} f''(y) k(x,y) \mathrm{d}y.
 \end{align*}
 
-\item \begin{align*}
-\int_0^1{K\left( x,t \right) \left( -f'' \left( t \right) \right) \mathrm{d}t}&=\int_0^x{K\left( x,t \right) \left( -f'' \left( t \right) \right) \mathrm{d}t}+\int_x^1{K\left( x,t \right) \left( -f'' \left( t \right) \right) \mathrm{d}t}
-\\
-&=\int_0^x{t\left( 1-x \right) \left( -f'' \left( t \right) \right) \mathrm{d}t}+\int_x^1{x\left( 1-t \right) \left( -f'' \left( t \right) \right) \mathrm{d}t}
-\\
-&=-x\left( 1-x \right) f' \left( x \right) +\int_0^x{\left( 1-x \right) f' \left( t \right) \mathrm{d}t}+x\left( 1-x \right) f' \left( x \right) -\int_x^1{xf' \left( t \right) \mathrm{d}t}
-\\
-&=\int_0^x{f' \left( t \right) \mathrm{d}t}-\int_0^x{xf' \left( t \right) \mathrm{d}t}-\int_x^1{xf' \left( t \right) \mathrm{d}t}
-\\
-&=f\left( x \right) -x\int_0^1{f' \left( t \right) \mathrm{d}t}
-\\
-&=f\left( x \right) -x\left[ f\left( 1 \right) -f\left( 0 \right) \right] 
-\\
-&=f\left( x \right) .
-\end{align*}
+\item 若$a=0,b=1$,则对$\forall p\in \mathbb{Z}$,都有
+\begin{gather*}
+\int_0^1{k^p\left( x,y \right) \mathrm{d}x}=\frac{y^p\left( y-1 \right) ^p}{p+1},
+\quad 
+\int_0^1{k^p\left( x,y \right) \mathrm{d}y}=\frac{x^p\left( x-1 \right) ^p}{p+1}.
+\end{gather*}
 \end{enumerate}
+\end{theorem}
+\begin{note}
+分部积分计算验证即可.
+\end{note}
+\begin{proof}
+
 
 \end{proof}
 
 \begin{theorem}[Favard不等式]\label{theorem:Favard(法瓦尔)不等式}
-若 \( f \) 是区间 \([0,1]\) 上的非负凹函数, 则有对 \( p \geqslant 1 \),
+若 \( f \) 是区间 \([0,1]\) 上的非负凹(上凸)函数, 则有对 \( p \geqslant 1 \),
 \[
 \int_{0}^{1} f^p(x) \, \mathrm{d}x \leqslant \frac{2^p}{p + 1} \left( \int_{0}^{1} f(x) \, \mathrm{d}x \right)^p.
 \]
 \end{theorem}
 \begin{remark}
-(1) 可以用连续函数的积分来逼近可积函数的积分;
-
-(2) 对 \([0,1]\) 上的凸或凹的连续函数 \( f \), 可以用 Bernstein 多项式列 \( B_n(f; x) \) 一致逼近 \( f \), 且 \( B_n(f; x) \) 与 \( f \) 有相同的凸性或凹性, 而且 \( B_n(f; x) \) 在两个端点与 \( f \) 的值相同;
-
-(3) 当 \( f \) 二阶连续可导且在两个端点 \( 0 \) 和 \( 1 \) 取零值时, \( f \) 可表示为
-\[
-\int_{0}^{1} K(x, t)(-f''(t)) \, \mathrm{d}t.
-\]
-\end{remark}
-\begin{proof}
-由\refthe{theorem:开区间下凸函数左右导数处处存在}知,凹函数在内点是连续的,且在两个端点的单边极限存在, 修改 \( f \) 在 \( 0 \) 的值为 \( \lim_{x \to 0^+} f(x) \),在 \( 1\) 的值为 \( \lim_{x \to 1^-} f(x) \) 这不改变积分的值, 此时 \( f \) 在 \( 0,1 \) 处连续,故可不妨设$f\in C[0,1]$. 选充分小的 \( \delta > 0 \), 并修改 \( f \) 在 \([0,\delta]\) 和 \([1 - \delta,1]\) 上的值, 使得修改后的函数是在 \([0,1]\) 的连续凹函数, 且在 \( 0,1 \) 取零值:
+不妨设的原因:由\refthe{theorem:开区间下凸函数左右导数处处存在}知,凹函数在内点是连续的,且在两个端点的单边极限存在, 修改 \( f \) 在 \( 0 \) 的值为 \( \lim_{x \to 0^+} f(x) \),在 \( 1\) 的值为 \( \lim_{x \to 1^-} f(x) \) 这不改变积分的值, 此时 \( f \) 在 \( 0,1 \) 处连续,故可不妨设$f\in C[0,1]$. 选充分小的 \( \delta > 0 \), 并修改 \( f \) 在 \([0,\delta]\) 和 \([1 - \delta,1]\) 上的值, 使得修改后的函数是在 \([0,1]\) 的连续凹函数, 且在 \( 0,1 \) 取零值:
 \[
 f_{\delta}(x) = \begin{cases} 
 \frac{f(\delta)}{\delta} x, & x \in [0,\delta), \\
@@ -798,45 +768,32 @@ f(x), & x \in [\delta,1 - \delta), \\
 \[
 B_n(f; x) = \sum_{k=0}^{n} f\left( \frac{k}{n} \right) \binom{n}{k} x^k (1 - x)^{n - k}, \quad n = 1,2,\cdots
 \]
-在 \([0,1]\) 上一致收敛于 \( f \), 且 \( B_n(f; x) \) 仍是在两个端点取零值的凹函数. 因此只需对有二阶连续导数的函数证明. 此时有 \( f''(x) \leqslant 0 \). 由 \( f(0) = 0 \), 得
-\[
-f(x) = \int_{0}^{x} f'(t) \, \mathrm{d}t = x f'(x) - \int_{0}^{x} t f''(t) \, \mathrm{d}t.
-\]
-再由 \( f(1) = 0 \), 可得
-\[
-f'(1) = \int_{0}^{1} t f''(t) \, \mathrm{d}t,
-\]
-由\nrefthe{lemma:K(x,t)的性质}{(2)}可知
+在 \([0,1]\) 上一致收敛于 \( f \), 且 \( B_n(f; x) \) 仍是在两个端点取零值的凹函数. 因此只需对有二阶连续导数的函数证明. 
+\end{remark}
+\begin{proof}
+不妨设$f\in C^2[0,1]$且$f(0)=f(1)=0.$
+由\hyperref[theorem:Green函数的性质]{Green函数的性质}可知
 \[
 \begin{aligned}
-f(x) &= x(f'(x) - f'(1)) + x f'(1) - \int_{0}^{x} t f''(t) \, \mathrm{d}t \\
-&= -x \int_{x}^{1} f''(t) \, \mathrm{d}t + x \int_{0}^{1} t f''(t) \, \mathrm{d}t - \int_{0}^{x} t f''(t) \, \mathrm{d}t \\
-&= - \int_{0}^{1} K(x, t) f''(t) \, \mathrm{d}t,
+f(x) =  \int_{0}^{1} k(x, t) f''(t) \, \mathrm{d}t,
 \end{aligned}
 \]
-其中二元函数 \( K(x, t) \) 定义为
+其中二元函数 \( k(x, t) \) 定义为
 \[
-K(x, t) = \begin{cases} 
-t(1 - x), & 0 \leqslant t \leqslant x \leqslant 1 \\
-x(1 - t), & 0 \leqslant x \leqslant t \leqslant 1.
+k(x, t) = \begin{cases} 
+t(x - 1), & 0 \leqslant t \leqslant x \leqslant 1 \\
+x(t - 1), & 0 \leqslant x \leqslant t \leqslant 1.
 \end{cases}
 \]
 由$f$是凹函数可知$f''\leqslant 0$.于是由\hyperref[theorem:Minkowski(闵可夫斯基)不等式]{Minkowski不等式}可得
 \[
 \begin{aligned}
-\left( \int_{0}^{1} f^p(x) \, \mathrm{d}x \right)^{\frac{1}{p}} &= \left( \int_{0}^{1} \left( \int_{0}^{1} K(x, t)(-f''(t)) \, \mathrm{d}t \right)^p \, \mathrm{d}x \right)^{\frac{1}{p}} \\
-&\leqslant \int_{0}^{1} \left( \int_{0}^{1} K^p(x, t)(-f''(t))^p \, \mathrm{d}x \right)^{\frac{1}{p}} \, \mathrm{d}t \\
-&\xlongequal{\text{\nrefthe{lemma:K(x,t)的性质}{(1)}}} \frac{1}{(p + 1)^{\frac{1}{p}}} \int_{0}^{1} t(1 - t) |f''(t)| \, \mathrm{d}t
+\left( \int_{0}^{1} f^p(x) \, \mathrm{d}x \right)^{\frac{1}{p}} &= \left( \int_{0}^{1} \left( \int_{0}^{1} k(x, t)f''(t) \, \mathrm{d}t \right)^p \, \mathrm{d}x \right)^{\frac{1}{p}} \leqslant \int_{0}^{1} \left( \int_{0}^{1} k^p(x, t)(f''(t))^p \, \mathrm{d}x \right)^{\frac{1}{p}} \, \mathrm{d}t \\
+&\xlongequal{\text{\hyperref[theorem:Green函数的性质]{Green函数的性质}}} \frac{1}{(p + 1)^{\frac{1}{p}}} \int_{0}^{1} |t(t - 1)| |f''(t)| \, \mathrm{d}t
+=\frac{1}{(p + 1)^{\frac{1}{p}}} \int_{0}^{1} t(t - 1) f''(t) \, \mathrm{d}t
 \\
-&=-\frac{1}{(p + 1)^{\frac{1}{p}}} \int_{0}^{1} t(1 - t) f''(t) \, \mathrm{d}t.
-\end{aligned}
-\]
-另一方面, 有
-\[
-\begin{aligned}
-\int_{0}^{1} f(x) \, \mathrm{d}x &= - \int_{0}^{1} \left( \int_{0}^{1} K(x, t) f''(t) \, \mathrm{d}t \right) \, \mathrm{d}x \\
-&= - \int_{0}^{1} \left( \int_{0}^{1} K(x, t) f''(t) \, \mathrm{d}x \right) \, \mathrm{d}t \\
-&\xlongequal{\text{\nrefthe{lemma:K(x,t)的性质}{(1)}}} - \frac{1}{2} \int_{0}^{1} t(1 - t) f''(t) \, \mathrm{d}t.
+&\xlongequal{\text{分部积分}}-\frac{2}{(p+1)^{\frac{1}{p}}}\int_0^1{tf' (t)\,\mathrm{d}t}
+\xlongequal{\text{分部积分}}\frac{2}{(p+1)^{\frac{1}{p}}}\int_0^1{f(t)\,\mathrm{d}t}.
 \end{aligned}
 \]
 因此
