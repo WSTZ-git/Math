@@ -1,17 +1,909 @@
-\documentclass[../../main.tex]{subfiles}
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
 \graphicspath{{\subfix{./image/}}} % 指定图片目录,后续可以直接使用图片文件名
 % 注意这里的文件路径不能用 ../../image/ ,否则用latexmk编译子文件会报错
 
 % 例如:
 % \begin{figure}[H]
 % \centering
-% \includegraphics[scale=0.4]{图.png}
+% \includegraphics[scale=0.3]{图.png}
 % \caption{}
 % \label{figure:图}
 % \end{figure}
 % 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
 
 \begin{document}
+
+\section{二重积分}
+
+\subsection{二重积分的定义及其存在性}
+
+\begin{definition}
+我们称一个平面图形$P$是\textbf{有界的}或\textbf{平面有界图形},是指构成这个平面图形的点集是平面上的有界点集,即存在一矩形$R$,使得$P \subset R$.
+
+设$P$是一平面有界图形,用某一平行于坐标轴的一组直线网$T$分割这个图形(\reffig{figure:平面有界图形}).这时直线网$T$的网眼——小闭矩形$\Delta_i$可分为三类:
+\begin{enumerate}[(i)]
+\item $\Delta_i$上的点都是$P$的内点,
+\item $\Delta_i$上的点都是$P$的外点,
+\item $\Delta_i$上含有$P$的边界点.
+\end{enumerate}
+
+我们将所有属于直线网$T$的第(i)类小矩形(\reffig{figure:平面有界图形}中阴影部分)的面积加起来,记这个和数为$s_P(T)$,则有$s_P(T) \leqslant \Delta_R$(这里$\Delta_R$表示包含$P$的那个矩形$R$的面积);将所有第(i)类与第(iii)类小矩形(\reffig{figure:平面有界图形}中含有粗线的小矩形)的面积加起来,记这个和数为$S_P(T)$,则有$s_P(T) \leqslant S_P(T)$.
+
+由确界存在定理可以推得,对于平面上所有直线网,数集$\{ s_P(T) \}$有上确界,数集$\{ S_P(T) \}$有下确界,记
+\begin{align*}
+\underline{I}_P = \sup\limits_T \{ s_P(T) \}, \quad \overline{I}_P = \inf\limits_T \{ S_P(T) \}.
+\end{align*}
+显然有
+\begin{align*}
+0 \leqslant \underline{I}_P \leqslant \overline{I}_P.
+\end{align*}
+通常称$\underline{I}_P$为$P$的\textbf{内面积},$\overline{I}_P$为$P$的\textbf{外面积}.
+\end{definition}
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{平面有界图形.png}
+\caption{}
+\label{figure:平面有界图形}
+\end{figure}
+
+\begin{definition}
+若平面有界图形$P$的内面积$\underline{I}_P$等于它的外面积$\overline{I}_P$,则称$P$为\textbf{可求面积},并称其共同值$I_P = \underline{I}_P = \overline{I}_P$为$P$的\textbf{面积}.
+\end{definition}
+
+\begin{theorem}\label{theorem:平面有界图形可求面积的充要条件1}
+平面有界图形$P$可求面积的充要条件是:对任给的$\varepsilon > 0$,总存在直线网$T$,使得
+\begin{align}
+S_P(T) - s_P(T) < \varepsilon. \label{eq::--sasaaufn23223rw82732804}
+\end{align}
+\end{theorem}
+\begin{proof}
+{\heiti 必要性:}设平面有界图形$P$的面积为$I_P$.由定义1,有$I_P = \underline{I}_P = \overline{I}_P$.对任给的$\varepsilon > 0$,由$\underline{I}_P$及$\overline{I}_P$的定义知道,分别存在直线网$T_1$与$T_2$,使得
+\begin{align}
+s_P(T_1) > I_P - \frac{\varepsilon}{2}, \quad S_P(T_2) < I_P + \frac{\varepsilon}{2}. \label{eq::--sufn23223rw82732804}
+\end{align}
+记$T$为由$T_1$与$T_2$这两个直线网合并而成的直线网,可证得
+\[
+s_P(T_1) \leqslant s_P(T), \quad S_P(T_2) \geqslant S_P(T).
+\]
+于是由\eqref{eq::--sufn23223rw82732804}可得
+\[
+s_P(T) > I_P - \frac{\varepsilon}{2}, \quad S_P(T) < I_P + \frac{\varepsilon}{2}.
+\]
+从而得到对直线网$T$有$S_P(T) - s_P(T) < \varepsilon$.
+
+{\heiti 充分性:}设对任给的$\varepsilon > 0$,存在某直线网$T$,使得\eqref{eq::--sasaaufn23223rw82732804}式成立.但
+\[
+s_P(T) \leqslant \underline{I}_P \leqslant \overline{I}_P \leqslant S_P(T).
+\]
+所以
+\[
+\overline{I}_P - \underline{I}_P \leqslant S_P(T) - s_P(T) < \varepsilon.
+\]
+由$\varepsilon$的任意性可得$\underline{I}_P = \overline{I}_P$,因而平面图形$P$可求面积.
+
+\end{proof}
+
+\begin{corollary}\label{corollary:平面有界图形可求面积的充要条件2}
+平面有界图形$P$的面积为零的充要条件是它的外面积$\overline{I}_P = 0$,即对任给的$\varepsilon > 0$,存在直线网$T$,使得
+\[
+S_P(T) < \varepsilon,
+\]
+或对任给的$\varepsilon > 0$,平面图形$P$能被有限个其面积总和小于$\varepsilon$的小矩形所覆盖.
+\end{corollary}
+
+\begin{theorem}
+平面有界图形$P$可求面积的充要条件是:$P$的边界$K$的面积为零.
+\end{theorem}
+\begin{proof}
+由\refthe{theorem:平面有界图形可求面积的充要条件1},$P$可求面积的充要条件是:对任给的$\varepsilon > 0$,存在直线网$T$,使得$S_P(T) - s_P(T) < \varepsilon$.由于
+\[
+S_K(T) = S_P(T) - s_P(T),
+\]
+所以也有$S_K(T) < \varepsilon$.由\refcor{corollary:平面有界图形可求面积的充要条件2},$P$的边界$K$的面积为零.
+
+\end{proof}
+
+\begin{theorem}\label{theorem:数分--定理21.3}
+若曲线$K$为定义在$[a,b]$上的连续函数$f(x)$的图像,则曲线$K$的面积为零.
+\end{theorem}
+\begin{proof}
+由于$f(x)$在闭区间$[a,b]$上连续,所以它在$[a,b]$上一致连续.因而对任给的$\varepsilon > 0$,总存在$\delta > 0$,当把区间$[a,b]$分成$n$个小区间$[x_{i-1},x_i]$ $(i = 1,2,\cdots,n,x_0 = a,x_n = b)$并且满足
+\[
+\max\{ \Delta x_i = x_i - x_{i-1} \mid i = 1,2,\cdots,n \} < \delta
+\]
+时,可使$f(x)$在每个小区间$[x_{i-1},x_i]$上的振幅都成立$\omega_i < \frac{\varepsilon}{b - a}$.现把曲线$K$按自变量$x = x_0,x_1,\cdots,x_n$分成$n$个小段,这时每一个小段都能被以$\Delta x_i$为宽,$\omega_i$为高的小矩形所覆盖.由于这$n$个小矩形面积的总和为
+\begin{align*}
+\sum_{i=1}^n \omega_i \Delta x_i < \frac{\varepsilon}{b - a} \sum_{i=1}^n \Delta x_i = \varepsilon,
+\end{align*}
+所以由\refcor{corollary:平面有界图形可求面积的充要条件2}即得曲线$K$的面积为零.
+
+\end{proof}
+
+\begin{corollary}
+参数方程$x = \varphi(t),y = \psi(t),t \in [\alpha,\beta]$所表示的光滑曲线(或按段光滑曲线)$K$的面积为零.
+\end{corollary}
+\begin{proof}
+由光滑曲线的定义,$\varphi'(t),\psi'(t)$在$[\alpha,\beta]$上连续且不同时为零.对任意$t_0 \in [\alpha,\beta]$,不妨设$\varphi'(t_0) \neq 0$,于是存在$t_0$的邻域$U(t_0)$,使得$x = \varphi(t)$在此邻域上严格单调,从而存在反函数$t = \varphi^{-1}(x)$.再由有限覆盖定理可把$[\alpha,\beta]$分成有限段:$\alpha = t_0 < t_1 < \cdots < t_n = \beta$,在每一小区间段上,$y = \psi(\varphi^{-1}(x))$或$x = \varphi(\psi^{-1}(y))$.由\refthe{theorem:数分--定理21.3},每一小段的曲线面积为零,因此整条曲线面积为零.
+
+\end{proof}
+
+\begin{corollary}
+由平面上分段光滑曲线所围成的有界闭区域是可求面积的.
+\end{corollary}
+\begin{remark}
+并非平面中所有的点集都是可求面积的.例如
+\[
+D = \{ (x,y) \mid x,y \in \mathbb{Q} \cap [0,1] \}.
+\]
+易知$0 = \underline{I}_D < \overline{I}_D = 1$,$D$是不可求面积的.
+\end{remark}
+
+\begin{definition}
+设$D$为$xy$平面上可求面积的有界闭区域,$f(x,y)$为定义在$D$上的函数.用任意的曲线把$D$分成$n$个可求面积的小区域
+\[
+\sigma_1,\sigma_2,\cdots,\sigma_n.
+\]
+以$\Delta \sigma_i$表示小区域$\sigma_i$的面积,这些小区域构成$D$的一个\textbf{分割}$T$,以$d_i$表示小区域$\sigma_i$的直径,称$\| T \| = \max\limits_{1 \leqslant i \leqslant n} d_i$为分割$T$的\textbf{细度}.在每个$\sigma_i$上任取一点$(\xi_i,\eta_i)$,作和式
+\[
+\sum_{i=1}^n f(\xi_i,\eta_i)\Delta \sigma_i.
+\]
+称它为函数$f(x,y)$在$D$上属于分割$T$的一个\textbf{积分和},$(\xi_i,\eta_i)$称为\textbf{介点}.
+\end{definition}
+
+\begin{definition}
+设$f(x,y)$是定义在可求面积的有界闭区域$D$上的函数.$J$是一个确定的数,若对任给的正数$\varepsilon$,总存在某个正数$\delta$,使对于$D$的任何分割$T$,当它的细度$\| T \| < \delta$时,属于$T$的所有积分和都有
+\begin{align}
+\left| \sum_{i=1}^n f(\xi_i,\eta_i)\Delta \sigma_i - J \right| < \varepsilon, \label{eq:::--89fhf32h89wfhj3jwfas}
+\end{align}
+则称$f(x,y)$在$D$上\textbf{可积},数$J$称为函数$f(x,y)$在$D$上的\textbf{二重积分},记作
+\begin{align*}
+J = \iint_D f(x,y)\mathrm{d}\sigma, 
+\end{align*}
+其中$f(x,y)$称为二重积分的\textbf{被积函数},$x,y$称为积分变量,$D$称为\textbf{积分区域}.
+
+若选用平行于坐标轴的直线网$T_1$来分割$D$,只要当$\| T_1 \| < \delta$时,\eqref{eq:::--89fhf32h89wfhj3jwfas}式都成立,则每一小网眼区域$\sigma$的面积$\Delta \sigma = \Delta x \Delta y$.此时通常把$\iint_D f(x,y)\mathrm{d}\sigma$记作
+\begin{align*}
+\iint_D f(x,y)\mathrm{d}x\mathrm{d}y. 
+\end{align*}
+\end{definition}
+\begin{remark}
+当$f(x,y) \geqslant 0$时,二重积分$\iint_D f(x,y)\mathrm{d}\sigma$在几何上就表示以$z=f(x,y)$为曲顶,$D$为底的曲顶柱体的体积.当$f(x,y)=1$时,二重积分$\iint_D f(x,y)\mathrm{d}\sigma$的值就等于积分区域$D$的面积.
+\end{remark}
+
+\begin{theorem}
+函数$f(x,y)$在有界、可求面积区域$D$上可积的必要条件是它在$D$上有界.
+\end{theorem}
+\begin{proof}
+
+
+\end{proof}
+
+\begin{definition}
+设函数$f(x,y)$在$D$上有界,$T$为$D$的一个分割,它把$D$分成$n$个可求面积的小区域$\sigma_1,\sigma_2,\cdots,\sigma_n$.令
+\[
+M_i = \sup\limits_{(x,y) \in \sigma_i} f(x,y), \quad (i = 1,2,\cdots,n).
+\]
+\[
+m_i = \inf\limits_{(x,y) \in \sigma_i} f(x,y)
+\]
+作和式$S(T) = \sum_{i=1}^n M_i \Delta \sigma_i$,$s(T) = \sum_{i=1}^n m_i \Delta \sigma_i$.它们分别称为函数$f(x,y)$关于分割$T$的\textbf{上和}与\textbf{下和.}
+\end{definition}
+
+\begin{theorem}\label{theorem:数分--定理21.4}
+$f(x,y)$在$D$上可积的充要条件是:
+\begin{align*}
+\lim_{\| T \| \to 0} S(T) = \lim_{\| T \| \to 0} s(T).
+\end{align*}
+\end{theorem}
+
+\begin{theorem}\label{theorem:数分--定理21.5}
+$f(x,y)$在$D$上可积的充要条件是:对于任给的正数$\varepsilon$,存在$D$的某个分割$T$,使得$S(T) - s(T) < \varepsilon$.
+\end{theorem}
+
+\begin{theorem}\label{theorem:数分--定理21.6}
+有界闭区域$D$上的连续函数必可积.
+\end{theorem}
+
+\begin{theorem}
+设$f(x,y)$在有界闭域$D$上有界,且其不连续点集$E$是零面积集,则$f(x,y)$在$D$上可积.
+\end{theorem}
+\begin{proof}
+对任意$\varepsilon > 0$,存在有限个矩形(不含边界)覆盖了$E$,而这些矩形面积之和小于$\varepsilon$.记这些矩形之并集为$K$,则$D \setminus K$是有界闭域(也可能是有限多个不交的有界闭域的并集).设$K \cap D$的面积为$\Delta_K$,则$\Delta_K < \varepsilon$.由于$f(x,y)$在$D \setminus K$上连续,因此由\refthe{theorem:数分--定理21.5}和\refthe{theorem:数分--定理21.6},存在$D \setminus K$上的分割$T_1 = \{ \sigma_1,\sigma_2,\cdots,\sigma_n \}$,使得$S(T_1) - s(T_1) < \varepsilon$.令$T = \{ \sigma_1,\sigma_2,\cdots,\sigma_n,K \cap D \}$,则$T$是$D$的一个分割.且
+\begin{align*}
+S(T) - s(T) = S(T_1) - s(T_1) + \omega_K \Delta_K < \varepsilon + \omega \varepsilon,
+\end{align*}
+其中$\omega_K$是$f(x,y)$在$K \cap D$上的振幅,$\omega$是$f(x,y)$在$D$上的振幅.由\refthe{theorem:数分--定理21.5},$f(x,y)$在$D$上可积.
+
+\end{proof}
+
+\begin{theorem}
+\begin{enumerate}[(1)]
+\item 若$f(x,y)$在区域$D$上可积,$k$为常数,则$kf(x,y)$在$D$上也可积,且
+\begin{align*}
+\iint_D kf(x,y)\mathrm{d}\sigma = k\iint_D f(x,y)\mathrm{d}\sigma.
+\end{align*}
+
+\item 若$f(x,y),g(x,y)$在$D$上都可积,则$f(x,y) \pm g(x,y)$在$D$上也可积,且
+\begin{align*}
+\iint_D [f(x,y) \pm g(x,y)]\mathrm{d}\sigma = \iint_D f(x,y)\mathrm{d}\sigma \pm \iint_D g(x,y)\mathrm{d}\sigma.
+\end{align*}
+
+\item 若$f(x,y)$在$D_1$和$D_2$上都可积,且$D_1$与$D_2$无公共内点,则$f(x,y)$在$D_1 \cup D_2$上也可积,且
+\begin{align*}
+\iint_{D_1 \cup D_2} f(x,y)\mathrm{d}\sigma = \iint_{D_1} f(x,y)\mathrm{d}\sigma + \iint_{D_2} f(x,y)\mathrm{d}\sigma.
+\end{align*}
+
+\item 若$f(x,y)$与$g(x,y)$在$D$上可积,且
+\begin{align*}
+f(x,y) \leqslant g(x,y),\quad (x,y) \in D,
+\end{align*}
+则
+\begin{align*}
+\iint_D f(x,y)\mathrm{d}\sigma \leqslant \iint_D g(x,y)\mathrm{d}\sigma.
+\end{align*}
+
+\item 若$f(x,y)$在$D$上可积,则函数$|f(x,y)|$在$D$上也可积,且
+\begin{align*}
+\left| \iint_D f(x,y)\mathrm{d}\sigma \right| \leqslant \iint_D |f(x,y)|\mathrm{d}\sigma.
+\end{align*}
+
+\item 若$f(x,y)$在$D$上可积,且
+\begin{align*}
+m \leqslant f(x,y) \leqslant M,\quad (x,y) \in D,
+\end{align*}
+则
+\begin{align*}
+mS_D \leqslant \iint_D f(x,y)\mathrm{d}\sigma \leqslant MS_D,
+\end{align*}
+这里$S_D$是积分区域$D$的面积.
+
+\item\label{theorem:二重积分中值定理} (中值定理) 若$f(x,y)$在有界闭区域$D$上连续,则存在$(\xi,\eta) \in D$,使得
+\begin{align*}
+\iint_D f(x,y)\mathrm{d}\sigma = f(\xi,\eta)S_D,
+\end{align*}
+这里$S_D$是积分区域$D$的面积.
+\end{enumerate}
+\end{theorem}
+\begin{remark}
+中值定理的几何意义:以$D$为底,$z = f(x,y)$ $(f(x,y) \geqslant 0)$为曲顶的曲顶柱体体积等于一个同底的平顶柱体的体积,这个平顶柱体的高等于$f(x,y)$在区域$D$中某点$(\xi,\eta)$的函数值$f(\xi,\eta)$.
+\end{remark}
+\begin{proof}
+
+
+\end{proof}
+
+
+
+\subsection{直角坐标系下二重积分的计算}
+
+\begin{theorem}\label{theorem:数分--二重积分计算定理--1}
+设$f(x,y)$在矩形区域$D=[a,b]\times[c,d]$上可积,且对每个$x\in[a,b]$,积分$\int_c^d f(x,y)\mathrm{d}y$存在,则累次积分
+\[
+\int_a^b \mathrm{d}x \int_c^d f(x,y)\mathrm{d}y
+\]
+也存在,且
+\begin{align}
+\iint_D f(x,y)\mathrm{d}\sigma = \int_a^b \mathrm{d}x \int_c^d f(x,y)\mathrm{d}y. \label{1}
+\end{align}
+\end{theorem}
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{二重积分计算证明图.png}
+\caption{}
+\label{figure:二重积分计算证明图}
+\end{figure}
+\begin{proof}
+令$F(x)=\int_c^d f(x,y)\mathrm{d}y$,定理要求证明$F(x)$在$[a,b]$上可积,且积分的结果恰为二重积分.为此,对区间$[a,b]$与$[c,d]$分别作分割
+\[
+a=x_0<x_1<\cdots<x_r=b,
+\]
+\[
+c=y_0<y_1<\cdots<y_s=d.
+\]
+按这些分点作两组直线
+\[
+x=x_i\quad(i=1,2,\cdots,r-1)
+\]
+及
+\[
+y=y_k\quad(k=1,2,\cdots,s-1),
+\]
+它把矩形$D$分为$rs$个小矩形(\reffig{figure:二重积分计算证明图}).记$\Delta_{ik}$为小矩形$[x_{i-1},x_i]\times[y_{k-1},y_k]$ $(i=1,2,\cdots,r,k=1,2,\cdots,s)$;设$f(x,y)$在$\Delta_{ik}$上的上确界和下确界分别为$M_{ik}$和$m_{ik}$.在区间$[x_{i-1},x_i]$中任取一点$\xi_i$,于是就有不等式
+\[
+m_{ik}\Delta y_k \leqslant \int_{y_{k-1}}^{y_k} f(\xi_i,y)\mathrm{d}y \leqslant M_{ik}\Delta y_k,
+\]
+其中$\Delta y_k=y_k-y_{k-1}$.因此
+\begin{align*}
+\sum_{k=1}^s m_{ik}\Delta y_k \leqslant F(\xi_i)=\int_c^d f(\xi_i,y)\mathrm{d}y \leqslant \sum_{k=1}^s M_{ik}\Delta y_k,
+\end{align*}
+\begin{align*}
+\sum_{i=1}^r \sum_{k=1}^s m_{ik}\Delta y_k\Delta x_i \leqslant \sum_{i=1}^r F(\xi_i)\Delta x_i \leqslant \sum_{i=1}^r \sum_{k=1}^s M_{ik}\Delta y_k\Delta x_i, \label{eq::aasaasfisfioqw212}
+\end{align*}
+其中$\Delta x_i=x_i-x_{i-1}$.记$\Delta_{ik}$的对角线长度为$d_{ik}$和
+\[
+\|T\|=\max\limits_{i,k} d_{ik}.
+\]
+由于二重积分存在,由\refthe{theorem:数分--定理21.4},当$\|T\|\to0$时,$\sum\limits_{i,k} m_{ik}\Delta y_k\Delta x_i$和$\sum\limits_{i,k} M_{ik}\Delta y_k\Delta x_i$有相同的极限,且极限值等于$\iint_D f(x,y)\mathrm{d}\sigma$.因此当$\|T\|\to0$时,由不等式\eqref{eq::aasaasfisfioqw212}可得
+\begin{align*}
+\lim_{\|T\|\to0} \sum_{i=1}^r F(\xi_i)\Delta x_i = \iint_D f(x,y)\mathrm{d}\sigma. \label{eq::aasaasfisfioqw2122q}
+\end{align*}
+由于当$\|T\|\to0$时,必有$\max\limits_{1\leqslant i\leqslant r}\Delta x_i\to0$,因此由定积分定义,\eqref{eq::aasaasfisfioqw2122q}式左边
+\[
+\lim_{\|T\|\to0} \sum_{i=1}^r F(\xi_i)\Delta x_i = \int_a^b F(x)\mathrm{d}x = \int_a^b \mathrm{d}x \int_c^d f(x,y)\mathrm{d}y.
+\]
+
+\end{proof}
+
+\begin{theorem}\label{theorem:数分--二重积分计算定理--2}
+设$f(x,y)$在矩形区域$D=[a,b]\times[c,d]$上可积,且对每个$y\in[c,d]$,积分$\int_a^b f(x,y)\mathrm{d}x$存在,则累次积分
+\[
+\int_c^d \mathrm{d}y \int_a^b f(x,y)\mathrm{d}x
+\]
+也存在,且
+\[
+\iint_D f(x,y)\mathrm{d}\sigma = \int_c^d \mathrm{d}y \int_a^b f(x,y)\mathrm{d}x.
+\]
+\end{theorem}
+
+\begin{corollary}
+当$f(x,y)$在矩形区域$D=[a,b]\times[c,d]$上连续时,则有
+\begin{align*}
+\iint_D f(x,y)\mathrm{d}\sigma = \int_a^b \mathrm{d}x \int_c^d f(x,y)\mathrm{d}y = \int_c^d \mathrm{d}y \int_a^b f(x,y)\mathrm{d}x.
+\end{align*}
+\end{corollary}
+\begin{proof}
+由\refthe{theorem:数分--二重积分计算定理--1}和\refthe{theorem:数分--二重积分计算定理--2}易得.
+
+\end{proof}
+
+\begin{definition}
+称平面点集
+\begin{align}\label{eq:::xxx-----4}
+D = \{ (x,y) \mid y_1(x) \leqslant y \leqslant y_2(x), a \leqslant x \leqslant b \}
+\end{align}
+为$x$型区域(\reffig{figure:x-y型区域}(a));称平面点集
+\begin{align}\label{eq:::xxx-----5}
+D = \{ (x,y) \mid x_1(y) \leqslant x \leqslant x_2(y), c \leqslant y \leqslant d \}
+\end{align}
+为$y$型区域(\reffig{figure:x-y型区域}(b)).
+\end{definition}
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{x-y型区域.png}
+\caption{}
+\label{figure:x-y型区域}
+\end{figure}
+\begin{remark}
+这些区域的特点是当$D$为$x$型区域时,垂直于$x$轴的直线$x=x_0$ $(a < x_0 < b)$至多与区域$D$的边界交于两点;当$D$为$y$型区域时,直线$y=y_0$ $(c < y_0 < d)$至多与$D$的边界交于两点.
+
+许多常见的区域都可以分解成有限个除边界外无公共内点的$x$型区域或$y$型区域(如\reffig{figure:数分图2}所示的区域$D$可分解成三个区域,其Ⅰ,Ⅲ为$x$型区域,Ⅱ为$y$型区域).因而解决了$x$型区域或$y$型区域上二重积分的计算问题,那么一般区域上二重积分的计算问题也就得到了解决.
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{数分图2.png}
+\caption{}
+\label{figure:数分图2}
+\end{figure}
+\end{remark}
+
+\begin{theorem}
+\begin{enumerate}[(1)]
+\item 若$f(x,y)$在如\eqref{eq:::xxx-----4}式所示的$x$型区域$D$上连续,其中$y_1(x),y_2(x)$在$[a,b]$上连续,则
+\begin{align*}
+\iint_D f(x,y)\mathrm{d}\sigma = \int_a^b \mathrm{d}x \int_{y_1(x)}^{y_2(x)} f(x,y)\mathrm{d}y.
+\end{align*}
+即二重积分可化为先对$y$后对$x$的累次积分.
+
+\item 若$D$为\eqref{eq:::xxx-----5}式所示的$y$型区域,其中$x_1(y),x_2(y)$在$[c,d]$上连续,则二重积分可化为先对$x$后对$y$的累次积分
+\begin{align*}
+\iint_D f(x,y)\mathrm{d}\sigma = \int_c^d \mathrm{d}y \int_{x_1(y)}^{x_2(y)} f(x,y)\mathrm{d}x.
+\end{align*}
+即二重积分可化为先对$x$后对$y$的累次积分.
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+只证(1),(2)类似可证.由于$y_1(x)$与$y_2(x)$在闭区间$[a,b]$上连续,故存在矩形区域$[a,b] \times [c,d] \supset D$(如\reffig{figure:x-y型区域}(a)),现作一定义在$[a,b] \times [c,d]$上的函数
+\begin{align*}
+F(x,y) = \begin{cases} 
+f(x,y), & (x,y) \in D, \\
+0, & (x,y) \notin D.
+\end{cases}
+\end{align*}
+可以验证,函数$F(x,y)$在$[a,b] \times [c,d]$上可积,而且
+\begin{align*}
+\iint_D f(x,y)\mathrm{d}\sigma &= \iint_{[a,b] \times [c,d]} F(x,y)\mathrm{d}\sigma = \int_a^b \mathrm{d}x \int_c^d F(x,y)\mathrm{d}y \\
+&= \int_a^b \mathrm{d}x \int_{y_1(x)}^{y_2(x)} F(x,y)\mathrm{d}y = \int_a^b \mathrm{d}x \int_{y_1(x)}^{y_2(x)} f(x,y)\mathrm{d}y.
+\end{align*}
+
+
+\end{proof}
+
+\begin{remark}
+从几何意义上可以这样来理解化二重积分为累次积分,二重积分是计算以$D$为底面,$f(x,y)$ $(\geqslant 0)$为高的曲顶柱体的体积,这个曲顶柱体可视为介于平行平面$x=a$与$x=b$之间的立体,可以利用截面面积$S(x),x \in [a,b]$的积分求出.而截面面积$S(x)$是一元函数$f(x,y)$(其中$x$为参量)与$y$轴以及直线$y=y_1(x),y=y_2(x)$所围图形的面积(\reffig{figure:数分图111}),所以
+\begin{align*}
+S(x) = \int_{y_1(x)}^{y_2(x)} f(x,y)\mathrm{d}y.
+\end{align*}
+那么曲顶柱体的体积
+\begin{align*}
+V = \int_a^b S(x)\mathrm{d}x = \int_a^b \mathrm{d}x \int_{y_1(x)}^{y_2(x)} f(x,y)\mathrm{d}y.
+\end{align*}
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{数分图111.png}
+\caption{}
+\label{figure:数分图111}
+\end{figure}
+\end{remark}
+
+
+
+\subsection{Green公式}
+
+\begin{definition}
+设区域$D$的边界$L$由一条或几条光滑曲线所组成. 边界曲线的\textbf{正方向}规定为:当人沿边界行走时,区域$D$总在他的左边,如\reffig{figure:区域的正方向示例图}所示.与上述规定的方向相反的方向称为\textbf{负方向},记为$-L$.
+\end{definition}
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{区域的正方向示例图.png}
+\caption{}
+\label{figure:区域的正方向示例图}
+\end{figure}
+
+\begin{theorem}\label{theorem:实变函数中的Green公式}
+若函数$P(x,y),Q(x,y)$在闭区域$D$上连续,且有连续的一阶偏导数,则有
+\begin{align}
+\iint_D \left( \frac{\partial Q}{\partial x} - \frac{\partial P}{\partial y} \right) \mathrm{d}\sigma = \oint_L P\mathrm{d}x + Q\mathrm{d}y, \label{eq::Greenjjwf2390m2f}
+\end{align}
+这里$L$为区域$D$的边界曲线,分段光滑,并取正方向.
+公式\eqref{eq::Greenjjwf2390m2f}称为\textbf{格林($\mathbf{Green}$)公式}.
+\end{theorem}
+\begin{remark}
+格林公式沟通了沿闭曲线的积分与二重积分之间的联系.为便于记忆,格林公式\eqref{eq::Greenjjwf2390m2f}也可写成下述形式:
+\begin{align*}
+\iint_D \begin{vmatrix}
+\frac{\partial}{\partial x} & \frac{\partial}{\partial y} \\
+P & Q
+\end{vmatrix} \mathrm{d}\sigma = \oint_L P\mathrm{d}x + Q\mathrm{d}y.
+\end{align*}
+\end{remark}
+\begin{proof}
+根据区域$D$的不同形状,一般可分三种情形来证明:
+\begin{enumerate}[(i)]
+\item 若区域$D$既是$x$型区域又是$y$型区域,即平行于坐标轴的直线和$L$至多交于两点(\reffig{figure:数分图21-12}).
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{数分图21-12.png}
+\caption{}
+\label{figure:数分图21-12}
+\end{figure}
+这时区域$D$可表示为
+\begin{align*}
+\varphi_1(x) \leqslant y \leqslant \varphi_2(x),\ a \leqslant x \leqslant b
+\end{align*}
+或
+\begin{align*}
+\psi_1(y) \leqslant x \leqslant \psi_2(y),\ \alpha \leqslant y \leqslant \beta.
+\end{align*}
+这里$y=\varphi_1(x)$和$y=\varphi_2(x)$分别为曲线$\wideparen{ACB}$和$\wideparen{AEB}$的方程.而$x=\psi_1(y)$和$x=\psi_2(y)$则分别是曲线$\wideparen{CAE}$和$\wideparen{CBE}$的方程.于是
+\begin{align*}
+\iint_D \frac{\partial Q}{\partial x} \mathrm{d}\sigma &= \int_{\alpha}^{\beta} \mathrm{d}y \int_{\psi_1(y)}^{\psi_2(y)} \frac{\partial Q}{\partial x} \mathrm{d}x \\
+&= \int_{\alpha}^{\beta} Q(\psi_2(y),y) \mathrm{d}y - \int_{\alpha}^{\beta} Q(\psi_1(y),y) \mathrm{d}y \\
+&= \int_{\wideparen{CBE}} Q(x,y) \mathrm{d}y - \int_{\wideparen{CAE}} Q(x,y) \mathrm{d}y \\
+&= \int_{\wideparen{CBE}} Q(x,y) \mathrm{d}y + \int_{\wideparen{EAC}} Q(x,y) \mathrm{d}y \\
+&= \oint_L Q(x,y) \mathrm{d}y.
+\end{align*}
+同理可以证得
+\begin{align*}
+- \iint_D \frac{\partial P}{\partial y} \mathrm{d}\sigma = \oint_L P(x,y) \mathrm{d}x.
+\end{align*}
+将上述两个结果相加即得
+\begin{align*}
+\iint_D \left( \frac{\partial Q}{\partial x} - \frac{\partial P}{\partial y} \right) \mathrm{d}\sigma = \oint_L P\mathrm{d}x + Q\mathrm{d}y.
+\end{align*}
+
+\item 若区域$D$是由一条按段光滑的闭曲线围成,如\reffig{figure:数分图21-13}所示,则先用几段光滑曲线将$D$分成有限个既是$x$型又是$y$型的子区域,然后逐块按(i)得到它们的格林公式,并相加即可.如\reffig{figure:数分图21-13}所示的区域$D$.可将$D$分成三个既是$x$型又是$y$型的区域$D_1,D_2,D_3$.
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{数分图21-13.png}
+\caption{}
+\label{figure:数分图21-13}
+\end{figure}
+于是
+\begin{align*}
+\iint_D \left( \frac{\partial Q}{\partial x} - \frac{\partial P}{\partial y} \right) \mathrm{d}\sigma &= \iint_{D_1} \left( \frac{\partial Q}{\partial x} - \frac{\partial P}{\partial y} \right) \mathrm{d}\sigma + \iint_{D_2} \left( \frac{\partial Q}{\partial x} - \frac{\partial P}{\partial y} \right) \mathrm{d}\sigma + \iint_{D_3} \left( \frac{\partial Q}{\partial x} - \frac{\partial P}{\partial y} \right) \mathrm{d}\sigma \\
+&= \oint_{L_1} P\mathrm{d}x + Q\mathrm{d}y + \oint_{L_2} P\mathrm{d}x + Q\mathrm{d}y + \oint_{L_3} P\mathrm{d}x + Q\mathrm{d}y \\
+&= \oint_L P\mathrm{d}x + Q\mathrm{d}y.
+\end{align*}
+
+\item 若区域$D$由几条闭曲线所围成,如\reffig{figure:数分图21-14}所示,这时可适当添加直线段$AB,CE$,把区域转化为(ii)的情况来处理.在\reffig{figure:数分图21-14}中联结了$AB,CE$后,则$D$的边界曲线由$AB,L_2,BA,\wideparen{AFC},CE,L_3,EC$及$\wideparen{CGA}$构成.
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{数分图21-14.png}
+\caption{}
+\label{figure:数分图21-14}
+\end{figure}
+由(ii)知
+\begin{align*}
+\iint_D \left( \frac{\partial Q}{\partial x} - \frac{\partial P}{\partial y} \right) \mathrm{d}\sigma &= \left\{ \int_{AB} + \int_{L_2} + \int_{BA} + \int_{\wideparen{AFC}} + \int_{CE} + \int_{L_3} + \int_{EC} + \int_{\wideparen{CGA}} \right\} (P\mathrm{d}x + Q\mathrm{d}y) \\
+&= \left( \oint_{L_2} + \oint_{L_3} + \oint_{L_1} \right) (P\mathrm{d}x + Q\mathrm{d}y) \\
+&= \oint_L P\mathrm{d}x + Q\mathrm{d}y.
+\end{align*}
+\end{enumerate}
+
+\end{proof}
+
+\begin{definition}
+若对于平面区域$D$上任一封闭曲线,皆可不经过$D$以外的点而连续收缩于属于$D$的某一点,则称此平面区域为\textbf{单连通区域},否则称为\textbf{复连通区域}.
+\end{definition}
+
+\begin{theorem}\label{theorem:数分--二重积分与路径无关定理}
+设$D$是单连通闭区域.若函数$P(x,y),Q(x,y)$在$D$内连续,且具有一阶连续偏导数,则以下四个条件等价:
+\begin{enumerate}[(i)]
+\item 沿$D$内任一按段光滑封闭曲线$L$,有
+\begin{align*}
+\oint_L P\mathrm{d}x + Q\mathrm{d}y = 0;
+\end{align*}
+
+\item 对$D$中任一按段光滑曲线$L$,曲线积分
+\begin{align*}
+\int_L P\mathrm{d}x + Q\mathrm{d}y
+\end{align*}
+与路线无关,只与$L$的起点及终点有关;
+
+\item $P\mathrm{d}x+Q\mathrm{d}y$是$D$内某一函数$u(x,y)$的全微分,即在$D$内有
+\begin{align*}
+\mathrm{d}u = P\mathrm{d}x + Q\mathrm{d}y;
+\end{align*}
+
+\item 在$D$内处处成立
+\begin{align*}
+\frac{\partial P}{\partial y} = \frac{\partial Q}{\partial x}.
+\end{align*}
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+(i)$\Rightarrow$(ii) 如\reffig{figure:数分图21-22},设$\wideparen{ARB}$与$\wideparen{ASB}$为联结点$A,B$的任意两条按段光滑曲线.
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{数分图21-22.png}
+\caption{}
+\label{figure:数分图21-22}
+\end{figure}
+由(i)可推得
+\begin{align*}
+\int_{\wideparen{ARB}} P\mathrm{d}x + Q\mathrm{d}y - \int_{\wideparen{ASB}} P\mathrm{d}x + Q\mathrm{d}y
+= \int_{\wideparen{ARB}} P\mathrm{d}x + Q\mathrm{d}y + \int_{\wideparen{BSA}} P\mathrm{d}x + Q\mathrm{d}y
+= \oint_{\wideparen{ARBSA}} P\mathrm{d}x + Q\mathrm{d}y = 0,
+\end{align*}
+所以
+\begin{align*}
+\int_{\wideparen{ARB}} P\mathrm{d}x + Q\mathrm{d}y = \int_{\wideparen{ASB}} P\mathrm{d}x + Q\mathrm{d}y.
+\end{align*}
+
+(ii)$\Rightarrow$(iii) 设$A(x_0,y_0)$为$D$内某一定点,$B(x,y)$为$D$内任意一点.由(ii),曲线积分
+\begin{align*}
+\int_{\wideparen{AB}} P\mathrm{d}x + Q\mathrm{d}y
+\end{align*}
+与路线的选择无关,故当$B(x,y)$在$D$内变动时,其积分值是$B(x,y)$的函数,即有
+\begin{align*}
+u(x,y) = \int_{\wideparen{AB}} P\mathrm{d}x + Q\mathrm{d}y.
+\end{align*}
+取$\Delta x$充分小,使$(x+\Delta x,y) \in D$,则函数$u(x,y)$对于$x$的偏增量(\reffig{figure:数分图21-23})
+\begin{align*}
+u(x + \Delta x,y) - u(x,y)
+= \int_{\wideparen{AC}} P\mathrm{d}x + Q\mathrm{d}y - \int_{\wideparen{AB}} P\mathrm{d}x + Q\mathrm{d}y.
+\end{align*}
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{数分图21-23.png}
+\caption{}
+\label{figure:数分图21-23}
+\end{figure}
+因为在$D$内曲线积分与路线无关,所以
+\begin{align*}
+\int_{\wideparen{AC}} P\mathrm{d}x + Q\mathrm{d}y
+= \int_{\wideparen{AB}} P\mathrm{d}x + Q\mathrm{d}y + \int_{BC} P\mathrm{d}x + Q\mathrm{d}y.
+\end{align*}
+由于直线段$BC$平行于$x$轴,所以$\mathrm{d}y=0$,从而由积分中值定理可得
+\begin{align*}
+\Delta u = u(x + \Delta x,y) - u(x,y) = \int_{BC} P\mathrm{d}x + Q\mathrm{d}y
+= \int_{x}^{x+\Delta x} P(s,y)\mathrm{d}s = P(x + \theta \Delta x,y)\Delta x,
+\end{align*}
+其中$0 < \theta < 1$.根据$P(x,y)$在$D$上连续,于是有
+\begin{align*}
+\frac{\partial u}{\partial x} = \lim_{\Delta x \to 0} \frac{\Delta u}{\Delta x} = \lim_{\Delta x \to 0} P(x + \theta \Delta x,y) = P(x,y).
+\end{align*}
+同理可证$\frac{\partial u}{\partial y} = Q(x,y)$.因此
+\begin{align*}
+\mathrm{d}u = P\mathrm{d}x + Q\mathrm{d}y.
+\end{align*}
+
+(iii)$\Rightarrow$(iv) 设存在函数$u(x,y)$,使得
+\begin{align*}
+\mathrm{d}u = P\mathrm{d}x + Q\mathrm{d}y,
+\end{align*}
+所以$P(x,y) = \frac{\partial}{\partial x} u(x,y)$,$Q(x,y) = \frac{\partial}{\partial y} u(x,y)$.因此
+\begin{align*}
+\frac{\partial P}{\partial y} = \frac{\partial^2 u}{\partial x \partial y},\quad \frac{\partial Q}{\partial x} = \frac{\partial^2 u}{\partial y \partial x}.
+\end{align*}
+因为$P(x,y),Q(x,y)$在区域$D$内具有一阶连续偏导数,所以
+\begin{align*}
+\frac{\partial^2 u}{\partial x \partial y} = \frac{\partial^2 u}{\partial y \partial x}.
+\end{align*}
+从而在$D$内每一点处都有
+\begin{align*}
+\frac{\partial P}{\partial y} = \frac{\partial Q}{\partial x}.
+\end{align*}
+
+(iv)$\Rightarrow$(i) 设$L$为$D$内任一按段光滑封闭曲线,记$L$所围的区域为$\sigma$.由于$D$为单连通区域,所以区域$\sigma$含在$D$内.应用格林公式及在$D$内恒有$\frac{\partial P}{\partial y} = \frac{\partial Q}{\partial x}$的条件,就得到
+\begin{align*}
+\oint_L P\mathrm{d}x + Q\mathrm{d}y = \iint_{\sigma} \left( \frac{\partial Q}{\partial x} - \frac{\partial P}{\partial y} \right) \mathrm{d}\sigma = 0.
+\end{align*}
+上面我们将四个条件循环推导了一遍,这就证明了它们是相互等价的.
+
+
+\end{proof}
+
+\begin{definition}
+设$D$是单连通闭区域.若函数$P(x,y),Q(x,y)$在$D$内连续,且具有一阶连续偏导数,则由\refthe{theorem:数分--二重积分与路径无关定理}的证明可看到二元函数
+\begin{align*}
+u(x,y) &= \int_{\wideparen{AB}} P(x,y)\mathrm{d}x + Q(x,y)\mathrm{d}y \\
+&= \int_{A(x_0,y_0)}^{B(x,y)} P(s,t)\mathrm{d}s + Q(s,t)\mathrm{d}t
+\end{align*}
+具有性质
+\begin{align*}
+\mathrm{d}u(x,y) = P(x,y)\mathrm{d}x + Q(x,y)\mathrm{d}y.
+\end{align*}
+它与一元函数的原函数相仿.所以我们也称$u(x,y)$为$P\mathrm{d}x+Q\mathrm{d}y$的一个\textbf{原函数}.
+\end{definition}
+
+
+
+\subsection{二重积分的变量替换}
+
+\begin{lemma}\label{lemma:数分---引理21}
+设变换$T:x=x(u,v),y=y(u,v)$将$uv$平面上由按段光滑封闭曲线所围的闭区域$\Delta$一对一地映成$xy$平面上的闭区域$D$,函数$x(u,v),y(u,v)$在$\Delta$内分别具有一阶连续偏导数且它们的函数行列式
+\begin{align*}
+J(u,v)=\frac{\partial(x,y)}{\partial(u,v)}\neq0,\quad(u,v)\in\Delta,
+\end{align*}
+则区域$D$的面积
+\begin{align*}
+\mu(D)=\iint_{\Delta}|J(u,v)|\mathrm{d}u\mathrm{d}v.
+\end{align*}
+\end{lemma}
+\begin{proof}
+下面给出当$y(u,v)$在$\Delta$内具有二阶连续偏导数时的证明.对$y(u,v)$具有一阶连续偏导数条件下的证明后续给出.
+
+由于$T$是一对变换,且$J(u,v)\neq0$,因而$T$把$\Delta$的内点变为$D$的内点,所以$\Delta$的按段光滑边界曲线$L_{\Delta}$变换到$D$时,其边界曲线$L_D$也是按段光滑的.
+
+设曲线$L_{\Delta}$的参数方程为
+\[
+u=u(t),\quad v=v(t)\quad(\alpha\leqslant t\leqslant\beta).
+\]
+由于$L_{\Delta}$按段光滑,所以$u'(t),v'(t)$在$[\alpha,\beta]$上至多除去有限个第一类间断点外,在其他的点上都连续.因为$L_D=T(L_{\Delta})$,所以$L_D$的参数方程为
+\[
+x=x(t)=x(u(t),v(t)),\quad(\alpha\leqslant t\leqslant\beta).
+\]
+\[
+y=y(t)=y(u(t),v(t))
+\]
+
+若规定$t$从$\alpha$变到$\beta$时,对应于$L_D$的正向,则根据格林公式,取$P(x,y)=0$,$Q(x,y)=x$,有
+\begin{align}\label{eq::--wjfioj3oij2-6}
+\mu(D)=\oint_{L_D}x\mathrm{d}y=\int_{\alpha}^{\beta}x(t)y'(t)\mathrm{d}t=\int_{\alpha}^{\beta}x(u(t),v(t))\left[\frac{\partial y}{\partial u}u'(t)+\frac{\partial y}{\partial v}v'(t)\right]\mathrm{d}t.
+\end{align}
+另一方面,在$uv$平面上
+\begin{align}\label{eq::--wjfioj3oij2-7}
+\oint_{L_{\Delta}}x(u,v)\left[\frac{\partial y}{\partial u}\mathrm{d}u+\frac{\partial y}{\partial v}\mathrm{d}v\right]&=\pm\int_{\alpha}^{\beta}x(u(t),v(t))\left[\frac{\partial y}{\partial u}u'(t)+\frac{\partial y}{\partial v}v'(t)\right]\mathrm{d}t,
+\end{align}
+其中正号及负号分别由$t$从$\alpha$变到$\beta$时,是对应于$L_{\Delta}$的正方向或负方向所决定.由\eqref{eq::--wjfioj3oij2-6}及\eqref{eq::--wjfioj3oij2-7}式得到
+\begin{align*}
+\mu(D)=\pm\oint_{L_{\Delta}}x(u,v)\left[\frac{\partial y}{\partial u}\mathrm{d}u+\frac{\partial y}{\partial v}\mathrm{d}v\right]=\pm\oint_{L_{\Delta}}x(u,v)\frac{\partial y}{\partial u}\mathrm{d}u+x(u,v)\frac{\partial y}{\partial v}\mathrm{d}v.
+\end{align*}
+令$P(u,v)=x(u,v)\frac{\partial y}{\partial u}$,$Q(u,v)=x(u,v)\frac{\partial y}{\partial v}$,在$uv$平面上对上式应用格林公式,得到
+\begin{align*}
+\mu(D)=\pm\iint_{\Delta}\left(\frac{\partial Q}{\partial u}-\frac{\partial P}{\partial v}\right)\mathrm{d}u\mathrm{d}v.
+\end{align*}
+由于函数$y(u,v)$具有二阶连续偏导数,即有$\frac{\partial^2 y}{\partial u\partial v}=\frac{\partial^2 y}{\partial v\partial u}$,因此,$\frac{\partial Q}{\partial u}-\frac{\partial P}{\partial v}=J(u,v)$,于是
+\begin{align*}
+\mu(D)=\pm\iint_{\Delta}J(u,v)\mathrm{d}u\mathrm{d}v.
+\end{align*}
+又因为$\mu(D)$总是非负的,而$J(u,v)$在$\Delta$上不为零且连续,故其函数值在$\Delta$上不变号,所以
+\begin{align*}
+\mu(D)=\iint_{\Delta}|J(u,v)|\mathrm{d}u\mathrm{d}v.
+\end{align*}
+
+
+\end{proof}
+
+\begin{theorem}\label{theorem:数分--定理21.13}
+设$f(x,y)$在有界闭区域$D$上可积,变换$T:x=x(u,v),y=y(u,v)$将$uv$平面由按段光滑封闭曲线所围成的闭区域$\Delta$一对一地映成$xy$平面上的闭区域$D$,函数$x(u,v),y(u,v)$在$\Delta$内分别具有一阶连续偏导数且它们的函数行列式
+\begin{align*}
+J(u,v)=\frac{\partial(x,y)}{\partial(u,v)}\neq0,\quad(u,v)\in\Delta,
+\end{align*}
+则
+\begin{align*}
+\iint_{D}f(x,y)\mathrm{d}x\mathrm{d}y=\iint_{\Delta}f(x(u,v),y(u,v))|J(u,v)|\mathrm{d}u\mathrm{d}v.
+\end{align*}
+\end{theorem}
+\begin{proof}
+用曲线网把$\Delta$分成$n$个小区域$\Delta_i$,在变换$T$作用下,区域$D$也相应地被分成$n$个小区域$D_i$.记$\Delta_i$及$D_i$的面积为$\mu(\Delta_i)$及$\mu(D_i)$ $(i=1,2,\cdots,n)$.由\reflem{lemma:数分---引理21}及\hyperref[theorem:二重积分中值定理]{二重积分中值定理},有
+\begin{align*}
+\mu(D_i)=\iint_{\Delta_i}|J(u,v)|\mathrm{d}u\mathrm{d}v=|J(\tilde{u}_i,\tilde{v}_i)|\mu(\Delta_i),
+\end{align*}
+其中$(\tilde{u}_i,\tilde{v}_i)\in\Delta_i$ $(i=1,2,\cdots,n)$.
+
+令$\xi_i=x(\tilde{u}_i,\tilde{v}_i)$,$\eta_i=y(\tilde{u}_i,\tilde{v}_i)$,则$(\xi_i,\eta_i)\in D_i$ $(i=1,2,\cdots,n)$.作二重积分$\iint_{D}f(x,y)\mathrm{d}x\mathrm{d}y$的积分和
+\begin{align*}
+\sigma=\sum_{i=1}^n f(\xi_i,\eta_i)\mu(D_i)=\sum_{i=1}^n f(x(\tilde{u}_i,\tilde{v}_i),y(\tilde{u}_i,\tilde{v}_i))|J(\tilde{u}_i,\tilde{v}_i)|\mu(\Delta_i).
+\end{align*}
+上式右边的和式是$\Delta$上可积函数$f(x(u,v),y(u,v))|J(u,v)|$的积分和.又由变换$T$的连续性可知,当区域$\Delta$的分割$T_{\Delta}:|\Delta_1,\Delta_2,\cdots,\Delta_n|$的细度$\|T_{\Delta}\|\to0$时,区域$D$相应的分割$T_D:|D_1,D_2,\cdots,D_n|$的细度$\|T_D\|$也趋于零.因此得到
+\begin{align*}
+\iint_{D}f(x,y)\mathrm{d}x\mathrm{d}y=\iint_{\Delta}f(x(u,v),y(u,v))|J(u,v)|\mathrm{d}u\mathrm{d}v.
+\end{align*}
+
+\end{proof}
+
+\begin{theorem}\label{theorem:数分-----定理11122423}
+设$f(x,y)$在有界闭区域$D$上可积,且在极坐标变换
+\begin{align*}
+T:\begin{cases}
+x=r\cos \theta ,\\
+t=r\sin \theta ,\\
+\end{cases}\quad 0\leqslant r<+\infty ,0\leqslant \theta \leqslant 2\pi 
+\end{align*}
+下,$xy$平面上有界闭区域$D$与$r\theta$平面上区域$\Delta$对应,则成立
+\begin{align}
+\iint_D f(x,y)\mathrm{d}x\mathrm{d}y = \iint_{\Delta} f(r\cos\theta,r\sin\theta)r\mathrm{d}r\mathrm{d}\theta. \label{eq::90fjw0j3223r2q---9}
+\end{align}
+\end{theorem}
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{数分图21-24.png}
+\caption{}
+\label{figure:数分图21-24}
+\end{figure}
+\begin{proof}
+若$D$为圆域$\{(x,y)|x^2+y^2 \leqslant R^2\}$,则$\Delta$为$r\theta$平面上矩形区域$[0,R] \times [0,2\pi]$.设$D_{\varepsilon}$为在圆环$\{(x,y)|0 < \varepsilon^2 \leqslant x^2+y^2 \leqslant R^2\}$中除去中心角为$\varepsilon$的扇形$BB'A'A$所得的区域(\reffig{figure:数分图21-24}(a)),则在变换$T$下,$D_{\varepsilon}$对应于$r\theta$平面上的矩形区域$\Delta_{\varepsilon} = [\varepsilon,R] \times [0,2\pi-\varepsilon]$(\reffig{figure:数分图21-24}(b)).但极坐标变换$T$在$D_{\varepsilon}$与$\Delta_{\varepsilon}$之间是一对一变换,且在$\Delta_{\varepsilon}$上函数行列式$J(r,\theta) > 0$.于是由\refthe{theorem:数分--定理21.13},有
+\begin{align*}
+\iint_{D_{\varepsilon}} f(x,y)\mathrm{d}x\mathrm{d}y = \iint_{\Delta_{\varepsilon}} f(r\cos\theta,r\sin\theta)r\mathrm{d}r\mathrm{d}\theta.
+\end{align*}
+因为$f(x,y)$在有界闭域$D$上有界,在上式中令$\varepsilon \to 0$,即得
+\begin{align*}
+\iint_D f(x,y)\mathrm{d}x\mathrm{d}y = \iint_{\Delta} f(r\cos\theta,r\sin\theta)r\mathrm{d}r\mathrm{d}\theta.
+\end{align*}
+
+若$D$是一般的有界闭区域,则取足够大的$R > 0$,使$D$包含在圆域$D_R = \{(x,y)|x^2 + y^2 \leqslant R^2\}$内,并且在$D_R$上定义函数
+\begin{align*}
+F(x,y) = \begin{cases} 
+f(x,y), & (x,y) \in D, \\
+0, & (x,y) \notin D.
+\end{cases}
+\end{align*}
+函数$F(x,y)$在$D_R$内至多在有限条按段光滑曲线上间断,因此,对函数$F(x,y)$,由前述有
+\begin{align*}
+\iint_{D_R} F(x,y)\mathrm{d}x\mathrm{d}y = \iint_{\Delta_R} F(r\cos\theta,r\sin\theta)r\mathrm{d}r\mathrm{d}\theta,
+\end{align*}
+其中$\Delta_R$为$r\theta$平面上矩形区域$[0,R] \times [0,2\pi]$.由函数$F(x,y)$的定义,即得\eqref{eq::90fjw0j3223r2q---9}式.
+
+
+\end{proof}
+
+
+
+\begin{proposition}
+\begin{enumerate}[(i)]
+\item 若原点$O \notin D$,且$xy$平面上射线$\theta = $常数与$D$的边界至多交于两点(\reffig{figure:数分图21-25}),则$\Delta$必可表示成
+\begin{align*}
+r_1(\theta) \leqslant r \leqslant r_2(\theta),\ \alpha \leqslant \theta \leqslant \beta,
+\end{align*}
+于是有
+\begin{align*}
+\iint_D f(x,y)\mathrm{d}x\mathrm{d}y = \int_{\alpha}^{\beta} \mathrm{d}\theta \int_{r_1(\theta)}^{r_2(\theta)} f(r\cos\theta,r\sin\theta)r\mathrm{d}r. 
+\end{align*}
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{数分图21-25.png}
+\caption{}
+\label{figure:数分图21-25}
+\end{figure}
+
+\item 类似地,若$xy$平面上的圆$r = $常数与$D$的边界至多交于两点(\reffig{figure:数分图21-26}),则$\Delta$必可表示成
+\begin{align*}
+\theta_1(r) \leqslant \theta \leqslant \theta_2(r),\ r_1 \leqslant r \leqslant r_2,
+\end{align*}
+所以
+\begin{align*}
+\iint_D f(x,y)\mathrm{d}x\mathrm{d}y = \int_{r_1}^{r_2} r\mathrm{d}r \int_{\theta_1(r)}^{\theta_2(r)} f(r\cos\theta,r\sin\theta)\mathrm{d}\theta.
+\end{align*}
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{数分图21-26.png}
+\caption{}
+\label{figure:数分图21-26}
+\end{figure}
+
+\item 若原点为$D$的内点(\reffig{figure:数分图21-27}),$D$的边界的极坐标方程为$r = r(\theta)$,则$\Delta$可表示成
+\begin{align*}
+0 \leqslant r \leqslant r(\theta),\ 0 \leqslant \theta \leqslant 2\pi.
+\end{align*}
+所以
+\begin{align*}
+\iint_D f(x,y)\mathrm{d}x\mathrm{d}y = \int_{0}^{2\pi} \mathrm{d}\theta \int_{0}^{r(\theta)} f(r\cos\theta,r\sin\theta)r\mathrm{d}r. 
+\end{align*}
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{数分图21-27.png}
+\caption{}
+\label{figure:数分图21-27}
+\end{figure}
+
+\item 若原点$O$在$D$的边界上(\reffig{figure:数分图21-27}),则$\Delta$为
+\begin{align*}
+0 \leqslant r \leqslant r(\theta),\ \alpha \leqslant \theta \leqslant \beta,
+\end{align*}
+于是
+\begin{align*}
+\iint_D f(x,y)\mathrm{d}x\mathrm{d}y = \int_{\alpha}^{\beta} \mathrm{d}\theta \int_{0}^{r(\theta)} f(r\cos\theta,r\sin\theta)r\mathrm{d}r. 
+\end{align*}
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{数分图21-28.png}
+\caption{}
+\label{figure:数分图21-28}
+\end{figure}
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+
+
+\end{proof}
+
+\begin{theorem}
+设$f(x,y)$在有界闭区域$D$上可积,作如下广义极坐标变换
+\begin{align*}
+T:\begin{cases} 
+x = ar\cos\theta, \\
+y = br\sin\theta,
+\end{cases}\ 0 \leqslant r < +\infty,\ 0 \leqslant \theta \leqslant 2\pi.
+\end{align*}
+$xy$平面上有界闭区域$D$与$r\theta$平面上区域$\Delta$对应,并计算得
+\begin{align*}
+J(r,\theta) = \begin{vmatrix} 
+a\cos\theta & -ar\sin\theta \\
+b\sin\theta & br\cos\theta
+\end{vmatrix} = abr.
+\end{align*}
+则成立
+\begin{align*}
+\iint_D f(x,y)\mathrm{d}x\mathrm{d}y = \iint_{\Delta} f(r\cos\theta,r\sin\theta)abr\mathrm{d}r\mathrm{d}\theta. 
+\end{align*}
+\end{theorem}
+\begin{proof}
+
+
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
