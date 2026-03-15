@@ -169,20 +169,50 @@ f'(x_1) = f^S(x_1).
 \begin{align}
 f^S(x_0) = \lim_{h \to 0} \frac{f(x_0 + h) - f(x_0 - h)}{2h}. \label{eq:13.2348982334242te3fd938523i23903t3ger34t4234898938523i23903t3ger34t4106}
 \end{align}
-如果$f$在$(a,b)$处处Schwarz可导, 则称$f$在$(a,b)$Schwarz可导.
+如果$f$在$(a,b)$处处Schwarz可导, 则称$f$在$(a,b)$上Schwarz可导.
 \end{definition}
 \begin{note}
-显然$f$在$x_0$可导则必然在$x_0$Schwarz可导且$f'(x_0) = f^S(x_0)$, 但反之不一定成立.
+显然$f$在$x_0$可导则必然在$x_0$处Schwarz可导且$f'(x_0) = f^S(x_0)$, 但反之不一定成立.
 \end{note}
 
 \begin{theorem}[Schwarz导数的Lagrange中值定理]\label{theorem:Schwarz导数的Lagrange中值定理}
-设$f$在$[a,b]$连续且在$(a,b)$Schwarz可导, 证明存在$x_1,x_2 \in (a,b)$, 使得
+设$f$在$[a,b]$连续且在$(a,b)$上Schwarz可导, 证明存在$x_1,x_2 \in (a,b)$, 使得
 \begin{align}
 f^S(x_1) \geqslant \frac{f(b) - f(a)}{b - a} \geqslant f^S(x_2). \label{eq:13.2348982334242te3fd938523i23903t3ger34t4234898938523i23903t3ger34t4107}
 \end{align}
 \end{theorem}
 \begin{note}
-本定理是此类问题的核心定理. 其余结果都是本定理的平凡推论.
+本定理是此类Schwarz导数问题的核心定理. 其余结果都是本定理的平凡推论.
+\end{note}
+\begin{remark}
+这题反证后,用有限覆盖定理极难处理同过拼接区间实现函数值的传递.
+
+注意条件有连续性的性态分析问题,一般使用确界原理进行证明是简便直观的.然后只需要取出一段单调区间,再将单调区间中点取为$c$即可完成证明,或者取单调区间的某一点作为$c$,再取其邻域中点作为对称点也能完成证明(如下述证明).即要保证取的确界$c$满足函数在点$c$附近穿过$f(c)$且单调.例如,我们还可以在下述证明中取$U=\{x\in [a,b]:\forall t\in [a,x],f(t)\leqslant k\}$,取$c=\mathrm{sup}\,U$.
+
+但是注意不能让$c$取成极值点,若极值点$c$发生左偏或右偏时,此时$c$就不满足结论了(无法实现关于$c$的对称点的函数值放缩).例如,若令下述证明中的$U=\{x\in [a,c]:f(x)\geqslant k\}$,此时$c=\mathrm{inf}\, U$就可能取到$f$的极值大点,比如当$c$这个极大值点右偏时就不满足结论.
+
+类似习题和解析见裴礼文(第3版)P196页(3.2.35).
+\end{remark}
+\begin{note}
+类似这种用确界原理的证明,可行的构造集合通常有多种,只需先构造一个类似的集合,然后画图结合端点值、极值点的性态调整一下即.然后取上确界或下确界就能完成证明.
+
+设$f\in C[a,b],f(a)<\mu <f(b)$,则常用的可行集合有
+\begin{gather*}
+U=\left\{ x\in \left[ a,b \right] :f\left( t \right) >\mu \right\} ,\text{此时取}c=\mathrm{inf}\,U.
+\\
+V=\left\{ x\in \left[ a,b \right] :f\left( t \right) <\mu \right\} ,\text{此时取}c=\mathrm{sup}\,U.
+\\
+E=\left\{ x\in \left[ a,b \right] :\forall t\in \left[ a,x \right] ,f\left( t \right) \leqslant \mu \right\} ,\text{此时取}c=\mathrm{sup}\,E.
+\\
+F=\left\{ x\in \left[ a,b \right] :\forall t\in \left[ x,b \right] ,f\left( t \right) \geqslant \mu \right\} ,\text{此时取}c=\mathrm{inf}\,E.
+\end{gather*}
+上述构造的上确界、下确界$c$都满足:
+
+(i)$c$点不是$f$的极值点;
+
+(ii)$f$在$c$点的邻域内单调;
+
+(iii)$f$的函数图像穿过$(c,f(c))$点.
 \end{note}
 \begin{proof}
 和证明Lagrange中值定理一样, 我们只需证明Rolle中值定理的情况即可. 即不妨设$f(a) = f(b) = 0$, 否则用$f(x) - f(a) - \frac{f(b)-f(a)}{b - a}(x - a)$代替$f$即可.
@@ -196,9 +226,17 @@ U = \{x \in [a,c] : f(x) > k\}.
 t_n \geqslant x_1, \lim_{n \to \infty} t_n = x_1.
 \end{align*}
 注意$x_1 \neq a$且若$f(x_1) > k$, 则且由函数连续性知$x_1$左侧仍有$f > k$, 这和$x_1$是$\inf U$矛盾! 故我们只有$x_1 \notin U$且$f(x_1) = k$.
-现在
+从而当$n$充分大时,有
+\begin{gather*}
+t_n\in U\Longrightarrow f\left( t_n \right) >k,
+\\
+x_1-t_n+x_1\in \left[ a,c \right] \backslash U\Longrightarrow f\left( x_1-t_n+x_1 \right) \leqslant k.
+\end{gather*}
+于是
 \begin{align*}
-f^S(x_1) = \lim_{h \to 0} \frac{f(x_1 + h) - f(x_1 - h)}{2h} = \lim_{n \to \infty} \frac{f(x_1 + t_n - x_1) - f(x_1 - (t_n - x_1))}{2(t_n - x_1)} \geqslant \lim_{n \to \infty} \frac{k - k}{2(t_n - x_1)} = 0.
+f^S(x_1)&=\lim_{h\rightarrow 0} \frac{f\left( x_1+h \right) -f\left( x_1-h \right)}{2h}=\lim_{n\rightarrow \infty} \frac{f\left( x_1+t_n-x_1 \right) -f\left( x_1-\left( t_n-x_1 \right) \right)}{2\left( t_n-x_1 \right)}
+\\
+&=\lim_{n\rightarrow \infty} \frac{f\left( t_n \right) -f\left( x_1-t_n+x_1 \right)}{2\left( t_n-x_1 \right)}>\lim_{n\rightarrow \infty} \frac{k-k}{2\left( t_n-x_1 \right)}=0.
 \end{align*}
 若$f$有负的最小值$f(c) < 0$. 取$k \in (f(c),0)$, 构造非空有界集
 \begin{align*}
@@ -212,7 +250,7 @@ f^S(x_1) = \lim_{h \to 0} \frac{f(x_1 + h) - f(x_1 - h)}{2h} = \lim_{n \to \inft
 \end{proof}
 
 \begin{proposition}
-设$f$在$[a,b]$连续且在$(a,b)$Schwarz可导, 若$f^S(x) \geqslant  0, \forall x \in (a,b)$, 则$f$在$[a,b]$递增.
+设$f$在$[a,b]$连续且在$(a,b)$上Schwarz可导, 若$f^S(x) \geqslant  0, \forall x \in (a,b)$, 则$f$在$[a,b]$递增.
 \end{proposition}
 \begin{proof}
 对$\forall [c,d] \subset [a,b]$, 由\hyperref[theorem:Schwarz导数的Lagrange中值定理]{Schwarz导数的Lagrange中值定理}知存在$\theta \in (c,d)$使得
