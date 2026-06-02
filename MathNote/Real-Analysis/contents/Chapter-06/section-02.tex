@@ -1,0 +1,205 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}} % 指定图片目录,后续可以直接使用图片文件名
+% 注意这里的文件路径不能用 ../../image/ ,否则用latexmk编译子文件会报错
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[scale=0.3]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{$L^p$空间的结构}
+
+\subsection{$L^p(E)(1\leqslant p<+\infty)$是完备距离空间}
+
+\begin{theorem}
+对于$f,g\in L^p(E)$，定义
+\begin{align*}
+d(f,g)=\|f-g\|_p,\quad 1\leqslant p\leqslant+\infty,
+\end{align*}
+则$(L^p(E),d)$是一个距离(度量)空间，仍简记为$L^p(E)$.
+\end{theorem}
+\begin{remark}
+我们将$L^p(E)$中几乎处处相等的函数视为同一元素，即当$f,g\in L^p(E)$且$f(x)=g(x)$ a.e. $x\in E$时，称$f$与$g$为$L^p(E)$中的同一元素。或者说用几乎处处相等作为等价关系把$L^p(E)$中的元分成等价类.例如,在$E$上几乎处处等于零的函数全体称为$L^p(E)$中的零元.
+\end{remark}
+\begin{proof}
+\begin{enumerate}[(i)]
+\item $d(f,g)\geqslant0$，且$d(f,g)=0$当且仅当$f(x)=g(x)$ a.e. $x\in E$，即$f$与$g$为同一元素。
+
+\item $d(f,g)=d(g,f)$。
+
+\item 由\hyperref[theorem:实变函数--Minkowski不等式]{Minkowski不等式}，
+\begin{align*}
+\|f-g\|_p=\|f-h+h-g\|_p
+\leqslant\|f-h\|_p+\|g-h\|_p,
+\end{align*}
+即$d(f,g)\leqslant d(f,h)+d(h,g)$。
+\end{enumerate}
+
+\end{proof}
+
+\begin{definition}
+设$\{f_k\}\subseteq L^p(E)$。若存在$f\in L^p(E)$，使得
+\begin{align*}
+\lim\limits_{k\to\infty}d(f_k,f)=\lim\limits_{k\to\infty}\|f_k-f\|_p=0,
+\end{align*}
+则称$\{f_k\}$依$L^p(E)$的意义\textbf{收敛于}$f$，$\{f_k\}$为$L^p(E)$中的\textbf{收敛列},$f$为$\{f_k\}$在$L^p(E)$中的\textbf{极限}。
+\end{definition}
+
+\begin{proposition}
+\begin{enumerate}[(i)]
+\item 若$\lim\limits_{k\to\infty}\|f_k-f\|_p=0$且$\lim\limits_{k\to\infty}\|f_k-g\|_p=0$，则$f=g$，即$f(x)=g(x)$ a.e. $x\in E$。
+\item 若$\lim\limits_{k\to\infty}\|f_k-f\|_p=0$，则$\lim\limits_{k\to\infty}\|f_k\|_p=\|f\|_p$，因为$|\|f_k\|_p-\|f\|_p|\leqslant\|f_k-f\|_p$。
+\end{enumerate}
+\end{proposition}
+
+\begin{definition}
+设$\{f_k\}\subseteq L^p(E)$。若$\lim\limits_{k,j\to\infty}\|f_k-f_j\|_p=0$，则称$\{f_k\}$是$L^p(E)$中的\textbf{基本}（或$\mathbf{Cauchy}$）\textbf{列}。
+\end{definition}
+
+\begin{theorem}[Riesz-Fischer定理]\label{theorem:Riesz-Fischer定理的另一种常用形式}
+$L^p(E)$是完备的距离空间。
+\end{theorem}
+\begin{proof}
+
+当$1\leqslant p<+\infty$时，设$\{f_k\}\subseteq L^p(E)$满足$\lim\limits_{k,j\to\infty}\|f_j-f_k\|_p=0$。对任给$\sigma>0$，令$E_{j,k}(\sigma)=\{x\in E:|f_j(x)-f_k(x)|\geqslant\sigma\}$，则
+\begin{align*}
+\sigma(m(E_{j,k}(\sigma)))^{\frac{1}{p}}\leqslant\left(\int_{E_{j,k}(\sigma)}|f_j(x)-f_k(x)|^p\mathrm{d}x\right)^{\frac{1}{p}}
+\leqslant\left(\int_E|f_j(x)-f_k(x)|^p\mathrm{d}x\right)^{\frac{1}{p}}=\|f_j-f_k\|_p.
+\end{align*}
+故$\lim\limits_{j,k\to\infty}m(E_{j,k}(\sigma))=0$，即$\{f_k\}$是依测度Cauchy列。由\refthe{theorem:定理3.16}，存在$E$上几乎处处有限的可测函数$f(x)$，使得$\{f_k\}$依测度收敛于$f(x)$。再由\refthe{theorem:Riesz定理}，存在子列$\{f_{k_i}\}$，使得$\lim\limits_{i\to\infty}f_{k_i}(x)=f(x)$ a.e. $x\in E$。
+
+由\hyperref[theorem:Fatou引理]{Fatou引理}，
+\begin{align*}
+\int_E|f_k(x)-f(x)|^p\mathrm{d}x=\int_E\lim\limits_{i\to\infty}|f_k(x)-f_{k_i}(x)|^p\mathrm{d}x
+\leqslant\liminf\limits_{i\to\infty}\int_E|f_k(x)-f_{k_i}(x)|^p\mathrm{d}x,
+\end{align*}
+故$\lim\limits_{k\to\infty}\int_E|f_k(x)-f(x)|^p\mathrm{d}x=0$，即$\lim\limits_{k\to\infty}\|f_k-f\|_p=0$。由$\|f\|_p\leqslant\|f-f_k\|_p+\|f_k\|_p$，知$f\in L^p(E)$。
+
+当$p=+\infty$时，设$\{f_k\}\subseteq L^\infty(E)$满足$\lim\limits_{k,j\to\infty}\|f_k-f_j\|_\infty=0$。对任意$k,j$，有$|f_k(x)-f_j(x)|\leqslant\|f_k-f_j\|_\infty$ a.e. $x\in E$，故存在零测集$Z$，使得对所有$k,j$，$|f_k(x)-f_j(x)|\leqslant\|f_k-f_j\|_\infty$，$x\notin Z$。于是存在$f(x)$，使得$\lim\limits_{k\to\infty}f_k(x)=f(x)$，$x\in E\setminus Z$。
+
+对任给$\varepsilon>0$，取自然数$N$，当$j,k>N$时，$\|f_k-f_j\|_\infty<\varepsilon$。当$k>N$且$x\in E\setminus Z$时，
+\begin{align*}
+|f_k(x)-f(x)|=\lim\limits_{j\to\infty}|f_k(x)-f_j(x)|\leqslant\varepsilon,
+\end{align*}
+故$\|f_k-f\|_\infty\leqslant\varepsilon$，即$\lim\limits_{k\to\infty}\|f_k-f\|_\infty=0$，且$f\in L^\infty(E)$。
+
+\end{proof}
+
+
+\subsection{$L^p(E)(1\leqslant p<+\infty)$是可分空间}
+
+\begin{definition}
+设$\Gamma$是$L^p(E)$的子集。若对任意$f\in L^p(E)$及$\varepsilon>0$，存在$g\in\Gamma$，使得$\|f-g\|_p<\varepsilon$，则称$\Gamma$在$L^p(E)$中\textbf{稠密}；若$L^p(E)$中存在可数稠密子集，则称$L^p(E)$是\textbf{可分的}。
+\end{definition}
+
+\begin{lemma}\label{lemma:实变函数--紧支集连续函数逼近Lp}
+设$f\in L^p(E)(1\leqslant p<+\infty)$，则对任意$\varepsilon>0$，有
+\begin{enumerate}[(i)]
+\item 存在$\mathbb{R}^n$上具有紧支集的连续函数$g(x)$，使得
+\begin{align*}
+\int_E|f(x)-g(x)|^p\mathrm{d}x<\varepsilon;
+\end{align*}
+\item 存在$\mathbb{R}^n$上具有紧支集的阶梯函数$\varphi(x)=\sum\limits_{i=1}^k c_i\chi_{I_i}(x)$（每个$I_i$是二进方体），使得
+\begin{align*}
+\int_E|f(x)-\varphi(x)|^p\mathrm{d}x<\varepsilon.
+\end{align*}
+\end{enumerate}
+\end{lemma}
+
+\begin{theorem}
+$L^p(E)(1\leqslant p<+\infty)$是可分空间。
+\end{theorem}
+\begin{proof}
+
+先考虑$E=\mathbb{R}^n$，$f\in L^p(\mathbb{R}^n)$。对任意$\varepsilon>0$，由\reflem{lemma:实变函数--紧支集连续函数逼近Lp}，存在阶梯函数$\varphi(x)=\sum\limits_{i=1}^k c_i\chi_{I_i}(x)$，使得$\|f-\varphi\|_p<\varepsilon/2$。不妨设$|c_i|<M$，$m(I_i)\leqslant M^p$，选取有理数$r_i$，使得$|r_i|<M$且$|c_i-r_i|<\frac{\varepsilon}{2kM}$，令$\psi(x)=\sum\limits_{i=1}^k r_i\chi_{I_i}(x)$，则
+\begin{align*}
+\|\varphi-\psi\|_p&=\left\|\sum\limits_{i=1}^k c_i\chi_{I_i}-\sum\limits_{i=1}^k r_i\chi_{I_i}\right\|_p
+\leqslant\sum\limits_{i=1}^k |c_i-r_i|\|\chi_{I_i}\|_p\\
+&\leqslant\frac{\varepsilon}{2kM}\sum\limits_{i=1}^k (m(I_i))^{\frac{1}{p}}\leqslant\frac{\varepsilon}{2kM}\cdot kM=\frac{\varepsilon}{2},
+\end{align*}
+故$\|f-\psi\|_p\leqslant\|f-\varphi\|_p+\|\varphi-\psi\|_p<\varepsilon$。所有形如$\psi$的阶梯函数构成可数集$\Gamma$，是$L^p(\mathbb{R}^n)$的可数稠密子集。
+
+对一般可测集$E$，设$f\in L^p(E)$，令$f_1(x)=f(x)$（$x\in E$），$f_1(x)=0$（$x\notin E$），则$f_1\in L^p(\mathbb{R}^n)$。对$\varepsilon>0$，存在$g\in\Gamma$，使得$\left(\int_{\mathbb{R}^n}|f_1(x)-g(x)|^p\mathrm{d}x\right)^{\frac{1}{p}}<\varepsilon$，从而$\left(\int_E|f(x)-g(x)|^p\mathrm{d}x\right)^{\frac{1}{p}}<\varepsilon$。将$\Gamma$中函数限制在$E$上，得到的集合$\Gamma'$是$L^p(E)$的可数稠密子集。
+
+\end{proof}
+
+\begin{corollary}
+若$1\leqslant p<+\infty$，$1\leqslant r\leqslant+\infty$，则$L^p(E)\cap L^r(E)$在$L^p(E)$中稠密。
+\end{corollary}
+
+\begin{theorem}
+若$f\in L^p(\mathbb{R}^n)(1\leqslant p<+\infty)$，则
+\begin{align}
+\lim\limits_{t\to0}\int_{\mathbb{R}^n}|f(x+t)-f(x)|^p\mathrm{d}x=0.\label{eq::--9ru90RFUJIJR3ruu0-5}
+\end{align}
+\end{theorem}
+
+\begin{example}
+若$f\in L^p(\mathbb{R}^n)(1\leqslant p<+\infty)$，则
+\begin{align*}
+\lim\limits_{|t|\to\infty}\int_{\mathbb{R}^n}|f(x)+f(x-t)|^p\mathrm{d}x=2\int_{\mathbb{R}^n}|f(x)|^p\mathrm{d}x.
+\end{align*}
+\end{example}
+
+\begin{proof}
+
+对任给$\varepsilon>0$，作分解$f(x)=g(x)+h(x)$，其中$g(x)$是$\mathbb{R}^n$上具有紧支集的连续函数，且$\|h\|_p<\varepsilon/4$。存在$M>0$，当$|t|\geqslant M$时，$g(x)$与$g(x-t)$的支集不相交，故
+\begin{align*}
+\int_{\mathbb{R}^n}|g(x)+g(x-t)|^p\mathrm{d}x=\int_{\mathbb{R}^n}|g(x)|^p\mathrm{d}x+\int_{\mathbb{R}^n}|g(x-t)|^p\mathrm{d}x=2\int_{\mathbb{R}^n}|g(x)|^p\mathrm{d}x.
+\end{align*}
+
+由分解式，$|\|f\|_p-\|g\|_p|\leqslant\|h\|_p<\varepsilon/4$。令$f_t(x)=f(x-t)$，$g_t(x)=g(x-t)$，则
+\begin{align*}
+|\|f+f_t\|_p-\|g+g_t\|_p|\leqslant\|h+h_t\|_p\leqslant2\|h\|_p<\frac{\varepsilon}{2},
+\end{align*}
+故当$|t|\geqslant M$时，
+\begin{align*}
+|\|f+f_t\|_p-2^{\frac{1}{p}}\|g\|_p|<\frac{\varepsilon}{2}.
+\end{align*}
+
+因此，
+\begin{align*}
+|\|f+f_t\|_p-2^{\frac{1}{p}}\|f\|_p|\leqslant|\|f+f_t\|_p-2^{\frac{1}{p}}\|g\|_p|+|2^{\frac{1}{p}}\|g\|_p-2^{\frac{1}{p}}\|f\|_p|
+<\frac{\varepsilon}{2}+\frac{\varepsilon}{2}=\varepsilon.
+\end{align*}
+
+\end{proof}
+
+\begin{example}
+$f(x)$在$\mathbb{R}^n$中任一测度有限的可测集上均可积的充分必要条件是：存在$f_1\in L^1(\mathbb{R}^n)$，$f_2\in L^\infty(\mathbb{R}^n)$，使得
+\begin{align*}
+f(x)=f_1(x)+f_2(x),\quad x\in\mathbb{R}^n.
+\end{align*}
+\end{example}
+\begin{proof}
+
+{\heiti 必要性：}令$A_k=\{x\in\mathbb{R}^n:k^2<|f(x)|\leqslant(k+1)^2\}$（$k=1,2,\cdots$），则存在$k_0$，使得$\sum\limits_{k=k_0}^\infty k^2m(A_k)<+\infty$。否则，若对任意$j$，$\sum\limits_{k=j}^\infty k^2m(A_k)=+\infty$，则
+\begin{enumerate}[(i)]
+\item 若存在$\{k_i\}$，使得$k_i^2m(A_{k_i})\geqslant1$，则存在$B_i\subseteq A_{k_i}$，使得$k_i^2m(B_i)=1$，故$m\left(\bigcup\limits_{i=1}^\infty B_i\right)<+\infty$，但$|f(x)|$在$\bigcup\limits_{i=1}^\infty B_i$上不可积，矛盾；
+\item 若存在$K$，当$k\geqslant K$时，$k^2m(A_k)<1$，则$m\left(\bigcup\limits_{k=K}^\infty A_k\right)<+\infty$，但$|f(x)|$在$\bigcup\limits_{k=K}^\infty A_k$上的积分为$+\infty$，矛盾。
+\end{enumerate}
+
+令$A=\bigcup\limits_{k=k_0}^\infty A_k$，$f_1(x)=f(x)\chi_A(x)$，$f_2(x)=f(x)\chi_{A^c}(x)$，则$f(x)=f_1(x)+f_2(x)$，其中$f_1\in L^1(\mathbb{R}^n)$，$f_2\in L^\infty(\mathbb{R}^n)$。
+
+{\heiti 充分性：}若$f(x)=f_1(x)+f_2(x)$，则$f(x)$可测，且对任意$m(E)<+\infty$，
+\begin{align*}
+\int_E|f(x)|\mathrm{d}x\leqslant\int_E|f_1(x)|\mathrm{d}x+\int_E|f_2(x)|\mathrm{d}x<\infty.
+\end{align*}
+
+\end{proof}
+
+
+
+
+
+
+
+
+
+\end{document}

@@ -1,0 +1,200 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}} % 指定图片目录,后续可以直接使用图片文件名
+% 注意这里的文件路径不能用 ../../image/ ,否则用latexmk编译子文件会报错
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[scale=0.3]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{Gauss-Bonnet公式}
+
+\begin{definition}
+设曲面$S:\boldsymbol{r}=\boldsymbol{r}(u^1,u^2)$，$C$为$S$上的曲线，其参数方程为$u^1=u^1(s),u^2=u^2(s)$，其中$s$为弧长参数，$0\leqslant s\leqslant L$。
+\begin{enumerate}[(1)]
+\item 若函数$u^\alpha(s)$连续，且存在区间分割$0=s_0<s_1<\dots<s_n=L$，使得$u^\alpha(s)$在每个小区间$(s_{i-1},s_i)$内部光滑，则称$C$为\textbf{分段光滑曲线}，$s=s_1,\dots,s_{n-1}$称为$C$的\textbf{角点}；
+\item 若$u^\alpha(0)=u^\alpha(L)\ (\alpha=1,2)$，则称$C$为\textbf{闭曲线}；
+\item 若$C$除端点外无其他自交点，即对任意$0\leqslant a<b<L$，有$\boldsymbol{r}(a)\neq\boldsymbol{r}(b)$，则称$C$为\textbf{简单曲线}。
+\end{enumerate}
+\end{definition}
+
+\begin{theorem}
+设$C$是有向曲面$S$上由$n$段光滑曲线组成的分段光滑简单闭曲线，其包围的区域$D$为$S$的单连通区域，则
+\begin{align}
+\oint_{C}\kappa_g\mathrm{d}s+\iint_{D}K\mathrm{d}\sigma=2\pi-\sum_{i=1}^{n}\alpha_i,\label{eq:gaussbonnet1}
+\end{align}
+其中$\kappa_g$为$C$的测地曲率，$K$为$S$的Gauss曲率，$\alpha_i$为$C$在角点$s=s_i$处的外角。
+\end{theorem}
+
+\begin{remark}
+定义\textbf{点曲率}为$\sum_{i=1}^{n}\alpha_i$，\textbf{线曲率}为$\oint_{C}\kappa_g\mathrm{d}s$，\textbf{面曲率}为$\iint_{D}K\mathrm{d}\sigma$，则Gauss-Bonnet公式表明：单连通区域的点曲率、线曲率、面曲率之和为$2\pi$。
+\begin{enumerate}[(1)]
+\item 平面上分段光滑闭曲线：点曲率与线曲率之和为$2\pi$；
+\item 平面光滑闭曲线：方向角总变差为$2\pi$；
+\item 平面多边形：外角和为$2\pi$。
+\end{enumerate}
+\end{remark}
+
+\begin{proof}
+
+分三步证明：
+
+\textbf{步骤1：光滑简单闭曲线且$D$含于正交参数坐标域}
+设$(U;(u,v))$为$S$的正交参数系，第一基本形式为
+\begin{align*}
+\mathrm{I}=E(\mathrm{d}u)^2+G(\mathrm{d}v)^2.
+\end{align*}
+设$C$的弧长参数方程为$u=u(s),v=v(s)$，$\theta(s)$为$C$与$u$-曲线的方向角，由Liouville定理，测地曲率满足
+\begin{align*}
+\kappa_g=\frac{\mathrm{d}\theta(s)}{\mathrm{d}s}-\frac{1}{2\sqrt{G}}\frac{\partial\ln E}{\partial v}\cos\theta+\frac{1}{2\sqrt{E}}\frac{\partial\ln G}{\partial u}\sin\theta.
+\end{align*}
+沿$C$积分得
+\begin{align}
+\oint_{C}\kappa_g\mathrm{d}s&=\oint_{C}\mathrm{d}\theta+\oint_{C}\left(-\frac{1}{2\sqrt{G}}\frac{\partial\ln E}{\partial v}\cos\theta+\frac{1}{2\sqrt{E}}\frac{\partial\ln G}{\partial u}\sin\theta\right)\mathrm{d}s\nonumber\\
+&=\oint_{C}\mathrm{d}\theta+\oint_{C}\left(-\frac{\sqrt{E}}{2\sqrt{G}}\frac{\partial\ln E}{\partial v}\mathrm{d}u+\frac{\sqrt{G}}{2\sqrt{E}}\frac{\partial\ln G}{\partial u}\mathrm{d}v\right)\nonumber\\
+&=\oint_{C}\mathrm{d}\theta+\oint_{C}\left(-\frac{(\sqrt{E})_v}{\sqrt{G}}\mathrm{d}u+\frac{(\sqrt{G})_u}{\sqrt{E}}\mathrm{d}v\right),\label{eq:gbstep1}
+\end{align}
+其中用到$\cos\theta=\sqrt{E}\frac{\mathrm{d}u}{\mathrm{d}s}$，$\sin\theta=\sqrt{G}\frac{\mathrm{d}v}{\mathrm{d}s}$。
+
+由Green公式，式\eqref{eq:gbstep1}中第二个积分满足
+\begin{align}
+\oint_{C}\left(-\frac{(\sqrt{E})_v}{\sqrt{G}}\mathrm{d}u+\frac{(\sqrt{G})_u}{\sqrt{E}}\mathrm{d}v\right)=\iint_{D}\left(\left(\frac{(\sqrt{E})_v}{\sqrt{G}}\right)_v+\left(\frac{(\sqrt{G})_u}{\sqrt{E}}\right)_u\right)\mathrm{d}u\mathrm{d}v=-\iint_{D}K\mathrm{d}\sigma.\label{eq:gbstep2}
+\end{align}
+
+$\theta(s)$可取连续可微分支，$\oint_{C}\mathrm{d}\theta$为方向角总变差，是$2\pi$的整数倍。令$E_t=1+t(E-1),G_t=1+t(G-1)\ (0\leqslant t\leqslant1)$，则$E_t,G_t>0$，$t=0$时退化为平面，由旋转指标定理得$\oint_{C}\mathrm{d}\theta=2\pi$。
+
+联立\eqref{eq:gbstep1},\eqref{eq:gbstep2}得光滑情形的Gauss-Bonnet公式：
+\begin{align*}
+\oint_{C}\kappa_g\mathrm{d}s+\iint_{D}K\mathrm{d}\sigma=2\pi.
+\end{align*}
+
+\textbf{步骤2：推广至分段光滑简单闭曲线}
+设$C$为$n$段光滑曲线构成的分段光滑简单闭曲线，角点外角为$\alpha_i$，由旋转指标定理
+\begin{align*}
+\oint_{C}\mathrm{d}\theta+\sum_{i=1}^{n}\alpha_i=2\pi,
+\end{align*}
+结合步骤1的积分关系，可得
+\begin{align*}
+\oint_{C}\kappa_g\mathrm{d}s+\iint_{D}K\mathrm{d}\sigma=2\pi-\sum_{i=1}^{n}\alpha_i.
+\end{align*}
+
+\textbf{步骤3：推广至一般单连通区域}
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{两个区域的拼接.png}
+\caption{两个区域的拼接}
+\label{figure:regionjoint}
+\end{figure}
+若$D$不能含于单一坐标域，用分段光滑曲线将$D$剖分为若干单连通子区域，每个子区域满足上述公式。相邻子区域的公共边界诱导定向相反，测地曲率积分抵消，Gauss曲率积分可合并；拼接后角点外角满足组合关系，最终式\eqref{eq:gaussbonnet1}对一般单连通区域成立。
+
+\end{proof}
+
+\begin{corollary}
+\begin{enumerate}[(1)]
+\item 若$C$为曲面$S$上的\textbf{测地$n$边形}（由$n$段测地线构成的分段光滑简单闭曲线，包围单连通区域$D$），则$\kappa_g=0$，式\eqref{eq:gaussbonnet1}化为
+\begin{align}
+\sum_{i=1}^{n}\alpha_i=2\pi-\iint_{D}K\mathrm{d}\sigma.\label{eq:gbgeopoly}
+\end{align}
+\item 若$C$为\textbf{测地三角形}，记其外角为$\alpha_1,\alpha_2,\alpha_3$，内角为$\beta_i=\pi-\alpha_i$，则
+\begin{align}
+\alpha_1+\alpha_2+\alpha_3=2\pi-\iint_{D}K\mathrm{d}\sigma,\label{eq:gbgeotri1}\\
+\beta_1+\beta_2+\beta_3=\pi+\iint_{D}K\mathrm{d}\sigma.\label{eq:gbgeotri2}
+\end{align}
+此时：
+\begin{itemize}
+\item 当$K>0$时，测地三角形外角和小于$2\pi$，内角和大于$\pi$；
+\item 当$K<0$时，测地三角形外角和大于$2\pi$，内角和小于$\pi$。
+\end{itemize}
+\end{enumerate}
+\end{corollary}
+
+\begin{theorem}
+设$S$为紧致无边的可定向闭曲面，$\chi(S)=f-e+v$为$S$的\textbf{Euler示性数}（$f$为单连通剖分区域数，$e$为棱数，$v$为顶点数），则
+\begin{align}
+\iint_{S}K\mathrm{d}\sigma=2\pi\chi(S).\label{eq:gbclosedsurf}
+\end{align}
+\end{theorem}
+
+\begin{remark}
+\begin{enumerate}[(1)]
+\item $\chi(S)$为曲面的\textbf{拓扑不变量}，与剖分方式、等距变形无关；
+\item 球面的Euler示性数$\chi=2$，环面$\chi=0$；亏格为$g$的面包圈状曲面满足$\chi(S)=2(1-g)$，$g$为曲面的\textbf{亏格}。
+\end{enumerate}
+\end{remark}
+
+\begin{proof}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{球面和环面的剖分.png}
+\caption{球面和环面的剖分}
+\label{figure:surfdivide}
+\end{figure}
+将$S$剖分为$f$个单连通三角形区域，满足$3f=2e$。对每个单连通区域应用Gauss-Bonnet公式\eqref{eq:gaussbonnet1}，求和得：
+\begin{align*}
+\iint_{S}K\mathrm{d}\sigma&=2\pi f-\sum_{i=1}^{v}\sum_{j=1}^{f_i}\alpha_{ij}\\
+&=2\pi f-\sum_{i=1}^{v}(f_i-2)\pi\\
+&=2\pi f-\pi\sum_{i=1}^{v}f_i+2\pi v\\
+&=2\pi(f-e+v)=2\pi\chi(S),
+\end{align*}
+其中$f_i$为以第$i$个顶点为顶点的单连通区域数，$\sum_{i=1}^{v}f_i=2e$，$\alpha_{ij}$为对应区域的外角。
+
+\end{proof}
+
+\begin{definition}
+设曲面$S$的正交参数系为$(u,v)$，第一基本形式$\mathrm{I}=E(\mathrm{d}u)^2+G(\mathrm{d}v)^2$，令
+\begin{align*}
+\boldsymbol{\alpha}_1=\frac{1}{\sqrt{E}}\boldsymbol{r}_u,\quad \boldsymbol{\alpha}_2=\frac{1}{\sqrt{G}}\boldsymbol{r}_v,
+\end{align*}
+则$\{\boldsymbol{r};\boldsymbol{\alpha}_1,\boldsymbol{\alpha}_2\}$为$S$上的\textbf{单位正交切标架场}。
+\end{definition}
+
+\begin{theorem}
+设$C$为有向曲面$S$上的光滑简单闭曲线，包围单连通区域$D$，$\boldsymbol{X}(s)$为沿$C$平行的单位切向量场，则$\boldsymbol{X}$沿$C$平行移动一周后的旋转角满足
+\begin{align}
+\varphi(l)-\varphi(0)=\iint_{D}K\mathrm{d}\sigma,\label{eq:parallelrot}
+\end{align}
+其中$l$为$C$的弧长，$\varphi(s)$为$\boldsymbol{X}(s)$与$u$-曲线的方向角。该结论对分段光滑简单闭曲线同样成立。
+\end{theorem}
+
+\begin{proof}
+
+设$\boldsymbol{X}(s)=\cos\varphi(s)\boldsymbol{\alpha}_1+\sin\varphi(s)\boldsymbol{\alpha}_2$，由平行性$\frac{\mathrm{D}\boldsymbol{X}(s)}{\mathrm{d}s}=\boldsymbol{0}$，展开求导并利用切标架的协变导数性质，可得
+\begin{align*}
+\frac{\mathrm{d}\varphi(s)}{\mathrm{d}s}=-\frac{\mathrm{D}\boldsymbol{\alpha}_1}{\mathrm{d}s}\cdot\boldsymbol{\alpha}_2.
+\end{align*}
+
+记$C$的单位切向量为$\boldsymbol{e}_1$，$\boldsymbol{e}_2=\boldsymbol{n}\times\boldsymbol{e}_1$，$\theta$为$\boldsymbol{e}_1$与$u$-曲线的方向角，则$\boldsymbol{e}_1=\cos\theta\boldsymbol{\alpha}_1+\sin\theta\boldsymbol{\alpha}_2$，测地曲率满足
+\begin{align*}
+\kappa_g=\frac{\mathrm{d}\theta}{\mathrm{d}s}+\frac{\mathrm{D}\boldsymbol{\alpha}_1}{\mathrm{d}s}\cdot\boldsymbol{\alpha}_2.
+\end{align*}
+
+联立得
+\begin{align*}
+\frac{\mathrm{d}\theta}{\mathrm{d}s}-\kappa_g=\frac{\mathrm{d}\varphi}{\mathrm{d}s}.
+\end{align*}
+
+沿$C$积分得
+\begin{align*}
+\varphi(l)-\varphi(0)=\oint_{C}\mathrm{d}\theta-\oint_{C}\kappa_g\mathrm{d}s=2\pi-\oint_{C}\kappa_g\mathrm{d}s,
+\end{align*}
+结合Gauss-Bonnet公式\eqref{eq:gaussbonnet1}（光滑情形），得式\eqref{eq:parallelrot}。
+
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+\end{document}

@@ -1,0 +1,1177 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}} % 指定图片目录,后续可以直接使用图片文件名
+% 注意这里的文件路径不能用 ../../image/ ,否则用latexmk编译子文件会报错
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[scale=0.3]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{共轭空间、弱收敛、自反空间}
+
+\subsection{共轭空间的表示及应用}
+
+\begin{theorem}\label{theorem:共轭空间的完备性}
+设$\mathscr{X}$是一个$B^*$空间，$\mathscr{X}$上的所有连续线性泛函全体$\mathscr{X}^*$，按范数
+\begin{align*}
+\|f\|=\sup\limits_{\|x\|=1}|f(x)|
+\end{align*}
+构成一个$B$空间，称为$\mathscr{X}$的\textbf{共轭空间}或\textbf{对偶空间}。
+\end{theorem}
+\begin{proof}
+
+$\mathscr{X}^*$的完备性可由$\mathscr{X}^*=\mathscr{L}(\mathscr{X},\mathbb{K})$和\refthe{theorem:有界线性算子全体构成的空间完备}直接导出。
+\end{proof}
+
+\begin{proposition}
+设$1\leqslant p<\infty$，$q$是$p$的共轭数，即
+\begin{align*}
+\begin{cases}
+\frac{1}{p}+\frac{1}{q}=1,& p>1,\\
+q=\infty,& p=1.
+\end{cases}
+\end{align*}
+则
+\begin{align}
+L^p[0,1]^*=L^q[0,1].\label{eq:lpconj}
+\end{align}
+\end{proposition}
+\begin{remark}
+该结论可推广至一般$\sigma$-有限的完全可加测度空间$(\Omega,\mathscr{B},\mu)$，即
+\begin{align}
+L^p(\Omega,\mathscr{B},\mu)^*=L^q(\Omega,\mathscr{B},\mu)\quad(1\leqslant p<\infty).\label{eq:lpgenconj}
+\end{align}
+\end{remark}
+\begin{proof}
+
+对任意$g\in L^q[0,1]$，由\hyperref[Real-Analysis-theorem:实变函数--Hölder不等式]{Hölder不等式}
+\begin{align*}
+\left|\int_{0}^{1}f(x)g(x)\mathrm{d}\mu\right|\leqslant\left(\int_{0}^{1}|f(x)|^p\mathrm{d}\mu\right)^{\frac{1}{p}}\left(\int_{0}^{1}|g(x)|^q\mathrm{d}\mu\right)^{\frac{1}{q}},
+\end{align*}
+其中$\mu$是$[0,1]$上的Lebesgue测度。定义映射
+\begin{align}
+F_g(f)\triangleq\int_{0}^{1}f(x)g(x)\mathrm{d}\mu\quad(\forall f\in L^p[0,1]),\label{eq:fgmap}
+\end{align}
+则$F_g$是$L^p[0,1]$上的连续线性泛函，且
+\begin{align}
+\|F_g\|_{L^p[0,1]^*}\leqslant\|g\|_{L^q[0,1]}.\label{eq:fnormbound}
+\end{align}
+即映射$g\mapsto F_g$将$L^q[0,1]$连续嵌入$L^p[0,1]^*$。
+
+下证该映射为等距满射，即对任意$F\in L^p[0,1]^*$，存在$g\in L^q[0,1]$，使得
+\begin{align}
+F(f)=\int_{0}^{1}f(x)g(x)\mathrm{d}\mu\quad(\forall f\in L^p[0,1]),\label{eq:frep}
+\end{align}
+且
+\begin{align}
+\|g\|_{L^q[0,1]}=\|F\|.\label{eq:gnormeqf}
+\end{align}
+
+对任意可测集$E\subseteq[0,1]$，令$\nu(E)\triangleq F(\chi_E)$，其中$\chi_E$为$E$的特征函数
+\begin{align*}
+\chi_E(x)=
+\begin{cases}
+1,& x\in E,\\
+0,& x\notin E.
+\end{cases}
+\end{align*}
+可验证$\nu$为完全可加测度：
+\begin{enumerate}[(1)]
+\item 有限可加性由$F$的可加性直接可得；
+\item 设$\{E_n\}\subseteq[0,1]$满足$E_1\supseteq E_2\supseteq\cdots\supseteq E_n\supseteq\cdots$且$\bigcap\limits_{n=1}^{\infty}E_n=\varnothing $，则
+\begin{align*}
+\nu(E_n)=F(\chi_{E_n})\leqslant\|F\|\cdot\|\chi_{E_n}\|_{L^p[0,1]}
+=\|F\|\left(\int_{0}^{1}|\chi_{E_n}|^p\mathrm{d}\mu\right)^{\frac{1}{p}}
+=\|F\|\mu(E_n)^{\frac{1}{p}}\to0\quad(n\to\infty).
+\end{align*}
+\end{enumerate}
+同时$\nu$关于$\mu$绝对连续，即$\mu(E)=0\implies\nu(E)=0$。
+
+由\hyperref[theorem:泛函分析--Radon-Nikodym定理]{Radon-Nikodym定理}，存在可测函数$g$，使得对任意可测集$E$，有$\nu(E)=\int_{E}g\mathrm{d}\mu$，因此
+\begin{align*}
+F(\chi_E)=\int_{0}^{1}\chi_E(x)g(x)\mathrm{d}\mu.
+\end{align*}
+进而对所有简单函数$f$，成立
+\begin{align*}
+F(f)=\int_{0}^{1}f(x)g(x)\mathrm{d}\mu.
+\end{align*}
+
+接下来证明
+\begin{align}
+\|g\|_{L^q[0,1]}\leqslant\|F\|.\label{eq:gnormbound}
+\end{align}
+简单函数在$L^p[0,1]$中稠密，故对任意$f\in L^p[0,1]$，存在简单函数列$f_n\to f\ (L^p[0,1])$，于是
+\begin{align*}
+F(f)=\lim\limits_{n\to\infty}F(f_n),
+\end{align*}
+且由\hyperref[Real-Analysis-theorem:实变函数--Hölder不等式]{Hölder不等式}
+\begin{align*}
+\left|\int_{0}^{1}[f(x)-f_n(x)]g(x)\mathrm{d}\mu\right|&\leqslant\left(\int_{0}^{1}|f(x)-f_n(x)|^p\mathrm{d}\mu\right)^{\frac{1}{p}}\left(\int_{0}^{1}|g(x)|^q\mathrm{d}\mu\right)^{\frac{1}{q}}\\
+&\leqslant\|F\|\cdot\|f-f_n\|_{L^p[0,1]}\to0\quad(n\to\infty),
+\end{align*}
+因此$\eqref{eq:frep}$成立。
+
+分两种情形证明$\eqref{eq:gnormbound}$：
+\begin{enumerate}[(1)]
+\item $1<p<\infty$。对任意$t>0$，记$E_t\triangleq\{x\in[0,1]\mid|g(x)|\leqslant t\}$。令$f=\chi_{E_t}|g|^{q-2}g$，则
+\begin{align*}
+\int_{E_t}|g|^q\mathrm{d}\mu=\int_{0}^{1}f\cdot g\mathrm{d}\mu=F(f)
+\leqslant\|F\|\cdot\|f\|_{L^p[0,1]}=\|F\|\left(\int_{E_t}|g|^q\mathrm{d}\mu\right)^{\frac{1}{p}},
+\end{align*}
+整理得$\left(\int_{E_t}|g|^q\mathrm{d}\mu\right)^{\frac{1}{q}}\leqslant\|F\|$，令$t\to\infty$即得$\eqref{eq:gnormbound}$。
+
+\item $p=1$，此时$q=\infty$。对任意$\varepsilon>0$，令$A\triangleq\{x\in[0,1]\mid|g(x)|>\|F\|+\varepsilon\}$，仍记$E_t=\{x\in[0,1]\mid|g(x)|\leqslant t\}$，令$f=\chi_{E_t\cap A}\mathrm{sign}\,g$，则$\|f\|_{L^1[0,1]}=\mu(E_t\cap A)$，且
+\begin{align*}
+\mu(E_t\cap A)(\|F\|+\varepsilon)\leqslant\int_{A\cap E_t}|g|\mathrm{d}\mu
+=\int_{0}^{1}f\cdot g\mathrm{d}\mu\leqslant\|F\|\mu(E_t\cap A).
+\end{align*}
+令$t\to\infty$得$\mu(A)(\|F\|+\varepsilon)\leqslant\|F\|\mu(A)$，故$\mu(A)=0$，因此$\|g\|_{L^\infty[0,1]}\leqslant\|F\|$。
+\end{enumerate}
+
+\end{proof}
+
+
+
+\begin{example}
+定义空间
+\begin{align*}
+BV[0,1]\triangleq\left\{g:[0,1]\to\mathbb{C}\,\middle|\,
+\begin{aligned}
+&g(0)=0,\\
+&g(t)=g(t+0)\ (\forall t\in(0,1)),\\
+&\mathrm{var}(g)<\infty
+\end{aligned}
+\right\},
+\end{align*}
+其中变差$\mathrm{var}(g)=\sup\sum\limits_{j=0}^{n-1}|g(t_{j+1})-g(t_j)|$，上确界取遍$[0,1]$的所有分割$\Delta:0=t_0<t_1<\cdots<t_n=1$。在$BV[0,1]$上赋范$\|g\|_v=\mathrm{var}(g)\ (\forall g\in BV[0,1])$，则$BV[0,1]$为$B$空间，且
+\begin{align}
+C[0,1]^*=BV[0,1].\label{eq:cconj}
+\end{align}
+\end{example}
+\begin{remark}
+有界变差函数可表示为两个单调递增函数的差$g=g_1-g_2$，调整函数取值可使其右连续，且不改变Stieltjes积分。映射$g\mapsto\int_{0}^{1}\varphi(t)\mathrm{d}g(t)$是$BV[0,1]\to C[0,1]^*$的等距同构。
+\end{remark}
+\begin{proof}
+
+对任意$\varphi\in C[0,1],g\in BV[0,1]$，Stieltjes积分定义为
+\begin{align*}
+\int_{0}^{1}\varphi(t)\mathrm{d}g(t)=\lim\limits_{\|\Delta\|\to0}\sum\limits_{j=0}^{n-1}\varphi(t_j^*)[g(t_{j+1})-g(t_j)],
+\end{align*}
+其中$\|\Delta\|=\max\limits_{1\leqslant j\leqslant n}|t_j-t_{j-1}|$，$t_j^*\in[t_j,t_{j+1}]$。
+
+对任意$g\in BV[0,1]$，其诱导$C[0,1]$上的连续线性泛函
+\begin{align*}
+\varphi\mapsto\langle f,\varphi\rangle=\int_{0}^{1}\varphi(t)\mathrm{d}g(t),
+\end{align*}
+满足
+\begin{align}
+\|f\|\leqslant\int_{0}^{1}|\mathrm{d}g(t)|=\mathrm{var}(g)=\|g\|_v.\label{eq:bstieltnorm}
+\end{align}
+
+反之，对任意$f\in C[0,1]^*$，由\hyperref[theorem:泛函分析--(哈恩-巴拿赫)Hahn-Banach定理]{Hahn-Banach定理}，将$f$保范延拓为$\widetilde{f}\in L^\infty[0,1]^*$，满足$\langle\widetilde{f},\chi_{\{0\}}\rangle=0$，$\langle\widetilde{f},\varphi\rangle=\langle f,\varphi\rangle\ (\forall\varphi\in C[0,1])$且$\|\widetilde{f}\|=\|f\|$。
+
+令
+\begin{align*}
+\begin{cases}
+g(s)=\langle\widetilde{f},\chi_{(0,s]}\rangle,&0<s\leqslant1,\\
+g(0)=0,
+\end{cases}
+\end{align*}
+下证$g\in BV[0,1]$，且满足对应关系。
+
+任取$[0,1]$的分割$\Delta:0=t_0<t_1<\cdots<t_n=1$，记$\omega_k\triangleq g(t_{k+1})-g(t_k)$，
+\[
+\lambda_k\triangleq
+\begin{cases}
+\overline{\omega_k}/|\omega_k|,&\omega_k\neq0,\\
+0,&\text{其他},
+\end{cases}
+\quad
+h_\Delta(t)\triangleq\sum\limits_{k=0}^{n-1}\lambda_k\chi_{(t_k,t_{k+1}]}(t).
+\]
+则
+\begin{align*}
+\sum\limits_{k=0}^{n-1}|\omega_k|=\sum\limits_{k=0}^{n-1}\lambda_k\omega_k=\langle\widetilde{f},h_\Delta\rangle
+\leqslant\|\widetilde{f}\|\cdot\|h_\Delta\|_{L^\infty[0,1]}\leqslant\|\widetilde{f}\|=\|f\|,
+\end{align*}
+故$g\in BV[0,1]$，且$\|g\|_v\leqslant\|f\|$。
+
+再证$\langle f,\varphi\rangle=\int_{0}^{1}\varphi(t)\mathrm{d}g(t)\ (\forall\varphi\in C[0,1])$。对任意$\varepsilon>0$，取分割$\Delta$使得
+\begin{align*}
+|\varphi(t)-\varphi(t')|<\frac{\varepsilon}{2\|\widetilde{f}\|},\quad\forall t,t'\in[t_j,t_{j+1}],\ j=0,1,\cdots,n-1,
+\end{align*}
+且
+\begin{align*}
+\left|\int_{0}^{1}\varphi(t)\mathrm{d}g(t)-\sum\limits_{j=0}^{n-1}\varphi(t_j)(g(t_{j+1})-g(t_j))\right|<\frac{\varepsilon}{2}.
+\end{align*}
+令$\varphi_\Delta\triangleq\sum\limits_{j=0}^{n-1}\varphi(t_j)\chi_{(t_j,t_{j+1}]}+\varphi(0)\chi_{\{0\}}$，则
+\begin{align*}
+\left|\langle f,\varphi\rangle-\int_{0}^{1}\varphi(t)\mathrm{d}g(t)\right|
+&\leqslant\left|\langle f,\varphi\rangle-\langle\widetilde{f},\varphi_\Delta\rangle\right|+\left|\langle\widetilde{f},\varphi_\Delta\rangle-\int_{0}^{1}\varphi(t)\mathrm{d}g(t)\right|\\
+&\leqslant\|\widetilde{f}\|\cdot\|\varphi-\varphi_\Delta\|_{L^\infty[0,1]}+\left|\sum\limits_{j=0}^{n-1}\varphi(t_j)(g(t_{j+1})-g(t_j))-\int_{0}^{1}\varphi(t)\mathrm{d}g(t)\right|\\
+&<\frac{\varepsilon}{2}+\frac{\varepsilon}{2}=\varepsilon.
+\end{align*}
+由$\varepsilon$的任意性，等式成立。
+
+\end{proof}
+
+\begin{theorem}[Riesz表示定理(连续函数空间)]\label{theorem:泛函分析--Riesz表示定理连续函数空间}
+若$M$是一个Hausdorff紧空间，则$\forall f\in C(M)^*$，存在唯一的复值Baire测度（完全可加的集函数）$\mu$，适合$|\mu|(M)<\infty$，满足
+\begin{align}
+\langle f,\varphi\rangle = \int_{M}\varphi(m)\mathrm{d}\mu \quad (\forall \varphi\in C(M)).
+\end{align}
+\end{theorem}
+
+\begin{lemma}\label{lemma:泛函分析--引理22421}
+对$\forall \mu\in\mathscr{M}(K)$，设
+\begin{align*}
+\wideparen{\mu}(w)=\int_{K}\frac{\mathrm{d}\mu(z)}{w-z},
+\end{align*}
+那么对$\forall R>0$，有$\wideparen{\mu}\in L^1(B_R)$（其中$B_R$是中心在原点的半径为$R$的圆），且$\wideparen{\mu}$在$\mathbb{C}_\infty\setminus K$上解析，还满足$\wideparen{\mu}(\infty)=0$.
+\end{lemma}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 证$\wideparen{\mu}\in L^1(B_R)$. 由定义
+\[
+|\wideparen{\mu}(w)|\leqslant\int_{K}\frac{\mathrm{d}|\mu|(z)}{|w-z|},
+\]
+从而
+\begin{align*}
+\int_{B_R}|\wideparen{\mu}(w)|\mathrm{d}x\mathrm{d}y&\leqslant\int_{B_R}\int_{K}\frac{\mathrm{d}|\mu|(z)}{|w-z|}\mathrm{d}x\mathrm{d}y
+=\int_{K}\int_{B_R}\frac{\mathrm{d}x\mathrm{d}y}{|w-z|}\mathrm{d}|\mu|(z)\\
+&\leqslant\int_{K}\int_{B(z,\rho)}\frac{\mathrm{d}x\mathrm{d}y}{|w-z|}\mathrm{d}|\mu|(z)\leqslant2\pi\rho|\mu|(K)<\infty,
+\end{align*}
+其中$\rho>R+\max\limits_{z\in K}|z|$.
+
+\item 证$\wideparen{\mu}$在$\mathbb{C}\setminus K$解析. 因$K$紧，可在积分号下求微商.
+
+\item 证$\wideparen{\mu}$在$\{\infty\}$解析，且$\wideparen{\mu}(\infty)=0$. 因$K$紧，当$|w|\to\infty$时，在积分号下取极限得$\wideparen{\mu}(w)\to0$，故$\infty$是可去奇点.
+\end{enumerate}
+\end{proof}
+
+\begin{theorem}[Runge定理]
+设$K$是复平面$\mathbb{C}$上的一个紧子集，记$\mathbb{C}_\infty=\mathbb{C}\cup\{\infty\}$。又设$E$是$\mathbb{C}_\infty\setminus K$中的一个子集，它与$\mathbb{C}_\infty\setminus K$的每一个连通分量都相交。若$f$是$K$的一个邻域内的任意解析函数，则必有有理函数列$f_n$，其极点都在$E$内，使得$f_n$在$K$上一致收敛到$f$。
+\end{theorem}
+
+\begin{proof}
+
+引用$K$上的连续函数空间$C(K)$，记$R(K,E)$为极点在$E$内的有理函数集在$C(K)$中的闭包，则$R(K,E)$是$C(K)$的闭线性子空间。为证$f\in R(K,E)$，只需证：对$\forall F\in C(K)^*$，
+\[
+F(g)=0\quad (\forall g\in R(K,E))\implies F(f)=0.
+\]
+由\hyperref[theorem:泛函分析--Riesz表示定理连续函数空间]{Riesz表示定理(连续函数空间)}，$C(K)^*$由$K$上的完全可加的复值测度$\mathscr{M}(K)$组成，故只需证：对$\forall \mu\in\mathscr{M}(K)$，
+\begin{align}
+\int_{K}g\mathrm{d}\mu=0\ (\forall g\in R(K,E))\implies \int_{K}f\mathrm{d}\mu=0. \label{eq:::HIOUR32s2.5.15}
+\end{align}
+由\reflem{lemma:泛函分析--引理22421}可得
+\begin{align}
+\left(\frac{\mathrm{d}}{\mathrm{d}w}\right)^n\wideparen{\mu}(w_0)=n!\int_{K}(z-w_0)^{-n+1}\mathrm{d}\mu(z)\quad (\forall w_0\in\mathbb{C}\setminus K), \label{eq:::HIOUR32s2.5.16}
+\end{align}
+而在$\infty$点附近它有展开
+\begin{align}
+\wideparen{\mu}(w)=-\frac{1}{w}\sum\limits_{n=0}^{\infty}\int_{K}\left(\frac{z}{w}\right)^n\mathrm{d}\mu(z)=-\sum\limits_{n=0}^{\infty}\frac{a_n}{w^{n+1}}, \label{eq:::HIOUR32s2.5.17}
+\end{align}
+其中$a_n=\int_{K}z^n\mathrm{d}\mu(z)$.
+
+若$\mu\in\mathscr{M}(K)$使得
+\begin{align}
+\int_{K}g(z)\mathrm{d}\mu(z)=0, \label{eq:::HIOUR32s2.5.18}
+\end{align}
+其中$g$是极点在$E$内的有理函数，则
+\begin{align}
+\wideparen{\mu}(w)=0\quad (\forall w\in\mathbb{C}_\infty\setminus K). \label{eq:::HIOUR32s2.5.19}
+\end{align}
+
+事实上，$\forall w_0\in E$，设$\Omega(w_0)$是$\mathbb{C}_\infty\setminus K$中含$w_0$的分量，由$E$的假设，
+\begin{align}
+\mathbb{C}_\infty\setminus K=\bigcup\limits_{w_0\in E}\Omega(w_0). \label{eq:::HIOUR32s2.5.20}
+\end{align}
+若$w_0\neq\infty$，由\eqref{eq:::HIOUR32s2.5.16}式与假设\eqref{eq:::HIOUR32s2.5.18}式，$\wideparen{\mu}$在$w_0$的各阶导数均为$0$，故$\wideparen{\mu}$在$\Omega(w_0)$内恒为$0$；若$w_0=\infty$，则由\eqref{eq:::HIOUR32s2.5.17}式与假设\eqref{eq:::HIOUR32s2.5.18}式，$\wideparen{\mu}$在$\Omega(w_0)$内也恒为$0$. 于是由\eqref{eq:::HIOUR32s2.5.20}式即得\eqref{eq:::HIOUR32s2.5.19}式.
+
+考察在$K$的某邻域$G$内解析的任意函数$f$，存在含于$G\setminus K$内的折线$\gamma_1,\gamma_2,\cdots,\gamma_n$使得
+\begin{align*}
+f(z)=\sum\limits_{k=1}^{n}\frac{1}{2\pi\mathrm{i}}\int_{\gamma_k}\frac{f(w)}{w-z}\mathrm{d}w.
+\end{align*}
+由Fubini定理，
+\begin{align}
+\int_{K}f(z)\mathrm{d}\mu(z)=\sum\limits_{k=1}^{n}\frac{1}{2\pi\mathrm{i}}\int_{K}\int_{\gamma_k}\frac{f(w)}{w-z}\mathrm{d}w\mathrm{d}\mu(z)
+=\sum\limits_{k=1}^{n}\frac{1}{2\pi\mathrm{i}}\int_{\gamma_k}f(w)\wideparen{\mu}(w)\mathrm{d}w=0, \label{eq:::HIOUR32s2.5.21}
+\end{align}
+因$\gamma_k\subseteq\mathbb{C}\setminus K$，故$\wideparen{\mu}(w)=0$于$\gamma_k$上. 于是由\eqref{eq:::HIOUR32s2.5.18}式推出\eqref{eq:::HIOUR32s2.5.21}式，即证得\eqref{eq:::HIOUR32s2.5.15}式.
+\end{proof}
+
+\begin{definition}
+设 $\mathscr{X}$ 是 $B^*$ 空间，其共轭空间 $\mathscr{X}^*$ 是 $B$ 空间，$\mathscr{X}^{**} = (\mathscr{X}^*)^*$ 称为 $\mathscr{X}$ 的\textbf{第二共轭空间}。
+\end{definition}
+
+\begin{theorem}\label{theorem:原空间可等距嵌入第二共轭空间}
+设 $\mathscr{X}$ 是 $B^*$ 空间，对$\forall x \in \mathscr{X}$,定义 $X : \mathscr{X}^* \to \mathbb{K}$如下：
+\[
+X(f) = \langle f, x \rangle \quad (\forall f \in \mathscr{X}^*),
+\]
+则$X$ 是 $\mathscr{X}^*$ 上的线性泛函，且满足
+\begin{align}\label{eq::IOUHJIOW22}
+|X(f)| \leqslant \|f\| \cdot \|x\| \quad (\forall f \in \mathscr{X}^*),
+\end{align}
+故 $X$ 连续，即 $X \in \mathscr{X}^{**}$。且
+\begin{align}\label{eq::--hruhiow3jio2}
+\left\| X \right\| \leqslant \left\| x \right\| .
+\end{align}
+映射 $T : \mathscr{X} \to \mathscr{X}^{**}$，$x\mapsto X$是$B^*$空间$\mathscr{X}$到它的第二共轭空间$\mathscr{X}^{**}$的一个子空间等距同构,称映射$T$为 $\mathscr{X}$ \textbf{到第二共轭空间} $\mathscr{X}^{**}$ 的\textbf{自然映射}或\textbf{自然嵌入}.并且
+\begin{align*}
+Tx\left( f \right) =\left< Tx,f \right> =\left< f,x \right> =f\left( x \right) \quad \left( \forall f\in \mathscr{X} ^*,\forall x\in \mathscr{X} \right) .
+\end{align*}
+若$\mathscr{X}$到$\mathscr{X}^{**}$的自然映射$T$是满射的，则称$\mathscr{X}$是\textbf{自反的}，记作$\mathscr{X}=\mathscr{X}^{**}$.
+\end{theorem}
+\begin{remark}
+有时对$x$与$X$不加区别，简记$\mathscr{X}\subseteq\mathscr{X}^{**}$.
+\end{remark}
+\begin{proof}
+
+由\eqref{eq::IOUHJIOW22}式知映射$T:x\mapsto X$是$\mathscr{X}$到$\mathscr{X}^{**}$的连续嵌入。$\forall \alpha,\beta\in\mathbb{C},x,y\in\mathscr{X}$，记$X=Tx,Y=Ty$，则
+\begin{align*}
+T(\alpha x+\beta y)(f)&=f(\alpha x+\beta y)
+=\alpha f(x)+\beta f(y)=\alpha X(f)+\beta Y(f)\\
+&=(\alpha X+\beta Y)(f)=(\alpha Tx+\beta Ty)(f)\quad (\forall f\in\mathscr{X}^*).
+\end{align*}
+故$T$是线性同构。
+
+由\refcor{corollary:泛函分析--推论2.4.6}，$\exists f\in\mathscr{X}^*$，使得$\|f\|=1$，且$\langle f,x\rangle=\|x\|$，于是
+\begin{align}
+\|x\|=X(f)\leqslant\|X\|\cdot\|f\|=\|X\|. \label{eq:::HIOUR32s2.5.24}
+\end{align}
+结合\eqref{eq::--hruhiow3jio2}式与\eqref{eq:::HIOUR32s2.5.24}式，$T$是等距的.
+
+\end{proof}
+
+\begin{examples}
+当$1<p<\infty$时，空间$L^p(\Omega,\mathscr{B},\mu)$是自反的；当$p=1,\infty$时，空间$L^p(\Omega,\mathscr{B},\mu)$不是自反的.
+\end{examples}
+
+
+\subsection{共轭算子}
+
+\begin{definition}[共轭算子]
+设$\mathscr{X},\mathscr{Y}$是$B^*$空间，算子$T\in\mathscr{L}(\mathscr{X},\mathscr{Y})$。算子$T^*:\mathscr{Y}^*\to\mathscr{X}^*$称为是$T$的\textbf{共轭算子}，若满足
+\begin{align}\label{eq:JHIODWI231122888}
+f(Tx)=(T^*f)(x)\quad (\forall f\in\mathscr{Y}^*,\forall x\in\mathscr{X}).
+\end{align}
+也即
+\begin{align*}
+\left< f,Tx \right> =\left< T^*f,x \right> \quad (\forall f\in \mathscr{Y} ^*,\forall x\in \mathscr{X} ).
+\end{align*}
+\end{definition}
+
+\begin{proposition}
+设$\mathscr{X},\mathscr{Y}$是$B^*$空间，则$\forall T\in\mathscr{L}(\mathscr{X},\mathscr{Y})$，$T^*$唯一存在，且
+\begin{align}\label{eq:::HIOUR32s2.5.26}
+T^*\in\mathscr{L}(\mathscr{Y}^*,\mathscr{X}^*),\quad \|T^*\|\leqslant\|T\|.
+\end{align}
+\end{proposition}
+\begin{proof}
+
+事实上，对$\forall f\in\mathscr{Y}^*$，令$g(x)=f(Tx)\ (\forall x\in\mathscr{X})$，则$g$线性,且由\refpro{proposition:有界线性算子的基本不等式}知
+\[
+|g(x)|\leqslant\|f\|\cdot\|T\|\cdot\|x\|\quad (\forall x\in\mathscr{X}).
+\]
+故$g\in\mathscr{X}^*$.令$T^*:\mathscr{Y}^*\to\mathscr{X}^*,f\mapsto g$线性,则由定义知$T^*$是$T$的共轭算子,且
+\begin{align}
+\|T^*f\|=\|g\|\leqslant\|T\|\cdot\|f\|\quad (\forall f\in\mathscr{Y}^*), \label{eq:::HIOUR32s2.5.25}
+\end{align}
+因此$T^*\in\mathscr{L}(\mathscr{Y}^*,\mathscr{X}^*)$，且
+\begin{align*}
+\|T^*\|\leqslant\|T\|. 
+\end{align*}
+注意到\eqref{eq:JHIODWI231122888}式左边由$f,T$完全确定,故$T$的共轭算子是唯一的.
+\end{proof}
+
+\begin{theorem}\label{theorem:泛函分析--等距同构基本定理}
+映射$*:T\mapsto T^*$是$\mathscr{L}(\mathscr{X},\mathscr{Y})$到$\mathscr{L}(\mathscr{Y}^*,\mathscr{X}^*)$内的等距同构,进而$\|T^{**}\|=\|T\|$.
+\end{theorem}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 证$*:T\mapsto T^*$是线性的：
+\begin{align*}
+[(\alpha_1T_1+\alpha_2T_2)^*f](x)=f[(\alpha_1T_1+\alpha_2T_2)x]
+=\alpha_1f(T_1x)+\alpha_2f(T_2x)=[(\alpha_1T_1^*+\alpha_2T_2^*)f](x)
+\end{align*}
+$(\forall x\in\mathscr{X},\forall f\in\mathscr{Y}^*,\forall\alpha_1,\alpha_2\in\mathbb{K})$.
+
+\item 证等距。已有\eqref{eq:::HIOUR32s2.5.26}式，只需证$\|T\|\leqslant\|T^*\|$.
+
+对$\forall x\in\mathscr{X}$，若$Tx\neq\theta$，由\refcor{corollary:泛函分析--推论2.4.6}，$\exists f\in\mathscr{Y}^*$，使得$f(Tx)=\|Tx\|$，且$\|f\|=1$. 于是由\refpro{proposition:有界线性算子的基本不等式}知
+\begin{align*}
+\|Tx\|=f(Tx)=(T^*f)(x)\leqslant\|T^*f\|\cdot\|x\|\leqslant\|T^*\|\cdot\|x\|,
+\end{align*}
+即$\|T\|\leqslant\|T^*\|$.
+\end{enumerate}
+
+\end{proof}
+
+\begin{theorem}
+设$\mathscr{X},\mathscr{Y}$是$B^*$空间，$T\in\mathscr{L}(\mathscr{X},\mathscr{Y})$，则$T^{**}\in\mathscr{L}(\mathscr{X}^{**},\mathscr{Y}^{**})$是$T$在$\mathscr{X}^{**}$上的延拓，且满足$\|T^{**}\|=\|T\|$.
+\end{theorem}
+\begin{proof}
+
+$T^*$的共轭算子$T^{**}=(T^*)^*\in\mathscr{L}(\mathscr{X}^{**},\mathscr{Y}^{**})$. 由\refthe{theorem:原空间可等距嵌入第二共轭空间}知$\mathscr{X}\subseteq\mathscr{X}^{**},\mathscr{Y}\subseteq\mathscr{Y}^{**}$，设自然嵌入映射分别为$U$和$V$，则
+\begin{align*}
+\langle T^{**}Ux,f\rangle=\langle Ux,T^*f\rangle
+=\langle T^*f,x\rangle=\langle f,Tx\rangle
+=\langle VTx,f\rangle\quad (\forall f\in\mathscr{Y}^*,\forall x\in\mathscr{X}).
+\end{align*}
+故$T^{**}Ux=VTx$，即$T^{**}$是$T$在$\mathscr{X}^{**}$上的同构意义下的扩张.由\refthe{theorem:泛函分析--等距同构基本定理}知$\|T^{**}\|=\|T^*\|=\|T\|$.
+
+\end{proof}
+
+\begin{example}
+设$(\Omega,\mathscr{B},\mu)$是一个测度空间，$K(x,y)$是$\Omega\times\Omega$上的二元平方可积函数：
+\[
+\iint_{\Omega\times\Omega}|K(x,y)|^2\mathrm{d}\mu(x)\mathrm{d}\mu(y)<\infty.
+\]
+定义算子
+\[
+T:u\mapsto (Tu)(x)=\int_{\Omega}K(x,y)u(y)\mathrm{d}\mu(y)\quad (\forall u\in L^2(\Omega,\mu)),
+\]
+则$T\in\mathscr{L}(L^2(\Omega,\mu))$，且
+\[
+(T^*v)(x)=\int_{\Omega}K(y,x)v(y)\mathrm{d}\mu(y)\quad (\forall v\in L^2(\Omega,\mu)).
+\]
+\end{example}
+
+\begin{proof}
+
+记$\|\cdot\|$为$L^2(\Omega,\mu)$上的范数，则
+\begin{align*}
+\|Tu\|^2&=\int_{\Omega}\left|\int_{\Omega}K(x,y)u(y)\mathrm{d}\mu(y)\right|^2\mathrm{d}\mu(x)\\
+&\leqslant\int_{\Omega}\left(\int_{\Omega}|K(x,y)|^2\mathrm{d}\mu(y)\int_{\Omega}|u(y)|^2\mathrm{d}\mu(y)\right)\mathrm{d}\mu(x)\\
+&\leqslant\left(\iint_{\Omega\times\Omega}|K(x,y)|^2\mathrm{d}\mu(x)\mathrm{d}\mu(y)\right)\|u\|^2\quad (\forall u\in L^2(\Omega,\mu)).
+\end{align*}
+且对$\forall u,v\in L^2(\Omega,\mu)$,有
+\begin{align*}
+\langle T^*v,u\rangle&=\langle v,Tu\rangle
+=\int_{\Omega}\left(\int_{\Omega}K(x,y)u(y)\mathrm{d}\mu(y)\right)v(x)\mathrm{d}\mu(x)\\
+&\stackrel{\one}{=}\iint_{\Omega\times\Omega}K(x,y)u(y)v(x)\mathrm{d}\mu(x)\mathrm{d}\mu(y)
+=\int_{\Omega}\left(\int_{\Omega}K(x,y)v(x)\mathrm{d}\mu(x)\right)u(y)\mathrm{d}\mu(y)
+\end{align*}
+上式第三个等号成立是因
+\[
+\iint_{\Omega\times\Omega}|K(x,y)||u(y)||v(x)|\mathrm{d}\mu(x)\mathrm{d}\mu(y)\leqslant\|u\|\cdot\|v\|\left(\iint_{\Omega\times\Omega}|K(x,y)|^2\mathrm{d}\mu(x)\mathrm{d}\mu(y)\right)^{\frac{1}{2}}<\infty,
+\]
+故可应用Fubini定理.故
+\[
+(T^*v)(y)=\int_{\Omega}K(x,y)v(x)\mathrm{d}\mu(x)\quad (\forall v\in L^2(\Omega,\mu)).
+\]
+
+\end{proof}
+
+\begin{lemma}[Young不等式]
+设$f\in L^p(\mathbb{R})\ (1\leqslant p\leqslant\infty)$，$K\in L^1(\mathbb{R})$，则
+\begin{align}
+\|K*f\|_p\leqslant\|K\|_1\cdot\|f\|_p, \label{eq:::HIOUR32s2.5.27}
+\end{align}
+其中$\|\cdot\|_p$表示$L^p(\mathbb{R})$的范数$(1\leqslant p\leqslant\infty)$.
+\end{lemma}
+\begin{proof}
+
+当$1<p<\infty$时，由Hölder不等式，
+\begin{align*}
+\left|\int_{-\infty}^{\infty}K(x-y)f(y)\mathrm{d}y\right|&\leqslant\int_{-\infty}^{\infty}|K(x-y)|^{\frac{1}{q}}\cdot|K(x-y)|^{\frac{1}{p}}|f(y)|\mathrm{d}y\\
+&\leqslant\left(\int_{-\infty}^{\infty}|K(x-y)|\mathrm{d}y\right)^{\frac{1}{q}}\left(\int_{-\infty}^{\infty}|K(x-y)|\cdot|f(y)|^p\mathrm{d}y\right)^{\frac{1}{p}},
+\end{align*}
+而
+\begin{align*}
+\int_{-\infty}^{\infty}\left|\int_{-\infty}^{\infty}K(x-y)f(y)\mathrm{d}y\right|^p\mathrm{d}x&\leqslant\|K\|_1^{\frac{p}{q}}\int_{-\infty}^{\infty}\int_{-\infty}^{\infty}|K(x-y)|\cdot|f(y)|^p\mathrm{d}y\mathrm{d}x\\
+&=\|K\|_1^{\frac{p}{q}}\cdot\|f\|_p^p\cdot\|K\|_1.
+\end{align*}
+由Fubini定理，$(K*f)(x)$几乎处处存在有限，且\eqref{eq:::HIOUR32s2.5.27}式成立.
+
+当$p=1$或$\infty$时，不等式\eqref{eq:::HIOUR32s2.5.27}显然成立.
+
+\end{proof}
+
+\begin{example}
+设$K(x)$是$\mathbb{R}$上的$L^1$函数，考察空间$L^p(\mathbb{R})\ (1\leqslant p\leqslant\infty)$上的卷积算子
+\[
+(K*f)(x)\triangleq\int_{-\infty}^{\infty}K(x-y)f(y)\mathrm{d}y,
+\]
+求其共轭算子。
+\end{example}
+\begin{remark}
+以上考虑的共轭空间和共轭算子都是在实数域上的共轭。若用复数域，则每个$L^q$函数$g$对应着$L^p$空间上的一个反连续线性泛函：
+\[
+F_g(f)=\int_{\Omega}f\cdot\overline{g}\mathrm{d}\mu.
+\]
+这时的复共轭算子为$T^*=\overline{\wideparen{K}}*$.
+\end{remark}
+\begin{proof}
+
+记$\wideparen{K}(x)\triangleq K(-x)$，由Fubini定理，
+\begin{align*}
+\int_{-\infty}^{\infty}\left(\int_{-\infty}^{\infty}K(x-y)f(y)\mathrm{d}y\right)g(x)\mathrm{d}x&=\int_{-\infty}^{\infty}f(y)\left(\int_{-\infty}^{\infty}K(x-y)g(x)\mathrm{d}x\right)\mathrm{d}y\\
+&=\int_{-\infty}^{\infty}(\wideparen{K}*g)(y)f(y)\mathrm{d}y.
+\end{align*}
+故$T\triangleq K*$的共轭算子为$T^*=\wideparen{K}*$.
+
+\end{proof}
+
+
+\subsection{弱收敛及*弱收敛}
+
+\begin{definition}
+设$\mathscr{X}$是一个$B^*$空间，$\{x_n\}\subseteq\mathscr{X}$，$x\in\mathscr{X}$。称$\{x_n\}$\textbf{弱收敛}到$x$，记作$x_n\rightharpoonup x$，是指：对$\forall f\in\mathscr{X}^*$都有
+\begin{align*}
+\lim\limits_{n\to\infty} f(x_n)=f(x).
+\end{align*}
+这时$x$称作点列$\{x_n\}$的\textbf{弱极限}。
+
+为区别起见，今后我们称$x_n\to x$(按范数收敛)为$\{x_n\}$\textbf{强收敛}到$x$，或$x$是$\{x_n\}$的\textbf{强极限}。
+\end{definition}
+\begin{remark}
+若$\dim\mathscr{X}<\infty$，则弱收敛与强收敛是等价的。事实上，设$e_1,e_2,\cdots,e_m$是$\mathscr{X}$的一组基，并设
+\begin{align*}
+x_n&=\xi_1^{(n)}e_1+\xi_2^{(n)}e_2+\cdots+\xi_m^{(n)}e_m\quad(n=1,2,\cdots),\\
+x&=\xi_1^{(0)}e_1+\xi_2^{(0)}e_2+\cdots+\xi_m^{(0)}e_m.
+\end{align*}
+取$f_i\in\mathscr{X}^*\ (i=1,2,\cdots,m)$，使得$f_i(e_j)=\delta_{ij}\ (i,j=1,2,\cdots,m)$，便有
+$$f_i(x_n)=\xi_i^{(n)}\quad\text{与}\quad f_i(x)=\xi_i^{(0)}\quad(i=1,2,\cdots,m).$$
+今若$x_n\rightharpoonup x$，则有$\lim\limits_{n\to\infty}f(x_n)=f(x)\ (\forall f\in\mathscr{X}^*)$，从而也有
+\begin{align*}
+\lim\limits_{n\to\infty} f_i(x_n)=f_i(x)\quad(i=1,2,\cdots,m),
+\end{align*}
+即
+\begin{align*}
+\lim\limits_{n\to\infty} \xi_i^{(n)}=\xi_i^{(0)}\quad(i=1,2,\cdots,m).
+\end{align*}
+换句话说就是$\{x_n\}$按其坐标收敛于$x$。反过来，若$\{x_n\}$按其坐标收敛于$x$，那么$x_n\to x\ (n\to\infty)$，由此便可推出$x_n\rightharpoonup x\ (n\to\infty)$。
+\end{remark}
+
+\begin{proposition}
+\begin{enumerate}[(1)]
+\item 弱极限若存在必唯一。
+\item 强极限若存在必是弱极限。
+\end{enumerate}
+\end{proposition}
+\begin{remark}
+但反过来,当$\text{dim}\,\mathscr{X}=\infty$时,弱极限存在却未必有强极限.
+\end{remark}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 若有$x_n\rightharpoonup x,\ x_n\rightharpoonup y\ (n\to\infty)$，由定义推得
+\begin{align*}
+f(x)=\lim\limits_{n\to\infty}f(x_n)=f(y)\quad(\forall f\in\mathscr{X}^*).
+\end{align*}
+因此$f(x-y)=0$,利用\refcor{corollary:泛函分析--推论2.4.6}，即得$x-y=\theta$,于是$x=y$。
+
+\item 若$x_n\to x\ (n\to\infty)$，则$\forall f\in\mathscr{X}^*$,由\refpro{proposition:有界线性算子的基本不等式}有
+\begin{align*}
+|f(x_n)-f(x)|\leqslant\|f\|\cdot\|x_n-x\|\to0\quad(n\to\infty),
+\end{align*}
+即得$\lim\limits_{n\to\infty}f(x_n)=f(x)$.故$x_n\rightharpoonup x\ (n\to\infty)$.
+\end{enumerate}
+
+\end{proof}
+
+\begin{example}
+在$L^2[0,1]$中，设$x_n=x_n(t)=\sin n\pi t$，则根据Riemann-Lebesgue引理，显然有
+\begin{align*}
+\langle f,x_n\rangle=\int_{0}^{1}f(t)\sin n\pi t\mathrm{d}t\to0\quad(\forall f\in L^2[0,1]),
+\end{align*}
+即$x_n\rightharpoonup\theta\ (n\to\infty)$。但$\|x_n\|=\frac{1}{\sqrt{2}}$，不可能有$x_n\to\theta\ (n\to\infty)$。
+\end{example}
+
+\begin{theorem}[Mazur定理]
+设$\mathscr{X}$是一个$B^*$空间，$x_n\rightharpoonup x_0\ (n\to\infty)$，则$\forall\varepsilon>0,\ \exists\lambda_i\geqslant0\ (i=1,2,\cdots,n),\ \sum\limits_{i=1}^{n}\lambda_i=1$，使得
+\begin{align*}
+\left\|x_0-\sum\limits_{i=1}^{n}\lambda_ix_i\right\|\leqslant\varepsilon.
+\end{align*}
+\end{theorem}
+\begin{remark}
+这表明弱收敛确实与强收敛不同。然而反过来，若$x_n\rightharpoonup x\ (n\to\infty)$，我们却可以找到$\{x_n\}$的凸组合序列，使其强收敛到$x$。
+\end{remark}
+\begin{proof}
+
+设$M\triangleq\overline{\mathrm{co}(\{x_n\})}$，则$M$是$\mathscr{X}$中的一个闭凸集。倘若$x_0\notin M$，应用\hyperref[corollary:泛函分析--Ascoli定理]{Ascoli定理}，$\exists f\in\mathscr{X}^*$及$\alpha\in\mathbb{R}$，使得
+\begin{align*}
+f(x)<\alpha<f(x_0)\quad(\forall x\in M).
+\end{align*}
+从而
+\begin{align*}
+f(x_n)<\alpha<f(x_0)\quad(\forall n\in\mathbb{N}).
+\end{align*}
+这与$x_n\rightharpoonup x_0\ (n\to\infty)$矛盾!
+
+\end{proof}
+
+\begin{definition}
+设$\mathscr{X}$是$B^*$空间，$\{f_n\}\subseteq\mathscr{X}^*$，$f\in\mathscr{X}^*$。称$\{f_n\}$\textbf{*弱收敛}到$f$，记作$w^*-\lim\limits_{n\to\infty}f_n=f$或$f_n \xrightarrow{w^*} f$，是指：对于$\forall x\in\mathscr{X}$，都有$\lim\limits_{n\to\infty}f_n(x)=f(x)$。这时$f$称作泛函序列$\{f_n\}$的\textbf{*弱极限}。
+\end{definition}
+
+\begin{proposition}\label{proposition:共轭空间上的弱收敛可推出星弱收敛}
+设 $\mathscr{X}$ 是$B^*$空间,
+若 $\{f_n\} \subseteq \mathscr{X}^*$ 弱收敛于 $f \in \mathscr{X}^*$，则 $\{f_n\}$ 也 *弱收敛于 $f$。
+
+特别地,若 $\mathscr{X}$ 是自反空间，则 $\mathscr{X}^*$ 中弱收敛与 *弱收敛等价。
+\end{proposition}
+\begin{proof}
+
+由\refthe{theorem:原空间可等距嵌入第二共轭空间}可知,存在线性等距嵌入 $J: \mathscr{X} \hookrightarrow \mathscr{X}^{**}$，并且对每个 $x \in \mathscr{X}$,有
+\begin{align*}
+\left< Jx,f \right> =\left< f,x \right> ,\forall f\in\mathscr{X}^*\iff Jx\left( f \right) =f\left( x \right) ,\forall f\in \mathscr{X} ^*.
+\end{align*}
+因此可将 $\mathscr{X}$ 视为 $\mathscr{X}^{**}$ 的子空间.
+ 
+设 $f_n \rightharpoonup f$，即对任意 $\Phi \in \mathscr{X}^{**}$ 有 $\Phi(f_n) \to \Phi(f)$。特别地，对每个 $x \in \mathscr{X}$，取 $\Phi = J(x) \in \mathscr{X}^{**}$，则
+\begin{gather*}
+\left< Jx,f_n \right> =Jx\left( f_n \right) \rightarrow Jx\left( f \right) =\left< Jx,f \right> \quad \left( n\rightarrow \infty \right) ;
+\\
+\left< Jx,f_n \right> =\left< f_n,x \right> =f_n\left( x \right) ,\quad \left< Jx,f \right> =\left< f,x \right> =f\left( x \right) .
+\end{gather*}
+故$f_n(x)\to f(x)(n\to \infty)$,对所有 $x\in\mathscr{X}$ 成立。这正是$w^*-\lim\limits_{n\to\infty}f_n=f$.
+
+特别地,若$\mathscr{X}$是自反空间，即 $J(\mathscr{X}) = \mathscr{X}^{**}$。  
+由上述证明已知弱收敛 $\Rightarrow$ *弱收敛.
+反之，设 $f_n \xrightarrow{w^*} f$，即对每个 $x\in\mathscr{X}$ 有 $f_n(x) \to f(x)$。任取 $\Phi \in \mathscr{X}^{**}$，由自反性存在 $x_\Phi \in \mathscr{X}$ 使得 $\Phi = J(x_\Phi)$。于是
+\[
+\Phi(f_n) = J(x_\Phi)(f_n) = f_n(x_\Phi) \to f(x_\Phi) = J(x_\Phi)(f) = \Phi(f).
+\]
+因此 $f_n \rightharpoonup f$。故弱收敛与 *弱收敛等价。
+\end{proof}
+
+\begin{theorem}
+设$\mathscr{X}$是一个$B^*$空间，又设$\{x_n\}\subseteq\mathscr{X},\ x\in\mathscr{X}$，则为了$x_n\rightharpoonup x\ (n\to\infty)$当且仅当
+\begin{enumerate}[(1)]
+\item $\|x_n\|$有界；
+\item 对$\mathscr{X}^*$中的一个稠密子集$M^*$上的一切$f$都有
+\begin{align*}
+\lim\limits_{n\to\infty}f(x_n)=f(x).
+\end{align*}
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+
+由\refthe{theorem:原空间可等距嵌入第二共轭空间}可知,只需把$x_n$看成是$\mathscr{X}^*$上的有界线性泛函：
+$$\langle x_n,f\rangle\triangleq f(x_n)\quad(\forall f\in\mathscr{X}^*).$$
+应用\hyperref[theorem:泛函分析--Banach-Steinhaus定理]{Banach-Steinhaus定理}即得结论。
+\end{proof}
+
+\begin{theorem}\label{theorem:泛函分析--定理2.5.21}
+设$\mathscr{X}$是一个$B$空间，又设$\{f_n\}\subseteq\mathscr{X}^*,\ f\in\mathscr{X}^*$，则为了$w^*-\lim\limits_{n\to\infty}f_n=f$当且仅当
+\begin{enumerate}[(1)]
+\item $\|f_n\|$有界；
+\item 对$\mathscr{X}$中的一个稠密子集$M$上的一切$x$都有
+\begin{align*}
+\lim\limits_{n\to\infty}f_n(x)=f(x).
+\end{align*}
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+
+本定理是\hyperref[theorem:泛函分析--Banach-Steinhaus定理]{Banach-Steinhaus定理}的特殊情形。
+
+\end{proof}
+
+\begin{definition}
+设$\mathscr{X},\mathscr{Y}$是$B^*$空间。又设$T_n\ (n=1,2,\cdots),\ T\in\mathscr{L}(\mathscr{X},\mathscr{Y})$。
+\begin{enumerate}[(1)]
+\item 若$\|T_n-T\|\to0$，则称$T_n$\textbf{一致收敛}于$T$，记作$T_n\rightrightarrows T$。这时$T$称作$\{T_n\}$的\textbf{一致极限}。
+
+\item 若$\|(T_n-T)x\|\to0\ (\forall x\in\mathscr{X})$，则称$T_n$\textbf{强收敛}于$T$，记作$T_n\to T$。这时$T$称作$\{T_n\}$的\textbf{强极限}。
+
+\item 如果对于$\forall x\in\mathscr{X}$，以及$\forall f\in\mathscr{Y}^*$都有
+\begin{align*}
+\lim\limits_{n\to\infty}f(T_nx)=f(Tx),
+\end{align*}
+则称$T_n$\textbf{弱收敛}于$T$，记作$T_n\rightharpoonup T$。这时$T$称作$\{T_n\}$的\textbf{弱极限}。
+\end{enumerate}
+\end{definition}
+\begin{remark}
+显然，一致收敛$\implies$强收敛$\implies$弱收敛，而且每种极限若存在必是唯一的。但反过来一般不对。
+\end{remark}
+
+\begin{example}[强收敛而不一致收敛]
+ 
+在空间$l^2$上考察左推移算子
+$$T:x=(x_1,x_2,\cdots,x_n,\cdots)\mapsto Tx=(x_2,x_3,\cdots,x_n,\cdots).$$
+令$T_n\triangleq T^n$，便有
+$$T_nx=(x_{n+1},x_{n+2},\cdots)\quad(\forall x=(x_1,x_2,\cdots,x_n,\cdots)\in l^2).$$
+可证：$T_n\to0$，但$T_n\to 0\ (n\to\infty)$。事实上，若取
+$$e_n=(\underbrace{0,0,\cdots,0}_{n},1,0,\cdots),$$
+那么$T_ne_{n+1}=e_1$，并且$\|e_n\|=1\ (\forall n\in\mathbb{N})$。因此
+$$\|T_n\|\geqslant\|T_n(e_{n+1})\|=1,$$
+从而$T_n\to 0$。但是对$\forall x=(x_1,x_2,\cdots,x_n,\cdots)\in l^2$有
+\begin{align*}
+\|T_nx\|=\left(\sum\limits_{i=1}^{\infty}|x_{n+i}|^2\right)^{\frac{1}{2}}\to0\quad(n\to\infty),
+\end{align*}
+即$T_n\to0$。
+\end{example}
+
+\begin{example}[弱收敛而不强收敛]
+
+在空间$l^2$上考察右推移算子
+$$S:x=(x_1,x_2,\cdots,x_n,\cdots)\mapsto Sx=(0,x_1,x_2,\cdots,x_n,\cdots).$$
+令$S_n\triangleq S^n$，便有
+$$S_nx=(\underbrace{0,0,\cdots,0}_{n},x_1,x_2,\cdots)\quad(\forall x\in l^2).$$
+显然，$\|S_nx\|=\|x\|\ (\forall x\in l^2)$，从而$S_n\nrightarrow0$。但是对于$\forall f=(y_1,y_2,\cdots,y_n,\cdots)\in(l^2)^*=l^2$，我们有
+\begin{align*}
+|\langle f,S_nx\rangle|=\left|\sum\limits_{i=1}^{\infty}y_{i+n}x_i\right|\leqslant\left(\sum\limits_{i=1}^{\infty}|y_{i+n}|^2\right)^{\frac{1}{2}}\|x\|\to0\quad(n\to\infty),
+\end{align*}
+即$S_n\rightharpoonup0\ (n\to\infty)$。
+\end{example}
+
+\subsection{弱列紧性与*弱列紧性}
+
+\begin{definition}
+设$A$是$B^*$空间$\mathscr{X}$的子集,称集$A$是\textbf{弱列紧的}，是指$A$中的任意点列有一个弱收敛子列。又称$A$是*\textbf{弱列紧的}，是指$A$中的任意点列有一个*弱收敛的子列。
+\end{definition}
+
+\begin{theorem}
+设$\mathscr{X}$是可分的$B^*$空间，那么$\mathscr{X}^*$上的任意有界列$\{f_n\}$必有*弱收敛的子列。
+\end{theorem}
+\begin{proof}
+
+因为$\mathscr{X}$可分，所以$\mathscr{X}$有可数的稠密子集$\{x_m\}$。因为$\{f_n\}$有界，所以对每一个固定的$m$，数集
+$$\{\langle f_n,x_m\rangle|n,m\in\mathbb{N}\}\subseteq \mathbb{K}=\mathbb{C}\text{或}\mathbb{R}$$
+是有界的。由\hyperref[Complex-Analysis-theorem:Bolzano-Weierstrass定理]{Bolzano-Weierstrass定理}和对角线法则,存在子列$\{f_{n_k}\}_{k=1}^{\infty}$，使得对$\forall m\in\mathbb{N}$，
+$$\{\langle f_{n_k},x_m\rangle\}_{k=1}^{\infty}$$
+是收敛数列。再由$\{x_m\}$在$\mathscr{X}$中稠密，以及$\{f_n\}$有界，可见对于$\forall x\in\mathscr{X}$，
+$$\{\langle f_{n_k},x\rangle\}_{k=1}^{\infty}$$
+是收敛数列。记$f(x)\triangleq\lim\limits_{k\to\infty}\langle f_{n_k},x\rangle$。易见$f$是线性的，并且由\refpro{proposition:有界线性算子的基本不等式}知
+$$|f(x)|\leqslant\sup\limits_{n}\|f_n\|\cdot\|x\|\quad(\forall x\in\mathscr{X}).$$
+从而有$f\in\mathscr{X}^*$，使得
+$$f(x)=\lim\limits_{k\to\infty}\langle f_{n_k},x\rangle\quad(\forall x\in\mathscr{X}).$$
+即得$w^*-\lim\limits_{k\to\infty}f_{n_k}=f$。
+
+\end{proof}
+
+\begin{theorem}[Banach定理]\label{theorem:泛函分析--Banach定理11}
+设$\mathscr{X}$是$B^*$空间。若$\mathscr{X}$的共轭空间$\mathscr{X}^*$是可分的，则$\mathscr{X}$本身必是可分的。
+\end{theorem}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 考察$\mathscr{X}^*$的单位球面$S_1^*\triangleq\{f\in\mathscr{X}^*|\|f\|=1\}$。$S_1^*$是可分的。事实上，由$\mathscr{X}^*$可分，$\exists\{f_n\}\subseteq\mathscr{X}^*$，使得$\forall f\in S_1^*,\ \exists\{n_k\}_{k=1}^{\infty}$，使得
+\begin{align*}
+\lim\limits_{k\to\infty}f_{n_k}=f.
+\end{align*}
+今令$g_n\triangleq f_n/\|f_n\|$（不妨设$f_n\neq\theta$），便有
+\begin{align*}
+\|f-g_{n_k}\|\leqslant\|f-f_{n_k}\|+\|f_{n_k}-g_{n_k}\|=\|f-f_{n_k}\|+|1-\|f_{n_k}\||\to0\quad(k\to\infty).
+\end{align*}
+由此可见$S_1^*$有可数的稠密子集$\{g_n\}$。
+
+\item 对于每个$g_n$，因为$\|g_n\|=1$，所以可以选取$x_n\in\mathscr{X}$，使得
+$$\|x_n\|=1,\quad\text{并且}\quad g_n(x_n)\geqslant\frac{1}{2}.$$
+记$\mathscr{X}_0\triangleq\overline{\mathrm{span}\{x_n\}}$，它显然是可分的（$x_n$的有理系数的线性组合在$\mathscr{X}_0$中稠密）。
+
+\item 证明$\mathscr{X}_0=\mathscr{X}$。倘若不然，存在$x_0\in\mathscr{X}\setminus\mathscr{X}_0$，不妨设$\|x_0\|=1$，利用\refthe{theorem:泛函分析--零值泛函延拓定理}，$\exists f_0\in\mathscr{X}^*$，使得$\|f_0\|=1$，从而$f_0\in S_1^*$，并且$f_0(x)=0\ (\forall x\in\mathscr{X}_0)$。
+对此$f_0$我们有
+\begin{align*}
+\|g_n-f_0\|=\sup\limits_{\|x\|=1}|g_n(x)-f_0(x)|
+\geqslant|g_n(x_n)-f_0(x_n)|=|g_n(x_n)|\geqslant\frac{1}{2}.
+\end{align*}
+这与$\{g_n\}$在$S_1^*$中稠密相矛盾，即得$\mathscr{X}=\mathscr{X}_0$。从而$\mathscr{X}$是可分的。
+\end{enumerate}
+
+\end{proof}
+
+\begin{theorem}[Pettis定理]
+自反空间$\mathscr{X}$的闭子空间$\mathscr{X}_0$必是自反空间。
+\end{theorem}
+\begin{proof}
+
+要证：若$z_0\in\mathscr{X}_0^{**}$，则必$z_0\in\mathscr{X}_0$；也就是要证：$\exists x\in\mathscr{X}_0$，使得
+\begin{align}
+\langle z_0,f_0\rangle=\langle f_0,x\rangle\quad(\forall f_0\in\mathscr{X}_0^*).\label{eq:::HIOUR32s2.5.28}
+\end{align}
+今对$\forall f\in\mathscr{X}^*$，考察$f$在$\mathscr{X}_0$上的限制$Tf=f_0\in\mathscr{X}_0^*$。因为
+$$\|f_0\|\leqslant\|f\|,$$
+所以$T\in\mathscr{L}(\mathscr{X}^*,\mathscr{X}_0^*)$。于是$z\triangleq T^*z_0\in\mathscr{X}^{**}$，又$\mathscr{X}$自反，因此$\exists x\in\mathscr{X}$，使得
+\begin{align}
+\langle z,f\rangle=\langle f,x\rangle\quad(\forall f\in\mathscr{X}^*).\label{eq:::HIOUR32s2.5.29}
+\end{align}
+今证此$x\in\mathscr{X}_0$。倘若不然，由\refthe{theorem:泛函分析--零值泛函延拓定理}，$\exists f\in\mathscr{X}^*$，使得
+$$f(\mathscr{X}_0)=0,\quad\text{且}\quad\langle f,x\rangle=1,$$
+从而$Tf=\theta$。但这导出矛盾：
+$$0=\langle z_0,Tf\rangle=\langle T^*z_0,f\rangle=\langle z,f\rangle=\langle f,x\rangle=1.$$
+这就证明了$\exists x\in\mathscr{X}_0$，使得\eqref{eq:::HIOUR32s2.5.29}式成立。现在要证此$x$还适合\eqref{eq:::HIOUR32s2.5.28}式。事实上，$\forall f_0\in\mathscr{X}_0^*$，由\hyperref[theorem:泛函分析--(哈恩-巴拿赫)Hahn-Banach定理]{Hahn-Banach定理}，存在$f\in\mathscr{X}^*$，使得$f_0=Tf$。从而我们有
+$$\langle z_0,f_0\rangle=\langle z_0,Tf\rangle=\langle z,f\rangle,$$
+以及
+$$\langle f_0,x\rangle=\langle f,x\rangle\quad(\forall x\in\mathscr{X}_0).$$
+由此可见，适合\eqref{eq:::HIOUR32s2.5.29}式的$x$必适合\eqref{eq:::HIOUR32s2.5.28}式。
+
+\end{proof}
+
+\begin{theorem}[Eberlein-Smulian定理]\label{theorem:Eberlein-Smulian定理}
+自反空间的单位(闭)球是弱(自)列紧的。
+\end{theorem}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 先证：自反空间$\mathscr{X}$中的任何有界点列$\{x_n\}$必有一个在$\mathscr{X}$中弱收敛的子列。令
+$$\mathscr{X}_0\triangleq\overline{\mathrm{span}\{x_n\}}.$$
+因为$\mathscr{X}$自反，所以$\mathscr{X}_0$也是自反的。又显然$\mathscr{X}_0$是可分的，这表明$(\mathscr{X}_0^*)^*$是可分的。再由\hyperref[theorem:泛函分析--Banach定理11]{Banach定理}，$\mathscr{X}_0^*$也是可分的。若记$\{g_n\}$为$\mathscr{X}_0^{**}$中的元素，它适合
+\begin{align}
+\langle g_n,f\rangle=\langle f,x_n\rangle\quad(\forall f\in\mathscr{X}_0^*),\label{eq:::HIOUR32s2.5.30}
+\end{align}
+则$\{\|g_n\|\}$有界。设$M_0^*$是$\mathscr{X}_0^*$中的可数稠密子集，用对角线法则，在$\{g_n\}$中可以抽出一子列$\{g_{n_k}\}$及$\exists g\in\mathscr{X}_0^{**}$，使得
+\begin{align}
+\lim\limits_{k\to\infty}\langle g_{n_k},f\rangle=\langle g,f\rangle\quad(\forall f\in M_0^*).\label{eq:::HIOUR32s2.5.31}
+\end{align}
+再依\refthe{theorem:泛函分析--定理2.5.21}，\eqref{eq:::HIOUR32s2.5.31}式蕴含
+\begin{align}
+\lim\limits_{k\to\infty}\langle g_{n_k},f\rangle=\langle g,f\rangle\quad(\forall f\in\mathscr{X}_0^*).\label{eq:::HIOUR32s2.5.32}
+\end{align}
+还由$\mathscr{X}_0$的自反性，$\exists x_0\in\mathscr{X}_0$适合
+\begin{align}
+\langle g,f\rangle=\langle f,x_0\rangle\quad(\forall f\in\mathscr{X}_0^*).\label{eq:::HIOUR32s2.5.33}
+\end{align}
+联合\eqref{eq:::HIOUR32s2.5.30}式，\eqref{eq:::HIOUR32s2.5.32}式与\eqref{eq:::HIOUR32s2.5.33}式，便得到
+\begin{align*}
+\lim\limits_{k\to\infty}\langle f,x_{n_k}\rangle&=\lim\limits_{k\to\infty}\langle g_{n_k},f\rangle\\
+&=\langle f,x_0\rangle\quad(\forall f\in\mathscr{X}_0^*).
+\end{align*}
+进一步对$\forall\widetilde{f}\in\mathscr{X}^*$，记$f\triangleq T\widetilde{f}$为$\widetilde{f}$在$\mathscr{X}_0$上的限制。因为$\{x_{n_k}\}\subseteq\mathscr{X}_0$及$x_0\in\mathscr{X}_0$，依上式便有
+\begin{align*}
+\lim\limits_{k\to\infty}\langle\widetilde{f},x_{n_k}\rangle=\lim\limits_{k\to\infty}\langle f,x_{n_k}\rangle
+=\langle f,x_0\rangle=\langle\widetilde{f},x_0\rangle\quad(\forall\widetilde{f}\in\mathscr{X}^*),
+\end{align*}
+即得$x_{n_k}\rightharpoonup x_0$。于是$\mathscr{X}$中的任意有界集是弱列紧集，特别是单位球是弱列紧的。同样，单位闭球也是弱列紧的。
+
+\item 证明单位闭球是弱自列紧的。设$x_{n_k}\rightharpoonup x_0$，并且$\|x_{n_k}\|\leqslant1$。由\refcor{corollary:泛函分析--推论2.4.6}，$\exists f\in\mathscr{X}^*$适合
+$$f(x_0)=\|x_0\|,\quad\text{且}\quad\|f\|=1.$$
+因此，我们有
+\begin{align*}
+\|x_0\|=f(x_0)=\lim\limits_{k\to\infty}f(x_{n_k})\leqslant\|f\|\sup\limits_{k\geqslant1}\|x_{n_k}\|\leqslant1,
+\end{align*}
+即$x_0$也在单位闭球内，从而单位闭球是弱自列紧的。
+\end{enumerate}
+
+\end{proof}
+
+\begin{theorem}[Alaoglu定理]
+设$\mathscr{X}$是$B^*$空间，则$\mathscr{X}^*$中的单位闭球是$*$弱紧的。
+\end{theorem}
+\begin{remark}
+$*$弱紧的定义及证明可参见下册第五章。
+\end{remark}
+
+\begin{definition}
+设$f\in L^1[0,2\pi]$，称
+\begin{align*}
+c_n\triangleq\frac{1}{2\pi}\int_{0}^{2\pi}f(x)\mathrm{e}^{-\mathrm{i}nx}\mathrm{d}x\quad(n=0,\pm1,\pm2,\cdots)
+\end{align*}
+为$f$的$\mathbf{Fourier}$\textbf{系数}；称级数
+\begin{align}
+\sum\limits_{n=-\infty}^{\infty}c_n\mathrm{e}^{\mathrm{i}nx}\label{eq:fourier_series}
+\end{align}
+为$f$的$\mathbf{Fourier}$\textbf{级数}。
+\end{definition}
+
+\begin{definition}
+Fourier级数\eqref{eq:fourier_series}的$\mathbf{Cesaro}$\textbf{部分和（算术平均和）}定义为
+\begin{align}
+\sigma_n(f)(x)=\frac{1}{n+1}\sum\limits_{k=0}^{n}S_k(f)(x)
+=\sum\limits_{k=-n}^{n}c_k\left(1-\frac{|k|}{n+1}\right)\mathrm{e}^{\mathrm{i}kx},\label{eq:cesaro_sum}
+\end{align}
+其中$S_n(f)(x)\triangleq\sum\limits_{k=-n}^{n}c_k\mathrm{e}^{\mathrm{i}kx}$。
+\end{definition}
+
+\begin{definition}[Fejer核]
+$\mathbf{Fejer}$\textbf{核}定义为
+\begin{align*}
+K_n(x)\triangleq\frac{1}{2\pi}\sum\limits_{k=-n}^{n}\left(1-\frac{|k|}{n+1}\right)\mathrm{e}^{\mathrm{i}kx}
+=\frac{1}{2\pi(n+1)}\left(\frac{\sin\frac{(n+1)x}{2}}{\sin\frac{x}{2}}\right)^2,
+\end{align*}
+满足卷积关系$\sigma_n(f)(x)=\int_{0}^{2\pi}f(y)K_n(x-y)\mathrm{d}y$，且$\int_{0}^{2\pi}K_n(x)\mathrm{d}x=1$。
+\end{definition}
+\begin{remark}
+由$K_n$的非负性及Young不等式，对任意$f\in L^p[0,2\pi](1\leqslant p<\infty)$，成立$\|\sigma_n(f)\|_{L^p}\leqslant\|f\|_{L^p}$，即Cesaro部分和的$L^p$范数一致有界。
+\end{remark}
+
+\begin{theorem}
+若$1<p\leqslant\infty$，且Fourier级数的Cesaro部分和满足
+\begin{align}
+\sup\limits_{n\geqslant1}\|\sigma_n\|_{L^p}<\infty,\label{eq:unif_bound}
+\end{align}
+则必存在$f\in L^p[0,2\pi]$，使得$\sigma_n$是$f$的Fourier级数的Cesaro部分和。
+\end{theorem}
+\begin{proof}
+
+由共轭空间结论$L^p[0,2\pi]=L^q[0,2\pi]^*$（$\frac{1}{p}+\frac{1}{q}=1$），且$L^q[0,2\pi]$可分。结合条件\eqref{eq:unif_bound}，存在$f\in L^p[0,2\pi]$及子列$\{n_k\}$，使得
+\begin{align*}
+w^*-\lim\limits_{k\to\infty}\sigma_{n_k}(x)=f(x)\quad(\text{在 }L^p[0,2\pi]\text{ 中}).
+\end{align*}
+因$\mathrm{e}^{\mathrm{i}mx}\in L^q[0,2\pi]\ (m=0,\pm1,\pm2,\cdots)$，故
+\begin{align*}
+\frac{1}{2\pi}\int_{0}^{2\pi}f(x)\mathrm{e}^{-\mathrm{i}mx}\mathrm{d}x=\lim\limits_{k\to\infty}\frac{1}{2\pi}\int_{0}^{2\pi}\sigma_{n_k}(x)\mathrm{e}^{-\mathrm{i}mx}\mathrm{d}x
+=\lim\limits_{k\to\infty}\left(1-\frac{|m|}{n_k+1}\right)c_m=c_m.
+\end{align*}
+因此$\sigma_n(x)$是$f$的Fourier级数的Cesaro部分和$\sigma_n(f)(x)$。
+
+\end{proof}
+
+\subsection{弱收敛的例子}
+
+\begin{example}[振荡型弱收敛]
+
+\begin{enumerate}[(1)]
+\item 令$u_n(x)=\sin n\pi x$，由Riemann-Lebesgue引理，当$n\to\infty$时，$u_n$在$L^2[0,1]$中弱收敛但不强收敛于$0$。
+\item 锯齿型函数列：
+\begin{align*}
+u_n(x)=
+\begin{cases}
+x-\frac{k}{n},& x\in\left[\frac{k}{n},\frac{2k+1}{2n}\right],\\
+-x+\frac{k+1}{n},& x\in\left[\frac{2k+1}{2n},\frac{k+1}{n}\right],
+\end{cases}
+\end{align*}
+该序列在$H^{1,2}(0,1)$中弱收敛但不强收敛于$0$，根源为函数列在$(0,1)$内剧烈振荡，常作为变分学中泛函的不收敛极小化子列。
+\end{enumerate}
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{锯齿形极小化序列.png}
+\caption{锯齿形极小化序列$u_n$}
+\label{figure:zigzag_min_seq}
+\end{figure}
+该序列自身及逐段导数均有界。
+\end{example}
+
+\begin{example}[平移型弱收敛]
+
+设$f\in L^p(\mathbb{R})\setminus\{0\},\ 1<p<\infty$，令$f_n(x)=f(x+n),\ x\in\mathbb{R},\ n=1,2,\cdots$，则$f_n\rightharpoonup0$，但$\|f_n\|=\|f\|$，即$f_n$弱收敛但不强收敛于$0$。
+\end{example}
+\begin{proof}
+
+需证对任意$g\in(L^p(\mathbb{R}))^*=L^q(\mathbb{R})$（$\frac{1}{p}+\frac{1}{q}=1$），成立
+\begin{align}
+\int_{\mathbb{R}}f_n(x)g(x)\mathrm{d}x=\int_{\mathbb{R}}f(x+n)g(x)\mathrm{d}x\to0,\quad n\to\infty.\label{eq:trans_weak_conv}
+\end{align}
+$C_0^\infty(\mathbb{R})$在$L^q(\mathbb{R})$中稠密，由Banach-Steinhaus定理，只需对$g\in C_0^\infty(\mathbb{R})$验证\eqref{eq:trans_weak_conv}。作变量代换得
+\begin{align*}
+\int_{\mathbb{R}}f(x+n)g(x)\mathrm{d}x=\int_{\mathbb{R}}f(x)g(x-n)\mathrm{d}x.
+\end{align*}
+
+先设$f\in C_0^\infty(\mathbb{R})$，令$\varphi_n(x)=f(x)g(x-n)$，则存在常数$C_g>0$，使得$|\varphi_n(x)|\leqslant C_g|f(x)|$，且$\varphi_n(x)\to0,\text{a.e.},\ n\to\infty$。由Lebesgue控制收敛定理
+\begin{align}
+\lim\limits_{n\to\infty}\int_{\mathbb{R}}f_n(x)g(x)\mathrm{d}x=\lim\limits_{n\to\infty}\int_{\mathbb{R}}f(x)g(x-n)\mathrm{d}x=0.\label{eq:trans_conv_lim}
+\end{align}
+
+对一般$f$，$\forall\varepsilon>0$，取$f_\varepsilon\in C_0^\infty(\mathbb{R})$，满足$\|f-f_\varepsilon\|_{L^p}<\frac{\varepsilon}{2(\|g\|_{L^q}+1)}$，则
+\begin{align*}
+\left|\int_{\mathbb{R}}f_n(x)g(x)\mathrm{d}x\right|&=\left|\int_{\mathbb{R}}f(x)g(x-n)\mathrm{d}x\right|\\
+&\leqslant\|f-f_\varepsilon\|_{L^p}\cdot\|g\|_{L^q}+\left|\int_{\mathbb{R}}f_\varepsilon(x)g(x-n)\mathrm{d}x\right|\\
+&<\frac{\varepsilon}{2}+\left|\int_{\mathbb{R}}f_\varepsilon(x)g(x-n)\mathrm{d}x\right|.
+\end{align*}
+结合\eqref{eq:trans_conv_lim}，存在$N$，当$n\geqslant N$时，$\left|\int_{\mathbb{R}}f_n(x)g(x)\mathrm{d}x\right|<\varepsilon$，故\eqref{eq:trans_weak_conv}成立。
+
+\end{proof}
+
+
+\begin{example}[集中型弱收敛]
+
+定义平面旋转不变函数空间$\mathscr{X}$：元素为$f(x,y)=u(r)$（$r=\sqrt{x^2+y^2}$），满足$u\in L^2_{\frac{4r\mathrm{d}r}{(1+r^2)^2}}(\mathbb{R}_+^1)$，$u'\in L^2_{r\mathrm{d}r}(\mathbb{R}_+^1)$，范数平方为
+\begin{align*}
+\|u\|^2=\int_{0}^{\infty}|u(r)|^2\frac{4r\mathrm{d}r}{(1+r^2)^2}+\int_{0}^{\infty}|u'(r)|^2r\mathrm{d}r.
+\end{align*}
+
+对$\lambda>0$，定义
+\begin{align*}
+\phi_\lambda(r)=\frac{-1+\lambda^2r^2}{1+\lambda^2r^2},\quad \psi_\lambda(r)=\frac{2\lambda r}{1+\lambda^2r^2},
+\end{align*}
+可验证$(\phi_\lambda,\psi_\lambda)\in\mathscr{X}$：
+\begin{align*}
+|\phi_\lambda(r)|^2+|\psi_\lambda(r)|^2=1\implies\int_{0}^{\infty}\left(|\phi_\lambda(r)|^2+|\psi_\lambda(r)|^2\right)\frac{4r\mathrm{d}r}{(1+r^2)^2}=2,
+\end{align*}
+且
+\begin{align*}
+\begin{cases}
+(\phi_\lambda')_r=\frac{4\lambda^2r}{(1+\lambda^2r^2)^2},\\
+(\psi_\lambda')_r=\frac{2\lambda(1-\lambda^2r^2)}{(1+\lambda^2r^2)^2},
+\end{cases}
+\end{align*}
+故
+\begin{align*}
+\int_{0}^{\infty}\left(|(\phi_\lambda')_r|^2+|(\psi_\lambda')_r|^2\right)r\mathrm{d}r=2.
+\end{align*}
+
+当$\lambda_j\to\infty$时，$(\phi_{\lambda_j},\psi_{\lambda_j})$存在弱收敛子列，但$\phi_{\lambda_j}$不强收敛；除$r=0$外，$(\phi_\lambda,\psi_\lambda)$逐点收敛到常值函数$(1,0)$。该例子的几何意义为：一族能量有界的调和映射，能量可集中于一点。
+\end{example}
+
+\begin{example}
+求证: $(l^p)^*=l^q \left(1\leqslant p<\infty,\frac{1}{p}+\frac{1}{q}=1\right)$.
+\end{example}
+
+\begin{example}
+设$C$是收敛数列的全体，赋以范数
+\begin{align*}
+\|\cdot\|:\{\xi_k\}\in C\mapsto \sup\limits_{k\geqslant1}|\xi_k|,
+\end{align*}
+求证: $C^*=l^1$.
+\end{example}
+
+\begin{example}
+设$C_0$是以$0$为极限的数列全体，赋以范数
+\begin{align*}
+\|\cdot\|:\{\xi_k\}\in C\mapsto \sup\limits_{k\geqslant1}|\xi_k|,
+\end{align*}
+求证: $C_0^*=l^1$.
+\end{example}
+
+\begin{example}
+求证: 有限维$B^*$空间必是自反的.
+\end{example}
+
+\begin{example}
+求证: $B$空间是自反的，当且仅当它的共轭空间是自反的.
+\end{example}
+
+\begin{example}
+设$\mathscr{X}$是$B^*$空间，$T$是从$\mathscr{X}$到$\mathscr{X}^{**}$的自然映射，求证: $R(T)$是闭的充要条件是$\mathscr{X}$是完备的.
+\end{example}
+
+\begin{example}
+在$l^1$中定义算子
+\begin{align*}
+T:(x_1,x_2,\cdots,x_n,\cdots)\mapsto(0,x_1,x_2,\cdots,x_n,\cdots),
+\end{align*}
+求证: $T\in\mathscr{L}(l^1)$并求$T^*$.
+\end{example}
+
+\begin{example}
+在$l^2$中定义算子
+\begin{align*}
+T:(x_1,x_2,\cdots,x_n,\cdots)\mapsto\left(x_1,\frac{x_2}{2},\cdots,\frac{x_n}{n},\cdots\right),
+\end{align*}
+求证: $T\in\mathscr{L}(l^2)$并求$T^*$.
+\end{example}
+
+\begin{example}
+设$H$是Hilbert空间，$A\in\mathscr{L}(H)$并满足
+\begin{align*}
+(Ax,y)=(x,Ay)\quad(\forall x,y\in H),
+\end{align*}
+求证:
+\begin{enumerate}[(1)]
+\item $A^*=A$;
+\item 若$R(A)$在$H$中稠密，则方程$Ax=y$对$\forall y\in R(A)$存在唯一解.
+\end{enumerate}
+\end{example}
+
+\begin{example}
+设$\mathscr{X},\mathscr{Y}$是$B^*$空间，$A\in\mathscr{L}(\mathscr{X},\mathscr{Y})$，又设$A^{-1}$存在且$A^{-1}\in\mathscr{L}(\mathscr{Y},\mathscr{X})$，求证:
+\begin{enumerate}[(1)]
+\item $(A^*)^{-1}$存在，且$(A^*)^{-1}\in\mathscr{L}(\mathscr{X}^*,\mathscr{Y}^*)$;
+\item $(A^*)^{-1}=(A^{-1})^*$.
+\end{enumerate}
+\end{example}
+
+\begin{example}
+设$\mathscr{X},\mathscr{Y},\mathscr{Z}$是$B^*$空间，而$B\in\mathscr{L}(\mathscr{X},\mathscr{Y})$以及$A\in\mathscr{L}(\mathscr{Y},\mathscr{Z})$，求证: $(AB)^*=B^*A^*$.
+\end{example}
+
+\begin{example}
+设$\mathscr{X},\mathscr{Y}$是$B$空间，$T$是$\mathscr{X}$到$\mathscr{Y}$的线性算子，又设对$\forall g\in\mathscr{Y}^*$，$g(Tx)$是$\mathscr{X}$上的有界线性泛函，求证: $T$是连续的.
+\end{example}
+
+\begin{example}
+设$\{x_n\}\subseteq C[a,b]$，$x\in C[a,b]$且$x_n\to x\ (n\to\infty)$，求证:
+\begin{align*}
+\lim\limits_{n\to\infty}x_n(t)=x(t)\quad(\forall t\in[a,b])\quad(\text{点点收敛}).
+\end{align*}
+\end{example}
+
+\begin{example}
+已知在$B^*$空间中$x_n\rightharpoonup x_0\ (n\to\infty)$，求证:
+\begin{align*}
+\lim\limits_{n\to\infty}\|x_n\|\geqslant\|x_0\|.
+\end{align*}
+\end{example}
+
+\begin{example}
+设$H$是Hilbert空间，$\{e_n\}$是$H$的正交规范基，求证: 在$H$中$x_n\rightharpoonup x_0\ (n\to\infty)$的充要条件是
+\begin{enumerate}[(1)]
+\item $\|x_n\|$有界;
+\item $(x_n,e_k)\to(x_0,e_k)\ (n\to\infty)(k=1,2,\cdots)$.
+\end{enumerate}
+\end{example}
+
+\begin{example}
+设$S_n$是$L^p(\mathbb{R})(1\leqslant p<\infty)$到自身的算子:
+\begin{align*}
+(S_nu)(x)=
+\begin{cases}
+u(x),&|x|\leqslant n,\\
+0,&|x|>n,
+\end{cases}
+\end{align*}
+其中$u\in L^p(\mathbb{R})$是任意的，求证: $\{S_n\}$强收敛于恒同算子$I$，但不一致收敛到$I$.
+\end{example}
+
+\begin{example}
+设$H$是Hilbert空间，在$H$中$x_n\rightharpoonup x_0\ (n\to\infty)$，而且$y_n\rightharpoonup y_0\ (n\to\infty)$，求证: $(x_n,y_n)\to(x_0,y_0)\ (n\to\infty)$.
+\end{example}
+
+\begin{example}
+设$\{e_n\}$是Hilbert空间$H$中的正交规范集，求证: 在$H$中$e_n\rightharpoonup \theta\ (n\to\infty)$，但$e_n\nrightarrow \theta\ (n\to\infty)$.
+\end{example}
+
+\begin{example}
+设$H$是Hilbert空间，求证: 在$H$中$x_n\rightharpoonup x\ (n\to\infty)$的充要条件是
+\begin{enumerate}[(1)]
+\item $\|x_n\|\to\|x\|\ (n\to\infty)$;
+\item $x_n\rightharpoonup x\ (n\to\infty)$.
+\end{enumerate}
+\end{example}
+
+\begin{example}
+求证: 在自反的$B$空间中，集合的弱列紧性与有界性是等价的.
+\end{example}
+
+\begin{example}
+求证: $B^*$空间中的闭凸集是弱闭的，即若$M$是闭凸集，$\{x_n\}\subseteq M$，且$x_n\rightharpoonup x_0\ (n\to\infty)$，则$x_0\in M$.
+\end{example}
+
+\begin{example}
+设$\mathscr{X}$是自反的$B$空间，$M$是$\mathscr{X}$中的有界闭凸集，$\forall f\in\mathscr{X}^*$，求证: $f$在$M$上达到最大值和最小值.
+\end{example}
+
+\begin{example}
+设$\mathscr{X}$是自反的$B$空间，$M$是$\mathscr{X}$中的非空闭凸集，求证: $\exists x_0\in M$，使得$\|x_0\|=\inf\limits\{\|x\|\mid x\in M\}$.
+\end{example}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}

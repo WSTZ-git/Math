@@ -1,0 +1,206 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}} % 指定图片目录,后续可以直接使用图片文件名
+% 注意这里的文件路径不能用 ../../image/ ,否则用latexmk编译子文件会报错
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[scale=0.3]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{分圆域$\,\,$二项方程}
+
+本节介绍**分圆域**，即多项式$x^n-1$与$x^n-a$的分裂域，二者是两类重要的域扩张。
+设$F$为特征为$p$的域，满足$(n,p)=1$。对任意$k\in\mathbb{N}$，$F[x]$中成立
+\begin{align*}
+x^{np^k}-1=(x^n-1)^{p^k},
+\end{align*}
+故$x^n-1$与$x^{np^k}-1$的分裂域一致。因此当$\mathrm{ch}\,F=p$时，可假设$p\nmid n$，讨论$x^n-1$的分裂域。
+
+\begin{definition}
+设$F$为域，$\theta$为$x^n-1$在$F$的代数闭包中的根，则称$\theta$为\textbf{$n$次单位根}。若$n$次单位根$\theta$满足
+\begin{align*}
+\theta^n=1,\quad \theta^m\neq1,\quad 0<m<n,
+\end{align*}
+则称$\theta$为\textbf{$n$次本原单位根}。
+\end{definition}
+
+\begin{theorem}
+设$\theta$为$n$次本原单位根，则$\theta^k$为$n$次本原单位根当且仅当$(k,n)=1$；因此$n$次本原单位根共有$\varphi(n)$个，其中$\varphi(n)$为\textbf{欧拉函数}，表示小于$n$且与$n$互素的正整数的个数。
+\end{theorem}
+\begin{proof}
+
+记$K$为$x^n-1\in F[x]$的分裂域，则全体$n$次单位根关于乘法构成群。
+求导得$(x^n-1)'=nx^{n-1}$，由$\mathrm{ch}\,F\nmid n$，得$\gcd(x^n-1,nx^{n-1})=1$，故$x^n-1$无重根，$n$次单位根群为$n$阶循环群$\langle\theta\rangle=\{1,\theta,\dots,\theta^{n-1}\}$。
+$\theta^k$为$n$次本原单位根当且仅当$\theta^k$是$n$阶元素，而循环群中元素$\theta^k$的阶为$\frac{n}{\gcd(k,n)}$，故其阶为$n$当且仅当$\gcd(k,n)=1$。
+因此$n$次本原单位根的个数为$\varphi(n)$。
+
+\end{proof}
+
+\begin{definition}
+设$\theta_1,\theta_2,\dots,\theta_{\varphi(n)}$为全体$n$次本原单位根，称首一多项式
+\begin{align*}
+\phi_n(x)=\prod\limits_{i=1}^{\varphi(n)}(x-\theta_i)
+\end{align*}
+为\textbf{$n$次分圆多项式}。
+\end{definition}
+
+\begin{examples}
+\begin{enumerate}[(1)]
+\item 设$p$为素数，$p$次单位根群为$p$阶循环群，故任意非幺元均为$p$次本原单位根，因此
+\begin{align*}
+\phi_p(x)=x^{p-1}+x^{p-2}+\dots+1.
+\end{align*}
+\item $\phi_4(x)=x^2+1$，且
+\begin{align*}
+x^4-1=(x-1)(x+1)(x^2+1)=\phi_1(x)\phi_2(x)\phi_4(x).
+\end{align*}
+\end{enumerate}
+\end{examples}
+
+\begin{theorem}
+对任意$n\in\mathbb{N}$，成立
+\begin{enumerate}[(1)]
+\item $x^n-1=\prod\limits_{d\mid n}\phi_d(x)$；
+\item $\phi_n(x)$是整系数首一多项式；
+\item $\phi_n(x)$在$\mathbb{Q}[x]$中不可约。
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 若$d\mid n$，则任意$d$次单位根均为$n$次单位根，故$\phi_d(x)\mid x^n-1$。
+对$n$的不同因子$d,d'$，$\gcd(\phi_d(x),\phi_{d'}(x))=1$，因此$\prod\limits_{d\mid n}\phi_d(x)\mid x^n-1$。
+反之，任意$n$次单位根的阶为某个$d\mid n$，故其为$d$次本原单位根，即$x-\alpha\mid\phi_d(x)$，因此$x^n-1\mid\prod\limits_{d\mid n}\phi_d(x)$。
+二者均为首一多项式，故$x^n-1=\prod\limits_{d\mid n}\phi_d(x)$。
+
+\item 对$n$用数学归纳法。
+当$n=1$时，$\phi_1(x)=x-1$，结论成立。
+假设对所有小于$n$的正整数$d$，$\phi_d(x)\in\mathbb{Z}[x]$为首一多项式。
+由(1)得
+\begin{align*}
+\phi_n(x)=\frac{x^n-1}{\prod\limits_{\substack{d\mid n\\d<n}}\phi_d(x)},
+\end{align*}
+由多项式除法，$\phi_n(x)$为整系数首一多项式。
+
+\item 反证法。设$\phi_n(x)=h(x)k(x)$，其中$h(x),k(x)\in\mathbb{Z}[x]$为首一多项式，$h(x)$在$\mathbb{Q}[x]$中不可约。
+取$h(x)$的根$\theta$（$n$次本原单位根），对任意与$n$互素的素数$p$，下证$\theta^p$也是$h(x)$的根。
+若$\theta^p$是$k(x)$的根，则$k(\theta^p)=0$，即$\theta$是$k(x^p)$的根。
+由$h(x)$不可约，得$h(x)\mid k(x^p)$，故$k(x^p)=h(x)l(x)$。
+将上式模$p$得到$\overline{k}(x)^p=\overline{h}(x)\overline{l}(x)\in\mathbb{F}_p[x]$，故$\gcd(\overline{h}(x),\overline{k}(x))\neq1$，即$x^n-1=\overline{h}(x)\overline{k}(x)\prod\limits_{\substack{d\mid n\\d<n}}\overline{\phi_d}(x)$在$\mathbb{F}_p[x]$中有重根。
+但$\mathrm{ch}\,\mathbb{F}_p=p\nmid n$，$x^n-1$无重根，矛盾。
+因此对任意满足$(m,n)=1$的正整数$m$，$\theta^m$是$h(x)$的根，即所有$n$次本原单位根均为$h(x)$的根，故$\phi_n(x)=h(x)$，即$\phi_n(x)$在$\mathbb{Q}[x]$中不可约。
+\end{enumerate}
+
+\end{proof}
+
+\begin{remark}
+若$(n,p)=1$，将$\phi_n(x)$视为$\mathbb{F}_p[x]$中的多项式，则$\phi_n(x)$不一定不可约。
+\end{remark}
+
+\begin{example}
+$\phi_{12}(x)=x^4-x^2+1$在$\mathbb{F}_{11}[x]$中可分解：
+\begin{align*}
+\phi_{12}(x)=(x^2+1)^2-3x^2=(x^2+1)^2-25x^2=(x^2-5x+1)(x^2+5x+1).
+\end{align*}
+\end{example}
+
+\begin{definition}
+设$\Pi$为素域，$\mathrm{ch}\,\Pi\nmid n$，称$x^n-1\in\Pi[x]$的分裂域为\textbf{$n$次单位根域}或\textbf{$n$次分圆域}。
+\end{definition}
+
+\begin{theorem}
+$\mathrm{Gal}(\phi_n(x),\mathbb{Q})$与模$n$的乘法群$U_n=\{\overline{k}\in\mathbb{Z}/n\mathbb{Z}\mid (k,n)=1\}$同构，故为Abel群。特别地，当$p$为奇素数时，$U_{p^k}$为循环群。
+\end{theorem}
+\begin{proof}
+
+$|U_n|=\varphi(n)$。
+记$E$为$x^n-1\in\mathbb{Q}[x]$的分裂域，$\theta$为$n$次本原单位根，则$E=\mathbb{Q}(\theta)$，且$\mathrm{Irr}(\theta,\mathbb{Q})=\phi_n(x)$，故$E$也是$\phi_n(x)$的分裂域。
+任意$\sigma\in\mathrm{Gal}(E/\mathbb{Q})$由$\sigma(\theta)$唯一确定，且$\sigma(\theta)=\theta^{k_\sigma}$，其中$(k_\sigma,n)=1$。
+定义映射$\chi:\mathrm{Gal}(E/\mathbb{Q})\to U_n,\ \sigma\mapsto \overline{k_\sigma}$，则$\chi$为双射，且
+\begin{align*}
+\chi(\sigma\tau)=\chi(\sigma)\chi(\tau),\quad \forall\sigma,\tau\in\mathrm{Gal}(E/\mathbb{Q}),
+\end{align*}
+故$\mathrm{Gal}(E/\mathbb{Q})\cong U_n$，为Abel群。
+
+当$p$为奇素数时，$\varphi(p^k)=p^{k-1}(p-1)$，且$\gcd(p^{k-1},p-1)=1$，故$U_{p^k}\cong H\times K$，其中$|H|=p^{k-1}$，$|K|=p-1$。
+\begin{enumerate}[(1)]
+\item 证$K$为循环群：取$b=a^{p^{k-1}}$，其中$a$是模$p$的原根，则$b$的阶为$p-1$，故$K$为$p-1$阶循环群。
+\item 证$H$为循环群：$H$为$p^{k-1}$阶Abel群，其$p$阶元生成的子群阶为$p$，故$H$为循环群。
+\end{enumerate}
+因此$U_{p^k}$为循环群。
+
+\end{proof}
+
+\begin{theorem}
+$U_2,U_4$为循环群；当$k\geqslant3$时，$U_{2^k}$是2阶循环群与$2^{k-2}$阶循环群的直积。
+\end{theorem}
+\begin{proof}
+
+$\varphi(2)=1,\varphi(4)=2$，故$U_2,U_4$为循环群。
+当$k\geqslant3$时，由Abel群基本定理，$U_{2^k}=H_1\times H_2\times\dots\times H_m$，其中$|H_i|=2^{k_i}$。
+$U_{2^k}$中2阶元生成的子群阶为$2^2=4$，故$m\geqslant2$。
+取$a=\overline{5}\in U_{2^k}$，对$k\geqslant3$用数学归纳法可证$a$的阶为$2^{k-2}$，故$U_{2^k}$包含$2^{k-2}$阶循环子群。
+因此$m=2$，即$U_{2^k}$为2阶循环群与$2^{k-2}$阶循环群的直积。
+
+\end{proof}
+
+\begin{example}
+$\mathrm{Gal}(\phi_{12}(x),\mathbb{Q})\cong U_{12}\cong K_4$（Klein四元群）。
+事实上，$U_{12}=\{\overline{1},\overline{5},\overline{7},\overline{11}\}$，且$\overline{5}^2=\overline{7}^2=\overline{11}^2\equiv1\pmod{12}$。
+\end{example}
+
+\begin{theorem}
+设$F$为域，$\mathrm{ch}\,F\nmid n$，$F$包含全体$n$次单位根，$a\in F$，则$\mathrm{Gal}(x^n-a,F)$同构于$n$阶循环群的子群，其阶$r$是满足$a^r=b^n\ (b\in F)$的最小正整数。
+\end{theorem}
+\begin{proof}
+
+设$\zeta$为$x^n-a$的根，$\theta$为$n$次本原单位根，则$x^n-a=\prod\limits_{i=0}^{n-1}(x-\theta^i\zeta)$。
+由$F$包含全体$n$次单位根，得$\theta\in F$，故$x^n-a$的分裂域为$F(\zeta)$。
+任意$\sigma\in\mathrm{Gal}(F(\zeta)/F)$由$\sigma(\zeta)$唯一确定，且$\sigma(\zeta)=\theta^{k_\sigma}\zeta$。
+映射$\sigma\mapsto\theta^{k_\sigma}$是群单同态，故$\mathrm{Gal}(F(\zeta)/F)$同构于$n$阶循环群的子群。
+设$\mathrm{Gal}(F(\zeta)/F)=\langle\sigma\rangle$，阶为$r$，则$\sigma^r(\zeta)=\zeta=\theta^{k_\sigma r}\zeta$，故$k_\sigma r\equiv0\pmod{n}$。
+同时
+\begin{align*}
+\sigma^r(\zeta^r)=(\sigma(\zeta))^r=\theta^{k_\sigma r}\zeta^r=\zeta^r=b\in F,
+\end{align*}
+即$a^r=(\zeta^n)^r=(\zeta^r)^n=b^n$，故$r$是满足$a^r=b^n\ (b\in F)$的最小正整数。
+
+\end{proof}
+
+\begin{theorem}
+设$F$为包含全体$n$次单位根的域，$\mathrm{ch}\,F\nmid n$，$K/F$为$n$次Galois扩张且$\mathrm{Gal}(K/F)$为循环群，则存在$\zeta\in K$使得$K=F(\zeta)$且$\zeta^n=a\in F$。
+若另有$\delta\in K$满足$K=F(\delta)$且$\delta^n\in F$，则存在$r\in\mathbb{N},\ c\in F$使得$\delta=c\zeta^r$。
+\end{theorem}
+\begin{proof}
+
+$K/F$为有限可分正规扩张，故存在本原元$\xi$使得$K=F(\xi)$，$\mathrm{Gal}(K/F)=\langle\sigma\rangle$为$n$阶循环群。
+取$n$次本原单位根$\theta$，令
+\begin{align*}
+\zeta=\sum\limits_{j=0}^{n-1}\sigma^j(\xi^{i-1})\theta^j\neq0,
+\end{align*}
+则
+\begin{align*}
+\sigma(\zeta)=\theta^{-1}\zeta,
+\end{align*}
+故
+\begin{align*}
+\sigma(\zeta^n)=(\sigma(\zeta))^n=(\theta^{-1}\zeta)^n=\zeta^n=a\in F.
+\end{align*}
+$x^n-a=\prod\limits_{i=0}^{n-1}(x-\theta^i\zeta)$，$\mathrm{Gal}(K/F)$在$x^n-a$的根上的作用可迁，故$x^n-a$在$F$上不可约，$K=F(\zeta)$。
+
+若$K=F(\delta)$且$\delta^n=b\in F$，则$\sigma(\delta)=\theta^{-r}\delta$，于是
+\begin{align*}
+\sigma\left(\frac{\delta}{\zeta^r}\right)=\frac{\delta}{\zeta^r}=c\in F,
+\end{align*}
+即$\delta=c\zeta^r$。
+
+\end{proof}
+
+
+
+\end{document}

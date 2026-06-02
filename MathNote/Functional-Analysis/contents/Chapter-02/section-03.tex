@@ -1,0 +1,792 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}} % 指定图片目录,后续可以直接使用图片文件名
+% 注意这里的文件路径不能用 ../../image/ ,否则用latexmk编译子文件会报错
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[scale=0.3]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{纲与开映射定理}
+
+\subsection{纲与纲推理}
+
+\begin{definition}
+设$(\mathscr{X},\rho)$是一个度量空间, 集合$E\subseteq\mathscr{X}$, 称$E$是\textbf{疏的}或\textbf{疏集}或\textbf{疏朗集}, 如果$\overline{E}$的内点是空的.
+\end{definition}
+
+\begin{examples}
+在$\mathbb{R}^n$上, 有穷点集是疏集. Cantor集是疏集.
+\end{examples}
+
+\begin{proposition}
+设$(\mathscr{X},\rho)$是一度量空间. $E\subseteq\mathscr{X}$是疏集当且仅当: 对$\forall B(x_0,r_0),\exists B(x_1,r_1)\subseteq B(x_0,r_0)$, 使得$\overline{E}\cap\overline{B}(x_1,r_1)=\varnothing$.
+\end{proposition}
+\begin{proof}
+
+{\heiti 必要性:} 因为$\overline{E}$无内点, 所以$\overline{E}$不能包含任一球$B(x_0,r_0)$. 从而$\exists x_1\in B(x_0,r_0)$, 使得$x_1\notin\overline{E}$. 又由$\overline{E}$闭, 所以$\overline{E}^c$是开集，进而$\exists\varepsilon_1>0$, 使得$\overline{B}(x_1,\varepsilon_1)\cap\overline{E}=\varnothing$. 取
+\begin{align*}
+0<r_1<\min(\varepsilon_1,r_0-\rho(x_0,x_1)),
+\end{align*}
+便有$B(x_1,r_1)\subseteq B(x_0,r_0)$, $\overline{B}(x_1,r_1)\cap\overline{E}=\varnothing$.
+
+{\heiti 充分性:} 若$E$不疏, 即$\overline{E}$有内点, 则$\exists B(x_0,r_0)\subseteq\overline{E}$. 但由假设$\exists B(x_1,r_1)\subseteq B(x_0,r_0)$, 使得$\overline{B}(x_1,r_1)\cap\overline{E}=\varnothing$. 一方面有$B(x_1,r_1)\cap\overline{E}=B(x_1,r_1)$; 另一方面有$B(x_1,r_1)\cap\overline{E}=\varnothing$. 即得矛盾!
+
+\end{proof}
+
+\begin{definition}
+在度量空间$(\mathscr{X},\rho)$上, 集合$E$称为\textbf{第一纲的}, 如果$E=\bigcup\limits_{n=1}^{\infty}E_n$, 其中$E_n$是疏集. 不是第一纲的集合称为\textbf{第二纲集}.
+\end{definition}
+
+\begin{examples}
+在$\mathbb{R}$上, 有理点集是第一纲集. 更一般地, 可数点集总是第一纲集.
+\end{examples}
+
+\begin{theorem}[Baire纲定理]\label{theorem:泛函分析--Baire纲定理}
+完备度量空间$(\mathscr{X},\rho)$是第二纲集.
+\end{theorem}
+\begin{proof}
+
+用反证法. 倘若$\mathscr{X}$是第一纲集, 即存在疏集$\{E_n\}$, 使得
+\begin{align}
+\mathscr{X}=\bigcup\limits_{n=1}^{\infty}E_n.
+\end{align}
+对任意的球$B(x_0,r_0),\exists B(x_1,r_1)\subseteq B(x_0,r_0)(r_1<1)$, 使得$\overline{B}(x_1,r_1)\cap\overline{E_1}=\varnothing$;
+
+对球$B(x_1,r_1),\exists B(x_2,r_2)\subseteq B(x_1,r_1)(r_2<\frac{1}{2})$, 使得$\overline{B}(x_2,r_2)\cap(\overline{E_1}\cup\overline{E_2})=\varnothing$;
+
+如此继续下去, 对球$B(x_{n-1},r_{n-1}),\exists B(x_n,r_n)\subseteq B(x_{n-1},r_{n-1})(r_n<1/n)$, 使得$\overline{B}(x_n,r_n)\cap\overline{E_n}=\varnothing$, 从而
+\begin{align}
+\overline{B}(x_n,r_n)\cap\left(\bigcup\limits_{i=1}^{n}\overline{E_i}\right)=\varnothing\quad(\forall n\in\mathbb{N}).
+\end{align}
+于是我们得到
+\begin{align*}
+\overline{B}(x_0,r_0)\supseteq\overline{B}(x_1,r_1)\supseteq\cdots\supseteq\overline{B}(x_n,r_n)\supseteq\cdots,
+\end{align*}
+而
+\begin{align}
+\rho(x_{n+p},x_n)\leqslant r_n<\frac{1}{n}\quad(\forall n,p\in\mathbb{N}).
+\end{align}
+由此可见$\{x_n\}$是基本列, 从而$\exists x\in\mathscr{X}$, 使得$\lim\limits_{n\to\infty}x_n=x$. 另一方面在式中令$p\to\infty$得$\rho(x,x_n)\leqslant r_n$, 从而
+\begin{align}
+x\in\overline{B}(x_n,r_n)\quad(\forall n\in\mathbb{N}).
+\end{align}
+联立式与式便有$x\notin\bigcup\limits_{n=1}^{\infty}E_n$, 这与式矛盾.
+
+\end{proof}
+
+\begin{theorem}
+在$C[0,1]$中处处不可微的函数集合$E$是非空的, 更确切地, $E$的余集是第一纲集.
+\end{theorem}
+\begin{remark}
+Vander Waerden Function:
+\begin{align*}
+f\left( x \right) =\sum_{n=0}^{\infty}{\frac{\varphi \left( 4^nx \right)}{4^n}},\text{其中}\varphi \left( x \right) =\underset{k\in \mathbb{Z}}{\min}\left\{ \left| x-k \right| \right\}
+\end{align*}
+就是\href{https://mp.weixin.qq.com/s/ki-x99Me_kKvQUvfXS-GGQ}{处处连续但处处不可微的函数}.
+\end{remark}
+\begin{proof}
+
+取$\mathscr{X}=C[0,1]$, 设$A_n$表示$\mathscr{X}$中这样一些元素$f$之集: 对$f,\exists s\in[0,1]$, 使对适合$0\leqslant s+h\leqslant1$与$|h|\leqslant1/n$的任何$h$, 成立下式:
+\begin{align*}
+\left|\frac{f(s+h)-f(s)}{h}\right|\leqslant n.
+\end{align*}
+若$f$在某个点$s$处可微, 则必有正整数$n$, 使得$f\in A_n$, 于是
+\begin{align}
+\mathscr{X}\setminus E\subseteq\bigcup\limits_{n=1}^{\infty}A_n.
+\end{align}
+下面我们证明每个$A_n$是疏集, 为此先证$A_n$是闭的. 事实上, 若$f\in\mathscr{X}\setminus A_n$, 则$\forall s\in[0,1],\exists h_s$, 使得$|h_s|\leqslant\frac{1}{n}$, 且$|f(s+h_s)-f(s)|>n|h_s|$.
+
+又由$f$的连续性, $\exists\varepsilon_s>0$, 以及$s$的某个适当的邻域$J_s$, 使得对$\forall\sigma\in J_s$, 有
+\begin{align}
+|f(\sigma+h_s)-f(\sigma)|>n|h_s|+2\varepsilon_s.
+\end{align}
+根据有限覆盖定理, 可设$J_{s_1},J_{s_2},\cdots,J_{s_m}$覆盖$[0,1]$, 并设$\varepsilon=\min\{\varepsilon_{s_1},\varepsilon_{s_2},\cdots,\varepsilon_{s_m}\}$.
+
+今若$g\in\mathscr{X}$适合$\|g-f\|<\varepsilon$, 则由式, 对$\forall\sigma\in J_{s_k}(k=1,2,\cdots,m)$有
+\begin{align*}
+|g(\sigma+h_{s_k})-g(\sigma)|\geqslant|f(\sigma+h_{s_k})-f(\sigma)|-2\varepsilon>n|h_{s_k}|.
+\end{align*}
+这证明了$\mathscr{X}\setminus A_n$是开集, 从而$A_n$是闭集.
+
+再证$A_n$没有内点. $\forall f\in A_n,\forall\varepsilon>0$, 由\hyperref[Basis-of-Analytics-theorem:多项式逼近有限阶光滑函数]{Weierstrass逼近定理}, 存在多项式$p$, 使得$\|f-p\|<\frac{\varepsilon}{2}$.
+
+$p$的导数在$[0,1]$上是有界的, 因此根据中值定理, $\exists M>0$, 使得对$\forall s\in[0,1]$及$|h|<\frac{1}{n}$, 成立$|p(s+h)-p(s)|\leqslant M|h|$.
+
+设$g(s)\in C[0,1]$是一个分段线性函数, 满足$\|g\|<\frac{\varepsilon}{2}$. 并且各条线段斜率的绝对值都大于$M+n$, 那么$p+g\in B(f,\varepsilon)$, 而$p+g\notin A_n$.
+
+这样, 我们证明了每个$A_n$是疏集, 从而$\bigcup\limits_{n=1}^{\infty}A_n$是第一纲集. 而$\mathscr{X}$是完备的, 由\hyperref[theorem:泛函分析--Baire纲定理]{Baire纲定理}$\mathscr{X}$是第二纲集, 由此根据式, $E$也是第二纲集.
+
+\end{proof}
+
+
+\subsection{开映射定理}
+
+\begin{definition}
+设$\mathscr{X},\mathscr{Y}$为非空集合，$T:\mathscr{X}\to\mathscr{Y}$为映射。
+\begin{enumerate}[(1)]
+\item 若存在映射$T_r^{-1}:\mathscr{Y}\to\mathscr{X}$，使得
+\begin{align*}
+TT_r^{-1} = I,
+\end{align*}
+其中$I$为$\mathscr{Y}$上的恒同算子，则称$T$\textbf{有右逆}，并称$T_r^{-1}$为$T$的一个\textbf{右逆}。
+\item 若存在映射$T_l^{-1}:\mathscr{Y}\to\mathscr{X}$，使得
+\begin{align*}
+T_l^{-1}T = I,
+\end{align*}
+其中$I$为$\mathscr{X}$上的恒同算子，则称$T$\textbf{有左逆}，并称$T_l^{-1}$为$T$的一个\textbf{左逆}。
+\item 若$T$既有左逆$T_l^{-1}$又有右逆$T_r^{-1}$，则$T_l^{-1}=T_r^{-1}$，此时称$T$是\textbf{可逆的}，并称该公共逆为$T$的\textbf{逆算子}，记为$T^{-1}$，即
+\begin{align*}
+T_l^{-1} = T_r^{-1} = T^{-1}.
+\end{align*}
+\end{enumerate}
+\end{definition}
+
+\begin{definition}
+设$\mathscr{X},\mathscr{Y}$为拓扑空间，映射$T:\mathscr{X}\to\mathscr{Y}$称为\textbf{开映射}，如果$T$将$\mathscr{X}$中的每个开集映为$\mathscr{Y}$中的开集，即对任意开集$U\subseteq\mathscr{X}$，像集$T(U)\subseteq\mathscr{Y}$是开集。
+\end{definition}
+
+\begin{definition}
+设$\mathscr{X},\mathscr{Y}$都是$B$空间, $T\in\mathscr{L}(\mathscr{X},\mathscr{Y})$.
+\begin{enumerate}[(1)]
+\item $T$称为是\textbf{单射}, 是指$T$是1-1的.
+\item $T$称为是\textbf{满射}, 是指$T(\mathscr{X})=\mathscr{Y}$.
+\end{enumerate}
+\end{definition}
+
+\begin{theorem}[开映射定理]\label{theorem:泛函分析--开映射定理}
+设$\mathscr{X},\mathscr{Y}$都是$B$空间, 若$T\in\mathscr{L}(\mathscr{X},\mathscr{Y})$是一个满射, 则$T$是开映射.
+\end{theorem}
+\begin{remark}
+定理中的$B$空间$\mathscr{X},\mathscr{Y}$可以换成更一般的$F$空间, 但证明需稍做修改. 参看关肇直、张恭庆、冯德兴所著《线性泛函分析入门》(上海科学技术出版社, 1979)的第二章§2.
+\end{remark}
+\begin{proof}
+
+用$B(x_0,a),U(y_0,b)$分别表示$\mathscr{X},\mathscr{Y}$中的开球.
+\begin{enumerate}[(1)]
+\item 为了证明$T$是开映射, 即$\forall$开集$W,T(W)$是开集, 当且仅当证明: $\exists\delta>0$, 使得
+\begin{align}
+TB(\theta,1)\supseteq U(\theta,\delta).
+\end{align}
+事实上, 必要性是显然的. 下证其充分性. 由于$T$的线性, 充分性假设条件等价于存在$\delta>0$,使得
+\begin{align*}
+TB(x_0,r)\supseteq U(Tx_0,r\delta)\quad(\forall x_0\in\mathscr{X},\forall r>0).
+\end{align*}
+$\forall y_0\in T(W)$, 按定义$\exists x_0\in W$, 使得$y_0=Tx_0$. 因为$W$是开集, 所以$\exists B(x_0,r)\subseteq W$. 于是取$\varepsilon=r\delta$, 便有$U(Tx_0,\varepsilon)\subseteq TB(x_0,r)\subseteq T(W)$, 即$y_0=Tx_0$是$T(W)$的内点.
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{泛函分析图2.3.1.png}
+\caption{}
+\label{figure:2.3.1}
+\end{figure}
+
+\item 证明: $\exists\delta>0$, 使得$\overline{TB(\theta,1)}\supseteq U(\theta,3\delta)$. 这是因为
+\begin{align*}
+\mathscr{Y}=T\mathscr{X}=\bigcup\limits_{n=1}^{\infty}TB(\theta,n),
+\end{align*}
+而$\mathscr{Y}$是完备的, 由\hyperref[theorem:泛函分析--Baire纲定理]{Baire纲定理}知$\mathscr{Y}$是第二纲集,所以至少有一个$n\in\mathbb{N}$, 使得$TB(\theta,n)$非疏, 即$\overline{TB(\theta,n)}$至少含有一个内点. 因此$\exists U(y_0,r)\subseteq\overline{TB(\theta,n)}$, 由$T$的线性性质知$TB(\theta,n)$是一个对称凸集, 利用$TB(\theta,n)$的对称性知$U(-y_0,r)\subseteq\overline{TB(\theta,n)}$, 再由$TB(\theta,n)$是凸集知
+\begin{align*}
+U(\theta,r)\subseteq\frac{1}{2}U(y_0,r)+\frac{1}{2}U(-y_0,r)\subseteq\overline{TB(\theta,n)}.
+\end{align*}
+由$T$的齐次性, 取$\delta=\frac{r}{3n}$, 便有
+\begin{align}\label{eq::FIOJWIOIOWIJOIJOWIOIOIIOIII}
+U\left( \theta ,3\delta \right) =U\left( \theta ,\frac{r}{n} \right) =\frac{1}{n}U\left( \theta ,r \right) \subseteq \frac{1}{n}\overline{TB\left( \theta ,n \right) }=\overline{TB\left( \theta ,1 \right) }.
+\end{align}
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{泛函分析图2.3.2.png}
+\caption{}
+\label{figure:2.3.2}
+\end{figure}
+
+\item 证明: $TB(\theta,1)\supseteq U(\theta,\delta)$. $\forall y_0\in U(\theta,\delta)$, 要证$\exists x_0\in B(\theta,1)$, 使得$Tx_0=y_0$, 即求方程$Tx=y_0$在$B(\theta,1)$内的一个解$x_0$, 我们用逐次逼近法.
+
+对$y_0\in U(\theta,\delta)$,由\eqref{eq::FIOJWIOIOWIJOIJOWIOIOIIOIII}式知$3y_0\in U(\theta,3\delta)\subseteq \overline{TB(\theta,1)}$,再由$\overline{TB(\theta,1)}$是闭集知,$\exists z_1\in B(\theta,1)$,使得
+\begin{align*}
+\|3y_0-Tz_1\|<\delta.
+\end{align*}
+取$x_1=\frac{z_1}{3}$,则$\|y_0-Tx_1\|<\frac{\delta}{3}$;
+
+对$y_1=y_0-Tx_1\in U\left(\theta,\frac{\delta}{3}\right)$, 同理可知$\exists x_2\in B\left(\theta,\frac{1}{3^2}\right)$, 使得$\|y_1-Tx_2\|<\frac{\delta}{3^2}$;
+
+……………………
+
+对$y_n=y_{n-1}-Tx_n\in U\left(\theta,\frac{\delta}{3^n}\right)$, 同理可知 $\exists x_{n+1}\in B\left(\theta,\frac{1}{3^{n+1}}\right)$, 使得$\|y_n-Tx_{n+1}\|<\frac{\delta}{3^{n+1}}$;
+
+于是
+\begin{align}\label{eqFJWFHOHIJW343}
+\sum_{n=1}^{\infty}{\left\| x_n \right\|}<\sum_{n=1}^{\infty}{\frac{1}{3^n}}\leqslant \frac{1}{2},
+\end{align}
+令$S_n\triangleq\sum\limits_{i=1}^{n}x_i,\forall n\in\mathbb{N}$,则$S_n\in D(T),\forall n\in \mathbb{N}$.并且由\eqref{eqFJWFHOHIJW343}知,对$\forall n,p\in \mathbb{N}$
+\begin{align*}
+\left\| S_{n+p}-S_n \right\| =\left\| \sum_{k=n+1}^{n+p}{x_k} \right\| \leqslant \sum_{k=n+1}^{n+p}{\left\| x_k \right\|}\rightarrow 0\quad \left( n,p\rightarrow \infty \right) .
+\end{align*}
+故$\{S_n\}$是$\mathscr{X}$中的基本列,又$\mathscr{X}$是完备的,故可设$S_n\to x_0\triangleq\sum\limits_{i=1}^{\infty}x_i(n\to\infty)$,则由\eqref{eqFJWFHOHIJW343}知$x_0\in B(\theta,1)$.
+而
+\begin{align*}
+\|y_n\|&=\|y_{n-1}-Tx_n\|=\cdots=\left\|y_0-T(x_1+x_2+\cdots+x_n)\right\|<\frac{\delta}{3^n}\quad(\forall n\in\mathbb{N}),
+\end{align*}
+即得$TS_n\to y_0\quad(n\to\infty).$
+又因为$T$是连续的且$S_n\to x_0(n\to\infty)$, 所以再由极限的唯一性知$Tx_0=y_0,$
+即得$U(\theta,\delta)\subseteq TB(\theta,1)$.
+\end{enumerate}
+
+\end{proof}
+
+\begin{theorem}[Banach逆算子定理]\label{theorem:泛函分析--Banach逆算子定理}
+设$\mathscr{X},\mathscr{Y}$是$B$空间. 若$T\in\mathscr{L}(\mathscr{X},\mathscr{Y})$, 它既是单射又是满射, 那么$T^{-1}\in\mathscr{L}(\mathscr{Y},\mathscr{X})$.
+\end{theorem}
+\begin{remark}
+定理中的$B$空间$\mathscr{X},\mathscr{Y}$可以换成更一般的$F$空间, 但证明需稍做修改. 参看关肇直、张恭庆、冯德兴所著《线性泛函分析入门》(上海科学技术出版社, 1979)的第二章§2.
+\end{remark}
+\begin{proof}
+
+依\hyperref[theorem:泛函分析--开映射定理]{开映射定理}证明中的第(3)部分, $\exists \delta>0$,使得$U(\theta,1)\subseteq TB\left(\theta,\frac{1}{\delta}\right)$, 即
+\begin{align*}
+T^{-1}U(\theta ,1)\subseteq B\left( \theta ,\frac{1}{\delta} \right) \text{或}\parallel T^{-1}y\parallel <\frac{1}{\delta}\quad (\forall y\in \mathscr{Y} ,\parallel y\parallel <1).
+\end{align*}
+特别地, 由范数的齐次性, $\forall y\in\mathscr{Y},\forall\varepsilon>0$, 有$\left\| \frac{y}{\left( 1+\varepsilon \right) \left\| y \right\|} \right\| <1$,进而由上式知
+\begin{align*}
+\left\| T^{-1}\frac{y}{\left( 1+\varepsilon \right) \left\| y \right\|} \right\| <\frac{1}{\delta}\Longrightarrow \left\| T^{-1}y \right\| <\frac{1+\varepsilon}{\delta}\left\| y \right\| .
+\end{align*}
+令$\varepsilon\to0$得
+\begin{align*}
+\|T^{-1}y\|\leqslant\frac{1}{\delta}\|y\|\quad(\forall y\in\mathscr{Y}).
+\end{align*}
+从而$T^{-1}\in\mathscr{L}(\mathscr{Y},\mathscr{X})$.
+
+\end{proof}
+
+
+\begin{definition}
+设$\mathscr{X},\mathscr{Y}$是$B^*$空间,$T$是$\mathscr{X}\to\mathscr{Y}$的线性算子, $D(T)$是其定义域. 称$T$是\textbf{闭的}, 是指由$x_n\in D(T),x_n\to x$, 以及$Tx_n\to y$就能推出$x\in D(T)$, 而且$y=Tx$.
+\end{definition}
+
+\begin{proposition}\label{proposition:有界线性算子必是闭的}
+设$\mathscr{X},\mathscr{Y}$是$B^*$空间,$T: \mathscr{X} \to  \mathscr{X}$ 为有界线性算子，则 $T$ 是闭算子。
+\end{proposition}
+\begin{proof}
+
+设 $\{x_n\} \subset \mathscr{X}$ 满足 $x_n \to x$且 $Tx_n \to y$。由于 $T$ 有界，从而由\refpro{proposition:线性算子有界当且仅当连续}知$T$是连续的，故 $Tx_n \to Tx$。又极限唯一，所以 $y = Tx$。显然 $x \in \mathscr{X} = D(T)$。因此 $T$ 是闭的。
+\end{proof}
+
+\begin{examples}
+在$C[0,1]$上, $D(T)=C^1[0,1], T=\frac{\mathrm{d}}{\mathrm{d}t}$是一个闭线性算子.
+\end{examples}
+\begin{proof}
+
+如果$x_n(t)\in C^1[0,1]$, 并且有
+\begin{align*}
+x_n\to x(C[0,1]),\quad \frac{\mathrm{d}x_n}{\mathrm{d}t}\to y(C[0,1]),
+\end{align*}
+则有
+\begin{align*}
+x_n(t)-x_n(0)\to\int_{0}^{t}y(\tau)\mathrm{d}\tau\quad(\forall t\in[0,1]),\\
+x_n(t)-x_n(0)\to x(t)-x(0)\quad(\forall t\in[0,1]),
+\end{align*}
+即得
+\begin{align*}
+x(t)=x(0)+\int_{0}^{t}y(\tau)\mathrm{d}\tau\quad(\forall t\in[0,1]).
+\end{align*}
+因此, $x\in C^1[0,1]$, 且$\frac{\mathrm{d}x}{\mathrm{d}t}=y(t)$.
+
+\end{proof}
+
+\begin{theorem}
+若$\mathscr{X},\mathscr{Y}$是$B$空间, $T$是$\mathscr{X}\to\mathscr{Y}$的一个闭线性算子, 满足$R(T)$是$\mathscr{Y}$中的第二纲集, 则$R(T)=\mathscr{Y}$并且$\forall\varepsilon>0,\exists\delta=\delta(\varepsilon)>0$, 使得$\forall y\in\mathscr{Y},\|y\|<\delta$必有$x\in D(T)$, 适合$\|x\|<\varepsilon$且$y=Tx$.
+\end{theorem}
+\begin{remark}
+在这个定理中, $T\mathscr{X}$是第二纲集的假设是不可少的(满射及$\mathscr{Y}$的完备性保证了这一点). 因为有例子, 取$\mathscr{X}=\mathscr{Y}=C[0,1]$, 规定
+\begin{align*}
+(Tx)(t)=\int_{0}^{t}x(\tau)\mathrm{d}\tau\quad(\forall x\in\mathscr{X}).
+\end{align*}
+它显然是连续线性的, 但$T\mathscr{X}=\mathscr{Y}_0=\{y\in C^1[0,1]|y(0)=0\}$不是$C[0,1]$的第二纲集. 这时$T^{-1}=\frac{\mathrm{d}}{\mathrm{d}t}$在$C[0,1]$中不是连续的(即使以$C[0,1]$中的一个子集$\mathscr{Y}_0$作为$T^{-1}$的定义域, 也不连续). 事实上, $x_n(t)\triangleq\sin n\pi t$, 显然$\|x_n\|=1$, 但是
+\begin{align*}
+\left\|\frac{\mathrm{d}}{\mathrm{d}t}x_n(t)\right\|=n\pi\|\cos n\pi t\|=n\pi\to\infty\quad(\text{当}n\to\infty),
+\end{align*}
+其中$\|\cdot\|$表示$C[0,1]$空间中的范数. 然而, 若$\mathscr{Y}_0$按$C^1[0,1]$的范数$\|\cdot\|_1$则构成$B$空间, 这时$T^{-1}=\frac{\mathrm{d}}{\mathrm{d}t}$是有界的. 事实上,
+\begin{align*}
+\|T^{-1}y\|=\left\|\frac{\mathrm{d}}{\mathrm{d}t}y(t)\right\|\leqslant\|y\|_1\quad(\forall y\in\mathscr{Y}_0).
+\end{align*}
+\end{remark}
+\begin{proof}
+
+用$B(x_0,a),U(y_0,b)$分别表示$\mathscr{X},\mathscr{Y}$中的开球.令$B_n\triangleq B(\theta,n)\cap D(T)$,则
+\begin{align*}
+R(T)=\bigcup\limits_{n=1}^{\infty}TB_n,
+\end{align*}
+而$R(T)$是第二纲集,所以至少有一个$n\in\mathbb{N}$, 使得$TB_n$非疏, 即$\overline{TB_n}$至少含有一个内点. 因此$\exists U(y_0,r)\subseteq\overline{TB_n}$, 由$T$的线性性质知$TB_n$是一个对称凸集, 利用$TB_n$的对称性知$U(-y_0,r)\subseteq\overline{TB_n}$, 再由$TB_n$是凸集知
+\begin{align*}
+U(\theta,r)\subseteq\frac{1}{2}U(y_0,r)+\frac{1}{2}U(-y_0,r)\subseteq\overline{TB_n}.
+\end{align*}
+由$T$的齐次性, 取$\delta=\frac{r}{3n}$, 便有
+\begin{align}\label{eq::FIOJWIOIOWIJOIJOWIOIOIIOIII1}
+U\left( \theta ,3\delta \right) =U\left( \theta ,\frac{r}{n} \right) =\frac{1}{n}U\left( \theta ,r \right) \subseteq \frac{1}{n}\overline{TB_n }=\overline{TB_n }.
+\end{align}
+再利用逐次逼近法.
+
+对$y_0\in U(\theta,\delta)$,由\eqref{eq::FIOJWIOIOWIJOIJOWIOIOIIOIII1}式知$3y_0\in U(\theta,3\delta)\subseteq \overline{TB_1}$,再由$\overline{TB_n}$是闭集知,$\exists z_1\in B_1$,使得
+\begin{align*}
+\|3y_0-Tz_1\|<\delta.
+\end{align*}
+取$x_1=\frac{z_1}{3}$,则$\|y_0-Tx_1\|<\frac{\delta}{3}$;
+
+对$y_1=y_0-Tx_1\in U\left(\theta,\frac{\delta}{3}\right)$, 再由\eqref{eq::FIOJWIOIOWIJOIJOWIOIOIIOIII1}式同理可知$\exists x_2\in B_{\frac{1}{3^2}}$, 使得$\|y_1-Tx_2\|<\frac{\delta}{3^2}$;
+
+……………………
+
+对$y_n=y_{n-1}-Tx_n\in U\left(\theta,\frac{\delta}{3^n}\right)$, 再由\eqref{eq::FIOJWIOIOWIJOIJOWIOIOIIOIII1}式同理可知 $\exists x_{n+1}\in B_{\frac{1}{3^{n+1}}}$, 使得$\|y_n-Tx_{n+1}\|<\frac{\delta}{3^{n+1}}$;
+
+于是
+\begin{align}\label{eqFJWFHOHIJW3431}
+\sum_{n=1}^{\infty}{\left\| x_n \right\|}<\sum_{n=1}^{\infty}{\frac{1}{3^n}}\leqslant \frac{1}{2},
+\end{align}
+令$S_n\triangleq\sum\limits_{i=1}^{n}x_i,\forall n\in\mathbb{N}$,则由\eqref{eqFJWFHOHIJW3431}知,对$\forall n,p\in \mathbb{N}$
+\begin{align*}
+\left\| S_{n+p}-S_n \right\| =\left\| \sum_{k=n+1}^{n+p}{x_k} \right\| \leqslant \sum_{k=n+1}^{n+p}{\left\| x_k \right\|}\rightarrow 0\quad \left( n,p\rightarrow \infty \right) .
+\end{align*}
+故$\{S_n\}$是$\mathscr{X}$中的基本列,又$\mathscr{X}$是完备的,故可设$S_n\to x_0\triangleq\sum\limits_{i=1}^{\infty}x_i(n\to\infty)$,则由\eqref{eqFJWFHOHIJW3431}知$x_0\in B_1$.
+而
+\begin{align*}
+\|y_n\|&=\|y_{n-1}-Tx_n\|=\cdots=\left\|y_0-T(x_1+x_2+\cdots+x_n)\right\|<\frac{\delta}{3^n}\quad(\forall n\in\mathbb{N}),
+\end{align*}
+即得$TS_n\to y_0\quad(n\to\infty).$
+又因为$S_n\in D(T)(\forall n\in \mathbb{N})$且$S_n\to x_0(n\to\infty)$, 所以由$T$是闭的知$Tx_0=y_0,$
+即得
+\begin{align}\label{eqHIUOFHJUW}
+U(\theta,\delta)\subseteq TB_1=T(B(\theta,1)\cap D(T)).
+\end{align}
+
+先证$R(T)=\mathscr{Y}$.由\eqref{eqHIUOFHJUW}式知$\exists\delta>0$, 使得
+\begin{align*}
+U(\theta,\delta)\subseteq T(B(\theta,1)\cap D(T)).
+\end{align*}
+$\forall y\in\mathscr{Y}$, 不妨设$y\neq\theta$(显然$\theta\in R(T)$). $\forall0<\delta_1<\delta$, 按式,
+\begin{align*}
+\frac{\delta_1 y}{\|y\|}\in U(\theta,\delta)\implies\frac{\delta_1 y}{\|y\|}\in T(B(\theta,1)\cap D(T)).
+\end{align*}
+于是$\exists x\in B(\theta,1)\cap D(T)$, 使得
+\begin{align*}
+\frac{\delta_1 y}{\|y\|}=Tx\implies y=T\left(\frac{\|y\|}{\delta_1}x\right)\implies y\in R(T).
+\end{align*}
+故$\mathscr{Y}\subseteq R(T)$,又显然有$\mathscr{Y}\supseteq R(T)$,因此$\mathscr{Y} = R(T)$.
+
+对$\forall \varepsilon>0$，令$\delta(\varepsilon)=\varepsilon\delta$，若$\|y\|<\delta(\varepsilon)=\varepsilon\delta$，则$\left\|\frac{y}{\varepsilon}\right\|<\delta$，即$\frac{y}{\varepsilon}\in U(\theta,\delta)$。
+从而由\eqref{eqHIUOFHJUW}式知存在$x_0\in B(\theta,1)\cap D(T)$满足$Tx_0=\frac{y}{\varepsilon}$。取$x=\varepsilon x_0$，则$x\in D(T)$，$\|x\|<\varepsilon$，且$Tx=y$。
+
+\end{proof}
+
+
+\subsection{闭图像定理}
+
+\begin{theorem}
+设$T$是$B^*$空间$\mathscr{X}$到$B$空间$\mathscr{Y}$的连续线性算子, 那么$T$能唯一地延拓到$\overline{D(T)}$上成为连续线性算子$T_1$, 使得$T_1|_{D(T)}=T$, 且$\|T_1\|=\|T\|$.
+\end{theorem}
+\begin{proof}
+
+任取$x\in\overline{D(T)},\exists x_n\in D(T),\lim\limits_{n\to\infty}x_n=x$, 依假设$T$在$D(T)$上连续, 由\refpro{proposition:线性算子有界当且仅当连续}知$T$有界, 即$\exists M>0$, 使得
+\begin{align*}
+\|Tx\|\leqslant M\|x\|\quad(\forall x\in D(T)).
+\end{align*}
+于是
+\begin{align*}
+\|Tx_{n+p}-Tx_n\|\leqslant M\|x_{n+p}-x_n\|.
+\end{align*}
+由此可见$\{Tx_n\}$是$\mathscr{Y}$中的基本列, 已设$\mathscr{Y}$完备, 所以$\exists y\in\mathscr{Y}$, 使得$Tx_n\to y=\lim_{n\to \infty}Tx_n$. 不难看出$y$仅依赖于$x$, 而与$D(T)$中$x_n$的选择无关. 因此, 可以定义$T_1:x\mapsto y= \lim_{n\to \infty}Tx_n$. 容易验证$T_1$是线性的, 还有$T_1|_{D(T)}=T$. 对$\forall x\in\overline{D(T)}$,存在$D(T)$中的序列$x_n\rightarrow x\left( n\rightarrow \infty \right)$.从而
+\begin{align*}
+\left\| T_1x \right\| =\underset{n\rightarrow \infty}{\lim}\left\| Tx_n \right\| \leqslant M\underset{n\rightarrow \infty}{\lim}\left\| x_n \right\| =M\left\| x \right\| .
+\end{align*}
+故$T_1$有界,由\refpro{proposition:线性算子有界当且仅当连续}知$T$连续.
+
+\end{proof}
+
+\begin{corollary}[等价范数定理]\label{corollary:泛函分析--等价范数定理}
+设线性空间$\mathscr{X}$上有两个范数$\|\cdot\|_1$与$\|\cdot\|_2$. 如果$\mathscr{X}$关于这两个范数都构成$B$空间, 而且$\|\cdot\|_2$比$\|\cdot\|_1$强, 则$\|\cdot\|_2$与$\|\cdot\|_1$必等价.
+\end{corollary}
+\begin{proof}
+
+考察恒同映射$I:\mathscr{X}\to\mathscr{X}$, 把它看成是由$(\mathscr{X},\|\cdot\|_2)\to(\mathscr{X},\|\cdot\|_1)$的线性算子, 由假设$\|\cdot\|_2$比$\|\cdot\|_1$强, 从而由\refpro{proposition:范数强的充要条件}知$\exists C>0$, 使得
+\begin{align*}
+\|Ix\|_1 \leqslant C\|x\|_2 \quad (\forall x\in\mathscr{X}).
+\end{align*}
+因此$I$是连续的, 由\refpro{proposition:线性算子有界当且仅当连续}知$I$有界.又注意到$I$既是单射又是满射,依\hyperref[theorem:泛函分析--Banach逆算子定理]{Banach逆算子定理}, $I$可逆且$I^{-1}$连续, 由\refpro{proposition:线性算子有界当且仅当连续}知$I^{-1}$有界,即有$M>0$, 使
+\begin{align*}
+\|I^{-1}x\|_2 \leqslant M\|x\|_1 \quad (\forall x\in\mathscr{X}).
+\end{align*}
+又因$Ix,I^{-1}x$与$x$是同一个元素, 所以
+\begin{align*}
+\frac{1}{C}\left\| x \right\| _1=\frac{1}{C}\left\| Ix \right\| _1\leqslant \left\| x \right\| _2=\left\| I^{-1}x \right\| _2\leqslant M\left\| x \right\| _1\quad (\forall x\in \mathscr{X} ).
+\end{align*}
+故由\refcor{corollary:范数等价的充要条件}知$\|\cdot\|_1$与$\|\cdot\|_2$等价.
+
+\end{proof}
+
+\begin{definition}
+设$\mathscr{X},\mathscr{Y}$是线性空间,$T$是$\mathscr{X}\to\mathscr{Y}$的线性算子,则集合$G(T)\triangleq\{(x,Tx)\mid x\in D(T)\}$称为算子$T$的\textbf{图像}, 
+
+设$\mathscr{X},\mathscr{Y}$是赋范线性空间,范数为$\|\cdot\|$,$T$是$\mathscr{X}\to\mathscr{Y}$的线性算子.引进另外一个范数$\|\cdot\|_G$如下:
+\begin{align*}
+\left\| x \right\| _G=\left\| x \right\| _{\mathscr{X}}+\left\| Tx \right\| _{\mathscr{Y}}\quad (\forall x\in D(T)).
+\end{align*}
+则$\|x\|_G$实际上是$(x,Tx)$在乘积空间$\mathscr{X}\times\mathscr{Y}$上的范数, 因此将$\|\cdot\|_G$称为\textbf{图模}. 
+\end{definition}
+\begin{remark}
+也可将上述$\|x\|_G$视作$D(T)$空间上的范数,此时显然有$\|\cdot\|_G$比$\|\cdot\|_\mathscr{X}$和$\|\cdot\|_\mathscr{Y}$强.
+\end{remark}
+
+\begin{proposition}
+设$\mathscr{X},\mathscr{Y}$是$B$空间,则算子$T$是闭的当且仅当$G(T)$按图模是闭的.
+\end{proposition}
+\begin{proof}
+
+
+\end{proof}
+
+\begin{theorem}[闭图像定理]\label{theorem:泛函分析--闭图像定理}
+设$\mathscr{X},\mathscr{Y}$是$B$空间. 若$T$是$\mathscr{X}\to\mathscr{Y}$的闭线性算子, 并且$D(T)$是闭的, 则$T$是连续的.
+\end{theorem}
+\begin{proof}
+
+因为$D(T)$是闭的, 所以由\rrefpro{proposition:完备度量空间的子空间等价于闭集}{proposition:完备度量空间的子空间等价于闭集-1}知$D(T)$作为$\mathscr{X}$的线性子空间可看成按$\mathscr{X}$中的范数$\|\cdot\|$构成$B$空间. 在$D(T)$上, 引进另外一个范数$\|\cdot\|_G$如下:
+\begin{align*}
+\|x\|_G = \|x\| + \|Tx\| \quad (\forall x\in D(T)).
+\end{align*}
+现在证明$(D(T),\|\cdot\|_G)$也是$B$空间, 事实上, 从
+\begin{align*}
+\|x_n - x_m\|_G = \|x_n - x_m\| + \|Tx_n - Tx_m\| \to 0 \quad (n,m\to\infty),
+\end{align*}
+可知$\exists x^*\in\mathscr{X}$与$y^*\in\mathscr{Y}$, 使得$x_n\to x^*$, 且$Tx_n\to y^*$. 根据$T$的闭性即得$y^* = Tx^*$, 从而$Tx_n\to Tx^*$. 因此$\|x_n - x^*\|_G\to 0(n\to \infty)$,故$(D(T),\|\cdot\|_G)$也是$B$空间.
+又显然有$\|\cdot\|_G$比$\|\cdot\|$强, 根据\hyperref[corollary:泛函分析--等价范数定理]{等价范数定理}, $\|\cdot\|_G$与$\|\cdot\|$等价, 故$\exists M>0$, 使得
+\begin{align*}
+\|Tx\| \leqslant \|x\|_G \leqslant M\|x\| \quad (\forall x\in D(T)).
+\end{align*}
+故$T$有界,由\refpro{proposition:线性算子有界当且仅当连续}知$T$连续.
+
+\end{proof}
+
+
+\subsection{共鸣定理}
+
+\begin{theorem}[共鸣定理或一致有界定理]\label{theorem:泛函分析--共鸣定理}
+设$\mathscr{X}$是$B$空间, $\mathscr{Y}$是$B^*$空间, 如果$W\subseteq\mathscr{L}(\mathscr{X},\mathscr{Y})$, 使得
+\begin{align*}
+\sup_{A\in W}\|Ax\| < \infty \quad (\forall x\in\mathscr{X}),
+\end{align*}
+那么存在常数$M$, 使得$\|A\|\leqslant M(\forall A\in W)$.
+\end{theorem}
+\begin{remark}
+条件: $\forall x\in\mathscr{X}$, $\sup_{A\in W}\|Ax\|<\infty$, 意味着$\forall x\in\mathscr{X}$, $\exists M_x>0$, 使得
+\begin{align}
+\|Ax\| \leqslant M_x\|x\| \quad (\forall A\in W).
+\label{eq:HIFHIOW0-3823412}
+\end{align}
+而结论: $\|A\|\leqslant M(\forall A\in W)$, 则可看作是, 存在与$x$无关的常数$M$, 使得
+\begin{align}
+\|Ax\| \leqslant M\|x\| \quad (\forall A\in W).
+\label{eq:HIFHIOW0-3823413}
+\end{align}
+式\eqref{eq:HIFHIOW0-3823412}意味着算子族$W$点点有界; 式\eqref{eq:HIFHIOW0-3823413}则意味着算子族$W$一致有界. 因此本定理给出条件保证点点有界蕴含一致有界, 故称“一致有界”定理. 另一方面, 如果我们从反面来叙述本定理将有: $\sup_{A\in W}\|A\|=\infty\implies\exists x_0\in\mathscr{X}$, 使得
+\begin{align*}
+\sup_{A\in W}\|Ax_0\| = \infty.
+\end{align*}
+因此本定理又有“共鸣定理”之称.
+\end{remark}
+\begin{proof}
+
+$\forall x\in\mathscr{X}$, 定义
+\begin{align*}
+\|x\|_W = \|x\| + \sup_{A\in W}\|Ax\|.
+\end{align*}
+显然, $\|\cdot\|_W$是$\mathscr{X}$上的范数, 且强于$\|\cdot\|$. 下面证明$(\mathscr{X},\|\cdot\|_W)$完备. 事实上, 如果
+\begin{align*}
+\|x_m - x_n\| + \sup_{A\in W}\|A(x_m - x_n)\| \to 0 \quad (\text{当 }m,n\to\infty).
+\end{align*}
+由$\mathscr{X}$的完备性, $\exists x\in\mathscr{X}$, 使得$\|x_n - x\|\to 0$ (当$n\to\infty$), 又因为$\forall\varepsilon>0$, $\exists N=N(\varepsilon)$, 使得
+\begin{align*}
+\sup_{A\in W}\|Ax_m - Ax_n\| < \varepsilon \quad (\forall m,n\geqslant N).
+\end{align*}
+从而对$\forall A\in W$有$\|Ax_n - Ax\|\leqslant\varepsilon$ ($\forall n\geqslant N$). 于是
+\begin{align*}
+\|x_n - x\| + \sup_{A\in W}\|A(x_n - x)\| \to 0 \quad (\text{当 }n\to\infty),
+\end{align*}
+即$\|x_n - x\|_W\to 0$.故$(\mathscr{X},\|\cdot\|_W)$和$(\mathscr{X},\|\cdot\|)$都是$B$空间. 再根据\hyperref[corollary:泛函分析--等价范数定理]{等价范数定理}, $\|\cdot\|_W$与$\|\cdot\|$等价, 从而存在常数$M$, 使得
+\begin{align*}
+\sup\limits_{A\in W}\|Ax\| \leqslant M\|x\| \quad (\forall x\in \mathscr{X}) \Longrightarrow \sup\limits_{A\in W}\|A\| = \sup\limits_{\substack{A\in W\\ x\in \mathscr{X} \setminus \{ \theta \}}}\frac{\|Ax\|}{\|x\|} \leqslant M.
+\end{align*}
+由此立即推出$\|A\|\leqslant M(\forall A\in W)$.
+
+\end{proof}
+
+\begin{theorem}[Banach-Steinhaus定理]\label{theorem:泛函分析--Banach-Steinhaus定理}
+设$\mathscr{X}$是$B$空间, $\mathscr{Y}$是$B^*$空间, $M$是$\mathscr{X}$的某个稠密子集. 若$A_n(n=1,2,\cdots),A\in\mathscr{L}(\mathscr{X},\mathscr{Y})$, 则$\forall x\in\mathscr{X}$都有
+\begin{align*}
+\lim_{n\to\infty}A_nx = Ax
+\end{align*}
+的充要条件是:
+\begin{enumerate}[(1)]
+\item $\|A_n\|(\forall n\in \mathbb{N})$有界;
+\item $\lim_{n\to\infty}A_nx = Ax$对$\forall x\in M$成立.
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+
+{\heiti 必要性:} 由假设可知结论(2)显然成立.记$W=\{A_n\}_{n=1}^{\infty}$,则由假设知
+\begin{align*}
+\mathop {\mathrm{sup}} \limits_{T\in W}\left\| Tx \right\| =\mathop {\mathrm{sup}} \limits_{n\in \mathbb{N}}\left\| A_nx \right\| \leqslant Ax+1\,\quad (\forall x\in \mathscr{X} ).
+\end{align*}
+再根据\hyperref[theorem:泛函分析--共鸣定理]{共鸣定理}知$\|A_n\|(\forall n\in \mathbb{N})$有界.
+
+{\heiti 充分性:} 假定$\|A_n\|\leqslant C(\forall n\in\mathbb{N})$, 由$M$的稠密性知对$\forall x\in\mathscr{X}$及$\forall\varepsilon>0$, 取$y\in M$, 使得
+\begin{align*}
+\|x - y\| \leqslant \frac{\varepsilon}{4(\|A\| + C)},
+\end{align*}
+由\refpro{proposition:线性算子有界当且仅当连续}知$A_n$都连续,再结合上式知,存在$N'\in \mathbb{N}$,使得
+\begin{align*}
+\|A_nx - Ax\| &\leqslant \|A_nx - A_ny\| + \|A_ny - Ay\| + \|Ax - Ay\| \\
+&< \frac{\varepsilon}{2} + \|A_ny - Ay\| \quad (\forall n>N').
+\end{align*}
+再取$N$足够大, 使得$\|A_ny - Ay\| < \frac{\varepsilon}{2}$ ($\forall n\geqslant N$), 便有
+\begin{align*}
+\|A_nx - Ax\| < \varepsilon \quad (\forall n\geqslant N).
+\end{align*}
+
+\end{proof}
+
+
+\subsection{应用}
+
+\begin{theorem}[Lax-Milgram定理]\label{theorem:泛函分析--Lax-Milgram定理}
+设$a(x,y)$是Hilbert空间$\mathscr{X}$上的一个共轭双线性函数, 满足:
+\begin{enumerate}[(1)]
+\item $\exists M>0$, 使$|a(x,y)|\leqslant M\|x\|\cdot\|y\|$ ($\forall x,y\in\mathscr{X}$);
+\item $\exists\delta>0$, 使$|a(x,x)|\geqslant\delta\|x\|^2$ ($\forall x\in\mathscr{X}$),
+\end{enumerate}
+那么必存在唯一的有连续逆的连续线性算子$A\in\mathscr{L}(\mathscr{X})$, 满足
+\begin{align}
+a(x,y) = (x,Ay) \quad (\forall x,y\in\mathscr{X}),
+\label{eq:HIFHIOW0-3823417}
+\end{align}
+\begin{align}
+\|A^{-1}\| \leqslant \frac{1}{\delta}.
+\label{eq:HIFHIOW0-3823418}
+\end{align}
+\end{theorem}
+\begin{proof}
+
+依\refthe{theorem:泛函分析--定理2.2.2}, 适合式\eqref{eq:HIFHIOW0-3823417}的算子$A\in\mathscr{L}(\mathscr{X})$存在唯一. 今证:
+\begin{enumerate}[(1)]
+\item $A$是单射. 若有$y_1,y_2\in\mathscr{X}$, 满足$Ay_1=Ay_2$, 则
+\begin{align*}
+a(x,y_1) = a(x,y_2) \quad (\forall x\in\mathscr{X}),
+\end{align*}
+从而
+\begin{align*}
+a(x,y_1 - y_2) = 0 \quad (\forall x\in\mathscr{X}).
+\end{align*}
+特别取$x=y_1 - y_2$, 由条件(2)即得$y_1=y_2$.
+\item $A$是满射. 先证$R(A)$是闭的. 事实上, $\forall w\in\overline{R(A)}$, $\exists v_n\in\mathscr{X}$ ($n=1,2,\cdots$), 使得
+\begin{align}
+w = \lim_{n\to\infty}Av_n.
+\label{eq:HIFHIOW0-3823419}
+\end{align}
+由条件(2),
+\begin{align*}
+\delta\|v_{n+p} - v_n\|^2 &\leqslant |a(v_{n+p} - v_n, v_{n+p} - v_n)| \\
+&= |(v_{n+p} - v_n, A(v_{n+p} - v_n))| \\
+&\leqslant \|v_{n+p} - v_n\| \cdot \|Av_{n+p} - Av_n\| \quad (\forall n,p\in\mathbb{N}),
+\end{align*}
+即得
+\begin{align*}
+\|v_{n+p} - v_n\| \leqslant \frac{1}{\delta}\|Av_{n+p} - Av_n\| \to 0 \quad (\text{当 }n\to\infty, \forall p\in\mathbb{N}).
+\end{align*}
+从而$\{v_n\}$是基本列, 因此$\exists v^*\in\mathscr{X}$, 使得$v_n\to v^*$, 并由$A$的连续性和式\eqref{eq:HIFHIOW0-3823419}得$w=Av^*$, 即$w\in R(A)$. 于是$R(A)$闭.
+
+再证$R(A)^\perp=\{\theta\}$. 倘若$w\in R(A)^\perp$, 则
+\begin{align*}
+(w,Av) = 0 \quad (\forall v\in\mathscr{X}),
+\end{align*}
+即$a(w,v)=0$ ($\forall v\in\mathscr{X}$). 特别取$v=w$, 再利用条件(2)有
+\begin{align*}
+\delta\|w\|^2 \leqslant |a(w,w)| = 0,
+\end{align*}
+即得$w=\theta$. 由此可见$A$是满射.
+\item 再利用\hyperref[theorem:泛函分析--Banach逆算子定理]{Banach逆算子定理}, $A^{-1}\in\mathscr{L}(\mathscr{X})$. 因为
+\begin{align*}
+\delta\|x\|^2 \leqslant |a(x,x)| = |(x,Ax)| \leqslant \|x\| \cdot \|Ax\|,
+\end{align*}
+所以$\delta\|x\| \leqslant \|Ax\|$ ($\forall x\in\mathscr{X}$), 即得式\eqref{eq:HIFHIOW0-3823418}.
+\end{enumerate}
+
+\end{proof}
+
+\begin{definition}[相容性]
+设 $\mathscr{X} $ 和 $\mathscr{Y} $ 为 $B$空间, $T\in\mathscr{L} (\mathscr{X} ,\mathscr{Y} )$，$\{T_n\}_{n\in\mathbb{N}}\subset\mathscr{L} (\mathscr{X} ,\mathscr{Y} )$。称 $\{T_n\}$ 是 $T$ 的\textbf{近似}（或$T$的近似格式$\{T_n\}$具有\textbf{相容性}），若对每个 $x\in\mathscr{X} $，
+\[
+\|Tx - T_nx\| \to 0 \quad (n\to\infty).
+\]
+\end{definition}
+
+\begin{definition}[稳定性]
+设 $\mathscr{X} $ 和 $\mathscr{Y} $ 为 $B$空间,  $T_n\in\mathscr{L} (\mathscr{X} ,\mathscr{Y} )$ 可逆,即存在逆算子 $T_n^{-1}\in\mathscr{L} (\mathscr{Y} ,\mathscr{X} )$.称近似格式 $\{T_n\}$ 具有\textbf{稳定性}，若存在常数 $C>0$ 使得
+\[
+\|T_n^{-1}\| \leqslant C \quad (\forall n\in\mathbb{N}).
+\]
+\end{definition}
+
+\begin{theorem}[Lax定理]\label{theorem:泛函分析--Lax定理}
+设 $\mathscr{X} $ 和 $\mathscr{Y} $ 为 $B$空间,  $T\in\mathscr{L} (\mathscr{X} ,\mathscr{Y} )$ 可逆，$\{T_n\}\subset\mathscr{L} (\mathscr{X} ,\mathscr{Y} )$ 可逆。假设$T$的近似格式$\{T_n\}$具有相容性,即对 $\forall x\in\mathscr{X} $，有
+\begin{align}\label{eq::23ur8902IOJAI1}
+T_nx\to Tx(n\to \infty).
+\end{align}
+则对 $\forall y\in\mathscr{Y} $，近似方程 $T_nx_n=y$ 的解 $x_n = T_n^{-1}y$ 收敛于原方程 $Tx=y$ 的解 $x = T^{-1}y$,即 $x_n\to x$ 于 $\mathscr{X} $当且仅当$\{T_n\}$ 具有稳定性,即存在常数 $C>0$ 使得
+\begin{align}
+\|T_n^{-1}\| \leqslant C \quad (\forall n\in\mathbb{N}).\label{eq::23ur8902IOJAI}
+\end{align}
+\end{theorem}
+\begin{proof}
+
+{\heiti 充分性:} 由式\eqref{eq::23ur8902IOJAI1}和式\eqref{eq::23ur8902IOJAI}, 我们得
+\begin{align*}
+\|x_n - x\| = \|T_n^{-1}y - T_n^{-1}T_nx\| 
+\leqslant \|T_n^{-1}\| \cdot \|Tx - T_nx\| 
+\leqslant C\|Tx - T_nx\| \to 0 \quad (n\to\infty).
+\end{align*}
+
+{\heiti 必要性:} $\forall y\in\mathscr{Y}$, 令$x_n=T_n^{-1}y$, $x=T^{-1}y$, 便有$x_n\to x$ ($n\to\infty$). 因此,
+\begin{align*}
+T_n^{-1}y \to T^{-1}y \quad (n\to\infty, \forall y\in\mathscr{Y}).
+\end{align*}
+由\hyperref[theorem:泛函分析--共鸣定理]{共鸣定理}, 立得$\|T_n^{-1}\|$有界.
+
+\end{proof}
+
+\begin{example}
+设$\mathscr{X}$是$B$空间，$\mathscr{X}_0$是$\mathscr{X}$的闭子空间。映射$\varphi:\mathscr{X}\to\mathscr{X}/\mathscr{X}_0$定义为
+\begin{align*}
+\varphi:x\mapsto [x]\quad (\forall x\in\mathscr{X}),
+\end{align*}
+其中$[x]\in \mathscr{X}/\mathscr{X}_0$表示含$x$的商类。求证$\varphi$是开映射。
+\end{example}
+
+\begin{example}
+设$\mathscr{X},\mathscr{Y}$是$B$空间，又设方程$Ux=y$对$\forall y\in\mathscr{Y}$有解$x\in\mathscr{X}$，其中$U\in\mathscr{L}(\mathscr{X},\mathscr{Y})$，并且$\exists m>0$，使得
+\begin{align*}
+\|Ux\|\geqslant m\|x\|\quad (\forall x\in\mathscr{X}).
+\end{align*}
+求证：$U$有连续逆$U^{-1}$，并且$\|U^{-1}\|\leqslant 1/m$。
+\end{example}
+
+\begin{example}
+设$H$是Hilbert空间，$A\in\mathscr{L}(H)$，并且$\exists m>0$，使得
+\begin{align*}
+|(Ax,x)|\geqslant m\|x\|^2\quad (\forall x\in H).
+\end{align*}
+求证：$\exists A^{-1}\in\mathscr{L}(H)$。
+\end{example}
+
+\begin{example}
+设$\mathscr{X},\mathscr{Y}$是$B^*$空间，$D$是$\mathscr{X}$的线性子空间，并且$A:D\to\mathscr{Y}$是线性映射。求证：
+\begin{enumerate}[(1)]
+\item 如果$A$连续且$D$是闭的，那么$A$是闭算子；
+\item 如果$A$连续且是闭算子，那么$\mathscr{Y}$完备蕴含$D$闭；
+\item 如果$A$是单射的闭算子，那么$A^{-1}$也是闭算子；
+\item 如果$\mathscr{X}$完备，$A$是单射的闭算子，$R(A)$在$\mathscr{Y}$中稠密，并且$A^{-1}$连续，那么$R(A)=\mathscr{Y}$。
+\end{enumerate}
+\end{example}
+
+\begin{example}
+用\hyperref[corollary:泛函分析--等价范数定理]{等价范数定理}证明：$(C[0,1],\|\cdot\|_1)$不是$B$空间，其中$\|f\|_1=\int_{0}^{1}|f(t)|\mathrm{d}t,\forall f\in C[0,1]$。
+\end{example}
+
+\begin{lemma}[Gelfand引理]\label{lemma:泛函分析--Gelfand引理}
+设$\mathscr{X}$是$B$空间，$p:\mathscr{X}\to\mathbb{R}$满足
+\begin{enumerate}[(1)]
+\item $p(x)\geqslant 0\quad (\forall x\in\mathscr{X})$;
+\item $p(\lambda x)=\lambda p(x)\quad (\forall\lambda>0,\forall x\in\mathscr{X})$;
+\item $p(x_1+x_2)\leqslant p(x_1)+p(x_2)\quad (\forall x_1,x_2\in\mathscr{X})$;
+\item 当$x_n\to x$时，$\lim\limits_{n\to\infty}p(x_n)\geqslant p(x)$.
+\end{enumerate}
+求证：$\exists M>0$，使得$p(x)\leqslant M\|x\|,\forall x\in\mathscr{X}$。
+\end{lemma}
+
+\begin{example}
+设$\mathscr{X}$和$\mathscr{Y}$是$B$空间，$A_n\in\mathscr{L}(\mathscr{X},\mathscr{Y})(n=1,2,\cdots)$，又对$\forall x\in\mathscr{X}$，$\{A_nx\}$在$\mathscr{Y}$中收敛。求证：$\exists A\in\mathscr{L}(\mathscr{X},\mathscr{Y})$，使得
+\begin{align*}
+A_nx\to Ax\quad (\forall x\in\mathscr{X}),
+\end{align*}
+并且$\|A\|\leqslant \lim\limits_{n\to\infty}\|A_n\|$。
+\end{example}
+
+\begin{example}
+设$1<p<\infty$，并且$\frac{1}{p}+\frac{1}{q}=1$。如果序列$\{\alpha_k\}$使得对$\forall x=\{\xi_k\}\in l^p$保证$\sum\limits_{k=1}^{\infty}\alpha_k\xi_k$收敛，求证：$\{\alpha_k\}\in l^q$。又若$f:x\mapsto\sum\limits_{k=1}^{\infty}\alpha_k\xi_k$，求证：$f$作为$l^p$上的线性泛函，有
+\begin{align*}
+\|f\|=\left(\sum\limits_{k=1}^{\infty}|\alpha_k|^q\right)^{\frac{1}{q}}.
+\end{align*}
+\end{example}
+
+\begin{example}
+如果序列$\{\alpha_k\}$使得对$\forall x=\{\xi_k\}\in l^1$，保证$\sum\limits_{k=1}^{\infty}\alpha_k\xi_k$收敛，求证：$\{\alpha_k\}\in l^\infty$。又若$f:x\mapsto\sum\limits_{k=1}^{\infty}\alpha_k\xi_k$作为$l^1$上的线性泛函，求证：
+\begin{align*}
+\|f\|=\sup_{k\geqslant 1}|\alpha_k|.
+\end{align*}
+\end{example}
+
+\begin{example}
+用\hyperref[lemma:泛函分析--Gelfand引理]{Gelfand引理}证明\hyperref[theorem:泛函分析--共鸣定理]{共鸣定理}。
+\end{example}
+
+\begin{example}
+设$\mathscr{X},\mathscr{Y}$是$B$空间，$A\in\mathscr{L}(\mathscr{X},\mathscr{Y})$是满射的。求证：如果在$\mathscr{Y}$中$y_n\to y_0$，则$\exists C>0$与$x_n\to x_0$，使得$Ax_n=y_n$，且$\|x_n\|\leqslant C\|y_n\|$。
+\end{example}
+
+\begin{example}
+设$\mathscr{X},\mathscr{Y}$是$B$空间，$T$是闭线性算子，$D(T)\subseteq\mathscr{X}$，$R(T)\subseteq\mathscr{Y}$，$N(T)\triangleq\{x\in\mathscr{X}\mid Tx=\theta\}$。
+\begin{enumerate}[(1)]
+\item 求证：$N(T)$是$\mathscr{X}$的闭线性子空间。
+\item 求证：$N(T)=\{\theta\},R(T)$在$\mathscr{Y}$中闭的充要条件是，$\exists\alpha>0$，使得
+\begin{align*}
+\|x\|\leqslant\alpha\|Tx\|\quad (\forall x\in D(T)).
+\end{align*}
+\item 如果用$d(x,N(T))$表示点$x\in\mathscr{X}$到集合$N(T)$的距离$\left(\inf\limits_{z\in N(T)}\|z-x\|\right)$。求证：$R(T)$在$\mathscr{Y}$中闭的充要条件是，$\exists\alpha>0$，使得
+\begin{align*}
+d(x,N(T))\leqslant\alpha\|Tx\|\quad (\forall x\in D(T)).
+\end{align*}
+\end{enumerate}
+\end{example}
+
+\begin{example}
+设$a(x,y)$是Hilbert空间$H$上的一个共轭双线性泛函，满足：
+\begin{enumerate}[(1)]
+\item $\exists M>0$，使得$|a(x,y)|\leqslant M\|x\|\cdot\|y\|\quad (\forall x,y\in H)$;
+\item $\exists\delta>0$，使得$|a(x,x)|\geqslant\delta\|x\|^2\quad (\forall x\in H)$.
+\end{enumerate}
+求证：$\forall f\in H^*,\exists y_f\in H$，使得
+\begin{align*}
+a(x,y_f)=f(x)\quad (\forall x\in H),
+\end{align*}
+而且$y_f$连续地依赖于$f$。
+\end{example}
+
+\begin{example}
+设$\Omega$是$\mathbb{R}^2$中边界光滑的有界开区域，$\alpha:\Omega\to\mathbb{R}$有界可测并满足$0<\alpha_0\leqslant\alpha,f\in L^2(\Omega)$。规定：
+\begin{align*}
+a(u,v)\triangleq\int_{\Omega}(\nabla u\cdot\nabla v+\alpha uv)\mathrm{d}x\mathrm{d}y\quad (\forall u,v\in H^1(\Omega)),\\
+F(v)\triangleq\int_{\Omega}f\cdot v\mathrm{d}x\mathrm{d}y\quad (\forall v\in L^2(\Omega)).
+\end{align*}
+求证：$\exists!u\in H^1(\Omega)$满足
+\begin{align*}
+a(u,v)=F(v)\quad (\forall v\in H^1(\Omega)).
+\end{align*}
+\end{example}
+
+
+
+
+
+\end{document}

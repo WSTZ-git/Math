@@ -1,0 +1,1169 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}} % 指定图片目录,后续可以直接使用图片文件名
+% 注意这里的文件路径不能用 ../../image/ ,否则用latexmk编译子文件会报错
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[scale=0.3]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{赋范线性空间}
+
+\subsection{线性空间}
+
+\begin{definition}[复（或实）线性空间]
+设$\mathscr{X}$是一个非空集，$\mathbb{K}$是\textbf{复（或实）数域}。如果下列条件满足，便称$\mathscr{X}$为一\textbf{复（或实）线性空间}:
+\begin{enumerate}[(1)]
+\item $\mathscr{X}$是一加法交换群，即对$\forall x,y\in\mathscr{X}$，$\exists u\in\mathscr{X}$，记作$u=x+y$，称$u$为$x,y$之和，适合
+\begin{enumerate}[(i)]
+\item $x+y=y+x$；
+\item $(x+y)+z=x+(y+z)$；
+\item 存在唯一的$\theta\in\mathscr{X}$，对$\forall x\in\mathscr{X}$，$x+\theta=\theta+x$；
+\item 对任意的$x\in\mathscr{X}$，$\exists x'\in\mathscr{X}$，使得$x+x'=\theta$，记此$x'$为$-x$。
+\end{enumerate}
+\item 定义了数域$\mathbb{K}$中的数$\alpha$与$x\in\mathscr{X}$的数乘运算，即$\forall(\alpha,x)\in\mathbb{K}\times\mathscr{X}$，$\exists u\in\mathscr{X}$，记作$u=\alpha x$，称$u$为$x$对$\alpha$的数乘，适合
+\begin{enumerate}[(i)]
+\item $\alpha(\beta x)=(\alpha\beta)x\quad(\forall\alpha,\beta\in\mathbb{K},\forall x\in\mathscr{X})$；
+\item $1\cdot x=x$；
+\item $(\alpha+\beta)x=\alpha x+\beta x\quad(\forall\alpha,\beta\in\mathbb{K},\forall x\in\mathscr{X})$，
+$\alpha(x+y)=\alpha x+\alpha y\quad(\forall x,y\in\mathscr{X},\forall\alpha\in\mathbb{K})$。
+\end{enumerate}
+\end{enumerate}
+线性空间的元素又称为\textbf{向量}，特别地，称$\theta$为\textbf{零向量}或\textbf{零元}.因而线性空间又称为\textbf{向量空间}。
+\end{definition}
+\begin{remark}
+今后谈到的线性空间都是复(或实)线性空间,$\mathbb{K}$都表示$\mathbb{R}$或$\mathbb{C}$,$\theta$都表示线性空间中的零向量.
+\end{remark}
+
+\begin{definition}[线性同构]
+设$\mathscr{X},\mathscr{X}_1$都是线性空间，$T:\mathscr{X}\to\mathscr{X}_1$称为是一个\textbf{线性同构}，如果
+\begin{enumerate}[(1)]
+\item 它既是单射又是满射，即它是一对一的并且是在上的；
+\item $T(\alpha x+\beta y)=\alpha Tx+\beta Ty\quad(\forall x,y\in\mathscr{X},\forall\alpha,\beta\in\mathbb{K})$。
+\end{enumerate}
+\end{definition}
+
+\begin{definition}[线性子空间]
+设$E\subseteq\mathscr{X}$，若$E$依$\mathscr{X}$上的加法与数乘还构成一个线性空间，则称$E$是$\mathscr{X}$的一个\textbf{线性子空间}。
+
+$\mathscr{X}$以及$\{\theta\}$都是$\mathscr{X}$的线性子空间，我们称它们为\textbf{平凡的子空间}，而称其他的子空间为\textbf{真子空间}。其中$\theta$是零向量.
+\end{definition}
+
+\begin{definition}[线性流形]
+设$E\subseteq\mathscr{X}$，若$\exists x_0\in\mathscr{X}$及线性子空间$E_0\subseteq\mathscr{X}$，使得$E=E_0+x_0\triangleq\{x+x_0\mid x\in E_0\}$，则称$E$为\textbf{线性流形}。
+还称
+\begin{align*}
+\bigcap{\left\{ A\subseteq \mathscr{X} \mid A\text{是线性流形且}A\supseteq E \right\}}
+\end{align*}
+是包含$E$的\textbf{最小线性流形}.
+\end{definition}
+\begin{remark}
+简单地说，线性流形就是子空间对某个向量的平移。
+\end{remark}
+
+\begin{definition}
+一组向量$x_1,x_2,\cdots,x_n\in\mathscr{X}$称为是\textbf{线性相关的}，如果存在$\lambda_1,\lambda_2,\cdots,\lambda_n\in\mathbb{K}$不全为0，使得
+\begin{align*}
+\lambda_1x_1+\lambda_2x_2+\cdots+\lambda_nx_n=0;
+\end{align*}
+否则称为是\textbf{线性无关的}。
+\end{definition}
+
+\begin{definition}
+若$A$是$\mathscr{X}$中的一个\textbf{极大线性无关向量组}，即$A$中的向量是线性无关的，而且任意的$x\in\mathscr{X}$都是$A$中的向量的线性组合，则称$A$是$\mathscr{X}$的一组\textbf{线性基}或\textbf{基}。
+
+线性空间中的线性基的元素个数（势），称为\textbf{维数}。
+\end{definition}
+
+\begin{definition}[线性包]
+设$\Lambda$是一个指标集，$\{x_\lambda\mid\lambda\in\Lambda\}$是$\mathscr{X}$中的向量族，一切由$\{x_\lambda\mid\lambda\in\Lambda\}$的有穷线性组合组成的集合
+\begin{align*}
+\{y=\alpha_1x_{\lambda_1}+\cdots+\alpha_nx_{\lambda_n}\mid\lambda_i\in\Lambda,\alpha_i\in\mathbb{K},i=1,2,\cdots,n\}
+\end{align*}
+称为$\{x_\lambda\mid\lambda\in\Lambda\}$的\textbf{线性包}。这线性包是一个线性子空间，不难证明它是包含$\{x_\lambda\mid\lambda\in\Lambda\}$的一切线性子空间的交。因此称线性包为$\{x_\lambda\mid\lambda\in\Lambda\}$张成的线性子空间，记为
+\begin{align*}
+\operatorname{span}\{x_\lambda\mid\lambda\in\Lambda\}.
+\end{align*}
+\end{definition}
+
+\begin{definition}
+设$E_1,E_2$是$\mathscr{X}$的子空间，我们称集合$\{x+y\mid x\in E_1,y\in E_2\}$为$E_1$与$E_2$的\textbf{线性和}，记为$E_1+E_2$。对于任意有限个子空间，定义以此类推。
+
+又若$(E_1,E_2)$中的任意一对非零向量都是线性无关的，则称线性和$E_1+E_2$为\textbf{直和}，记作$E_1\oplus E_2$，这时$E_1\cap E_2=\{\theta\}$，对$\forall x\in E_1\oplus E_2$，有唯一的分解：
+\begin{align*}
+x=x_1+x_2\quad(x_i\in E_i,i=1,2).
+\end{align*}
+其中$\theta$是零向量.
+\end{definition}
+
+\subsection{线性空间上的距离}
+
+\begin{theorem}
+设 $\mathscr{X}$ 是域 $\mathbb{K}$（$\mathbb{R}$ 或 $\mathbb{C}$）上的线性空间，$\rho:\mathscr{X}\times\mathscr{X}\to\mathbb{R}$ 是一个距离函数，且满足\textbf{平移不变性}:
+\[
+\rho(x+z,\,y+z)=\rho(x,y),\qquad \forall x,y,z\in\mathscr{X}.
+\]
+令 $\theta$ 表示 $\mathscr{X}$ 中的零向量，并定义
+\[
+p(x)\triangleq \rho(x,\theta),\quad \forall x\in\mathscr{X}.
+\]
+则
+\begin{enumerate}[(1)]
+\item \textbf{加法连续性}：若 $\rho(x_n,x)\to0\,(n\to\infty)$ 且 $\rho(y_n,y)\to0\,(n\to\infty)$，则
+\[
+\rho(x_n+y_n,\,x+y)\to0\,(n\to\infty).
+\]
+
+\item 函数 $p$ 具有以下性质：
+\begin{enumerate}[(i)]
+\item 正定性:$p(x)\geqslant 0$，且 $p(x)=0\iff x=\theta$；
+\item 次可加性:$p(x+y)\leqslant p(x)+p(y)$；
+\item 对称性:$p(-x)=p(x)$。
+\end{enumerate}
+
+\item[(3)] \textbf{数乘的连续性}等价于关于 $p$ 的条件：对任意的$\{x_n\}$,都有
+\begin{align*}
+&\rho (x_n,x)\rightarrow 0\left( n\rightarrow \infty \right) \Longrightarrow \rho (\alpha x_n,\alpha x)\rightarrow 0\left( n\rightarrow \infty \right) ,\,\,\forall \alpha \in \mathbb{K} 
+\\
+&\Longleftrightarrow p(x_n)\rightarrow 0\left( n\rightarrow \infty \right) \Longrightarrow \;p(\alpha x_n)\rightarrow 0\left( n\rightarrow \infty \right) ,\,\,\forall \alpha \in \mathbb{K} ;
+\end{align*}
+\begin{align*}
+&\alpha _n\rightarrow \alpha\left( n\rightarrow \infty \right)  \Longrightarrow \rho (\alpha _nx,\alpha x)\rightarrow 0\left( n\rightarrow \infty \right) ,\,\,\forall x\in \mathscr{X} 
+\\
+&\Longleftrightarrow \alpha _n\rightarrow 0\left( n\rightarrow \infty \right) \Longrightarrow p(\alpha _nx)\rightarrow 0\left( n\rightarrow \infty \right) ,\,\,\forall x\in \mathscr{X} .
+\end{align*}
+\end{enumerate}
+\end{theorem}
+\begin{remark}
+反之，如果距离$\rho$满足加法连续性也能推出平移不变性.
+\end{remark}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 由平移不变性及三角不等式，
+\begin{align*}
+\rho(x_n+y_n,x+y)
+&=\rho\bigl((x_n+y_n)-(x+y),\,\theta\bigr)
+=\rho\bigl((x_n-x)+(y_n-y),\,\theta\bigr)\\
+&=\rho\bigl(x_n-x,\;y-y_n\bigr)\leqslant \rho(x_n-x,\theta)+\rho(\theta,\,y-y_n)\\
+&=\rho(x_n,x)+\rho(y_n,y)\to0.
+\end{align*}
+其中用到 $\rho(u,v)=\rho(u-v,\theta)$ 以及 $\rho(\theta,y-y_n)=\rho(y_n,y)$.
+
+\item 由距离函数的定义直接转化:
+\begin{enumerate}[(i)]
+\item 非负性及唯一性：$\rho(x,\theta)\geqslant 0$，且 $\rho(x,\theta)=0\iff x=\theta$。
+
+\item 次可加性：对任意 $x,y\in\mathscr{X}$，
+\[
+p(x+y)=\rho(x+y,\theta)\leqslant \rho(x+y,x)+\rho(x,\theta)=\rho(y,\theta)+\rho(x,\theta)=p(x)+p(y),
+\]
+其中 $\rho(x+y,x)=\rho(y,\theta)$ 使用了平移不变性。
+
+\item 对称性：$p(-x)=\rho(-x,\theta)=\rho(\theta,x)=\rho(x,\theta)=p(x)$.
+\end{enumerate}
+
+\item 由平移不变性得
+\[
+\rho(\alpha x_n,\alpha x)=\rho(\alpha x_n-\alpha x,\theta)=p(\alpha(x_n-x)),
+\]
+而由平移不变性知$\rho(x_n,x)=p(x_n-x)$. 因此 $\rho(x_n,x)\to0(n\to \infty)$ 等价于 $p(x_n-x)\to0(n\to \infty)$. 令$u_n=x_n-x$,则对$\forall \alpha \in \mathbb{K}$,当$n\to \infty$时,有
+\[
+\rho (x_n,x)\rightarrow 0\Longrightarrow \rho (\alpha x_n,\alpha x)\rightarrow 0\Longleftrightarrow p\left( x_n-x \right) \rightarrow 0\Longrightarrow p\left( \alpha \left( x_n-x \right) \right) \rightarrow 0\Longleftrightarrow p\left( u_n \right) \rightarrow 0\;\Longrightarrow p\left( \alpha u_n \right) \rightarrow 0.
+\]
+类似地，对$\forall x\in \mathscr{X}$,有
+\[
+\rho(\alpha_n x,\alpha x)=p((\alpha_n-\alpha)x),
+\]
+故 $\alpha_n\to\alpha(n\to \infty)$ 等价于 $(\alpha_n-\alpha)\to0(n\to \infty)$,令$\beta_n=\alpha_n-\alpha$,则对$\forall x\in \mathscr{X}$,当$n\to \infty$时,有
+\[
+\alpha _n\rightarrow \alpha \Longrightarrow \rho (\alpha _nx,\alpha x)\rightarrow 0\Longleftrightarrow \alpha _n-\alpha \rightarrow 0\Longrightarrow p(\left( \alpha _n-\alpha \right) x)\rightarrow 0\Longleftrightarrow \beta _n\rightarrow 0\Longrightarrow p(\beta _nx)\rightarrow 0.
+\]
+\end{enumerate}
+\end{proof}
+
+\begin{definition}
+\begin{enumerate}
+\item 线性空间$\mathscr{X}$上的\textbf{准范数（准模）}定义为这空间上的一个函数$\|\cdot\|:\mathscr{X}\to\mathbb{R}$，满足条件：
+\begin{enumerate}[(1)]
+\item 正定性:$\|x\|\geqslant0(\forall x\in\mathscr{X})$；$\|x\|=0\iff x=\theta$；
+
+\item 三角形不等式:$\|x+y\|\leqslant\|x\|+\|y\|\quad(\forall x,y\in\mathscr{X})$；
+
+\item 交换性:$\|-x\|=\|x\|\quad(\forall x\in\mathscr{X})$；
+
+\item 连续性:$\lim\limits_{\alpha_n\to0}\|\alpha_n x\|=0$，$\lim\limits_{\|x_n\|\to0}\|\alpha x_n\|=0\quad(\forall x\in\mathscr{X},\forall\alpha\in\mathbb{K})$.
+\end{enumerate}
+其中$\theta$为零向量.
+
+\item 线性空间$\mathscr{X}$上的\textbf{范数(模)}$\|\cdot\|$定义为这空间上的一个函数：$\mathscr{X}\to\mathbb{R}$，满足条件：
+\begin{enumerate}[(1)]
+\item 正定性:$\|x\|\geqslant0(\forall x\in\mathscr{X})$，$\|x\|=0\iff x=\theta$；
+\item 三角形不等式:$\|x+y\|\leqslant\|x\|+\|y\|\quad(\forall x,y\in\mathscr{X})$；
+\item 齐次性:$\|\alpha x\|=|\alpha|\cdot\|x\|\quad(\forall\alpha\in\mathbb{K},\forall x\in\mathscr{X})$。
+\end{enumerate}
+其中$\theta$为零向量.
+\end{enumerate}
+\end{definition}
+\begin{remark}
+显然，具有齐次性的准范数(准模)就是范数(模),并且范数必是准范数。
+
+准范数或范数都可诱导线性空间上$\mathscr{X}$的度量$\rho:\mathscr{X}\times \mathscr{X}\to \mathbb{R},\,\,(x,y)\mapsto \|x-y\|$.
+\end{remark}
+
+\begin{proposition}\label{proposition:范数定义的基本推论}
+设$\|\cdot\|$ 线性空间是 $\mathscr{X}$ 上的一个范数,则对$\forall x,y\in \mathscr{X}$,有
+\begin{enumerate}[(1)]
+\item\label{proposition:范数定义的基本推论-1} $\left| \left\| x \right\| -\left\| y \right\| \right|\leqslant \left\| x-y \right\| \leqslant \left\| x \right\| +\left\| y \right\| .$
+
+\item\label{proposition:范数定义的基本推论-2} $\left\| \sum_{i=1}^n{x_i} \right\| \leqslant \sum_{i=1}^n{\left\| x_i \right\|}.$
+
+\item\label{proposition:范数定义的基本推论-3} 令$\varphi(x)=\|x\|$,则$\varphi$是$\mathscr{X}$ 上的连续函数,即$\varphi \in C(\mathscr{X})$.
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 第二个不等号由范数定义显然成立. 再由范数定义可得
+\begin{align*}
+\| x \| = \| (x-y) + y \| \leqslant \| x-y \| + \| y \| \Longrightarrow \| x \| - \| y \| \leqslant \| x-y \|.
+\end{align*}
+交换$x,y$即得$| \| x \| - \| y \| | \leqslant \| x-y \|.$
+
+\item 由范数定义和数学归纳法可立得.
+
+\item 由范数的定义立得.
+\end{enumerate}
+\end{proof}
+
+\begin{definition}
+如果 $\|\cdot\|$ 是线性空间$\mathscr{X}$ 上的一个准范数,就称 $(\mathscr{X},\|\cdot\|)$ 为\textbf{赋准范数的线性空间},或称$\bm{F}^*$\textbf{空间}。此时,线性空间$\mathscr{X}$中的度量为$\rho:\mathscr{X}\times \mathscr{X}\to \mathbb{R},\,\,(x,y)\mapsto \|x-y\|$.故称$\mathscr{X}$中的点列$\{x_n\}$收敛到$x\in \mathscr{X}$,即
+\begin{align*}
+x_n\to x\ (n\to\infty)\iff \|x_n-x\|\to0\quad(n\to\infty).
+\end{align*}
+完备的$F^*$空间称为$\mathbf{Frechet}$\textbf{空间}，简称$\bm{F}$\textbf{空间}。
+
+如果 $\|\cdot\|$ 线性空间是 $\mathscr{X}$ 上的一个范数,就称 $(\mathscr{X},\|\cdot\|)$ 为\textbf{赋范线性空间}，或称$\bm{B}^*$\textbf{空间}。此时,线性空间$\mathscr{X}$中的度量为$\rho:\mathscr{X}\times \mathscr{X}\to \mathbb{R},\,\,(x,y)\mapsto \|x-y\|$.故称$\mathscr{X}$中的点列$\{x_n\}$收敛到$x\in \mathscr{X}$,即
+\begin{align*}
+x_n\to x\ (n\to\infty)\iff \|x_n-x\|\to0\quad(n\to\infty).
+\end{align*}
+完备的$B^*$空间叫作$\mathbf{Banach}$\textbf{空间},简称$\bm{B}$\textbf{空间}.
+\end{definition}
+
+\begin{proposition}\label{proposition:常见F空间}
+\begin{enumerate}[(1)]
+\item\label{proposition:常见F空间-1} 设$(M,\rho)$是一个紧的度量空间，用$C(M)$表示$M\to\mathbb{R}$的一切连续映射全体.则
+\begin{align*}
+\|u\|=\max_{x\in M}|u(x)|,\quad \forall u\in M.
+\end{align*}
+是一个范数，并且$(C(M),\|\cdot\|)$是一个$B$空间。
+
+\item Euclid空间$\mathbb{R}^n$。设$x=(x_1,x_2,\cdots,x_n)\in\mathbb{R}^n$，定义
+\begin{align*}
+\|x\|=\left(\sum_{i=1}^n|x_i|^2\right)^{\frac{1}{2}},
+\end{align*}
+则它是一个范数，且$(\mathbb{R}^n,\|\cdot\|)$是一个$B$空间。
+
+\item\label{proposition:常见$F$空间-3} 用$S$表示一切序列$x=(x_1,x_2,\cdots,x_n,\cdots)$组成的线性空间，加法与数乘按自然方式定义：
+\begin{align*}
+x+y&=(x_1+y_1,x_2+y_2,\cdots,x_n+y_n,\cdots),\\
+\alpha x&=(\alpha x_1,\alpha x_2,\cdots,\alpha x_n,\cdots)\quad(\alpha\in\mathbb{K}),
+\end{align*}
+其中$x=(x_1,x_2,\cdots,x_n,\cdots),y=(y_1,y_2,\cdots,y_n,\cdots)$。对$\forall x\in S$定义
+\begin{align*}
+\|x\|=\sum_{n=1}^\infty\frac{1}{2^n}\cdot\frac{|x_n|}{1+|x_n|},
+\end{align*}
+那么它是一个准范数,且$(S,\|\cdot\|)$是一个$F$空间。称$(S,\|\cdot\|)$为\textbf{空间}$\bm{S}$.
+
+\item $C(\mathbb{R}^n)$空间表示$\mathbb{R}^n$上一切连续函数全体，并令
+\begin{align*}
+\parallel u\parallel =\sum_{k=1}^{\infty}{\frac{1}{2^k}}\cdot \frac{\max\limits_{|x|\leqslant k} |u(x)|}{1+\max\limits_{|x|\leqslant k} |u(x)|},
+\end{align*}
+其中$u(x)\in C(\mathbb{R}^n),x=(x_1,x_2,\cdots,x_n),|x|=\sqrt{x_1^2+x_2^2+\cdots+x_n^2}$。这时$\|\cdot\|$是一个准范数，并且$(C(\mathbb{R}^n),\|\cdot\|)$构成一个$F$空间.
+\end{enumerate}
+\end{proposition}
+\begin{remark}
+由\ref{proposition:常见$F$空间-3}的证明不难看出：点列
+\begin{align*}
+x^{(m)}=(x_1^{(m)},x_2^{(m)},\cdots,x_n^{(m)},\cdots)\quad(m=1,2,\cdots)
+\end{align*}
+收敛于$\theta=(0,0,\cdots,0,\cdots)\ (\text{当 }m\to\infty)$，当且仅当对每个正整数$n$都有$x_n^{(m)}\to0\ (\text{当 }m\to\infty)$。这意味着按$S$距离收敛与按坐标收敛是等价的。
+\end{remark}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 
+
+\item 
+
+\item 事实上，$\|\cdot\|$的正定性和交换性是明显成立的。下面先验证三角形不等式，注意到初等不等式
+\begin{align*}
+\frac{\alpha+\beta}{1+\alpha+\beta}=\frac{\alpha}{1+\alpha+\beta}+\frac{\beta}{1+\alpha+\beta}\leqslant\frac{\alpha}{1+\alpha}+\frac{\beta}{1+\beta}\quad(\forall\alpha,\beta>0),
+\end{align*}
+便得到
+\begin{align*}
+\|x+y\|&=\sum_{n=1}^\infty\frac{1}{2^n}\cdot\frac{|x_n+y_n|}{1+|x_n+y_n|}
+\leqslant\sum_{n=1}^\infty\frac{1}{2^n}\cdot\frac{|x_n|+|y_n|}{1+|x_n|+|y_n|}\\
+&\leqslant\sum_{n=1}^\infty\frac{1}{2^n}\left(\frac{|x_n|}{1+|x_n|}+\frac{|y_n|}{1+|y_n|}\right)=\|x\|+\|y\|.
+\end{align*}
+其次验证连续性。因为还有初等不等式
+\begin{align*}
+\frac{\alpha\beta}{1+\alpha\beta}\leqslant\begin{cases}
+\alpha\frac{\beta}{1+\beta},&\text{当 }\alpha\geqslant1,\beta\geqslant0,\\
+\frac{\beta}{1+\beta},&\text{当 }0<\alpha<1,\beta\geqslant0,
+\end{cases}
+\end{align*}
+所以$\forall\alpha\in\mathbb{K}$，有
+\begin{align*}
+\|\alpha x_n\|\leqslant\max(|\alpha|,1)\|x_n\|\to0\quad(\|x_n\|\to0).
+\end{align*}
+
+又若$|\alpha_m|\to0$，$\forall\varepsilon>0$，取$n_0$，使得$\frac{1}{2^{n_0}}<\frac{\varepsilon}{2}$，固定住$n_0$，取$N=N(\frac{\varepsilon}{2})$，使得当$m>N$时有
+\begin{align*}
+|\alpha_m|\max_{1\leqslant i\leqslant n_0}|x_i|<\frac{\varepsilon}{2},
+\end{align*}
+则
+\begin{align*}
+\parallel \alpha _mx\parallel &=\sum_{n=1}^{n_0}{\frac{1}{2^n}}\cdot \frac{|\alpha _mx_n|}{1+|\alpha _mx_n|}+\sum_{n=n_0+1}^{\infty}{\frac{1}{2^n}}\cdot \frac{|\alpha _mx_n|}{1+|\alpha _mx_n|}
+\\
+&\leqslant \sum_{n=1}^{n_0}{\frac{1}{2^n}}\cdot \frac{\frac{\varepsilon}{2}}{1+\frac{\varepsilon}{2}}+\sum_{n=n_0+1}^{\infty}{\frac{1}{2^n}}\leqslant \frac{\varepsilon}{2}\sum_{n=1}^{n_0}{\frac{1}{2^n}}+\sum_{n=n_0+1}^{\infty}{\frac{1}{2^n}}
+\\
+&<\frac{\varepsilon}{2}\frac{\frac{1}{2}\left( 1-\frac{1}{2^{n_0}} \right)}{1-\frac{1}{2}}+\frac{\frac{1}{2^{n_0+1}}}{1-\frac{1}{2}}<\frac{\varepsilon}{2}+\frac{1}{2^{n_0}}
+\\
+&<\frac{\varepsilon}{2}+\frac{\varepsilon}{2}=\varepsilon .
+\end{align*}
+这就证明了$S$是一个$F^*$空间。
+
+最后再验证完备性。若
+\begin{align*}
+\|x^{(m+p)}-x^{(m)}\|=\sum_{n=1}^\infty\frac{1}{2^n}\cdot\frac{|x_n^{(m+p)}-x_n^{(m)}|}{1+|x_n^{(m+p)}-x_n^{(m)}|}\to0\quad(\text{当 }m\to\infty,\forall p\in\mathbb{N}),
+\end{align*}
+则对$\forall n\in\mathbb{N}$，$|x_n^{(m+p)}-x_n^{(m)}|\to0\quad(\text{当 }m\to\infty,\forall p\in\mathbb{N})$。于是存在$x_n^*$，使得$x_n^{(m)}\to x_n^*\quad(\text{当 }m\to\infty)$。因此，$\forall\varepsilon>0$，取$n_0$，使得$\frac{1}{2^{n_0}}<\frac{\varepsilon}{2}$，再取$N$，使得当$m>N$时有
+\begin{align*}
+|x_n^{(m)}-x_n^*|<\frac{\varepsilon}{2}\quad(n=1,2,\cdots,n_0),
+\end{align*}
+便得到
+\begin{align*}
+\parallel x^{(m)}-x^*\parallel &=\sum_{n=1}^{\infty}{\frac{1}{2^n}}\cdot \frac{|x_{n}^{(m)}-x_{n}^{*}|}{1+|x_{n}^{(m)}-x_{n}^{*}|}
+\\
+&\leqslant \sum_{n=1}^{n_0}{\frac{1}{2^n}|x_{n}^{(m)}}-x_{n}^{*}|+\sum_{n=n_0+1}^{\infty}{\frac{1}{2^n}}
+\\
+&<\frac{\varepsilon}{2}\frac{\frac{1}{2}\left( 1-\frac{1}{2^{n_0}} \right)}{1-\frac{1}{2}}+\frac{\frac{1}{2^{n_0+1}}}{1-\frac{1}{2}}<\frac{\varepsilon}{2}+\frac{1}{2^{n_0}}
+\\
+&<\frac{\varepsilon}{2}+\frac{\varepsilon}{2}=\varepsilon \quad (\text{当} m>N),
+\end{align*}
+其中$x^*=(x_1^*,x_2^*,\cdots,x_n^*,\cdots)$。于是$S$是一个$F$空间.
+
+\item 
+\end{enumerate}
+\end{proof}
+
+\begin{proposition}\label{proposition:常见B空间11111}
+设$(\Omega,\mathscr{B},\mu)$是一个测度空间，$u$是$\Omega$上的可测函数，而且$|u|^p$在$\Omega$上是可积的。这种函数$u$的全体记作$L^p(\Omega,\mu)$，叫作$(\Omega,\mathscr{B},\mu)$上的$p$次可积函数空间。$L^p(\Omega,\mu)$按通常的加法与数乘规定运算，并且把几乎处处（记作a.e.）相等的两个函数看成是同一个向量，经这样处理过的空间$L^p(\Omega,\mu)$仍是一个线性空间，并且定义
+\begin{align*}
+\|u\|=\left(\int_\Omega|u(x)|^p\mathrm{d}\mu\right)^{\frac{1}{p}},
+\end{align*}
+那么$\|\cdot\|$是一个范数。并且$(L^p(\Omega,\mu),\|\cdot\|)$还是一个$B$空间.称$(L^p(\Omega,\mu),\|\cdot\|)$为\textbf{空间}$\boldsymbol{L}^{\boldsymbol{p}}\boldsymbol{(\Omega },\boldsymbol{\mu }\mathbf{)(}\mathbf{1}\leqslant \boldsymbol{p}<\boldsymbol{\infty )}$。
+
+特别地,
+\begin{enumerate}[(1)]
+\item $\Omega$是$\mathbb{R}^n$中的一个可测集，而$\mathrm{d}\mu$即是普通的Lebesgue测度，这时，对应的空间记作$L^p(\Omega)$。
+
+\item $\Omega=\mathbb{N}$，而测度$\mu$是等分布的：$\mu(\{n\})=1(\forall n\in\mathbb{N})$，这时空间$L^p(\Omega,\mu)$由满足$\sum_{n=1}^\infty|u_n|^p<\infty$的序列$u=\{u_n\}_{n=1}^\infty$组成，对应的空间记作$l^p$，其范数是
+\begin{align*}
+\|u\|=\left(\sum_{n=1}^\infty|u_n|^p\right)^{\frac{1}{p}}.
+\end{align*}
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+
+这是因为范数定义中的正定性和齐次性都是显然的，而三角不等式正是著名的\hyperref[Real-Analysis-theorem:实变函数--Minkowski不等式]{Minkowski不等式}：
+\begin{align*}
+\left(\int_\Omega|u(x)+v(x)|^p\mathrm{d}\mu\right)^{\frac{1}{p}}\leqslant\left(\int_\Omega|u(x)|^p\mathrm{d}\mu\right)^{\frac{1}{p}}+\left(\int_\Omega|v(x)|^p\mathrm{d}\mu\right)^{\frac{1}{p}}.
+\end{align*}
+又由\hyperref[Real-Analysis-theorem:Riesz-Fischer定理的另一种常用形式]{Riesz-Fischer定理}知,$L^p(\Omega,\mu)$还是一个$B$空间.
+\end{proof}
+
+\begin{proposition}
+空间$L^\infty(\Omega,\mu)$。设$(\Omega,\mathscr{B},\mu)$是一个测度空间，$\mu$对于$\Omega$是$\sigma$-有限的，$u(x)$是$\Omega$上的可测函数。如果$u(x)$与$\Omega$上的一个有界函数几乎处处相等，则称$u(x)$是$\Omega$上的一个\textbf{本性有界可测函数}。$\Omega$上的一切本性有界可测函数（把a.e.相等的两个函数视为同一个向量）的全体记作$L^\infty(\Omega,\mu)$，在其上规定：
+\begin{align}\label{eq:linfnorm}
+\|u\|=\inf_{\substack{\mu(E_0)=0\\E_0\subseteq\Omega}}\left(\sup_{x\in\Omega\setminus E_0}|u(x)|\right),
+\end{align}
+此式右端有时也记作$\operatorname{ess}\sup_{x\in\Omega}|u(x)|$或$\operatorname{l.u.b}_{x\in\Omega}|u(x)|$。显然$L^\infty(\Omega,\mu)$是一个线性空间,并且$\|\cdot\|$是一个范数,$(L^\infty(\Omega,\mu),\|\cdot\|)$还是一个$B$空间.
+
+特别地,
+\begin{enumerate}[(1)]
+\item 当$\Omega$是$\mathbb{R}^n$中的一个可测集时，对应的空间记作$L^\infty(\Omega)$；
+
+\item 当$\Omega = \mathbb{N}$时，对应的空间记作$l^\infty$，它是由一切有界序列$u = \{u_n\}_{n=1}^\infty$组成的空间，其范数是$\|u\| = \sup\limits_{n\geqslant 1} |u_n|.$
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+
+事实上，范数定义中的齐次性及$\|u\|\geqslant0$都是显然的，需验证：
+\begin{enumerate}[(1)]
+\item $\|u\|=0\iff u=\theta$。充分性是显然的。为了证必要性，若$\|u\|=0$，则由下确界定义知,对$\forall n\in\mathbb{N}$，$\exists E_n\subseteq\Omega$，使得$\mu(E_n)=0$，并且
+\begin{align*}
+\sup_{x\in\Omega\setminus E_n}|u(x)|<\frac{1}{n}.
+\end{align*}
+令
+\begin{align*}
+\Omega_1\triangleq\bigcap_{n=1}^\infty(\Omega\setminus E_n)=\Omega\setminus\bigcup_{n=1}^\infty E_n,
+\end{align*}
+则对$\forall n\in\mathbb{N}$,都有
+\begin{align*}
+\Omega _1\subseteq \Omega \backslash E_n\Longrightarrow |u(x)|\leqslant \mathop {\mathrm{sup}} \limits_{x\in \Omega \setminus E_n}|u(x)|<\frac{1}{n},\,\forall x\in \Omega _1.
+\end{align*}
+令$n\to \infty$得$u(x)=0\ \forall x\in\Omega_1$.又$\mu\left(\bigcup_{n=1}^\infty E_n\right)=0$，所以
+\begin{align*}
+u(x)=0\ \text{a.e.}x\in\Omega,\quad\text{即 }u=\theta.
+\end{align*}
+\item $\|u+v\|\leqslant\|u\|+\|v\|$。由下确界定义知,对$\forall\varepsilon>0$，$\exists E_0,E_1\subseteq\Omega$，使得$\mu(E_0)=\mu(E_1)=0$，且
+\begin{align*}
+\sup_{x\in\Omega\setminus E_0}|u(x)|\leqslant\|u\|+\frac{\varepsilon}{2},\quad
+\sup_{x\in\Omega\setminus E_1}|v(x)|\leqslant\|v\|+\frac{\varepsilon}{2}.
+\end{align*}
+因此
+\begin{align*}
+\parallel u+v\parallel &\leqslant \mathop {\mathrm{sup}} \limits_{x\in \Omega \setminus (E_0\cup E_1)}|u(x)+v(x)|\leqslant \mathop {\mathrm{sup}} \limits_{x\in \Omega \setminus (E_0\cup E_1)}|u(x)|+\mathop {\mathrm{sup}} \limits_{x\in \Omega \setminus (E_0\cup E_1)}|v(x)|
+\\
+&\leqslant \mathop {\mathrm{sup}} \limits_{x\in \Omega \setminus E_0}|u(x)|+\mathop {\mathrm{sup}} \limits_{x\in \Omega \setminus E_1}|v(x)|\leqslant \parallel u\parallel +\parallel v\parallel +\varepsilon ,
+\end{align*}
+而$\varepsilon>0$是任意的，即得所要证的结论。
+\end{enumerate}
+
+最后验证$(L^\infty(\Omega,\mu),\|\cdot\|)$是完备的.
+设
+\begin{align}\label{eq::JOHIFJO33523}
+\parallel u_{n+p}-u_n\parallel \rightarrow 0\,\,\left( \text{当}n\rightarrow \infty ,\forall p\in \mathbb{N} \right) .
+\end{align}
+根据$L^\infty(\Omega,\mu)$中范数定义，$\exists Z_{n,p} \subseteq \Omega, \mu(Z_{n,p}) = 0$，使得
+$$|u_{n+p}(x)-u_n(x)| \leqslant \|u_{n+p}-u_n\| + \frac{1}{2^{n+p}} \quad (\forall x \in \Omega \setminus Z_{n,p}).$$
+令$Z = \bigcup\limits_{n,p} Z_{n,p}$，则$\mu(Z)=0$，且
+$$|u_{n+p}(x)-u_n(x)| \leqslant \|u_{n+p}-u_n\| + \frac{1}{2^{n+p}} \quad (x \in \Omega \setminus Z, n,p \in \mathbb{N}).$$
+由上式和\eqref{eq::JOHIFJO33523}式知,对$\forall \varepsilon > 0, \exists N \in \mathbb{N}$，使$\forall n \geqslant N, p \in \mathbb{N}$有
+$$|u_{n+p}(x)-u_n(x)| < \varepsilon + \frac{1}{2^{n+p}} \quad (x \in \Omega \setminus Z).$$
+故对每个固定的$x \in \Omega \setminus Z$,$\{u_n(x)\}$都是$(\mathbb{R},\rho)$上的基本列,进而$\lim\limits_{n\to\infty} u_n(x) = u(x)$都存在.再对上式令$p \to \infty$得
+$$|u(x)-u_n(x)| \leqslant \varepsilon \quad (x \in \Omega \setminus Z),$$
+即
+$$\sup\limits_{x \in \Omega \setminus Z} |u(x)-u_n(x)| \leqslant \varepsilon.$$
+因$\mu(Z)=0$，所以$u(x)=u_n(x)\,\text{a.e.}\,x\in \Omega$.故$u \in L^\infty(\Omega,\mu)$，且
+$$\|u_n - u\| \leqslant \varepsilon \quad (n \geqslant N),$$
+即$\|u_n - u\| \to 0 \quad (n \to \infty).$
+
+\end{proof}
+
+\begin{proposition}\label{examples:常见的B空间222222}
+设$\Omega$是$\mathbb{R}^n$中的一个有界连通开区域，$k \in \mathbb{N}$，用$C^k(\overline{\Omega})$表示在$\overline{\Omega}$上具有直到$k$阶连续偏导数的函数$u(x)=u(x_1,x_2,\cdots,x_n)$的全体，加法与数乘按自然法则定义，再规定范数为
+\begin{align}
+\|u\| = \max\limits_{|\alpha|\leqslant k} \max\limits_{x \in \overline{\Omega}} |\partial^\alpha u(x)|,
+\end{align}
+其中$\alpha = (\alpha_1,\alpha_2,\cdots,\alpha_n), |\alpha| = \alpha_1+\alpha_2+\cdots+\alpha_n$，以及
+\begin{align*}
+\partial^\alpha u(x) = \frac{\partial^{|\alpha|}}{\partial x_1^{\alpha_1} \partial x_2^{\alpha_2} \cdots \partial x_n^{\alpha_n}} u(x).
+\end{align*}
+则上述定义的$\|\cdot\|$是一个范数，从而$C^k(\overline{\Omega})$是一个赋范线性空间,并且它还是$B$空间。
+\end{proposition}
+\begin{proof}
+
+$\|\cdot\|$显然是一个范数.事实上，若$\{u_n\}$是一个基本列，则$\forall \alpha \in \mathbb{R}^n$ 且 $|\alpha| \leqslant k$，固定$\alpha$。对$\forall \varepsilon >0$，当$m,n\in \mathbb{N}$ 且$m\geqslant n$时，有
+\begin{align*}
+\max_{x\in \overline{\Omega}} |\partial^\alpha u_m(x)-\partial^\alpha u_n(x)| \leqslant \max_{|\alpha| \leqslant k} \max_{x\in \overline{\Omega}} |\partial^\alpha u_m(x)-\partial^\alpha u_n(x)| = \| u_m - u_n \| < \varepsilon.
+\end{align*}
+从而$\{\partial^\alpha u_n\}_{n=1}^\infty$ 是连续函数空间$(C(\overline{\Omega}),\rho)$中的基本列，其中
+\begin{align*}
+\rho(u,v) = \max_{x\in \overline{\Omega}} |u(x)-v(x)|,\quad \forall u,v\in C(\overline{\Omega}).
+\end{align*}
+又$(C(\overline{\Omega}),\rho)$是完备的，故$\{\partial^\alpha u_n\}_{n=1}^\infty$是收敛列，即存在连续函数$v_\alpha$，使得
+\begin{align}
+\partial^\alpha u_n(x) \rightrightarrows v_\alpha(x) \quad (n \to \infty, |\alpha| \leqslant k, \text{对 } x \in \overline{\Omega} \text{ 一致}).\label{eq::fiouhwefhjoijioeojioej390}
+\end{align}
+先证
+\begin{align}
+v_{(1,0,\cdots,0)} = \frac{\partial}{\partial x_1} v_{(0,0,\cdots,0)}.\label{eq::IODJO230902490349}
+\end{align}
+由\eqref{eq::fiouhwefhjoijioeojioej390}式知
+$$\frac{\partial}{\partial x_1} u_n(x) \rightrightarrows v_{(1,0,\cdots,0)}(x) \quad (n \to \infty, \text{对 } x \in \overline{\Omega} \text{ 一致}),$$
+$$u_n(x) \rightrightarrows v_{(0,0,\cdots,0)}(x) \quad (n \to \infty, \text{对 } x \in \overline{\Omega} \text{ 一致}),$$
+以及
+$$u_n(x) = \int_{x_1^0}^{x_1} \frac{\partial}{\partial \xi} u_n(\xi, x_2, \cdots, x_n) \mathrm{d}\xi + u_n(x_1^0, x_2, \cdots, x_n),$$
+所以由一致连续的逐项可积性可得
+$$v_{(0,0,\cdots,0)}(x) = \int_{x_1^0}^{x_1} v_{(1,0,\cdots,0)}(\xi, x_2, \cdots, x_n) \mathrm{d}\xi + v_{(0,0,\cdots,0)}(x_1^0, x_2, \cdots, x_n),$$
+再对上式求偏导即得\eqref{eq::IODJO230902490349}式。同理有
+$$v_{(0,0,\cdots,0,1,0,\cdots,0)} = \frac{\partial}{\partial x_j} v_{(0,0,\cdots,0)} \quad (j=2,3,\cdots,n).$$
+其余对$|\alpha|$用数学归纳法类推易得
+\begin{align*}
+\partial ^{\alpha}v_{(0,0,\cdots ,0)}=v_{\alpha},\quad \forall \alpha \in \mathbb{R} ^n\text{且}\left| \alpha \right|\leqslant k.
+\end{align*}
+再利用\eqref{eq::fiouhwefhjoijioeojioej390}式可知
+\begin{align*}
+\left\| u_n-v_{(0,0,\cdots ,0)} \right\| =\max_{|\alpha |\leqslant k} \max_{x\in \overline{\Omega }} \left| \partial ^{\alpha}u\left( x \right) -\partial ^{\alpha}v_{(0,0,\cdots ,0)}\left( x \right) \right|=\max_{|\alpha |\leqslant k} \max_{x\in \overline{\Omega }} \left| \partial ^{\alpha}u\left( x \right) -v_{\alpha}\left( x \right) \right|\rightarrow 0,\quad \left( n\rightarrow \infty \right) .
+\end{align*}
+\end{proof}
+
+\begin{proposition}
+设$\Omega$是$\mathbb{R}^n$中的一个有界连通开区域，$m$是一个非负整数，$1 \leqslant p < \infty$，对于$C^m(\overline{\Omega})$中的任意$u$，定义范数
+\begin{align*}
+\|u\|_{m,p} = \left( \sum\limits_{|\alpha|\leqslant m} \int_\Omega |\partial^\alpha u(x)|^p \mathrm{d}x \right)^{\frac{1}{p}}.
+\end{align*}
+则$\|\cdot\|_{m,p}$是范数，但$C^m(\overline{\Omega})$依$\|\cdot\|_{m,p}$不是完备的.即$C^m(\overline{\Omega},\|\cdot\|_{m,p})$是$B^*$空间但不是$B$空间.
+
+将$C^m(\Omega)$的子集
+$$S \triangleq \{u \in C^m(\overline{\Omega}) \mid \|u\|_{m,p} < \infty\}$$
+按照范数完备化，得到的完备化空间称为\hyperref[definition:Sobolev空间]{Sobolev空间}，记作$W^{m,p}(\Omega)$或$H^{m,p}(\Omega)$.特别当$p=2$时,$H^{m,2}(\Omega)$简单地记成$H^{m}(\Omega)$.
+\end{proposition}
+
+
+\subsection{赋准范数的线性空间上的范数等价}
+
+\begin{definition}
+设在线性空间$\mathscr{X}$上给定了两个范数$\|\cdot\|_1$与$\|\cdot\|_2$，称$\|\cdot\|_2$比$\|\cdot\|_1$\textbf{强}，是指
+$$\|x_n\|_2 \to 0 \implies \|x_n\|_1 \to 0 \quad (n \to \infty).$$
+如果$\|\cdot\|_2$比$\|\cdot\|_1$强，而且$\|\cdot\|_1$又比$\|\cdot\|_2$强，则称$\|\cdot\|_1$与$\|\cdot\|_2$\textbf{等价}。
+\end{definition}
+
+\begin{proposition}\label{proposition:范数强的充要条件}
+设在线性空间$\mathscr{X}$上给定了两个范数$\|\cdot\|_1$与$\|\cdot\|_2$，则$\|\cdot\|_2$比$\|\cdot\|_1$强当且仅当存在常数$C>0$，使得
+\begin{align*}
+\|x\|_1 \leqslant C\|x\|_2 \quad (\forall x \in \mathscr{X}).
+\end{align*}
+\end{proposition}
+\begin{proof}
+
+充分性是显然的，下证必要性。用反证法。若上述式子不成立，则对$\forall n \in \mathbb{N}, \exists x_n \in \mathscr{X}$，使得$\|x_n\|_1 > n\|x_n\|_2$。令$y_n\triangleq \frac{x_n}{\parallel x_n\parallel _1}$,则一方面$\|y_n\|_1=1$，另一方面因为
+$$0 \leqslant \|y_n\|_2 < \frac{1}{n} \quad (\forall n \in \mathbb{N}),$$
+所以$\|y_n\|_2 \to 0 \ (n \to \infty)$。又因为$\|\cdot\|_2$比$\|\cdot\|_1$强，所以$\|y_n\|_1 \to 0 \ (n \to \infty)$。这显然是一个矛盾!
+
+\end{proof}
+
+\begin{corollary}\label{corollary:范数等价的充要条件}
+设在线性空间$\mathscr{X}$上给定了两个范数$\|\cdot\|_1$与$\|\cdot\|_2$，则$\|\cdot\|_1$与$\|\cdot\|_2$等价当且仅当存在常数$C_1,C_2>0$，使得
+$$C_1\|x\|_1 \leqslant \|x\|_2 \leqslant C_2\|x\|_1 \quad (\forall x \in \mathscr{X}).$$
+\end{corollary}
+\begin{proof}
+
+由\refpro{proposition:范数强的充要条件}立得.
+\end{proof}
+
+\begin{theorem}\label{theorem:有限维赋范线性空间的范数都等价}
+设$\mathscr{X}$是一个有限维线性空间，$\{e_1,\dots,e_n\}$ 是 $\mathscr{X}$ 的一组基,则可定义线性同构 $T:\mathscr{X}\to\mathbb{K}^n$ 如下：
+\[
+T x = (\xi_1,\dots,\xi_n),\quad \text{其中 } x = \sum_{j=1}^n \xi_j e_j.
+\]
+取$\mathbb{K}^n$中的范数为欧几里得范数$|\cdot|$,即
+\[
+|\xi| = \left(\sum_{j=1}^n |\xi_j|^2\right)^{\frac{1}{2}},\quad \forall \xi = (\xi_1,\dots,\xi_n)\in\mathbb{K}^n.
+\]
+再定义 $\|x\|_T \triangleq |Tx|,\forall x\in \mathscr{X}$,则$\|\cdot\|_T$ 也是$\mathscr{X}$ 上的一个范数,称$\|\cdot\|_T$为$\mathscr{X}$的$\mathbb{K} ^{n}$\textbf{范数}.且$\mathscr{X}$的$\mathbb{K} ^n$范数与$\mathscr{X}$上的任一范数$\|\cdot\|$等价,即存在常数$C_1,C_2>0$,使得
+\begin{align*}
+C_1\|x\|_T \leqslant \|x\|_ \leqslant C_2\|x\|_T \quad (\forall x \in \mathscr{X}).
+\end{align*}
+进而映射$T$是$(\mathscr{X},\|\cdot\|_T)$到$(\mathbb{K}^n,|\cdot|)$的等距同构.
+\end{theorem}
+\begin{remark}
+本定理表明：具有相同维数的两个有限维赋范线性空间在代数上是同构的，在拓扑上是同胚的。
+\end{remark}
+\begin{proof}
+
+设 $\{e_1,\dots,e_n\}$ 是 $\mathscr{X}$ 的一组基,$\|\cdot \|$是$\mathscr{X}$上的一个范数。由线性代数知识,定义线性同构 $T:\mathscr{X}\to\mathbb{K}^n$ 如下：
+\[
+T x = (\xi_1,\dots,\xi_n),\quad \text{其中 } x = \sum_{j=1}^n \xi_j e_j.
+\]
+取$\mathbb{K}^n$中的范数为欧几里得范数$|\cdot|$,即
+\[
+|\xi| = \left(\sum_{j=1}^n |\xi_j|^2\right)^{\frac{1}{2}},\quad \forall \xi = (\xi_1,\dots,\xi_n)\in\mathbb{K}^n.
+\]
+考虑函数
+\[
+p:\mathbb{K}^n\to[0,\infty),\quad p(\xi) = \biggl\|\sum_{j=1}^n \xi_j e_j\biggr\|,\,\,\forall \xi\in\mathbb{K}^n.
+\]
+
+对任意 $\xi,\eta\in\mathbb{K}^n$,由\rrefpro{proposition:范数定义的基本推论}{proposition:范数定义的基本推论-1}和Cauchy-Schwarz不等式可得
+\begin{align*}
+|p(\xi)-p(\eta)|
+&\leqslant p(\xi-\eta) = \biggl\|\sum_{j=1}^n (\xi_j-\eta_j)e_j\biggr\|
+\leqslant \sum_{j=1}^n |\xi_j-\eta_j| \,\|e_j\| \\
+&\leqslant \left(\sum_{j=1}^n |\xi_j-\eta_j|^2\right)^{\frac{1}{2}}
+\left(\sum_{j=1}^n \|e_j\|^2\right)^{\frac{1}{2}} \\
+&= |\xi-\eta| \left(\sum_{j=1}^n \|e_j\|^2\right)^{\frac{1}{2}}.
+\end{align*}
+因此 $p$ 在 $\mathbb{K}^n$ 上 Lipschitz 连续，从而一致连续。
+
+因为单位球面 $S_1 = \{\xi\in\mathbb{K}^n : |\xi|=1\}$ 是 $\mathbb{K}^n$ 中的紧集,且$p$连续，所以$p$在 $S_1$ 上必能取到最小值和最大值,记
+\[
+C_1 = \min_{\xi\in S_1} p(\xi),\quad C_2 = \max_{\xi\in S_1} p(\xi).
+\]
+则 $0\leqslant C_1\leqslant C_2 <\infty$，且
+\begin{align}
+C_1 \leqslant p(\xi) \leqslant C_2 \quad \forall \xi\in S_1.\label{eq::JJIJFAIOIO987}
+\end{align}
+
+断言$C_1>0$.若$C_1=0$。则存在 $\xi^*\in S_1$ 使得 $p(\xi^*)=0$，即
+\[
+\biggl\|\sum_{j=1}^n \xi_j^* e_j\biggr\| =0 \Longrightarrow\sum_{j=1}^n \xi_j^* e_j = 0.
+\]
+因为$e_1,\dots,e_n$线性无关,故所有 $\xi_j^*=0$，即 $\xi^*=0$，这与$\xi^*\in S_1$即$|\xi^*|=1$ 矛盾!因此 $C_1>0$。
+
+注意到对$\forall \xi\in\mathbb{K}^n\setminus\{0\}$,有$\frac{\xi}{|\xi|}\in S_1$,且由范数的齐次性得
+\[
+p(\xi)=\biggl\|\sum_{j=1}^n \xi_j e_j\biggr\|
+=|\xi|\,\biggl\|\sum_{j=1}^n \frac{\xi_j}{|\xi|}\,e_j\biggr\|
+=|\xi|\,p\!\left(\frac{\xi}{|\xi|}\right).
+\]
+因此由\eqref{eq::JJIJFAIOIO987}式知,对$\forall \xi \in\mathbb{K}^n\setminus \{0\}$,有
+\begin{align*}
+C_1\leqslant p\left( \frac{\xi}{\left| \xi \right|} \right) \leqslant C_2\Longleftrightarrow C_1\left| \xi \right|\leqslant \left| \xi \right|p\left( \frac{\xi}{\left| \xi \right|} \right) \leqslant C_2\left| \xi \right|\Longleftrightarrow C_1|\xi |\leqslant p\left( \xi \right) \leqslant C_2|\xi |.
+\end{align*}
+从而
+\[
+C_1 |\xi| \leqslant p(\xi) \leqslant C_2 |\xi|,\quad \forall \xi\in\mathbb{K}^n.
+\]
+
+由$T$是$\mathscr{X} \rightarrow \mathbb{K} ^n$的同构知, 对$\forall x\in \mathscr{X}$, 存在$\xi = (\xi _1,\xi _2,\cdots,\xi _n) \in \mathbb{K} ^n$, 使得$Tx=\xi$, 且$x=\sum\limits_{j=1}^n \xi _je_j$. 从而
+\begin{align*}
+p(\xi) = \left\| \sum\limits_{j=1}^n \xi _je_j \right\| = \|x\|, \quad |\xi|=|Tx|.
+\end{align*}
+于是由式可得
+\begin{align*}
+C_1|Tx|\leqslant \|x\| \leqslant C_2|Tx|, \quad \forall x\in \mathscr{X}.
+\end{align*}
+定义 $\|x\|_T \triangleq |Tx|$，则显然$\|\cdot\|_T$ 也是$\mathscr{X}$ 上的一个范数.由上述不等式和\refcor{corollary:范数等价的充要条件}知$\mathscr{X}$ 上的任一范数$\|\cdot\|$ 都与 $\|\cdot\|_T$ 等价。
+\end{proof}
+
+\begin{corollary}\label{corollary:有限维赋范线性空间的范数都等价11}
+设$\mathscr{X}$是一个有限维线性空间，若$\|\cdot\|_1$与$\|\cdot\|_2$都是$\mathscr{X}$上的范数，则必有常数$C_1,C_2>0$，使得
+$$C_1\|x\|_1 \leqslant \|x\|_2 \leqslant C_2\|x\|_1 \quad (\forall x \in \mathscr{X}).$$
+即$\|\cdot\|_1$与$\|\cdot\|_2$等价.
+\end{corollary}
+\begin{proof}
+
+由\refthe{theorem:有限维赋范线性空间的范数都等价}知$\|\cdot\|_1$与$\|\cdot\|_2$都与$X$的$\mathbb{K}^n$范数等价,故$\|\cdot\|_1$与$\|\cdot\|_2$等价.
+\end{proof}
+
+\begin{corollary}
+\begin{enumerate}[(1)]
+\item 有限维$B^*$空间必是$B$空间。
+
+\item $B^*$空间上的任意有限维子空间必是闭子空间.
+\end{enumerate}
+\end{corollary}
+\begin{proof}
+
+设$X$是$n$维$B^*$空间,其范数为$\|\cdot \|$.
+\begin{enumerate}[(1)]
+\item 设$\{ e_1,e_2,\cdots,e_n \}$为$X$的一组基，设线性同构
+\begin{align*}
+T:X\rightarrow \mathbb{K} ^n,\quad x\mapsto \xi = (\xi _1,\xi _2,\cdots,\xi _n),\text{其中}x=\sum\limits_{i=1}^n \xi _ie_i.
+\end{align*}
+取$\mathbb{K} ^n$中的范数为欧几里得范数$|\cdot|$，即
+\begin{align*}
+|\xi|=\left( \sum\limits_{i=1}^n |\xi _i|^2 \right) ^{\frac{1}{2}},\quad \forall \xi = (\xi _1,\xi _2,\cdots,\xi _n) \in \mathbb{K} ^n.
+\end{align*}
+记$\| x \|_T=|Tx|(\forall x\in X)$是$X$的$\mathbb{K} ^n$范数，由\refthe{theorem:有限维赋范线性空间的范数都等价}知存在常数$C_1,C_2>0$，使得
+\begin{align*}
+C_1\| x \|_T\leqslant \| x \| \leqslant C_2\| x \|_T,\quad \forall x\in X.
+\end{align*}
+若$\{ x_n \}$是$( X,\|\cdot\| )$中的基本列，则对$\forall \varepsilon >0$，当$n,m\in \mathbb{N}$且$m\geqslant n$时，有
+\begin{align*}
+C_1|Tx_m-Tx_n|=C_1\| x_m-x_n \|_T\leqslant \| x_m-x_n \| <\varepsilon .
+\end{align*}
+故$\{ Tx_n \}$是$( \mathbb{K} ^n,|\cdot| )$中的基本列，而$( \mathbb{K} ^n,|\cdot| )$是完备的，因此存在$\xi \in \mathbb{K} ^n$，使得
+\begin{align*}
+\| x_n-(T^{-1}\xi) \|_T=|Tx_n-T(T^{-1}\xi)|=|Tx_n-\xi|<\varepsilon .
+\end{align*}
+注意到$T^{-1}\xi \in X$，故$\{ x_n \}$是$( X,\|\cdot\| )$中的收敛列。因此$( X,\|\cdot\| )$是完备的。
+
+\item 设$Y$是$X$的有限维子空间,则由(1)知$(Y,\|\cdot \|)$是$B$空间.再由\rrefpro{proposition:完备度量空间的子空间等价于闭集}{proposition:完备度量空间的子空间等价于闭集-2}知$Y$是$X$的闭子集.
+\end{enumerate}
+\end{proof}
+
+\begin{definition}
+\begin{enumerate}
+\item 设$P: \mathscr{X} \to \mathbb{R}$是线性空间$\mathscr{X}$上的一个函数，若它满足
+\begin{enumerate}[(1)]
+\item 次可加性:$P(x+y) \leqslant P(x)+P(y) \quad (\forall x,y \in \mathscr{X})$,
+\item 正齐次性:$P(\lambda x) = \lambda P(x) \quad (\forall \lambda>0, \forall x \in \mathscr{X})$,
+\end{enumerate}
+则称$P$为$\mathscr{X}$上的一个\textbf{次线性泛函}。
+
+\item 设$P: \mathscr{X} \to \mathbb{R}$是线性空间$\mathscr{X}$上的一个函数，若它满足
+\begin{enumerate}[(1)]
+\item 非负性:$P(x) \geqslant 0 (\forall x \in \mathscr{X})$;
+
+\item 次可加性:$P(x+y) \leqslant P(x)+P(y) \quad (\forall x,y \in \mathscr{X})$;
+
+\item 齐次性:$P(\alpha x)=|\alpha| P(x) (\forall \alpha \in \mathbb{K}, \forall x \in \mathscr{X})$.
+\end{enumerate}
+则称$P$是一个\textbf{半范数}或\textbf{半模}。
+\end{enumerate}
+\end{definition}
+
+\begin{theorem}\label{theorem:泛函分析--定理1.4.22}
+设$P$是有限维$B^*$空间$\mathscr{X}$上的一个次线性泛函，如果$P(x) \geqslant 0 (\forall x \in \mathscr{X})$，并且$P(x)=0 \iff x=\theta$，其中$\theta$是零向量.则存在正常数$C_1,C_2$，使得
+$$C_1\|x\| \leqslant P(x) \leqslant C_2\|x\| \quad (\forall x \in \mathscr{X}).$$
+\end{theorem}
+\begin{proof}
+
+由\refthe{theorem:有限维赋范线性空间的范数都等价}同理可证.
+\end{proof}
+
+
+\subsection{最佳逼近问题}
+
+\begin{theorem}\label{theorem:最佳逼近元的存在性}
+设$\mathscr{X}$是一个$B^*$空间。若$e_1,e_2,\cdots,e_n$是$\mathscr{X}$中给定的向量组，则$\forall x \in \mathscr{X}$，存在最佳逼近系数$\lambda_1,\lambda_2,\cdots,\lambda_n$，使得
+\begin{align*}
+\left\| x-\sum_{i=1}^n{\lambda _ie_i} \right\| =\min_{a=\left( a_1,\cdots ,a_n \right) \in \mathbb{K} ^n} \left\| x-\sum_{i=1}^n{a_ie_i} \right\| .
+\end{align*}
+记$M = \text{span}\{e_1,e_2,\cdots,e_n\}, \rho(x,M) = \inf\limits_{y \in M} \|x-y\|$，则上述结论等价于存在$x_0 = \sum\limits_{i=1}^n \lambda_i e_i\in M$,使得
+$$\rho(x,x_0) = \rho(x,M).$$
+称$x_0$为$x$在$M$上的\textbf{最佳逼近元}。
+\end{theorem}
+\begin{proof}
+
+设$F(a) = \left\| x - \sum\limits_{i=1}^n a_i e_i \right\| ,\forall a =(a_1,\cdots,a_n)\in \mathbb{K}^n$，则$F$是$\mathbb{K}^n$上的连续函数，且
+$$F(a) \geqslant \left\| \sum\limits_{i=1}^n a_i e_i \right\| - \|x\| \quad (\forall a=(a_1,\cdots,a_n) \in \mathbb{K}^n).$$
+令$P(a) = \left\| \sum\limits_{i=1}^n a_i e_i \right\|,\forall a =(a_1,\cdots,a_n)\in \mathbb{K}^n$，则显然$P$是$\mathbb{K}^n$上的范数，故由\refcor{corollary:有限维赋范线性空间的范数都等价11}知,$\mathbb{K}^n$上的范数$P(a)$与欧几里得范数$|\cdot|$等价,从而由\refcor{corollary:范数等价的充要条件}知存在$c_1>0$，使得$P(a) \geqslant c_1 |a|$，因此$F(a) \to \infty$（当$|a| \to \infty$）.从而存在$R>0$，使得
+\begin{align*}
+F(a) > F(0), \quad \forall a\in \mathbb{K}^n \text{且} |a|>R.
+\end{align*}
+故$F$的最小值不可能在$\{ a\in \mathbb{K}^n:|a|>R \}$上取到。
+又$M\triangleq \{ a\in \mathbb{K}^n:|a|\leqslant R \}$是$\mathbb{K}^n$中的紧集，且$F\in C(\mathbb{K}^n)$，因此存在$x_0\in M$，使得
+\begin{align*}
+F(x_0) = \min\limits_{a\in \mathbb{K}^n} F(a).
+\end{align*}
+
+\end{proof}
+
+\begin{definition}[严格凸的]
+$B^*$空间$(\mathscr{X},\|\cdot\|)$称为\textbf{严格凸的}，是指$\forall x,y \in \mathscr{X}, x \neq y$，必有
+\begin{align*}
+\|x\| = \|y\| = 1 \implies \|\alpha x + \beta y\| < 1 \quad (\forall \alpha,\beta>0, \alpha+\beta=1).
+\end{align*}
+也即
+\begin{align*}
+\|x\| = \|y\| = 1 \implies \|t x + (1-t) y\| < 1 \quad (\forall 0<t<1).
+\end{align*}
+\end{definition}
+
+\begin{theorem}
+设$\mathscr{X}$是严格凸的$B^*$空间，$\{e_1,e_2,\cdots,e_n\}$是$\mathscr{X}$上给定的一组线性无关向量，则$\forall x \in \mathscr{X}$，存在着唯一的一组最佳逼近系数$\{\lambda_1,\lambda_2,\cdots,\lambda_n\}$适合
+\begin{align*}
+\left\| x - \sum\limits_{i=1}^n \lambda_i e_i \right\| = \min\limits_{a \in \mathbb{K}^n} \left\| x - \sum\limits_{i=1}^n a_i e_i \right\|.
+\end{align*}
+记$M = \text{span}\{e_1,e_2,\cdots,e_n\}, \rho(x,M) = \inf\limits_{y \in M} \|x-y\|$，则上述结论等价于存在唯一的$x_0 = \sum\limits_{i=1}^n \lambda_i e_i\in M$,使得
+$$\rho(x,x_0) = \rho(x,M).$$
+\end{theorem}
+\begin{proof}
+
+由\refthe{theorem:最佳逼近元的存在性}知这样的最佳逼近元一定存在.
+若存在两个不同的最佳逼近元$y,z \in M$，使得$\|x-y\| = \|x-z\| = d = \rho(x,M)>0$，则对$\forall \alpha,\beta>0, \alpha+\beta=1$，由严格凸性有
+$$\left\| \alpha \frac{x-y}{d} + \beta \frac{x-z}{d} \right\| < 1,$$
+即$\|x - (\alpha y + \beta z)\| < d$，与$d$的定义矛盾!若$d=0$，则$x=y$，故最佳逼近元唯一。
+
+\end{proof}
+
+\begin{proposition}
+\begin{enumerate}[(1)]
+\item 空间$L^p(\Omega,\mu) \ (1 < p < \infty)$是严格凸的。
+
+\item $C(M)$及$L^1(\Omega,\mu)$都不是严格凸的。
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 因为\hyperref[Real-Analysis-theorem:实变函数--Minkowski不等式]{Minkowski不等式}$\|u+v\| \leqslant \|u\| + \|v\|$等号成立的充要条件是：$\exists k_1,k_2 \geqslant 0 \ (k_1+k_2>0)$，使得$k_1 u = k_2 v$（a.e.）.
+所以当$\|u\|=\|v\|=1, u \neq v$时,若$\exists k_1,k_2 \geqslant 0 \ (k_1+k_2>0)$，使得$k_1 u = k_2 v$（a.e.）.取范数得$k_1=k_2$,即$u=v$,这与$u\neq v$矛盾!因此由\hyperref[Real-Analysis-theorem:实变函数--Minkowski不等式]{Minkowski不等式}可得
+$$\|tu + (1-t)v\| < t\|u\| + (1-t)\|v\| = 1 \quad (\forall 0 < t < 1),$$
+故$L^p(\Omega,\mu)$是严格凸的。
+
+\item 以$C[0,1]$为例，取$x(t) \equiv 1, y(t)=t$，则$\|x\|=\|y\|=1$，但$\left\| \frac{1}{2}(x+y) \right\| = 1$；
+
+以$L^1[0,1]$为例，取$x(t) \equiv 1, y(t)=2t$，则$\|x\|=\|y\|=1$，但$\left\| \frac{1}{2}(x+y) \right\| = 1$，故二者均不严格凸。
+\end{enumerate}
+\end{proof}
+
+
+\subsection{有限为$B^*$空间的刻画}
+
+\begin{theorem}\label{theorem:有限维B空间的充要条件11}
+$B^*$空间$\mathscr{X}$是有限维的当且仅当$\mathscr{X}$的单位球面$S_1 = \{x \in \mathscr{X} \mid \|x\|=1\}$是列紧的。
+\end{theorem}
+\begin{proof}
+
+{\heiti 必要性:}设$\dim\mathscr{X}=n$，$\{e_1,\cdots,e_n\}$是$\mathscr{X}$的一组基，$\|\cdot\|$为$\mathscr{X}$的范数。定义线性同构
+\begin{align*}
+T:\mathscr{X}\to\mathbb{K}^n,\quad x\mapsto\xi=(\xi_1,\cdots,\xi_n)\in\mathbb{K}^n,
+\end{align*}
+其中$x=\sum\limits_{i=1}^n\xi_ie_i$。则由\refthe{theorem:有限维赋范线性空间的范数都等价}知$T$是$(\mathscr{X},\|\cdot\|_T)$到$(\mathbb{K}^n,|\cdot|)$的等距同构，其中$\|\cdot\|_T$是$\mathscr{X}$的$\mathbb{K}^n$范数，$|\cdot|$为欧几里得范数。注意到
+\begin{align*}
+TS_1=\{Tx\in\mathbb{K}^n\mid\|x\|=1\}=\{\xi\in\mathbb{K}^n\mid|x|=1\}
+\end{align*}
+是$(\mathbb{K}^n,|\cdot|)$中的有界闭集，又$(\mathbb{K}^n,|\cdot|)$中的紧集等价于有界闭集，故$TS_1$是$(\mathbb{K}^n,|\cdot|)$中的紧集。进而由\refthe{theorem:紧集等价于自列紧}知$TS_1$在$(\mathbb{K}^n,|\cdot|)$中是列紧的。
+再由$T$是$(\mathscr{X},\|\cdot\|_T)$到$(\mathbb{K}^n,|\cdot|)$的等距同构知$S_1$在$(\mathscr{X},\|\cdot\|_T)$中也是列紧的。
+又由\refthe{theorem:有限维赋范线性空间的范数都等价}知$\|\cdot\|_T$和$\|\cdot\|$等价，故$S_1$在$(\mathscr{X},\|\cdot\|)$中也是列紧的。
+
+{\heiti 充分性：}若$\mathscr{X}$是无穷维的,则任取$S_1$上有限个线性无关向量$\{x_1,\cdots,x_n\}$。从而
+\begin{align*}
+M_n=\mathrm{span}\{x_1,\cdots,x_n\}\subseteq\mathscr{X} \text{ 且 } \mathscr{X}\setminus M_n\neq\varnothing.
+\end{align*}
+于是存在$y\in\mathscr{X}\setminus M_n$，由\refthe{theorem:最佳逼近元的存在性}知，存在$x\in M_n$，使得
+\begin{align*}
+\|y-x\|=d\triangleq\inf\limits_{a\in M}\|y-a\|.
+\end{align*}
+显然$d>0$，否则$y=x$，这与$y\notin M_n$矛盾！令$x_{n+1}\triangleq\frac{y-x}{d}$，则$x_{n+1}\in S_1$，且
+\begin{align*}
+\|x_{n+1}-x_i\|=\frac{1}{d}\|y-(x+dx_i)\|\geqslant\frac{1}{d}\cdot d=1,\quad i=1,2,\cdots,n.
+\end{align*}
+依此类推，因为$\mathscr{X}$是无穷维的，所以可以逐次在$S_1$上抽选出一串$\{x_n\}_{n=1}^{\infty}$适合
+\begin{align*}
+\|x_m-x_k\|\geqslant1,\quad \forall m,k\in\mathbb{N}\cap(n,+\infty) \text{ 且 } m\neq k.
+\end{align*}
+因此$\{x_n\}_{n=1}^{\infty}$没有收敛子列，即$S_1$不是列紧的，矛盾！
+
+\end{proof}
+
+\begin{definition}
+$B^*$空间$\mathscr{X}$上的一个子集$A$称为是\textbf{有界的}，如果存在常数$c>0$，使得$\|x\| \leqslant c \ (\forall x \in A).$
+
+也即存在$R>0$,使得$A\subseteq B(\theta,R)=\{x\in \mathscr{X}\mid \|x\|< R\}$.
+\end{definition}
+
+\begin{corollary}\label{corollary:有限维线性空间等价于任意有界集列紧}
+$B^*$ 空间 $\mathscr{X}$ 是有限维的当且仅当其任意有界集是列紧的.
+\end{corollary}
+\begin{proof}
+
+{\heiti 必要性:}对任意有界集$A$，存在$R>0$，使得$$A\subseteq B(\theta,R)\triangleq\{x\in\mathscr{X}\mid\|x\|< R\}.$$
+任取$B(\theta,R)$的一个点列$\{x_n\}$，令$y_n\triangleq\frac{x_n}{\|x_n\|}$，则
+$$y_n\in S_1\triangleq\{x\in\mathscr{X}\mid\|x\|=1\},\quad \forall n\in\mathbb{N}.$$
+由\ref{theorem:有限维B空间的充要条件11}知$S_1$是列紧的，故$\{y_n\}$存在收敛子列$\{y_{n_k}\}$，进而对应的$\{x_n\}$的子列$\{x_{n_k}\}$也是收敛的。
+故$\overline{B(\theta,R)}$是列紧的，因此其子集$A$也是列紧的。
+
+{\heiti 充分性:}显然单位球面$S_1 = \{x \in \mathscr{X} \mid \|x\|=1\}$是有界集,故此时$S_1$是列紧的,因此由\refthe{theorem:有限维B空间的充要条件11}知$\mathscr{X}$ 是有限维的.
+
+\end{proof}
+
+\begin{lemma}[Riesz引理]\label{lemma:Riesz引理}
+如果 $\mathscr{X}_0$ 是 $B^*$ 空间 $\mathscr{X}$ 的一个真闭子空间, 那么对 $\forall 0<\varepsilon<1, \exists y \in \mathscr{X}$, 使得 $\|y\|=1$, 并且
+\begin{align*}
+\|y-x\| \geqslant 1-\varepsilon \quad (\forall x \in \mathscr{X}_0).
+\end{align*}
+\end{lemma}
+\begin{proof}
+
+任取 $y_0 \in \mathscr{X} \setminus \mathscr{X}_0$. 因为 $\mathscr{X}_0$ 是闭的, 所以
+\begin{align*}
+d \triangleq \inf_{x \in \mathscr{X}_0} \|y_0-x\| > 0.
+\end{align*}
+因此, $\forall \eta>0, \exists x_0 \in \mathscr{X}_0$ 使得 $d \leqslant \|y_0-x_0\| < d+\eta$(参看\reffig{figure:图1.4.1}). 
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{图1.4.1.png}
+\caption{}
+\label{figure:图1.4.1}
+\end{figure}
+若 $y \triangleq \frac{y_0-x_0}{\|y_0-x_0\|}$, 则 $\|y\|=1$, 并且对 $\forall x \in \mathscr{X}_0$ 有
+\begin{align*}
+\|y-x\| = \frac{\|y_0-x'\|}{\|y_0-x_0\|} > \frac{d}{d+\eta} = 1-\frac{\eta}{d+\eta},
+\end{align*}
+其中 $x' = x_0 + \|y_0-x_0\|x \in \mathscr{X}_0$. 于是对于 $\forall 0<\varepsilon<1$, 只要 $\eta = \frac{d\varepsilon}{1-\varepsilon}$, 便得到 $\|y-x\| > 1-\varepsilon$.
+
+\end{proof}
+
+\subsection{商空间}
+
+\begin{definition}
+设 $(\mathscr{X},\|\cdot\|)$ 是 $B^*$ 空间, $\mathscr{X}_0 \subseteq \mathscr{X}$ 是一个闭线性子空间, $x',x'' \in \mathscr{X}$, 记 $x' \sim x''$, 若 $x'-x'' \in \mathscr{X}_0$. 这是一个等价关系, 用 $[x]$ 表示 $x$ 所在的等价类,称为$x$的\textbf{商类}. 所有等价类组成的空间称为关于 $\mathscr{X}_0$ 的\textbf{商空间}, 记为 $\mathscr{X}/\mathscr{X}_0$, 其中加法和数乘定义如下:
+\begin{enumerate}[(1)]
+\item $[x] + [y] = [x+y] \quad ([x],[y] \in \mathscr{X}/\mathscr{X}_0)$;
+\item $\lambda [x] = [\lambda x] \quad (\lambda \in \mathbb{K}, [x] \in \mathscr{X}/\mathscr{X}_0)$.
+\end{enumerate}
+容易验证, $\mathscr{X}/\mathscr{X}_0$ 关于上述运算组成一个线性空间.
+\end{definition}
+
+\begin{theorem}\label{theorem:闭线性子空间的商空间完备}
+设 $(\mathscr{X},\|\cdot\|)$ 是 $B^*$ 空间, $\mathscr{X}_0 \subseteq \mathscr{X}$ 是一个闭线性子空间, $[x] \in \mathscr{X}/\mathscr{X}_0$, 定义
+\begin{align*}
+\|[x]\|_0 = \inf_{y \in [x]} \|y\|.
+\end{align*}
+则 $(\mathscr{X}/\mathscr{X}_0,\|\cdot\|_0)$ 是 $B^*$ 空间, 又当 $(\mathscr{X},\|\cdot\|)$ 是 $B$ 空间时, $(\mathscr{X}/\mathscr{X}_0,\|\cdot\|_0)$ 也是 $B$ 空间.
+\end{theorem}
+
+\begin{proof}
+
+根据定义, $\mathscr{X}/\mathscr{X}_0$ 中零元素为 $[x],x \in \mathscr{X}_0$. 又
+\begin{align*}
+\|[x]\|_0 \geqslant 0, \quad \|\lambda [x]\|_0 = |\lambda| \| [x]\|_0, \quad \forall [x] \in \mathscr{X}/\mathscr{X}_0, \lambda \in \mathbb{R}.
+\end{align*}
+显然成立. 三角不等式验证如下:
+\begin{align*}
+\|[x] + [y]\|_0 = \|[x+y]\|_0 = \inf_{z \in [x+y]} \|z\|.
+\end{align*}
+取 $x_n \in [x], y_n \in [y]$, 使
+\begin{align*}
+\|x_n\| \to \|[x]\|_0, \quad \|y_n\| \to \|[y]\|_0 \quad (n \to \infty).
+\end{align*}
+这时 $x_n + y_n \in [x+y]$, 从而
+\begin{align*}
+\|[x] + [y]\|_0 \leqslant \|x_n + y_n\| 
+\leqslant \|x_n\| + \|y_n\| \to \|[x]\|_0 + \|[y]\|_0 \quad (n \to \infty),
+\end{align*}
+即成立三角不等式:
+\begin{align*}
+\|[x] + [y]\|_0 \leqslant \|[x]\|_0 + \|[y]\|_0.
+\end{align*}
+
+现设 $\|[x]\|_0 = 0$. 根据定义, 存在 $x_n \in [x]$, 使得 $\|x_n\| \to 0, n \to \infty$. 因 $\mathscr{X}_0$ 是闭子空间, 由 $x - x_n \in \mathscr{X}_0$ 得
+\begin{align*}
+x = \lim\limits_{n \to \infty} (x - x_n) \in \mathscr{X}_0.
+\end{align*}
+即 $[x] = \theta$ 为 $\mathscr{X}/\mathscr{X}_0$ 中的零元素, 从而 $(\mathscr{X}/\mathscr{X}_0,\|\cdot\|_0)$ 是 $B^*$ 空间.
+
+再设 $(\mathscr{X},\|\cdot\|)$ 是 $B$ 空间, 下证 $(\mathscr{X}/\mathscr{X}_0,\|\cdot\|_0)$ 完备. 令 $\{[x_n]\}$ 是 Cauchy 列, 则有
+\begin{align*}
+\|[x_n] - [x_m]\|_0 = \|[x_n - x_m]\|_0 \to 0 \quad (n,m \to \infty).
+\end{align*}
+取子列, 仍记为 $\{[x_n]\}$, 使得
+\begin{align*}
+\|[x_n - x_{n+1}]\|_0 \leqslant \frac{1}{2^{n+1}}.
+\end{align*}
+由定义, 存在 $y_{n,n+1} \in \mathscr{X}, y_{n,n+1} \in [x_n - x_{n+1}]$, 满足
+\begin{align*}
+\|y_{n,n+1}\| \leqslant \|[x_n - x_{n+1}]\|_0 + \frac{1}{2^{n+1}} \leqslant \frac{1}{2^n}.
+\end{align*}
+记 $y_1 = x_1, y_{n+1} = y_n - y_{n,n+1}, n \geqslant 1$, 存在 $z_{n,n+1} \in \mathscr{X}_0$, 使
+\begin{align*}
+y_{n+1} = y_n - (x_n - x_{n+1} + z_{n,n+1}).
+\end{align*}
+即
+\begin{align*}
+y_{n+1} - x_{n+1} = y_n - x_n - z_{n,n+1} \in \mathscr{X}_0.
+\end{align*}
+因为 $y_1 = x_1$, 所以 $[y_{n+1}] = [x_{n+1}]$. 这时,
+\begin{align*}
+\|y_n - y_{n+p}\| &\leqslant \|y_n - y_{n+1}\| + \cdots + \|y_{n+p-1} - y_{n+p}\| \\
+&= \|y_{n,n+1}\| + \cdots + \|y_{n+p-1,n+p}\| \\
+&\leqslant \frac{1}{2^{n+1}} + \cdots + \frac{1}{2^{n+p}} \leqslant \frac{1}{2^n}.
+\end{align*}
+即 $\{y_n\}$ 是 $\mathscr{X}$ 中的 Cauchy 列, 于是有 $y \in \mathscr{X}$ 使得
+\begin{align*}
+\|y_n - y\| \to 0 \quad (n \to \infty).
+\end{align*}
+因此,
+\begin{align*}
+\|[x_n] - [y]\|_0 &= \|[y_n] - [y]\|_0 = \|[y_n - y]\|_0 \\
+&\leqslant \|y_n - y\| \to 0 \quad (n \to \infty),
+\end{align*}
+即 $(\mathscr{X}/\mathscr{X}_0,\|\cdot\|_0)$ 完备.
+
+\end{proof}
+
+\begin{example}
+在二维空间$\mathbb{R}^2$中, 对每一点$z = (x, y)$, 令
+\begin{align*}
+\|z\|_1 = |x| + |y|; \quad \|z\|_2 = \sqrt{x^2 + y^2}; \quad 
+\|z\|_3 = \max(|x|, |y|); \quad \|z\|_4 = (x^4 + y^4)^{\frac{1}{4}}.
+\end{align*}
+\begin{enumerate}[(1)]
+\item 求证$\|\cdot\|_i(i = 1, 2, 3, 4)$都是$\mathbb{R}^2$的范数.
+\item 画出$(\mathbb{R}^2, \|\cdot\|_i)(i = 1, 2, 3, 4)$各空间中的单位球面图形.
+\item 在$\mathbb{R}^2$中取定三点$O = (0, 0), A = (1, 0), B = (0, 1)$, 试在上述四种不同范数下求出$\triangle OAB$三边的长度.
+\end{enumerate}
+\end{example}
+
+\begin{example}
+设$C(0, 1]$表示$(0, 1]$上连续且有界的函数$x(t)$全体. 对$\forall x \in C(0, 1]$, 令$\|x\| = \sup\limits_{0 < t \leqslant 1} |x(t)|$. 求证:
+\begin{enumerate}[(1)]
+\item $\|\cdot\|$是$C(0, 1]$上的范数;
+\item $l^\infty$与$C(0, 1]$的一个子空间是等距同构的.
+\end{enumerate}
+\end{example}
+
+\begin{example}
+在$C^1[a, b]$中, 令
+\begin{align*}
+\|f\|_1 = \left( \int_{a}^{b} (|f|^2 + |f'|^2) \mathrm{d}x \right)^{\frac{1}{2}} \quad (\forall f \in C^1[a, b]).
+\end{align*}
+\begin{enumerate}[(1)]
+\item 求证$\|\cdot\|_1$是$C^1[a, b]$上的范数.
+\item 问$(C^1[a, b], \|\cdot\|_1)$是否完备?
+\end{enumerate}
+\end{example}
+
+\begin{example}
+在$C[0, 1]$中, 对每一个$f \in C[0, 1]$, 令
+\begin{align*}
+\|f\|_1 = \left( \int_{0}^{1} |f(x)|^2 \mathrm{d}x \right)^{\frac{1}{2}}, \quad 
+\|f\|_2 = \left( \int_{0}^{1} (1 + x)|f(x)|^2 \mathrm{d}x \right)^{\frac{1}{2}}.
+\end{align*}
+求证$\|\cdot\|_1$和$\|\cdot\|_2$是$C[0, 1]$中的两个等价范数.
+\end{example}
+
+\begin{example}
+设$BC[0, \infty)$表示$[0, \infty)$上连续且有界的函数$f(x)$全体, 对于每个$f \in BC[0, \infty)$及$a > 0$, 定义
+\begin{align*}
+\|f\|_a = \left( \int_{0}^{\infty} e^{-ax} |f(x)|^2 \mathrm{d}x \right)^{\frac{1}{2}}.
+\end{align*}
+\begin{enumerate}[(1)]
+\item 求证$\|\cdot\|_a$是$BC[0, \infty)$上的范数.
+\item 若$a, b > 0, a \neq b$, 求证$\|\cdot\|_a$与$\|\cdot\|_b$作为$BC[0, \infty)$上的范数是不等价的.
+\end{enumerate}
+\end{example}
+
+\begin{example}
+设$\mathscr{X}_1, \mathscr{X}_2$是两个$B^*$空间, $x_1 \in \mathscr{X}_1$和$x_2 \in \mathscr{X}_2$的序对$(x_1, x_2)$全体构成空间$\mathscr{X} = \mathscr{X}_1 \times \mathscr{X}_2$, 并赋以范数
+\begin{align*}
+\|x\| = \max(\|x_1\|_1, \|x_2\|_2),
+\end{align*}
+其中$x = (x_1, x_2), x_1 \in \mathscr{X}_1, x_2 \in \mathscr{X}_2$, $\|\cdot\|_1$和$\|\cdot\|_2$分别是$\mathscr{X}_1$和$\mathscr{X}_2$的范数. 求证: 如果$\mathscr{X}_1, \mathscr{X}_2$是$B$空间, 那么$\mathscr{X}$也是$B$空间.
+\end{example}
+
+\begin{example}
+设$\mathscr{X}$是$B^*$空间. 求证: $\mathscr{X}$是$B$空间, 当且仅当对$\forall \{x_n\}_{n=1}^{\infty} \subset \mathscr{X}$, $\sum\limits_{n=1}^{\infty} \|x_n\| < \infty \implies \sum\limits_{n=1}^{\infty} x_n$收敛.
+\end{example}
+
+\begin{example}
+记$[a, b]$上次数不超过$n$的多项式全体为$\mathbb{P}_n$. 求证: $\forall f(x) \in C[a, b], \exists P_0(x) \in \mathbb{P}_n$, 使得
+\begin{align*}
+\max_{a \leqslant x \leqslant b} |f(x) - P_0(x)| = \min_{P \in \mathbb{P}_n} \max_{a \leqslant x \leqslant b} |f(x) - P(x)|.
+\end{align*}
+也就是说, 如果用所有次数不超过$n$的多项式去对$f(x)$一致逼近, 那么$P_0(x)$是最佳的.
+\end{example}
+
+\begin{example}
+在$\mathbb{R}^2$中, 对$\forall x = (x_1, x_2) \in \mathbb{R}^2$, 定义范数
+\begin{align*}
+\|x\| = \max(|x_1|, |x_2|),
+\end{align*}
+并设$e_1 = (1, 0), x_0 = (0, 1)$. 求$a \in \mathbb{R}$适合
+\begin{align*}
+\|x_0 - a e_1\| = \min_{\lambda \in \mathbb{R}} \|x_0 - \lambda e_1\|,
+\end{align*}
+并问这样的$a$是否唯一? 请对结果做出几何解释.
+\end{example}
+
+\begin{example}
+求证: 范数的严格凸性等价于下列条件:
+\begin{align*}
+\|x + y\| = \|x\| + \|y\| \quad (\forall x \neq \theta, y \neq \theta) \implies x = c y \quad (c > 0).
+\end{align*}
+\end{example}
+
+\begin{example}
+设$\mathscr{X}$是赋范线性空间, 函数$\varphi: \mathscr{X} \to \mathbb{R}$称为凸的, 如果不等式
+\begin{align*}
+\varphi(\lambda x + (1 - \lambda) y) \leqslant \lambda \varphi(x) + (1 - \lambda) \varphi(y) \quad (\forall 0 \leqslant \lambda \leqslant 1)
+\end{align*}
+成立. 求证: 凸函数的局部极小值必然是全空间最小值.
+\end{example}
+
+\begin{example}
+设$(\mathscr{X}, \|\cdot\|)$是一赋范线性空间, $M$是$\mathscr{X}$的有限维子空间, $\{e_1, e_2, \cdots, e_n\}$是$M$的一组基, 给定$g \in \mathscr{X}$, 引进函数$F: \mathbb{K}^n \to \mathbb{R}$, 对$\forall c = (c_1, c_2, \cdots, c_n) \in \mathbb{K}^n$规定
+\begin{align*}
+F(c) = F(c_1, c_2, \cdots, c_n) = \left\| \sum_{i=1}^{n} c_i e_i - g \right\|.
+\end{align*}
+\begin{enumerate}[(1)]
+\item 求证: $F$是一个凸函数.
+\item 若$F(c)$的最小值点是$c = (c_1, c_2, \cdots, c_n)$, 求证:
+\begin{align*}
+f \triangleq \sum_{i=1}^{n} c_i e_i
+\end{align*}
+给出$g$在$M$中的最佳逼近元.
+\end{enumerate}
+\end{example}
+
+\begin{example}
+设$\mathscr{X}$是$B^*$空间, $\mathscr{X}_0$是$\mathscr{X}$的线性子空间, 假定$\exists c \in (0, 1)$, 使得
+\begin{align*}
+\inf_{x \in \mathscr{X}_0} \|y - x\| \leqslant c \|y\| \quad (\forall y \in \mathscr{X}).
+\end{align*}
+求证: $\mathscr{X}_0$在$\mathscr{X}$中稠密.
+\end{example}
+
+\begin{example}
+设$C_0$表示以$0$为极限的实数全体, 并在$C_0$中赋以范数
+\begin{align*}
+\|x\| = \max_{n \geqslant 1} |\xi_n| \quad (\forall x = (\xi_1, \xi_2, \cdots, \xi_n) \in C_0).
+\end{align*}
+又设$M \triangleq \left\{ x = \{\xi_n\}_{n=1}^{\infty} \in C_0 \mid \sum_{n=1}^{\infty} \frac{\xi_n}{2^n} = 0 \right\}$.
+\begin{enumerate}[(1)]
+\item 求证: $M$是$C_0$的闭线性子空间.
+\item 设$x_0 = (2, 0, \cdots, 0, \cdots)$, 求证:
+\begin{align*}
+\inf_{z \in M} \|x_0 - z\| = 1,
+\end{align*}
+但$\forall y \in M$有$\|x_0 - y\| > 1$.
+\end{enumerate}
+\begin{remark}
+本题提供一个例子说明: 对于无穷维闭线性子空间来说, 给定其外一点$x_0$, 未必能在其上找到一点$y$适合
+\begin{align*}
+\|x_0 - y\| = \inf_{z \in M} \|x_0 - z\|.
+\end{align*}
+换句话说, 给定$x_0 \notin M$, 未必能在$M$上找到最佳逼近元.
+\end{remark}
+\end{example}
+
+\begin{example}
+设$\mathscr{X}$是$B^*$空间, $M$是$\mathscr{X}$的有限维真子空间. 求证: $\exists y \in \mathscr{X}, \|y\| = 1$, 使得
+\begin{align*}
+\|y - x\| \geqslant 1 \quad (\forall x \in M).
+\end{align*}
+\end{example}
+
+\begin{example}
+若$f$是定义在区间$[0, 1]$上的复值函数, 定义
+\begin{align*}
+\omega_\delta(f) = \sup\{ |f(x) - f(y)| \mid \forall x, y \in [0, 1], |x - y| \leqslant \delta \}.
+\end{align*}
+如果$0 < \alpha \leqslant 1$对应的Lipschitz空间Lip $\alpha$, 由满足
+\begin{align*}
+\|f\| \triangleq |f(0)| + \sup_{\delta > 0} \{ \delta^{-\alpha} \omega_\delta(f) \} < \infty
+\end{align*}
+的一切$f$组成, 并以$\|f\|$为范数. 又设
+\begin{align*}
+\text{lip } \alpha \triangleq \{ f \in \text{Lip } \alpha \mid \lim_{\delta \to 0} \delta^{-\alpha} \omega_\delta(f) = 0 \}.
+\end{align*}
+求证: Lip $\alpha$是$B$空间, 而且lip $\alpha$是Lip $\alpha$的闭子空间.
+\end{example}
+
+\begin{example}
+设有商空间$\mathscr{X}/\mathscr{X}_0$.
+\begin{enumerate}[(1)]
+\item 设$[x] \in \mathscr{X}/\mathscr{X}_0$, 求证: 对$\forall x \in [x]$, 有
+\begin{align*}
+\inf_{z \in \mathscr{X}_0} \|x - z\| = \|[x]\|_0.
+\end{align*}
+\item 定义映射$\varphi: \mathscr{X} \to \mathscr{X}/\mathscr{X}_0$为
+\begin{align*}
+\varphi(x) = [x] \triangleq x + \mathscr{X}_0 \quad (\forall x \in \mathscr{X}),
+\end{align*}
+求证: $\varphi$是连续线性映射.
+\item $\forall [x] \in \mathscr{X}/\mathscr{X}_0$, 求证: $\exists x \in \mathscr{X}$, 使得
+\begin{align*}
+\varphi(x) = [x], \quad \text{且} \quad \|x\| \leqslant 2\|[x]\|_0.
+\end{align*}
+\item 设$\mathscr{X} = C[0, 1], \mathscr{X}_0 = \{ f \in \mathscr{X} \mid f(0) = 0 \}$, 求证:
+\begin{align*}
+\mathscr{X}/\mathscr{X}_0 \cong \mathbb{K},
+\end{align*}
+其中记号“$\cong$”表示等距同构.
+\end{enumerate}
+\end{example}
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}

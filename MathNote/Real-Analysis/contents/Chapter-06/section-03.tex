@@ -1,0 +1,415 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}} % 指定图片目录,后续可以直接使用图片文件名
+% 注意这里的文件路径不能用 ../../image/ ,否则用latexmk编译子文件会报错
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[scale=0.3]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{$L^p$内积空间}
+
+\subsection{内积,正交系}
+
+\begin{definition}
+对于 $f, g \in L^2(E)$，定义它们的\textbf{(实)内积}为
+\begin{align*}
+\langle f, g \rangle = \int_E f(x) g(x) \mathrm{d}x.
+\end{align*}
+显然内积具有以下性质：
+\begin{enumerate}[(i)]
+\item $\langle f, g \rangle = \langle g, f \rangle$;
+\item $\langle f_1 + f_2, g \rangle = \langle f_1, g \rangle + \langle f_2, g \rangle$;
+\item $\langle af, g \rangle = a\langle f, g \rangle = \langle f, ag \rangle$（$a$ 为实数）.
+\end{enumerate}
+称$L^2(E)$ 为\textbf{(完备的)(实)内积空间}.
+\end{definition}
+\begin{remark}
+Schwartz不等式可写为
+\begin{align*}
+|\langle f, g \rangle| \leqslant \|f\|_2 \cdot \|g\|_2.
+\end{align*}
+\end{remark}
+
+\begin{example}
+设 $f, g \in L^2(E)$，则 $2\|fg\|_1 \leqslant t\|f\|_2^2 + \frac{1}{t}\|g\|_2^2$（$t>0$）。
+\end{example}
+\begin{proof}
+
+设 $a, b \geqslant 0$，则
+\begin{align*}
+2ab = 2(\sqrt{t}a)(b/\sqrt{t}) \leqslant ta^2 + b^2/t.
+\end{align*}
+于是 $2|f(x)g(x)| \leqslant t|f(x)|^2 + |g(x)|^2/t$，积分得
+\begin{align*}
+2\int_E |f(x)g(x)| \mathrm{d}x \leqslant t\int_E |f(x)|^2 \mathrm{d}x + \int_E |g(x)|^2 \mathrm{d}x / t,
+\end{align*}
+即 $2\|fg\|_1 \leqslant t\|f\|_2^2 + \|g\|_2^2 / t$.
+
+\end{proof}
+
+\begin{example}
+设 $f(x)$ 是 $[0, +\infty)$ 上的非负可测函数，则
+\begin{align*}
+\left( \int_0^{+\infty} f(x) \mathrm{d}x \right)^4 \leqslant \pi^2 \int_0^{+\infty} f^2(x) \mathrm{d}x \cdot \int_0^{+\infty} x^2 f^2(x) \mathrm{d}x.
+\end{align*}
+\end{example}
+\begin{proof}
+
+不妨设 $u = \int_0^{+\infty} f^2(x) \mathrm{d}x < +\infty$，$v = \int_0^{+\infty} x^2 f^2(x) \mathrm{d}x < +\infty$。令 $\alpha > 0, \beta > 0$，则
+\begin{align*}
+\left( \int_0^{+\infty} f(x) \mathrm{d}x \right)^2 &= \left( \int_0^{+\infty} \frac{1}{\sqrt{\alpha + \beta x^2}} \cdot \sqrt{\alpha + \beta x^2} f(x) \mathrm{d}x \right)^2 \\
+&\leqslant \int_0^{+\infty} \frac{\mathrm{d}x}{\alpha + \beta x^2} \cdot \left( \alpha \int_0^{+\infty} f^2(x) \mathrm{d}x + \beta \int_0^{+\infty} x^2 f^2(x) \mathrm{d}x \right) \\
+&= \frac{\pi}{2} \frac{1}{\sqrt{\alpha\beta}} (\alpha u + \beta v) = \frac{\pi}{2} \left( \sqrt{\frac{\alpha}{\beta}} u + \sqrt{\frac{\beta}{\alpha}} v \right).
+\end{align*}
+取 $\alpha = v, \beta = u$，则上式右端为 $\pi \sqrt{uv}$.
+
+\end{proof}
+
+\begin{example}
+设 $f(x, y)$ 在 $\mathbb{R}_+^2 = \{(x, y): x>0, y>0\}$ 上非负可测，则
+\begin{align*}
+\left( \iint_{\mathbb{R}_+^2} f(x, y) \mathrm{d}x\mathrm{d}y \right)^4 \leqslant C \iint_{\mathbb{R}_+^2} f^2(x, y) \mathrm{d}x\mathrm{d}y \cdot \iint_{\mathbb{R}_+^2} (x^2 + y^2)^2 f^2(x, y) \mathrm{d}x\mathrm{d}y.
+\end{align*}
+\end{example}
+\begin{proof}
+
+令 $\lambda > 0$，作 $g(x, y) = (x^2 + y^2)/[\lambda + (x^2 + y^2)^2]$，则
+\begin{align*}
+\iint_{\mathbb{R}_+^2} f(x, y) \mathrm{d}x\mathrm{d}y &= \iint_{\mathbb{R}_+^2} [1 - g(x, y)] f(x, y) \mathrm{d}x\mathrm{d}y + \iint_{\mathbb{R}_+^2} \frac{g(x, y)}{x^2 + y^2} (x^2 + y^2) f(x, y) \mathrm{d}x\mathrm{d}y \\
+&\leqslant \left( \iint_{\mathbb{R}_+^2} [1 - g(x, y)]^2 \mathrm{d}x\mathrm{d}y \right)^{\frac{1}{2}} \left( \iint_{\mathbb{R}_+^2} f^2(x, y) \mathrm{d}x\mathrm{d}y \right)^{\frac{1}{2}} \\
+&\quad + \left( \iint_{\mathbb{R}_+^2} \frac{g^2(x, y)}{(x^2 + y^2)^2} \mathrm{d}x\mathrm{d}y \right)^{\frac{1}{2}} \left( \iint_{\mathbb{R}_+^2} (x^2 + y^2)^2 f^2(x, y) \mathrm{d}x\mathrm{d}y \right)^{\frac{1}{2}},
+\end{align*}
+其中
+\begin{align*}
+\iint_{\mathbb{R}_+^2} [1 - g(x, y)]^2 \mathrm{d}x\mathrm{d}y = \frac{\pi^2}{16} \sqrt{\lambda} \left( \int_0^{+\infty} \frac{\mathrm{d}t}{(1 + t^2)^2} = \frac{\pi}{4} \right).
+\end{align*}
+取
+\begin{align*}
+\lambda = \frac{\iint_{\mathbb{R}_+^2} (x^2 + y^2)^2 f^2(x, y) \mathrm{d}x\mathrm{d}y}{\iint_{\mathbb{R}_+^2} f^2(x, y) \mathrm{d}x\mathrm{d}y},
+\end{align*}
+计算可得
+\begin{align*}
+\iint_{\mathbb{R}_+^2} f(x, y) \mathrm{d}x\mathrm{d}y \leqslant \frac{\pi}{2} \left( \iint_{\mathbb{R}_+^2} f^2(x, y) \mathrm{d}x\mathrm{d}y \right)^{1/4} \left( \iint_{\mathbb{R}_+^2} (x^2 + y^2)^2 f^2(x, y) \mathrm{d}x\mathrm{d}y \right)^{1/4}.
+\end{align*}
+取 $C = \frac{\pi^4}{16}$，即得结论.
+
+\end{proof}
+
+\begin{example}
+设 $f \in L^2([0,1])$，若
+\begin{align*}
+\int_0^1 x^n f(x) \mathrm{d}x = \frac{1}{n+2} \quad (n \in \mathbb{N}),
+\end{align*}
+则 $f(x) = x$，a.e. $x \in [0,1]$.
+\end{example}
+\begin{proof}
+
+注意到 $\frac{1}{n+2} = \int_0^1 x^{n+1} \mathrm{d}x$，故
+\begin{align*}
+\int_0^1 x^{n-1} x(f(x) - x) \mathrm{d}x = 0 \quad (n \in \mathbb{N}).
+\end{align*}
+令 $F(x) = xf(x) - x^2$（$x \in [0,1]$），则对任意多项式 $P(x)$，有
+\begin{align*}
+\int_0^1 P(x) F(x) \mathrm{d}x = 0.
+\end{align*}
+对任意 $g \in C([0,1])$ 及 $\varepsilon > 0$，存在多项式 $Q(x)$ 使得 $|g(x) - Q(x)| < \varepsilon$（$x \in [0,1]$），于是
+\begin{align*}
+\left| \int_0^1 g(x) F(x) \mathrm{d}x \right| \leqslant \int_0^1 |g(x) - Q(x)| \cdot |F(x)| \mathrm{d}x < \varepsilon \int_0^1 |F(x)| \mathrm{d}x.
+\end{align*}
+由 $\varepsilon$ 的任意性，得 $\left| \int_0^1 g(x) F(x) \mathrm{d}x \right| = 0$，故 $F(x) = 0$，a.e. $x \in [0,1]$，即 $f(x) = x$，a.e. $x \in [0,1]$.
+
+\end{proof}
+
+\begin{theorem}[内积的连续性]
+若在 $L^2(E)$ 中 $\lim\limits_{k \to \infty} \|f_k - f\|_2 = 0$，则对任意 $g \in L^2(E)$，有
+\begin{align}
+\lim\limits_{k \to \infty} \langle f_k, g \rangle = \langle f, g \rangle. \label{eq:inner_continuity}
+\end{align}
+\end{theorem}
+\begin{proof}
+
+由不等式
+\begin{align*}
+|\langle f_k, g \rangle - \langle f, g \rangle| = |\langle f_k - f, g \rangle| \leqslant \|f_k - f\|_2 \cdot \|g\|_2,
+\end{align*}
+即得 \eqref{eq:inner_continuity}.
+
+\end{proof}
+
+\begin{definition}
+若 $f, g \in L^2(E)$ 且 $\langle f, g \rangle = 0$，则称 $f$ 与 $g$ \textbf{正交}；若 $\{\varphi_\alpha\} \subseteq L^2(E)$ 中任意两个元素都正交，则称 $\{\varphi_\alpha\}$ 是\textbf{正交系}；若还有 $\|\varphi_\alpha\|_2 = 1$（一切 $\alpha$），则称 $\{\varphi_\alpha\}$ 为 $L^2(E)$ 中的\textbf{标准正交系}。
+\end{definition}
+\begin{remark}
+若正交系 $\{\varphi_\alpha\} \subseteq L^2(E)$ 中对一切 $\alpha$ 有 $\|\varphi_\alpha\| \neq 0$，则 $\left\{ \frac{\varphi_\alpha}{\|\varphi_\alpha\|_2} \right\}$ 是标准正交系。以下总假定对一切 $\alpha$，$\|\varphi_\alpha\|_2 \neq 0$.
+\end{remark}
+
+\begin{example}
+$L^2([-\pi, \pi])$ 中的三角函数列
+\begin{align*}
+\frac{1}{\sqrt{2\pi}}, \frac{1}{\sqrt{\pi}}\cos x, \frac{1}{\sqrt{\pi}}\sin x, \cdots, \frac{1}{\sqrt{\pi}}\cos kx, \frac{1}{\sqrt{\pi}}\sin kx, \cdots
+\end{align*}
+是标准正交系。
+\end{example}
+
+\begin{theorem}
+$L^2(E)$ 中任一标准正交系都是可数的。
+\end{theorem}
+\begin{proof}
+
+设 $\{\varphi_\alpha\}$ 是 $L^2(E)$ 中的标准正交系，则对 $\alpha \neq \beta$，有
+\begin{align*}
+\|\varphi_\alpha - \varphi_\beta\|_2^2 = \langle \varphi_\alpha - \varphi_\beta, \varphi_\alpha - \varphi_\beta \rangle = \langle \varphi_\alpha, \varphi_\alpha \rangle + \langle \varphi_\beta, \varphi_\beta \rangle = 2,
+\end{align*}
+故 $\|\varphi_\alpha - \varphi_\beta\|_2^2 = 2$。因 $L^2(E)$ 是可分空间，存在可数稠密集，故 $\{\varphi_\alpha\}$ 实际上是可数的.
+
+\end{proof}
+
+
+\subsection{广义 Fourier 级数}
+
+\begin{definition}
+设 $\{\varphi_i\}$ 是 $L^2(E)$ 中的标准正交系，$f \in L^2(E)$，称
+\begin{align*}
+c_k = \langle f, \varphi_k \rangle = \int_E f(x) \varphi_k(x) \mathrm{d}x, \quad k=1,2,\cdots
+\end{align*}
+为 $f$（关于 $\{\varphi_k\}$）的\textbf{广义}$\mathbf{Fourier}$\textbf{系数}，称 $\sum\limits_{k=1}^\infty c_k \varphi_k(x)$ 为 $f$ 的（关于 $\{\varphi_k\}$）\textbf{广义}$\mathbf{Fourier}$\textbf{级数}，简记为
+\begin{align*}
+f \sim \sum\limits_{k=1}^\infty c_k \varphi_k.
+\end{align*}
+\end{definition}
+
+\begin{theorem}
+设 $\{\varphi_i\}$ 是 $L^2(E)$ 中的标准正交系，$f \in L^2(E)$，取定 $k$，作
+\begin{align*}
+f_k(x) = \sum_{i=1}^k a_i \varphi_i(x),
+\end{align*}
+其中 $a_i$（$i=1,2,\cdots,k$）是实数，则当 $a_i = c_i = \langle f, \varphi_i \rangle$（$i=1,2,\cdots,k$）时，$\|f - f_k\|_2$ 达到最小值。
+\end{theorem}
+\begin{proof}
+
+由 $\{\varphi_i\}$ 的标准正交性，$\|f_k\|_2^2 = \langle f_k, f_k \rangle = \sum\limits_{i=1}^k a_i^2$，故
+\begin{align*}
+\|f - f_k\|_2^2 &= \left\langle f - \sum_{i=1}^k a_i \varphi_i, f - \sum_{i=1}^k a_i \varphi_i \right\rangle \\
+&= \|f\|_2^2 - 2\sum_{i=1}^k a_i c_i + \sum_{i=1}^k a_i^2 \\
+&= \|f\|_2^2 + \sum_{i=1}^k (c_i - a_i)^2 - \sum_{i=1}^k c_i^2.
+\end{align*}
+当 $a_i = c_i$（$i=1,2,\cdots,k$）时，$\|f - f_k\|_2^2$ 达到最小值，最小值为 $\|f\|_2^2 - \sum\limits_{i=1}^k c_i^2$.
+
+令 $S_k(x) = \sum\limits_{i=1}^k c_i \varphi_i(x)$，则
+\begin{align*}
+\|f - S_k\|_2^2 = \|f\|_2^2 - \sum_{i=1}^k c_i^2.
+\end{align*}
+
+\end{proof}
+
+\begin{theorem}[Bessel不等式]\label{theorem:实变函数--Bessel不等式}
+设 $\{\varphi_k\}$ 是 $L^2(E)$ 中的标准正交系，且 $f \in L^2(E)$，则 $f(x)$ 的广义Fourier系数 $\{c_k\}$ 满足
+\begin{align}
+\sum_{k=1}^\infty c_k^2 \leqslant \|f\|_2^2. \label{eq:bessel}
+\end{align}
+\end{theorem}
+\begin{proof}
+
+对任意 $k$，由前一定理（$S_k$ 同前），有
+\begin{align*}
+\|f\|_2^2 - \sum_{i=1}^k c_i^2 = \|f - S_k\|_2^2 \geqslant 0,
+\end{align*}
+故 $\sum\limits_{i=1}^k c_i^2 \leqslant \|f\|_2^2$。令 $k \to \infty$，即得 \eqref{eq:bessel}.
+
+\end{proof}
+
+\begin{theorem}[Riesz-Fischer定理]\label{theorem:实变函数--Riesz-Fischer定理原始形式}
+设 $\{\varphi_k\}$ 是 $L^2(E)$ 中的标准正交系，若 $\{c_k\}$ 满足 $\sum\limits_{k=1}^\infty c_k^2 < +\infty$，则存在 $g \in L^2(E)$，使得
+\begin{align*}
+\langle g, \varphi_k \rangle = c_k, \quad k=1,2,\cdots.
+\end{align*}
+\end{theorem}
+\begin{proof}
+
+作函数 $S_k(x) = \sum\limits_{i=1}^k c_i \varphi_i(x)$，则
+\begin{align*}
+\|S_{k+p} - S_k\|_2^2 = \left\| \sum_{i=k+1}^{k+p} c_i \varphi_i \right\|_2^2 = \sum_{i=k+1}^{k+p} c_i^2.
+\end{align*}
+故 $\{S_k\}$ 是 $L^2(E)$ 中的基本列。由 $L^2(E)$ 的完备性，存在 $g \in L^2(E)$ 使得
+\begin{align*}
+\lim_{k \to \infty} \|g - S_k\|_2 = 0.
+\end{align*}
+由此得 $\langle g, \varphi_k \rangle = c_k$（$k=1,2,\cdots$）.
+
+\end{proof}
+
+\begin{remark}
+$L^2(E)$ 中的元 $f$ 的广义Fourier级数总是在 $L^2$ 中收敛于某个 $g \in L^2$，但 $g$ 不一定是 $f$。例如，$\varphi_k = \frac{1}{\sqrt{\pi}} \sin kx$（$k=1,2,\cdots$）是 $L^2((-\pi, \pi))$ 中的标准正交系，对 $f(x) = \cos x$，有 $c_k = \langle f, \varphi_k \rangle = 0$（$k=1,2,\cdots$），故
+\begin{align*}
+\lim_{n \to \infty} \left\| \sum_{k=1}^n c_k \varphi_k - f \right\|_2 = \|f\|_2 \neq 0.
+\end{align*}
+这类似于三维欧氏空间中仅取两个正交向量组成正交系但不构成正交基的情形，不同向量可能有相同的坐标。
+\end{remark}
+
+\begin{definition}[完全正交系]
+设 $\{\varphi_k\}$ 是 $L^2(E)$ 中的正交系，若 $L^2(E)$ 中不存在非零元能与一切 $\varphi_k$ 正交，则称 $\{\varphi_k\}$ 是 $L^2$ 中的\textbf{完全正交系}。即若 $f \in L^2(E)$ 且 $\langle f, \varphi_k \rangle = 0$（$k=1,2,\cdots$），则必有 $f(x) = 0$，a.e. $x \in E$.
+\end{definition}
+
+\begin{theorem}
+设 $\{\varphi_k\}$ 是 $L^2(E)$ 中的标准完全正交系，$f \in L^2(E)$，令 $c_k = \langle f, \varphi_k \rangle$（$k=1,2,\cdots$），则
+\begin{align}
+\lim_{k \to \infty} \left\| \sum_{i=1}^k c_i \varphi_i - f \right\|_2 = 0. \label{eq:complete_convergence}
+\end{align}
+\end{theorem}
+\begin{proof}
+
+设 $\lim\limits_{k \to \infty} \left\| \sum\limits_{i=1}^k c_i \varphi_i - g \right\|_2 = 0$，$g \in L^2(E)$，则 $\langle g, \varphi_i \rangle = c_i$（$i=1,2,\cdots$），故
+\begin{align*}
+\langle f - g, \varphi_i \rangle = \langle f, \varphi_i \rangle - \langle g, \varphi_i \rangle = 0, \quad i=1,2,\cdots.
+\end{align*}
+因 $\{\varphi_i\}$ 是完全正交系，故 $f(x) - g(x) = 0$，a.e. $x \in E$，即 \eqref{eq:complete_convergence} 成立.
+
+\end{proof}
+
+\begin{example}
+设 $E = [-\pi, \pi]$，则三角函数系 $1, \cos x, \sin x, \cdots, \cos kx, \sin kx, \cdots$ 是 $L^2(E)$ 中的完全正交系。
+\end{example}
+
+\begin{proof}
+\begin{enumerate}[(i)]
+\item 设 $f(x)$ 是 $[-\pi, \pi]$ 上的连续函数，若其一切Fourier系数都是零，则 $f(x) \equiv 0$。
+
+若 $f(x) \not\equiv 0$，则存在 $x_0 \in [-\pi, \pi]$ 使得 $|f(x_0)|$ 为最大值，不妨设 $f(x_0) = M > 0$，取充分小区间 $I = (x_0 - \delta, x_0 + \delta)$，使得
+\begin{align*}
+f(x) > \frac{1}{2}M, \quad x \in I \cap [-\pi, \pi].
+\end{align*}
+取三角多项式 $t(x) = 1 + \cos(x - x_0) - \cos\delta$，则 $t^n(x)$ 仍是三角多项式，由假设
+\begin{align*}
+\int_{-\pi}^\pi f(x) t^n(x) \mathrm{d}x = 0, \quad n=1,2,\cdots.
+\end{align*}
+但这不可能：当 $x \in [-\pi, \pi] \setminus I$ 时，$|t^n(x)| \leqslant 1$，故
+\begin{align*}
+\int_{[-\pi, \pi] \setminus I} f(x) t^n(x) \mathrm{d}x \leqslant M \cdot 2\pi;
+\end{align*}
+当 $x \in J = (x_0 - \delta/2, x_0 + \delta/2)$ 时，存在 $r > 1$ 使得 $t(x) \geqslant r$，故
+\begin{align*}
+\int_{I \cap [-\pi, \pi]} f(x) t^n(x) \mathrm{d}x \geqslant \int_{J \cap [-\pi, \pi]} f(x) t^n(x) \mathrm{d}x \geqslant \frac{1}{2}M r^n \frac{\delta}{2}.
+\end{align*}
+合并得 $\lim\limits_{n \to \infty} \int_{-\pi}^\pi f(x) t^n(x) \mathrm{d}x = +\infty$，矛盾，故 $f(x) \equiv 0$.
+
+\item 设 $f \in L^2(E)$，作
+\begin{align*}
+g(x) = \int_{-\pi}^x f(t) \mathrm{d}t.
+\end{align*}
+$g(x)$ 是 $[-\pi, \pi]$ 上的绝对连续函数，且 $g(-\pi) = g(\pi) = 0$，由分部积分得
+\begin{align*}
+\int_{-\pi}^\pi g(x) \begin{pmatrix} \sin kx \\ \cos kx \end{pmatrix} \mathrm{d}x &= g(x) \left( -\frac{\cos kx}{\sin kx} \right) \frac{1}{k} \bigg|_{-\pi}^\pi - \frac{1}{k} \int_{-\pi}^\pi f(x) \left( -\frac{\cos kx}{\sin kx} \right) \mathrm{d}x \\
+&= 0, \quad k \geqslant 1.
+\end{align*}
+令 $B = \frac{1}{2\pi} \int_{-\pi}^\pi g(x) \mathrm{d}x$，$G(x) = g(x) - B$，则
+\begin{align*}
+\int_{-\pi}^\pi G(x) \begin{pmatrix} \cos kx \\ \sin kx \end{pmatrix} \mathrm{d}x = 0, \quad k=0,1,2,\cdots,
+\end{align*}
+故 $G(x) \equiv 0$，即 $g(x) \equiv B$，从而 $f(x) = g'(x) = 0$，a.e. $x \in E$.
+\end{enumerate}
+
+\end{proof}
+
+\begin{definition}
+设 $\psi_1(x), \psi_2(x), \cdots, \psi_k(x)$ 是定义在 $E$ 上的函数，若从
+\begin{align*}
+a_1 \psi_1(x) + a_2 \psi_2(x) + \cdots + a_k \psi_k(x) = 0, \quad \text{a.e. } x \in E
+\end{align*}
+可推出 $a_i = 0$（$i=1,2,\cdots,k$），则称函数 $\psi_i$（$i=1,2,\cdots,k$）在 $E$ 上是\textbf{线性无关的}；对无穷多个函数组成的函数系，若其中任意有限个函数都是线性无关的，则称\textbf{此函数系是线性无关的}.
+\end{definition}
+\begin{remark}
+显然，线性无关函数系中不存在几乎处处等于零的函数.
+\end{remark}
+
+\begin{example}
+$L^2(E)$ 中的正交系 $\{\varphi_k\}$ 一定是线性无关的。
+\end{example}
+\begin{proof}
+
+在 $\{\varphi_k\}$ 中任取有限个，设
+\begin{align*}
+a_1 \varphi_{k_1}(x) + a_2 \varphi_{k_2}(x) + \cdots + a_i \varphi_{k_i}(x) = 0, \quad \text{a.e. } x \in E,
+\end{align*}
+两端乘以 $\varphi_{k_1}(x)$ 并在 $E$ 上积分，由正交性得 $a_1 = 0$，同理 $a_2 = a_3 = \cdots = a_i = 0$.
+
+\end{proof}
+
+\begin{theorem}
+设$\{\psi_k\}$ 是 $L^2(E)$ 中的线性无关系，令
+\begin{gather*}
+\varphi_1(x) = \psi_1(x), \quad \varphi_2(x) = -\frac{\langle \psi_2, \varphi_1 \rangle}{\|\varphi_1\|_2^2} \varphi_1(x) + \psi_2(x).
+\end{gather*}
+一般来说，在取定 $\varphi_1, \varphi_2, \cdots, \varphi_{k-1}$ 时，令
+\begin{gather*}
+\varphi_k(x) = a_{k,1}\varphi_1(x) + a_{k,2}\varphi_2(x) + \cdots + a_{k,k-1}\varphi_{k-1}(x) + \psi_k(x),
+\end{gather*}
+其中
+\begin{align*}
+a_{k,i} = -\frac{\langle \psi_k, \varphi_i \rangle}{\|\varphi_i\|_2^2}, \quad i=1,2,\cdots,k-1.
+\end{align*}
+则这样所得的 $\{\varphi_k\}$（$k=1,2,\cdots$）是正交的。
+\end{theorem}
+\begin{remark}
+一个线性无关的函数系不一定是正交系，但可在此函数系的基础上建立正交系，即Gram-Schmidt正交化方法。
+
+由于 $L^2(E)$ 中存在可数稠密集 $\Gamma$，若将 $\Gamma$ 中线性无关的向量选出来，再进行上述正交化过程，就可得到一个正交系。
+\end{remark}
+
+\begin{theorem}
+设 $\{\varphi_i\}$ 是 $L^2(E)$ 中的标准正交系。若对任意的 $f \in L^2(E)$ 以及 $\varepsilon > 0$，存在 $\{\varphi_i\}$ 中的线性组合
+\begin{align*}
+g(x) = \sum_{j=1}^k a_j \varphi_{i_j}(x),
+\end{align*}
+使得 $\|f - g\|_2 < \varepsilon$（此时，也称 $\{\varphi_i\}$ 为封闭系），则 $\{\varphi_i\}$ 是完全正交系。
+\end{theorem}
+\begin{proof}
+
+假定 $\{\varphi_i\}$ 不是完全正交系，则存在非零元 $f \in L^2(E)$，使得 $\langle f, \varphi_i \rangle = 0$（$i=1,2,\cdots$）。因为 $\|f\|_2 > 0$，所以根据假定，存在数组 $a_1, a_2, \cdots, a_k$，使得
+\begin{align*}
+\left\| f - \sum_{j=1}^k a_j \varphi_{i_j} \right\|_2 < \frac{\|f\|_2}{2},
+\end{align*}
+从而得
+\begin{align*}
+\left| \left\langle f, f - \sum_{j=1}^k a_j \varphi_{i_j} \right\rangle \right| \leqslant \|f\|_2 \cdot \left\| f - \sum_{j=1}^k a_j \varphi_{i_j} \right\|_2 < \frac{\|f\|_2^2}{2}.
+\end{align*}
+另一方面，由于 $\langle f, \varphi_i \rangle = 0$（$i=1,2,\cdots$），故
+\begin{align*}
+\left| \left\langle f, f - \sum_{j=1}^k a_j \varphi_{i_j} \right\rangle \right| = \left| \langle f, f \rangle - \sum_{j=1}^k a_j \langle f, \varphi_{i_j} \rangle \right| = \|f\|_2^2.
+\end{align*}
+这一矛盾说明 $\{\varphi_i\}$ 是完全正交系.
+
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}

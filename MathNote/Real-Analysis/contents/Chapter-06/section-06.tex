@@ -1,0 +1,386 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}} % 指定图片目录,后续可以直接使用图片文件名
+% 注意这里的文件路径不能用 ../../image/ ,否则用latexmk编译子文件会报错
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[scale=0.3]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{弱收敛}
+
+\begin{definition}[弱收敛]
+设 $1\leqslant p,q\leqslant +\infty$, $\frac{1}{p}+\frac{1}{q}=1$, $f\in L^p(E)$, $f_n\in L^p(E)$ ($n\in\mathbb{N}$). 若有
+\begin{align*}
+\lim_{n\to\infty}\int_E f_n(x)g(x)\mathrm{d}x=\int_E f(x)g(x)\mathrm{d}x\quad (g\in L^q(E)),
+\end{align*}
+则称 $\{f_n\}$ 在 $L^p(E)$ 中\textbf{弱收敛}于 $f$.
+\end{definition}
+\begin{remark}
+若 $\|f_n-f\|_p\to 0$ ($n\to\infty$), 则 $\{f_n\}$ 在 $L^p(E)$ 中弱收敛于 $f$.
+\end{remark}
+
+\begin{example}
+$\{\cos nx\}$ 在 $L^2([0,2\pi])$ 中弱收敛于 $0$.
+\end{example}
+\begin{remark}
+因为 $m(\{x\in[0,2\pi]:|\cos nx|\geqslant \frac{1}{2}\})=4\pi/3$, 所以 $\{\cos nx\}$ 不是依测度收敛于 $0$. 又函数列
+\begin{align*}
+f_n(x)=
+\begin{cases}
+n, & x\in[0,\frac{1}{n}], \\
+0, & x\in(\frac{1}{n},1]
+\end{cases}
+\quad (n\in\mathbb{N})
+\end{align*}
+在 $[0,1]$ 上依测度收敛于 $0$, 但不在 $L^p([0,1])$ 中弱收敛. 函数列
+\begin{align*}
+f_n(x)=
+\begin{cases}
+\sqrt{n}, & x\in[0,\frac{1}{n}], \\
+0, & x\in(\frac{1}{n},1]
+\end{cases}
+\quad (n\in\mathbb{N})
+\end{align*}
+在 $[0,1]$ 上几乎处处收敛于 $0$, 且在 $L^2([0,1])$ 中弱收敛于 $0$, 但不是 $L^2([0,1])$ 意义下收敛.
+\end{remark}
+\begin{proof}
+
+对 $g(x)=\chi_{[\alpha,\beta]}(x)$ ($[\alpha,\beta]\subseteq[0,2\pi]$), 易知
+\begin{align*}
+\lim_{n\to\infty}\int_0^{2\pi}\cos nx\cdot\chi_{[\alpha,\beta]}(x)\mathrm{d}x=\lim_{n\to\infty}\frac{\sin(n\beta)-\sin(n\alpha)}{n}=0.
+\end{align*}
+对 $g(x)=\sum_{i=1}^m c_i\chi_{[\alpha_i,\beta_i]}(x)$, 其中 $\{[\alpha_i,\beta_i]\}_{i=1}^m$ 是 $[0,2\pi]$ 中互不相交的子区间组, 则
+\begin{align*}
+\lim_{n\to\infty}\int_0^{2\pi}g(x)\cos nx\mathrm{d}x=0.
+\end{align*}
+对 $g\in L^2([0,2\pi])$, 注意到简单函数族在 $L^2([0,2\pi])$ 中稠密, 立即可得
+\begin{align*}
+\int_0^{2\pi}g(x)\cos nx\mathrm{d}x\to 0\quad (n\to\infty).
+\end{align*}
+
+\end{proof}
+
+
+
+\begin{theorem}
+设 $E\subseteq\mathbb{R}^N$: $m(E)<+\infty$. 若有
+\begin{enumerate}[(i)]
+\item $\{f_n\}$ 在 $L^p(E)$ 中弱收敛于 $f$;
+\item $\lim_{n\to\infty}f_n(x)=g(x)$, a.e. $x\in E$,
+\end{enumerate}
+则 $f(x)=g(x)$, a.e. $x\in E$.
+\end{theorem}
+
+\begin{proof}
+
+根据\hyperref[theorem:Egorov定理]{Egorov定理}可知, 对任给 $\varepsilon>0$, 存在闭集 $F\subseteq E$: $m(E\setminus F)<\varepsilon$, 使得 $f_n(x)$ 在 $F$ 上一致收敛于 $g(x)$. 又由\hyperref[theorem:Lusin(卢津)定理]{Lusin定理}可知, 当 $\varepsilon>0$ 充分小时, 可使 $f(x)$ 在闭集 $F$ 上有界, 从而得
+\begin{align*}
+\lim_{n\to\infty}\int_F f_n(x)(g(x)-f(x))\mathrm{d}x=\int_F g(x)(g(x)-f(x))\mathrm{d}x.
+\end{align*}
+另一方面, 由 (i) 可知
+\begin{align*}
+\lim_{n\to\infty}\int_F f_n(x)(g(x)-f(x))\mathrm{d}x
+&=\lim_{n\to\infty}\int_E f_n(x)(g(x)-f(x))\chi_F(x)\mathrm{d}x \\
+&=\int_F f(x)(g(x)-f(x))\mathrm{d}x.
+\end{align*}
+因此, 我们有 $\int_F (g(x)-f(x))^2\mathrm{d}x=0$, 再由 $\varepsilon$ 的任意性, 易知结论成立.
+
+\end{proof}
+
+\begin{theorem}
+设 $1\leqslant p<+\infty$, $f_n$ 在 $L^p(E)$ 中弱收敛于 $f$, 则
+\begin{align*}
+\varliminf_{n\to\infty}\|f_n\|_p\geqslant\|f\|_p.
+\end{align*}
+\end{theorem}
+\begin{proof}
+
+令 $g(x)=(f(x))^{p/q}\mathrm{sign}f(x)$, $\frac{1}{p}+\frac{1}{q}=1$, 则 $g\in L^q(E)$. 我们有
+\begin{align*}
+\lim_{n\to\infty}\int_E f_n(x)g(x)\mathrm{d}x=\int_E f(x)g(x)\mathrm{d}x=\|f\|_p^p.
+\end{align*}
+另一方面, 我们又有
+\begin{align*}
+\left|\int_E f_n(x)g(x)\mathrm{d}x\right|\leqslant\|f_n\|_p\cdot\|g\|_q=\|f_n\|_p\cdot\|f\|_p^{p/q},
+\end{align*}
+从而可得 $\varliminf_{n\to\infty}\|f_n\|_p\cdot\|f\|_p^{p/q}\geqslant\|f\|_p^p$, 由此有 $\varliminf_{n\to\infty}\|f_n\|_p\geqslant\|f\|_p$.
+
+\end{proof}
+
+\begin{remark}
+在 $p=+\infty$ 的情形, 假定 $m(E)<+\infty$, 则对任给 $\varepsilon>0$, 作 $E_\varepsilon=\{x\in E:|f(x)|\geqslant\|f\|_\infty-\varepsilon\}$, $g(x)=\chi_{E_\varepsilon}(x)\mathrm{sign}f(x)$, 我们有
+\begin{align*}
+\lim_{n\to\infty}\int_E f_n(x)g(x)\mathrm{d}x=\int_E f(x)g(x)\mathrm{d}x\geqslant(\|f\|_\infty-\varepsilon)m(E_\varepsilon),
+\end{align*}
+且
+\begin{align*}
+\left|\int_E f_n(x)g(x)\mathrm{d}x\right|\leqslant\|f_n\|_\infty m(E_\varepsilon).
+\end{align*}
+注意到 $m(E_\varepsilon)>0$, 因此得到 $\varliminf_{n\to\infty}\|f_n\|_\infty\geqslant\|f\|_\infty-\varepsilon$.
+\end{remark}
+
+\begin{theorem}
+设 $1<p\leqslant+\infty$, $f_n\in L^p(E)$ ($n\in\mathbb{N}$). 若存在 $M>0$, 使得 $\|f_n\|_p\leqslant M$ ($n\in\mathbb{N}$), 则存在子列 $\{f_{n_k}\}$ 在 $L^p(E)$ 中弱收敛.
+\end{theorem}
+
+\begin{proof}
+
+设 $1\leqslant q<+\infty$: $\frac{1}{p}+\frac{1}{q}=1$, 并记 $\mathscr{F}_n(g)=\int_E f_n(x)g(x)\mathrm{d}x$. 根据 $L^q(E)$ 的可分性, 可知存在简单函数列 $\{g_i(x)\}$ 在 $L^q(E)$ 中稠密. 由 Hölder 不等式可得 $|\mathscr{F}_n(g_i)|\leqslant M\|g_i\|_q$, 故 $\{\mathscr{F}_n(g_i)\}$ 是有界列, 从而有收敛子列 $\{\mathscr{F}_{n,1}(g_1)\}$.
+
+同理, 在 $\{\mathscr{F}_{n,1}(g_2)\}$ 中有收敛子列 $\{\mathscr{F}_{n,2}(g_2)\}$. 继续这样做, 可得 $\{\mathscr{F}_{n,m}(g_i)\}$, 存在 $\lim_{n\to\infty}\mathscr{F}_{n,m}(g_i)$ ($i=1,2,\cdots,m$). 用对角线法再取子列, 并记 $\mathscr{F}_{n'}=\mathscr{F}_{n,n}$, 则存在 $\lim_{n'\to\infty}\mathscr{F}_{n'}(g_i)$ (任意 $g_i$). 任意取定 $g\in L^q(E)$, 对任给 $\varepsilon>0$, 存在 $g_j\in\{g_i\}$, 使得 $\|g_j-g\|_q<\varepsilon$. 因为 $\{\mathscr{F}_{n'}(g_j)\}$ 是 Cauchy 列, 所以存在 $n_\varepsilon$, 使得
+\begin{align*}
+|\mathscr{F}_{n'}(g_j)-\mathscr{F}_{m'}(g_j)|<\varepsilon\quad (n',m'\geqslant n_\varepsilon).
+\end{align*}
+由此知
+\begin{align*}
+|\mathscr{F}_{n'}(g)-\mathscr{F}_{m'}(g)|
+&\leqslant|\mathscr{F}_{n'}(g-g_j)|+|\mathscr{F}_{m'}(g-g_j)|+|\mathscr{F}_{n'}(g_j)-\mathscr{F}_{m'}(g_j)| \\
+&\leqslant 2M\|g-g_j\|_q+\varepsilon\leqslant(2M+1)\varepsilon.
+\end{align*}
+这说明对任意的 $g\in L^q(E)$, $\{\mathscr{F}_{n'}(g)\}$ 是 Cauchy 列, 故是收敛列. 现在令 $\mathscr{F}(g)=\lim_{n'\to\infty}\mathscr{F}_{n'}(g)$ ($g\in L^q(E)$), 则 $\mathscr{F}(g)$ 是 $L^q(E)$ 上的有界线性泛函. 注意到 $1\leqslant q<+\infty$, 由 Riesz 表示定理可知, 存在 $f\in L^p(E)$, 使得
+\begin{align*}
+\mathscr{F}(g)=\int_E g(x)f(x)\mathrm{d}x\quad (\text{一切 } g\in L^q(E)),
+\end{align*}
+即
+\begin{align*}
+\lim_{n\to\infty}\int_E f_n(x)g(x)\mathrm{d}x=\int_E f(x)g(x)\mathrm{d}x.
+\end{align*}
+
+\end{proof}
+
+\begin{theorem}
+设 $1<p<+\infty$, $\{f_n(x)\}$ 在 $L^p(E)$ 中弱收敛于 $f(x)$. 若 $\lim_{n\to\infty}\|f_n\|_p=\|f\|_p$, 则 $\|f_n-f\|_p\to 0$ ($n\to\infty$).
+\end{theorem}
+
+\begin{proof}
+
+(i) $p\geqslant 2$ 的情形. 令 $t=(f_n(x)-f(x))/f(x)$ ($f(x)\neq 0$), 用不等式
+\begin{align}
+|1+t|^p\geqslant 1+pt+C|t|^p\quad (p\geqslant 2), \label{eq:radon1}
+\end{align}
+再乘以 $|f(x)|^p$, 可得
+\begin{align*}
+|f_n(x)|^p &\geqslant |f(x)|^p + p|f(x)|^{p-2}f(x)[f_n(x)-f(x)] \\
+&\quad + C|f_n(x)-f(x)|^p
+\end{align*}
+(此不等式对 $f(x)=0$ 亦真). 对上式作 $E$ 上积分并取极限, 可知
+\begin{align*}
+C\varliminf_{n\to\infty}\int_E |f_n(x)-f(x)|^p\mathrm{d}x
+&\leqslant \lim_{n\to\infty}(\|f_n\|_p^p-\|f\|_p^p) - p\lim_{n\to\infty}\int_E |f(x)|^{p-2}f(x)(f_n(x)-f(x))\mathrm{d}x.
+\end{align*}
+
+(ii) $1<p<2$ 的情形. 作点集列
+\begin{align*}
+E_n=\{x\in E:|f_n(x)-f(x)|\geqslant|f(x)|\}\quad (n\in\mathbb{N}),
+\end{align*}
+并采用不等式 ($1<p<2$)
+\begin{align}
+|1+t|^p\geqslant
+\begin{cases}
+1+pt+C|t|^p, & |t|\geqslant 1, \\
+1+pt+C|t|^2, & |t|\leqslant 1
+\end{cases}
+\quad (t\in\mathbb{R}). \label{eq:radon2}
+\end{align}
+取 $t=(f_n(x)-|f(x)|)/f(x)$ ($f(x)\neq 0$), 再乘以 $|f(x)|^p$, 可得
+\begin{align*}
+\text{(A) } |f_n(x)|^p &\geqslant |f(x)|^p + p|f(x)|^{p-2}f(x)[f_n(x)-f(x)] \\
+&\quad + C|f_n(x)-f(x)|^p\ (x\in E_n), \\
+\text{(B) } |f_n(x)|^p &\geqslant |f(x)|^p + p|f(x)|^{p-2}f(x)[f_n(x)-f(x)] \\
+&\quad + C|f_n(x)-f(x)|^2|f(x)|^{p-2}\ (x\in E\setminus E_n).
+\end{align*}
+对 (A) 作 $E$ 上积分, 对 (B) 作 $E\setminus E_n$ 上的积分, 再令 $n\to\infty$, 我们有
+\begin{align*}
+&C\underline{\lim }_{n\rightarrow \infty}\left\{ \int_{E_n}{|f_n(x)}-f(x)|^p\mathrm{d}x+\int_{E\setminus E_n}{|f_n(x)}-f(x)|^2\cdot |f(x)|^{p-2}\mathrm{d}x \right\} 
+\\
+&\leqslant \lim_{n\rightarrow \infty} \{\parallel f_n\parallel _{p}^{p}-\parallel f\parallel _{p}^{p}\}-p\lim_{n\rightarrow \infty} \int_E{|f(x)|^{p-2}f(x)(f_n(x)}-f(x))\mathrm{d}x=0,
+\end{align*}
+从而
+\begin{align*}
+\lim_{n\to\infty}\int_{E_n}|f_n(x)-f(x)|^p\mathrm{d}x=0, \quad
+\lim_{n\to\infty}\int_{E\setminus E_n}|f_n(x)-f(x)|^2\cdot|f(x)|^{p-2}\mathrm{d}x=0.
+\end{align*}
+根据 $E_n$ 的定义以及 \hyperref[theorem:实变函数--Hölder不等式]{Hölder 不等式}, 可知
+\begin{align*}
+&\varliminf_{n\to\infty}\int_E |f_n(x)-f(x)|^p\mathrm{d}x
+\leqslant \varliminf_{n\to\infty}\int_{E_n}|f_n(x)-f(x)|^p\mathrm{d}x + \varliminf_{n\to\infty}\int_{E\setminus E_n}|f(x)|^{p-1}\cdot|f_n(x)-f(x)|\mathrm{d}x \\
+&\leqslant \varliminf_{n\to\infty}\int_{E_n}|f_n(x)-f(x)|^p\mathrm{d}x + \left(\int_E |f(x)|^p\mathrm{d}x\right)^{\frac{1}{2}}\cdot\lim_{n\to\infty}\left(\int_{E\setminus E_n}|f(x)|^{p-2}\cdot|f_n(x)-f(x)|^2\mathrm{d}x\right)^{\frac{1}{2}}=0.
+\end{align*}
+
+\end{proof}
+
+\begin{remark}
+\begin{enumerate}[(1)]
+\item 定理的结论对 $p=+\infty,1$ 不真.
+\begin{enumerate}[(i)]
+\item $f_n(x)=
+\begin{cases}
+0, & 0\leqslant x\leqslant \frac{1}{n}, \\
+1, & \frac{1}{n}<x\leqslant 1
+\end{cases}$
+则 $\{f_n\}$ 在 $L^\infty([0,1])$ 上弱收敛于 $f=1$, 且 $\|f_n\|_\infty\to 1$ ($n\to\infty$), 但 $\|f_n-f\|_\infty=1$ ($n\in\mathbb{N}$);
+
+\item $f_n(x)=4+\sin nx$ ($n\in\mathbb{N}$, $0<x<2\pi$), 则 $\{f_n\}$ 在 $L^1((0,2\pi))$ 中弱收敛于 $f=4$, 且 $\|f_n\|_1\to\|f\|_1$ ($n\to\infty$), 但 $\|f_n-f\|_1=4$ ($n\in\mathbb{N}$).
+\end{enumerate}
+
+\item 不等式 \eqref{eq:radon1}, \eqref{eq:radon2} 的证明:
+对 $t\neq 0$, $x=1/t$, 作函数
+\begin{align*}
+f(t)=\frac{|1+t|^p-1-pt}{|t|^p}=|1+x|^p-|x|^p-p|x|^{p-2}x=\varphi(x).
+\end{align*}
+我们只需指出 $\varphi(x)\geqslant C>0$ ($x\in\mathbb{R}$) 即可.
+
+若 $-1\leqslant x<0$, 直接估计得
+\begin{align*}
+\varphi(x)\geqslant(1-|x|)^p+(p-1)|x|^{p-1}\geqslant\min\{1,p-1\}/2^p.
+\end{align*}
+若 $0<x\leqslant 1$, 我们有
+\begin{align*}
+(1+x)^p-x^p
+&=\int_0^1\frac{\mathrm{d}}{\mathrm{d}s}(s+x)^p\mathrm{d}s=p\int_0^1(s+x)^{p-1}\mathrm{d}s \\
+&=-p\int_0^1(s+x)^{p-1}\frac{\mathrm{d}}{\mathrm{d}s}(1-s)\mathrm{d}s \\
+&=px^{p-1}+p(p-1)\int_0^1(1-s)(s+x)^{p-2}\mathrm{d}s \\
+&\geqslant px^{p-1}+\min\{p/2^p,p(p-1)/4\}.
+\end{align*}
+从而对 $|x|\leqslant 1$, 可得 $\varphi(x)\geqslant C_p(p-1)$ (某个 $C_p>0$).
+
+在 $p\geqslant 2$ 且 $|x|\geqslant 1$ 时, 可直接得出
+\begin{align*}
+|1+x|^p-|x|^p=\int_0^1\frac{\mathrm{d}}{\mathrm{d}s}|s+x|^p\mathrm{d}s=p\int_0^1|s+x|^{p-1}\mathrm{sign}(s+x)\mathrm{d}s.
+\end{align*}
+对此, 在 $x\geqslant 1$, $p\geqslant 2$ 时, 有 $((x+y)^p\geqslant x^p+y^p, x,y>0)$
+\begin{align*}
+|1+x|^p-|x|^p\geqslant p\int_0^1(x^{p-1}+s^{p-1})\mathrm{d}s\geqslant p|x|^{p-2}x+1.
+\end{align*}
+在 $x\leqslant -1$, $p\geqslant 2$ 时, 有 $(|x-y|^p\leqslant|x^p-y^p|,x,y>0)$
+\begin{align*}
+|1+x|^p-|x|^p=-p\int_0^1(|x|-s)^{p-1}\mathrm{d}s\geqslant -p\int_0^1(|x|^{p-1}-s^{p-1})\mathrm{d}s=p|x|^{p-2}+1.
+\end{align*}
+在 $|x|>1$, $1<p<2$ 时, 对 $t\in(0,1)$, 我们有 (用分部积分)
+\begin{align*}
+(1+t)^p-1
+&=-\int_0^1\frac{\mathrm{d}}{\mathrm{d}s}[1+(t-s)]^p\mathrm{d}s \\
+&=p\int_0^1[1+(t-s)]^{p-1}\mathrm{d}s \\
+&=pt+p(p-1)\int_0^1s[1+(t-s)]^{p-2}\mathrm{d}s \\
+&\geqslant pt+p(p-1)t^2/4.
+\end{align*}
+从而可得
+\begin{align*}
+\frac{(1+t)^p-1-pt}{t^2}\geqslant\frac{p(p-1)}{4}\quad (t\in(0,1)).
+\end{align*}
+对 $t\in(-1,0)$ 有类似结论, 且下界相同.
+
+\item $\{f_n(x)\}$ 在 $L^2([a,b])$ 中弱收敛于 $f(x)$ 当且仅当
+\begin{align*}
+\|f_n\|_2<+\infty\quad (n\in\mathbb{N}),\quad \lim_{n\to\infty}\int_a^x f_n(t)\mathrm{d}t=\int_a^x f(t)\mathrm{d}t\quad (a\leqslant x\leqslant b).
+\end{align*}
+\end{enumerate}
+\end{remark}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}

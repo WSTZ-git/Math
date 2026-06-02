@@ -1,0 +1,101 @@
+% contents/Chapter-01/section-02.tex 第一章第二节
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}} % 指定图片目录,后续可以直接使用图片文件名
+% 注意这里的文件路径不能用 ../../image/ ,否则用latexmk编译子文件会报错
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[scale=0.3]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{循环行列式}
+
+循环行列式关于单位根的计算公式见\hyperref[proposition:循环行列式计算公式]{命题\ref{proposition:循环行列式计算公式}}.
+
+\begin{example}
+设 $a, n$ 是给定互素正整数，按 Euild 除法(带余除法)，存在唯一确定的整数对 $(s, t)$ 使得 $a = sn + t$, $0 \leqslant  t \leqslant  n - 1$。
+
+令
+\[u_i = 
+\begin{cases} 
+s + 1, & 0 \leqslant  i < t \\
+s, & t \leqslant  i \leqslant  n - 1 
+\end{cases}\]
+
+若 $t$ 与 $n$ 互素，计算
+\[D_n =
+\begin{vmatrix}
+u_0 & u_1 & \cdots & u_{n-1} \\
+u_{n-1} & u_0 & \cdots & u_{n-2} \\
+\vdots & \vdots & \ddots & \vdots \\
+u_1 & u_2 & \cdots & u_0
+\end{vmatrix}\]
+\end{example}
+\begin{proof}
+
+记 $f(x) \triangleq \sum_{i=1}^n u_i x^i$, $w_j \triangleq e^{\frac{2\pi j \mathrm{i} }{n}}$, $j=0,1,2,\cdots,n-1$, 则由\hyperref[proposition:循环行列式计算公式]{命题\ref{proposition:循环行列式计算公式}}可知
+\begin{align*}
+D_n=\prod_{k=0}^n{f\left( w_k \right)}=f\left( 1 \right) \prod_{k=0}^{n-1}{f\left( w_k \right)}.
+\end{align*}
+由条件可知
+\[
+f(1) = \sum_{i=0}^{t-1} (s+1) + \sum_{i=t}^{n-1} s = (s+1)t + (n-t)s = ns + t = a.
+\]
+从而
+\begin{align*}
+D_n&=a\prod_{k=0}^{n-1}{f(w_k)}=a\prod_{k=0}^{n-1}{\left[ \sum_{i=0}^{t-1}{(s}+1)w_{k}^{i}+\sum_{i=t}^{n-1}{sw_{k}^{i}} \right]}
+\\
+&=a\prod_{k=0}^{n-1}{\left[ \sum_{i=0}^{t-1}{w_{k}^{i}}+s\sum_{i=0}^{n-1}{w_{k}^{i}} \right]}=a\prod_{k=0}^{n-1}{\left( \frac{1-w_{k}^{t}}{1-w_k}+s\frac{1-w_{k}^{n}}{1-w_k} \right)}.
+\end{align*}
+由 $w_{k}^{n} = 1$, $w_k = w_{1}^{k}$ 可知
+\[
+D_n = a \prod_{i=0}^{n-1} \frac{1-w_{1}^{kt}}{1-w_{1}^{k}}.
+\]
+由群论可知 $\{1, w_1, \cdots, w_{1}^{n-1}\}$ 是一个循环群且 $w_1$ 的阶为 $n$, 再根据群论的 Lagrange 定理及 $(t, n) = 1$ 可知, $w_{1}^{t}$ 的阶为 $\frac{n}{(n,t)} = n$。  
+因此$w_1^t=w_1$,故$\langle w_1 \rangle=\{1,w_1, w_{1}^{2}, \cdots, w_{1}^{n-1}\} = \{1,w_{1}^{t}, w_{2}^{2t}, \cdots, w_{1}^{(n-1)t}\}$。于是 $w_{1}^{k} = w_{1}^{tk},k=1,2,\cdots,n-1$,故
+\[
+D_n = a \prod_{k=0}^{n-1} \frac{1-w_{1}^{kt}}{1-w_{1}^{k}} = a.
+\]
+
+\end{proof}
+
+\begin{example}
+计算:
+\begin{align*}
+D_n=\left| \begin{matrix}
+a&		a+d&		\cdots&		a+(n-1)d\\
+a+\left( n-1 \right) d&		a&		\cdots&		a+(n-2)d\\
+\vdots&		\vdots&		&		\vdots\\
+a+d&		a+2d&		\cdots&		a\\
+\end{matrix} \right|.
+\end{align*}
+\end{example}
+\begin{proof}
+
+记$f(x) = \sum_{j=0}^{n-1} (a+jd)w_k^j$,其中$w_k=e^{\frac{2\pi k\mathrm{i}}{n}},k=0,1,2,\cdots ,n-1.$由\hyperref[proposition:循环行列式计算公式]{命题\ref{proposition:循环行列式计算公式}}可知
+\begin{align*}
+D_n&=f\left( w_0 \right) f\left( w_1 \right) \cdots f\left( w_{n-1} \right) =\prod_{k=0}^{n-1}{\sum_{j=0}^{n-1}{(a}+jd)w_{k}^{j}}=\frac{2an+n\left( n-1 \right) d}{2}\prod_{k=1}^{n-1}{\sum_{j=0}^{n-1}{(a}+jd)w_{k}^{j}}
+\\
+&\xlongequal{\text{错位相减}}\frac{2an+n\left( n-1 \right) d}{2}\prod_{k=1}^{n-1}{\frac{aw_{k}^{n+1}-aw_{k}^{n}-aw_k+a-dw_{k}^{n+1}-dnw_{k}^{n}+dw_k}{\left( w_k-1 \right) ^2}}
+\\
+&\xlongequal{w_{k}^{n}=1}\frac{2an+n\left( n-1 \right) d}{2}\prod_{k=1}^{n-1}{\frac{dn}{w_k-1}}=\frac{2an+n\left( n-1 \right) d}{2}\cdot \left( dn \right) ^{n-1}\prod_{k=1}^{n-1}{\frac{1}{w_k-1}}.
+\end{align*}
+注意到 $w_k-1$, $k=1,2,\cdots ,n-1$ 是 $(x+1)^n-1=0$ 的 $n-1$ 个复根, 这些根和 $w_0-1=0$ 一起就是 $(x+1)^n-1=0$ 的全部复根. 从而由 Vieta 定理可得, $(x+1)^n-1$ 的一次项系数乘 $(-1)^{n-1}$ 为
+\begin{align*}
+(-1)^{n-1}n=\sum_{0\leqslant i_1<i_2<\cdots <i_{n-1}\leqslant n-1}(w_{i_1}-1)(w_{i_2}-1)\cdots(w_{i_{n-1}}-1)=\prod_{k=1}^{n-1}(w_k-1).
+\end{align*}
+故
+\begin{align*}
+D_n=\frac{2an+n(n-1)d}{2}\cdot(dn)^{n-1}\prod_{k=1}^{n-1}\frac{1}{w_k-1}=(-1)^{n-1}\cdot\frac{2a+(n-1)d}{2}\cdot(nd)^{n-1}.
+\end{align*}
+
+\end{proof}
+
+
+\end{document}

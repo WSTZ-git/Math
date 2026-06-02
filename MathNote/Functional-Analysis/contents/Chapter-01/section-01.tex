@@ -1,0 +1,730 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}} % 指定图片目录,后续可以直接使用图片文件名
+% 注意这里的文件路径不能用 ../../image/ ,否则用latexmk编译子文件会报错
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[scale=0.3]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{压缩映象原理}
+
+\begin{definition}
+设$\mathscr{X}$是一个非空集。$\mathscr{X}$叫做\textbf{距离(度量)空间}，是指在$\mathscr{X}$上定义了一个双变量的实值函数
+\begin{align*}
+\rho:\mathscr{X}\times \mathscr{X}\to \mathbb{R},\,\,(x,y)\mapsto d.
+\end{align*}
+满足下列三个条件：
+\begin{enumerate}[(1)]
+\item 正定性:$\rho(x,y)\geqslant 0$，而且$\rho(x,y)=0$，当且仅当$x=y$；
+\item 交换性:$\rho(x,y)=\rho(y,x)$；
+\item 三角不等式:$\rho(x,z)\leqslant \rho(x,y)+\rho(y,z)$ $(\forall x,y,z\in \mathscr{X})$。
+\end{enumerate}
+这里$\rho$叫做$\mathscr{X}$上的一个\textbf{距离}；以$\rho$为距离的距离空间$\mathscr{X}$记做$(\mathscr{X},\rho)$。
+
+若还有$\mathscr{Y}\subseteq \mathscr{X}$,则显然将$\rho$限制在$\mathscr{Y}\times \mathscr{Y}$上得到的函数记作$\rho|_{\mathscr{Y}\times \mathscr{Y}}$是$\mathscr{Y}$上的一个距离.距离(度量)空间$(\mathscr{Y},\rho|_{\mathscr{Y}\times \mathscr{Y}})$称为$(\mathscr{X},\rho)$的\textbf{子距离(度量)空间}或\textbf{子空间},一般将其简记为$(\mathscr{Y},\rho)$.
+\end{definition}
+\begin{remark}
+引进距离的目的是刻画“收敛”。
+\end{remark}
+
+\begin{definition}
+设$(X,\rho)$是一个度量空间,$A\subseteq X$,定义$A$的直径为
+\begin{align*}
+\text{diam}(A)\triangleq \mathrm{sup}\left\{ \rho \left( a,g \right) \mid a,b\in A \right\} .
+\end{align*}
+若$\text{diam}(A)$有限,则称$A$为\textbf{有界集}.
+\end{definition}
+
+\begin{definition}
+设$(X,\rho)$是一个度量空间,$x_0\in X$,$r>0$,则称
+\begin{align*}
+B(x_0,r)\triangleq \{x\in X: \rho(x,x_0)<r\}
+\end{align*}
+为$x_0$的一个$r$(球形)\textbf{邻域}.此外
+\begin{align*}
+\overline{B}(x_0,r)\triangleq \overline{B(x_0,r)}=\{x\in X: \rho(x,x_0)\leqslant r\}.
+\end{align*}
+\end{definition}
+
+\begin{theorem}\label{theorem:有界充要条件-度量空间}
+设$(X,\rho)$是一个度量空间,$A\subseteq X$是有界集等价于
+\begin{enumerate}[(1)]
+\item $\text{diam}(A)<+\infty$.
+
+\item 存在$x_0\in X$,$R>0$,使得$\rho(a,x_0)\leqslant R,\forall a\in A$.
+
+\item 存在$x_0\in X$,$R>0$,使得$A\subseteq B(x_0,R)$.
+\end{enumerate}
+\end{theorem}
+
+\begin{definition}
+距离空间$(\mathscr{X},\rho)$上的点列$\{x_n\}$叫做收敛到$x_0$的是指：$\rho(x_n,x_0)\to 0\,(n\to \infty)$。这时记作$\lim\limits_{n \to \infty} x_n = x_0$。或简单地记作$x_n \to x_0$。
+\end{definition}
+\begin{remark}
+在区间$[a,b]$上的连续函数全体$C[a,b]$中点列$\{x_n\}$收敛到$x_0$是指：$\{x_n(t)\}$一致收敛到$x_0(t)$。
+\end{remark}
+
+\begin{theorem}\label{theorem:度量空间中收敛序列极限的唯一性和序列有界性}
+设 $(X,\rho)$ 为度量空间，$\{x_n\}_{n=1}^\infty$ 是 $X$ 中的收敛序列，则：
+\begin{enumerate}[(1)]
+\item 序列 $\{x_n\}_{n=1}^\infty$ 的极限唯一；
+
+\item 序列 $\{x_n\}_{n=1}^\infty$ 是有界序列。
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 设序列 $\{x_n\}_{n=1}^\infty$ 有两个极限 $a,b \in X$，且 $a \neq b$。根据收敛序列的定义，对任意 $\varepsilon > 0$，存在正整数 $N$，当 $n > N$ 时，有
+\[
+\rho(x_n,a) < \varepsilon, \quad \rho(x_n,b) < \varepsilon.
+\]
+特别地，取 $\varepsilon = \frac{1}{2}\rho(a,b) > 0$，则存在 $N \in \mathbb{N}$，当 $n > N$ 时，
+\[
+\rho(x_n,a) < \frac{1}{2}\rho(a,b), \quad \rho(x_n,b) < \frac{1}{2}\rho(a,b).
+\]
+从而对$\forall n > N$，有
+\[
+\rho(a,b) \leqslant \rho(a,x_n) + \rho(x_n,b) < \frac{1}{2}\rho(a,b) + \frac{1}{2}\rho(a,b) = \rho(a,b),
+\]
+即 $\rho(a,b) < \rho(a,b)$，矛盾!因此假设 $a \neq b$ 不成立，故 $a = b$，即收敛序列的极限唯一。
+
+\item 设序列 $\{x_n\}_{n=1}^\infty$ 收敛于 $x_0 \in X$。取 $\varepsilon = 1 > 0$，由收敛序列的定义，存在正整数 $N$，当 $n > N$ 时，$\rho(x_n,x_0) < 1$。
+
+令 $R_0 = \max_{1 \leqslant n \leqslant N} \rho(x_n,x_0)$，由于 $N$ 是有限正整数，有限个非负实数的最大值存在，故 $R_0$ 为有限非负实数。取 $R = \max\{R_0, 1\}$，则 $R > 0$，且对所有 $n \in \mathbb{N}$,
+当 $1 \leqslant n \leqslant N$ 时，$\rho(x_n,x_0) \leqslant R_0 \leqslant R$；
+当 $n > N$ 时，$\rho(x_n,x_0) < 1 \leqslant R$。
+
+因此对所有 $n \in \mathbb{N}$，均有 $\rho(x_n,x_0) < R$，即 $\{x_n\}_{n=1}^\infty \subseteq B(x_0, R)$，其中 $B(x_0,R) = \{x \in X \mid \rho(x,x_0) < R\}$ 是以 $x_0$ 为中心、$R$ 为半径的开球。故由\refthe{theorem:有界充要条件-度量空间}知$\{x_n\}_{n=1}^\infty$ 是有界序列。
+\end{enumerate}
+
+\end{proof}
+
+\begin{definition}
+度量空间$(\mathscr{X},\rho)$中的一个子集$E$称为\textbf{闭集}，是指：$\forall \{x_n\} \subset E$，若$x_n \to x_0$，则$x_0 \in E$。
+\end{definition}
+
+\begin{definition}
+距离空间$(\mathscr{X},\rho)$上的点列$\{x_n\}$叫做\textbf{基本列}或$\mathbf{Cauchy}$\textbf{列}，是指：$\rho(x_n,x_m) \to 0\,(n,m \to \infty)$。这也就是说：$\forall \varepsilon > 0$，$\exists N(\varepsilon)$，使得$m,n \geqslant N(\varepsilon) \Rightarrow \rho(x_n,x_m) < \varepsilon$。
+
+如果距离空间$(\mathscr{X},\rho)$中所有基本列都是收敛列且收敛点都在$\mathscr{X}$中，那么就称距离空间$(\mathscr{X},\rho)$是\textbf{完备的}.
+\end{definition}
+
+\begin{proposition}\label{proposition:收敛列必是基本列}
+距离空间$(\mathscr{X},\rho)$中的收敛列都是基本列.即点列$\{x_n\}\subseteq \mathscr{X}$收敛的必要条件是$\{x_n\}$为基本列.
+\end{proposition}
+\begin{proof}
+
+设$x_n\to x(n\to \infty)$,则对$\forall n,m\in \mathbb{N}$且$m\geqslant m$,有
+\begin{align*}
+\rho(x_m,x_n)\leqslant \rho(x_m,x)+\rho (x,x_n).
+\end{align*}
+令$n\to \infty$得$\lim_{n\to \infty}\rho(x_m,x_n)=0$,即$\{x_n\}$是基本列.
+\end{proof}
+
+\begin{proposition}\label{proposition:完备度量空间的子空间等价于闭集}
+设 $(X, \rho)$ 为度量空间，$M \subseteq X$,则：
+\begin{enumerate}[(1)]
+\item\label{proposition:完备度量空间的子空间等价于闭集-1} 若 $(X, \rho)$ 是完备度量空间，且 $M$ 是 $X$ 的闭子集，则其度量子空间$(M, \rho)$ 是完备度量子空间；
+\item\label{proposition:完备度量空间的子空间等价于闭集-2} 若$(X, \rho)$的度量子空间$(M, \rho)$ 是完备度量子空间，则 $M$ 是 $X$ 的闭子集。
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 设 $(X, \rho)$ 为完备度量空间，$M \subseteq X$ 为闭子集。我们证明 $(M, \rho)$ 是完备的。
+
+取 $M$ 中的任意Cauchy列 $\{x_n\}_{n=1}^\infty$，即对任意 $\varepsilon > 0$，存在 $N \in \mathbb{N}$，当 $m,n > N$ 时，有
+\[
+\rho(x_m, x_n) < \varepsilon.
+\]
+由于 $M \subseteq X$，故 $\{x_n\}$ 也是 $X$ 中的Cauchy列。由 $X$ 的完备性，存在 $x \in X$，使得 $\{x_n\}$ 在 $X$ 中收敛于 $x$，即 $\rho(x_n, x) \to 0 \ (n \to \infty)$。
+
+根据闭集的序列定义：若序列 $\{x_n\} \subseteq M$ 在 $X$ 中收敛于 $x \in X$，则必有 $x \in M$。因此 $x \in M$，即 $\{x_n\}$ 在 $M$ 中收敛于 $x$。由完备度量空间的定义，$(M, \rho)$ 是完备的。
+
+\item 设 $(M, \rho)$ 是完备度量子空间，我们证明 $M$ 是 $X$ 的闭子集。
+
+要证 $M$ 为闭集，只需证明：对任意 $x \in X$，若存在序列 $\{x_n\}_{n=1}^\infty \subseteq M$，使得 $\{x_n\}$ 在 $X$ 中收敛于 $x$，则必有 $x \in M$。
+
+由于 $\{x_n\}$ 在 $X$ 中收敛，故它是 $X$ 中的Cauchy列，即对任意 $\varepsilon > 0$，存在 $N \in \mathbb{N}$，当 $m,n > N$ 时，$\rho(x_m, x_n) < \varepsilon$。又因为 $\{x_n\} \subseteq M$，故 $\{x_n\}$ 也是 $M$ 中的Cauchy列。
+
+由 $M$ 的完备性，存在 $x' \in M$，使得 $\{x_n\}$ 在 $M$ 中收敛于 $x'$，即 $\rho(x_n, x') \to 0 \ (n \to \infty)$。
+
+根据\hyperref[theorem:度量空间中收敛序列极限的唯一性和序列有界性]{度量空间中极限的唯一性},由 $\rho(x_n, x) \to 0$ 和 $\rho(x_n, x') \to 0$，可得 $x = x'$，故 $x \in M$。因此 $M$ 是 $X$ 的闭子集。
+\end{enumerate}
+
+\end{proof}
+
+\begin{theorem}[常见的度量空间]\label{theorem:常见的度量空间}
+\begin{enumerate}
+\item 在欧氏空间$\mathbb{R}^n$中,对$\forall x=(x_1,x_2,\cdots,x_n)$，$y=(y_1,y_2,\cdots,y_n)\in \mathbb{R}^n$，令
+\begin{align}\label{eq::::902ru2rf1.1111}
+\rho(x,y)\triangleq\left[(x_1 - y_1)^2 + \cdots + (x_n - y_n)^2\right]^{\frac{1}{2}},
+\end{align}
+则$(\mathbb{R}^n,\rho)$形成完备度量空间.此时将$\rho$称作\textbf{欧氏距离}.
+
+\item 区间$[a,b]$上的连续函数全体记为 $C[a,b]$，对$\forall x(t),y(t)\in C[a,b]$,令
+\begin{align}
+\label{eq::::902ru2rf1.1.2}
+\rho(x,y) \triangleq \max_{a \leqslant t \leqslant b} |x(t) - y(t)|
+\end{align}
+则$(C[a,b],\rho)$形成完备度量空间.称$(C[a,b],\rho)$为\textbf{连续函数空间}.
+\end{enumerate}
+\end{theorem}
+\begin{remark}
+\begin{enumerate}
+\item 以后将$(\mathbb{R}^n,\rho)$简记作 $\mathbb{R}^n$。以后当说到欧氏空间$\mathbb{R}^n$或其子集时，我们始终用\eqref{eq::::902ru2rf1.1111}规定的 $\rho$ 作为其上的距离，除非另外说明.
+
+\item 以后将$(C[a,b],\rho)$简记作 $C[a,b]$。以后当说到连续函数空间$C[a,b]$或其子集时，我们始终用\eqref{eq::::902ru2rf1.1.2}规定的 $\rho$ 作为其上的距离，除非另外说明.
+\end{enumerate}
+\end{remark}
+\begin{proof}
+\begin{enumerate}
+\item 定义自明.
+
+\item 显然$(C[a,b],\rho)$形成距离空间.设$\{x_n\}$是$(C[a,b],\rho)$中的一串基本列，那么$\forall \varepsilon>0$，$\exists N(\varepsilon)$，使得对$\forall m,n\geqslant N(\varepsilon)$有
+$$\rho(x_m,x_n)=\max_{a\leqslant t\leqslant b}|x_m(t)-x_n(t)|<\varepsilon,$$
+因此，对$\forall t\in [a,b]$,
+\begin{align}
+\label{eq:1.1.3}
+|x_m(t)-x_n(t)|<\varepsilon \quad (\forall m,n\geqslant N(\varepsilon)).
+\end{align}
+固定$t\in [a,b]$，我们看到数列$\{x_n(t)\}$是基本的，由于$(\mathbb{R}^n,\rho)$是完备的,因此极限$\lim\limits_{n\to \infty} x_n(t)$存在。让我们用$x_0(t)$表示此极限，在\eqref{eq:1.1.3}中令$m\to \infty$得到$|x_0(t)-x_n(t)|\leqslant \varepsilon (\forall n\geqslant N(\varepsilon))$。由此可见$x_n(t)$一致收敛到$x_0(t)$，从而$x_0(t)$连续并在$C[a,b]$中$x_n$收敛到$x_0$。
+\end{enumerate}
+
+\end{proof}
+
+\begin{definition}
+设$(\mathscr{X}, \rho), (\mathscr{Y}, r)$是两个度量空间,$T: (\mathscr{X}, \rho) \to (\mathscr{Y}, r)$是一个映射，称它是\textbf{连续的}，如果对于$\mathscr{X}$中的任意点列$\{x_n\}$和点$x_0$，
+$$\rho(x_n, x_0) \to 0 \Rightarrow r(Tx_n, Tx_0) \to 0 \quad (n \to \infty).$$
+\end{definition}
+
+\begin{proposition}[连续映射充要条件]\label{proposition:距离空间的连续映射充要条件}
+$T: (\mathscr{X}, \rho) \to (\mathscr{Y}, r)$是连续的的充要条件是对$\forall \varepsilon > 0$，$\forall x_0 \in \mathscr{X}$，$\exists \delta = \delta(x_0, \varepsilon) > 0$，使得
+\begin{align}
+\label{eq:1.1.4}
+\rho(x, x_0) < \delta \Rightarrow r(Tx, Tx_0) < \varepsilon \quad (\forall x \in \mathscr{X}).
+\end{align}
+\end{proposition}
+\begin{proof}
+
+{\heiti 必要性:}若\eqref{eq:1.1.4}不成立，必$\exists x_0 \in \mathscr{X}$，$\exists \varepsilon > 0$，使得$\forall n \in \mathbb{N}$，$\exists x_n$使得$\rho(x_n, x_0) < \frac{1}{n}$，但$r(Tx_n, Tx_0) \geqslant \varepsilon$，即得$\lim\limits_{n \to \infty} \rho(x_n, x_0) = 0$，但$\lim\limits_{n \to \infty} r(Tx_n, Tx_0) \neq 0$，这与$T$连续矛盾。
+
+{\heiti 充分性:}设\eqref{eq:1.1.4}成立，且$\lim\limits_{n \to \infty} \rho(x_n, x_0) = 0$，那么$\forall \varepsilon > 0$，$\exists N = N(\delta(x_0, \varepsilon))$，使得当$n > N$时，$\rho(x_n, x_0) < \delta$。从而$r(Tx_n, Tx_0) < \varepsilon$，即得$\lim\limits_{n \to \infty} r(Tx_n, Tx_0) = 0$。
+
+\end{proof}
+
+\begin{definition}
+设$(\mathscr{X},\rho)$是一个距离空间,称映射$T:(\mathscr{X},\rho) \to (\mathscr{X},\rho)$满足$\mathbf{Lipschitz}$\textbf{条件},$L$是$\mathbf{Lipschitz}$\textbf{常数}.如果存在$L >0$，使得$$\rho(Tx,Ty) \leqslant L\rho(x,y)\,(\forall x,y \in \mathscr{X}).$$
+\end{definition}
+
+\begin{theorem}\label{theorem:满足Lipschitz条件的映射必连续}
+设$(\mathscr{X},\rho)$是一个距离空间,映射$T:(\mathscr{X},\rho) \to (\mathscr{X},\rho)$满足Lipschitz条件,$L$是Lipschitz常数,则的映射$T$是连续的。
+\end{theorem}
+\begin{proof}
+
+对$\forall \varepsilon > 0$，$\forall x_0 \in \mathscr{X}$，取$\delta=\frac{\varepsilon}{L}$，使得当$\rho(x, x_0) < \delta$时,有
+\begin{align*}
+\rho \left( Tx,Tx_0 \right) \leqslant L\rho \left( x,x_0 \right) <\varepsilon \quad \left( \forall x\in \mathscr{X} \right) .
+\end{align*}
+故由\refpro{proposition:距离空间的连续映射充要条件}知$T$是连续的.
+
+\end{proof}
+
+\begin{definition}
+设$(\mathscr{X},\rho)$是一个距离空间，称$T:(\mathscr{X},\rho) \to (\mathscr{X},\rho)$是一个\textbf{压缩映射}，如果存在$0 < \alpha < 1$，使得$$\rho(Tx,Ty) \leqslant \alpha\rho(x,y)\,(\forall x,y \in \mathscr{X}).$$
+\end{definition}
+\begin{remark}
+显然压缩映射满足Lipschitz条件.进而由\refthe{theorem:满足Lipschitz条件的映射必连续}可知\textbf{压缩映射一定是连续的}.
+\end{remark}
+
+\begin{example}
+设$\mathscr{X} = [0,1]$，$T(x)$是$[0,1]$上的一个可微函数，满足条件：
+\begin{align}
+\label{eq:1.1.8}
+T(x) \in [0,1] \quad (\forall x \in [0,1]),
+\end{align}
+以及
+\begin{align}
+\label{eq:1.1.9}
+|T'(x)| \leqslant \alpha < 1 \quad (\forall x \in [0,1]),
+\end{align}
+则映射$T:\mathscr{X} \to \mathscr{X}$是一个压缩映射。
+\end{example}
+\begin{proof}
+
+由Lagrange中值定理可知
+\begin{align*}
+\rho(Tx,Ty) &= |T(x) - T(y)|= |T'(\theta x + (1 - \theta)y)(x - y)| \\
+&\leqslant \alpha|x - y| = \alpha\rho(x,y) \quad (\forall x,y \in \mathscr{X}, 0 < \theta < 1).
+\end{align*}
+
+\end{proof}
+
+\begin{definition}[不动点]
+设$(\mathscr{X},\rho)$是一个度量空间，$T:\mathscr{X}\to \mathscr{X}$是一个映射.若存在$x\in X$,使得
+\begin{align*}
+Tx=x,
+\end{align*}
+则称$x$为映射$T$的一个\textbf{不动点}.
+\end{definition}
+
+\begin{theorem}[Banach不动点定理——压缩映象原理]\label{theorem:Banach不动点定理——压缩映象原理}
+设$(\mathscr{X},\rho)$是一个完备的距离空间，$T$是$(\mathscr{X},\rho)$到其自身的一个压缩映射，则$T$在$\mathscr{X}$上存在唯一的不动点.
+\end{theorem}
+\begin{proof}
+
+任取初始点$x_0 \in \mathscr{X}$。考察迭代产生的序列
+$$x_{n+1} = Tx_n \quad (n = 0,1,2,\cdots).$$
+我们有
+\begin{align*}
+\rho(x_{n+1}, x_n) = \rho(Tx_n, Tx_{n-1}) \leqslant \alpha \rho(x_n, x_{n-1}) \leqslant \cdots \leqslant \alpha^n \rho(x_1, x_0).
+\end{align*}
+从而对$\forall p \in \mathbb{N}$，
+\begin{align*}
+\rho(x_{n+p}, x_n) \leqslant \sum_{i=1}^p \rho(x_{n+i}, x_{n+i-1}) \leqslant \frac{\alpha^n}{1 - \alpha} \rho(x_1, x_0) \to 0(n \to \infty).
+\end{align*}
+由此可见$\{x_n\}$是一个基本列.因为$(\mathscr{X},\rho)$是完备的,所以$\{x_n\}$收敛,设$\underset{n\rightarrow \infty}{\lim}x_n=x^*.$又$T$是连续的,故$\underset{n\rightarrow \infty}{\lim}Tx_n=Tx^*.$于是对$x_{n+1} = Tx_n$两边同时取极限得$x^*=Tx^*,$即$x^*$是$T$在$\mathscr{X}$上的一个不动点。若$x^*, x^{ }$都是不动点，则
+\begin{align*}
+\rho \left( x^*,x^{ } \right) =\rho \left( Tx^*,Tx^{ } \right) \leqslant \alpha \rho \left( x^*,x^{ } \right) \Longrightarrow \left( 1-\alpha \right) \rho \left( x^*,x^{ } \right) \leqslant 0.
+\end{align*}
+由此推出
+$x^* = x.$
+\end{proof}
+
+\begin{corollary}\label{corollary:压缩映射迭代收敛性质}
+设 $(X, d)$ 是完备度量空间，映射 $T: (X,d) \to (X,d)$ 为压缩映射，即存在常数 $L \in [0, 1)$，使得对任意 $x, y \in X$，都有
+\begin{align*}
+d(Tx, Ty) \leqslant L d(x, y).
+\end{align*}
+则 $T$ 在 $X$ 中存在唯一的不动点 $x^*$.且对$\forall x_0 \in X$，由
+\begin{align*}
+x_{n+1} = Tx_n,\quad n=0,1,2,\cdots
+\end{align*}
+生成的序列 $\{x_n\}$收敛于不动点 $x^*$，即
+\begin{align*}
+\lim_{n \to \infty} d(x_n, x^*) =\lim_{n \to \infty} d(T^nx_0, x^*) =0.
+\end{align*}
+\end{corollary}
+\begin{proof}
+
+任取 $x_0 \in X$，定义 $x_{n+1}=Tx_n$。由压缩映射条件，对任意 $n \in \mathbb{N}$，有
+\begin{align*}
+d(x_{n+1}, x_n) = d(Tx_n, Tx_{n-1}) \leqslant L d(x_n, x_{n-1}) \leqslant \cdots \leqslant L^n d(x_1, x_0).
+\end{align*}
+对任意正整数 $n, p$，有
+\begin{align*}
+d(x_{n+p}, x_n) &\leqslant d(x_{n+p}, x_{n+p-1}) + \cdots + d(x_{n+1}, x_n) \\
+&\leqslant \left(L^{n+p-1} + \cdots + L^n\right) d(x_1, x_0) \\
+&= L^n \cdot \frac{1-L^p}{1-L} d(x_1, x_0) \leqslant \frac{L^n}{1-L} d(x_1, x_0).
+\end{align*}
+因 $0 \leqslant L < 1$，故$\lim\limits_{n \to \infty}d(x_{n+p}, x_n)=\lim\limits_{n \to \infty} L^n = 0$，即 $\{x_n\}$ 是 $X$ 中的柯西列。
+
+由 $X$ 的完备性，柯西列 $\{x_n\}$ 收敛，记极限为 $x' = \lim\limits_{n \to \infty} x_n$。
+压缩映射 $T$ 是连续映射，因此
+\begin{align*}
+Tx' = T\left(\lim_{n \to \infty} x_n\right) = \lim_{n \to \infty} Tx_n = \lim_{n \to \infty} x_{n+1} = x',
+\end{align*}
+即 $x'$ 是 $T$ 的不动点。又由\hyperref[theorem:Banach不动点定理——压缩映象原理]{Banach不动点定理}知$T$存在唯一不动点$x^*$,故$x'=x^*$,即$\{x_n\}$收敛于不动点$x^*$.
+
+\end{proof}
+
+\begin{theorem}[常微分方程初值问题的局部存在唯一性定理]\label{theorem:常微分方程初值问题解的局部存在唯一性}
+设二元函数 $F(t,x)$ 在区域 $D = [-h_0,h_0] \times [\xi-\delta\xi+\delta_0] \subset \mathbb{R} \times \mathbb{R}$ 上连续，且关于 $x$ 对 $t$ 一致满足局部Lipschitz条件：即存在常数 $L>0$，使得对任意 $t\in[-h_0,h_0]$ 及 $x_1,x_2\in[\xi-\delta\xi+\delta_0]$，有
+\[
+|F(t,x_1) - F(t,x_2)| \leqslant L |x_1 - x_2|.
+\]
+记 $M = \max_{(t,x)\in D} |F(t,x)|$，取 $h>0$ 满足
+\[
+0 < h < \min\left\{ h_0, \frac{\delta_0}{M}, \frac{1}{L} \right\}.
+\]
+则初值问题
+\[
+\begin{cases}
+\frac{\mathrm{d}x}{\mathrm{d}t} = F(t,x(t)), \\
+x(0) = \xi
+\end{cases}
+\]
+在区间 $[-h,h]$ 上存在唯一的连续解 $x(t)$。
+\end{theorem}
+\begin{proof}
+
+原问题等价于求解积分方程
+\[
+x(t) = \xi + \int_0^t F(\tau, x(\tau)) \, \mathrm{d}\tau, \quad t\in[-h,h].
+\]
+定义映射 $T: C[-h,h] \to C[-h,h]$ 为
+\[
+(Tx)(t) = \xi + \int_0^t F(\tau, x(\tau)) \, \mathrm{d}\tau, \quad t\in[-h,h],
+\]
+求解初值问题等价于寻找 $T$ 的不动点，即满足 $Tx = x$ 的函数 $x\in C[-h,h]$。
+
+取 $C[-h,h]$ 中的闭球
+\[
+\mathcal{X} = \overline{B}(\xi, \delta_0) = \left\{ x\in C[-h,h] \,\bigg|\, \max_{|t|\leqslant h} |x(t) - \xi| \leqslant \delta_0 \right\},
+\]
+其中 $\xi$ 视为 $[-h,h]$ 上的常值函数。记
+\begin{align*}
+\rho \triangleq \max_{|t|\leqslant h} \left| x(t) - y(t) \right|,\quad \forall x,y\in C[-h,h].
+\end{align*}
+由\refthe{theorem:常见的度量空间}知$(C[-h,h],\rho)$是完备度量空间，而 $\mathcal{X}$ 是其闭子集，故由\refpro{proposition:完备度量空间的子空间等价于闭集}知$(\mathcal{X},\rho)$ 也是完备度量空间。
+
+对任意 $x\in \mathcal{X}$ 及 $t\in[-h,h]$，有
+\[
+|(Tx)(t) - \xi| = \left| \int_0^t F(\tau, x(\tau)) \, \mathrm{d}\tau \right| \leqslant \int_0^{|t|} |F(\tau, x(\tau))| \, \mathrm{d}\tau \leqslant M h.
+\]
+由 $h < \frac{\delta_0}{M}$，得 $Mh < \delta_0$，因此
+\[
+\max_{|t|\leqslant h} |(Tx)(t) - \xi| \leqslant Mh < \delta
+\]
+即 $Tx\in \mathcal{X}$，故 $T$ 是 $\mathcal{X}$ 到自身的映射。
+
+对任意 $x,y\in \mathcal{X}$，有
+\[
+\rho(Tx, Ty) = \max_{|t|\leqslant h} \left| (Tx)(t) - (Ty)(t) \right| = \max_{|t|\leqslant h} \left| \int_0^t \left[ F(\tau,x(\tau)) - F(\tau,y(\tau)) \right] \mathrm{d}\tau \right|.
+\]
+由Lipschitz条件，对任意 $\tau\in[-h,h]$，有
+\[
+|F(\tau,x(\tau)) - F(\tau,y(\tau))| \leqslant L |x(\tau) - y(\tau)| \leqslant L \rho(x,y).
+\]
+因此
+\[
+\left| \int_0^t \left[ F(\tau,x(\tau)) - F(\tau,y(\tau)) \right] \mathrm{d}\tau \right| \leqslant \int_0^{|t|} L \rho(x,y) \, \mathrm{d}\tau \leqslant L h \rho(x,y).
+\]
+对 $|t|\leqslant h$ 取最大值，得
+\[
+\rho(Tx, Ty) \leqslant L h \rho(x,y).
+\]
+由 $h < \frac{1}{L}$，知 $Lh < 1$，故 $T: (\mathcal{X},\rho)\to (\mathcal{X},\rho)$是压缩映射。
+
+根据\hyperref[theorem:Banach不动点定理——压缩映象原理]{Banach不动点定理}，$T$ 在 $\mathcal{X}$ 中存在唯一的不动点 $x^*$，即 $Tx^* = x^*$。该不动点满足积分方程，从而是初值问题\eqref{eq::hjr2389jr8jHSAIOUFh}的唯一解。
+
+\end{proof}
+
+\begin{theorem}[隐函数存在定理]\label{theorem:隐函数存在定理}
+设 \( f : \mathbb{R}^n \times \mathbb{R}^m \to \mathbb{R}^m \)，\( U \times V \subset \mathbb{R}^n \times \mathbb{R}^m \) 是 \( (x_0, y_0) \in \mathbb{R}^n \times \mathbb{R}^m \) 的一个邻域。设 \( f \) 在 \( U \times V \) 内连续并且对\( \forall x \in U \)，$f$关于 \( y \in V \) 连续可微。又设
+\[
+f(x_0, y_0) = 0; \quad \left[ \det \left( \frac{\partial f}{\partial y} \right) \right] (x_0, y_0) \neq 0,
+\]
+则存在\( x_0 \) 的一个邻域 \( U_0 \subset U \) 以及唯一的连续函数 \( \varphi : U_0 \to \mathbb{R}^m \)，满足
+\begin{align}\label{eq::hjr2389jr8jHSAIOUFh}
+\begin{cases} 
+f(x, \varphi(x)) = 0 ,&\forall x \in U_0, \\
+\varphi(x_0) = y_0.
+\end{cases}
+\end{align}
+\end{theorem}
+\begin{remark}
+$\frac{\partial f}{\partial y}$表示$f$关于$y$的Jacobian(雅可比)矩阵,$\det \left( \frac{\partial f}{\partial y} \right)$表示$f$关于$y$的Jacobian(雅可比)行列式.我们有
+\begin{align*}
+\left( \frac{\partial f}{\partial y}(x_0,y_0)\right) =\left| \begin{matrix}
+\frac{\partial f_1}{\partial y_1}\left( x_0,y_0 \right)&		\frac{\partial f_1}{\partial y_2}\left( x_0,y_0 \right)&		\cdots&		\frac{\partial f_1}{\partial y_m}\left( x_0,y_0 \right)\\
+\frac{\partial f_2}{\partial y_1}\left( x_0,y_0 \right)&		\frac{\partial f_2}{\partial y_2}\left( x_0,y_0 \right)&		\cdots&		\frac{\partial f_2}{\partial y_m}\left( x_0,y_0 \right)\\
+\vdots&		\vdots&		&		\vdots\\
+\frac{\partial f_m}{\partial y_1}\left( x_0,y_0 \right)&		\frac{\partial f_m}{\partial y_2}\left( x_0,y_0 \right)&		\cdots&		\frac{\partial f_m}{\partial y_m}\left( x_0,y_0 \right)\\
+\end{matrix} \right| .
+\end{align*}
+\end{remark}
+\begin{proof}
+
+记
+\begin{align*}
+D_y f(x, y_1, \cdots, y_m) \triangleq \begin{pmatrix}
+\frac{\partial f_1}{\partial y_1}(x,y_1)&\cdots&\frac{\partial f_1}{\partial y_m}(x,y_1)\\
+\vdots&&\vdots\\
+\frac{\partial f_m}{\partial y_1}(x,y_m)&\cdots&\frac{\partial f_m}{\partial y_m}(x,y_m)
+\end{pmatrix},
+\end{align*}
+由于$\dfrac{\partial f}{\partial y}$在$U\times V$上连续，且$\det\dfrac{\partial f}{\partial y}(x_0,y_0)\neq 0$，故$\dfrac{\partial f}{\partial y}(x_0,y_0)$可逆。于是存在$\delta>0$，使得当$x$ $\in$ $\overline{B}(x_0,\delta)$，$y_1$,$y_2$,$\cdots$,$y_m\in\overline{B}(y_0,\delta)$时，
+有
+\begin{align}
+&\left| \left[ \frac{\partial f}{\partial y}\left( (x_0,y_0) \right)-D_yf\left( x,y_1,\cdots ,y_m \right)\right] _{ij} \right|<\frac{1}{2m},\quad i,j=1,2,\cdots ,m.
+\nonumber \\
+\Longleftrightarrow &\left| \delta _{ij}-\left[ \left( \frac{\partial f}{\partial y}(x_0,y_0) \right) ^{-1}D_yf(x,y_1,\cdots ,y_m) \right] _{ij} \right|<\frac{1}{2m},\quad i,j=1,2,\cdots ,m.
+\label{eq:::111616156}
+\end{align}
+其中$[\cdot]_{ij}$表示矩阵第$i$行第$j$列元素，并且
+\[
+\delta_{ij} \triangleq \begin{cases} 
+1 & (i = j), \\
+0 & (i \neq j).
+\end{cases}
+\]
+再由$f(x,y_0)$在$(x_0,y_0)$处连续知，存在$\eta>0$，使得当$x\in\overline{B}(x_0,\eta)$时，有
+\begin{align}\label{eq::0j90qij390UFORJFJAWJ}
+\max_{\substack{x \in \overline{B}(x_0, \eta) \\ 1 \leqslant i \leqslant m}} \left| \left[ \left( \frac{\partial f}{\partial y}(x_0, y_0) \right)^{-1} (f(x, y_0) - f(x_0, y_0)) \right]_i \right| < \frac{\delta}{2}.
+\end{align}
+其中$[\cdot]_{i}$表示向量第$i$个分量.
+取$r=\min\{\delta,\eta\}$，定义函数空间$C\left(\overline{B}(x_0, r), \mathbb{R}^m\right)$为全体定义在$\overline{B}(x_0, r)$上且取值在$\mathbb{R}^m$上的向量值连续函数。再令
+\[
+\rho(\varphi, \psi) \triangleq \max_{\substack{x \in \overline{B}(x_0, r) \\ 1 \leqslant i \leqslant m}} |\varphi_i(x) - \psi_i(x)|,
+\]
+其中$\varphi = (\varphi_1, \varphi_2, \cdots, \varphi_m)$，$\psi = (\psi_1, \psi_2, \cdots, \psi_m)\in C\left(\overline{B}(x_0, r), \mathbb{R}^m\right)$.容易验证$\big(C(\overline{B}(x_0,r),\mathbb{R}^m),\rho\big)$为完备度量空间.
+
+再取
+\[
+\mathcal{X} \triangleq \{ \varphi \in C(\overline{B}(x_0, r), \mathbb{R}^m) \mid \varphi(x_0) = y_0,\ \varphi(x) \in \overline{B}(y_0, \delta) \},
+\]
+由$\mathcal{X}$中函数的连续性知$\mathcal{X}$是闭集，故由\refpro{proposition:完备度量空间的子空间等价于闭集}知$(\mathcal{X},\rho)$同样为完备度量空间.
+
+记
+\[
+(T\varphi)(x) \triangleq \varphi(x) - \left( \frac{\partial f}{\partial y}(x_0, y_0) \right)^{-1} f(x, \varphi(x)),\quad \forall \varphi \in \mathcal{X},\forall x\in\overline{B}(x_0,r).
+\]
+现在定义映射
+\begin{align*}
+T:\mathcal{X}\to C(\overline{B}(x_0,r),\mathbb{R}^m),\,\,\varphi\mapsto T\varphi.
+\end{align*}
+则由$f$的连续性和$\varphi\in \mathcal{X}\subseteq C(\overline{B}(x_0, r), \mathbb{R}^m)$知$T\varphi \in C(\overline{B}(x_0, r), \mathbb{R}^m)$.故$T$是良定义的.
+
+任取$\varphi = (\varphi_1, \varphi_2, \cdots, \varphi_m)$，$\psi = (\psi_1, \psi_2, \cdots, \psi_m)\in\mathcal{X}$，记$d_i(x) \triangleq \varphi_i(x) - \psi_i(x)\ (i=1,2,\cdots,m)$，由多元函数微分中值定理，存在$0 < \theta_i = \theta_i(x) < 1$，满足
+$\hat{y}_i(x) = \theta_i \varphi(x) + (1 - \theta_i) \psi(x)$且$\hat{y}_i(x)\in\overline{B}(y_0,\delta)$，使得
+\begin{align*}
+f(x,\varphi(x))-f(x,\psi(x))=D_y f(x, \hat{y}_1, \cdots, \hat{y}_m) \left( \varphi(x) - \psi(x) \right).
+\end{align*}
+再结合\eqref{eq:::111616156}式可得
+\begin{align}
+&\rho(T\varphi, T\psi) = \max_{\substack{x \in \overline{B}(x_0, r) \\ 1 \leqslant i \leqslant m}} \left| \left[ (T\varphi)(x) - (T\psi)(x) \right]_i \right| \nonumber \\
+&= \max_{\substack{x \in \overline{B}(x_0, r) \\ 1 \leqslant i \leqslant m}} \left| \varphi_i(x) - \psi_i(x) - \left[ \left( \frac{\partial f}{\partial y}(x_0, y_0) \right)^{-1} \left( f(x, \varphi(x)) - f(x, \psi(x)) \right) \right]_i \right| \nonumber \\
+&= \max_{\substack{x \in \overline{B}(x_0, r) \\ 1 \leqslant i \leqslant m}} \left| d_i(x) - \left[ \left( \frac{\partial f}{\partial y}(x_0, y_0) \right)^{-1} D_y f(x, \hat{y}_1, \cdots, \hat{y}_m) \left( \varphi(x) - \psi(x) \right) \right]_i \right| \nonumber \\
+&= \max_{\substack{x \in \overline{B}(x_0, r) \\ 1 \leqslant i \leqslant m}} \left| d_i(x) - \sum_{j=1}^m \left[ \left( \frac{\partial f}{\partial y}(x_0, y_0) \right)^{-1} D_y f(x, \hat{y}_1, \cdots, \hat{y}_m) \right]_{ij} d_j(x) \right| \nonumber \\
+&=\max_{\substack{x \in \overline{B}(x_0, r) \\ 1 \leqslant i \leqslant m}}\left| \sum_{j=1}^m{\delta _{ij}d_{j}(x)}-\sum_{j=1}^m{\left[ \left( \frac{\partial f}{\partial y}(x_0,y_0) \right) ^{-1}D_yf(x,\hat{y}_1,\cdots ,\hat{y}_m) \right] _{ij}d_j(x)} \right|
+\nonumber \\
+&\leqslant \max_{\substack{x \in \overline{B}(x_0, r) \\ 1 \leqslant i \leqslant m}}\sum_{j=1}^m{\left| \delta _{ij}-\left[ \left( \frac{\partial f}{\partial y}(x_0,y_0) \right) ^{-1}D_yf(x,\hat{y}_1,\cdots ,\hat{y}_m) \right] _{ij} \right|\left| d_j(x) \right|}
+\nonumber \\
+&<\frac{1}{2m}\max_{\substack{x \in \overline{B}(x_0, r) \\ 1 \leqslant i \leqslant m}}\sum_{j=1}^m{\left| d_j(x) \right|}\leqslant \frac{1}{2m}\max_{\substack{x \in \overline{B}(x_0, r) \\ 1 \leqslant i \leqslant m}}m\cdot \underset{1\leqslant j\leqslant m}{\max}\left| d_j(x) \right|
+\nonumber \\
+&= \frac{1}{2} \max_{\substack{x \in \overline{B}(x_0, r) \\ 1 \leqslant i \leqslant m}} |d_i(x)| = \frac{1}{2} \rho(\varphi, \psi),
+\label{1.1.11}
+\end{align}
+接下来验证$T:\mathcal{X}\to\mathcal{X}$。对$\forall \varphi \in \mathcal{X}$,有
+\[
+(T\varphi)(x_0) = \varphi(x_0) - \left( \frac{\partial f}{\partial y}(x_0, y_0) \right)^{-1} f(x_0, \varphi(x_0)) = y_0 - \left( \frac{\partial f}{\partial y}(x_0, y_0) \right)^{-1} f(x_0, y_0) = y_0.
+\]
+再结合\eqref{eq::0j90qij390UFORJFJAWJ}式和$\varphi(x)\in \overline{B}(y_0,\delta)$得
+\begin{align*}
+&\rho(T\varphi, y_0) \leqslant \rho(T\varphi, T y_0) + \rho(T y_0, y_0) \\
+&\leqslant \frac{1}{2} \rho(\varphi, y_0) + \max_{\substack{x \in \overline{B}(x_0, r) \\ 1 \leqslant i \leqslant m}} \left| \left[ \left( \frac{\partial f}{\partial y}(x_0, y_0) \right)^{-1} f(x, y_0) \right]_i \right|
+\\
+&\leqslant \frac{\delta}{2}+\frac{\delta}{2}=\delta,
+\end{align*}
+即$(T\varphi)(x)\in\overline{B}(y_0,\delta)$。
+故$T$将$\mathcal{X}$映射到自身。
+
+综上可知,$T:(\mathcal{X},\rho)\to (\mathcal{X},\rho)$是一个压缩映射.由\hyperref[theorem:Banach不动点定理——压缩映象原理]{Banach不动点定理}，完备度量空间$\mathcal{X}$上的压缩映射$T$存在唯一不动点$\varphi$,即
+\begin{align*}
+\varphi(x)=\varphi(x)-A^{-1}f\big(x,\varphi(x)\big),\,\,\forall x\in\overline{B}(x_0,r)\iff f\big(x,\varphi(x)\big)=0,\,\,\forall x\in\overline{B}(x_0,r).
+\end{align*}
+同时满足$\varphi(x_0)=y_0$，且$\varphi$在$x_0$的邻域$\overline{B}(x_0,r)$上为连续函数。
+
+
+\end{proof}
+
+\begin{example}[Newton法]
+
+设$f$是定义在$[a,b]$上的二次连续可微的实值函数，$\widehat{x} \in (a,b)$使得$f(\widehat{x})=0$, $f'(\widehat{x}) \neq 0$。求证: 存在$\widehat{x}$的邻域$U(\widehat{x})$, 使得$\forall x_0 \in U(\widehat{x})$, 迭代序列
+\begin{align*}
+x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)} \quad (n=0,1,2,\cdots)
+\end{align*}
+是收敛的, 并且
+\begin{align*}
+\lim\limits_{n\to\infty} x_n = \widehat{x}.
+\end{align*}
+\end{example}
+\begin{proof}
+
+令$\varphi(x)=x-\frac{f(x)}{f'(x)}$，
+则由$f\in C^2[a,b]$知$\varphi\in C^1[a,b]$，且
+\begin{align*}
+\varphi'(x)=\frac{f(x)f''(x)}{[f'(x)]^2}.
+\end{align*}
+由条件可知$\varphi'(\widehat{x})=0$，$\varphi(\widehat{x})=\widehat{x}$。再由$\varphi'$的连续性知，存在$\delta>0$，使得
+\begin{align*}
+|\varphi'(x)|=|\varphi'(x)-\varphi'(\widehat{x})|<\frac{1}{2},\quad \forall x\in \overline{B}(\widehat{x},\delta).
+\end{align*}
+记
+\begin{align*}
+\rho\triangleq |x-y|,\quad \forall x,y\in\mathbb{R}.
+\end{align*}
+则由\refthe{theorem:常见的度量空间}知$(\mathbb{R},\rho)$是完备度量空间，$\overline{B}(\widehat{x},\delta)$是$\mathbb{R}$的闭子集，故由\refpro{proposition:完备度量空间的子空间等价于闭集}知$(\overline{B}(\widehat{x},\delta),\rho)$也是完备度量空间。
+
+令
+\begin{align*}
+T:\overline{B}(\widehat{x},\delta)\to \overline{B}(\widehat{x},\delta),\quad x\mapsto \varphi(x)=x-\frac{f(x)}{f'(x)},
+\end{align*}
+则$T(x)=\varphi(x)$，$\forall x\in \overline{B}(\widehat{x},\delta)$。对$\forall x\in \overline{B}(\widehat{x},\delta)$，由Lagrange中值定理知，存在$\eta\in \overline{B}(\widehat{x},\delta)$，使得
+\begin{align*}
+|T(x)-\widehat{x}|=|\varphi(x)-\varphi(\widehat{x})|=|\varphi'(\eta)||x-\widehat{x}|<\frac{1}{2}|x-\widehat{x}|<|x-\widehat{x}|\leqslant \delta \Longrightarrow T(x)\in \overline{B}(\widehat{x},\delta).
+\end{align*}
+故$T$是良定义的。对$\forall x,y\in \overline{B}(\widehat{x},\delta)$，再利用Lagrange中值定理知，存在$\xi\in \overline{B}(\widehat{x},\delta)$，使得
+\begin{align*}
+|T(x)-T(y)|=|\varphi(x)-\varphi(y)|=|\varphi'(\xi)||x-y|<\frac{1}{2}|x-y|.
+\end{align*}
+故$T:(\overline{B}(\widehat{x},\delta),\rho)\to (\overline{B}(\widehat{x},\delta),\rho)$是压缩映射。由题设可知
+\begin{align*}
+x_{n+1}=x_n-\frac{f(x_n)}{f'(x_n)}=T(x_n),\quad n=0,1,2,\cdots.
+\end{align*}
+于是由\refcor{corollary:压缩映射迭代收敛性质}知$T$存在唯一不动点$x^*$且$\lim\limits_{n\to\infty}x_n=x^*$。又注意到$T(\widehat{x})=\varphi(\widehat{x})=\widehat{x}$也是$T$的不动点，故由$T$的不动点唯一知
+\begin{align*}
+\widehat{x}=x^*\Longrightarrow \lim\limits_{n\to\infty}x_n=\widehat{x}.
+\end{align*}
+
+\end{proof}
+
+\begin{example}
+设$(\mathscr{X},\rho)$是度量空间, 映射$T:\mathscr{X}\to\mathscr{X}$满足
+\begin{align*}
+\rho(Tx,Ty)<\rho(x,y)\quad (\forall x\neq y),
+\end{align*}
+并已知$T$有不动点, 求证: 此不动点是唯一的.
+\end{example}
+\begin{proof}
+
+设$x,y$都是$T$的不动点，若$x\neq y$，则由题设知
+\begin{align*}
+\rho(x,y)=\rho(Tx,Ty)<\rho(x,y),
+\end{align*}
+矛盾!故$x=y$，即$T$的不动点唯一.
+
+\end{proof}
+
+\begin{example}
+设$(X,d)$是度量空间,$T:(X,d)\to (X,d)$是压缩映射, 求证: $T^n(n\in\mathbb{N})$也是压缩映射, 并说明逆命题不一定成立.
+\end{example}
+\begin{proof}
+
+(i)若$T:(X,d)\to(X,d)$是压缩映射，则存在$L\in[0,1)$，使得
+\begin{align*}
+d(Tx,Ty)\leqslant Ld(x,y),\quad \forall x,y\in X.
+\end{align*}
+从而对$\forall n\in\mathbb{N}$，有
+\begin{align*}
+d(T^nx,T^ny)=Ld(T^{n-1}x,T^{n-1}y)\leqslant\cdots\leqslant L^nd(x,y),\quad \forall x,y\in X.
+\end{align*}
+显然$L^n\in[0,1)$。又$T^n(X)\subseteq T^{n-1}(X)\subseteq\cdots\subseteq T(X)\subseteq X$，故$T^n:(X,d)\to(X,d)$也是压缩映射。
+
+(ii)若$T^n:(X,d)\to(X,d)\ (n\in\mathbb{N})$是压缩映射，则此时$T$存在唯一不动点,但$T$被不一定是压缩映射.
+
+设$x_0$是$T^n$的不动点，即$T^nx_0=x_0$。从而
+\begin{align*}
+T^n(Tx_0)=T^{n+1}x_0=Tx_0\Longrightarrow Tx_0\text{也是}T^n\text{的不动点}.
+\end{align*}
+由\hyperref[theorem:Banach不动点定理——压缩映象原理]{Banach不动点定理}知$T^n$的不动点唯一，故$Tx_0=x_0$。若$T$还有不动点$x_1$，则$x_1$也是$T^n$的不动点，从而由$T^n$不动点的唯一性知$x_1=x_0$。故此时$T$存在唯一的不动点。
+
+$T$不一定是压缩映射的反例：
+考虑度量空间$([0,1],d)$，其中$d=|x-y|,\forall x,y\in[0,1]$。令
+\begin{align*}
+T:[0,1]\to[0,1],\quad x\mapsto \sqrt{x},
+\end{align*}
+\begin{align*}
+T^2:[0,1]\to[0,1],\quad x\mapsto x.
+\end{align*}
+则显然$T^2:([0,1],d)\to([0,1],d)$是压缩映射，但当$x,y\in\left[0,\frac{1}{3}\right)$时，有
+\begin{align*}
+|Tx-Ty|=\frac{|x-y|}{|\sqrt{x}+\sqrt{y}|}>\frac{3}{2}|x-y|.
+\end{align*}
+故$T:([0,1],d)\to([0,1],d)$不是压缩映射.
+
+\end{proof}
+
+\begin{example}
+设$M$是度量空间$(\mathbb{R}^n,\rho)$中的有界闭集,其中$\rho$是欧氏距离. 映射$T:M\to M$满足:
+$$
+\rho(Tx,Ty)<\rho(x,y)(\forall x,y\in M,x\neq y).
+$$
+求证: $T$在$M$中存在唯一的不动点.
+\end{example}
+\begin{proof}
+
+记$f(x)=\rho(x,Tx)$，则对$\forall x_0\in M$，由三角不等式知
+\begin{align*}
+\rho(x,Tx)\leqslant \rho(x,x_0)+\rho(x_0,Tx)\leqslant \rho(x,x_0)+\rho(x_0,Tx_0)+\rho(Tx_0,Tx)\Longrightarrow \rho(x,Tx)-\rho(x_0,Tx_0)\leqslant \rho(x,x_0)+\rho(Tx_0,Tx).
+\end{align*}
+再结合条件得
+\begin{align*}
+|f(x)-f(x_0)|=|\rho(x,Tx)-\rho(x_0,Tx_0)|\leqslant \rho(x,x_0)+\rho(Tx_0,Tx)<2\rho(x,x_0).
+\end{align*}
+于是
+\begin{align*}
+\lim\limits_{x\to x_0}\rho(x,x_0)=0\Longrightarrow \lim\limits_{x\to x_0}|f(x)-f(x_0)|=0\Longrightarrow \lim\limits_{x\to x_0}f(x)=f(x_0).
+\end{align*}
+故$f:(M,\rho)\to(\mathbb{R},\rho)$是$n$元连续函数。因为$M$是$\mathbb{R}^n$中的有界闭集，所以由连续函数最值定理知，存在$x_0\in M$，使得
+\begin{align*}
+\rho(x_0,Tx_0)=f(x_0)=\min\limits_{x\in M}f(x).
+\end{align*}
+若$\rho(x_0,Tx_0)>0$，则由题设知$Tx_0\in M$且
+\begin{align*}
+f(Tx_0)=\rho(Tx_0,T^2x_0)<\rho(x_0,Tx_0)=\min\limits_{x\in M}f(x),
+\end{align*}
+这与最小值定义矛盾!故$\rho(x_0,Tx_0)=0$，从而$x_0=Tx_0$为$T$的不动点.
+
+设$x_1\neq x_0$也是$T$的不动点，则由题设知
+\begin{align*}
+\rho(x_0,x_1)=\rho(Tx_0,Tx_1)<\rho(x_0,x_1),
+\end{align*}
+矛盾!故$T$的不动点唯一.
+
+\end{proof}
+
+\begin{example}
+对于积分方程
+\begin{align*}
+x(t)-\lambda\int_{0}^{1}\mathrm{e}^{t-s}x(s)\mathrm{d}s=y(t),\quad \forall t\in [0,1].
+\end{align*}
+其中$y(t)\in C[0,1]$为一给定函数, $\lambda$为常数, $|\lambda|<1$, 求证: 存在唯一解$x(t)\in C[0,1]$.
+\end{example}
+\begin{proof}
+
+原积分方程等价于
+\begin{align*}
+e^{-t}x(t)=e^{-t}y(t)+\lambda\int_0^1 e^{-s}x(s)\mathrm{d}s,\quad \forall t\in [0,1].
+\end{align*}
+记$z(t)=e^{-t}x(t)$，$\zeta(t)=e^{-t}y(t)$，则$z(t),\zeta(t)\in C[0,1]$，且上式等价于
+\begin{align*}
+z(t)=\zeta(t)+\lambda\int_0^1 z(s)\mathrm{d}s,\quad \forall t\in [0,1].
+\end{align*}
+因此只需证明这个积分方程存在唯一解$z(t)\in C[0,1]$即可。令
+\begin{align*}
+Tz(t)=\zeta(t)+\lambda\int_0^1 z(s)\mathrm{d}s,\quad \forall t\in [0,1].
+\end{align*}
+定义映射
+\begin{align*}
+T:C[0,1]\to C[0,1],\quad z\mapsto Tz.
+\end{align*}
+则由$y\in C[0,1]$知$\zeta\in C[0,1]$，从而当$z\in C[0,1]$时，有$Tz\in C[0,1]$。故$T$是良定义的。记
+\begin{align*}
+\rho(x_1,x_2)=\max\limits_{t\in [0,1]}|x_1(t)-x_2(t)|,\quad x_1,x_2\in C[0,1].
+\end{align*}
+则由\refthe{theorem:常见的度量空间}知$(C[0,1],\rho)$是完备的度量空间。从而对$\forall z_1,z_2\in C[0,1]$，有
+\begin{align*}
+\rho(Tz_1,Tz_2)=\max\limits_{t\in [0,1]}|Tz_1(t)-Tz_2(t)|=\lambda\max\limits_{t\in [0,1]}\left| \int_0^1 [z_1(s)-z_2(s)]\mathrm{d}s \right|
+\leqslant \lambda\max\limits_{t\in [0,1]}\int_0^1 |z_1(s)-z_2(s)|\mathrm{d}s=\lambda\rho(z_1,z_2).
+\end{align*}
+又$|\lambda|<1$，故$T:(C[0,1],\rho)\to (C[0,1],\rho)$是压缩映射。由\hyperref[theorem:Banach不动点定理——压缩映象原理]{Banach不动点定理}知，$T$存在唯一的不动点$z^*$，即
+\begin{align*}
+Tz^*=z^*\Longleftrightarrow z^*(t)=\zeta(t)+\lambda\int_0^1 z^*(s)\mathrm{d}s=e^{-t}y(t)+\lambda\int_0^1 z^*(s)\mathrm{d}s,\quad \forall t\in [0,1].
+\end{align*}
+再令$x^*(t)=e^t z^*(t)$，则$x^*(t)\in C[0,1]$，且对$\forall t\in [0,1]$，都有
+\begin{align*}
+e^{-t}x^*(t)=e^{-t}y(t)+\lambda\int_0^1 e^{-s}x^*(s)\mathrm{d}s\Longleftrightarrow x^*(t)=y(t)+\lambda\int_0^1 e^{t-s}x^*(s)\mathrm{d}s.
+\end{align*}
+即$x^*(t)$是原积分方程的解。若$x^{**}(t)$也是原积分方程的解，令$z^{**}(t)=e^{-t}x^{**}(t)$，则
+\begin{align*}
+x^{**}(t)=y(t)+\lambda\int_0^1 e^{t-s}x^{**}(s)\mathrm{d}s,\ \forall t\in [0,1] \Longleftrightarrow e^{-t}x^{**}(t)=e^{-t}y(t)+\lambda\int_0^1 e^{-s}x^{**}(s)\mathrm{d}s,\ \forall t\in [0,1]
+\Longleftrightarrow z^{**}(t)=\zeta(t)+\lambda\int_0^1 z^{**}(s)\mathrm{d}s,\ \forall t\in [0,1] \Longleftrightarrow Tz^{**}=z^{**}.
+\end{align*}
+故$z^{**}$也是$T$的不动点，由$T$的不动点的唯一性知$z^*=z^{**}$，从而$x^*=x^{**}$。因此原积分方程存在唯一解$x^*\in C[0,1]$.
+
+\end{proof}
+
+
+
+
+
+
+\end{document}
