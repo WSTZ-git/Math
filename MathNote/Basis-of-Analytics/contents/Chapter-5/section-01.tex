@@ -16,24 +16,83 @@
 \section{Hermite插值定理}
 
 \begin{theorem}[Hermite插值定理]\label{theorem:Hermite插值定理}
-给定\(a < x_1 < x_2 < \cdots < x_m < b\)和非负整数\(s_j,j = 0,1,2,\cdots,m\)。设\(f \in C^{\sum\limits_{j = 1}^{m}(s_j + 1)-1}[a,b]\)且\(f \in D^{\sum\limits_{j = 1}^{m}(s_j + 1)}(a,b)\),设\(p(x)\)满足条件:
-对闭区间\([a,b]\)中的\(m\)个点\(a \leqslant  x_1 < x_2 < \cdots < x_m \leqslant  b\),\(s_j \in \mathbb{N}_0,j = 1,2,\cdots,m\),都有唯一的次数不超过$\sum_{j = 1}^{m}(s_j + 1)-1$的多项式$p(x)\in \mathbb{R}[x]$,并且
+给定\(a < x_1 < x_2 < \cdots < x_m < b\)和非负整数\(s_j,j = 0,1,2,\cdots,m\)。设\(f \in C^{\sum\limits_{j = 1}^{m}(s_j + 1)-1}[a,b]\)且\(f \in D^{\sum\limits_{j = 1}^{m}(s_j + 1)}(a,b)\),
+则对闭区间\([a,b]\)中的\(m\)个点\(a \leqslant  x_1 < x_2 < \cdots < x_m \leqslant  b\),\(s_j \in \mathbb{N}_0,j = 1,2,\cdots,m\),都有唯一的次数不超过$\sum_{j = 1}^{m}(s_j + 1)-1$的多项式$p(x)\in \mathbb{R}[x]$,满足
 \begin{align*}
 p^{(i)}(x_j)=f^{(i)}(x_j),i = 0,1,\cdots,s_j,j = 1,2,\cdots,m.
 \end{align*}
-并称满足上述条件的多项式$p(x)$为\textbf{Hermite 插值多项式},
-则对每个$x$ $\in$ $[a,b]$,都存在$\theta$ $\in$ $(\min\{x,x_1\}$, $\max\{x,x_m\})$，使得
+称满足上述条件的多项式$p(x)$为\textbf{Hermite 插值多项式},
+并且对每个$x$ $\in$ $[a,b]$,都存在$\theta$ $\in$ $(\min\{x,x_1\}$, $\max\{x,x_m\})$，使得
 \begin{align*}
 f(x)=p(x)+\frac{f^{(\sum\limits_{j = 1}^{m}(s_j + 1))}(\theta)}{\left(\sum\limits_{j = 1}^{m}(s_j + 1)\right)!}(x - x_1)^{s_1 + 1}(x - x_2)^{s_2 + 1}\cdots(x - x_m)^{s_m + 1}.
 \end{align*}
 \end{theorem}
-\begin{note}
+\begin{remark}
+如果考试中要使用这个Hermite插值定理,要先用K值法证明(类似这个定理的证明)需要用到的插值等式.
+\end{remark}
+\begin{remark}
 $p(x)$的求法:先由各插值点的次数确定$p(x)$的最高次数(即$\sum_{j = 1}^{m}(s_j + 1)-1$),再由方程$p^{(i)}(x_j)=f^{(i)}(x_j),i = 0,1,\cdots,s_j,j = 1,2,\cdots,m.$直接解出.
-\end{note}
+\end{remark}
 \begin{proof}
 
+$\boldsymbol{p}${\heiti 的存在性}:将每个节点 $x_j$ 重复 $s_j+1$ 次，得到$N$维数组
+\[
+\left( t_1,t_2,\cdots ,t_N \right) \triangleq \left( \underset{s_1+1\text{个}}{\underbrace{x_1,\cdots ,x_1}},\underset{s_2+1\text{个}}{\underbrace{x_2,\cdots ,x_2}},\cdots ,\underset{s_m+1\text{个}}{\underbrace{x_m,\cdots ,x_m}} \right) ,
+\]
+其中 $N = \sum_{j=1}^m (s_j+1)$。构造\hyperref[Numerical-Analysis-theorem:牛顿均差插值多项式]{Newton均差插值多项式}
+\[
+p(x) = \sum_{i=1}^{N} f[t_1,\cdots,t_i] \prod_{j=1}^{i-1} (x - t_j),
+\]
+则$p(x)$ 是次数不超过 $N-1$ 的多项式。记
+\begin{align*}
+\omega(x)=\prod_{j=1}^m (x-x_j)^{s_j+1}=\prod_{i=1}^N (x-t_i),
+\end{align*}
+则由\hyperref[Numerical-Analysis-theorem:牛顿均差插值多项式]{牛顿均差插值多项式}知插值余项为
+\[
+f(x)-p(x)=f[t_1,\cdots,t_N,x]\,\omega(x).
+\]
+由于 $\omega(x)$ 在 $x_j$ 处有 $s_j+1$ 重零点，而 $f[t_1,\cdots,t_N,x]$ 在 $x_j$ 处连续，因此 $f(x)-p(x)$ 在 $x_j$ 处有至少 $s_j+1$ 重零点，即
+\[
+f^{(i)}(x_j)-p^{(i)}(x_j)=0,\qquad i=0,1,\cdots,s_j.
+\]
+故 $p(x)$ 满足 Hermite 插值条件。
 
+$\boldsymbol{p}${\heiti 的唯一性}:若有两个这样的多项式 $q_1,q_2$，则 $q_1-q_2$ 次数 $\leqslant N-1$ 且在每点 $x_j$ 有至少 $s_j+1$ 重零点，故共有 $N$ 个零点（计重数），只能恒为零。因此 $p$ 唯一。
 
+$\boldsymbol{\theta }${\heiti 的存在性}:若 $x$ 等于某个 $x_j$，则两边为零，结论成立。设 $x$ 不是任何节点，令
+\[
+K = \frac{f(x)-p(x)}{\omega(x)}.
+\]
+构造辅助函数
+\[
+F(t) = f(t) - p(t) - K\,\omega(t),\quad t\in[a,b].
+\]
+显然 $F(x)=0$。对每个节点 $x_j$，由插值条件及 $\omega$ 在 $x_j$ 处有 $s_j+1$ 重零点，得
+\[
+F^{(i)}(x_j) = f^{(i)}(x_j)-p^{(i)}(x_j)-K\cdot0 = 0,\quad i=0,\cdots,s_j.
+\]
+即 $x_j$ 是 $F$ 的至少 $s_j+1$ 重零点。加上 $x$ 这个单零点，$F$ 在 $[a,b]$ 上共有至少
+\[
+\sum_{j=1}^m (s_j+1) + 1 = N+1
+\]
+个零点（计重数）。
+
+现在对 $F,F',\cdots,F^{(N-1)}$反复应用\hyperref[theorem:加强的Rolle中值定理]{Rolle定理}得 $F^{(N)}$ 在区间 $(\min\{x,x_1\},\max\{x,x_m\})$ 内至少有一个零点 $\theta$，即
+\[
+F^{(N)}(\theta)=0.
+\]
+由于 $\deg p \leqslant N-1$，故 $p^{(N)}(t)\equiv0$；而 $\omega(t)$ 是首一多项式且次数为 $N$，因此 $\omega^{(N)}(t) \equiv N!$。于是
+\[
+F^{(N)}(t) = f^{(N)}(t) - K\cdot N!.
+\]
+代入 $t=\theta$ 得
+\[
+0 = f^{(N)}(\theta) - K\cdot N! \Longrightarrow K = \frac{f^{(N)}(\theta)}{N!}.
+\]
+代回 $K$ 的定义，即得
+\[
+f(x) =p(x) + \frac{f^{(N)}(\theta)}{N!}\,\omega(x).
+\]
 \end{proof}
 
 \begin{proposition}[Lagrange插值公式]\label{proposition:Lagrange插值公式}
