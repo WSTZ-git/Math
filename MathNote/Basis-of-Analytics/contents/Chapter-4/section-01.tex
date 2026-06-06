@@ -13,7 +13,7 @@
 
 \begin{document}
 
-\section{基本的渐进估计与求极限方法}
+\section{基本的渐近估计与求极限方法}
 
 \subsection{基本极限计算}
 
@@ -409,7 +409,7 @@ $.其中$o(n)$表示一个(类)数列,只不过这个(类)数列具有$\underset
 \begin{align*}
 \underset{n\rightarrow +\infty}{\lim}\left( 1+\frac{1}{f\left( n \right)} \right) ^n=\underset{n\rightarrow +\infty}{\lim}e^{n\ln \left( 1+\frac{1}{f\left( n \right)} \right)}=e^{\underset{n\rightarrow +\infty}{\lim}n\ln \left( 1+\frac{1}{f\left( n \right)} \right)}=e^{\underset{n\rightarrow +\infty}{\lim}\frac{n}{f\left( n \right)}}=e.
 \end{align*}
-{\color{blue}解法二(渐进估计):}
+{\color{blue}解法二(渐近估计):}
 
 由$\underset{n\rightarrow +\infty}{\lim}\frac{f\left( n \right)}{n}=1$,可知
 \begin{align*}
@@ -481,7 +481,7 @@ e^{-1}, & \alpha = 1, \\
 \end{solution}
 
 \begin{example}
-计算$(1+\frac{1}{x})^x,x\to+\infty$的渐进估计.
+计算$(1+\frac{1}{x})^x,x\to+\infty$的渐近估计.
 \end{example}
 \begin{solution}
 
@@ -505,7 +505,7 @@ e^{-1}, & \alpha = 1, \\
 
 \end{solution}
 \begin{remark}
-反复利用上述\eqref{equation:12345}式构造极限的方法,再求出相应极限,就能得到$e$的更精确的渐进估计.这也是计算渐进估计的一般方法.
+反复利用上述\eqref{equation:12345}式构造极限的方法,再求出相应极限,就能得到$e$的更精确的渐近估计.这也是计算渐近估计的一般方法.
 \end{remark}
 
 \begin{example}
@@ -1242,12 +1242,126 @@ f''(x) > f(x) \quad \forall x > X''.
 
 
 
-
-
-
-
-
 \subsection{与方程的根有关的渐近估计}
+
+\subsubsection{迭代方法}
+
+\begin{proposition}[Lampert W 函数的渐近估计]\label{proposition:Lampert W 函数的渐近估计}
+设 $x_n > 0$ 满足以下条件之一:
+\begin{enumerate}[(1)]
+\item 对$\forall n\in \mathbb{N}$,有$x_n e^{x_n} = n$或$x_n+\ln x_n=\ln n.$
+
+\item 当$n$充分大时,有$x_n e^{x_n} \sim  n$或$ x_n+\ln x_n\sim \ln n$
+\end{enumerate}
+估计$x_n,n\to \infty$.并证明 :
+\begin{align*}
+x_n = \ln n - \ln \ln n + \frac{\ln \ln n}{\ln n} + o\left( \frac{\ln \ln n}{\ln n} \right), n \to \infty.
+\end{align*}
+\begin{align*}
+x_n=\ln n-\ln\ln n+\frac{\ln\ln n}{\ln n}+\frac{\left( \ln\ln n \right) ^2}{2\ln ^2n}+o\left( \frac{\left( \ln\ln n \right) ^2}{\ln ^2n} \right) ,\quad n\rightarrow \infty .
+\end{align*}
+\end{proposition}
+\begin{remark}
+一些含指/对数函数的隐式方程的根有关的渐近估计往往可以转化成Lampert W 的渐近估计.
+\end{remark}
+\begin{note}
+主要想法是:先通过条件方程得到$x_n$的一个初步估计,再利用条件方程将其写成可Taylor展开的形式,然后将$x_n$的初步估计代入Taylor展开后的式子中得到比初步估计高一阶的渐近公式.再反复迭代就能不断得到更高一阶的渐近公式.这种方法称为\textbf{迭代方法}.
+\end{note}
+\begin{proof}
+
+对$\forall n\in \mathbb{N}$且$n\geqslant 3$,令$f_n(x) = xe^{x}-n$,则
+\begin{align*}
+f(1)=e-n<0,\quad f(\ln n)=n\ln n-n>0.
+\end{align*}
+由零点存在定理知$x_n\in (1,\ln n),\forall n\geqslant 3$.从而对于条件(1)有
+\[
+1 \leqslant x_n = \ln n - \ln x_n \leqslant \ln n \Rightarrow x_n = O(\ln n), \quad \forall n\in \mathbb{N}\text{且}n\geqslant 3.
+\]
+对于条件(2)有
+\begin{align*}
+1 \leqslant x_n \sim \ln n - \ln x_n \leqslant \ln n \Rightarrow x_n = O(\ln n),\quad  n\to \infty.
+\end{align*}
+于是
+\begin{align}
+\ln x_n&\sim \ln \left( \ln n-\ln x_n \right) =\ln \left( \ln n\cdot \frac{\ln n-\ln x_n}{\ln n} \right)\nonumber\\
+&=\ln\ln n+\ln \left( 1-\frac{\ln x_n}{\ln n} \right) =\ln\ln n-\frac{\ln x_n}{\ln n}+o\left( \frac{\ln x_n}{\ln n} \right)\nonumber\\
+&=\ln\ln n-\frac{\ln O(\ln n)}{\ln n}+o\left( \frac{\ln O(\ln n)}{\ln n} \right)\nonumber\\
+&=\ln\ln n-\frac{\ln\ln n+\ln O(1)}{\ln n}+o\left( \frac{\ln\ln n+\ln O(1)}{\ln n} \right)\nonumber\\
+&=\ln\ln n-\frac{\ln\ln n}{\ln n}+o\left( \frac{\ln\ln n}{\ln n} \right) ,\quad n\to \infty.\label{eq::F---HIOUHJWOFHJIOJWIUIOU89389423789}
+\end{align}
+故
+\[
+x_n \sim\ln n-\ln x_n= \ln n - \ln \ln n + \frac{\ln \ln n}{\ln n} + o\left( \frac{\ln \ln n}{\ln n} \right),\quad n\to \infty.
+\]
+
+再利用\eqref{eq::F---HIOUHJWOFHJIOJWIUIOU89389423789}式可得
+\begin{align*}
+\ln x_n&\sim \ln \left( \ln n-\ln x_n \right) =\ln \left( \ln n\cdot \frac{\ln n-\ln x_n}{\ln n} \right)\\
+&=\ln\ln n+\ln \left( 1-\frac{\ln x_n}{\ln n} \right) =\ln\ln n-\frac{\ln x_n}{\ln n}-\frac{\ln ^2x_n}{2\ln ^2n}+o\left( \frac{\ln ^2x_n}{\ln ^2n} \right)\\
+&=\ln\ln n-\frac{\ln\ln n-\frac{\ln\ln n}{\ln n}+o\left( \frac{\ln\ln n}{\ln n} \right)}{\ln n}-\frac{\left( \ln\ln n-\frac{\ln\ln n}{\ln n}+o\left( \frac{\ln\ln n}{\ln n} \right) \right) ^2}{2\ln ^2n}\\
+&\quad +o\left( \frac{\left( \ln\ln n-\frac{\ln\ln n}{\ln n}+o\left( \frac{\ln\ln n}{\ln n} \right) \right) ^2}{\ln ^2n} \right)\\
+&=\ln\ln n-\frac{\ln\ln n}{\ln n}+\frac{\ln\ln n}{\ln ^2n}+o\left( \frac{\ln\ln n}{\ln ^2n} \right) -\frac{\left( \ln\ln n \right) ^2}{2\ln ^2n}+o\left( \frac{\left( \ln\ln n \right) ^2}{\ln ^2n} \right)\\
+&=\ln\ln n-\frac{\ln\ln n}{\ln n}-\frac{\left( \ln\ln n \right) ^2}{2\ln ^2n}+o\left( \frac{\left( \ln\ln n \right) ^2}{\ln ^2n} \right) ,\quad n\rightarrow \infty .
+\end{align*}
+进而
+\begin{align*}
+x_n\sim \ln n-\ln x_n=\ln n-\ln\ln n+\frac{\ln\ln n}{\ln n}+\frac{\left( \ln\ln n \right) ^2}{2\ln ^2n}+o\left( \frac{\left( \ln\ln n \right) ^2}{\ln ^2n} \right) ,\quad n\rightarrow \infty .
+\end{align*}
+
+同理,将$\ln \left( 1-\frac{\ln x_n}{\ln n} \right)$依次多Taylor展开一项,再反复代入前一个$x_n$的渐近展开式就能不断得到$x_n$更高一阶的渐近展开.
+
+\end{proof}
+
+\begin{example}
+设\(x_n\)是\(x = \tan x\)从小到大排列的全部正根，估计$x_n,n\to \infty$.并证明
+\begin{align*}
+x_n = n\pi +\frac{\pi}{2}-\frac{1}{n\pi}+O(\frac{1}{n^2}),\quad n\rightarrow +\infty .
+\end{align*}
+\begin{align*}
+x_n=n\pi +\frac{\pi}{2}-\frac{1}{n\pi}+\frac{1}{2\pi n^2}-\frac{3\pi ^2+8}{12\pi ^3n^3}+O\left( \frac{1}{n^4} \right) ,\quad n\rightarrow +\infty .
+\end{align*}
+\end{example}
+\begin{note}
+主要想法是结合$\arctan x$的性质:\(\arctan x + \arctan\frac{1}{x} = \frac{\pi}{2}\)，\(x > 0\),再利用迭代方法计算渐近展开.
+\end{note}
+\begin{solution}
+
+令\(f(x)=\tan x - x\)，\(x\in(n\pi, n\pi + \frac{\pi}{2})\)，\(n = 1, 2, \cdots\)，则\(f^\prime(x)=\tan^2 x > 0\)，\(\forall x\in(n\pi, n\pi + \frac{\pi}{2})\)，\(n = 1, 2, \cdots\)。因此\(f(x)\)在\((n\pi, n\pi + \frac{\pi}{2})\)上严格单调递增，其中\(n = 1, 2, \cdots\)。又注意到\(\lim_{x\rightarrow (n\pi)^+}(\tan x - x)= -n\pi < 0\)，\(\lim_{x\rightarrow (n\pi + \frac{\pi}{2})^+}(\tan x - x)= +\infty > 0\)。故由零点存在定理可知，存在唯一的\(x_n\in(n\pi, n\pi + \frac{\pi}{2})\)，\(n = 1, 2, \cdots\)，使得
+\[
+\tan x_n = x_n.
+\]
+从而\(x_n - n\pi\in(0, \frac{\pi}{2})\)，于是
+\begin{align}\label{example4.19-1.1}
+x_n = \tan x_n = \tan(x_n - n\pi) \Longrightarrow x_n = \arctan x_n + n\pi.  
+\end{align}
+又因为\(x_n\in(n\pi, n\pi + \frac{\pi}{2})\)，\(n = 1, 2, \cdots\)，所以当\(n\rightarrow +\infty\)时，有\(x_n\rightarrow +\infty\)。再结合\eqref{example4.19-1.1}式可得
+\begin{align}\label{example4.19-1.2}
+x_n = \arctan x_n + n\pi = n\pi + \frac{\pi}{2} + o(1), n\rightarrow +\infty.
+\end{align}
+注意到\(\arctan x + \arctan\frac{1}{x} = \frac{\pi}{2}\)，\(x > 0\)，从而\(\arctan x = \frac{\pi}{2} - \arctan\frac{1}{x}\)。于是利用\eqref{example4.19-1.2}式可得
+\begin{align}
+x_n&=\arctan x_n+n\pi =\frac{\pi}{2}+n\pi -\arctan \frac{1}{x_n}=\frac{\pi}{2}+n\pi -\arctan \frac{1}{n\pi +\frac{\pi}{2}+o(1)}\nonumber
+\\
+&=\frac{\pi}{2}+n\pi -\arctan \left( \frac{1}{n\pi}\frac{1}{1+\frac{1}{2n}+o(\frac{1}{n})} \right) =\frac{\pi}{2}+n\pi -\arctan \left[ \frac{1}{n\pi}\left( 1+O(\frac{1}{n}) \right) \right] \nonumber
+\\
+&=\frac{\pi}{2}+n\pi -\arctan \left[ \frac{1}{n\pi}+O(\frac{1}{n^2}) \right] = n\pi +\frac{\pi}{2}-\frac{1}{n\pi}+O(\frac{1}{n^2}),\quad n\rightarrow +\infty .\label{eq::::HIOIOWIOJDJIOWHJFHUQPPPP}
+\end{align}
+
+再利用\eqref{example4.19-1.2}\eqref{eq::::HIOIOWIOJDJIOWHJFHUQPPPP}式和Taylor公式可得
+\begin{align*}
+x_n&=\arctan x_n+n\pi =n\pi +\frac{\pi}{2}-\arctan \frac{1}{x_n}\\
+&=n\pi +\frac{\pi}{2}-\arctan \left( \frac{1}{n\pi +\frac{\pi}{2}-\frac{1}{n\pi}+O\left( \frac{1}{n^2} \right)} \right) =n\pi +\frac{\pi}{2}-\arctan \left( \frac{1}{n\pi}\frac{1}{1+\frac{1}{2n}-\frac{1}{n^2\pi ^2}+O\left( \frac{1}{n^3} \right)} \right)\\
+&=n\pi +\frac{\pi}{2}-\arctan \left[ \frac{1}{n\pi}\left( 1-\left( \frac{1}{2n}-\frac{1}{n^2\pi ^2}+O\left( \frac{1}{n^3} \right) \right) +\left( \frac{1}{2n}-\frac{1}{n^2\pi ^2}+O\left( \frac{1}{n^3} \right) \right) ^2+O\left( \frac{1}{n^3} \right) \right) \right]\\
+&=n\pi +\frac{\pi}{2}-\arctan \left[ \frac{1}{n\pi}\left( 1-\frac{1}{2n}+\frac{1}{n^2\pi ^2}+\frac{1}{4n^2}+O\left( \frac{1}{n^3} \right) \right) \right]\\
+&=n\pi +\frac{\pi}{2}-\arctan \left( \frac{1}{n\pi}-\frac{1}{2\pi n^2}+\frac{\pi ^2+4}{4\pi ^3n^3}+O\left( \frac{1}{n^4} \right) \right)\\
+&=n\pi +\frac{\pi}{2}-\left[ \frac{1}{n\pi}-\frac{1}{2\pi n^2}+\frac{\pi ^2+4}{4\pi ^3n^3}+O\left( \frac{1}{n^4} \right) \right] +\frac{1}{3}\left[ \frac{1}{n\pi}-\frac{1}{2\pi n^2}+\frac{\pi ^2+4}{4\pi ^3n^3}+O\left( \frac{1}{n^4} \right) \right] ^3\\
+&=n\pi +\frac{\pi}{2}-\frac{1}{n\pi}+\frac{1}{2\pi n^2}-\frac{3\pi ^2+8}{12\pi ^3n^3}+O\left( \frac{1}{n^4} \right) ,\quad n\rightarrow +\infty .
+\end{align*}
+
+同理,将$\arctan x$和$\frac{1}{1-x}$同时依次多Taylor展开一项,再反复代入前一个$x_n$的渐近展开式就能不断得到$x_n$更高一阶的渐近展开.
+\end{solution}
+
+
 
 \subsubsection{可以解出n的类型}
 
@@ -1257,6 +1371,9 @@ f''(x) > f(x) \quad \forall x > X''.
 \lim_{n\rightarrow\infty}x_n,\lim_{n\rightarrow\infty}n(1 + x_n).
 \]
 \end{example}
+\begin{note}
+实际上,$x_n$的渐近估计可以转化为\hyperref[proposition:Lampert W 函数的渐近估计]{Lampert W函数的渐近估计}.
+\end{note}
 \begin{solution}
 
 注意到\(0^{2n + 1}+e^{0}>0,(-1)^{2n + 1}+e^{-1}<0\)且\(x^{2n + 1}+e^{x}\)严格单调递增,所以由零点存在定理可知,对每个\(n\in\mathbb{N}\),存在唯一的\(x_n\in(-1,0)\),使得
@@ -1284,6 +1401,9 @@ x_n^{2n + 1}+e^{x_n}=0\Rightarrow\frac{x_n}{\ln(-x_n)} = 2n + 1\rightarrow +\inf
 a_n=1-\frac{\ln n}{n}+o\left(\frac{\ln n}{n}\right).
 \]
 \end{example}
+\begin{note}
+实际上,$a_n$的渐近估计可以转化为\hyperref[proposition:Lampert W 函数的渐近估计]{Lampert W函数的渐近估计}.
+\end{note}
 \begin{proof}
 
 注意到\(0^n + 0 - 1 < 0\),\(1^n + 1 - 1 > 0\),且\(x^n + x - 1\)在\((0, 1)\)上严格单调递增,所以由零点存在定理可知,对\(\forall n\in \mathbb{N}\),存在唯一的\(a_n\in (0, 1)\),使得
@@ -1325,6 +1445,9 @@ a_{n}^{n} + a_n = 1 \Rightarrow \frac{\ln(1 - a_n)}{\ln a_n} = n \rightarrow +\i
 \begin{example}
 设\(f_n(x)=x + x^2+\cdots+x^n,n\in\mathbb{N}\),\(f_n(x)=1\)在\([0,1]\)的根为\(x_n\).求\(\lim_{n\rightarrow\infty}x_n\).
 \end{example}
+\begin{note}
+实际上,$x_n$的渐近估计可以转化为\hyperref[proposition:Lampert W 函数的渐近估计]{Lampert W函数的渐近估计}.
+\end{note}
 \begin{solution}
 
 注意到\(f_n(x) - 1\)严格单调递增，且\(f_n(0) - 1 = -1 < 0\)，\(f_n(1) - 1 = n - 1 > 0\)，\(\forall n\geqslant 2\)。故由零点存在定理可知，当\(n\geqslant 2\)时，存在唯一的\(x_n\in(0, 1)\)，使得\(f_n(x_n) = 1\)。
@@ -1344,70 +1467,76 @@ f_n(x_n)=\frac{x_n - x_{n}^{n + 1}}{1 - x_n}=1\Rightarrow x_n - x_{n}^{n + 1}=1 
 
 \end{solution}
 
-\subsubsection{迭代方法}
-
 \begin{example}
-设\(x_n\)是\(x = \tan x\)从小到大排列的全部正根，设
-\[
-\lim_{n\rightarrow\infty}n(x_n - An - B)=C,
-\]
-求\(A,B,C\)。
+给定方程$x^n(x-1)=1$，其中$n\geqslant 1$。证明：
+\begin{enumerate}[(1)]
+\item 方程在$[1,+\infty)$上有且仅有一个根$x_n$。
+\item 当$n$充分大时，$x_n > 1+\frac{\ln n}{n}-\frac{\ln\ln n}{n}$。
+\end{enumerate}
 \end{example}
-\begin{note}
-主要想法是结合$\arctan x$的性质:\(\arctan x + \arctan\frac{1}{x} = \frac{\pi}{2}\)，\(x > 0\),再利用迭代法计算渐近展开.
-\end{note}
-\begin{solution}
 
-令\(f(x)=\tan x - x\)，\(x\in(n\pi, n\pi + \frac{\pi}{2})\)，\(n = 1, 2, \cdots\)，则\(f^\prime(x)=\tan^2 x > 0\)，\(\forall x\in(n\pi, n\pi + \frac{\pi}{2})\)，\(n = 1, 2, \cdots\)。因此\(f(x)\)在\((n\pi, n\pi + \frac{\pi}{2})\)上严格单调递增，其中\(n = 1, 2, \cdots\)。又注意到\(\lim_{x\rightarrow (n\pi)^+}(\tan x - x)= -n\pi < 0\)，\(\lim_{x\rightarrow (n\pi + \frac{\pi}{2})^+}(\tan x - x)= +\infty > 0\)。故由零点存在定理可知，存在唯一的\(x_n\in(n\pi, n\pi + \frac{\pi}{2})\)，\(n = 1, 2, \cdots\)，使得
-\[
-\tan x_n = x_n.
-\]
-从而\(x_n - n\pi\in(0, \frac{\pi}{2})\)，于是
-\begin{align}\label{example4.19-1.1}
-x_n = \tan x_n = \tan(x_n - n\pi) \Rightarrow x_n = \arctan x_n + n\pi.  
-\end{align}
-又因为\(x_n\in(n\pi, n\pi + \frac{\pi}{2})\)，\(n = 1, 2, \cdots\)，所以当\(n\rightarrow +\infty\)时，有\(x_n\rightarrow +\infty\)。再结合\eqref{example4.19-1.1}式可得
-\begin{align}\label{example4.19-1.2}
-x_n = \arctan x_n + n\pi = n\pi + \frac{\pi}{2} + o(1), n\rightarrow +\infty.
-\end{align}
-注意到\(\arctan x + \arctan\frac{1}{x} = \frac{\pi}{2}\)，\(x > 0\)，从而\(\arctan x = \frac{\pi}{2} - \arctan\frac{1}{x}\)。于是利用\eqref{example4.19-1.2}式可得
-\begin{align*}
-x_n&=\arctan x_n+n\pi =\frac{\pi}{2}+n\pi -\arctan \frac{1}{x_n}=\frac{\pi}{2}+n\pi -\arctan \frac{1}{n\pi +\frac{\pi}{2}+o(1)}
-\\
-&=\frac{\pi}{2}+n\pi -\arctan \left( \frac{1}{n\pi}\frac{1}{1+\frac{1}{2n}+o(\frac{1}{n})} \right) =\frac{\pi}{2}+n\pi -\arctan \left[ \frac{1}{n\pi}\left( 1+O(\frac{1}{n}) \right) \right] 
-\\
-&=\frac{\pi}{2}+n\pi -\arctan \left[ \frac{1}{n\pi}+O(\frac{1}{n^2}) \right] =\frac{\pi}{2}+n\pi -\frac{1}{n\pi}+O(\frac{1}{n^2}),n\rightarrow +\infty .
-\end{align*}
-因此\(\lim_{n\rightarrow +\infty}n\left(x_n - \frac{\pi}{2} - n\pi\right)= -\frac{1}{\pi}\)。
-
-\end{solution}
-
-\begin{proposition}[Lampert W 的渐进估计]\label{proposition:Lampert W 的渐进估计}
-设 $x_n > 0$ 满足 $x_n e^{x_n} = n, n = 1, 2, \cdots$, 证明
-\[
-x_n = \ln n - \ln \ln n + \frac{\ln \ln n}{\ln n} + o\left( \frac{\ln \ln n}{\ln n} \right), n \to \infty.
-\]
-\end{proposition}
 \begin{proof}
+\begin{enumerate}[(1)]
+\item 方对$\forall n\in \mathbb{N}$，设$f_n(x)=x^n(x-1)-1\ (\forall x\in [1,+\infty))$，则$f_n\in C^1[1,+\infty)$且
+\begin{align*}
+f_{n}'(x)=x^{n-1}\big((n+1)x-n\big)>0,\quad \forall x\in [1,+\infty).
+\end{align*}
+因此$f_n(x)$在$[1,+\infty)$上严格递增。注意到
+$$f_n(1)=-1<0,\quad f_n(2)=2^n-1>0,$$
+故由零点存在定理知，存在$x_n\in (1,2)$，使得$f_n(x_n)=0$。再由$f_n$的严格递增性知$f_n(x)$在$[1,+\infty)$上的零点唯一。此即方程$x^n(x-1)=1$在$[1,+\infty)$上有且仅有一个根$x_n$。
 
-注意到
-\[
-1 \leqslant x_n = \ln n - \ln x_n \leqslant \ln n \Rightarrow x_n = O(\ln n), n = 3, 4, \cdots,
-\]
-于是
-\[
-\begin{aligned}
-\ln x_n &= \ln \ln n + \ln \left( 1 - \frac{\ln x_n}{\ln n} \right) = \ln \ln n - \frac{\ln x_n}{\ln n} + o\left( \frac{\ln x_n}{\ln n} \right) = \ln \ln n - \frac{\ln O(\ln n)}{\ln n} + o\left( \frac{\ln O(\ln n)}{\ln n} \right) \\
-&= \ln \ln n - \frac{\ln \ln n + \ln O(1)}{\ln n} + o\left( \frac{\ln \ln n + \ln O(1)}{\ln n} \right) \\
-&= \ln \ln n - \frac{\ln \ln n}{\ln n} + o\left( \frac{\ln \ln n}{\ln n} \right),
-\end{aligned}
-\]
+\item 对$\forall n\in \mathbb{N}$，由(1)可知$x_n\in (1,2)$。由聚点定理知$\{x_n\}$的任意子列都收敛，任取子列$\{x_{n_k}\}$，设$\lim\limits_{k\rightarrow \infty}x_{n_k}=c\in [1,2]$，由题设可得
+\begin{align}
+n=\frac{\ln \frac{1}{x_n-1}}{\ln x_n},\quad \forall n\in \mathbb{N}. \label{eq:lab310xyz}
+\end{align}
+令$n\rightarrow \infty$得$\lim\limits_{n\rightarrow \infty}\frac{\ln \frac{1}{x_n-1}}{\ln x_n}=+\infty$。若$c>1$，则
+$$\lim\limits_{k\rightarrow \infty}\frac{\ln \frac{1}{x_{n_k}-1}}{\ln x_{n_k}}=\frac{\ln \frac{1}{c-1}}{\ln c}<+\infty,$$
+矛盾！故$c=1$，由$\{x_{n_k}\}$的任意性知$\lim\limits_{n\rightarrow \infty}x_n=1$。令$t_n=n(x_n-1)\ (\forall n\in \mathbb{N})$，则
+$$\lim\limits_{n\rightarrow \infty}\frac{t_n}{n}=\lim\limits_{n\rightarrow \infty}\big(x_n-1\big)=0.$$
+又注意到
+$$x_{n}^{n}(x_n-1)=1\Longleftrightarrow t_ne^{n\ln \left(1+\frac{t_n}{n}\right)}=n,\quad \forall n\in \mathbb{N}.$$
+故
+\begin{align*}
+t_ne^{t_n}\sim t_ne^{n\ln \left(1+\frac{t_n}{n}\right)}=n,\quad n\rightarrow \infty.
+\end{align*}
+于是由\hyperref[proposition:Lampert W 函数的渐近估计]{Lampert W 函数的渐近估计}知
+$$n(x_n-1)=t_n=\ln n-\ln\ln n+\frac{\ln\ln n}{\ln n}+o\left( \frac{\ln\ln n}{\ln n} \right) ,\quad n\rightarrow \infty .$$
+因此
+$$x_n=1+\frac{\ln n}{n}-\frac{\ln\ln n}{n}+\frac{\ln\ln n}{n\ln n}+o\left( \frac{\ln\ln n}{n\ln n} \right) ,\quad n\rightarrow \infty .$$
 即
-\[
-x_n = \ln n - \ln \ln n + \frac{\ln \ln n}{\ln n} + o\left( \frac{\ln \ln n}{\ln n} \right).
-\]
-
+$$\lim\limits_{n\rightarrow \infty}\frac{x_n-\left( 1+\frac{\ln n}{n}-\frac{\ln\ln n}{n} \right)}{\frac{\ln\ln n}{n\ln n}}=1.$$
+故存在$N\in \mathbb{N}$，使得当$n>N$时，有
+$$x_n\geqslant 1+\frac{\ln n}{n}-\frac{\ln\ln n}{n}+\frac{\ln\ln n}{n\ln n}>1+\frac{\ln n}{n}-\frac{\ln\ln n}{n}.$$
+\end{enumerate}
 \end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
