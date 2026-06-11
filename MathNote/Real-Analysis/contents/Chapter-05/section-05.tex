@@ -1,6 +1,6 @@
 \documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
-\graphicspath{{\subfix{./image/}}} % 指定图片目录,后续可以直接使用图片文件名
-% 注意这里的文件路径不能用 ../../image/ ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
 
 % 例如:
 % \begin{figure}[H]
@@ -16,43 +16,44 @@
 \section{$\mathbb{R}$上的积分换元公式}
 
 \begin{lemma}\label{lemma:实变函数--引理5.19}
-设 $f(x)$ 是 $[a,b]$ 上的实值函数, $E\subset[a,b]$. 如果 $f'(x)$ 在 $E$ 上存在且 $|f'(x)|\leqslant M$, 则
+设 $f(x)$ 是 $[a,b]\subseteq \mathbb{R}$ 上的实值函数, $E\subset[a,b]$. 如果$f$在$[a,b]$上Lipschitz连续,记Lipschitz常数为$M$, 则
 \[
 m^*(f(E)) \leqslant Mm^*(E). 
 \]
 \end{lemma}
-\begin{remark}
-可以将条件:$f'(x)$ 在 $E$ 上存在且 $|f'(x)|\leqslant M$,改为$f$在$[a,b]$上Lipschitz连续,证明是相同的.
-\end{remark}
 \begin{proof}
 
 将点集 $E$ 作如下分解: 对任给 $\varepsilon>0$, 作
 \[
 E_n = \left\{x\in E: \text{当 } [a,b] \text{ 中的点 } y \text{ 满足 } |y-x|<\frac{1}{n} \text{ 时}, \text{ 有 } |f(y)-f(x)|\leqslant(M+\varepsilon)|x-y|\right\}.
 \]
-显然, 有 $E_n\subset E_{n+1}$, $f(E_n)\subset f(E_{n+1})$ 以及
+显然, 有 $E_n\subset E_{n+1}$,进而$f(E_n)\subset f(E_{n+1})$.于是由\refcor{corollary:递增集列外测度和极限可交换}可知
 \[
 \lim_{n\to\infty}m^*(E_n) = m^*(E), \quad \lim_{n\to\infty}m^*(f(E_n)) = m^*(f(E)).
 \]
-从而根据 $\varepsilon$ 的任意性和\refcor{corollary:递增集列外测度和极限可交换}, 我们只需证明对每个 $n$ 有
+从而根据 $\varepsilon$ 的任意性, 我们只需证明对每个 $n$ 有
 \[
 m^*(f(E_n)) < (M+\varepsilon)(m^*(E_n)+\varepsilon).
 \]
-为此, 在 $(a,b)$ 中取覆盖 $E_n$ 的开区间列 $\{I_{n,k}\}$, 使得
+为此, 对任意固定的$n\in \mathbb{N}$,在 $(a,b)$ 中取覆盖 $E_n$ 的开区间列 $\{I_{n,k}\}$, 使得
 \[
 \sum_{k=1}^{\infty} |I_{n,k}| < m^*(E_n)+\varepsilon, \quad |I_{n,k}| < \frac{1}{n}, \quad k=1,2,\cdots.
 \]
-显然, 若 $s,t\in E_n\cap I_{n,k}$, 则有
+由条件知,对$\forall k\in \mathbb{N},\forall s,t\in E_n\cap I_{n,k}$, 有
 \[
 |f(s)-f(t)| < (M+\varepsilon)|I_{n,k}|.
 \]
-于是得到
+于是再结合\rrefpro{proposition:外测度相关的基本性质}{proposition:外测度相关的基本性质-6}知对$\forall k\in \mathbb{N}$,有
+\begin{align*}
+m^*(f(E_n\cap I_{n,k}))\leqslant \operatorname{diam}(f(E_n\cap I_{n,k})) 
+\leqslant (M+\varepsilon)|I_{n,k}|.
+\end{align*}
+故
 \begin{align*}
 m^*(f(E_n)) &= m^*\left(f\left(E_n\cap\bigcup_{k=1}^{\infty} I_{n,k}\right)\right) \leqslant \sum_{k=1}^{\infty} m^*(f(E_n\cap I_{n,k})) \\
 &\leqslant \sum_{k=1}^{\infty} \operatorname{diam}(f(E_n\cap I_{n,k})) 
 \leqslant (M+\varepsilon)\sum_{k=1}^{\infty} |I_{n,k}| < (M+\varepsilon)(m(E_n)+\varepsilon).
 \end{align*}
-
 \end{proof}
 
 \begin{corollary}\label{corollary:可微的可测函数像集外测度小于导数积分}

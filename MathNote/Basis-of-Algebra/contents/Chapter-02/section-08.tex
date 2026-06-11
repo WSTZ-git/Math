@@ -1,7 +1,7 @@
 % contents/chapter-02/section-08.tex 第二章第三节
 \documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
-\graphicspath{{\subfix{./image/}}} % 指定图片目录,后续可以直接使用图片文件名
-% 注意这里的文件路径不能用 ../../image/ ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
 
 % 例如:
 % \begin{figure}[H]
@@ -182,8 +182,9 @@
 \lambda \boldsymbol{I}_n-\boldsymbol{AB}&		\boldsymbol{O}\\
 \boldsymbol{B}&		\boldsymbol{I}_m\\
 \end{matrix} \right|=\left| \lambda \boldsymbol{I}_n-\boldsymbol{AB} \right|.
-\\
-\left| \begin{matrix}
+\end{gather*}
+\begin{align*}
+&\left| \begin{matrix}
 \lambda \boldsymbol{I}_n&		\boldsymbol{A}\\
 \boldsymbol{B}&		\boldsymbol{I}_m\\
 \end{matrix} \right|=\left| \begin{matrix}
@@ -198,11 +199,13 @@
 \end{matrix} \right) \left( \begin{matrix}
 \lambda \boldsymbol{I}_n&		\boldsymbol{A}\\
 \boldsymbol{B}&		\boldsymbol{I}_m\\
-\end{matrix} \right) \right|=\left| \begin{matrix}
+\end{matrix} \right) \right|
+\\
+&=\left| \begin{matrix}
 \lambda \boldsymbol{I}_n&		\boldsymbol{A}\\
 \boldsymbol{O}&		\boldsymbol{I}_m-\frac{1}{\lambda}\boldsymbol{BA}\\
-\end{matrix} \right|=\lambda ^n\left| \boldsymbol{I}_m-\frac{1}{\lambda}\boldsymbol{BA} \right|=\lambda ^{n-m}\left| \lambda \boldsymbol{I}_m-\boldsymbol{BA} \right|.    
-\end{gather*}
+\end{matrix} \right|=\lambda ^n\left| \boldsymbol{I}_m-\frac{1}{\lambda}\boldsymbol{BA} \right|=\lambda ^{n-m}\left| \lambda \boldsymbol{I}_m-\boldsymbol{BA} \right|.
+\end{align*}
 于是$\left| \begin{matrix}
 \lambda \boldsymbol{I}_n&		\boldsymbol{A}\\
 \boldsymbol{B}&		\boldsymbol{I}_m\\
@@ -500,17 +503,22 @@ A =
 \end{solution}
 
 \begin{proposition}\label{proposition:对角相同分块矩阵行列式计算}
-设\(A,B\)是\(n\)阶矩阵,求证:
-\[
+设\(A,B\)是\(n\)阶矩阵,则
+\begin{gather*}
 \begin{vmatrix}
 A & B\\
 B & A
-\end{vmatrix}=|A + B||A - B|.
-\]
+\end{vmatrix}=|A + B||A - B|,
+\quad 
+\begin{vmatrix}
+A & -B\\
+B & A
+\end{vmatrix}=|A + \mathrm{i}B||A - \mathrm{i}B|.
+\end{gather*}
 \end{proposition}
 \begin{proof}
-
-将分块矩阵的第二行加到第一行上,再将第二列减去第一列,可得
+\begin{enumerate}[(1)]
+\item 将分块矩阵的第二行加到第一行上,再将第二列减去第一列,可得
 \[
 \begin{pmatrix}
 A & B\\
@@ -534,6 +542,30 @@ B & A - B
 \end{vmatrix}=|A + B||A - B|.
 \]
 
+\item 将分块矩阵的第二行乘以\(\mathrm{i}\)加到第一行上,再将第一列乘以\(-\mathrm{i}\)加到第二列上,可得
+\[
+\begin{pmatrix}
+A & -B\\
+B & A
+\end{pmatrix}\to\begin{pmatrix}
+A + \mathrm{i}B & \mathrm{i}A - B\\
+B & A
+\end{pmatrix}\to\begin{pmatrix}
+A + \mathrm{i}B & O\\
+B & A - \mathrm{i}B
+\end{pmatrix}.
+\]
+第三类分块初等变换不改变行列式的值,因此可得
+\[
+\begin{vmatrix}
+A & -B\\
+B & A
+\end{vmatrix}=\begin{vmatrix}
+A + \mathrm{i}B & O\\
+B & A - \mathrm{i}B
+\end{vmatrix}=|A + \mathrm{i}B||A - \mathrm{i}B|.
+\]
+\end{enumerate}
 \end{proof}
 
 \begin{example}
@@ -624,43 +656,6 @@ y - w & x - z
 
 \end{solution}
 
-\begin{proposition}\label{proposition:对角相同的复分块矩阵行列式计算}
-设\(A,B\)是\(n\)阶复矩阵,求证:
-\[
-\begin{vmatrix}
-A & -B\\
-B & A
-\end{vmatrix}=|A + \mathrm{i}B||A - \mathrm{i}B|.
-\]
-\end{proposition}
-\begin{proof}
-
-将分块矩阵的第二行乘以\(\mathrm{i}\)加到第一行上,再将第一列乘以\(-\mathrm{i}\)加到第二列上,可得
-\[
-\begin{pmatrix}
-A & -B\\
-B & A
-\end{pmatrix}\to\begin{pmatrix}
-A + \mathrm{i}B & \mathrm{i}A - B\\
-B & A
-\end{pmatrix}\to\begin{pmatrix}
-A + \mathrm{i}B & O\\
-B & A - \mathrm{i}B
-\end{pmatrix}.
-\]
-第三类分块初等变换不改变行列式的值,因此可得
-\[
-\begin{vmatrix}
-A & -B\\
-B & A
-\end{vmatrix}=\begin{vmatrix}
-A + \mathrm{i}B & O\\
-B & A - \mathrm{i}B
-\end{vmatrix}=|A + \mathrm{i}B||A - \mathrm{i}B|.
-\]
-
-\end{proof}
-
 \begin{example}\label{example:2.28}
 设\(A,B\)是\(n\)阶矩阵且\(AB = BA\),求证:
 \[
@@ -672,7 +667,7 @@ B & A
 \end{example}
 \begin{proof}
 
-由\hyperref[proposition:对角相同的复分块矩阵行列式计算]{命题\ref{proposition:对角相同的复分块矩阵行列式计算}}的结论可得
+由\hyperref[proposition:对角相同分块矩阵行列式计算]{命题\ref{proposition:对角相同分块矩阵行列式计算}}的结论可得
 \begin{align*}
 \begin{vmatrix}
 A & -B\\
@@ -696,7 +691,7 @@ B & A
 \end{example}
 \begin{proof}
 
-注意到\(A,B\)都是实矩阵,故由\nrefpro{行列式计算常识}{(3)}得\(\overline{|A + \mathrm{i}B|}=|\overline{A + \mathrm{i}B}|=|A - \mathrm{i}B|\),再由\hyperref[proposition:对角相同的复分块矩阵行列式计算]{命题\ref{proposition:对角相同的复分块矩阵行列式计算}}的结论可得
+注意到\(A,B\)都是实矩阵,故由\nrefpro{行列式计算常识}{(3)}得\(\overline{|A + \mathrm{i}B|}=|\overline{A + \mathrm{i}B}|=|A - \mathrm{i}B|\),再由\hyperref[proposition:对角相同分块矩阵行列式计算]{命题\ref{proposition:对角相同分块矩阵行列式计算}}的结论可得
 \begin{align*}
 \begin{vmatrix}
 A & -B\\

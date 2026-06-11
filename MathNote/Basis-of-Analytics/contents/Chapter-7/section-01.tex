@@ -1,6 +1,6 @@
 \documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
-\graphicspath{{\subfix{./image/}}} % 指定图片目录,后续可以直接使用图片文件名
-% 注意这里的文件路径不能用 ../../image/ ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
 
 % 例如:
 % \begin{figure}[H]
@@ -572,6 +572,8 @@ x = 1, & y = -2
 \end{solution}
 
 
+\subsection{多元函数的微分}
+
 \begin{definition}
 设$D \subseteq \mathbb{R}^n$为开集，$\bm{x}_0 \in D$，$f: D \to \mathbb{R}^m$。如果存在某个线性变换$A$（只依赖于$\bm{x}_0$），使得$\bm{x} \in U(\bm{x}_0) \subseteq D$时，有
 \begin{align*}
@@ -585,21 +587,55 @@ f(\bm{x}) - f(\bm{x}_0) = A(\bm{x} - \bm{x}_0) + o\left( \|\bm{x} - \bm{x}_0\| \
 \end{definition}
 
 \begin{theorem}\label{theorem:多元函数可微的导数与偏导的关系}
-设$D \subseteq \mathbb{R}^n$为开集，$\bm{x}_0 \in D$，$f: D \to \mathbb{R}^m$。当$f$在$\bm{x}_0$可微时，$f$在$\bm{x}_0$的导数矩阵$A$为
+设$D \subseteq \mathbb{R}^n$为开集，$\bm{x}_0 \in D$，$f: D \to \mathbb{R}^m$。若$f$在$\bm{x}_0$可微，则当$\bm{x} \in U(\bm{x}_0) \subseteq D$时，有
 \begin{align*}
-A = \begin{pmatrix}
+f(\bm{x}) - f(\bm{x}_0) = f'(x_0)(\bm{x} - \bm{x}_0) + o\left( \|\bm{x} - \bm{x}_0\| \right),
+\end{align*}
+其中
+\begin{align*}
+f'(\bm{x}_0) = \mathrm{D}f(\bm{x}_0) = \begin{pmatrix}
 \frac{\partial f_1}{\partial x_1} & \cdots & \frac{\partial f_1}{\partial x_n} \\
 \vdots & & \vdots \\
 \frac{\partial f_m}{\partial x_1} & \cdots & \frac{\partial f_m}{\partial x_n}
 \end{pmatrix}
-\quad (= f'(\bm{x}_0) = \mathrm{D}f(\bm{x}_0)).
+.
+\end{align*}
+\end{theorem}
+
+\begin{theorem}[多元函数带Peano余项的Taylor公式]\label{theorem:多元函数带Peano余项的Taylor公式}
+设 $D \subseteq \mathbb{R}^n$ 是开集，$\bm{x}_0 \in D$，函数 $f: D \to \mathbb{R}$ 在 $\bm{x}_0$ 的某邻域内具有直到 $k$ 阶的连续偏导数,则对任意满足 $\bm{x}_0 + \bm{h} \in D$ 的 $\bm{h} = (h_1,\cdots,h_n)$，存在$\delta>0$,当 $\|\bm{h}\| < \delta$ 时,有
+\[
+f(\bm{x}_0 + \bm{h}) = \sum_{|\alpha|=0}^{k} \frac{1}{\alpha!} \, \partial^\alpha f(\bm{x}_0) \, \bm{h}^\alpha \;+\; o\bigl(\|\bm{h}\|^k\bigr),
+\]
+其中
+\begin{enumerate}[(1)]
+\item $\alpha = (\alpha_1,\cdots,\alpha_n)$ 是多重指标，$\alpha_i$ 为非负整数，$|\alpha| = \alpha_1 + \cdots + \alpha_n$；
+\item $\alpha! = \alpha_1! \,\alpha_2! \cdots \alpha_n!$；
+\item $\bm{h}^\alpha = h_1^{\alpha_1} h_2^{\alpha_2} \cdots h_n^{\alpha_n}$；
+\item $\partial^\alpha f(\bm{x}_0) = \dfrac{\partial^{|\alpha|} f}{\partial x_1^{\alpha_1} \cdots \partial x_n^{\alpha_n}}(\bm{x}_0)$ 是混合偏导数在 $\bm{x}_0$ 处的值。
+\end{enumerate}
+等价地，用全微分形式可写作
+\[
+f(\bm{x}_0 + \bm{h}) = f(\bm{x}_0) + \sum_{j=1}^{k} \frac{1}{j!}\, \mathrm{d}^j f(\bm{x}_0)(\bm{h}) \;+\; o\bigl(\|\bm{h}\|^k\bigr),
+\]
+其中 $\mathrm{d}^j f(\bm{x}_0)$ 是 $j$ 阶全微分，作用在 $\bm{h}$ 上为
+\[
+\mathrm{d}^j f(\bm{x}_0)(\bm{h}) = \sum_{|\alpha|=j} \frac{j!}{\alpha!} \, \partial^\alpha f(\bm{x}_0) \, \bm{h}^\alpha.
+\]
+
+特别地，当 $n=2$ 且 $k=2$ 时，设 $(x_0,y_0) \in D \subseteq \mathbb{R}^2$，$f(x,y)$ 在 $(x_0,y_0)$ 邻域内具有二阶连续偏导数，则存在$\delta>0$,当 $\sqrt{(x-x_0)^2+(y-y_0)^2}  < \delta$ 时有
+\begin{align*}
+f(x, y) = &\; f(x_0,y_0) 
++ \frac{\partial f}{\partial x}(x_0,y_0)\, (x-x_0) \;+\; \frac{\partial f}{\partial y}(x_0,y_0)\, (y-y_0) \\
+&+ \frac{1}{2}\Bigg[ \frac{\partial^2 f}{\partial x^2}(x_0,y_0)\, (x-x_0)^2 \;+\; 2\frac{\partial^2 f}{\partial x \partial y}(x_0,y_0)\, (x-x_0)(y-y_0) \;+\; \frac{\partial^2 f}{\partial y^2}(x_0,y_0)\, (y-y_0)^2 \Bigg] \\
+&+ o\!\left( (x-x_0)^2 + (y-y_0)^2 \right).
 \end{align*}
 \end{theorem}
 
 \begin{example}
 设$f: \mathbb{R}^2 \to \mathbb{R}^2$可微且恒有
 \begin{align*}
-\|f(x,y) - f(0,0)\| \ge \sqrt{x^2 + y^2}, \quad \forall (x,y) \in \mathbb{R}^2.
+\|f(x,y) - f(0,0)\| \geqslant \sqrt{x^2 + y^2}, \quad \forall (x,y) \in \mathbb{R}^2.
 \end{align*}
 证明：$f$在原点的雅可比矩阵一定非退化，即行列式非零。
 \end{example}
@@ -607,7 +643,7 @@ A = \begin{pmatrix}
 
 反证，若$|Jf(0)| = 0$，则存在$0 \ne X \in \mathbb{R}^2$使得$Jf(0)X = 0$. 由条件知
 \begin{align*}
-\|f(tX) - f(0)\| \ge \|tX\| = |t| \cdot \|X\|, \quad \forall t > 0.
+\|f(tX) - f(0)\| \geqslant \|tX\| = |t| \cdot \|X\|, \quad \forall t > 0.
 \end{align*}
 又由$f$在$\mathbb{R}^2$上可微和\refthe{theorem:多元函数可微的导数与偏导的关系}知
 \begin{align*}
@@ -618,8 +654,53 @@ f(tX) = f(0) + Jf(0)tX + o(tX), \quad t \to 0^+.
 \frac{\|f(tX) - f(0)\|}{\|tX\|} < \|Jf(0)\| + \varepsilon = \varepsilon < 1.
 \end{align*}
 这与前面的不等式矛盾！故结论成立.
-
 \end{proof}
+
+\begin{example}
+设$f(x,y)$在平面$\mathbb{R}^2$上有二阶连续偏导数，$B((0,0),r)$是以$(0,0)$为心，$r$为半径的圆盘。证明：
+\begin{align*}
+\lim\limits_{r \to 0^+} \frac{1}{r^2} \left[ \frac{1}{\pi r^2} \iint_{B((0,0),r)} f(x,y) \, \mathrm{d}x\mathrm{d}y - f(0,0) \right] = \frac{1}{8} \Delta f(0,0),
+\end{align*}
+其中$\Delta f = f_{xx} + f_{yy}$。
+\end{example}
+\begin{proof}
+
+由\hyperref[theorem:多元函数带Peano余项的Taylor公式]{多元函数带Peano余项的Taylor公式}知存在$\delta >0$，使得当$x^2+y^2<\delta$时，有
+\begin{align}
+f(x,y) &= f(0,0) + f_x(0,0)x + f_y(0,0)y + \frac{1}{2}\left[ f_{xx}(0,0)x^2 + 2f_{xy}(0,0)xy + f_{yy}(0,0)y^2 \right] + R(x,y), \label{eq9s7k2p}
+\end{align}
+并且$\lim\limits_{(x,y) \to (0,0)} \frac{R(x,y)}{x^2+y^2}=0.$从而对$\forall \varepsilon >0$，$\exists \delta_1 \in (0,\delta)$，使得当$x^2+y^2<\delta_1$时，有
+\begin{align}
+|R(x,y)| \leqslant \varepsilon (x^2+y^2). \label{eq4z8m1n}
+\end{align}
+对$\forall r \in (0,\delta)$，记$B_r \triangleq B((0,0),r)$，则由对称性知
+\begin{gather*}
+\iint_{B_r} x\mathrm{d}x\mathrm{d}y=\iint_{B_r} -x\mathrm{d}x\mathrm{d}y=\iint_{B_r} y\mathrm{d}x\mathrm{d}y=\iint_{B_r} -y\mathrm{d}x\mathrm{d}y=\iint_{B_r} xy\mathrm{d}x\mathrm{d}y=\iint_{B_r} -xy\mathrm{d}x\mathrm{d}y=0, \\
+\iint_{B_r} x^2\mathrm{d}x\mathrm{d}y=\iint_{B_r} y^2\mathrm{d}x\mathrm{d}y=\frac{1}{2}\iint_{B_r} (x^2+y^2)\mathrm{d}x\mathrm{d}y=\frac{1}{2}\int_0^{2\pi}\mathrm{d}\theta \int_0^r \rho^3\mathrm{d}\rho=\frac{\pi r^4}{4}.
+\end{gather*}
+从而对$\eqref{eq9s7k2p}$式两边积分得
+\begin{align}
+\iint_{B_r} f(x,y)\mathrm{d}x\mathrm{d}y &= \iint_{B_r} \left[ f(0,0) + f_x(0,0)x + f_y(0,0)y + \frac{1}{2}\left[ f_{xx}(0,0)x^2 + 2f_{xy}(0,0)xy + f_{yy}(0,0)y^2 \right] + R(x,y) \right] \mathrm{d}x\mathrm{d}y \nonumber \\
+&= f(0,0)\iint_{B_r}\mathrm{d}x\mathrm{d}y + \frac{f_{xx}(0,0)}{2}\iint_{B_r}x^2\mathrm{d}x\mathrm{d}y + \frac{f_{yy}(0,0)}{2}\iint_{B_r}y^2\mathrm{d}x\mathrm{d}y + \iint_{B_r}R(x,y)\mathrm{d}x\mathrm{d}y \nonumber \\
+&= f(0,0)\pi r^2 + \frac{\pi r^4}{8}\left[ f_{xx}(0,0) + f_{yy}(0,0) \right] + \iint_{B_r}R(x,y)\mathrm{d}x\mathrm{d}y. \label{eq7d3s6f}
+\end{align}
+由$\eqref{eq4z8m1n}$式知当$r<\delta_1$时，有
+\begin{align*}
+\left| \frac{1}{r^4}\iint_{B_r} R(x,y)\mathrm{d}x\mathrm{d}y \right| \leqslant \frac{\varepsilon}{r^4}\iint_{B_r} (x^2+y^2)\mathrm{d}x\mathrm{d}y=\frac{\pi}{2}\varepsilon.
+\end{align*}
+故
+\begin{align}
+\lim\limits_{r\to 0^+} \frac{1}{r^4}\iint_{B_r} R(x,y)\mathrm{d}x\mathrm{d}y=0. \label{eq2p5g8h}
+\end{align}
+于是结合$\eqref{eq9s7k2p}$$\eqref{eq7d3s6f}$、$\eqref{eq2p5g8h}$式可得
+\begin{align*}
+\lim\limits_{r\to 0^+} \frac{1}{r^2}\left[ \frac{1}{\pi r^2}\iint_{B_r} f(x,y)\mathrm{d}x\mathrm{d}y - f(0,0) \right] = \lim\limits_{r\to 0^+} \frac{1}{8}\left[ f_{xx}(0,0) + f_{yy}(0,0) \right] + \lim\limits_{r\to 0^+}\frac{1}{\pi r^4}\iint_{B_r}R(x,y)\mathrm{d}x\mathrm{d}y 
+= \frac{1}{8}\Delta f(0,0).
+\end{align*}
+\end{proof}
+
+
+
 
 
 \subsection{多元函数极值原理}

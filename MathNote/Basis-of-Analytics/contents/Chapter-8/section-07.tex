@@ -1,6 +1,6 @@
 \documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
-\graphicspath{{\subfix{./image/}}} % 指定图片目录,后续可以直接使用图片文件名
-% 注意这里的文件路径不能用 ../../image/ ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
 
 % 例如:
 % \begin{figure}[H]
@@ -12,6 +12,189 @@
 % 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
 
 \begin{document}
+
+\section{场论}
+
+\begin{definition}
+设$D\subseteq\mathbb{R}^n$为非空开集，称映射
+\begin{align*}
+f:D\to\mathbb{R},\,\,\bm{x}=(x_1,\cdots,x_n)\mapsto f(\bm{x})
+\end{align*}
+为$D$上的\textbf{标量场}。
+称映射
+\begin{align*}
+F:D\to\mathbb{R}^m,\,\,\bm{x}=(x_1,\cdots,x_n)\mapsto \bm{F}(\bm{x})
+\end{align*}
+为$D$上的\textbf{向量场}。通常取$m=n$，即
+\begin{align*}
+F:D\to\mathbb{R}^n,\,\,\bm{x}=(x_1,\cdots,x_n)\mapsto \bm{F}(\bm{x}).
+\end{align*}
+\end{definition}
+
+\begin{definition}
+设$f:D\subseteq\mathbb{R}^n\to\mathbb{R}$在点$\bm{x}_0$处所有一阶偏导数存在，称向量
+\[
+\nabla f(\bm{x}_0)=\left(\frac{\partial f}{\partial x_1}(\bm{x}_0),\cdots,\frac{\partial f}{\partial x_n}(\bm{x}_0)\right)
+\]
+为$f$在$\bm{x}_0$处的\textbf{梯度},称$\nabla$为$\mathbf{Hamilton}$\textbf{(哈密顿)算子}.
+\end{definition}
+
+\begin{definition}
+设$\bm{F}=(F_1,\cdots,F_n)$是$\mathbb{R}^n$上的向量场，若$F_i$均可微，则定义$\bm{F}$的\textbf{散度}为
+\[
+\nabla\cdot\bm{F}=\sum_{i=1}^{n}\frac{\partial F_i}{\partial x_i}.
+\]
+\end{definition}
+
+\begin{definition}
+设$\bm{F}=(F_1,F_2,F_3)$是$\mathbb{R}^3$上的向量场，若各分量均可微，则定义$\bm{F}$的\textbf{旋度}为
+\[
+\nabla\times\bm{F}=
+\begin{vmatrix}
+\bm{i} & \bm{j} & \bm{k} \\
+\frac{\partial}{\partial x} & \frac{\partial}{\partial y} & \frac{\partial}{\partial z} \\
+F_1 & F_2 & F_3
+\end{vmatrix}
+=\left(\frac{\partial F_3}{\partial y}-\frac{\partial F_2}{\partial z},\frac{\partial F_1}{\partial z}-\frac{\partial F_3}{\partial x},\frac{\partial F_2}{\partial x}-\frac{\partial F_1}{\partial y}\right).
+\]
+\end{definition}
+
+\begin{definition}
+对于二次可微的标量场$f:\mathbb{R}^n\to\mathbb{R}$，定义\textbf{Laplace(拉普拉斯)算子}为
+\[
+\Delta f=\nabla\cdot(\nabla f)=\sum_{i=1}^{n}\frac{\partial^{2}f}{\partial x_i^{2}}.
+\]
+\end{definition}
+
+\begin{definition}
+设$D\subseteq\mathbb{R}^n$为开集，$f:D\to\mathbb{R}$，$\bm{x}_0\in D$，$\bm{e}\in\mathbb{R}^n$为单位向量。若极限
+\begin{align*}
+\lim_{t\to 0}\frac{f(\bm{x}_0+t\bm{e})-f(\bm{x}_0)}{t}
+\end{align*}
+存在，则称该极限为$f$在点$\bm{x}_0$处沿方向$\bm{e}$的\textbf{方向导数}，记作$\frac{\partial f}{\partial\bm{e}}(\bm{x}_0)$或$D_{\bm{e}}f(\bm{x}_0)$.
+\end{definition}
+
+\begin{theorem}[方向导数的基本性质]
+设$f,g:D\subseteq\mathbb{R}^n\to\mathbb{R}$在点$\bm{x}_0\in D$处可微，$\alpha,\beta\in\mathbb{R}$，$\bm{e}\in \mathbb{R}^n$为任意单位向量，$\nabla f(\bm{x}_0)$为梯度。则
+\begin{enumerate}[(1)]
+\item \textbf{梯度表示:}方向导数存在且
+\begin{align*}
+\frac{\partial f}{\partial\bm{e}}(\bm{x}_0)=\nabla f(\bm{x}_0)\cdot\bm{e}.
+\end{align*}
+
+\item \textbf{线性性质:}
+\begin{align*}
+\frac{\partial(\alpha f+\beta g)}{\partial\bm{e}}(\bm{x}_0)=\alpha\frac{\partial f}{\partial\bm{e}}(\bm{x}_0)+\beta\frac{\partial g}{\partial\bm{e}}(\bm{x}_0).
+\end{align*}
+
+\item 若$\nabla f(\bm{x}_0)\neq\bm{0}$，则当$\bm{e}$与$\nabla f(\bm{x}_0)$同向时方向导数取得最大值$|\nabla f(\bm{x}_0)|$，反向时取得最小值$-|\nabla f(\bm{x}_0)|$.进而对所有单位方向$\bm{e}$有
+\begin{align*}
+-|\nabla f(\bm{x}_0)|\leqslant\frac{\partial f}{\partial\bm{e}}(\bm{x}_0)\leqslant|\nabla f(\bm{x}_0)|.
+\end{align*}
+
+\item 设$\varphi(t)=f(\bm{x}_0+t\bm{e})$，则$\varphi'(0)=\frac{\partial f}{\partial\bm{e}}(\bm{x}_0)$.并且当$f$可微时,有$\varphi'(t)=\nabla f(\bm{x}_0+t\bm{e})\cdot\bm{e}$.
+\end{enumerate}
+\end{theorem}
+\begin{remark}
+方向导数存在不能推出函数在该点连续，即使所有方向导数存在且为零，函数仍可能不连续。例如
+\[
+f(x,y)=\begin{cases}\dfrac{x^{2}y}{x^{4}+y^{2}},&(x,y)\neq(0,0),\\0,&(x,y)=(0,0),\end{cases}
+\]
+在原点沿任何方向的方向导数均为$0$，但$f$在原点不连续.
+\end{remark}
+
+\begin{theorem}
+设$f,g$是标量场，$\bm{F},\bm{G}$是向量场，$c\in \mathbb{R}$，则
+\begin{enumerate}[(1)]
+\item $\nabla(cf)=c\nabla f$，$\nabla\cdot(c\bm{F})=c\nabla\cdot\bm{F}$，$\nabla\times(c\bm{F})=c\nabla\times\bm{F}$.
+\item $\nabla(f\pm g)=\nabla f\pm\nabla g$，$\nabla\cdot(\bm{F}\pm\bm{G})=\nabla\cdot\bm{F}\pm\nabla\cdot\bm{G}$，$\nabla\times(\bm{F}\pm\bm{G})=\nabla\times\bm{F}\pm\nabla\times\bm{G}$.
+\item $\nabla(fg)=f\nabla g+g\nabla f$.
+\item $\nabla\cdot(f\bm{F})=f\nabla\cdot\bm{F}+\nabla f\cdot\bm{F}$.
+\item $\nabla\times(f\bm{F})=f\nabla\times\bm{F}+\nabla f\times\bm{F}$.
+\item $\nabla\cdot(\bm{F}\times\bm{G})=\bm{G}\cdot(\nabla\times\bm{F})-\bm{F}\cdot(\nabla\times\bm{G})$.
+\item 旋度无源:$\nabla\times(\nabla f)=\bm{0}$.
+\item 散度无旋:$\nabla\cdot(\nabla\times\bm{F})=0$.
+
+\item $\Delta(cu)=c\Delta u$
+\item $\Delta(u\pm v)=\Delta u\pm\Delta v$.
+\item $\Delta(uv)=u\Delta v+v\Delta u+2\nabla u\cdot\nabla v$.
+\end{enumerate}
+\end{theorem}
+
+\begin{theorem}[散度定理]\label{theorem:散度定理}
+设$\Omega\subset\mathbb{R}^n$是有界闭区域，其边界$\partial\Omega$是逐片光滑的定向曲面，$\bm{n}$为$\partial\Omega$的单位外法向量。若向量场$\bm{F}$在$\overline{\Omega}$上连续，在$\Omega$内连续可微，则
+\begin{align*}
+\int_{\Omega}\nabla\cdot\bm{F}\,\mathrm{d}V=\int_{\partial\Omega}\bm{F}\cdot\bm{n}\,\mathrm{d}S. 
+\end{align*}
+特别地，取$\bm{F}=(0,\cdots,0,f,0,\cdots,0)$（仅第$i$分量为$f$），得到分量形式：
+\begin{align*}
+\int_{\Omega}\frac{\partial f}{\partial x_i}\,\mathrm{d}V=\int_{\partial\Omega}f\,n_i\,\mathrm{d}S. 
+\end{align*}
+\end{theorem}
+
+\begin{theorem}[Stokes定理]\label{theorem:Stokes公式--多元函数}
+设$\Sigma$是$\mathbb{R}^3$中逐片光滑的有向曲面，边界$\partial\Sigma$是分段光滑的闭曲线，方向与$\Sigma$符合右手定则。若向量场$\bm{F}$在包含$\Sigma$的某个开区域内连续可微，则
+\begin{align*}
+\int_{\Sigma}(\nabla\times\bm{F})\cdot\bm{n}\,\mathrm{d}S=\oint_{\partial\Sigma}\bm{F}\cdot\mathrm{d}\bm{r}. 
+\end{align*}
+\end{theorem}
+
+\begin{theorem}[Green公式（平面散度定理与旋度定理）]\label{theorem:Green公式平面散度定理与旋度定理}
+设$D\subset\mathbb{R}^2$是有界闭区域，边界$\partial D$是分段光滑的闭曲线，取正向（逆时针）。若$P,Q$在$\overline{D}$上连续，在$D$内连续可微，则
+\begin{align*}
+\iint_{D}\left(\frac{\partial Q}{\partial x}-\frac{\partial P}{\partial y}\right)\mathrm{d}x\mathrm{d}y=\oint_{\partial D}P\,\mathrm{d}x+Q\,\mathrm{d}y, 
+\end{align*}
+\begin{align}
+\iint_{D}\left(\frac{\partial P}{\partial x}+\frac{\partial Q}{\partial y}\right)\mathrm{d}x\mathrm{d}y=\oint_{\partial D}(P\,\mathrm{d}y-Q\,\mathrm{d}x).\label{eq:green_div} 
+\end{align}
+\end{theorem}
+\begin{remark}
+上述定理中的\eqref{eq:green_div}是散度定理在二维的体现.
+\end{remark}
+
+\begin{theorem}[Green恒等式]\label{theorem:Green恒等式}
+设$\Omega\subset\mathbb{R}^n$是有界闭区域，其边界$\partial\Omega$是逐片光滑的定向曲面，$\bm{n}$为$\partial\Omega$的单位外法向量。若$u,v\in C^2(\Omega)\cap C^1(\overline{\Omega})$，则有
+\begin{enumerate}[(1)]
+\item\label{theorem:Green第一恒等式} $\mathbf{Green}$\textbf{第一恒等式:}
+\begin{align*}
+\int_{\Omega}u\Delta v\,\mathrm{d}V=\int_{\partial\Omega}u\frac{\partial v}{\partial\bm{n}}\,\mathrm{d}S-\int_{\Omega}\nabla u\cdot\nabla v\,\mathrm{d}V.
+\end{align*}
+
+\item\label{theorem:Green第二恒等式} $\mathbf{Green}$\textbf{第二恒等式:}
+\begin{align*}
+\int_{\Omega}(u\Delta v-v\Delta u)\,\mathrm{d}V=\int_{\partial\Omega}\left(u\frac{\partial v}{\partial\bm{n}}-v\frac{\partial u}{\partial\bm{n}}\right)\mathrm{d}S. 
+\end{align*}
+\end{enumerate}
+\end{theorem}
+
+\begin{theorem}[多元函数分部积分公式]\label{theorem:多元函数分部积分公式}
+设$\Omega\subset\mathbb{R}^n$是有界闭区域，其边界$\partial\Omega$是逐片光滑的定向曲面，$\bm{n}$为$\partial\Omega$的单位外法向量。若$u\in C^1(\Omega)\cap C(\overline{\Omega})$，$\bm{F}\in C^1(\Omega)\cap C(\overline{\Omega})$为向量场，则
+\begin{align*}
+\int_{\Omega}u(\nabla\cdot\bm{F})\,\mathrm{d}V=\int_{\partial\Omega}u(\bm{F}\cdot\bm{n})\,\mathrm{d}S-\int_{\Omega}\nabla u\cdot\bm{F}\,\mathrm{d}V. 
+\end{align*}
+\end{theorem}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
