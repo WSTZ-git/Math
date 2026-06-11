@@ -6,11 +6,11 @@
 
 ## 介绍
 
-1.VScode Configuration Files中的.json文件是我的VScode中的LaTex配置文件，配置了latexmk配方，调用是Xelatex和Biber，编译更便捷。
+1.VScode Configuration Files中的`.json`文件是我的VScode中的LaTex配置文件，配置了`latexmk`配方，调用是`Xelatex`和`Biber`，编译更便捷。
 
 2.笔记模板使用的是ElegantBook，详见https://github.com/ElegantLaTeX/ElegantBook
 
-3.由于页数太多，且LaTex编译效率低下，故我用\subfiles宏包对文档进行了拆分（具体可见我已经拆分好的文件Sample Files）。
+3.由于页数太多，且LaTex编译效率低下，故我用`subfiles`宏包对文档进行了拆分（具体可见我已经拆分好的文件Sample Files）。
 
 4.笔记内容来源包括但不限于书本内容、各类数学网站、个人理解等。
 
@@ -54,6 +54,6 @@ MarkDown写起来很方便，但是对于公式的支持到今天仍然没有非
 
 + 对于交换图的支持不够好，画箭头会非常复杂。
 
-+ 无法引用公式(latex的`ref`)。
++ 无法引用公式(LaTex的`ref`)。
 
 第二个问题可能更为致命，因为无法引用意味着我实际上没有办法有效地进行公式的，笔记中将充斥着大量"上式"以及"参考某一小节的某个公式"这样的模糊的论述，查找起来会非常麻烦。
