@@ -1,0 +1,355 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[scale=0.3]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{卷积}
+
+\begin{theorem}[Young不等式]\label{theorem:实变函数--Young不等式}
+设 $f\in L^1(\mathbb{R}^n)$, $g\in L^p(\mathbb{R}^n)(1<p<+\infty)$, 则
+\begin{align}
+\|f*g\|_p \leqslant \|f\|_1 \cdot \|g\|_p.
+\label{eq:young}
+\end{align}
+\end{theorem}
+\begin{proof}
+
+令 $p'$ 为 $p$ 的共轭指标, 注意到
+\begin{align*}
+|(f*g)(x)| \leqslant \int_{\mathbb{R}^n} |f(x-y)| \cdot |g(y)| \mathrm{d}y 
+= \int_{\mathbb{R}^n} |f(x-y)|^{\frac{1}{p}} \cdot |g(y)| \cdot |f(x-y)|^{\frac{1}{p}'} \mathrm{d}y,
+\end{align*}
+对右端应用\hyperref[theorem:实变函数--Hölder不等式]{Hölder不等式}, 可得
+\begin{align*}
+|(f*g)(x)| \leqslant \left( \int_{\mathbb{R}^n} |f(x-y)| \cdot |g(y)|^p \mathrm{d}y \right)^{\frac{1}{p}} \left( \int_{\mathbb{R}^n} |f(x-y)| \mathrm{d}y \right)^{\frac{1}{p}'}.
+\end{align*}
+对上式两端 $p$ 乘方后再对 $x$ 作积分, 可知
+\begin{align*}
+\int_{\mathbb{R}^n} |(f*g)(x)|^p \mathrm{d}x
+&\leqslant \|f\|_1^{p/p'} \int_{\mathbb{R}^n} \left( \int_{\mathbb{R}^n} |f(x-y)| \cdot |g(y)|^p \mathrm{d}y \right) \mathrm{d}x \\
+&= \|f\|_1^{p/p'} \int_{\mathbb{R}^n} |g(y)|^p \left( \int_{\mathbb{R}^n} |f(x-y)| \mathrm{d}x \right) \mathrm{d}y \\
+&= \|f\|_1^{(p/p')+1} \cdot \|g\|_p^p = \|f\|_1^p \cdot \|g\|_p^p,
+\end{align*}
+从而\eqref{eq:young}式成立.
+
+\end{proof}
+
+\begin{definition}[展缩函数]\label{definition:展缩函数}
+设 \( K(x) \) 是定义在 \( \mathbb{R}^n \) 上的函数，\( \varepsilon > 0 \)，令
+\[
+K_{\varepsilon}(x) = \varepsilon^{-n} K\left( \frac{x}{\varepsilon} \right) = \varepsilon^{-n} K\left( \frac{x_1}{\varepsilon}, \frac{x_2}{\varepsilon}, \cdots, \frac{x_n}{\varepsilon} \right),
+\]
+称 \( K_{\varepsilon}(x) \) 为 \( K(x) \) 的\textbf{展缩函数}.
+\end{definition}
+
+\begin{proposition}
+设 $K(x)=\chi_{B(0,1)}(x)$, 则有
+\begin{align*}
+K_\varepsilon(x) = 
+\begin{cases}
+\varepsilon^{-n}, & |x|<\varepsilon, \\
+0, & |x| \geqslant \varepsilon.
+\end{cases}
+\end{align*}
+设 $K\in L^1(\mathbb{R}^n)$, 则
+\begin{enumerate}[(i)]
+\item $\displaystyle \int_{\mathbb{R}^n} K_\varepsilon(x) \mathrm{d}x = \int_{\mathbb{R}^n} K(x) \mathrm{d}x$;
+\item 对于固定的 $\delta>0$, 有
+\begin{align*}
+\lim\limits_{\varepsilon\to 0} \int_{|x|>\delta} |K_\varepsilon(x)| \mathrm{d}x = 0.
+\end{align*}
+\end{enumerate}
+\end{proposition}
+
+\begin{theorem}\label{theorem:实变函数--定理6.22}
+设 $K\in L^1(\mathbb{R}^n)$, 且 $\|K\|_1=1$. 若 $f\in L^p(\mathbb{R}^n)(1\leqslant p<+\infty)$, 则有
+\begin{align}
+\lim\limits_{\varepsilon\to 0} \|K_\varepsilon * f - f\|_p = 0.
+\label{eq:approx_id}
+\end{align}
+\end{theorem}
+\begin{proof}
+
+由于
+\begin{align*}
+(K_\varepsilon * f)(x) - f(x) = \int_{\mathbb{R}^n} (f(x-y)-f(x)) K_\varepsilon(y) \mathrm{d}y 
+= \int_{\mathbb{R}^n} (f(x-\varepsilon y)-f(x)) K(y) \mathrm{d}y,
+\end{align*}
+根据\hyperref[theorem:广义Minkowski不等式]{广义Minkowski不等式}可得
+\begin{align*}
+\left( \int_{\mathbb{R}^n} |(K_\varepsilon * f)(x) - f(x)|^p \mathrm{d}x \right)^{\frac{1}{p}}
+&= \left[ \int_{\mathbb{R}^n} \left| \int_{\mathbb{R}^n} (f(x-\varepsilon y)-f(x)) K(y) \mathrm{d}y \right|^p \mathrm{d}x \right]^{\frac{1}{p}} \\
+&\leqslant \int_{\mathbb{R}^n} \left( \int_{\mathbb{R}^n} |f(x-\varepsilon y)-f(x)|^p \mathrm{d}x \right)^{\frac{1}{p}} |K(y)| \mathrm{d}y.
+\end{align*}
+令
+\begin{align*}
+F_\varepsilon(y) = \left( \int_{\mathbb{R}^n} |f(x-\varepsilon y)-f(x)|^p \mathrm{d}x \right)^{\frac{1}{p}},
+\end{align*}
+显然, $0\leqslant F_\varepsilon(y)|K(y)| \leqslant 2\|f\|_p \cdot |K(y)|$, 且当 $\varepsilon\to 0$ 时, 有 $F_\varepsilon(y)\to 0$. 从而根据\hyperref[theorem:控制收敛定理]{Lebesgue控制收敛定理}, 我们有
+\begin{align*}
+\lim\limits_{\varepsilon\to 0} \|K_\varepsilon * f - f\|_p = 0.
+\end{align*}
+也称这样的展缩族 $\{K_\varepsilon\}$ 为逼近恒等族.
+
+\end{proof}
+
+\begin{proposition}
+令 $K(x)=\rho(x)$:
+\begin{align*}
+\rho(x) = 
+\begin{cases}
+c\exp\left( -\frac{1}{1-|x|^2} \right), & |x|\leqslant 1, \\
+0, & |x|>1,
+\end{cases}
+\end{align*}
+其中 $c$ 是使 $\|\rho\|_1=1$ 的常数. 则当函数 $f(x)$ 是具有紧支集 $F$ 且属于 $L^p(\mathbb{R}^n)$ 的函数时, $(\rho_\varepsilon * f)(x)$ 也具有紧支集.
+\end{proposition}
+\begin{proof}
+
+事实上, 在等式
+\begin{align*}
+(\rho_\varepsilon * f)(x) = \int_{\mathbb{R}^n} f(x-\varepsilon t) \rho(t) \mathrm{d}t = \int_{|t|\leqslant 1} f(x-\varepsilon t) \rho(t) \mathrm{d}t
+\end{align*}
+之中, 当 $f(x)$ 的紧支集 $F$ 与闭球 $\overline{B}(x;\varepsilon)$ 不相交时, 由于 $|t|<1$, 故 $f(x-\varepsilon t)\rho(t)=0$, 即 $(\rho_\varepsilon * f)(x)=0$. 所以, $(\rho_\varepsilon * f)(x)$ 的支集是 $F$ 的 $\varepsilon$-邻域(指 $\{x: d(x,F)<\varepsilon\}$). 这就是说它具有紧支集.
+\end{proof}
+
+\begin{theorem}
+具有紧支集且无限次可微的函数类 $C_c^{(\infty)}(\mathbb{R}^n)$ 在 $L^p(\mathbb{R}^n)$ 中稠密.
+\end{theorem}
+\begin{proof}
+
+设 $f(x)\in L^p(\mathbb{R}^n)$, 令
+\begin{align*}
+f_N(x) = 
+\begin{cases}
+f(x), & |x|\leqslant N, \\
+0, & |x|>N.
+\end{cases}
+\end{align*}
+显然, 对于任意的 $\eta>0$, 必存在 $N$, 使得 $\|f-f_N\|_p<\eta$. 由于 $f_N(x)$ 具有紧支集, 故 $\rho_\varepsilon * f_N(x)\in C_c^{(\infty)}(\mathbb{R}^n)$. 从而根据\refthe{theorem:实变函数--定理6.22}, 存在 $\varepsilon>0$, 使得 $\|\rho_\varepsilon * f_N - f_N\|_p < \eta$. 最后, 由不等式
+\begin{align*}
+\|\rho_\varepsilon * f_N - f\|_p \leqslant \|\rho_\varepsilon * f_N - f_N\|_p + \|f_N - f\|_p < 2\eta
+\end{align*}
+可知结论是成立的.
+
+\end{proof}
+
+\begin{theorem}\label{theorem:实变函数--定理2882io}
+设 $F\subseteq \mathbb{R}^n$ 是紧集, $G$ 是开集且包含 $F$, 则存在 $f\in C_c^{(\infty)}(\mathbb{R}^n)$, 满足
+\begin{align*}
+f(x)=1, \ x\in F; \quad \mathrm{supp}(f)\subseteq G; \quad 0\leqslant f(x)\leqslant 1, \ x\in \mathbb{R}^n.
+\end{align*}
+\end{theorem}
+
+\begin{proof}
+
+令 $\delta=d(F,G^c)$, $U=\{x: d(x,F)<\delta/3\}$. 选非负函数 $\varphi\in C_c^{(\infty)}(\mathbb{R}^n)$: $\int_{\mathbb{R}^n} \varphi(x) \mathrm{d}x=1$, 且 $\varphi(x)=0(|x|\geqslant \delta/3)$. 作函数
+\begin{align*}
+f(x) = (\chi_U * \varphi)(x), \quad x\in \mathbb{R}^n,
+\end{align*}
+易知 $f\in C_c^{(\infty)}(\mathbb{R}^n)$.
+
+\end{proof}
+
+\begin{corollary}
+设 $p>1$, $\varepsilon>0$, $M>0$, $k_0\in \mathbb{N}$, 则存在函数 $\varphi\in C_c^{(\infty)}(\mathbb{R}^n)$, 满足 $\mathrm{supp}\varphi\subseteq \mathbb{R}^n\setminus B(0,k_0)$, 且有
+\begin{align*}
+\int_{\mathbb{R}^n} \varphi(x) \mathrm{d}x=1, \quad \|\varphi\|_p < \varepsilon, \quad 0\leqslant \varphi(x)\leqslant M, \ x\in \mathbb{R}^n.
+\end{align*}
+\end{corollary}
+\begin{proof}
+
+以 $n=1$ 为例. 由\refthe{theorem:实变函数--定理2882io}可知, 存在 $f\in C_c^{(\infty)}(\mathbb{R})$, 满足 $\mathrm{supp}f\subseteq [k_0,k_0+k+2](k>0)$, 且有
+\begin{align*}
+0\leqslant f(x)\leqslant 1(x\in \mathbb{R}), \quad f(x)=1(x\in [k_0+1,k_0+k+1]).
+\end{align*}
+假定 $\int_{\mathbb{R}} f(x) \mathrm{d}x=A$, 令 $\varphi(x)=f(x)/A$, 则
+\begin{align*}
+A = \int_{\mathbb{R}} f(x) \mathrm{d}x \geqslant \int_{k_0+1}^{k_0+k+1} 1 \mathrm{d}x = k.
+\end{align*}
+由此知 $0\leqslant \varphi(x)\leqslant \frac{1}{k}$. 我们有
+\begin{align*}
+\|\varphi\|_p \leqslant \left( \int_{k_0}^{k_0+k+2} \left( \frac{1}{k} \right)^p \mathrm{d}x \right)^{\frac{1}{p}} = \left( \frac{k+2}{k} \right)^{\frac{1}{p}} k^{\frac{1}{p}-1},
+\end{align*}
+从而只需取 $k$ 充分大, 可使 $\|\varphi\|_p<\varepsilon$.
+\end{proof}
+
+\begin{example}
+设 $1<p<+\infty$, 则
+\begin{align*}
+E = \left\{ f\in C_c^{(\infty)}(\mathbb{R}^n): \int_{\mathbb{R}^n} f(x) \mathrm{d}x=0 \right\}
+\end{align*}
+在 $L^p(\mathbb{R}^n)$ 中稠密.
+\end{example}
+\begin{proof}
+
+以 $n=1$ 为例. 对任给 $\varepsilon>0$, 已知存在 $g\in C_c^{(\infty)}(\mathbb{R})$, 使得
+\begin{align*}
+\|f-g\|_p <\frac{ \varepsilon}{2}.
+\end{align*}
+若 $\int_{\mathbb{R}} g(x) \mathrm{d}x=0$, 则结论成立. 若 $\int_{\mathbb{R}} g(x) \mathrm{d}x=A\neq 0$, 则取 $k_0$, 使得 $\mathrm{supp}g\cap [k_0,+\infty)=\varnothing$. 从而取 $\varphi\in C_c^{(\infty)}(\mathbb{R})$, 满足 $\mathrm{supp}\varphi\subseteq [k_0,+\infty)$, $\varphi(x)\geqslant 0(x\in \mathbb{R})$, 且有
+\begin{align*}
+\int_{\mathbb{R}} \varphi(x) \mathrm{d}x=1, \quad \|\varphi\|_p < \frac{\varepsilon}{2|A|}.
+\end{align*}
+考查 $\psi(x)=g(x)-A\varphi(x)$. 易知 $\psi\in L^p(\mathbb{R}^n)$, 且有
+\begin{align*}
+\|f-\psi\|_p &= \|f-g+A\varphi\|_p \\
+&\leqslant \|f-g\|_p + |A|\cdot \|\varphi\|_p < \varepsilon,
+\end{align*}
+即得所证.
+\end{proof}
+
+\begin{example}
+设 $f\in L^\infty(\mathbb{R})$, 记 $f_t(x)=f(x-t)$. 若
+\begin{align*}
+\lim\limits_{t\to 0} \|f_t - f\|_\infty = 0,
+\end{align*}
+则存在 $\mathbb{R}$ 上的一致连续函数 $g(x)$, 使得
+\begin{align*}
+f(x)=g(x), \quad \text{a.e. } x\in \mathbb{R}.
+\end{align*}
+\end{example}
+\begin{proof}
+
+取 $\varphi_n(x) \stackrel{\text{def}}{=} \varphi_{\varepsilon_n}(x)(n=1,2,\cdots)$ 为非负逼近恒等族.
+\begin{enumerate}[(i)]
+\item $\|\varphi_n * f - f\|_\infty \leqslant \sup\limits_{|t|\leqslant \varepsilon_n} \|f_t - f\|_\infty$.
+
+实际上, 对 $\|\psi\|_1=1$, 我们有
+\begin{align*}
+\left| \int_{\mathbb{R}} (f*\varphi_n(x)-f(x))\psi(x) \mathrm{d}x \right|
+&\leqslant \iint_{\mathbb{R}\times\mathbb{R}} |f(x-t)-f(x)| \cdot |\varphi_n(t)| \cdot |\psi(x)| \mathrm{d}x\mathrm{d}t \\
+&= \int_{|t|\leqslant \varepsilon_n} \varphi_n(t) \left( \int_{\mathbb{R}} |f_t(x)-f(x)| \cdot |\psi(x)| \mathrm{d}x \right) \mathrm{d}t \\
+&\leqslant \sup\limits_{|t|\leqslant \varepsilon_n} \|f_t - f\|_\infty \int_{\mathbb{R}} \varphi_n(t) \left( \int_{\mathbb{R}} |\psi(x)| \mathrm{d}x \right) \mathrm{d}t \\
+&= \sup\limits_{|t|\leqslant \varepsilon_n} \|f_t - f\|_\infty.
+\end{align*}
+
+\item 由(i)以及题设可知
+\begin{align*}
+\lim\limits_{n\to\infty} \|\varphi_n * f - f\|_\infty = 0.
+\end{align*}
+注意到 $\varphi_n * f(x)$ 是 $\mathbb{R}$ 上的一致连续函数, 以及 $\{(\varphi_n * f)(x)\}$ 是(对 $x$ 一致)Cauchy列, 因此存在一致连续函数 $g(x)$, 使得
+\begin{align*}
+\lim\limits_{n\to\infty} \varphi_n * f(x) = g(x).
+\end{align*}
+由此即得 $f(x)=g(x)$, a.e. $x\in \mathbb{R}$.
+\end{enumerate}
+
+\end{proof}
+
+\begin{example}
+设 $E\subseteq \mathbb{R}$ 是正测集, 则存在 $\delta>0$, 使得向量差集 $E-E\supseteq (-\delta,\delta)$.
+\end{example}
+\begin{proof}
+
+不妨假定 $E$ 是有界的, 令 $g(x)=\chi_E(x)$, $g\in L^1\cap L^\infty(E)$. 作 $g(x)$ 与 $g(-x)$ 的卷积:
+\begin{align*}
+f(x) = \int_{\mathbb{R}} g(y) g(y-x) \mathrm{d}y, \quad x\in \mathbb{R},
+\end{align*}
+则 $f(x)$ 是 $\mathbb{R}$ 上的连续函数, 且
+\begin{align*}
+f(0) = \int_{\mathbb{R}} g^2(y) \mathrm{d}y = \int_{\mathbb{R}} \chi_E(y) \mathrm{d}y = m(E) > 0.
+\end{align*}
+从而存在 $\delta>0$, 在 $(-\delta,\delta)$ 上 $f(x)>0$. 又因我们有
+\begin{align*}
+f(x) &= \int_{\mathbb{R}} \chi_E(y) \chi_E(y-x) \mathrm{d}x \\
+&= \int_{\mathbb{R}} \chi_{E\cap (E-\{x\})}(y) \mathrm{d}y > 0, \quad x\in (-\delta,\delta),
+\end{align*}
+所以存在 $t\in E$, $s\in E$, 使得 $t-s=x\in (-\delta,\delta)$.
+
+\end{proof}
+
+\begin{example}
+设 $\{\varphi_i\}$ 是 $L^2(\mathbb{T})$ 中的完全正交系, 则
+\begin{align}
+\sum\limits_{i=1}^\infty \|\varphi_i\|_1 = \sum\limits_{i=1}^\infty \int_{\mathbb{T}} |\varphi_i(x)| \mathrm{d}x = +\infty.
+\label{eq:ortho_series}
+\end{align}
+\end{example}
+\begin{proof}
+\begin{enumerate}[(i)]
+\item 若 $f\in L^2(\mathbb{T})$, 则 $\|f\|_2^2 = \sum\limits_{i=1}^\infty |\langle f,\varphi_i\rangle|^2$. 特别对于 $f(x)=e^{inx}$, 有
+\begin{align*}
+\sum\limits_{i=1}^\infty |\hat{\varphi}_i(n)|^2 = 1.
+\end{align*}
+现在, 对满足 $\sum\limits_{n=1}^\infty c_n=+\infty$, $\sum\limits_{n=1}^\infty c_n^2<+\infty$ 的正数列 $\{c_n\}$, 作 $g\in L^2(\mathbb{T})$, 使得 $\hat{g}(n)=c_n(n\in \mathbb{N})$.
+
+\item 反证法. 假定\eqref{eq:ortho_series}式不真, 我们有
+\begin{align*}
++\infty = \sum\limits_{n=1}^\infty c_n &= \sum\limits_{n=1}^\infty \sum\limits_{i=1}^\infty c_n |\hat{\varphi}_i(n)|^2 = \sum\limits_{i=1}^\infty \sum\limits_{n=1}^\infty c_n \hat{\varphi}_i(n) \overline{\hat{\varphi}_i(n)} \\
+&= \sum\limits_{i=1}^\infty \langle g*\varphi_i,\varphi_i\rangle = \sum\limits_{i=1}^\infty \langle g,\varphi_i * \overline{\varphi_i}\rangle \\
+&\leqslant \|g\|_2 \sum\limits_{i=1}^\infty \|\varphi_i\|_1,
+\end{align*}
+矛盾!
+\end{enumerate}
+\end{proof}
+
+\begin{example}
+设$f \in L^1(\mathbb{R})$，$g$是$\mathbb{R}$上有界可测函数，定义卷积
+\begin{align*}
+(f * g)(x) = \int_{\mathbb{R}} f(x - y)g(y)\mathrm{d}y,
+\end{align*}
+求证：$f * g$有界且一致连续。
+\end{example}
+
+\begin{proof}
+
+设$M > 0$，$|g(x)| \leqslant M$，$\forall x \in \mathbb{R}$。从而对$\forall x,y \in \mathbb{R}$，有
+\begin{align*}
+|f(x - y)g(y)| \leqslant M|f(x - y)|, \quad \int_{\mathbb{R}} |f(x - y)|\mathrm{d}y = \int_{\mathbb{R}} |f(t)|\mathrm{d}t < \infty.
+\end{align*}
+于是对$\forall x \in \mathbb{R}$，有
+\begin{align*}
+|f*g(x)| = \left| \int_{\mathbb{R}} f(x - y)g(y)\mathrm{d}y \right|
+\leqslant \int_{\mathbb{R}} |f(x - y)||g(y)|\mathrm{d}y
+\leqslant M \int_{\mathbb{R}} |f(x - y)|\mathrm{d}y
+= M \int_{\mathbb{R}} |f(t)|\mathrm{d}t.
+\end{align*}
+故$f*g(x)$在$\mathbb{R}$上有界，且$f(x - y)g(y) \in L^1(\mathbb{R})$，$\forall x \in \mathbb{R}$。
+
+由\refthe{theorem:可积函数可被有紧支集的函数逼近}知对$\forall \varepsilon > 0$，存在函数$f_1,f_2$，使得
+\begin{align*}
+f(x) = f_1(x) + f_2(x), \quad \forall x \in \mathbb{R}.
+\end{align*}
+其中$f_1$是$\mathbb{R}$上具有紧支集的连续函数，$f_2$满足$\int_{\mathbb{R}} |f_2(x)|\mathrm{d}x < \varepsilon$。
+由$\mathrm{supp}f_1$是紧集知，存在$n \in \mathbb{N}$，使得$\mathrm{supp}f_1 \subseteq [-n,n]$。又因为$f_1 \in C[-n,n]$，所以由\hyperref[theroem:Heine-Cantor定理]{Heine-Cantor定理}知$f_1$在$[-n,n]$上一致连续。从而存在$\delta > 0$，当$|x_1 - x_2| < \delta$，$y \in \mathbb{R}$且$x_1 - y, x_2 - y \in [-n,n]$时，有
+\begin{align*}
+|f_1(x_1 - y) - f_1(x_2 - y)| < \varepsilon.
+\end{align*}
+因此对$\forall x_1,x_2 \in \mathbb{R}$且$|x_1 - x_2| < \delta$，有
+\begin{align*}
+|f*g(x_1) - f*g(x_2)|
+&\leqslant \left| \int_{\mathbb{R}} [f(x_1 - y) - f(x_2 - y)]g(y)\mathrm{d}y \right| \\
+&\leqslant \left| \int_{\mathbb{R}} [f_1(x_1 - y) - f_1(x_2 - y)]g(y)\mathrm{d}y \right| + \left| \int_{\mathbb{R}} [f_2(x_1 - y) - f_2(x_2 - y)]g(y)\mathrm{d}y \right| \\
+&\leqslant M \int_{\mathbb{R}} |f_1(x_1 - y) - f_1(x_2 - y)|\mathrm{d}y + M \int_{\mathbb{R}} |f_2(x_1 - y) - f_2(x_2 - y)|\mathrm{d}y \\
+&\leqslant M \int_{\substack{x_1 - y, x_2 - y \in \mathrm{supp}f_1}} |f_1(x_1 - y) - f_1(x_2 - y)|\mathrm{d}y + 2M\varepsilon \\
+&\leqslant M \int_{\substack{x_1 - y, x_2 - y \in [-n,n]}} |f_1(x_1 - y) - f_1(x_2 - y)|\mathrm{d}y + 2M\varepsilon \\
+&\leqslant M \int_{\max\limits_{i=1,2} \{x_i - n\}}^{\max\limits_{i=1,2} \{x_i + n\}} |f_1(x_1 - y) - f_1(x_2 - y)|\mathrm{d}y + 2M\varepsilon \\
+&\leqslant M(2n + |x_1 - x_2|)\varepsilon + 2M\varepsilon \\
+&\leqslant M(2n + \delta)\varepsilon + 2M\varepsilon = (2n + \delta + 2)M\varepsilon.
+\end{align*}
+故$f*g$在$\mathbb{R}$上一致连续。
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}

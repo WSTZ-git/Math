@@ -1,0 +1,492 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[scale=0.3]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{Sylow子群}
+
+\begin{definition}[$p$群]
+设$p$是素数. 若群$G$的阶是$p$的方幂, 即$|G|=[G:e]=p^k(k\in\mathbb{N})$, $e$为$G$的幺元, 则称$G$是一个$\boldsymbol{p}$\textbf{群}.
+\end{definition}
+
+\begin{theorem}\label{theorem:抽象代数--定理4.3.1}
+设$p$群$G$作用在集合$X$上, $|X|=n$, $t=|\{x\in X\mid g(x)=x, \forall g\in G\}|$,则有下列结论：
+\begin{enumerate}[(1)]
+\item\label{theorem:抽象代数--定理4.3.1-1} $t\equiv n\pmod{p}$.也即$n\equiv t\pmod{p}$. \label{eq:::09jf0r2g4h4hj4.3.1}
+
+\item\label{theorem:抽象代数--定理4.3.1-2} 当$(n,p)=1$时, $t\geqslant 1$. 即$\exists x\in X$, 使$g(x)=x(\forall g\in G)$.也即$\exists x\in X$,使$O_x=\{x\}$.亦即$X$中必有不动元素.
+
+\item\label{theorem:抽象代数--定理4.3.1-3} $G$的中心$C(G)\neq \{e\}$.
+\end{enumerate}
+\end{theorem}
+\begin{remark}
+由\eqref{eq::98h20jf30tuj3pg34}式知$\{x\in X\mid g(x)=x, \forall g\in G\}$中的元素$x$的轨道都只包含其自身一个元素即$O_x=\{x\},|O_x|=1.$故$t$就是只包含一个元素的$X$的轨道的个数.
+\end{remark}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 由\rrefthe{theorem:抽象代数--定理4.2.2}{theorem:抽象代数--定理4.2.2-1}及$|X|=n$,可设$X$的轨道分解为
+\begin{align*}
+X=O_{x_1}\bigsqcup O_{x_2}\bigsqcup\cdots\bigsqcup O_{x_m},
+\end{align*}
+其中$O_{x_1},O_{x_2},\cdots,O_{x_m}(m\leqslant n)$为$X$中所有不同的轨道.
+注意到
+\begin{align*}
+&x\in \{x\in X\mid g(x)=x,\forall g\in G\}\Longleftrightarrow g(x)=x(\forall g\in G)
+\\
+&\Longleftrightarrow O_x=\left\{ g\left( x \right) \in X\mid g\in G \right\} =\left\{ x \right\} \Longleftrightarrow |O_x|=1,
+\end{align*}
+故
+\begin{align}\label{eq::98h20jf30tuj3pg34}
+\{x\in X\mid g(x)=x,\forall g\in G\}=\left\{ x\in X\mid O_x=\left\{ x \right\} \right\} =\left\{ x\in X\mid |O_x|=1 \right\}.
+\end{align}
+从而对$\forall x,y\in \{x\in X\mid g(x)=x,\forall g\in G\}$且$x\ne y$,有$O_x=\{x\}\ne \{y\}=O_y$.因此$x,y\in \{x_1,x_2,\cdots ,x_m\}$.故$\{x\in X\mid g(x)=x,\forall g\in G\}\subseteq \{x_1,x_2,\cdots ,x_m\}$.
+于是
+\begin{align*}
+n&=\left| O_{x_1} \right|+\cdots +\left| O_{x_m} \right|=\sum_{\substack{|O_{x_i}|= 1}} |O_{x_i}|+\sum_{\substack{|O_{x_i}|\neq 1}} |O_{x_i}|
+\\
+&=\sum_{\substack{x_i\in \{x\in X\mid g(x)=x,\forall g\in G\}}} 1+\sum_{\substack{|O_{x_i}|\neq 1}} |O_{x_i}|=t+\sum_{\substack{|O_{x_i}|\neq 1}} |O_{x_i}|.
+\end{align*}
+由\refcor{corollary:有限群轨道的阶与其商掉迷向子群的阶相同}知$|O_{x_i}|\mid |G|$. 由$G$为$p$群, $|O_{x_i}|>1$, 故$p\mid |O_{x_i}|$, 因而结论(1)成立.
+\item $(n,p)=1$, 由结论(1)知$t\neq 0$, 故结论(2)成立.
+\item 考虑$G$在$G$上的伴随作用. 由\rrefthe{theorem:共轭类,中心化子,中心的集合形式}{theorem:共轭类,中心化子,中心的集合形式-4}知
+$$
+C(G)=\{x\in G\mid \mathrm{ad}x\left( g \right) =\mathrm{id}_G\left( g \right)=g ,\forall g\in G\}.
+$$
+自然$e\in C(G)$, 故$|C(G)|\geqslant 1$. 又$p\mid |G|$, 由结论(1)(取$X=C(G)$)知$|G|\equiv |C(G)|\pmod{p}$, 故$|C(G)|>1$, 即$C(G)\neq \{e\}$.
+\end{enumerate}
+
+\end{proof}
+
+\begin{lemma}\label{lemma:Sylow定理证明引理1}
+设$p$是素数, $n=p^lm$, $(m,p)=1$. 若$k\in\mathbb{N}, k\leqslant l$, 则
+\begin{align*}
+p^{l-k}||\mathrm{C}_n^{p^k}, 
+\end{align*}
+其中 $||$表示恰能整除,即$p^{l-k}\mid \mathrm{C}_n^{p^k}$但$p^{l-k+1}\nmid \mathrm{C}_n^{p^k}$, $\mathrm{C}_n^{p^k}$是组合数.
+\end{lemma}
+\begin{proof}
+
+当$1\leqslant i\leqslant p^k-1$时,$i$都有分解$i=j_ip^t$, 其中, $(j_i,p)=1$, 于是有$t<k\leqslant l$, 而此时
+\begin{align*}
+n-i&=p^lm-p^tj=p^t(p^{l-t}m-j_i), \\
+p^k-i&=p^t(p^{k-t}-j_i),
+\end{align*}
+因而$p^t||(n-i)$, $p^t||(p^k-i)$. 又
+\begin{align*}
+\mathrm{C}_{n}^{p^k}&=\frac{n}{p^k}\frac{n-1}{p^k-1}\cdots \frac{n-(p^k-1)}{p^k-(p^k-1)}=\frac{n}{p^k}\cdot \prod_{i=1}^{p^k-1}{\frac{n-i}{p^k-i}}
+\\
+&=\frac{p^lm}{p^k}\cdot \prod_{i=1}^{p^k-1}{\frac{p^t\left( p^{l-t}m-j_i \right)}{p^t\left( p^{k-t}-j_i \right)}}=p^{l-k}\cdot m\prod_{i=1}^{p^k-1}{\frac{p^{l-t}m-j_i}{p^{k-t}-j_i}}.
+\end{align*}
+注意到$(m\prod_{i=1}^{p^k-1}{\frac{p^{l-t}m-j_i}{p^{k-t}-j_i}},p)=1$,故由此知$p^{l-k}||\mathrm{C}_n^{p^k}$.
+
+\end{proof}
+
+\begin{theorem}[Sylow 第一定理]\label{theorem:Sylow 第一定理}
+设$G$是一个阶为$p^lm$的群, 其中, $p$为素数, $l\geqslant 1$, $(p,m)=1$, 则对任何$1\leqslant k\leqslant l$, $G$中一定有$p^k$阶子群.
+
+特别地,一定存在$a\in G$,使得$\mathrm{ord}\,a = p$.
+\end{theorem}
+\begin{remark}
+对一般的有限群$G$,由因式分解定理知$|G|$可分解成有限个素数幂$p^{k_i}$的乘积,故\hyperref[theorem:Sylow 第一定理]{Sylow 第一定理}对有限群$G$的阶的因子$p^{k_i}$都成立.
+\end{remark}
+\begin{proof}
+
+令$X$是$G$中所有含$p^k$个元素的子集的集合, 即
+\begin{align*}
+X=\{A\subseteq G\mid |A|=p^k\}.
+\end{align*}
+显然$|X|=\mathrm{C}_n^{p^k}$, 其中$n=p^lm$.
+
+$G\times X$到$X$上的映射
+\begin{align*}
+f(g,A)=gA=\{ga|a\in A\}
+\end{align*}
+定义了$G$在$X$上的作用. 于是由\rrefthe{theorem:抽象代数--定理4.2.2}{theorem:抽象代数--定理4.2.2-1}知$X$有轨道分解
+\begin{align*}
+X=\bigsqcup O_A, \quad |X|=\sum |O_A|.
+\end{align*}
+由\reflem{lemma:Sylow定理证明引理1}知$p^{l-k}||\mathrm{C}_n^{p^k}$,即$p^{l-k}|||X|$ .因而$\exists A\in X$, 使$p^{l-k}\mid |O_A|,p^{l-k+1}\nmid |O_A|$. 从而存在$t$,使$(p,t)=1$且$|O_A|=p^{l-k}t$.
+设$F_A$是$A$的迷向子群, 于是由\refcor{corollary:有限群轨道的阶与其商掉迷向子群的阶相同}及\hyperref[theorem:抽象代数--Lagrange定理]{Lagrange定理}可得
+\begin{align*}
+|O_A|&=[G:F_A]=\frac{p^lm}{[F_A:e]}=\frac{p^lm}{|F_A|}\Longrightarrow |O_A|\cdot |F_A|=p^lm
+\\
+&\Longrightarrow p^{l-k}t\cdot |F_A|=p^lm\Longrightarrow |F_A|t=p^k.
+\end{align*}
+又$(p,t)=1$，故$p^k\mid |F_A|$。若$p^{k+1}\mid |F_A|$，则存在$c$，使$|F_A|=p^{k+1}c$，从而由上式知
+\begin{align*}
+p^lm=|O_A|\cdot |F_A|=p^{l-k}t\cdot p^{k+1}c=p^{l+1}tc\implies m=ptc,
+\end{align*}
+这与$(p,m)=1$矛盾！故$p^{k+1}\nmid |F_A|$，因此$p^k\parallel |F_A|$。
+
+另一方面, 对$g\in F_A$有$gA=A$,即$g(a)=ga\in A(\forall a\in A)$. 于是$F_A\cdot a\subseteq A$, 故再由\refpro{proposition:有限群乘积的阶}知
+$$
+|F_A\cdot a|=|F_A|\leqslant |A|=p^k.
+$$
+由此知$|F_A|=p^k$, 即$F_A$是一个$p^k$阶子群.
+
+特别地,$G$中一定存在$p$阶子群$P$.由\refpro{proposition:素数阶群必为循环群}知$P$为循环群,故任取$a\in P\setminus\{e\}$,都有$P = \langle a \rangle$,因此由\refthe{theorem:抽象代数-推论 1.3.4}知$\mathrm{ord}\,a = p$.
+
+\end{proof}
+
+\begin{definition}[Sylow $p$子群]
+设群$G$的阶为$p^lm$, $p$为素数且$(p,m)=1$, 则$G$的$p^l$阶子群称为$G$的\textbf{Sylow $\boldsymbol{p}$子群}.
+\end{definition}
+\begin{remark}
+\hyperref[theorem:Sylow 第一定理]{Sylow 第一定理}肯定了 Sylow $p$ 子群的存在性,故上述定义是良定义的.
+\end{remark}
+
+\begin{proposition}\label{theorem:Sylow p群中元素的阶}
+设$P$为群$G$的一个Sylow $p$子群,则对$\forall a\in P$,都存在$k\in \mathbb{N}$,使得$\mathrm{ord}\,a = p^k.$
+\end{proposition}
+\begin{remark}
+这个命题表明:Sylow $p$子群的元素的阶都是$p$的方幂.
+\end{remark}
+\begin{proof}
+
+设$|P|=p^l$,则由\refthe{theorem:抽象代数-推论 1.3.4}知$\mathrm{ord}\,a \mid |P|$,故存在$k\in \mathbb{N}$,使得$\mathrm{ord}\,a = p^k.$
+
+\end{proof}
+
+\begin{theorem}[Sylow 第二定理]\label{theorem:Sylow 第二定理}
+设群$G$的阶为$p^lm$, $p$为素数, $(p,m)=1$. 又$P$是$G$的一个Sylow $p$子群, $H$是$G$的一个$p$群,即$H$是$G$的一个$p^k(k\leqslant l)$阶子群, 则$\exists g\in G$, 使$H\subseteq gPg^{-1}$.即$H$含于$G$的某个Sylow $p$子群中.
+
+特别地, $G$的Sylow $p$子群是在$G$中相互共轭的.
+\end{theorem}
+\begin{proof}
+
+将$G$在$G/P$上的左平移作用限制在$H$上, 于是得到$H$在$G/P$上的左平移作用
+\begin{align*}
+h(gP)=hgP, \quad \forall h\in H, g\in G.
+\end{align*}
+由\hyperref[theorem:抽象代数--Lagrange定理]{Lagrange定理}知
+\begin{align*}
+\left[ G:e \right] =\left[ G:P \right] \left[ P:e \right] \Longleftrightarrow \left| G \right|=\left| G/P \right|\left| P \right|\Longleftrightarrow p^lm=\left| G/P \right|p^l\Longleftrightarrow \left| G/P \right|=m.
+\end{align*}
+又$|H|=p^k$, $(p,m)=1$, 故由\rrefthe{theorem:抽象代数--定理4.3.1}{theorem:抽象代数--定理4.3.1-2}知$G/P$中含有元素$gP$, 其轨道仅含$gP$, 即$hgP=gP(\forall h\in H)$, 故存在$p_1,p_2$,使$hgp_1=gp_2$,从而$h=gp_2p_1^{-1}g^{-1}\in gpg^{-1}$.因此$H\subseteq gPg^{-1}$.
+
+特别地, 若$H$也是$G$的一个Sylow $p$子群,则$|H|=p^l$,再由\refpro{proposition:有限群乘积的阶}知$|H|=p^l=|P|=|gPg^{-1}|$. 又由之前证明知$H\subseteq gPg^{-1}$,从而$H=gPg^{-1}$.由\refthe{theorem:共轭子群和正规化子}知$H,P$相互共轭.
+
+\end{proof}
+
+\begin{corollary}\label{corollary:p群中的所有Sylow p子群}
+设群$G$的阶为$p^lm$, $p$为素数, $(p,m)=1$. 又$P$是$G$的一个Sylow $p$子群,则
+\begin{enumerate}[(1)]
+\item\label{corollary:p群中的所有Sylow p子群-1} 群$G$中Sylow $p$子群的集合是$X=\{gPg^{-1}|g\in G\}$,即$P$的共轭子群构成的集合.
+
+\item\label{corollary:p群中的所有Sylow p子群-2} $G\times X$到$X$的映射
+\begin{align*}
+f(g,P_1)=g(P_1)=gP_1g^{-1}, \quad \forall g\in G, P_1\in X.
+\end{align*}
+是群$G$在$X$上的作用.并且$G$在$X$上的作用$f$是可递的.
+\end{enumerate}
+\end{corollary}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 任取$g\in G$,对$\forall p_1,p_2\in P$,有$(gp_1g^{-1})(gp_2g^{-1})^{-1}=gp_1p_2^{-1}g^{-1}\in gPg^{-1},$因此$gPg^{-1}$是$G$的子群.
+又由\refpro{proposition:有限群乘积的阶}知$|P|=|gPg^{-1}|=p^l$,故$gPg^{-1}$也是$G$的Sylow $p$子群.
+
+又若$P_1$是$G$的另一Sylow $p$子群. 由\hyperref[theorem:Sylow 第二定理]{Sylow 第二定理}知$\exists g_1\in G$, 使得$g_1Pg_1^{-1}=P_1$, 因而$X=\{gPg^{-1}|g\in G\}$是$G$中Sylow $p$子群的集合.
+
+\item 根据群作用的定义容易验证$f$是群$G$在$X$上的一个作用.对$\forall P_1,P_2\in \{X\}$,由\hyperref[theorem:Sylow 第二定理]{Sylow 第二定理}知$P_1,P_2$共轭,即存在$g\in G$,使
+\begin{align*}
+P_1=gP_2g^{-1}=g(P_1)=f(g,P_1).
+\end{align*}
+故$G$在$X$上的作用$f$是可递的.
+\end{enumerate}
+
+\end{proof}
+
+\begin{theorem}[Sylow第三定理]\label{theorem:Sylow第三定理}
+设群$G$的阶为$p^lm$, $p$为素数, $(p,m)=1$. 又设$G$中Sylow $p$子群的个数为$k$, 则$k$也是$G$中任意一个Sylow $p$子群的共轭子群的个数.
+并且有
+\begin{enumerate}[(1)]
+\item\label{theorem:Sylow第三定理-1} 当且仅当$k=1$时, $G$的Sylow $p$子群$P\lhd G$;
+
+\item\label{theorem:Sylow第三定理-2} $k|m$, $\,\,k\equiv 1\pmod{p}$,$\,\,k=[G:N_G(P)]$,其中$P$为$G$中任一Sylow p子群.
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+
+设$P$是$G$的一Sylow $p$子群.则由\rrefcor{corollary:p群中的所有Sylow p子群}{corollary:p群中的所有Sylow p子群-1}知$X=\{gPg^{-1}|g\in G\}$是$G$中Sylow $p$子群的集合.从而$k$也是$G$中任意一个Sylow $p$子群的共轭子群的个数.
+\begin{enumerate}[(1)]
+\item 若$|X|=1$, 即$gPg^{-1}=P(\forall g\in G)$, 故由正规子群定义知$P\lhd G$. 反之, 若$P\lhd G$, 则$gPg^{-1}=P(\forall g\in G)$, 故$|X|=1$. 这样就证明了结论(1).
+
+\item 由\rrefcor{corollary:p群中的所有Sylow p子群}{corollary:p群中的所有Sylow p子群-1}知$X=\{gPg^{-1}|g\in G\}$是$G$中Sylow $p$子群的集合.现设$|X|=k$, 由\rrefcor{corollary:p群中的所有Sylow p子群}{corollary:p群中的所有Sylow p子群-2}知$G\times X$到$X$的映射
+\begin{align*}
+f(g,P_1)=gP_1g^{-1}, \quad \forall g\in G, P_1\in X.
+\end{align*}
+定义了$G$在$X$上的作用. 设$F_P$为$P$的迷向子群, 即
+\begin{align*}
+F_P=\{g\in G, |gPg^{-1}=P\}.
+\end{align*}
+显然, $P\lhd F_P$, 故由\hyperref[theorem:抽象代数--Lagrange定理]{Lagrange定理}知$|P|\mid |F_P|$,即$p^l\mid |F_P|$, 因而存在$t$,使得
+\begin{align}\label{eq::90j243gy5yhserfgdjirzz}
+|F_P|=p^lt.
+\end{align}
+于是由\hyperref[theorem:抽象代数--Lagrange定理]{Lagrange定理}知
+\begin{align}\label{eq::iogjio30uv33}
+|G|=[G:F_P]|F_P| \iff p^lm=[G:F_P]p^lt \iff m=[G:F_P]t\Longrightarrow [G:F_P] \mid m,\, t\mid m.
+\end{align}
+又注意到$G$在$X$上的作用下$P$的轨道为$O_P=X$，故由\refcor{corollary:有限群轨道的阶与其商掉迷向子群的阶相同}知
+\begin{align*}
+k=|X|=[G:F_P].
+\end{align*}
+因此再结合\eqref{eq::iogjio30uv33}式得$k\mid m$.
+
+将上面$G$在$X$上的作用限制为$P$在$X$上的作用, 显然$P\in X$, $P$在$X$上的作用下$P$的轨道$O_P'=\{P\}$. 若另有$P_1\in X$, 在$P$作用下的轨道$O_{P_1}'=\{P_1\}$, 即有$gP_1g^{-1}=P_1(\forall g\in P)$. 由\hyperref[theorem:Sylow 第二定理]{Sylow 第二定理}, $\exists h\in G$, 使得
+$P_1=hPh^{-1}$, 因而
+$$
+g(hPh^{-1})g^{-1}=hPh^{-1}(\forall g\in P) \iff (h^{-1}gh)P(h^{-1}gh)^{-1}=P(\forall g\in P).
+$$
+故$h^{-1}gh\in F_P(\forall g\in P)$,从而$hPh^{-1}\subseteq F_P$. 因此$h^{-1}Ph$, $P$均为$F_P$的子群.由\eqref{eq::iogjio30uv33}式知$t\mid m$,又因为$(p,m)=1$,所以$(p,t)=1.$而由\eqref{eq::90j243gy5yhserfgdjirzz}知$|F_p|=p^lt,|P|=p^l$,再由\refpro{proposition:有限群乘积的阶}知$|h^{-1}Ph|=|P|=p^l$,故$h^{-1}Ph$, $P$均为$F_P$的Sylow $p$子群. 又$P\lhd F_P$, 故由结论(1)知$h^{-1}Ph=P$, 故$P=P_1$. 这就说明包含一个元素的$X$的轨道仅有一个. 注意到
+\begin{align*}
+P' \in \{ P' \in X \mid g(P') = gP'g^{-1} = P', \forall g \in P \} \iff O_{P'} = \{ g(P') = gP'g^{-1} = P' \mid g \in P \} = \{ P' \},
+\end{align*}
+故
+\begin{align*}
+\{ P' \in X \mid g(P') = gP'g^{-1} = P', \forall g \in P \} = \{ P' \in X \mid O_{P'} = \{ P' \} \} = \{ P \}.
+\end{align*}
+即$| \{ P' \in X \mid g(P') = gP'g^{-1} = P', \forall g \in P \} | = 1.$
+故由\rrefthe{theorem:抽象代数--定理4.3.1}{theorem:抽象代数--定理4.3.1-1}知$k\equiv 1\pmod{p}$.
+\end{enumerate}
+
+\end{proof}
+
+\begin{proposition}\label{proposition:Sylow-p子群的一些性质}
+设$N$是有限群$G$的正规子群,$|G|=p^lm$,$(m,p)=1$.$P$是$G$的Sylow $p$-子群。则
+\begin{enumerate}[(1)]
+\item\label{proposition:Sylow-p子群的一些性质-1} $N\cap P$是$N$的Sylow $p$-子群.
+
+\item\label{proposition:Sylow-p子群的一些性质-2} $PN/N$是$G/N$的Sylow $p$-子群.
+
+\item\label{proposition:Sylow-p子群的一些性质-3} $(N_G(P)N)/N = N_{G/N}(PN/N)$.
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 由$N\lhd G$和\rrefpro{proposition:正规子群的基本性质}{proposition:正规子群的基本性质-6}知$NP=PN\leqslant G$. 由\rrefcor{corollary:抽象代数-推论 1.3.5}{corollary:抽象代数-推论 1.3.5-3}可得
+\begin{align*}
+|NP|=\frac{|N||P|}{|N\cap P|}\Longleftrightarrow \frac{|NP|}{|P|}=\frac{|N|}{|N\cap P|}\Longleftrightarrow [N:N\cap P] = [NP:P].
+\end{align*}
+由\rrefpro{proposition:抽象代数---子群的基本性质}{proposition:抽象代数---子群的基本性质-2}知$N\cap P\leqslant P$，故$|N\cap P|\mid |P|$，即$|N\cap P|=p^a\ (a\leqslant l)$.
+因为$P$是$G$的Sylow-$p$子群，所以$(p,[G:P])=(p,m)=1$. 而
+\begin{align*}
+[G:P] = [G:NP]\cdot [NP:P],
+\end{align*}
+故$(p,[N:N\cap P])=(p,[NP:P])=1$. 又$N\cap P\leqslant N\lhd G$，故$|N|\mid |G|$，即$|N|=p^bn$，其中$a\leqslant b\leqslant l,n\mid m$. 于是
+\begin{align*}
+[N:N\cap P]=\frac{|N|}{|N\cap P|}=p^{b-a}n.
+\end{align*}
+由$(p,[N:N\cap P])=1$知$b=a$. 故$N\cap P$是$N$的Sylow-$p$子群.
+
+\item 由\refthe{theorem:抽象代数--定理1.7.3}知$PN/N\cong P/(N\cap P)$，再结合(1)可得
+\begin{align*}
+|PN/N|=\frac{|P|}{|N\cap P|}=p^{l-a},\quad |G/N|=\frac{|G|}{|N|}=p^{l-a}\frac{m}{n}.
+\end{align*}
+故$PN/N$是$G/N$的Sylow-$p$子群.
+
+\item 对$\forall x\in N_G(P)N$，则存在$g\in N_G(P),n\in N$，使得$x=gn$. 从而$xN=gnN=gN$. 于是再结合$N\lhd G$可得
+\begin{align*}
+(xN)(PN/N)(xN)^{-1}=(gN)(PN/N)(gN)^{-1}=(gPNg^{-1})/N=(gPg^{-1}\cdot gNg^{-1})/N=PN/N.
+\end{align*}
+故$xN\in N_{G/N}(PN/N)$，因此$N_G(P)N/N\subseteq N_{G/N}(PN/N)$.
+
+设$N_{G/N}(PN/N)=T/N\leqslant G/N$，由\rrefcor{corollary:群同态第二定理推论}{corollary:群同态第二定理推论-1}知$T\leqslant G$. 由正规化子的定义知，对$\forall t\in T$，有
+\begin{align*}
+(tN)(PN/N)(tN)^{-1}=PN/N\Longleftrightarrow tPNt^{-1}=PN.
+\end{align*}
+于是$tPt^{-1}=tP\cdot 1\cdot t^{-1}\subseteq tPNt^{-1}=PN$. 由(1)(2)可知
+\begin{align*}
+|PN|=|PN/N|\cdot |N|=p^{l-a}\cdot p^an=p^ln.
+\end{align*}
+而$P$是$G$的Sylow-$p$子群，因此$|P|=|tPt^{-1}|=p^l$. 又$P,tPt^{-1}\subseteq PN$，故$P,tPt^{-1}$都是$PN$的Sylow-$p$子群. 从而存在$x\in PN$，使得
+\begin{align*}
+tPt^{-1}=xPx^{-1}\Longleftrightarrow x^{-1}tPt^{-1}x=P\Longleftrightarrow x^{-1}t\in N_G(P)\Longleftrightarrow t\in xN_G(P).
+\end{align*}
+由\refthe{theorem:共轭子群和正规化子}知$P\lhd N_G(P)$，所以$x\in PN\subseteq N_G(P)N$. 又$N\lhd G$，故由\rrefpro{proposition:正规子群的基本性质}{proposition:正规子群的基本性质-6}和\rrefthe{theorem:子群陪集的基本性质}{theorem:子群陪集的基本性质-3}可得
+\begin{align*}
+t\in xN_G(P)\subseteq N_G(P)NN_G(P)=N_G(P)N_G(P)N=N_G(P)N.
+\end{align*}
+因而$T\subseteq N_G(P)N$，再由\rrefcor{corollary:群同态第二定理推论}{corollary:群同态第二定理推论-1}可知$N_{G/N}(PN/N)=T/N\subseteq N_G(P)N/N$.
+
+综上可知$N_G(P)N/N=N_{G/N}(PN/N)$.
+\end{enumerate}
+
+\end{proof}
+
+\begin{definition}[单群]\label{definecolor:单群定义--抽象代数}
+一个群如果没有非平凡的正规子群就称为\textbf{单群}.
+\end{definition}
+
+\begin{proposition}\label{proposition:阶数大于2的循环群必非单群}
+\begin{enumerate}[(1)]
+\item\label{proposition:阶数大于2的循环群必非单群-1} 阶数大于2的循环群都不是单群.
+
+\item\label{proposition:阶数大于2的循环群必非单群-2} 单群只有平凡中心.即单群$G$的中心$Z(G)=\{1\}$或$G$.
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 因为循环群都是Abel群,所以其子群都是正规子群.又有阶数大于2,故一定有非平凡的正规子群.
+
+\item 由\rrefthe{theorem:中心化子的基本性质}{theorem:中心化子的基本性质-1}知$Z(G)\lhd G$,若$Z(G)$是$G$的非平凡正规子群,就与$G$是单群矛盾!
+\end{enumerate}
+
+\end{proof}
+
+\begin{example}
+设群$G$的阶为72, 则$G$不是单群.
+\end{example}
+\begin{remark}
+Sylow 定理在群论中有许多应用, 其一就是判断某些有限群不是单群.
+\end{remark}
+\begin{solution}
+
+$72=2^3\cdot 3^2$. 设$G$中Sylow 3子群的个数为$k$, 于是由\hyperref[theorem:Sylow第三定理]{Sylow第三定理}知有$t$, 使得$k=3t+1$, $k|8$, 因而$t=0$或$t=1$.
+
+若$t=0$, 则$k=1$. 此时再由\hyperref[theorem:Sylow第三定理]{Sylow第三定理}知Sylow 3子群为$G$的正规子群, 故$G$不是单群.
+
+若$t=1$, 则$k=4$. 设$X=\{P_1,P_2,P_3,P_4\}$为$G$的Sylow 3子群的集合, 由\rrefcor{corollary:p群中的所有Sylow p子群}{corollary:p群中的所有Sylow p子群-2}知有$G$在$X$上的作用
+\begin{align*}
+g(P_1)=gP_1g^{-1}, \quad \forall g\in G, P_1\in X.
+\end{align*}
+并且这个$G$在$X$上的作用是可递的.
+由\refthe{theorem:抽象代数--定理4.2.1}知有$G$到$S_X=S_4$中的同态$\sigma$满足
+\begin{align*}
+\sigma \left( g \right) =\sigma _g,\forall g\in G,
+\end{align*}
+其中$\sigma _g:X\rightarrow X,P\longmapsto g\left( P \right) =gPg^{-1}.$
+于是由\hyperref[theorem:群的同态基本定理]{群的同态基本定理}知$\ker \sigma \lhd G$且$G/\ker\sigma$与$S_4$的一个子群$\sigma(G)$同构, 而$|S_4|=24<72$,于是
+\begin{align*}
+[G:\ker\sigma] = |\sigma(G)| \leqslant |S_4| = 24 < 72 = |G|.
+\end{align*}
+再利用\hyperref[theorem:抽象代数--Lagrange定理]{Lagrange定理}可得
+\begin{align*}
+|G| = [G:\ker\sigma]|\ker\sigma| \implies |\ker\sigma| = \frac{|G|}{[G:\ker\sigma]} \geqslant \frac{72}{24} > 1.
+\end{align*}
+因此$\ker\sigma \neq \{e\}$.
+
+注意到
+\begin{align*}
+\ker\sigma = \{ g \in G \mid \sigma(g) = \mathrm{id}_G \} = \{ g \in G \mid gPg^{-1} = P, \forall P \in X \},
+\end{align*}
+又由$G$在$X$上的作用可递知对$P_1,P_2 \in X$，存在$g_1 \in G$，使$P_2 = g(P_1) = g_1P_1g_1^{-1}$。若$\ker\sigma = G$，则$g_1 \in \ker\sigma$，从而
+\begin{align*}
+P_2 = g_1P_1g_1^{-1} = P_1,
+\end{align*}
+这与$P_1 \neq P_2$矛盾！因此$\ker \sigma\neq G$. 故$\ker\sigma$是$G$的非平凡正规子群, 因而$G$不是单群.
+
+\end{solution}
+
+\begin{proposition}\label{proposition:阶为特定素数乘积的群必为循环群}
+设 $p,q$ 都是素数, $p<q$, $p\nmid (q-1)$. 证明 $pq$ 阶群一定是循环群.
+\end{proposition}
+\begin{proof}
+
+设 $P,Q$ 分别为 $pq$ 阶群 $G$ 的 $p,q$ 阶子群. 于是由\hyperref[theorem:Sylow第三定理-2]{Sylow第三定理\ref{theorem:Sylow第三定理-2}},可设$P,Q$ 共轭子群的个数分别为$sp+1,tq+1(s,t\in \mathbb{N})$.由\rrefcor{corollary:p群中的所有Sylow p子群}{corollary:p群中的所有Sylow p子群-1}知,$P$的共轭子群都是$G$的Sylow $p$子群,$Q$的共轭子群都是$G$的Sylow $p$子群.因此
+\begin{align*}
+sp+1=q,\quad tq+1=p.
+\end{align*}
+由 $p<q$, 于是 $t=0$, 因而 $Q$ 是 $G$ 的唯一的 $q$ 阶子群. 若 $s\neq 0$, 则 $sp+1=q$, 这与 $p\nmid (q-1)$ 矛盾. 于是 $s=0$, 因而 $P$ 是 $G$ 的唯一的 $p$ 阶子群.
+
+因为$p,q$都是素数且$p<q$,所以$|P\cup Q|\leqslant p+q<pq=|G|$,因此$G\neq Q\cup P$. 对$\forall a \in G\setminus (P\cup Q)$,则$\langle a\rangle \neq P,Q$,从而由$P,Q$分别是$G$的唯一$p,q$阶子群知$\langle a\rangle$ 的阶既不是 $p$ 也不是 $q$.又由\hyperref[theorem:抽象代数--Lagrange定理]{Lagrange定理}知$|\langle a\rangle|=\mid pq$,于是$|\langle a\rangle|=pq$, 因此$G=\langle a\rangle$为循环群.
+
+\end{proof}
+
+\begin{proposition}\label{proposition:g到g的幂的自同构充要条件}
+设$G$是有限Abel群,则$g$对应到$g^k$是$G$的一个自同构当且仅当$k$和$|G|$互素.
+\end{proposition}
+\begin{proof}
+
+令$\alpha: G\to G,\, g\mapsto g^k.$
+
+{\heiti 充分性:}设$k$与$|G|$互素，则对$\forall g,h\in G$，因为$G$是Abel群，所以
+\begin{align*}
+\alpha(gh)=(gh)^k=(gh)\cdots(gh)=g^kh^k=\alpha(g)\alpha(h).
+\end{align*}
+故$\alpha$是群同态。若$\alpha(g)=\alpha(h)$，则
+\begin{align*}
+g^k=h^k\Longrightarrow (h^{-1}g)^k=1\Longrightarrow \mathrm{ord}\left((h^{-1}g)^k\right)=1.
+\end{align*}
+由\refthe{theorem:抽象代数-推论 1.3.4}知$\mathrm{ord}(h^{-1}g)\mid |G|$，又$(k,|G|)=1$，故$(k,\mathrm{ord}(h^{-1}g))=1$。因此由\rrefthe{theorem:群元素的阶的基本性质}{theorem:群元素的阶的基本性质-4}知
+\begin{align*}
+1=\mathrm{ord}\left((h^{-1}g)^k\right)=\frac{\mathrm{ord}(h^{-1}g)}{(k,\mathrm{ord}(h^{-1}g))}=\mathrm{ord}(h^{-1}g)\Longrightarrow h^{-1}g=1\Longrightarrow g=h.
+\end{align*}
+故$\alpha$是单同态。由$(k,|G|)=1$知，存在$l,m\in\mathbb{Z}$，使得
+\begin{align*}
+lk+m|G|=1.
+\end{align*}
+又由\refthe{theorem:抽象代数-推论 1.3.4}知$\mathrm{ord}\,g\mid |G|$，于是
+\begin{align*}
+g=g^{lk+m|G|}=(g^l)^k=\alpha(g^l).
+\end{align*}
+故$\alpha$也是满同态。综上可知，$\alpha$是$G$的自同构。
+
+{\heiti 必要性:}设$\alpha$是$G$的一个自同构，则对$\forall g\in G$，结合\rrefthe{theorem:群元素的阶的基本性质}{theorem:群元素的阶的基本性质-4}有
+\begin{align}
+\mathrm{ord}\,g=\mathrm{ord}\,\alpha(g)=\mathrm{ord}\,g^k=\frac{\mathrm{ord}\,g}{(k,\mathrm{ord}\,g)}\Longrightarrow (k,\mathrm{ord}\,g)=1.
+\label{eq:::j83jjSIUFJEIOSJI31.1}
+\end{align}
+
+{\color{blue}证法一:}由\hyperref[theorem:抽象代数--Cauchy定理]{Cauchy定理}知，对$|G|$的任意素因子$p$，都存在$a\in G$，使得$\mathrm{ord}\,a=p$。由\eqref{eq:::j83jjSIUFJEIOSJI31.1}式知$(k,p)=(k,\mathrm{ord}\,a)=1$。再结合因式分解定理知$(k,|G|)=1$.
+
+{\color{blue}证法二:}若存在$g\in G$，使得$\mathrm{ord}\,g=|G|$，则$(k,|G|)=(k,\mathrm{ord}\,g)=1$。
+下设$\mathrm{ord}\,g<|G|,\forall g\in G$。任取$a\in G$，则$\mathrm{ord}\,a=n<|G|$。
+对$G$的阶$|G|$进行归纳，假设结论对阶数小于$|G|$的情况成立。
+现令$\overline{G}=G/\langle a\rangle$，则由$G$是Abel群知$\overline{G}$也是Abel群，且由\rrefcor{corollary:抽象代数-推论 1.3.5}{corollary:抽象代数-推论 1.3.5-0}知
+\begin{align}
+|\overline{G}|=\frac{|G|}{|\langle a\rangle|}=\frac{|G|}{n}<|G|.
+\label{eq:::j83jjSIUFJEIOSJI31.2}
+\end{align}
+再令
+\begin{align*}
+\overline{\alpha}:\overline{G}\to\overline{G},\, g\langle a\rangle\mapsto \overline{g}=g^k\langle a\rangle.
+\end{align*}
+对$\forall g,h\in G$，因为$\overline{G}$是Abel群，所以
+\begin{align*}
+\overline{\alpha}(\overline{g}\overline{h})=(\overline{g}\overline{h})^k=(\overline{g}\overline{h})\cdots(\overline{g}\overline{h})=(\overline{g})^k(\overline{h})^k=\overline{\alpha}(g)\overline{\alpha}(h).
+\end{align*}
+故$\overline{\alpha}$是群同态。由$\alpha$是$G$的自同构知，存在$b\in G$，使得
+\begin{align*}
+\alpha(b)=b^k=g\Longrightarrow \overline{\alpha}(\overline{b})=(\overline{b})^k=\overline{b^k}=\overline{g}.
+\end{align*}
+故$\overline{\alpha}$是满同态。若$\overline{\alpha}(\overline{g})=\overline{\alpha}(\overline{h})$，则
+\begin{align*}
+(\overline{g})^k=(\overline{h})^k\Longrightarrow \overline{(h^{-1}g)^k}=\overline{1}\Longrightarrow (h^{-1}g)^k\in\langle a\rangle\Longrightarrow \mathrm{ord}\left((h^{-1}g)^k\right)=n.
+\end{align*}
+由\eqref{eq:::j83jjSIUFJEIOSJI31.1}式知$(k,\mathrm{ord}(h^{-1}g))=1$，故
+\begin{align*}
+n=\mathrm{ord}\left((h^{-1}g)^k\right)=\frac{\mathrm{ord}(h^{-1}g)}{(k,\mathrm{ord}(h^{-1}g))}=\mathrm{ord}(h^{-1}g).
+\end{align*}
+又由\eqref{eq:::j83jjSIUFJEIOSJI31.1}式知$(k,\mathrm{ord}\,a)=(k,n)=1$，故存在$l,m\in\mathbb{Z}$，使得
+\begin{align*}
+kl+mn=1.
+\end{align*}
+从而
+\begin{align*}
+h^{-1}g=(h^{-1}g)^{kl+mn}=(h^{-1}g)^{kl}\in\langle a\rangle\Longrightarrow \overline{h^{-1}g}=\overline{1}\Longrightarrow \overline{h}=\overline{g}.
+\end{align*}
+故$\overline{\alpha}$也是单同态。因此$\overline{\alpha}$是$\overline{G}$的自同构。
+综上，$\overline{G}$和$\overline{\alpha}$也满足归纳假设条件且$|\overline{G}|<|G|$，故由\eqref{eq:::j83jjSIUFJEIOSJI31.2}式和归纳假设知
+\begin{align*}
+\left(k,\frac{|G|}{n}\right)=(k,|\overline{G}|)=1.
+\end{align*}
+又由\eqref{eq:::j83jjSIUFJEIOSJI31.1}式知$(k,n)=1$，故$(k,|G|)=1$。
+
+\end{proof}
+
+
+
+
+
+\end{document}

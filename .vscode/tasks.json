@@ -1,0 +1,106 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        // 任务1：清理辅助文件（保持不变）
+        {
+            "label": "Clean Auxiliary Files",
+            "type": "process",
+            "command": "find",
+            "args": [
+                ".",
+                "-type",
+                "f",
+                "(",
+                "-name",
+                "*.aux",
+                "-o",
+                "-name",
+                "*.bcf",
+                "-o",
+                "-name",
+                "*.gz",
+                "-o",
+                "-name",
+                "*.log",
+                "-o",
+                "-name",
+                "*.out",
+                "-o",
+                "-name",
+                "*.toc",
+                "-o",
+                "-name",
+                "*.xml",
+                "-o",
+                "-name",
+                "*.bbl",
+                "-o",
+                "-name",
+                "*.blg",
+                "-o",
+                "-name",
+                "*.fls",
+                "-o",
+                "-name",
+                "*.xdv",
+                "-o",
+                "-name",
+                "*.nav",
+                "-o",
+                "-name",
+                "*.snm",
+                "-o",
+                "-name",
+                "*.vrb",
+                "-o",
+                "-name",
+                "*.synctex(busy)",
+                "-o",
+                "-name",
+                "*.Identifier",
+                "-o",
+                "-name",
+                "*.fdb_latexmk",
+                "-o",
+                "-name",
+                "*.bbl-SAVE-ERROR",
+                "-o",
+                "-name",
+                "*.bcf-SAVE-ERROR",
+                "-o",
+                "-name",
+                "*.fdb-SAVE-ERROR",
+                ")",
+                "-delete"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/MathNote"
+            },
+            "problemMatcher": [],
+            "group": "build"
+        },
+
+        // 任务2：逐个编译子文档（使用完整 shell 命令）
+        {
+            "label": "Compile All Sub-documents",
+            "type": "shell",
+            "command": "find . -maxdepth 2 -type f -name main.tex -execdir sh -c 'latexmk -xelatex -interaction=nonstopmode main.tex' {} \\;",
+            "options": {
+                "cwd": "${workspaceFolder}/MathNote"
+            },
+            "problemMatcher": [],
+            "group": "build"
+        },
+
+        // 任务3：先清理，再逐个编译子文档
+        {
+            "label": "Clean & Compile All Sub-documents",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "Clean Auxiliary Files",
+                "Compile All Sub-documents"
+            ],
+            "problemMatcher": []
+        }
+    ]
+}

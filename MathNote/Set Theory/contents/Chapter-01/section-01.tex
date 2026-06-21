@@ -1,0 +1,763 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[scale=0.3]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{集合及其运算}
+
+\begin{definition}[集合]
+具有确定内容或满足一定条件的事物的全体称为\textbf{集合} (或\textbf{集})，通常用大写字母如 \(A, B, C\) 等表示。构成一个集合的那些事物称为集合的\textbf{元素} (或\textbf{元}).
+
+若 \(a\) 是集合 \(A\) 的元素，则称 \(a\) \textbf{属于} \(A\)，记为 \(a \in A\)；若 \(a\) 不是集合 \(A\) 的元素，则称 \(a\) \textbf{不属于} \(A\)，记为 \(a \notin A\)。对于给定的集合，任一元素要么属于它，要么不属于它，二者必居其一。
+
+不含任何元素的集合称为\textbf{空集}，记为\(\varnothing\).
+
+我们用 \(\mathbb{Z}, \mathbb{N}, \mathbb{Q}, \mathbb{R}\) 分别表示整数集、自然数集(不包含0)、有理数集和实数集.特别地,我们用$\mathbb{N}_0$表示$\mathbb{N}\cup 0$.
+\end{definition}
+\begin{remark}
+集合的表示方法:
+
+(1) 列举法 —— 列出给定集合的全部元素. 例如
+\begin{align*}
+A = \{a, b, c\}, \quad B = \{1, 3, \cdots, 2n - 1\}.
+\end{align*}
+
+(2) 描述法 —— \(A = \{x : x \text{ 具有性质 } P\}\). 例如
+\begin{align*}
+\ker f = \{x : f(x) = 0\}=\{x \mid f(x) = 0\}.
+\end{align*}
+\end{remark}
+
+\begin{definition}
+若集合 \(A\) 和 \(B\) 具有完全相同的元素，则称 \(A\) 与 \(B\)\textbf{相等}，记为 \(A = B\).
+
+若 \(A\) 中的每个元素都是 \(B\) 的元素，则称 \(A\) 为 \(B\) 的\textbf{子集}，记为 \(A \subseteq B\) 或 \(B \supseteq A\).
+
+若 \(A \subseteq B\) 且 \(A \neq B\)，则称 \(A\) 为 \(B\) 的\textbf{真子集}，记为 \(A \subset B\).
+
+集合 \(A\) 的所有子集的全体，称为 \(A\) 的\textbf{幂集}，记为 \(2^A\)或\(\mathcal{P}(A)\). 
+\end{definition}
+\begin{remark}
+\(A = B \Longleftrightarrow A \subseteq B\) 且 \(B \subseteq A\).
+
+由\(n\)个元素形成的集合\(E\)的幂集\(\mathcal{P}(E)\)共有\(2^n\)个元素。
+\end{remark}
+
+\begin{definition}
+设$\forall \alpha \in \Gamma$,$A_\alpha$都是集合,则\(\{A_\alpha: \alpha \in \Gamma\}=\{A_{\alpha}\}_{\alpha \in \varGamma}\) 称为\textbf{集族}或\text{集合族}, 称\(\varGamma\) 为\textbf{指标集},\(\alpha\) 为\textbf{指标}. 特别地，当 \(\varGamma = \mathbb{N}\) 时，集族称为\textbf{集列}或\textbf{集合列}，记为 \(\{A_n\}_{n = 1}^{\infty}\) 或 \(\{A_n\}\)。
+\end{definition}
+
+\begin{definition}
+设有集合族\(\{A_{\alpha}\}_{\alpha\in I}\)，我们定义其并集与交集如下：
+\begin{gather*}
+\bigcup_{\alpha\in I}A_{\alpha}=\{x:\exists \alpha \in I,\,\text{s.t.}\,\,x\in A_{\alpha}\},\\
+\bigcap_{\alpha\in I}A_{\alpha}=\{x:\forall \alpha \in I,x\in A_{\alpha}\}.
+\end{gather*}
+
+设 \(A, B\) 为两个集合，若 \(A \cap B = \varnothing\)，则称 \(A\) 与 \(B\) \textbf{互不相交}。
+\end{definition}
+
+\begin{definition}
+设$A,B$是两个集合,称$\{x:x\in A,x\notin B\}$为$A$与$B$的\textbf{差集},记作$A-B$或$A\setminus B$.
+
+在上述定义中,当$B\subset A$时,称$A\setminus B$为集合$B$相对于集合$A$的\textbf{补集}或\textbf{余集}.
+
+通常，在我们讨论问题的范围内，所涉及的集合总是某个给定的“大”集合\(X\)的子集，我们称\(X\)为\textbf{全集}。此时，集合\(B\)相对于全集\(X\)的补集就简称为\(B\)的\textbf{补集}或\textbf{余集}，并记为\(B^c\)或\(\mathscr{C} B\)，即
+\[B^c = X\setminus  B.\]
+今后，凡没有明显标出全集\(X\)时，都表示取补集运算的全集\(X\)预先已知，而所讨论的一切集合皆为其子集。于是\(B^c\)也记为
+\[B^c = \{x\in X:x\notin B\}.\]
+\end{definition}
+
+\begin{definition}[笛卡尔积/直积集]
+设$n\in \mathbb{N},\{A_i\}_{i=1}^n$为集族,称
+\begin{align*}
+\{(x_1, \cdots, x_n) : x_i \in A_i, i = 1, \cdots, n\}
+\end{align*}
+为$A_1,A_2,\cdots,A_n$的\textbf{笛卡尔积},记为$A_1 \times \cdots \times A_n .$
+
+若$(x_1, \cdots, x_n),(x_1', \cdots, x_n')\in A_1 \times \cdots \times A_n$,则\((x_1, \cdots, x_n)=(x_1', \cdots, x_n')\)当且仅当\(x_i = x_i',i=1,2,\cdots,n.\)
+
+特别地,记$\underset{n\text{个}}{\underbrace{A_1\times \cdots \times A_1}}=A_1^n.$
+\end{definition}
+
+\begin{theorem}[集合的运算及性质]\label{theorem:集合论-集合的运算及性质}
+设$A,B,E$为全集$X$中的子集,$\{A_\alpha\}_{\alpha\in \Gamma}$为一集族,则
+\begin{enumerate}[(1)]
+\item \textbf{广义交换律和结合律}:当一个集合族被分解(以任何方式)为许多子集合族时，那么先作子集合族中各集合的并集，然后再作各并集的并集，仍然得到原集合族的并，而且作并集时与原有的顺序无关。当然，对于交的运算也是如此.
+
+\item \(A \cup A = A\)，\(A \cap A = A\).
+
+\item \(A \cup \varnothing = A\)，\(A \cap \varnothing = \varnothing\).
+
+\item \(A \cup B = B \cup A\)，\(A \cap B = B \cap A\).
+
+\item \((A \cup B) \cup C = A \cup (B \cup C)\)，\((A \cap B) \cap C = A \cap (B \cap C)\).
+
+\item\label{theorem:集合论-集合的运算及性质-5} \( A \cup A^c = X\)，\(A \cap A^c = \varnothing\),
+
+\(A \cap (\bigcup_{\alpha \in \varGamma} B_{\alpha}) = \bigcup_{\alpha \in \varGamma}(A \cap B_{\alpha})\)，\(\quad A \cup (\bigcap_{\alpha \in \varGamma} B_{\alpha}) = \bigcap_{\alpha \in \varGamma}(A \cup B_{\alpha})\).
+
+\item \(X^c = \varnothing\)，\(\varnothing^c = X\).
+
+\item \(A \setminus B = A \cap B^c\)。
+
+\item 若\(A\supseteq B\)，则\(A^c\subseteq B^c\)；若\(A\cap B = \varnothing\)，则\(A\subseteq B^c\)。
+
+\item\label{theorem:集合论-集合的运算及性质-11} $A\setminus B^c=B\setminus A^c$.
+
+\item\label{theorem:集合论-集合的运算及性质-12} \(\bigcup_{\alpha \in \Gamma} A_{\alpha} \setminus \bigcup_{\alpha \in \Gamma} B_{\alpha} \subseteq \bigcup_{\alpha \in \Gamma} (A_{\alpha} \setminus B_{\alpha}).\)
+
+\item\label{theorem:集合论-集合的运算及性质-13} $\bigcup_{\alpha \in \Gamma}{\left( A_{\alpha}\cap B_{\alpha} \right)}\subseteq \bigcup_{\alpha \in \Gamma}{A_{\alpha}}\cap \bigcup_{\alpha \in \Gamma}{B_{\alpha}}.$
+
+\item $B = (E \cap A)^c \cap (E^c \cup A) \Leftrightarrow B^c = E.$
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 
+
+\item 
+
+\item 
+
+\item 
+
+\item 
+
+\item 
+
+\item 
+
+\item 
+
+\item 
+
+\item $x\in A\setminus B^c\Longleftrightarrow x\in A\text{且}x\notin B^c\Longleftrightarrow x\in A\text{且}x\in B
+\Longleftrightarrow x\in B\text{且}x\notin A^c\Longleftrightarrow x\in B\setminus A^c.$
+
+\item 对\(\forall x \in \bigcup_{\alpha \in \Gamma} A_{\alpha} \setminus \bigcup_{\alpha \in \Gamma} B_{\alpha}\)，存在\(\alpha_x \in \Gamma\)，使\(x \in A_{\alpha_x}\)，并且\(x \notin B_{\alpha}, \forall \alpha \in \Gamma\)。从而\(x \in A_{\alpha_x} \setminus B_{\alpha_x} \subseteq \bigcup_{\alpha \in \Gamma} (A_{\alpha} \setminus B_{\alpha})\)。故\(\bigcup_{\alpha \in \Gamma} A_{\alpha} \setminus \bigcup_{\alpha \in \Gamma} B_{\alpha} \subseteq \bigcup_{\alpha \in \Gamma} (A_{\alpha} \setminus B_{\alpha})\)。
+
+\item 对$\forall x\in \bigcup_{\alpha \in \Gamma}{\left( A_{\alpha}\cap B_{\alpha} \right)}$, 都存在$\alpha _x\in \Gamma$, 使得$x\in A_{\alpha _x}\cap B_{\alpha _x}$. 于是$x\in \bigcup_{\alpha \in \Gamma}{A_{\alpha}}$且$x\in \bigcup_{\alpha \in \Gamma}{B_{\alpha}}$, 即$x\in \bigcup_{\alpha \in \Gamma}{A_{\alpha}}\cap \bigcup_{\alpha \in \Gamma}{B_{\alpha}}$. 故$\bigcup_{\alpha \in \Gamma}{\left( A_{\alpha}\cap B_{\alpha} \right)}\subseteq \bigcup_{\alpha \in \Gamma}{A_{\alpha}}\cap \bigcup_{\alpha \in \Gamma}{B_{\alpha}}.$
+
+\item {\color{blue}证法一:}
+\begin{align*}
+B&=(E\cap A)^c\cap (E^c\cup A)=(E^c\cup A^c)\cap (E^c\cup A)
+\\
+&=E^c\cup (A^c\cap A)=E^c\cup \varnothing =E^c
+\\
+&\Longleftrightarrow B^c=E.
+\end{align*}
+
+{\color{blue}证法二:}显然$B=(E\cap A)^c\cap (E^c\cup A)\Longleftrightarrow B^c=\left( (E\cap A)^c\cap (E^c\cup A) \right) ^c$,故
+\begin{align*}
+B^c&=\left( (E\cap A)^c\cap (E^c\cup A) \right) ^c
+\\
+&=(E\cap A)\cup (E^c\cup A)^c=(E\cap A)\cup (E\cap A^c)
+\\
+&=E\cap (A\cup A^c)=E\cap X=E.
+\end{align*}
+
+{\color{blue}证法三:}
+\begin{align*}
+B&=(E\cap A)^c\cap (E^c\cup A)=(E^c\cup A^c)\cap (E^c\cup A)
+\\
+&=(E^c\cap E^c)\cup (A^c\cap E^c)\cup (A^c\cap A)\cup (E^c\cap A)
+\\
+&=E^c\cup (A\cup E)^c\cup \varnothing \cup (E^c\cap A)
+\\
+&=E^c\cup (A\cup E)^c=(E\cap (A\cup E))^c=E^c
+\\
+&\Longleftrightarrow B^c=E.
+\end{align*}
+\end{enumerate}
+
+\end{proof}
+
+\begin{theorem}[De Morgan定律]\label{theorem:De Morgan定律}
+设 \(\{A_{\alpha}\}_{\alpha \in \varGamma}\) 为一集族，则
+
+(i) \((\bigcup_{\alpha \in \varGamma} A_{\alpha})^c = \bigcap_{\alpha \in \varGamma} A_{\alpha}^c\)；
+$\quad \quad$
+(ii) \((\bigcap_{\alpha \in \varGamma} A_{\alpha})^c = \bigcup_{\alpha \in \varGamma} A_{\alpha}^c\)。
+\end{theorem}
+\begin{proof}
+
+(i) 设 \(x \in (\bigcup_{\alpha \in \varGamma} A_{\alpha})^c\)，则 \(x \notin \bigcup_{\alpha \in \varGamma} A_{\alpha}\)，故对 \(\forall \alpha \in \varGamma\)，\(x \notin A_{\alpha}\)，即 \(\forall \alpha \in \varGamma\)，\(x \in A_{\alpha}^c\)。从而 \(x \in \bigcap_{\alpha \in \varGamma} A_{\alpha}^c\)，因此，\((\bigcup_{\alpha \in \varGamma} A_{\alpha})^c \subset \bigcap_{\alpha \in \varGamma} A_{\alpha}^c\)。上述推理反过来也成立，故 \(\bigcap_{\alpha \in \varGamma} A_{\alpha}^c \subset (\bigcup_{\alpha \in \varGamma} A_{\alpha})^c\)。因此，\((\bigcup_{\alpha \in \varGamma} A_{\alpha})^c = \bigcap_{\alpha \in \varGamma} A_{\alpha}^c\)。
+
+(ii) 类似可证。 
+
+\end{proof}
+
+\begin{definition}[对称差集]
+设 \( A,B \) 为两个集合，称集合 \( (A \setminus B) \cup (B \setminus A) \) 为 \( A \) 与 \( B \) 的\textbf{对称差集}，记为 \( A \triangle B \).
+\end{definition}
+\begin{note}
+对称差集是由既属于 \( A,B \) 之一但又不同时属于两者的一切元素构成的集合.
+\end{note}
+
+\begin{theorem}[集合对称差的性质]\label{theorem:集合对称差的性质}
+\begin{enumerate}[(1)]
+\item \(A \triangle B = \left( A\cup B \right) \backslash \left( A\cap B \right) .\)
+
+\item 交换律:\( A \triangle \varnothing = A \)，\( A \triangle A = \varnothing \)，\( A \triangle A^c = X \)，\( A \triangle X = A^c \)。
+
+\item 结合律:\( A \triangle B = B \triangle A \)。
+
+\item 交与对称差满足分配律:\(
+(A \triangle B) \triangle C = A \triangle (B \triangle C).
+\)
+
+\item $A \cap (B \triangle C) = (A \cap B) \triangle (A \cap C).$
+
+\item \( A^c \triangle B^c = A \triangle B \)；\( A = A \triangle B \) 当且仅当 \( B = \varnothing \)。
+
+\item 对任意的集合 \( A \) 与 \( B \)，存在唯一的集合 \( E \)，使得 \( E \triangle A = B \)（实际上 \( E = B \triangle A \)）。
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 由对称差集的定义及\rrefthe{theorem:集合论-集合的运算及性质}{theorem:集合论-集合的运算及性质-5}可得
+\begin{align*}
+A\bigtriangleup B&=\left( A\cap B^c \right) \cup \left( B\cap A^c \right) =\left[ \left( A\cap B^c \right) \cup B \right] \cap \left[ \left( A\cap B^c \right) \cup A^c \right] 
+\\
+&=\left( A\cup B \right) \cap \left( A^c\cap B^c \right) =\left( A\cup B \right) \cap \left( A\cap B \right) ^c
+\\
+&=\left( A\cup B \right) \backslash \left( A\cap B \right) .
+\end{align*}
+
+\item 证明是显然的.
+
+\item 证明是显然的.
+
+\item $x\in A \backslash  B\triangle C \Leftrightarrow x\in A;\ x\notin B\triangle C=(B\backslash C)\cup(C\backslash B)$
+$\Leftrightarrow x\in A;\ x\in B\cap C,\text{或 } x\notin B \text{且}x\notin C$
+$\Leftrightarrow x\in A\backslash B\backslash C \text{或} x\in A\cap B\cap C$
+$\Leftrightarrow x\in (A\backslash B\backslash C)\cup(A\cap B\cap C),$
+即
+\begin{align*}
+A \backslash  B\triangle C = (A \backslash  B \backslash  C) \cup (A \cap B \cap C).
+\end{align*}
+于是
+\begin{align*}
+A\triangle(B\triangle C) &= (A \backslash  B\triangle C) \cup (B\triangle C \backslash  A) \\
+&=(A \backslash  B \backslash  C) \cup (A \cap B \cap C) \cup (B \backslash  C \backslash  A) \cup (C \backslash  B \backslash  A) \\
+&=(A \backslash  B \backslash  C) \cup (B \backslash  A \backslash  C) \cup (C \backslash  A \backslash  B) \cup (A \cap B \cap C) \\
+&=((A \backslash  B) \cup (B \backslash  A) \backslash  C) \cup (C \backslash  A\triangle B) \\
+&=(A\triangle B \backslash  C) \cup (C \backslash  A\triangle B) \\
+&=(A\triangle B)\triangle C.
+\end{align*}
+即
+\begin{align*}
+A\triangle(B\triangle C) = (A\triangle B)\triangle C.
+\end{align*}
+
+\item $x\in A\cap(B\backslash C)\Leftrightarrow x\in A \text{且} x\in B\backslash C$
+$\Leftrightarrow x\in A \text{且} x\in B,x\notin C$
+$\Leftrightarrow x\in A\cap B \text{且} x\notin A\cap C$
+$\Leftrightarrow x\in (A\cap B)\backslash (A\cap C),$
+即
+\begin{align*}
+A \cap (B \backslash  C) = (A \cap B) \backslash  (A \cap C).
+\end{align*}
+于是
+\begin{align*}
+A \cap (B\triangle C) &= A \cap ((B \backslash  C) \cup (C \backslash  B)) \\
+&=(A \cap (B \backslash  C)) \cup (A \cap (C \backslash  B)) \\
+&=(A \cap B \backslash  A \cap C) \cup (A \cap C \backslash  A \cap B) \\
+&=(A \cap B)\triangle(A \cap C).
+\end{align*}
+
+\item $x\in A^c \backslash  B^c \Leftrightarrow x\in A^c,x\notin B^c$
+$\Leftrightarrow x\notin A,x\in B$
+$\Leftrightarrow x\in B \backslash  A,$
+即
+\begin{align*}
+A^c \backslash  B^c = B \backslash  A.
+\end{align*}
+于是
+\begin{align*}
+A^c\triangle B^c = (A^c \backslash  B^c) \cup (B^c \backslash  A^c) 
+= (B \backslash  A) \cup (A \backslash  B) = (A \backslash  B) \cup (B \backslash  A) = A\triangle B.
+\end{align*}
+
+
+\item 若 $E\triangle A = B$,则
+\begin{align*}
+E &= E\triangle \varnothing = E\triangle (A\triangle A) = (E\triangle A)\triangle A = B\triangle A.
+\end{align*}
+反之,令 $E = B\triangle A$,则
+\begin{align*}
+E\triangle A &= (B\triangle A)\triangle A = B\triangle (A\triangle A) = B\triangle \varnothing = B.
+\end{align*}
+所以, $\exists E,\text{s.t.}\ E\triangle A = B.$
+\end{enumerate}
+
+\end{proof}
+
+\begin{definition}[递增、递减集合列]\label{definition:递增、递减集合列}
+设\(\{A_k\}\)是一个集合列。若
+\[A_1\supseteq A_2\supseteq\cdots\supseteq A_k\supseteq\cdots,\]
+则称此集合列为\textbf{递减集合列}，此时称其交集\(\bigcap_{k = 1}^{\infty}A_k\)为集合列\(\{A_k\}\)的极限集，记为\(\lim_{k\rightarrow\infty}A_k\)；若\(\{A_k\}\)满足
+\[A_1\subseteq A_2\subseteq\cdots\subseteq A_k\subseteq\cdots,\]
+则称\(\{A_k\}\)为\textbf{递增集合列}，此时称其并集\(\bigcup_{k = 1}^{\infty}A_k\)为\(\{A_k\}\)的极限集，记为\(\lim_{k\rightarrow\infty}A_k\)。
+\end{definition}
+
+\begin{proposition}\label{proposition:单调集合上下限的一般形式}
+设$\{A_n\}$和$\{B_n\}(n=1,2,\cdots)$为两个集列.
+\begin{enumerate}[(1)]
+\item 当$\{A_n\}$为递减集合列时,$\lim_{k\to \infty}A_n=\bigcap_{k=1}^{\infty}A_n=\bigcap_{k=N}^{\infty}A_n$($\forall N\in \mathbb{N}$).
+
+当$\{A_n\}$为递增集合列时,$\lim_{k\to \infty}A_n=\bigcup_{k=1}^{\infty}A_n=\bigcup_{k=N}^{\infty}A_n$($\forall N\in \mathbb{N}$).
+
+\item 
+令 $B_1 = A_1,B_n = A_n \setminus \bigcup\limits_{i=1}^{n-1}A_i(n\geqslant 2)$. 证明：$\{B_n\}(n = 1,2,\cdots)$ 为一个彼此不相交的集列，并且
+\begin{align*}
+\bigcup_{i=1}^{n} A_i = \bigcup_{i=1}^{n} B_i,\quad n = 1,2,\cdots;
+\end{align*}
+\begin{align*}
+\bigcup_{i=1}^{\infty} A_i = \bigcup_{i=1}^{\infty} B_i.
+\end{align*}
+
+\item 
+如果 $\{A_n\}(n=1,2,\cdots)$ 为单调减（即 $A_1\supseteq A_2\supseteq\cdots\supseteq A_n\supseteq\cdots$）的集列，证明：
+\begin{align*}
+A_1 = (A_1 - A_2) \cup (A_2 - A_3) \cup \cdots(A_n - A_{n+1}) \cup \cdots \cup \left( \bigcap_{i=1}^{\infty} A_i \right).
+\end{align*}
+并且其中各项互不相交.
+
+\item 证明: $\bigcup_{n=1}^{\infty} (A_n \cap B_n) \subseteq \left( \bigcup_{n=1}^{\infty} A_n \right) \cap \left( \bigcup_{n=1}^{\infty} B_n \right).$反之并不成立,并举例说明:
+$$\bigcup_{n=1}^{\infty} (A_n \cap B_n) \nsupseteq \left( \bigcup_{n=1}^{\infty} A_n \right) \cap \left( \bigcup_{n=1}^{\infty} B_n \right).$$
+
+特别地,如果$\{A_n\}$和$\{B_n\}(n=1,2,\cdots)$都是单调增的集列,证明:
+\begin{align*}
+\bigcup_{n=1}^{\infty} (A_n \cap B_n) = \left( \bigcup_{n=1}^{\infty} A_n \right) \cap \left( \bigcup_{n=1}^{\infty} B_n \right).
+\end{align*}
+\end{enumerate}
+\end{proposition}
+\begin{note}
+这个命题(2)给出了一种构造互不相交集列(不改变其并集)的方法.
+\end{note}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 对$\forall N\in \mathbb{N}$,一方面,
+由$\bigcap_{k=1}^{\infty}{A_n}=\bigcap_{k=1}^{N-1}{A_n}\cap \bigcap_{k=N}^{\infty}{A_n}$可知$\bigcap_{k=1}^{\infty}{A_n}\subset \bigcap_{k=N}^{\infty}{A_n}$.另一方面,由$\{A_n\}$为递减集合列可得
+\begin{align*}
+A_1\supseteq A_2\supseteq \cdots \supseteq A_{N-1}\supseteq A_n,\forall k=N,N+1,\cdots .
+\end{align*}
+因此$\bigcap_{k=1}^{N-1}{A_n}\supseteq \bigcap_{k=N}^{\infty}{A_n}$,故再根据$\bigcap_{k=1}^{\infty}{A_n}=\bigcap_{k=1}^{N-1}{A_n}\cap \bigcap_{k=N}^{\infty}{A_n}$可知$\bigcap_{k=1}^{\infty}{A_n}\supseteq \bigcap_{k=N}^{\infty}{A_n}$.
+
+对$\forall N\in \mathbb{N}$,一方面,
+由$\bigcup_{k=1}^{\infty}{A_n}=\bigcup_{k=1}^{N-1}{A_n}\cup \bigcup_{k=N}^{\infty}{A_n}$可知$\bigcup_{k=1}^{\infty}{A_n}\supseteq \bigcup_{k=N}^{\infty}{A_n}$.另一方面,由$\{A_n\}$为递增集合列可得
+\begin{align*}
+A_1\subseteq A_2\subseteq \cdots \subseteq A_{N-1}\subseteq A_N.
+\end{align*}
+因此$\bigcup_{k=1}^{N-1}{A_n}\subseteq A_N \subseteq \bigcup_{k=N}^{\infty}{A_n}$,故再根据$\bigcup_{k=1}^{\infty}{A_n}=\bigcup_{k=1}^{N-1}{A_n}\cup \bigcup_{k=N}^{\infty}{A_n}$可知$\bigcup_{k=1}^{\infty}{A_n}\subseteq \bigcup_{k=N}^{\infty}{A_n}$.
+
+\item {\color{blue}证法一:}
+显然, $B_i = A_i \setminus \bigcup_{j=1}^{i-1} A_j \subseteq A_i$, 故 $\bigcup_{i=1}^{n} B_i \subseteq \bigcup_{i=1}^{n} A_i$.
+
+反之, 若 $x \in \bigcup_{i=1}^{n} A_i$, \one $x \in A_1$, 则 $x \in A_1 = B_1 \subseteq \bigcup_{i=1}^{n} B_i$; \two $x \notin A_i, i=1,2,\cdots,m$, $x \in A_{m+1}$, 则 $x \in A_{m+1} \setminus \bigcup_{i=1}^{m} A_i = B_{m+1} \subseteq \bigcup_{i=1}^{n} B_i$. 因此, $\bigcup_{i=1}^{n} A_i \subseteq \bigcup_{i=1}^{n} B_i$.
+综上得到
+\begin{align*}
+\bigcup_{i=1}^{n} A_i = \bigcup_{i=1}^{n} B_i.
+\end{align*}
+易见, 由 $B_i = A_i \setminus \bigcup_{j=1}^{i-1} A_j \subseteq A_i$ 知 $\bigcup_{i=1}^{\infty} B_i \subseteq \bigcup_{i=1}^{\infty} A_i$.
+
+反之, 若 $x \in \bigcup_{i=1}^{\infty} A_i$, \one $x \in A_1$, 则 $x \in A_1 = B_1 \subseteq \bigcup_{i=1}^{\infty} B_i$; \two $x \notin A_i, i=1,2,\cdots,m$, $x \in A_{m+1}$, 则 $x \in A_{m+1} \setminus \bigcup_{i=1}^{m} A_i = B_{m+1} \subseteq \bigcup_{i=1}^{\infty} B_i$. 因此, $\bigcup_{i=1}^{\infty} A_i \subseteq \bigcup_{i=1}^{\infty} B_i$.
+综上得到
+\begin{align*}
+\bigcup_{i=1}^{\infty} A_i = \bigcup_{i=1}^{\infty} B_i.
+\end{align*}
+
+{\color{blue}证法二(归纳法):}当 $n=1$ 时, 有
+\begin{align*}
+\bigcup_{i=1}^{1} A_i = A_1 = B_1 = \bigcup_{i=1}^{1} B_i.
+\end{align*}
+假设 $n=k$ 时, 有 $\bigcup_{i=1}^{k} A_i = \bigcup_{i=1}^{k} B_i$, 则
+\begin{align*}
+\bigcup_{i=1}^{k+1} B_i = B_{k+1} \cup \left( \bigcup_{i=1}^{k} B_i \right) = \left( A_{k+1} \setminus \bigcup_{i=1}^{k} A_i \right) \cup \left( \bigcup_{i=1}^{k} A_i \right) = \bigcup_{i=1}^{k+1} A_i.
+\end{align*}
+因此, 对 $\forall n \in \mathbb{N}$, 有 $\bigcup_{i=1}^{n} A_i = \bigcup_{i=1}^{n} B_i$.
+
+再证 $\bigcup_{i=1}^{\infty} A_i = \bigcup_{i=1}^{\infty} B_i$. 事实上, 由
+\begin{align*}
+A_i \subseteq \bigcup_{j=1}^{i} A_j = \bigcup_{j=1}^{i} B_j \subseteq \bigcup_{j=1}^{\infty} B_j = \bigcup_{i=1}^{\infty} B_i,
+\end{align*}
+故 $\bigcup_{i=1}^{\infty} A_i \subseteq \bigcup_{i=1}^{\infty} B_i$. 同理, $\bigcup_{i=1}^{\infty} B_i \subseteq \bigcup_{i=1}^{\infty} A_i$. (或者由 $B_i = A_i \setminus \bigcup_{j=1}^{i} A_j \subseteq A_i$ 推得上式). 于是
+\begin{align*}
+\bigcup_{i=1}^{\infty} A_i = \bigcup_{i=1}^{\infty} B_i.
+\end{align*}
+
+\item 因为 $A_1 \setminus A_2 \subseteq A_1$, $A_2 \setminus A_3 \subseteq A_2 \subseteq A_1$, $\cdots$, $A_n \setminus A_{n+1} \subseteq A_n \subseteq A_{n-1} \subseteq \cdots \subseteq A_1$, $\bigcap_{i=1}^{\infty} A_i \subseteq A_1$, 所以
+\begin{align*}
+(A_1 \setminus A_2) \cup (A_2 \setminus A_3) \cup \cdots \cup (A_n \setminus A_{n+1}) \cup \cdots \cup \left( \bigcap_{i=1}^{\infty} A_i \right) \subseteq A_1.
+\end{align*}
+反之, 对 $\forall x \in A_1$, 有两种情形:
+
+\one $x \in \bigcap_{i=1}^{\infty} A_i$;
+
+\two $x \notin \bigcap_{i=1}^{\infty} A_i$, 则存在$i_0\in \mathbb{N}$,使$x \notin A_{i_0}$, 且 $x \in A_i, i=1,2,\cdots,i_0-1$, 则 $x \in A_{i_0-1} \setminus A_{i_0}$. 于是
+\begin{align*}
+x \in (A_1 \setminus A_2) \cup (A_2 \setminus A_3) \cup \cdots \cup (A_n \setminus A_{n+1}) \cup \cdots \cup \left( \bigcap_{i=1}^{\infty} A_i \right),
+\end{align*}
+\begin{align*}
+A_1 \subseteq (A_1 \setminus A_2) \cup (A_2 \setminus A_3) \cup \cdots \cup (A_n \setminus A_{n+1}) \cup \cdots \cup \left( \bigcap_{i=1}^{\infty} A_i \right).
+\end{align*}
+综合上述得到
+\begin{align*}
+A_1 = (A_1 \setminus A_2) \cup (A_2 \setminus A_3) \cup \cdots \cup (A_n \setminus A_{n+1}) \cup \cdots \cup \left( \bigcap_{i=1}^{\infty} A_i \right).
+\end{align*}
+
+\item 因为$A_n \cap B_n \subseteq A_n \subseteq \bigcup_{i=1}^{\infty} A_i$; $A_n \cap B_n \subseteq B_n \subseteq \bigcup_{i=1}^{\infty} B_i$, 故
+\begin{align}\label{eq::--932uruwjfweof}
+\bigcup_{n=1}^{\infty} (A_n \cap B_n) \subseteq \left( \bigcup_{i=1}^{\infty} A_i \right) \cap \left( \bigcup_{i=1}^{\infty} B_i \right) = \left( \bigcup_{n=1}^{\infty} A_n \right) \cap \left( \bigcup_{n=1}^{\infty} B_n \right).
+\end{align}
+反之,设$A_n = \{n\}, n \in \mathbb{N}$; $B_1 = \varnothing$, $B_n = \{n-1\}, n=2,3,\cdots$. 则
+\begin{align*}
+\bigcup_{n=1}^{\infty} (A_n \cap B_n) = \bigcup_{n=1}^{\infty} \varnothing = \varnothing \nsupseteq \mathbb{N} = \mathbb{N} \cap \mathbb{N} = \left( \bigcup_{n=1}^{\infty} A_n \right) \cap \left( \bigcup_{n=1}^{\infty} B_n \right).
+\end{align*}
+
+特别地,由\eqref{eq::--932uruwjfweof}式知
+\begin{align*}
+\bigcup_{n=1}^{\infty} (A_n \cap B_n) \subseteq \left( \bigcup_{n=1}^{\infty} A_n \right) \cap \left( \bigcup_{n=1}^{\infty} B_n \right).
+\end{align*}
+另一方面,对$\forall x \in \left( \bigcup_{n=1}^{\infty} A_n \right) \cap \left( \bigcup_{n=1}^{\infty} B_n \right)$,即$x \in \bigcup_{n=1}^{\infty} A_n$,且$x \in \bigcup_{n=1}^{\infty} B_n$. 则必有$x \in A_{n_1}$, $x \in B_{n_2}$,不妨设$n_1 \leqslant n_2$. 又因$\{A_n \mid n \in \mathbb{N}\}$为递增集列,故
+\begin{align*}
+x \in A_{n_1} \subseteq A_{n_2},
+\end{align*}
+于是
+\begin{align*}
+x \in A_{n_2} \cap B_{n_2} \subseteq \bigcup_{n=1}^{\infty} (A_n \cap B_n),
+\end{align*}
+\begin{align*}
+\left( \bigcup_{n=1}^{\infty} A_n \right) \cap \left( \bigcup_{n=1}^{\infty} B_n \right) \subseteq \bigcup_{n=1}^{\infty} (A_n \cap B_n).
+\end{align*}
+综合上述,有
+\begin{align*}
+\bigcup_{n=1}^{\infty} (A_n \cap B_n) = \left( \bigcup_{n=1}^{\infty} A_n \right) \cap \left( \bigcup_{n=1}^{\infty} B_n \right).
+\end{align*}
+\end{enumerate}
+
+\end{proof}
+
+\begin{definition}[上、下极限集]\label{definition:上、下极限集}
+  设\(\{A_k\}\)是一集合列，令
+\[B_j=\bigcup_{k = j}^{\infty}A_k\quad (j = 1,2,\cdots),\]
+显然有\(B_j\supset B_{j + 1}(j = 1,2,\cdots)\)。我们称
+\[\lim_{k\rightarrow\infty}B_k=\bigcap_{j = 1}^{\infty}B_j=\bigcap_{j = 1}^{\infty}\bigcup_{k = j}^{\infty}A_k\]
+为集合列\(\{A_k\}\)的\textbf{上极限集}，简称为\textbf{上限集}，记为
+\[\varlimsup_{k\rightarrow\infty}A_k=\bigcap_{j = 1}^{\infty}\bigcup_{k = j}^{\infty}A_k.\]
+
+类似地，称集合\(\bigcup_{j = 1}^{\infty}\bigcap_{k = j}^{\infty}A_k\)为集合列\(\{A_k\}\)的\textbf{下极限集}，简称为\textbf{下限集}，记为
+\[\varliminf_{k\rightarrow\infty}A_k=\bigcup_{j = 1}^{\infty}\bigcap_{k = j}^{\infty}A_k.\]
+
+若上、下限集相等，则说\(\{A_k\}\)的极限集存在并等于上限集或下限集，记为\(\lim_{k\rightarrow\infty}A_k\)。
+\end{definition}
+
+\begin{proposition}\label{proposition:单调集列的上下限集相等都等于其极限集}
+设$\{A_k\}$是一个集合列,我们有
+\begin{enumerate}
+\item 若$A_1\supseteq A_2\supseteq \cdots\supseteq A_k\supseteq \cdots$,则
+\begin{align*}
+\bigcap_{k=1}^{\infty}A_k=\lim_{k\to \infty}A_k=\varliminf_{k\to \infty}A_k=\varlimsup_{k\to \infty}A_k.
+\end{align*}
+
+\item 若$A_1\subseteq A_2\subseteq \cdots\subseteq A_k\subseteq \cdots$,则
+\begin{align*}
+\bigcup_{k=1}^{\infty}A_k=\lim_{k\to \infty}A_k=\varliminf_{k\to \infty}A_k=\varlimsup_{k\to \infty}A_k.
+\end{align*}
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+\begin{enumerate}
+\item 由于$\{A_k\}$为递减集合列,故
+\begin{align*}
+\bigcup_{j=k}^{\infty}{A_j}=A_k,\forall k\in \mathbb{N} .
+\end{align*}
+又由\refpro{proposition:单调集合上下限的一般形式}可知
+\begin{align*}
+\underset{k\rightarrow \infty}{\lim}A_k=\bigcap_{j=1}^{\infty}{A_j}=\bigcap_{j=k}^{\infty}{A_j},\forall k\in \mathbb{N} .
+\end{align*}
+于是
+\begin{gather*}
+\underset{k\rightarrow \infty}{\overline{\lim }}A_k=\bigcap_{k=1}^{\infty}{\bigcup_{j=k}^{\infty}{A_j}}=\bigcap_{k=1}^{\infty}{A_k}=\underset{k\rightarrow \infty}{\lim}A_k.
+\\
+\underset{k\rightarrow \infty}{\underline{\lim }}A_k=\bigcup_{k=1}^{\infty}{\bigcap_{j=k}^{\infty}{A_j}}=\bigcup_{k=1}^{\infty}{\bigcap_{j=1}^{\infty}{A_j}}=\bigcap_{j=1}^{\infty}{A_j}=\underset{j\rightarrow \infty}{\lim}A_j.
+\end{gather*}
+
+\item 由于$\{A_k\}$为递增集合列,故
+\begin{align*}
+\bigcap_{j=k}^{\infty}{A_j}=A_k,\forall k\in \mathbb{N} .
+\end{align*}
+又由\refpro{proposition:单调集合上下限的一般形式}可知
+\begin{align*}
+\underset{k\rightarrow \infty}{\lim}A_k=\bigcup_{j=1}^{\infty}{A_j}=\bigcup_{j=k}^{\infty}{A_j},\forall k\in \mathbb{N} .
+\end{align*}
+于是
+\begin{gather*}
+\underset{k\rightarrow \infty}{\overline{\lim }}A_k=\bigcap_{k=1}^{\infty}{\bigcup_{j=k}^{\infty}{A_j}}=\bigcap_{k=1}^{\infty}{\bigcup_{j=1}^{\infty}{A_j}}=\bigcup_{j=1}^{\infty}{A_j}=\underset{j\rightarrow \infty}{\lim}A_j.
+\\
+\underset{k\rightarrow \infty}{\underline{\lim }}A_k=\bigcup_{k=1}^{\infty}{\bigcap_{j=k}^{\infty}{A_j}}=\bigcup_{k=1}^{\infty}{A_k}=\underset{k\rightarrow \infty}{\lim}A_k.
+\end{gather*}
+\end{enumerate}
+
+\end{proof}
+
+\begin{proposition}[上、下极限集的性质]\label{proposition:上、下极限集的性质}
+设\(\{A_k\}\)是一集合列,$E$是一个集合则
+\begin{align*}
+(\text{i}) E\setminus\varlimsup_{k\rightarrow\infty}A_k=\varliminf_{k\rightarrow\infty}(E\setminus A_k);\quad (\text{ii}) E\setminus\varliminf_{k\rightarrow\infty}A_k=\varlimsup_{k\rightarrow\infty}(E\setminus A_k).
+\end{align*}
+\end{proposition}
+\begin{proof}
+
+
+
+\end{proof}
+
+\begin{theorem}\label{theorem:上、下极限集的刻画}
+若\(\{A_k\}\)为一集合列，则
+\begin{align*}
+&(\mathrm{i})\underset{k\rightarrow \infty}{\overline{\lim }}A_k=\bigcap_{j=1}^{\infty}{\bigcup_{k=j}^{\infty}{A_k}}=\{x: x \text{ 属于无穷多个 } A_k\}=\left\{ x:\forall j\in \mathbb{N} ,\exists k\geqslant j\text{且}k\in \mathbb{N} \,\,\text{s.t.}\,\,x\in A_k \right\}
+\\
+&(\mathrm{i}\mathrm{i})\varliminf_{k\rightarrow\infty}A_k=\{x: \text{ 除有限个 } A_k \text{ 外, 都含有 } x\}=\left\{ x:\exists j_0\in \mathbb{N} ,\forall k\geqslant j_0\text{且}k\in \mathbb{N} ,x\in A_k \right\} 
+\end{align*}
+并且我们有
+\[\varlimsup_{k\rightarrow\infty}A_k\supseteq\varliminf_{k\rightarrow\infty}A_k.\]
+\end{theorem}
+\begin{proof}
+
+(i)设 $x \in \varlimsup_{k\rightarrow\infty}A_k=\bigcap_{n = 1}^{\infty} \bigcup_{k = n}^{\infty} A_k$，则对 $n = 1$, 有 $x \in \bigcup_{k = 1}^{\infty} A_k$，故 $\exists n_1 \in \mathbb{N}$, 使得 $x \in A_{n_1}$；对 $n = n_1 + 1$, 有 $x \in \bigcup_{k = n_1 + 1}^{\infty} A_k$，故 $\exists n_2 > n_1$, 使得 $x \in A_{n_2}$；以此类推，得到一列 $\{n_k\}$ 满足 $n_1 < n_2 < \cdots$, 且 $x \in A_{n_k}, \forall k$. 因此$x$ 属于无穷多个 $A_n$.
+
+反之，若 $x$ 属于无穷多个 $A_n$, 不妨设 $x \in A_{n_k}, k = 1, 2, \cdots$, 且 $n_1 < n_2 < \cdots$, 则对 $\forall n \in \mathbb{N}$, 都存在 $n_k > n$. 从而 $x \in A_{n_k} \subset \bigcup_{k = n}^{\infty} A_k$. 因此$x \in \bigcap_{n = 1}^{\infty} \bigcup_{k = n}^{\infty} A_k=\varlimsup_{k\rightarrow\infty}A_k$.
+    
+(ii)若\(x\in\varliminf_{k\rightarrow\infty}A_k\)，则存在自然数\(j_0\)，使得
+\[x\in\bigcap_{k = j_0}^{\infty}A_k,\]
+从而当\(k\geqslant j_0\)时，有\(x\in A_k\)。自然除了$A_1,\cdots,A_{j_0-1}$这有限个集合外,其他$A_k(k\geqslant j_0)$都含有$x$.
+
+反之，若除有限个$ A_k$外, 都含有$x$,则存在自然数\(j_0\)，当\(k\geqslant j_0\)时，有\(x\in A_k\)，从而得到
+\[x\in\bigcap_{k = j_0}^{\infty}A_k.\]
+由此可知\(x\in\bigcup_{j = 1}^{\infty}\bigcap_{k = j}^{\infty}A_k=\varliminf_{k\rightarrow\infty}A_k\)。
+
+由$\left( \mathrm{i} \right) \left( \mathrm{ii} \right) $可知,\(\{A_k\}\)的上限集是由属于\(\{A_k\}\)中无穷多个集合的元素所形成的；\(\{A_k\}\)的下限集是由只不属于\(\{A_k\}\)中有限多个集合的元素所形成的。从而立即可知
+\[\varlimsup_{k\rightarrow\infty}A_k\supseteq\varliminf_{k\rightarrow\infty}A_k.\]
+
+\end{proof}
+
+\begin{example}
+设$A_{2k-1} = \left( 0, \frac{1}{k} \right), A_{2k} = (0, k), k=1,2,\cdots$,求$\varlimsup_{n \to +\infty} A_n$和$\varliminf_{n \to +\infty} A_n$.
+\end{example}
+\begin{solution}
+
+{\color{blue}解法一:} 由\refthe{theorem:上、下极限集的刻画}可得
+\begin{align*}
+\varlimsup_{n \to +\infty} A_n &= \{x \mid \exists \text{无穷个} \, n, \text{s. t.} \, x \in A_n\} = (0, +\infty). \\
+\varliminf_{n \to +\infty} A_n &= \{x \mid \text{只有有限个} \, n, \text{s. t.} \, x \notin A_n\} = \varnothing.
+\end{align*}
+
+{\color{blue}解法二:} 根据上、下限集的定义知
+\begin{align*}
+\varlimsup_{n \to +\infty} A_n &= \bigcap_{k=1}^{\infty} \bigcup_{n=k}^{\infty} A_n = \bigcap_{k=1}^{\infty} (0, +\infty) = (0, +\infty). \\
+\varliminf_{n \to +\infty} A_n &= \bigcup_{k=1}^{\infty} \bigcap_{n=k}^{\infty} A_n = \bigcup_{k=1}^{\infty} \varnothing = \varnothing.
+\end{align*}
+
+\end{solution}
+
+\begin{example}
+设 $A_{2n + 1} = [0, 2 - 1/(2n + 1)], n = 0, 1, 2, \cdots$, $A_{2n} = [0, 1 + \frac{1}{2}n], n = 1, 2, \cdots$, 求 $\liminf_{n \to \infty} A_n$ 与 $\limsup_{n \to \infty} A_n$.
+\end{example}
+\begin{solution}
+
+注意到
+\begin{align*}
+[0, 1] \subseteq \bigcap_{n = 1}^{\infty} A_n \subseteq \liminf_{n \to \infty} A_n \subseteq \limsup_{n \to \infty} A_n \subseteq \bigcup_{n = 1}^{\infty} A_n \subseteq [0, 2)
+\end{align*}
+故只需考察 $(1, 2)$ 中的点. 对 $\forall x \in (1, 2)$, 存在 $n_0 \in \mathbb{N}$(与 $x$ 有关), 使得
+\begin{align*}
+1 + \frac{1}{2n} < x < 2 - \frac{1}{2n + 1}, \quad \forall n \geqslant n_0
+\end{align*}
+即当 $n \geqslant n_0$ 时, 有 $x \notin A_{2n}, x \in A_{2n + 1}$. 这说明: (i) $x$ 不能 “除有限个 $A_n$ 外, 都含有 $x$”, 即 $x \notin \liminf_{n \to \infty} A_n$; (ii) “$x$ 属于无穷多个 $A_n$”, 故 $x \in \limsup_{n \to \infty} A_n$. 因此, $\liminf_{n \to \infty} A_n = [0, 1]$, $\limsup_{n \to \infty} A_n = [0, 2)$.
+
+\end{solution}
+
+\begin{proposition}
+设$f(x)$为$E$上的一个实函数,$c$为任何实数，
+\[
+E(f > c) = \{x \in E \mid f(x) > c\}, \quad E(f \leqslant c) = \{x \in E \mid f(x) \leqslant c\}
+\]
+等. 证明:
+\begin{enumerate}[(1)]
+\item $E(f > c) \cup E(f \leqslant c) = E$.
+\item $E(f \geqslant c) = E(f > c) \cup E(f = c)$.
+\item 当$c \leqslant d$时,$E(f > c) \cap E(f \leqslant d) = E(c < f \leqslant d)$.
+\item 当$c \geqslant 0$时,$E(f^2 > c) = E(f > \sqrt{c}) \cup E(f < -\sqrt{c})$.
+\item 当$f \geqslant g$时,$E(f > c) \supseteq E(g > c)$.
+\item $E(f \geqslant c) = \bigcup_{n=1}^{\infty} E(c \leqslant f < c + n)$.
+\item $E(f < c) = \bigcup_{n=1}^{\infty} E\left(f \leqslant c - \frac{1}{n}\right)$.
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 
+\begin{align*}
+E(f > c) \cup E(f \leqslant c) &= \{x \in E \mid f(x) > c\} \cup \{x \in E \mid f(x) \leqslant c\} \\
+&= \{x \in E \mid f(x) > c \text{ 或 } f(x) \leqslant c\} = E.
+\end{align*}
+
+\item 
+\begin{align*}
+E(f > c) \cup E(f = c) &= \{x \in E \mid f(x) > c\} \cup \{x \in E \mid f(x) = c\} \\
+&= \{x \in E \mid f(x) > c \text{ 或 } f(x) = c\} = \{x \in E \mid f(x) \geqslant c\} = E(f \geqslant c).
+\end{align*}
+
+\item 
+\begin{align*}
+E(f > c) \cap E(f \leqslant d) &= \{x \in E \mid f(x) > c\} \cap \{x \in E \mid f(x) \leqslant d\} \\
+&= \{x \in E \mid f(x) > c \text{ 且 } f(x) \leqslant d\} = \{x \in E \mid c < f(x) \leqslant d\} \\
+&= E(c < f \leqslant d).
+\end{align*}
+
+\item 
+\begin{align*}
+E(f > \sqrt{c}) \cup E(f < -\sqrt{c}) &= \{x \in E \mid f(x) > \sqrt{c}\} \cup \{x \in E \mid f(x) < -\sqrt{c}\} \\
+&= \{x \in E \mid f(x) > \sqrt{c} \text{ 或 } f(x) < -\sqrt{c}\} = \{x \in E \mid f^2(x) > c\} \\
+&= E(f^2 > c).
+\end{align*}
+
+\item 
+$x \in E(g > c) \Leftrightarrow x \in E, \text{且 } g(x) > c \Rightarrow x \in E, \text{且 } f(x) \geqslant g(x) > c \Leftrightarrow x \in E(f > c).$
+等价于
+\begin{align*}
+E(f > c) \supseteq E(g > c).
+\end{align*}
+
+\item 显然,$E(c \leqslant f < c + n) \subseteq E(f \geqslant c)$,故
+\begin{align*}
+\bigcup_{n=1}^{\infty} E(c \leqslant f < c + n) \subseteq E(f \geqslant c).
+\end{align*}
+另一方面,对$\forall x \in E(f \geqslant c)$,即$f(x) \geqslant c$. 则必有充分大的$n_0 \in \mathbb{N}$,使得$c \leqslant f(x) < c + n_0$,故$x \in E(c \leqslant f < c + n_0)$. 于是
+\begin{align*}
+x \in E(c \leqslant f < c + n_0) \subseteq \bigcup_{n=1}^{\infty} E(c \leqslant f < c + n).
+\end{align*}
+这就得到
+\begin{align*}
+E(f \geqslant c) \subseteq \bigcup_{n=1}^{\infty} E(c \leqslant f < c + n).
+\end{align*}
+综合上述,有
+\begin{align*}
+E(f \geqslant c) = \bigcup_{n=1}^{\infty} E(c \leqslant f < c + n).
+\end{align*}
+
+\item 因为$f(x) \leqslant c - \frac{1}{n} \Rightarrow f(x) \leqslant c - \frac{1}{n} < c$,故
+\begin{align*}
+E\left(f \leqslant c - \frac{1}{n}\right) \subseteq E(f < c),
+\end{align*}
+\begin{align*}
+\bigcup_{n=1}^{\infty} E\left(f \leqslant c - \frac{1}{n}\right) \subseteq E(f < c).
+\end{align*}
+另一方面,对$\forall x \in E(f < c)$,即$x \in E$且$f(x) < c$. 则必有$n_0 \in \mathbb{N}$, s. t. $f(x) \leqslant c - \frac{1}{n_0}$. 即$x \in E\left(f \leqslant c - \frac{1}{n_0}\right)$. 从而
+\begin{align*}
+x \in \bigcup_{n=1}^{\infty} E\left(f \leqslant c - \frac{1}{n}\right), \quad E(f < c) \subseteq \bigcup_{n=1}^{\infty} E\left(f \leqslant c - \frac{1}{n}\right).
+\end{align*}
+综合上述,有
+\begin{align*}
+E(f < c) = \bigcup_{n=1}^{\infty} E\left(f \leqslant c - \frac{1}{n}\right).
+\end{align*}
+\end{enumerate}
+
+\end{proof}
+
+\begin{proposition}\label{proposition:递增函数列的集合相关结论2}
+设$\{f_n\}(n=1,2,\cdots)$为$E$上的实函数列,且关于$n$单调增,即
+\[
+f_1(x) \leqslant f_2(x) \leqslant \cdots \leqslant f_n(x) \leqslant f_{n+1}(x) \leqslant \cdots, \quad \forall x \in E,
+\]
+并且$\lim\limits_{n \to +\infty} f_n(x) = f(x)$.证明:对任何实数$c$,有
+\begin{enumerate}[(1)]
+\item\label{proposition:递增函数列的集合相关结论2-1} $E(f > c) = \bigcup_{n=1}^{\infty} E(f_n > c) = \lim\limits_{n \to +\infty} E(f_n > c)$.
+\item\label{proposition:递增函数列的集合相关结论2-2} $E(f \leqslant c) = \bigcap_{n=1}^{\infty} E(f_n \leqslant c) = \lim\limits_{n \to +\infty} E(f_n \leqslant c)$.
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item {\color{blue}证法一:}
+设$x \in E(f > c)$,则$\lim\limits_{n \to +\infty} f_n(x) = f(x) > c$.于是,$\exists N \in \mathbb{N}$,s.t.当$n_0 > N$时,有$f_{n_0}(x) > c$.从而,$x \in E(f_{n_0} > c) \subseteq \bigcup_{n=1}^{\infty} E(f_n > c)$,$E(f > c) \subseteq \bigcup_{n=1}^{\infty} E(f_n > c)$.
+
+反之,如果$x \in \bigcup_{n=1}^{\infty} E(f_n > c)$,则$\exists n_0 \in \mathbb{N}$,s.t.$x \in E(f_{n_0} > c)$.由于$f_n$关于$n$单调增,故有$f(x) = \lim\limits_{n \to +\infty} f_n(x) \geqslant f_{n_0}(x) > c$,$x \in E(f > c)$.从而,$\bigcup_{n=1}^{\infty} E(f_n > c) \subseteq E(f > c)$.
+
+综合上述,有
+\begin{align*}
+E(f > c) = \bigcup_{n=1}^{\infty} E(f_n > c).
+\end{align*}
+因为$f_n$单调增,故$E(f_n > c) \subseteq E(f_{n+1} > c)$,从而
+\begin{align*}
+\lim\limits_{n \to +\infty} E(f_n > c) = \bigcup_{n=1}^{\infty} E(f_n > c).
+\end{align*}
+
+{\color{blue}证法二:}
+如果\rrefpro{proposition:递增函数列的集合相关结论2}{proposition:递增函数列的集合相关结论2-2}不是利用\rrefpro{proposition:递增函数列的集合相关结论2}{proposition:递增函数列的集合相关结论2-1}的结论证得,则
+\begin{align*}
+E(f>c)=E\setminus E(f\leqslant c)\xlongequal{\text{\rrefpro{proposition:递增函数列的集合相关结论2}{proposition:递增函数列的集合相关结论2-2}}}E\setminus \bigcap_{n=1}^{\infty}{E(f_n}\leqslant c)\xlongequal{\mathrm{De}\,\,\text{Morgan公式}}\bigcup_{n=1}^{\infty}{(E}\setminus E(f_n\leqslant c))=\bigcup_{n=1}^{\infty}{E(f_n}>c).
+\end{align*}
+
+\item {\color{blue}证法一:}
+因为$f_n$关于$n$单调增,故$f(x) = \lim\limits_{n \to +\infty} f_n(x) \geqslant f_n(x)$,从而
+\begin{align*}
+E(f \leqslant c) \subseteq E(f_n \leqslant c), \quad n=1,2,\cdots,
+\end{align*}
+\begin{align*}
+E(f \leqslant c) \subseteq \bigcap_{n=1}^{\infty} E(f_n \leqslant c).
+\end{align*}
+另一方面,如果$x \in \bigcap_{n=1}^{\infty} E(f_n \leqslant c)$,则$x \in E(f_n \leqslant c), \forall n \in \mathbb{N}$,即$f_n(x) \leqslant c, \forall n \in \mathbb{N}$.于是,$f(x) = \lim\limits_{n \to +\infty} f_n(x) \leqslant c$,$x \in E(f \leqslant c)$,$\bigcap_{n=1}^{\infty} E(f_n \leqslant c) \subseteq E(f \leqslant c)$.
+
+综合上述,有
+\begin{align*}
+E(f \leqslant c) = \bigcap_{n=1}^{\infty} E(f_n \leqslant c).
+\end{align*}
+由于$f_n$关于$n$单调增,故$E(f_n \leqslant c)$关于$n$单调减,从而
+\begin{align*}
+\lim\limits_{n \to +\infty} E(f_n \leqslant c) = \bigcap_{n=1}^{\infty} E(f_n \leqslant c).
+\end{align*}
+
+{\color{blue}证法二:}
+如果\rrefpro{proposition:递增函数列的集合相关结论2}{proposition:递增函数列的集合相关结论2-1}不是利用\rrefpro{proposition:递增函数列的集合相关结论2}{proposition:递增函数列的集合相关结论2-2}的结论证得,则
+\begin{align*}
+E(f\leqslant c)=E\setminus E(f>c)\xlongequal{\text{\rrefpro{proposition:递增函数列的集合相关结论2}{proposition:递增函数列的集合相关结论2-1}}}E\setminus \bigcup_{n=1}^{\infty}{E(f_n}>c)\xlongequal{\mathrm{De}\,\,\text{Morgan公式}}\bigcap_{n=1}^{\infty}{(E}\setminus E(f_n>c))=\bigcap_{n=1}^{\infty}{E(f_n}\leqslant c).
+\end{align*}
+\end{enumerate}
+
+\end{proof}
+
+\begin{example}
+设$\{f_i(x)\}(i=1,2,\cdots)$为定义在$\mathbb{R}^n$上的实函数列,试用点集
+\[
+\left\{ x \in \mathbb{R}^n \mid f_i(x) \geqslant \frac{1}{j} \right\}, \quad i,j = 1,2,\cdots
+\]
+表示点集$\{x \in \mathbb{R}^n \mid \varlimsup_{i \to +\infty} f_i(x) > 0\}$.
+\end{example}
+\begin{solution}
+
+\begin{align*}
+\{x \in \mathbb{R}^n \mid \varlimsup_{i \to +\infty} f_i(x) > 0\} &= \bigcup_{j=1}^{\infty} \left\{ x \in \mathbb{R}^n \mid \text{存在无穷个} \, i, \text{使} \, f_i(x) \geqslant \frac{1}{j} \right\} \\
+&= \bigcup_{j=1}^{\infty} \varlimsup_{i \to +\infty} \left\{x \in \mathbb{R}^n \mid f_i(x) \geqslant \frac{1}{j} \right\} \\
+&= \bigcup_{j=1}^{\infty} \bigcap_{N=1}^{\infty} \bigcup_{i=N}^{\infty} \left\{x \in \mathbb{R}^n \mid f_i(x) \geqslant \frac{1}{j} \right\}.
+\end{align*}
+
+\end{solution}
+
+
+
+
+
+
+\end{document}

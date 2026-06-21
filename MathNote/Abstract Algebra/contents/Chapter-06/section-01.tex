@@ -1,0 +1,172 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[scale=0.3]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{Galois基本理论}
+
+\begin{definition}
+设$K$是域$F$的有限扩张，则$K$的所有$F$-自同构构成的集合$\mathrm{Gal}(K/F)$关于自同构的复合运算构成群，称为$K$在$F$上的\textbf{Galois群}。
+\end{definition}
+
+\begin{definition}
+设$G$是域$K$的自同构群$\mathrm{Aut}K$的子群，定义$K$的子集
+\begin{align*}
+\mathrm{Inv}G=\{a\in K\mid g(a)=a,\forall g\in G\},
+\end{align*}
+则$\mathrm{Inv}G$是$K$的子域，称为$K$的$G$\textbf{不变子域}（或$G$\textbf{固定子域}）。
+\end{definition}
+
+\begin{proposition}
+设域与群满足对应包含关系，则有如下基本性质：
+\begin{enumerate}[(1)]
+\item 若$K_1\supseteq K_2\supseteq F$，则$\mathrm{Gal}(K_1/K_2)\subseteq\mathrm{Gal}(K_1/F)$；
+\item 若$G_1\supseteq G_2$，则$\mathrm{Inv}G_1\subseteq\mathrm{Inv}G_2$；
+\item $\mathrm{Inv}(\mathrm{Gal}(K/F))\supseteq F$；
+\item $\mathrm{Gal}(K/\mathrm{Inv}G)\supseteq G$.
+\end{enumerate}
+\end{proposition}
+
+\begin{theorem}
+设$K$是域，$G$是$\mathrm{Aut}K$的有限子群，则$K$是$\mathrm{Inv}G$上的有限扩张，且
+\begin{align*}
+[K:\mathrm{Inv}G]\leqslant|G|.
+\end{align*}
+\end{theorem}
+
+\begin{proof}
+
+设$G=\{\eta_1=\mathrm{id},\eta_2,\cdots,\eta_n\}$。任取$m>n$个元素$u_1,u_2,\cdots,u_m\in K$，作$n\times m$矩阵$A$满足$\mathrm{ent}_{ij}(A)=\eta_i(u_j)$，则齐次线性方程组$AX=0$必存在非零解。
+取非零解$(b_1,b_2,\cdots,b_m)'$为非零元素个数最少的解，不妨设$b_1=1$。
+
+若存在$b_i\notin\mathrm{Inv}G$，不妨取$b_2\notin\mathrm{Inv}G$，则存在$\eta\in G$使得$\eta(b_2)\neq b_2$。可验证$(1,\eta(b_2),\cdots,\eta(b_m))'$也是非零解，进而$(0,b_2-\eta(b_2),\cdots,b_m-\eta(b_m))'$为非零解，其非零元素个数更少，矛盾。
+故所有$b_i\in\mathrm{Inv}G$，即$u_1,\cdots,u_m$在$\mathrm{Inv}G$上线性相关，因此$[K:\mathrm{Inv}G]\leqslant|G|$，且$K$是$\mathrm{Inv}G$的有限扩张.
+
+\end{proof}
+
+\begin{definition}
+设域$F$的扩张$K$满足
+\begin{align*}
+\mathrm{Inv}(\mathrm{Gal}(K/F))=F,
+\end{align*}
+则称$K$是$F$的\textbf{Galois扩张}。
+\end{definition}
+
+\begin{theorem}
+设$K$是域$F$的有限扩张，则下列条件等价：
+\begin{enumerate}[(1)]
+\item $K$是某个可分多项式$f(x)\in F[x]$的分裂域；
+\item $K$是$F$的Galois扩张，且$[K:F]=|\mathrm{Gal}(K/F)|$；
+\item $K$是$F$的可分正规扩张.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+
+$(1)\Rightarrow(2)$：因$f(x)$可分，故$|\mathrm{Gal}(K/F)|=[K:F]$。令$E=\mathrm{Inv}(\mathrm{Gal}(K/F))$，由基本性质得$\mathrm{Gal}(K/E)=\mathrm{Gal}(K/F)$。
+$f(x)$也是$E$上的可分多项式，$K$为其分裂域，故$|\mathrm{Gal}(K/E)|=[K:E]$，因此$[K:E]=[K:F]$，即$E=F$，故$K$为$F$的Galois扩张。
+
+$(2)\Rightarrow(3)$：任取$\alpha\in K$，记$G=\mathrm{Gal}(K/F)$，$\mathrm{Irr}(\alpha,F)=x^r+b_1x^{r-1}+\cdots+b_r$。对任意$\sigma\in G$，$\sigma(\alpha)$是该不可约多项式的根。
+令$h(x)=\prod\limits_{i=1}^s(x-\sigma_i(\alpha))$，则$h(x)\in F[x]$且$h(x)\mid\mathrm{Irr}(\alpha,F)$，故$\mathrm{Irr}(\alpha,F)=h(x)$，$\alpha$为可分元。
+又$F[x]$中不可约多项式若在$K$中有根则全部根在$K$中，故$K$是正规扩张。
+
+$(3)\Rightarrow(1)$：$K$为有限可分正规扩张，故是某可分多项式的分裂域.
+
+\end{proof}
+
+\begin{remark}
+有限扩张范畴内，Galois扩张等价于有限可分正规扩张。
+\end{remark}
+
+\begin{theorem}
+设$K$是域$F$的有限可分正规扩张，记$\Gamma$为$G=\mathrm{Gal}(K/F)$的全体子群的集合，$\Sigma$为$F$与$K$之间全体中间域的集合，则映射
+\begin{align*}
+\mathrm{Inv}:H\mapsto\mathrm{Inv}H,\quad \forall H\in\Gamma
+\end{align*}
+是$\Gamma$到$\Sigma$的可逆映射，且满足：
+\begin{enumerate}[(1)]
+\item $\mathrm{Inv}^{-1}=\mathrm{Gal}:E\mapsto\mathrm{Gal}(K/E),\ \forall E\in\Sigma$；
+\item $H_1\supseteq H_2\in\Gamma$当且仅当$\mathrm{Inv}H_1\subseteq\mathrm{Inv}H_2$；
+\item 若$H\in\Gamma$，则$|H|=[K:\mathrm{Inv}H],\ [G:H]=[\mathrm{Inv}H:F]$；
+\item $\mathrm{Inv}H$是$F$的正规扩张当且仅当$H\lhd G$，此时$\mathrm{Gal}(\mathrm{Inv}H/F)\cong G/H$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+
+任取$H\in\Gamma$，记$E=\mathrm{Inv}H$，则$F\subseteq E\subseteq K$。$K$是$E$的有限可分正规扩张，故$|H|=[K:E]$，结合前述定理得$H=\mathrm{Gal}(K/\mathrm{Inv}H)$，即$\mathrm{Gal}\circ\mathrm{Inv}=\mathrm{id}_\Gamma$。
+
+任取$E\in\Sigma$，$K$是$E$的有限可分正规扩张，故$\mathrm{Inv}(\mathrm{Gal}(K/E))=E$，即$\mathrm{Inv}\circ\mathrm{Gal}=\mathrm{id}_\Sigma$，因此$\mathrm{Inv}$是可逆映射，(1)成立。
+
+(2)由子群与不变子域的包含关系直接可得。
+
+(3)由$|G|=[K:F],\ |H|=[K:\mathrm{Inv}H]$，得$[G:H]=\frac{|G|}{|H|}=\frac{[K:F]}{[K:\mathrm{Inv}H]}=[\mathrm{Inv}H:F]$。
+
+(4)若$H\lhd G$，则$\eta(\mathrm{Inv}H)=\mathrm{Inv}H,\forall\eta\in G$。作同态$\pi:G\to\mathrm{Gal}(\mathrm{Inv}H/F)$，$\pi(\eta)$为$\eta$在$\mathrm{Inv}H$上的限制，则$\pi(G)=\mathrm{Gal}(\mathrm{Inv}H/F)\cong G/H$，故$\mathrm{Inv}H$为正规扩张。
+反之，若中间域$E$是$F$的正规扩张，则$\eta(E)=E,\forall\eta\in G$，故$\eta\mathrm{Gal}(K/E)\eta^{-1}=\mathrm{Gal}(K/E)$，即$\mathrm{Gal}(K/E)\lhd G$.
+
+\end{proof}
+
+\begin{example}
+设$K$为$x^5-2\in\mathbb{Q}[x]$的分裂域，求$K$在$\mathbb{Q}$上的Galois群、其子群及对应不变子域。
+\end{example}
+
+\begin{solution}
+
+令$\theta=e^{\frac{2\pi\sqrt{-1}}{5}}$，则
+\begin{align*}
+\mathrm{Irr}(\theta,\mathbb{Q})=x^4+x^3+x^2+x+1,\quad x^5-2=\prod\limits_{i=0}^4(x-\theta^i\sqrt[5]{2}),
+\end{align*}
+故
+\begin{align*}
+K=\mathbb{Q}(\sqrt[5]{2},\theta\sqrt[5]{2},\theta^2\sqrt[5]{2},\theta^3\sqrt[5]{2},\theta^4\sqrt[5]{2})=\mathbb{Q}(\sqrt[5]{2},\theta).
+\end{align*}
+
+计算扩张次数：
+\begin{align*}
+[K:\mathbb{Q}]=[K:\mathbb{Q}(\theta)][\mathbb{Q}(\theta):\mathbb{Q}]=4[K:\mathbb{Q}(\theta)]\leqslant20,\quad [K:\mathbb{Q}]=[K:\mathbb{Q}(\sqrt[5]{2})][\mathbb{Q}(\sqrt[5]{2}):\mathbb{Q}]=5[K:\mathbb{Q}(\sqrt[5]{2})],
+\end{align*}
+故$5\mid[K:\mathbb{Q}],\ 4\mid[K:\mathbb{Q}]$，即$[K:\mathbb{Q}]=20$，因此$|\mathrm{Gal}(K/\mathbb{Q})|=20$。
+
+记$G=\mathrm{Gal}(K/\mathbb{Q})$：
+\begin{enumerate}[(1)]
+\item $G$中有唯一$5$阶正规子群$G_0=\langle\tau\rangle$，$\tau(\theta)=\theta,\ \tau(\sqrt[5]{2})=\theta\sqrt[5]{2}$，$\mathrm{Inv}G_0=\mathbb{Q}(\theta)$；
+\item $G$有$5$个$4$阶子群$G_i=\langle\sigma_i\rangle$，$\sigma_i(\theta^{i-1}\sqrt[5]{2})=\theta^{i-1}\sqrt[5]{2},\ \sigma_i(\theta)=\theta^2\ (2\leqslant i\leqslant5)$，$\mathrm{Inv}G_i=\mathbb{Q}(\theta^{i-1}\sqrt[5]{2})$；
+\item 每个$G_i$有唯一$2$阶子群$G_i'=\langle\sigma_i^2\rangle$，$\mathrm{Inv}G_i'=\mathbb{Q}(\theta^{i-1}\sqrt[5]{2},\sqrt{5})$；
+\item $G$中有唯一$10$阶正规子群$G_0'=\langle\sigma_1^2,\tau\rangle$，$\mathrm{Inv}G_0'=\mathbb{Q}(\sqrt{5})$.
+\end{enumerate}
+
+子群、阶数、不变子域与正规性如下表所示：
+\begin{table}[H]
+\centering
+\caption{}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{ccccccc}
+\toprule
+子群 & $G$ & $G'_0 = \langle \sigma_1^2, \tau \rangle$ & $G_0 = \langle \tau \rangle$ & $G_i = \langle \sigma_i \rangle,\ 1 \leq i \leq 5$ & $G'_i = \langle \sigma_i^2 \rangle,\ 1 \leq i \leq 5$ & id \\
+\midrule
+阶数 & 20 & 10 & 5 & 4 & 2 & 1 \\
+\midrule
+不变子域对 $\mathbb{Q}$ 的正规性 & $\mathbb{Q}$ & $\mathbb{Q}(\sqrt{5})$ & $\mathbb{Q}(\theta)$ & $\mathbb{Q}(\theta^{\,i-1}\sqrt{2})$ & $\mathbb{Q}(\theta^{\,i-1}\sqrt{2},\sqrt{5})$ & $K$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\end{solution}
+
+
+
+
+
+
+\end{document}

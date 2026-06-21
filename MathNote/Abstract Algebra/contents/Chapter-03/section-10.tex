@@ -1,0 +1,1295 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[scale=0.3]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{练习}
+
+\subsection{子群和陪集分解}
+
+\begin{example}
+设$G$是奇数阶有限群，$\alpha \in \mathrm{Aut}(G)$且$\alpha^2 = 1$。令
+\begin{align*}
+G_1 = \{g \in G \mid \alpha(g) = g\}, \quad
+G_{-1} = \{g \in G \mid \alpha(g) = g^{-1}\}.
+\end{align*}
+试证: $G = G_1G_{-1}$且$G_1 \cap G_{-1} = \{1\}$.
+\end{example}
+\begin{proof}
+
+由$G$是奇数阶有限群知$(2,|G|)=1$，故存在$k,l\in\mathbb{Z}$，使得
+\begin{align*}
+2k+l|G|=1.
+\end{align*}
+从而对$\forall g\in G$，结合\refthe{theorem:抽象代数-推论 1.3.4}有
+\begin{align*}
+g=g^{2k+l|G|}=(g^k)^2.
+\end{align*}
+即$G$的任意元都等于某一元的平方。从而存在$x\in G$，使得
+\begin{align}
+g^{-1}\alpha(g)=x^2\Longleftrightarrow \alpha(g)=gx^2.\label{eq:--rfj382jHURHWeq::--HUHFWIUQQH1}
+\end{align}
+再由$\alpha^2=1$可得
+\begin{align*}
+\alpha(x)^2=\alpha(x^2)=\alpha(g^{-1}\alpha(g))=\alpha(g^{-1})g=(g^{-1}\alpha(g))^{-1}=x^{-2}\Longrightarrow (x\alpha(x))^2=1.
+\end{align*}
+由\refthe{theorem:抽象代数-推论 1.3.4}知$\mathrm{ord}(x\alpha(x))\mid|G|$，又$|G|$是奇数，故$(2,\mathrm{ord}(x\alpha(x)))=1$。于是由\rrefthe{theorem:群元素的阶的基本性质}{theorem:群元素的阶的基本性质-4}可得
+\begin{align*}
+1=\mathrm{ord}(x\alpha(x))^2=\frac{\mathrm{ord}(x\alpha(x))}{(2,\mathrm{ord}(x\alpha(x)))}=\mathrm{ord}(x\alpha(x)).
+\end{align*}
+故$x\alpha(x)=1$，进而$\alpha(x)=x^{-1}$，即$x\in G_{-1}$。再结合$\eqref{eq:--rfj382jHURHWeq::--HUHFWIUQQH1}$式可得
+\begin{align*}
+\alpha(gx)=\alpha(g)\alpha(x)=gx^2x^{-1}=gx\Longrightarrow gx\in G_1.
+\end{align*}
+又注意到$g=(gx)x^{-1}$，故由$g$的任意性知$G=G_1G_{-1}$。
+
+对$\forall g\in G_1\cap G_{-1}$，由\refthe{theorem:抽象代数-推论 1.3.4}知$\mathrm{ord}\,g\mid|G|$，又$|G|$是奇数，故$(2,\mathrm{ord}\,g)=1$。再由\rrefthe{theorem:群元素的阶的基本性质}{theorem:群元素的阶的基本性质-4}可得
+\begin{align*}
+\alpha(g)=g=g^{-1}\Longrightarrow g^2=1\Longrightarrow 1=\mathrm{ord}\,g^2=\frac{\mathrm{ord}\,g}{(2,\mathrm{ord}\,g)}=\mathrm{ord}\,g\Longrightarrow g=1.
+\end{align*}
+故$G_1\cap G_{-1}=\{1\}$.
+
+\end{proof}
+
+\begin{example}
+设群$G$的元$a_1, a_2, b_1, b_2$满足
+\begin{align*}
+a_1b_1 = a_2b_2 = b_1a_1 = b_2a_2,\quad a_1^m = a_2^m = b_1^n = b_2^n = 1,
+\end{align*}
+其中$m$和$n$是互素的正整数. 则$a_1 = a_2$, $b_1 = b_2$.
+\end{example}
+\begin{proof}
+
+由条件可得
+\begin{align*}
+b_1^m=(a_1b_1)^m=(a_2b_2)^m=b_2^m,\quad a_1^n=(a_1b_1)^n=(a_2b_2)^n=a_2^n.
+\end{align*}
+由$(m,n)=1$可知，存在$k,l\in\mathbb{Z}$，使得
+\begin{align*}
+mk+nl=1.
+\end{align*}
+从而
+\begin{align*}
+a_1=a_1^{mk+nl}=(a_1^m)^k(a_1^n)^l=(a_2^m)^k(a_2^n)^l=a_2^{mk+nl}=a_2,\\
+b_1=b_1^{mk+nl}=(b_1^m)^k(b_1^n)^l=(b_2^m)^k(b_2^n)^l=b_2^{mk+nl}=b_2.
+\end{align*}
+
+\end{proof}
+
+\subsection{循环群}
+
+\begin{theorem}[Euler定理]\label{theorem:Euler定理}
+若$n$是正整数，$a$是与$n$互素的整数，则$a^{\varphi(n)} \equiv 1 \pmod{n}$，其中$\varphi(n)$是Euler函数，即$\varphi(n)$是与$n$互素的不超过$n$的正整数的个数.
+
+特别地，$\mathbf{Fermat}$\textbf{小定理:}若$p$是素数，则$a^p \equiv a \pmod{p}$, $\forall a \in \mathbb{Z}$.
+\end{theorem}
+\begin{proof}
+
+$\mathbb{Z}_n$中乘法可逆的元作成$\varphi(n)$阶群，记为$\mathbb{Z}_n^*$. 因$(a,n)=1$，故$\overline{a} \in \mathbb{Z}_n^*$. 于是由\refthe{theorem:抽象代数-推论 1.3.4}知在群$\mathbb{Z}_n^*$中有$(\overline{a})^{\varphi(n)} = \overline{1}$，即$a^{\varphi(n)} \equiv 1 \pmod{n}$.
+
+若$p$是素数，则$\varphi(p)=p-1$. 因此，若$p \nmid a$，则由上述证明可知$a^{p-1} \equiv 1 \pmod{p}$，从而$a^p \equiv a \pmod{p}$. 
+
+若$p \mid a$,则$a^p\equiv 0\equiv a\pmod{p}$.
+
+\end{proof}
+
+\begin{example}
+设 \( n \) 是正整数，试证：满足方程 \( x^n = 1 \) 的复数的集合 \( G \) 在通常乘法下是一个 \( n \) 阶循环群.
+\end{example}
+\begin{proof}
+
+\begin{align*}
+G = \left\{ \cos \frac{2k\pi}{n} + \mathrm{i} \sin \frac{2k\pi}{n} \mid k = 0, 1, \cdots, n-1 \right\} = \left\langle \cos \frac{2\pi}{n} + \mathrm{i} \sin \frac{2\pi}{n} \right\rangle.
+\end{align*}
+
+\end{proof}
+
+\begin{example}
+设群$G$中元$g$的阶$\mathrm{ord}\,g$与正整数$n$互素，在$\langle g\rangle$中求解方程$x^n = g$.
+\end{example}
+\begin{proof}
+
+设$s \mathrm{ord}\,g + t n = 1$, $s,t\in\mathbb{Z}$. 于是$g = g^{t n}$, 故$x = g^t \in \langle g\rangle$是方程$x^n = g$的解.
+
+设$x = g^m$, $g^t$均是$x^n = g$的解,则$g^m,g^n\in \langle g\rangle$,进而$0\leqslant t\leqslant m\leqslant \mathrm{ord}\,g-1$. 由$g^{m n} = g$知$m n \equiv 1$, $t n \equiv 1 \pmod{\mathrm{ord}\,g}$. 从而$\mathrm{ord}\,g\mid (m-t)n$, $\mathrm{ord}\,g\mid (m-t)$, 于是$m = t$. 即在$\langle g\rangle$中方程$x^n = g$有唯一的解.
+
+\end{proof}
+
+\begin{definition}[极大子群]
+真子群$M$称为群$G$的\textbf{极大子群}，如果不存在$G$的子群$B$，使得$M < B < G$。也即包含$M$的子群只有$G$和$M$本身.
+\end{definition}
+
+\begin{theorem}\label{theorem:有限群的每个真子群必包含于某个极大子群中}
+设$G$是有限群，则$G$的每个真子群都包含于$G$的某个极大子群中.
+\end{theorem}
+\begin{remark}
+若$G$是无限群，则上述结论不成立. 反例：有理数加法群$\mathbb{Q}$没有极大子群.
+因为若$H$是$\mathbb{Q}$的真子群，则存在$r\in\mathbb{Q}\setminus H$，令$H'=\{ h+mr\mid h\in H,m\in\mathbb{Z} \}$，则$H'$为$\mathbb{Q}$的真子群. 故$\mathbb{Q}$中任何真子群都包含于某个真子群.
+\end{remark}
+\begin{proof}
+
+设$K$是$G$的一个真子群，令
+\begin{align*}
+S=\{ M\mid M\text{是}G\text{的真子群且}K\subseteq M\subset G \},
+\end{align*}
+显然$K\in S$，故$S\neq\varnothing$. 由$G$有限知$S$是有限集. 由\hyperref[Set Theorem-theorem:有限偏序集必有极大元]{有限偏序集必有极大元}知，$S$中存在极大元$M$. 故$M$就是$G$的极大子群且$K\subseteq M$.
+
+\end{proof}
+
+\begin{example}
+确定无限循环群$\mathbb{Z}$的全部极大子群。
+\end{example}
+\begin{solution}
+
+由\refthe{theorem:有限和无限循环群的常用结论}知,任何无限循环群都同构于整数加群$\mathbb{Z}$,故只需求无限循环群$\mathbb{Z}$的全部极大子群.无限循环群$\mathbb{Z}$的任一子群形如$n\mathbb{Z}$，这里$n$是非负整数。它是极大子群当且仅当$n$为素数.
+
+\end{solution}
+
+\begin{proposition}\label{proposition:有限群唯一极大子群则必为素数幂阶循环群}
+如果有限群$G$有唯一的极大子群, 则$G$是素数幂阶循环群.
+\end{proposition}
+\begin{proof}
+
+设$H$是$G$的唯一极大子群. 由\refthe{theorem:有限群的每个真子群必包含于某个极大子群中}知$G$的任一真子群必含于$G$的某一极大子群之中. 因为$H$是$G$的唯一极大子群, 故$H$也是$G$的最大子群, 即$H$包含$G$的任一真子群. 取$g \notin H$, $g \in G$, 则$G = \langle g \rangle$. 否则$\langle g \rangle$是$G$的真子群,进而$\langle g \rangle \subseteq H$,这与$g\notin H$矛盾!
+
+若$g$的阶含有两个不同的素因子$p$和$q$, 则$\langle g^p \rangle$和$\langle g^q \rangle$均是$G$的真子群. 从而$\langle g^p \rangle$, $\langle g^q \rangle \subseteq H$. 因为$(p,q)=1$, 所以存在整数$l,m$使得$lp + mq = 1$. 故$g = g^{lp+mq} \in H$, 矛盾!故$g$的阶必是一个素数的幂.
+
+\end{proof}
+
+\begin{example}
+举一个无限群的例子，它的任意阶数不为1的子群都具有有限指数.
+\end{example}
+\begin{solution}
+
+设$H$是无限循环群$\mathbb{Z}$的阶数不为1的子群，则$H=n\mathbb{Z}$，它的指数为$n$，这里$n$是正整数.
+
+\end{solution}
+
+\begin{example}
+设$p$是一个素数，$G=\{x\in\mathbb{C}\mid \text{存在正整数 }n\text{ 使得 }x^{p^n}=1\}$，则$G$对于复数的乘法作成Abel群。试证$G$的任意真子群都是有限阶的循环群.
+\end{example}
+\begin{proof}
+
+对$\forall x,y\in G$，设$x^{p^n}=y^{p^m}=1$，则
+\begin{align*}
+(xy)^{p^{m+n}}=x^{p^{n+m}}y^{p^{n+m}}=1\Longrightarrow xy\in G.
+\end{align*}
+显然复数乘法本身满足结合律和交换律，且$1$是$G$的幺元，$\frac{1}{x}$是$x$的逆元. 故$G$是Abel群.
+
+设$H$是$G$的真子群，则存在$g\in G\setminus H$. 由$G$的定义知存在$N\in\mathbb{N}$，使得$g^{p^N}=1$. 由\refthe{theorem:抽象代数-推论 1.3.4}知$\mathrm{ord}\,g\mid p^N$，故可设$\mathrm{ord}\,g=p^n(n\leqslant N)$.
+
+对$\forall h\in H\subset G$，由$G$的定义和\refthe{theorem:抽象代数-推论 1.3.4}知存在$m_h\in\mathbb{N}$，使得$\mathrm{ord}\,h=p^{m_h}$. 我们断言$m_h<n,\forall h\in H$. 否则，存在$h_0\in H$，使得
+\begin{align*}
+\mathrm{ord}\,h_0=p^{m_0},m_0\geqslant n\Longrightarrow h^{p^{m_0}}=1\Longrightarrow \exists r\in \{0,1,\cdots,p^{m_0}-1\} \text{ 使得 } h=e^{r\cdot \frac{2\pi \mathrm{i}}{p^{m_0}}}.
+\end{align*}
+记$U_{p^{m_0}}=\left\{ x\in\mathbb{C} \mid x^{p^{m_0}}=1 \right\} =\left\{ e^{t\cdot \frac{2\pi \mathrm{i}}{p^{m_0}}}\mid t=0,1,\cdots,p^{m_0}-1 \right\}$，则
+\begin{align*}
+\langle h \rangle =\left\{ 1,h,\cdots,h^{p^{m_0}-1} \right\} =\left\{ 1,e^{r\cdot \frac{2\pi \mathrm{i}}{p^{m_0}}},\cdots,e^{r(p^{m_0}-1)\cdot \frac{2\pi \mathrm{i}}{p^{m_0}}} \right\} \subseteq U_{p^{m_0}}.
+\end{align*}
+而$| U_{p^{m_0}} |=| \langle h \rangle |$，故$\langle h \rangle =U_{p^{m_0}}$. 又因为$\mathrm{ord}\,g=p^n$且$m_0\geqslant n$，所以
+\begin{align*}
+g^{p^m}=(g^{p^n})^{p^{m_0-n}}=1\Longrightarrow g\in U_{p^{m_0}}=\langle h \rangle \subseteq H,
+\end{align*}
+这与$g\notin H$矛盾! 故$m_h<n,\forall h\in H$. 从而
+\begin{align*}
+&\quad\quad \mathrm{ord}\,h=p^{m_h}<p^n,\forall h\in H\Longrightarrow h^{p^n}=1,\forall h\in H
+\\
+&\Longrightarrow H\subseteq U_{p^n}=\left\{ x\in\mathbb{C} \mid x^{p^n}=1 \right\} =\left\{ e^{t\cdot \frac{2\pi \mathrm{i}}{p^n}}\mid t=0,1,\cdots,p^n-1 \right\}.
+\end{align*}
+因此$| H |\leqslant| U_{p^n} |=p^n-1$，故$| H |$是有限群. 取$M=\max\limits_{h\in H}\left\{ m_h \right\}$，则存在$h_M\in H$，使得$\mathrm{ord}\,h_M=p^M$. 于是
+\begin{align}
+&\quad\quad \mathrm{ord}\,h=p^{m_h}<p^M,\forall h\in H\Longrightarrow h^{p^M}=1,\forall h\in H \nonumber
+\\
+&\Longrightarrow H\subseteq U_{p^M}=\left\{ x\in\mathbb{C} \mid x^{p^M}=1 \right\} =\left\{ e^{t\cdot \frac{2\pi \mathrm{i}}{p^M}}\mid t=0,1,\cdots,p^M-1 \right\}.\label{eq:--OJfjw8fjioj3eq::--HUHFWIUQQH1}
+\end{align}
+注意到$h_{M}^{p^M}=1$，故存在$t_M\in \{0,1,\cdots,p^M-1\}$，使得$h_M=e^{t_M\cdot \frac{2\pi \mathrm{i}}{p^M}}$. 从而
+\begin{align*}
+\langle h_M \rangle =\left\{ 1,h,\cdots,h^{p^M-1} \right\} =\left\{ 1,e^{t_M\cdot \frac{2\pi \mathrm{i}}{p^M}},\cdots,e^{t_M(p^M-1)\cdot \frac{2\pi \mathrm{i}}{p^M}} \right\} \subseteq U_{p^M},
+\end{align*}
+又$| \langle h_M \rangle |=| U_{p^M} |$，故$\langle h_M \rangle =U_{p^M}$. 再结合$\eqref{eq:--OJfjw8fjioj3eq::--HUHFWIUQQH1}$式知$H\subseteq \langle h_M \rangle$，显然$\langle h_M \rangle \subseteq H$，故$H=\langle h_M \rangle$.
+
+\end{proof}
+
+\begin{example}
+若群$G$只有有限多个子群，则$G$是有限群.
+\end{example}
+\begin{proof}
+
+由$G$是有限群知$G$的每个元的阶都有限. 否则，存在$g\in G$，使得$\mathrm{ord}\,g=\infty$. 从而$\langle g \rangle$是无限循环群，进而由\refthe{theorem:有限和无限循环群的常用结论}知$\langle g \rangle \cong (\mathbb{Z},+)$. 而$(\mathbb{Z},+)$有无限多个形如$n\mathbb{Z} \ (n\in\mathbb{Z})$的子群，故$\langle g \rangle$也有无限多个子群，也是$G$的子群，这与$G$只有有限多个子群矛盾!
+
+因为$G$只有有限多个子群，所以$G$也只有有限个循环子群. 又注意到$G=\bigcup\limits_{a\in G}\langle a \rangle$，故存在有限个元$a_1,\cdots,a_n$，使得$G=\bigcup\limits_{i=1}^n\langle a_i \rangle$. 又由$G$的每个元的阶都有限知
+\begin{align*}
+\left| \langle a_i \rangle \right|=\mathrm{ord}\,a_i<\infty ,\quad i=1,2\cdots ,n.
+\end{align*}
+于是
+\begin{align*}
+\left| G \right|=\left| \bigcup\limits_{i=1}^n\langle a_i \rangle \right|\leqslant \sum\limits_{i=1}^n\left| \langle a_i \rangle \right|<\infty ,
+\end{align*}
+即$G$是有限群.
+
+\end{proof}
+
+\begin{example}
+有理数加法群$\mathbb{Q}$不是循环群, 但它的任意有限生成的子群都是循环群.
+\end{example}
+\begin{proof}
+
+设$\frac{m}{n}\in\mathbb{Q}$，取素数$p$不是$n$的因子，则$\frac{1}{p}\notin\left<\frac{m}{n}\right>$，故$(\mathbb{Q},+)$不是循环群。
+
+要证$(\mathbb{Q},+)$的任意有限生成的子群都是循环群，由归纳法知只需证由两个元生成的子群是循环群即可。
+
+设$\frac{m}{n},\frac{t}{s}\in\mathbb{Q}$，$H=\left<\frac{m}{n},\frac{t}{s}\right>$，取$d=(ms,nt)$，则$\left(\frac{ms}{d},\frac{nt}{d}\right)=1$，从而存在$a,b\in\mathbb{Z}$，使得
+\begin{align*}
+a\frac{ms}{d}+b\frac{nt}{d}=1.
+\end{align*}
+再结合\refthe{theorem:生成子群的元素的形式}和\refpro{proposition:群的生成组的基本性质111}知
+\begin{align*}
+\frac{d}{ns}=\frac{d\left(a\frac{ms}{d}+b\frac{nt}{d}\right)}{ns}=a\frac{m}{n}+b\frac{t}{s}\in\left<\frac{m}{n},\frac{t}{s}\right>\Longrightarrow\left<\frac{d}{ns}\right>\subseteq\left<\frac{m}{n},\frac{t}{s}\right>.
+\end{align*}
+又注意到
+\begin{align*}
+\frac{m}{n}=\frac{ms}{d}\cdot\frac{d}{ns}\in\left<\frac{d}{ns}\right>,\quad\frac{t}{s}=\frac{nt}{d}\cdot\frac{d}{ns}\in\left<\frac{d}{ns}\right>,
+\end{align*}
+故由\refpro{proposition:群的生成组的基本性质111}知$\left<\frac{m}{n},\frac{t}{s}\right>\subseteq\left<\frac{d}{ns}\right>$，因此$H=\left<\frac{m}{n},\frac{t}{s}\right>=\left<\frac{d}{ns}\right>$.
+
+\end{proof}
+
+\begin{example}
+在$n$阶循环群$G$中, 对$n$的每个正因子$m$, 阶为$m$的元恰好有$\varphi(m)$个, 其中$\varphi(m)$是与$m$互素且不超过$m$的正整数的个数. 由此证明等式
+\begin{align*}
+\sum\limits_{m|n}\varphi(m)=n.
+\end{align*}
+\end{example}
+\begin{proof}
+
+设$G=\left< a \right>$, $|G|=\mathrm{ord}\,a=n$. 则对$n$的每个因子$m$, 设$\mathrm{ord}\,a^k=m\ (k\leqslant n)$, 则由\rrefthe{theorem:群元素的阶的基本性质}{theorem:群元素的阶的基本性质-4}知
+\begin{align*}
+m=\mathrm{ord}\,a^k=\frac{\mathrm{ord}\,a}{(k,\mathrm{ord}\,a)}=\frac{n}{(k,n)}\Longrightarrow (k,n)=\frac{n}{m}.
+\end{align*}
+从而存在$q_k\in\mathbb{N}$, 使得$k=q_k\frac{n}{m}$. 又由$k\leqslant n$知$q_k\leqslant m$. 于是
+\begin{align*}
+\frac{n}{m}=(k,n)=\left(q_k\frac{n}{m},n\right)=\frac{n}{m}(q_k,m)\Longrightarrow (q_k,m)=1.
+\end{align*}
+故$q_k$的取值只有$\varphi(m)$个, 进而$k$的取值也只有$\varphi(m)$个. 因此$G$中阶为$m$的元恰好有$\varphi(m)$个.
+
+又由\refthe{theorem:抽象代数-推论 1.3.4}知$G$中任一元的阶都是$n$的因子, 故$n=|G|=\sum\limits_{m\mid n}\varphi(m).$
+
+\end{proof}
+
+\subsection{正规子群和商群}
+
+\begin{example}
+令 \(G\) 是实数对 \((a, b)\), \(a \neq 0\) 带有乘法 \((a, b)(c, d) = (ac, ad + b)\) 的群.
+试证: \(K = \{(1, b) \mid b \in \mathbb{R}\}\) 是 \(G\) 的正规子群且 \(G/K \cong \mathbb{R}^*\), 这里 \(\mathbb{R}^*\) 是非零实数的乘法群.
+\end{example}
+\begin{proof}
+
+直接验证易得 \(K \lhd G\). 考虑群同态 \(f: G \to \mathbb{R}^*\), \(f(a, b) = a\). 这显然是满同态且 \(\operatorname{ker}\,f = K\). 故由\hyperref[theorem:群的同态基本定理]{群的同态基本定理}知 \(G/K \cong \mathbb{R}^*\).
+
+\end{proof}
+
+\begin{proposition}\label{proposition:指数为2的子群必是正规子群}
+群$G$的指数为$2$的子群$N$一定是$G$的正规子群。
+\end{proposition}
+\begin{proof}
+
+因$[G:N]=2$, 故$G/N$或中只有两个元.由\refthe{theorem:抽象代数-定理 1.3.2}知$G=N\cup gN=N\cup Ng$, $\forall g\notin N$. 于是$gN=Ng$, $\forall g\in G$. 即$N\lhd G$.
+
+\end{proof}
+
+\begin{example}
+\begin{enumerate}[(1)]
+\item 设 $N \lhd G$, $M$ 是 $G$ 的子群且 $N \leqslant M$. 则 $N_G(M)/N = N_{\overline{G}}(\overline{M})$, 这里 $\overline{G}=G/N$, $\overline{M}=M/N$.
+\item 设 $f: G \longrightarrow H$ 是群同态, $M \leqslant G$. 试证 $f^{-1}(f(M))=KM$, 这里 $K=\operatorname{ker} f$.
+\end{enumerate}
+\end{example}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 由\rrefpro{proposition:正规子群的基本性质}{proposition:正规子群的基本性质-2}知$N\lhd M$，故$M/N$也是商群。设$\pi$是$G$到$G/N$的自然同态，则由\refcor{corollary:群同态第二定理推论}知$\pi$是$\Sigma \rightarrow \Gamma$的双射，其中$\Sigma$为$G$中包含$N$的子群的集合，$\Gamma$为$G/N$的子群的集合。于是对$\forall g\in G$，有\begin{align*}
+(gN)\overline{M}(gN)^{-1}=\overline{M}&\Longleftrightarrow (gMg^{-1})/N=(gN)(M/N)(gN)^{-1}=M/N\\
+&\Longleftrightarrow \pi(gMg^{-1})=\pi(M)\Longleftrightarrow gMg^{-1}=M.
+\end{align*}
+从而\begin{align*}
+N_{\overline{G}}(\overline{M})&=\{gN\in\overline{G}\mid (gN)\overline{M}(gN)^{-1}=\overline{M}\}=\{g\in G\mid (gN)\overline{M}(gN)^{-1}=\overline{M}\}/N\\
+&=\{g\in G\mid gMg^{-1}=M\}/N=N_G(M)/N.
+\end{align*}
+\item 对$\forall k\in K,m\in M$，有\begin{align*}
+f(km)=f(k)f(m)=1_Hf(m)=f(m)\in f(M).
+\end{align*}
+进而$km\in f^{-1}(f(M))$，故$KM\subseteq f^{-1}(f(M))$。
+
+对$\forall g\in f^{-1}(f(M))$，则存在$m\in M$，使得$f(g)=f(m)$。从而\begin{align*}
+f(gm^{-1})=f(g)f(m)^{-1}=f(g)f(g)^{-1}=1_H\Longrightarrow gm^{-1}\in\operatorname{ker}f=K.
+\end{align*}
+进而$g=(gm^{-1})m\in KM$，故$f^{-1}(f(M))\subseteq KM$。
+综上，$f^{-1}(f(M))=KM$。
+\end{enumerate}
+
+\end{proof}
+
+\begin{example}
+设$N \lhd G$, $g$是群$G$的任意一个元. 若$g$的阶和$|G/N|$互素, 则$g \in N$.
+\end{example}
+\begin{proof}
+
+设$\text{ord}(g) = n,\overline{g}=gN,\forall g\in G$, 则$g^n = 1$, $\overline{g}^n = \overline{1}$. 令$m = |G/N|$, 则由\refthe{theorem:抽象代数-推论 1.3.4}知$\overline{g}^m = \overline{1}$.从而由\rrefthe{theorem:群元素的阶的基本性质}{theorem:群元素的阶的基本性质-2}知
+\begin{align*}
+\overline{g}^n=\overline{g}^m\Longleftrightarrow m\equiv n\equiv 0\left( \mathrm{mod}\;n \right) \Longleftrightarrow n\mid m.
+\end{align*}
+但是$(m,n)=1$, 故$n=1$,因此$\overline{g} = \overline{1}$. 即$g \in N$.
+
+\end{proof}
+
+\begin{proposition}\label{proposition:群商中心循环则必为Abel群}
+如果$G/Z(G)$是循环群，则$G$是Abel群。
+\end{proposition}
+\begin{proof}
+
+设$G/Z(G) = \langle gZ(G)\rangle$。则$\forall a, b \in G$, 存在$m,n\in \mathbb{Z}$，使得
+\begin{align*}
+aZ(G)=g^mZ(G)\Longleftrightarrow g^{-m}a\in Z(G),\quad bZ(G)=g^nZ(G)\Longleftrightarrow g^{-n}b\in Z(G).
+\end{align*}
+故存在$c,d\in Z(G)$，使得
+\begin{align*}
+g^{-m}a=c\Longleftrightarrow a=g^mc,\quad g^{-n}b=d\Longleftrightarrow b=g^nd.
+\end{align*}
+再结合$Z(G)$的定义知
+\begin{align*}
+ab=g^mcg^nd=g^ndg^mc=ba.
+\end{align*}
+即$G$是Abel群.
+
+\end{proof}
+
+\begin{example}
+证明:非可换群$G$的自同构群$\mathrm{Aut}(G)$不是循环群. 
+
+特别地, 若群$G$只有素数个自同构, 则$G$是可换群.
+\end{example}
+\begin{proof}
+
+若$\mathrm{Aut}(G)$是循环群,则由\hyperref[theorem:循环群的任何子群也是循环群]{循环群的任何子群也是循环群}和\rrefthe{theorem:内自同构群及其基本性质}{theorem:内自同构群及其基本性质-3}知$\mathrm{Int}(G)$也是循环群.再由\rrefthe{theorem:内自同构群及其基本性质}{theorem:内自同构群及其基本性质-4}知$G/Z(G)$也是循环群,从而由\refpro{proposition:群商中心循环则必为Abel群}知$G$是Abel群,矛盾!
+
+特别地,若群$G$只有素数个自同构, 则由\hyperref[proposition:素数阶群必为循环群]{素数阶群必为循环群}知$\mathrm{Aut}(G)$是循环群.由\hyperref[theorem:循环群的任何子群也是循环群]{循环群的任何子群也是循环群}和\rrefthe{theorem:内自同构群及其基本性质}{theorem:内自同构群及其基本性质-3}知$\mathrm{Int}(G)$也是循环群.再由\rrefthe{theorem:内自同构群及其基本性质}{theorem:内自同构群及其基本性质-4}知$G/Z(G)$也是循环群,从而由\refpro{proposition:群商中心循环则必为Abel群}知$G$是Abel群.
+
+\end{proof}
+
+\begin{example}
+设$N \lhd G$, $N \cap [G,G] = \{1\}$, 则$N \leqslant Z(G)$.
+\end{example}
+\begin{proof}
+
+因为$N$已经是群,所以只需证明$N\subseteq Z(G)$.
+对$\forall x \in N$, $\forall g \in G$,有$g^{-1}x^{-1}gx \in N \cap [G,G] = \{1\}$, 从而$xg=gx$,于是$x \in Z(G)$,故$N\subseteq Z(G)$.
+
+\end{proof}
+
+\begin{example}
+设$\alpha$是有限群$G$的自同构，令$I = \{g \in G \mid \alpha(g) = g^{-1}\}$。试证:
+\begin{enumerate}[(1)]
+\item 若$|I| > \frac{3}{4}|G|$, 则$G$是Abel群.
+\item 若$|I| = \frac{3}{4}|G|$, 则$G$一定有指数为2的Abel正规子群.
+\end{enumerate}
+\end{example}
+\begin{proof}
+
+对$\forall x\in I$，断言$xI\cap I\subseteq C_G(x)$，进而
+\begin{align}
+|xI\cap I|\leqslant |C_G(x)|.
+\label{eq::920urj3jfEHSFUJIO}
+\end{align}
+事实上，对$\forall z\in xI\cap I$，存在$y\in I$，使得$z=xy$。从而
+\begin{align*}
+x^{-1}y^{-1}=\alpha(x)\alpha(y)=\alpha(xy)=\alpha(z)=z^{-1}=(xy)^{-1}=y^{-1}x^{-1}\Longrightarrow xy=yx.
+\end{align*}
+于是
+\begin{align*}
+xz=x^2y=xyx=zx\Longrightarrow z\in C_G(x).
+\end{align*}
+故$xI\cap I\subseteq C_G(x)$。
+\begin{enumerate}[(1)]
+\item 对$\forall x\in I$，由\refpro{proposition:有限群乘积的阶}和条件知
+\begin{align*}
+|xI\cap I|=|xI|+|I|-|xI\cup I|>\frac{3}{4}|G|+\frac{3}{4}|G|-|G|=\frac{1}{2}|G|,
+\end{align*}
+再结合$\eqref{eq::920urj3jfEHSFUJIO}$式可知
+\begin{align*}
+\frac{1}{2}|G|<|xI\cap I|\leqslant |C_G(x)|\Longrightarrow \frac{|G|}{|C_G(x)|}<2.
+\end{align*}
+又$C_G(x)$是$G$的子群，故$G/C_G(x)$是商集，进而$|G/C_G(x)|\in \mathbb{N}$。于是由\hyperref[theorem:抽象代数--Lagrange定理]{Lagrange定理}知$|G/C_G(x)|=\frac{|G|}{|C_G(x)|}=1$，再由\rrefcor{corollary:抽象代数-推论 1.3.5}{corollary:抽象代数-推论 1.3.5-4}知$G=C_G(x)$。
+于是$x\in Z(G)$，再由$x$的任意性知$I\subseteq Z(G)$。再由条件可得
+\begin{align*}
+|Z(G)|\geqslant |I|>\frac{3}{4}|G|\Longrightarrow \frac{|G|}{|Z(G)|}<\frac{4}{3}.
+\end{align*}
+又由\rrefthe{theorem:中心化子的基本性质}{theorem:中心化子的基本性质-1}知$Z(G)\lhd G$，故$G/Z(G)$是商群，进而$|G/Z(G)|\in \mathbb{N}$。于是由\hyperref[theorem:抽象代数--Lagrange定理]{Lagrange定理}知$|G/Z(G)|=\frac{|G|}{|Z(G)|}=1$，再由\rrefcor{corollary:抽象代数-推论 1.3.5}{corollary:抽象代数-推论 1.3.5-4}知$G=Z(G)$，即$G$是Abel群。
+\item 对$\forall x\in I$，由\refpro{proposition:有限群乘积的阶}和条件知
+\begin{align*}
+|xI\cap I|=|xI|+|I|-|xI\cup I|\geqslant \frac{3}{4}|G|+\frac{3}{4}|G|-|G|=\frac{1}{2}|G|,
+\end{align*}
+再结合$\eqref{eq::920urj3jfEHSFUJIO}$式可知
+\begin{align}
+\frac{1}{2}|G|\leqslant |xI\cap I|\leqslant |C_G(x)|\Longrightarrow \frac{|G|}{|C_G(x)|}\leqslant 2.
+\label{eq::90r--2ri-23iJSWFHIOWJIO}
+\end{align}
+若$\frac{|G|}{|C_G(x)|}<2,\forall x\in I$。则由$(1)$同理可得$G$是Abel群。此时对$\forall x,y\in I$，有
+\begin{align*}
+\alpha(xy)=\alpha(x)\alpha(y)=x^{-1}y^{-1}=y^{-1}x^{-1}=(xy)^{-1}\Longrightarrow xy\in I.
+\end{align*}
+故$I$对乘法封闭。显然$I$对乘法有结合律，$1_G$为$I$的幺元，$x$在$I$中的逆元为$x^{-1}$。故$I$此时为$G$的子群，因此$G/I$为商集合，从而$|G/I|\in \mathbb{N}$。但由\hyperref[theorem:抽象代数--Lagrange定理]{Lagrange定理}
+和条件知
+\begin{align*}
+|G/I|=\frac{|G|}{|I|}=\frac{4}{3}\notin \mathbb{N},
+\end{align*}
+矛盾!
+下设存在$x\in I$，使得$\frac{|G|}{|C_G(x)|}=2$。又$C_G(x)$是$G$的子群，并且由\hyperref[theorem:抽象代数--Lagrange定理]{Lagrange定理}
+知$[G:C_G(x)] = 2$，再由\refpro{proposition:指数为2的子群必是正规子群}知$C_G(x)\lhd G$。
+由$\eqref{eq::90r--2ri-23iJSWFHIOWJIO}$式和$xI\cap I\subseteq C_G(x)$知，此时$xI\cap I=C_G(x)$。对$\forall a,b\in C_G(x)=xI\cap I$，有$ab\in C_G(x)=xI\cap I$。于是
+\begin{align*}
+a^{-1}b^{-1}=\alpha(a)\alpha(b)=\alpha(ab)=(ab)^{-1}=b^{-1}a^{-1}\Longrightarrow ab=ba.
+\end{align*}
+故$C_G(x)$是Abel群。综上可知，$C_G(x)$是指数为$2$的Abel正规子群。
+\end{enumerate}
+
+\end{proof}
+
+\begin{example}
+群$G$的非平凡子群$N$称为$G$的极小子群，如果不存在子群$B$使得$1 \subsetneq B \subsetneq N$. 试证:
+\begin{enumerate}[(1)]
+\item 整数加法群$\mathbb{Z}$没有极小子群.
+
+\item 有理数加法群$\mathbb{Q}$既没有极小子群也没有极大子群.
+\end{enumerate}
+\end{example}
+\begin{remark}
+第(2)未解决,《近世代数三百例》P62答案最后一步伪证.
+\end{remark}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 由\refcor{corollary:抽象代数--定理1.8.1推论}知整数加法群$\mathbb{Z}$的非平凡子群都形如$\langle n \rangle =n\mathbb{Z} \left( n\in \mathbb{N} \right)$。注意到对$\forall m\geqslant 2$且$m\in \mathbb{N}$，都有$\langle mn \rangle$是$\langle n \rangle$的真子群，故整数加法群$\mathbb{Z}$无极小子群。
+
+\item 任取$\frac{a}{b}\in \mathbb{Q} \setminus \{ 0 \}$，显然$\operatorname{ord}\frac{a}{b}=\infty$，则$\langle \frac{a}{b} \rangle$是无限循环群，由\refthe{theorem:有限和无限循环群的常用结论}知$\langle \frac{a}{b} \rangle \cong (\mathbb{Z},+)$。而由(1)知$(\mathbb{Z},+)$无极小子群，故$\langle \frac{a}{b} \rangle$也无极小子群，因此$(\mathbb{Q},+)$也无极小子群。
+
+
+\end{enumerate}
+
+\end{proof}
+
+
+
+\subsection{置换群}
+
+\begin{example}
+当 $n\geqslant 3$ 时, 试证 $n-2$ 个 3 轮换 $(1\ 2\ 3)$, $(1\ 2\ 4)$, $\cdots$, $(1\ 2\ n)$ 是 $A_n$ 的生成元.
+\end{example}
+\begin{proof}
+
+由\rrefthe{theorem:抽象代数--定理4.4.2}{theorem:抽象代数--定理4.4.2-1}知全体长为 3 的轮换生成 $A_n$. 故只要证这 $n-2$ 个 3 轮换能生成任何一个 3 轮换.
+
+任取 3 轮换 $(i\ j\ k)$, 若 $i,j,k$ 中含有 1 和 2, 则此时$(i\ j\ k)=(1\ 2\ i)$或$(1\ 2\ j)$或$(1\ 2\ k)$,结论显然成立. 若 $i,j,k$ 中含有 1 和 2 之一, 不妨设 $(i\ j\ k)=(1\ j\ k)$, 则
+\begin{align*}
+(1\ j\ k)=(1\ 2\ k)^{-1}(1\ 2\ j)(1\ 2\ k)=(1\ 2\ k)(1\ 2\ k)(1\ 2\ j)(1\ 2\ k).
+\end{align*}
+若 $i,j,k$ 中既无 1, 也无 2, 则
+\begin{align*}
+(i\ j\ k)=(1\ 2\ i)^{-1}(1\ 2\ k)(1\ 2\ j)^{-1}(1\ 2\ i)=(1\ 2\ i)(1\ 2\ i)(1\ 2\ k)(1\ 2\ j)(1\ 2\ j)(1\ 2\ i).
+\end{align*}
+
+\end{proof}
+
+\begin{proposition}
+试证:
+\begin{enumerate}[(1)]
+\item 对称群$S_n$是交错群$A_{2n}$的子群.
+\item 每个有限群均同构于某个置换群，进而是某个交错群的子群.
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 将$S_n$中的元写成互不相交的轮换的乘积. 考虑
+\begin{align*}
+\varphi:S_n \to A_{2n},\,\, \sigma \mapsto \sigma\sigma',
+\end{align*}
+其中$\sigma'$是将$\sigma$中$1$改为$n+1$, $2$改为$n+2$, $\cdots$, $n$改为$2n$所得的$S_{2n}$中的轮换.对$\forall \sigma_1,\sigma_2\in S_n$,由$\sigma_2,\sigma_1'$无交和\rrefpro{proposition:对换与轮换的基本性质}{proposition:对换与轮换的基本性质-2}知
+\begin{align*}
+\varphi \left( \sigma _1\sigma _2 \right) =\sigma _1\sigma _2\sigma _{1}^{\prime}\sigma _{2}^{\prime}=\sigma _1\sigma _{1}^{\prime}\sigma _2\sigma _{2}^{\prime}=\varphi \left( \sigma _1 \right) \varphi \left( \sigma _2 \right) . 
+\end{align*}
+故$\varphi$是同态.设$\varphi(\sigma)=\varphi(\tau)$，则由$\sigma'(i),\tau'(i)=i,\forall i\in\{1,2,\cdots,n\}$可得\begin{align*}
+\sigma(i)=\sigma\sigma'(i)=\tau\tau'(i)=\tau(i),\quad \forall i\in\{1,2,\cdots,n\}.
+\end{align*}
+故$\sigma=\tau$，即$\varphi$是单射。因此$\varphi$是$S_n$到$A_{2n}$的嵌入映射。从而$\varphi$是$S_n$到$\varphi(S_n)$的同构映射，
+因为\hyperref[theorem:群同态与同构的基本性质-3]{子群的同态像也是子群}，所以$\varphi(S_n)$是$A_{2n}$的子群。故$S_n\cong\varphi(S_n)$也是$A_{2n}$的子群(同构意义下)。
+
+\item 设$G$是$n$阶有限群，$G=\{g_1,g_2,\cdots,g_n\}$，其中$g_1=1$为幺元。
+对$\forall g\in G$，令$\sigma_g\in S_n$满足\begin{align*}
+\sigma_g(i)=j\Longleftrightarrow gg_i=g_j.
+\end{align*}
+因为对$\forall i\in\{1,2,\cdots,n\}$，$gg_i$是$G$中唯一确定的元，所以存在唯一的$j\in\{1,2,\cdots,n\}$，使得$gg_i=g_j$。因此$\sigma_g$是$S_n$上良定义的置换。再令\begin{align*}
+\varphi:L_G\rightarrow S_n,\quad L_g\mapsto \sigma_g.
+\end{align*}
+对$\forall L_g,L_h\in L_G$，有\begin{align*}
+\varphi(L_gL_h)=\varphi(L_{gh})=\sigma_{gh},\quad \varphi(L_g)\varphi(L_h)=\sigma_g\sigma_h.
+\end{align*}
+而对$\forall i\in\{1,2,\cdots,n\}$，有\begin{align*}
+ghg_i=g(hg_i)=gg_{\sigma_h(i)}=g_{\sigma_g(\sigma_h(i))}=g_{\sigma_g\sigma_h(i)}\Longleftrightarrow \sigma_{gh}(i)=\sigma_g\sigma_h(i).
+\end{align*}
+故$\sigma_{gh}=\sigma_g\sigma_h$，即$\varphi$是同态。
+
+设$\varphi(L_g)=\mathrm{id}$，则对$\forall i\in\{1,2,\cdots,n\}$，有\begin{align*}
+\sigma_g(i)=i\Longleftrightarrow gg_i=g_i\Longleftrightarrow g=1\Longleftrightarrow L_g(g_i)=g_i\Longleftrightarrow L_g=\mathrm{id}.
+\end{align*}
+故$\ker\varphi=\{\mathrm{id}\}$，即$\varphi$是单同态。因此$\varphi$是$L_G$到$S_n$的嵌入映射。
+于是$\varphi$就是$L_G$到$\varphi(L_G)$的同构。又因为\hyperref[theorem:群同态与同构的基本性质-3]{子群的同态像也是子群}，所以$\varphi(L_G)$是$S_n$的子群。$L_G\cong\varphi(L_G)$是$S_n$的子群(同构意义下)。
+
+又由\hyperref[theorem:抽象代数-Cayley定理-定理 1.5.1]{Cayley定理}知$G\cong L_G$。故$G\cong L_G\cong\varphi(L_G)$也是$S_n$的子群(同构意义下)。
+由(1)可知$S_n$是$A_{2n}$的子群(同构意义下)。故由\hyperref[proposition:抽象代数---子群的基本性质-0]{子群的传递性}知$G$也是$A_{2n}$的子群(同构意义下)。
+\end{enumerate}
+
+\end{proof}
+
+\begin{example}
+当$n\geqslant 2$时，试证$(1\ 2)$和$(1\ 2\ \cdots\ n)$是$S_n$的一组生成元。
+\end{example}
+\begin{proof}
+
+设$H_n$是由$(1\ 2)$和$(1\ 2\ \cdots\ n)$生成的$S_n$的子群，用数学归纳法证明$H_n=S_n$。
+
+$n=2$时显然成立。设$H_{n-1}=S_{n-1}$，我们有
+\begin{align*}
+&\quad\quad (2\ 3\ \cdots\ n) = (1\ 2)(1\ 2\ \cdots\ n) \in H_n
+\\
+&\Longrightarrow (1 n)=(n\,\,n-1 \cdots \,\,3 2 1)(2 3 \cdots \,\,n)=(1 2 \cdots \,\,n)^{n-1}(2 3 \cdots \,\,n)\in H_n,
+\\
+&\Longrightarrow (1 2 \cdots \,\,n-1)=(1 n)(1 2 \cdots \,\,n)\in H_n.
+\end{align*}
+由归纳假设知$(1\ 2)$和$(1\ 2\ \cdots\ n-1)$生成$S_{n-1}$。因此$H_n \supseteq S_{n-1}$，$(1\ n) \in H_n$。注意到$(1\ 2),\cdots ,(1\ n-1)\in S_{n-1}\subseteq H_n$,又由\refthe{theorem:抽象代数--置换必可写成对换之积}知$(1\ 2),\ \cdots,\ (1\ n-1),\ (1\ n)$是$S_n$的一组生成元,故由\refpro{proposition:群的生成组的基本性质111}可知$H_n=S_n$.
+
+\end{proof}
+
+
+\subsection{群在集合上的作用}
+
+\begin{proposition}
+设$G$作用在集合$S$上，对任意$a,b\in S$，若存在$g\in G$使得$ga=b$，则$S_a=g^{-1}S_bg$。
+\end{proposition}
+\begin{remark}
+换句话说，\textbf{同一轨道中元素的迷向子群彼此共轭}。
+\end{remark}
+\begin{proof}
+
+我们有
+\begin{align*}
+S_b &= \{x\in G \mid xb = b\} = \{x\in G \mid xga = ga\} \\
+&= \{x\in G \mid g^{-1}xga = a\} = \{x\in G \mid g^{-1}xg \in S_a\} \\
+&= gS_ag^{-1}.
+\end{align*}
+
+\end{proof}
+
+\begin{example}
+设群 $G$ 在集合 $S$ 上的作用是可迁的, $N$ 是 $G$ 的正规子群, 则 $S$ 在 $N$ 作用下的每个轨道有同样多的元.
+\end{example}
+\begin{proof}
+
+由$G$在$S$上的作用是可迁的知，对$\forall x,a\in S$，存在$g\in G$，使得$x=ga$。从而
+\begin{align*}
+S_x\left( N \right) &=\left\{ n\in N\mid nx=x \right\} =\left\{ n\in N\mid nga=ga \right\} \\
+&=\left\{ n\in N\mid \left( g^{-1}ng \right) a=a \right\} =\left\{ n\in N\mid g^{-1}ng\in S_a\left( G \right) \right\} \\
+&=\left\{ n\in N\mid n\in gS_a\left( G \right) g^{-1} \right\} =N\cap gS_a\left( G \right) g^{-1}.
+\end{align*}
+又因为$N\lhd G$，所以
+\begin{align*}
+S_x\left( N \right) &=N\cap gS_a\left( G \right) g^{-1}=gNg^{-1}\cap gS_a\left( G \right) g^{-1}\\
+&=g\left( N\cap S_a\left( G \right) \right) g^{-1}=gS_a\left( N \right) g^{-1}.
+\end{align*}
+于是由\hyperref[corollary:有限群轨道的阶与其商掉迷向子群的阶相同]{轨道公式}、\hyperref[theorem:抽象代数--Lagrange定理]{Lagrange定理}及\refpro{proposition:有限群乘积的阶}可得
+\begin{align*}
+\left| O_x\left( N \right) \right|=\frac{\left| N \right|}{\left| S_x\left( N \right) \right|}=\frac{\left| N \right|}{\left| gS_a\left( N \right) g^{-1} \right|}=\frac{\left| N \right|}{\left| S_a\left( N \right) \right|}=\left| O_a\left( N \right) \right|.
+\end{align*}
+即$S$在$N$作用下的每个轨道的阶相同（有同样多的元）。
+
+\end{proof}
+
+\begin{example}
+设 $p$ 是一个素数, $G$ 是 $p$ 的方幂阶的群. 试证 $G$ 的非正规子群的个数一定是 $p$ 的倍数.
+\end{example}
+\begin{proof}
+
+令 $S = \{ G$ 的非正规子群 $\}$, 考虑 $G$ 在 $S$ 上的共轭作用. 由\rrefthe{theorem:抽象代数--定理4.2.2}{theorem:抽象代数--定理4.2.2-1}和\hyperref[corollary:有限群轨道的阶与其商掉迷向子群的阶相同]{轨道公式}知
+\begin{align}\label{eq::3j3r230rujJSAIOFJ}
+|S| = \sum\limits_{H \in R} \frac{|G|}{|G_H|},
+\end{align}
+其中 $R$ 是 $S$ 的一组轨道代表元, $G_H$ 是 $H$ 的迷向子群, 也就是 $H$ 在 $G$ 中的正规化子. 由\hyperref[theorem:抽象代数--Lagrange定理]{Lagrange定理}知$|G_H|\mid |G|,\forall H\in S$.进而$|G_H|$都是$p$的方幂,于是$|G/G_H|$都是 $p$ 的方幂, 且 $G \neq G_H$(否则由\rrefthe{theorem:共轭子群的个数和正规化子的性质}{theorem:共轭子群的个数和正规化子的性质-2}知 $H \lhd G$, 与 $H \in S$矛盾! ),故由\eqref{eq::3j3r230rujJSAIOFJ}可知$p \mid |S|$.
+
+\end{proof}
+
+\begin{example}
+令 $G$ 是一个单群, 如果存在 $G$ 的真子群 $H$ 使得 $[G:H] \leqslant 4$, 则 $|G| \leqslant 3$.
+\end{example}
+\begin{proof}
+
+设$m=|G/H|=[G:H]$,若$m=1$则由\hyperref[theorem:抽象代数--Lagrange定理]{Lagrange定理}知$H=G$矛盾!故$m\in [2,4]\cap \mathbb{N}$.考虑 $G$ 在$H$ 的左陪集集合$G/H$上的左平移作用. 由\refthe{theorem:抽象代数--定理4.2.1}和\refthe{theorem:n个文字的置换群同构于n阶置换群}知,对$\forall g\in G$,令
+\begin{align*}
+\rho_g:G/H\rightarrow G/H,\quad xH\mapsto (gx)H.
+\end{align*}
+则$\rho_g\in S_{G/H}\cong S_m$.并且
+\begin{align*}
+\rho:G\rightarrow S_m,\quad g\mapsto \rho_g
+\end{align*}
+是群同态。由\refpro{proposition:群同态的核是定义域的子群,像是陪域的子群-抽象代数}知$\ker\rho\lhd G$，而$G$是单群，故$\ker\rho=\{1\}$或$G$。
+若$\ker\rho=G$，则
+\begin{align*}
+G&=\mathrm{ker}\rho =\left\{ x\in G\mid \rho \left( x \right) =\mathrm{id}_{G/H} \right\} =\left\{ x\in G\mid \rho _x\left( gH \right) =xgH=gH,\forall g\in G \right\} 
+\\
+&=\left\{ x\in G\mid g^{-1}xg\in H,\forall g\in G \right\} =\left\{ x\in G\mid x\in gHg^{-1},\forall g\in G \right\} 
+\\
+&=\bigcap_{g\in G}{gHg^{-1}}\subseteq H,
+\end{align*}
+故$H=G$，这与$H$是$G$的真子群矛盾！故$\ker\rho=\{1\}$，由\refpro{proposition:群同态的核是定义域的子群,像是陪域的子群-抽象代数}知$\rho$是单同态。
+因此$\rho$是$G$到$S_m$的嵌入映射，于是$G$可视为$S_m$的子群（同构意义下）。
+\begin{enumerate}[(1)]
+\item 当$m=2$时，结论显然成立。
+
+\item 当$m=3$时，$G$是$S_3$的子群。注意到$S_3$有非平凡正规子群$A_3$，而$G$是单群，故$G\ne S_3$，即$G$只能是$S_3$的真子群。再由\hyperref[theorem:抽象代数--Lagrange定理]{Lagrange定理}知$|G|\mid 6$且$|G|\ne 6$，故$|G|=1,2,3\leqslant 3$。
+
+\item 当$m=4$时，$G$是$S_4$的子群。注意到$S_4$和$A_4$都不是单群（$K_4\lhd S_4,A_4$），而$G$是单群，故$G\ne S_4,A_4$。再由\hyperref[theorem:抽象代数--Lagrange定理]{Lagrange定理}知$|G|\mid 24$，故$|G|=1,2,3,4,6,8$。又由$[G:H]=4$知$|G|=4|H|$，故$|G|$是$4$的倍数，只可能为$4$和$8$。
+\begin{enumerate}[(i)]
+\item 若$|G|=8$，则因为$G$是单群，所以由\rrefpro{proposition:阶数大于2的循环群必非单群}{proposition:阶数大于2的循环群必非单群-2}知$Z(G)=\{1\}$或$G$。又注意到此时$G$是$2$-群，由\refthe{theorem:抽象代数--定理4.3.}知$G$的中心$Z(G)\ne \{1\}$，故$Z(G)=G$，即$G$是Abel群。再由\refthe{theorem:抽象代数--定理4.4.1}知$|G|$为素数，这与$|G|=8$矛盾！
+
+\item 若$|G|=4$，则由\refpro{proposition:4阶群只有两个4阶循环群和Klein四元群}知$G\cong K_4$或$C_4$，其中$K_4$为Klein四元数群，$C_4$为$4$阶循环群。由\refthe{theorem:Klein四元数群的基本性质}和\rrefpro{proposition:阶数大于2的循环群必非单群}{proposition:阶数大于2的循环群必非单群-1}知$K_4$和$C_4$都不是单群，故此时$G$不是单群。
+\end{enumerate}
+\end{enumerate}
+综上可知，$m$只可能为$2,3$,并且无论如何，都有$|G|\leqslant 3$。
+
+\end{proof}
+
+\begin{example}
+设$H$是群$G$的指数为$n<\infty$的真子群，试证$H$一定含有$G$的一个有有限指数的真正规子群。如果还有$|G|>n!$,则$G$不是单群。
+\end{example}
+\begin{proof}
+
+设$n=[G:H]$，考虑$G$在$H$的左陪集集合上的左平移作用，由\refthe{theorem:抽象代数--定理4.2.1}和\refthe{theorem:n个文字的置换群同构于n阶置换群}知,对$\forall g\in G$，令
+\begin{align*}
+\rho_g:G/H\to G/H,\quad xH\mapsto gxH.
+\end{align*}
+则$\rho_g\in S_{G/H}\cong S_n$.并且
+\begin{align*}
+\rho:G\to S_n,\quad g\mapsto \rho_g
+\end{align*}
+是群同态.注意到
+\begin{align*}
+&\mathrm{ker}\rho=\{x\in G\mid \rho(x)=\mathrm{id}_{G/H}\}=\{x\in G\mid \rho_x(gH)=xgH=gH,\forall g\in G\}\\
+&=\{x\in G\mid g^{-1}xg\in H,\forall g\in G\}=\{x\in G\mid x\in gHg^{-1},\forall g\in G\}=\bigcap\limits_{g\in G}gHg^{-1},
+\end{align*}
+故$\mathrm{ker}\rho\subseteq H\subset G$，由\refpro{proposition:群同态的核是定义域的子群,像是陪域的子群-抽象代数}知$\mathrm{ker}\rho\lhd G$，再由\hyperref[theorem:群的同态基本定理]{群的同态定理}知
+\begin{align*}
+G/\mathrm{ker}\rho\cong \mathrm{Im}(\rho)\subseteq S_n.
+\end{align*}
+从而由\hyperref[theorem:抽象代数--Lagrange定理]{Lagrange定理}知$[G:\mathrm{ker}\rho]\mid n!$，因此$[G:\mathrm{ker}\rho]<\infty$，综上可知，$\mathrm{ker}\rho$是$G$的指数有限的真正规子群。
+
+如果还有$|G|>n!$，则由$[G:\mathrm{ker}\rho]\mid n!$可得
+\begin{align*}
+\frac{n!}{|\mathrm{ker}\rho|}<\frac{|G|}{|\mathrm{ker}\rho|}\leqslant n!\Longrightarrow |\mathrm{ker}\rho|>1\Longrightarrow \mathrm{ker}\rho\neq \{1\}.
+\end{align*}
+又因为$\mathrm{ker}\rho\subset G$，所以$\mathrm{ker}\rho\neq \{1\},G$，故$\mathrm{ker}\rho$就是$G$的非平凡正规子群，因此此时$G$不是单群。
+
+
+\end{proof}
+
+\begin{example}
+试证一般线性群$GL(n,\mathbb{C})$不含有指数有限的真子群。
+\end{example}
+\begin{proof}
+
+否则，设$H$是$G=GL(n,\mathbb{C})$的指数有限的真子群，$[GL(n,\mathbb{C}):H]=m$。考虑$G$在$H$的左陪集集合上的左诱导作用，由\refpro{proposition:群在商集合上的左平移作用诱导群到置换群的同态}知,对$\forall g\in G$,令
+\begin{align*}
+\rho_g:G/H\rightarrow G/H,\quad xH\mapsto (gx)H.
+\end{align*}
+则$\rho_g$都可视为$S_m$的元素(同构意义下).并且
+\begin{align*}
+\rho:G\rightarrow S_m,\quad g\mapsto \rho_g
+\end{align*}
+是群同态.再由\hyperref[theorem:群的同态基本定理]{群的同态定理}知
+\begin{align*}
+G/\mathrm{ker}\rho\cong \mathrm{Im}(\rho)\subseteq S_m.
+\end{align*}
+从而由\hyperref[theorem:抽象代数--Lagrange定理]{Lagrange定理}知$|G/\mathrm{ker}\rho|\mid m!$。设$|G/\mathrm{ker}\rho|=s$。
+
+$\forall B\in G$，由\refthe{theorem:抽象代数-推论 1.3.4}知$\text{ord}(B\,\mathrm{ker}\rho) \mid s$,进而$(B\,\mathrm{ker}\rho)^s=\mathrm{ker}\rho$,即$B^s\in \mathrm{ker}\rho$。而另一方面，由\refpro{Basis of Algebra-proposition:可逆复方阵必可开任意根}知对于任一$A\in G$和任一正整数$t$，存在$B\in G$使得$A=B^t$。因此$A\in \mathrm{ker}\rho$，$\forall A\in G$。于是$G=\mathrm{ker}\rho$.又注意到
+\begin{align*}
+G&=\mathrm{ker}\rho =\left\{ x\in G\mid \rho \left( x \right) =\mathrm{id}_{G/H} \right\} =\left\{ x\in G\mid \rho _x\left( gH \right) =xgH=gH,\forall g\in G \right\} 
+\\
+&=\left\{ x\in G\mid g^{-1}xg\in H,\forall g\in G \right\} =\left\{ x\in G\mid x\in gHg^{-1},\forall g\in G \right\} 
+\\
+&=\bigcap_{g\in G}{gHg^{-1}}\subseteq H,
+\end{align*}
+故$H=G$，这与$H$是$G$的真子群矛盾！
+
+
+\end{proof}
+
+\begin{example}
+求对称群$S_3$的自同构群$\operatorname{Aut}(S_3)$.
+\end{example}
+\begin{remark}
+群在集合上的自然作用并没有严格的定义.只是表示由群和集合自身的代数结构直接诱导的一个群作用.
+\end{remark}
+\begin{solution}
+
+注意到$S_3=\{1, (12), (13), (23), (123), (132)\}$,故$S_3$的所有2阶子群只有$A_1=\langle (12)\rangle ,A_2\langle (13)\rangle ,A_3=\langle (23)\rangle $.
+令$\Sigma = \{S_3 \text{ 的 } 2 \text{ 阶子群}\} = \{A_1, A_2, A_3\}$. 考虑$\operatorname{Aut}(S_3)$在$\Sigma$上的自然作用
+\begin{align*}
+f:\operatorname{Aut}(S_3) \times \Sigma \to \Sigma ,\,\,(\alpha,A_i)\mapsto \alpha(A_i),\,i=1,2,3.
+\end{align*}
+由\refthe{theorem:抽象代数--定理4.2.1}和\refthe{theorem:n个文字的置换群同构于n阶置换群}知,对$\forall \alpha \in \operatorname{Aut}(S_3)$，令
+\begin{align*}
+\rho_\alpha:\Sigma\rightarrow \Sigma,\quad A_i\mapsto \alpha(A_i),\,i=1,2,3.
+\end{align*}
+则$\rho_\alpha\in S_{\Sigma}\cong S_3$.并且
+\begin{align*}
+\rho:\operatorname{Aut}(S_3)\rightarrow S_3,\quad \alpha\mapsto \rho_\alpha.
+\end{align*}
+是群同态. 因为
+\begin{align*}
+\operatorname{ker} \rho &= \{\alpha \in \operatorname{Aut}(S_3) \mid \alpha(A_i) = A_i, \, i = 1, 2, 3\} \\
+&= \{\alpha \in \operatorname{Aut}(S_3) \mid \alpha((12)) = (12), \, \alpha((13)) = (13), \, \alpha((23)) = (23)\} \\
+&= \{\text{id}_{S_3}\}=\{1_{\operatorname{Aut}(S_3)}\},
+\end{align*}
+所以$\rho$是单同态,因此$\rho$是$\operatorname{Aut}(S_3)$到$ S_3$的嵌入映射,即$\operatorname{Aut}(S_3)\cong \rho(\operatorname{Aut}(S_3))\leqslant S_3$.另一方面,注意到$Z(S_3)=\{1\}$,再由\rrefthe{theorem:内自同构群及其基本性质}{theorem:内自同构群及其基本性质-4}知$S_3$的内自同构群$\text{Int}(S_3)\cong S_3 / Z(S_3) = S_3$. 又由\rrefthe{theorem:内自同构群及其基本性质}{theorem:内自同构群及其基本性质-3}知$\text{Int}(S_3)\lhd \text{Aut}(S_3)$,故
+$\operatorname{Aut}(S_3) \cong S_3$.
+
+\end{solution}
+
+\begin{example}
+令$G$是阶数为$2^n m$的群, 其中$m$是奇数. 如果$G$含有一个$2^n$阶的元, 则$G$含有一个指数为$2^n$的正规子群.
+\end{example}
+\begin{proof}
+
+对$n$用数学归纳法. 下述证明也包含了对$n=1$情形的证明. 设$g \in G$且$\text{ord}\,g=2^n$, 考虑$G$的左平移作用. 由\refthe{theorem:抽象代数--定理4.2.2}和\refthe{theorem:n个文字的置换群同构于n阶置换群}知,对$\forall g\in G$,令
+\begin{align*}
+\rho_g: G\to G,\,\,x\mapsto gx.
+\end{align*}
+则$\rho_g\in S_G\cong S_{2^nm}$.并且
+\begin{align*}
+\rho: G \to S_G\cong S_{2^n m},\,\,g\mapsto \rho_g.
+\end{align*}
+是群的同态.又注意到$G$的左平移作用是有效的,故由\rrrefthe{theorem:抽象代数--定理4.2.1}{theorem:抽象代数--定理4.2.1-2}{theorem:抽象代数--定理4.2.1-2-1}知$\rho$还是单同态.于是由\rrefthe{theorem:群元素的阶的基本性质}{theorem:群元素的阶的基本性质-9}知$\rho(g)$的阶也为$2^n$.
+
+由\refthe{theorem:置换必可写成对换之积}知,可将$\rho(g)$写成互不相交的轮换之积. 对任一$a \in G$,由$\text{ord}\,\rho(g)=2^n$知$G$中的$2^n$个元
+\begin{align*}
+a, \rho(g)a, \rho(g^2)a, \cdots, \rho(g^{2^n-1})a
+\end{align*}
+互不相同, 故这$2^n$个元都属于包含$a$的同一个轮换因子,从而每个包含$a$的轮换因子的长度都大于等于$2^n$,再结合$a$的任意性知$\rho(g)$的每个轮换因子长度都大于等于$2^n$.由\hyperref[theorem:抽象代数--Ruffini(鲁菲尼)定理]{Ruffini定理}知$\rho(g)$的每个轮换因子的长度的最小公倍数为$2^n$,故每个轮换因子的长度都小于等于$2^n$.
+因此$\rho(g)$的每个轮换因子长就是$2^n$. 
+
+对$\forall x\in G$,有$\rho(g)(x)=gx\neq x$,否则$gx=x,$进而$g=1$,与$\text{ord}\,g=2^n$矛盾!故$\rho(g)$将$G$的每个元都变动,因此$\rho(g)$包含$G$中所有元素,从而$\rho(g)$是$m$个长为$2^n$的轮换之积. 于是由\refcor{corollary:奇置换与偶置换分别可表示成奇数和偶数个对换之积}知$\rho(g)$是奇置换.
+
+由$\rho$是$G\to S_G$的单同态知$\rho$是$G\to \rho(G)$的同构,即$G\cong \rho(G)\leqslant S_G\cong S_{2^nm}$.令$N = \rho(G) \cap A_{2^n m}$,则由\refpro{proposition:Sn的分解和An是Sn的正规子群}知$\rho(G)/N=\{N,\rho(G)N\}$且$N\lhd \rho(G)$,即$N$是$\rho(G)$的指数为$2$的正规子群, 从而由\hyperref[theorem:抽象代数--Lagrange定理]{Lagrange定理}知
+\begin{align*}
+2=\frac{|\rho(G)|}{|N|} = \frac{|G|}{|N|}=\frac{2^nm}{|N|} \Longrightarrow |N|=2^{n-1}m.
+\end{align*}
+注意到$\text{ord}\,g^2=\frac{\text{ord}\,g}{(2,\text{ord}\,g)}=2^{n-1}$,且由\refcor{corollary:奇置换与偶置换分别可表示成奇数和偶数个对换之积}知$\rho(g^2)=\rho(g)\rho(g)$是偶置换,故$N$中有$2^{n-1}$阶的元$\rho(g^2)$.由归纳假设知, $N$有正规子群$M$使得$[N:M]=2^{n-1}$. 于是
+\begin{align*}
+[G:M]=\frac{|G|}{|M|}=\frac{|G|}{|N|}\cdot \frac{|N|}{|M|}=2\cdot 2^{n-1}=2^n\Longrightarrow |M|=\frac{|G|}{2^n}=m.
+\end{align*}
+下证$M \lhd G$. 否则存在$g \in G$使得$gMg^{-1} \neq M$. 设$x = gag^{-1} \notin M$, $a \in M\subseteq N$, 则由$N\lhd \rho(G)\cong G$知$x \in gNg^{-1} = N$,进而 $\overline{x} \neq \overline{1} \in N/M$，而$|N/M|=2^{n-1}$,故$\overline{x}$的阶为$2$的正次幂. 但是
+\begin{align*}
+\overline{x}^m = \overline{ga^m g^{-1}} = \overline{1},
+\end{align*}
+于是$\text{ord}(\overline{x}) \mid m$,而$m$是奇数,矛盾！
+
+\end{proof}
+
+\begin{example}
+设$\alpha$是有限群$G$的一个自同构. 若$\alpha$把每个元都变到它在$G$中的共轭元, 即对任意$g \in G$, $g$ 和 $\alpha(g)$ 共轭, 则 $\alpha$ 的阶的每个素因子都是 $|G|$ 的因子.
+\end{example}
+\begin{proof}
+
+设$o(\alpha) = pm$, $p$ 为素数, 则 $o(\alpha^m) = \frac{pm}{(m, pm)} = p$. 因为 $\alpha^m(g)$ 和 $g$ 也共轭, 对任意 $g \in G$, 所以不妨设 $o(\alpha) = p$. 对$\forall x \in G$, 令 $[x] = \{gxg^{-1} \mid g \in G\}$为$G$中以$x$为代表的共轭类.
+
+将$\alpha$看作$G$作用在自身上的群作用.
+断言: 存在共轭类 $[x]$, 使得 $[x]$ 中不含 $\alpha$ 的不动点.
+否则, 即任意共轭类 $[x]$ 均有 $\alpha$ 的不动点. 由\refpro{proposition:不动点子群}知$\alpha$ 的不动点全体$H$是$G$的子群.并且$H \neq G$,否则$H=G$,则$\alpha$是恒等映射,即$o(\alpha)=1,$这与$o(\alpha)=p$矛盾!
+对$\forall g\in G$，则$[g]$中存在一个$\alpha$的不动点$y\in [g]\cap H$。于是存在$h\in G$，使得\begin{align*}
+hgh^{-1}=y\in H\Longrightarrow g\in h^{-1}Hh.
+\end{align*}
+故$G\subseteq \bigcup\limits_{g\in G}gHg^{-1}$,即真子群 $H$ 的共轭子群覆盖了 $G$,这与\refpro{proposition:有限群的真子群的共轭子群之并不能覆盖整个群}矛盾!
+
+设 $[x]$ 中不含 $\alpha$ 的不动点. 因 $o(\alpha) =o(\alpha^i)= p,\,i=1,2,\cdots,p-1$,所以$\langle \alpha\rangle=\langle \alpha^i\rangle,\,i=1,2,\cdots p-1$,从而存在$k_i\in \mathbb{N}$,使得$\alpha =(\alpha^i)^{k_i}$.若$x\in [x]$是$\alpha^i$的不动点,则$\alpha(x)=(\alpha^i(x))^{k_i}=x$,这与$[x]$中没有$\alpha$的不动点矛盾!故 $[x]$ 中也不含 $\alpha^i$ 的不动点, $i = 1, \cdots, p-1$. 
+
+考虑 $\langle \alpha \rangle$ 在 $[x]$ 上的自然作用
+\begin{align*}
+f:\langle \alpha\rangle \times [x]\to [x],\,\,(\alpha,a)\mapsto \alpha(a).
+\end{align*}
+设 $a \in [x]$.因为 $a$ 不是 $\alpha^i$ 的不动点, $i = 1, \cdots, p-1$, 故 $a$ 的迷向子群 $\langle \alpha \rangle_a$ 为 $\{1\}$. 从而由\hyperref[corollary:有限群轨道的阶与其商掉迷向子群的阶相同]{轨道公式}可得
+\begin{align*}
+|O_a(\langle \alpha \rangle)| = \frac{|\langle \alpha \rangle|}{|\langle \alpha \rangle_a|} = |\langle \alpha \rangle| = p.
+\end{align*}
+由\rrefthe{theorem:抽象代数--定理4.2.2}{theorem:抽象代数--定理4.2.2-1}知 $[x] = \bigsqcup\limits_{a} O_a(\langle \alpha \rangle)$,再结合$a$和$x$的任意性知$p \mid |[x]|,\forall x\in G$.又由\rrefthe{theorem:中心化子的基本性质}{theorem:中心化子的基本性质-2}知$G=\bigsqcup\limits_{x}[x]$,故$p\mid |G|$.
+
+\end{proof}
+
+\begin{proposition}\label{proposition:Zp自同构群同构Z_p-1}
+设$p$是一个素数,则$\text{Aut}(\mathbb{Z}_p)\cong\mathbb{Z}_{p}^{\times} \cong \mathbb{Z}_{p-1}$.
+\end{proposition}
+\begin{proof}
+
+
+
+\end{proof}
+
+\begin{example}
+设$p$是$|G|$的最小素因子. 若$p$阶子群$A \lhd G$, 则$A \leqslant Z(G)$.
+
+特别地, $p$-群$G$的$p$阶正规子群是$G$的中心的子群.
+\end{example}
+\begin{proof}
+
+因为$A \lhd G$, 故$G$在$A$上有良定义的共轭作用. 于是由\refthe{theorem:抽象代数--定理4.2.2}知,对$\forall g\in G$,令
+\begin{align*}
+\rho_g: A\to A,\,\,(g,a)\mapsto gag^{-1}.
+\end{align*}
+则$\rho_g\in =S_A\cong S_p$.并且映射
+\begin{align*}
+\rho: G \to S_A \cong S_p,\,\,g\mapsto \rho_g
+\end{align*}
+是群同态.
+注意到$\rho_g(\forall g\in G)$都是群同态,故$\rho_g\in \text{Aut}(A),\forall g\in G$.从而$\rho(G)\leqslant \mathrm{Aut}(A) $.因为\hyperref[proposition:素数阶群必为循环群]{素数阶群必为循环群},所以$A$是$p$阶循环群,再由\refthe{theorem:有限和无限循环群的常用结论}知$A\cong \mathbb{Z}_p$.
+再由\refpro{proposition:Zp自同构群同构Z_p-1}知$\rho(G)\leqslant\mathrm{Aut}(A)\cong \mathrm{Aut}(\mathbb{Z}_p)\cong \mathbb{Z}_{p-1}$.
+又注意到
+\begin{align*}
+\mathrm{ker}\rho &=\left\{ g\in G\mid \rho \left( g \right) =\mathrm{id}_A \right\} =\left\{ g\in G\mid \rho \left( g \right) \left( x \right) =gxg^{-1}=x,\forall x\in A \right\} 
+\\
+&=\left\{ g\in G\mid gx=xg,\forall x\in A \right\} =C_G(A),
+\end{align*}
+于是由\hyperref[theorem:群的同态基本定理]{群的同态基本定理}知$|G/C_G(A)| \cong |\mathrm{Im}\rho| \mid (p-1)$. 但是$|G/C_G(A)|$是$|G|$的因子, 而$p$是$|G|$的最小素因子, 故只能$|G/C_G(A)| = 1$, 即$C_G(A) = G$, 即$A \leqslant Z(G)$.
+
+\end{proof}
+
+
+\subsection{Sylow定理}
+
+\begin{example}
+设$p$是$|G|$的素因子，则方程$x^p=1$在$G$中的解的个数是$p$的倍数。
+\end{example}
+\begin{proof}
+
+由\hyperref[proposition:素数阶群必为循环群]{素数阶群必为循环群}可得
+\begin{align*}
+\{ x\in G\mid x^p=1 \} =\{ x\in G\mid o(x)=p \} \cup \{ 1 \} =\bigcup\limits_{\substack{x\in G\\o(x)=p}}{\langle x \rangle}=\bigcup\limits_{\substack{H\leqslant G\\|H|=p}}{H}.
+\end{align*}
+断言:$G$中任意两个不同的$p$阶群之交都是$\{ 1 \}$.否则,由\hyperref[proposition:素数阶群必为循环群]{素数阶群必为循环群}可设$1\ne a\in \langle x \rangle \cap \langle y \rangle$且$o(x)=o(y)=p,x\ne y$,则存在$k\in \{ 1,2,\cdots ,p-1 \} $,使得
+\begin{align*}
+a=x^k\Longrightarrow o(a)=\frac{o(x)}{(k,o(x))}=p=| \langle x \rangle |=| \langle y \rangle |.
+\end{align*}
+从而由\refthe{theorem:抽象代数-推论 1.3.4}知$\langle a \rangle =\langle x \rangle =\langle y \rangle $,矛盾!因此
+\begin{align*}
+\{ x\in G\mid x^p=1 \} =\{ 1 \} \sqcup \bigsqcup\limits_{\substack{H\leqslant G\\|H|=p}}{H\setminus \{ 1 \}}.
+\end{align*}
+由\hyperref[theorem:Sylow第三定理]{Sylow第三定理}知$G$中有$kp+1$个$p$阶子群,其中$k$为某一非负整数.于是
+\begin{align*}
+| \{ x\in G\mid x^p=1 \} |=1+\sum\limits_{\substack{H\leqslant G\\|H|=p}}{| H\setminus \{ 1 \} |}=1+\sum\limits_{\substack{H\leqslant G\\|H|=p}}{(p-1)}=1+(kp+1)(p-1)=(kp+1)p-kp.
+\end{align*}
+
+\end{proof}
+
+\begin{example}
+证明6阶非Abel群只有$S_3$(同构意义下)。
+\end{example}
+\begin{proof}
+
+设$G$是6阶非Abel群,则$|G|=2\times 3$,即$G$是Sylow$\,$2子群,也是Sylow$\,$3子群.
+由\hyperref[theorem:Sylow 第一定理]{Sylow 第一定理}和\hyperref[theorem:Sylow第三定理]{Sylow第三定理}知$G$存在一个2阶正规子群$A$和一个3阶正规子群$B$,且$A,B\lhd G$.由\hyperref[proposition:素数阶群必为循环群]{素数阶群必为循环群}知$A,B$都是循环群,不妨设
+\begin{align*}
+A=\langle \alpha \rangle =\{ 1,\alpha \} ,\quad B=\langle \beta \rangle =\{ 1,\beta ,\beta^2 \} ,
+\end{align*}
+其中$o(\alpha)=2,o(\beta)=3$.显然$\alpha \ne \beta$,故$A\cap B=\{ 1 \}$.再由\rrefcor{corollary:抽象代数-推论 1.3.5}{corollary:抽象代数-推论 1.3.5-3}知
+\begin{align*}
+|AB|=\frac{|A|\cdot |B|}{|A\cap B|}=6=|G|\Longrightarrow G=AB=\{ \alpha^n\beta^m\mid n\in \{ 0,1 \} ,m\in \{ 0,1,2 \} \} .
+\end{align*}
+从而$\alpha \beta \ne \alpha ,\alpha \beta^2\ne \alpha$,否则$|G|=|AB|<6$,矛盾!于是
+\begin{align*}
+\alpha \beta \alpha^{-1}\ne 1,\quad (\alpha \beta \alpha^{-1})^2=\alpha \beta^2\alpha^{-1}\ne 1,\quad (\alpha \beta \alpha^{-1})^3=1.
+\end{align*}
+故$o(\alpha \beta \alpha^{-1})=3$,而$G$中3阶元只有$\beta ,\beta^2$,因此$\alpha \beta \alpha^{-1}\in \{ \beta ,\beta^2 \} $.又由$G$是非Abel群知$\alpha \beta \ne \beta \alpha$,即$\alpha \beta \alpha^{-1}\ne \beta$,故
+\begin{align}
+\alpha \beta \alpha^{-1}=\beta^2\Longleftrightarrow \alpha \beta =\beta^2\alpha \Longleftrightarrow \beta^{-2}\alpha =\alpha \beta^{-1}\Longleftrightarrow \beta \alpha =\alpha \beta^2.
+\label{eq::--HUHFWIUQQH1}
+\end{align}
+记$\tau=(1\ 2),\sigma=(1\ 2\ 3)$,则容易发现
+\begin{align*}
+S_3=\{ \tau^n\sigma^m\mid n\in \{ 0,1 \} ,m\in \{ 0,1,2 \} \} .
+\end{align*}
+不难发现
+\begin{align}
+\sigma \tau=(1\ 3)=\tau \sigma^2.
+\label{eq::--HUHFWIUQQH2}
+\end{align}
+令
+\begin{align*}
+\varphi :G\rightarrow S_3,\quad \alpha^n\beta^m\mapsto \tau^n\sigma^m,\quad n\in \{ 0,1 \} ,m\in \{ 0,1,2 \} .
+\end{align*}
+显然$\varphi$是双射(一一对应).
+设$\alpha^n\beta^m,\alpha^s\beta^t\in G$,其中$n,s\in \{ 0,1 \} ,m,t\in \{ 0,1,2 \} $,则当$s=0$时,有
+\begin{align*}
+\varphi (\alpha^n\beta^m\alpha^s\beta^t)=\varphi (\alpha^n\beta^{m+t})=\tau^n\sigma^{m+t}=\tau^n\sigma^m\sigma^t=\varphi (\tau^n\sigma^m)\varphi (\tau^s\sigma^t).
+\end{align*}
+当$s=1$时,由\eqref{eq::--HUHFWIUQQH1}\eqref{eq::--HUHFWIUQQH2}式有
+\begin{align*}
+\varphi (\alpha^n\beta^m\alpha^s\beta^t)=\varphi (\alpha^n\beta^m\alpha \beta^t)=\varphi (\alpha^{n+1}\beta^{2m+t})=\tau^{n+1}\sigma^{2m+t}\\
+=\tau^n\tau \sigma^{2m}\sigma^t=\tau^n\sigma^m\tau \sigma^t=\varphi (\tau^n\sigma^m\tau^s\sigma^t).
+\end{align*}
+故$\varphi$是同态.因此$\varphi$是$G$到$S_3$的群同构,即$G\cong S_3$.
+
+\end{proof}
+
+\begin{example}
+200阶群有正规的Sylow子群.
+\end{example}
+\begin{proof}
+
+注意到$200=2^3 5^2$,故由\hyperref[theorem:Sylow第三定理]{Sylow第三定理}知Sylow$\,$5子群的个数$N(25)$为$5k+1$且整除8,其中$k$为某一非负整数,故$N(25)=1$,故再由\hyperref[theorem:Sylow第三定理]{Sylow第三定理}知25阶子群是正规的Sylow子群.
+
+\end{proof}
+
+\begin{example}\label{example:S4的Sylow子群}
+确定$S_4$的 Sylow 子群的个数.
+\end{example}
+\begin{solution}
+
+注意到$|S_4| = 2^3 3,$故由\hyperref[theorem:Sylow第三定理]{Sylow第三定理}知$S_4$的 Sylow 3-子群个数$N(3) = (3k + 1) \mid 8,$ 其中$k$为某一非负整数. 于是$N(3)=1$或$4$.而由\hyperref[proposition:素数阶群必为循环群]{素数阶群必为循环群}知$S_4$至少有4个 Sylow 3-子群, 即3-轮换生成的子群, 故$N(3) = 4.$ 
+
+再由\hyperref[theorem:Sylow第三定理]{Sylow第三定理}知$S_4$的 Sylow 2-子群个数$N(8) = (2k + 1) \mid 3,$ 于是$N(8)=1$或$3$.若$N(8)=1$，则由\hyperref[theorem:Sylow第三定理]{Sylow第三定理}知，$S_4$的Sylow 2-子群$N$是8阶正规子群。从而\begin{align*}
+|S_4/N|=\frac{|S_4|}{|N|}=2.
+\end{align*}
+由\hyperref[proposition:素数阶群必为循环群]{素数阶群必为循环群}知$S_4/N$是循环群，进而也是Abel群。再由\rrefpro{proposition:换位子(群)保持群自同构}{proposition:换位子(群)保持群自同构-3}知$[S_4,S_4]\subseteq N$。又由\refpro{proposition:SnSn=An}知$[S_4,S_4]=A_4$，故$A_4\subseteq N$。但$|A_4|=12>8=|N|$，矛盾!故$N(8) = 3.$
+
+事实上, $S_4$的 Sylow 3-子群为
+\begin{align*}
+\langle (123) \rangle, \quad \langle (124) \rangle, \quad \langle (134) \rangle, \quad \langle (234) \rangle.
+\end{align*}
+而其 Sylow 2-子群为
+\begin{align*}
+& \{1,\ (13),\ (24),\ (12)(34),\ (13)(24),\ (14)(23),\ (1234),\ (1432)\}, \\
+& \{1,\ (12),\ (34),\ (12)(34),\ (13)(24),\ (14)(23),\ (1324),\ (1423)\}, \\
+& \{1,\ (14),\ (23),\ (12)(34),\ (13)(24),\ (14)(23),\ (1243),\ (1342)\}.
+\end{align*}
+
+\end{solution}
+
+\begin{example}
+设$P$是有限群$G$的Sylow $p$-子群，$N_G(P)\lhd G$。证明$P\lhd G$.
+\end{example}
+\begin{proof}
+
+由\hyperref[theorem:共轭子群和正规化子]{正规化子的定义}知$P$是$N_G(P)$的Sylow $p$-子群.对任一$g\in G$,由$N_G(P)\lhd G$知
+\begin{align*}
+gPg^{-1}\subseteq gN_G(P)g^{-1}\subseteq N_G(P).
+\end{align*}
+故$gPg^{-1}$也是$N_G(P)$的Sylow $p$-子群。故由\hyperref[theorem:Sylow 第二定理]{Sylow 第二定理}知，它们在$N_G(P)$中共轭，即有$n\in N_G(P)$使得$gPg^{-1}=nPn^{-1}=P$,即$P\lhd G$.
+
+\end{proof}
+
+\begin{example}
+设$N$是有限群$G$的正规子群,$|G|=p^lm$,$(m,p=1)$.若素数$p$和$|G/N|$互素，则$N$包含$G$的所有Sylow $p$-子群。
+\end{example}
+\begin{proof}
+
+由\hyperref[theorem:抽象代数--Lagrange定理]{Lagrange定理}知$p^lm=|G|=|G/N|\cdot|N|$，而$(p,|G/N|)=1$，故$p^l || |N|$。因此$N$的Sylow $p$-子群都是$G$的Sylow $p$-子群。
+设$P$是$N$的一个Sylow $p$-子群，$P'$是$G$的一个Sylow $p$-子群，则由\hyperref[theorem:Sylow 第二定理]{Sylow 第二定理}知，存在$g\in G$，使得
+\begin{align*}
+P' = gPg^{-1} \leqslant gNg^{-1} = N.
+\end{align*}
+故$P'$也是$N$的一个Sylow $p$-子群。因此$N$包含$G$的所有Sylow $p$-子群。
+
+\end{proof}
+
+\begin{example}
+设$G$是集合$\Sigma$上的置换群，$|G|=p^mn,(n,m)=1$,考虑$G$在$\Sigma$上的自然作用
+\begin{align*}
+f:G\times \Sigma \to \Sigma,\,\,(g,a)\mapsto g(a).
+\end{align*}
+$P$是$G$的Sylow $p$-子群,$a\in\Sigma$。若$p^m\mid |O_a(G)|$，则$p^m\mid |O_a(P)|$。
+\end{example}
+\begin{proof}
+
+考虑$G$在$\Sigma$上的自然作用
+\begin{align*}
+\rho: G\times \Sigma \rightarrow \Sigma ,\quad (g,a) \mapsto g(a).
+\end{align*}
+注意到$S_a(P)=S_a(G)\cap P$，故由\hyperref[corollary:有限群轨道的阶与其商掉迷向子群的阶相同]{轨道公式}知
+\begin{align*}
+|O_a(G)|\frac{|S_a(G)|}{|S_a(G)\cap P|}=\frac{|G|}{|S_a(G)|}\frac{|S_a(G)|}{|S_a(G)\cap P|}=\frac{|G|}{|S_a(P)|}=\frac{|G|}{|P|}\frac{|P|}{|S_a(P)|}=[G:P]\cdot |O_a(P)|.
+\end{align*}
+因$p^m\mid |O_a(G)|$，故$p^m\mid ([G:P]\cdot |O_a(P)|)$。由$P$是$G$的Sylow-$p$子群知
+\begin{align*}
+([G:P],|P|)=\left(\frac{|G|}{|P|},|P|\right)=(n,p^m)=1.
+\end{align*}
+故$p^m\mid |O_a(P)|$.
+
+\end{proof}
+
+\begin{example}
+确定恰有3个共轭类的有限非交换群$G$.
+\end{example}
+\begin{proof}
+
+设$G$的3个共轭类的阶分别为$1,m,n$，其中$1\leqslant m\leqslant n$，则$|G|=1+m+n$.
+
+断言$m\neq n$,否则$m=n$，进而$m\mid |G|=2m+1$，从而$m=1$，于是$|G|=3$.由\hyperref[proposition:素数阶群必为循环群]{素数阶群必为循环群}知此时$G$是循环群,故$G$可换，与题设矛盾!因此$m<n$.
+
+再由$n\mid |G|=1+m+n$知$n=m+1$. 从而$m\mid |G|=2m+2$，故$m=1,2$. 若$m=1$,则此时$G$是4阶群,而由\refpro{proposition:4阶群只有两个4阶循环群和Klein四元群}知4阶群都可换，矛盾!故$m=2$,$|G|=6$. 从而$G\cong S_3\cong D_2$.
+
+\end{proof}
+
+\begin{example}
+设$P$是有限群$G$的Sylow $p$-子群，$H$是$G$的子群，$p\mid |H|$。则存在$a\in G$使得$aPa^{-1}\cap H$是$H$的Sylow $p$-子群。
+\end{example}
+\begin{proof}
+
+设$|G|=p^lm,(p,m)=1$.因为$p\mid |H|$，故可取到$H$的Sylow $p$-子群$A$,即$|A|=p^k|||H|(k\leqslant l)$。由\hyperref[theorem:Sylow 第二定理]{Sylow 第二定理}知，存在$a\in G$,使得$A$含于$G$的某个Sylow $p$-子群$aPa^{-1}$，从而$A\subseteq aPa^{-1}\cap H$。而$aPa^{-1}\cap H$是$H$的阶为$p$的幂的子群，故$|aPa^{-1}\cap H|\leqslant |A|$。于是$A = aPa^{-1}\cap H$，即$aPa^{-1}\cap H$是$H$的Sylow $p$-子群.
+
+\end{proof}
+
+\begin{example}
+证明24, 36, 48 阶群均非单群.
+\end{example}
+\begin{proof}
+
+设$|G|=24=2^3\times 3$. 不妨设$G$的 Sylow 2-子群非正规(若正规,则结论显然成立). 则由\hyperref[theorem:Sylow第三定理]{Sylow第三定理}知, $G$ 有 3 个 Sylow 2-子群 $P_1,P_2,P_3$. 考虑 $G$ 在 $X=\{P_1,P_2,P_3\}$ 上的共轭作用, 由\refthe{theorem:抽象代数--定理4.2.2}知它诱导了群同态
+\begin{align*}
+\rho:G\to S_X\cong S_3,\,\,g\mapsto \rho_g.
+\end{align*}
+其中$\rho_g:X\to X,\,\,P_i\mapsto gP_ig^{-1}.$
+易知 $\operatorname{Ker}\rho\neq \{1\}$.否则 $\rho:G\to S_3$ 是单射,从而$G\cong \text{Im}G\leqslant S_3$ 这不可能! 因为 $|G|=24$, $|S_3|=6$.
+又易知 $\operatorname{Ker}\rho\neq G$.否则 $gP_ig^{-1}=P_i$, $\forall g\in G$, $i=1,2,3$. 这与 $G$ 的 Sylow 2-子群非正规.
+因此 $\operatorname{Ker}\rho$ 是 $G$ 的非平凡的正规子群, 从而 $G$ 非单群.
+
+同理可证 36, 48 阶群非单群.
+
+\end{proof}
+
+\begin{example}
+确定$S_4$的自同构群$\operatorname{Aut}(S_4)$.
+\end{example}
+\begin{solution}
+
+注意到$|S_4|=24=2^3\times 3$,故由\hyperref[theorem:Sylow第三定理]{Sylow第三定理}知$S_4$只有4个Sylow 3-子群.令$\Sigma = \{P_1, P_2, P_3, P_4\}$是$S_4$的 Sylow 3-子群的集合,则由\refexa{example:S4的Sylow子群}可知
+\begin{align*}
+\Sigma = \{\langle(123)\rangle, \langle(124)\rangle, \langle(134)\rangle, \langle(234)\rangle\}.
+\end{align*}
+令$G = \operatorname{Aut}(S_4)$. 由\refpro{proposition:置换群的中心}知$S_4$的中心为$1$，故由\rrefthe{theorem:内自同构群及其基本性质}{theorem:内自同构群及其基本性质-4}知$S_4$的内自同构群$I(S_4)$同构于$S_4$.又由\rrefthe{theorem:内自同构群及其基本性质}{theorem:内自同构群及其基本性质-3}知$\text{I}(S_4)\lhd \text{Aut}(S_4)=G$,从而$|G| \geqslant 24$.
+
+因为$S_4$的自同构将 Sylow 3-子群仍变成 Sylow 3-子群，故$G$在$\Sigma$上有自然的作用
+\begin{align*}
+f:G\times \Sigma\to \Sigma ,\,\,(\alpha,P_i)\mapsto \alpha(P_i),
+\end{align*}
+由\refthe{theorem:抽象代数--定理4.2.2}知这个群作用诱导出群同态
+\begin{align*}
+\pi: G \to S_\Sigma \cong S_4,\,\,\alpha\mapsto \pi_{\alpha},
+\end{align*}
+其中$\pi_\alpha:\Sigma \to \Sigma,\,\,P_i\mapsto \alpha(P_i)$.
+从而得到
+\begin{align*}
+\operatorname{Ker}\pi = \{\alpha \in G \mid \alpha(P_i) = P_i,\ i = 1,2,3,4\}.
+\end{align*}
+我们断言$\operatorname{Ker}\pi = \{1\}$，即$\pi$是单同态.从而$G\cong \pi(G)\leqslant S_4$,进而$|\pi(G)|\leqslant |S_4|$.
+又由$|G|=|\pi(G)| \geqslant 24=|S_4|$知$G\cong \pi(G) = S_4$,故$G \cong S_4$.
+
+下证$\operatorname{Ker}\pi = \{1\}$.设$\alpha \in \operatorname{Ker}\pi$. 因为$\alpha\in \text{Aut}(S_4)$,所以$\alpha$将$S_4$的12阶子群仍变成12阶子群.由\refpro{proposition:Sn的分解和An是Sn的正规子群}知$S_4$的12阶子群只有$A_4$.故$\alpha(A_4) = A_4$.
+
+又由$\alpha\in \text{Aut}(S_4)$知$\alpha$将2阶元变成2阶元，故$\alpha$将$S_4$中的对换变成对换，或变成两个文字不相交的对换的乘积. 但两个文字不相交的对换的乘积属于$A_4$，由$\alpha(A_4) = A_4$知，$\alpha$只能将$S_4$中的对换变成对换.
+
+因$\alpha\in \text{Ker}\pi$,故$\alpha(\langle(123)\rangle) = \langle(123)\rangle=\langle(132)\rangle$，故$\alpha((123)) = (123)$，或者$\alpha((123)) = (132)$. 因$(123) = (13)(12)$，所以$\alpha(13)\alpha(12)=(123)$或$(132)$.故枚举所有情况可得$\alpha((12))$只能是$(12)$，或者$(13)$，或者$(23)$.
+
+因$\alpha(\langle(124)\rangle) = \langle(124)\rangle$，故$\alpha((124)) = (124)$，或者$\alpha((124)) = (142)$. 因$(124) = (14)(12)$，所以$\alpha(14)\alpha(12)=(124)$或$(142)$.故枚举所有情况可得$\alpha((12))$只能是$(12)$，或者$(14)$，或者$(24)$.
+
+综合起来$\alpha((12))$只能是$(12)$.
+同理$\alpha((13)) = (13)$，$\alpha((14)) = (14)$. 因$(12), (13), (14)$生成$S_4$，故$\alpha = \operatorname{id}$.
+
+\end{solution}
+
+\begin{example}
+设$P_1,\cdots,P_t$是有限群$G$的全部Sylow $p$-子群,$|G|=p^lm,(p,m)=1$.若对$i\neq j$，$1\leqslant i,j\leqslant t$，总有$[P_i:P_i\cap P_j]\geqslant p^r(r\leqslant l)$，则$t\equiv 1\pmod{p^r}$.
+\end{example}
+\begin{proof}
+
+令$P:=P_1$，$N:=N_G(P)\leqslant G$，则由\hyperref[theorem:Sylow第三定理]{Sylow第三定理}知$t=[G:N]$. 由\rrefthe{theorem:抽象代数-定理 1.3.2}{theorem:抽象代数-定理 1.3.2-3}可考虑$G$关于$(N,P)$的双陪集分解
+\begin{align}\label{eq::2jfoeiwjseijefshioSAHU}
+G=\bigsqcup_{1\leqslant i\leqslant m} Na_iP, \text{ 其中 } a_1=1.
+\end{align}
+对任一双陪集$NaP$，由\rrefpro{proposition:左右陪集的基本性质}{proposition:左右陪集的基本性质-4}可记
+\begin{align*}
+s(a):=\frac{|NaP|}{|N|}=\frac{|P|}{|P\cap aNa^{-1}|},
+\end{align*}
+则
+\begin{align*}
+s(a)=1\iff aNa^{-1}\supseteq P\iff a^{-1}Pa\subseteq N.
+\end{align*}
+此时，因$P$与$a^{-1}Pa$均是$N$的Sylow $p$-子群，故它们在$N$中共轭. 从而
+\begin{align*}
+&s(a)=1\iff a^{-1}Pa\subseteq N\iff \exists n\in N\,\text{s.t.}\,nPn^{-1}=a^{-1}Pa
+\\
+&\iff (an)P(an)^{-1}=P\iff an\in N\iff a\in Nn^{-1}= N.
+\end{align*}
+因此由$a_1=1\in N$可得$s(a_1)=1$.若还有$a_i\in N$,则$Na_iP=NP=Na_1P$,这与\eqref{eq::2jfoeiwjseijefshioSAHU}式矛盾!故$a_i\notin N,i=2,\cdots,m$.因此$s(a_i)>1,i=2,\cdots,m$.于是结合\hyperref[theorem:Sylow第三定理]{Sylow第三定理}知
+\begin{align}
+t=[G:N]=\frac{\left| G \right|}{\left| N \right|}=\sum_{i=1}^m{\frac{|Na_iP|}{\left| N \right|}}=\sum_{i=1}^m{s\left( a_i \right)}=1+\sum_{i=2}^m{s\left( a_i \right)}=1+\sum_{i=2}^m{\frac{\left| P \right|}{\left| P\cap a_iNa_{i}^{-1} \right|}}=1+\sum_{i=2}^m{\frac{\left| P \right|}{\left| N\cap a_{i}^{-1}Pa_i \right|}}.\label{eq::FJIOJW329r}
+\end{align}
+因$N\cap a_i^{-1}Pa_i\leqslant a_i^{-1}Pa_i$且$|a_i^{-1}Pa_i|=|P|=p^l$,故$N\cap a_i^{-1}Pa_i$是$p^k(k\leqslant l)$阶群，故由\hyperref[theorem:Sylow 第二定理]{Sylow 第二定理}知$N\cap a_i^{-1}Pa_i$含于$N$的某一Sylow $p$-子群$P_i'$中. 由\refthe{theorem:共轭子群和正规化子}知$G$的Sylow $p$-子群$P\lhd N$,从而$p^l|||N|$,所以$N$的Sylow $p$-子群也是$G$的Sylow $p$-子群.进而$a_i^{-1}Pa_i,P_i'$都是$G$的Sylow $p$-子群，从而
+\begin{align*}
+N\cap a_i^{-1}Pa_i=P_i'\cap a_i^{-1}Pa_i\Longrightarrow s(a_i)=\frac{\left| P \right|}{\left| P_i'\cap a_i^{-1}Pa_i \right|},\,\,i=2,3,\cdots,m.
+\end{align*}
+若$P_i'=a_i^{-1}Pa_i$,则$s(a_i)=\frac{|P|}{|P_i'|}=1(i=2,\cdots,m.)$,这与$s(a_i)>1(i=2,\cdots,m.)$矛盾!故$P_i'\neq a_i^{-1}Pa_i$.
+于是由条件知
+\begin{align*}
+s(a_i)=\frac{|P|}{|N\cap a_i^{-1}Pa_i|}=\frac{\left| P \right|}{\left| P_i'\cap a_i^{-1}Pa_i \right|}\geqslant p^r,\,\,i=2,3,\cdots,m.
+\end{align*}
+又因为$|P|=p^l$,$N\cap a_i^{-1}Pa_i$是$p^k$阶群,所以$s(a_i)\mid p^r$.
+从而再结合\eqref{eq::FJIOJW329r}式知$t\equiv 1\pmod{p^r}$.
+
+\end{proof}
+
+\begin{example}
+设$G$是集合$\Sigma$上的置换群，考虑$G$在$\Sigma$上的自然作用
+\begin{align*}
+f: G\times \Sigma\to \Sigma,\,\,(g,a)\mapsto g(a)=ga.
+\end{align*}
+再设$a\in\Sigma$，$P$是迷向子群$G_a$的Sylow $p$-子群，$\Delta$是轨道$Ga$在$P$的自然作用$f|_{P\times Ga}$下的全部不动点的集合.证明$N_G(P)$在$\Delta$上的自然作用$f|_{N_G(P)\times \Delta}$是可迁的.
+\end{example}
+\begin{proof}
+
+由题设知$\Delta = \{ga\in Ga \mid pga = ga,\ \forall p\in P\}$. 对任一$n\in N_G(P)$和$ga\in\Delta$，有
+\begin{align*}
+p(nga) = np'ga = nga,\ \forall p\in P,
+\end{align*}
+其中$p' = n^{-1}pn\in P$. 故$nga\in \Delta$,即$N_G(P)(\Delta)\subseteq \Delta$.这表明$N_G(P)$在$\Delta$上有自然的作用
+\begin{align*}
+f|_{N_G(P)\times \Delta}:N_G(P)\times \Delta\to \Delta,\,\,(n,ga)\mapsto nga.
+\end{align*}
+因
+\begin{align*}
+\Delta = \{ga\in Ga \mid g^{-1}Pg \leqslant G_a\},
+\end{align*}
+从而$g^{-1}Pg \leqslant G_a$当且仅当$P$与$g^{-1}Pg$都是$G_a$的Sylow $p$-子群，故由\hyperref[theorem:Sylow 第二定理]{Sylow 第二定理}知,这当且仅当它们在$G_a$中共轭，这就等价于
+\begin{align*}
+\exists h\in G_a\,\,\mathrm{s}.\mathrm{t}.\,\,g^{-1}Pg=h^{-1}Ph&\Longleftrightarrow \exists h\in G_a\,\,\mathrm{s}.\mathrm{t}.\,\,\,gh^{-1}Phg^{-1}=P\Longleftrightarrow \exists h\in G_a\,\,\mathrm{s}.\mathrm{t}.\,\,gh^{-1}\in N_G(P)
+\\
+&\Longleftrightarrow \exists h\in G_a\,\,\mathrm{s}.\mathrm{t}.\,\,g\in N_G(P)h\Longleftrightarrow g\in N_G(P)G_a.
+\end{align*}
+于是
+\begin{align*}
+\Delta = \{ga\in Ga \mid g\in N_G(P)G_a\} = N_G(P)G_a a = N_G(P)a,
+\end{align*}
+从而对$\forall x,y\in \Delta$,存在$g_1,g_2\in N_G(P)\leqslant G$,使得$x=g_1a,y=g_2a$.进而$g_1g_2^{-1}\in N_G(P)$,且
+\begin{align*}
+x=g_1a=g_1g_2^{-1}(g_2a)=g_1g_2^{-1}(y).
+\end{align*}
+即$N_G(P)$在$\Delta$上的作用是可迁的.
+
+\end{proof}
+
+\begin{example}
+设$G$是$24$阶群且中心$Z(G)=1$，证明$G \cong S_4$.
+\end{example}
+\begin{proof}
+
+因$24=2^3 3$, 故由\hyperref[theorem:Sylow第三定理]{Sylow第三定理}知$G$的Sylow 3-子群个数$N(3)=(3k+1) \mid 8$. 首先断言$N(3)=4$.
+
+否则, $N(3)=1$. 由\hyperref[proposition:素数阶群必为循环群]{素数阶群必为循环群}和\hyperref[theorem:Sylow第三定理]{Sylow第三定理}可设$T=\langle t \rangle$是$G$的$3$阶正规子群.
+
+若$G$的Sylow 2-子群的个数$N(8)=1$, 则由\hyperref[theorem:Sylow第三定理]{Sylow第三定理}知$G$有$8$阶正规子群$E$.由\refthe{theorem:抽象代数-推论 1.3.4}知$E$无3阶元,故$T\cap R=\{1\}$,从而$G=TE$. 因$T,E \lhd G$, $T \cap E=\{1\}$, 故对$\forall t\in T,e\in E$,有
+\begin{align*}
+tet^{-1}\in E,ete^{-1}\in T\Longrightarrow[t,e]=tet^{-1}e^{-1}\in T\cap E=\{1\}\Longrightarrow te=et.
+\end{align*}
+因此$T$中任一元与$E$中任一元可交换. 从而$T \leqslant Z(G)$. 矛盾!
+
+因此$N(8)=3$. 设$E$是$G$的一个Sylow 2-子群, 则由\refthe{theorem:抽象代数-推论 1.3.4}知$E$无3阶元,故$T\cap R=\{1\}$,从而$G=TE$. 于是由\hyperref[theorem:Sylow 第二定理]{Sylow 第二定理}知$G$的$3$个Sylow 2-子群为
+\begin{align*}
+\left\{ gEg^{-1}\mid g\in G \right\} &=\left\{ \left( te \right) E\left( te \right) ^{-1}\mid t\in T,e\in E \right\} =\left\{ teEe^{-1}t\mid t\in T,e\in E \right\} 
+\\
+&=\left\{ tEt^{-1}\mid t\in T=\left< t \right> =\left\{ 1,t,t^2 \right\} \right\} =\left\{ E,tEt^{-1},t^2Et^{-2} \right\} .
+\end{align*}
+考虑$G$在$E$的左陪集空间上的左平移作用, 故由\refthe{theorem:抽象代数--定理4.2.2}知有群同态
+\begin{align*}
+\pi: G=TE \to S_{G/E} \cong S_3,\,\,g\mapsto \pi_g,
+\end{align*}
+其中$\pi_g:G/E\to G/E,\,\,aE\to gaE$.
+从而
+\begin{align*}
+N&:=\mathrm{Ker}\pi =\left\{ g\in G\mid \pi _g=\mathrm{id}_{G/E} \right\} =\left\{ g\in G\mid gtE=tE,\forall t\in G \right\} 
+\\
+&=\left\{ g\in G\mid t^{-1}gtE=E,\forall t\in E \right\} =\left\{ g\in G\mid t^{-1}gt\in E,\forall t\in E \right\} 
+\\
+&=\left\{ g\in G\mid g\in tEt^{-1},\forall t\in E \right\} =\left\{ g\in G\mid g\in \bigcap_{0\leqslant i\leqslant 2}{t^iEt^{-i}} \right\} 
+\\
+&=\bigcap_{0\leqslant i\leqslant 2}{t^iEt^{-i}}.
+\end{align*}
+容易看出$N = C_G(t) \cap E$. 事实上, 一方面由定义直接看出$C_G(t) \cap E \subseteq \bigcap\limits_{0 \leqslant i \leqslant 2} t^i E t^{-i} = N$. 另一方面, $\forall n \in N\subseteq E$, 有$n = tet^{-1}, t\in T,e \in E$. 因$T \lhd G$, 故$ntn^{-1} \in T$. 但$ntn^{-1} \neq t^2$, 否则$t^2 n = nt = te$, $tn = e$,进而再结合$T\lhd G$可得$t=en^{-1}=ete^{-1}t^{-1}\in T\cap E=\{1\}$, 这与$t$是$T$的3阶生成元矛盾!于是$ntn^{-1} = t$, 即$nt = tn$. 这表明$n \in C_G(t) \cap E$, 即$N \subseteq C_G(t) \cap E$.
+
+因$T=\langle t \rangle\lhd G$,所以$t$在$G$中的的共轭元都在$T$中,因此$t$只有两个共轭元,即$t$和$t^2$,故$t$的共轭类阶为$|C_t(G)|=2$.考虑$G$在$T$上的共轭作用,则由\hyperref[corollary:有限群轨道的阶与其商掉迷向子群的阶相同]{轨道公式}得
+\begin{align*}
+C_G(t)=S_t(G)=\frac{|G|}{|O_t(G)}=\frac{|G|}{|C_t(G)|}=\frac{24}{2}=12.
+\end{align*}
+由$N=C_G(t)\cap E\leqslant C_G(t),E$和\hyperref[theorem:抽象代数--Lagrange定理]{Lagrange定理}知$|N|$是$12$和$|E|=8$的公因子, 即$|N|=1,2$或$4$. 但$|N| \neq 4$.不然, 设$|N|=4$. 若$N \cap Z(E)=\{1\}$, 由\refpro{proposition:4阶群只有两个4阶循环群和Klein四元群}知$4$阶群都是Abel群, 即$E$是Abel群, 即$Z(E)=E$.又由\rrefcor{corollary:抽象代数-推论 1.3.5}{corollary:抽象代数-推论 1.3.5-3}知
+\begin{align*}
+|NZ(E)|=\frac{|N||Z(E)|}{|N\cap Z(E)|}=32> 8=|E|,
+\end{align*}
+这与$NZ(E)\leqslant E$矛盾! 于是$N \cap Z(E) \neq \{1\}$. 令$z \neq 1$, $z \in N \cap Z(E)$, 则$z$与$t$及$E$中元都可换, 从而$z \in Z(G)$,矛盾!从而$|N|=1$或$2$. 但$G/N$是$S_3$的子群, 从而$24$阶群或$12$阶群是$6$阶群$S_3$的子群. 这与$Z(G)=1$矛盾!
+
+这就证明了断言, 即$G$有$4$个不同的Sylow 3-子群$T_1, T_2, T_3, T_4$. 令$\Sigma = \{T_i \mid i=1,2,3,4\}$, 考虑$G$在$\Sigma$上的共轭作用, 则由\refthe{theorem:抽象代数--定理4.2.2}知有群同态
+\begin{align*}
+\rho: G \to S_\Sigma\cong S_4,\,\,g\mapsto \rho_g.
+\end{align*}
+其中$\rho_g:\Sigma\to \Sigma,\,\,T_i\mapsto gT_ig^{-1}$(由\hyperref[theorem:Sylow 第二定理]{Sylow 第二定理}知$gT_ig^{-1}$仍是$G$的Sylow 3-子群,故$\rho_g$是良定义的).从而
+\begin{align*}
+K:=\operatorname{Ker} \rho = \{g \in G \mid gT_i g^{-1} = T_i, i=1,2,3,4\} 
+= \bigcap\limits_{1 \leqslant i \leqslant 4} N_G(T_i) \lhd G.
+\end{align*}
+由\hyperref[theorem:Sylow第三定理]{Sylow第三定理}知$G$中Sylow 3-子群的个数为
+\begin{align*}
+4=N(3)=[G:N_G(T_i)]\Longrightarrow |N_G(T_i)|=\frac{|G|}{4}=6,\,\,i=1,2,3,4.
+\end{align*}
+又$K\leqslant N_G(T_i)$,故由\hyperref[theorem:抽象代数--Lagrange定理]{Lagrange定理}知$|K|=1,2,3$或$6$.
+
+但$|K| \neq 3$,否则$G$有$3$阶正规子群$K$, 而由\hyperref[theorem:Sylow第三定理]{Sylow第三定理}知这当且仅当$N(3)=1$,这与$N(3)=4$矛盾!
+
+又$|K| \neq 6$,否则$N_G(T_i)=N_G(T_j)$, $1 \leqslant i,j \leqslant 4$. 于是$T_1, T_2$都是$N_G(T_1)$的Sylow 3-子群, 从而由\hyperref[theorem:Sylow 第二定理]{Sylow 第二定理}知, $T_1$与$T_2$在$N_G(T_1)$中共轭, 于是存在$t\in N_G(T_1)$,使得$T_1=tT_1t^{-1}=T_2$, 这与$N(3)=4$矛盾!
+
+最后, $|K| \neq 2$,否则$K=\{1,x\}$. 因$K \lhd G$, 故$gxg^{-1}=x$, $\forall g \in G$, 即$x \in Z(G)$,这与$Z(G)=\{1\}$矛盾!
+
+因此$|K|=|\text{Ker}\rho|=1$,即$\rho$是单同态.于是由\hyperref[theorem:群的同态基本定理]{群的同态基本定理}知$G\cong \rho(G)$.进而$|\rho(G)|=|G|=24=|S_4|=|S_\Sigma|$,而$\rho (G)\leqslant S_\Sigma$,故$\rho(G)=S_\Sigma$.即$G\cong \rho(G)=S_\Sigma\cong S_4$.
+
+
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}

@@ -1,0 +1,473 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[scale=0.3]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{Fredholm算子}
+
+\begin{definition}
+设$\mathscr{X},\mathscr{Y}$是$B$空间，$T\in\mathscr{L}(\mathscr{X},\mathscr{Y})$称为一个$\mathbf{Fredholm}$\textbf{算子}，是指:
+\begin{enumerate}[(1)]
+\item $R(T)$是闭的；
+\item $\dim N(T)<\infty$；
+\item $\operatorname{codim}R(T)<\infty$.
+\end{enumerate}
+$\mathscr{X}\to\mathscr{Y}$的一切Fredholm算子的全体记作$\mathscr{F}(\mathscr{X},\mathscr{Y})$，特别地，当$\mathscr{Y}=\mathscr{X}$时，记作$\mathscr{F}(\mathscr{X})$.
+
+设$T\in\mathscr{F}(\mathscr{X},\mathscr{Y})$，令
+\begin{align*}
+\operatorname{ind}(T)\triangleq\dim N(T)-\operatorname{codim}R(T),
+\end{align*}
+并称其为$T$的\textbf{指标}.
+\end{definition}
+
+\begin{examples}
+\begin{enumerate}[(1)]
+\item 若$A\in\mathfrak{C}(\mathscr{X})$，则$T=I-A\in\mathscr{F}(\mathscr{X})$，并且$\operatorname{ind}(T)=0$.
+\item 若$\mathscr{X}=l^2$，$T$是$\mathscr{X}$上的左推移算子，即
+\begin{align*}
+T:x=(x_1,x_2,\cdots)\mapsto(x_2,x_3,\cdots),
+\end{align*}
+则$T\in\mathscr{F}(\mathscr{X})$，并且$\operatorname{ind}(T)=1$.同理，$T^*$是右推移算子，即
+\begin{align*}
+T^*:x=(x_1,x_2,\cdots)\mapsto(0,x_1,x_2,\cdots),
+\end{align*}
+有$T^*\in\mathscr{F}(\mathscr{X})$，并且$\operatorname{ind}(T^*)=-1$.一般地，还有
+\begin{align*}
+T^n\in\mathscr{F}(\mathscr{X}),\quad \operatorname{ind}(T^n)=n\quad (n=1,2,\cdots),
+\end{align*}
+以及
+\begin{align*}
+(T^*)^n\in\mathscr{F}(\mathscr{X}),\quad \operatorname{ind}((T^*)^n)=-n\quad (n=1,2,\cdots).
+\end{align*}
+\end{enumerate}
+\end{examples}
+
+\begin{theorem}\label{theorem:泛函分析--Fredholm算子正则化定理}
+设$\mathscr{X},\mathscr{Y}$是$B$空间.
+\begin{enumerate}[(1)]
+\item 若$T\in\mathscr{F}(\mathscr{X},\mathscr{Y})$，则必有$S\in\mathscr{L}(\mathscr{Y},\mathscr{X})$以及$A_1\in\mathfrak{C}(\mathscr{X}),A_2\in\mathfrak{C}(\mathscr{Y})$，使得
+\begin{align}
+ST=I_{\mathscr{X}}-A_1,\quad TS=I_{\mathscr{Y}}-A_2,\label{eq:fredholm-reg1}
+\end{align}
+其中$I_{\mathscr{X}},I_{\mathscr{Y}}$分别表示$\mathscr{X}$和$\mathscr{Y}$上的恒同算子.
+\item 如果$T\in\mathscr{L}(\mathscr{X},\mathscr{Y})$，又有$R_1,R_2\in\mathscr{L}(\mathscr{Y},\mathscr{X})$以及$A_1\in\mathfrak{C}(\mathscr{X}),A_2\in\mathfrak{C}(\mathscr{Y})$，使得
+\begin{align}
+R_1T=I_{\mathscr{X}}-A_1,\quad TR_2=I_{\mathscr{Y}}-A_2,\label{eq:fredholm-reg2}
+\end{align}
+则$T\in\mathscr{F}(\mathscr{X},\mathscr{Y})$.
+\end{enumerate}
+\end{theorem}
+\begin{remark}
+满足\eqref{eq:fredholm-reg2}式的$R_1,R_2$分别称为$T$的\textbf{左、右正则化}子.在商掉紧算子集$\mathfrak{C}(\mathscr{X})$（以及$\mathfrak{C}(\mathscr{Y})$）意义下，它们分别是$T$的左、右逆.因此Fredholm算子是$\mathscr{L}(\mathscr{X},\mathscr{Y})$中模$\mathfrak{C}(\mathscr{X})$（及$\mathfrak{C}(\mathscr{Y})$）的可逆算子.
+
+若$R$同时是$T$的左、右正则化子，则$R$本身也是Fredholm算子.特别地，若$T\in\mathscr{F}(\mathscr{X},\mathscr{Y})$，则存在$S\in\mathscr{F}(\mathscr{Y},\mathscr{X})$，以及$A_1\in\mathfrak{C}(\mathscr{X}),A_2\in\mathfrak{C}(\mathscr{Y})$，使得\eqref{eq:fredholm-reg1}式成立.
+\end{remark}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 令
+\begin{align*}
+\widetilde{T}[x]=Tx\quad (\forall x\in[x])\quad (\forall [x]\in\mathscr{X}/N(T)).
+\end{align*}
+由$T\in\mathscr{F}(\mathscr{X},\mathscr{Y})$，得$\widetilde{T}:\mathscr{X}/N(T)\to R(T)$有连续逆$\widetilde{T}^{-1}$，且存在投影算子：
+\begin{align*}
+A_1:\mathscr{X}\to N(T),\quad A_2:\mathscr{Y}\to\mathscr{Y}/R(T).
+\end{align*}
+$A_1,A_2$为有穷秩算子，故是紧算子.令$S\triangleq\widetilde{T}^{-1}(I_{\mathscr{Y}}-A_2)$，则
+\begin{align*}
+ST=\widetilde{T}^{-1}(I_{\mathscr{Y}}-A_2)T=I_{\mathscr{X}}-A_1,
+\end{align*}
+\begin{align*}
+TS=T\widetilde{T}^{-1}(I_{\mathscr{Y}}-A_2)=I_{\mathscr{Y}}-A_2.
+\end{align*}
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{算子演示图.png}
+\caption{Fredholm算子正则化示意图}
+\label{figure:fredholm-reg}
+\end{figure}
+
+\item 若存在$R_1,R_2,A_1,A_2$使得\eqref{eq:fredholm-reg2}成立，则
+\begin{align*}
+N(T)\subseteq N(R_1T)=N(I_{\mathscr{X}}-A_1)\implies\dim N(T)<\infty,
+\end{align*}
+\begin{align*}
+R(T)\supseteq R(TR_2)=R(I_{\mathscr{Y}}-A_2)\implies\operatorname{codim}R(T)\leqslant\operatorname{codim}R(I_{\mathscr{Y}}-A_2)<\infty.
+\end{align*}
+$R(T)$的闭性可仿照\refthe{theorem:紧算子与闭值域算子的关系}证明.
+\end{enumerate}
+\end{proof}
+
+\begin{theorem}
+设$\mathscr{X},\mathscr{Y}$是$B$空间,若$T_1\in\mathscr{F}(\mathscr{X},\mathscr{Y}),T_2\in\mathscr{F}(\mathscr{Y},\mathscr{Z})$，其中$\mathscr{X},\mathscr{Y},\mathscr{Z}$都是$B$空间，则$T_2T_1\in\mathscr{F}(\mathscr{X},\mathscr{Z})$，且
+\begin{align}
+\operatorname{ind}(T_2T_1)=\operatorname{ind}(T_1)+\operatorname{ind}(T_2).\label{eq:index-product}
+\end{align}
+\end{theorem}
+\begin{proof}
+
+由\refthe{theorem:泛函分析--Fredholm算子正则化定理}，存在$S_1\in\mathscr{F}(\mathscr{Y},\mathscr{X}),S_2\in\mathscr{F}(\mathscr{Z},\mathscr{Y})$，使得
+\begin{align*}
+\begin{cases}
+S_1T_1=I_{\mathscr{X}}-A_1^{(1)},\\
+T_1S_1=I_{\mathscr{Y}}-A_2^{(1)},
+\end{cases}
+\quad\text{及}\quad
+\begin{cases}
+S_2T_2=I_{\mathscr{Y}}-A_1^{(2)},\\
+T_2S_2=I_{\mathscr{Z}}-A_2^{(2)}.
+\end{cases}
+\end{align*}
+取$S\triangleq S_1S_2$，则
+\begin{align*}
+\begin{aligned}
+S(T_2T_1)&=S_1(S_2T_2)T_1=S_1(I_{\mathscr{Y}}-A_1^{(2)})T_1\\
+&=S_1T_1-S_1A_1^{(2)}T_1=I_{\mathscr{X}}-A_1^{(1)}-S_1A_1^{(2)}T_1=I_{\mathscr{X}}-\text{紧算子}.
+\end{aligned}
+\end{align*}
+同理可证$(T_2T_1)S$是恒同减去紧算子，故$T_2T_1\in\mathscr{F}(\mathscr{X},\mathscr{Z})$.
+
+记$\mathscr{Y}_2=R(T_1)\cap N(T_2),\mathscr{X}_2=T_1^{-1}\mathscr{Y}_2$，$\mathscr{Y}_1=R(T_1)\setminus\mathscr{Y}_2,\mathscr{Y}_3=N(T_2)\setminus\mathscr{Y}_2$，$\mathscr{Y}_4=\mathscr{Y}/R(T_1)\setminus\mathscr{Y}_3,\mathscr{Z}_4=T_2\mathscr{Y}_4$，则
+\begin{align*}
+R(T_2)\cong\mathscr{Y}/N(T_2)=\mathscr{Y}_1+\mathscr{Y}_4,\quad \mathscr{X}_2\cong\mathscr{Y}_2,\quad \mathscr{Z}_4\cong\mathscr{Y}_4,
+\end{align*}
+\begin{align*}
+N(T_2T_1)=N(T_1)\oplus\mathscr{X}_2,\quad R(T_2)=R(T_2T_1)\oplus\mathscr{Z}_4.
+\end{align*}
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{算子示意图11.png}
+\caption{算子乘积指标分析示意图}
+\label{figure:index-product}
+\end{figure}
+
+记$T=T_2T_1$，则
+\begin{gather*}
+\dim N(T)=\dim N(T_1)+\dim\mathscr{X}_2=\dim N(T_1)+\dim\mathscr{Y}_2,\\
+\operatorname{codim}R(T)=\operatorname{codim}R(T_2)+\dim\mathscr{Z}_4=\operatorname{codim}R(T_2)+\dim\mathscr{Y}_4,\\
+\operatorname{codim}R(T_1)=\dim\mathscr{Y}_3+\dim\mathscr{Y}_4,\\
+\dim N(T_2)=\dim\mathscr{Y}_2+\dim\mathscr{Y}_3.
+\end{gather*}
+因此
+\begin{align*}
+\operatorname{ind}(T)&=\dim N(T)-\operatorname{codim}R(T)\\
+&=\dim N(T_1)+\dim N(T_2)-\operatorname{codim}R(T_2)-\operatorname{codim}R(T_1)\\
+&=\operatorname{ind}(T_1)+\operatorname{ind}(T_2).
+\end{align*}
+
+\end{proof}
+
+\begin{theorem}\label{theorem:泛函分析--定理3.6.7}
+设$\mathscr{X},\mathscr{Y}$是$B$空间,若$T\in\mathscr{F}(\mathscr{X},\mathscr{Y})$，则存在$\varepsilon>0$，使得当$S\in\mathscr{L}(\mathscr{X},\mathscr{Y})$，且$\|S\|<\varepsilon$时，有$T+S\in\mathscr{F}(\mathscr{X},\mathscr{Y})$，且
+\begin{align*}
+\operatorname{ind}(T+S)=\operatorname{ind}(T).
+\end{align*}
+\end{theorem}
+\begin{remark}
+定理中的$\varepsilon$可取$\varepsilon<\frac{1}{\|R\|}$，其中$R$是$T$的一个正则化子.
+\end{remark}
+\begin{proof}
+
+存在$R\in\mathscr{F}(\mathscr{Y},\mathscr{X})$及$A_1\in\mathfrak{C}(\mathscr{X}),A_2\in\mathfrak{C}(\mathscr{Y})$，使得
+\begin{align}
+RT=I_{\mathscr{X}}-A_1,\quad TR=I_{\mathscr{Y}}-A_2.\label{eq:perturb-reg}
+\end{align}
+于是
+\begin{align*}
+R(T+S)=I_{\mathscr{X}}-A_1+RS.
+\end{align*}
+当$\|S\|<\frac{1}{\|R\|}$时，$E_1\triangleq(I_{\mathscr{X}}+RS)^{-1}$有界，故
+\begin{align}
+E_1R(T+S)=I_{\mathscr{X}}-E_1A_1.\label{eq:perturb-left}
+\end{align}
+同理，当$\|S\|<\frac{1}{\|R\|}$时，$E_2\triangleq(I_{\mathscr{Y}}+SR)^{-1}$有界，故
+\begin{align}
+(T+S)RE_2=I_{\mathscr{Y}}-A_2E_2.\label{eq:perturb-right}
+\end{align}
+因$E_1A_1\in\mathfrak{C}(\mathscr{X})$且$A_2E_2\in\mathfrak{C}(\mathscr{Y})$，故$T+S\in\mathscr{F}(\mathscr{X},\mathscr{Y})$.
+
+当$\|S\|<\frac{1}{\|R\|}$时，$E_1$可逆，故$E_1\in\mathscr{F}(\mathscr{X})$，且$\operatorname{ind}(E_1)=0$.由\eqref{eq:perturb-left}及乘积指标性质，得
+\begin{align*}
+\operatorname{ind}(E_1)+\operatorname{ind}(R)+\operatorname{ind}(T+S)=0.
+\end{align*}
+由\eqref{eq:perturb-reg}及乘积指标性质，得
+\begin{align*}
+\operatorname{ind}(R)+\operatorname{ind}(T)=0.
+\end{align*}
+联立得$\operatorname{ind}(T+S)=\operatorname{ind}(T)\left(\|S\|<\frac{1}{\|R\|}\right)$.
+
+\end{proof}
+
+\begin{proposition}
+$H\in\mathscr{L}(L^2(S^1))$，其中$S^1$表示$\mathbb{R}^2$上的单位圆周，$H$定义为
+\begin{align*}
+(Hu)(z)\triangleq\frac{1}{\pi\mathrm{i}}\text{P.V.}\int_{S^1}\frac{u(s)}{s-z}\mathrm{d}s\quad (\forall z\in S^1).
+\end{align*}
+\end{proposition}
+
+\begin{proof}
+
+建立$L^2(S^1)$与$l^2$的等距同构：对$\forall u\in L^2(S^1)$，展开为Fourier级数
+\begin{align*}
+u(\mathrm{e}^{\mathrm{i}\theta})=\sum\limits_{n=-\infty}^{\infty}c_n\mathrm{e}^{\mathrm{i}n\theta}\quad (0\leqslant\theta<2\pi),
+\end{align*}
+其中
+\begin{align*}
+c_n=\frac{1}{2\pi}\int_{0}^{2\pi}u(\mathrm{e}^{\mathrm{i}\theta})\mathrm{e}^{-\mathrm{i}n\theta}\mathrm{d}\theta\quad (n=0,\pm1,\pm2,\cdots).
+\end{align*}
+映射$L^2(S^1)\ni u\mapsto\{c_n\}_{n=-\infty}^{\infty}\in l^2$是等距同构.
+
+注意到
+\begin{align*}
+\begin{aligned}
+\frac{\mathrm{e}^{\mathrm{i}\varphi}}{\mathrm{e}^{\mathrm{i}\varphi}-\mathrm{e}^{\mathrm{i}\theta}}=\frac{1}{2}\left(1+\frac{\mathrm{e}^{\mathrm{i}\varphi}+\mathrm{e}^{\mathrm{i}\theta}}{\mathrm{e}^{\mathrm{i}\varphi}-\mathrm{e}^{\mathrm{i}\theta}}\right)
+=\frac{1}{2}\left(1+\mathrm{i}\cot\frac{\theta-\varphi}{2}\right),
+\end{aligned}
+\end{align*}
+因此
+\begin{align*}
+\begin{aligned}
+(Hu)(\mathrm{e}^{\mathrm{i}\theta})=\frac{1}{2\pi}\text{P.V.}\int_{0}^{2\pi}\left(1+\mathrm{i}\cot\frac{\theta-\varphi}{2}\right)u(\mathrm{e}^{\mathrm{i}\varphi})\mathrm{d}\varphi
+=c_0+\mathrm{i}\widetilde{u}(\mathrm{e}^{\mathrm{i}\theta}),
+\end{aligned}
+\end{align*}
+其中
+\begin{align*}
+\widetilde{u}(\mathrm{e}^{\mathrm{i}\theta})=\frac{1}{2\pi}\text{P.V.}\int_{0}^{2\pi}u(\mathrm{e}^{\mathrm{i}\varphi})\cot\frac{\theta-\varphi}{2}\mathrm{d}\varphi
+\end{align*}
+是$u$的共轭函数，其Fourier级数为
+\begin{align*}
+\widetilde{u}(\mathrm{e}^{\mathrm{i}\theta})=-\mathrm{i}\sum\limits_{n=-\infty}^{\infty}c_n\operatorname{sign}(n)\mathrm{e}^{\mathrm{i}n\theta},
+\end{align*}
+其中
+\begin{align*}
+\operatorname{sign}(n)=
+\begin{cases}
+-1,&n<0,\\
+0,&n=0,\\
+1,&n>0.
+\end{cases}
+\end{align*}
+故$\widetilde{u}\in L^2(S^1)$，且$\|\widetilde{u}\|\leqslant\|u\|$.
+
+定义\textbf{投影算子}
+\begin{align}\label{eq::HIOUFHo234234234}
+P:u\mapsto\sum\limits_{n=0}^{\infty}c_n\mathrm{e}^{\mathrm{i}n\theta},
+\end{align}
+满足$Pu=\frac{1}{2}(u+\mathrm{i}\widetilde{u})+\frac{1}{2}c_0=\frac{1}{2}(u+Hu)$，即
+\begin{align}
+H=2P-I.\label{eq:hilbert-proj}
+\end{align}
+因此$H\in\mathscr{L}(L^2(S^1))$.
+
+\end{proof}
+
+\begin{remark}
+由\eqref{eq:hilbert-proj}可得：若$a,b\in C(S^1)$，则
+\begin{align}
+aI+\mathrm{i}bH=(a+\mathrm{i}b)P+(a-\mathrm{i}b)(I-P).\label{eq:h-op-decomp}
+\end{align}
+\end{remark}
+
+\begin{lemma}\label{lemma:泛函分析--引理3.6.9}
+对$\forall\varphi\in C(S^1)$，定义算子$[\varphi,P]\triangleq\varphi\cdot P-P\varphi$，其中$\varphi\cdot$表示$L^2(S^1)$上的乘法算子，$P$为\eqref{eq::HIOUFHo234234234}式表示的投影算子，则
+\begin{align*}
+[\varphi,P]\in\mathfrak{C}(L^2(S^1))\quad (\forall\varphi\in C(S^1)).
+\end{align*}
+\end{lemma}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 若$\varphi=\mathrm{e}^{\mathrm{i}m\theta}(m\in\mathbb{Z})$，则
+\begin{align*}
+\begin{aligned}
+[\varphi,P]u=\sum\limits_{n=0}^{\infty}c_n\mathrm{e}^{\mathrm{i}(n+m)\theta}-\sum\limits_{n\geqslant-m}c_n\mathrm{e}^{\mathrm{i}(m+n)\theta}
+=\sum\limits_{-m\leqslant n\leqslant0}c_n\mathrm{e}^{\mathrm{i}(m+n)\theta},
+\end{aligned}
+\end{align*}
+为有穷秩算子.
+\item 对任意三角多项式$\varphi=\sum\limits_{|n|\leqslant N}d_n\mathrm{e}^{\mathrm{i}n\theta}$，由(1)得$[\varphi,P]$是有穷秩算子.
+\item 对$\forall\varphi\in C(S^1),\forall\varepsilon>0$，存在三角多项式$\varphi_\varepsilon$，使得$\|\varphi-\varphi_\varepsilon\|_{C(S^1)}<\frac{\varepsilon}{2}$，于是
+\begin{align*}
+\|[\varphi,P]-[\varphi_\varepsilon,P]\|_{\mathscr{L}(L^2(S^1))}=\|[\varphi-\varphi_\varepsilon,P]\|_{\mathscr{L}(L^2(S^1))}<\varepsilon.
+\end{align*}
+故由\rrefpro{proposition:泛函分析--命题3.1.2}{proposition:泛函分析--命题3.1.2-3}知$[\varphi,P]\in\mathfrak{C}(L^2(S^1))$.
+\end{enumerate}
+
+\end{proof}
+
+\begin{definition}[环绕数]
+对$\forall\varphi\in C(S^1)$，称
+\begin{align*}
+\nu_\varphi\triangleq\frac{1}{2\pi}\int_{0}^{2\pi}\mathrm{d}\arg\varphi(\mathrm{e}^{\mathrm{i}\theta})
+\end{align*}
+为函数$\varphi$关于原点的\textbf{环绕数}.
+\end{definition}
+
+\begin{theorem}
+\begin{enumerate}[(1)]
+\item 若$c,d \in C(S^1)$，满足$(c\cdot d)(z) \neq 0\ (\forall z \in S^1)$，则算子$T = cP + d(I-P) \in \mathscr{F}(L^2(S^1))$，并且
+\begin{align*}
+\mathrm{ind}(T) = \nu_d - \nu_c,
+\end{align*}
+其中$\nu_c$和$\nu_d$分别是函数$c$和$d$关于原点的环绕数。
+
+\item 若$c,d \in C(S^1)$，满足$c\cdot P + d\cdot(I-P) \in \mathscr{F}(L^2(S^1))$，则$(c\cdot d)(z) \neq 0\ (\forall z \in S^1)$.
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item \begin{enumerate}[(i)]
+\item 取$S = \frac{1}{c}\cdot P + \frac{1}{d}\cdot(I-P)$，由\reflem{lemma:泛函分析--引理3.6.9}，$S$是$T$的正则化子。
+\item 由\reflem{lemma:泛函分析--引理3.6.9}可得
+\begin{align*}
+T &= c\cdot P + d\cdot(I-P) \\
+&= P_c\cdot P + (I-P)d\cdot(I-P) + K,
+\end{align*}
+其中$K \in \mathscr{C}(L^2(S^1))$。记$l_+^2,l_-^2$分别为$PL^2(S^1)$与$(I-P)L^2(S^1)$按Fourier展开对应的$l^2$子空间，则
+$$P_c\cdot P \in \mathscr{F}(l_+^2),\quad (I-P)d\cdot(I-P) \in \mathscr{F}(l_-^2).$$
+$\nu_c$为$c$关于原点的环绕数等价于$c$与$\mathrm{e}^{\mathrm{i}\nu_c\theta}$同伦，即存在连续映射
+$$F:[0,1]\times S^1 \to \mathbb{C}\setminus\{0\},$$
+使得$F(0,\mathrm{e}^{\mathrm{i}\theta})=c(\mathrm{e}^{\mathrm{i}\theta})$，$F(1,\mathrm{e}^{\mathrm{i}\theta})=\mathrm{e}^{\mathrm{i}\nu_c\theta}$。
+因$|F|$在$[0,1]\times S^1$上恒不为零，故存在下界$\delta>0$。将区间$[0,1]$等分为$N$份，使得在每个小区间$[t_j,t_{j+1}]$上，
+\begin{align*}
+|\Delta_j F| \triangleq \max_{t,s\in[t_j,t_{j+1}]}|F(t,\mathrm{e}^{\mathrm{i}\theta})-F(s,\mathrm{e}^{\mathrm{i}\theta})| < \frac{1}{\delta}.
+\end{align*}
+应用\refthe{theorem:泛函分析--定理3.6.7}及其注可推得
+$$\mathrm{ind}\big(P_c\cdot P|_{l_+^2}\big) = \mathrm{ind}\big(P_{\mathrm{e}^{\mathrm{i}\nu_c\theta}}\cdot P|_{l_+^2}\big) = -\nu_c.$$
+上式最后一个等号成立是由于$P_{\mathrm{e}^{\mathrm{i}\nu_c\theta}}\cdot P|_{l_+^2}$是$l_+^2$上的推移算子。同理可得
+\begin{align*}
+\mathrm{ind}\big((I-P)d\cdot(I-P)|_{l_-^2}\big) &= \mathrm{ind}\big((I-P)\mathrm{e}^{\mathrm{i}\nu_d\theta}\cdot(I-P)|_{l_-^2}\big) = \nu_d.
+\end{align*}
+\end{enumerate}
+综上即可得到
+\begin{align*}
+\mathrm{ind}(T) = \nu_d - \nu_c.
+\end{align*}
+
+\item 相关详细内容可参考《泛函分析》(张恭庆)下册第五章。
+\end{enumerate}
+\end{proof}
+
+(本节各题中的$\mathscr{X},\mathscr{Y},\mathscr{Z}$均指$B$空间)
+\begin{example}
+设$T\in\mathscr{F}(\mathscr{X},\mathscr{Y}),A\in\mathfrak{C}(\mathscr{X},\mathscr{Y})$，求证：
+\begin{enumerate}[(1)]
+\item $T+A\in\mathscr{F}(\mathscr{X},\mathscr{Y})$;
+\item $\mathrm{ind}(T+A)=\mathrm{ind}(T)$.
+\end{enumerate}
+\end{example}
+
+\begin{example}
+设$T\in\mathscr{F}(\mathscr{X}),S\in\mathscr{F}(\mathscr{Y})$，求证：
+\begin{enumerate}[(1)]
+\item $T\oplus S\in\mathscr{F}(\mathscr{X}\oplus\mathscr{Y})$;
+\item $\mathrm{ind}(T\oplus S)=\mathrm{ind}(T)+\mathrm{ind}(S)$.
+\end{enumerate}
+\end{example}
+
+\begin{example}
+设$\mathscr{X}\subseteq\mathscr{Y}$，并且$\mathscr{X}\to\mathscr{Y}$的嵌入算子是紧的，又设$T\in\mathscr{L}(\mathscr{X},\mathscr{Y})$满足：
+\begin{align}
+\|x\|_{\mathscr{X}}\leqslant c\left(\|x\|_{\mathscr{Y}}+\|Tx\|_{\mathscr{Y}}\right)\quad(\forall x\in\mathscr{X}),\label{eq:3.6.13}
+\end{align}
+其中$c$是一常数。求证：
+\begin{enumerate}[(1)]
+\item $\dim N(T)<\infty$;
+\item $R(T)$是闭的.
+\end{enumerate}
+\end{example}
+
+\begin{example}
+在上题中，如果将(1)与(2)作为假设，求证：存在常数$c>0$，使得\eqref{eq:3.6.13}式成立。
+\end{example}
+
+\begin{example}
+设$T\in\mathscr{F}(\mathscr{X},\mathscr{Y})$，求证：
+\begin{enumerate}[(1)]
+\item $T^{*}\in\mathscr{F}(\mathscr{Y}^{*},\mathscr{X}^{*})$;
+\item $\mathrm{ind}(T^{*})=-\mathrm{ind}(T)$.
+\end{enumerate}
+\end{example}
+
+\begin{example}
+在例3.6.4中，求$T$的左、右正则化子。
+\end{example}
+
+\begin{example}
+设$\Omega\subset\mathbb{R}^{2}$是由光滑曲线$\Gamma$围成的区域，$\mathscr{X}\subseteq C(\overline{\Omega})$是由在$\Omega$内解析、在$\overline{\Omega}$上连续的函数组成的闭线性子空间。求证：限制算子
+\begin{align*}
+R:u(z)\mapsto u(z)\big|_{z\in\Gamma}
+\end{align*}
+是$\mathscr{X}\to C(\Gamma)$的Fredholm算子，并求它的指标。
+\end{example}
+
+\begin{example}
+设$a_{j}(x)\in C[0,1](j=1,2,\cdots,n)$，
+\begin{align*}
+T=\left(\frac{\mathrm{d}}{\mathrm{d}x}\right)^{n}+a_{1}(x)\left(\frac{\mathrm{d}}{\mathrm{d}x}\right)^{n-1}+\cdots+a_{n}(x),
+\end{align*}
+求证：$T\in\mathscr{F}(C^{n}[0,1],C[0,1])$，并求$\mathrm{ind}(T)$.
+\end{example}
+
+\begin{example}
+设$a(x)\in C[0,1],T=a(x)$，求证：
+$$T\in\mathscr{F}(C[0,1])\iff a(x)\neq0\quad(\forall x\in[0,1]).$$
+\end{example}
+
+\begin{example}
+设$A\in\mathscr{L}(\mathscr{X})$，并$\exists n\in\mathbb{N}$，使得
+$$I-A^{n}\in\mathfrak{C}(\mathscr{X}),$$
+求证：$A\in\mathscr{F}(\mathscr{X})$.
+\end{example}
+
+\begin{example}
+设$T_{1}\in\mathscr{L}(\mathscr{X},\mathscr{Y}),T_{2}\in\mathscr{L}(\mathscr{Y},\mathscr{Z})$，使得$T_{2}T_{1}\in\mathscr{F}(\mathscr{X},\mathscr{Z})$，求证：
+$$T_{1}\in\mathscr{F}(\mathscr{X},\mathscr{Y})\iff T_{2}\in\mathscr{F}(\mathscr{Y},\mathscr{Z}).$$
+\end{example}
+
+\begin{example}
+设$D$为复平面上的单位圆盘，$\widetilde{H}^{2}(D)$是$D$上的Hardy空间，它指在$D$内解析且其Taylor系数序列属于$l^{2}$的函数全体。
+\begin{align*}
+(f,g)\triangleq\sum\limits_{n=0}^{\infty}a_{n}\overline{b}_{n}\quad(\forall f,g\in\widetilde{H}^{2}(D)),
+\end{align*}
+其中
+\begin{align*}
+f(z)=\sum\limits_{n=0}^{\infty}a_{n}z^{n},\quad g(z)=\sum\limits_{n=0}^{\infty}b_{n}z^{n}\quad(\forall z\in D).
+\end{align*}
+又记$S^{1}=\partial D$，对$\forall\varphi\in C(S^{1})$，定义Toeplitz算子$T_{\varphi}$如下：
+\begin{align*}
+T_{\varphi}=PM_{\varphi}\iota,
+\end{align*}
+其中$P$是$L^{2}(S^{1})\to\widetilde{H}^{2}(D)$的正交投影算子，即
+\begin{align*}
+P:u(\mathrm{e}^{\mathrm{i}\theta})=\sum\limits_{n=-\infty}^{\infty}c_{n}\mathrm{e}^{\mathrm{i}n\theta}\mapsto u(z)=\sum\limits_{n=0}^{\infty}c_{n}z^{n}\quad(\forall z\in D),
+\end{align*}
+$M_{\varphi}$是$L^{2}(S^{1})\to L^{2}(S^{1})$的乘法算子，即$u\mapsto\varphi\cdot u$，而$\iota$是$\widetilde{H}^{2}(D)\to L^{2}(S^{1})$的嵌入算子，即
+\begin{align*}
+\iota:u(z)=\sum\limits_{n=0}^{\infty}c_{n}z^{n}\mapsto u(\mathrm{e}^{\mathrm{i}\theta})=\sum\limits_{n=0}^{\infty}c_{n}\mathrm{e}^{\mathrm{i}n\theta}.
+\end{align*}
+求证：若$\varphi(s)\neq0(\forall s\in S^{1})$，则$T_{\varphi}\in\mathscr{F}(\widetilde{H}^{2}(D))$，并且
+\begin{align*}
+\mathrm{ind}(T_{\varphi})=-\frac{1}{2\pi}\int_{0}^{2\pi}\mathrm{darg}\,\varphi(\mathrm{e}^{\mathrm{i}\theta}).
+\end{align*}
+\end{example}
+
+
+
+
+
+
+
+
+
+\end{document}

@@ -1,0 +1,392 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[scale=0.3]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{基本结论}
+
+\begin{definition}[Riemann积分Darboux上、下和]
+设 \( f(x) \) 是定义在 \( I = [a,b] \) 上的有界函数，\( P \) 是对 \([a,b]\) 所做的分划：
+\begin{gather*}
+P : a = x_0 < x_1 < \cdots < x_n = b,\quad \Delta x_i=x_i-x_{i-1}.
+\end{gather*}
+令
+\begin{gather*}
+M_i \triangleq \sup \{ f(x) : x_{i - 1} \leqslant x \leqslant x_i \},
+\quad 
+m_i \triangleq \inf \{ f(x) : x_{i - 1}\leqslant x \leqslant x_i \},
+\end{gather*}
+关于 \( f(x) \)在分划$P$的第$i$个子区间$[x_{i-1},x_i]$上的\textbf{振幅}定义为
+\begin{align*}
+w_{i}=M_{i}-m_{i}=\mathrm{sup}\left\{ \left| f\left( u \right) -f\left( v \right) \right|:u,v\in \left[ x_{i-1},x_i \right] \right\} .
+\end{align*}
+关于 \( f(x) \)在分划$P$下的$\mathbf{Darboux}$\textbf{上、下和}分别定义为
+\begin{gather*}
+U\left( f,P \right) =\overline{S}\left( f,P \right) =S^+\left( f,P \right) =S\left( f,P \right) \triangleq \sum_{i=1}^{n}{M_{i}\left( x_{i}-x_{i-1} \right)},
+\\
+L\left( f,P \right) =\underline{S}\left( f,P \right) =S^-\left( f,P \right) =s\left( f,P \right) \triangleq \sum_{i=1}^{n}{m_{i}\left( x_{i}-x_{i-1}\right)}.
+\end{gather*}
+\end{definition}
+
+\begin{definition}[Riemann积分Darboux上、下积分]\label{definition:Riemann积分Darboux上下积分}
+设 \( f(x) \) 是定义在 \( I = [a,b] \) 上的有界函数，\(\{ P_n \}\) 是对 \([a,b]\) 所做的分划序列：
+\begin{gather*}
+P_n : a = x_0^{(n)} < x_1^{(n)} < \cdots < x_{k_n}^{(n)} = b \quad (n = 1,2,\cdots),
+\\
+|\Delta x_i^{(n)}| \triangleq \max \{ x_i^{(n)} - x_{i - 1}^{(n)} : 1 \leqslant i \leqslant k_n \}, \quad \lim_{n \to \infty} |\Delta x_i^{(n)}| = 0.
+\end{gather*}
+对每个 \( i \) 以及 \( n \)，令
+\begin{gather*}
+M_i^{(n)} \triangleq \sup \{ f(x) : x_{i - 1}^{(n)} \leqslant x \leqslant x_i^{(n)} \},
+\quad 
+m_i^{(n)} \triangleq \inf \{ f(x) : x_{i - 1}^{(n)} \leqslant x \leqslant x_i^{(n)} \},
+\end{gather*}
+关于 \( f(x) \) 的 $\mathbf{Darboux}$\textbf{上、下积分}分别定义为
+\begin{gather*}
+\overline{\int_a^b{}}f(x)\,\mathrm{d}x= \lim_{n\rightarrow \infty} U\left( f,P_n \right) =\lim_{n\rightarrow \infty} \overline{S}\left( f,P_n \right) =\lim_{n\rightarrow \infty} S^+\left( f,P_n \right) =\lim_{n\rightarrow \infty} S\left( f,P_n \right) \triangleq \lim_{n\rightarrow \infty} \sum_{i=1}^{k_n}{M_{i}^{\left( n \right)}\left( x_{i}^{\left( n \right)}-x_{i-1}^{\left( n \right)} \right)},
+\\
+\underline{\int_a^b{}}f(x)\,\mathrm{d}x= \lim_{n\rightarrow \infty} L\left( f,P_n \right) =\lim_{n\rightarrow \infty} \underline{S}\left( f,P_n \right) =\lim_{n\rightarrow \infty} S^-\left( f,P_n \right) =\lim_{n\rightarrow \infty} s\left( f,P_n \right) \triangleq\lim_{n\rightarrow \infty} \sum_{i=1}^{k_n}{m_{i}^{\left( n \right)}\left( x_{i}^{\left( n \right)}-x_{i-1}^{\left( n \right)} \right)}.
+\end{gather*}
+\end{definition}
+
+\begin{theorem}[Riemann可积的充要条件]\label{theorem:Riemann可积的充要条件}
+设 $f(x)$ 是定义在 $[a,b]$ 上的有界函数，则$f$ 在 $[a,b]$ 上 Riemann 可积的充要条件是满足下述条件之一:
+\begin{enumerate}
+\item 对任意分划序列 $\{P_n\}$满足
+\begin{gather*}
+P_n : a = x_0^{(n)} < x_1^{(n)} < \cdots < x_{k_n}^{(n)} = b \quad (n = 1,2,\cdots),
+\\
+|\Delta x_i^{(n)}| \triangleq \max \{ x_i^{(n)} - x_{i - 1}^{(n)} : 1 \leqslant i \leqslant k_n \}, \quad \lim_{n \to \infty} |\Delta x_i^{(n)}| = 0,
+\end{gather*}
+有
+\[
+\lim_{n\to\infty} U(f,P_n) = \lim_{n\to\infty} L(f,P_n).
+\]
+
+\item 对任意分划序列 $\{P_n\}$满足
+\begin{gather*}
+P_n : a = x_0^{(n)} < x_1^{(n)} < \cdots < x_{k_n}^{(n)} = b \quad (n = 1,2,\cdots),
+\\
+|\Delta x_i^{(n)}| \triangleq \max \{ x_i^{(n)} - x_{i - 1}^{(n)} : 1 \leqslant i \leqslant k_n \}, \quad \lim_{n \to \infty} |\Delta x_i^{(n)}| = 0,
+\end{gather*}
+有
+\[
+\lim_{n\to\infty} \sum_{i=1}^{k_n} \omega_i^{(n)} \Delta x_i^{(n)} = 0,
+\]
+其中 $\omega_i^{(n)}$为$f$在分划$P_n$的第$i$个子区间上的振幅.
+
+\item 对$\forall \varepsilon > 0$，存在一个分划 $P$满足
+\begin{gather*}
+P : a = x_0 < x_1 < \cdots < x_n = b,\quad \Delta x_i=x_i-x_{i-1}.
+\end{gather*}
+使得
+\[
+\sum_{i=1}^{k} \omega_i \Delta x_i < \varepsilon,
+\]
+其中 $\omega_i$为$f$在分划$P$的第$i$个子区间上的振幅.
+\end{enumerate}
+\end{theorem}
+
+\begin{proposition}[常见的可积函数]\label{proposition:常见的可积函数}
+\begin{enumerate}
+\item 闭区间上的连续函数必定可积.
+
+\item 闭区间上的单调函数必定可积.
+
+\item 闭区间上只有有限个不连续点的有界函数必定可积.
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+
+由\refthe{Real Analysis-theorem:定理4.24}知$f\in R[a,b]$的充要条件是$f$在$[a,b]$上几乎处处连续.故结论显然都成立.
+\end{proof}
+
+\begin{theorem}[Riemann可积函数必绝对可积]\label{theorem:Riemann可积函数必绝对可积}
+设函数 $f$ 在闭区间 $[a,b]$ 上有界且Riemann可积，则 $|f|$ 也在 $[a,b]$ 上Riemann可积，并且
+\[
+\left| \int_a^b f(x)\,\mathrm{d}x \right| \leqslant \int_a^b |f(x)|\,\mathrm{d}x.
+\]
+反之，由 $|f|\in R[a,b]$不能推出 $f\in R[a,b]$.
+\end{theorem}
+\begin{remark}
+对于常规的Riemann积分,反例：在区间 $[0,1]$ 上定义
+\[
+f(x) = \begin{cases}
+1, & x \in \mathbb{Q},\\
+-1, & x \notin \mathbb{Q},
+\end{cases}
+\]
+则 $|f(x)| \equiv 1$ 在 $[0,1]$ 上可积，但 $f$在$\mathbb{R}$上处处不连续，进而在$\mathbb{R}$上不是Riemann可积的。
+\end{remark}
+\begin{remark}
+对于广义积分，$f$绝对收敛可推出$f$条件收敛.但$f$条件收敛推不出绝对收敛.例如 :$\int_1^{+\infty} \frac{\sin x}{x}\,\mathrm{d}x$ 条件收敛，但 $\int_1^{+\infty} \left|\frac{\sin x}{x}\right|\,\mathrm{d}x\geqslant \int_1^{+\infty} \frac{1}{x}\,\mathrm{d}x$ 发散。
+\end{remark}
+
+\begin{theorem}[Dirichlet函数和Riemann函数的定义及其性质]\label{theorem:Dirichlet函数和Riemann函数的定义及其性质}
+\begin{enumerate}
+\item 称$D(x)=\begin{cases}
+1,&x\in \mathbb{Q} ,\\
+0,&x\in \mathbb{R} \backslash \mathbb{Q} \\
+\end{cases}$为$\mathbf{Dirichlet}$\textbf{函数}.并且$D(x)$满足
+\begin{enumerate}[(1)]
+\item $D(x)$在$\mathbb{R}$上处处无极限、处处不连续、处处不可导.
+
+\item $D(x)$是偶函数,且以任意正有理数为周期,进而$D(x)$无最小正周期.
+
+\item $D(x)$在$\mathbb{R}$的任何区间上不Riemann可积,但$D(x)$在$\mathbb{R}$的任何区间上Lebesgue可积,且$D(x)$在$\mathbb{R}$的任何区间上的Lebesgue积分都为0.
+\end{enumerate}
+
+\item  称
+\[
+R(x) = 
+\begin{cases}
+\dfrac{1}{q}, & \text{若 } x = \dfrac{p}{q},\ p, q \in \mathbb{N}^+,\ \dfrac{p}{q} \text{ 为既约真分数}; \\[1em]
+0, & \text{若 } x = 0,\ 1 \text{ 或 } x \text{ 为无理数}
+\end{cases}
+\]
+为 \textbf{黎曼函数}。并且$R(x)$满足
+\begin{enumerate}[(1)]
+\item $R(x)$是 \([0,1]\) 上的有界函数，其上确界为 \(\dfrac{1}{2}\)，下确界为 \(0\)。
+\item $R(x)$的值域只有一个聚点 \(0\)，它也是数列 \(\left\{\dfrac{1}{q}\middle| q\in\mathbb{N}\right\}\)的极限值。
+\item $R(x)$的图象关于直线 \(x = \dfrac{1}{2}\) 对称。
+\item 对\(\forall \varepsilon \in (0, \frac{1}{2})\)，使得 \(R(x) = \dfrac{1}{q} > \varepsilon\) 的有理点 \(x\in(0,1)\) 只有有限多个。
+\item $R(x)$在区间 \([0,1]\) 内的极限处处为 \(0\)。
+\item $R(x)$在 \([0,1]\) 内的无理点处处连续，在有理点处处不连续。
+\item $R(x)$ \([0,1]\) 上是Riemann可积的，并且 \(\displaystyle\int_0^1 R(x)\,dx = 0\).
+\end{enumerate}
+\end{enumerate}
+\end{theorem}
+
+\begin{proposition}[常见反例]\label{proposition:常见反例}
+\begin{enumerate}
+\item 设$D(x)$是Dirichlet函数,则
+\begin{enumerate}[(1)]
+\item $f(x) = x^2D(x)$仅在$x=0$一点可导的函数,在$\mathbb{R}$上其余点都不连续.
+
+\item \textbf{两个周期函数的和不是周期函数的例子}:$f(x)=\sin x+D(x)$.
+\end{enumerate}
+
+\item $f\left( x \right) =\begin{cases}
+\prod_{i=1}^n{\left( x-x_i \right)},&x\in \mathbb{Q} ,\\
+0,&x\in \mathbb{R} \backslash \mathbb{Q} .\\
+\end{cases}$只在$x_1,x_2,\cdots,x_n$点连续,在$\mathbb{R}$上其余点都不连续.
+
+\item 设$f(x)=x^m \sin\frac{1}{x^n}$,补充定义$f(0)=0$.则$f\in C^{\infty}(\mathbb{R}\setminus \{0\})$,并且
+\begin{enumerate}[(1)]
+\item $f$在$x=0$处连续当且仅当$m>0$.
+\item $f$在$x=0$处$k$阶可微当且仅当$m>k(n+1)-n$.
+\item $f$在$x=0$处$k$阶连续可微当且仅当$m>k(n+1)$.
+\end{enumerate}
+
+\item 设$\varphi \left( x \right) =\underset{k\in \mathbb{Z}}{\min}\left\{ \left| x-k \right| \right\}$,则Vander Waerden Function(范德瓦尔登函数):
+\begin{align*}
+f\left( x \right) =\sum_{n=0}^{\infty}{\frac{\varphi \left( 4^nx \right)}{4^n}}
+\end{align*}
+是\href{https://mp.weixin.qq.com/s/ki-x99Me_kKvQUvfXS-GGQ}{处处连续但处处不可微的函数}.
+
+\item $f\left( x \right) =\begin{cases}
+e^{-\frac{1}{x^2}},&x\neq 0,\\
+0,&x=0\\
+\end{cases}$是在$x=0$处各阶导数全为0的非零函数.
+
+\item $f\left( x \right) =\sin \left( \frac{1}{x} \right) $是在$[0,1]$内有无穷多个极值点的函数.
+
+\item \textbf{函数存在原函数与}$\mathbf{Riemann}$\textbf{可积无关},反例如下:
+\begin{enumerate}[(1)]
+\item 符号函数$\sgn(x)=
+\begin{cases}
+1,\ x>0,\\
+0,\ x=0,\\
+-1,\ x<0
+\end{cases}.$
+在$[-1,1]$上Riemann可积,但无原函数.
+
+\item \hyperref[Real Analysis-theorem:Volterra函数的基本性质]{Volterra(沃尔泰拉)函数的导函数}在$[0,1]$上存在原函数$V$,但在$[0,1]$上不是 Riemann 可积的.
+\end{enumerate}
+
+\item \textbf{反常积分收敛但函数无界且无穷远处不趋于0的函数}:定义在\([1,+\infty)\) 上的函数
+\[
+f(x)=\begin{cases}
+n+1, & x\in\left[n,\; n+\frac{1}{n(n+1)^2}\right],\quad n=1,2,\dots\\
+0, & \text{其他}.
+\end{cases}
+\]
+则 \(\int_1^{+\infty}f(x)\,\mathrm{d}x=1\) 收敛，但 \(f\) 无界且 \(\lim_{x\to+\infty}f(x)\neq0\)。
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+\begin{enumerate}
+\item 
+
+\item 
+
+\item 
+
+\item 
+
+\item 
+
+\item 
+
+\item 
+
+\item 由$f$定义可得
+\begin{align*}
+\int_1^{+\infty}f(x)\,\mathrm{d}x=\int_{n}^{n+\frac{1}{n(n+1)^2}}(n+1)\,\mathrm{d}x=\sum_{n=1}^{\infty}\frac{1}{n(n+1)}=1.
+\end{align*}
+\end{enumerate}
+\end{proof}
+
+\begin{example}
+已知函数 $f(x)$ 在 $[a, +\infty)$ 上连续可微，且
+\begin{align*}
+\lim\limits_{x\to +\infty} f(x) = A < \infty.
+\end{align*}
+判断：
+\begin{align*}
+\lim\limits_{x\to +\infty} f'(x) = 0
+\end{align*}
+是否成立？若成立，请说明理由；若不成立，请给出反例。
+\end{example}
+\begin{solution}
+
+$\lim\limits_{x\to +\infty} f'(x) = 0$ 不一定成立.反例 :
+\begin{align*}
+f(x) = \frac{\sin(x^2)}{x}, \quad x \geqslant 1.
+\end{align*}
+显然 $f(x)$ 在 $[1, +\infty)$ 上连续可微，且 $\lim\limits_{x\to +\infty} f(x) = 0$，但
+\begin{align*}
+f'(x) = 2\cos(x^2) - \frac{\sin(x^2)}{x^2},
+\end{align*}
+当 $x\to +\infty$ 时，第二项趋于 $0$，而第一项在 $[-2,2]$ 内震荡，故 $f'(x)$在正无穷远处极限不存在。
+\end{solution}
+
+\begin{proposition}
+若定义在$D\subset \mathbb{R}$上的周期函数$f(x)$可导,则$f'(x)$也是周期函数,且周期与$f(x)$相同.
+\end{proposition}
+\begin{remark}
+反之,设$f(x)$是定义在$D\subset \mathbb{R}$上的可导函数,若$f'(x)$是周期函数,则$f(x)$不一定是周期函数.例如 :$f(x)=\sin x +x$.
+\end{remark}
+
+\begin{theorem}[Leibniz公式]\label{theorem:Leibniz公式}
+$(f(x)g(x))^{(n)} = \sum_{k = 0}^{n} C_{n}^{k}f^{(n - k)}(x)g^{(k)}(x).$
+\end{theorem}
+
+\begin{example}
+设\(f(x)\)定义在\([0,1]\)中且\(\lim_{x\rightarrow0^{+}}f\left(x\left(\frac{1}{x}-\left[\frac{1}{x}\right]\right)\right)=0\)，证明：\(\lim_{x\rightarrow0^{+}}f(x)=0\)。
+\end{example}
+\begin{note}
+将极限定义中的$\varepsilon,\delta$适当地替换成$\frac{1}{n},\frac{1}{N}$往往更方便我们分析问题和书写过程.
+\end{note}
+\begin{proof}
+
+用\(\{x\}\)表示\(x\)的小数部分，则\(x\left(\frac{1}{x}-\left[\frac{1}{x}\right]\right)=x\left\{\frac{1}{x}\right\}\)。
+
+对任意\(\varepsilon>0\)，依据极限定义，存在\(\delta>0\)使得任意\(x\in(0,\delta)\)都有\(\left|f\left(x\left\{\frac{1}{x}\right\}\right)\right|<\varepsilon\)。
+
+取充分大的正整数\(N\)使得\(\frac{1}{N}<\delta\)，则任意\(x\in\left(\frac{1}{N + 1},\frac{1}{N}\right)\)都有\(\left|f\left(x\left\{\frac{1}{x}\right\}\right)\right|<\varepsilon\)。
+
+考虑函数\(x\left\{\frac{1}{x}\right\}\)在区间\(\left(\frac{1}{N + 1},\frac{1}{N}\right)\)中的值域，也就是连续函数
+\[g(u)=\frac{u - [u]}{u}=\frac{u - N}{u},u\in(N,N + 1)\]
+的值域，考虑端点处的极限可知\(g(u)\)的值域是\(\left(0,\frac{1}{N + 1}\right)\),且严格单调递增.所以对任意\(y\in\left(0,\frac{1}{N + 1}\right)\)，都存在\(x\in\left(\frac{1}{N + 1},\frac{1}{N}\right)\subset(0,\delta)\)使得$\frac{1}{x}=g^{-1}(y)\in(N,N+1)$,即\(y =g(\frac{1}{x})= x\left\{\frac{1}{x}\right\}\)，故\(|f(y)|=\left|f\left(x\left\{\frac{1}{x}\right\}\right)\right|<\varepsilon\).
+
+也就是说，任意\(\varepsilon>0\)，存在正整数\(N\)，使得任意\(y\in\left(0,\frac{1}{N + 1}\right)\)，都有\(|f(y)|<\varepsilon\)，结论得证。
+
+\end{proof}
+
+\begin{example}
+设 $f$ 在 $x_0$ 可微且
+$$
+\alpha_n < x_0 < \beta_n,\ n\in\mathbb{N},\ \lim_{n\to\infty}\alpha_n = \lim_{n\to\infty}\beta_n = x_0,
+$$
+证明:
+$$
+\lim_{n\to\infty}\frac{f(\beta_n)-f(\alpha_n)}{\beta_n-\alpha_n}=f'(x_0).
+$$
+\end{example}
+\begin{proof}
+
+不失一般性, 假设 $f(x_0)=x_0=0$, 否则用 $f(x+x_0)-f(x_0)$ 代替 $f(x)$, $\beta_n-x_0$ 代替 $\beta_n$, $\alpha_n-x_0$ 代替 $\alpha_n$ 即可.
+
+现在
+\begin{align*}
+\lim_{n\to\infty}\frac{f(\beta_n)-f(\alpha_n)}{\beta_n-\alpha_n}
+&= \lim_{n\to\infty}\left(\frac{\beta_n}{\beta_n-\alpha_n}\frac{f(\beta_n)}{\beta_n}-\frac{\alpha_n}{\beta_n-\alpha_n}\frac{f(\alpha_n)}{\alpha_n}\right) \\
+&= \lim_{n\to\infty}\left(\frac{1}{1-\frac{\alpha_n}{\beta_n}}\frac{f(\beta_n)}{\beta_n}-\frac{\frac{\alpha_n}{\beta_n}}{1-\frac{\alpha_n}{\beta_n}}\frac{f(\alpha_n)}{\alpha_n}\right).
+\end{align*}
+
+我们设 $\lim_{k\to\infty}\frac{\alpha_{n_k}}{\beta_{n_k}}=c\in\mathbb{R}$, 则
+\begin{align*}
+\lim_{k\to\infty}\left(\frac{1}{1-\frac{\alpha_{n_k}}{\beta_{n_k}}}\frac{f(\beta_{n_k})}{\beta_{n_k}}-\frac{\frac{\alpha_{n_k}}{\beta_{n_k}}}{1-\frac{\alpha_{n_k}}{\beta_{n_k}}}\frac{f(\alpha_{n_k})}{\alpha_{n_k}}\right)
+= \frac{1}{1-c}f'(x_0)-\frac{c}{1-c}f'(x_0)=f'(x_0).
+\end{align*}
+
+设 $\lim_{k\to\infty}\frac{\alpha_{n_k}}{\beta_{n_k}}=\infty$, 则
+\begin{align*}
+\lim_{k\to\infty}\left(\frac{1}{1-\frac{\alpha_{n_k}}{\beta_{n_k}}}\frac{f(\beta_{n_k})}{\beta_{n_k}}-\frac{\frac{\alpha_{n_k}}{\beta_{n_k}}}{1-\frac{\alpha_{n_k}}{\beta_{n_k}}}\frac{f(\alpha_{n_k})}{\alpha_{n_k}}\right)
+= 0\cdot f'(x_0)-(-1)\cdot f'(x_0)=f'(x_0).
+\end{align*}
+再由\hyperref[proposition:子列极限命题]{子列极限命题}可知,结论成立.
+
+\end{proof}
+
+\begin{example}
+设$f(x)\in C(\mathbb{R})$，且有
+\begin{align*}
+\lim\limits_{h\to 0^+}\frac{f(x+2h)-f(x+h)}{h}=0,\quad \forall x\in \mathbb{R}.
+\end{align*}
+\begin{enumerate}[(1)]
+\item $f(x)$的右导数处处存在.
+\item $f(x)$为常值函数.
+\end{enumerate}
+\end{example}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 任取$x\in \mathbb{R}$。由题设知对$\forall \varepsilon>0,\exists \delta>0$，使得对$\forall h\in (0,\delta)$，有
+\begin{align*}
+\left| f\left(x+2h\right)-f\left(x+h\right) \right|<\varepsilon h.
+\end{align*}
+因为对$\forall k\in \mathbb{N}$，有$\frac{h}{2^{k+1}}\in \left(0,\delta\right)$，所以
+\begin{align*}
+\left| f\left(x+\frac{h}{2^k}\right)-f\left(x+\frac{h}{2^{k+1}}\right) \right|<\frac{\varepsilon h}{2^k},\quad \forall k\in \mathbb{N}.
+\end{align*}
+由$f\in C\left(\mathbb{R}\right)$知$\lim\limits_{n\to \infty}\left| f\left(x+\frac{h}{2^n}\right)-f\left(x\right) \right|=0$。从而对$\forall h\in \left(0,\delta\right),n>N$，就有
+\begin{align*}
+\left| f\left(x+h\right)-f\left(x\right) \right|\leqslant \sum\limits_{k=1}^n\left| f\left(x+\frac{h}{2^{k-1}}\right)-f\left(x+\frac{h}{2^k}\right) \right|+\left| f\left(x+\frac{h}{2^n}\right)-f\left(x\right) \right|\leqslant \sum\limits_{k=1}^n\frac{\varepsilon h}{2^k}+\left| f\left(x+\frac{h}{2^n}\right)-f\left(x\right) \right|.
+\end{align*}
+令$n\to \infty$得对$\forall h\in \left(0,\delta\right)$，有
+\begin{align*}
+\left| f\left(x+h\right)-f\left(x\right) \right|\leqslant \varepsilon h\iff \left| \frac{f\left(x+h\right)-f\left(x\right)}{h} \right|\leqslant \varepsilon.
+\end{align*}
+故$f_{+}'\left(x\right)=\lim\limits_{h\to 0^+}\frac{f\left(x+h\right)-f\left(x\right)}{h}=0$。再由$x$的任意性知$f$的右导数处处为$0$。
+
+\item 任取$a,b\in \mathbb{R}$且$a<b$。由(1)知$f_{+}'\left(x\right)=0\left( \forall x\in \mathbb{R} \right)$，故对$\forall \varepsilon>0,\exists \delta>0$，使得
+\begin{align}\label{eq:num31abc}
+\left| f\left(x+h\right)-f\left(x\right) \right|\leqslant \varepsilon h.
+\end{align}
+对闭区间$\left[a,b\right]$做$n\triangleq \lfloor \frac{1}{\delta} \rfloor +1$等分，记分点为
+\[a=x_1<x_2<\cdots <x_n<x_{n+1}=b.\]
+则
+\[x_{i+1}-x_i<\delta ,\quad i=1,2,\cdots ,n.\]
+于是由\eqref{eq:num31abc}式知
+\begin{align*}
+\left| f\left(b\right)-f\left(a\right) \right|\leqslant \sum\limits_{k=1}^n\left| f\left(x_{i+1}\right)-f\left(x_i\right) \right|<\sum\limits_{k=1}^n\varepsilon \left(x_{i+1}-x_i\right)=\varepsilon \left(b-a\right).
+\end{align*}
+令$\varepsilon \to 0^+$得$f\left(a\right)=f\left(b\right)$。再由$a,b$的任意性知$f\left(x\right)$在$\mathbb{R}$上恒为常数。
+\end{enumerate}
+\end{proof}
+
+
+
+
+\end{document}

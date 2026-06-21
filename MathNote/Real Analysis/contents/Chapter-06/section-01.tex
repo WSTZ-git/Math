@@ -1,0 +1,414 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[scale=0.3]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{$L^p$空间的定义与不等式}
+
+\begin{definition}[$L^p$空间]
+设 $f(x)$ 是 $E\subset\mathbb{R}^n$ 上的可测函数，记
+\begin{align*}
+\|f\|_p = \left(\int_E |f(x)|^p \mathrm{d}x\right)^{\frac{1}{p}},\quad 0 < p < +\infty.
+\end{align*}
+并称
+\begin{align*}
+L^p\left( E \right) =\left\{ f\mid \left\| f \right\| _p<+\infty \right\} 
+\end{align*}
+为 $\boldsymbol{L}^{\boldsymbol{p}}$ \textbf{空间}.
+
+若存在$M$，使得 $|f(x)| \leqslant M$，a.e., $x\in E$，则称 $f(x)$ 在 $E$ 上\textbf{本性有界}，$M$ 称为 $f(x)$ 的\textbf{本性上界}。
+称
+\begin{align*}
+\left\| f \right\| _{\infty}=\mathrm{inf}\left\{ M\mid \left| f\left( x \right) \right|\leqslant M,\,\mathrm{a}.\mathrm{e}.\,x\in E \right\} 
+\end{align*}
+为 $f(x)$ 在 $E$ 上的\textbf{本性上确界}。并称
+\begin{align*}
+L^{\infty}\left( E \right) =\left\{ f\mid f\text{为}E\text{上本性有界函数} \right\} .
+\end{align*}
+为$\boldsymbol{L}^{\boldsymbol{\infty}}$ \textbf{空间}.
+\end{definition}
+\begin{remark}
+注意，对 $L^p(E)$，我们主要的兴趣在 $p\geqslant 1$ 的情形，下文中若未指明 $p>0$，则一律认为是 $p\geqslant 1$.
+\end{remark}
+
+\begin{proposition}
+设 $f(x)$ 是 $E\subset\mathbb{R}^n$ 上的可测函数，若 $0 < m(E) < +\infty$，则 $\lim\limits_{p\to\infty} \|f\|_p = \|f\|_\infty$。
+\end{proposition}
+\begin{proof}
+
+事实上，不妨记 $M = \|f\|_\infty$，则对任一满足 $M' < M$ 的 $M'$，点集
+\begin{align*}
+A = \{x\in E: |f(x)| > M'\}
+\end{align*}
+有正测度。由不等式
+\begin{align*}
+\|f\|_p = \left(\int_E |f(x)|^p \mathrm{d}x\right)^{\frac{1}{p}} \geqslant M'(m(A))^{\frac{1}{p}}
+\end{align*}
+可知 $\varliminf\limits_{p\to\infty} \|f\|_p \geqslant M'$。令 $M'\to M$，得 $\varliminf\limits_{p\to\infty} \|f\|_p \geqslant M$。
+
+另一方面，我们总有
+\begin{align*}
+\|f\|_p \leqslant \left(\int_E M^p \mathrm{d}x\right)^{\frac{1}{p}} = M(m(E))^{\frac{1}{p}},
+\end{align*}
+从而又得
+\begin{align*}
+\varlimsup\limits_{p\to\infty} \|f\|_p \leqslant M.
+\end{align*}
+
+\end{proof}
+
+\begin{theorem}
+若 $f,g\in L^p(E)$, $0 < p \leqslant +\infty$, $\alpha,\beta$ 是实数，则
+\begin{align*}
+\alpha f + \beta g \in L^p(E).
+\end{align*}
+进而$L^p(E)$构成一个线性空间.
+\end{theorem}
+\begin{proof}
+
+(i) 当 $0 < p < \infty$ 时，我们有
+\begin{align*}
+|\alpha f(x) + \beta g(x)|^p \leqslant 2^p(|\alpha|^p \cdot |f(x)|^p + |\beta|^p \cdot |g(x)|^p).
+\end{align*}
+
+(ii) 当 $p = +\infty$ 时，我们有
+\begin{align*}
+|\alpha f(x) + \beta g(x)| \leqslant |\alpha| \cdot \|f\|_\infty + |\beta| \cdot \|g\|_\infty,\quad \text{a.e. } x\in E,
+\end{align*}
+从而可知 $\|\alpha f + \beta g\|_\infty \leqslant |\alpha| \cdot \|f\|_\infty + |\beta| \cdot \|g\|_\infty$.
+
+\end{proof}
+
+\begin{example}
+设 $E=(0,1)$，则
+\begin{gather*}
+\ln\frac{1}{x} \in L^p(E),\quad \ln\frac{1}{x} \notin L^\infty(E); \\
+x^{-\frac{1}{p}} \in L^{p-\alpha}(E)\quad (0 < \alpha < p),\quad x^{-\frac{1}{p}} \notin L^p(E); \\
+x^{-\frac{1}{p}}\left(\ln\frac{1}{x}\right)^{-2/p} \notin L^{p+\alpha}(E)\quad (\alpha > 0), \\
+x^{-\frac{1}{p}}\left(\ln\frac{1}{x}\right)^{-2/p} \in L^p(E).
+\end{gather*}
+\end{example}
+
+\begin{definition}[共轭指标]
+若 $p,p'>1$, 且 $\frac{1}{p}+\frac{1}{p'}=1$, 则称 $p$ 与 $p'$ 为\textbf{共轭指标(数)}.
+
+若 $p=1$, 则规定共轭指标 $p'=\infty$; 若 $p=\infty$, 则规定共轭指标 $p'=1$.
+\end{definition}
+\begin{remark}
+注意到 $p'=\frac{p}{p-1}$, 可知 $p=2$ 时 $p'=2$.
+\end{remark}
+
+\begin{theorem}[Hölder不等式]\label{theorem:实变函数--Hölder不等式}
+设 $p$ 与 $p'$ 为共轭指标, 若 $f\in L^p(E), g\in L^{p'}(E)$, 则有
+\begin{align}\label{eq::--9ru90RFUJIJR3ruu0-1}
+\|fg\|_1 \leqslant \|f\|_p \cdot \|g\|_{p'}, \quad 1\leqslant p\leqslant +\infty,
+\end{align}
+即
+\begin{align*}
+\int_E |f(x)g(x)|\mathrm{d}x \leqslant \left( \int_E |f(x)|^p \mathrm{d}x \right)^{\frac{1}{p}} \left( \int_E |g(x)|^{p'} \mathrm{d}x \right)^{\frac{1}{p'}}, \quad 1<p<+\infty,
+\end{align*}
+以及($p=+\infty$ 即 $p'=1$ 时类似)
+\begin{align*}
+\int_E |f(x)g(x)|\mathrm{d}x \leqslant \|g\|_\infty \int_E |f(x)|\mathrm{d}x, \quad p=1.
+\end{align*}
+\end{theorem}
+\begin{proof}
+
+当 $p$ 或 $p'$ 之一为 $\infty$ 时, \eqref{eq::--9ru90RFUJIJR3ruu0-1}式显然成立.
+
+当 $\|f\|_p=0$ 或 $\|g\|_{p'}=0$ 时, 有 $f(x)g(x)=0$, a.e. $x\in E$, \eqref{eq::--9ru90RFUJIJR3ruu0-1}式也显然成立.
+
+当 $\|f\|_p>0$, $\|g\|_{p'}>0$, 且 $p,p'<+\infty$ 时, 则在公式
+\begin{align*}
+a^{\frac{1}{p}}b^{\frac{1}{p}'}\leqslant \frac{a}{p}+\frac{b}{p'}, \quad a>0, b>0 \one
+\end{align*}
+中, 令
+\begin{align*}
+a=\frac{|f(x)|^p}{\|f\|_p^p}, \quad b=\frac{|g(x)|^{p'}}{\|g\|_{p'}^{p'}},
+\end{align*}
+可知
+\begin{align*}
+\frac{|f(x)g(x)|}{\|f\|_p \cdot \|g\|_{p'}} \leqslant \frac{1}{p} \cdot \frac{|f(x)|^p}{\|f\|_p^p} + \frac{1}{p'} \cdot \frac{|g(x)|^{p'}}{\|g\|_{p'}^{p'}}.
+\end{align*}
+将上式作积分, 即得 $\|fg\|_1\leqslant \|f\|_p \cdot \|g\|_{p'}$.
+
+\end{proof}
+
+\begin{theorem}[Hölder不等式特例:Cauchy-Schwarz不等式]\label{theorem:Hölder不等式特例:Schwarz不等式}
+当 $p=p'=2$ 时, 有
+\begin{align*}
+\int_E |f(x)g(x)|\mathrm{d}x \leqslant \left( \int_E |f(x)|^2 \mathrm{d}x \right)^{\frac{1}{2}} \left( \int_E |g(x)|^2 \mathrm{d}x \right)^{\frac{1}{2}}.
+\end{align*}
+\end{theorem}
+
+\begin{remark}
+Hölder 不等式对 $\|f\|_p$ 或 $\|g\|_{p'}=+\infty$ 时自然成立.
+\end{remark}
+
+\begin{example}
+若 $m(E)<+\infty$, 且 $0<p_1<p_2\leqslant+\infty$, 则 $L^{p_2}(E)\subseteq L^{p_1}(E)$, 且有
+\begin{align}
+\|f\|_{p_1} \leqslant (m(E))^{(\frac{1}{p}_1)-(\frac{1}{p}_2)} \|f\|_{p_2}.
+\end{align}
+\end{example}
+
+\begin{proof}
+
+不妨设 $p_2<+\infty$. 令 $r=p_2/p_1$, 则 $r>1$. 记 $r'$ 为 $r$ 的共轭指标, 则对 $f\in L^{p_2}(E)$, 由 \eqref{eq::--9ru90RFUJIJR3ruu0-1}式可得
+\begin{align*}
+&\int_E |f(x)|^{p_1} \mathrm{d}x = \int_E (|f(x)|^{p_1} \cdot 1) \mathrm{d}x \\
+&\leqslant \left( \int_E |f(x)|^{p_1 \cdot r} \mathrm{d}x \right)^{1/r} \left( \int_E 1^{r'} \mathrm{d}x \right)^{1/r'} \\
+&= (m(E))^{1/r'} \left( \int_E |f(x)|^{p_2} \mathrm{d}x \right)^{1/r},
+\end{align*}
+从而可知
+\begin{align*}
+\left( \int_E |f(x)|^{p_1} \mathrm{d}x \right)^{\frac{1}{p}_1} \leqslant (m(E))^{(\frac{1}{p}_1)-(\frac{1}{p}_2)} \left( \int_E |f(x)|^{p_2} \mathrm{d}x \right)^{\frac{1}{p}_2}.
+\end{align*}
+这就是 \eqref{eq::--9ru90RFUJIJR3ruu0-2}式.
+
+\end{proof}
+
+\begin{example}
+若 $f\in L^r(E)\cap L^s(E)$, 且令 $0<r<p<s\leqslant+\infty$ 以及 $0<\lambda<1$, $\frac{1}{p}=\frac{\lambda}{r}+\frac{1-\lambda}{s}$, 则
+\begin{align*}
+\|f\|_p \leqslant \|f\|_r^\lambda \cdot \|f\|_s^{1-\lambda}.
+\end{align*}
+\end{example}
+
+\begin{proof}
+
+当 $r<s<+\infty$ 时, 我们有
+\begin{align*}
+\int_E |f(x)|^p \mathrm{d}x = \int_E |f(x)|^{\lambda p} \cdot |f(x)|^{(1-\lambda)p} \mathrm{d}x 
+\leqslant \left( \int_E |f(x)|^r \mathrm{d}x \right)^{\lambda p/r} \left( \int_E |f(x)|^s \mathrm{d}x \right)^{(1-\lambda)p/s}.
+\end{align*}
+当 $r<s=+\infty$ 时, 因为 $p=r/\lambda$, 所以有
+\begin{align*}
+\int_E |f(x)|^p \mathrm{d}x \leqslant \|f^{p-r}\|_\infty \int_E |f(x)|^r \mathrm{d}x = \|f\|_\infty^{p\lambda} \cdot \|f\|_r^{p(1-\lambda)}.
+\end{align*}
+上述结果还说明, 当 $r<p<s\leqslant+\infty$ 时, 有
+\begin{align*}
+\|f\|_p \leqslant \max\{ \|f\|_r, \|f\|_s \}.
+\end{align*}
+
+\end{proof}
+
+\begin{example}
+设 $0<r<p<s<+\infty$, $f\in L^p(E)$, 则对任意的 $t>0$, 存在分解 $f(x)=g(x)+h(x)$, 使得
+\begin{align*}
+\|g\|_r^r \leqslant t^{r-p} \|f\|_p^p, \quad \|h\|_s^s \leqslant t^{s-p} \|f\|_p^p.
+\end{align*}
+\end{example}
+
+\begin{proof}
+
+对 $t>0$, 作函数
+\begin{align*}
+g(x) =
+\begin{cases}
+0, & |f(x)|\leqslant t, \\
+f(x), & |f(x)|>t,
+\end{cases}
+\quad h(x)=f(x)-g(x).
+\end{align*}
+我们有(注意 $r-p<0$)
+\begin{align*}
+\|g\|_r^r &= \int_E |g(x)|^r \mathrm{d}x = \int_E |g(x)|^{r-p} |g(x)|^p \mathrm{d}x \\
+&\leqslant t^{r-p} \int_E |g(x)|^p \mathrm{d}x \leqslant t^{r-p} \int_E |f(x)|^p \mathrm{d}x,
+\end{align*}
+即得所证.
+
+类似地可证第二个不等式.
+
+\end{proof}
+
+\begin{theorem}[反向 Hölder 不等式]\label{theorem:反向Hölder不等式}
+设 $0<p<1$, $q<0$, $\frac{1}{p}+\frac{1}{q}=1$, 则对 $f\in L^p(E)$, $g\in L^q(E)$, 有
+\begin{align*}
+\int_E |f(x)g(x)|\mathrm{d}x \geqslant \|f\|_p \cdot \|g\|_q.
+\end{align*}
+\end{theorem}
+\begin{proof}
+
+不妨假定 $fg\in L(E)$, 且令 $\bar{p}=\frac{1}{p}>1$, $\bar{q}=1/(1-p)>1$, 则 $1/\bar{p}+1/\bar{q}=1$, 且有
+\begin{align*}
+\|f\|_p &= \left( \int_E \frac{|f(x)g(x)|^p}{|g(x)|^p} \mathrm{d}x \right)^{\frac{1}{p}} \\
+&\leqslant \left( \int_E |f(x)g(x)|\mathrm{d}x \right) \left( \int_E \frac{1}{|g(x)|^{\frac{p}{1-p}}} \mathrm{d}x \right)^{\frac{1-p}{p}} \\
+&= \int_E \frac{|f(x)g(x)|}{\|g\|_q} \mathrm{d}x.
+\end{align*}
+由此即得所证.
+
+\end{proof}
+
+\begin{theorem}[Minkowski不等式]\label{theorem:实变函数--Minkowski不等式}
+若 $f,g\in L^p(E)$ ($1\leqslant p\leqslant\infty$), 则
+\begin{align}\label{eq::--9ru90RFUJIJR3ruu0-3}
+\|f+g\|_p \leqslant \|f\|_p + \|g\|_p.
+\end{align}
+\end{theorem}
+\begin{proof}
+
+当 $p=1$ 时, \eqref{eq::--9ru90RFUJIJR3ruu0-3}式显然成立; 当 $p=\infty$ 时, 因为 $|f(x)|\leqslant\|f\|_\infty$, a.e. $x\in E$, $|g(x)|\leqslant\|g\|_\infty$, a.e. $x\in E$, 所以有
+\begin{align*}
+|f(x)+g(x)|\leqslant\|f\|_\infty + \|g\|_\infty, \quad \text{a.e. } x\in E.
+\end{align*}
+从而可知 $\|f+g\|_\infty\leqslant\|f\|_\infty+\|g\|_\infty$, 即 \eqref{eq::--9ru90RFUJIJR3ruu0-3}式成立.
+
+当 $1<p<+\infty$ 时, 我们有
+\begin{align*}
+\int_E |f(x)+g(x)|^p \mathrm{d}x
+&\leqslant \int_E |f(x)+g(x)|^{p-1} \cdot |f(x)+g(x)|\mathrm{d}x \\
+&\leqslant \int_E |f(x)+g(x)|^{p-1} \cdot |f(x)|\mathrm{d}x + \int_E |f(x)+g(x)|^{p-1} \cdot |g(x)|\mathrm{d}x.
+\end{align*}
+用Hölder不等式于上式右端第一个积分, 对 $|f(x)+g(x)|^{p-1}$ 与 $|f(x)|$ 分别配指标 $p'=p/(p-1)$ 与 $p$, 可得
+\begin{align*}
+\int_E |f(x)+g(x)|^{p-1} \cdot |f(x)|\mathrm{d}x \leqslant \|f+g\|_p^{p-1} \cdot \|f\|_p;
+\end{align*}
+同理, 对于前式右端第二个积分也可得
+\begin{align*}
+\int_E |f(x)+g(x)|^{p-1} \cdot |g(x)|\mathrm{d}x \leqslant \|f+g\|_p^{p-1} \cdot \|g\|_p.
+\end{align*}
+将上面两式代入前式, 即有
+\begin{align*}
+\|f+g\|_p^p \leqslant \|f+g\|_p^{p-1} \cdot (\|f\|_p + \|g\|_p).
+\end{align*}
+不妨设 $\|f+g\|_p\neq0$, 于是在上式两端用 $\|f+g\|_p^{p-1}$ 除之, 得
+\begin{align*}
+\|f+g\|_p \leqslant \|f\|_p + \|g\|_p.
+\end{align*}
+若 $\|f+g\|_p=0$, 原式无所可证.
+
+\end{proof}
+
+\begin{theorem}[反向 Minkowski 不等式]\label{theorem:反向Minkowski不等式}
+设 $0<p<1$, 则对 $f,g\in L^p(E)$, 有
+\begin{align*}
+\||f|+|g|\|_p \geqslant \|f\|_p + \|g\|_p.
+\end{align*}
+\end{theorem}
+\begin{proof}
+
+不妨假定 $\||f|+|g|\|_p>0$, 则由反 Hölder 不等式可得
+\begin{align*}
+\||f|+|g|\|_p^p &= \int_E (|f(x)|+|g(x)|)^{p-1} (|f(x)|+|g(x)|) \mathrm{d}x \\
+&\geqslant \left( \int_E (|f(x)|+|g(x)|)^{q(p-1)} \right)^{1/q} (\|f\|_p + \|g\|_p) \\
+&= \||f|+|g|\|_p^{p/q} (\|f\|_p + \|g\|_p) \quad (q=p/(p-1)).
+\end{align*}
+
+\end{proof}
+
+\begin{proposition}
+\begin{enumerate}[(1)]
+\item 设 $f\in L^{p_1}(E)$, $g\in L^{p_2}(E)$ ($0<p_1,p_2<+\infty$), 则 $fg\in L^p(E)$ ($p=\frac{p_1p_2}{p_1+p_2}$).
+
+\item 设 $f(x)$ 是 $\mathbb{R}$ 上的可微函数, 而且 $f'\in L^p(\mathbb{R})$ ($p>1$). 若 $f\in L(\mathbb{R})$, 则 $\lim\limits_{|x|\to+\infty} f(x)=0$.
+
+\item (Hanner 不等式) 设 $f,g\in L^p(E)$ ($1\leqslant p<+\infty$), 则
+\begin{enumerate}[(i)]
+\item $\|f+g\|_p^p + \|f-g\|_p^p \leqslant (\|f\|_p + \|g\|_p)^p + |\|f\|_p - \|g\|_p|^p$ ($p\geqslant2$);
+\item $\|f+g\|_p^p + \|f-g\|_p^p \geqslant (\|f\|_p + \|g\|_p)^p + |\|f\|_p - \|g\|_p|^p$ ($1\leqslant p\leqslant2$);
+\item $(\|f+g\|_p + \|f-g\|_p)^p + |\|f+g\|_p - \|f-g\|_p|^p \geqslant 2^p (\|f\|_p^p + \|g\|_p^p)$ ($p\geqslant2$);
+\item $(\|f+g\|_p + \|f-g\|_p)^p + |\|f+g\|_p - \|f-g\|_p|^p \leqslant 2^p (\|f\|_p^p + \|g\|_p^p)$ ($1\leqslant p\leqslant2$).
+\end{enumerate}
+
+\item (Clarkson 不等式) 设 $1<p,q<+\infty$, $\frac{1}{p}+\frac{1}{q}=1$, $f,g\in L^p(E)$, 则
+\begin{enumerate}[(i)]
+\item $\left\| \frac{f+g}{2} \right\|_p^p + \left\| \frac{f-g}{2} \right\|_p^p \leqslant \frac{\|f\|_p^p + \|g\|_p^p}{2}$ ($p\geqslant2$);
+\item $\left\| \frac{f+g}{2} \right\|_p^p + \left\| \frac{f-g}{2} \right\|_p^p \geqslant \frac{\|f\|_p^p + \|g\|_p^p}{2}$ ($1<p\leqslant2$);
+\item $\left\| \frac{f+g}{2} \right\|_p^q + \left\| \frac{f-g}{2} \right\|_p^q \geqslant \left( \frac{\|f\|_p^p + \|g\|_p^p}{2} \right)^{q-1}$ ($p\geqslant2$);
+\item $\left\| \frac{f+g}{2} \right\|_p^q + \left\| \frac{f-g}{2} \right\|_p^q \leqslant \left( \frac{\|f\|_p^p + \|g\|_p^p}{2} \right)^{q-1}$ ($1<p\leqslant2$).
+\end{enumerate}
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 令 $\lambda=\frac{1}{p}_1+\frac{1}{p}_2$, $p=\lambda p_1$, $q=\lambda p_2$, 则 $0<p,q<+\infty$, $\frac{1}{p}+1/q=1$. 由题设 $|f|^{1/\lambda}\in L^p(E)$, $|g|^{1/\lambda}\in L^q(E)$. 从而 $|fg|^{1/\lambda}\in L^1(E)$.
+\begin{align*}
+\int_E |f(x)g(x)|^p \mathrm{d}x = \int_E |f(x)|^{1/\lambda} |g(x)|^{1/\lambda} \mathrm{d}x 
+\leqslant \left( \int_E |f(x)|^{p_1} \mathrm{d}x \right)^{\frac{1}{p}} \left( \int_E |g(x)|^{p_2} \mathrm{d}x \right)^{1/q} < +\infty.
+\end{align*}
+
+\item 注意到 $f(x+h)-f(x)=\int_x^{x+h} f'(t)\mathrm{d}t$, 可知
+\begin{align*}
+|f(x+h)-f(x)| &\leqslant \left| \int_x^{x+h} f'(t)\mathrm{d}t \right| \\
+&\leqslant \left| \int_x^{x+h} |f'(t)|\mathrm{d}t \right| \leqslant \left( \int_x^{x+h} |f'(t)|^p \mathrm{d}t \right)^{\frac{1}{p}} \cdot |h|^{1-\frac{1}{p}} \\
+&\leqslant \|f'\|_p |h|^{1-\frac{1}{p}} \to 0 \quad (|h|\to0).
+\end{align*}
+这说明 $f(x)$ 在 $\mathbb{R}$ 上一致连续. 由于 $f\in L(\mathbb{R})$, 故知结论成立.
+
+\item 
+
+\item 
+\end{enumerate}
+
+\end{proof}
+
+\begin{example}
+设 $f\in L^p([0,1])$ ($p>0$), 则
+\begin{align*}
+\lim_{p\searrow0} \|f\|_p = \exp\left( \int_0^1 \ln|f(x)|\mathrm{d}x \right).
+\end{align*}
+\end{example}
+\begin{proof}
+
+根据Jensen不等式, 可知
+\begin{align*}
+\ln\|f\|_p = \frac{1}{p} \ln\left( \int_0^1 |f(x)|^p \mathrm{d}x \right) \geqslant \int_0^1 \ln|f(x)|\mathrm{d}x.
+\end{align*}
+另一方面, 因为 $\ln x\leqslant x-1$ ($x>0$), 所以有
+\begin{align*}
+\frac{1}{p} \ln\left( \int_0^1 |f(x)|^p \mathrm{d}x \right) &\leqslant \frac{1}{p} \left( \int_0^1 |f(x)|^p \mathrm{d}x - 1 \right) \\
+&= \int_0^1 \frac{|f(x)|^p - 1}{p} \mathrm{d}x.
+\end{align*}
+令 $E=\{x\in[0,1]: |f(x)|\geqslant1\}$, 我们有: $A_p(x)=[|f(x)|^p-1]/p$ 作为 $p$ 的函数, 在 $E$ 上随 $p\searrow0$ 递减趋于 $\ln|f(x)|$; 在 $[0,1]\setminus E$ 上随 $p\searrow0$ 递增趋于 $\ln|f(x)|$. 由此可得
+\begin{align*}
+\lim_{p\searrow0} \int_0^1 \frac{|f(x)|^p - 1}{p} \mathrm{d}x = \int_0^1 \ln|f(x)|\mathrm{d}x.
+\end{align*}
+综合上述结果, 即得所证.
+
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}

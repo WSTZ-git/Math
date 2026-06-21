@@ -1,0 +1,164 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[scale=0.3]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{中值极限问题}
+
+此类问题有一个固定操作，即对中值点再套一次中值定理，使得中值参数可以暴露出来，从而解出参数求极限得到证明。
+
+\begin{example}
+设$f\in C^2[0,1],f'(0)=0,f''(0)\neq 0$，证明对任何$x\in(0,1)$，存在$\xi(x)\in(0,1)$，使得
+\begin{align*}
+\int_0^x f(t)\mathrm{d}t = f(\xi(x))x,
+\end{align*}
+且
+\begin{align*}
+\lim_{x\to 0^+}\frac{\xi(x)}{x}=\frac{1}{\sqrt{3}}.
+\end{align*} 
+\end{example}
+\begin{proof}
+
+对$\forall x\in(0,1)$，由积分中值定理可知，存在$\xi(x)\in(0,1)$，使得
+\begin{align*}
+\int_0^x f(t) \mathrm{d}t = f(\xi(x))x.
+\end{align*}
+从而对$\forall x\in(0,1)$，由Taylor定理可知，存在$\theta(x)\in(0,\xi(x))$，使得
+\begin{align*}
+f(\xi(x)) = f(0) + f'(0)\xi(x) + \frac{1}{2}f''(\theta(x))\xi^2(x) = f(0) + \frac{f''(\theta(x))}{2}\xi^2(x).
+\end{align*}
+从而将$\int_0^x f(t)\mathrm{d}t = f(\xi(x))x$代入上式可得
+\begin{align*}
+\int_0^x f(t)\mathrm{d}t = x\left[f(0) + \frac{f''(\theta(x))}{2}\xi^2(x)\right].
+\end{align*}
+故$f''(\theta(x))\xi^2(x) = 2\left(\frac{\int_0^x f(t)\mathrm{d}t}{x} - f(0)\right)$。于是
+\begin{align*}
+\lim_{x\to 0^+}\theta(x) = 0 \Rightarrow \lim_{x\to 0^+}f''(\theta(x)) = f''(0).
+\end{align*}
+因此由L'Hospital法则可得
+\begin{align*}
+f''(0)\lim_{x\to 0^+}\frac{\xi^2(x)}{x^2} &= \lim_{x\to 0^+}\frac{f''(\theta(x))\xi^2(x)}{x^2} = \lim_{x\to 0^+}\frac{2\left(\int_0^x f(t)\mathrm{d}t - xf(0)\right)}{x^3}\\
+&= \lim_{x\to 0^+}\frac{2\left(f(x) - f(0)\right)}{3x^2} = \lim_{x\to 0^+}\frac{f'(x)}{3x} = \frac{f''(0)}{3}.
+\end{align*}
+又$f''(0)\neq 0$，故$\lim_{x\to 0^+}\frac{\xi^2(x)}{x^2} = \frac{1}{3}$，因此$\lim_{x\to 0^+}\frac{\xi(x)}{x} = \frac{1}{\sqrt{3}}$。 
+
+\end{proof}
+
+\begin{example}
+设$f$在$x = a$的邻域$n + p$阶可导且$p\geqslant  1$，于是有
+\begin{align}
+f(x) = f(a) + f'(a)(x - a) + \cdots + \frac{f^{(n - 1)}(a)}{(n - 1)!}(x - a)^{n - 1} + \frac{f^{(n)}(c)}{n!}(x - a)^n.\label{example0.90.0}
+\end{align}
+如果对于$j = 1,2,\cdots,p - 1$都有$f^{(n + j)}(a) = 0$，$f^{(n + p)}(a)\neq 0$，求极限$\lim_{x\to a}\frac{c - a}{x - a}$。 
+\end{example}
+\begin{proof}
+
+由Taylor中值定理及条件可知，存在$\theta\in U(a)$，使得
+\begin{align}
+f^{(n)}(c) = f^{(n)}(a) + \frac{f^{(n + p)}(\theta)}{p!}(c - a)^p. \label{example0.9-1.1}
+\end{align}
+从而结合上式，再利用带Peano余项的Taylor公式可得
+\begin{align*}
+\lim_{x\to a^+}f^{(n + p)}(\theta) &= \lim_{x\to a^+}p!\frac{f^{(n)}(c) - f^{(n)}(a)}{(c - a)^p} = \lim_{x\to a^+}p!\frac{\frac{f^{(n + p)}(a)}{p!}(c - a)^p + o((c - a)^p)}{(c - a)^p} = f^{(n + p)}(a).
+\end{align*}
+于是利用\eqref{example0.90.0}\eqref{example0.9-1.1}式，再结合带Peano余项的Taylor公式可得
+\begin{align*}
+\lim_{x\to a^+}\left(\frac{c - a}{x - a}\right)^p &\xlongequal{\text{\eqref{example0.9-1.1}}} \lim_{x\to a^+}\left[p!\cdot\frac{f^{(n)}(c) - f^{(n)}(a)}{(x - a)^pf^{(n + p)}(\theta)}\right] \xlongequal{\text{\eqref{example0.90.0}}} \lim_{x\to a^+}\left[p!\cdot\frac{\frac{n![f(x) - \sum\limits_{j = 0}^{n - 1}\frac{f^{(j)}(a)}{j!}(x - a)^j]}{(x - a)^n} - f^{(n)}(a)}{(x - a)^pf^{(n + p)}(\theta)}\right]\\
+&= \lim_{x\to a^+}\left[n!p!\cdot\frac{f(x) - \sum\limits_{j = 0}^n\frac{f^{(j)}(a)}{j!}(x - a)^j}{(x - a)^{n + p}f^{(n + p)}(\theta)}\right] = \frac{n!p!}{f^{(n + p)}(a)}\lim_{x\to a^+}\frac{\frac{f^{(n + p)}(a)}{(n + p)!}(x - a)^{n + p} + o[(x - a)^{n + p}]}{(x - a)^{n + p}} 
+\\
+&= \frac{n!p!}{(n + p)!}.
+\end{align*}
+故$\lim_{x\to a^+}\frac{c - a}{x - a} = \sqrt[p]{\frac{n!p!}{(n + p)!}}$。 
+
+\end{proof}
+
+\begin{example}
+设$f \in C^3[0,x]$，$x > 0$，证明：存在$\xi \in (0,x)$使得
+\begin{align}\label{equation:::::----16856486}
+\int_0^x f(t) \,\mathrm{d}t = \frac{x}{2}[f(0) + f(x)] - \frac{x^3}{12}f''(\xi).
+\end{align}
+若还有$f'''(0) \neq 0$，计算$\lim_{x \to 0^+} \frac{\xi}{x}.$
+\end{example}
+\begin{note}
+我们当然可以直接用\hyperref[proposition:Lagrange插值公式]{Lagrange插值公式}得到
+\begin{align*}
+f\left( t \right) =\left( f\left( x \right) -f\left( 0 \right) \right) t+f\left( 0 \right) +f'' \left( \xi \right) t\left( t-x \right) ,t\in \left[ 0,x \right] .
+\end{align*}
+两边同时对$t$在$[0,x]$上积分就能得到\eqref{equation:::::----16856486}式.
+\end{note}
+\begin{proof}
+
+设$K \in \mathbb{R}$使得
+\begin{align*}
+\int_0^x f(t) \,\mathrm{d}t = \frac{x}{2}[f(0) + f(x)] - \frac{x^3}{12}K,
+\end{align*}
+则考虑
+\begin{align*}
+g(y) \triangleq \int_0^y f(t) \,\mathrm{d}t - \frac{y}{2}[f(0) + f(y)] + \frac{y^3}{12}K,
+\end{align*}
+于是
+\begin{align*}
+g'(y) = f(y) - \frac{1}{2}[f(0) + f(y)] - \frac{y f'(y)}{2} + \frac{y^2 K}{4} = \frac{f(y) - f(0)}{2} - \frac{y f'(y)}{2} + \frac{y^2 K}{4}
+\end{align*}
+以及
+\begin{align*}
+g''(y) = -\frac{y f''(y)}{2} + \frac{y K}{2}.
+\end{align*}
+由$g(x) = g(0) = 0$和罗尔中值定理得$\xi_1 \in (0,x)$使得$g'(\xi_1) = 0$. 注意到$g'(0) = 0$. 再次由罗尔中值定理得$\xi \in (0,x)$使得
+\begin{align*}
+g''(\xi) = -\frac{\xi f''(\xi)}{2} + \frac{\xi K}{2} = 0,
+\end{align*}
+即$K = f''(\xi)$, 这就得到了\eqref{equation:::::----16856486}式.
+由\eqref{equation:::::----16856486}式得
+\begin{align*}
+f''(\xi) = -12 \frac{\int_0^x f(t) \,\mathrm{d}t - \frac{x}{2}[f(0) + f(x)]}{x^3}
+\end{align*}
+由Lagrange中值定理得
+\begin{align*}
+f''(\xi) = f''(0) + f'''(\eta) \xi, \eta \in (0,\xi).
+\end{align*}
+于是
+\begin{align*}
+f'''(\eta) \frac{\xi}{x} = \frac{-12 \frac{\int_0^x f(t) \,\mathrm{d}t - \frac{x}{2}[f(0) + f(x)]}{x^3} - f''(0)}{x}
+\end{align*}
+现在利用L'Hospital法则就有
+\begin{align*}
+\lim_{x \to 0^+} f'''(\eta) \frac{\xi}{x} &= \lim_{x \to 0^+} \frac{-12 \frac{\int_0^x f(t) \,\mathrm{d}t - \frac{x}{2}[f(0) + f(x)]}{x^3} - f''(0)}{x} \\
+&= \lim_{x \to 0^+} \frac{-12 \int_0^x f(t) \,\mathrm{d}t + 6x [f(0) + f(x)] - f''(0) x^3}{x^4} \\
+&= \lim_{x \to 0^+} \frac{-12 f(x) + 6 [f(x) + f(0)] + 6x f'(x) - 3 f''(0) x^2}{4x^3} \\
+&= \lim_{x \to 0^+} \frac{6x f''(x) - 6 f''(0) x}{12x^2} \\
+&= \lim_{x \to 0^+} \frac{f''(x) - f''(0)}{2x} = \frac{1}{2} f'''(0).
+\end{align*}
+因为$0<\eta<\xi<x$,所以
+\begin{align*}
+\lim_{x \to 0^+} f'''(\eta) = f'''(0),
+\end{align*}
+我们有
+\begin{align*}
+\lim_{x \to 0^+} \frac{\xi}{x} = \frac{1}{2}.
+\end{align*}
+
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}
