@@ -1,0 +1,494 @@
+\documentclass[reqno]{scrartcl}
+\usepackage[top=2.2cm, bottom=2.6cm, left=2.2cm, right=2.2cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools,bbm}
+\usepackage[dvipsnames]{xcolor}
+\usepackage[framemethod=TikZ]{mdframed}
+\usepackage{kvoptions}
+\usepackage{etoolbox}
+\usepackage{subdepth}
+\usepackage{eucal}
+\usepackage[all]{xy}
+\usepackage{tikz-cd}
+\usepackage{tikz}
+\usepackage{fontawesome}
+
+
+
+\usetikzlibrary{patterns}
+\providetoggle{mytheorems}
+\settoggle{mytheorems}{false}
+
+
+
+\usepackage[theoremsnumbered=true,mobileview=false]{asoul}
+\usepackage[bookmarksnumbered,bookmarksopen,colorlinks=true,linkcolor=blue]{hyperref}
+
+\iftoggle{mytheorems}{%
+
+}{\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{exercise}[theorem]{Exercise}
+}
+
+\usepackage{liyuezhao}
+\newcommand{\aind}{\operatorname{a-ind}}
+\newcommand{\tind}{\operatorname{t-ind}}
+\newcommand{\Hilb}{\mathcal{H}}
+\newcommand{\Fred}{\mathcal{F}}
+\newcommand{\Kc}{\operatorname{K}_{\mathrm{c}}}
+\newcommand{\Hc}{\operatorname{H}_{\mathrm{c}}} % compactly-supported cohomology/homology
+\newcommand{\Thom}{\text{Thom}}
+\newcommand{\Op}{\operatorname{Op}}
+\renewcommand{\cup}{\smile}
+
+
+\tikzset{commutative diagrams/.cd,
+mysymbol/.style={start anchor=center,end anchor=center,draw=none}
+}
+\newcommand\MySymb[2][?]{\arrow[mysymbol]{#2}[description]{#1}}
+
+\begin{document}
+\title{Introduction to index theory}
+\author{Yuezhao Li\footnote{\url{mailto: y.li@math.leidenuniv.nl}} \\ Mathematical Institute, Leiden University}
+\date{11 November, 2021}
+\maketitle
+
+This is a handout for a reading seminar at Leiden University. In this talk, I will give a very basic introduction on the celebrated Atiyah--Singer index theorem, which is one of the most exciting and elegant mathematical achievements in the past century. The theorem claims that the analytical index of an elliptic (pseudo)differential operator, which is the Fredholm index of this operator (viewed as a linear operator between suitable Hilbert spaces), equals the topological index of the operator, defined in purely topological terms. I will define the analytical index and the topological index of an elliptic operator, and sketch the proof why they are equal. The proof will be closely following the original K-theoretic proof due to Atiyah and Singer \cite{atiyahsinger1}, but I will also try to highlight the role of K-theory of C*-algebras.
+
+
+\subsection*{Notations and Conventions}
+\begin{itemize}
+\item Let $\Hilb$ be a complex Hilbert space. We write $\Cpt(\Hilb)$ for the \Cst-algebra of compact operators on $\Hilb$, and write $\Bdd(\Hilb)$ for the \Cst-algebra of bounded operators on $\Hilb$. When the Hilbert space is clear from the context we shall also omit $\Hilb$ and write $\Cpt$ and $\Bdd$ for simplicity.
+\item We write $\mono$ for monomorphisms and $\epi$ for epimorphisms.
+\item We write $\Hc$ for the compactly-supported cohomology, \emph{with coefficients in $\Q$}. We write $\Hc^\even$ for the direct sum of all cohomology groups in even dimensions. $\Hc^\odd$ is defined likewise.
+\item We write $\K_0,\K_1,\ldots$ for K-theory of \Cst-algebras, and $\K^0,\K^{-1},\ldots$ for \emph{compactly-supported} K-theory of topological spaces. For simplicity (and in consistency with literature) we will usually use $\K$ instead of $\K^0$. For instance, let $X$ be a locally compact topological space. Then we have
+\[ \K_0(\Conto(X))=\K^0(X)=\K(X). \]
+\item Let $E\to X$ be a complex vector bundle of complex rank $k$. Then it is both oriented and \K-oriented (Proposition \ref{Prop: complex vector bundles are oriented and K-oriented}). We write $\phi_E\in\K(E)$ for the Thom class of $E$ in K-theory, and $\psi_E\in \Hc^\even(E)$ for the Thom class of $E$ in compactly-supported cohomology. 
+\item We use $\smile$ to denote the cup product in (generalised) cohomology theories, like (compactly-supported) cohomology and K-theory. One can find their definitions in some standard references, for example, \cite{hatcherAT,hatcher2003vector}.
+
+
+
+\end{itemize}
+
+
+\newpage
+\tableofcontents
+
+
+\section{An overview}
+The general form of an index theorem is given by an equation
+\[ \boxed{\text{Analytical index}=\text{Topological index}} \]
+In the Atiyah--Singer index theorem, the \emph{analytical index} is given by the Fredholm index of an elliptic (pseudo)differential operator. The \emph{topological index} is given by some purely ``topological'' data coming from the symbol of the operator, together with the base manifold.
+
+\begin{theorem}[Atiyah--Singer]
+Let $D$ be an elliptic (pseudo)differential operator on a compact $m$-dimensional manifold $M$. Then
+\[ \aind(D)=\tind(D), \]
+where
+\[ \aind\defeq\Index(D), \]
+and
+\[ \tind(D)\defeq(-1)^m\int_{\mathrm{T}M}\pi^*\Td(\mathrm{T}M\otimes\C)\cup\Ch([\sigma(D)]). \]
+\end{theorem}
+
+Atiyah--Singer index theorem vastly generalises the following ``classical'' theorems:
+\begin{itemize}
+\item Chern--Gauß--Bonnet theorem
+\item Hirzebruch--Riemann--Roch theorem.
+\item Hirzebruch signature theorem.
+\end{itemize}
+
+Before going into the details, one might wonder why such a theorem could exist. There are various discussions on this specific question, aiming at an insight of such a tremendous theorem. One superficial idea might be that the Fredholm index is homotopy-invariant:
+
+\begin{proposition}
+Let $\Hilb$ be a complex infinite-dimensional Hilbert space, $\Fred(\Hilb)$ be the set of bounded Fredholm operators on $\Hilb$, equipped with the norm topology. Then the map 
+\[ \Fred(\Hilb)\to\Z,\qquad T\mapsto\Index(T) \] 
+is continuous. Therefore, the Fredholm index is locally constant.
+\end{proposition}
+
+The fact at least implies that the analytical index is actually ``topological'', and one could expect a topological formula for it. A generalisation of the previous proposition is:
+
+\begin{theorem}[Atiyah--Jänich]
+Let $X$ be a compact Hausdorff space. Then
+\[ [X,\Fred(\Hilb)]\cong\K(X). \]
+where $[X,Y]$ denotes the set of homotopy classes of maps from $X$ to $Y$.
+\end{theorem}
+
+The previous proposition is the special case of Atiyah--Jänich Theorem where $X=\pt$. The theorem also motivates that we can define an index for ``family of operators parametrised by $X$'' whereas it should take value in $\K(X)$ instead of $\K(\pt)=\Z$. This is the starting point of \cite{atiyahsinger4}.
+
+
+
+\section{The analytical index}
+From now on we shall always let $D$ be a \red{scalar-valued elliptic pseudodifferential operator of order $0$} on a \red{compact} $m$-dimensional manifold $M$, whose meaning will be explained soon. In Section \ref{Sec: remarks on the general case} we shall explain how to generalise to more general cases.
+
+\subsection{K-theory and Fredholm index}
+The analytical index $\aind(D)$ of $D$ is just its Fredholm index (view $D$ as a Fredholm operator on $L^2(M)$). The best way to understand the Fredholm indices and operators might be introducing the (topological) K-theory of \Cst-algebras. Nevertheless we will only treat it as a blackbox. It suffices to know that:
+\begin{enumerate}
+\item Topological K-theory is a homology theory of \Cst-algebras in the sense that: let
+\[ I\overset{i}{\mono} E\overset{q}{\epi} Q \]
+be an extension of \Cst-algebras (that is, $I$ is a closed ideal in the \Cst-algebra $E$). Then there is an induced long exact sequence
+\[ \cdots\to\K_i(I)\xrightarrow{i_*}\K_i(E)\xrightarrow{q_*}\K_i(Q)\xrightarrow{\partial}\K_{i-1}(I)\to\cdots \]
+of abelian groups.
+\item The biggest distinction between topological K-theory and algebraic K-theory (of rings) is that in topological K-theory we have \emph{Bott periodicity}
+\[ \K_{i+2}(A)\cong\K_i(A) \]
+for any \Cst-algebra $A$. Combined with 1 we have a 6-term cyclic exact sequence
+\[ \begin{tikzcd}
+\K_0(I)\arrow[r] & \K_0(E)\arrow[r] & \K_0(Q)\arrow[d] \\
+\K_1(Q)\arrow[u] & \K_1(E)\arrow[l] & \K_1(I)\arrow[l].
+\end{tikzcd} \]
+\item (Relation to topological K-theory of topological spaces). Let $X$ be a locally compact topological space. Then $\Conto(X)$ is a \Cst-algebra, and $\K_i(\Conto(X))\cong\K^{-i}(X)$. The right-hand side is defined by $\K^{-i}(X)\defeq\K(X\times\R^i)$, the (compactly supported) K-theory of $X\times\R^i$, introduced in Bram's talk.
+\end{enumerate}
+
+Now we are at the right place to define the analytical index. Recall that (see, e.g. \cite[Chapter 14]{olsen1994k}):
+\begin{definition}
+Let $\Hilb$ be a complex Hilbert space. An operator $T\in\Bdd(\Hilb)$ is called \emph{Fredholm} if it has closed image, has finite-dimensional kernel and finite-dimensional cokernel\footnote{The image being closed is actually an unnecessary condition: it is automatically true if $T$ has finite-dimensional kernel and cokernel.}. The \emph{Fredholm index} of $T$, denoted by $\Index(T)$, is defined by
+\[ \Index(T)\defeq\dim\ker T-\dim\coker T. \]
+\end{definition}
+and
+\begin{theorem}[Atkinson]
+$T\in\Bdd(\Hilb)$ is Fredholm, if and only if it is invertible modulo compact operators, if and only if the image of $T$ in $\Bdd(\Hilb)/\Cpt(\Hilb)$ is invertible.
+\end{theorem}
+We have an extension of \Cst-algebras
+\[ \Cpt\mono\Bdd\epi\Bdd/\Cpt. \]
+An invertible element in a \Cst-algebra $A$ defines a class in $\K_1(A)$. If $T$ is Fredholm, then its image in $\Bdd/\Cpt$ is invertible and represents a class $[T]$ in $\K_1(\Bdd/\Cpt)$. The long exact sequence in K-theory yields a boundary map
+\[ \partial\colon\K_1(\Bdd/\Cpt)\to\K_0(\Cpt)\cong\Z. \]
+We have the following well-known result (see, e.g. \cite[Chapter 14]{olsen1994k}):
+\begin{theorem} 
+The boundary map $\K_1(\Bdd/\Cpt)\xrightarrow{\partial}\K_0(\Cpt)\cong\Z$ sends the class $[T]\in\K_1(\Bdd/\Cpt)$ to the Fredholm index $\Index(T)$ of $T$.
+\end{theorem}
+
+\subsection{Pseudodifferential extension}
+\textit{Pseudodifferential calculus is a very deep and complicated topic. We shall be very brief and ad hoc here.}
+
+Recall from Yufan's talk that we can construct operators on $L^2(\R^n)$ by ``quantising'' (that is, applying inverse Fourier transforms) ``nice'' functions
+\[ a(x,\xi)\mapsto A=\Op(a)=a(x,-i\partial_x), \]
+or more formally
+\[ Af(x)\defeq\int_{\R^n}a(x,\xi)\hat{f}(\xi)\ee^{i\braket{x,\xi}}d\xi. \]
+Such operators are called \emph{pseudodifferential operators}. A pseudodifferential operator $A=\Op(a)$ on $\R^n$ is defined by its symbol $a(x,\xi)$, where $a$ is a suitable function defined on $U\times\R^n\subseteq\R^n\times \R^n$ for some open set $U$. Here $U\times\R^n$ should be interpreted as the cotangent bundle $T^*U$. If the function $a$ has an asymptotic expansion\footnote{Here the asympotic expansion should be interpreted as: for every $k$, outside some compact set, the remainder $a-\sum_{i=k}^{m}a_i$ has order lower than $k$.}
+\[ a(x,\xi)\sim\sum_{i=-\infty}^{m}a_i(x,\xi) \]
+for some integer $m$, where each $a_i$ is homogeneous of order $i$ in $\xi$:
+\[ a_i(x,\lambda\xi)=\lambda^ia_i(x,\xi), \]
+then $A=\Op(a)$ is called a \emph{classical pseudodifferential operator of order $m$}.\footnote{Or we can characterise the order using the growth condition: there exists constant $C_{\alpha,\beta}$ such that $\abs{\partial_x^\beta\partial_\xi^\alpha p(x,\xi)}\leq C_{\alpha,\beta}(1+\abs{\xi})^{m-\abs{\alpha}}$ for all multi-index $\alpha$ and $\beta$. The order of $A$ is the supremum of such $m$.}
+
+The \emph{principal symbol} of an order-$m$ classical pseudodifferential operator is the ``leading term'' of the symbol:
+\[ \sigma(A)(x,\xi)\defeq a_i(x,\xi)=\lim_{\lambda\to\infty}a(x,\lambda\xi)/\lambda^m \]
+
+The constructions above can be generalised to manifolds by requiring them to be (pseudo)differential operators in local charts.\footnote{For differential operators, which are operators with polynomial symbols, such constructions are straightforward because all differential operators are \emph{local}. But pseudodifferential operator are not local in general. A well-defined global pseudodifferential operator on $M$ should satisfy that it restricts to pseudodifferential operator on $\R^n$ for \emph{any} local chart of $M$. See \cite{treves2013introduction}.} Then $(x,\xi)$ are local coordinates of points in $\mathrm{T}^*M$, and the principal symbol $\sigma(A)$ defines a (smooth) function $\mathrm{T}^*M\to\C$. We restrict it to the cosphere bundle $\mathrm{S}^*M=\set{x\in \mathrm{T}^*M\mid\norm{x}=1}$ to obtain $\sigma(A)\in\Cinfty(\mathrm{S}^*M)$. 
+
+If we restrict to classical pseudodifferential operators of order 0, then they are bounded operators on $L^2(M)$, and we take the norm completion to obtain a \Cst-algebra $\Psi^0(M)$. Operators in $\Psi^0(M)$ are called \emph{pseudodifferential operators of order $0$}. The principal symbol $\sigma$ extends to a \emph{surjective} $\ast$-homomorphism $\Psi^0(M)\epi\Cont(\mathrm{S}^*M)$. In particular, we have the following extension of \Cst-algebras, referred to as the pseudodifferential extension:
+
+\begin{theorem}
+There is an extension of \Cst-algebras
+\[ \Cpt(L^2(M))\mono\Psi^0(M)\overset{\sigma}{\epi}\Cont(\mathrm{S}^*M). \]
+In particular, it fits in the following commutative diagram:
+\[ \begin{tikzcd}
+\Cpt(L^2(M)) \arrow[r, tail] \arrow[d, equal] & \Psi^0(M) \arrow[r, two heads, "\sigma"] \arrow[d, tail] & \Cont(\mathrm{S}^*M) \arrow[d, tail] \\
+\Cpt(L^2(M)) \arrow[r, tail]                                & \Bdd(L^2(M)) \arrow[r, two heads]                & \Bdd(L^2(M))/\Cpt(L^2(M)).      
+\end{tikzcd} \]
+\end{theorem}
+
+Therefore, we may identify a principal symbol $\sigma(A)$ in $\Cont(\mathrm{S}^*M)$ with an element in the Calkin algebra $\Bdd/\Cpt$. By functoriality of K-theory we have
+\begin{equation} \label{Eqn: boundary map in pd extension}
+\begin{tikzcd}
+\K_1(\Cont(\mathrm{S}^*M)) \arrow[d] \arrow[r, "\partial"] & \K_0(\Cpt) \arrow[d,equal] \\
+\K_1(\Bdd/\Cpt)\arrow[r, "\partial"'] & \K_0(\Cpt)
+\end{tikzcd}
+\end{equation}
+So the boundary map can be identified with the Fredholm index when acting on the $\K_1$-class of a Fredholm operator. 
+
+Now we introduce ellipticity:
+\begin{definition}
+$D\in\Psi^0(M)$ is called \textbf{elliptic}, if $\sigma(D)$ is invertible on $\mathrm{S}^*M$, or equivalently if $\sigma(D)(x,\xi)\neq 0$ for $(x,\xi)\in \mathrm{T}^*M\setminus 0$.
+\end{definition}
+
+Now Atkinson's theorem immediately implies:
+
+\begin{theorem}
+If $D\in\Psi^0(M)$ is elliptic, then it is Fredholm (as a bounded operator on $L^2(M)$). The Fredholm index $\Index(D)$ of $D$ is the image of $[\sigma(D)]\in\K_1(\Cont(\mathrm{S}^*M))$ under the boundary map $\K_1(\Cont(\mathrm{S}^*M))\xrightarrow{\partial}\K_0(\Cpt)$ in \eqref{Eqn: boundary map in pd extension}.
+\end{theorem}
+
+\subsection{The $\K(\mathrm{T}M)$-symbol class}
+We have seen that the symbol $\sigma(D)$ represents a class $[\sigma(D)]\in\K_1(\Cont(\mathrm{S}^*M))=\K^{-1}(\mathrm{S}^*M)$. In most literatures and in the construction of the topological index in Section \ref{Sec: topological index}, we consider a class in $\K^0(\mathrm{T}M)$. Given $[\sigma(D)]\in\K_1(\Cont(\mathrm{S}^*M))$, we obtain a class in $\K_0(\Cont_0(\mathrm{T}M))=\K(\mathrm{T}M)$, which we also denote by $[\sigma(D)]$, under the following composition of maps:
+\[ \K^{-1}(\mathrm{S}^*M)\xrightarrow{\partial}\K^0(\mathrm{T}^*M)\xrightarrow{\cong}\K^0(\mathrm{T}M), \]
+where:
+\begin{itemize}
+\item $\partial$ is the boundary map in K-theory induced by the extension
+\begin{equation} \label{Eqn: disk-sphere extension}
+\Conto(\mathrm{T}^*M)\mono\Cont(\mathrm{D}^*M)\epi\Cont(\mathrm{S}^*M)
+\end{equation}
+where $\mathrm{D}^*M\defeq\set{x\in \mathrm{T}^*M\mid\norm{x}\leq 1}$ is the \emph{codisk bundle} over $M$, and $\mathrm{S}^*M\defeq\set{x\in \mathrm{T}^*M\mid\norm{x}=1}$ is the \emph{cosphere bundle} over $M$. The map $\Cont(\mathrm{D}^*M)\epi\Cont(\mathrm{S}^*M)$ is given by restriction of functions, and the kernel consists of functions on $\mathrm{D}^*M$ vanishing on the boundary. $\mathrm{D}^*M$ is homeomorphic to the one-point compactification of $\mathrm{T}^*M$, and $\mathrm{S}^*M$ is sent to infinity under this homeomorphism. Hence we may identify the kernel with functions on $\mathrm{T}^*M$ vanishing at infinity.
+\item We use a Riemannian metric to identify $\mathrm{T}^*M$ with $\mathrm{T}M$, hence $\K(\mathrm{T}^*M)$ with $\K(\mathrm{T}M)$.
+\end{itemize}
+
+We have defined the analytical index $\aind(D)$ using the class $[\sigma(D)]\in\K^{-1}(\mathrm{S}^*M)$. It turns out that it does not matter if we move to $[\sigma(D)]\in\K(\mathrm{T}M)$. In fact, we have:
+\begin{proposition}
+$\aind(D)$ depends only on the $\K(\mathrm{T}M)$-symbol class $[\sigma(D)]\in\K(\mathrm{T}M)$.
+\end{proposition}
+
+\begin{proof}[sketch]
+The extension \eqref{Eqn: disk-sphere extension} induces a long exact sequence
+\[ \cdots\to\K_1(\Cont(\mathrm{D}^*M))\to\K_1(\Cont(\mathrm{S}^*M))\xrightarrow{\partial}\K_0(\Conto(\mathrm{T}^*M))\to\cdots, \]
+if $[\sigma(D)]\in\K_1(\Cont(\mathrm{S}^*M))$ lies in the kernel of the boundary map $\K_1(\Cont(\mathrm{S}^*M))\xrightarrow{\partial}\K_0(\Conto(\mathrm{T}^*M))$, by exactness it is the restriction of an invertible function in $\Cont(\mathrm{D}^*M)$. But $\mathrm{D}^*M$ has properly contractible fibres, hence any function in $\Cont(\mathrm{D}^*M)$ is properly homotopic to a function which is fibrewise constant. Such a function is the symbol of a nowhere vanishing multiplication operator, and its index is zero since it is invertible.
+\end{proof}
+
+From now on, we will only consider $[\sigma(D)]\in\K(\mathrm{T}M)$. We call it the $\K(\mathrm{T}M)$-symbol class of $D$.
+
+
+
+\section{The topological index} \label{Sec: topological index}
+Let $[\sigma(D)]$ be the $\K(\mathrm{T}M)$-symbol class of $D$. The topological index $\tind(D)$ is defined as the image of $[\sigma(D)]$ under the following composition of maps: 
+\[ \K(\mathrm{T}M)\xrightarrow{i_!}\K(\mathrm{T}\R^n)\xrightarrow{\cong}\Z, \]
+where the map $i_!$ is the \emph{wrong-way} map, constructed using the Thom isomorphism, which we will elaborate on. The isomorphism $\K(\mathrm{T}\R^n)\xrightarrow{\cong}\Z$ is the \emph{Bott periodicity}. In fact, it is also a special case of the Thom isomorphism.
+
+\subsection{Thom isomorphism} \label{Sec: Thom isomorphism}
+Let $E\to M$ be an oriented vector bundle over a compact base. The Thom isomorphism of compactly-supported cohomology states that the cohomology groups of $E$ are isomorphic to those of $M$ with a dimension shift.
+
+Being more precise. Recall that a real vector bundle $E\xrightarrow{\pi}M$ of rank-$k$ is oriented, if and only if there exists $\psi_E\in\Hc^k(E)$ such that $\psi_E$ restricts to a generator of $\Hc^k(E_x)$ for each $x\in M$. Such $\psi_E$ is unique up to a sign and called the \emph{Thom class} of $E$. There is an isomorphism
+\[ \Hc^\bullet(M)\xrightarrow{\cong}\Hc^{\bullet+k}(E),\quad \alpha\mapsto\pi^*\alpha\cup\psi_E. \]
+
+The situation in (compactly-supported) K-theory is just similar. In fact, this can be defined for all generalised cohomology theories. We say a real vector bundle $E\xrightarrow{\pi}M$ of \emph{even} rank is \emph{\K-oriented}, if there exists $\phi_E\in\K(E)$, such that $\phi_E$ restricts to a generator of each $\K(E_x)\cong\Z$ (here we need that $E_x$ is even-dimensional). There is an isomorphism (here we apply Bott periodicity to remove the dimension shift):
+\[ \K(M)\xrightarrow{\cong}\K(E),\quad \alpha\mapsto\pi^*\alpha\cup\phi_E. \]
+
+Real vector bundles are not K-oriented in general. But we have the following:
+\begin{proposition}\label{Prop: complex vector bundles are oriented and K-oriented}
+Every complex vector bundle is oriented and \K-oriented.
+\end{proposition}
+
+\begin{example}
+Bott periodicity is a special case of the Thom isomorphism. Bott periodicity states that $\K(\pt)\cong\K(\R^{2n})$. Since $\R^{2n}\cong\C^{n}$, it is a \K-oriented vector bundle over the base, which is a single point. The Thom class is just a generator $\phi_{\R^{2n}}\in\K(\R^{2n})$, called the \emph{Bott class}, and the Thom isomorphism sends an element $\alpha\in\K(\pt)$ to $\pi^*\alpha\cup\phi_{\R^{2n}}$. If we identify $\K(\pt)$ with $\Z$, then the isomorphism is just given by $n\mapsto n\phi_{\R^{2n}}$ for $n\in\Z$.
+\end{example}
+
+Now we would like to apply the Thom isomorphism to obtain a wrong-way map in K-theory. Let $i\colon X\to Y$ be a proper embedding of manifolds. Then it induces an embedding $i_*\colon \mathrm{T}X\to \mathrm{T}Y$. We want to use Thom isomorphism to find a map $\K(\mathrm{T}X)\to\K(\mathrm{T}Y)$ between K-theory. But $\mathrm{T}Y$ is not a vector bundle over $\mathrm{T}X$. For this we consider the extension of vector bundles over X:
+\[ \mathrm{T}X\overset{i_*}{\mono}\mathrm{T}Y|_X\epi \mathrm{T}Y|_X/\mathrm{T}X. \]  
+The vector bundle $\mathrm{T}Y|_X/\mathrm{T}X$ is called the \emph{normal bundle} of $X$ in $Y$. We denote it by $NX$. Then $\mathrm{T}Y|_X$ decomposes as $\mathrm{T}X\oplus NX$. Using the lemma,
+\begin{lemma}[Tubular neighbourhood theorem]
+There is an open neighbourhood $N$ of $X$ in $Y$ which is diffeomorphic to $NX$. Such an $N$ is called a tubular neighbourhood of $X$ in $Y$,
+\end{lemma}
+we can identify $N$ with the vector bundle $NX$ over $X$, and $N$ is an open subset of $Y$. The embedding $i$ decomposes as $i\colon X\mono N\mono Y$, similarly $i_*\colon \mathrm{T}X\mono \mathrm{T}N\mono \mathrm{T}Y$. $N$ being a vector bundle over $X$ implies that $\mathrm{T}N$ is a vector bundle over $\mathrm{T}X$. In particular, $\mathrm{T}N$ admits a complex structure and hence K-oriented: recall that $\mathrm{T}Y|_X=\mathrm{T}X\oplus NX\cong \mathrm{T}X\oplus N$. So $\mathrm{TT}Y|_{\mathrm{T}X}\cong \mathrm{TT}X\oplus \mathrm{T}N$. But $\mathrm{TT}Y|_{\mathrm{T}X}\cong \pi^*(\mathrm{T}Y|_X)\oplus\pi^*(\mathrm{T}Y|_X)$ and $\mathrm{TT}X\cong\pi^*\mathrm{T}X\oplus\pi^*\mathrm{T}X$, where $\pi\colon \mathrm{T}X\to X$ is the projection of the tangent bundle. So $\mathrm{T}N\cong\pi^*N\oplus\pi^*N=\pi^*N\otimes\C$. Therefore $\mathrm{T}N$ can be equipped with a complex structure and we obtain the Thom isomorphism
+\[ \K(\mathrm{T}X)\xrightarrow{\cong}\K(\mathrm{T}N). \]
+
+The inclusion $\mathrm{T}N\mono \mathrm{T}Y$ induces a map
+\[ \K(\mathrm{T}N)\to\K(\mathrm{T}Y). \]
+To see this, notice that there is an ``extension by zero'' $\ast$-homomorphism $\Conto(\mathrm{T}N)\mono\Conto(\mathrm{T}Y)$ (here $\mathrm{T}N\subseteq \mathrm{T}Y$ must be open!) Then we have an induced map $\K_0(\Conto(\mathrm{T}N))\to\K_0(\Conto(\mathrm{T}Y))$ because K-theory of \Cst-algebras is functorial.
+
+The composition of the two maps above gives a map $i_!\colon\K(\mathrm{T}X)\to\K(\mathrm{T}Y)$ as desired.
+
+\subsection{The cohomological formula}
+Now we derive the cohomological formula for the topological index. This is done by a diagram chase, as first carried out in \cite{atiyahsinger3}. Recall from Bram's talk that the diagram
+\[ \begin{tikzcd}
+\K(M) \arrow[d, "\Ch"'] \arrow[r, "\Thom"] \arrow[rd, "{\text{\huge\red\faTimes}}", phantom] & \K(E) \arrow[d, "\Ch"] \\
+\Hc^\even(M) \arrow[r, "\Thom"']           & \Hc^\even(E)          
+\end{tikzcd} \]
+fails to commute. The ``defect'' measured by the \emph{Todd class} of $\bar{E}$, the conjugate bundle of $E$:
+\begin{lemma}
+The following diagram commutes:
+\[ \begin{tikzcd}
+\K(M) \arrow[d, "(-1)^k\Td(\bar{E})^{-1}\cup\Ch"'] \arrow[r, "\Thom"] & \K(E) \arrow[d, "\Ch"] \\
+\Hc^\even(M) \arrow[r, "\Thom"']                                      & \Hc^\even(E)          
+\end{tikzcd} \]
+where $\bar{E}$ is the conjugate bundle of $E$, and $k$ is the \emph{complex} rank of $E$.
+\end{lemma}
+
+The following diagram commutes:
+
+%\noindent
+%\makebox[\textwidth]{\parbox{1.3\textwidth}{%
+\hspace{-5em}\begin{tikzpicture}[baseline= (a).base]
+\node[scale=.75] (a) at (0,0){
+\begin{tikzcd}
+{[\sigma(D)]}                                          &                                                                                      & \tind(D)\cdot\phi_{\mathrm{T}\R^n} & \tind(D)                                     \\
+\K(\mathrm{T}M) \arrow[r, "\Thom"] \arrow[d]                    & \K(\mathrm{T}N) \arrow[r, tail] \arrow[d]                                                     & \K(\mathrm{T}\R^n) \arrow[d]       & \K(\pt)\cong\Z \arrow[d] \arrow[l, "\Thom"'] \\
+\Hc^\even(\mathrm{T}M) \arrow[r, "\Thom"']                      & \Hc^\even(\mathrm{T}N) \arrow[r, tail]                                                        & \Hc^\even(\mathrm{T}\R^n)          & \Hc^\even(\pt)\cong\Q \arrow[l, "\Thom"]     \\
+{(-1)^{n-m}\pi^*\Td({\mathrm{T}M}\otimes\C)\cup\Ch([\sigma(D)])} & \blue{(-1)^{n-m}\pi^*\Td({\mathrm{T}M}\otimes\C)\cup\Ch([\sigma(D)])\cup\psi_{\mathrm{T}N}} \arrow[r, equal] & \blue{(-1)^n\tind(D)\psi_{\mathrm{T}\R^n}}   & (-1)^n\tind(D)                                    
+\end{tikzcd}
+};\end{tikzpicture}
+%}}
+
+\begin{itemize}
+\item Let $M$ be an $m$-dimensional compact manifold, embedded in $\R^n$. We have seen that $N$ is isomorphic to the normal bundle of $X$ in $Y$, and $\mathrm{T}N$ has complex rank $(n-m)$.
+\item The topological index is the image of $[\sigma(D)]$ under the composition of maps in the first row. In particular, the Thom isomorphism $\K(\pt)\cong\K(\mathrm{T}\R^n)$ sends the index $\tind(D)$ to $\tind(D)\cdot\phi_{\mathrm{T}\R^n}$ where $\phi_{\mathrm{T}\R^n}$ is the Bott element of $\mathrm{T}\R^n$.
+\item We apply Chern characters to every K-theory group, and use the previous theorem to obtain this big commutative diagram. In the commutative square on the right, the Todd class of $\mathrm{T}\R^n$ is just 1, and the image in $\Hc^\even(\mathrm{T}\R^n)$ is just $(-1)^n\tind(D)\psi_{\mathrm{T}\R^n}$, where $\psi_{\mathrm{T}\R^n}$ is the Bott
+ class in $\Hc^{2n}(\mathrm{T}\R^{2n})$. The extra factor $(-1)^n$ comes from the Chern character defect. The diagram on the left can be worked out in a similar way.
+\item Now we look at the Todd class $\Td(\ol{\mathrm{T}N})$. We have seen that $\mathrm{T}N\cong\pi^*N\otimes\C$, so $\mathrm{T}N$ is isomorphic to its complex conjugate. Since $\mathrm{T}N\oplus \mathrm{TT}M\cong \mathrm{T}\R^n$ is trivial, computation shows that $\Td(\mathrm{T}N)=\Td(\mathrm{TT}M)^{-1}$. And $\mathrm{TT}M=\pi^*\mathrm{T}M\otimes\C$. Therefore we obtain the characteristic class in $\Hc^\even(\mathrm{T}N)$:
+\[ (-1)^{n-m}\pi^*\Td(\mathrm{T}M\otimes\C)\cup\Ch([\sigma(D)])\cup\psi_{\mathrm{T}N}, \]
+whose image in $\Hc^\even(\mathrm{T}\R^n)$ is just $\tind(D)\cdot\phi_{\mathrm{T}\R^n}$ since the diagram commutes.
+\item The last thing is to unzip $\tind$ from the characteristic classes we have just obtained. We integrate the two forms 
+over $\mathrm{T}\R^n$ (which is just pairing with the fundamental class of $\mathrm{T}\R^n$ in $\mathrm{H}_{2n}(\mathrm{T}\R^n)$):
+\[ \int_{\mathrm{T}\R^n}(-1)^{n-m}\pi^*\Td(\mathrm{T}M\otimes\C)\cup\Ch([\sigma(D)])\cup\psi_{\mathrm{T}N}=\int_{\mathrm{T}\R^n}(-1)^n\tind(D)\psi_{\mathrm{T}\R^n}. \]
+The right-hand side is just $(-1^n)\tind(D)$. The integral on the left-hand side restricts to the integral on $\mathrm{T}N$ since $\psi_{\mathrm{T}N}$ is compactly supported on $\mathrm{T}N$. Recall that the inverse of the Thom isomorphism is integrating along the fibres, the integral becomes
+\[ (-1)^{n-m}\int_{\mathrm{T}M}\pi^*\Td(\mathrm{T}M\otimes\C)\cup\Ch([\sigma(D)]). \]
+\end{itemize}
+
+Compare both sides of the equation we obtain:
+\begin{theorem}[Cohomological formula of the topological index, I]
+The topological index $\tind(D)$ equals
+\[ \tind(D)=(-1)^m\int_{\mathrm{T}M}\pi^*\Td(\mathrm{T}M\otimes\C)\cup\Ch([\sigma(D)]), \]
+where $m$ is the dimension of $M$, $\pi\colon \mathrm{T}M\to M$ is the bundle projection of $\mathrm{T}M$.
+\end{theorem}
+
+If $M$ is oriented, then Thom isomorphism applies to $\mathrm{T}M$ and we can obtain a similar cohomological formula where the integral is on $M$ instead of $\mathrm{T}M$. However, an extra factor $(-1)^{m(m-1)/2}$ is involved due to the orientation of $M$.
+
+\begin{theorem}[Cohomological formula of the topological index, II]
+If $M$ is oriented, then the topological index $\tind(D)$ equals
+\[ \tind(D)=(-1)^{m(m+1)/2}\int_{M}\pi_!(\pi^*\Td(\mathrm{T}M\otimes\C)\cup\Ch([\sigma(D)])), \]
+where $\pi_!$ is ``integrating along fibres''.
+\end{theorem}
+
+
+\section{Remarks on the general cases}\label{Sec: remarks on the general case}
+So far, we have imposed several restrictions on the pseudodifferential operator $D$.
+\begin{itemize}
+\item The \red{ellipticity} guarantees that $D$ is Fredholm. This is indeed not a necessary condition: there are operators which are not elliptic but nevertheless Fredholm, see for example \cite{baum2014k}. This is, however, far from our goal.
+\item We have restricted to \red{order-zero} operators. Such operators are bounded on $L^2(M)$. While considering pseudodifferential operators of higher orders, they are no longer bounded on $L^2(M)$. An elliptic pseudodifferential operator $D$ of order $m$ defines a bounded Fredholm operator $\Sob{s}(M)\to\Sob{s-m}(M)$ for all $s$, where $\Sob{s}(M)$ and $\Sob{s-m}(M)$ are Sobolev spaces. Another viewpoint is to consider $D$ as an \emph{unbounded} Fredholm operator on $L^2(M)$.
+
+In either case, a pseudodifferential operator $D$ of order greater than $0$ does not belong to $\Bdd(L^2(M))$; such operators do not even form an algebra. But we can consider the operator
+\[ D(1+D^2)^{-1/2}, \]
+which has order zero, hence bounded. In particular, this operator has the same symbol class with $D$. Since indices are defined as collections of maps $\K(\mathrm{T}X)\to\Z$, we see that studying order-zero operators is enough.
+
+\item We have restricted to \red{scalar-valued} operators, that is, they are defined by scalar-valued symbols. However, most elliptic differential operators are operators which act on sections of vector bundles; that is, they are linear maps
+\[ D\colon\Cinfty(M;E)\to\Cinfty(M;E) \]
+where $E$ is a vector bundle over a compact manifold $M$, and $\Cinfty(M;E)$ denotes the smooth sections. (The scalar valued case can be viewed as such a map with $E=M\times\C$). In these cases, the symbol $\sigma(D)$ is a section of the endomorphism bundle
+\[ \End(\pi^*E), \]
+where $\pi\colon \mathrm{T}^*M\to E$ is the bundle projection; or rather its restriction to $\mathrm{S}^*M$. Such sections are in bijection with 
+\[ \End_{\Cont(\mathrm{S}^*M)}\Cont(\mathrm{S}^*M;\pi^*E), \] 
+the \emph{\Cst-algebra} of \emph{adjointable operators} on the \emph{Hilbert $\Cont(\mathrm{S}^*M)$-module} $\Cont(\mathrm{S}^*M;\pi^*E)$. Assuming $M$ is compact, then $\mathrm{S}^*M$ is also compact and hence $\Cont(\mathrm{S}^*M)$ is unital. Since $\pi^*E$ is finite-dimensional, $\Cont(\mathrm{S}^*M;\pi^*E)$ is finitely-generated. Then $\End_{\Cont(\mathrm{S}^*M)}\Cont(\mathrm{S}^*M;\pi^*E)$ is Morita equivalent to $\Cont(\mathrm{S}^*M)$. Consequently, nothing changes on the K-theory level. See, e.g. \cite{manuilov2005hilbert}, for more on Hilbert \Cst-modules.
+
+\end{itemize} 
+
+
+\section{Proof of the index theorem}
+In the end, we will sketch the elegant proof of the index theorem, due to Atiyah--Singer \cite{atiyahsinger1}. The strategy of the proof is to show that there is a unique index satisfying certain constraints. Both $\aind$ and $\tind$ satisfy them, hence the two indices must coincide.
+
+More precisely, an index is a collection of group homomorphisms $\ind=\set{\K(\mathrm{T}X)\to\Z}$ for each compact manifold $X$. We have
+\begin{proposition}
+There is a unique index $\ind$ satisfying 1 and 2:
+\begin{enumerate}
+\item If $X=\pt$, then $\ind\colon\K(\pt)\to\Z$ is the identity map.
+\item If $X\mono Y$ is a proper embedding of manifolds, then $\ind\circ i_!=\ind$, where $i_!$ is the wrong-way map. (See Section \ref{Sec: Thom isomorphism}).
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}Consider $X\overset{i}{\mono}\R^n\overset{j}{\leftarrowtail}\pt$, where $X\mono\R^n$ is a proper embedding. It induces
+\[ \begin{tikzcd}
+\K(\mathrm{T}X) \arrow[r, "i_!"] \arrow[rd, "\ind"'] & \K(\mathrm{T}\R^n) \arrow[d, "\ind"] & \K(\pt) \arrow[ld, "\ind"] \arrow[l, "j_!"', "\cong"] \\
+                                            & \Z                          &                                               
+\end{tikzcd}, \]
+Condition 2 claims that the index $\K(\mathrm{T}X)\to\Z$ on $X$ is determined by the index $\K(\mathrm{T}\R^n)\to\Z$ on $\R^n$, and by Thom isomorphism determined by the index $\K(\pt)\to\Z$ on $\pt$, but this is unique by Condition 1.
+\end{proof}
+
+The remaining work is to show that both $\aind$ and $\tind$ satisfy Conditions 1--2 in the previous proposition.
+
+\begin{proposition}
+$\tind$ satisfies conditions 1--2.
+\end{proposition}
+
+\begin{proof}1 is just Bott periodicity; 2 is by functoriality.
+\end{proof}
+
+\begin{proposition}
+$\aind$ satisfies conditions 1--2.
+\end{proposition}
+
+Condition 1 for $\aind$ is easy to check. Let $M=\pt$, then a vector bundle over $M$ is just a finite-dimensional vector space, and a class $[E]-[F]\in\K(\pt)$ is identified with $\dim E-\dim F\in\Z$. A symbol $\sigma(D)$ is just a linear map $E\to F$, so $\dim E=\dim\ker D+\dim\im D=\dim\ker D+\dim F-\dim\coker D$. Hence $\aind(D)=\dim E-\dim F$.
+
+Checking condition 2 is difficult. For a detailed proof we refer to Atiyah--Singer's original work \cite{atiyahsinger1}, in which they introduced the equivariant index theorem as well. Recall that $i_!$ is constructed as the composition
+\[ \begin{tikzcd}
+i_!\colon\K(\mathrm{T}X) \arrow[r, "\Thom", "\cong"'] \arrow[rd, "\ind"'] & \K(\mathrm{T}N)  \arrow[d, "\ind"] \arrow[r] & \K(\mathrm{T}Y) \arrow[ld, "\ind"] \\
+                                                       & \Z                                 &                          
+\end{tikzcd} \]
+To show that the outer diagram commutes, it suffices to show that the two triangles commute. The right triangle commutes due to the \emph{excision} property of the analytical index. The idea: the extension homomorphism $\Conto(\mathrm{T}U)\mono\Conto(\mathrm{T}X)$ lifts to $\Cont(\mathrm{S}^*U)\mono\Cont(\mathrm{S}^*X)$, and the boundary map in K-theory is natural, so we must have the same index.
+
+The commutativity of the left triangle is hard and we will only sketch the main ideas. The proof is based on the following ``product formula'', and its equivariant version.
+
+Recall that K-theory of topological spaces allows an exterior product (cross product):
+\[ \K(X)\otimes\K(Y)\xrightarrow{\times}\K(X\times Y),\quad x\otimes y\mapsto\pi_X^*x\cup\pi_Y^*y \]
+where $\pi_X\colon X\times Y\to X$ and $\pi_Y\colon X\times Y\to Y$.
+
+\begin{lemma}
+Let $x\in\K(\mathrm{T}X)$ and $y\in\K(\mathrm{T}Y)$. The the cross product $x\times y$ is an element in $\K(\mathrm{T}X\times \mathrm{T}Y)\cong\K(T(X\times Y))$. And we have
+\[ \aind(x\times y)=\aind(x)\cdot\aind(y). \]
+\end{lemma}
+The product formula already solves the case when $N$ is \emph{trivial}: the Thom isomorphism
+\[ \K(\mathrm{T}X)\to\K(\mathrm{T}N) \]
+sends $x\in\K(\mathrm{T}X)$ to $\pi_1^*x\cdot\phi_{\mathrm{T}N}$ where $\pi_1$ is the projection $\mathrm{T}N\to \mathrm{T}X$. If $N\cong X\times \R^n$ is trivial, then $\phi_{\mathrm{T}N}$ is just the pullback of the Bott element $\phi_{\mathrm{T}\R^n}\in\K(\mathrm{T}\R^n)$ under the projection $\mathrm{T}N\xrightarrow{p} \mathrm{T}\R^n$. So $x$ is sent to $\pi_1^*x\cup\pi_2^*\phi_{\mathrm{T}\R^{n}}=x\times\phi_{\mathrm{T}\R^{n}}$. The product formula then claims that $\aind(x\times\phi_{\mathrm{T}\R^{n}})=\aind(x)\cdot\aind(\phi_{\mathrm{T}\R^{n}})=\aind(x)$ because the Bott element has index 1.
+
+The discussion above also shows that the Thom isomorphism for the trivial bundle $\mathrm{T}N\cong \mathrm{T}X\times \mathrm{T}\R^n\cong \mathrm{T}X\times\R^{2n}$ is given by the composition
+
+\[ \K(\mathrm{T}X)\to\K(\mathrm{T}X)\otimes\K(\mathrm{T}\R^n)\xrightarrow{\times}\K(\mathrm{T}N),\quad x\mapsto x\otimes \phi_{\mathrm{T}\R^n}\mapsto x\times\phi_{\mathrm{T}\R^n}. \]
+
+But $N$ is not trivial in general. In that case, the cross product $\K(\mathrm{T}X)\otimes\K(\mathrm{T}\R^n)\xrightarrow{\times}\K(\mathrm{T}N)$ does not make sense. But one can define a ``twisted'' cross product instead. In this situation we require the K-theory classes in the typical fibre $\mathrm{T}\R^n$ are well-defined globally, this requires they are \emph{equivariant} with respect to the structure group $\O(n)$. The cross product should be replaced by a twisted product
+\[ \K(\mathrm{T}X)\otimes\K_{\O(n)}(\mathrm{T}\R^n)\to\K(\mathrm{T}N) \]
+where we need an ``$\O(n)$-equivariant Bott element'' $\phi_{\mathrm{T}\R^n}^{\O(n)}$, which comes from the following ``equivariant Bott periodicity'':
+\[ \K_{\O(n)}(\pt)\xrightarrow{\cong}\K_{\O(n)}(\mathrm{T}\R^{n}),\quad x\mapsto\pi^*x\cup\phi_{\mathrm{T}\R^n}^{\O(n)}. \] 
+
+Atiyah and Singer proved that an ``equivariant product formula'' holds as well, and the Thom isomorphism $\K(\mathrm{T}X)\xrightarrow{\cong}\K(\mathrm{T}N)$ sends an element to its twisted product with the equivariant Bott element. Since the equivariant Bott element has analytical index $1$, a similar argument as in the trivial case shows that the Thom isomorphism does not change the analytical index, and the proof is done.
+
+
+
+
+%Now that $N$ is a vector bundle over $X$. By choosing a Riemannian metric, $N$ can be identified with the associated fibre bundle
+%\[ \O(N)\times_{\O(n)}\R^n, \]
+%where $\O(N)$ is the principal $\O(n)$-bundle of orthogonal frames of $N$. In particular, $\O(n)$ acts freely on $\O(N)$ and the quotient is $X$.
+%
+%Since $N$ is a vector bundle over $X$, we have a short exact sequence of vector bundles
+%\[ VN\mono TN\epi\pi^*TX, \]
+%where $VN$ is the \emph{vertical subbundle} of $TN$. It is not hard to see that it is isomorphic to the associated vector bundle
+%\[ \O(N)\times_{\O(n)}\mathrm{T}\R^n, \]
+%where the action of $\O(n)$ on $\mathrm{T}\R^n$ is induced by that of $\O(n)$ on $\R^n$.
+%
+%Now we can construct the product \eqref{Eqn: twisted product}. The exact sequence above yields a decomposition $TN\cong VN\oplus\pi^*TX$, and a cross product
+%\[ \K(TX)\otimes\K(VN)\xrightarrow{\times}\K(TN). \]
+%The projection $\O(N)\times T\R^n\to T\R^n$ is $\O(n)$-equivariant, so it induces a map in equivariant K-theory
+%\[ \K_{\O(n)}(T\R^n)\to\K_{\O(n)}(\O(N)\times T\R^n). \]
+%But $\O(n)$ acts on $\O(N)\times_{\O(n)}T\R^n$ freely. Hence there is a (natural) isomorphism
+%\[ \K_{\O(n)}(\O(N)\times T\R^n)\cong\K(\O(N)\times_{O(n)} T\R^n)\cong\K(VN). \]
+
+
+
+\subsection*{Notes and comments}
+I assume that my audience have some basic knowledge on K-theory and algebraic topology. Knowing K-theory for \Cst-algebras will be helpful but not necessary, as we will only use very few properties of them.
+
+Most of the contents and details can be found in Atiyah--Singer's masterpiece \cite{atiyahsinger1}. The cohomological formula is presented in \cite{atiyahsinger3}. Liturature that I refer to include \cite{mukherjee2013atiyah,shanahan2006atiyah,landweber2005k}, but they are mostly explaining the original article by Atiyah and Singer.
+
+The thesis \cite{vanerp} should be especially mentioned, since it interprets the index theory in the framework of K-theory of \Cst-algebras, which I favour. Such a strategy should have a long history, and eventually leads to the most elegant and powerful way to attack the index theory: Kasparov's bivariant K-theory \cite{kasparov1988equivariant}. I have to admit that although K-theory of \Cst-algebras is mentioned in my talk, the proofs depend quite little on this powerful tool. One can find a purely \Cst-algebraic proof in \cite{higson1993k}, which is closely related to E-theory, another bivariant K-theory of \Cst-algebras.
+
+
+\iffalse
+
+\setcounter{section}{0}
+\renewcommand\theHsection{P2.\thesection}
+\renewcommand\thesection{\Alph{section}}
+\section{Sobolev spaces}
+In order to define analytical indices for (pseudo)differential operators $D\colon\Cinfty(M)\to\Cinfty(M)$, we need to first complete $\Cinfty(M)$ into a Hilbert space. We need to define Sobolev spaces $\Sob{s}$.
+
+
+Let $M$ be a compact manifold. Let $\Delta\colon\Cinfty(M)\to\Cinfty(M)$ be the Laplace-Beltrami operator on $M$. The spectral theory of Laplacians claims that $\Delta-1\colon\Cinfty(M)\to\Cinfty(M)$ is a bijection. 
+
+\begin{definition}
+The Sobolev $s$-norm of $u\in\Cinfty(M)$ is
+\[ \norm{u}_s\defeq\norm{(1-\Delta)^{t/2}u}_{L^2(M)}, \]
+where $\norm{\cdot}_{L^2(M)}$ denotes the norm on $L^2(M)$. The Sobolev space $\Sob{s}(M)$ is defined as the completion $\Cinfty(M)$ under the Sobolev $s$-norm.
+\end{definition}
+
+We state the following results without proving them:
+
+\section{Unbounded Fredholm operators}
+
+\fi
+
+
+
+
+\bibliographystyle{alpha}
+\bibliography{ref}
+
+\end{document}

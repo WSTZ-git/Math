@@ -1,0 +1,244 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.8\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{分布函数}
+
+\begin{definition}[分布函数]
+设$f$是测度空间$(X,\mu)$上的可测函数，$f$的分布函数是定义在$[0,+\infty)$上的函数$d_f$，满足
+\begin{align*}
+d_f(\alpha) = \mu\left(\{x\in X: |f(x)|>\alpha\}\right).
+\end{align*}
+\end{definition}
+\begin{remark}
+$d_f$可以反映$f$的大小信息，无法体现$f$在定点附近的局部行为：例如$\mathbb{R}^n$上的函数与其平移变换后的函数具有完全相同的分布函数。
+\end{remark}
+
+\begin{proposition}\label{proposition:非负简单函数的分布函数}
+设测度空间$(X,\mu)$中的非负简单函数为
+\begin{align*}
+f(x)=\sum\limits_{j=1}^N a_j\chi_{E_j}(x),
+\end{align*}
+其中集合$\{E_j\}_{j=1}^N$两两不交，且$a_1>\dots>a_N>0$.则$f$的分布函数是
+\begin{align*}
+d_f(\alpha)=\sum\limits_{j=0}^N B_j\chi_{[a_{j+1},a_j)}(\alpha),
+\end{align*}
+其中$a_0=\infty$,$B_0=a_{N+1}=0$,$B_j=\sum\limits_{k=1}^j \mu(E_k),j=1,2,\cdots,N$.
+\end{proposition}
+\begin{remark}
+特别地,$N=3$时的函数图像与对应分布函数图像如下：
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{distubution_functino_image.png}
+\caption{简单函数$f=\sum\limits_{k=1}^3 a_k\chi_{E_k}$及其分布函数$d_f$，其中$B_j=\sum\limits_{k=1}^j \mu(E_k)$}
+\label{figure:simple-f-dist-plot}
+\end{figure}
+\end{remark}
+\begin{proof}
+对$\forall \alpha \in \mathbb{R}$,有
+\begin{enumerate}[(i)]
+\item 若$\alpha\geqslant a_1$，显然$d_f(\alpha)=0$；
+\item 若$a_2\leqslant\alpha<a_1$，$|f(x)|>\alpha$当且仅当$x\in E_1$；
+\item 一般地，若$a_{j+1}\leqslant\alpha<a_j$，$|f(x)|>\alpha$当且仅当$x\in \bigcup\limits_{k=1}^j E_k$。
+\end{enumerate}
+取$a_0=\infty$,$B_0=a_{N+1}=0$，记$B_j=\sum\limits_{k=1}^j \mu(E_k)(j=1,2,\cdots,N)$,则分布函数可表示为
+\begin{align*}
+d_f(\alpha)=\sum\limits_{j=0}^N B_j\chi_{[a_{j+1},a_j)}(\alpha).
+\end{align*}
+\end{proof}
+
+\begin{proposition}[分布函数的基本性质]\label{proposition:分布函数的基本性质}
+设$f,g$是测度空间$(X,\mu)$上的可测函数，则对$\forall \alpha,\beta>0$，下述结论成立：
+\begin{enumerate}[(1)]
+\item $d_f$关于$\alpha$单调递减（但不一定严格递减）.
+
+\item $|g|\leqslant|f|$ $\mu$-a.e. 蕴含$d_g\leqslant d_f$；
+\item 对任意$c\in\mathbb{C}\setminus\{0\}$，$d_{cf}(\alpha)=d_f\left(\frac{\alpha}{|c|}\right)$；
+\item $d_{f+g}(\alpha+\beta)\leqslant d_f(\alpha)+d_g(\beta)$；
+\item $d_{fg}(\alpha\beta)\leqslant d_f(\alpha)+d_g(\beta)$.
+\end{enumerate}
+\end{proposition}
+
+\begin{proposition}[层饼表示(Layer-Cake representation)]\label{proposition:广义层饼表示(Generalized Layer-Cake Representation)}
+设 $(X,\mathscr{M},\mu)$ 为测度空间.
+\begin{enumerate}[(1)]
+\item 若$f:X\to \mathbb{C}$ 为可测函数，
+$\varphi:[0,\infty)\to[0,\infty)$ 为连续可微的增函数，且 $\varphi(0)=0$。
+则
+\begin{align}\label{eq::::UHFUHEWUHUIOJIWJIJJIJIIJII}
+\int_X \varphi(|f|)\,\mathrm{d}\mu
+=
+\int_0^\infty \varphi'(\alpha)\,d_f(\alpha)\,\mathrm{d}\alpha.
+\end{align}
+
+\item 若$f:X\to[0,\infty]$ 为非负可测函数,则
+\begin{align*}
+\int_X f(x)\,\mathrm{d}\mu(x)=\int_0^{\infty}{d_f\left( t \right) \,\mathrm{d}t}=\int_0^{\infty}{\mu \left( \left\{ x:t<f\left( x \right) \right\} \right) \,\mathrm{d}t}.
+\end{align*}
+
+\item 若$0<p<\infty$且$f\in L^p(X,\mu)$，则
+\begin{align}
+\|f\|_{L^p}^p = p\int_{0}^{\infty}\alpha^{p-1}d_f(\alpha)\mathrm{d}\alpha.
+\label{eq:lp-dist-representation}
+\end{align}
+\end{enumerate}
+\end{proposition}
+\begin{proof}\begin{enumerate}[(1)]
+\item 由于 $\varphi$ 单调递增且连续可微，有 $\varphi'(\alpha)\ge 0$ 对所有 $\alpha\ge 0$ 成立。
+
+$\mathbf{Step}\mathbf{1}:$ 先设 $f$ 为非负简单函数，即
+\[
+f(x)=\sum_{i=1}^{n} c_i \chi_{A_i}(x),
+\]
+其中 $c_i>0$，$A_i\in\mathscr{M}$ 两两不交。则
+\[
+\int_X \varphi(f)\,\mathrm{d}\mu=\sum_{i=1}^{n} \varphi(c_i)\mu(A_i).
+\]
+另一方面，
+\[
+d_f(\alpha)=\mu(\{x:f(x)>\alpha\})=\sum_{\{i:c_i>\alpha\}}\mu(A_i).
+\]
+于是
+\begin{align*}
+\int_0^\infty \varphi'(\alpha)d_f(\alpha)\,\mathrm{d}\alpha
+&=\int_0^\infty \varphi'(\alpha)\sum_{\{i:c_i>\alpha\}}\mu(A_i)\,\mathrm{d}\alpha =\sum_{i=1}^{n}\mu(A_i)\int_0^{c_i}\varphi'(\alpha)\,\mathrm{d}\alpha \\
+&=\sum_{i=1}^{n}\mu(A_i)\varphi(c_i) =\int_X \varphi(f)\,\mathrm{d}\mu.
+\end{align*}
+故简单函数情形成立。
+
+$\mathbf{Step}\mathbf{2}:$ 对一般可测函数$f$，由\hyperref[theorem:实分析-简单函数逼近定理]{简单函数逼近定理}，存在一列递增的非负简单函数 $\{s_n\}_{n=1}^{\infty}$，使得
+\begin{align}
+\lim\limits_{n\to\infty} s_n(x)=\left|f(x)\right|,\quad \forall x\in X.\label{eq::::::OIHWIHIHJF}
+\end{align}
+由\hyperref[Real Analysis-theorem:实分析-Beppo Levi单调收敛定理]{Beppo Levi单调收敛定理}知
+\begin{align}
+\int_X \varphi(\left|f\right|)\,\mathrm{d}\mu
+=
+\lim_{n\to\infty}\int_X \varphi(s_n)\,\mathrm{d}\mu. \label{eq::::HIUUHUAHU424-1}
+\end{align}
+对每个固定的 $\alpha\geqslant 0$，由$\{s_n\}$的递增性和\eqref{eq::::::OIHWIHIHJF}式知,对$\forall \alpha\geqslant 0$，有
+\begin{align*}
+\left\{ x:s_n\left( x \right) >\alpha \right\} \subset \left\{ x:s_{n+1}\left( x \right) >\alpha \right\} \left( \forall n\in \mathbb{N} \right),\quad \underset{n\rightarrow \infty}{\lim}\{x:s _n(x)>\alpha\}=\{x:\left|f(x)\right|>\alpha\}.
+\end{align*}
+故由\hyperref[Real Analysis-theorem:递增可测集列的测度运算]{递增可测集列的测度运算}知
+\[
+\lim_{n\to\infty}d_{s_n}(\alpha)=\lim_{n\to\infty}\mu(\{x:s_n(x)>\alpha\})= \mu(\{x:\left|f(x)\right|>\alpha\})=d_f(\alpha).
+\]
+于是对$\forall \alpha\geqslant 0$，有
+\[
+\lim_{n\to\infty}\varphi'(\alpha)d_{s_n}(\alpha)=\varphi'(\alpha)d_f(\alpha).
+\]
+由$\mathbf{Step}\mathbf{1}$知对每个 $n$，有
+\begin{align}
+\int_X \varphi(s_n)\,\mathrm{d}\mu
+=
+\int_0^\infty \varphi'(\alpha)d_{s_n}(\alpha)\,\mathrm{d}\alpha.\label{eq::::HIUUHUAHU424}
+\end{align}
+令 $n\to\infty$，再结合\eqref{eq::::HIUUHUAHU424-1}\eqref{eq::::HIUUHUAHU424}式可得
+\[
+\int_X \varphi(f)\,\mathrm{d}\mu
+=
+\int_0^\infty \varphi'(\alpha)d_f(\alpha)\,\mathrm{d}\alpha.
+\]
+
+\item 取 $\varphi(t)=t$（$t\geqslant 0$）。则 $\varphi$ 是连续可微的递增函数，$\varphi(0)=0$，且 $\varphi'(t)=1$。代入\eqref{eq::::UHFUHEWUHUIOJIWJIJJIJIIJII}式中得
+\[
+\int_X f(x)\,\mathrm{d}\mu(x)
+=
+\int_0^\infty 1\cdot d_f(\alpha)\,\mathrm{d}\alpha
+=
+\int_0^\infty d_f(\alpha)\,\mathrm{d}\alpha=\int_0^{\infty}{\mu \left( \left\{ x:t<f\left( x \right) \right\} \right) \,\mathrm{d}t}.
+\]
+
+\item {\color{blue}证法一:}取 $\varphi(t)=t^p$（$p>0$），则 $\varphi'(t)=p t^{p-1}$，代入\eqref{eq::::UHFUHEWUHUIOJIWJIJJIJIIJII}式中得
+\[
+\|f\|_{L^p}^p = \int_X |f|^p\,\mathrm{d}\mu
+= p\int_0^\infty \alpha^{p-1} d_f(\alpha)\,\mathrm{d}\alpha.
+\]
+
+{\color{blue}证法二:}令 $E_n=\{x: |f(x)|>\frac{1}{n}\}(n\in \mathbb{N})$,则由\hyperref[Real Analysis-theorem:实分析-Markov不等式]{Markov不等式}和$f\in L^p(X,\mu)$可得
+\begin{align*}
+\mu \left( E_n \right) \leqslant n^p\int_{E_n}{\left| f\left( x \right) \right|^p\mathrm{d}\mu \left( x \right)}\leqslant n^p\int_X{\left| f\left( x \right) \right|^p\mathrm{d}\mu \left( x \right)}=n^p\left\| f \right\| _{L^p}^{p}<\infty .
+\end{align*}
+因此每个$E_n$都是有限测度的,而$f$的支集为
+\begin{align*}
+E_0\triangleq \{x:|f(x)|>0\}=\bigcup_{n=1}^{\infty}E_n,
+\end{align*}
+故$E_0$是$\sigma$--有限的,进而$E_0\times(0,\infty)$也是$\sigma$--有限的.
+定义非负可测函数
+\[
+F(x,\alpha)=p\alpha^{p-1}\chi_{\{x:|f(x)|>\alpha\}}(x),
+\]
+其支集含于 $\sigma$--有限空间 $E_0\times(0,\infty)$。在该空间上应用\hyperref[Real Analysis-theorem:Tonelli定理]{Tonelli定理}得
+\begin{align*}
+p\int_0^{\infty}{\alpha ^{p-1}d_f(\alpha )\,\mathrm{d}\alpha}&=\int_0^{\infty}{p\alpha ^{p-1}\mu \left( \left\{ x:\left| f\left( x \right) \right|>\alpha \right\} \right) \,\mathrm{d}\alpha}=\int_0^{\infty}{\int_X{p\alpha ^{p-1}\,\chi _{\left\{ x:\left| f\left( x \right) \right|>\alpha \right\}}\left( x \right) \mathrm{d}\mu \left( x \right)}\,\mathrm{d}\alpha}\\
+&=\int_0^{\infty}{\int_X{F\left( x,\alpha \right) \,\mathrm{d}\mu \left( x \right) \,\mathrm{d}\alpha}}=\int_0^{\infty}{\int_{E_0}{F\left( x,\alpha \right) \,\mathrm{d}\mu \left( x \right) \,\mathrm{d}\alpha}}\\
+&\xlongequal{\text{\hyperref[Real Analysis-theorem:Tonelli定理]{Tonelli定理}}}\int_{E_0}{\int_0^{\infty}{F\left( x,\alpha \right) \,\mathrm{d}\alpha \,\mathrm{d}\mu \left( x \right)}}=\int_{E_0}{\int_0^{\infty}{p\alpha ^{p-1}\,\chi _{\left\{ x:\left| f\left( x \right) \right|>\alpha \right\}}\left( x \right) \,\mathrm{d}\alpha \,\mathrm{d}\mu \left( x \right)}}\\
+&=\int_{E_0}{\int_0^{\left| f\left( x \right) \right|}{p\alpha ^{p-1}\,\mathrm{d}\alpha \,\mathrm{d}\mu \left( x \right)}}=\int_{E_0}{\left| f\left( x \right) \right|^p\,\mathrm{d}\mu \left( x \right)}\\
+&=\int_X{\left| f\left( x \right) \right|^p\,\mathrm{d}\mu \left( x \right)}=\left\| f \right\| _{L^p}^{p}.
+\end{align*}
+\end{enumerate}
+\end{proof}
+
+\begin{definition}
+设$(X,\mu)$是测度空间,$0<p<\infty$，$L^{p}(X,\mu)$的\textbf{弱空间}$L^{p,\infty}(X,\mu)$是所有满足下述条件的$\mu$-可测函数$f$构成的集合：
+\begin{align}
+\|f\|_{L^{p,\infty}} = \inf\left\{C>0: d_f(\alpha)\leqslant \frac{C^p}{\alpha^p},\ \forall \alpha>0\right\}
+= \sup\left\{\gamma d_f(\gamma)^{\frac{1}{p}}: \gamma>0\right\}<\infty.
+\label{eq:weak-lp-def-2}
+\end{align}
+$L^{p,\infty}(X,\mu)$中几乎处处$\mu$-a.e.相等的函数视为同一元素，定义$L^{\infty,\infty}(X,\mu)\triangleq L^\infty(X,\mu)$.
+
+$L^{p,\infty}(X,\mu)$也称为\textbf{$X$上的弱$L^p$空间},$L^{p,\infty}(X,\mu)$上的范数称为\textbf{弱}$L^p$\textbf{范数},也可简称为\textbf{弱范数}.
+\end{definition}
+
+\begin{proposition}
+设$(X,\mu)$是测度空间,$0<p<\infty$，$L^{p}(X,\mu)$的弱空间$L^{p,\infty}(X,\mu)$上的弱范数具备如下性质：
+\begin{enumerate}[(1)]
+\item 齐次性：对任意非零复常数$k$，$\|kf\|_{L^{p,\infty}}=|k|\|f\|_{L^{p,\infty}}$；
+\item 拟三角不等式：$\|f+g\|_{L^{p,\infty}}\leqslant c_p\left(\|f\|_{L^{p,\infty}}+\|g\|_{L^{p,\infty}}\right)$，其中$c_p=\max\left(2,2^{\frac{1}{p}}\right)$；
+\item 分离性：若$\|f\|_{L^{p,\infty}}=0$，则$f=0$ $\mu$-a.e.。
+\end{enumerate}
+因此$L^{p,\infty}(X,\mu)$是$0<p<\infty$上的准范数线性空间。
+\end{proposition}
+\begin{proof}\begin{enumerate}[(1)]
+\item 可由分布函数的数乘性质$d_{kf}(\alpha)=d_f\left(\frac{\alpha}{|k|}\right)$直接推导；
+\item 将前述分布函数加法不等式中$\alpha,\beta$均取为$\frac{\alpha}{2}$即可推得结论；
+\item 可由弱范数的定义直接验证。
+\end{enumerate}
+\end{proof}
+
+\begin{proposition}
+对任意$0<p<\infty$与任意$f\in L^p(X,\mu)$，有$\|f\|_{L^{p,\infty}}\leqslant\|f\|_{L^p}$，因此$L^p(X,\mu)\subseteq L^{p,\infty}(X,\mu)$，且该包含关系严格成立。
+\end{proposition}
+\begin{proof}
+该结论是切比雪夫不等式的直接推论，切比雪夫不等式给出：
+\begin{align}
+\alpha^p d_f(\alpha)\leqslant \int_{\{|f(x)|>\alpha\}}|f(x)|^p\mathrm{d}\mu(x).
+\label{eq:chebyshev-ineq}
+\end{align}
+\eqref{eq:chebyshev-ineq}右侧积分不超过$\|f\|_{L^p}^p$，结合弱范数等价定义\eqref{eq:weak-lp-def-2}就能得到$\|f\|_{L^{p,\infty}}\leqslant\|f\|_{L^p}$。
+
+取$\mathbb{R}^n$配备勒贝格测度，令$h(x)=|x|^{-\frac{n}{p}}$，可验证$h\notin L^p(\mathbb{R}^n)$但$h\in L^{p,\infty}(\mathbb{R}^n)$，且$\|h\|_{L^{p,\infty}(\mathbb{R}^n)}=v_n$（$v_n$为$\mathbb{R}^n$单位球的测度），由此证明包含关系严格成立。
+
+弱$L^p$空间在拟范数$\|\cdot\|_{L^{p,\infty}}$下的完备性可由后续定理证明。
+\end{proof}
+
+
+
+
+
+
+
+\end{document}

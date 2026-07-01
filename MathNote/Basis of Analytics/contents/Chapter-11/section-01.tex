@@ -5,7 +5,7 @@
 % 例如:
 % \begin{figure}[H]
 % \centering
-% \includegraphics[scale=0.3]{图.png}
+% \includegraphics[width=0.8\textwidth]{图.png}
 % \caption{}
 % \label{figure:图}
 % \end{figure}
@@ -107,7 +107,6 @@ P : a = x_0 < x_1 < \cdots < x_n = b,\quad \Delta x_i=x_i-x_{i-1}.
 \end{enumerate}
 \end{proposition}
 \begin{proof}
-
 由\refthe{Real Analysis-theorem:定理4.24}知$f\in R[a,b]$的充要条件是$f$在$[a,b]$上几乎处处连续.故结论显然都成立.
 \end{proof}
 
@@ -224,8 +223,7 @@ n+1, & x\in\left[n,\; n+\frac{1}{n(n+1)^2}\right],\quad n=1,2,\dots\\
 则 \(\int_1^{+\infty}f(x)\,\mathrm{d}x=1\) 收敛，但 \(f\) 无界且 \(\lim_{x\to+\infty}f(x)\neq0\)。
 \end{enumerate}
 \end{proposition}
-\begin{proof}
-\begin{enumerate}
+\begin{proof}\begin{enumerate}
 \item 
 
 \item 
@@ -279,8 +277,78 @@ f'(x) = 2\cos(x^2) - \frac{\sin(x^2)}{x^2},
 \end{remark}
 
 \begin{theorem}[Leibniz公式]\label{theorem:Leibniz公式}
-$(f(x)g(x))^{(n)} = \sum_{k = 0}^{n} C_{n}^{k}f^{(n - k)}(x)g^{(k)}(x).$
+设$f_1(x), f_2(x), \cdots, f_m(x)$均在$x$处具有$n$阶导数, 则它们的乘积的$n$阶导数为:
+\begin{align*}
+\left(f_1 f_2 \cdots f_m\right)^{(n)} = \sum\limits_{\substack{k_1+k_2+\cdots+k_m=n \\ k_i\geqslant 0}} \frac{n!}{k_1! k_2! \cdots k_m!} f_1^{(k_1)}(x) f_2^{(k_2)}(x) \cdots f_m^{(k_m)}(x).
+\end{align*}
+其中$f_i^{(0)}(x)$表示函数本身$f_i(x)$.
+特别地,
+$$(f_1(x)f_2(x))^{(n)} = \sum_{k = 0}^{n} C_{n}^{k}f_1^{(n - k)}(x)f_2^{(k)}(x).$$
 \end{theorem}
+
+\begin{example}
+设$f$在点$a$存在$f^{(n)}(a)$, 且$f(a)=0$. 令$F(x)=[f(x)]^n$.
+\begin{enumerate}[(1)]
+\item 证明: 对于$k=0,1,\cdots,n-1$, $F^{(k)}(a)=0$. 
+
+\item 举例说明: 导数$f^{(n)}(a)$存在的条件不能去掉.
+\end{enumerate}
+\end{example}
+\begin{proof}\begin{enumerate}[(1)]
+\item {\color{blue}证法一:} 对$\forall k\in \{0,1,\cdots,n-1\}$, 由\hyperref[theorem:Leibniz公式]{Leibniz公式}知
+\begin{align}
+F^{(k)}(a) = \sum\limits_{\substack{m_1+\cdots+m_n=k \\ m_i\geqslant 0}} \frac{k!}{m_1!\cdots m_n!} f^{(m_1)}(a) \cdots f^{(m_n)}(a).
+\label{eq:leibniz_prod_312}
+\end{align}
+因为$k<n$, 所以和式\eqref{eq:leibniz_prod_312}中的任一项中的$m_1,\cdots,m_n$不可能都大于$1$, 否则$m_1+\cdots+m_n\ne k$. 所以必存在$m_i=0$.
+
+于是\eqref{eq:leibniz_prod_312}式中的每一项乘积都含有$f^{(0)}(a)=f(a)=0$, 故再由$k$的任意性知
+\begin{align*}
+F^{(k)}(a) = 0,\quad k=0,1,\cdots,n-1.
+\end{align*}
+
+{\color{blue}证法二:} 由\hyperref[theorem:带各种余项的Taylor公式]{带Peano余项的Taylor公式}, 将$f$在$a$处展开得
+\begin{align*}
+f(x) = f'(a) (x-a) + o(x-a),\quad x\to a.
+\end{align*}
+从而存在$M,\delta>0$, 使得当$|x-a|<\delta$时, 有
+\begin{align}
+|f(x)| \leqslant M|x-a| \implies |F(x)| = |f(x)|^n \leqslant M^n |x-a|^n.
+\label{eq:f_bound_310}
+\end{align}
+再由\hyperref[theorem:带各种余项的Taylor公式]{带Peano余项的Taylor公式}, 将$F$在$a$处展开到$n-1$阶得
+\begin{align}
+F(x) = \sum\limits_{i=0}^{n-1} \frac{F^{(i)}(a)}{i!} (x-a)^i + o\left((x-a)^{n-1}\right),\quad x\to a.
+\label{eq:taylor_F_311}
+\end{align}
+假设$F'(a),\cdots,F^{(n-1)}(a)$中至少有一个不为$0$, 取
+$k_0 \triangleq \min\left\{ k\in \{0,1,\cdots,n-1\} \mid F^{(k)}(a) \ne 0 \right\}$,
+则$F^{(k_0)}(a) \ne 0$. 再结合\eqref{eq:taylor_F_311}式知
+\begin{align*}
+F(x) = \sum\limits_{i=k_0}^{n-1} \frac{F^{(i)}(a)}{i!} (x-a)^i + o\left((x-a)^{n-1}\right) = \frac{F^{(k_0)}(a)}{k_0!} (x-a)^{k_0} + o\left((x-a)^{k_0}\right),\quad x\to a.
+\end{align*}
+于是
+\begin{align*}
+\lim\limits_{x\to a} \frac{F(x)}{(x-a)^{k_0}} = \frac{F^{(k_0)}(a)}{k_0!} \ne 0.
+\end{align*}
+但由\eqref{eq:f_bound_310}式知
+\begin{align*}
+\lim\limits_{x\to a} \frac{F(x)}{(x-a)^{k_0}} \leqslant \lim\limits_{x\to a} M^n |x-a|^{n-k_0} = 0,
+\end{align*}
+矛盾! 故结论成立.
+
+\item 取
+\begin{align*}
+n\geqslant 2,\quad a=0,\quad f(x)=|x|^{\frac{1}{n}},
+\end{align*}
+则$f(0)=0$, 但$f'(0)$不存在, 故$f^{(n)}(0)$也不存在. 而
+\begin{align*}
+F(x)=f^n(x)=|x|
+\end{align*}
+在$x=0$处不可导, 所以$F'(0)$不存在, 此时原结论不成立.
+\end{enumerate}
+\end{proof}
+
 
 \begin{example}
 设\(f(x)\)定义在\([0,1]\)中且\(\lim_{x\rightarrow0^{+}}f\left(x\left(\frac{1}{x}-\left[\frac{1}{x}\right]\right)\right)=0\)，证明：\(\lim_{x\rightarrow0^{+}}f(x)=0\)。
@@ -289,7 +357,6 @@ $(f(x)g(x))^{(n)} = \sum_{k = 0}^{n} C_{n}^{k}f^{(n - k)}(x)g^{(k)}(x).$
 将极限定义中的$\varepsilon,\delta$适当地替换成$\frac{1}{n},\frac{1}{N}$往往更方便我们分析问题和书写过程.
 \end{note}
 \begin{proof}
-
 用\(\{x\}\)表示\(x\)的小数部分，则\(x\left(\frac{1}{x}-\left[\frac{1}{x}\right]\right)=x\left\{\frac{1}{x}\right\}\)。
 
 对任意\(\varepsilon>0\)，依据极限定义，存在\(\delta>0\)使得任意\(x\in(0,\delta)\)都有\(\left|f\left(x\left\{\frac{1}{x}\right\}\right)\right|<\varepsilon\)。
@@ -315,7 +382,6 @@ $$
 $$
 \end{example}
 \begin{proof}
-
 不失一般性, 假设 $f(x_0)=x_0=0$, 否则用 $f(x+x_0)-f(x_0)$ 代替 $f(x)$, $\beta_n-x_0$ 代替 $\beta_n$, $\alpha_n-x_0$ 代替 $\alpha_n$ 即可.
 
 现在
@@ -350,8 +416,7 @@ $$
 \item $f(x)$为常值函数.
 \end{enumerate}
 \end{example}
-\begin{proof}
-\begin{enumerate}[(1)]
+\begin{proof}\begin{enumerate}[(1)]
 \item 任取$x\in \mathbb{R}$。由题设知对$\forall \varepsilon>0,\exists \delta>0$，使得对$\forall h\in (0,\delta)$，有
 \begin{align*}
 \left| f\left(x+2h\right)-f\left(x+h\right) \right|<\varepsilon h.
