@@ -5,7 +5,7 @@
 % 例如:
 % \begin{figure}[H]
 % \centering
-% \includegraphics[width=0.8\textwidth]{图.png}
+% \includegraphics[width=0.3\textwidth]{图.png}
 % \caption{}
 % \label{figure:图}
 % \end{figure}
@@ -14,6 +14,8 @@
 \begin{document}
 
 \section{重积分计算}
+
+\subsection{常规计算}
 
 \begin{theorem}[二重积分的Newton-Leibniz公式]
 设 $D = [a,b] \times [c,d] \subset \mathbb{R}^2$ 是闭矩形区域，函数 $f(x,y)$ 在 $D$ 上连续。若存在二元函数 $F(x,y)$ 在 $D$ 上具有连续混合偏导数 $\frac{\partial^2 F}{\partial x \partial y}$，且满足
@@ -68,7 +70,6 @@ x^2 + y^2 + z^2 = 1 \\
 计算$\int_C y(y - x)\mathrm{d}s$.
 \end{example}
 \begin{solution}
-
 记$K\triangleq \sqrt{\alpha^2+\beta^2}$，$M\triangleq \sqrt{\alpha^2+\beta^2+\gamma^2}$，考虑如下正交变换
 \begin{align*}
 \begin{pmatrix}
@@ -144,7 +145,6 @@ I(t)=\iint_{\Sigma_t} P\mathrm{d}y\mathrm{d}z+Q\mathrm{d}z\mathrm{d}x+R\mathrm{d
 \end{align*}
 \end{example}
 \begin{solution}
-
 由\hyperref[theorem:Gauss公式--数分]{Gauss公式}可得
 \begin{align*}
 I(t)=\iiint_V \left(\frac{\partial P}{\partial x}+\frac{\partial Q}{\partial y}+\frac{\partial R}{\partial z}\right)\mathrm{d}x\mathrm{d}y\mathrm{d}z=\iiint_V f'\big((x^2+y^2)z\big)\big(2xz+2yz+x^2+y^2\big)\mathrm{d}x\mathrm{d}y\mathrm{d}z,
@@ -162,79 +162,125 @@ I(t)&=\iint_{x^2+y^2\leqslant t^2}\mathrm{d}x\mathrm{d}y\int_0^1 f'\big((x^2+y^2
 \end{align*}
 \end{solution}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+\subsection{利用调和函数性质计算}
+
+\begin{definition}
+设$D$为$\mathbb{R}^2$中的开区域，函数$u\in C^2(D)$。若
+\begin{align*}
+\Delta u \triangleq \frac{\partial^2 u}{\partial x^2}+\frac{\partial^2 u}{\partial y^2}=0, \quad \forall (x,y)\in D,
+\end{align*}
+则称$u$为$D$上的\textbf{调和函数},也称$u$在区域$D$上\textbf{调和}.
+\end{definition}
+
+\begin{theorem}[调和函数的平均值定理]\label{theorem:数分-调和函数的平均值定理}
+设$u$在开区域$D$内调和，$(x_0,y_0)\in D$，$r>0$使得闭圆盘$\overline{B_r(x_0,y_0)}\subset D$。则
+\begin{enumerate}[(1)]
+\item 圆周平均值公式：
+\begin{align*}
+u(x_0,y_0)=\frac{1}{2\pi}\int_{0}^{2\pi} u(x_0+r\cos\theta, y_0+r\sin\theta)\,\mathrm{d}\theta. 
+\end{align*}
+\item 圆盘平均值公式：
+\begin{align*}
+u(x_0,y_0)=\frac{1}{\pi r^2}\iint_{B_r(x_0,y_0)} u(x,y)\,\mathrm{d}x\mathrm{d}y. 
+\end{align*}
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 对$0<\rho<r$，记$B_\rho$为以$(x_0,y_0)$为圆心、$\rho$为半径的圆盘，其边界为$\partial B_\rho$。由\hyperref[theorem:Green第一恒等式]{Green第一恒等式}有
+\begin{align*}
+0=\iint_{B_\rho} \Delta u\,\mathrm{d}x\mathrm{d}y
+=\oint_{\partial B_\rho} \frac{\partial u}{\partial n}\,\mathrm{d}s,
+\end{align*}
+其中$\frac{\partial u}{\partial n}$为外法向导数。在极坐标$(x,y)=(x_0+\rho\cos\theta, y_0+\rho\sin\theta)$下，$\frac{\partial u}{\partial n}=u_\rho$，$\mathrm{d}s=\rho\,\mathrm{d}\theta$，故由\hyperref[theorem:含参反常积分的可微性]{含参反常积分的可微性}知
+\begin{align*}
+0=\int_{0}^{2\pi} u_\rho(\rho,\theta)\,\rho\,\mathrm{d}\theta
+=\rho \frac{\mathrm{d}}{\mathrm{d}\rho}\left(\int_{0}^{2\pi} u(\rho,\theta)\,\mathrm{d}\theta\right).
+\end{align*}
+因此
+\begin{align*}
+\int_{0}^{2\pi} u(\rho,\theta)\,\mathrm{d}\theta = C \in \mathbb{R},
+\end{align*}
+令$\rho\to 0^+$，由连续性得
+\begin{align*}
+C=2\pi u(x_0,y_0),
+\end{align*}
+从而圆周平均值公式成立。
+
+\item 将圆周平均值公式两边乘以$\rho$，并对$\rho$从$0$到$r$积分：
+\begin{align*}
+u(x_0,y_0)\int_{0}^{r} \rho\,\mathrm{d}\rho
+=\frac{1}{2\pi}\int_{0}^{r}\int_{0}^{2\pi} u(x_0+\rho\cos\theta, y_0+\rho\sin\theta)\rho\,\mathrm{d}\theta\mathrm{d}\rho,
+\end{align*}
+再取$x=x_0+\rho \cos\theta,y=y_0+\rho \sin \theta$换元得
+\begin{align*}
+u(x_0,y_0)\frac{r^2}{2}
+=\frac{1}{2\pi}\iint_{B_r} u\,\mathrm{d}x\mathrm{d}y,
+\end{align*}
+整理得
+\begin{align*}
+u(x_0,y_0)=\frac{1}{\pi r^2}\iint_{B_r} u\,\mathrm{d}x\mathrm{d}y.
+\end{align*}
+从而圆盘平均值公式成立。
+\end{enumerate}
+\end{proof}
+
+
+\begin{example}
+定义在 $D \triangleq \{(x,y): x^2+y^2 \leqslant R^2\}$ 的函数 $f$ 二阶连续可微, 满足 $f(0,0)=0$, $\Delta f = x + x^2 + y^2$, 计算积分
+\begin{align}
+I = \iint_D f(x,y)\mathrm{d}x\mathrm{d}y.
+\label{eq:double_int_f_disk_20260704}
+\end{align}
+\end{example}
+\begin{note}
+可以利用PDE中关于求解Possion方程的方法反解出满足$\Delta P=\Delta f=x^2+y^2+x$的函数$P$.
+\end{note}
+\begin{solution}
+设$r^2=x^2+y^2$，令
+\begin{align*}
+P(x,y)=\frac{r^4}{16}+\frac{xr^2}{8}=\frac{\left( x^2+y^2 \right) ^2}{16}+\frac{x\left( x^2+y^2 \right)}{8}.
+\end{align*}
+直接计算得
+\begin{align*}
+\Delta P = x^2+y^2+x=\Delta f.
+\end{align*}
+故$h\triangleq f-P$在$D$内调和。
+
+又因$f(0,0)=0$且$P(0,0)=0$，故$h(0,0)=0$。由\hyperref[theorem:数分-调和函数的平均值定理]{调和函数的平均值定理}，对半径为$R$的圆盘$D$，有
+\begin{align*}
+h(0,0)=\frac{1}{\pi R^2}\iint_D h(x,y)\,\mathrm{d}x\mathrm{d}y.
+\end{align*}
+因为$h(0,0)=0$，所以
+\begin{align*}
+\iint_D h\,\mathrm{d}x\mathrm{d}y=0.
+\end{align*}
+于是
+\begin{align*}
+I=\iint_D f\,\mathrm{d}x\mathrm{d}y
+=\iint_D (P+h)\,\mathrm{d}x\mathrm{d}y
+=\iint_D P\,\mathrm{d}x\mathrm{d}y.
+\end{align*}
+而
+\begin{align*}
+\iint_D P\,\mathrm{d}x\mathrm{d}y
+=\frac{1}{16}\iint_D r^4\,\mathrm{d}x\mathrm{d}y
++\frac{1}{8}\iint_D x r^2\,\mathrm{d}x\mathrm{d}y.
+\end{align*}
+由于$D$关于$y$轴对称，且$x r^2$关于$x$为奇函数，故
+\begin{align*}
+\iint_D x r^2\,\mathrm{d}x\mathrm{d}y=0.
+\end{align*}
+因此
+\begin{align*}
+I=\frac{1}{16}\iint_D r^4\,\mathrm{d}x\mathrm{d}y.
+\end{align*}
+用极坐标变换得
+\begin{align*}
+I=\frac{1}{16}\int_{0}^{2\pi}\int_{0}^{R} \rho^4\cdot \rho\,\mathrm{d}\rho\mathrm{d}\theta 
+=\frac{1}{16}\cdot 2\pi\cdot \frac{R^6}{6} =\frac{\pi R^6}{48}.
+\end{align*}
+\end{solution}
 
 
 

@@ -5,7 +5,7 @@
 % 例如:
 % \begin{figure}[H]
 % \centering
-% \includegraphics[width=0.8\textwidth]{图.png}
+% \includegraphics[width=0.3\textwidth]{图.png}
 % \caption{}
 % \label{figure:图}
 % \end{figure}
@@ -14,6 +14,78 @@
 \begin{document}
 
 \section{重积分不等式证明}
+
+\begin{example}
+\begin{enumerate}[(1)]
+\item 定义在 $[0,1]\times[0,1]$ 的函数 $f(x,y)$ 连续可微, 且在边界上恒为 $0$, 求证:
+\begin{align*}
+\left| \iint_{[0,1]\times[0,1]} f(x,y)\mathrm{d}x\mathrm{d}y \right| \leqslant \frac{1}{6} \max\limits_{[0,1]\times[0,1]} \sqrt{\left( \frac{\partial f}{\partial x} \right)^2 + \left( \frac{\partial f}{\partial y} \right)^2}.
+\end{align*}
+
+\item 设$D=\{(x,y):x^2+y^2\leqslant R^2\}$，函数$f$在$D$上连续可微，且在边界$\partial D$上恒为$0$，证明：
+\begin{align*}
+\iint_D f(x,y)\,\mathrm{d}x\mathrm{d}y
+\leqslant \frac{\pi R^3}{3}\max_{(x,y)\in D}\sqrt{f_x^2+f_y^2}.
+\end{align*}
+\end{enumerate}
+\end{example}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 用直线$y=x$与$y=1-x$将正方形$[0,1]^2$分成四个全等的三角形区域，记为$D_1,D_2,D_3,D_4$，其中
+\begin{align*}
+D_1&=\{(x,y):\frac12\leqslant y\leqslant 1,\; 1-y\leqslant x\leqslant y\}, \\
+D_2&=\{(x,y):0\leqslant y\leqslant \frac12,\; y\leqslant x\leqslant 1-y\}, \\
+D_3&=\{(x,y):0\leqslant x\leqslant \frac12,\; x\leqslant y\leqslant 1-x\}, \\
+D_4&=\{(x,y):\frac12\leqslant x\leqslant 1,\; 1-x\leqslant y\leqslant x\}.
+\end{align*}
+令$M\triangleq \max_{[0,1]^2}\sqrt{f_x^2+f_y^2}.$
+对$\forall (x,y)\in D_1$,固定$x$,因为函数$y\mapsto f(x,y)$在$[0,1]$上可微且$f(x,1)=0$，所以由Lagrange中值定理，存在$\eta\in(y,1)$使得
+\begin{align*}
+|f(x,y)|=|f(x,y)-f(x,1)|=|(y-1)f_y(x,\eta)|\leqslant (1-y)|f_y(x,\eta)|\leqslant (1-y)M.
+\end{align*}
+因此
+\begin{align*}
+\iint_{D_1}|f(x,y)|\,\mathrm{d}x\mathrm{d}y
+&\leqslant M\iint_{D_1}(1-y)\,\mathrm{d}x\mathrm{d}y =M\int_{\frac{1}{2}}^{1}(1-y)\left(\int_{1-y}^{y}\mathrm{d}x\right)\mathrm{d}y \\
+&=M\int_{\frac{1}{2}}^{1}(1-y)(2y-1)\,\mathrm{d}y =M\left[-\frac{2}{3}y^3+\frac{3}{2}y^2-y\right]_{\frac{1}{2}}^{1} =\frac{M}{24}.
+\end{align*}
+同理，对其余三个三角形区域$D_2,D_3,D_4$，分别利用$f(x,0)=0$、$f(0,y)=0$、$f(1,y)=0$作类似的估计可得
+\begin{align*}
+\iint_{D_k}|f(x,y)|\,\mathrm{d}x\mathrm{d}y\leqslant \frac{M}{24},\qquad k=2,3,4.
+\end{align*}
+于是
+\begin{align*}
+\iint_{[0,1]^2} f(x,y)\,\mathrm{d}x\mathrm{d}y
+\leqslant \iint_{[0,1]^2}|f(x,y)|\,\mathrm{d}x\mathrm{d}y =\sum_{k=1}^{4}\iint_{D_k}|f(x,y)|\,\mathrm{d}x\mathrm{d}y 
+\leqslant 4\cdot\frac{M}{24} =\frac{M}{6}.
+\end{align*}
+
+\item 令
+\begin{align*}
+M\triangleq \max_{(x,y)\in D}\sqrt{f_x^2+f_y^2}.
+\end{align*}
+做极坐标变换$x=r\cos\theta,\; y=r\sin\theta$，其中$0\leqslant r\leqslant R,\; 0\leqslant \theta\leqslant 2\pi$。边界条件变为$f(R,\theta)=0$。
+
+对$\forall (r,\theta)\in [0,R]\times [0,2\pi]$,固定$\theta$,因为函数$r\mapsto f(r,\theta)$在$[0,R]$上连续可微且$f(R,\theta)=0$,所以由Lagrange中值定理，存在$\xi\in(r,R)$,使得
+\begin{align*}
+|f(r,\theta)|=|f(r,\theta)-f(R,\theta)|=|(r-R)f_r(\xi,\theta)|\leqslant (R-r)|f_r(\xi,\theta)|.
+\end{align*}
+由于
+\begin{align*}
+|f_r|=|f_x\cos\theta+f_y\sin\theta|\leqslant \sqrt{f_x^2+f_y^2}\leqslant M,
+\end{align*}
+故
+\begin{align*}
+|f(r,\theta)|\leqslant M(R-r).
+\end{align*}
+于是
+\begin{align*}
+\iint_D |f(x,y)|\,\mathrm{d}x\mathrm{d}y
+&=\int_0^{2\pi}\int_0^R |f(r,\theta)|\,r\,\mathrm{d}r\mathrm{d}\theta \leqslant M\int_0^{2\pi}\int_0^R (R-r)r\,\mathrm{d}r\mathrm{d}\theta
+=M\cdot 2\pi\cdot \frac{R^3}{6} =\frac{\pi R^3}{3}M.
+\end{align*}
+\end{enumerate}
+\end{proof}
 
 \begin{example}
 \begin{enumerate}[(1)]
