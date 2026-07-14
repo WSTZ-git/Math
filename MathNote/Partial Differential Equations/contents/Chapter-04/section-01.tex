@@ -16,5 +16,908 @@
 
 
 
+\section{初值问题}
+
+在这一节中我们将考虑实际问题的理想模型：一根无端点的无限长的弦，一张无限大无边界的薄膜，一个充满整个空间的弹性体。由于这些区域没有边界，因此我们只需要对波动方程提初始条件，而不需要提边值条件，从而可以极大地简化波动方程定解问题的求解。这样的定解问题通常称为 \textbf{Cauchy 初值问题}。通过波动方程初值问题的解的表达式，我们将发现波动方程的最基本的特征——扰动的传播速度有限。
+
+\subsection{问题的简化}
+
+我们考虑如下 Cauchy 初值问题
+\begin{align}
+\begin{cases}
+\mathcal{L}u=u_{tt}-a^2\Delta u=f(x,t), & (x,t)\in\mathbb{R}^n\times\mathbb{R}_+, \\
+u(x,0)=\varphi(x), & x\in\mathbb{R}^n, \\
+u_t(x,0)=\psi(x), & x\in\mathbb{R}^n.
+\end{cases} \label{eq:wave-cauchy}
+\end{align}
+
+初值问题 \eqref{eq:wave-cauchy} 是线性的，我们可以将它一分为三，以简化问题的求解。它们分别是
+\begin{align}
+\begin{cases}
+\mathcal{L}u_1=u_{1tt}-a^2\Delta u_1=0, & (x,t)\in\mathbb{R}^n\times\mathbb{R}_+, \\
+u_1(x,0)=\varphi(x), & x\in\mathbb{R}^n, \\
+u_{1t}(x,0)=0, & x\in\mathbb{R}^n,
+\end{cases} \label{eq:wave-sub1}
+\end{align}
+\begin{align}
+\begin{cases}
+\mathcal{L}u_2=u_{2tt}-a^2\Delta u_2=0, & (x,t)\in\mathbb{R}^n\times\mathbb{R}_+, \\
+u_2(x,0)=0, & x\in\mathbb{R}^n, \\
+u_{2t}(x,0)=\psi(x), & x\in\mathbb{R}^n,
+\end{cases} \label{eq:wave-sub2}
+\end{align}
+\begin{align}
+\begin{cases}
+\mathcal{L}u_3=u_{3tt}-a^2\Delta u_3=f(x,t), & (x,t)\in\mathbb{R}^n\times\mathbb{R}_+, \\
+u_3(x,0)=0, & x\in\mathbb{R}^n, \\
+u_{3t}(x,0)=0, & x\in\mathbb{R}^n.
+\end{cases} \label{eq:wave-sub3}
+\end{align}
+由线性叠加原理知道
+\begin{align}
+u=u_1+u_2+u_3 \label{eq:wave-super}
+\end{align}
+是初值问题 \eqref{eq:wave-cauchy} 的解。实际上，由后面的唯一性定理知道初值问题 \eqref{eq:wave-cauchy} 的解必定可表示为上述形式。
+
+为求解初值问题 \eqref{eq:wave-cauchy}，我们指出求解初值问题 \eqref{eq:wave-sub2} 是基本的。事实上，其他两个初值问题 \eqref{eq:wave-sub1} 和 \eqref{eq:wave-sub3} 的解可以通过初值问题 \eqref{eq:wave-sub2} 的解表示出来。
+
+\begin{theorem}
+设 $u_2=M_\psi(x,t)$ 是初值问题 \eqref{eq:wave-sub2} 的解（这里 $M_\psi$ 表示以 $\psi$ 为初速度的初值问题 \eqref{eq:wave-sub2} 的解），则初值问题 \eqref{eq:wave-sub1}，\eqref{eq:wave-sub3} 的解 $u_1,u_3$ 可分别表为
+\begin{align}
+u_1=\frac{\partial}{\partial t}M_\varphi(x,t), \label{eq:u1-from-M}
+\end{align}
+\begin{align}
+u_3=\int_0^t M_{f_\tau}(x,t-\tau)\,\mathrm{d}\tau, \label{eq:u3-from-M}
+\end{align}
+这里 $f_\tau=f(x,\tau)$，并且假定 $M_\varphi(x,t)$ 和 $M_{f_\tau}(x,t-\tau)$ 分别在区域 $\mathbb{R}^n\times[0,\infty)$ 和 $\mathbb{R}^n\times[\tau,\infty)$ 上对变量 $x,t$ 和 $\tau$ 充分光滑。
+\end{theorem}
+
+\begin{proof}
+我们先证公式 \eqref{eq:u1-from-M}。由于 $M_\varphi$ 满足初值问题
+\begin{align*}
+\begin{cases}
+\mathcal{L}M_\varphi=0, & (x,t)\in\mathbb{R}^n\times\mathbb{R}_+, \\
+M_\varphi(x,0)=0, & x\in\mathbb{R}^n, \\
+\frac{\partial}{\partial t}M_\varphi(x,0)=\varphi(x), & x\in\mathbb{R}^n,
+\end{cases}
+\end{align*}
+因此我们得到
+\begin{align*}
+\mathcal{L}u_1=\mathcal{L}\frac{\partial}{\partial t}M_\varphi=\frac{\partial}{\partial t}\mathcal{L}M_\varphi=0,
+\end{align*}
+从而证明了 $u_1$ 满足定解问题 \eqref{eq:wave-sub1} 的方程。显然
+\begin{align*}
+u_1(x,0)=\frac{\partial}{\partial t}M_\varphi(x,0)=\varphi(x).
+\end{align*}
+又由于 $M_\varphi$ 在区域 $\mathbb{R}^n\times[0,\infty)$ 上对变量 $x,t$ 充分光滑，因而在初始时刻 $t=0$ 也满足方程 $\mathcal{L}M_\varphi=0$，因此
+\begin{align*}
+\frac{\partial}{\partial t}u_1(x,0)=\frac{\partial^2}{\partial t^2}M_\varphi(x,0)=a^2\Delta M_\varphi(x,0)=0.
+\end{align*}
+这样我们证明了 $u_1$ 满足初值问题 \eqref{eq:wave-sub1} 的初始条件。
+
+接着我们证明公式 \eqref{eq:u3-from-M}。由于 $M_{f_\tau}(x,t)$ 满足初值问题
+\begin{align*}
+\begin{cases}
+\mathcal{L}M_{f_\tau}=0, & (x,t)\in\mathbb{R}^n\times\mathbb{R}_+, \\
+M_{f_\tau}(x,0)=0, & x\in\mathbb{R}^n, \\
+\frac{\partial}{\partial t}M_{f_\tau}(x,0)=f(x,\tau), & x\in\mathbb{R}^n,
+\end{cases}
+\end{align*}
+由算子 $\mathcal{L}$ 的平移不变性我们知道 $w=M_{f_\tau}(x,t-\tau)$ 是定解问题
+\begin{align*}
+\begin{cases}
+\mathcal{L}w=0, & (x,t)\in\mathbb{R}^n\times(\tau,+\infty), \\
+w|_{t=\tau}=0, & x\in\mathbb{R}^n, \\
+w_t|_{t=\tau}=f(x,\tau), & x\in\mathbb{R}^n
+\end{cases}
+\end{align*}
+的解。从 $u_3$ 的表达式我们进一步得到
+\begin{align*}
+u_3(x,0)=0
+\end{align*}
+和
+\begin{align*}
+\frac{\partial u_3}{\partial t}=M_{f_\tau}(x,t-\tau)|_{\tau=t}+\int_0^t\frac{\partial}{\partial t}M_{f_\tau}(x,t-\tau)\,\mathrm{d}\tau.
+\end{align*}
+因此
+\begin{align*}
+\frac{\partial}{\partial t}u_3(x,0)=0.
+\end{align*}
+这样我们证明了 $u_3$ 满足初值问题 \eqref{eq:wave-sub3} 的初始条件。又由于
+\begin{align*}
+\frac{\partial^2u_3}{\partial t^2}
+&=\frac{\partial}{\partial t}M_{f_\tau}(x,t-\tau)|_{\tau=t}+\int_0^t\frac{\partial^2}{\partial t^2}M_{f_\tau}(x,t-\tau)\,\mathrm{d}\tau \\
+&=f(x,t)+a^2\int_0^t\Delta M_{f_\tau}(x,t-\tau)\,\mathrm{d}\tau \\
+&=f(x,t)+a^2\Delta u_3,
+\end{align*}
+这样我们证明了 $u_3$ 满足初值问题 \eqref{eq:wave-sub3} 的方程。于是我们就完成了定理的证明。
+\end{proof}
+
+\begin{remark}
+表达式 \eqref{eq:u3-from-M} 可以写成和的极限，即
+\begin{align*}
+u_3(x,t)=\lim_{\lambda\to 0}\sum_{i=0}^{n-1}M_{f_{t_i}}(x,t-t_i)\Delta t_i,
+\end{align*}
+其中 $0=t_0<t_1<\cdots<t_n=t$，$\Delta t_i=t_{i+1}-t_i$，$\lambda=\max_{0\leqslant i\leqslant n-1}\Delta t_i$，$f_{t_i}=f(x,t_i)$。实际上，和式中的每一项表示在时间段 $[t_i,t_{i+1}]$ 内，外力 $f_{t_i}$ 作用于弹性体的冲量 $f_{t_i}\Delta t_i$ 转化为瞬时初速度 $f_{t_i}\Delta t_i$ 而引起的弹性体的位移。将非齐次方程的初值问题 \eqref{eq:wave-sub3} 的解表示为一系列具有初速度的齐次方程的初值问题 \eqref{eq:wave-sub2} 的解的叠加，这种求解过程通常称之为 \textbf{Duhamel 原理}。
+\end{remark}
+
+\subsection{一维初值问题}
+
+我们首先考虑空间维数 $n=1$ 时的波动方程初值问题
+\begin{align}
+\begin{cases}
+\mathcal{L}u=u_{tt}-a^2u_{xx}=f(x,t), & (x,t)\in\mathbb{R}\times\mathbb{R}_+, \\
+u(x,0)=\varphi(x), & x\in\mathbb{R}, \\
+u_t(x,0)=\psi(x), & x\in\mathbb{R}.
+\end{cases} \label{eq:wave-cauchy1d}
+\end{align}
+
+我们将利用特征线法给出其解的表达式。为了求出初值问题 \eqref{eq:wave-cauchy1d} 的解的表达式，由定理 \eqref{eq:u1-from-M} 和 \eqref{eq:u3-from-M} 的结论，我们只需求解下列初值问题
+\begin{align}
+\begin{cases}
+\mathcal{L}u=u_{tt}-a^2u_{xx}=0, & (x,t)\in\mathbb{R}\times\mathbb{R}_+, \\
+u(x,0)=0, & x\in\mathbb{R}, \\
+u_t(x,0)=\psi(x), & x\in\mathbb{R}.
+\end{cases} \label{eq:wave-cauchy1d-psi}
+\end{align}
+
+由于微分算子 $\mathcal{L}$ 可以分解为两个一阶算子的乘积，即
+\begin{align*}
+\mathcal{L}=\left(\frac{\partial}{\partial t}+a\frac{\partial}{\partial x}\right)\left(\frac{\partial}{\partial t}-a\frac{\partial}{\partial x}\right),
+\end{align*}
+因而可以把初值问题 \eqref{eq:wave-cauchy1d-psi} 的方程分解成两个如下的一阶方程：
+\begin{align}
+\frac{\partial u}{\partial t}-a\frac{\partial u}{\partial x}=v, \label{eq:wave-char1}
+\end{align}
+\begin{align}
+\frac{\partial v}{\partial t}+a\frac{\partial v}{\partial x}=0. \label{eq:wave-char2}
+\end{align}
+由初值问题 \eqref{eq:wave-cauchy1d-psi} 的初始条件，我们得到 $u,v$ 在 $t=0$ 时的初始条件
+\begin{align}
+u(x,0)=0 \label{eq:u-0}
+\end{align}
+和
+\begin{align}
+v(x,0)=u_t(x,0)-au_x(x,0)=\psi(x). \label{eq:v-0}
+\end{align}
+于是我们把初值问题 \eqref{eq:wave-cauchy1d-psi} 分解为两个一阶方程的初值问题 \eqref{eq:wave-char1}, \eqref{eq:u-0} 和 \eqref{eq:wave-char2}, \eqref{eq:v-0}。
+
+\begin{definition}
+称常微分方程
+\begin{align*}
+\frac{\mathrm{d}x}{\mathrm{d}t}=-a,\qquad \frac{\mathrm{d}x}{\mathrm{d}t}=a
+\end{align*}
+的解分别为一阶偏微分方程 \eqref{eq:wave-char1}, \eqref{eq:wave-char2} 的特征线。
+\end{definition}
+
+对于方程 \eqref{eq:wave-char2}，它的特征线为
+\begin{align*}
+x=x_1(t)=c+at,
+\end{align*}
+这里 $c$ 为任意常数。对于任意一点 $(x_0,t_0)\in\mathbb{R}\times\mathbb{R}_+$，过 $(x_0,t_0)$ 的特征线为
+\begin{align*}
+x_1(t)=x_0-at_0+at.
+\end{align*}
+在此特征线上，方程 \eqref{eq:wave-char2} 具有形式
+\begin{align*}
+\frac{\mathrm{d}v(x_1(t),t)}{\mathrm{d}t}=0.
+\end{align*}
+因此，函数 $v(x,t)$ 在此特征线上为常数。特别地，由初值条件 \eqref{eq:v-0} 我们得到
+\begin{align*}
+v(x_0,t_0)=v[x_1(t_0),t_0]=v(x_0-at_0,0)=\psi(x_0-at_0).
+\end{align*}
+于是对于任意 $(x,t)\in\mathbb{R}\times\mathbb{R}_+$，有
+\begin{align}
+v(x,t)=\psi(x-at). \label{eq:v-sol}
+\end{align}
+
+对于方程 \eqref{eq:wave-char1}，它的特征线为
+\begin{align*}
+x=x_2(t)=c-at,
+\end{align*}
+这里 $c$ 为任意常数。特别地，过点 $(x_0,t_0)$ 的特征线为
+\begin{align*}
+x_2(t)=x_0+at_0-at.
+\end{align*}
+在此特征线上，注意到 $v(x,t)$ 的表达式 \eqref{eq:v-sol}，则方程 \eqref{eq:wave-char1} 具有形式
+\begin{align*}
+\frac{\mathrm{d}u(x_2(t),t)}{\mathrm{d}t}=v[x_2(t),t]=\psi[x_2(t)-at]=\psi(x_0+at_0-2at).
+\end{align*}
+因此，利用初始条件 \eqref{eq:u-0} 我们得到
+\begin{align*}
+u(x_0,t_0)=u[x_2(t_0),t_0]=\int_0^{t_0}\psi(x_0+at_0-2a\tau)\,\mathrm{d}\tau
+=\frac{1}{2a}\int_{x_0-at_0}^{x_0+at_0}\psi(\xi)\,\mathrm{d}\xi.
+\end{align*}
+于是我们获得初值问题 \eqref{eq:wave-cauchy1d-psi} 的解的表达式
+\begin{align}
+u(x,t)=\frac{1}{2a}\int_{x-at}^{x+at}\psi(\xi)\,\mathrm{d}\xi. \label{eq:wave-psi-sol}
+\end{align}
+
+利用定理 \eqref{eq:u1-from-M} 和 \eqref{eq:u3-from-M} 中的表达式 \eqref{eq:u1-from-M} 和 \eqref{eq:u3-from-M}，我们得到了初值问题 \eqref{eq:wave-cauchy1d} 有如下形式的解：
+\begin{align*}
+u(x,t)&=\frac{\partial}{\partial t}\left[\frac{1}{2a}\int_{x-at}^{x+at}\varphi(\xi)\,\mathrm{d}\xi\right]+\frac{1}{2a}\int_{x-at}^{x+at}\psi(\xi)\,\mathrm{d}\xi \\
+&\quad+\int_0^t\left[\frac{1}{2a}\int_{x-a(t-\tau)}^{x+a(t-\tau)}f(\xi,\tau)\,\mathrm{d}\xi\right]\mathrm{d}\tau.
+\end{align*}
+简化得到
+\begin{align}
+u(x,t)&=\frac{1}{2}[\varphi(x+at)+\varphi(x-at)]+\frac{1}{2a}\int_{x-at}^{x+at}\psi(\xi)\,\mathrm{d}\xi \nonumber \\
+&\quad+\frac{1}{2a}\int_0^t\mathrm{d}\tau\int_{x-a(t-\tau)}^{x+a(t-\tau)}f(\xi,\tau)\,\mathrm{d}\xi. \label{eq:dalambert}
+\end{align}
+特别地，当 $f\equiv 0$ 时，上述表达式称为 \textbf{D'Alembert 公式}。
+
+当然我们也可以不用定理 \eqref{eq:u1-from-M} 而直接用特征线法来求解初值问题 \eqref{eq:wave-cauchy1d}。具体来说，把初值问题 \eqref{eq:wave-cauchy1d} 的方程分解成两个如下的一阶方程：
+\begin{align*}
+\frac{\partial u}{\partial t}-a\frac{\partial u}{\partial x}=v,\qquad \frac{\partial v}{\partial t}+a\frac{\partial v}{\partial x}=f,
+\end{align*}
+其中 $u,v$ 分别满足初值条件
+\begin{align*}
+u(x,0)=\varphi(x)
+\end{align*}
+和
+\begin{align*}
+v(x,0)=u_t(x,0)-au_x(x,0)=\psi(x)-a\varphi'(x).
+\end{align*}
+先通过特征线簇 $x_1(t)$ 求解出 $v(x,t)$，然后再通过特征线簇 $x_2(t)$ 求解出 $u(x,t)$。这样对于初值问题 \eqref{eq:wave-cauchy1d}，我们也可以得到同样的公式 \eqref{eq:dalambert}。具体细节我们留给读者作为练习。
+
+\begin{remark}
+从 D'Alembert 公式我们知道，当 $f\equiv 0$ 时，初值问题 \eqref{eq:wave-cauchy1d} 的解可以表示成如下形式：
+\begin{align*}
+u(x,t)=F(x+at)+G(x-at).
+\end{align*}
+例如，我们可以选取
+\begin{align*}
+F(s)=\frac{1}{2}\varphi(s)+\frac{1}{2a}\int_0^s\psi(\xi)\,\mathrm{d}\xi,\qquad
+G(s)=\frac{1}{2}\varphi(s)-\frac{1}{2a}\int_0^s\psi(\xi)\,\mathrm{d}\xi.
+\end{align*}
+这里函数 $F(x+at)$ 和 $G(x-at)$ 分别称为\textbf{左行波}和\textbf{右行波}。此时初值问题 \eqref{eq:wave-cauchy1d} 的解可以分解成左行波和右行波的叠加。
+\end{remark}
+
+直到现在，表达式 \eqref{eq:dalambert} 只是给出初值问题 \eqref{eq:wave-cauchy1d} 的形式解。为了使表达式 \eqref{eq:dalambert} 确实是初值问题 \eqref{eq:wave-cauchy1d} 的古典解，我们需要对初值问题 \eqref{eq:wave-cauchy1d} 中方程的非齐次项 $f$ 和初值 $\varphi,\psi$ 提适当的光滑性条件。
+
+\begin{theorem}
+若 $\varphi\in C^2(\mathbb{R})$，$\psi\in C^1(\mathbb{R})$ 及 $f\in C^1(\mathbb{R}\times\overline{\mathbb{R}}_+)$，则由表达式 \eqref{eq:dalambert} 给出的函数 $u\in C^2(\mathbb{R}\times\overline{\mathbb{R}}_+)$，且是初值问题 \eqref{eq:wave-cauchy1d} 的解。
+\end{theorem}
+
+\begin{corollary}
+若 $\varphi,\psi$ 及 $f$ 是 $x$ 的偶（或奇，或周期为 $l$ 的）函数，则由表达式 \eqref{eq:dalambert} 给出的解 $u$ 必是 $x$ 的偶（或奇，或周期为 $l$ 的）函数。
+\end{corollary}
+
+\subsection{一维半无界问题}
+
+在这一小节中我们求解半无界问题
+\begin{align}
+\begin{cases}
+\mathcal{L}u=u_{tt}-a^2u_{xx}=f(x,t), & (x,t)\in\mathbb{R}_+\times\mathbb{R}_+, \\
+u(x,0)=\varphi(x), & x\in\overline{\mathbb{R}}_+, \\
+u_t(x,0)=\psi(x), & x\in\overline{\mathbb{R}}_+, \\
+u(0,t)=g(t), & t\in\overline{\mathbb{R}}_+.
+\end{cases} \label{eq:wave-half}
+\end{align}
+我们分别考虑齐次边值情形和非齐次边值情形。
+\begin{enumerate}
+\item \textbf{齐次边值情形 $g(t)\equiv 0$:}求解半无界问题的基本思想方法是把定解问题的初值 $\varphi(x),\psi(x)$ 和非齐次项 $f(x,t)$ 延拓到整个实数轴上，将问题化为一个 Cauchy 初值问题，利用上一小节已知的结论得到在整个实数轴上 Cauchy 初值问题的解，同时使得这样构造出来的解 $u$ 在 $x=0$ 上自然地满足齐次边值条件
+\begin{align}
+u(0,t)=0. \label{eq:bc-zero}
+\end{align}
+将这样的解限制在区域 $\overline{\mathbb{R}}_+\times\overline{\mathbb{R}}_+$ 上就得到半无界问题 \eqref{eq:wave-half} 的解。
+
+\begin{remark}
+一个定义在整个实数轴上的函数 $w(x)$，如果它是连续的奇函数，即 $w(-x)=-w(x)$，则必有 $w(0)=0$；如果它是一次连续可微的偶函数，即 $w(-x)=w(x)$，则必有 $w'(0)=0$。
+\end{remark}
+
+从推论可知，假如初值和非齐次项在整个实数轴上是 $x$ 的奇函数，则相应的 Cauchy 初值问题的解必是 $x$ 的奇函数，因此我们将半无界问题 \eqref{eq:wave-half} 的初值 $\varphi(x),\psi(x)$ 和非齐次项 $f(x,t)$ 奇延拓到整个实数轴上，使得延拓后的初值 $\overline{\varphi}(x),\overline{\psi}(x)$ 和非齐次项 $\overline{f}(x,t)$ 是 $x$ 的奇函数。为此，我们定义
+\begin{align*}
+\overline{\varphi}(x)=\begin{cases}
+\varphi(x), & x\geqslant 0, \\
+-\varphi(-x), & x<0,
+\end{cases}\qquad
+\overline{\psi}(x)=\begin{cases}
+\psi(x), & x\geqslant 0, \\
+-\psi(-x), & x<0,
+\end{cases}
+\end{align*}
+\begin{align*}
+\overline{f}(x,t)=\begin{cases}
+f(x,t), & x\geqslant 0,\ t\geqslant 0, \\
+-f(-x,t), & x<0,\ t\geqslant 0.
+\end{cases}
+\end{align*}
+显然初值 $\overline{\varphi},\overline{\psi}$ 和非齐次项 $\overline{f}$ 是 $x$ 的奇函数。
+
+我们首先求解 Cauchy 初值问题
+\begin{align*}
+\begin{cases}
+\mathcal{L}\overline{u}=\overline{f}(x,t), & (x,t)\in\mathbb{R}\times\mathbb{R}_+, \\
+\overline{u}(x,0)=\overline{\varphi}(x), & x\in\mathbb{R}, \\
+\overline{u}_t(x,0)=\overline{\psi}(x), & x\in\mathbb{R}.
+\end{cases}
+\end{align*}
+从 Cauchy 初值问题解的表达式 \eqref{eq:dalambert} 知，上述初值问题的解可以表示为
+\begin{align*}
+\overline{u}(x,t)=\frac{1}{2}[\overline{\varphi}(x+at)+\overline{\varphi}(x-at)]+\frac{1}{2a}\int_{x-at}^{x+at}\overline{\psi}(\xi)\,\mathrm{d}\xi
++\frac{1}{2a}\int_0^t\mathrm{d}\tau\int_{x-a(t-\tau)}^{x+a(t-\tau)}\overline{f}(\xi,\tau)\,\mathrm{d}\xi.
+\end{align*}
+由推论，我们知道 $\overline{u}(x,t)$ 是 $x$ 的奇函数。令 $u=\overline{u}|_{\overline{\mathbb{R}}_+\times\overline{\mathbb{R}}_+}$，显然它是半无界问题 \eqref{eq:wave-half} 的解。在 $\overline{\mathbb{R}}_+\times\overline{\mathbb{R}}_+$ 上，从 $\overline{\varphi},\overline{\psi},\overline{f}$ 的定义，解 $u(x,t)$ 可以进一步表示为下列形式：
+
+当 $x\geqslant at$ 时，
+\begin{align}
+u(x,t)&=\frac{1}{2}[\varphi(x+at)+\varphi(x-at)]+\frac{1}{2a}\int_{x-at}^{x+at}\psi(\xi)\,\mathrm{d}\xi \nonumber \\
+&\quad+\frac{1}{2a}\int_0^t\mathrm{d}\tau\int_{x-a(t-\tau)}^{x+a(t-\tau)}f(\xi,\tau)\,\mathrm{d}\xi; \label{eq:wave-half-sol1}
+\end{align}
+
+当 $x<at$ 时，
+\begin{align}
+u(x,t)&=\frac{1}{2}[\varphi(x+at)-\varphi(at-x)]+\frac{1}{2a}\int_{at-x}^{x+at}\psi(\xi)\,\mathrm{d}\xi \nonumber \\
+&\quad+\frac{1}{2a}\left[\int_{t-\frac{x}{a}}^t\mathrm{d}\tau\int_{x-a(t-\tau)}^{x+a(t-\tau)}f(\xi,\tau)\,\mathrm{d}\xi\right. \nonumber \\
+&\quad\left.+\int_0^{t-\frac{x}{a}}\mathrm{d}\tau\int_{a(t-\tau)-x}^{x+a(t-\tau)}f(\xi,\tau)\,\mathrm{d}\xi\right]. \label{eq:wave-half-sol2}
+\end{align}
+
+上述求解半无界问题 \eqref{eq:wave-half} $(g(t)\equiv 0$ 时) 的方法通常称为\textbf{对称开拓法}。
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{PDE图1.png}
+\caption{}
+\label{figure:PDE图1}
+\end{figure}
+然而，表达式 \eqref{eq:wave-half-sol1} 和 \eqref{eq:wave-half-sol2} 只给出半无界问题 \eqref{eq:wave-half} 的形式解。为了使它确实是半无界问题 \eqref{eq:wave-half} 的解，我们还必须像处理 Cauchy 初值问题一样需要对初值 $\varphi(x),\psi(x)$ 和非齐次项 $f(x,t)$ 提适当的光滑性要求。同时我们还必须在定解区域的角点 $(0,0)$ 提一些\textbf{相容性条件}，以保证所给出的解是古典解，也就是使得这样的解在整个定解区域 $\overline{\mathbb{R}}_+\times\overline{\mathbb{R}}_+$ 内是二次连续可微的。由于波动方程的解的初边值的奇性（不可微）沿着特征线向定解区域内部传播，因而必须要求它在 $t=0$ 上是二次连续可微的。也就是说，对于半无界问题，它的古典解必须要求它在整个定解区域 $\overline{\mathbb{R}}_+\times\overline{\mathbb{R}}_+$ 上是二次连续可微的。为此我们需要在角点 $(0,0)$ 提必要的相容性条件。
+
+由于要求 $u\in C(\overline{\mathbb{R}}_+\times\overline{\mathbb{R}}_+)$，因此 $u$ 必须在角点 $(0,0)$ 连续。于是
+\begin{align*}
+\lim_{t\to 0}u(0,t)=u(0,0)=\lim_{x\to 0}u(x,0),
+\end{align*}
+即
+\begin{align}
+\varphi(0)=0. \label{eq:comp1}
+\end{align}
+其次，由于要求 $u\in C^1(\overline{\mathbb{R}}_+\times\overline{\mathbb{R}}_+)$，因此 $u_t$ 必须在角点 $(0,0)$ 连续。于是
+\begin{align*}
+\lim_{t\to 0}u_t(0,t)=u_t(0,0)=\lim_{x\to 0}u_t(x,0),
+\end{align*}
+即
+\begin{align}
+\psi(0)=g'(0)=0. \label{eq:comp2}
+\end{align}
+又由于要求 $u\in C^2(\overline{\mathbb{R}}_+\times\overline{\mathbb{R}}_+)$，而 $u$ 在 $\overline{\mathbb{R}}_+\times\overline{\mathbb{R}}_+$ 的内部适合方程，因此在角点 $(0,0)$ 满足
+\begin{align*}
+\lim_{(x,t)\to(0,0)}(u_{tt}-a^2u_{xx}-f)
+=\lim_{t\to 0}u_{tt}(0,t)-a^2\lim_{x\to 0}u_{xx}(x,0)-f(0,0)
+=g''(0)-a^2\varphi''(0)-f(0,0)=0.
+\end{align*}
+故
+\begin{align}
+a^2\varphi''(0)+f(0,0)=0. \label{eq:comp3}
+\end{align}
+
+现在我们叙述一个结论。
+
+\begin{theorem}
+若半无界问题 \eqref{eq:wave-half} 的初值 $\varphi(x)\in C^2(\overline{\mathbb{R}}_+)$，$\psi(x)\in C^1(\overline{\mathbb{R}}_+)$ 及非齐次项 $f(x,t)\in C^1(\overline{\mathbb{R}}_+\times\overline{\mathbb{R}}_+)$ 满足相容性条件 \eqref{eq:comp1}, \eqref{eq:comp2} 和 \eqref{eq:comp3}，且边值 $g(t)\equiv 0$，则由公式 \eqref{eq:wave-half-sol1} 和 \eqref{eq:wave-half-sol2} 给出的函数 $u\in C^2(\overline{\mathbb{R}}_+\times\overline{\mathbb{R}}_+)$，且是半无界问题 \eqref{eq:wave-half} 的解。
+\end{theorem}
+
+\item \textbf{非齐次边值情形 $g(t)\neq 0$}
+
+作函数替换
+\begin{align}
+u(x,t)=v(x,t)+g(t), \label{eq:wave-half-trans}
+\end{align}
+我们从半无界问题 \eqref{eq:wave-half} 得到 $v(x,t)$ 在区域 $\overline{\mathbb{R}}_+\times\overline{\mathbb{R}}_+$ 上适合以下齐次边值问题
+\begin{align*}
+\begin{cases}
+\mathcal{L}v=\mathcal{L}u-\mathcal{L}g(t)=f(x,t)-g''(t), & (x,t)\in\overline{\mathbb{R}}_+\times\overline{\mathbb{R}}_+, \\
+v(x,0)=\varphi(x)-g(0), & x\in\overline{\mathbb{R}}_+, \\
+v_t(x,0)=\psi(x)-g'(0), & x\in\overline{\mathbb{R}}_+, \\
+v(0,t)=0, & t\in\overline{\mathbb{R}}_+.
+\end{cases}
+\end{align*}
+因此 $v(x,t)$ 可以通过表达式 \eqref{eq:wave-half-sol1} 和 \eqref{eq:wave-half-sol2} 给出。回到函数替换 \eqref{eq:wave-half-trans}，我们同样可以给出半无界问题 \eqref{eq:wave-half} 的解的表达式。
+
+根据定理，立即得到如下的结论。
+
+\begin{theorem}
+若半无界问题 \eqref{eq:wave-half} 的初值 $\varphi(x)\in C^2(\overline{\mathbb{R}}_+)$，$\psi(x)\in C^1(\overline{\mathbb{R}}_+)$，非齐次项 $f(x,t)\in C^1(\overline{\mathbb{R}}_+\times\overline{\mathbb{R}}_+)$ 和边值 $g(t)\in C^3(\overline{\mathbb{R}}_+)$ 满足相容性条件
+\begin{align*}
+\varphi(0)=g(0),\qquad \psi(0)=g'(0),\qquad g''(0)-a^2\varphi''(0)=f(0,0),
+\end{align*}
+则半无界问题 \eqref{eq:wave-half} 有解 $u\in C^2(\overline{\mathbb{R}}_+\times\overline{\mathbb{R}}_+)$。
+\end{theorem}
+
+\begin{remark}
+在半无界问题 \eqref{eq:wave-half} 中，若在边界 $x=0$ 上给定第二边值条件
+\begin{align*}
+u_x(0,t)=g(t),
+\end{align*}
+则可以作函数变换
+\begin{align*}
+u(x,t)=xg(t)+v(x,t),
+\end{align*}
+把 $x=0$ 上的边值条件化为齐次边值条件
+\begin{align*}
+v_x(0,t)=0.
+\end{align*}
+然后利用对称开拓法，把相应的初值 $\varphi,\psi$ 和非齐次项 $f$ 关于 $x$ 进行偶开拓，就可求得解 $v(x,t)$ 的表达式，从而得到 $u(x,t)$ 的表达式。如果再对初值 $\varphi,\psi$，边值 $g$ 和非齐次项 $f$ 提适当的光滑性要求，且在定解区域的角点 $(0,0)$ 提适当的相容性条件，就可证明得到的 $u(x,t)$ 确实是相应的半无界问题的解。
+\end{remark}
+
+\end{enumerate}
+
+\subsection{多维初值问题}
+
+在这一小节中，我们先用球面平均法求解空间维数 $n=3$ 时的 Cauchy 初值问题，然后利用降维法求解空间维数 $n=2$ 时的 Cauchy 初值问题。
+
+\subsubsection{三维问题}
+
+我们考虑空间维数 $n=3$ 时波动方程的初值问题
+\begin{align}
+\begin{cases}
+\mathcal{L}u=u_{tt}-a^2\Delta u=f(x,t), & (x,t)\in\mathbb{R}^3\times\mathbb{R}_+, \\
+u(x,0)=\varphi(x), & x\in\mathbb{R}^3, \\
+u_t(x,0)=\psi(x), & x\in\mathbb{R}^3.
+\end{cases} \label{eq:wave-cauchy3d}
+\end{align}
+
+由定理 \eqref{eq:u1-from-M} 和 \eqref{eq:u3-from-M}，我们只需要求解初值问题
+\begin{align}
+\begin{cases}
+\mathcal{L}u=u_{tt}-a^2\Delta u=0, & (x,t)\in\mathbb{R}^3\times\mathbb{R}_+, \\
+u(x,0)=0, & x\in\mathbb{R}^3, \\
+u_t(x,0)=\psi(x), & x\in\mathbb{R}^3.
+\end{cases} \label{eq:wave-cauchy3d-psi}
+\end{align}
+就可得到初值问题 \eqref{eq:wave-cauchy3d} 的解的表达式。我们这里介绍球面平均法来求出初值问题 \eqref{eq:wave-cauchy3d-psi} 的解 $u(x,t)$。
+
+固定 $x\in\mathbb{R}^3$。对任意 $r>0,t>0$，定义
+\begin{align*}
+U(r,t)=\fint_{\partial B(x,r)}u(y,t)\,\mathrm{d}S(y)
+=\frac{1}{4\pi r^2}\int_{\partial B(x,r)}u(y,t)\,\mathrm{d}S(y)
+=\int_{\partial B(0,1)}u(x+rz,t)\,\mathrm{d}S(z),
+\end{align*}
+其中积分号 $\fint$ 表示在积分区域上求平均值。我们计算函数 $U(r,t)$ 对 $r$ 的偏导数得
+\begin{align*}
+U_r(r,t)&=\int_{\partial B(0,1)}Du(x+rz,t)\cdot z\,\mathrm{d}S(z) \\
+&=\fint_{\partial B(x,r)}Du(y,t)\cdot\frac{y-x}{r}\,\mathrm{d}S(y) \\
+&=\fint_{\partial B(x,r)}Du(y,t)\cdot n\,\mathrm{d}S(y),
+\end{align*}
+其中 $\bm{n}$ 表示球面 $\partial B(x,r)$ 的单位外法向量。利用 Gauss-Green 公式和初值问题 \eqref{eq:wave-cauchy3d-psi} 的方程，我们得到
+\begin{align*}
+U_r(r,t)=\frac{1}{4\pi r^2}\int_{B(x,r)}\Delta u(y,t)\,\mathrm{d}y
+=\frac{1}{4\pi a^2r^2}\int_{B(x,r)}u_{tt}(y,t)\,\mathrm{d}y,
+\end{align*}
+于是
+\begin{align*}
+a^2r^2U_r(r,t)=\frac{1}{4\pi}\int_{B(x,r)}u_{tt}(y,t)\,\mathrm{d}y.
+\end{align*}
+两边对 $r$ 求偏导数得
+\begin{align*}
+a^2[r^2U_r(r,t)]_r
+=\frac{1}{4\pi}\int_{\partial B(x,r)}u_{tt}(y,t)\,\mathrm{d}S(y)
+=r^2\left[\frac{1}{4\pi r^2}\int_{\partial B(x,r)}u(y,t)\,\mathrm{d}S(y)\right]_{tt}.
+\end{align*}
+由函数 $U(r,t)$ 的定义上式即为
+\begin{align*}
+r^2U_{tt}=a^2(r^2U_r)_r,
+\end{align*}
+化简后得到
+\begin{align*}
+(rU)_{tt}=a^2\frac{1}{r}(r^2U_r)_r=a^2(rU)_{rr}.
+\end{align*}
+对任意 $r>0,t>0$，定义
+\begin{align*}
+\widetilde{U}(r,t)=rU(r,t)=\frac{1}{4\pi r}\int_{\partial B(x,r)}u(y,t)\,\mathrm{d}S(y),
+\end{align*}
+\begin{align*}
+\widetilde{\Psi}(r)=\frac{1}{4\pi r}\int_{\partial B(x,r)}\psi(y)\,\mathrm{d}S(y).
+\end{align*}
+假设 $u$ 是二次连续可微函数，则
+\begin{align*}
+\lim_{r\to 0^+}\widetilde{U}(r,t)=0.
+\end{align*}
+因而函数 $\widetilde{U}$ 满足半无界问题
+\begin{align}
+\begin{cases}
+\widetilde{U}_{tt}-a^2\widetilde{U}_{rr}=0, & (r,t)\in\mathbb{R}_+\times\mathbb{R}_+, \\
+\widetilde{U}(r,0)=0, & r\in\mathbb{R}_+, \\
+\widetilde{U}_t(r,0)=\widetilde{\Psi}(r), & r\in\mathbb{R}_+, \\
+\widetilde{U}(0,t)=0, & t\in\mathbb{R}_+.
+\end{cases} \label{eq:wave-3d-reduced}
+\end{align}
+从半无界问题的解的表达式 \eqref{eq:wave-half-sol2} 知，当 $0<r\leqslant at$ 时，上述方程的解可表达成
+\begin{align*}
+\widetilde{U}(r,t)=\frac{1}{2a}\int_{at-r}^{r+at}\widetilde{\Psi}(s)\,\mathrm{d}s,
+\end{align*}
+由定义我们得到
+\begin{align*}
+u(x,t)=\lim_{r\to 0^+}\frac{\widetilde{U}(r,t)}{r}
+=\frac{1}{2a}\lim_{r\to 0^+}\frac{1}{r}\int_{at-r}^{r+at}\widetilde{\Psi}(s)\,\mathrm{d}s
+=\frac{1}{a}\widetilde{\Psi}(at)
+=\frac{1}{4\pi a^2t}\int_{\partial B(x,at)}\psi(y)\,\mathrm{d}S(y).
+\end{align*}
+由定理 \eqref{eq:u1-from-M} 和 \eqref{eq:u3-from-M} 知，我们可以求得初值问题 \eqref{eq:wave-cauchy3d} 的解的表达式如下：
+\begin{align*}
+u&=u_1+u_2+u_3 \\
+&=\frac{\partial}{\partial t}\left[\frac{1}{4\pi a^2t}\int_{\partial B(x,at)}\varphi(y)\,\mathrm{d}S(y)\right]+\frac{1}{4\pi a^2t}\int_{\partial B(x,at)}\psi(y)\,\mathrm{d}S(y) \\
+&\quad+\int_0^t\frac{1}{4\pi a^2(t-\tau)}\int_{\partial B(x,a(t-\tau))}f(y,\tau)\,\mathrm{d}S(y)\,\mathrm{d}\tau.
+\end{align*}
+简化后得到
+\begin{align*}
+u_1&=\frac{\partial}{\partial t}\left[t\fint_{\partial B(x,at)}\varphi(y)\,\mathrm{d}S(y)\right]
+=\frac{\partial}{\partial t}\left[t\int_{\partial B(0,1)}\varphi(x+atz)\,\mathrm{d}S(z)\right] \\
+&=\fint_{\partial B(0,1)}\varphi(x+atz)\,\mathrm{d}S(z)+t\int_{\partial B(0,1)}D\varphi(x+atz)\cdot az\,\mathrm{d}S(z) \\
+&=\fint_{\partial B(x,at)}\varphi(y)\,\mathrm{d}S(y)+\fint_{\partial B(x,at)}D\varphi(y)\cdot(y-x)\,\mathrm{d}S(y)
+\end{align*}
+和
+\begin{align*}
+u_3=\frac{1}{4\pi a^2}\int_{B(x,at)}\frac{f(y,t-|y-x|/a)}{|y-x|}\,\mathrm{d}y,
+\end{align*}
+于是我们得到初值问题 \eqref{eq:wave-cauchy3d} 的解的表达式
+\begin{align}
+u(x,t)&=\frac{1}{4\pi a^2t^2}\int_{\partial B(x,at)}[\varphi(y)+D\varphi(y)\cdot(y-x)+t\psi(y)]\,\mathrm{d}S(y) \nonumber \\
+&\quad+\frac{1}{4\pi a^2}\int_{B(x,at)}\frac{f(y,t-|y-x|/a)}{|y-x|}\,\mathrm{d}y. \label{eq:kirchhoff}
+\end{align}
+特别地，当 $f(x,t)\equiv 0$ 时，上述表达式称为\textbf{Kirchhoff 公式}。通过直接验证我们可以得到下面关于三维初值问题 \eqref{eq:wave-cauchy3d} 的解的存在性结论。
+
+\begin{theorem}
+若 $\varphi\in C^2(\mathbb{R}^3)$，$\psi\in C^1(\mathbb{R}^3)$ 及 $f\equiv 0$，则由 Kirchhoff 公式
+\begin{align}
+u(x,t)=\frac{1}{4\pi a^2t^2}\int_{\partial B(x,at)}[\varphi(y)+D\varphi(y)\cdot(y-x)+t\psi(y)]\,\mathrm{d}S(y) \label{eq:kirchhoff-hom}
+\end{align}
+给出的函数 $u\in C^2(\mathbb{R}^3\times[0,+\infty))$，且是初值问题 \eqref{eq:wave-cauchy3d} 的解。
+\end{theorem}
+
+\subsubsection{二维问题}
+
+现在我们考虑空间维数 $n=2$ 的情形，求出 Cauchy 初值问题
+\begin{align}
+\begin{cases}
+u_{tt}-a^2(u_{x_1x_1}+u_{x_2x_2})=f(x,t), & (x,t)\in\mathbb{R}^2\times\mathbb{R}_+, \\
+u(x,0)=\varphi(x), & x\in\mathbb{R}^2, \\
+u_t(x,0)=\psi(x), & x\in\mathbb{R}^2
+\end{cases} \label{eq:wave-cauchy2d}
+\end{align}
+的解 $u(x,t)$，其中 $x=(x_1,x_2)$。
+
+我们将利用降维法来求解问题。具体来说，我们将二维问题看成一个特殊的三维问题，利用关于三维问题的结论来得到二维问题的解的表达式。为此记 $\tilde{x}=(x,x_3)=(x_1,x_2,x_3)$，同时定义
+\begin{align*}
+\tilde{f}(\tilde{x},t)=f(x,t),\qquad \tilde{\varphi}(\tilde{x})=\varphi(x),\qquad \tilde{\psi}(\tilde{x})=\psi(x).
+\end{align*}
+我们首先来求出三维初值问题
+\begin{align}
+\begin{cases}
+\tilde{u}_{tt}-a^2(\tilde{u}_{x_1x_1}+\tilde{u}_{x_2x_2}+\tilde{u}_{x_3x_3})=\tilde{f}, & (\tilde{x},t)\in\mathbb{R}^3\times\mathbb{R}_+, \\
+\tilde{u}(\tilde{x},0)=\tilde{\varphi}(\tilde{x}), & \tilde{x}\in\mathbb{R}^3, \\
+\tilde{u}_t(\tilde{x},0)=\tilde{\psi}(\tilde{x}), & \tilde{x}\in\mathbb{R}^3
+\end{cases} \label{eq:wave-cauchy3d-ext}
+\end{align}
+的解 $\tilde{u}(\tilde{x},t)$。如果 $u(x,t)$ 是初值问题 \eqref{eq:wave-cauchy2d} 的解，则它一定是初值问题 \eqref{eq:wave-cauchy3d-ext} 的解。由于初值问题 \eqref{eq:wave-cauchy2d} 的解的唯一性（将在后面讨论），则
+\begin{align*}
+u(x,t)=\tilde{u}(\tilde{x},t)=\tilde{u}(x_1,x_2,0,t).
+\end{align*}
+记 $\tilde{B}(\tilde{x},r)$ 为以 $\tilde{x}$ 为心，$r$ 为半径的三维球。我们利用三维初值问题 \eqref{eq:wave-cauchy3d-ext} 的解的表达式得到
+\begin{align*}
+u(x,t)&=\frac{1}{4\pi a^2t^2}\int_{\partial\tilde{B}(\tilde{x},at)}[\tilde{\varphi}(\tilde{y})+D\tilde{\varphi}(\tilde{y})\cdot(\tilde{y}-\tilde{x})+t\tilde{\psi}(\tilde{y})]\,\mathrm{d}S(\tilde{y}) \\
+&\quad+\frac{1}{4\pi a^2}\int_{\tilde{B}(\tilde{x},at)}\frac{\tilde{f}(\tilde{y},t-|\tilde{y}-\tilde{x}|/a)}{|\tilde{y}-\tilde{x}|}\,\mathrm{d}\tilde{y}.
+\end{align*}
+记 $B(x,at)$ 表示以 $x$ 为心，半径为 $at$ 的圆盘，并记上述等式右端的第一项为 $u_1(x,t)$，第二项为 $u_2(x,t)$，我们得到
+\begin{align*}
+u_1(x,t)=\frac{1}{2\pi at}\int_{B(x,at)}\frac{[\varphi(y)+D\varphi(y)\cdot(y-x)+t\psi(y)]}{\sqrt{(at)^2-|y-x|^2}}\,\mathrm{d}y,
+\end{align*}
+\begin{align*}
+u_2(x,t)&=\frac{1}{4\pi a^2}\int_0^{at}\int_{\partial B(x,r)}\frac{f(\tilde{y},t-r/a)}{r}\,\mathrm{d}S(\tilde{y})\,\mathrm{d}r \\
+&=\frac{1}{2\pi a^2}\int_0^{at}\int_{B(x,r)}\frac{f(y,t-r/a)}{\sqrt{r^2-|y-x|^2}}\,\mathrm{d}y\,\mathrm{d}r \\
+&=\frac{1}{2\pi a}\int_0^t\int_{B(x,a(t-\tau))}\frac{f(y,\tau)}{\sqrt{a^2(t-\tau)^2-|y-x|^2}}\,\mathrm{d}y\,\mathrm{d}\tau.
+\end{align*}
+记 $C(x,t)=\{(y,\tau)\in\mathbb{R}^3:0\leqslant\tau\leqslant t,\ |y-x|\leqslant a(t-\tau)\}$ 是 $\mathbb{R}^3$ 中以 $(x,t)$ 为顶点，圆盘 $\{(y,0):|y-x|\leqslant at\}$ 为底面的锥。于是，我们得到二维初值问题 \eqref{eq:wave-cauchy2d} 的解的表达式
+\begin{align}
+u(x,t)&=u_1(x,t)+u_2(x,t) \nonumber \\
+&=\frac{1}{2\pi at}\int_{B(x,at)}\frac{[\varphi(y)+D\varphi(y)\cdot(y-x)+t\psi(y)]}{\sqrt{(at)^2-|y-x|^2}}\,\mathrm{d}y \nonumber \\
+&\quad+\frac{1}{2\pi a}\iint_{C(x,t)}\frac{f(y,\tau)}{\sqrt{a^2(t-\tau)^2-|y-x|^2}}\,\mathrm{d}y\,\mathrm{d}\tau. \label{eq:poisson2d}
+\end{align}
+特别地，当 $f(x,t)\equiv 0$ 时，上述表达式称为 \textbf{Poisson 公式}。直接验证我们得到下面关于二维初值问题 \eqref{eq:wave-cauchy2d} 的解的存在性结论。
+
+\begin{theorem}
+若 $\varphi\in C^3(\mathbb{R}^2)$，$\psi\in C^2(\mathbb{R}^2)$ 及 $f\equiv 0$，则由 Poisson 公式
+\begin{align}
+u(x,t)=\frac{1}{2\pi at}\int_{B(x,at)}\frac{[\varphi(y)+D\varphi(y)\cdot(y-x)+t\psi(y)]}{\sqrt{(at)^2-|y-x|^2}}\,\mathrm{d}y \label{eq:poisson2d-hom}
+\end{align}
+给出的函数 $u\in C^2(\mathbb{R}^2\times[0,+\infty))$，且是初值问题 \eqref{eq:wave-cauchy2d} 的解。
+\end{theorem}
+
+\subsection{特征锥}
+
+设 $(x_0,t_0)\in\mathbb{R}_+^{n+1}=\mathbb{R}^n\times\mathbb{R}_+$ $(n=1,2,3)$，从公式 \eqref{eq:dalambert}, \eqref{eq:kirchhoff}, \eqref{eq:poisson2d} 我们得知，$u(x_0,t_0)$ 的值只与锥 $C(x_0,t_0)=\{(x,t)\in\mathbb{R}_+^{n+1}:|x-x_0|\leqslant a(t_0-t)\}$ 内的初值 $\varphi(x),\psi(x)$ 及非齐次项 $f(x,t)$ 有关，也就是说，$u(x_0,t_0)$ 的值完全由锥 $C(x_0,t_0)$ 内的初值 $\varphi(x),\psi(x)$ 及非齐次项 $f(x,t)$ 决定。由于锥 $C(x_0,t_0)$ 的重要性我们给出如下定义。
+
+\begin{definition}
+上半空间 $\mathbb{R}_+^{n+1}=\mathbb{R}^n\times\mathbb{R}_+$ $(n\geqslant 1)$ 中的锥
+\begin{align*}
+C(x_0,t_0)=\{(x,t)\in\mathbb{R}_+^{n+1}:|x-x_0|\leqslant a(t_0-t)\}
+\end{align*}
+称为以 $(x_0,t_0)$ 为顶点的特征锥。
+\end{definition}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{PDE图2.png}
+\caption{}
+\label{figure:PDE图2}
+\end{figure}
+特别地，我们考虑 $f\equiv 0$ 的简单情形。此时 $u(x_0,t_0)$ 的值只依赖于区域 $D_{(x_0,t_0)}=\{x\in\mathbb{R}^n:|x-x_0|\leqslant at_0\}$ 上的初值，而不依赖于区域 $\{x\in\mathbb{R}^n:|x-x_0|>at_0\}$ 上的初值。也就是说，距离点 $x_0$ 大于 $at_0$ 处的初值在 $t=t_0$ 时刻之前不能对 $u(x_0,t_0)$ 产生影响。区域 $D_{(x_0,t_0)}\subset\mathbb{R}^n$ 通常称为点 $(x_0,t_0)$ 对初值的\textbf{依赖区域}。这种\textbf{扰动的传播速度有限（等于 $a$）的性质是波动方程的解的最基本特征}。
+
+这个性质我们还可以从另一个角度来阐述。从公式 \eqref{eq:dalambert}, \eqref{eq:kirchhoff}, \eqref{eq:poisson2d} 我们得知，区域
+\begin{align*}
+J_{x_0}=\{(x,t)\in\mathbb{R}_+^{n+1}:|x-x_0|\leqslant at\}
+\end{align*}
+上的点的值 $u(x,t)$ 与 $x_0$ 处的初值 $\varphi(x_0),\psi(x_0)$ 有关，即受到初值 $\varphi(x_0),\psi(x_0)$ 的影响，而此区域以外的点的值 $u(x,t)$ 与 $x_0$ 处的初值 $\varphi(x_0),\psi(x_0)$ 无关。这就是说，在时刻 $t$ 之前，$x_0$ 处的初值 $\varphi(x_0),\psi(x_0)$ 的影响范围不超过与 $x_0$ 距离为 $at$ 的点。这说明扰动的传播速度有限，且传播速度为 $a$。区域 $J_{x_0}$ 通常称为点 $x_0$ 的影响区域。不难看出，影响区域和依赖区域有如下关系：
+\begin{align*}
+J_{x_0}=\{(x,t)\in\mathbb{R}_+^{n+1}:x_0\in D_{(x,t)}\}.
+\end{align*}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{PDE图3.png}
+\caption{}
+\label{figure:PDE图3}
+\end{figure}
+而对于一个区域 $D_0\subset\mathbb{R}^n$，它的影响区域 $J_{D_0}$ 自然定义为它的所有点的影响区域的并集。由定义易知
+\begin{align*}
+J_{D_0}=\bigcup_{x_0\in D_0}J_{x_0}=\{(x,t)\in\mathbb{R}_+^{n+1}:D_{(x,t)}\cap D_0\neq\varnothing\}.
+\end{align*}
+
+对于任一区域 $D_0\subset\mathbb{R}^n$，我们还关心在 $\mathbb{R}^n\times\mathbb{R}_+$ 上的这些点 $(x,t)$，其值 $u(x,t)$ 完全由 $D_0$ 上的初值 $\varphi$ 和 $\psi$ 决定，也就是那些点对初值的依赖区域完全包含于 $D_0$ 的点。这个区域通常称为区域 $D_0$ 的\textbf{决定区域}，记为 $F_{D_0}$。实际上不难得到
+\begin{align*}
+F_{D_0}=\{(x,t)\in\mathbb{R}_+^{n+1}:D_{(x,t)}\subset D_0\}\subset\mathbb{R}_+^{n+1}.
+\end{align*}
+
+综上所述，我们知道扰动具有有限传播速度是波动方程的基本特征。而从上一章我们知道扰动具有无限传播速度是热方程的基本性质。这也说明，从本质上来看，波动方程和热方程具有截然不同的特征。
+
+从二维波动方程 Cauchy 问题的解的表达式来看，二维问题实际上是一个特殊的三维问题，其初值与空间的一个方向无关。我们比较一下三维和二维波动方程 Cauchy 问题的解的表达式——Kirchhoff 公式 \eqref{eq:kirchhoff-hom} 和 Poisson 公式 \eqref{eq:poisson2d-hom}，就会发现两者又有显著的差别。虽然初值问题的解 $u(x,t)$ 在点 $(x_0,t_0)$ 的值都只依赖于在依赖区域 $D_{(x_0,t_0)}$ 上给定的初值 $\varphi,\psi$，但仔细观察 Kirchhoff 公式 \eqref{eq:kirchhoff-hom} 和 Poisson 公式 \eqref{eq:poisson2d-hom} 就会发现，当 $n=3$ 时，$u(x_0,t_0)$ 实际上只依赖于在依赖区域 $D_{(x_0,t_0)}$ 的边界 $\partial D_{(x_0,t_0)}=\{x\in\mathbb{R}^3:|x-x_0|=at_0\}$ 上的初值 $\varphi,\psi$，而与它们在 $D_{(x_0,t_0)}$ 内部 $\{x\in\mathbb{R}^3:|x-x_0|<at_0\}$ 的初值 $\varphi,\psi$ 无关；而当 $n=2$ 时，$u(x_0,t_0)$ 依赖于整个依赖区域 $D_{(x_0,t_0)}=\{x\in\mathbb{R}^2:|x-x_0|\leqslant at_0\}$ 上的初值 $\varphi,\psi$。这个差别在物理学上产生截然不同的效应。
+
+假设初值 $\varphi,\psi$ 只在区域 $D_0$ 内不为零。更简单地，假设初位移 $\varphi$ 在整个空间 $\mathbb{R}^n$ 上恒为零，初速度 $\psi$ 在区域 $D_0$ 内大于零，在区域 $D_0$ 外都等于零。考虑区域 $D_0$ 外的一个点 $x_0$，记点 $x_0$ 到 $D_0$ 的最近距离和最远距离分别为 $d_{\min}$ 和 $d_{\max}$，即
+\begin{align*}
+d_{\min}=\min_{x\in D_0}|x-x_0|,\qquad d_{\max}=\max_{x\in D_0}|x-x_0|.
+\end{align*}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{PDE图4.png}
+\caption{}
+\label{figure:PDE图4}
+\end{figure}
+我们考虑在 $t_0$ 时刻，由于初值不为零而引起的点 $x_0$ 的位移 $u(x_0,t_0)$。
+
+下面我们分别考虑 $n=3$ 和 $n=2$ 的情形。
+
+\begin{enumerate}[(1)]
+\item $n=3$ 的情形
+
+由 Kirchhoff 公式 \eqref{eq:kirchhoff-hom} 得到：
+\begin{enumerate}[(i)]
+\item 当 $0<t_0<\frac{1}{a}d_{\min}$ 时，由于 $\partial D_{(x_0,t_0)}\cap D_0$ 是空集，则
+\begin{align*}
+u(x_0,t_0)=0;
+\end{align*}
+\item 当 $\frac{1}{a}d_{\min}<t_0<\frac{1}{a}d_{\max}$ 时，由于 $\partial D_{(x_0,t_0)}\cap D_0$ 非空，则
+\begin{align*}
+u(x_0,t_0)>0;
+\end{align*}
+\item 当 $t_0>\frac{1}{a}d_{\max}$ 时，由于 $\partial D_{(x_0,t_0)}\cap D_0$ 是空集，则
+\begin{align*}
+u(x_0,t_0)=0.
+\end{align*}
+\end{enumerate}
+这说明三维波（如声波）的传播既有清晰的波前，又有清晰的波后。这种现象通常称为 \textbf{Huygens 原理}或\textbf{无后效现象}。
+
+\item $n=2$ 的情形
+
+由 Poisson 公式 \eqref{eq:poisson2d-hom} 得到：
+\begin{enumerate}[(i)]
+\item 当 $0<t_0<\frac{1}{a}d_{\min}$ 时，由于 $D_{(x_0,t_0)}\cap D_0$ 是空集，则
+\begin{align*}
+u(x_0,t_0)=0;
+\end{align*}
+\item 当 $t_0>\frac{1}{a}d_{\min}$ 时，由于 $D_{(x_0,t_0)}\cap D_0$ 非空，则
+\begin{align*}
+u(x_0,t_0)>0.
+\end{align*}
+\end{enumerate}
+这说明二维波（如湖面上的水波）的传播只有清晰的波前，没有清晰的波后。这种现象通常称为波的\textbf{弥漫}或\textbf{有后效现象}。
+\end{enumerate}
+
+正是由于在三维空间中声波的传播具有无后效现象，我们在谈话时可以清楚地听到对方的声音。而在平面上波的传播会产生弥漫现象，这就是为什么一块石头投入水中，激起层层波浪而久久不消散的原因。
+
+\subsection{能量不等式}
+
+在这一小节中我们介绍波动方程的能量不等式。能量不等式是波动方程中最重要的先验估计，不仅可以用来证明波动方程的古典解的唯一性和稳定性，而且还可以用来证明波动方程的广义解（弱解）的存在性。值得指出的是波动方程的能量不等式具有明显的物理意义。
+
+\begin{theorem}
+设函数 $u\in C^1(\overline{\mathbb{R}}_+^{n+1})\cap C^2(\mathbb{R}_+^{n+1})$ 是初值问题 \eqref{eq:wave-cauchy} 的解。固定一点 $(x_0,t_0)\in\overline{\mathbb{R}}_+^{n+1}$。对于任意 $\tau\in[0,t_0]$，在特征锥 $C(x_0,t_0)=\{(x,t)\in\overline{\mathbb{R}}_+^{n+1}:|x-x_0|\leqslant a(t_0-t)\}$ 上成立估计
+\begin{align}
+\int_{C_\tau}(u_t^2+a^2|Du|^2)\,\mathrm{d}x
+\leqslant M\left[\int_{C_0}(\psi^2+a^2|D\varphi|^2)\,\mathrm{d}x+\int_0^\tau\mathrm{d}t\int_{C_t}f^2\,\mathrm{d}x\right], \label{eq:wave-energy}
+\end{align}
+其中 $M=e^{t_0}$，
+\begin{align*}
+C_\tau=C(x_0,t_0)\cap\{t=\tau\}=\{x\in\mathbb{R}^n:|x-x_0|\leqslant a(t_0-\tau)\}.
+\end{align*}
+特别地，当 $f\equiv 0$ 时，$M=1$。
+\end{theorem}
+
+为简单起见，我们只对一维初值问题 \eqref{eq:wave-cauchy1d} 的能量不等式给出证明，多维初值问题的能量不等式用同样的方法可以得到证明。当 $n=1$ 时，特征锥 $C(x_0,t_0)$ 是上半平面 $\mathbb{R}_+^2$ 上以 $(x_0,t_0)$ 为顶点，底边为区间 $\{(x,0):x\in(x_0-at_0,x_0+at_0)\}$ 的等腰三角形，即
+\begin{align*}
+C(x_0,t_0)=\{(x,t)\in\mathbb{R}_+^2:0\leqslant t\leqslant t_0,\ x_0-a(t_0-t)\leqslant x\leqslant x_0+a(t_0-t)\},
+\end{align*}
+而当 $\tau\in[0,t_0]$ 时，直线 $t=\tau$ 与等腰三角形 $C(x_0,t_0)$ 相交得线段
+\begin{align*}
+C_\tau=\{(x,\tau):x_0-a(t_0-\tau)\leqslant x\leqslant x_0+a(t_0-\tau)\}.
+\end{align*}
+因此我们的定理具有如下形式。
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{PDE图5.png}
+\caption{}
+\label{figure:PDE图5}
+\end{figure}
+
+\begin{theorem}
+设 $u\in C^1(\overline{\mathbb{R}}_+^2)\cap C^2(\mathbb{R}_+^2)$ 是初值问题 \eqref{eq:wave-cauchy1d} 的解。固定一点 $(x_0,t_0)\in\mathbb{R}_+^2$，则对于 $\tau\in[0,t_0]$，成立估计
+\begin{align}
+&\int_{x_0-a(t_0-\tau)}^{x_0+a(t_0-\tau)}[u_t^2(x,\tau)+a^2u_x^2(x,\tau)]\,\mathrm{d}x \nonumber \\
+&\leqslant M\left\{\int_{x_0-at_0}^{x_0+at_0}[\psi^2(x)+a^2|\varphi'(x)|^2]\,\mathrm{d}x+\int_0^\tau\mathrm{d}t\int_{x_0-a(t_0-t)}^{x_0+a(t_0-t)}f^2(x,t)\,\mathrm{d}x\right\}, \label{eq:wave-energy1d}
+\end{align}
+其中 $M=e^{t_0}$。特别地，当 $f\equiv 0$ 时，$M=1$。
+\end{theorem}
+
+\begin{proof}
+在初值问题 \eqref{eq:wave-cauchy1d} 的波动方程两端同时乘 $u_t$，并在等腰梯形 $C(\tau)=C(x_0,t_0)\cap\{0\leqslant t\leqslant\tau\}$ 上积分，我们得到
+\begin{align*}
+\iint_{C(\tau)}u_t(u_{tt}-a^2u_{xx})\,\mathrm{d}x\,\mathrm{d}t=\iint_{C(\tau)}u_tf\,\mathrm{d}x\,\mathrm{d}t.
+\end{align*}
+注意到
+\begin{align*}
+u_tu_{tt}=\frac{1}{2}(u_t^2)_t,\qquad -a^2u_tu_{xx}=-a^2[(u_tu_x)_x-u_{tx}u_x]=-a^2(u_tu_x)_x+\frac{a^2}{2}(u_x^2)_t,
+\end{align*}
+上式可化为
+\begin{align*}
+\iint_{C(\tau)}\left\{\frac{1}{2}[u_t^2+a^2u_x^2]_t-a^2(u_tu_x)_x\right\}\mathrm{d}x\,\mathrm{d}t=\iint_{C(\tau)}u_tf\,\mathrm{d}x\,\mathrm{d}t.
+\end{align*}
+将上述等式的左端记为 $I$，对于积分 $I$ 应用 Green 公式得到
+\begin{align*}
+I=\oint_{\partial C(\tau)}a^2u_tu_x\,\mathrm{d}t+\frac{1}{2}(u_t^2+a^2u_x^2)\,\mathrm{d}x,
+\end{align*}
+其中 $\partial C(\tau)$ 是等腰梯形 $C(\tau)$ 的边界，它的定向沿顺时针方向。记 $\Gamma_\tau^1$ 和 $\Gamma_\tau^2$ 为等腰梯形 $C(\tau)$ 的侧边，易知
+\begin{align*}
+\Gamma_\tau^1=\{(x,t)\in\mathbb{R}_+^2:0\leqslant t\leqslant\tau,\ x=x_0-a(t_0-t)\},\\
+\Gamma_\tau^2=\{(x,t)\in\mathbb{R}_+^2:0\leqslant t\leqslant\tau,\ x=x_0+a(t_0-t)\}.
+\end{align*}
+于是
+\begin{align*}
+I&=\frac{1}{2}\int_{x_0-a(t_0-\tau)}^{x_0+a(t_0-\tau)}[u_t^2(x,\tau)+a^2u_x^2(x,\tau)]\,\mathrm{d}x \\
+&\quad-\frac{1}{2}\int_{x_0-at_0}^{x_0+at_0}[\psi^2(x)+a^2|\varphi'(x)|^2]\,\mathrm{d}x \\
+&\quad+\int_{\Gamma_\tau^1\cup\Gamma_\tau^2}a^2u_tu_x\,\mathrm{d}t+\frac{1}{2}(u_t^2+a^2u_x^2)\,\mathrm{d}x \\
+&=I_1+I_2+I_3,
+\end{align*}
+这里我们分别记右端的三个积分为 $I_1,I_2$ 和 $I_3$。因此我们得到
+\begin{align*}
+I_1+I_2+I_3=\iint_{C(\tau)}u_tf\,\mathrm{d}x\,\mathrm{d}t.
+\end{align*}
+下面利用 $\Gamma_\tau^1$ 和 $\Gamma_\tau^2$ 的表达式证明 $I_3$ 非负。事实上，在 $\Gamma_\tau^1$ 上 $\mathrm{d}x=a\,\mathrm{d}t$，在 $\Gamma_\tau^2$ 上 $\mathrm{d}x=-a\,\mathrm{d}t$，从而
+\begin{align*}
+I_3=\frac{a}{2}\int_{\Gamma_\tau^1}(u_t+au_x)^2\,\mathrm{d}t-\frac{a}{2}\int_{\Gamma_\tau^2}(u_t-au_x)^2\,\mathrm{d}t.
+\end{align*}
+注意到 $\partial C(\tau)$ 的定向，在 $\Gamma_\tau^1$ 上 $\mathrm{d}t$ 为正，在 $\Gamma_\tau^2$ 上 $\mathrm{d}t$ 为负，于是
+\begin{align*}
+I_3\geqslant 0.
+\end{align*}
+综上我们得到
+\begin{align}
+\int_{x_0-a(t_0-\tau)}^{x_0+a(t_0-\tau)}[u_t^2(x,\tau)+a^2u_x^2(x,\tau)]\,\mathrm{d}x 
+\leqslant \int_{x_0-at_0}^{x_0+at_0}[\psi^2(x)+a^2|\varphi'(x)|^2]\,\mathrm{d}x+2\iint_{C(\tau)}u_tf\,\mathrm{d}x\,\mathrm{d}t. \label{eq:wave-energy1d-inter}
+\end{align}
+于是，当 $f\equiv 0$ 时，估计 \eqref{eq:wave-energy1d} 成立，且此时 $M=1$。
+
+最后，处理不等式 \eqref{eq:wave-energy1d-inter} 的右端项。由代数不等式 $2ab\leqslant a^2+b^2$ 知
+\begin{align*}
+2\iint_{C(\tau)}u_tf\,\mathrm{d}x\,\mathrm{d}t\leqslant \iint_{C(\tau)}u_t^2\,\mathrm{d}x\,\mathrm{d}t+\iint_{C(\tau)}f^2\,\mathrm{d}x\,\mathrm{d}t.
+\end{align*}
+代入不等式 \eqref{eq:wave-energy1d-inter}，则
+\begin{align}
+\int_{x_0-a(t_0-\tau )}^{x_0+a(t_0-\tau )}{[u_{t}^{2}(x,\tau )}+a^2u_{x}^{2}(x,\tau )]\,\mathrm{d}x\leqslant \int_{x_0-at_0}^{x_0+at_0}{\{\psi ^2(x)}+a^2|\varphi \prime (x)|^2\}\,\mathrm{d}x+\iint_{C(\tau )}{u_{t}^{2}\,\mathrm{d}x\,\mathrm{d}t}+\iint_{C(\tau )}{f^2\,\mathrm{d}x\,\mathrm{d}t}.\label{eq:wave-energy1d-gron}
+\end{align}
+记
+\begin{align*}
+G(\tau)=\iint_{C(\tau)}(u_t^2+a^2u_x^2)\,\mathrm{d}x\,\mathrm{d}t,
+\end{align*}
+则
+\begin{align*}
+G(\tau)=\int_0^\tau\left[\int_{x_0-a(t_0-t)}^{x_0+a(t_0-t)}(u_t^2+a^2u_x^2)\,\mathrm{d}x\right]\mathrm{d}t.
+\end{align*}
+从不等式 \eqref{eq:wave-energy1d-gron} 可以得到一个 $G(\tau)$ 满足的微分不等式
+\begin{align*}
+\frac{\mathrm{d}G(\tau)}{\mathrm{d}\tau}\leqslant G(\tau)+F(\tau),
+\end{align*}
+这里
+\begin{align*}
+F(\tau)=\int_{x_0-at_0}^{x_0+at_0}[\psi^2(x)+a^2|\varphi'(x)|^2]\,\mathrm{d}x+\iint_{C(\tau)}f^2\,\mathrm{d}x\,\mathrm{d}t,
+\end{align*}
+它是 $\tau$ 的单调递增函数。利用 Gronwall 不等式（引理 \eqref{eq:gronwall-diff}）立即得到
+\begin{align*}
+G(\tau)\leqslant (e^{\tau}-1)F(\tau)\leqslant (e^{t_0}-1)F(\tau)
+\end{align*}
+和
+\begin{align*}
+\frac{\mathrm{d}G(\tau)}{\mathrm{d}\tau}\leqslant e^{\tau}F(\tau)\leqslant e^{t_0}F(\tau).
+\end{align*}
+这就是我们要证的结论。
+\end{proof}
+
+\begin{remark}
+不记常数因子，表达式
+\begin{align*}
+\int_{C_\tau}(u_t^2+a^2u_x^2)\,\mathrm{d}x
+\end{align*}
+表示物体的 $C_\tau$ 部分在 $\tau$ 时刻的总能量，其中第一项积分表示动能，第二项积分表示弹性势能。通常称之为\textbf{能量积分}或\textbf{能量模}。上述定理给出了初值问题 \eqref{eq:wave-cauchy} 的解 $u$ 的能量模估计。特别地，当外力项 $f\equiv 0$ 时，物体的 $C_\tau$ 部分在 $\tau$ 时刻的总能量小于物体的 $C_0$ 部分在初始时刻的总能量。由上一小节的分析，在 $\tau$ 时刻 $C_\tau$ 的点的位移完全由初始时刻物体的 $C_0$ 部分上的位移和速度决定，而没有受到其他部分的影响，因而在 $\tau$ 时刻此 $C_\tau$ 部分的能量由初始时刻物体 $C_0$ 部分的能量转化而来。
+\end{remark}
+
+\begin{remark}
+从定理的推导过程中，我们得到另一种形式的能量模估计
+\begin{align}
+\iint_{C(\tau)}(u_t^2+a^2u_x^2)\,\mathrm{d}x\,\mathrm{d}t
+\leqslant M_1\left[\int_{C_0}(\psi^2+a^2|\varphi'|^2)\,\mathrm{d}x+\iint_{C(\tau)}f^2\,\mathrm{d}x\,\mathrm{d}t\right], \label{eq:wave-energy1d2}
+\end{align}
+此时 $M_1=e^{\tau}-1$，$C_0=(x_0-at_0,x_0+at_0)$，且
+\begin{align}\label{eq:::HFOJIOJu23ijiojif}
+C(\tau)=\{(x,t)\in\mathbb{R}_+^2:0\leqslant t\leqslant\tau,\ x_0-a(t_0-t)\leqslant x\leqslant x_0+a(t_0-t)\}.
+\end{align}
+\end{remark}
+
+\begin{remark}
+从能量模估计可以导出解 $u$ 的 $L^2$ 估计：
+\begin{align}
+\int_{C_\tau}u^2(x,\tau)\,\mathrm{d}x
+&\leqslant M_2\left[\int_{C_0}(\varphi^2+\psi^2+a^2|\varphi'|^2)\,\mathrm{d}x+\iint_{C(\tau)}f^2\,\mathrm{d}x\,\mathrm{d}t\right], \label{eq:wave-L2-est1}
+\end{align}
+\begin{align}
+\iint_{C(\tau)}u^2(x,t)\,\mathrm{d}x\,\mathrm{d}t
+&\leqslant M_2\left[\int_{C_0}(\varphi^2+\psi^2+a^2|\varphi'|^2)\,\mathrm{d}x+\iint_{C(\tau)}f^2\,\mathrm{d}x\,\mathrm{d}t\right], \label{eq:wave-L2-est2}
+\end{align}
+其中 $M_2=e^{2\tau}$，$\tau\in[0,t_0]$，$C_\tau=(x_0-a(t_0-\tau),x_0+a(t_0-\tau))$，$C(\tau)$ 如\eqref{eq:::HFOJIOJu23ijiojif}式定义。
+\begin{proof}
+对于任意 $\tau \in [0, t_0]$，
+\begin{align}
+\int_{C_\tau} [u^2(x, \tau) - u^2(x, 0)] \, \mathrm{d}x
+= \int_{C_\tau} \int_0^\tau [u^2(x, t)]_t \, \mathrm{d}t \, \mathrm{d}x
+\leqslant \iint_{C(\tau)} u^2(x, t) \, \mathrm{d}x\mathrm{d}t + \iint_{C(\tau)} u_t^2(x, t) \, \mathrm{d}x\mathrm{d}t. \label{est:diff1}
+\end{align}
+记
+\begin{align}
+G(\tau) \triangleq \iint_{C(\tau)} u^2(x, t) \, \mathrm{d}x\mathrm{d}t,
+\end{align}
+则 $G(0)=0$。从上式可以得到一个 $G(\tau)$ 满足的微分不等式
+\begin{align}
+\frac{\mathrm{d}G(\tau)}{\mathrm{d}\tau} \leqslant G(\tau) + F(\tau), \label{ineq:G}
+\end{align}
+其中
+\begin{align}
+F(\tau) = \int_{C_0} \varphi^2 \, \mathrm{d}x + \iint_{C(\tau)} u_t^2 \, \mathrm{d}x\mathrm{d}t.
+\end{align}
+从估计\eqref{eq:wave-energy1d2}得到
+\begin{align}
+F(\tau) \leqslant e^{\tau} \left[ \int_{C_0} (\varphi^2 + \psi^2 + a^2 |\varphi'|^2) \, \mathrm{d}x + \iint_{C(\tau)} f^2 \, \mathrm{d}x\mathrm{d}t \right], \label{est:F}
+\end{align}
+利用 Gronwall 不等式 (引理\eqref{eq:gronwall-diff}) 得
+\begin{align}
+\int_{C_\tau} u^2(x, \tau) \, \mathrm{d}x \leqslant e^{\tau} F(\tau). \label{est:42}
+\end{align}
+由此立即得到估计\eqref{eq:wave-L2-est1}。又从 Gronwall 不等式的结论
+\begin{align}
+G(\tau) \leqslant (e^{\tau} - 1)F(\tau), \label{est:43}
+\end{align}
+立即得到估计\eqref{eq:wave-L2-est2}。
+\end{proof}
+\end{remark}
+
+\begin{remark}
+从能量模估计 \eqref{eq:wave-energy} 不难导出波动方程 Cauchy 初值问题 \eqref{eq:wave-cauchy} 解的唯一性以及在能量模意义下解对于初值和非齐次项的连续依赖性。
+\end{remark}
+
+\begin{remark}
+利用能量模估计的证明方法，我们可以证明半无界问题 \eqref{eq:wave-half} 在函数类 $C^1(\overline{\mathbb{R}}_+\times\overline{\mathbb{R}}_+)\cap C^2(\mathbb{R}_+\times\mathbb{R}_+)$ 中的解的唯一性。具体来说，在区域 $\{0\leqslant x\leqslant x_0-at,\ 0\leqslant t\leqslant T\}$ 上（其中 $x_0$ 是任意正数，$0<T\leqslant\frac{x_0}{a}$），证明相应的齐次定解问题只有零解。
+\end{remark}
+
+
 
 \end{document}

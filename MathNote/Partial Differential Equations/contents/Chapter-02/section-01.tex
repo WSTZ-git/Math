@@ -13,6 +13,491 @@
 
 \begin{document}
 
+\section{调和函数}
+
+\subsection{实例}
+
+\begin{definition}
+如果函数 $u:\Omega\to\mathbb{R}$ 具有二阶连续偏导数且满足 Laplace 方程 $\Delta u = 0$，我们称之为\textbf{调和函数}；如果一个多项式满足 Laplace 方程 $\Delta u = 0$，我们称之为\textbf{调和多项式}。
+\end{definition}
+
+\begin{proposition}
+设$n\in \mathbb{N}$,则下列函数均为调和函数:
+\begin{enumerate}[(1)]
+\item 常数函数 $1$ 与线性函数 $x_i$ $(i=1,\cdots,n)$；
+\item 二次多项式 $x_i^2-x_j^2$ $(i,j=1,\cdots,n)$；
+\item 若 $\Omega\subset\mathbb R^2$ 为开集，视其为复平面区域，$f:\Omega\to\mathbb C$ 解析，则 $u=\Re f$ 与 $v=\Im f$ 调和；
+\item 特别地，对任意非负整数 $k$，$z^k=(x+iy)^k$ 的实部 $P_k(x,y)$ 与虚部 $Q_k(x,y)$ 是 $k$ 次调和多项式，且满足递推关系
+\begin{align}
+P_{k+1}=xP_k-yQ_k,\qquad Q_{k+1}=xQ_k+yP_k. \label{rec:pq}
+\end{align}
+\item 函数 $e^x\cos y$ 与 $e^x\sin y$ 调和。
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+对于 (1)，直接计算得
+\begin{align*}
+\Delta 1=0,\qquad \Delta x_i=0.
+\end{align*}
+对于 (2)，有
+\begin{align*}
+\Delta(x_i^2-x_j^2)=2-2=0.
+\end{align*}
+对于 (3)，由 Cauchy-Riemann 方程
+\begin{align*}
+\frac{\partial u}{\partial x}=\frac{\partial v}{\partial y},\qquad 
+\frac{\partial u}{\partial y}=-\frac{\partial v}{\partial x},
+\end{align*}
+可得
+\begin{align*}
+\frac{\partial^2 u}{\partial x^2}+\frac{\partial^2 u}{\partial y^2}
+= \frac{\partial}{\partial x}\left(\frac{\partial v}{\partial y}\right)
++\frac{\partial}{\partial y}\left(-\frac{\partial v}{\partial x}\right)
+= v_{yx}-v_{xy}=0,
+\end{align*}
+同理 $\Delta v=0$，故 $u,v$ 调和。
+对于 (4)，由于 $z^k$ 是解析函数，由 (3) 知其实部 $P_k$ 与虚部 $Q_k$ 调和；递推关系 \eqref{rec:pq} 由 $z^{k+1}=z^k\cdot z$ 直接展开得到。
+对于 (5)，因为 $e^z=e^x(\cos y+i\sin y)$ 解析，其实部 $e^x\cos y$ 与虚部 $e^x\sin y$ 调和。
+\end{proof}
+
+\begin{theorem}
+假设 $u(x)$ 是一个 $\mathbb{R}^n$ 上的调和函数，则
+\begin{enumerate}[(1)]
+\item $u(\lambda x)$ 是一个调和函数，其中 $\lambda$ 是任一实数；
+\item $u(x+x_0)$ 是一个调和函数，其中 $x_0\in\mathbb{R}^n$ 固定；
+\item $u(Ox)$ 是一个调和函数，其中 $O:\mathbb{R}^n\to\mathbb{R}^n$ 是一个正交变换。
+\end{enumerate}
+\end{theorem}
+\begin{remark}
+此定理说明在伸缩变换、平移变换和正交变换下调和函数仍变为调和函数。
+\end{remark}
+
+
+
+\subsection{平均值公式}
+
+\begin{theorem}[调和函数平均值公式]\label{theorem:调和函数平均值公式}
+假设 $u\in C^2(\Omega)$ 是 $\Omega$ 上的调和函数，则对于任意的球 $B(x,r)\subset\Omega$，有
+\begin{align}
+u(x) = \fint_{\partial B(x,r)} u(y)\,\mathrm{d}S(y) = \fint_{B(x,r)} u(y)\,\mathrm{d}y, \label{eq:mean-value}
+\end{align}
+其中积分号 $\fint$ 表示求平均值，即
+\begin{gather*}
+\fint_{\partial B(x,r)} u(y)\,\mathrm{d}S(y) = \frac{1}{n\alpha(n)r^{n-1}} \int_{\partial B(x,r)} u(y)\,\mathrm{d}S(y), \\
+\fint_{B(x,r)} u(y)\,\mathrm{d}y = \frac{1}{\alpha(n)r^n} \int_{B(x,r)} u(y)\,\mathrm{d}y,
+\end{gather*}
+这里 $\alpha(n)=\frac{2\pi^{\frac{n}{2}}}{n\Gamma\left(\frac{n}{2}\right)}$ 表示 $\mathbb{R}^n$ 上单位球的体积。
+\end{theorem}
+\begin{proof}
+
+(1) 令
+\begin{align*}
+\phi(r) = \fint_{\partial B(x,r)} u(y)\,\mathrm{d}S(y).
+\end{align*}
+作平移和伸缩变换，则
+\begin{align*}
+\phi(r) = \int_{\partial B(0,1)} u(x+rz)\,\mathrm{d}S(z).
+\end{align*}
+对 $r$ 求微商，由\hyperref[Basis of Analytics-theorem:Green第一恒等式]{Green第一恒等式}我们得到
+\begin{align*}
+\phi'(r) &= \int_{\partial B(0,1)} D u(x+rz)\cdot z\,\mathrm{d}S(z)
+= \fint_{\partial B(x,r)} D u(y)\cdot \frac{y-x}{r}\frac{1}{r^{n-1}}\,\mathrm{d}S(y) \\
+&= \frac{1}{r^{n-1}}\fint_{\partial B(x,r)} D u(y)\cdot n\,\mathrm{d}S(y) = \frac{1}{r^{n-1}}\fint_{\partial B(x,r)} \frac{\partial u(y)}{\partial n}\,\mathrm{d}S(y) \\
+&= \frac{1}{r^{n-1}}\fint_{B(x,r)} \Delta u(y)\,\mathrm{d}y = 0,
+\end{align*}
+于是 $\phi(r)$ 是一个常数。由 $u(x)$ 的连续性，从而
+\begin{align*}
+u(x) = \lim_{t\to 0^+} \phi(t) = \phi(r),
+\end{align*}
+即
+\begin{align}
+u(x) = \fint_{\partial B(x,r)} u(y)\,\mathrm{d}S(y). \label{eq:mean-sphere}
+\end{align}
+
+(2) 注意到
+\begin{align*}
+\int_{B(x,r)} u(y)\,\mathrm{d}y = \int_0^r \int_{\partial B(x,t)} u(y)\,\mathrm{d}S(y)\,\mathrm{d}t,
+\end{align*}
+再利用等式 \eqref{eq:mean-sphere}，则
+\begin{align*}
+\int_{B(x,r)} u(y)\,\mathrm{d}y = u(x)\int_0^r n\alpha(n)t^{n-1}\,\mathrm{d}t = \alpha(n)r^n u(x).
+\end{align*}
+于是我们完成定理的证明。
+\end{proof}
+
+\begin{theorem}\label{theorem:调和函数平均值定理逆命题}
+假设 $u\in C^2(\Omega)$ 满足，对于任意 $B(x,r)\subset\Omega$，
+\begin{align*}
+u(x) = \fint_{\partial B(x,r)} u(y)\,\mathrm{d}S(y),
+\end{align*}
+则 $u$ 是调和函数。
+\end{theorem}
+\begin{proof}
+对于固定的 $x\in\Omega$，任意球 $B(x,r)\subset\Omega$，$\phi(r)$ 如\hyperref[theorem:调和函数平均值公式]{调和函数平均值公式}的证明中定义。由假设我们得到 $\phi(r)$ 是一个常数，因此
+\begin{align*}
+\phi'(r) = 0.
+\end{align*}
+由\hyperref[theorem:调和函数平均值公式]{调和函数平均值公式}第一步的证明，我们有
+\begin{align*}
+\frac{1}{r^{n-1}}\fint_{B(x,r)} \Delta u(y)\,\mathrm{d}y = 0,
+\end{align*}
+于是
+\begin{align*}
+\int_{B(x,r)} \Delta u(y)\,\mathrm{d}y = 0.
+\end{align*}
+令 $r\to 0$，由 $\Delta u(x)$ 的连续性，则
+\begin{align*}
+\Delta u(x) = 0.
+\end{align*}
+至此我们完成定理的证明。
+\end{proof}
+
+\begin{theorem}\label{theorem:theorem:调和函数平均值定理逆命题-u弱化成连续}
+假设 $u\in C(\Omega)$ 满足平均值公式，即对于任意 $B(x,r)\subset\Omega$，有
+\begin{align*}
+u(x) = \fint_{\partial B(x,r)} u(y)\,\mathrm{d}S(y),
+\end{align*}
+则 $u$ 是调和函数且 $u\in C^\infty(\Omega)$。
+\end{theorem}
+\begin{remark}
+定理中 $u\in C(\Omega)$ 的假设还可以降低，我们在这里就不展开讨论了。
+\end{remark}
+\begin{proof}
+设 $\eta:\mathbb{R}^n\to\mathbb{R}$ 是一个光滑化子，即径向对称的非负函数 $\eta\in C_0^\infty(\mathbb{R}^n)$ 满足：
+\begin{enumerate}[(1)]
+\item $\eta(x)=\zeta(|x|)$，这里 $\zeta:[0,+\infty)\to[0,+\infty)$ 是一个非负函数；
+\item 其支集 $\operatorname{spt}\eta\subset B(0,1)$；
+\item $\int_{\mathbb{R}^n}\eta(x)\,\mathrm{d}x = \int_{B(0,1)}\eta(y)\,\mathrm{d}y = 1$.
+\end{enumerate}
+对于 $\varepsilon>0$，定义
+\begin{align*}
+\eta_\varepsilon(y) = \frac{1}{\varepsilon^n}\eta\left(\frac{y}{\varepsilon}\right),
+\end{align*}
+于是 $\operatorname{spt}\eta_\varepsilon\subset B(0,\varepsilon)$，且
+\begin{align*}
+\int_{\mathbb{R}^n}\eta_\varepsilon(y)\,\mathrm{d}y
+= \frac{1}{\varepsilon^n}\int_{B(0,\varepsilon)} \eta\left(\frac{y}{\varepsilon}\right)\,\mathrm{d}y 
+= \int_{B(0,1)}\eta(y)\,\mathrm{d}y = 1.
+\end{align*}
+利用球坐标变换我们得到
+\begin{align*}
+\frac{1}{\varepsilon^n}\int_0^\varepsilon \zeta\left(\frac{r}{\varepsilon}\right)\cdot n\alpha(n)r^{n-1}\,\mathrm{d}r = 1.
+\end{align*}
+对于充分小的 $\varepsilon>0$，在区域 $\Omega_\varepsilon = \{x\in\Omega \mid \operatorname{dist}(x,\partial\Omega)>\varepsilon\}$ 上定义
+\begin{align*}
+u_\varepsilon(x) = \int_\Omega \eta_\varepsilon(x-y)u(y)\,\mathrm{d}y.
+\end{align*}
+由于 $\eta$ 无穷次可微且具有紧支集，容易证明 $u_\varepsilon\in C^\infty(\Omega_\varepsilon)$。对于任意 $x\in\Omega_\varepsilon$，我们利用平均值公式计算得到
+\begin{align*}
+u_\varepsilon(x) &= \frac{1}{\varepsilon^n}\int_{B(x,\varepsilon)} \eta\left(\frac{x-y}{\varepsilon}\right)u(y)\,\mathrm{d}y = \frac{1}{\varepsilon^n}\int_0^\varepsilon \zeta\left(\frac{r}{\varepsilon}\right) \int_{\partial B(x,r)} u(y)\,\mathrm{d}S(y)\,\mathrm{d}r \\
+&= \frac{1}{\varepsilon^n}\int_0^\varepsilon \zeta\left(\frac{r}{\varepsilon}\right) u(x)\cdot n\alpha(n)r^{n-1}\,\mathrm{d}r 
+= u(x).
+\end{align*}
+因而 $u\in C^\infty(\Omega_\varepsilon)$。令 $\varepsilon\to 0$，我们得到 $u\in C^\infty(\Omega)$。再利用\refthe{theorem:调和函数平均值定理逆命题}即可得证。
+\end{proof}
+
+\begin{theorem}[Harnack 不等式]
+对于 $\Omega$ 上的任何连通紧子集 $V$，存在一个仅与距离函数
+\begin{align*}
+\operatorname{dist}(V,\partial\Omega) = \min_{x\in V,\, y\in\partial\Omega} |x-y|
+\end{align*}
+和维数 $n$ 有关的正常数 $C$，使得
+\begin{align}
+\sup_V u \leqslant C \inf_V u, \label{eq:harnack}
+\end{align}
+其中 $u$ 是 $\Omega$ 上的任意非负调和函数。特别地，对任意 $x,y\in V$，
+\begin{align*}
+\frac{1}{C}u(y) \leqslant u(x) \leqslant C u(y).
+\end{align*}
+\end{theorem}
+
+\begin{proof}
+取 $r = \frac{1}{4}\operatorname{dist}(V,\partial\Omega)$。
+
+(1) 首先考虑 $x,y\in V$，$|x-y|\leqslant r$。于是 $B(y,r)\subset B(x,2r)$，从而
+\begin{align*}
+u(x) &= \fint_{B(x,2r)} u(z)\,\mathrm{d}z \geqslant \frac{1}{2^n}\fint_{B(y,r)} u(z)\,\mathrm{d}z \geqslant \frac{1}{2^n}u(y).
+\end{align*}
+
+(2) 由于 $V$ 是连通的紧集，我们可用一串有限多个半径为 $r$ 的球 $\{B_i\}_{i=1}^N$ 覆盖它，而且满足 $B_i\cap B_{i-1}\neq\varnothing$ $(i=2,\cdots,N)$。于是，对任意 $x,y\in V$，有
+\begin{align*}
+u(x) \geqslant \frac{1}{2^{nN}} u(y).
+\end{align*}
+至此我们完成定理的证明。
+\end{proof}
+
+\begin{theorem}[Harnack 不等式]
+假设 $u$ 是半径为 $R$ 的球 $B_R$ 上的任意非负调和函数，则对任意 $r\in(0,R)$，成立不等式
+\begin{align}
+\sup_{B_r} u \leqslant \left(\frac{R+r}{R-r}\right)^n \inf_{B_r} u,
+\end{align}
+其中 $B_r$ 是以 $r$ 为半径，与 $B_R$ 同心的球。
+\end{theorem}
+
+\begin{theorem}[强极值原理]\label{theorem:PED-强极值原理}
+假设 $\Omega$ 是 $\mathbb{R}^n$ 上的有界开集，$u\in C^2(\Omega)\cap C(\overline{\Omega})$ 是 $\Omega$ 上的调和函数，则
+\begin{enumerate}[(1)]
+\item $u(x)$ 在 $\overline{\Omega}$ 上的最大（小）值一定在边界 $\partial\Omega$ 上达到，即
+\begin{align*}
+\max_{\overline{\Omega}} u = \max_{\partial\Omega} u;
+\end{align*}
+\item 如果 $\Omega$ 是连通的，且存在 $x_0\in\Omega$ 使得调和函数 $u(x)$ 在 $x_0$ 点达到 $u(x)$ 在 $\overline{\Omega}$ 上的最大（小）值，则 $u$ 在 $\overline{\Omega}$ 上是常数。
+\end{enumerate}
+\end{theorem}
+\begin{remark}
+如果只有定理中结论 (1) 成立，我们通常称之为\textbf{弱极值原理}。
+\end{remark}
+\begin{proof}
+仅就最大值的情形证明。
+
+(1) 记
+\begin{align*}
+M = \max_{\overline{\Omega}} u(x).
+\end{align*}
+如果 $u(x)$ 在边界 $\partial\Omega$ 上的某点达到 $M$，结论 (1) 自然成立。如果 $u(x)$ 在 $\Omega$ 上的内点 $x_0\in\Omega$ 达到 $M$，即 $u(x_0)=M$，我们证明在 $\Omega$ 的一个包含 $x_0$ 的连通分支 $\Omega_1$ 上，调和函数 $u(x)$ 恒为常数 $M$。
+
+固定 $x_1\in\Omega_1$，则存在一条路径 $\gamma:[0,1]\to\Omega_1$ 连接 $x_0$ 和 $x_1$ 两点，也就是说，路径 $\gamma(t)$ 关于 $t$ 连续且 $\gamma(0)=x_0$ 和 $\gamma(1)=x_1$。定义
+\begin{align*}
+l = \sup\{t\in[0,1] \mid u[\gamma(t)] = M\},
+\end{align*}
+我们将证明 $l=1$，从而得到 $u(x_1)=u[\gamma(1)]=M$。
+
+我们用反证法证明 $l=1$。假设 $l<1$，记 $x_l=\gamma(l)$，由函数 $u[\gamma(t)]$ 的连续性，我们有 $u(x_l)=M$。由于 $x_l$ 是内点，因此存在 $B(x_l,r_1)\subset\Omega_1$，在 $B(x_l,r_1)$ 应用平均值公式并注意到 $u(x_l)=M$，我们得到在 $B(x_l,r_1)$ 上函数 $u(x)=M$。注意到 $\gamma(t)$ 在 $l$ 处的连续性，存在充分小的 $\varepsilon>0$，使得 $\gamma$ 在区间 $[l-\varepsilon,l+\varepsilon]$ 上的象集包含于 $B(x_l,r_1)$。于是 $u[\gamma(l+\varepsilon)]=M$。这与 $l$ 是上确界的定义矛盾。因此假设 $l<1$ 不成立，从而 $l=1$。
+
+这样我们证明了在 $\Omega$ 的包含 $x_0$ 的连通分支 $\Omega_1$ 上，$u(x)$ 恒为常数 $M$。由于函数 $u(x)$ 的连续性，$u(x)$ 在 $\Omega_1$ 的边界 $\partial\Omega_1$ 上也恒为常数 $M$。而 $\partial\Omega_1$ 是 $\Omega$ 的边界 $\partial\Omega$ 的一部分，从而得到定理的结论 (1) 成立。
+
+(2) 当 $\Omega$ 连通时，$\Omega$ 只有一个连通分支，从而 $\Omega_1=\Omega$，定理的结论 (2) 成立。至此我们完成定理的证明。
+\end{proof}
+
+\begin{corollary}
+假设 $\Omega$ 是 $\mathbb{R}^n$ 上的有界开集且 $g\in C(\partial\Omega)$ 和 $f\in C(\Omega)$，则 Dirichlet 问题 \eqref{eq:dirichlet} 
+\begin{align}
+\begin{cases}
+-\Delta u = f, & x\in\Omega, \\
+u = g, & x\in\partial\Omega
+\end{cases} \label{eq:dirichlet}
+\end{align}
+最多存在一个解 $u\in C^2(\Omega)\cap C(\overline{\Omega})$。
+\end{corollary}
+\begin{proof}
+假如存在两个解 $u_1$ 和 $u_2$，并令 $w=u_1-u_2$。由于 Dirichlet 问题 \eqref{eq:dirichlet} 是线性的，故 $w$ 满足齐次边值问题
+\begin{align*}
+\begin{cases}
+-\Delta w = 0, & x\in\Omega, \\
+w = 0, & x\in\partial\Omega.
+\end{cases}
+\end{align*}
+我们需要证明 $w\equiv 0$。利用极值原理我们得到，对于 $x\in\Omega$，$w(x)\leqslant 0$。注意到 $-w$ 满足同样的齐次边值问题，于是对于 $x\in\Omega$，$w(x)\geqslant 0$。因而 $w\equiv 0$。至此我们完成推论证明。
+\end{proof}
+
+下面我们利用平均值公式来推导出关于调和函数所有偏导数的估计，然后以此来证明调和函数是解析函数。
+
+\begin{theorem}
+假设 $u$ 是 $\Omega$ 上的调和函数，则对于任意球 $B(x,r)\subset\Omega$，任意阶数为 $k$ 的多重指标 $\alpha$，估计
+\begin{align}
+|D^\alpha u(x)| \leqslant \frac{C_k}{r^{n+k}} \int_{B(x,r)} |u(y)|\,\mathrm{d}y \label{eq:der-est}
+\end{align}
+成立，其中
+\begin{align}
+C_0 = \frac{1}{\alpha(n)},\qquad C_k = \frac{(n+k)^{n+k}(n+1)^k}{\alpha(n)(n+1)^{n+1}} \quad (k=1,2,\cdots). \label{eq:Ck}
+\end{align}
+\end{theorem}
+
+\begin{proof}
+我们对 $k$ 利用数学归纳法证明公式 \eqref{eq:der-est} 和 \eqref{eq:Ck}。
+
+(1) 当 $k=0$ 时，公式 \eqref{eq:der-est} 和 \eqref{eq:Ck} 是平均值公式 \eqref{eq:mean-value} 的直接推论；
+
+当 $k=1$ 时，我们注意到 $u_{x_i}$ $(i=1,2,\cdots,n)$ 也是调和函数，于是在球 $B(x,s)$ $(0<s\leqslant r)$ 上利用平均值公式和 Gauss-Green 公式得
+\begin{align*}
+|u_{x_i}(x)| &= \left| \fint_{B(x,s)} u_{x_i}(y)\,\mathrm{d}y \right| = \left| \frac{1}{\alpha(n)s^n} \int_{\partial B(x,s)} u(y)n_i(y)\,\mathrm{d}S(y) \right|,
+\end{align*}
+从而有
+\begin{align*}
+\alpha(n)s^n |u_{x_i}(x)| \leqslant \int_{\partial B(x,s)} |u(y)|\,\mathrm{d}S(y).
+\end{align*}
+对上式两端在 $(0,r)$ 上积分我们得到
+\begin{align*}
+|u_{x_i}(x)| \int_0^r \alpha(n)s^n\,\mathrm{d}s \leqslant \int_0^r \mathrm{d}s \int_{\partial B(x,s)} |u(y)|\,\mathrm{d}S(y) = \int_{B(x,r)} |u(y)|\,\mathrm{d}y,
+\end{align*}
+因而
+\begin{align}
+|u_{x_i}(x)| \leqslant \frac{n+1}{\alpha(n)r^{n+1}} \int_{B(x,r)} |u(y)|\,\mathrm{d}y. \label{eq:der-k1}
+\end{align}
+至此我们完成当 $k=1$ 时公式 \eqref{eq:der-est} 和 \eqref{eq:Ck} 的证明。
+
+(2) 现在假设 $k\geqslant 2$ 且对于 $\Omega$ 上的所有球和 $k-1$ 阶的多重指标，公式 \eqref{eq:der-est} 和 \eqref{eq:Ck} 成立。固定 $B(x,r)\subset\Omega$。令 $\alpha$ 为一个 $k$ 阶多重指标，必然存在 $i\in\{1,2,\cdots,n\}$ 和一个 $k-1$ 阶的多重指标 $\beta$，使得 $D^\alpha u=(D^\beta u)_{x_i}$。令 $v=D^\beta u$。由于 $v$ 是调和函数，对于任意 $0<t<1$，在球 $B(x,tr)$ 上应用不等式 \eqref{eq:der-k1} 有
+\begin{align*}
+|D^\alpha u(x)| \leqslant \frac{n+1}{\alpha(n)(tr)^{n+1}} \int_{B(x,tr)} |D^\beta u(y)|\,\mathrm{d}y.
+\end{align*}
+注意到 $y\in B(x,tr)$ 蕴涵着 $B(y,(1-t)r)\subset B(x,r)\subset\Omega$。由我们的假设，公式 \eqref{eq:der-est} 和 \eqref{eq:Ck} 蕴涵着：对任意 $0<t<1$，有
+\begin{align*}
+|D^\beta u(y)| \leqslant \frac{C_{k-1}}{[(1-t)r]^{n+k-1}} \int_{B(y,(1-t)r)} |u(z)|\,\mathrm{d}z \leqslant \frac{C_{k-1}}{[(1-t)r]^{n+k-1}} \int_{B(x,r)} |u(z)|\,\mathrm{d}z.
+\end{align*}
+综上，我们得到
+\begin{align*}
+|D^\alpha u(x)| \leqslant \frac{n+1}{\alpha(n)(tr)^{n+1}} \alpha(n)(tr)^n \max_{y\in B(x,tr)} |D^\beta u(y)| \leqslant \frac{(n+1)C_{k-1}}{r^{n+k} t(1-t)^{n+k-1}} \int_{B(x,r)} |u(z)|\,\mathrm{d}z.
+\end{align*}
+又易证函数 $f(t)=t(1-t)^{n+k-1}$ 在 $t=\frac{1}{n+k}$ 时达到在区间 $(0,1)$ 上的最大值，故在上式中取 $t=\frac{1}{n+k}$，我们得到
+\begin{align*}
+|D^\alpha u(x)| \leqslant \frac{C_k}{r^{n+k}} \int_{B(x,r)} |u(y)|\,\mathrm{d}y,
+\end{align*}
+其中
+\begin{align*}
+C_k = (n+1)C_{k-1} \frac{(n+k)^{n+k}}{(n+k-1)^{n+k-1}}.
+\end{align*}
+记
+\begin{align*}
+B_k = \frac{C_k}{(n+k)^{n+k}}, \quad k=1,2,\cdots,
+\end{align*}
+则我们有递推关系式
+\begin{align*}
+B_k = (n+1)B_{k-1}, \quad k=2,3,\cdots
+\end{align*}
+从而
+\begin{align*}
+B_k = (n+1)^{k-1}B_1, \quad k=2,3,\cdots
+\end{align*}
+注意到 $C_1=\frac{n+1}{\alpha(n)}$ 和 $B_1=\frac{C_1}{(n+1)^{n+1}}$，我们得到
+\begin{align*}
+C_k = B_k(n+k)^{n+k} = \frac{(n+k)^{n+k}(n+1)^k}{\alpha(n)(n+1)^{n+1}} \quad (k=1,2,\cdots).
+\end{align*}
+这就完成当 $|\alpha|=k$ 时公式 \eqref{eq:der-est} 和 \eqref{eq:Ck} 的证明，从而完成定理的证明。
+\end{proof}
+
+\begin{theorem}[Liouville定理]\label{theorem:PDE-Liouville定理}
+假设 $u$ 是 $\mathbb{R}^n$ 上的有界调和函数，则 $u$ 是常数。
+\end{theorem}
+\begin{proof}
+设 $|u|\leqslant M$。固定 $x\in\mathbb{R}^n$。对任意 $r>0$，在球 $B(x,r)$ 上利用定理 \eqref{eq:der-est} 当 $k=1$ 时的结论，则
+\begin{align*}
+|Du(x)| \leqslant \frac{nC_1}{r^{n+1}} \int_{B(x,r)} |u(y)|\,\mathrm{d}y \leqslant \frac{nC_1\alpha(n)}{r}M.
+\end{align*}
+令 $r\to+\infty$，我们有
+\begin{align*}
+Du(x)\equiv 0,\quad x\in\mathbb{R}^n.
+\end{align*}
+因此 $u$ 是常数。至此我们完成定理的证明。
+\end{proof}
+
+\begin{definition}[上有界和下有界]
+\begin{enumerate}[(1)]
+\item $u$是$\mathbb{R}^n$的\textbf{上有界}函数是指存在一个常数 $M$，使得对于任意 $x\in\mathbb{R}^n$，有 $u(x)\leqslant M$ 成立.
+
+\item $u$是$\mathbb{R}^n$的\textbf{下有界}函数是指存在一个常数$M$，使得对于任意 $x\in\mathbb{R}^n$，有 $u(x)\geqslant M$ 成立.
+\end{enumerate}
+\end{definition}
+
+\begin{theorem}
+假设 $u$ 是 $\mathbb{R}^n$ 的上有界（或下有界）调和函数，则 $u$ 是一个常数。
+\end{theorem}
+
+\begin{theorem}
+假设 $u$ 是 $\Omega$ 上的调和函数，则 $u$ 是 $\Omega$ 上的解析函数。
+\end{theorem}
+\begin{proof}
+固定 $x_0\in\Omega$。我们要证 $u(x)$ 在 $x_0$ 的某个邻域内可表示为一个收敛的幂级数。取 $r=\frac{1}{4}\operatorname{dist}(x_0,\partial\Omega)$，并记
+\begin{align*}
+A = \frac{1}{\alpha(n)(n+1)^{n+1}r^n} \int_{B(x_0,2r)} |u(y)|\,\mathrm{d}y.
+\end{align*}
+对任意 $x\in B(x_0,r)$，则 $B(x,r)\subset B(x_0,2r)\subset\Omega$。由定理 \eqref{eq:der-est} 得到
+\begin{align*}
+|D^\alpha u(x)| \leqslant \frac{A}{r^N}(n+N)^{n+N}(n+1)^N,
+\end{align*}
+其中 $|\alpha|=N$。利用 Stirling 公式
+\begin{align*}
+\lim_{N\to\infty} \frac{N^{N+\frac{1}{2}}}{N!e^N} = \frac{1}{(2\pi)^{\frac{1}{2}}} < 1,
+\end{align*}
+我们得到，当 $N$ 充分大时，
+\begin{align*}
+(n+N)^{n+N} = \left(1+\frac{n}{N}\right)^N (N+n)^n N^N 
+\leqslant e^n (2N)^n N^N \leqslant 2^n e^n N!e^N N^{n-\frac{1}{2}}.
+\end{align*}
+我们将要证明，当
+\begin{align}
+|x-x_0| \leqslant \frac{r}{2n(n+1)e} \label{eq:analytic-domain}
+\end{align}
+时，$u(x)$ 在 $x_0$ 处的 Taylor 级数
+\begin{align*}
+\sum_{|\alpha|=0}^{\infty} \frac{D^\alpha u(x_0)}{\alpha!}(x-x_0)^\alpha
+\end{align*}
+收敛到 $u(x)$。
+
+实际上，对充分大的 $N$，存在 $t=t(x)\in(0,1)$ 使得 $u(x)$ 在 $x_0$ 处的 Taylor 级数的余项可以表示为
+\begin{align*}
+R_N(x) = u(x) - \sum_{k=0}^{N-1}\sum_{|\alpha|=k} \frac{D^\alpha u(x_0)}{\alpha!}(x-x_0)^\alpha 
+= \sum_{|\alpha|=N} \frac{D^\alpha u[x_0+t(x-x_0)]}{\alpha!}(x-x_0)^\alpha.
+\end{align*}
+利用组合公式
+\begin{align*}
+\sum_{|\alpha|=N}\frac{N!}{\alpha!} = n^N,
+\end{align*}
+我们得到，当 $N$ 充分大时，
+\begin{align*}
+|R_N(x)| &\leqslant A\sum_{|\alpha|=N} \frac{1}{\alpha!}(n+N)^{n+N}\left[\frac{(n+1)|x-x_0|}{r}\right]^N \\
+&\leqslant 2^n e^n A \left(\sum_{|\alpha|=N}\frac{N!}{\alpha!}\right) e^N N^{n-\frac{1}{2}} \left[\frac{(n+1)|x-x_0|}{r}\right]^N \\
+&\leqslant 2^n e^n A \left[\frac{n(n+1)e|x-x_0|}{r}\right]^N N^{n-\frac{1}{2}} \leqslant 2^n e^n A \frac{N^{n-\frac{1}{2}}}{2^N},
+\end{align*}
+从而 $u(x)$ 在 $x_0$ 处的 Taylor 级数的余项 $R_N(x)$ 在 $x_0$ 的上述邻域内一致收敛到 $0$。因此 $u(x)$ 在 $x_0$ 的某个邻域内可表示为一个收敛的幂级数。至此我们完成定理的证明。
+\end{proof}
+
+\begin{theorem}
+假设 $u$ 是 $\mathbb{R}^n$ 的单位球 $B_1$ 上的调和函数，则
+\begin{align*}
+H(r) = \int_{\partial B_r} u^2\,\mathrm{d}S,\qquad D(r) = r^2\int_{B_r} |\nabla u|^2\,\mathrm{d}y
+\end{align*}
+是 $r$ 的单调递增函数，其中 $B_r$ 是与 $B_1$ 同心，以 $r$ 为半径的球。
+\end{theorem}
+\begin{remark}
+上述定理中的单调性在 $r=0$ 处也成立，但通常只对 $r>0$ 讨论。
+\end{remark}
+\begin{proof}
+作伸缩变换，显然有
+\begin{align*}
+H(r) = \int_{\partial B_1} u^2(rz)\,\mathrm{d}S(z).
+\end{align*}
+对 $r$ 求微商，我们得到
+\begin{align*}
+H'(r) &= \int_{\partial B_1} D u^2(rz)\cdot z\,\mathrm{d}S(z) = \int_{\partial B_r} \frac{\partial u^2(y)}{\partial n}\,\mathrm{d}S(y) \\
+&= \frac{1}{n\alpha(n)r^{n-1}}\int_{B_r} \Delta u^2\,\mathrm{d}y = \frac{2}{n\alpha(n)r^{n-1}}\int_{B_r} |\nabla u|^2\,\mathrm{d}y \\
+&= \frac{2}{nr}D(r)\geqslant 0,
+\end{align*}
+其中 $\bm{n}$ 为球面 $\partial B_r$ 的单位外法向量。
+
+作伸缩变换，我们有
+\begin{align*}
+D(r) = r^2\int_{B_1} |\nabla u|^2(rz)\,\mathrm{d}z.
+\end{align*}
+对 $r$ 求微商，我们得到
+\begin{align*}
+D'(r) &= 2r\int_{B_1} |\nabla u|^2(rz)\,\mathrm{d}z + r^2\int_{B_1} D(|\nabla u|^2(rz))\cdot z\,\mathrm{d}z \\
+&= \frac{2}{r}D(r) + 2r^2\int_{B_1}\sum_{i,j=1}^n u_i(rz)u_{ij}(rz)z_j\,\mathrm{d}z \\
+&= \frac{2}{r}D(r) + 2r\int_{B_r}\sum_{i,j=1}^n u_i(y)u_{ji}(y)y_j\,\mathrm{d}y \\
+&= \frac{2}{r}D(r) + \frac{2}{\alpha(n)r^{n-1}}\int_{B_r}\sum_{i,j=1}^n [(u_i u_j y_j)_i - u_i u_j \delta_{ij}]\,\mathrm{d}y \\
+&= \frac{2}{\alpha(n)r^{n-1}}\int_{\partial B_r}\sum_{i,j=1}^n (u_i u_j y_j)y_i\,\mathrm{d}S(y) \\
+&= 2nr\int_{\partial B_r}\sum_{i,j=1}^n \left(u_i\frac{y_i}{r}\right)\left(u_j\frac{y_j}{r}\right)\mathrm{d}S(y) \\
+&= 2nr\int_{\partial B_r}\left|\frac{\partial u}{\partial n}\right|^2\,\mathrm{d}S \geqslant 0.
+\end{align*}
+因此 $D(r)$ 是 $r$ 的单调递增函数。
+
+进一步，我们证明 $f(r)=\frac{D(r)}{H(r)}$ 是 $r$ 的单调递增函数。由上面的结果，
+\begin{align*}
+D(r) = \frac{nr}{2}H'(r),
+\end{align*}
+以及
+\begin{align*}
+H'(r) = \int_{\partial B_r}\frac{\partial u^2}{\partial n}\,\mathrm{d}S,\qquad D'(r)=2nr\int_{\partial B_r}\left|\frac{\partial u}{\partial n}\right|^2\,\mathrm{d}S,
+\end{align*}
+于是
+\begin{align*}
+f'(r) &= H^{-2}\big(D'(r)H(r) - H'(r)D(r)\big) \\
+&= H^{-2}\left(2nr\int_{\partial B_r}\left|\frac{\partial u}{\partial n}\right|^2\,\mathrm{d}S \cdot \int_{\partial B_r}u^2\,\mathrm{d}S - \frac{nr}{2}\left[\int_{\partial B_r}\frac{\partial u^2}{\partial n}\,\mathrm{d}S\right]^2\right) \\
+&= 2nrH^{-2}\left(\int_{\partial B_r}|u_n|^2\,\mathrm{d}S \cdot \int_{\partial B_r}u^2\,\mathrm{d}S - \left[\int_{\partial B_r}u u_n\,\mathrm{d}S\right]^2\right) \\
+&\geqslant 0.
+\end{align*}
+由 Cauchy 不等式，最后一个不等式成立。因此 $f(r)$ 是 $r$ 的单调递增函数。
+\end{proof}
+
 
 
 
