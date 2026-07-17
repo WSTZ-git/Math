@@ -180,9 +180,9 @@ f^S(x_0) = \lim_{h \to 0} \frac{f(x_0 + h) - f(x_0 - h)}{2h}. \label{eq:13.23489
 f^S(x_1) \geqslant \frac{f(b) - f(a)}{b - a} \geqslant f^S(x_2). \label{eq:13.2348982334242te3fd938523i23903t3ger34t4234898938523i23903t3ger34t4107}
 \end{align}
 \end{theorem}
-\begin{note}
+\begin{remark}
 本定理是此类Schwarz导数问题的核心定理. 其余结果都是本定理的平凡推论.
-\end{note}
+\end{remark}
 \begin{remark}
 这题反证后,用有限覆盖定理极难处理同过拼接区间实现函数值的传递.
 
@@ -529,11 +529,12 @@ $$|x_{n+1}-x_n|\leqslant2\sqrt{MK}.$$
 证明$f$一致连续.
 \end{example}
 \begin{proof}
-由条件知,对任何$\varepsilon > 0$,存在$\delta > 0$,使得
+
+{\color{blue}证法一:}由条件知,对任何$\varepsilon > 0$,存在$\delta > 0$,使得
 \begin{align*}
 |f(x + h) - 2f(x) + f(x - h)| \leqslant \varepsilon, \forall x \in \mathbb{R}, h \in [-\delta, \delta].
 \end{align*}
-现在对固定的$h \in [-\delta, \delta]$,考虑$\{f(x + nh)\}_{n=0}^\infty$,我们有
+现在对固定的$h \in [-\delta, \delta]$,考虑$\{f(x + nh)\}_{n=0}^\infty$,由上式我们有
 \begin{align*}
 \sup_{n \geqslant 0} |f(x + nh)| \leqslant \sup |f|,\quad \sup_{n \geqslant 0} |f(x + (n + 2)h) - 2f(x + (n + 1)h) + f(x + nh)| \leqslant \varepsilon.
 \end{align*}
@@ -543,6 +544,79 @@ $$|x_{n+1}-x_n|\leqslant2\sqrt{MK}.$$
 \end{align*}
 这就证明了$f$在$\mathbb{R}$上一致连续.
 
+{\color{blue}证法二:}首先注意到如下差分恒等式:
+\begin{align}
+2\left(f(x+h)-f(x)\right) = f(x+2h) - f(x) - \left(f(x+2h) - 2f(x+h) + f(x)\right).
+\label{eq:diff_identity_2h}
+\end{align}
+记
+\begin{align*}
+A(h) \triangleq \sup_{x \in \mathbb{R}} \left| f(x+h) - f(x) \right|, \quad
+B(h) \triangleq \sup_{x \in \mathbb{R}} \left| f(x+h) - 2f(x) + f(x-h) \right|, \quad
+M \triangleq \sup_{x \in \mathbb{R}} \left| f(x) \right|.
+\end{align*}
+由$f$在$\mathbb{R}$上有界可知$M < +\infty$, 且显然有$A(h) \leqslant 2M$.
+对\eqref{eq:diff_identity_2h}两边同时在$\mathbb{R}$上取上确界, 由三角不等式可得
+\begin{align}
+A(h) \leqslant \frac{1}{2}A(2h) + \frac{1}{2}B(h).
+\label{eq:iter_ineq_base}
+\end{align}
+将\eqref{eq:iter_ineq_base}迭代$n$次, 依次有
+\begin{align*}
+&A(2h)\leqslant \frac{1}{2}A(4h)+\frac{1}{2}B(2h),
+\\
+&A(4h)\leqslant \frac{1}{2}A(8h)+\frac{1}{2}B(4h),
+\\
+&\cdots \cdots \cdots \cdots 
+\\
+&A(2^{n-1}h)\leqslant \frac{1}{2}A(2^nh)+\frac{1}{2}B(2^{n-1}h).
+\end{align*}
+将上述式子从前往后逐一代入\eqref{eq:iter_ineq_base}式可得
+\begin{align}
+A(h) \leqslant \frac{1}{2^n} A(2^n h) + \sum\limits_{k=0}^{n-1} \frac{1}{2^{k+1}} B(2^k h).
+\label{eq:iter_ineq_n}
+\end{align}
+
+下面证明$\lim\limits_{h \to 0} A(h) = 0$.
+由题设条件$\lim\limits_{h \to 0} B(h) = 0$, 故对任意$\varepsilon > 0$, 存在$\delta > 0$, 使得当$0 < |h| < \delta$时, 成立
+\begin{align*}
+B(h) < \frac{\varepsilon}{2}.
+\end{align*}
+任取满足$0 < |h| < \frac{\delta}{2}$的$h$, 取正整数$n$使得
+\begin{align*}
+\frac{\delta}{2} \leqslant 2^n |h| < \delta.
+\end{align*}
+此时对任意$0 \leqslant k \leqslant n-1$, 有$2^k |h| \leqslant 2^{n-1} |h| < \frac{\delta}{2} < \delta$, 因此
+\begin{align*}
+B(2^k h) < \frac{\varepsilon}{2}, \quad \forall 0 \leqslant k \leqslant n-1.
+\end{align*}
+一方面, 由$A(2^n h) \leqslant 2M$以及$2^n |h| \geqslant \frac{\delta}{2}$, 可得
+\begin{align}
+\frac{1}{2^n} A(2^n h) \leqslant \frac{2M}{2^n} = \frac{2M \cdot |h|}{2^n |h|} \leqslant \frac{2M \cdot |h|}{\delta / 2} = \frac{4M}{\delta} |h|.
+\label{eq:first_term_est}
+\end{align}
+另一方面, 结合$B(2^k h) < \frac{\varepsilon}{2}$以及等比级数求和公式, 有
+\begin{align}
+\sum\limits_{k=0}^{n-1} \frac{1}{2^{k+1}} B(2^k h)
+< \sum\limits_{k=0}^{n-1} \frac{1}{2^{k+1}} \cdot \frac{\varepsilon}{2}
+< \sum\limits_{k=0}^{\infty} \frac{1}{2^{k+1}} \cdot \frac{\varepsilon}{2}
+= \frac{\varepsilon}{2}.
+\label{eq:second_term_est}
+\end{align}
+将\eqref{eq:first_term_est}与\eqref{eq:second_term_est}代入\eqref{eq:iter_ineq_n}, 得到
+\begin{align}
+A(h) \leqslant \frac{4M}{\delta} |h| + \frac{\varepsilon}{2}.
+\label{eq:A_h_final_est}
+\end{align}
+取$\delta' = \min\left\{ \frac{\delta \varepsilon}{8M}, \frac{\delta}{2} \right\}$, 则当$0 < |h| < \delta'$时, 有$\frac{4M}{\delta} |h| < \frac{\varepsilon}{2}$, 代入\eqref{eq:A_h_final_est}得
+\begin{align*}
+A(h) < \frac{\varepsilon}{2} + \frac{\varepsilon}{2} = \varepsilon.
+\end{align*}
+即
+\begin{align*}
+\lim\limits_{h \to 0} \sup_{x \in \mathbb{R}} \left| f(x+h) - f(x) \right| = 0,
+\end{align*}
+因此$f$在$\mathbb{R}$上一致连续.
 \end{proof}
 
 \begin{example}
