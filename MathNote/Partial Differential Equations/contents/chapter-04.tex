@@ -13,83 +13,71 @@
 
 \chapter{波动方程}
 
-本章讨论波动方程
+\begin{definition}[波动方程]
+设 $\Omega\subset\mathbb{R}^n$，$a>0$ 为常数，$f=f(x,t)$ 为已知函数，$u=u(x,t)$，$x\in\Omega$，$t>0$. 称方程
 \begin{align}
-u_{tt}-a^2\Delta u=f, \label{eq:wave-gen}
+u_{tt}-a^2\Delta u=f \label{eq:wave-gen}
 \end{align}
-其中 $u=u(x,t)$，$x=(x_1,x_2,\cdots,x_n)\in\Omega\subset\mathbb{R}^n$，$t>0$；$a>0$ 是常数，$f=f(x,t)$ 是已知函数。
+为\textbf{波动方程}. 当 $f\equiv 0$ 时，称
+\begin{align*}
+u_{tt}-a^2\Delta u=0
+\end{align*}
+为\textbf{齐次波动方程}.
+\end{definition}
 
-在本章第一节中我们首先利用特征线法求解出一维波动方程初值问题的解的表达式——D'Alembert公式，接着求解一维波动方程半无界问题，最后利用球平均法和降维法求解出三维波动方程和二维波动方程初值问题的解的表达式——Kirchhoff公式和Poisson公式，从而得到一维、二维和三维波动方程初值问题的解的存在性。与此同时，我们将介绍波动方程最重要的概念——特征线（特征锥），推导波动方程的最基本的先验估计——能量不等式，从而得到波动方程初值问题的解的唯一性和稳定性。这样我们就证明了波动方程初值问题的适定性。在第二节中我们首先利用分离变量法来求解出一维波动方程混合问题的解的表达式，得到一维波动方程混合问题的解的存在性，并解释一些有趣的物理现象；然后我们推导波动方程混合问题的能量不等式，从而得到一维波动方程混合问题的解的唯一性和稳定性；最后，在能量守恒律的框架下我们介绍波动方程混合问题的广义解，讨论广义解的存在性、唯一性和稳定性问题，从而基本上回答波动方程混合问题在更大的函数空间上的适定性问题。
+\begin{definition}
+设 $Q\subset \mathbb{R}^n\times(0,\infty)$，我们用 $C^{2,2}(Q)$ 表示所有在 $Q$ 内关于 $x$ 二阶偏导数连续、关于 $t$ 二阶偏导数连续的函数构成的集合，即
+\begin{align*}
+C^{2,2}(Q) \triangleq \{\, u \mid u, u_t, u_{tt}, u_{x_i}, u_{x_ix_j} \in C(Q),\ i,j=1,\cdots,n\,\}.
+\end{align*}
+称波动方程 \eqref{eq:wave-gen} 在 $C^{2,2}$ 函数集中的解为波动方程的\textbf{古典解}.
+\end{definition}
 
-波动方程是偏微分方程中一类重要的方程，可以从许多具有物理意义的模型得到。实际上，波动方程是关于振动的弦 ($n=1$)、薄膜 ($n=2$) 和弹性体 ($n=3$) 的二阶偏微分方程。在此我们简略地推导一下。
-
-通常让 $u=u(x,t)$ 表示物体 $\Omega$ 在时刻 $t$，点 $x$ 在某个方向的位移。令 $V$ 为 $\Omega$ 内的任何光滑区域，考虑它在任意时段 $[t_1,t_2]$ 动量的变化。由动量守恒律我们知道，$V$ 在时段 $[t_1,t_2]$ 动量的变化，也即 $V$ 在时刻 $t_2$ 的动量与它在时刻 $t_1$ 的动量之差等于通过其边界 $\partial V$ 作用于 $V$ 的弹性内力在时段 $[t_1,t_2]$ 产生的冲量与作用于 $V$ 的外力在时段 $[t_1,t_2]$ 产生的冲量之和。设 $\rho=\rho(x)$ 表示物体在点 $x\in\Omega$ 的密度，$\bm{F}$ 表示物体通过边界 $\partial V$ 作用于 $V$ 的弹性内力密度，$f_0=f_0(x,t)$ 表示作用于 $V$ 的外力密度（例如重力密度）。动量守恒律用数学语言表达，为
-\begin{align*}
-\int_V(\rho u_t)|_{t=t_2}\,\mathrm{d}x-\int_V(\rho u_t)|_{t=t_1}\,\mathrm{d}x
-=-\int_{t_1}^{t_2}\int_{\partial V}\bm{F}\cdot\bm{n}\,\mathrm{d}S\,\mathrm{d}t+\int_{t_1}^{t_2}\int_V f_0\,\mathrm{d}x\,\mathrm{d}t,
-\end{align*}
-其中 $\bm{n}$ 为 $\partial V$ 的单位外法向量。上式右端第一项取如此形式是因为只有法方向的弹性内力对物体产生拉伸作用。
-
-利用 Gauss-Green 公式我们得到
-\begin{align*}
-\int_{t_1}^{t_2}\int_V(\rho u_t)_t\,\mathrm{d}x\,\mathrm{d}t+\int_{t_1}^{t_2}\int_{\partial V}\operatorname{div}\bm{F}\,\mathrm{d}x\,\mathrm{d}t=\int_{t_1}^{t_2}\int_V f_0\,\mathrm{d}x\,\mathrm{d}t.
-\end{align*}
-由于区域 $V$ 和时段 $[t_1,t_2]$ 的任意性，我们有
-\begin{align*}
-(\rho u_t)_t+\operatorname{div}\bm{F}=f_0.
-\end{align*}
-假设弹性体是均匀的，即密度 $\rho=\rho_0$ 为常数。此时 $\bm{F}$ 是位移 $u$ 的梯度 $Du$ 的函数，即
-\begin{align*}
-\bm{F}=\bm{F}(Du).
-\end{align*}
-对于小位移 $u$ 和小位移梯度 $Du$ 的情形，可合理地假设
-\begin{align*}
-\bm{F}=-T_0Du,
-\end{align*}
-其中 $T_0$ 表示弹性内力强度。简化上述方程得到
-\begin{align*}
-u_{tt}-a^2\Delta u=f,
-\end{align*}
-其中
-\begin{align*}
-a=\sqrt{\frac{T_0}{\rho_0}},\qquad f=\frac{f_0}{\rho_0}.
-\end{align*}
-至此我们推导出方程 \eqref{eq:wave-gen}。
-
-求解一个用偏微分方程描述的实际问题，一般来说只知道方程是不够的，还需要提适当的附加条件。为了求解方程 \eqref{eq:wave-gen}，我们需要提适当的初始条件和边值条件：
-
-\textbf{初始条件:} 给出弹性体各点在初始时刻 $t=0$ 的位移和速度，即
+\begin{definition}[波动方程的定解条件]
+波动方程 \eqref{eq:wave-gen} 的定解条件包括初始条件和边值条件：
+\begin{enumerate}[(1)]
+\item \textbf{初始条件：} 给出弹性体各点在初始时刻 $t=0$ 的位移和速度：
 \begin{align}
 \begin{cases}
 u(x,0)=\varphi(x), & x\in\Omega, \\
 u_t(x,0)=\psi(x), & x\in\Omega,
 \end{cases} \label{eq:wave-init}
 \end{align}
-其中 $\varphi(x),\psi(x)$ 是已知函数。
-
-\textbf{边值条件:} 给出弹性体边界点在时间 $t>0$ 的状态，如位移或受力情况，通常有如下三类：
-
-\begin{enumerate}[(1)]
-\item 已知边界点的位移变化
+其中 $\varphi,\psi$ 为已知函数. 称
 \begin{align}
-u(x,t)=g(x,t),\quad x\in\partial\Omega,\ t\geqslant 0. \label{eq:wave-bc1}
+\begin{cases}
+u_{tt}-a^2\Delta u=f(x,t), & (x,t)\in\mathbb{R}^n\times\mathbb{R}_+,\\
+u(x,0)=\varphi(x),\quad u_t(x,0)=\psi(x), & x\in\mathbb{R}^n,
+\end{cases}
 \end{align}
-当 $g(x,t)\equiv 0$ 时，表示弹性体边界 $\partial\Omega$ 固定。
+为\textbf{$n$维波动方程初值问题（Cauchy初值问题）}.
 
-\item 已知边界点的受力情况
+\item \textbf{边值条件：} 通常有以下三类：
+\begin{enumerate}[(i)]
+\item \textbf{第一类边值条件（Dirichlet 条件）：}
 \begin{align}
-\frac{\partial}{\partial n}u(x,t)=g(x,t),\quad x\in\partial\Omega,\ t\geqslant 0, \label{eq:wave-bc2}
+u(x,t)=g(x,t),\qquad x\in\partial\Omega,\ t>0. \label{eq:wave-bc1}
 \end{align}
-其中 $n$ 是 $\partial\Omega$ 的单位外法向量。当 $g(x,t)\equiv 0$ 时，表示无外力通过边界 $\partial\Omega$ 对弹性体作用，此时 $\partial\Omega$ 处于自由状态。
+当 $g\equiv 0$ 时，表示边界固定.
 
-\item 已知边界点的位移与所受外力的线性组合
+\item \textbf{第二类边值条件（Neumann 条件）：}
 \begin{align}
-\frac{\partial}{\partial n}u(x,t)+\alpha(x,t)u(x,t)=g(x,t),\quad x\in\partial\Omega,\ t\geqslant 0, \label{eq:wave-bc3}
+\frac{\partial}{\partial n}u(x,t)=g(x,t),\qquad x\in\partial\Omega,\ t>0, \label{eq:wave-bc2}
 \end{align}
-其中 $\alpha(x,t)>0$，$n$ 是 $\partial\Omega$ 的单位外法向量。当 $g(x,t)\equiv 0$ 时，表示弹性体的边界 $\partial\Omega$ 固定在弹性支撑上。
+其中 $n$ 是 $\partial\Omega$ 的单位外法向量. 当 $g\equiv 0$ 时，表示边界自由（无外力作用）.
+
+\item \textbf{第三类边值条件（Robin 条件）：}
+\begin{align}
+\frac{\partial}{\partial n}u(x,t)+\alpha(x,t)u(x,t)=g(x,t),\qquad x\in\partial\Omega,\ t>0, \label{eq:wave-bc3}
+\end{align}
+其中 $\alpha(x,t)>0$，$n$ 是 $\partial\Omega$ 的单位外法向量. 当 $g\equiv 0$ 时，表示边界固定在弹性支撑上.
 \end{enumerate}
-
-另外，应该注意到上述波动方程的初始条件和边值条件与上一章热方程的初始条件和边值条件既有相同之处又有不同之处。
+\end{enumerate}
+称波动方程 \eqref{eq:wave-gen} 连同初始条件 \eqref{eq:wave-init} 及某一类边值条件构成的问题为波动方程的\textbf{混合问题}（或初边值问题）.
+\end{definition}
+\begin{remark}
+波动方程 \eqref{eq:wave-gen} 的物理背景：若 $u(x,t)$ 表示物体在位置 $x$、时刻 $t$ 的位移，则 $a=\sqrt{T_0/\rho_0}$，其中 $T_0$ 为弹性内力强度，$\rho_0$ 为密度，$f$ 为外力密度除以密度. 当 $n=1$ 时，描述弦的振动；$n=2$ 时描述薄膜振动；$n=3$ 时描述弹性体振动.
+\end{remark}
 
 \subfile{Chapter-04/section-01.tex}
 

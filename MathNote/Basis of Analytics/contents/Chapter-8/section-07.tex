@@ -39,6 +39,72 @@ F:D\to\mathbb{R}^n,\,\,\bm{x}=(x_1,\cdots,x_n)\mapsto \bm{F}(\bm{x}).
 为$f$在$\bm{x}_0$处的\textbf{梯度},称$\nabla$为$\mathbf{Hamilton}$\textbf{(哈密顿)算子}.
 \end{definition}
 
+\begin{proposition}\label{proposition:连通开集上梯度为0就是常数}
+设 $\Omega\subset \mathbb{R}^n$ 是非空连通开集，$f:\Omega\to\mathbb{R}$ 在 $\Omega$ 上可微，且
+\begin{align*}
+\nabla f(x)=0,\qquad \forall x\in\Omega,
+\end{align*}
+则 $f$ 在 $\Omega$ 上为常数.
+\end{proposition}
+\begin{remark}
+该命题的逆命题显然成立：常函数的梯度处处为零.
+\end{remark}
+\begin{proof}
+任取 $x_0\in\Omega$，定义集合
+\begin{align*}
+A\triangleq\{\,x\in\Omega\mid f(x)=f(x_0)\,\}.
+\end{align*}
+显然$x_0\in A$，故$A\neq\varnothing$.
+
+先证 $A$ 是开集：任取 $y\in A$，因 $\Omega$ 开，故存在 $r>0$ 使得 $B(y,r)\subset\Omega$. 对任意 $z\in B(y,r)$，由于球是凸的，线段 $[y,z]\subset B(y,r)\subset\Omega$. 对 $t\in[0,1]$，令 $\gamma(t)=y+t(z-y)$，则由链式法则得
+\begin{align*}
+\frac{\mathrm{d}}{\mathrm{d}t} f(\gamma(t))=\nabla f(\gamma(t))\cdot(z-y)=0.
+\end{align*}
+故 $f(\gamma(t))$ 恒为常数，因此$f(\gamma(0))=f(\gamma(1))=f(z)=f(y)=f(x_0)$，所以 $z\in A$. 因此 $B(y,r)\subset A$，即$A$ 为开集.
+
+再证 $A$ 是闭集：由 $f$ 的连续性知$A=f^{-1}(\{f(x_0)\})$ 是 $\Omega$ 的闭集.
+
+若$A \subsetneq  \Omega$,则$\Omega =A\sqcup (\Omega\setminus A)$,由$A$ 非空且既开又闭知$\Omega\setminus A$也是开集,这与$\Omega$ 连通矛盾!故 $A=\Omega$. 因此对任意 $x\in\Omega$，$f(x)=f(x_0)$，即 $f$ 为常数.
+\end{proof}
+
+\begin{proposition}\label{proposition:}
+设 $A$ 是 $n$ 阶实矩阵，$x=(x_1,\cdots,x_n)^T\in\mathbb{R}^n$，定义二次型
+\begin{align*}
+f(x)\triangleq x^T A x=\sum_{i=1}^n\sum_{j=1}^n a_{ij}x_i x_j.
+\end{align*}
+则 $f$ 在 $x$ 处的梯度为
+\begin{align}
+\nabla f(x)=(A+A^T)x. \label{grad:general}
+\end{align}
+特别地，若 $A$ 为对称矩阵，则
+\begin{align}
+\nabla f(x)=2Ax. \label{grad:symmetric}
+\end{align}
+\end{proposition}
+\begin{remark}
+二次型 $x^T A x$ 的值仅由 $A$ 的对称部分 $\frac{1}{2}(A+A^T)$ 决定，因此梯度的表达式自然地反映了这一事实.
+\end{remark}
+\begin{proof}
+将 $f(x)$ 展开：
+\begin{align*}
+f(x)=\sum_{i=1}^n\sum_{j=1}^n a_{ij}x_i x_j.
+\end{align*}
+固定 $k$，对 $x_k$ 求偏导：
+\begin{align*}
+\frac{\partial f}{\partial x_k}
+=\sum_{i=1}^n\sum_{j=1}^n a_{ij}\frac{\partial}{\partial x_k}(x_i x_j) 
+=\sum_{i=1}^n\sum_{j=1}^n a_{ij}(\delta_{ik}x_j+x_i\delta_{jk}) 
+=\sum_{j=1}^n a_{kj}x_j+\sum_{i=1}^n a_{ik}x_i.
+\end{align*}
+上式第一项为 $(Ax)_k$，第二项为 $(A^T x)_k$，因此
+\begin{align*}
+\frac{\partial f}{\partial x_k}=((A+A^T)x)_k.
+\end{align*}
+所以 $\nabla f(x)=(A+A^T)x$，即 \eqref{grad:general}式成立.
+
+当 $A$ 对称时，$A^T=A$，代入 \eqref{grad:general} 得 $\nabla f(x)=2Ax$，即 \eqref{grad:symmetric}式成立.
+\end{proof}
+
 \begin{definition}
 设$\bm{F}=(F_1,\cdots,F_n)$是$\mathbb{R}^n$上的向量场，若$F_i$均可微，则定义$\bm{F}$的\textbf{散度}为
 \[
@@ -125,7 +191,7 @@ f(x,y)=\begin{cases}\dfrac{x^{2}y}{x^{4}+y^{2}},&(x,y)\neq(0,0),\\0,&(x,y)=(0,0)
 \item\label{theorem:散度旋度Laplace算子的性质-9} $\Delta(cu)=c\Delta u$
 \item $\Delta(u\pm v)=\Delta u\pm\Delta v$.
 
-\item\label{theorem:散度旋度Laplace算子的性质-10} $\Delta(uv)=u\Delta v+v\Delta u+2\nabla u\cdot\nabla v$.
+\item\label{theorem:散度旋度Laplace算子的性质-10} $\Delta(uv)=u\Delta v+v\Delta u+2\nabla u\cdot\nabla v$,特别地$\Delta u^2=2u\Delta u+\left| \nabla u \right|^2.$
 \end{enumerate}
 \end{theorem}
 
@@ -167,7 +233,7 @@ f(x,y)=\begin{cases}\dfrac{x^{2}y}{x^{4}+y^{2}},&(x,y)\neq(0,0),\\0,&(x,y)=(0,0)
 \int_{\Omega}(u\Delta v-v\Delta u)\,\mathrm{d}V=\int_{\partial\Omega}\left(u\frac{\partial v}{\partial\bm{n}}-v\frac{\partial u}{\partial\bm{n}}\right)\mathrm{d}S. 
 \end{align*}
 
-\item 若$u,v\in C^1(\Omega)\cap C(\overline{\Omega})$，则有
+\item\label{theorem:Green恒等式-3} 若$u,v\in C^1(\Omega)\cap C(\overline{\Omega})$，则有
 \begin{align*}
 \int_\Omega \frac{\partial u}{\partial x_i}v\,\mathrm{d}x = -\int_\Omega u \frac{\partial v}{\partial x_i}\,\mathrm{d}x + \int_{\partial\Omega} u v n_i\,\mathrm{d}S(x),
 \end{align*}

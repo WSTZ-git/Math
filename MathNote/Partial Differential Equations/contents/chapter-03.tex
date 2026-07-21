@@ -14,85 +14,81 @@
 
 \chapter{热方程}
 
-本章讨论热方程
+\begin{definition}
+设 $\Omega\subset\mathbb{R}^n$，$a>0$ 为常数，$f=f(x,t)$ 为已知函数，$u=u(x,t)$，$x\in\Omega$，$t>0$. 称方程
 \begin{align}
-u_t - a^2\Delta u = f, \label{eq:heat-gen}
+u_t - a^2\Delta u = f \label{def:heat}
 \end{align}
-其中 $u=u(x,t)$，$x=(x_1,x_2,\cdots,x_n)\in\Omega\subset\mathbb{R}^n$，$t>0$；$a>0$ 是常数，$f=f(x,t)$ 是已知函数。
-
-在此章第一节中，我们将首先从 Fourier 级数诱导出 Fourier 变换和 Fourier 积分，讨论 Fourier 变换和 Fourier 积分的性质；然后我们利用 Fourier 变换和 Fourier 积分求解出一维和多维热方程的 Cauchy 初值问题的解的表达式——Poisson 公式，从而得到热方程初值问题的解的存在性，并由此导出热方程的基本解。在第二节中，我们介绍分离变量法的理论基础——特征值问题，并利用分离变量法来解出一维热方程混合问题的解的表达式，从而得到一维热方程混合问题的解的存在性，同时由此导出热方程的 Green 函数。在第三节中，我们利用在位势方程这一章中应用的方法，推导出关于热方程混合问题和初值问题的各种极值原理和最大模估计；然后我们介绍一个重要的 Gronwall 不等式，并以此推导出热方程的混合问题的能量模估计，从而解决相应的解的惟一性问题和稳定性问题；最后我们讨论热方程反问题的解的惟一性和此类问题的不适定性。
-
-热方程的解的性质与位势方程的解的性质有很大的相似性。对于大多数关于位势方程的定理也有关于热方程的相应定理成立。当然，相对于位势方程来说，关于热方程的定理和证明通常要复杂一些，毕竟热方程中多了一个变量和关于这个变量的一阶的偏导数。另外，从尺度变换的观点来看，热方程中空间变量和时间变量不是各向同性的，因此热方程的解在空间方向和时间方向上的性质有一定的差异。这在以下的讨论中将得到进一步的阐述。
-
-热方程是偏微分方程中另一类重要的方程，可以从许多具有物理意义的数学模型中得到。在此我们简略地推导一下。
-
-设 $u=u(x,t)$ 表示某一均匀物体 $\Omega\subset\mathbb{R}^3$ 在位置 $x$，时刻 $t$ 的温度（单位：K）；$c$ 表示比热（单位：J/(kg$\cdot$K)），$\rho$ 表示密度（单位：kg/m$^3$）。令 $V$ 为 $\Omega$ 内的任何光滑区域，$q$ 表示温度场的热流密度（单位：W/m$^2$）且 $f_0=f_0(x,t)$ 表示在位置 $x$，时刻 $t$ 产生的热量密度。由能量守恒定律我们得到
+为\textbf{热方程}. 当 $f\equiv 0$ 时，称
 \begin{align}
-\frac{\mathrm{d}}{\mathrm{d}t}\int_V c\rho u\,\mathrm{d}x + \int_{\partial V} q\cdot n\,\mathrm{d}S(x) = \int_V \rho f_0\,\mathrm{d}x,
+u_t - a^2\Delta u = 0 \label{def:heat-hom}
 \end{align}
-其中 $n$ 为 $\partial V$ 的单位外法向量。利用 Gauss-Green 公式我们知
+为\textbf{齐次热方程}.
+\end{definition}
+
+\begin{definition}
+设 $Q\subset\mathbb{R}^n$，$T>0$. 我们用$C^{2,1}(Q)$表示所有在$Q$内关于$x$二阶偏导数连续,关于$t$一阶偏导数连续的函数构成的函数集,即
 \begin{align*}
-c\rho\int_V u_t\,\mathrm{d}x + \int_V \operatorname{div} q\,\mathrm{d}x = \int_V \rho f_0\,\mathrm{d}x.
+C^{2,1}(Q) \triangleq \{\, u \mid u, u_t, u_{x_i}, u_{x_ix_j} \in C(Q),\ i,j=1,\cdots,n\,\}.
 \end{align*}
-由于区域 $V$ 的任意性，我们有
-\begin{align}
-c\rho u_t + \operatorname{div} q = \rho f_0. \label{eq:heat-deriv1}
-\end{align}
-由 Fourier 热传导定律（温度场中热流密度与温度梯度成正比，而且热量总是从高温处流向低温处）
-\begin{align}
-q = -k Du, \label{eq:fourier-law}
-\end{align}
-其中 $k>0$ 是物体的导热系数，我们把等式 \eqref{eq:fourier-law} 代入等式 \eqref{eq:heat-deriv1} 得到热方程
+称热方程 \eqref{def:heat}在$C^{2,1}$函数集中的解为热方程\eqref{def:heat}的\textbf{古典解}. 类似地，用$C^{1,0}(Q)$表示所有在$Q$内函数本身连续且关于$x$一阶偏导数连续的函数构成的函数集,即
 \begin{align*}
-u_t - a^2\Delta u = f,
+C^{1,0}(Q) \triangleq \{\, u \mid u, u_{x_i} \in C(Q),\ i=1,\cdots,n\,\}.
 \end{align*}
-这里 $a=\sqrt{\frac{k}{c\rho}}$，$f=\frac{f_0}{c}$。
+\end{definition}
 
-\begin{remark}
-如果 $u$ 表示物质在位置 $x$，时刻 $t$ 的浓度，则方程 \eqref{eq:heat-gen} 称为反应扩散方程。在推导过程中只需把 Fourier 热传导定律换为 Fick 扩散定律。此时 $f(x,t)$ 表示在位置 $x$，时刻 $t$ 产生的物质的密度，也称为反应项。而 $-a^2\Delta u$ 表示在位置 $x$，时刻 $t$ 物质的扩散强度，也称为扩散项。
-\end{remark}
-
-解一个用偏微分方程描述的实际问题，一般来说只知道方程是不够的，因此我们还需要提适当的附加条件。本章中为了求解方程 \eqref{eq:heat-gen}，我们需要适当的初始条件和边值条件。初始条件和边值条件也称为\textbf{定解条件}，一个偏微分方程和相应的定解条件组成一个\textbf{定解问题}。回到上述具体问题，为了确定物体内部的温度分布，我们还需要知道物体内部的初始温度分布以及物体通过它的边界所受周围介质的影响，故对于上述具体问题的定解条件如下：
-
-\textbf{初始条件} 给出物体内部的各点在初始时刻 $t=0$ 的温度分布
-\begin{align*}
-u(x,0)=\varphi(x),\quad x\in\Omega,
-\end{align*}
-其中 $\varphi(x)$ 是已知函数。
-
-\textbf{边值条件} 给出物体边界 $\partial\Omega$ 在时间 $t>0$ 的温度分布或受周围介质的影响情况，通常有以下三类：
+\begin{definition}
+热方程 \eqref{def:heat} 的定解条件包括初始条件和边值条件：
 \begin{enumerate}[(1)]
-\item 已知边界 $\partial\Omega$ 的温度分布
+\item \textbf{初始条件：}
 \begin{align*}
-u(x,t)=g(x,t),\quad x\in\partial\Omega,\ t\geqslant 0.
+u(x,0)=\varphi(x),\qquad x\in\Omega,
 \end{align*}
-当 $g$ 为常数时，表示物体的边界保持\textbf{恒温}。
+其中 $\varphi$ 为已知函数.称\eqref{eq:heat-cauchy1d}式
+\begin{align}
+\begin{cases}
+\frac{\partial u}{\partial t} - a^2\frac{\partial^2 u}{\partial x^2} = f(x,t), & (x,t)\in\mathbb{R}\times\mathbb{R}_+, \\
+u(x,0)=\varphi(x), & x\in\mathbb{R}.
+\end{cases} \label{eq:heat-cauchy1d}
+\end{align}
+为\textbf{一维热方程初值问题}.称\eqref{eq:多维热方程初值问题}式
+\begin{align}\label{eq:多维热方程初值问题}
+\begin{cases}
+\frac{\partial u}{\partial t}-a^2\Delta u=f(x,t), & (x,t)\in\mathbb{R}_+^{n+1}=\mathbb{R}^n\times\mathbb{R}_+,\\
+u(x,0)=\varphi(x), & x\in\mathbb{R}^n.
+\end{cases}
+\end{align}
+为\textbf{$n$维热方程初值问题}.
 
-\item 已知通过物体的边界 $\partial\Omega$ 流入或流出物体 $\Omega$ 的热量
+\item \textbf{边值条件：} 通常有以下三类：
+\begin{enumerate}[(i)]
+\item \textbf{第一类边值条件（Dirichlet 条件）：}
 \begin{align*}
-k\frac{\partial}{\partial n}u(x,t)=g(x,t),\quad x\in\partial\Omega,\ t\geqslant 0,
+u(x,t)=g(x,t),\qquad x\in\partial\Omega,\ t>0.
 \end{align*}
-其中 $n$ 是 $\partial\Omega$ 的单位外法向量，当 $g\geqslant 0$ 时表示热量流入，当 $g\leqslant 0$ 时表示热量流出，特别地，当 $g\equiv 0$ 时，表示物体\textbf{绝热}。
+当 $g\equiv$ 常数时，称边界保持恒温.
 
-\item 已知通过物体的边界 $\partial\Omega$ 与周围介质的热交换强度
+\item \textbf{第二类边值条件（Neumann 条件）：}
 \begin{align*}
-k\frac{\partial}{\partial n}u(x,t)=\alpha_0(x,t)(g_0(x,t)-u(x,t)),\quad x\in\partial\Omega,\ t\geqslant 0
+k\frac{\partial u}{\partial n}(x,t)=g(x,t),\qquad x\in\partial\Omega,\ t>0,
 \end{align*}
-或
+其中 $n$ 为 $\partial\Omega$ 的单位外法向量，$k>0$ 为导热系数. 当 $g\equiv 0$ 时，称边界绝热.
+
+\item \textbf{第三类边值条件（Robin 条件）：}
 \begin{align*}
-\frac{\partial}{\partial n}u(x,t)+\alpha(x,t)u(x,t)=g(x,t),\quad x\in\partial\Omega,\ t\geqslant 0,
+k\frac{\partial u}{\partial n}(x,t)=\alpha_0(x,t)(g_0(x,t)-u(x,t)),\qquad x\in\partial\Omega,\ t>0,
 \end{align*}
-其中 $n$ 是 $\partial\Omega$ 的单位外法向量，$g_0$ 表示周围介质的温度，$\alpha_0>0$ 表示热交换系数，$\alpha=\frac{\alpha_0}{k}>0$，$g=\frac{g_0}{k}$。
+或等价地
+\begin{align*}
+\frac{\partial u}{\partial n}(x,t)+\alpha(x,t)u(x,t)=g(x,t),\qquad x\in\partial\Omega,\ t>0,
+\end{align*}
+其中 $\alpha_0>0$ 为热交换系数，$g_0$ 为周围介质温度，$\alpha=\frac{\alpha_0}{k}$，$g=\frac{\alpha_0 g_0}{k}$.
 \end{enumerate}
-
-在以下章节中，我们用 $C^{2,1}(Q)$ 表示所有在 $Q$ 内关于 $x$ 二阶偏导数连续，关于 $t$ 一阶偏导数连续的函数构成的函数集，即
-\begin{align*}
-C^{2,1}(Q)=\{u\in C(Q) \mid u_t,u_{x_i},u_{x_i x_j}\in C(Q);\ i,j=1,\cdots,n\}.
-\end{align*}
-热方程 \eqref{eq:heat-gen} 在函数集 $C^{2,1}(Q)$ 中的解通常称为它的\textbf{古典解}。同时我们用 $C^{1,0}(Q)$ 表示所有在 $Q$ 内函数本身连续且关于 $x$ 一阶偏导数连续的函数构成的函数集，即
-\begin{align*}
-C^{1,0}(Q)=\{u\in C(Q) \mid u_{x_i}\in C(Q);\ i=1,\cdots,n\}.
-\end{align*}
+\end{enumerate}
+\end{definition}
+\begin{remark}
+热方程 \eqref{def:heat} 的物理背景：若 $u(x,t)$ 表示物体在位置 $x$、时刻 $t$ 的温度，则 $a=\sqrt{k/(c\rho)}$，其中 $k$ 为导热系数，$c$ 为比热，$\rho$ 为密度，$f=f_0/c$，$f_0$ 为热源密度. 若 $u$ 表示浓度，则 \eqref{def:heat} 称为反应扩散方程，此时 $a^2$ 为扩散系数，$-a^2\Delta u$ 为扩散项，$f$ 为反应项.
+\end{remark}
 
 \subfile{Chapter-03/section-01.tex}
 

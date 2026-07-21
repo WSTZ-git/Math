@@ -15,54 +15,7 @@
 
 \section{初值问题}
 
-我们将在这一节中求解一维热方程初值问题
-\begin{align}
-\begin{cases}
-\frac{\partial u}{\partial t} - a^2\frac{\partial^2 u}{\partial x^2} = f(x,t), & (x,t)\in\mathbb{R}\times\mathbb{R}_+, \\
-u(x,0)=\varphi(x), & x\in\mathbb{R}.
-\end{cases} \label{eq:heat-cauchy1d}
-\end{align}
-多维热方程初值问题的求解完全类似。在求解一维热方程初值问题 \eqref{eq:heat-cauchy1d} 之前我们先介绍 Fourier 变换和 Fourier 积分。
-
 \subsection{Fourier 变换和 Fourier 积分}
-
-Fourier 积分实际上是 Fourier 级数的一种极限形式。从 Fourier 级数，我们可以从形式上诱导出 Fourier 积分。
-
-设 $f(x)\in C^1(\mathbb{R})$。对任意 $l>0$，$f(x)$ 在 $(-l,l)$ 可以展开为 Fourier 级数，且对 $x\in(-l,l)$，
-\begin{align*}
-f(x)=\frac{a_0}{2}+\sum_{k=1}^{\infty}\left(a_k\cos\frac{k\pi}{l}x+b_k\sin\frac{k\pi}{l}x\right),
-\end{align*}
-其中系数
-\begin{align*}
-a_k=\frac{1}{l}\int_{-l}^{l}f(\xi)\cos\frac{k\pi}{l}\xi\,\mathrm{d}\xi,\quad k=0,1,2,\cdots,\\
-b_k=\frac{1}{l}\int_{-l}^{l}f(\xi)\sin\frac{k\pi}{l}\xi\,\mathrm{d}\xi,\quad k=1,2,\cdots.
-\end{align*}
-我们将系数 $a_k,b_k$ 的表达式代入上式，并利用三角函数和差化积公式得到
-\begin{align*}
-f(x)&=\frac{1}{2l}\int_{-l}^{l}f(\xi)\,\mathrm{d}\xi+\sum_{k=1}^{\infty}\frac{1}{l}\int_{-l}^{l}f(\xi)\cos\frac{k\pi}{l}(x-\xi)\,\mathrm{d}\xi \\
-&=\frac{1}{2l}\int_{-l}^{l}f(\xi)\,\mathrm{d}\xi+\frac{1}{\pi}\sum_{k=1}^{\infty}\Delta\lambda_k\int_{-l}^{l}f(\xi)\cos\lambda_k(x-\xi)\,\mathrm{d}\xi,
-\end{align*}
-这里
-\begin{align*}
-\lambda_k=\frac{k\pi}{l},\qquad \Delta\lambda_k=\lambda_{k+1}-\lambda_k=\frac{\pi}{l}.
-\end{align*}
-设极限
-\begin{align*}
-\lim_{l\to+\infty}\int_{-l}^{l}|f(\xi)|\,\mathrm{d}\xi
-\end{align*}
-存在，则当 $l\to+\infty$ 时，
-\begin{align*}
-\frac{1}{2l}\int_{-l}^{l}f(\xi)\,\mathrm{d}\xi \longrightarrow 0,
-\end{align*}
-且形式上
-\begin{align*}
-\frac{1}{\pi}\sum_{k=1}^{\infty}\Delta\lambda_k\int_{-l}^{l}f(\xi)\cos\lambda_k(x-\xi)\,\mathrm{d}\xi
-\longrightarrow \frac{1}{\pi}\int_0^{+\infty}\mathrm{d}\lambda\int_{-\infty}^{+\infty}f(\xi)\cos\lambda(x-\xi)\,\mathrm{d}\xi,
-\end{align*}
-因而我们可以猜测
-\begin{align}
-f(x)=\frac{1}{\pi}\int_0^{+\infty}\mathrm{d}\lambda\int_{-\infty}^{+\infty}f(\xi)\cos\lambda(x-\xi)\,\mathrm{d}\xi. \label{eq:fourier-informal}
-\end{align}
 
 \begin{definition}
 设 $f(x)\in L^1(\mathbb{R})$，则无穷积分
@@ -72,21 +25,7 @@ f(x)=\frac{1}{\pi}\int_0^{+\infty}\mathrm{d}\lambda\int_{-\infty}^{+\infty}f(\xi
 有意义，称为 $f(x)$ 的 \textbf{Fourier 变换}，记为 $(f(x))^\wedge=\hat{f}(\lambda)$。
 \end{definition}
 
-\begin{lemma}[Riemann-Lebesgue 引理]
-设 $f(x)\in C[a,b]$，则
-\begin{align}
-\lim_{n\to+\infty}\int_a^b f(x)\sin nx\,\mathrm{d}x=0. \label{eq:riemann-lebesgue}
-\end{align}
-\end{lemma}
-\begin{remark}
-另外，从复变函数我们知道如下有用的等式：
-\begin{align}
-\int_{-\infty}^{+\infty}\frac{\sin x}{x}\,\mathrm{d}x=\pi. \label{eq:sinc-integral}
-\end{align}
-我们将利用以上事实来证明 Fourier 积分定理。
-\end{remark}
-
-\begin{theorem}[Fourier 积分定理]
+\begin{theorem}[Fourier积分定理]
 设 $f(x)\in L^1(\mathbb{R})\cap C^1(\mathbb{R})$，则
 \begin{align}
 f(x)=\lim_{N\to+\infty}\frac{1}{\sqrt{2\pi}}\int_{-N}^{N}\hat{f}(\lambda)e^{\mathrm{i}\lambda  x}\,\mathrm{d}\lambda. \label{eq:fourier-inversion}
@@ -95,8 +34,10 @@ f(x)=\lim_{N\to+\infty}\frac{1}{\sqrt{2\pi}}\int_{-N}^{N}\hat{f}(\lambda)e^{\mat
 \begin{align*}
 (\hat{f})^\vee=f.
 \end{align*}
-也就是说，$L^1(\mathbb{R})\cap C^1(\mathbb{R})$ 中的函数作一次 Fourier 变换后，再作一次 Fourier 逆变换，又回到函数本身。
 \end{theorem}
+\begin{remark}
+也就是说，$L^1(\mathbb{R})\cap C^1(\mathbb{R})$ 中的函数作一次 Fourier 变换后，再作一次 Fourier 逆变换，又回到函数本身.
+\end{remark}
 \begin{proof}
 由于 $f(x)\in L^1(\mathbb{R})$，则对任意的 $\lambda\in\mathbb{R}$，无穷积分
 \begin{align*}
@@ -136,7 +77,7 @@ g(x,\eta)=\int_0^1 f'(x+\tau\eta)\,\mathrm{d}\tau
 \begin{align*}
 |I_1|+|I_3|<\frac{\varepsilon}{2},
 \end{align*}
-然后利用公式 \eqref{eq:riemann-lebesgue} 和 \eqref{eq:sinc-integral} 再取定 $N_0$，使得当 $N>N_0$ 时，
+然后利用\hyperref[Basis of Analytics-lemma:Riemann-Lebesgue引理]{Riemann-Lebesgue引理}和\rrefpro{Basis of Analytics-proposition:重要定积分结论}{Basis of Analytics-proposition:重要定积分结论-2}再取定 $N_0$，使得当 $N>N_0$ 时，
 \begin{align*}
 \left|\frac{1}{\pi}\int_{-M}^{M}g(x,\eta)\sin N\eta\,\mathrm{d}\eta\right|<\frac{\varepsilon}{4},
 \end{align*}
@@ -151,134 +92,118 @@ g(x,\eta)=\int_0^1 f'(x+\tau\eta)\,\mathrm{d}\tau
 从而完成定理的证明。
 \end{proof}
 
-\begin{proposition}[线性性质]
-若 $f_i(x)\in L^1(\mathbb{R})$，$a_i\in\mathbb{C}$ $(i=1,2)$，则
+\begin{proposition}[$\mathbb{R}$上的Fourier 变换的基本性质]\label{proposition:Fourier 变换的基本性质1}
+设 $f,g\in L^1(\mathbb{R})$，$a_1,a_2\in\mathbb{C}$，$k\in\mathbb{R}$，$k\neq 0$，则其 Fourier 变换
 \begin{align*}
-(a_1f_1(x)+a_2f_2(x))^\wedge=a_1\hat{f}_1(\lambda)+a_2\hat{f}_2(\lambda).
+\hat{f}(\lambda)\triangleq \frac{1}{\sqrt{2\pi}}\int_{-\infty}^{+\infty}f(x)e^{-\mathrm{i}\lambda x}\,\mathrm{d}x
 \end{align*}
-\end{proposition}
-
-\begin{proposition}[微商性质]
-若 $f(x),f'(x)\in L^1(\mathbb{R})\cap C(\mathbb{R})$，则
+满足以下性质：
+\begin{enumerate}[(1)]
+\item\label{proposition:Fourier 变换的基本性质1-1} \textbf{线性性质:}
 \begin{align*}
-(f'(x))^\wedge=\mathrm{i}\lambda \hat{f}(\lambda).
+(a_1f_1+a_2f_2)^\wedge=a_1\hat{f}_1+a_2\hat{f}_2.
 \end{align*}
-\end{proposition}
 
+\item\label{proposition:Fourier 变换的基本性质1-2} \textbf{微商性质:}若 $f,f'\in L^1(\mathbb{R})\cap C(\mathbb{R})$，则
+\begin{align*}
+(f')^\wedge=\mathrm{i}\lambda \hat{f}(\lambda).
+\end{align*}
+更一般地，若 $f,f',\cdots,f^{(m)}\in L^1(\mathbb{R})\cap C(\mathbb{R})$，则
+\begin{align*}
+(f^{(m)})^\wedge=(\mathrm{i}\lambda)^m\hat{f}(\lambda).
+\end{align*}
+
+\item\label{proposition:Fourier 变换的基本性质1-3} \textbf{乘多项式性质:}若 $f,xf\in L^1(\mathbb{R})$，则
+\begin{align*}
+(xf)^\wedge=\mathrm{i}\frac{\mathrm{d}}{\mathrm{d}\lambda}\hat{f}(\lambda).
+\end{align*}
+更一般地，若 $f,xf,\cdots,x^m f\in L^1(\mathbb{R})$，则
+\begin{align*}
+(x^m f)^\wedge=\mathrm{i}^m\frac{\mathrm{d}^m}{\mathrm{d}\lambda^m}\hat{f}(\lambda).
+\end{align*}
+
+\item\label{proposition:Fourier 变换的基本性质1-4} \textbf{平移性质:}
+\begin{align*}
+(f(x-k))^\wedge=e^{-\mathrm{i}\lambda k}\hat{f}(\lambda).
+\end{align*}
+
+\item\label{proposition:Fourier 变换的基本性质1-5} \textbf{伸缩性质:}
+\begin{align*}
+(f(kx))^\wedge=\frac{1}{|k|}\hat{f}\left(\frac{\lambda}{k}\right).
+\end{align*}
+
+\item\label{proposition:Fourier 变换的基本性质1-6} \textbf{对称性质:}
+\begin{align*}
+(f)^\vee=\hat{f}(-\lambda),
+\end{align*}
+其中 $(f)^\vee$ 表示 Fourier 逆变换.
+
+\item\label{proposition:Fourier 变换的基本性质1-7} \textbf{卷积性质:}定义卷积
+\begin{align*}
+(f*g)(x)\triangleq\int_{-\infty}^{+\infty}f(x-t)g(t)\,\mathrm{d}t,
+\end{align*}
+则 $f*g\in L^1(\mathbb{R})$，且
+\begin{align*}
+(f*g)^\wedge=\sqrt{2\pi}\,\hat{f}(\lambda)\hat{g}(\lambda).
+\end{align*}
+\end{enumerate}
+\end{proposition}
 \begin{proof}
-由于 $f'(x)\in C(\mathbb{R})\cap L^1(\mathbb{R})$，因此由 Newton-Leibniz 公式
+\begin{enumerate}[(1)]
+\item 
+
+\item 由 $f'\in C(\mathbb{R})\cap L^1(\mathbb{R})$ 及 Newton-Leibniz 公式，极限 $\lim_{|x|\to\infty}f(x)=0$ 存在且为零。于是分部积分得
 \begin{align*}
-f(x)=f(0)+\int_0^x f'(x)\,\mathrm{d}x
-\end{align*}
-我们知，极限
-\begin{align*}
-\lim_{x\to+\infty}f(x),\qquad \lim_{x\to-\infty}f(x)
-\end{align*}
-存在。又由于 $f(x)\in L^1(\mathbb{R})$，故
-\begin{align*}
-\lim_{|x|\to+\infty}f(x)=0.
-\end{align*}
-利用上式和分部积分公式得到
-\begin{align*}
-(f'(x))^\wedge=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{+\infty}f'(x)e^{-\mathrm{i}\lambda  x}\,\mathrm{d}x 
-=\frac{1}{\sqrt{2\pi}}\mathrm{i}\lambda \int_{-\infty}^{+\infty}f(x)e^{-\mathrm{i}\lambda  x}\,\mathrm{d}x 
+(f')^\wedge
+=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{+\infty}f'(x)e^{-\mathrm{i}\lambda x}\,\mathrm{d}x 
+=\frac{1}{\sqrt{2\pi}}\left[f(x)e^{-\mathrm{i}\lambda x}\right]_{-\infty}^{+\infty}
++\frac{\mathrm{i}\lambda}{\sqrt{2\pi}}\int_{-\infty}^{+\infty}f(x)e^{-\mathrm{i}\lambda x}\,\mathrm{d}x 
 =\mathrm{i}\lambda \hat{f}(\lambda).
-\end{align*}
-\end{proof}
+\end{align*} 
 
-\begin{proposition}[乘多项式性质]
-若 $f(x),xf(x)\in L^1(\mathbb{R})$，则
+\item  由于 $f,xf\in L^1(\mathbb{R})$，$\hat{f}$ 可微且
 \begin{align*}
-(xf(x))^\wedge=i\frac{\mathrm{d}}{\mathrm{d}\lambda}\hat{f}(\lambda).
+\frac{\mathrm{d}}{\mathrm{d}\lambda}\hat{f}(\lambda)
+&=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{+\infty}f(x)(-\mathrm{i}x)e^{-\mathrm{i}\lambda x}\,\mathrm{d}x
+=-\mathrm{i}(xf)^\wedge,
 \end{align*}
-\end{proposition}
+故 $(xf)^\wedge=\mathrm{i}\frac{\mathrm{d}}{\mathrm{d}\lambda}\hat{f}(\lambda)$.
 
-\begin{proof}
-由于 $f(x),xf(x)\in L^1(\mathbb{R})$，故 $\hat{f}(\lambda)$ 是 $\lambda$ 的连续可微函数，且
+\item 注意到
 \begin{align*}
-\frac{\mathrm{d}}{\mathrm{d}\lambda}\hat{f}(\lambda)=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{+\infty}f(x)(-\mathrm{i}x)e^{-\mathrm{i}\lambda  x}\,\mathrm{d}x=-\mathrm{i}(xf(x))^\wedge.
+(f(x-k))^\wedge
+=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{+\infty}f(x-k)e^{-\mathrm{i}\lambda x}\,\mathrm{d}x 
+=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{+\infty}f(y)e^{-\mathrm{i}\lambda(y+k)}\,\mathrm{d}y
+=e^{-\mathrm{i}\lambda k}\hat{f}(\lambda).
 \end{align*}
-\end{proof}
 
-\begin{corollary}
-若 $f(x),f'(x),\cdots,f^{(m)}(x)\in L^1(\mathbb{R})\cap C(\mathbb{R})$，则
+\item  以 $k>0$ 为例，作变量替换 $y=kx$：
 \begin{align*}
-(f^{(m)}(x))^\wedge=(\mathrm{i}\lambda )^m\hat{f}(\lambda);
+(f(kx))^\wedge
+=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{+\infty}f(kx)e^{-\mathrm{i}\lambda x}\,\mathrm{d}x 
+=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{+\infty}f(y)e^{-\mathrm{i}\lambda y/k}\,\frac{\mathrm{d}y}{k}
+=\frac{1}{k}\hat{f}\left(\frac{\lambda}{k}\right).
 \end{align*}
-若 $f(x),xf(x),\cdots,x^m f(x)\in L^1(\mathbb{R})$，则
-\begin{align*}
-(x^m f(x))^\wedge=\mathrm{i}^m\frac{\mathrm{d}^m}{\mathrm{d}\lambda^m}\hat{f}(\lambda).
-\end{align*}
-这里 $m$ 是大于或等于 $1$ 的正整数。
-\end{corollary}
+$k<0$ 时同理得 $\frac{1}{|k|}\hat{f}(\lambda/k)$.
 
-\begin{proposition}[平移性质]
-对任意常数 $k$，若 $f(x)\in L^1(\mathbb{R})$，则
-\begin{align*}
-(f(x-k))^\wedge=e^{-\mathrm{i}\lambda  k}\hat{f}(\lambda).
-\end{align*}
-\end{proposition}
+\item  
 
-\begin{proof}
-由定义得到
-\begin{align*}
-(f(x-k))^\wedge&=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{+\infty}f(x-k)e^{-\mathrm{i}\lambda  x}\,\mathrm{d}x \\
-&=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{+\infty}f(y)e^{-\mathrm{i}\lambda (k+y)}\,\mathrm{d}y \\
-&=e^{-\mathrm{i}\lambda  k}\hat{f}(\lambda).
-\end{align*}
-\end{proof}
-
-\begin{proposition}[伸缩性质]
-若 $f(x)\in L^1(\mathbb{R})$，则
-\begin{align*}
-(f(kx))^\wedge=\frac{1}{|k|}\hat{f}\left(\frac{\lambda}{k}\right),\quad k\neq 0.
-\end{align*}
-\end{proposition}
-
-\begin{proof}
-不妨设 $k>0$，由定义得到
-\begin{align*}
-(f(kx))^\wedge&=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{+\infty}f(kx)e^{-\mathrm{i}\lambda  x}\,\mathrm{d}x \\
-&=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{+\infty}f(y)e^{-\mathrm{i}\lambda  \frac{y}{k}}\,\mathrm{d}\left(\frac{y}{k}\right) \\
-&=\frac{1}{k}\hat{f}\left(\frac{\lambda}{k}\right).
-\end{align*}
-一般情形同理。
-\end{proof}
-
-\begin{proposition}[对称性质]
-若 $f(x)\in L^1(\mathbb{R})$，则
-\begin{align*}
-(f(x))^\vee=\hat{f}(-\lambda).
-\end{align*}
-\end{proposition}
-
-\begin{proposition}[卷积性质]
-若 $f(x),g(x)\in L^1(\mathbb{R})$，那么 $f(x)$ 和 $g(x)$ 的卷积 $f*g$ 定义为
-\begin{align*}
-f*g(x)=\int_{-\infty}^{+\infty}f(x-t)g(t)\,\mathrm{d}t,
-\end{align*}
-则 $f*g(x)\in L^1(\mathbb{R})$，且
-\begin{align*}
-(f*g(x))^\wedge=\sqrt{2\pi}\hat{f}(\lambda)\hat{g}(\lambda).
-\end{align*}
-\end{proposition}
-
-\begin{proof}
-我们先证 $f*g(x)\in L^1(\mathbb{R})$。由 Fubini 定理得到
+\item 首先
 \begin{align*}
 \int_{-\infty}^{+\infty}|f*g(x)|\,\mathrm{d}x
-&\leqslant \int_{-\infty}^{+\infty}\mathrm{d}x\int_{-\infty}^{+\infty}|f(x-t)g(t)|\,\mathrm{d}t \\
-&=\int_{-\infty}^{+\infty}|g(t)|\,\mathrm{d}t\int_{-\infty}^{+\infty}|f(x-t)|\,\mathrm{d}x \\
-&=\int_{-\infty}^{+\infty}|g(t)|\,\mathrm{d}t\cdot\int_{-\infty}^{+\infty}|f(x)|\,\mathrm{d}x,
+\leqslant \int_{-\infty}^{+\infty}\int_{-\infty}^{+\infty}|f(x-t)g(t)|\,\mathrm{d}t\,\mathrm{d}x 
+=\int_{-\infty}^{+\infty}|g(t)|\,\mathrm{d}t\int_{-\infty}^{+\infty}|f(x-t)|\,\mathrm{d}x
+=\|f\|_1\|g\|_1,
 \end{align*}
-从而 $f*g\in L^1(\mathbb{R})$。
-
-又由 Fubini 定理，我们知
+故 $f*g\in L^1(\mathbb{R})$. 再由\hyperref[Real Analysis-theorem:Fubini定理 可积函数的情形]{Fubini定理}得
 \begin{align*}
-(f*g(x))^\wedge&=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{+\infty}e^{-\mathrm{i}\lambda  x}\mathrm{d}x\int_{-\infty}^{+\infty}f(x-t)g(t)\,\mathrm{d}t \\
-&=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{+\infty}g(t)e^{-\mathrm{i}\lambda  t}\left[\int_{-\infty}^{+\infty}f(x-t)e^{-\mathrm{i}\lambda (x-t)}\,\mathrm{d}x\right]\mathrm{d}t \\
-&=\sqrt{2\pi}\hat{f}(\lambda)\hat{g}(\lambda).
+(f*g)^\wedge
+&=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{+\infty}e^{-\mathrm{i}\lambda x}\int_{-\infty}^{+\infty}f(x-t)g(t)\,\mathrm{d}t\,\mathrm{d}x \\
+&=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{+\infty}g(t)e^{-\mathrm{i}\lambda t}
+\left(\int_{-\infty}^{+\infty}f(x-t)e^{-\mathrm{i}\lambda (x-t)}\,\mathrm{d}x\right)\mathrm{d}t \\
+&=\sqrt{2\pi}\,\hat{f}(\lambda)\hat{g}(\lambda).
 \end{align*}
+\end{enumerate}
 \end{proof}
 
 \begin{example}
@@ -291,15 +216,15 @@ f_1(x)=\begin{cases}
 \end{align*}
 求 $\hat{f}_1(\lambda)$。
 \end{example}
-
+\begin{remark}
+此例可以用于一维波动方程初值问题的求解。
+\end{remark}
 \begin{solution}
 由定义，有
 \begin{align*}
 \hat{f}_1(\lambda)=\frac{1}{\sqrt{2\pi}}\int_{-A}^{A}e^{-\mathrm{i}\lambda  x}\,\mathrm{d}x=\sqrt{\frac{2}{\pi}}\frac{\sin\lambda A}{\lambda}.
 \end{align*}
 \end{solution}
-
-此例可以用于一维波动方程初值问题的求解。
 
 \begin{example}
 设
@@ -311,7 +236,6 @@ e^{-x}, & x\geqslant 0,\\
 \end{align*}
 求 $\hat{f}_2(\lambda)$。
 \end{example}
-
 \begin{solution}
 由定义，有
 \begin{align*}
@@ -322,13 +246,12 @@ e^{-x}, & x\geqslant 0,\\
 \begin{example}
 设 $f_3(x)=e^{-|x|}$。求 $\hat{f}_3(\lambda)$。
 \end{example}
-
 \begin{solution}
-由于 $f_3(x)=f_2(x)+f_2(-x)$，利用线性性质和伸缩性质则有
+由于 $f_3(x)=f_2(x)+f_2(-x)$，利用\hyperref[proposition:Fourier 变换的基本性质1-1]{线性性质}和\hyperref[proposition:Fourier 变换的基本性质1-5]{伸缩性质}则有
 \begin{align*}
-\hat{f}_3(\lambda)&=\hat{f}_2(\lambda)+(f_2(-x))^\wedge 
-=\hat{f}_2(\lambda)+\hat{f}_2(-\lambda) \\
-&=\frac{1}{\sqrt{2\pi}(1+\mathrm{i}\lambda )}+\frac{1}{\sqrt{2\pi}(1-\mathrm{i}\lambda )} 
+\hat{f}_3(\lambda)=\hat{f}_2(\lambda)+(f_2(-x))^\wedge 
+=\hat{f}_2(\lambda)+\hat{f}_2(-\lambda) 
+=\frac{1}{\sqrt{2\pi}(1+\mathrm{i}\lambda )}+\frac{1}{\sqrt{2\pi}(1-\mathrm{i}\lambda )} 
 =\frac{2}{\sqrt{2\pi}(1+\lambda^2)}.
 \end{align*}
 \end{solution}
@@ -336,9 +259,8 @@ e^{-x}, & x\geqslant 0,\\
 \begin{example}
 设 $f_4(x)=e^{-x^2}$。求 $\hat{f}_4(\lambda)$。
 \end{example}
-
 \begin{solution}
-由分部积分公式和乘多项式性质我们得到，当 $\lambda\neq 0$ 时，
+由分部积分公式和\hyperref[proposition:Fourier 变换的基本性质1-3]{乘多项式性质}我们得到，当 $\lambda\neq 0$ 时，
 \begin{align*}
 \hat{f}_4(\lambda)&=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{+\infty}e^{-x^2}e^{-\mathrm{i}\lambda  x}\,\mathrm{d}x \\
 &=-\frac{1}{\sqrt{2\pi}}\cdot\frac{1}{\mathrm{i}\lambda }\left(e^{-x^2}e^{-\mathrm{i}\lambda  x}\Big|_{-\infty}^{+\infty}+2\int_{-\infty}^{+\infty}xe^{-x^2}e^{-\mathrm{i}\lambda  x}\,\mathrm{d}x\right) \\
@@ -365,9 +287,8 @@ f_5(x)=e^{-Ax^2}\quad (A>0).
 \end{align*}
 求 $\hat{f}_5(\lambda)$。
 \end{example}
-
 \begin{solution}
-利用伸缩性质得到
+利用\hyperref[proposition:Fourier 变换的基本性质1-5]{伸缩性质}得到
 \begin{align*}
 \hat{f}_5(\lambda)=(f_4(\sqrt{A}x))^\wedge=\frac{1}{\sqrt{A}}\hat{f}_4\left(\frac{\lambda}{\sqrt{A}}\right)
 =\frac{1}{\sqrt{2A}}e^{-\frac{\lambda^2}{4A}}.
@@ -379,7 +300,7 @@ f_5(x)=e^{-Ax^2}\quad (A>0).
 \begin{align}
 \hat{f}(\lambda)=\frac{1}{(\sqrt{2\pi})^n}\int_{\mathbb{R}^n}f(x)e^{-\mathrm{i}\lambda \cdot x}\,\mathrm{d}x \label{eq:fourier-multidim}
 \end{align}
-有意义，称为 $f(x)$ 的 Fourier 变换，这里 $\lambda=(\lambda_1,\lambda_2,\cdots,\lambda_n)\in\mathbb{R}^n$，记为 $(f(x))^\wedge=\hat{f}(\lambda)$。
+有意义，称为 $f(x)$ 的 \textbf{Fourier 变换}，这里 $\lambda=(\lambda_1,\lambda_2,\cdots,\lambda_n)\in\mathbb{R}^n$，记为 $(f(x))^\wedge=\hat{f}(\lambda)$。
 \end{definition}
 
 \begin{theorem}[反演公式]
@@ -387,99 +308,69 @@ f_5(x)=e^{-Ax^2}\quad (A>0).
 \begin{align}
 (\hat{f}(\lambda))^\vee=\lim_{N\to+\infty}\frac{1}{(\sqrt{2\pi})^n}\int_{|\lambda|\leqslant N}\hat{f}(\lambda)e^{\mathrm{i}\lambda \cdot x}\,\mathrm{d}\lambda=f(x), \label{eq:fourier-inv-multidim}
 \end{align}
-其中 $x=(x_1,x_2,\cdots,x_n)\in\mathbb{R}^n$。$(\hat{f}(\lambda))^\vee$ 表示在 Cauchy 主值意义下的无穷积分，称为 $\hat{f}(\lambda)$ 的 Fourier 逆变换。换句话说，
-\begin{align*}
-(\hat{f})^\vee=f.
-\end{align*}
+其中 $x=(x_1,x_2,\cdots,x_n)\in\mathbb{R}^n$。$(\hat{f}(\lambda))^\vee$ 表示在 Cauchy 主值意义下的无穷积分，称为 $\hat{f}(\lambda)$ 的 \textbf{Fourier 逆变换}。
 \end{theorem}
 
-对于多维 Fourier 变换，容易证明有类似于一维 Fourier 变换的性质成立。
-
-\begin{proposition}[线性性质]
-若 $f_j(x)\in L^1(\mathbb{R}^n)$，$a_j\in\mathbb{C}$ $(j=1,2)$，则
+\begin{proposition}[$\mathbb{R}^n$上的Fourier变换的基本性质]\label{proposition:Fourier 变换的基本性质2}
+设 $f,g\in L^1(\mathbb{R}^n)$，$a_1,a_2\in\mathbb{C}$，$k\in\mathbb{R}\setminus\{0\}$，$x_0\in\mathbb{R}^n$，则其Fourier变换
 \begin{align*}
-(a_1f_1(x)+a_2f_2(x))^\wedge=a_1\hat{f}_1(\lambda)+a_2\hat{f}_2(\lambda).
+\hat{f}(\lambda)\triangleq \frac{1}{(2\pi)^{n/2}}\int_{\mathbb{R}^n} f(x)e^{-\mathrm{i}\lambda\cdot x}\,\mathrm{d}x
 \end{align*}
+满足以下性质：
+\begin{enumerate}[(1)]
+\item \textbf{线性性质:}
+\begin{align*}
+(a_1f_1+a_2f_2)^\wedge=a_1\hat{f}_1+a_2\hat{f}_2.
+\end{align*}
+
+\item \textbf{微商性质:} 若 $f\in C^m(\mathbb{R}^n)$ 且对所有 $|\alpha|\leqslant m$ 有 $D^\alpha f\in L^1(\mathbb{R}^n)$，则
+\begin{align*}
+(D^\alpha f)^\wedge=(\mathrm{i}\lambda)^\alpha \hat{f}(\lambda),\qquad |\alpha|\leqslant m,
+\end{align*}
+其中 $\lambda^\alpha=\lambda_1^{\alpha_1}\cdots\lambda_n^{\alpha_n}$.
+
+\item \textbf{乘多项式性质:} 若 $x^\alpha f\in L^1(\mathbb{R}^n)$ 对所有 $|\alpha|\leqslant m$ 成立，则
+\begin{align*}
+(x^\alpha f)^\wedge=\mathrm{i}^{|\alpha|}D^\alpha \hat{f}(\lambda),\qquad |\alpha|\leqslant m.
+\end{align*}
+
+\item \textbf{平移性质:}
+\begin{align*}
+(f(x-x_0))^\wedge=e^{-\mathrm{i}\lambda\cdot x_0}\hat{f}(\lambda).
+\end{align*}
+
+\item \textbf{伸缩性质:}
+\begin{align*}
+(f(kx))^\wedge=\frac{1}{|k|^n}\hat{f}\left(\frac{\lambda}{k}\right).
+\end{align*}
+
+\item \textbf{对称性质:}
+\begin{align*}
+(f)^\vee=\hat{f}(-\lambda),
+\end{align*}
+其中 $(f)^\vee$ 表示 Fourier 逆变换.
+
+\item \textbf{卷积性质:} 定义卷积
+\begin{align*}
+(f*g)(x)\triangleq\int_{\mathbb{R}^n} f(x-y)g(y)\,\mathrm{d}y,
+\end{align*}
+则 $f*g\in L^1(\mathbb{R}^n)$，且
+\begin{align*}
+(f*g)^\wedge=(2\pi)^{\frac{n}{2}}\,\hat{f}(\lambda)\hat{g}(\lambda).
+\end{align*}
+
+\item\label{proposition:Fourier 变换的基本性质2-8} \textbf{分离变量性质:} 若 $f(x)=\prod_{j=1}^n f_j(x_j)$，其中 $f_j\in L^1(\mathbb{R})$，则
+\begin{align*}
+\hat{f}(\lambda)=\prod_{j=1}^n \hat{f}_j(\lambda_j).
+\end{align*}
+\end{enumerate}
 \end{proposition}
-
-\begin{proposition}[微商性质]
-若 $f(x),D f(x)\in L^1(\mathbb{R}^n)\cap C(\mathbb{R}^n)$，则
-\begin{align*}
-\left(\frac{\partial f}{\partial x_j}\right)^\wedge=\mathrm{i}\lambda _j\hat{f}(\lambda),\quad j=1,2,\cdots,n.
-\end{align*}
-\end{proposition}
-
-\begin{proposition}[乘多项式性质]
-若 $f(x),x_j f(x)\in L^1(\mathbb{R}^n)$，$j=1,2,\cdots,n$，则
-\begin{align*}
-(x_j f(x))^\wedge=i\frac{\partial}{\partial\lambda_j}\hat{f}(\lambda).
-\end{align*}
-\end{proposition}
-
-\begin{remark}
-作为上述两个性质的推论，若 $f(x),D f(x),\cdots,D^k f(x)\in L^1(\mathbb{R}^n)\cap C(\mathbb{R}^n)$，则
-\begin{align*}
-(D^\alpha f(x))^\wedge=(\mathrm{i}\lambda )^\alpha\hat{f}(\lambda);
-\end{align*}
-若 $x^\alpha f(x)\in L^1(\mathbb{R}^n)$，则
-\begin{align*}
-(x^\alpha f(x))^\wedge=i^{|\alpha|}D^\alpha\hat{f}(\lambda).
-\end{align*}
-这里 $\alpha=(\alpha_1,\alpha_2,\cdots,\alpha_n)$ 是阶数小于或等于 $k$ 的多重指标，$x^\alpha=x_1^{\alpha_1}x_2^{\alpha_2}\cdots x_n^{\alpha_n}$。
-\end{remark}
-
-\begin{proposition}[平移性质]
-对任意固定的 $x_0\in\mathbb{R}^n$，若 $f(x)\in L^1(\mathbb{R}^n)$，则
-\begin{align*}
-(f(x-x_0))^\wedge=e^{-\mathrm{i}\lambda \cdot x_0}\hat{f}(\lambda).
-\end{align*}
-\end{proposition}
-
-\begin{proposition}[伸缩性质]
-若 $f(x)\in L^1(\mathbb{R}^n)$，则
-\begin{align*}
-(f(kx))^\wedge=\frac{1}{|k|}\hat{f}\left(\frac{\lambda}{k}\right),\quad k\neq 0.
-\end{align*}
-\end{proposition}
-
-\begin{proposition}[对称性质]
-若 $f(x)\in L^1(\mathbb{R}^n)$，则
-\begin{align*}
-(f(x))^\vee=\hat{f}(-\lambda).
-\end{align*}
-\end{proposition}
-
-\begin{proposition}[卷积性质]
-若 $f(x),g(x)\in L^1(\mathbb{R}^n)$，那么 $f(x)$ 和 $g(x)$ 的卷积 $f*g$ 定义为
-\begin{align*}
-f*g(x)=\int_{\mathbb{R}^n}f(x-y)g(y)\,\mathrm{d}y,
-\end{align*}
-则 $f*g(x)\in L^1(\mathbb{R}^n)$ 且
-\begin{align*}
-(f*g(x))^\wedge=(\sqrt{2\pi})^n\hat{f}(\lambda)\hat{g}(\lambda).
-\end{align*}
-\end{proposition}
-
-同时我们还有如下结论。
-
-\begin{proposition}[分离变量性质]
-若 $f(x)=f_1(x_1)f_2(x_2)\cdots f_n(x_n)$，其中 $f_j(x_j)\in L^1(\mathbb{R})$，则
-\begin{align*}
-\hat{f}(\lambda)=\prod_{i=1}^{n}\hat{f}_i(\lambda_i).
-\end{align*}
-这里 $x=(x_1,x_2,\cdots,x_n)\in\mathbb{R}^n$，$\lambda=(\lambda_1,\lambda_2,\cdots,\lambda_n)\in\mathbb{R}^n$。
-\end{proposition}
-
-\begin{proof}
-由定义将重积分化为累次积分即得证。
-\end{proof}
 
 \begin{example}
 设 $f_6(x)=e^{-A|x|^2}$ ($A>0$)。求 $\hat{f}_6(\lambda)$。
 \end{example}
-
 \begin{solution}
-事实上，由分离变量性质我们得到
+事实上，由\hyperref[proposition:Fourier 变换的基本性质2-8]{分离变量性质}我们得到
 \begin{align*}
 \hat{f}_6(\lambda)=\prod_{i=1}^{n}(e^{-Ax_i^2})^\wedge=\prod_{i=1}^{n}\frac{1}{\sqrt{2A}}e^{-\frac{\lambda_i^2}{4A}}=\frac{1}{(2A)^{\frac{n}{2}}}e^{-\frac{|\lambda|^2}{4A}}.
 \end{align*}
@@ -487,56 +378,54 @@ f*g(x)=\int_{\mathbb{R}^n}f(x-y)g(y)\,\mathrm{d}y,
 
 \subsection{初值问题和基本解}
 
-现在我们利用 Fourier 变换来求解初值问题 \eqref{eq:heat-cauchy1d}。对方程和初始条件两边关于 $x$ 作 Fourier 变换，利用线性性质和微商性质得到
+\begin{definition}
+对 $x\in\mathbb{R}$，$t>0$，称函数
 \begin{align*}
-\begin{cases}
-\frac{\mathrm{d}\hat{u}}{\mathrm{d}t}+a^2\lambda^2\hat{u}=\hat{f}(\lambda,t),\\
-\hat{u}(\lambda,0)=\hat{\varphi}(\lambda),
-\end{cases}
-\end{align*}
-其中 $\hat{u}=\hat{u}(\lambda,t)$ 是解 $u(x,t)$ 关于 $x$ 的 Fourier 变换。解这个常微分方程的初值问题得
-\begin{align*}
-\hat{u}(\lambda,t)=\hat{\varphi}e^{-a^2\lambda^2 t}+\int_0^t \hat{f}(\lambda,\tau)e^{-a^2\lambda^2(t-\tau)}\,\mathrm{d}\tau.
-\end{align*}
-然后对上式两边求 Fourier 逆变换得
-\begin{align*}
-u(x,t)=(\hat{u}(\lambda,t))^\vee 
-=(\hat{\varphi}e^{-a^2\lambda^2 t})^\vee+\int_0^t(\hat{f}(\lambda,\tau)e^{-a^2\lambda^2(t-\tau)})^\vee\,\mathrm{d}\tau.
-\end{align*}
-利用伸缩性质的结论，我们得到
-\begin{align*}
-e^{-a^2\lambda^2 t}=(g(x,t))^\wedge,
-\end{align*}
-其中
-\begin{align*}
-g(x,t)=\frac{1}{a\sqrt{2t}}e^{-\frac{x^2}{4a^2t}},
-\end{align*}
-从而
-\begin{align*}
-(\hat{\varphi}e^{-a^2\lambda^2 t})^\vee=(\hat{\varphi}\hat{g})^\vee=\frac{1}{\sqrt{2\pi}}\varphi*g
-=\frac{1}{2a\sqrt{\pi t}}\int_{-\infty}^{+\infty}\varphi(\xi)e^{-\frac{(x-\xi)^2}{4a^2t}}\,\mathrm{d}\xi.
-\end{align*}
-同理
-\begin{align*}
-(\hat{f}(\lambda,\tau)e^{-a^2\lambda^2(t-\tau)})^\vee
-=\frac{1}{2a\sqrt{\pi(t-\tau)}}\int_{-\infty}^{+\infty}f(\xi,\tau)e^{-\frac{(x-\xi)^2}{4a^2(t-\tau)}}\,\mathrm{d}\xi.
-\end{align*}
-于是我们得到
-\begin{align}
-u(x,t)=\int_{-\infty}^{+\infty}K(x-\xi,t)\varphi(\xi)\,\mathrm{d}\xi+\int_0^t\mathrm{d}\tau\int_{-\infty}^{+\infty}K(x-\xi,t-\tau)f(\xi,\tau)\,\mathrm{d}\xi, \label{eq:poisson-1d}
-\end{align}
-这里
-\begin{align}
-K(x,t)=\begin{cases}
+K(x,t)\triangleq \begin{cases}
 \frac{1}{2a\sqrt{\pi t}}e^{-\frac{x^2}{4a^2t}}, & t>0,\\
 0, & t\leqslant 0
-\end{cases} \label{eq:poisson-kernel1d}
-\end{align}
-称为\textbf{Poisson 核}。
-
-表达式 \eqref{eq:poisson-1d} 称为 \textbf{Poisson 公式}，$\Gamma(x,t;\xi,\tau)=K(x-\xi,t-\tau)$ 称为\textbf{热方程的基本解}。热方程的基本解也可以如下定义。
+\end{cases} 
+\end{align*}
+为\textbf{一维热方程的Poisson 核}或\textbf{一维热方程的热核}，其中 $a>0$ 为常数.
+\end{definition}
 
 \begin{definition}
+设 $\varphi\in C(\mathbb{R})$ 有界，$f\in C(\mathbb{R}\times(0,\infty))$ 有界，$a>0$ 为常数. 对任意 $x\in\mathbb{R}$，$t>0$，定义
+\begin{align}
+u(x,t)\triangleq \int_{-\infty}^{+\infty}K(x-\xi,t)\varphi(\xi)\,\mathrm{d}\xi
++\int_0^t\int_{-\infty}^{+\infty}K(x-\xi,t-\tau)f(\xi,\tau)\,\mathrm{d}\xi\,\mathrm{d}\tau, \label{def:poisson1d}
+\end{align}
+其中 $K$是一维热方程的Poisson核. 称 \eqref{def:poisson1d}式为\textbf{一维热方程初值问题的Poisson 公式}.
+\end{definition}
+
+\begin{definition}
+设 $\varGamma $ 是定义在 $\mathbb{R}\times(0,\infty)\times\mathbb{R}\times(0,\infty)$ 上的函数（其中 $t>\tau$），定义为
+\begin{align*}
+\varGamma (x,t;\xi,\tau)\triangleq K(x-\xi,t-\tau),\quad t>\tau,
+\end{align*}
+其中 $K$是一维热方程的Poisson核. 即
+\begin{align}
+\varGamma (x,t;\xi,\tau)=
+\begin{cases}
+\dfrac{1}{2a\sqrt{\pi(t-\tau)}}\exp\left(-\dfrac{(x-\xi)^2}{4a^2(t-\tau)}\right), & t>\tau,\\[0.4cm]
+0, & t\leqslant \tau.
+\end{cases}
+\end{align}
+称 $\varGamma $ 为\textbf{一维热方程的基本解}.
+\end{definition}
+\begin{remark}
+由定义可知，对任意固定的 $(\xi,\tau)$，$\varGamma (x,t;\xi,\tau)$ 作为 $(x,t)$ 的函数在 $t>\tau$ 时满足热方程
+\begin{align*}
+\partial_t \varGamma  - a^2\partial_x^2\varGamma  = 0,
+\end{align*}
+且在 $t=\tau$ 处有初始奇性 $\varGamma (x,\tau;\xi,\tau)=\delta(x-\xi)$（在广义函数意义下）.
+\end{remark}
+\begin{remark}
+基本解的物理意义如下：考虑两端均在无穷远点，侧表面绝热的均匀细杆。在 $t=\tau$ 时刻，在 $x=\xi$ 处放置一个瞬时单位点热源，那么由这个瞬时单位点热源在杆上产生的温度分布实际上就是基本解 $\varGamma (x,t;\xi,\tau)$。因此基本解 $\varGamma (x,t;\xi,\tau)$ 也称为\textbf{点源函数}。
+\end{remark}
+\begin{remark}
+热方程的基本解也可如下定义:
+
 对于任意 $(\xi,\tau)\in\mathbb{R}_+^2=\mathbb{R}\times\mathbb{R}_+$，若函数 $u(x,t)\in L_{\mathrm{loc}}^1(\mathbb{R}_+^2)\cap C(\mathbb{R}_+^2\setminus(\xi,\tau))$ 且在广义函数意义下满足方程和初始条件
 \begin{align*}
 \begin{cases}
@@ -544,79 +433,78 @@ K(x,t)=\begin{cases}
 u(x,0)=0, & x\in\mathbb{R},
 \end{cases}
 \end{align*}
-则称之为\textbf{热方程的基本解}，且记为 $\Gamma(x,t;\xi,\tau)$。这里 $\delta(x-\xi,t-\tau)$ 是 Dirac 测度。
-\end{definition}
+则称之为\textbf{一维热方程的基本解}，且记为 $\varGamma (x,t;\xi,\tau)$。这里 $\delta(x-\xi,t-\tau)$ 是 Dirac 测度。
+\end{remark}
 
-基本解的物理意义如下：考虑两端均在无穷远点，侧表面绝热的均匀细杆。在 $t=\tau$ 时刻，在 $x=\xi$ 处放置一个瞬时单位点热源，那么由这个瞬时单位点热源在杆上产生的温度分布实际上就是基本解 $\Gamma(x,t;\xi,\tau)$。因此基本解 $\Gamma(x,t;\xi,\tau)$ 也称为\textbf{点源函数}。
+\begin{proposition}[热方程基本解的性质]\label{proposition:热方程基本解的性质}
+设 $\varGamma(x,t;\xi,\tau)$ 为一维热方程的基本解，则对任意 $x,\xi\in\mathbb{R}$，$t>\tau$，成立以下性质：
+\begin{enumerate}[(1)]
+\item $\varGamma(x,t;\xi,\tau)>0$.
 
-\begin{proposition}
-当 $t>\tau$ 时，$\Gamma(x,t;\xi,\tau)>0$。
-\end{proposition}
+\item $\varGamma(x,t;\xi,\tau)=\varGamma(\xi,t;x,\tau).$
 
-\begin{proposition}
-$\Gamma(x,t;\xi,\tau)=\Gamma(\xi,t;x,\tau)$。
-\end{proposition}
+\item $\int_{-\infty}^{+\infty}\varGamma(x,t;\xi,\tau)\,\mathrm{d}\xi=1.$
 
-\begin{proposition}
-当 $t>\tau$，$x\in\mathbb{R}$ 时，
+\item $\varGamma(x,t;\xi,\tau)$ 关于所有自变量无穷次连续可微，且满足
 \begin{align*}
-\int_{-\infty}^{+\infty}\Gamma(x,t;\xi,\tau)\,\mathrm{d}\xi=1.
+\frac{\partial\varGamma}{\partial t}-a^2\frac{\partial^2\varGamma}{\partial x^2}=0,\qquad 
+\frac{\partial\varGamma}{\partial\tau}+a^2\frac{\partial^2\varGamma}{\partial\xi^2}=0.
 \end{align*}
-\end{proposition}
 
+\item $|\varGamma(x,t;\xi,\tau)|\leqslant \frac{1}{2a\sqrt{\pi(t-\tau)}}.$
+
+\item 若 $\varphi\in C(\mathbb{R})\cap L^\infty(\mathbb{R})$，则对任意 $x\in\mathbb{R}$，
+\begin{align*}
+\lim_{t\to 0^+}\int_{-\infty}^{+\infty}\varGamma(x,t;\xi,0)\varphi(\xi)\,\mathrm{d}\xi=\varphi(x).
+\end{align*}
+\end{enumerate}
+\end{proposition}
 \begin{proof}
-当 $t>\tau$ 时，作变量替换 $\eta=(\xi-x)/(2a\sqrt{t-\tau})$，则
-\begin{align*}
-\int_{-\infty}^{+\infty}\Gamma(x,t;\xi,\tau)\,\mathrm{d}\xi
-=\int_{-\infty}^{+\infty}\frac{1}{2a\sqrt{\pi(t-\tau)}}e^{-\frac{(x-\xi)^2}{4a^2(t-\tau)}}\,\mathrm{d}\xi 
-=\frac{1}{\sqrt{\pi}}\int_{-\infty}^{+\infty}e^{-\eta^2}\,\mathrm{d}\eta=1.
-\end{align*}
-\end{proof}
+\begin{enumerate}[(1)]
+\item 由定义 $\varGamma(x,t;\xi,\tau)=\frac{1}{2a\sqrt{\pi(t-\tau)}}\exp\left(-\frac{(x-\xi)^2}{4a^2(t-\tau)}\right)$，因指数函数恒正且系数为正，故 $\varGamma>0$.
 
-\begin{proposition}
-当 $t>\tau$，$x\in\mathbb{R}$ 时，$\Gamma(x,t;\xi,\tau)$ 关于所有自变量无穷次连续可微，且满足方程
-\begin{align*}
-\frac{\partial\Gamma}{\partial t}-a^2\frac{\partial^2\Gamma}{\partial x^2}=0,\qquad \frac{\partial\Gamma}{\partial\tau}+a^2\frac{\partial^2\Gamma}{\partial\xi^2}=0.
-\end{align*}
-\end{proposition}
+\item 由定义直接验证可得.
 
-\begin{proposition}
-当 $t>\tau$ 时，成立估计式
+\item 作变量替换 $\eta=\frac{\xi-x}{2a\sqrt{t-\tau}}$，则
 \begin{align*}
-|\Gamma(x,t;\xi,\tau)|\leqslant \frac{1}{2a\sqrt{\pi(t-\tau)}}.
+\int_{-\infty}^{+\infty}\varGamma(x,t;\xi,\tau)\,\mathrm{d}\xi
+&=\frac{1}{\sqrt{\pi}}\int_{-\infty}^{+\infty}e^{-\eta^2}\,\mathrm{d}\eta=1.
 \end{align*}
-\end{proposition}
 
-\begin{proposition}
-若 $\varphi\in C(\mathbb{R})\cap L^\infty(\mathbb{R})$，即 $\varphi$ 是 $\mathbb{R}$ 上连续的有界函数，则对于任意 $x\in\mathbb{R}$，成立
+\item 直接计算可得.
+
+\item 由 $\varGamma$ 的表达式，$e^{-\frac{(x-\xi)^2}{4a^2(t-\tau)}}\leqslant 1$，故
 \begin{align*}
-\lim_{t\to 0^+}\int_{-\infty}^{+\infty}\Gamma(x,t;\xi,0)\varphi(\xi)\,\mathrm{d}\xi=\varphi(x).
+|\varGamma(x,t;\xi,\tau)|\leqslant \frac{1}{2a\sqrt{\pi(t-\tau)}}.
 \end{align*}
-\end{proposition}
 
-\begin{proof}
-作变量替换 $\eta=(\xi-x)/(2a\sqrt{t})$，则
+\item 作变量替换 $\eta=\frac{\xi-x}{2a\sqrt{t}}$，则
 \begin{align*}
-\int_{-\infty}^{+\infty}\Gamma(x,t;\xi,0)\varphi(\xi)\,\mathrm{d}\xi
+\int_{-\infty}^{+\infty}\varGamma(x,t;\xi,0)\varphi(\xi)\,\mathrm{d}\xi
 =\frac{1}{\sqrt{\pi}}\int_{-\infty}^{+\infty}e^{-\eta^2}\varphi(x+2a\sqrt{t}\eta)\,\mathrm{d}\eta.
 \end{align*}
-利用 $\varphi$ 的有界性和连续性，上述积分在 $t\in\mathbb{R}_+$ 上关于 $t$ 一致收敛。因此
+由 $\varphi$ 的有界性和连续性，积分关于 $t$ 一致收敛，故可交换极限与积分：
 \begin{align*}
-\lim_{t\to 0^+}\int_{-\infty}^{+\infty}\Gamma(x,t;\xi,0)\varphi(\xi)\,\mathrm{d}\xi
-&=\frac{1}{\sqrt{\pi}}\int_{-\infty}^{+\infty}e^{-\eta^2}\lim_{t\to 0^+}\varphi(x+2a\sqrt{t}\eta)\,\mathrm{d}\eta \\
-&=\varphi(x)\frac{1}{\sqrt{\pi}}\int_{-\infty}^{+\infty}e^{-\eta^2}\,\mathrm{d}\eta=\varphi(x).
+\lim_{t\to 0^+}\int_{-\infty}^{+\infty}\varGamma(x,t;\xi,0)\varphi(\xi)\,\mathrm{d}\xi
+&=\frac{1}{\sqrt{\pi}}\int_{-\infty}^{+\infty}e^{-\eta^2}\varphi(x)\,\mathrm{d}\eta
+=\varphi(x).
 \end{align*}
+\end{enumerate}
 \end{proof}
 
 \begin{theorem}
-设 $\varphi(x)\in C(\mathbb{R})\cap L^\infty(\mathbb{R})$，$f(x,t)\equiv 0$，则 Poisson 公式 \eqref{eq:poisson-1d} 表示的函数 $u(x,t)$ 是初值问题 \eqref{eq:heat-cauchy1d} 的有界 $C^{2,1}(\mathbb{R}_+^2)$ 解，其中函数 $u(x,t)$ 在极限的意义下取初值 $\varphi(x)$。
+设 $\varphi(x)\in C(\mathbb{R})\cap L^\infty(\mathbb{R})$，$f(x,t)\equiv 0$，则一维热方程初值问题的Poisson公式\eqref{def:poisson1d}表示的函数
+\begin{align*}
+u(x,t)=\int_{-\infty}^{+\infty}K(x-\xi,t)\varphi(\xi)\,\mathrm{d}\xi
+\end{align*}
+是一维热方程初值问题\eqref{eq:heat-cauchy1d} 的有界 $C^{2,1}(\mathbb{R}_+^2)$ 解，其中函数 $u(x,t)$ 在极限的意义下取初值 $\varphi(x)$。
 \end{theorem}
 \begin{remark}
 定理中关于 $\varphi(x)$ 有界的假设可以改进为
 \begin{align*}
 |\varphi(x)|\leqslant Me^{Ax^2},\quad x\in\mathbb{R},
 \end{align*}
-这里 $A$ 和 $M$ 是正常数。此时 Poisson 公式 \eqref{eq:poisson-1d} 表示的函数 $u(x,t)$ 在区域 $\mathbb{R}\times(0,(4a^2A)^{-1})$ 上仍然是初值问题 \eqref{eq:heat-cauchy1d} 的 $C^\infty$ 解。
+这里 $A$ 和 $M$ 是正常数。此时 Poisson 公式 \eqref{def:poisson1d} 表示的函数 $u(x,t)$ 在区域 $\mathbb{R}\times(0,(4a^2A)^{-1})$ 上仍然是初值问题 \eqref{eq:heat-cauchy1d} 的 $C^\infty$ 解。
 \end{remark}
 \begin{proof}
 当 $(x,t)\in\mathbb{R}_+^2$ 时，
@@ -625,7 +513,7 @@ $\Gamma(x,t;\xi,\tau)=\Gamma(\xi,t;x,\tau)$。
 &\leqslant \sup_{\mathbb{R}}|\varphi(\xi)|\frac{1}{\sqrt{\pi}}\int_{-\infty}^{+\infty}e^{-\eta^2}\,\mathrm{d}\eta \\
 &\leqslant \sup_{\mathbb{R}}|\varphi(\xi)|.
 \end{align*}
-另外，固定任何一点 $(x_0,t_0)\in\mathbb{R}_+^2$，我们在其邻域 $(x_0-t_0,x_0+t_0)\times(\frac{t_0}{2},\frac{3t_0}{2})$ 内考虑 $u(x,t)$ 的微分性质。因此，$\frac{1}{\sqrt{t}}$ 在此邻域上无穷次可微，而 $e^{-\frac{(x-\xi)^2}{4a^2t}}$ 与任何次数的多项式 $P(\xi)$ 的乘积在 $\mathbb{R}$ 上可积，根据微积分的一致收敛定理我们知道 Poisson 公式 \eqref{eq:poisson-1d} 中的 $u(x,t)$ 关于 $x,t$ 求任意阶偏导数可以与关于 $\xi$ 求积分交换次序。由此我们得到 $u(x,t)$ 是 $C^\infty(\mathbb{R}_+^2)$ 中的函数，而且
+另外，固定任何一点 $(x_0,t_0)\in\mathbb{R}_+^2$，我们在其邻域 $(x_0-t_0,x_0+t_0)\times(\frac{t_0}{2},\frac{3t_0}{2})$ 内考虑 $u(x,t)$ 的微分性质。因此，$\frac{1}{\sqrt{t}}$ 在此邻域上无穷次可微，而 $e^{-\frac{(x-\xi)^2}{4a^2t}}$ 与任何次数的多项式 $P(\xi)$ 的乘积在 $\mathbb{R}$ 上可积，根据\hyperref[Basis of Analytics-theorem:含参量积分的可微性1]{含参量积分的可微性}我们知道 Poisson 公式 \eqref{def:poisson1d} 中的 $u(x,t)$ 关于 $x,t$ 求任意阶偏导数可以与关于 $\xi$ 求积分交换次序。由此我们得到 $u(x,t)$ 是 $C^\infty(\mathbb{R}_+^2)$ 中的函数，而且
 \begin{align*}
 \frac{\partial u(x,t)}{\partial t}-a^2\frac{\partial^2 u(x,t)}{\partial x^2}
 =\int_{-\infty}^{+\infty}\left[\frac{\partial K(x-\xi,t)}{\partial t}-a^2\frac{\partial^2 K(x-\xi,t)}{\partial x^2}\right]\varphi(\xi)\,\mathrm{d}\xi=0.
@@ -644,52 +532,96 @@ u(x,t)=\frac{1}{\sqrt{\pi}}\int_{-\infty}^{+\infty}e^{-\eta^2}\varphi(x+2a\sqrt{
 至此完成定理的证明。
 \end{proof}
 
-\begin{proposition}[奇偶性和周期性]
-设 $\varphi$ 是奇（或偶，或周期为 $T$ 的）函数，则解 $u(x,t)$ 也是 $x$ 的奇（或偶，或周期为 $T$ 的）函数。
-\end{proposition}
+\begin{proposition}\label{proposition:一维热方程初值问题解的性质}
+设 $\varphi(x)\in C(\mathbb{R})\cap L^\infty(\mathbb{R})$，$f(x,t)\equiv 0$,一维热方程初值问题的Poisson公式\eqref{def:poisson1d}表示的函数为
+\begin{align*}
+u(x,t)=\int_{-\infty}^{+\infty}K(x-\xi,t)\varphi(\xi)\,\mathrm{d}\xi
+\end{align*}
+\begin{enumerate}[(1)]
+\item \textbf{奇偶性和周期性:}若 $\varphi$ 是奇（或偶，或周期为 $T$ 的）函数，$f\in C(\mathbb{R}\times(0,\infty))$ 有界,则$u(x,t)$
+也是 $x$ 的奇（或偶，或周期为 $T$ 的）函数。
 
-\begin{proposition}[无限传播速度]
-设无穷长杆的初始温度 $\varphi(x)$ 在小段 $(x_0-\delta,x_0+\delta)$ 大于零，且在其他地方 $\mathbb{R}\setminus(x_0-\delta,x_0+\delta)$ 等于零，则杆在 $t>0$ 时刻，在任何一点 $x$ 的温度
+\item\label{proposition:一维热方程初值问题解的性质-2} \textbf{无限传播速度:}若存在$x_0\in \mathbb{R},\delta >0$,使得
+\begin{gather*}
+\varphi \left( x \right) >0,\quad \forall x\in \left( x_0-\delta ,x_0+\delta \right) ;
+\\
+\varphi \left( x \right) =0,\quad \forall x\in \mathbb{R} \backslash \left( x_0-\delta ,x_0+\delta \right) .
+\end{gather*}
+则对$\forall x\in \mathbb{R},t>0$,都有
 \begin{align*}
 u(x,t)=\int_{-\infty}^{+\infty}K(x-\xi,t)\varphi(\xi)\,\mathrm{d}\xi>0.
 \end{align*}
+
+\item \textbf{无穷次可微性:}无论$\varphi(x)$ 是否可微，当 $t>0$ 时，$u(x,t)$ 在 $\mathbb{R}\times\mathbb{R}_+$ 上必无穷次可微。
+\end{enumerate}
 \end{proposition}
 \begin{remark}
-此性质说明，顷刻之间，杆的热量传递到杆上的任何一点，且离 $x_0$ 近的点，温度会升高多一些；而离 $x_0$ 远的点，温度会升高少一些。当然，这个结论与线性的 Fourier 热传导定律有关。
+性质\ref{proposition:一维热方程初值问题解的性质-2}的物理表述是：若无穷长杆的初始温度 $\varphi(x)$ 在小段 $(x_0-\delta,x_0+\delta)$ 大于零，且在其他地方 $\mathbb{R}\setminus(x_0-\delta,x_0+\delta)$ 等于零，则杆在 $t>0$ 时刻，在任何一点 $x$ 的温度
+\begin{align*}
+u(x,t)=\int_{-\infty}^{+\infty}K(x-\xi,t)\varphi(\xi)\,\mathrm{d}\xi>0.
+\end{align*}
+性质\ref{proposition:一维热方程初值问题解的性质-2}也说明，顷刻之间，杆的热量传递到杆上的任何一点，且离 $x_0$ 近的点，温度会升高多一些；而离 $x_0$ 远的点，温度会升高少一些。当然，这个结论与线性的 Fourier 热传导定律有关。
 \end{remark}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 
 
-\begin{proposition}[无穷次可微性]
-若 $\varphi(x)\in L^\infty(\mathbb{R})\cap C(\mathbb{R})$，不管 $\varphi(x)$ 是否可微，当 $t>0$ 时，解 $u(x,t)$ 在 $\mathbb{R}\times\mathbb{R}_+$ 上必无穷次可微。
-\end{proposition}
+\item 
 
-事实上，当 $t>0$ 时，对于任意点 $x\in\mathbb{R}$，
+\item 事实上，当 $t>0$ 时，对于任意点 $x\in\mathbb{R}$，
 \begin{align*}
 \frac{\partial^{k+l}u}{\partial x^k\partial t^l}
 =\int_{-\infty}^{+\infty}\frac{\partial^{k+l}}{\partial x^k\partial t^l}K(x-\xi,t)\varphi(\xi)\,\mathrm{d}\xi.
 \end{align*}
 这是因为对于任何正数 $\delta$，上述积分在区域 $\mathbb{R}\times(\delta,+\infty)$ 一致收敛，因而可以将求微商与求积分交换次序。
+\end{enumerate}
+\end{proof}
 
-同样我们可以利用多维 Fourier 变换来求解多维热方程初值问题
-\begin{align}
+
+\begin{definition}
+对 $x\in\mathbb{R}^n$，$t>0$，称函数
+\begin{align*}
+K(x,t)\triangleq 
 \begin{cases}
-\frac{\partial u}{\partial t}-a^2\Delta u=f(x,t), & (x,t)\in\mathbb{R}_+^{n+1}=\mathbb{R}^n\times\mathbb{R}_+,\\
-u(x,0)=\varphi(x), & x\in\mathbb{R}^n.
-\end{cases} \label{eq:heat-cauchy-nd}
-\end{align}
-我们可以得到 Poisson 公式
+\dfrac{1}{(4\pi a^2 t)^{n/2}}e^{-\frac{|x|^2}{4a^2t}}, & t>0,\\[0.4cm]
+0, & t\leqslant 0
+\end{cases}
+\end{align*}
+为 \textbf{$n$维热方程的Poisson 核}或\textbf{$n$维热方程的热核}，其中 $a>0$ 为常数.
+\end{definition}
+
+\begin{definition}
+设 $\varphi\in C(\mathbb{R}^n)\cap L^\infty(\mathbb{R}^n)$，$f\in C(\mathbb{R}^n\times(0,\infty))$ 有界，$a>0$ 为常数. 对任意 $x\in\mathbb{R}^n$，$t>0$，定义
 \begin{align}
-u(x,t)=\int_{\mathbb{R}^n}K(x-\xi,t)\varphi(\xi)\,\mathrm{d}\xi+\int_0^t\mathrm{d}\tau\int_{\mathbb{R}^n}K(x-\xi,t-\tau)f(\xi,\tau)\,\mathrm{d}\xi, \label{eq:poisson-nd}
+u(x,t)\triangleq \int_{\mathbb{R}^n}K(x-\xi,t)\varphi(\xi)\,\mathrm{d}\xi
++\int_0^t\int_{\mathbb{R}^n}K(x-\xi,t-\tau)f(\xi,\tau)\,\mathrm{d}\xi\,\mathrm{d}\tau, \label{def:poisson-nd}
 \end{align}
-这里
+其中 $K$ 为 $n$ 维热方程的 Poisson 核. 称 \eqref{def:poisson-nd}式为 \textbf{$n$ 维热方程初值问题的Poisson 公式}.
+\end{definition}
+
+\begin{definition}
+设 $\varGamma$ 是定义在 $\mathbb{R}^n\times(0,\infty)\times\mathbb{R}^n\times(0,\infty)$ 上的函数（其中 $t>\tau$），定义为
+\begin{align*}
+\varGamma(x,t;\xi,\tau)\triangleq K(x-\xi,t-\tau),\qquad t>\tau,
+\end{align*}
+其中 $K$ 为 $n$ 维热方程的 Poisson 核，即
 \begin{align}
-K(x,t)=\begin{cases}
-\frac{1}{(4\pi a^2 t)^{n/2}}e^{-\frac{|x|^2}{4a^2t}}, & t>0,\\
-0, & t\leqslant 0.
-\end{cases} \label{eq:poisson-kernel-nd}
+\varGamma(x,t;\xi,\tau)=
+\begin{cases}
+\dfrac{1}{(4\pi a^2(t-\tau))^{n/2}}\exp\left(-\dfrac{|x-\xi|^2}{4a^2(t-\tau)}\right), & t>\tau,\\[0.4cm]
+0, & t\leqslant \tau.
+\end{cases}
 \end{align}
+称 $\varGamma$ 为 \textbf{$n$ 维热方程的基本解}.
+\end{definition}
 
 \begin{theorem}
-设 $\varphi(x)\in C(\mathbb{R}^n)\cap L^\infty(\mathbb{R}^n)$，$f(x,t)\in C^{0,1}(\mathbb{R}_+^{n+1})$，则 Poisson 公式 \eqref{eq:poisson-nd} 表示的函数是初值问题 \eqref{eq:heat-cauchy-nd} 的有界 $C^\infty(\mathbb{R}_+^{n+1})$ 解。
+设 $\varphi(x)\in C(\mathbb{R}^n)\cap L^\infty(\mathbb{R}^n)$，$f(x,t)\in C^{0,1}(\mathbb{R}_+^{n+1})$，则$n$ 维热方程初值问题的Poisson 公式\eqref{def:poisson-nd}表示的函数
+\begin{align*}
+u(x,t)= \int_{\mathbb{R}^n}K(x-\xi,t)\varphi(\xi)\,\mathrm{d}\xi
++\int_0^t\int_{\mathbb{R}^n}K(x-\xi,t-\tau)f(\xi,\tau)\,\mathrm{d}\xi\,\mathrm{d}\tau
+\end{align*}
+是$n$ 维热方程初值问题\eqref{eq:多维热方程初值问题}的有界 $C^\infty(\mathbb{R}_+^{n+1})$ 解。
 \end{theorem}
 
 
