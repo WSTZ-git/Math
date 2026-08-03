@@ -482,11 +482,11 @@ G=\bigcup_{i=1}^{\infty}\bigcup_{J\in\mathscr{H}_i}J.
 \begin{definition}
 设 \(x\in\mathbb{R}^n\)，\(E\) 是 \(\mathbb{R}^n\) 中的非空点集，称
 \begin{align*}
-d(x,E)=\inf\{|x - y|: y\in E\}
+d(x,E)=\text{dist}(x,E)=\inf\{|x - y|: y\in E\}
 \end{align*}
 为点 \(x\) 到 \(E\) 的\textbf{距离}；若 \(E_1\)，\(E_2\) 是 \(\mathbb{R}^n\) 中的非空点集，称
 \begin{align*}
-d(E_1,E_2)=\inf\{|x - y|: x\in E_1, y\in E_2\}
+d(E_1,E_2)=\text{dist}(E_1,E_2)=\inf\{|x - y|: x\in E_1, y\in E_2\}
 \end{align*}
 为 \(E_1\) 与 \(E_2\) 之间的\textbf{距离}。也可等价地定义为
 \[
@@ -496,18 +496,26 @@ d(E_1,E_2)=\inf\{|x - y|: x\in E_1, y\in E_2\}
 
 \begin{proposition}[点集间的距离的性质]\label{proposition:点集间的距离的性质}
 \begin{enumerate}[(1)]
-\item 设$E_1,E_2,\cdots,E_n,F$是$\mathbb{R}^n$中$n+1$个非空点集,则
+\item\label{proposition:点集间的距离的性质-1} 设$E_1,E_2,\cdots,E_n,F$是$\mathbb{R}^n$中$n+1$个非空点集,则
 \begin{align*}
 d\left( F,\bigcup_{i=1}^n{E_i} \right) =\underset{i=1,2,\cdots ,n}{\min}\left\{ d\left( F,E_i \right) \right\}.
 \end{align*}
 
-\item 设$E_1,E_2,\cdots,E_n$是$\mathbb{R}^n$中$n$个非空点集,若$d(E_i,E_j)>0(i\ne j)$,则$E_i\cap E_j=\varnothing (i\ne j)$.
+\item\label{proposition:点集间的距离的性质-2} 设$E_1,E_2,\cdots,E_n$是$\mathbb{R}^n$中$n$个非空点集,若$d(E_i,E_j)>0(i\ne j)$,则$E_i\cap E_j=\varnothing (i\ne j)$.
 
-\item 设$E_1,E_2,\cdots,E_n$是$\mathbb{R}^n$中$n$个非空闭集,若$E_i\cap E_j=\varnothing (i\ne j)$,则$d(E_i,E_j)>0(i\ne j)$.
+\item\label{proposition:点集间的距离的性质-3} 设$E_1$是$\mathbb{R}^n$中的非空紧集,$E_2$是$\mathbb{R}^n$中的非空闭集,若$E_1\cap E_2=\varnothing $,则$d(E_1,E_2)>0$.
 \end{enumerate}
 \end{proposition}
 \begin{remark}
-若(3)中去掉$E_i$是闭集这个条件,则结论不一定成立(例如,两个开球相切).
+若\ref{proposition:点集间的距离的性质-3}中去掉$E_1,E_2$都只是闭集,则结论不一定成立,例如,设
+\[
+E_1=\{(x,0): x\in\mathbb R\},\qquad E_2=\{(x,e^{-x}): x\in\mathbb R\}.
+\]
+$E_1$ 是 $x$ 轴，$E_2$ 是指数函数 $y=e^{-x}$ 的图像，二者均为 $\mathbb{R}^2$ 中的非空闭集，且 $E_1\cap E_2=\varnothing$，因为 $e^{-x}>0$ 恒成立。然而
+\[
+d(E_1,E_2)=\inf_{x\in\mathbb R} e^{-x}=0,
+\]
+故 $d(E_1,E_2)=0$，并非大于 $0$。因此两个闭集不相交时，距离未必为正。
 \end{remark}
 \begin{proof}\begin{enumerate}[(1)]
 \item 由$\bigcup_{i=1}^nE_i\supset E_i$（$i=1,2,\cdots,n$）可知
@@ -534,11 +542,15 @@ d\left(F,\bigcup_{i=1}^nE_i\right)=\inf\left\{d(x,y)|x\in F,y\in\bigcup_{i=1}^nE
 
 \item 反证,假设存在$i\ne j$,使得$E_i\cap E_j\ne \varnothing,$则任取$x_0\in E_i\cap E_j$,又由$d(E_i,E_j)>0$可知,对$\forall x\in E_i,y\in E_j$,都有$d(x,y)\geqslant  d(E_i,E_j)>0$.这与$d(x_0,x_0)=0,x_0\in E_i\cap E_j$矛盾!
 
-\item 反证,假设存在$i\ne j$,使得$d(E_i,E_j)=0$.由$d(E_i,E_j) = \inf\{d(x,y) \mid x \in E_i, y \in E_j\}$及下确界的定义可知，对$\forall n \in \mathbb{N}$，存在$x_n \in E_i$，$y_n \in E_j$，使得$d(x_n,y_n) < \frac{1}{n}$。从而$\lim_{n \to \infty} d(x_n,y_n) = 0$，因此
+\item 反证,假设 $d(E_1,E_2)=0$。由距离的定义，存在点列 $\{x_k\}\subset E_1$，$\{y_k\}\subset E_2$，使得
 \begin{align*}
-\lim_{n \to \infty} x_n = \lim_{n \to \infty} y_n = c.
+\lim_{k\to\infty} \|x_k-y_k\| = 0.
 \end{align*}
-再由$E_i$，$E_j$都是闭集可知$c \in E_i \cap E_j$，这与$E_i \cap E_j = \varnothing$矛盾！
+由于 $E_1$ 是紧集，点列 $\{x_k\}$ 有收敛子列，不妨仍记为 $\{x_k\}$，设 $x_k\to x\in E_1$。由三角不等式，
+\begin{align*}
+\|y_k-x\| \leqslant \|y_k-x_k\| + \|x_k-x\| \to 0,
+\end{align*}
+故 $y_k\to x$。又因为 $E_2$ 是闭集，所以 $x\in E_2$。于是 $x\in E_1\cap E_2$，这与 $E_1\cap E_2=\varnothing$ 矛盾!
 \end{enumerate}
 
 \end{proof}
@@ -546,8 +558,8 @@ d\left(F,\bigcup_{i=1}^nE_i\right)=\inf\left\{d(x,y)|x\in F,y\in\bigcup_{i=1}^nE
 \begin{example}
 在 \(\mathbb{R}^2\) 中作点集
 \begin{align*}
-E_1 &= \{x = (\xi,\eta): -\infty < \xi < +\infty, \eta = 0\},\\
-E_2 &= \{y = (\xi,\eta): \xi\cdot\eta = 1\},
+E_1 = \{x = (\xi,\eta): -\infty < \xi < +\infty, \eta = 0\},\quad
+E_2 = \{y = (\xi,\eta): \xi\cdot\eta = 1\},
 \end{align*}
 则 \(d(E_1,E_2) = 0\)。
 \end{example}
@@ -590,8 +602,8 @@ d(x_0,F)=d(x_0,\overline{B}\cap F).
 \begin{proof}
 考虑 \(\mathbb{R}^n\) 中的两点 \(x,y\)。根据 \(d(y,E)\) 的定义，对任给的 \(\varepsilon>0\)，必存在 \(z\in E\)，使得 \(|y - z|<d(y,E)+\varepsilon\)，从而有
 \begin{align*}
-d(x,E)&\leqslant|x - z|\leqslant|x - y|+|y - z|\\
-&<|x - y|+d(y,E)+\varepsilon.
+d(x,E)\leqslant|x - z|\leqslant|x - y|+|y - z|
+<|x - y|+d(y,E)+\varepsilon.
 \end{align*}
 由 \(\varepsilon\) 的任意性可知
 \[
@@ -1011,15 +1023,16 @@ E_t=\{\boldsymbol{x}\in E\mid \omega(\boldsymbol{x})<t\}\text{与}\{\boldsymbol{
 为闭集.
 \end{theorem}
 \begin{proof}
-如果$E_t=\varnothing\in\mathscr{T}$,则$E_t$为开集.
+
+如果$E_t=\varnothing$,则$E_t$为开集.
 
 如果$E_t\neq\varnothing$.对$\forall\,\boldsymbol{x}^0\in E_t$,因$\omega(\boldsymbol{x}^0)<t$,故$\exists\,\delta_1\in(0,\delta_0)$,s.t.$B(\boldsymbol{x}^0;\delta_1)\subset E$,且有
 \begin{align*}
-\sup\{|f(\boldsymbol{x}')-f(\boldsymbol{x}'')|\mid \boldsymbol{x}',\boldsymbol{x}''\in B(\boldsymbol{x}^0;\delta_1)\}\leqslant t_1<t.
+\sup\{|f(\boldsymbol{x}')-f(\boldsymbol{x}'')|\mid \boldsymbol{x}',\boldsymbol{x}''\in B(\boldsymbol{x}^0;\delta_1)\}<t.
 \end{align*}
 现对$\forall\,\boldsymbol{x}\in B(\boldsymbol{x}^0;\delta_1)$,可选$\delta_2>0$,s.t.$B(\boldsymbol{x};\delta_2)\subset B(\boldsymbol{x}^0;\delta_1)$.显然,有
 \begin{align*}
-\sup\{|f(\boldsymbol{x}')-f(\boldsymbol{x}'')|\mid \boldsymbol{x}',\boldsymbol{x}''\in B(\boldsymbol{x};\delta_2)\}\leqslant t_1<t.
+\sup\{|f(\boldsymbol{x}')-f(\boldsymbol{x}'')|\mid \boldsymbol{x}',\boldsymbol{x}''\in B(\boldsymbol{x};\delta_2)\}\leqslant \sup\{|f(\boldsymbol{x}')-f(\boldsymbol{x}'')|\mid \boldsymbol{x}',\boldsymbol{x}''\in B(\boldsymbol{x}^0;\delta_1)\}<t.
 \end{align*}
 由此可知
 \begin{align*}
@@ -1042,7 +1055,7 @@ E_t=\{\boldsymbol{x}\in E\mid \omega(\boldsymbol{x})<t\}\text{与}\{\boldsymbol{
 \begin{enumerate}[(1)]
 \item 如果$f,g$在$\boldsymbol{x}^0\in E$连续,则$f\pm g,\lambda f(\lambda\in\mathbb{R}),fg$以及$\frac{f}{g}(g(\boldsymbol{x}^0)\neq0)$在$\boldsymbol{x}^0$也连续.
 
-\item (\textbf{最值定理})设$E\subseteq\mathbb{R}^n$为紧集($\iff$有界闭集),$f\in C(E)$,则$\exists\,\boldsymbol{x}^1,\boldsymbol{x}^2\in E$,s.t.
+\item (\textbf{最值定理})设$E\subseteq\mathbb{R}^n$为紧集,$f\in C(E)$,则$\exists\,\boldsymbol{x}^1,\boldsymbol{x}^2\in E$,s.t.
 \begin{align*}
 f(\boldsymbol{x}^1)=\sup\{f(\boldsymbol{x})\mid \boldsymbol{x}\in E\}=\max\{f(\boldsymbol{x})\mid \boldsymbol{x}\in E\},
 \end{align*}
