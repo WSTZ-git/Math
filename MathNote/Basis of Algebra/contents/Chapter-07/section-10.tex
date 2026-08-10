@@ -574,10 +574,119 @@ e^{cI}&=I+\frac{1}{1!}(cI)+\frac{1}{2!}(cI)^2+\frac{1}{3!}(cI)^3+\cdots\\
 e^Ae^{-A}=e^{A - A}=I_n,
 \end{align*}
 于是$e^A$非异且$(e^A)^{-1}=e^{-A}$. 
-
 \end{proof}
 
+\begin{theorem}[Perron-Frobenius定理]\label{theorem:Perron-Frobenius定理}
+设 $A \in \mathbb{R}^{n \times n}$的所有元素非负，则
+\begin{enumerate}[(1)]
+\item $A$ 的谱半径 $\rho(A)$ 是 $A$ 的一个特征值；
+\item $\rho(A)$ 有一个对应的分量全非负且不全为零的特征向量 $x$；
+\item 若 $B-A$ 的元素全非负，则 $\rho(B) \geqslant \rho(A)$。
+\end{enumerate}
+\end{theorem}
 
+\begin{example}
+设实矩阵
+\begin{align*}
+\bm{A} = \begin{pmatrix} a & b \\ c & d \end{pmatrix}, \quad a, b, c, d > 0.
+\end{align*}
+证明: 一定存在 \(\bm{A}\) 的特征向量 \(\begin{pmatrix} x \\ y \end{pmatrix} \in \mathbb{R}^2\), 满足 \(x, y > 0\).
+\end{example}
+\begin{solution}
+注意到
+\begin{align*}
+|\lambda \bm{E} - \bm{A}| = \begin{vmatrix} \lambda - a & -b \\ -c & \lambda - d \end{vmatrix} = \lambda^2 - (a+d)\lambda + (ad - bc).
+\end{align*}
+由于 \(a, b, c, d > 0\), 所以上述特征多项式的判别式
+\begin{align*}
+\Delta = (a+d)^2 - 4(ad-bc) = (a-d)^2 + 4bc \geqslant 4bc > 0.
+\end{align*}
+即 \(\bm{A}\) 存在两个互异的实特征值, 取特征值
+\begin{align*}
+\lambda_1 = \frac{a+d + \sqrt{(a-d)^2+4bc}}{2} > \frac{a+d + |a-d|}{2} = \max\{a, d\}.
+\end{align*}
+由于 \(|\lambda_1 \bm{E} - \bm{A}| = 0\), 即 \(\lambda_1 \bm{E} - \bm{A}\) 两个行向量线性相关, 且其第 \(1\) 个行向量 \((\lambda_1 - a, -b)\) 非零, 所以 \((\lambda_1 - a, -b)\) 是 \(\lambda_1 \bm{E} - \bm{A}\) 行向量的极大线性无关组, 于是方程组
+$(\lambda_1 \bm{E} - \bm{A}) \begin{pmatrix} x \\ y \end{pmatrix} = 0$ 与 $(\lambda_1 - a)x - by = 0$ 同解, 而明显
+\begin{align*}
+\begin{pmatrix} x \\ y \end{pmatrix} = \begin{pmatrix} b \\ \lambda_1 - a \end{pmatrix}.
+\end{align*}
+是 \((\lambda_1 - a)x - by = 0\) 的特解, 进而其是 \(\bm{A}\) 的属于特征值 \(\lambda_1\) 的特征向量, 并且 \(x = b > 0, y = \lambda_1 - a > 0.\) 
+\end{solution}
+
+\begin{example}
+设 $x_1(t), x_2(t), \cdots, x_n(t)$ 是 $\mathbf{R}$ 上的可微函数，满足
+\begin{align*}
+\begin{cases}
+x_1'(t) = a_{11}x_1(t) + a_{12}x_2(t) + \cdots + a_{1n}x_n(t), \\
+x_2'(t) = a_{21}x_1(t) + a_{22}x_2(t) + \cdots + a_{2n}x_n(t), \\
+\cdots \\
+x_n'(t) = a_{n1}x_1(t) + a_{n2}x_2(t) + \cdots + a_{nn}x_n(t),
+\end{cases}
+\end{align*}
+其中 $a_{ij} \geqslant 0$，$i, j = 1, 2, \cdots, n$。假如对任何 $i$，当 $t \to +\infty$ 时，$x_i(t) \to 0$。问函数 $x_1(t), x_2(t), \cdots, x_n(t)$ 必定是线性相关的吗?
+\end{example}
+\begin{proof}
+
+{\color{blue}证法一:}令 \(A = (a_{ij})_{n \times n}\) 为非负矩阵. 根据\hyperref[theorem:Perron-Frobenius定理]{Perron 定理}, \(A\) 必存在非负特征值 \(\lambda\),即$A$的谱半径$\rho(A)$.且存在分量均非负(实)的非零向量 \(\alpha = (a_1, a_2, \cdots, a_n)^T \neq 0\), 满足 \(A\alpha = \lambda\alpha\) 以及 \(\alpha^T A = \lambda\alpha^T\).令 \(y(t) = \sum\limits_{i=1}^{n} a_i x_i(t)\). 则
+\begin{align*}
+y'(t) = \sum\limits_{i=1}^{n} a_i x_i'(t) = (a_1, a_2, \cdots, a_n) \begin{pmatrix} x_1'(t) \\ x_2'(t) \\ \vdots \\ x_n'(t) \end{pmatrix} = \alpha' A \begin{pmatrix} x_1(t) \\ x_2(t) \\ \vdots \\ x_n(t) \end{pmatrix} = \lambda \alpha' \begin{pmatrix} x_1(t) \\ x_2(t) \\ \vdots \\ x_n(t) \end{pmatrix} = \lambda y(t).
+\end{align*}
+解微分方程 \(\frac{\mathrm{d}y}{\mathrm{d}t} = \lambda y\) 得
+\begin{align*}
+\frac{\mathrm{d}y}{y} = \lambda \mathrm{d}t \implies \ln|y| = \lambda t + \ln C \implies y(t) = C e^{\lambda t}.
+\end{align*}
+若对任何$i$,都有\(\lim\limits_{t \to +\infty} x_i(t) = 0\), 则 \(\lim\limits_{t \to +\infty} y(t) = 0\). 由此得 \(C = 0\).
+因此 \(x_1(t), x_2(t), \cdots, x_n(t)\) 线性相关.
+
+{\color{blue}证法二:}记
+\begin{align*}
+\mathbf{x}(t)\triangleq \left( \begin{array}{c}
+x_1(t)\\
+x_2(t)\\
+\vdots\\
+x_n(t)\\
+\end{array} \right) ,\quad A\triangleq (a_{ij})\in \mathbb{R} ^{n\times n},
+\end{align*}
+则原方程等价于
+\begin{align*}
+\mathbf{x}'(t)=A\mathbf{x}(t)\Longrightarrow \mathbf{x}(t)=e^{At}\mathbf{x}_0,
+\end{align*}
+其中 $\mathbf{x}_0\in\mathbb{R}^n$。将 $A$ 化为 Jordan 标准形
+\begin{align*}
+P^{-1}AP=\operatorname{diag}(J_{n_1}(\lambda_1),\cdots,J_{n_s}(\lambda_s)),
+\end{align*}
+其中$P$可逆.并记 $P^{-1}\mathbf{x}_0=(\mathbf{x}_0^{(1)},\cdots,\mathbf{x}_0^{(s)})^T$,则只需证明向量组
+$\{\mathbf{x}_0^{(1)},\cdots,\mathbf{x}_0^{(s)}\}$ 线性相关。
+又由$\mathbf{x}(t)=e^{At}\mathbf{x}_0$有
+\begin{align}
+P^{-1}\mathbf{x}(t)
+=
+\begin{pmatrix}
+e^{J_{n_1}(\lambda_1)t}\mathbf{x}_0^{(1)} \\
+\vdots \\
+e^{J_{n_s}(\lambda_s)t}\mathbf{x}_0^{(s)}
+\end{pmatrix}. \label{eq:block}
+\end{align}
+由\cref{proposition:Jordan块的性质}知,对任意 $m$ 阶 Jordan 块 $J_m(\lambda)$，其指数矩阵为
+\begin{align*}
+e^{J_m(\lambda)t}=e^{\lambda t}
+\begin{pmatrix}
+1 & t & \cdots & \frac{t^{m-1}}{(m-1)!} \\
+0 & 1 & \cdots & \frac{t^{m-2}}{(m-2)!} \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \cdots & 1
+\end{pmatrix}. 
+\end{align*}
+因此，对于任意向量 $\mathbf{y}\in\mathbb{C}^m$，有
+\begin{align}
+\lim_{t\to+\infty} e^{J_m(\lambda)t}\mathbf{y}=0
+\iff \Re(\lambda)<0 \quad\text{或}\quad \mathbf{y}=0. \label{eq:limit_criterion}
+\end{align}
+由题设知$\lim_{t\to+\infty}\mathbf{x}(t)=0$,则 $\lim_{t\to+\infty}P^{-1}\mathbf{x}(t)=0$，由 \eqref{eq:block}式 和 \eqref{eq:limit_criterion}式 得,对每个 $i$，要么 $\Re(\lambda_i)<0$，要么 $\mathbf{x}_0^{(i)}=0$。
+
+再记$\operatorname{tr}(A)=\sum_{i=1}^s \lambda_i$（计重数）。由题设知 $\operatorname{tr}(A)\geqslant 0$, 进而存在某个 $i_0$ 使得 $\Re(\lambda_{i_0})\geqslant 0$。若不然，所有 $\Re(\lambda_i)<0$，则 $\Re(\operatorname{tr}(A))<0$，与 $\operatorname{tr}(A)\geqslant 0$ 矛盾!于是对 $i_0$，由前面结论知必须 $\mathbf{x}_0^{(i_0)}=0$。
+因此向量组 $\{\mathbf{x}_0^{(1)},\cdots,\mathbf{x}_0^{(s)}\}$ 中至少有一个零向量，故线性相关。这就完成了证明。
+\end{proof}
 
 
 
