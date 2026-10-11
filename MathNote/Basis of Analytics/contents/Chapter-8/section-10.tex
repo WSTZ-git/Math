@@ -1,0 +1,198 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{第一型曲面积分}
+
+\begin{definition}
+类似于第一型曲线积分, 当质量分布在某一曲面块 $S$ (设密度函数 $\rho(x,y,z)$ 在 $S$ 上连续) 时, 曲面块 $S$ 的质量为
+\begin{align*}
+\lim\limits_{\|T\|\to 0}\sum\limits_{i=1}^n \rho(\xi_i,\eta_i,\zeta_i)\Delta S_i,
+\end{align*}
+其中 $T=\{S_1,S_2,\cdots,S_n\}$ 为曲面块的分割, $\Delta S_i$ 表示小曲面块 $S_i$ 的面积, $(\xi_i,\eta_i,\zeta_i)$ 为 $S_i$ 中任意一点, $\|T\|$ 为分割 $T$ 的细度, 即为诸 $S_i$ 中的直径的最大值.
+
+设 $S$ 是空间中可求面积的曲面, $f(x,y,z)$ 为定义在 $S$ 上的函数. 对曲面 $S$ 作分割 $T$, 它把 $S$ 分成 $n$ 个小曲面块 $S_i$ ($i=1,2,\cdots,n$), 以 $\Delta S_i$ 记小曲面块 $S_i$ 的面积, 分割 $T$ 的细度 $\|T\|=\max\limits_{1\leqslant i\leqslant n}\{S_i的直径\}$, 在 $S_i$ 上任取一点 $(\xi_i,\eta_i,\zeta_i)$ ($i=1,2,\cdots,n$), 若极限
+\begin{align*}
+\lim\limits_{\|T\|\to 0}\sum\limits_{i=1}^n f(\xi_i,\eta_i,\zeta_i)\Delta S_i
+\end{align*}
+存在, 且与分割 $T$ 及 $(\xi_i,\eta_i,\zeta_i)$ ($i=1,2,\cdots,n$) 的取法无关, 则称此极限为 $f(x,y,z)$ 在 $S$ 上的第一型曲面积分, 记作
+\begin{align}
+\iint_S f(x,y,z)\mathrm{d}S. \label{eq:first_surface_integral}
+\end{align}
+特别地, 当 $f(x,y,z)\equiv 1$ 时, 曲面积分 $\iint_S \mathrm{d}S$ 就是曲面块 $S$ 的面积.
+\end{definition}
+
+\begin{theorem}
+设有光滑曲面
+\begin{align*}
+S: z=z(x,y), \quad (x,y)\in D,
+\end{align*}
+$f(x,y,z)$ 为 $S$ 上的连续函数, 则
+\begin{align}
+\iint_S f(x,y,z)\mathrm{d}S = \iint_D f(x,y,z(x,y))\sqrt{1+z_x^2+z_y^2}\mathrm{d}x\mathrm{d}y. \label{eq:surface_integral_calc}
+\end{align}
+\end{theorem}
+
+\begin{example}
+计算 $\iint_S \frac{\mathrm{d}S}{z}$, 其中 $S$ 是球面 $x^2+y^2+z^2=a^2$ 被平面 $z=h$ ($0<h<a$) 所截的顶部.
+\end{example}
+
+\begin{solution}
+曲面 $S$ 的方程为
+\begin{align*}
+z=\sqrt{a^2-x^2-y^2},
+\end{align*}
+定义域 $D$ 为圆域 $x^2+y^2\leqslant a^2-h^2$. 由于
+\begin{align*}
+\sqrt{1+z_x^2+z_y^2}=\frac{a}{\sqrt{a^2-x^2-y^2}},
+\end{align*}
+所以由公式\eqref{eq:surface_integral_calc}求得
+\begin{align*}
+\iint_S \frac{\mathrm{d}S}{z} &= \iint_D \frac{a}{a^2-x^2-y^2}\mathrm{d}x\mathrm{d}y = \int_0^{2\pi}\mathrm{d}\theta\int_0^{\sqrt{a^2-h^2}}\frac{a}{a^2-r^2}r\mathrm{d}r \\
+&= 2\pi a\int_0^{\sqrt{a^2-h^2}}\frac{r}{a^2-r^2}\mathrm{d}r = -\pi a\ln(a^2-r^2)\Big|_0^{\sqrt{a^2-h^2}} \\
+&= 2\pi a\ln\frac{a}{h}.
+\end{align*}
+\end{solution}
+
+\begin{example}
+计算 $\iint_S (x^2+y^2+z^2)\mathrm{d}S$, 其中
+\begin{enumerate}[(1)]
+\item $S: x^2+y^2+z^2=a^2$;
+\item $S: x^2+y^2+z^2=2az$.
+\end{enumerate}
+\end{example}
+
+\begin{solution}
+\begin{enumerate}[(1)]
+\item 因为积分曲面 $S$ 满足 $x^2+y^2+z^2=a^2$, 所以
+\begin{align*}
+\iint_S (x^2+y^2+z^2)\mathrm{d}S = \iint_S a^2\mathrm{d}S = 4\pi a^2\cdot a^2 = 4\pi a^4.
+\end{align*}
+\item 因为积分曲面 $S$ 满足 $x^2+y^2+z^2=2az$, 所以
+\begin{align*}
+\iint_S (x^2+y^2+z^2)\mathrm{d}S = \iint_S 2az\mathrm{d}S = \iint_{S_1} 2az\mathrm{d}S + \iint_{S_2} 2az\mathrm{d}S,
+\end{align*}
+其中
+\begin{align*}
+S_1: z_1 &= a+\sqrt{a^2-(x^2+y^2)}, \quad (x,y)\in D, \\
+S_2: z_2 &= a-\sqrt{a^2-(x^2+y^2)}, \quad (x,y)\in D, \\
+D: x^2+y^2 &\leqslant a^2.
+\end{align*}
+由于
+\begin{align*}
+\sqrt{1+\left(\frac{\partial z_1}{\partial x}\right)^2+\left(\frac{\partial z_1}{\partial y}\right)^2} = \sqrt{1+\left(\frac{\partial z_2}{\partial x}\right)^2+\left(\frac{\partial z_2}{\partial y}\right)^2} = \frac{a}{\sqrt{a^2-(x^2+y^2)}},
+\end{align*}
+因此
+\begin{align*}
+\iint_{S_1} 2az\mathrm{d}S &= \iint_D 2a(a+\sqrt{a^2-(x^2+y^2)})\frac{a}{\sqrt{a^2-(x^2+y^2)}}\mathrm{d}x\mathrm{d}y, \\
+\iint_{S_2} 2az\mathrm{d}S &= \iint_D 2a(a-\sqrt{a^2-(x^2+y^2)})\frac{a}{\sqrt{a^2-(x^2+y^2)}}\mathrm{d}x\mathrm{d}y,
+\end{align*}
+所以
+\begin{align*}
+\iint_S (x^2+y^2+z^2)\mathrm{d}S &= 4\iint_D \frac{a^3}{\sqrt{a^2-(x^2+y^2)}}\mathrm{d}x\mathrm{d}y \\
+&= 4a^3\int_0^{2\pi}\mathrm{d}\theta\int_0^a\frac{r\mathrm{d}r}{\sqrt{a^2-r^2}} \\
+&= 8a^3\pi(-\sqrt{a^2-r^2})\Big|_0^a = 8a^4\pi.
+\end{align*}
+\end{enumerate}
+\end{solution}
+
+\begin{theorem}
+对于由参数形式表示的光滑曲面
+\begin{align*}
+S: \begin{cases}
+x=x(u,v), \\
+y=y(u,v), \\
+z=z(u,v),
+\end{cases} \quad (u,v)\in D,
+\end{align*}
+则在 $S$ 上第一型曲面积分的计算公式为
+\begin{align}
+\iint_S f(x,y,z)\mathrm{d}S = \iint_D f(x(u,v),y(u,v),z(u,v))\sqrt{EG-F^2}\mathrm{d}u\mathrm{d}v, \label{eq:parametric_surface_integral}
+\end{align}
+其中
+\begin{align*}
+E &= x_u^2+y_u^2+z_u^2, \\
+F &= x_ux_v+y_uy_v+z_uz_v, \\
+G &= x_v^2+y_v^2+z_v^2.
+\end{align*}
+这里还要求雅可比行列式 $\frac{\partial(x,y)}{\partial(u,v)},\frac{\partial(y,z)}{\partial(u,v)},\frac{\partial(z,x)}{\partial(u,v)}$ 中至少有一个不等于零.
+\end{theorem}
+
+\begin{example}
+计算 $\iint_S z\mathrm{d}S$, 其中 $S$ 为螺旋面的一部分
+\begin{align*}
+S: \begin{cases}
+x=u\cos v, \\
+y=u\sin v, \\
+z=v,
+\end{cases} \quad (u,v)\in D,
+\end{align*}
+\begin{align*}
+D: \begin{cases}
+0\leqslant u\leqslant a, \\
+0\leqslant v\leqslant 2\pi.
+\end{cases}
+\end{align*}
+\end{example}
+
+\begin{solution}
+由于
+\begin{align*}
+E &= x_u^2+y_u^2+z_u^2 = \cos^2 v+\sin^2 v = 1, \\
+F &= x_ux_v+y_uy_v+z_uz_v = -u\sin v\cos v+u\sin v\cos v = 0, \\
+G &= x_v^2+y_v^2+z_v^2 = u^2\sin^2 v+u^2\cos^2 v+1 = 1+u^2,
+\end{align*}
+因此由公式\eqref{eq:parametric_surface_integral}可以求得
+\begin{align*}
+\iint_S z\mathrm{d}S &= \iint_D v\sqrt{1+u^2}\mathrm{d}u\mathrm{d}v = \int_0^{2\pi}v\mathrm{d}v\int_0^a\sqrt{1+u^2}\mathrm{d}u \\
+&= 2\pi^2\left[\frac{u}{2}\sqrt{1+u^2}+\frac{1}{2}\ln(u+\sqrt{1+u^2})\right]\Big|_0^a \\
+&= \pi^2\left[a\sqrt{1+a^2}+\ln(a+\sqrt{1+a^2})\right].
+\end{align*}
+\end{solution}
+
+\begin{definition}
+与重积分相同, 利用第一型曲面积分可以求曲面块的质心、转动惯量、引力等. 设曲面块 $S$ 的面密度为 $\rho(x,y,z)$, 且 $\rho(x,y,z)$ 在 $S$ 上连续.
+
+曲面块 $S$ 的总质量为
+\begin{align*}
+M = \iint_S \rho(x,y,z)\mathrm{d}S.
+\end{align*}
+
+曲面块 $S$ 的质心坐标 $(\overline{x},\overline{y},\overline{z})$ 为
+\begin{align*}
+\overline{x} = \frac{1}{M}\iint_S x\rho(x,y,z)\mathrm{d}S, \quad \overline{y} = \frac{1}{M}\iint_S y\rho(x,y,z)\mathrm{d}S, \quad \overline{z} = \frac{1}{M}\iint_S z\rho(x,y,z)\mathrm{d}S.
+\end{align*}
+
+曲面块 $S$ 对 $x,y,z$ 轴及原点的转动惯量分别为
+\begin{align*}
+I_x &= \iint_S (y^2+z^2)\rho(x,y,z)\mathrm{d}S, \\
+I_y &= \iint_S (z^2+x^2)\rho(x,y,z)\mathrm{d}S, \\
+I_z &= \iint_S (x^2+y^2)\rho(x,y,z)\mathrm{d}S, \\
+I_O &= \iint_S (x^2+y^2+z^2)\rho(x,y,z)\mathrm{d}S.
+\end{align*}
+
+设曲面块 $S$ 外一点 $P(x_0,y_0,z_0)$ 处有一质量为 $m$ 的质点, 则曲面块 $S$ 对该质点的引力 $\bm{F}=(F_x,F_y,F_z)$ 为
+\begin{align*}
+F_x &= km\iint_S \frac{x-x_0}{r^3}\rho(x,y,z)\mathrm{d}S, \\
+F_y &= km\iint_S \frac{y-y_0}{r^3}\rho(x,y,z)\mathrm{d}S, \\
+F_z &= km\iint_S \frac{z-z_0}{r^3}\rho(x,y,z)\mathrm{d}S,
+\end{align*}
+其中 $r=\sqrt{(x-x_0)^2+(y-y_0)^2+(z-z_0)^2}$, $k$ 为引力常数.
+\end{definition}
+
+
+
+
+
+\end{document}

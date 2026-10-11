@@ -1,0 +1,260 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}}
+
+\begin{document}
+
+\section{相似解}\label{section:ch04-similarity}
+
+研究偏微分方程时，寻找形式上反映 PDE 结构中各种对称性的特定解 $u$，常常是有益的。我们在 \S2.2.1、\S2.3.1 推导 Laplace 方程与热方程的基本解时，以及在 \S3.4.4 发现守恒律稀疏波时，已经见过这一想法。下面是这一重要方法的一些进一步应用。
+
+\subsection{平面波与行波、孤立子}\label{subsection:ch04-plane-wave}
+
+先考虑一个涉及两个变量 $x\in\mathbb{R}$、$t\in\mathbb{R}$ 的偏微分方程。形如
+\begin{align}\label{align:ch04-traveling}
+u(x,t)=v(x-\sigma t) \qquad(x\in\mathbb{R},\ t\in\mathbb{R})
+\end{align}
+的解 $u$ 称为一个\textbf{行波}（速度 $\sigma$，剖面 $v$）。更一般地，$n+1$ 个变量 $x=(x_1,\cdots,x_n)\in\mathbb{R}^n$、$t\in\mathbb{R}$ 中 PDE 的一个解 $u$，形如
+\begin{align}\label{align:ch04-plane}
+u(x,t)=v(y\cdot x-\sigma t) \qquad(x\in\mathbb{R}^n,\ t\in\mathbb{R})
+\end{align}
+称为一个\textbf{平面波}（波前垂直于 $y\in\mathbb{R}^n$，速度 $\sigma/|y|$，剖面 $v$）。
+
+\subsubsection{指数解}
+
+鉴于 Fourier 变换（稍后在 \S4.3.1 讨论），研究线性偏微分方程时，考虑形如
+\begin{align}\label{align:ch04-complex-plane}
+u(x,t)=e^{\mathrm{i}(y\cdot x-\sigma t)}
+\end{align}
+的复值平面波解特别有启发，其中 $\sigma\in\mathbb{C}$，$y=(y_1,\cdots,y_n)\in\mathbb{R}^n$，$\sigma$ 为时间频率，$\{y_i\}_{i=1}^n$ 为波数。我们下一步把形如\eqref{align:ch04-complex-plane} 的试探解代入各种线性 PDE，特别注意方程结构所迫使的 $y$ 与 $\sigma=\sigma(y)$ 之间的关系。
+
+\begin{enumerate}[(i)]
+\item \textbf{热方程.} 若 $u$ 由\eqref{align:ch04-complex-plane} 给出，计算 $u_t-\Delta u=(-i\sigma+|y|^2)u=0$，只要 $\sigma=-i|y|^2$。故 $u=e^{\mathrm{i}y\cdot x-|y|^2 t}$ 对每个 $y\in\mathbb{R}^n$ 解热方程。取实部与虚部，进一步发现 $e^{-|y|^2 t}\cos(y\cdot x)$ 与 $e^{-|y|^2 t}\sin(y\cdot x)$ 也是解。注意此例中由于 $\sigma$ 纯虚，公式中出现一个实的负指数项 $e^{-|y|^2 t}$，对应于阻尼或耗散。
+
+\item \textbf{波动方程、Klein--Gordon 方程.} 把\eqref{align:ch04-complex-plane} 代入波动方程，发现 $u_{tt}-\Delta u=(-\sigma^2+|y|^2)u=0$，只要 $\sigma=\pm|y|$。故 $u=e^{\mathrm{i}(y\cdot x\pm|y|t)}$ 解波动方程，函数对 $\cos(y\cdot x\pm|y|t)$ 与 $\sin(y\cdot x\pm|y|t)$ 亦然。由于 $\sigma$ 实，这些解中无耗散效应；且每个这种解的传播速度绝对值 $|\sigma|/|y|=1$ 都相同。
+
+转向 Klein--Gordon 方程 $u_{tt}-\Delta u+m^2u=0$，插入\eqref{align:ch04-complex-plane} 得 $u_{tt}-\Delta u+m^2u=(-\sigma^2+|y|^2+m^2)u=0$，其中 $\sigma=\pm(|y|^2+m^2)^{1/2}$。然而现注意传播速度 $\sigma/|y|$ 非线性地依赖于初值 $e^{\mathrm{i}y\cdot x}$ 的频率，振荡越慢的解传播越快。不同频率的波以不同速度传播，意味着 Klein--Gordon 方程产生色散。
+
+\item \textbf{其他色散方程.} 把 $u=e^{\mathrm{i}(y\cdot x-\sigma t)}$ 代入 Schrödinger 方程 $iu_t+\Delta u=0$，计算得 $iu_t+\Delta u=(\sigma-|y|^2)u=0$，当 $\sigma=|y|^2$。故 $u=e^{\mathrm{i}(y\cdot x-|y|^2 t)}$，此解显示出色散。
+
+作为色散 PDE 的最后一个例子，令 $n=1$，把 $u=e^{\mathrm{i}(yx-\sigma t)}$ 代入 Airy 方程 $u_t+u_{xxx}=0$。计算得 $u_t+u_{xxx}=-i(\sigma+y^3)u=0$，每当 $\sigma=-y^3$。
+\end{enumerate}
+\textbf{相速度与群速度.} 对一般的常系数色散线性 PDE，原则上可如上算出 $\sigma=\sigma(y)$。我们有时把 $\sigma(y)/|y|$ 称为指数平面波解\eqref{align:ch04-complex-plane} 的\textbf{相速度}：即在单位向量 $y/|y|$ 方向上的传播速度。
+
+然而我们将在 \S4.3.1 看到：常可用 Fourier 变换把 PDE 的更一般解写成这种指数平面波解的线性叠加：
+\begin{align*}
+u(x,t)=\int_{\mathbb{R}^n} e^{\mathrm{i}(y\cdot x-\sigma(y)t)}a(y)\,\mathrm{d}y
+\end{align*}
+对某恰当函数 $a$。为理解 $u$ 的传播速度，考虑 $t\to\infty$ 而比值 $v\triangleq x/t$ 固定的极限。我们稍后在 \S4.5.3 驻相法中将知道：积分
+\begin{align*}
+\int_{\mathbb{R}^n} e^{\mathrm{i}(y\cdot x-\sigma(y)t)}a(y)\,\mathrm{d}y=\int_{\mathbb{R}^n}e^{\mathrm{i}t(y\cdot v-\sigma(y))}a(y)\,\mathrm{d}y
+\end{align*}
+的主要贡献来自波数 $y$ 满足 $D\sigma(y)=v$ 之处。为此我们称 $D\sigma(y)$ 为\textbf{群速度}。
+
+\subsubsection{孤立子}
+
+现考虑形式为
+\begin{align}\label{align:ch04-kdv}
+u_t+6uu_x+u_{xxx}=0 \qquad\text{在 }\mathbb{R}\times(0,\infty)\text{ 中}
+\end{align}
+的 Korteweg--de Vries（KdV）方程，此非线性色散方程是水面波的一个模型。我们寻求具结构
+\begin{align}\label{align:ch04-kdv-travel}
+u(x,t)=v(x-\sigma t) \qquad(x\in\mathbb{R},\ t>0)
+\end{align}
+的行波解。则只要 $v$ 满足 ODE
+\begin{align}\label{align:ch04-kdv-ode}
+-\sigma v'+6vv'+v'''=0 \qquad('=\tfrac{\mathrm{d}}{\mathrm{d}s}),
+\end{align}
+$u$ 就解 KdV 方程\eqref{align:ch04-kdv}。
+
+我们通过首先注意
+\begin{align}\label{align:ch04-kdv-int1}
+-\sigma v+3v^2+v''=a
+\end{align}
+来积分\eqref{align:ch04-kdv-ode}，$a$ 表某常数。用 $v'$ 乘此等式，得 $-\sigma vv'+3v^2v'+v''v'=av'$，从而推出
+\begin{align}\label{align:ch04-kdv-int2}
+\frac{(v')^2}{2}=-v^3+\frac{\sigma}{2}v^2+av+b,
+\end{align}
+其中 $b$ 为另一任意常数。
+
+我们现只寻找满足 $v,v',v''\to 0$（当 $s\to\pm\infty$）的解 $v$（此时具形式\eqref{align:ch04-kdv-travel} 的函数 $u$ 称为一个\textbf{孤立波}）。则\eqref{align:ch04-kdv-int1}、\eqref{align:ch04-kdv-int2} 蕴含 $a=b=0$。方程\eqref{align:ch04-kdv-int2} 于是化简为 $\dfrac{(v')^2}{2}=v^2\left(-v+\dfrac{\sigma}{2}\right)$。故 $v'=\pm v(\sigma-2v)^{1/2}$。为计算方便取上面负号，得到 $v$ 的隐式公式
+\begin{align}\label{align:ch04-kdv-impl}
+s=-\int_{v(s)}^1\frac{\mathrm{d}z}{z(\sigma-2z)^{1/2}}+c,
+\end{align}
+对某常数 $c$。现代入 $z=\dfrac{\sigma}{2}\operatorname{sech}^2\theta$。由此 $\dfrac{\mathrm{d}z}{\mathrm{d}\theta}=-\sigma\operatorname{sech}^2\theta\tanh\theta$，且 $z(\sigma-2z)^{1/2}=\dfrac{\sigma^{3/2}}{2}\operatorname{sech}^2\theta\tanh\theta$。故\eqref{align:ch04-kdv-impl} 成为
+\begin{align}\label{align:ch04-kdv-theta}
+s=\frac{2}{\sqrt{\sigma}}\theta+c,
+\end{align}
+其中 $\theta$ 由关系 $\dfrac{\sigma}{2}\operatorname{sech}^2\theta=v(s)$ 隐式给出。最后合并\eqref{align:ch04-kdv-theta} 与此关系，算得
+\begin{align*}
+v(s)=\frac{\sigma}{2}\operatorname{sech}^2\!\left(\frac{\sqrt{\sigma}}{2}(s-c)\right) \qquad(s\in\mathbb{R}).
+\end{align*}
+反之，直接验证如此定义的 $v$ 确解 ODE \eqref{align:ch04-kdv-ode} 是例行的。
+
+结论是：对每个 $c\in\mathbb{R}$、$\sigma>0$，
+\begin{align}\label{align:ch04-soliton}
+u(x,t)=\frac{\sigma}{2}\operatorname{sech}^2\!\left(\frac{\sqrt{\sigma}}{2}(x-\sigma t-c)\right) \qquad(x\in\mathbb{R},\ t\geqslant 0)
+\end{align}
+是 KdV 方程的一个解。这种形式的解称为一个\textbf{孤立子}。注意孤立子的速度依赖于其高度。
+
+KdV 方程事实上极为非凡：它是可积的，意味着原则上对一般初始数据可算出精确解。相关技术大多超出本书范围，但更多信息见习题 11、12 以及 Drazin \cite{Dr}。
+
+\subsubsection{双稳态方程的行波}
+
+现考虑标量反应--扩散方程
+\begin{align}\label{align:ch04-bistable}
+u_t-u_{xx}=f(u) \qquad\text{在 }\mathbb{R}\times(0,\infty)\text{ 中},
+\end{align}
+其中 $f:\mathbb{R}\to\mathbb{R}$ 具``三次状''形状。更确切地，我们假定 $f$ 光滑并验证
+\begin{align}\label{align:ch04-f-cond}
+\begin{cases}
+\text{(a) } f(0)=f(a)=f(1)=0,\\
+\text{(b) } f<0\text{ 在 }(0,a)\text{ 上，}f>0\text{ 在 }(a,1)\text{ 上},\\
+\text{(c) } f'(0)<0,\ f'(1)<0,\\
+\text{(d) } \int_0^1 f(z)\,\mathrm{d}z>0
+\end{cases}
+\end{align}
+对某点 $0<a<1$。
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.55\textwidth]{fig-ch04-f-graph.png}
+\caption{具``三次状''形状的函数 $f$ 的图像（$f(0)=f(a)=f(1)=0$，$0,1$ 为稳定零点，$a$ 为不稳定零点）}
+\label{figure:ch04-f-graph}
+\end{figure}
+
+我们寻找形如
+\begin{align}\label{align:ch04-bistable-travel}
+u(x,t)=v(x-\sigma t)
+\end{align}
+的行波解，剖面 $v$ 与速度 $\sigma$ 待定，使 $u\to 0$ 当 $x\to-\infty$，$u\to 1$ 当 $x\to+\infty$。现由于在 $z=0,1$ 处 $f'<0$，常数 $0$ 与 $1$ 是 PDE 的稳定解（而由于在 $z=a$ 处 $f'\geqslant 0$，常数 $a$ 是不稳定解）。故我们要行波\eqref{align:ch04-bistable-travel} 在 $x=\mp\infty$ 处插值于两个稳定态 $z=0,1$ 之间。
+
+把\eqref{align:ch04-bistable-travel} 代入\eqref{align:ch04-bistable}，看到 $v$ 必须满足 ODE
+\begin{align}\label{align:ch04-bistable-ode}
+v''+\sigma v'+f(v)=0 \qquad('=\tfrac{\mathrm{d}}{\mathrm{d}s}),
+\end{align}
+并满足条件
+\begin{align}\label{align:ch04-bistable-bc}
+\lim_{s\to+\infty}v(s)=1,\quad \lim_{s\to-\infty}v(s)=0,\quad \lim_{s\to\pm\infty}v'(s)=0.
+\end{align}
+
+我们现（不给出完整证明）概述 ODE 问题\eqref{align:ch04-bistable-ode}、\eqref{align:ch04-bistable-bc} 的相平面分析。开始令 $w\triangleq v'$。则\eqref{align:ch04-bistable-ode}、\eqref{align:ch04-bistable-bc} 变换为自治一阶系统
+\begin{align}\label{align:ch04-phase}
+\begin{cases}
+v'=w,\\
+w'=-\sigma w-f(v),
+\end{cases}
+\end{align}
+且 $\lim_{s\to\infty}(v,w)=(1,0)$，$\lim_{s\to-\infty}(v,w)=(0,0)$。
+
+现 $(0,0)$ 与 $(1,0)$ 是系统\eqref{align:ch04-phase} 的驻点，相应线性化的特征值为
+\begin{align}\label{align:ch06-Rayleigh}
+\lambda_0^\pm=\frac{-\sigma\pm(\sigma^2-4f'(0))^{1/2}}{2},\quad
+\lambda_1^\pm=\frac{-\sigma\pm(\sigma^2-4f'(1))^{1/2}}{2}.
+\end{align}
+鉴于\eqref{align:ch04-f-cond}(c)，$\lambda_0^\pm,\lambda_1^\pm$ 为实、异号，故 $(0,0)$ 与 $(1,0)$ 是流\eqref{align:ch04-phase} 的鞍点。于是一条``不稳定曲线''$W^u$ 离开 $(0,0)$，一条``稳定曲线''$W^s$ 趋近 $(1,0)$。此外通过计算\eqref{align:ch06-Rayleigh} 相应的特征向量，看到
+\begin{align}\label{align:ch04-curves-tangent}
+\begin{cases}
+W^u\text{ 在 }(0,0)\text{ 处切于直线 }w=\lambda_0^+ v,\\
+W^s\text{ 在 }(1,0)\text{ 处切于直线 }w=\lambda_1^-(v-1).
+\end{cases}
+\end{align}
+
+注意 $\lambda_0^\pm,\lambda_1^\pm,W^u,W^s$ 都依赖参数 $\sigma$。我们的意图是找 $\sigma<0$，使在区域 $\{v>0,w>0\}$ 中
+\begin{align}\label{align:ch04-curves-equal}
+W^u=W^s.
+\end{align}
+于是将有\eqref{align:ch04-phase}、\eqref{align:ch04-bistable-bc} 的一个解，其相平面路径是连接 $(0,0)$ 到 $(1,0)$ 的异宿轨道。
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.55\textwidth]{fig-ch04-stable-unstable.png}
+\caption{鞍点 $(0,0)$ 出发的不稳定曲线 $W^u$ 与趋近鞍点 $(1,0)$ 的稳定曲线 $W^s$}
+\label{figure:ch04-stable-unstable}
+\end{figure}
+
+为建立\eqref{align:ch04-curves-equal}，固定一小数 $\varepsilon>0$，令 $L$ 表示过点 $(a+\varepsilon,0)$ 的竖直线。我们断言：若 $\sigma<0$，则 $W^s\cap L\neq\varnothing$，$W^u\cap L\neq\varnothing$。为验证此断言，定义
+\begin{align}\label{align:ch04-energy}
+E(v,w)\triangleq\frac{w^2}{2}+\int_0^v f(z)\,\mathrm{d}z \qquad(v,w\in\mathbb{R}),
+\end{align}
+并计算
+\begin{align*}
+\frac{\mathrm{d}}{\mathrm{d}t}E(v(t),w(t))=w(t)w'(t)+f(v(t))v'(t)=-\sigma w^2(t) \quad\text{(由\eqref{align:ch04-phase})}.
+\end{align*}
+由于 $\sigma<0$，看到 $E$ 沿 ODE \eqref{align:ch04-phase} 的轨迹非减。
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.6\textwidth]{fig-ch04-level-E.png}
+\caption{能量 $E(v,w)=\dfrac{w^2}{2}+\displaystyle\int_0^v f(z)\,\mathrm{d}z$ 的水平集形状}
+\label{figure:ch04-level-E}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.6\textwidth]{fig-ch04-region-RS.png}
+\caption{相平面分析中的区域 $R$（左）与区域 $S$（右）}
+\label{figure:ch04-region-RS}
+\end{figure}
+
+可进一步证明存在 $\sigma<0$ 使 $W^u=W^s$：固定 $\beta>0$ 考察某区域 $S$，沿线段 $T=\{0\leqslant v\leqslant a+\varepsilon,\ w=\beta v\}$，有
+\begin{align*}
+\frac{w'}{v'}=\frac{-\sigma w-f(v)}{w}=-\sigma-\frac{f(v)}{\beta v}.
+\end{align*}
+由于 $|f(v)/v|$ 对 $0\leqslant v\leqslant a+\varepsilon$ 有界，看到在 $T$ 上 $\dfrac{w'}{v'}\geqslant-\sigma-\dfrac{C}{\beta}>\beta$，只要 $\sigma<0$ 且 $|\sigma|$ 足够大。此计算表明 $W^u$ 不能从线段 $T$ 离开 $S$。结合 $\sigma=0$ 时 $W^u$ 与 $W^s$ 在 $L$ 上交点的位置关系，并注意 $w_0,w_1$ 光滑依赖于 $\sigma$，推出存在 $\sigma<0$ 使 $W^u=W^s$。
+
+对此速度 $\sigma$，因而存在 ODE \eqref{align:ch04-phase}、\eqref{align:ch04-bistable-bc} 的解。于是我们为反应--扩散 PDE \eqref{align:ch04-bistable} 找到了形如\eqref{align:ch04-bistable-travel} 的行波。更精细的分析表明：验证 $W^u=W^s$ 的速度 $\sigma$ 唯一。因而给定满足假设\eqref{align:ch04-f-cond} 的非线性项 $f$，存在唯一速度使相应行波存在。把此断言与前例对比：那里我们对每个给定速度都找到了 KdV 方程的孤立子行波。
+
+\subsection{伸缩下的相似性}\label{subsection:ch04-scaling}
+
+我们现说明寻找 PDE 其他类型``相似''解的可能性。
+
+\begin{example}[一个伸缩不变解]\label{example:ch04-barenblatt}再次考虑多孔介质方程
+\begin{align}\label{align:ch04-porous2}
+u_t-\Delta(u^\gamma)=0 \qquad\text{在 }\mathbb{R}^n\times(0,\infty)\text{ 中},
+\end{align}
+其中 $u\geqslant 0$，$\gamma>1$ 为常数。
+
+如 \S2.3.1 中早前推导热方程基本解那样，让我们寻找形如
+\begin{align}\label{align:ch04-similarity-form}
+u(x,t)=\frac{1}{t^\alpha}v\!\left(\frac{x}{t^\beta}\right) \qquad(x\in\mathbb{R}^n,\ t>0)
+\end{align}
+的解，其中常数 $\alpha,\beta$ 与函数 $v:\mathbb{R}^n\to\mathbb{R}$ 待定。回忆：若我们寻求\eqref{align:ch04-porous2} 在伸缩变换 $u(x,t)\mapsto\lambda^\alpha u(\lambda^\beta x,\lambda t)$ 下不变的解 $u$，就会遇到\eqref{align:ch04-similarity-form}；即 $u(x,t)=\lambda^\alpha u(\lambda^\beta x,\lambda t)$ 对一切 $\lambda>0$、$x\in\mathbb{R}^n$、$t>0$ 成立。令 $\lambda=t^{-1}$，得\eqref{align:ch04-similarity-form}，其中 $v(y)\triangleq u(y,1)$。
+
+把\eqref{align:ch04-similarity-form} 代入\eqref{align:ch04-porous2}，发现
+\begin{align}\label{align:ch04-similarity-sub}
+\alpha t^{-(\alpha+1)}v(y)+\beta t^{-(\alpha+1)}y\cdot Dv(y)+t^{-(\alpha\gamma+2\beta)}\Delta(v^\gamma)(y)=0
+\end{align}
+其中 $y=t^{-\beta}x$。为把\eqref{align:ch04-similarity-sub} 化为只含变量 $y$ 的表达式，要求
+\begin{align}\label{align:ch04-alpha-rel}
+\alpha+1=\alpha\gamma+2\beta.
+\end{align}
+则\eqref{align:ch04-similarity-sub} 化为
+\begin{align}\label{align:ch04-v-ode2}
+\alpha v+\beta y\cdot Dv+\Delta(v^\gamma)=0.
+\end{align}
+至此我们已实现从 $n+1$ 个变量到 $n$ 个变量的约化。进一步假定 $v$ 径向；即 $v(y)=w(|y|)$ 对某 $w:\mathbb{R}\to\mathbb{R}$。则\eqref{align:ch04-v-ode} 成为
+\begin{align}\label{align:ch04-w-ode}
+\alpha w+\beta r w'+(w^\gamma)''+\frac{n-1}{r}(w^\gamma)'=0,
+\end{align}
+其中 $r=|y|$，$'=\dfrac{\mathrm{d}}{\mathrm{d}r}$。现若令
+\begin{align}\label{align:ch04-alpha-beta}
+\alpha=n\beta,
+\end{align}
+则\eqref{align:ch04-w-ode} 化简为 $(r^{n-1}(w^\gamma)')'+\beta(r^n w)'=0$。因而 $r^{n-1}(w^\gamma)'+\beta r^n w=a$，对某常数 $a$。假定 $w,w'$ 当 $r\to\infty$ 时衰减足够快，得 $a=0$，从而 $(w^\gamma)'=-\beta rw$。但于是 $(w^{\gamma-1})'=-\dfrac{\gamma-1}{\gamma}\beta r$。故 $w^{\gamma-1}=b-\dfrac{\gamma-1}{2\gamma}\beta r^2$，$b$ 为常数；从而
+\begin{align}\label{align:ch04-w-radial}
+w=\left(b-\frac{\gamma-1}{2\gamma}\beta r^2\right)_+^{\frac{1}{\gamma-1}},
+\end{align}
+其中我们取右端的正部以确保 $w\geqslant 0$。回忆 $v(y)=w(r)$ 与\eqref{align:ch04-similarity-form}，得
+\begin{align}\label{align:ch04-barenblatt}
+u(x,t)=\frac{1}{t^\alpha}\left(b-\frac{\gamma-1}{2\gamma}\frac{|x|^2}{t^{2\beta}}\right)_+^{\frac{1}{\gamma-1}} \qquad(x\in\mathbb{R}^n,\ t>0),
+\end{align}
+其中由\eqref{align:ch04-alpha-rel}、\eqref{align:ch04-alpha-beta}，
+\begin{align}\label{align:ch04-ab-values}
+\alpha=\frac{n}{n(\gamma-1)+2},\quad \beta=\frac{1}{n(\gamma-1)+2}.
+\end{align}
+公式\eqref{align:ch04-barenblatt}、\eqref{align:ch04-ab-values} 是多孔介质方程的 Barenblatt--Kompaneetz--Zeldovich 解（或简称 Barenblatt 解）。
+\end{example}
+
+\textbf{有限传播速度与退化扩散.} 注意 Barenblatt 解对每个时刻 $t>0$ 具紧支集。这是多孔介质方程具紧支集初始数据的（恰当定义的）非负弱解的一般特征。非线性抛物 PDE \eqref{align:ch04-porous2} 在 $u=0$ 处退化，集合 $\{u>0\}$ 以有限传播速度移动。因而多孔介质方程\eqref{align:ch04-porous2} 有时被视为比线性热方程更好的扩散传播模型，后者预测无限传播速度。
+
+\end{document}

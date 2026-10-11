@@ -1,0 +1,931 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}}
+
+\begin{document}
+
+\section{Laplace方程}\label{section:ch02-laplace}
+
+所有偏微分方程中最重要者，无疑包括Laplace方程
+\begin{align}\label{align:ch02-laplace}
+\Delta u=0
+\end{align}
+以及 Poisson 方程\footnote{我习惯在\eqref{align:ch02-poisson} 中写成负号，以便与\cref{chapter:ch06-二阶椭圆型方程}中一般二阶椭圆算子的记号保持一致。}
+\begin{align}\label{align:ch02-poisson}
+-\Delta u=f.
+\end{align}
+在\eqref{align:ch02-laplace} 与\eqref{align:ch02-poisson} 中，$x\in U$，未知函数为 $u:\overline{U}\to\mathbb{R}$，$u=u(x)$，其中 $U\subset\mathbb{R}^n$ 是给定开集。在\eqref{align:ch02-poisson} 中函数 $f:U\to\mathbb{R}$ 也是给定的。由 \S A.3 回忆，$u$ 的 Laplace 算子为
+\begin{align*}
+\Delta u\triangleq\sum_{i=1}^n u_{x_i x_i}.
+\end{align*}
+
+\begin{definition}\label{definition:ch02-harmonic}
+满足\eqref{align:ch02-laplace} 的 $C^2$ 函数 $u$ 称为\textbf{调和函数}。
+\end{definition}
+
+\textbf{物理解释.} Laplace方程出现在极为广泛的物理背景之中。在一种典型解释里，$u$ 表示某种物理量（例如化学浓度）在平衡态下的密度。于是若 $V$ 是 $U$ 内任一光滑子区域，则 $u$ 通过 $\partial V$ 的净通量为零：
+\begin{align*}
+\int_{\partial V}\mathbf{F}\cdot\boldsymbol{\nu}\,\mathrm{d}S=0,
+\end{align*}
+其中 $\mathbf{F}$ 表通量密度，$\boldsymbol{\nu}$ 表单位外法向量场。由 Gauss--Green 公式（\S C.2），有
+\begin{align*}
+\int_V \operatorname{div}\mathbf{F}\,\mathrm{d}x=\int_{\partial V}\mathbf{F}\cdot\boldsymbol{\nu}\,\mathrm{d}S=0,
+\end{align*}
+从而
+\begin{align}\label{align:ch02-divf}
+\operatorname{div}\mathbf{F}=0 \qquad \text{在 }U\text{ 中},
+\end{align}
+这是因为 $V$ 是任意的。在许多情形下，物理上合理的假定是通量 $\mathbf{F}$ 与梯度 $Du$ 成正比但方向相反（因为流动是从高浓度区域流向低浓度区域）。于是
+\begin{align}\label{align:ch02-flux}
+\mathbf{F}=-aDu \qquad (a>0).
+\end{align}
+代入\eqref{align:ch02-divf}，便得到Laplace方程 $\operatorname{div}(Du)=\Delta u=0$。
+
+若 $u$ 分别表示
+$\begin{cases}\text{化学浓度}\\ \text{温度}\\ \text{静电势},\end{cases}$
+则方程\eqref{align:ch02-flux} 分别是
+$\begin{cases}\text{扩散的 Fick 定律}\\ \text{热传导的 Fourier 定律}\\ \text{导电的 Ohm 定律}.\end{cases}$
+
+关于Laplace方程在数学物理中无处不在的讨论，见 Feynman--Leighton--Sands \cite{F-L-S} 第 12 章。Laplace方程还出现在解析函数的研究以及 Brown 运动的概率研究之中。
+
+\subsection{基本解}\label{subsection:ch02-fundamental}
+
+\subsubsection{基本解的推导}
+
+研究任何偏微分方程的一个好策略，是先找出某些显式解，然后，若该 PDE 是线性的，再用先前得到的特解组装出更复杂的解。此外，在寻找显式解时，把注意力限制在具有某种对称性的函数类上往往是明智的。由于Laplace方程在旋转下不变（习题 2），因而先去寻找径向解，即形如 $r=|x|$ 的函数，似乎是可取的。
+
+因此，我们尝试在 $U=\mathbb{R}^n$ 中寻找Laplace方程\eqref{align:ch02-laplace} 的形如
+\begin{align*}
+u(x)=v(r)
+\end{align*}
+的解，其中 $r=|x|=(x_1^2+\cdots+x_n^2)^{1/2}$，而 $v$ 要选得（若可能）使 $\Delta u=0$。首先注意到，对 $i=1,\cdots,n$，
+\begin{align*}
+\frac{\partial r}{\partial x_i}=\frac{1}{2}(x_1^2+\cdots+x_n^2)^{-1/2}2x_i=\frac{x_i}{r}\qquad (x\neq 0).
+\end{align*}
+于是
+\begin{align*}
+u_{x_i}=v'(r)\frac{x_i}{r},\qquad
+u_{x_i x_i}=v''(r)\frac{x_i^2}{r^2}+v'(r)\left(\frac{1}{r}-\frac{x_i^2}{r^3}\right),
+\end{align*}
+从而
+\begin{align*}
+\Delta u=v''(r)+\frac{n-1}{r}v'(r).
+\end{align*}
+因此 $\Delta u=0$ 当且仅当
+\begin{align}\label{align:ch02-radial-ode}
+v''+\frac{n-1}{r}v'=0.
+\end{align}
+若 $v'\neq 0$，则推出
+\begin{align*}
+(\log|v'|)'=\frac{v''}{v'}=\frac{1-n}{r},
+\end{align*}
+因而 $v'(r)=\dfrac{a}{r^{n-1}}$（$a$ 为某常数）。于是当 $r>0$ 时，
+\begin{align*}
+v(r)=
+\begin{cases}
+b\log r+c & (n=2),\\
+\dfrac{b}{r^{n-2}}+c & (n\geqslant 3),
+\end{cases}
+\end{align*}
+其中 $b,c$ 为常数。
+
+这些考虑引出下面的
+
+\begin{definition}\label{definition:ch02-fundamental-solution}
+函数
+\begin{align}\label{align:ch02-Phi}
+\Phi(x)\triangleq
+\begin{cases}
+-\dfrac{1}{2\pi}\log|x| & (n=2),\\
+\dfrac{1}{n(n-2)\alpha(n)}\dfrac{1}{|x|^{n-2}} & (n\geqslant 3),
+\end{cases}
+\end{align}
+定义于 $x\in\mathbb{R}^n$，$x\neq 0$，称为Laplace方程的\textbf{基本解}。
+\end{definition}
+
+稍后即可明白\eqref{align:ch02-Phi} 中常数取这些特定值的缘由。（由 \S A.2 回忆，$\alpha(n)$ 表示 $\mathbb{R}^n$ 中单位球的体积。）
+
+我们有时会略微滥用记号，写作 $\Phi(x)=\Phi(|x|)$，以强调基本解是径向的。还可注意到有估计
+\begin{align}\label{align:ch02-Phi-est}
+|D\Phi(x)|\leqslant\frac{C}{|x|^{n-1}},\qquad |D^2\Phi(x)|\leqslant\frac{C}{|x|^n} \qquad (x\neq 0)
+\end{align}
+其中 $C>0$ 为某常数。
+
+\subsubsection{Poisson 方程}
+
+由构造，函数 $x\mapsto\Phi(x)$ 在 $x\neq 0$ 处调和。若把原点平移到新点 $y$，PDE \eqref{align:ch02-laplace} 不变；于是 $x\mapsto\Phi(x-y)$ 作为 $x$ 的函数，在 $x\neq y$ 处也调和。现取 $f:\mathbb{R}^n\to\mathbb{R}$，注意到映射 $x\mapsto\Phi(x-y)f(y)$（$x\neq y$）对每个 $y\in\mathbb{R}^n$ 都调和，因而为不同点 $y$ 构造的有限个这种表达式之和也调和。
+
+这一推理或许会使人以为卷积
+\begin{align}\label{align:ch02-newton-potential}
+u(x)&=\int_{\mathbb{R}^n}\Phi(x-y)f(y)\,\mathrm{d}y\\
+&=\begin{cases}
+-\dfrac{1}{2\pi}\int_{\mathbb{R}^2}\log(|x-y|)f(y)\,\mathrm{d}y & (n=2),\\
+\dfrac{1}{n(n-2)\alpha(n)}\displaystyle\int_{\mathbb{R}^n}\dfrac{f(y)}{|x-y|^{n-2}}\,\mathrm{d}y & (n\geqslant 3)
+\end{cases}\nonumber
+\end{align}
+将解出Laplace方程\eqref{align:ch02-laplace}。然而这是不对的。事实上，正如估计\eqref{align:ch02-Phi-est} 所提示的，$D^2\Phi(x-y)$ 在奇点 $y=x$ 附近不可积，因此在积分号下形式地微分是没有根据的（也是不正确的）。我们必须更谨慎地计算 $\Delta u$。
+
+为简单起见，现设 $f\in C_c^2(\mathbb{R}^n)$，即 $f$ 二次连续可微且具有紧支集。
+
+\begin{theorem}[求解 Poisson 方程]\label{theorem:ch02-solve-poisson}由\eqref{align:ch02-newton-potential} 定义 $u$。则
+\begin{enumerate}[(i)]
+\item $u\in C^2(\mathbb{R}^n)$，且
+\item $-\Delta u=f$ 在 $\mathbb{R}^n$ 中。
+\end{enumerate}
+\end{theorem}
+
+于是我们看到，\eqref{align:ch02-newton-potential} 给出了 Poisson 方程\eqref{align:ch02-poisson} 在 $\mathbb{R}^n$ 中一个解的公式。
+
+\begin{proof}
+1. 我们有
+\begin{align}\label{align:ch02-u-change}
+u(x)=\int_{\mathbb{R}^n}\Phi(x-y)f(y)\,\mathrm{d}y=\int_{\mathbb{R}^n}\Phi(y)f(x-y)\,\mathrm{d}y;
+\end{align}
+因而
+\begin{align*}
+\frac{u(x+he_i)-u(x)}{h}=\int_{\mathbb{R}^n}\Phi(y)\left[\frac{f(x+he_i-y)-f(x-y)}{h}\right]\mathrm{d}y,
+\end{align*}
+其中 $h\neq 0$，$e_i=(0,\cdots,1,\cdots,0)$，$1$ 在第 $i$ 个位置。但
+\begin{align*}
+\frac{f(x+he_i-y)-f(x-y)}{h}\to f_{x_i}(x-y)
+\end{align*}
+在 $\mathbb{R}^n$ 上关于 $h\to 0$ 一致成立，故
+\begin{align*}
+u_{x_i}(x)=\int_{\mathbb{R}^n}\Phi(y)f_{x_i}(x-y)\,\mathrm{d}y \qquad (i=1,\cdots,n).
+\end{align*}
+类似地，
+\begin{align}\label{align:ch02-u-second-diff}
+u_{x_i x_j}(x)=\int_{\mathbb{R}^n}\Phi(y)f_{x_i x_j}(x-y)\,\mathrm{d}y \qquad (i,j=1,\cdots,n).
+\end{align}
+由于\eqref{align:ch02-u-second-diff} 右端作为变量 $x$ 的函数连续，故 $u\in C^2(\mathbb{R}^n)$。
+
+2. 由于 $\Phi$ 在 $0$ 处发散，后续计算需要把这一奇点隔离在一个小球内。取定 $\varepsilon>0$。则
+\begin{align}\label{align:ch02-laplace-decomp}
+\Delta u(x)=\int_{B(0,\varepsilon)}\Phi(y)\Delta_x f(x-y)\,\mathrm{d}y
++\int_{\mathbb{R}^n-B(0,\varepsilon)}\Phi(y)\Delta_x f(x-y)\,\mathrm{d}y
+\triangleq I_\varepsilon+J_\varepsilon.
+\end{align}
+现在
+\begin{align}\label{align:ch02-I-eps}
+|I_\varepsilon|\leqslant C\|D^2 f\|_{L^\infty(\mathbb{R}^n)}\int_{B(0,\varepsilon)}|\Phi(y)|\,\mathrm{d}y
+\leqslant
+\begin{cases}
+C\varepsilon^2|\log\varepsilon| & (n=2),\\
+C\varepsilon^2 & (n\geqslant 3).
+\end{cases}
+\end{align}
+分部积分（见 \S C.2）给出
+\begin{align}\label{align:ch02-J-eps}
+J_\varepsilon&=\int_{\mathbb{R}^n-B(0,\varepsilon)}\Phi(y)\Delta_y f(x-y)\,\mathrm{d}y\\
+&=-\int_{\mathbb{R}^n-B(0,\varepsilon)}D\Phi(y)\cdot D_y f(x-y)\,\mathrm{d}y
++\int_{\partial B(0,\varepsilon)}\Phi(y)\frac{\partial f}{\partial\nu}(x-y)\,\mathrm{d}S(y)\nonumber\\
+&\triangleq K_\varepsilon+L_\varepsilon,\nonumber
+\end{align}
+其中 $\boldsymbol{\nu}$ 表示沿 $\partial B(0,\varepsilon)$ 指向内部的单位法向量。易验
+\begin{align}\label{align:ch02-L-eps}
+|L_\varepsilon|\leqslant \|Df\|_{L^\infty(\mathbb{R}^n)}\int_{\partial B(0,\varepsilon)}|\Phi(y)|\,\mathrm{d}S(y)
+\leqslant
+\begin{cases}
+C\varepsilon|\log\varepsilon| & (n=2),\\
+C\varepsilon & (n\geqslant 3).
+\end{cases}
+\end{align}
+
+3. 我们对 $K_\varepsilon$ 再分部积分一次，得到
+\begin{align*}
+K_\varepsilon&=\int_{\mathbb{R}^n-B(0,\varepsilon)}\Delta\Phi(y)f(x-y)\,\mathrm{d}y
+-\int_{\partial B(0,\varepsilon)}\frac{\partial\Phi}{\partial\nu}(y)f(x-y)\,\mathrm{d}S(y)\\
+&=-\int_{\partial B(0,\varepsilon)}\frac{\partial\Phi}{\partial\nu}(y)f(x-y)\,\mathrm{d}S(y),
+\end{align*}
+这是因为 $\Phi$ 在原点之外调和。现 $D\Phi(y)=-\dfrac{1}{n\alpha(n)}\dfrac{y}{|y|^n}$（$y\neq 0$），而在 $\partial B(0,\varepsilon)$ 上 $\boldsymbol{\nu}=-\dfrac{y}{|y|}=-\dfrac{y}{\varepsilon}$。因而在 $\partial B(0,\varepsilon)$ 上 $\dfrac{\partial\Phi}{\partial\nu}(y)=\boldsymbol{\nu}\cdot D\Phi(y)=\dfrac{1}{n\alpha(n)\varepsilon^{n-1}}$。由于 $n\alpha(n)\varepsilon^{n-1}$ 是球面 $\partial B(0,\varepsilon)$ 的面积，我们有
+\begin{align}\label{align:ch02-K-eps}
+K_\varepsilon&=-\frac{1}{n\alpha(n)\varepsilon^{n-1}}\int_{\partial B(0,\varepsilon)}f(x-y)\,\mathrm{d}S(y)\\
+&=-\fint_{\partial B(x,\varepsilon)}f(y)\,\mathrm{d}S(y)\to -f(x)\qquad (\varepsilon\to 0).\nonumber
+\end{align}
+（由 \S A.3 回忆，积分号上的斜杠表示平均。）
+
+4. 现将\eqref{align:ch02-laplace-decomp}--\eqref{align:ch02-K-eps} 合并并令 $\varepsilon\to 0$，即得 $-\Delta u(x)=f(x)$，如所断言。
+\end{proof}
+
+定理\cref{theorem:ch02-solve-poisson} 实际上在对 $f$ 远弱于上述光滑性要求下仍成立，见 Gilbarg--Trudinger \cite{G-T}。
+
+\textbf{基本解的解释.} 我们有时写作
+\begin{align*}
+-\Delta\Phi=\delta_0 \qquad \text{在 }\mathbb{R}^n\text{ 中},
+\end{align*}
+其中 $\delta_0$ 表示 $\mathbb{R}^n$ 上赋予点 $0$ 单位质量的 Dirac 测度。采用此记号，可形式地计算
+\begin{align*}
+-\Delta u(x)&=\int_{\mathbb{R}^n}-\Delta_x\Phi(x-y)f(y)\,\mathrm{d}y\\
+&=\int_{\mathbb{R}^n}\delta_x f(y)\,\mathrm{d}y=f(x)\qquad (x\in\mathbb{R}^n),
+\end{align*}
+与定理\cref{theorem:ch02-solve-poisson} 一致。
+
+\subsection{平均值公式}\label{subsection:ch02-meanvalue}
+
+现考虑开集 $U\subset\mathbb{R}^n$，设 $u$ 在 $U$ 内调和。接下来推导重要的平均值公式：只要 $B(x,r)\subset U$，$u(x)$ 既等于 $u$ 在球面 $\partial B(x,r)$ 上的平均，又等于 $u$ 在整个球 $B(x,r)$ 上的平均。这些涉及 $u$ 的隐式公式将导出数量惊人的推论，我们马上就会看到。
+
+\begin{theorem}[Laplace方程的平均值公式]\label{theorem:ch02-mean-value}若 $u\in C^2(U)$ 调和，则对每个 $B(x,r)\subset U$，
+\begin{align}\label{align:ch02-mean-value}
+u(x)=\fint_{\partial B(x,r)}u\,\mathrm{d}S=\fint_{B(x,r)}u\,\mathrm{d}y.
+\end{align}
+\end{theorem}
+
+\begin{proof}
+1. 令
+\begin{align*}
+\phi(r)\triangleq\fint_{\partial B(x,r)}u(y)\,\mathrm{d}S(y)=\fint_{\partial B(0,1)}u(x+rz)\,\mathrm{d}S(z).
+\end{align*}
+则
+\begin{align*}
+\phi'(r)=\fint_{\partial B(0,1)}Du(x+rz)\cdot z\,\mathrm{d}S(z),
+\end{align*}
+从而利用 \S C.2 的 Green 公式，计算得
+\begin{align*}
+\phi'(r)&=\fint_{\partial B(x,r)}Du(y)\cdot\frac{y-x}{r}\,\mathrm{d}S(y)\\
+&=\fint_{\partial B(x,r)}\frac{\partial u}{\partial\nu}\,\mathrm{d}S(y)
+=\frac{r}{n}\fint_{B(x,r)}\Delta u(y)\,\mathrm{d}y=0.
+\end{align*}
+故 $\phi$ 为常数，于是
+\begin{align*}
+\phi(r)=\lim_{t\to 0}\phi(t)=\lim_{t\to 0}\fint_{\partial B(x,t)}u(y)\,\mathrm{d}S(y)=u(x).
+\end{align*}
+
+2. 其次注意，采用 \S C.3 的极坐标，有
+\begin{align*}
+\int_{B(x,r)}u\,\mathrm{d}y=\int_0^r\left(\int_{\partial B(x,s)}u\,\mathrm{d}S\right)\mathrm{d}s
+=u(x)\int_0^r n\alpha(n)s^{n-1}\,\mathrm{d}s=\alpha(n)r^n u(x).
+\end{align*}
+\end{proof}
+
+\begin{theorem}[平均值性质的逆]\label{theorem:ch02-mean-converse}若 $u\in C^2(U)$ 对每个 $B(x,r)\subset U$ 都满足
+\begin{align*}
+u(x)=\fint_{\partial B(x,r)}u\,\mathrm{d}S,
+\end{align*}
+则 $u$ 调和。
+\end{theorem}
+
+\begin{proof}
+若 $\Delta u\not\equiv 0$，则存在某球 $B(x,r)\subset U$，使得在 $B(x,r)$ 内，比方说 $\Delta u>0$。但对如上的 $\phi$，
+\begin{align*}
+0=\phi'(r)=\frac{r}{n}\fint_{B(x,r)}\Delta u(y)\,\mathrm{d}y>0,
+\end{align*}
+矛盾。
+\end{proof}
+
+\subsection{调和函数的性质}\label{subsection:ch02-properties}
+
+下面给出一系列关于调和函数的有趣推论，全部基于平均值公式。下文设 $U\subset\mathbb{R}^n$ 为开且有界。
+
+\subsubsection{强极值原理与唯一性}
+
+我们从如下断言开始：调和函数必在边界上达到最大值，且除非为常数，不能在连通区域内部达到最大值。
+
+\begin{theorem}[强极值原理]\label{theorem:ch02-strong-max}设 $u\in C^2(U)\cap C(\overline{U})$ 在 $U$ 内调和。
+\begin{enumerate}[(i)]
+\item 则 $\max_{\overline{U}}u=\max_{\partial U}u$。
+\item 进一步，若 $U$ 连通且存在一点 $x_0\in U$ 使 $u(x_0)=\max_{\overline{U}}u$，则 $u$ 在 $U$ 内为常数。
+\end{enumerate}
+\end{theorem}
+
+断言 (i) 是Laplace方程的极值原理，(ii) 是强极值原理。把 $u$ 换成 $-u$，便得到把``max''换成``min''的类似断言。
+
+\begin{proof}
+设有一点 $x_0\in U$ 使 $u(x_0)=M\triangleq\max_{\overline{U}}u$。则对 $0<r<\operatorname{dist}(x_0,\partial U)$，平均值性质给出
+\begin{align*}
+M=u(x_0)=\fint_{B(x_0,r)}u\,\mathrm{d}y\leqslant M.
+\end{align*}
+由于等号成立当且仅当在 $B(x_0,r)$ 内 $u\equiv M$，故对一切 $y\in B(x_0,r)$ 有 $u(y)=M$。于是集合 $\{x\in U\mid u(x)=M\}$ 在 $U$ 中既开又相对闭；因而若 $U$ 连通，它就等于 $U$。这就证明了断言 (ii)，由此可得 (i)。
+\end{proof}
+
+\textbf{正性.} 强极值原理特别断言：若 $U$ 连通，且 $u\in C^2(U)\cap C(\overline{U})$ 满足
+\begin{align*}
+\begin{cases}
+\Delta u=0 & \text{在 }U\text{ 中},\\
+u=g & \text{在 }\partial U\text{ 上},
+\end{cases}
+\end{align*}
+其中 $g\geqslant 0$，则只要 $g$ 在 $\partial U$ 上某点为正，$u$ 就在 $U$ 内处处为正。
+
+极值原理的一个重要应用是建立 Poisson 方程某类边值问题解的唯一性。
+
+\begin{theorem}[唯一性]\label{theorem:ch02-uniqueness}设 $g\in C(\partial U)$，$f\in C(U)$。则边值问题
+\begin{align}\label{align:ch02-dirichlet-bvp}
+\begin{cases}
+-\Delta u=f & \text{在 }U\text{ 中},\\
+u=g & \text{在 }\partial U\text{ 上}
+\end{cases}
+\end{align}
+至多存在一个解 $u\in C^2(U)\cap C(\overline{U})$。
+\end{theorem}
+
+\begin{proof}
+若 $u$ 与 $\widetilde{u}$ 都满足\eqref{align:ch02-dirichlet-bvp}，对调和函数 $w\triangleq\pm(u-\widetilde{u})$ 应用定理\cref{theorem:ch02-strong-max} 即可。
+\end{proof}
+
+\subsubsection{正则性}
+
+接下来证明：若 $u\in C^2$ 调和，则必有 $u\in C^\infty$。因此调和函数自动地无穷次可微。这类断言称为正则性定理。有趣之处在于，Laplace方程 $\Delta u=\sum_{i=1}^n u_{x_i x_i}=0$ 的代数结构，导致了如下解析推论：$u$ 的所有偏导数都存在，甚至那些并未出现在 PDE 中的导数也存在。
+
+\begin{theorem}[光滑性]\label{theorem:ch02-smoothness}若 $u\in C(U)$ 对每个 $B(x,r)\subset U$ 都满足平均值性质\eqref{align:ch02-mean-value}，则 $u\in C^\infty(U)$。
+\end{theorem}
+
+请特别注意，$u$ 在直至 $\partial U$ 处未必光滑，甚至未必连续。
+
+\begin{proof}
+设 $\eta$ 为 \S C.5 所述标准磨光子，并回忆 $\eta$ 是径向函数。令 $u_\varepsilon\triangleq\eta_\varepsilon*u$，定义在 $U_\varepsilon=\{x\in U\mid \operatorname{dist}(x,\partial U)>\varepsilon\}$ 中。如 \S C.5 所示，$u_\varepsilon\in C^\infty(U_\varepsilon)$。
+
+我们将通过证明在 $U_\varepsilon$ 上实际上 $u\equiv u_\varepsilon$ 来证明 $u$ 光滑。事实上，若 $x\in U_\varepsilon$，则
+\begin{align*}
+u_\varepsilon(x)&=\int_U \eta_\varepsilon(x-y)u(y)\,\mathrm{d}y\\
+&=\frac{1}{\varepsilon^n}\int_{B(x,\varepsilon)}\eta\!\left(\frac{|x-y|}{\varepsilon}\right)u(y)\,\mathrm{d}y\\
+&=\frac{1}{\varepsilon^n}\int_0^\varepsilon\eta\!\left(\frac{r}{\varepsilon}\right)\left(\int_{\partial B(x,r)}u\,\mathrm{d}S\right)\mathrm{d}r\\
+&=\frac{1}{\varepsilon^n}u(x)\int_0^\varepsilon\eta\!\left(\frac{r}{\varepsilon}\right)n\alpha(n)r^{n-1}\,\mathrm{d}r \qquad \text{（由\eqref{align:ch02-mean-value}）}\\
+&=u(x)\int_{B(0,\varepsilon)}\eta_\varepsilon\,\mathrm{d}y=u(x).
+\end{align*}
+因此在 $U_\varepsilon$ 上 $u_\varepsilon\equiv u$，从而对每个 $\varepsilon>0$ 都有 $u\in C^\infty(U_\varepsilon)$。
+\end{proof}
+
+\subsubsection{调和函数的局部估计}
+
+现利用平均值公式，对调和函数的各阶偏导数导出精细的估计。下文证明解析性时需要这些估计的精确结构。
+
+\begin{theorem}[导数估计]\label{theorem:ch02-derivative-est}设 $u$ 在 $U$ 中调和。则对每个 $B(x_0,r)\subset U$ 以及每个阶数 $|\alpha|=k$ 的多重指标 $\alpha$，有
+\begin{align}\label{align:ch02-derivative-est}
+|D^\alpha u(x_0)|\leqslant\frac{C_k}{r^{n+k}}\|u\|_{L^1(B(x_0,r))},
+\end{align}
+其中
+\begin{align}\label{align:ch02-Ck}
+C_0=\frac{1}{\alpha(n)},\qquad C_k=\frac{(2^{n+1}nk)^k}{\alpha(n)} \quad (k=1,\cdots).
+\end{align}
+\end{theorem}
+
+\begin{proof}
+1. 我们关于 $k$ 归纳证明\eqref{align:ch02-derivative-est}、\eqref{align:ch02-Ck}，$k=0$ 的情形由平均值公式\eqref{align:ch02-mean-value} 直接得到。对 $k=1$，注意到对Laplace方程求导可知 $u_{x_i}$（$i=1,\cdots,n$）调和。因而
+\begin{align}\label{align:ch02-deriv-k1}
+|u_{x_i}(x_0)|=\left|\fint_{B(x_0,r/2)}u_{x_i}\,\mathrm{d}x\right|
+=\left|\frac{2^n}{\alpha(n)r^n}\int_{\partial B(x_0,r/2)}u_{\nu_i}\,\mathrm{d}S\right|
+\leqslant\frac{2^n}{r}\|u\|_{L^\infty(\partial B(x_0,r/2))}.
+\end{align}
+现若 $x\in\partial B(x_0,r/2)$，则 $B(x,r/2)\subset B(x_0,r)\subset U$，于是由 $k=0$ 时的\eqref{align:ch02-derivative-est}、\eqref{align:ch02-Ck}，
+\begin{align*}
+|u(x)|\leqslant\frac{1}{\alpha(n)}\left(\frac{2}{r}\right)^n\|u\|_{L^1(B(x_0,r))}.
+\end{align*}
+合并上述不等式，推出当 $|\alpha|=1$ 时
+\begin{align*}
+|D^\alpha u(x_0)|\leqslant\frac{2^{n+1}n}{\alpha(n)}\frac{1}{r^{n+1}}\|u\|_{L^1(B(x_0,r))}.
+\end{align*}
+这就验证了 $k=1$ 时的\eqref{align:ch02-derivative-est}、\eqref{align:ch02-Ck}。
+
+2. 现设 $k\geqslant 2$，且\eqref{align:ch02-derivative-est}、\eqref{align:ch02-Ck} 对 $U$ 中所有球及所有阶数不超过 $k-1$ 的多重指标成立。取定 $B(x_0,r)\subset U$，令 $\alpha$ 为 $|\alpha|=k$ 的多重指标。则对某个 $i\in\{1,\cdots,n\}$、$|\beta|=k-1$，有 $D^\alpha u=(D^\beta u)_{x_i}$。由类似于\eqref{align:ch02-deriv-k1} 的计算，得
+\begin{align*}
+|D^\alpha u(x_0)|\leqslant\frac{nk}{r}\|D^\beta u\|_{L^\infty(\partial B(x_0,r/k))}.
+\end{align*}
+若 $x\in\partial B(x_0,r/k)$，则 $B(x,\frac{k-1}{k}r)\subset B(x_0,r)\subset U$。于是 $k-1$ 时的\eqref{align:ch02-derivative-est}、\eqref{align:ch02-Ck} 给出
+\begin{align*}
+|D^\beta u(x)|\leqslant\frac{(2^{n+1}n(k-1))^{k-1}}{\alpha(n)\left(\frac{k-1}{k}r\right)^{n+k-1}}\|u\|_{L^1(B(x_0,r))}.
+\end{align*}
+合并前两个估计，得到界
+\begin{align}\label{align:ch02-deriv-induct}
+|D^\alpha u(x_0)|\leqslant\frac{(2^{n+1}nk)^k}{\alpha(n)r^{n+k}}\|u\|_{L^1(B(x_0,r))}.
+\end{align}
+这就确认了 $|\alpha|=k$ 时的\eqref{align:ch02-derivative-est}、\eqref{align:ch02-Ck}。
+\end{proof}
+
+\subsubsection{Liouville 定理}
+
+我们现断言：在整个 $\mathbb{R}^n$ 上不存在非平凡的有界调和函数。
+
+\begin{theorem}[Liouville 定理]\label{theorem:ch02-liouville}设 $u:\mathbb{R}^n\to\mathbb{R}$ 调和且有界。则 $u$ 为常数。
+\end{theorem}
+
+\begin{proof}
+取定 $x_0\in\mathbb{R}^n$，$r>0$，在 $B(x_0,r)$ 上应用定理\cref{theorem:ch02-derivative-est}：
+\begin{align*}
+|Du(x_0)|\leqslant\frac{\sqrt{n}C_1}{r^{n+1}}\|u\|_{L^1(B(x_0,r))}
+\leqslant\frac{\sqrt{n}C_1\alpha(n)}{r}\|u\|_{L^\infty(\mathbb{R}^n)}\to 0
+\end{align*}
+当 $r\to\infty$。故 $Du\equiv 0$，从而 $u$ 为常数。
+\end{proof}
+
+\begin{theorem}[表示公式]\label{theorem:ch02-rep-formula}设 $f\in C_c^2(\mathbb{R}^n)$，$n\geqslant 3$。则
+\begin{align*}
+-\Delta u=f \qquad \text{在 }\mathbb{R}^n\text{ 中}
+\end{align*}
+的任一有界解都形如
+\begin{align*}
+u(x)=\int_{\mathbb{R}^n}\Phi(x-y)f(y)\,\mathrm{d}y+C \qquad (x\in\mathbb{R}^n)
+\end{align*}
+其中 $C$ 为某常数。
+\end{theorem}
+
+\begin{proof}
+由于当 $n\geqslant 3$ 时 $|x|\to\infty$ 有 $\Phi(x)\to 0$，故 $\widetilde{u}(x)\triangleq\int_{\mathbb{R}^n}\Phi(x-y)f(y)\,\mathrm{d}y$ 是 $-\Delta u=f$ 在 $\mathbb{R}^n$ 中的一个有界解。若 $u$ 是另一解，则由 Liouville 定理，$w\triangleq u-\widetilde{u}$ 为常数。
+\end{proof}
+
+\begin{remark}\label{remark:ch02-n2}
+若 $n=2$，$\Phi(x)=-\dfrac{1}{2\pi}\log|x|$ 当 $|x|\to\infty$ 时无界，故 $\int_{\mathbb{R}^2}\Phi(x-y)f(y)\,\mathrm{d}y$ 可能无界。
+\end{remark}
+
+\subsubsection{解析性}
+
+我们把定理\cref{theorem:ch02-smoothness} 精细化：
+
+\begin{theorem}[解析性]\label{theorem:ch02-analyticity}设 $u$ 在 $U$ 中调和。则 $u$ 在 $U$ 中解析。
+\end{theorem}
+
+\begin{proof}
+1. 任取一点 $x_0\in U$。我们必须证明 $u$ 在 $x_0$ 的某个邻域内可由一个收敛的幂级数表示。
+令 $r\triangleq\frac{1}{4}\operatorname{dist}(x_0,\partial U)$。则 $M\triangleq\frac{1}{\alpha(n)r^n}\|u\|_{L^1(B(x_0,2r))}<\infty$。
+
+2. 由于对每个 $x\in B(x_0,r)$ 有 $B(x,r)\subset B(x_0,2r)\subset U$，定理\cref{theorem:ch02-derivative-est} 给出界
+\begin{align*}
+\|D^\alpha u\|_{L^\infty(B(x_0,r))}\leqslant M\left(\frac{2^{n+1}n}{r}\right)^{|\alpha|}|\alpha|^{|\alpha|}.
+\end{align*}
+由于对所有正整数 $k$ 有 $\dfrac{k^k}{k!}<e^k$，故对所有多重指标 $\alpha$ 有
+\begin{align*}
+|\alpha|^{|\alpha|}\leqslant e^{|\alpha|}|\alpha|!.
+\end{align*}
+此外，多项式定理（\S1.5）给出 $n^k=(1+\cdots+1)^k=\sum_{|\alpha|=k}\dfrac{|\alpha|!}{\alpha!}$，从而
+\begin{align*}
+|\alpha|!\leqslant n^{|\alpha|}\alpha!.
+\end{align*}
+合并上述不等式，得估计
+\begin{align}\label{align:ch02-analytic-est}
+\|D^\alpha u\|_{L^\infty(B(x_0,r))}\leqslant M\left(\frac{2^{n+1}n^2e}{r}\right)^{|\alpha|}\alpha!.
+\end{align}
+
+3. $u$ 在 $x_0$ 处的 Taylor 级数为
+\begin{align*}
+\sum_\alpha\frac{D^\alpha u(x_0)}{\alpha!}(x-x_0)^\alpha,
+\end{align*}
+求和遍历所有多重指标。我们断言该幂级数在
+\begin{align}\label{align:ch02-analytic-radius}
+|x-x_0|<\frac{r}{2^{n+2}n^3e}
+\end{align}
+时收敛。为验证此点，对每个 $N$ 计算余项：
+\begin{align*}
+R_N(x)\triangleq u(x)-\sum_{k=0}^{N-1}\sum_{|\alpha|=k}\frac{D^\alpha u(x_0)(x-x_0)^\alpha}{\alpha!}=\sum_{|\alpha|=N}\frac{D^\alpha u(x_0+t(x-x_0))(x-x_0)^\alpha}{\alpha!}
+\end{align*}
+其中 $0\leqslant t\leqslant 1$，$t$ 依赖于 $x$。此式可通过把一元函数 $g(t)\triangleq u(x_0+t(x-x_0))$ 在 $t=1$ 处展开写出前 $N$ 项与误差得到。利用\eqref{align:ch02-analytic-est}、\eqref{align:ch02-analytic-radius}，可估计
+\begin{align*}
+|R_N(x)|\leqslant M\sum_{|\alpha|=N}\left(\frac{2^{n+1}n^2e}{r}\right)^N\left(\frac{r}{2^{n+2}n^3e}\right)^N
+\leqslant M\frac{n^N}{(2^n)^N}=\frac{M}{2^N}\to 0 \qquad (N\to\infty).
+\end{align*}
+\end{proof}
+
+关于解析函数与偏微分方程的更多内容，见 \S4.6.2。
+
+\subsubsection{Harnack 不等式}
+
+由 \S A.2 回忆，$V\subset\!\subset U$ 表示 $V\subset\overline{V}\subset U$ 且 $\overline{V}$ 紧。
+
+\begin{theorem}[Harnack 不等式]\label{theorem:ch02-harnack}对每个连通开集 $V\subset\!\subset U$，存在一个仅依赖于 $V$ 的正常数 $C$，使得对 $U$ 中一切非负调和函数 $u$，都有
+\begin{align*}
+\sup_V u\leqslant C\inf_V u.
+\end{align*}
+因而特别地，对一切 $x,y\in V$，
+\begin{align*}
+\frac{1}{C}u(y)\leqslant u(x)\leqslant C u(y).
+\end{align*}
+这些不等式断言：非负调和函数在 $V$ 内的值彼此相当---除非 $u$ 在 $V$ 内处处很小（或很大），否则它在 $V$ 内任一点都不会很小（或很大）。
+
+其直观想法是：由于 $V$ 与 $\partial U$ 相距一段正距离，因而``有空间让Laplace方程的平均效应发挥作用''。
+\end{theorem}
+
+\begin{proof}
+令 $r\triangleq\frac{1}{4}\operatorname{dist}(V,\partial U)$。取 $x,y\in V$，$|x-y|\leqslant r$。则
+\begin{align*}
+u(x)=\fint_{B(x,2r)}u\,\mathrm{d}z\geqslant\frac{1}{\alpha(n)2^n r^n}\int_{B(y,r)}u\,\mathrm{d}z
+=\frac{1}{2^n}\fint_{B(y,r)}u\,\mathrm{d}z=\frac{1}{2^n}u(y).
+\end{align*}
+于是若 $x,y\in V$，$|x-y|\leqslant r$，则 $2^n u(y)\geqslant u(x)\geqslant\dfrac{1}{2^n}u(y)$。由于 $V$ 连通且 $\overline{V}$ 紧，可用有限个球 $\{B_i\}_{i=1}^N$ 覆盖 $\overline{V}$，每个半径为 $r/2$，且对 $i=2,\cdots,N$ 有 $B_i\cap B_{i-1}\neq\varnothing$。于是对一切 $x,y\in V$，
+\begin{align*}
+u(x)\geqslant\frac{1}{2^{n(N+1)}}u(y).
+\end{align*}
+\end{proof}
+
+\subsection{Green 函数}\label{subsection:ch02-green}
+
+现设 $U\subset\mathbb{R}^n$ 开、有界，且 $\partial U$ 为 $C^1$。接下来我们要为 Poisson 方程
+\begin{align*}
+-\Delta u=f \qquad \text{在 }U\text{ 中}
+\end{align*}
+在给定边界条件 $u=g$（在 $\partial U$ 上）下，求一个解的一般表示公式。
+
+\subsubsection{Green 函数的推导}
+
+设 $u\in C^2(\overline{U})$ 为任意函数。取定 $x\in U$，选 $\varepsilon>0$ 充分小使 $B(x,\varepsilon)\subset U$，在区域 $V_\varepsilon\triangleq U-B(x,\varepsilon)$ 上对 $u(y)$ 与 $\Phi(y-x)$ 应用 \S C.2 的 Green 公式。由此计算得
+\begin{align}\label{align:ch02-green-identity}
+\int_{V_\varepsilon}u(y)\Delta\Phi(y-x)-\Phi(y-x)\Delta u(y)\,\mathrm{d}y
+=\int_{\partial V_\varepsilon}u(y)\frac{\partial\Phi}{\partial\nu}(y-x)-\Phi(y-x)\frac{\partial u}{\partial\nu}(y)\,\mathrm{d}S(y),
+\end{align}
+其中 $\boldsymbol{\nu}$ 表示 $\partial V_\varepsilon$ 上的外单位法向量。其次回忆，当 $x\neq y$ 时 $\Delta\Phi(x-y)=0$。我们还观察到
+\begin{align*}
+\left|\int_{\partial B(x,\varepsilon)}\Phi(y-x)\frac{\partial u}{\partial\nu}(y)\,\mathrm{d}S(y)\right|\leqslant C\varepsilon^{n-1}\max_{\partial B(0,\varepsilon)}|\Phi|=o(1) \qquad (\varepsilon\to 0).
+\end{align*}
+此外,\cref{theorem:ch02-solve-poisson} 证明中的计算表明
+\begin{align*}
+\int_{\partial B(x,\varepsilon)}u(y)\frac{\partial\Phi}{\partial\nu}(y-x)\,\mathrm{d}S(y)=\fint_{\partial B(x,\varepsilon)}u(y)\,\mathrm{d}S(y)\to u(x) \qquad (\varepsilon\to 0).
+\end{align*}
+因此在\eqref{align:ch02-green-identity} 中令 $\varepsilon\to 0$，得公式
+\begin{align}\label{align:ch02-rep-prelim}
+u(x)=\int_{\partial U}\Phi(y-x)\frac{\partial u}{\partial\nu}(y)-u(y)\frac{\partial\Phi}{\partial\nu}(y-x)\,\mathrm{d}S(y)
+-\int_U\Phi(y-x)\Delta u(y)\,\mathrm{d}y.
+\end{align}
+此恒等式对任一点 $x\in U$ 及任一函数 $u\in C^2(\overline{U})$ 都成立。
+
+现在，若我们知道 $U$ 内 $\Delta u$ 的值以及沿 $\partial U$ 的 $u$ 与 $\partial u/\partial\nu$ 的值，公式\eqref{align:ch02-rep-prelim} 就能解出 $u(x)$。然而，对于我们所应用的、给定 $u$ 边值的 Poisson 方程问题，沿 $\partial U$ 的法向导数 $\partial u/\partial\nu$ 是未知的。因此我们必须想办法修改\eqref{align:ch02-rep-prelim} 以消去这一项。
+
+现在的想法是：对固定的 $x$ 引入一个校正函数 $\phi_x=\phi_x(y)$，求解边值问题
+\begin{align}\label{align:ch02-corrector}
+\begin{cases}
+\Delta\phi_x=0 & \text{在 }U\text{ 中},\\
+\phi_x=\Phi(y-x) & \text{在 }\partial U\text{ 上}.
+\end{cases}
+\end{align}
+我们再应用一次 Green 公式，计算
+\begin{align}\label{align:ch02-corrector-green}
+-\int_U\phi_x(y)\Delta u(y)\,\mathrm{d}y
+&=\int_{\partial U}u(y)\frac{\partial\phi_x}{\partial\nu}(y)-\phi_x(y)\frac{\partial u}{\partial\nu}(y)\,\mathrm{d}S(y)\\
+&=\int_{\partial U}u(y)\frac{\partial\phi_x}{\partial\nu}(y)-\Phi(y-x)\frac{\partial u}{\partial\nu}(y)\,\mathrm{d}S(y).\nonumber
+\end{align}
+
+接下来引入
+
+\begin{definition}\label{definition:ch02-green}
+区域 $U$ 的 Green 函数定义为
+\begin{align*}
+G(x,y)\triangleq\Phi(y-x)-\phi_x(y) \qquad (x,y\in U,\ x\neq y).
+\end{align*}
+\end{definition}
+
+采用此术语，并把\eqref{align:ch02-corrector-green} 与\eqref{align:ch02-rep-prelim} 相加，得
+\begin{align}\label{align:ch02-rep-green}
+u(x)=-\int_{\partial U}u(y)\frac{\partial G}{\partial\nu}(x,y)\,\mathrm{d}S(y)-\int_U G(x,y)\Delta u(y)\,\mathrm{d}y \qquad (x\in U),
+\end{align}
+其中 $\dfrac{\partial G}{\partial\nu}(x,y)=D_y G(x,y)\cdot\boldsymbol{\nu}(y)$ 是 $G$ 关于变量 $y$ 的外法向导数。注意方程\eqref{align:ch02-rep-green} 中不再出现 $\partial u/\partial\nu$ 这一项：我们引入校正函数 $\phi_x$ 正是为了达到这一目的。
+
+现设 $u\in C^2(\overline{U})$ 对给定的连续函数 $f,g$ 求解边值问题
+\begin{align}\label{align:ch02-bvp-poisson}
+\begin{cases}
+-\Delta u=f & \text{在 }U\text{ 中},\\
+u=g & \text{在 }\partial U\text{ 上}.
+\end{cases}
+\end{align}
+代入\eqref{align:ch02-rep-green}，我们得到
+
+\begin{theorem}[用Green函数的表示公式]\label{theorem:ch02-green-rep}
+若 $u\in C^2(\overline{U})$ 求解问题\eqref{align:ch02-bvp-poisson}，则
+\begin{align}\label{align:ch02-green-rep-formula}
+u(x)=-\int_{\partial U}g(y)\frac{\partial G}{\partial\nu}(x,y)\,\mathrm{d}S(y)+\int_U f(y)G(x,y)\,\mathrm{d}y \qquad (x\in U).
+\end{align}
+\end{theorem}
+
+这里我们得到了边值问题\eqref{align:ch02-bvp-poisson} 的解的公式，前提是我们能为给定区域 $U$ 构造 Green 函数 $G$。这一般是一件困难的事，只有当 $U$ 具有简单几何形状时才能做到。后续小节将指出几类可显式计算 $G$ 的特殊情形。
+
+\textbf{Green 函数的解释.} 固定 $x\in U$。把 $G$ 看作 $y$ 的函数，可符号地写作
+\begin{align*}
+\begin{cases}
+-\Delta G=\delta_x & \text{在 }U\text{ 中},\\
+G=0 & \text{在 }\partial U\text{ 上},
+\end{cases}
+\end{align*}
+其中 $\delta_x$ 表示赋予点 $x$ 单位质量的 Dirac 测度。
+
+在转入具体例子之前，先记录 $G$ 关于变量 $x,y$ 对称这一一般断言：
+
+\begin{theorem}[Green 函数的对称性]\label{theorem:ch02-green-symmetry}
+对一切 $x,y\in U$，$x\neq y$，有
+\begin{align*}
+G(y,x)=G(x,y).
+\end{align*}
+\end{theorem}
+
+\begin{proof}
+固定 $x,y\in U$，$x\neq y$。写
+\begin{align*}
+v(z)\triangleq G(x,z),\qquad w(z)\triangleq G(y,z) \qquad (z\in U).
+\end{align*}
+则 $\Delta v(z)=0$（$z\neq x$），$\Delta w(z)=0$（$z\neq y$），且在 $\partial U$ 上 $w=v=0$。于是对充分小的 $\varepsilon>0$，在 $V\triangleq U-[B(x,\varepsilon)\cup B(y,\varepsilon)]$ 上应用 Green 恒等式，得
+\begin{align}\label{align:ch02-symmetry-id}
+\int_{\partial B(x,\varepsilon)}\frac{\partial v}{\partial\nu}w-\frac{\partial w}{\partial\nu}v\,\mathrm{d}S(z)
+=\int_{\partial B(y,\varepsilon)}\frac{\partial w}{\partial\nu}v-\frac{\partial v}{\partial\nu}w\,\mathrm{d}S(z),
+\end{align}
+其中 $\boldsymbol{\nu}$ 表示 $\partial B(x,\varepsilon)\cup\partial B(y,\varepsilon)$ 上指向内部的单位向量场。现 $w$ 在 $x$ 附近光滑，故
+\begin{align*}
+\left|\int_{\partial B(x,\varepsilon)}\frac{\partial w}{\partial\nu}v\,\mathrm{d}S\right|\leqslant C\varepsilon^{n-1}\sup_{\partial B(x,\varepsilon)}|v|=o(1) \qquad (\varepsilon\to 0).
+\end{align*}
+另一方面，$v(z)=\Phi(z-x)-\phi_x(z)$，其中 $\phi_x$ 在 $U$ 中光滑。因而
+\begin{align*}
+\lim_{\varepsilon\to 0}\int_{\partial B(x,\varepsilon)}\frac{\partial v}{\partial\nu}w\,\mathrm{d}S
+=\lim_{\varepsilon\to 0}\int_{\partial B(x,\varepsilon)}\frac{\partial\Phi}{\partial\nu}(x-z)w(z)\,\mathrm{d}S=w(x),
+\end{align*}
+计算同定理\cref{theorem:ch02-solve-poisson} 的证明。于是\eqref{align:ch02-symmetry-id} 左端当 $\varepsilon\to 0$ 时收敛到 $w(x)$。类似地右端收敛到 $v(y)$。因此
+\begin{align*}
+G(y,x)=w(x)=v(y)=G(x,y).
+\end{align*}
+\end{proof}
+
+\subsubsection{半空间的 Green 函数}
+
+在本小节与下一小节中，我们将为两个几何形状简单的区域，即半空间 $\mathbb{R}^n_+$ 与单位球 $B(0,1)$，构造 Green 函数。一切都取决于我们在这些区域中显式求解校正问题\eqref{align:ch02-corrector}，而这又取决于一些巧妙的几何反射技巧。
+
+首先考虑半空间
+\begin{align*}
+\mathbb{R}^n_+=\{x=(x_1,\cdots,x_n)\in\mathbb{R}^n\mid x_n>0\}.
+\end{align*}
+尽管此区域无界，因而前一节的计算不能直接套用，我们仍将尝试用先前发展的思想来构造 Green 函数。当然，稍后我们必须直接验证相应的表示公式确实成立。
+
+\begin{definition}\label{definition:ch02-reflection}
+若 $x=(x_1,\cdots,x_{n-1},x_n)\in\mathbb{R}^n_+$，它在平面 $\partial\mathbb{R}^n_+$ 中的镜像点为 $\widetilde{x}=(x_1,\cdots,x_{n-1},-x_n)$。
+\end{definition}
+
+我们对半空间通过令
+\begin{align*}
+\phi_x(y)\triangleq\Phi(y-\widetilde{x})=\Phi(y_1-x_1,\cdots,y_{n-1}-x_{n-1},y_n+x_n) \qquad (x,y\in\mathbb{R}^n_+)
+\end{align*}
+来求解问题\eqref{align:ch02-corrector}。其想法是：校正函数 $\phi_x$ 是由 $\Phi$``把奇点从 $x\in\mathbb{R}^n_+$ 反射到 $\widetilde{x}\notin\mathbb{R}^n_+$''而构造的。我们注意到，若 $y\in\partial\mathbb{R}^n_+$，则 $\phi_x(y)=\Phi(y-x)$，从而
+\begin{align*}
+\begin{cases}
+\Delta\phi_x=0 & \text{在 }\mathbb{R}^n_+\text{ 中},\\
+\phi_x=\Phi(y-x) & \text{在 }\partial\mathbb{R}^n_+ \text{ 上},
+\end{cases}
+\end{align*}
+正合所需。
+
+\begin{definition}\label{definition:ch02-green-halfspace}
+半空间 $\mathbb{R}^n_+$ 的 Green 函数为
+\begin{align*}
+G(x,y)\triangleq\Phi(y-x)-\Phi(y-\widetilde{x}) \qquad (x,y\in\mathbb{R}^n_+,\ x\neq y).
+\end{align*}
+\end{definition}
+
+于是
+\begin{align*}
+G_{y_n}(x,y)&=\Phi_{y_n}(y-x)-\Phi_{y_n}(y-\widetilde{x})\\
+&=-\frac{1}{n\alpha(n)}\left[\frac{y_n-x_n}{|y-x|^n}-\frac{y_n+x_n}{|y-\widetilde{x}|^n}\right].
+\end{align*}
+因而若 $y\in\partial\mathbb{R}^n_+$，
+\begin{align*}
+\frac{\partial G}{\partial\nu}(x,y)=-G_{y_n}(x,y)=-\frac{2x_n}{n\alpha(n)}\frac{1}{|x-y|^n}.
+\end{align*}
+
+现设 $u$ 求解边值问题
+\begin{align}\label{align:ch02-halfspace-bvp}
+\begin{cases}
+\Delta u=0 & \text{在 }\mathbb{R}^n_+\text{ 中},\\
+u=g & \text{在 }\partial\mathbb{R}^n_+\text{ 上}.
+\end{cases}
+\end{align}
+于是由\eqref{align:ch02-green-rep-formula}，我们期望
+\begin{align}\label{align:ch02-poisson-halfspace}
+u(x)=\frac{2x_n}{n\alpha(n)}\int_{\partial\mathbb{R}^n_+}\frac{g(y)}{|x-y|^n}\,\mathrm{d}y \qquad (x\in\mathbb{R}^n_+)
+\end{align}
+是解的一个表示公式。函数
+\begin{align*}
+K(x,y)\triangleq\frac{2x_n}{n\alpha(n)}\frac{1}{|x-y|^n} \qquad (x\in\mathbb{R}^n_+,\ y\in\partial\mathbb{R}^n_+)
+\end{align*}
+是 $\mathbb{R}^n_+$ 的 Poisson 核，而\eqref{align:ch02-poisson-halfspace} 是 Poisson 公式。
+
+我们现在必须直接验证公式\eqref{align:ch02-poisson-halfspace} 确实给出边值问题\eqref{align:ch02-halfspace-bvp} 的解。
+
+\begin{theorem}[半空间的 Poisson 公式]\label{theorem:ch02-poisson-halfspace}设 $g\in C(\mathbb{R}^{n-1})\cap L^\infty(\mathbb{R}^{n-1})$，由\eqref{align:ch02-poisson-halfspace} 定义 $u$。则
+\begin{enumerate}[(i)]
+\item $u\in C^\infty(\mathbb{R}^n_+)\cap L^\infty(\mathbb{R}^n_+)$；
+\item $\Delta u=0$ 在 $\mathbb{R}^n_+$ 中；
+\item 对每一点 $x_0\in\partial\mathbb{R}^n_+$，$\displaystyle\lim_{\substack{x\to x_0\\ x\in\mathbb{R}^n_+}}u(x)=g(x_0)$。
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+1. 对每个固定的 $x$，映射 $y\mapsto G(x,y)$ 除 $y=x$ 外调和。由于 $G(x,y)=G(y,x)$，映射 $x\mapsto G(x,y)$ 除 $x=y$ 外调和。因而 $x\mapsto-\dfrac{\partial G}{\partial y_n}(x,y)=K(x,y)$ 对 $x\in\mathbb{R}^n_+$、$y\in\partial\mathbb{R}^n_+$ 调和。
+
+2. 直接计算（细节从略）可验证，对每个 $x\in\mathbb{R}^n_+$，
+\begin{align}\label{align:ch02-kernel-normalization}
+1=\int_{\partial\mathbb{R}^n_+}K(x,y)\,\mathrm{d}y.
+\end{align}
+由于 $g$ 有界，由\eqref{align:ch02-poisson-halfspace} 定义的 $u$ 同样有界。由于 $x\mapsto K(x,y)$ 在 $x\neq y$ 时光滑，我们还容易验证 $u\in C^\infty(\mathbb{R}^n_+)$，且
+\begin{align*}
+\Delta u(x)=\int_{\partial\mathbb{R}^n_+}\Delta_x K(x,y)g(y)\,\mathrm{d}y=0 \qquad (x\in\mathbb{R}^n_+).
+\end{align*}
+
+3. 现取定 $x_0\in\partial\mathbb{R}^n_+$，$\varepsilon>0$。选 $\delta>0$ 充分小，使当 $|y-x_0|<\delta$、$y\in\partial\mathbb{R}^n_+$ 时
+\begin{align}\label{align:ch02-continuity}
+|g(y)-g(x_0)|<\varepsilon.
+\end{align}
+于是若 $|x-x_0|<\delta/2$、$x\in\mathbb{R}^n_+$，则
+\begin{align}\label{align:ch02-continuity-split}
+|u(x)-g(x_0)|&=\left|\int_{\partial\mathbb{R}^n_+}K(x,y)[g(y)-g(x_0)]\,\mathrm{d}y\right|\\
+&\leqslant\int_{\partial\mathbb{R}^n_+\cap B(x_0,\delta)}K(x,y)|g(y)-g(x_0)|\,\mathrm{d}y\nonumber\\
+&\quad+\int_{\partial\mathbb{R}^n_+-B(x_0,\delta)}K(x,y)|g(y)-g(x_0)|\,\mathrm{d}y\nonumber\\
+&\triangleq I+J.\nonumber
+\end{align}
+现由\eqref{align:ch02-kernel-normalization}、\eqref{align:ch02-continuity}，
+\begin{align*}
+I\leqslant\varepsilon\int_{\partial\mathbb{R}^n_+}K(x,y)\,\mathrm{d}y=\varepsilon.
+\end{align*}
+此外，若 $|x-x_0|\leqslant\delta/2$ 且 $|y-x_0|\geqslant\delta$，则
+\begin{align*}
+|y-x_0|\leqslant|y-x|+\frac{\delta}{2}\leqslant|y-x|+\frac{1}{2}|y-x_0|;
+\end{align*}
+故 $|y-x|\geqslant\frac{1}{2}|y-x_0|$。于是
+\begin{align*}
+J\leqslant 2\|g\|_{L^\infty}\int_{\partial\mathbb{R}^n_+-B(x_0,\delta)}K(x,y)\,\mathrm{d}y
+\leqslant\frac{2^{n+2}\|g\|_{L^\infty}x_n}{n\alpha(n)}\int_{\partial\mathbb{R}^n_+-B(x_0,\delta)}|y-x_0|^{-n}\,\mathrm{d}y\to 0
+\end{align*}
+当 $x_n\to 0^+$。把此计算与估计\eqref{align:ch02-continuity-split} 合并，推出只要 $|x-x_0|$ 充分小，就有 $|u(x)-g(x_0)|\leqslant 2\varepsilon$。
+\end{proof}
+
+\subsubsection{球的 Green 函数}
+
+为构造单位球 $B(0,1)$ 的 Green 函数，我们将再次使用一种反射，这次是关于球面 $\partial B(0,1)$ 的反演。
+
+\begin{definition}\label{definition:ch02-inversion}
+若 $x\in\mathbb{R}^n-\{0\}$，点 $\widetilde{x}=\dfrac{x}{|x|^2}$ 称为 $x$ 关于 $\partial B(0,1)$ 的对偶点。映射 $x\mapsto\widetilde{x}$ 即关于单位球面 $\partial B(0,1)$ 的反演。
+\end{definition}
+
+现利用关于球面的反演来计算单位球 $U=B_0(0,1)$ 的 Green 函数。取定 $x\in B_0(0,1)$。记住我们必须找一个校正函数 $\phi_x=\phi_x(y)$，求解
+\begin{align}\label{align:ch02-ball-corrector}
+\begin{cases}
+\Delta\phi_x=0 & \text{在 }B_0(0,1)\text{ 中},\\
+\phi_x=\Phi(y-x) & \text{在 }\partial B(0,1)\text{ 上};
+\end{cases}
+\end{align}
+则 Green 函数为
+\begin{align}\label{align:ch02-ball-green-def}
+G(x,y)=\Phi(y-x)-\phi_x(y).
+\end{align}
+
+现在的想法是把奇点从 $x\in B_0(0,1)$``反演''到 $\widetilde{x}\notin B(0,1)$。暂且设 $n\geqslant 3$。映射 $y\mapsto\Phi(y-\widetilde{x})$ 在 $y\neq\widetilde{x}$ 处调和；因而 $y\mapsto|x|^{2-n}\Phi(y-\widetilde{x})$ 在 $y\neq\widetilde{x}$ 处调和，于是
+\begin{align}\label{align:ch02-ball-phi}
+\phi_x(y)\triangleq\Phi(|x|(y-\widetilde{x}))
+\end{align}
+在 $U$ 中调和。此外，若 $y\in\partial B(0,1)$ 且 $x\neq 0$，
+\begin{align*}
+|x|^2|y-\widetilde{x}|^2=|x|^2\left(|y|^2-\frac{2y\cdot x}{|x|^2}+\frac{1}{|x|^2}\right)=|x|^2-2y\cdot x+1=|x-y|^2.
+\end{align*}
+因而 $(|x||y-\widetilde{x}|)^{-(n-2)}=|x-y|^{-(n-2)}$。于是
+\begin{align}\label{align:ch02-ball-phi-boundary}
+\phi_x(y)=\Phi(y-x) \qquad (y\in\partial B(0,1)),
+\end{align}
+正合所需。
+
+\begin{definition}\label{definition:ch02-green-ball}
+单位球的 Green 函数为
+\begin{align}\label{align:ch02-ball-green}
+G(x,y)\triangleq\Phi(y-x)-\Phi(|x|(y-\widetilde{x})) \qquad (x,y\in B(0,1),\ x\neq y).
+\end{align}
+\end{definition}
+同一公式对 $n=2$ 也成立。
+
+现设 $u$ 求解边值问题
+\begin{align}\label{align:ch02-ball-bvp}
+\begin{cases}
+\Delta u=0 & \text{在 }B_0(0,1)\text{ 中},\\
+u=g & \text{在 }\partial B(0,1)\text{ 上}.
+\end{cases}
+\end{align}
+则由\eqref{align:ch02-green-rep-formula}，有
+\begin{align}\label{align:ch02-ball-rep}
+u(x)=-\int_{\partial B(0,1)}g(y)\frac{\partial G}{\partial\nu}(x,y)\,\mathrm{d}S(y).
+\end{align}
+由公式\eqref{align:ch02-ball-green}，
+\begin{align*}
+G_{y_i}(x,y)=\Phi_{y_i}(y-x)-\Phi_{y_i}(|x|(y-\widetilde{x})).
+\end{align*}
+但
+\begin{align*}
+\Phi_{y_i}(y-x)=\frac{1}{n\alpha(n)}\frac{x_i-y_i}{|x-y|^n},
+\end{align*}
+并且当 $y\in\partial B(0,1)$ 时，
+\begin{align*}
+\Phi_{y_i}(|x|(y-\widetilde{x}))=-\frac{1}{n\alpha(n)}\frac{y_i|x|^2-x_i}{(|x||y-\widetilde{x}|)^n}=-\frac{1}{n\alpha(n)}\frac{y_i|x|^2-x_i}{|x-y|^n}.
+\end{align*}
+于是
+\begin{align*}
+\frac{\partial G}{\partial\nu}(x,y)&=\sum_{i=1}^n y_i G_{y_i}(x,y)\\
+&=-\frac{1}{n\alpha(n)}\frac{1}{|x-y|^n}\sum_{i=1}^n y_i\big((y_i-x_i)-y_i|x|^2+x_i\big)\\
+&=-\frac{1}{n\alpha(n)}\frac{1-|x|^2}{|x-y|^n}.
+\end{align*}
+因而公式\eqref{align:ch02-ball-rep} 给出表示公式
+\begin{align*}
+u(x)=\frac{1-|x|^2}{n\alpha(n)}\int_{\partial B(0,1)}\frac{g(y)}{|x-y|^n}\,\mathrm{d}S(y).
+\end{align*}
+
+现设 $u$ 不求解\eqref{align:ch02-ball-bvp}，而是对某 $r>0$ 求解边值问题
+\begin{align}\label{align:ch02-ball-r-bvp}
+\begin{cases}
+\Delta u=0 & \text{在 }B_0(0,r)\text{ 中},\\
+u=g & \text{在 }\partial B(0,r)\text{ 上}.
+\end{cases}
+\end{align}
+则 $\widetilde{u}(x)=u(rx)$ 求解\eqref{align:ch02-ball-bvp}，其中以 $\widetilde{g}(x)=g(rx)$ 代替 $g$。作变量代换，得到 Poisson 公式
+\begin{align}\label{align:ch02-poisson-ball}
+u(x)=\frac{r^2-|x|^2}{n\alpha(n)r}\int_{\partial B(0,r)}\frac{g(y)}{|x-y|^n}\,\mathrm{d}S(y) \qquad (x\in B_0(0,r)).
+\end{align}
+函数
+\begin{align*}
+K(x,y)\triangleq\frac{r^2-|x|^2}{n\alpha(n)r}\frac{1}{|x-y|^n} \qquad (x\in B_0(0,r),\ y\in\partial B(0,r))
+\end{align*}
+是球 $B(0,r)$ 的 Poisson 核。
+
+我们是在假定\eqref{align:ch02-ball-r-bvp} 的光滑解存在的前提下建立\eqref{align:ch02-poisson-ball} 的。接下来我们断言：此公式实际上就给出一个解：
+
+\begin{theorem}[球的 Poisson 公式]\label{theorem:ch02-poisson-ball}设 $g\in C(\partial B(0,r))$，由\eqref{align:ch02-poisson-ball} 定义 $u$。则
+\begin{enumerate}[(i)]
+\item $u\in C^\infty(B_0(0,r))$；
+\item $\Delta u=0$ 在 $B_0(0,r)$ 中；
+\item 对每一点 $x_0\in\partial B(0,r)$，$\displaystyle\lim_{\substack{x\to x_0\\ x\in B_0(0,r)}}u(x)=g(x_0)$。
+\end{enumerate}
+\end{theorem}
+
+证明与定理\cref{theorem:ch02-poisson-halfspace} 类似，留作练习。
+
+\subsection{能量方法}\label{subsection:ch02-energy}
+
+至此我们对调和函数的分析，大多依赖于涉及基本解、Green 函数等的相当显式的表示公式。在这最后一小节中，我们展示一些``能量''方法，即涉及各表达式 $L^2$ 范数的技巧。这些思想预示着后文第二、三部分的理论发展。
+
+\subsubsection{唯一性}
+
+首先考虑边值问题
+\begin{align}\label{align:ch02-energy-bvp}
+\begin{cases}
+-\Delta u=f & \text{在 }U\text{ 中},\\
+u=g & \text{在 }\partial U\text{ 上}.
+\end{cases}
+\end{align}
+我们已在 \S2.2.3 中用极值原理证明了唯一性，现给出一个简单的替代证明。设 $U$ 开、有界，$\partial U$ 为 $C^1$。
+
+\begin{theorem}[唯一性]\label{theorem:ch02-energy-uniqueness}\eqref{align:ch02-energy-bvp} 至多存在一个解 $u\in C^2(\overline{U})$。
+\end{theorem}
+
+\begin{proof}
+设 $\widetilde{u}$ 是另一解，令 $w\triangleq u-\widetilde{u}$。则在 $U$ 中 $\Delta w=0$，分部积分给出
+\begin{align*}
+0=-\int_U w\Delta w\,\mathrm{d}x=\int_U|Dw|^2\,\mathrm{d}x.
+\end{align*}
+因而在 $U$ 中 $Dw\equiv 0$；又因在 $\partial U$ 上 $w=0$，推出在 $U$ 中 $w=u-\widetilde{u}\equiv 0$。
+\end{proof}
+
+\subsubsection{Dirichlet 原理}
+
+接下来我们证明：Poisson 方程边值问题\eqref{align:ch02-energy-bvp} 的解可刻画为某个适当泛函的极小化子。为此，定义能量泛函
+\begin{align*}
+I[w]\triangleq\int_U\frac{1}{2}|Dw|^2-wf\,\mathrm{d}x,
+\end{align*}
+其中 $w$ 属于容许集
+\begin{align*}
+\mathcal{A}\triangleq\{w\in C^2(\overline{U})\mid w=g\text{ 在 }\partial U\text{ 上}\}.
+\end{align*}
+
+\begin{theorem}[Dirichlet 原理]\label{theorem:ch02-dirichlet}设 $u\in C^2(\overline{U})$ 求解\eqref{align:ch02-energy-bvp}。则
+\begin{align}\label{align:ch02-dirichlet-min}
+I[u]=\min_{w\in\mathcal{A}}I[w].
+\end{align}
+反之，若 $u\in\mathcal{A}$ 满足\eqref{align:ch02-dirichlet-min}，则 $u$ 求解边值问题\eqref{align:ch02-energy-bvp}。换言之，若 $u\in\mathcal{A}$，则 PDE $-\Delta u=f$ 等价于 $u$ 在 $\mathcal{A}$ 中函数里使能量 $I[\cdot]$ 取极小。
+\end{theorem}
+
+\begin{proof}
+1. 任取 $w\in\mathcal{A}$。则\eqref{align:ch02-energy-bvp} 蕴含
+\begin{align*}
+0=\int_U(-\Delta u-f)(u-w)\,\mathrm{d}x.
+\end{align*}
+分部积分得
+\begin{align*}
+0=\int_U Du\cdot D(u-w)-f(u-w)\,\mathrm{d}x,
+\end{align*}
+由于在 $\partial U$ 上 $u-w=g-g\equiv 0$，没有边界项。因而
+\begin{align*}
+\int_U|Du|^2-uf\,\mathrm{d}x=\int_U Du\cdot Dw-wf\,\mathrm{d}x
+\leqslant\int_U\frac{1}{2}|Du|^2\,\mathrm{d}x+\int_U\frac{1}{2}|Dw|^2-wf\,\mathrm{d}x,
+\end{align*}
+其中我们用了由 Cauchy--Schwarz 不等式与 Cauchy 不等式（\S B.2）得到的估计
+\begin{align*}
+|Du\cdot Dw|\leqslant|Du||Dw|\leqslant\frac{1}{2}|Du|^2+\frac{1}{2}|Dw|^2.
+\end{align*}
+整理得
+\begin{align}\label{align:ch02-dirichlet-ineq}
+I[u]\leqslant I[w] \qquad (w\in\mathcal{A}).
+\end{align}
+由于 $u\in\mathcal{A}$，由\eqref{align:ch02-dirichlet-ineq} 得\eqref{align:ch02-dirichlet-min}。
+
+2. 现反过来设\eqref{align:ch02-dirichlet-min} 成立。任取 $v\in C_c^\infty(U)$，写
+\begin{align*}
+i(\tau)\triangleq I[u+\tau v] \qquad (\tau\in\mathbb{R}).
+\end{align*}
+由于对每个 $\tau$ 都有 $u+\tau v\in\mathcal{A}$，标量函数 $i(\cdot)$ 在零处取极小，故
+\begin{align*}
+i'(0)=0 \qquad \left('=\frac{\mathrm{d}}{\mathrm{d}\tau}\right),
+\end{align*}
+只要此导数存在。而
+\begin{align*}
+i(\tau)&=\int_U\frac{1}{2}|Du+\tau Dv|^2-(u+\tau v)f\,\mathrm{d}x\\
+&=\int_U\frac{1}{2}|Du|^2+\tau Du\cdot Dv+\frac{\tau^2}{2}|Dv|^2-(u+\tau v)f\,\mathrm{d}x.
+\end{align*}
+因而
+\begin{align*}
+0=i'(0)=\int_U Du\cdot Dv-vf\,\mathrm{d}x=\int_U(-\Delta u-f)v\,\mathrm{d}x.
+\end{align*}
+此恒等式对每个 $v\in C_c^\infty(U)$ 都成立，故在 $U$ 中 $-\Delta u=f$。
+\end{proof}
+
+\end{document}

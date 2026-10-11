@@ -1,0 +1,351 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+% SOURCE p=48; printed=33; object=ch01-sec05-title; region=upper-middle
+\section{实直线上的 Borel 测度}\label{section:ch01-borel-measures-real-line}
+
+% SOURCE p=48; printed=33; object=ch01-borel-measure-intro; region=middle
+现在，我们可以基于区间的测度就是其长度这一思想，为测量 $\mathbb{R}$ 的子集建立一个确切的理论。我们先给出一个更一般（但只稍复杂一些）的构造，它产生 $\mathbb{R}$ 上的一大族测度。
+\begin{definition}[Borel 测度]\label{definition:ch01-borel-measure}
+定义域为 Borel $\sigma$-代数 $\mathscr{B}_{\mathbb{R}}$ 的测度称为 $\mathbb{R}$ 上的 \textbf{Borel 测度}。
+\end{definition}
+
+% SOURCE p=48; printed=33; object=ch01-distribution-function-motivation; region=middle
+
+\begin{definition}[分布函数]\label{definition:ch01-distribution-function-motivation}
+为说明这些思想，设 $\mu$ 为 $\mathbb{R}$ 上的有限 Borel 测度，令 $F(x)=\mu((-\infty,x])$。（有时称 $F$ 为 $\mu$ 的\textbf{分布函数}。）
+\end{definition}
+
+\begin{remark}
+由\subcref{theorem:ch01-measure-properties}{item:ch01-measure-monotonicity}，$F$ 单调递增；由\subcref{theorem:ch01-measure-properties}{item:ch01-measure-continuity-above}，$F$ 右连续，因为当 $x_n\searrow x$ 时，$(-\infty,x]=\bigcap_1^\infty(-\infty,x_n]$。（回顾\cref{section:ch00-extended-real-numbers}中对递增函数的讨论。）此外，若 $b>a$，则 $(-\infty,b]=(-\infty,a]\cup(a,b]$，所以 $\mu((a,b])=F(b)-F(a)$。
+\end{remark}
+我们的做法是将这一过程倒过来，从一个单调递增的右连续函数 $F$ 出发构造测度 $\mu$。特殊情形 $F(x)=x$ 将给出通常的“长度”测度。
+
+% SOURCE p=48; printed=33; object=ch01-h-intervals; region=middle-lower
+
+\begin{definition}[h-区间]\label{definition:ch01-h-intervals}
+我们的理论以 $\mathbb{R}$ 中左开右闭的区间为基本组成部分，即形如 $(a,b]$、$(a,\infty)$ 或 $\varnothing$ 的集合，其中 $-\infty\leqslant a<b<\infty$。本节称这样的集合为 \textbf{h-区间}（h 表示“半开”）。
+\end{definition}
+
+\begin{remark}
+显然，两个 h-区间的交仍为 h-区间，一个 h-区间的补集是一个 h-区间或两个 h-区间的不交并。由\cref{proposition:ch01-elementary-algebra}，h-区间的有限不交并组成的族 $\mathscr{A}$ 是代数；由\cref{proposition:ch01-real-borel-generators}，$\mathscr{A}$ 生成的 $\sigma$-代数为 $\mathscr{B}_{\mathbb{R}}$。
+\end{remark}
+
+
+% SOURCE p=48; printed=33; object=ch01-stieltjes-premeasure; number=1.15; region=lower
+\begin{proposition}\label{proposition:ch01-stieltjes-premeasure}
+设 $F:\mathbb{R}\to\mathbb{R}$ 单调递增且右连续。若 $(a_j,b_j]$（$j=1,\ldots,n$）是两两不交的 h-区间，令
+\begin{align*}
+\mu_0\left(\bigcup_1^n(a_j,b_j]\right)=\sum_1^n[F(b_j)-F(a_j)],
+\end{align*}
+并令 $\mu_0(\varnothing)=0$。则 $\mu_0$ 是代数 $\mathscr{A}$ 上的预测度。
+\end{proposition}
+
+% SOURCE p=48; printed=33; object=ch01-proof-stieltjes-premeasure-well-defined-start; region=bottom
+\begin{proof}
+首先必须核实 $\mu_0$ 的定义是良定义的，因为 $\mathscr{A}$ 中的元素可以不止一种方式表示为 h-区间的不交并。若 $\{(a_j,b_j]\}_1^n$ 两两不交，且 $\bigcup_1^n(a_j,b_j]=(a,b]$，则在必要时重排指标 $j$ 后，必有 $a=a_1<b_1=a_2<b_2=\cdots<b_n=b$，所以 $\sum_1^n[F(b_j)-F(a_j)]=F(b)-F(a)$。更一般地，若 $\{I_i\}_1^n$ 和 $\{J_j\}_1^m$ 是由两两不交的 h-区间构成的有限序列，
+% SOURCE p=49; printed=34; object=ch01-proof-stieltjes-premeasure-well-defined-end; region=top
+满足 $\bigcup_1^n I_i=\bigcup_1^m J_j$，则上述推理表明
+\begin{align*}
+\sum_i\mu_0(I_i)=\sum_{i,j}\mu_0(I_i\cap J_j)=\sum_j\mu_0(J_j).
+\end{align*}
+所以 $\mu_0$ 是良定义的，而且由其构造可知它是有限可加的。
+
+% SOURCE p=49; printed=34; object=ch01-proof-stieltjes-premeasure-countable; region=upper
+还需证明：若 $\{I_j\}_1^\infty$ 是两两不交的 h-区间序列，且 $\bigcup_1^\infty I_j\in\mathscr{A}$，则 $\mu_0(\bigcup_1^\infty I_j)=\sum_1^\infty\mu_0(I_j)$。由于 $\bigcup_1^\infty I_j$ 是有限个 h-区间的并，可以将序列 $\{I_j\}_1^\infty$ 分成有限多个子序列，使每个子序列中的区间之并为单个 h-区间。分别考察各子序列，并利用 $\mu_0$ 的有限可加性，可设 $\bigcup_1^\infty I_j$ 是 h-区间 $I=(a,b]$。此时，
+\begin{align*}
+\mu_0(I)&=\mu_0\left(\bigcup_1^n I_j\right)+\mu_0\left(I\setminus\bigcup_1^n I_j\right)\\
+&\geqslant\mu_0\left(\bigcup_1^n I_j\right)=\sum_1^n\mu_0(I_j).
+\end{align*}
+令 $n\to\infty$，得到 $\mu_0(I)\geqslant\sum_1^\infty\mu_0(I_j)$。为证明反向不等式，先设 $a,b$ 都有限，并固定 $\varepsilon>0$。由于 $F$ 右连续，存在 $\delta>0$ 使 $F(a+\delta)-F(a)<\varepsilon$；若 $I_j=(a_j,b_j]$，则对每个 $j$，存在 $\delta_j>0$ 使 $F(b_j+\delta_j)-F(b_j)<\varepsilon2^{-j}$。开区间 $(a_j,b_j+\delta_j)$ 覆盖紧集 $[a+\delta,b]$，因而存在有限子覆盖。删去包含在较大区间内的各 $(a_j,b_j+\delta_j)$，并重排指标 $j$，可设
+\begin{itemize}
+\item 区间 $(a_1,b_1+\delta_1),\ldots,(a_N,b_N+\delta_N)$ 覆盖 $[a+\delta,b]$；
+\item 对 $j=1,\ldots,N-1$，有 $b_j+\delta_j\in(a_{j+1},b_{j+1}+\delta_{j+1})$。
+\end{itemize}
+于是
+\begin{align*}
+\mu_0(I)&<F(b)-F(a+\delta)+\varepsilon\\
+&\leqslant F(b_N+\delta_N)-F(a_1)+\varepsilon\\
+&=F(b_N+\delta_N)-F(a_N)+\sum_1^{N-1}[F(a_{j+1})-F(a_j)]+\varepsilon\\
+&\leqslant F(b_N+\delta_N)-F(a_N)+\sum_1^{N-1}[F(b_j+\delta_j)-F(a_j)]+\varepsilon\\
+&<\sum_1^N[F(b_j)+\varepsilon2^{-j}-F(a_j)]+\varepsilon\\
+&<\sum_1^\infty\mu_0(I_j)+2\varepsilon.
+\end{align*}
+由 $\varepsilon$ 的任意性，$a,b$ 都有限的情形已证。若 $a=-\infty$，则对任意 $M<\infty$，区间 $(a_j,b_j+\delta_j)$ 覆盖 $[-M,b]$，同样的推理给出 $F(b)-F(-M)\leqslant\sum_1^\infty\mu_0(I_j)+2\varepsilon$；若 $b=\infty$，则对任意 $M<\infty$，类似地得到 $F(M)-F(a)\leqslant\sum_1^\infty\mu_0(I_j)+2\varepsilon$。令 $\varepsilon\to0$ 且 $M\to\infty$，即得所需结论。
+\end{proof}
+
+% SOURCE p=50; printed=35; object=ch01-stieltjes-measure; number=1.16; region=top
+\begin{theorem}\label{theorem:ch01-stieltjes-measure}
+若 $F:\mathbb{R}\to\mathbb{R}$ 为任意单调递增的右连续函数，则存在唯一的 $\mathbb{R}$ 上的 Borel 测度 $\mu_F$，使得对所有 $a,b$ 都有 $\mu_F((a,b])=F(b)-F(a)$。若 $G$ 是另一个这样的函数，则 $\mu_F=\mu_G$ 当且仅当 $F-G$ 为常数。反之，若 $\mu$ 是 $\mathbb{R}$ 上的 Borel 测度，且在所有有界 Borel 集上有限，定义
+\begin{align*}
+F(x)=\begin{cases}
+\mu((0,x]),&x>0,\\
+0,&x=0,\\
+-\mu((x,0]),&x<0,
+\end{cases}
+\end{align*}
+则 $F$ 单调递增且右连续，并且 $\mu=\mu_F$。
+\end{theorem}
+
+% SOURCE p=50; printed=35; object=ch01-proof-stieltjes-measure; region=upper-middle
+\begin{proof}
+由\cref{proposition:ch01-stieltjes-premeasure}，每个 $F$ 都在 $\mathscr{A}$ 上诱导一个预测度。显然，$F$ 与 $G$ 诱导相同的预测度当且仅当 $F-G$ 为常数，且这些预测度是 $\sigma$-有限的（因为 $\mathbb{R}=\bigcup_{-\infty}^\infty(j,j+1]$）。因此前两个断言由\cref{theorem:ch01-measure-extension}得到。对于最后一个断言，$\mu$ 的单调性蕴含 $F$ 的单调性，而 $\mu$ 的上连续性和下连续性分别蕴含 $F$ 在 $x\geqslant0$ 和 $x<0$ 时的右连续性。显然，$\mu=\mu_F$ 在 $\mathscr{A}$ 上成立，从而由\cref{theorem:ch01-measure-extension}中的唯一性，$\mu=\mu_F$ 在 $\mathscr{B}_{\mathbb{R}}$ 上成立。
+\end{proof}
+
+% SOURCE p=50; printed=35; object=ch01-stieltjes-measure-remarks; region=middle
+
+\begin{remark}
+这里需要作几点说明。第一，使用形如 $[a,b)$ 的区间和左连续函数 $F$，同样可以建立这一理论。第二，若 $\mu$ 为 $\mathbb{R}$ 上的有限 Borel 测度，则 $\mu=\mu_F$，其中 $F(x)=\mu((-\infty,x])$ 是 $\mu$ 的累积分布函数；它与\cref{theorem:ch01-stieltjes-measure}中指定的 $F$ 相差常数 $\mu((-\infty,0])$。第三，对于每个单调递增且右连续的 $F$，\cref{section:ch01-outer-measures}的理论不仅给出 Borel 测度 $\mu_F$，还给出一个定义域包含 $\mathscr{B}_{\mathbb{R}}$ 的完备测度 $\overline{\mu}_F$。事实上，$\overline{\mu}_F$ 正是 $\mu_F$ 的完备化（\subcref{exercise:ch01-extension-completion-saturation}{item:ch01-extension-completion-sigma-finite}或下面的\cref{theorem:ch01-stieltjes-measurable-sets}），而且可以证明，其定义域总严格大于 $\mathscr{B}_{\mathbb{R}}$。
+\end{remark}
+
+\begin{definition}[Lebesgue–Stieltjes 测度]\label{definition:ch01-lebesgue-stieltjes-measure}
+我们通常也将这个完备测度记作 $\mu_F$；它称为与 $F$ 相伴的 \textbf{Lebesgue–Stieltjes 测度}。
+\end{definition}
+
+
+% SOURCE p=50; printed=35; object=ch01-stieltjes-regularity-intro; region=middle-lower
+Lebesgue–Stieltjes 测度具有一些有用的正则性性质，我们现在来研究它们。在以下讨论中，固定 $\mathbb{R}$ 上与单调递增的右连续函数 $F$ 相伴的完备 Lebesgue–Stieltjes 测度 $\mu$，并以 $\mathscr{M}_\mu$ 表示 $\mu$ 的定义域。于是，对任意 $E\in\mathscr{M}_\mu$，
+\begin{align*}
+\mu(E)&=\inf\left\{\sum_1^\infty[F(b_j)-F(a_j)]:E\subseteq\bigcup_1^\infty(a_j,b_j]\right\}\\
+&=\inf\left\{\sum_1^\infty\mu((a_j,b_j]):E\subseteq\bigcup_1^\infty(a_j,b_j]\right\}.
+\end{align*}
+首先注意，在 $\mu(E)$ 的第二个公式中，可以用开 h-区间替换 h-区间：
+
+% SOURCE p=50; printed=35; object=ch01-stieltjes-open-cover; number=1.17; region=bottom
+\begin{lemma}\label{lemma:ch01-stieltjes-open-cover}
+对任意 $E\in\mathscr{M}_\mu$，
+\begin{align*}
+\mu(E)=\inf\left\{\sum_1^\infty\mu((a_j,b_j)):E\subseteq\bigcup_1^\infty(a_j,b_j)\right\}.
+\end{align*}
+\end{lemma}
+
+% SOURCE p=51; printed=36; object=ch01-proof-stieltjes-open-cover; region=top
+\begin{proof}
+将右端的量记为 $\nu(E)$。设 $E\subseteq\bigcup_1^\infty(a_j,b_j)$。每个 $(a_j,b_j)$ 是 h-区间 $I_j^k$（$k=1,2,\ldots$）的可数不交并；具体地，$I_j^k=(c_j^k,c_j^{k+1}]$，其中 $\{c_j\}$ 是满足 $c_j^1=a_j$ 且当 $k\to\infty$ 时 $c_j^k$ 递增至 $b_j$ 的任意序列。于是 $E\subseteq\bigcup_{j,k=1}^\infty I_j^k$，所以
+\begin{align*}
+\sum_1^\infty\mu((a_j,b_j))=\sum_{j,k=1}^\infty\mu(I_j^k)\geqslant\mu(E),
+\end{align*}
+从而 $\nu(E)\geqslant\mu(E)$。另一方面，给定 $\varepsilon>0$，存在 $\{(a_j,b_j]\}_1^\infty$，使 $E\subseteq\bigcup_1^\infty(a_j,b_j]$ 且 $\sum_1^\infty\mu((a_j,b_j])\leqslant\mu(E)+\varepsilon$；并且对每个 $j$，存在 $\delta_j>0$ 使 $F(b_j+\delta_j)-F(b_j)<\varepsilon2^{-j}$。于是 $E\subseteq\bigcup_1^\infty(a_j,b_j+\delta_j)$，且
+\begin{align*}
+\sum_1^\infty\mu((a_j,b_j+\delta_j))\leqslant\sum_1^\infty\mu((a_j,b_j])+\varepsilon\leqslant\mu(E)+2\varepsilon,
+\end{align*}
+所以 $\nu(E)\leqslant\mu(E)$。
+\end{proof}
+
+% SOURCE p=51; printed=36; object=ch01-stieltjes-regularity; number=1.18; region=middle
+\begin{theorem}\label{theorem:ch01-stieltjes-regularity}
+若 $E\in\mathscr{M}_\mu$，则
+\begin{align*}
+\mu(E)&=\inf\{\mu(U):U\supseteq E\text{ 且 }U\text{ 为开集}\}\\
+&=\sup\{\mu(K):K\subseteq E\text{ 且 }K\text{ 为紧集}\}.
+\end{align*}
+\end{theorem}
+
+% SOURCE p=51; printed=36; object=ch01-proof-stieltjes-regularity; region=middle-lower
+\begin{proof}
+由\cref{lemma:ch01-stieltjes-open-cover}，对任意 $\varepsilon>0$，存在区间 $(a_j,b_j)$，使得 $E\subseteq\bigcup_1^\infty(a_j,b_j)$ 且 $\sum_1^\infty\mu((a_j,b_j))\leqslant\mu(E)+\varepsilon$。令 $U=\bigcup_1^\infty(a_j,b_j)$，则 $U$ 为开集，$U\supseteq E$，且 $\mu(U)\leqslant\mu(E)+\varepsilon$。另一方面，只要 $U\supseteq E$，就有 $\mu(U)\geqslant\mu(E)$，所以第一个等式成立。对于第二个等式，先设 $E$ 有界。若 $E$ 为闭集，则 $E$ 为紧集，等式显然成立。否则，给定 $\varepsilon>0$，可以选取开集 $U\supseteq\overline{E}\setminus E$，使 $\mu(U)\leqslant\mu(\overline{E}\setminus E)+\varepsilon$。令 $K=\overline{E}\setminus U$。则 $K$ 为紧集，$K\subseteq E$，且
+\begin{align*}
+\mu(K)&=\mu(E)-\mu(E\cap U)=\mu(E)-[\mu(U)-\mu(U\setminus E)]\\
+&\geqslant\mu(E)-\mu(U)+\mu(\overline{E}\setminus E)\geqslant\mu(E)-\varepsilon.
+\end{align*}
+若 $E$ 无界，令 $E_j=E\cap(j,j+1]$。由上面的论证，对任意 $\varepsilon>0$，存在紧集 $K_j\subseteq E_j$ 使 $\mu(K_j)\geqslant\mu(E_j)-\varepsilon2^{-|j|}/3$。令 $H_n=\bigcup_{-n}^n K_j$。则 $H_n$ 为紧集，$H_n\subseteq E$，且 $\mu(H_n)>\mu(\bigcup_{-n}^n E_j)-\varepsilon$。由于 $\mu(E)=\lim_{n\to\infty}\mu(\bigcup_{-n}^n E_j)$，结论随之得到。
+\end{proof}
+
+% SOURCE p=51; printed=36; object=ch01-stieltjes-measurable-sets; number=1.19; region=bottom
+\begin{theorem}\label{theorem:ch01-stieltjes-measurable-sets}
+若 $E\subseteq\mathbb{R}$，则下列条件等价。
+\begin{enumerate}[label=\alph*.,ref=(\alph*)]
+\item\label{item:ch01-stieltjes-measurable-condition} $E\in\mathscr{M}_\mu$。
+\item\label{item:ch01-stieltjes-g-delta-condition} $E=V\setminus N_1$，其中 $V$ 为 $G_\delta$ 集且 $\mu(N_1)=0$。
+\item\label{item:ch01-stieltjes-f-sigma-condition} $E=H\cup N_2$，其中 $H$ 为 $F_\sigma$ 集且 $\mu(N_2)=0$。
+\end{enumerate}
+\end{theorem}
+
+% SOURCE p=52; printed=37; object=ch01-proof-stieltjes-measurable-sets; region=top
+\begin{proof}
+显然，\subcref{theorem:ch01-stieltjes-measurable-sets}{item:ch01-stieltjes-g-delta-condition}和\subcref{theorem:ch01-stieltjes-measurable-sets}{item:ch01-stieltjes-f-sigma-condition}各自都蕴含\subcref{theorem:ch01-stieltjes-measurable-sets}{item:ch01-stieltjes-measurable-condition}，因为 $\mu$ 在 $\mathscr{M}_\mu$ 上完备。设 $E\in\mathscr{M}_\mu$ 且 $\mu(E)<\infty$。由\cref{theorem:ch01-stieltjes-regularity}，对 $j\in\mathbb{N}$，可以选取开集 $U_j\supseteq E$ 与紧集 $K_j\subseteq E$，使
+\begin{align*}
+\mu(U_j)-2^{-j}\leqslant\mu(E)\leqslant\mu(K_j)+2^{-j}.
+\end{align*}
+令 $V=\bigcap_1^\infty U_j$，$H=\bigcup_1^\infty K_j$。则 $H\subseteq E\subseteq V$，且 $\mu(V)=\mu(H)=\mu(E)<\infty$，所以 $\mu(V\setminus E)=\mu(E\setminus H)=0$。这就证明了 $\mu(E)<\infty$ 时的结论；推广到一般情形留给读者（\cref{exercise:ch01-measurable-set-characterization-proof}）。
+\end{proof}
+
+% SOURCE p=52; printed=37; object=ch01-simple-approximation-discussion; region=upper-middle
+\cref{theorem:ch01-stieltjes-measurable-sets}的意义在于，忽略零测集后，所有 Borel 集（更一般地，$\mathscr{M}_\mu$ 中的所有集合）都有相当简单的形式。这与不排除零测集时，从开集构造 Borel 集所必需的复杂操作形成鲜明对比；参见下面的\cref{proposition:ch01-transfinite-sigma-generation}。一般可测集可以用“简单”集合逼近这一思想的另一种形式，包含在下述命题中，其证明留给读者（\cref{exercise:ch01-finite-interval-approximation-proof}）：
+
+% SOURCE p=52; printed=37; object=ch01-finite-interval-approximation; number=1.20; region=middle
+\begin{proposition}\label{proposition:ch01-finite-interval-approximation}
+若 $E\in\mathscr{M}_\mu$ 且 $\mu(E)<\infty$，则对每个 $\varepsilon>0$，存在由有限个开区间之并构成的集合 $A$，使 $\mu(E\mathbin{\triangle}A)<\varepsilon$。
+\end{proposition}
+
+% SOURCE p=52; printed=37; object=ch01-lebesgue-measure-definition; region=middle
+
+\begin{definition}[Lebesgue 测度与 Lebesgue 可测集]\label{definition:ch01-lebesgue-measure-definition}
+现在考察 $\mathbb{R}$ 上最重要的测度，即 \textbf{Lebesgue 测度}：它是与函数 $F(x)=x$ 相伴的完备测度 $\mu_F$，区间在这一测度下的测度就是其长度。我们将它记作 $m$。$m$ 的定义域称为 \textbf{Lebesgue 可测集}类，记作 $\mathscr{L}$。我们也将 $m$ 在 $\mathscr{B}_{\mathbb{R}}$ 上的限制称为 Lebesgue 测度。
+\end{definition}
+
+
+% SOURCE p=52; printed=37; object=ch01-lebesgue-invariance-intro; region=middle-lower
+Lebesgue 测度最重要的性质之一，是它在平移下的不变性以及在伸缩下的简单变化规律。
+\begin{definition}[集合的平移与伸缩]\label{definition:ch01-lebesgue-invariance-intro}
+若 $E\subseteq\mathbb{R}$ 且 $s,r\in\mathbb{R}$，定义
+\begin{align*}
+E+s=\{x+s:x\in E\},\qquad rE=\{rx:x\in E\}.
+\end{align*}
+\end{definition}
+
+
+% SOURCE p=52; printed=37; object=ch01-lebesgue-invariance; number=1.21; region=lower
+\begin{theorem}\label{theorem:ch01-lebesgue-invariance}
+若 $E\in\mathscr{L}$，则对所有 $s,r\in\mathbb{R}$，都有 $E+s\in\mathscr{L}$ 和 $rE\in\mathscr{L}$。此外，$m(E+s)=m(E)$ 且 $m(rE)=|r|m(E)$。
+\end{theorem}
+
+% SOURCE p=52; printed=37; object=ch01-proof-lebesgue-invariance; region=lower
+\begin{proof}
+由于开区间族在平移和伸缩下保持不变，$\mathscr{B}_{\mathbb{R}}$ 也如此。对 $E\in\mathscr{B}_{\mathbb{R}}$，令 $m_s(E)=m(E+s)$，$m^r(E)=m(rE)$。显然，$m_s$ 和 $m^r$ 在区间的有限并上分别与 $m$ 和 $|r|m$ 相同，从而由\cref{theorem:ch01-measure-extension}，在 $\mathscr{B}_{\mathbb{R}}$ 上也分别相同。特别地，若 $E\in\mathscr{B}_{\mathbb{R}}$ 且 $m(E)=0$，则 $m(E+s)=m(rE)=0$，由此可知，Lebesgue 零测集类在平移和伸缩下保持不变。因此，$\mathscr{L}$（其成员是 Borel 集与 Lebesgue 零测集的并）在平移和伸缩下保持不变，且对所有 $E\in\mathscr{L}$，有 $m(E+s)=m(E)$ 和 $m(rE)=|r|m(E)$。
+\end{proof}
+
+% SOURCE p=52; printed=37; object=ch01-measure-topology-comparison-start; region=bottom
+$\mathbb{R}$ 的子集的测度论性质与拓扑性质之间的关系十分微妙，且有一些出人意料之处。考虑下列事实。
+\begin{example}\label{example:ch01-measure-topology-example}
+$\mathbb{R}$ 中每个单点集的 Lebesgue 测度都是零，因此每个可数集也如此。
+% SOURCE p=53; printed=38; object=ch01-measure-topology-comparison-end; region=top
+特别地，$m(\mathbb{Q})=0$。设 $\{r_j\}_1^\infty$ 是 $[0,1]$ 中有理数的一个枚举；给定 $\varepsilon>0$，令 $I_j$ 为以 $r_j$ 为中心、长度为 $\varepsilon2^{-j}$ 的开区间。则集合 $U=(0,1)\cap\bigcup_1^\infty I_j$ 为开集且在 $[0,1]$ 中稠密，但 $m(U)\leqslant\sum_1^\infty\varepsilon2^{-j}=\varepsilon$；其补集 $K=[0,1]\setminus U$ 为闭集且无处稠密，但 $m(K)\geqslant1-\varepsilon$。所以，一个开且稠密、因而在拓扑意义下“很大”的集合，在测度论意义下可能很小；一个无处稠密、因而在拓扑意义下“很小”的集合，在测度论意义下却可能很大。（不过，非空开集不可能具有零 Lebesgue 测度。）
+\end{example}
+
+
+% SOURCE p=53; printed=38; object=ch01-cantor-intro; region=upper
+Lebesgue 零测集不仅包括所有可数集，还包括许多具有连续统基数的集合。现在介绍一个标准例子，即 Cantor 集；它在其他方面也很有意义。
+
+% SOURCE p=53; printed=38; object=ch01-ternary-expansions; region=upper-middle
+每个 $x\in[0,1]$ 都有三进制小数展开 $x=\sum_1^\infty a_j3^{-j}$，其中 $a_j=0,1$ 或 $2$。除非 $x$ 具有 $p3^{-k}$ 的形式（$p,k$ 为整数），否则这一展开唯一；在后一情形，$x$ 有两个展开：一个在 $j>k$ 时有 $a_j=0$，另一个在 $j>k$ 时有 $a_j=2$。设 $p$ 不能被 $3$ 整除，则这两个展开中，一个满足 $a_k=1$，另一个满足 $a_k=0$ 或 $2$。若约定总使用后一个展开，则
+\begin{align*}
+a_1=1&\quad\Longleftrightarrow\quad\tfrac13<x<\tfrac23,\\
+a_1\ne1\text{ 且 }a_2=1&\quad\Longleftrightarrow\quad\tfrac19<x<\tfrac29\text{ 或 }\tfrac79<x<\tfrac89,
+\end{align*}
+依此类推。还应注意，若 $x=\sum a_j3^{-j}$ 且 $y=\sum b_j3^{-j}$，则 $x<y$ 当且仅当存在 $n$，使 $a_n<b_n$，且在 $j<n$ 时有 $a_j=b_j$。
+
+% SOURCE p=53; printed=38; object=ch01-cantor-set-definition; region=middle
+
+\begin{definition}[Cantor 集]\label{definition:ch01-cantor-set-definition}
+\textbf{Cantor 集} $C$ 是所有具有三进制展开 $x=\sum a_j3^{-j}$ 且对所有 $j$ 都有 $a_j\ne1$ 的 $x\in[0,1]$ 组成的集合。
+\end{definition}
+
+\begin{remark}
+因此，$C$ 从 $[0,1]$ 中先删去中间三分之一的开区间 $(\frac13,\frac23)$，再从余下两个区间中删去各自中间三分之一的开区间 $(\frac19,\frac29)$ 和 $(\frac79,\frac89)$，如此继续而得到。
+\end{remark}
+$C$ 的基本性质归纳如下：
+
+% SOURCE p=53; printed=38; object=ch01-cantor-set-properties; number=1.22; region=middle-lower
+\begin{proposition}\label{proposition:ch01-cantor-set-properties}
+设 $C$ 为 Cantor 集。
+\begin{enumerate}[label=\alph*.,ref=(\alph*)]
+\item\label{item:ch01-cantor-topology} $C$ 为紧集、无处稠密且完全不连通（即 $C$ 的连通子集只有单点集）。此外，$C$ 没有孤立点。
+\item\label{item:ch01-cantor-null} $m(C)=0$。
+\item\label{item:ch01-cantor-cardinality} $\card(C)=\mathfrak{c}$。
+\end{enumerate}
+\end{proposition}
+
+% SOURCE p=53; printed=38; object=ch01-proof-cantor-set-properties; region=lower
+\begin{proof}
+\subcref{proposition:ch01-cantor-set-properties}{item:ch01-cantor-topology}的证明留给读者（\cref{exercise:ch01-cantor-topology-proof}）。对于\subcref{proposition:ch01-cantor-set-properties}{item:ch01-cantor-null}，$C$ 是从 $[0,1]$ 中删去一个长度为 $\frac13$ 的区间、两个长度为 $\frac19$ 的区间，依此类推而得到的。因此
+\begin{align*}
+m(C)=1-\sum_0^\infty\frac{2^j}{3^{j+1}}=1-\frac13\cdot\frac1{1-(2/3)}=0.
+\end{align*}
+最后，设 $x\in C$，则 $x=\sum_0^\infty a_j3^{-j}$，其中对所有 $j$ 都有 $a_j=0$ 或 $2$。令 $f(x)=\sum_1^\infty b_j2^{-j}$，其中 $b_j=a_j/2$。定义 $f(x)$ 的级数是 $[0,1]$ 中某个数的二进制展开，且 $[0,1]$ 中任意数都可以这样得到。因此 $f$ 将 $C$ 满射到 $[0,1]$，从而得到\subcref{proposition:ch01-cantor-set-properties}{item:ch01-cantor-cardinality}。
+\end{proof}
+
+% SOURCE p=54; printed=39; object=ch01-cantor-function; region=top
+进一步考察上述证明中的映射 $f$。容易看出，若 $x,y\in C$ 且 $x<y$，则 $f(x)<f(y)$，除非 $x,y$ 是从 $[0,1]$ 中删去以得到 $C$ 的某个区间的两个端点。此时，对于某些整数 $p,k$，有 $f(x)=p2^{-k}$，且 $f(x)$ 与 $f(y)$ 是这个数的两个二进制展开。因此，可以规定 $f$ 在 $C$ 所缺的每个区间上取常数，从而将 $f$ 延拓为 $[0,1]$ 到自身的映射。延拓后的 $f$ 仍单调递增，而且由于其值域为整个 $[0,1]$，它不可能有跳跃间断点；所以它连续。
+\begin{definition}[Cantor 函数]\label{definition:ch01-cantor-function}
+$f$ 称为 \textbf{Cantor 函数}或 \textbf{Cantor–Lebesgue 函数}。
+\end{definition}
+
+
+% SOURCE p=54; printed=39; object=ch01-generalized-cantor-set; region=upper-middle
+从 $[0,1]$ 出发依次删去各区间中间三分之一的开区间来构造 Cantor 集的方法，有一个显然的推广。
+\begin{definition}[广义 Cantor 集]\label{definition:ch01-generalized-cantor-set}
+若 $I$ 为有界区间且 $\alpha\in(0,1)$，将与 $I$ 中点相同、长度等于 $I$ 的长度的 $\alpha$ 倍的开区间称为 $I$ 的“中间 $\alpha$ 部分的开区间”。若 $\{\alpha_j\}_1^\infty$ 是 $(0,1)$ 中的任意数列，可如下定义闭集的递减序列 $\{K_j\}$：$K_0=[0,1]$，$K_j$ 由构成 $K_{j-1}$ 的各区间分别删去中间 $\alpha_j$ 部分的开区间而得到。所得极限集合 $K=\bigcap_1^\infty K_j$ 称为\textbf{广义 Cantor 集}。
+\end{definition}
+
+\begin{remark}
+所有广义 Cantor 集与通常的 Cantor 集一样，都具有\subcref{proposition:ch01-cantor-set-properties}{item:ch01-cantor-topology}和\subcref{proposition:ch01-cantor-set-properties}{item:ch01-cantor-cardinality}中的性质。至于其 Lebesgue 测度，显然 $m(K_j)=(1-\alpha_j)m(K_{j-1})$，所以 $m(K)$ 是无穷乘积 $\prod_1^\infty(1-\alpha_j)=\lim_{n\to\infty}\prod_1^n(1-\alpha_j)$。若所有 $\alpha_j$ 都等于固定的 $\alpha\in(0,1)$（例如，对通常的 Cantor 集有 $\alpha=\frac13$），则 $m(K)=0$。然而，若当 $j\to\infty$ 时 $\alpha_j\to0$ 足够快，则 $m(K)$ 为正；而且对任意 $\beta\in(0,1)$，可以选取 $\alpha_j$ 使 $m(K)=\beta$；参见\cref{exercise:ch01-cantor-infinite-product}。这给出了构造正测度无处稠密集的另一种方法。
+\end{remark}
+
+
+% SOURCE p=54; printed=39; object=ch01-lebesgue-not-borel; region=middle
+
+\begin{remark}
+并非每个 Lebesgue 可测集都是 Borel 集。可以利用 Cantor 函数给出 $\mathscr{L}\setminus\mathscr{B}_{\mathbb{R}}$ 中集合的例子；参见\cref{chapter:ch02-integration}的\cref{exercise:ch02-cantor-non-borel}。另一种方法是注意到，Cantor 集的每个子集都是 Lebesgue 可测的，因而 $\card(\mathscr{L})=\card(\mathscr{P}(\mathbb{R}))>\mathfrak{c}$，而 $\card(\mathscr{B}_{\mathbb{R}})=\mathfrak{c}$。后者由下面的\cref{proposition:ch01-transfinite-sigma-generation}得到。
+\end{remark}
+
+
+% SOURCE p=54; printed=39; object=ch01-sec05-exercises; region=middle-lower
+\subsection*{习题}
+
+% SOURCE p=54; printed=39; object=ch01-exercise-measurable-set-characterization-proof; number=25; region=lower
+\begin{exercise}\label{exercise:ch01-measurable-set-characterization-proof}
+补全\cref{theorem:ch01-stieltjes-measurable-sets}的证明。
+\end{exercise}
+
+% SOURCE p=54; printed=39; object=ch01-exercise-finite-interval-approximation-proof; number=26; region=lower
+\begin{exercise}\label{exercise:ch01-finite-interval-approximation-proof}
+证明\cref{proposition:ch01-finite-interval-approximation}。（使用\cref{theorem:ch01-stieltjes-regularity}。）
+\end{exercise}
+
+% SOURCE p=54; printed=39; object=ch01-exercise-cantor-topology-proof; number=27; region=lower
+\begin{exercise}\label{exercise:ch01-cantor-topology-proof}
+证明\subcref{proposition:ch01-cantor-set-properties}{item:ch01-cantor-topology}。（证明：若 $x,y\in C$ 且 $x<y$，则存在 $z\notin C$ 使 $x<z<y$。）
+\end{exercise}
+
+% SOURCE p=54; printed=39; object=ch01-exercise-stieltjes-interval-values; number=28; region=lower
+\begin{exercise}\label{exercise:ch01-stieltjes-interval-values}
+设 $F$ 单调递增且右连续，$\mu_F$ 为相伴的测度。则 $\mu_F(\{a\})=F(a)-F(a-)$，$\mu_F([a,b))=F(b-)-F(a-)$，$\mu_F([a,b])=F(b)-F(a-)$，且 $\mu_F((a,b))=F(b-)-F(a)$。
+\end{exercise}
+
+% SOURCE p=54; printed=39; object=ch01-exercise-nonmeasurable-subsets; number=29; region=bottom
+\begin{exercise}\label{exercise:ch01-nonmeasurable-subsets}
+设 $E$ 为 Lebesgue 可测集。
+\begin{enumerate}[label=\alph*.,ref=(\alph*)]
+\item\label{item:ch01-vitali-measurable-subset} 若 $E\subseteq N$，其中 $N$ 为\cref{section:ch01-introduction}所述的不可测集，则 $m(E)=0$。
+\item\label{item:ch01-positive-measure-nonmeasurable-subset} 若 $m(E)>0$，则 $E$ 包含不可测集。（只需假设 $E\subseteq[0,1]$。采用\cref{section:ch01-introduction}的记号，有 $E=\bigcup_{r\in R}E\cap N_r$。）
+\end{enumerate}
+\end{exercise}
+
+% SOURCE p=55; printed=40; object=ch01-exercise-high-relative-density; number=30; region=top
+\begin{exercise}\label{exercise:ch01-high-relative-density}
+若 $E\in\mathscr{L}$ 且 $m(E)>0$，则对任意 $\alpha<1$，存在开区间 $I$ 使 $m(E\cap I)>\alpha m(I)$。
+\end{exercise}
+
+% SOURCE p=55; printed=40; object=ch01-exercise-difference-set-interval; number=31; region=upper
+\begin{exercise}\label{exercise:ch01-difference-set-interval}
+若 $E\in\mathscr{L}$ 且 $m(E)>0$，则集合 $E-E=\{x-y:x,y\in E\}$ 包含一个以 $0$ 为中心的区间。（若 $I$ 如\cref{exercise:ch01-high-relative-density}，且 $\alpha>\frac34$，则 $E-E$ 包含 $(-\frac12m(I),\frac12m(I))$。）
+\end{exercise}
+
+% SOURCE p=55; printed=40; object=ch01-exercise-cantor-infinite-product; number=32; region=upper
+\begin{exercise}\label{exercise:ch01-cantor-infinite-product}
+设 $\{\alpha_j\}_1^\infty\subseteq(0,1)$。
+\begin{enumerate}[label=\alph*.,ref=(\alph*)]
+\item\label{item:ch01-infinite-product-positive} $\prod_1^\infty(1-\alpha_j)>0$ 当且仅当 $\sum_1^\infty\alpha_j<\infty$。（比较 $\sum_1^\infty\log(1-\alpha_j)$ 与 $\sum\alpha_j$。）
+\item\label{item:ch01-infinite-product-prescribed} 给定 $\beta\in(0,1)$，给出序列 $\{\alpha_j\}$，使 $\prod_1^\infty(1-\alpha_j)=\beta$。
+\end{enumerate}
+\end{exercise}
+
+% SOURCE p=55; printed=40; object=ch01-exercise-borel-intermediate-density; number=33; region=upper-middle
+\begin{exercise}\label{exercise:ch01-borel-intermediate-density}
+存在 Borel 集 $A\subseteq[0,1]$，使得对 $[0,1]$ 的每个子区间 $I$，都有 $0<m(A\cap I)<m(I)$。（提示：$[0,1]$ 的每个子区间都包含正测度的 Cantor 型集合。）
+\end{exercise}
+\end{document}
+

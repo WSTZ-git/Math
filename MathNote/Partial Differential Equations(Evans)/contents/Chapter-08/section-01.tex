@@ -1,0 +1,383 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}}
+
+\begin{document}
+
+\section{引言}\label{section:ch08-1-引言}
+
+\subsection{基本思想}\label{subsection:ch08-1-1-基本思想}
+
+我们引入一个新的视角：假设希望求解某个特定的偏微分方程，为简单起见将其写成抽象形式
+\begin{align}
+A[u]=0.\label{align:ch08-1-eq01}
+\end{align}
+此处 $A[\cdot]$ 表示给定的、可能非线性的偏微分算子，$u$ 为未知函数。当然，并不存在求解所有这类 PDE 的一般理论。
+
+变分法识别出一类重要的非线性问题，可用相对简单的非线性泛函分析技巧求解。这就是变分问题类，即形如\eqref{align:ch08-1-eq01} 的 PDE，其中非线性算子 $A[\cdot]$ 是某个适当的"能量"泛函 $I[\cdot]$ 的"导数"。符号地写为
+\begin{align}
+A[\cdot]=I'[\cdot].\label{align:ch08-1-eq02}
+\end{align}
+于是问题\eqref{align:ch08-1-eq01} 成为
+\begin{align}
+I'[u]=0.\label{align:ch08-1-eq03}
+\end{align}
+这一新表述的优势在于：现在可以把\eqref{align:ch08-1-eq01} 的解识别为 $I[\cdot]$ 的临界点。在某些情形下，这些临界点可能相对容易找到：例如，若泛函 $I[\cdot]$ 在 $u$ 处取到最小值，则\eqref{align:ch08-1-eq03} 理应成立，从而 $u$ 是原 PDE \eqref{align:ch08-1-eq01} 的解。
+
+关键在于：直接求解\eqref{align:ch08-1-eq01} 通常极其困难，而找到泛函 $I[\cdot]$ 的最小（或最大，或其他临界）点则可能容易得多。此外，物理学及其他许多学科中的许多定律直接来自变分原理。
+
+\subsection{一阶变分，Euler--Lagrange 方程}\label{subsection:ch08-1-2-一阶变分}
+
+现设 $U\subset\mathbb{R}^n$ 为带光滑边界 $\partial U$ 的有界开集，并给定光滑函数
+\begin{align*}
+L:\mathbb{R}^n\times\mathbb{R}\times\overline{U}\to\mathbb{R}.
+\end{align*}
+称 $L$ 为 Lagrangian（Lagrange量）。
+
+\paragraph{记号。}我们写
+\begin{align*}
+L=L(p,z,x)=L(p_1,\cdots,p_n,z,x_1,\cdots,x_n),
+\end{align*}
+其中 $p\in\mathbb{R}^n$，$z\in\mathbb{R}$，$x\in U$。因此"$p$"是下方代入 $Dw(x)$ 的变量名，"$z$"是下方代入 $w(x)$ 的变量。我们还记
+\begin{align}
+\begin{cases}
+D_pL=(L_{p_1},\cdots,L_{p_n}),\\
+D_xL=(L_{x_1},\cdots,L_{x_n}).
+\end{cases}\label{align:ch08-1-eq04}
+\end{align}
+这一记号将使后续理论更为清晰。
+
+我们把\cref{subsection:ch08-1-1-基本思想} 中含糊的想法精确化，现假设 $I[\cdot]$ 具有显式形式
+\begin{align}
+I[w]\triangleq\int_U L(Dw(x),w(x),x)\,\mathrm{d}x,\label{align:ch08-1-eq05}
+\end{align}
+其中 $w:\overline{U}\to\mathbb{R}$ 为满足边界条件
+\begin{align}
+w=g\quad\text{在 }\partial U\text{ 上}\label{align:ch08-1-eq06}
+\end{align}
+的光滑函数，$g$ 给定。现进一步假设某个满足边界条件 $u=g$ 在 $\partial U$ 上的光滑函数 $u$，恰好是 $I[\cdot]$ 在所有满足\eqref{align:ch08-1-eq06} 的函数 $w$ 中的极小元。我们将证明 $u$ 自动是某个非线性偏微分方程的解。
+
+为此，先任取光滑函数 $v\in C_c^\infty(U)$，考虑实值函数
+\begin{align}
+i(\tau)\triangleq I[u+\tau v]\qquad (\tau\in\mathbb{R}).\label{align:ch08-1-eq07}
+\end{align}
+由于 $u$ 是 $I[\cdot]$ 的极小元，且 $u+\tau v=u=g$ 在 $\partial U$ 上，故 $i(\cdot)$ 在 $\tau=0$ 处取到最小值。因此
+\begin{align}
+i'(0)=0.\label{align:ch08-1-eq08}
+\end{align}
+
+我们显式计算这一导数（称为一阶变分），写出
+\begin{align}
+i(\tau)=\int_U L(Du+\tau Dv,u+\tau v,x)\,\mathrm{d}x.\label{align:ch08-1-eq09}
+\end{align}
+于是
+\begin{align*}
+i'(\tau)=\int_U\sum_{i=1}^n L_{p_i}(Du+\tau Dv,u+\tau v,x)v_{x_i}+L_z(Du+\tau Dv,u+\tau v,x)v\,\mathrm{d}x.
+\end{align*}
+令 $\tau=0$，由\eqref{align:ch08-1-eq08} 推得
+\begin{align*}
+0=i'(0)=\int_U\sum_{i=1}^n L_{p_i}(Du,u,x)v_{x_i}+L_z(Du,u,x)v\,\mathrm{d}x.
+\end{align*}
+最后，由于 $v$ 具有紧支集，分部积分得
+\begin{align*}
+0=\int_U\left[-\sum_{i=1}^n\big(L_{p_i}(Du,u,x)\big)_{x_i}+L_z(Du,u,x)\right]v\,\mathrm{d}x.
+\end{align*}
+由于此等式对所有检验函数 $v$ 成立，故 $u$ 是非线性 PDE
+\begin{align}
+-\sum_{i=1}^n\big(L_{p_i}(Du,u,x)\big)_{x_i}+L_z(Du,u,x)=0\quad\text{在 }U\text{ 中}\label{align:ch08-1-eq10}
+\end{align}
+的解。这就是与\eqref{align:ch08-1-eq05} 所定义能量泛函 $I[\cdot]$ 相关联的 Euler--Lagrange 方程。注意\eqref{align:ch08-1-eq10} 是散度形式的拟线性二阶 PDE。
+
+总之，$I[\cdot]$ 的任一光滑极小元都是 Euler--Lagrange PDE \eqref{align:ch08-1-eq10} 的解；反之，我们可以通过寻找\eqref{align:ch08-1-eq05} 的极小元来求\eqref{align:ch08-1-eq10} 的解。
+
+\begin{example}[Dirichlet 原理]\label{example:ch08-1-1-Dirichlet原理}
+取
+\begin{align*}
+L(p,z,x)=\frac{1}{2}|p|^2.
+\end{align*}
+则 $L_{p_i}=p_i$（$i=1,\cdots,n$），$L_z=0$；故与泛函
+\begin{align*}
+I[w]\triangleq\frac{1}{2}\int_U|Dw|^2\,\mathrm{d}x
+\end{align*}
+相关联的 Euler--Lagrange 方程是 Laplace 方程
+\begin{align*}
+\Delta u=0\quad\text{在 }U\text{ 中}.
+\end{align*}
+这一事实即 Dirichlet 原理，此前已在 \S2.2.5 介绍。
+\end{example}
+
+\begin{example}[广义 Dirichlet 原理]\label{example:ch08-1-2-广义Dirichlet原理}
+写
+\begin{align*}
+L(p,z,x)=\frac{1}{2}\sum_{i,j=1}^n a^{ij}(x)p_ip_j-zf(x),
+\end{align*}
+其中 $a^{ij}=a^{ji}$（$i,j=1,\cdots,n$）。则 $L_{p_i}=\sum_{j=1}^n a^{ij}(x)p_j$（$i=1,\cdots,n$），$L_z=-f(x)$。故与泛函
+\begin{align*}
+I[w]\triangleq\int_U\frac{1}{2}\sum_{i,j=1}^n a^{ij}w_{x_i}w_{x_j}-wf\,\mathrm{d}x
+\end{align*}
+相关联的 Euler--Lagrange 方程是散度结构线性方程
+\begin{align*}
+-\sum_{i,j=1}^n\big(a^{ij}u_{x_j}\big)_{x_i}=f\quad\text{在 }U\text{ 中}.
+\end{align*}
+后面（在 \S8.1.3 与 \S8.2）将看到，系数 $a^{ij}$（$i,j=1,\cdots,n$）的一致椭圆性条件是证明极小元存在性所需的自然进一步假设。因此，从变分法的非线性视角看，线性二阶椭圆 PDE 的散度结构形式完全自然。这一观察为第 6 章使用的双线性型技巧提供了迟到的动机。
+\end{example}
+
+\begin{example}[非线性 Poisson 方程]\label{example:ch08-1-3-非线性Poisson方程}
+给定光滑函数 $f:\mathbb{R}\to\mathbb{R}$，定义其原函数 $F(z)=\int_0^z f(y)\,\mathrm{d}y$。则与泛函
+\begin{align*}
+I[w]\triangleq\int_U\frac{1}{2}|Dw|^2-F(w)\,\mathrm{d}x
+\end{align*}
+相关联的 Euler--Lagrange 方程是非线性 Poisson 方程
+\begin{align*}
+-\Delta u=f(u)\quad\text{在 }U\text{ 中}.
+\end{align*}
+\end{example}
+
+\begin{example}[极小曲面]\label{example:ch08-1-4-极小曲面}
+令
+\begin{align*}
+L(p,z,x)=(1+|p|^2)^{1/2},
+\end{align*}
+于是
+\begin{align*}
+I[w]=\int_U(1+|Dw|^2)^{1/2}\,\mathrm{d}x
+\end{align*}
+是函数 $w:U\to\mathbb{R}$ 图像的面积。相关联的 Euler--Lagrange 方程为
+\begin{align}
+\sum_{i=1}^n\left(\frac{u_{x_i}}{(1+|Du|^2)^{1/2}}\right)_{x_i}=0\quad\text{在 }U\text{ 中}.\label{align:ch08-1-eq10b}
+\end{align}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.55\textwidth]{ch08-fig-minimal-surface.png}
+\caption{一个极小曲面}\label{figure:ch08-minimal-surface}
+\end{figure}
+这一偏微分方程即极小曲面方程。\eqref{align:ch08-1-eq10b} 左端的表达式 $\operatorname{div}\!\left(\frac{Du}{(1+|Du|^2)^{1/2}}\right)$ 是 $u$ 的图像的平均曲率的 $n$ 倍。因此极小曲面的平均曲率为零。
+\end{example}
+
+\subsection{二阶变分}\label{subsection:ch08-1-3-二阶变分}
+
+我们延续 \S8.1.2 的计算精神，现计算 $I[\cdot]$ 在函数 $u$ 处的二阶变分。注意到由于 $u$ 给出 $I[\cdot]$ 的最小值，必有 $i''(0)\geqslant 0$，其中 $i(\cdot)$ 由\eqref{align:ch08-1-eq07} 定义。由\eqref{align:ch08-1-eq09} 可算得
+\begin{align*}
+i''(\tau)=\int_U&\sum_{i,j=1}^n L_{p_ip_j}(Du+\tau Dv,u+\tau v,x)v_{x_i}v_{x_j}\\
+&+2\sum_{i=1}^n L_{p_iz}(Du+\tau Dv,u+\tau v,x)v_{x_i}v+L_{zz}(Du+\tau Dv,u+\tau v,x)v^2\,\mathrm{d}x.
+\end{align*}
+令 $\tau=0$，导出不等式
+\begin{align}
+0\leqslant i''(0)=\int_U&\sum_{i,j=1}^n L_{p_ip_j}(Du,u,x)v_{x_i}v_{x_j}\notag\\
+&+2\sum_{i=1}^n L_{p_iz}(Du,u,x)v_{x_i}v+L_{zz}(Du,u,x)v^2\,\mathrm{d}x,\label{align:ch08-1-eq11}
+\end{align}
+对所有检验函数 $v\in C_c^\infty(U)$ 成立。
+
+可从不等式\eqref{align:ch08-1-eq11} 提取有用信息如下。首先，经常规逼近论证可知，估计\eqref{align:ch08-1-eq11} 对任一在 $\partial U$ 上为零的 Lipschitz 连续函数 $v$ 均成立。然后固定 $\xi\in\mathbb{R}^n$，定义
+\begin{align}
+v(x)\triangleq\varepsilon\rho\!\left(\frac{x\cdot\xi}{\varepsilon}\right)\zeta(x)\qquad (x\in U),\label{align:ch08-1-eq12}
+\end{align}
+其中 $\zeta\in C_c^\infty(U)$，$\rho:\mathbb{R}\to\mathbb{R}$ 为由下式定义的周期三角函数
+\begin{align*}
+\rho(x)=\begin{cases}x&\text{若 }0\leqslant x\leqslant\frac12,\\1-x&\text{若 }\frac12\leqslant x\leqslant 1,\end{cases}\qquad \rho(x+1)=\rho(x)\quad (x\in\mathbb{R}).
+\end{align*}
+于是
+\begin{align}
+|\rho'|=1\quad\text{a.e.}\label{align:ch08-1-eq13}
+\end{align}
+进一步注意到 $v_{x_i}(x)=\rho'\!\left(\frac{x\cdot\xi}{\varepsilon}\right)\xi_i\zeta+O(\varepsilon)$（当 $\varepsilon\to 0$），将\eqref{align:ch08-1-eq12} 代入\eqref{align:ch08-1-eq11} 得
+\begin{align*}
+0\leqslant\int_U\sum_{i,j=1}^n L_{p_ip_j}(Du,u,x)(\rho')^2\xi_i\xi_j\zeta^2\,\mathrm{d}x+O(\varepsilon).
+\end{align*}
+回顾\eqref{align:ch08-1-eq13}，令 $\varepsilon\to 0$，得到不等式
+\begin{align*}
+0\leqslant\int_U\sum_{i,j=1}^n L_{p_ip_j}(Du,u,x)\xi_i\xi_j\zeta^2\,\mathrm{d}x.
+\end{align*}
+由于此估计对所有 $\zeta\in C_c^\infty(U)$ 成立，推得
+\begin{align}
+\sum_{i,j=1}^n L_{p_ip_j}(Du,u,x)\xi_i\xi_j\geqslant 0\qquad (\xi\in\mathbb{R}^n,\ x\in U).\label{align:ch08-1-eq14}
+\end{align}
+后面在 \S8.2 将看到，这一必要条件暗示了极小元存在性理论对 Lagrangian $L$ 所需的基本凸性假设。
+
+\subsection{方程组}\label{subsection:ch08-1-4-方程组}
+
+\subsubsection*{a. Euler--Lagrange 方程组}
+
+前面的考虑可相当容易地推广到方程组情形，新出现的困难主要是记号上的。回顾 \S A.1，$\mathbb{M}^{m\times n}$ 表示实 $m\times n$ 矩阵空间，并设给定光滑 Lagrangian 函数
+\begin{align*}
+L:\mathbb{M}^{m\times n}\times\mathbb{R}^m\times\overline{U}\to\mathbb{R}.
+\end{align*}
+
+\paragraph{记号。}我们写
+\begin{align}
+L=L(P,z,x)=L(p_i^1,\cdots,p_n^1,z_1,\cdots,z_m,x_1,\cdots,x_n),\label{align:ch08-1-eq15}
+\end{align}
+其中 $P\in\mathbb{M}^{m\times n}$，$z\in\mathbb{R}^m$，$x\in U$，而
+\begin{align*}
+P=\begin{pmatrix}p_1^1&\cdots&p_n^1\\&\ddots&\\p_1^m&\cdots&p_n^m\end{pmatrix}_{m\times n}.
+\end{align*}
+（我们现在用上标表示行，因为这一记号约定可简化后续公式。）
+
+如同 \S8.1.2，与 $L$ 相关联的泛函为
+\begin{align}
+I[\mathbf{w}]\triangleq\int_U L(D\mathbf{w}(x),\mathbf{w}(x),x)\,\mathrm{d}x,\label{align:ch08-1-eq15b}
+\end{align}
+定义于光滑函数 $\mathbf{w}:\overline{U}\to\mathbb{R}^m$，$\mathbf{w}=(w^1,\cdots,w^m)$，满足边界条件 $\mathbf{w}=\mathbf{g}$ 在 $\partial U$ 上，其中 $\mathbf{g}:\partial U\to\mathbb{R}^m$ 给定。此处
+\begin{align*}
+D\mathbf{w}(x)=\begin{pmatrix}w_{x_1}^1&\cdots&w_{x_n}^1\\&\ddots&\\w_{x_1}^m&\cdots&w_{x_n}^m\end{pmatrix}_{m\times n}
+\end{align*}
+是 $\mathbf{w}$ 在 $x$ 处的梯度矩阵。
+
+现证明 $I[\cdot]$ 的任一光滑极小元 $\mathbf{u}=(u^1,\cdots,u^m)$（在 $\partial U$ 上等于 $\mathbf{g}$ 的函数中取）必求解某个非线性偏微分方程组。为此固定 $\mathbf{v}=(v^1,\cdots,v^m)\in C_c^\infty(U;\mathbb{R}^m)$，写
+\begin{align*}
+i(\tau)\triangleq I[\mathbf{u}+\tau\mathbf{v}].
+\end{align*}
+如前，$i'(0)=0$。由此易得等式
+\begin{align*}
+0=i'(0)=\int_U\sum_{i=1}^n\sum_{k=1}^m L_{p_i^k}(D\mathbf{u},\mathbf{u},x)v_{x_i}^k+\sum_{k=1}^m L_{z^k}(D\mathbf{u},\mathbf{u},x)v^k\,\mathrm{d}x.
+\end{align*}
+由于此恒等式对所有 $v^1,\cdots,v^m$ 的选取均成立，分部积分后得到
+\begin{align}
+-\sum_{i=1}^n\big(L_{p_i^k}(D\mathbf{u},\mathbf{u},x)\big)_{x_i}+L_{z^k}(D\mathbf{u},\mathbf{u},x)=0\quad\text{在 }U\text{ 中}\ (k=1,\cdots,m).\label{align:ch08-1-eq16}
+\end{align}
+这一耦合的拟线性 PDE 组即\eqref{align:ch08-1-eq15b} 所定义泛函 $I[\cdot]$ 的 Euler--Lagrange 方程组。
+
+\subsubsection*{b. 零 Lagrangian}
+
+出人意料地，研究某些每个光滑函数都是其解的非线性偏微分方程组竟是有趣的。
+
+\begin{definition}\label{definition:ch08-1-零Lagrangian}
+称函数 $L$ 为\textbf{零 Lagrangian}，若 Euler--Lagrange 方程组
+\begin{align}
+-\sum_{i=1}^n\big(L_{p_i^k}(D\mathbf{u},\mathbf{u},x)\big)_{x_i}+L_{z^k}(D\mathbf{u},\mathbf{u},x)=0\quad\text{在 }U\text{ 中}\ (k=1,\cdots,m)\label{align:ch08-1-eq17}
+\end{align}
+被所有光滑函数 $\mathbf{u}:U\to\mathbb{R}^m$ 所满足。
+\end{definition}
+
+零 Lagrangian 的重要性在于：相应能量
+\begin{align*}
+I[\mathbf{w}]=\int_U L(D\mathbf{w},\mathbf{w},x)\,\mathrm{d}x
+\end{align*}
+只依赖于边界条件。
+
+\begin{theorem}[零 Lagrangian 与边界条件]\label{theorem:ch08-1-1-零Lagrangian边界条件}
+设 $L$ 为零 Lagrangian。假设 $\mathbf{u},\widetilde{\mathbf{u}}\in C^2(\overline{U};\mathbb{R}^m)$ 满足
+\begin{align}
+\mathbf{u}\equiv\widetilde{\mathbf{u}}\quad\text{在 }\partial U\text{ 上}.\label{align:ch08-1-eq18}
+\end{align}
+则
+\begin{align}
+I[\mathbf{u}]=I[\widetilde{\mathbf{u}}].\label{align:ch08-1-eq19}
+\end{align}
+\begin{proof}
+定义
+\begin{align*}
+i(\tau)\triangleq I[\tau\mathbf{u}+(1-\tau)\widetilde{\mathbf{u}}]\qquad (0\leqslant\tau\leqslant 1).
+\end{align*}
+则
+\begin{align*}
+i'(\tau)&=\int_U\sum_{i=1}^n\sum_{k=1}^m L_{p_i^k}(\tau D\mathbf{u}+(1-\tau)D\widetilde{\mathbf{u}},\tau\mathbf{u}+(1-\tau)\widetilde{\mathbf{u}},x)(u_{x_i}^k-\widetilde{u}_{x_i}^k)\\
+&\qquad+\sum_{k=1}^m L_{z^k}(\tau D\mathbf{u}+(1-\tau)D\widetilde{\mathbf{u}},\tau\mathbf{u}+(1-\tau)\widetilde{\mathbf{u}},x)(u^k-\widetilde{u}^k)\,\mathrm{d}x\\
+&=\sum_{k=1}^m\int_U\left[-\sum_{i=1}^n\big(L_{p_i^k}(\tau D\mathbf{u}+(1-\tau)D\widetilde{\mathbf{u}},\tau\mathbf{u}+(1-\tau)\widetilde{\mathbf{u}},x)\big)_{x_i}\right.\\
+&\qquad\left.+L_{z^k}(\tau D\mathbf{u}+(1-\tau)D\widetilde{\mathbf{u}},\tau\mathbf{u}+(1-\tau)\widetilde{\mathbf{u}},x)\right](u^k-\widetilde{u}^k)\,\mathrm{d}x=0,
+\end{align*}
+最后一等式成立是因为 $\tau\mathbf{u}+(1-\tau)\widetilde{\mathbf{u}}$ 满足 Euler--Lagrange PDE 组。恒等式\eqref{align:ch08-1-eq19} 得证。
+\end{proof}
+\end{theorem}
+
+在标量情形 $m=1$，唯一的零 Lagrangian 是 $L$ 关于变量 $p$ 线性的平凡例子。但对于方程组情形（$m>1$），存在某些非平凡例子，后面将发现它们对我们很重要。
+
+\paragraph{记号。}若 $A$ 为 $n\times n$ 矩阵，记
+\begin{align*}
+\operatorname{cof}A
+\end{align*}
+为余子式矩阵，其 $(k,i)$ 元为 $(\operatorname{cof}A)_i^k=(-1)^{i+k}d(A)_i^k$，其中 $d(A)_i^k$ 是从 $A$ 删去第 $k$ 行第 $i$ 列所得 $(n-1)\times(n-1)$ 矩阵的行列式。
+
+\begin{lemma}[各行无散]\label{lemma:ch08-1-各行无散}
+设 $\mathbf{u}:\mathbb{R}^n\to\mathbb{R}^n$ 为光滑函数。则
+\begin{align}
+\sum_{i=1}^n(\operatorname{cof}D\mathbf{u})_{x_i}^k{}_i=0\qquad (k=1,\cdots,n).\label{align:ch08-1-eq20}
+\end{align}
+\begin{proof}
+1. 由线性代数回顾恒等式
+\begin{align}
+(\det P)I=P^T(\operatorname{cof}P)\qquad (P\in\mathbb{M}^{n\times n});\label{align:ch08-1-eq21}
+\end{align}
+即
+\begin{align}
+(\det P)\delta_{ij}=\sum_{k=1}^n p_i^k(\operatorname{cof}P)_j^k\qquad (i,j=1,\cdots,n).\label{align:ch08-1-eq22}
+\end{align}
+特别地
+\begin{align}
+\frac{\partial\det P}{\partial p_m^k}=(\operatorname{cof}P)_m^k\qquad (k,m=1,\cdots,n).\label{align:ch08-1-eq23}
+\end{align}
+2. 现于\eqref{align:ch08-1-eq22} 中令 $P=D\mathbf{u}$，对 $x_j$ 求导并关于 $j=1,\cdots,n$ 求和，得
+\begin{align*}
+\sum_{j,k,m=1}^n\delta_{ij}(\operatorname{cof}D\mathbf{u})_m^k u_{x_mx_j}^k=\sum_{k,j=1}^n u_{x_ix_j}^k(\operatorname{cof}D\mathbf{u})_j^k+u_{x_i}^k(\operatorname{cof}D\mathbf{u})_{x_j}^k{}_j
+\end{align*}
+（$i=1,\cdots,n$）。此恒等式化简为
+\begin{align}
+\sum_{k=1}^n u_{x_i}^k\left(\sum_{j=1}^n(\operatorname{cof}D\mathbf{u})_{x_j}^k{}_j\right)=0\qquad (i=1,\cdots,n).\label{align:ch08-1-eq24}
+\end{align}
+3. 若 $\det D\mathbf{u}(x_0)\neq 0$，由\eqref{align:ch08-1-eq24} 推得
+\begin{align*}
+\sum_{j=1}^n(\operatorname{cof}D\mathbf{u})_{x_j}^k{}_j=0\qquad (k=1,\cdots,n)
+\end{align*}
+在 $x_0$ 处。若反之 $\det D\mathbf{u}(x_0)=0$，取 $\varepsilon>0$ 充分小使得 $\det(D\mathbf{u}(x_0)+\varepsilon I)\neq 0$，对 $\widetilde{\mathbf{u}}\triangleq\mathbf{u}+\varepsilon x$ 应用第 1--2 步，再令 $\varepsilon\to 0$。
+\end{proof}
+\end{lemma}
+
+\begin{theorem}[行列式作为零 Lagrangian]\label{theorem:ch08-1-2-行列式零Lagrangian}
+行列式函数
+\begin{align*}
+L(P)=\det P\qquad (P\in\mathbb{M}^{n\times n})
+\end{align*}
+是零 Lagrangian。
+\begin{proof}
+需证对任一光滑函数 $\mathbf{u}:U\to\mathbb{R}^n$，
+\begin{align*}
+\sum_{i=1}^n\big(L_{p_i^k}(D\mathbf{u})\big)_{x_i}=0\qquad (k=1,\cdots,n).
+\end{align*}
+由\eqref{align:ch08-1-eq23}，$L_{p_i^k}=(\operatorname{cof}P)_i^k$（$i,k=1,\cdots,n$）。利用上述引理的记号与结论，有
+\begin{align*}
+\sum_{i=1}^n\big(L_{p_i^k}(D\mathbf{u})\big)_{x_i}=\sum_{i=1}^n(\operatorname{cof}D\mathbf{u})_{x_i}^k{}_i=0\qquad (k=1,\cdots,n).
+\end{align*}
+\end{proof}
+\end{theorem}
+
+其他有趣的零 Lagrangian 在习题中介绍。
+
+\subsubsection*{c. 应用}
+
+一个漂亮的应用是给出一个拓扑不动点定理的简洁解析证明。
+
+\begin{theorem}[Brouwer 不动点定理]\label{theorem:ch08-1-3-Brouwer不动点}
+假设
+\begin{align*}
+\mathbf{u}:B(0,1)\to B(0,1)
+\end{align*}
+连续，其中 $B(0,1)$ 表示 $\mathbb{R}^n$ 中的闭单位球。则 $\mathbf{u}$ 有不动点，即存在点 $x\in B(0,1)$ 使 $\mathbf{u}(x)=x$。
+\begin{proof}
+1. 写 $B=B(0,1)$。首先断言不存在光滑函数
+\begin{align}
+\mathbf{w}:B\to\partial B\label{align:ch08-1-eq25}
+\end{align}
+使得
+\begin{align}
+\mathbf{w}(x)=x\quad\text{对所有 }x\in\partial B.\label{align:ch08-1-eq26}
+\end{align}
+2. 反设这样的函数 $\mathbf{w}$ 存在。临时记恒等函数为 $\widetilde{\mathbf{w}}$，即 $\widetilde{\mathbf{w}}(x)=x$ 对所有 $x\in B$。由\eqref{align:ch08-1-eq26}，$\mathbf{w}\equiv\widetilde{\mathbf{w}}$ 在 $\partial B$ 上。由于行列式是零 Lagrangian，\cref{theorem:ch08-1-1-零Lagrangian边界条件} 蕴涵
+\begin{align}
+\int_B\det D\mathbf{w}\,\mathrm{d}x=\int_B\det D\widetilde{\mathbf{w}}\,\mathrm{d}x=|B|\neq 0.\label{align:ch08-1-eq27}
+\end{align}
+另一方面，\eqref{align:ch08-1-eq25} 蕴涵 $|\mathbf{w}|^2\equiv 1$；求导得
+\begin{align}
+(D\mathbf{w})^T\mathbf{w}=0.\label{align:ch08-1-eq28}
+\end{align}
+由于 $|\mathbf{w}|=1$，\eqref{align:ch08-1-eq28} 表明对每个 $x\in B$，$0$ 是 $D\mathbf{w}^T$ 的特征值。因此 $\det D\mathbf{w}\equiv 0$ 在 $B$ 中。这与\eqref{align:ch08-1-eq27} 矛盾，从而证明不存在满足\eqref{align:ch08-1-eq25}、\eqref{align:ch08-1-eq26} 的光滑函数 $\mathbf{w}$。
+3. 接着证明不存在任何满足\eqref{align:ch08-1-eq25}、\eqref{align:ch08-1-eq26} 的连续函数 $\mathbf{w}$。事实上，若 $\mathbf{w}$ 是这样的函数，连续延拓令 $x\in\mathbb{R}^n\setminus B$ 时 $\mathbf{w}(x)=x$。注意 $\mathbf{w}(x)\neq 0$（$x\in\mathbb{R}^n$）。取 $\varepsilon>0$ 充分小使 $\mathbf{w}_1\triangleq\eta_\varepsilon*\mathbf{w}$ 满足 $\mathbf{w}_1(x)\neq 0$（$x\in\mathbb{R}^n$）。又由于 $\eta_\varepsilon$ 径向，当 $\varepsilon>0$ 充分小时，$x\in\mathbb{R}^n\setminus B(0,2)$ 时 $\mathbf{w}_1(x)=x$。于是
+\begin{align*}
+\mathbf{w}_2\triangleq\frac{2\mathbf{w}_1}{|\mathbf{w}_1|}
+\end{align*}
+将是满足\eqref{align:ch08-1-eq25}、\eqref{align:ch08-1-eq26} 的光滑映射（以球 $B(0,2)$ 代替 $B=B(0,1)$），与第 1 步矛盾。
+4. 最后假设 $\mathbf{u}:B\to B$ 连续但无不动点。现定义映射 $\mathbf{w}:B\to\partial B$：令 $\mathbf{w}(x)$ 为从 $\mathbf{u}(x)$ 出发经过 $x$ 的射线与 $\partial B$ 的交点。由于对所有 $x\in B$ 有 $\mathbf{u}(x)\neq x$，此映射良定义。此外 $\mathbf{w}$ 连续并满足\eqref{align:ch08-1-eq25}、\eqref{align:ch08-1-eq26}。但这又与第 2 步矛盾。
+\end{proof}
+\end{theorem}
+
+我们将在第 9 章多次使用 Brouwer 不动点定理。
+
+\end{document}

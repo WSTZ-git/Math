@@ -1,0 +1,244 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}}
+
+\begin{document}
+
+\section{单调方法}\label{section:ch04-变换方法}
+
+先考察一个散度结构拟线性 PDE 的边值问题：
+\begin{align}
+\begin{cases}
+-\operatorname{div}\mathbf{a}(Du)=f&\text{在 }U\text{ 中},\\
+u=0&\text{在 }\partial U\text{ 上},
+\end{cases}\label{align:ch09-1-eq01}
+\end{align}
+其中 $f\in L^2(U)$ 给定，光滑向量场 $\mathbf{a}:\mathbb{R}^n\to\mathbb{R}^n$，$\mathbf{a}=(a^1,\cdots,a^n)$ 给定。如常，未知函数为 $u:\overline{U}\to\mathbb{R}$，$u=u(x)$，其中 $U$ 为 $\mathbb{R}^n$ 中边界光滑的有界开集。
+
+若存在函数 $F:\mathbb{R}^n\to\mathbb{R}$ 使 $\mathbf{a}$ 是 $F$ 的梯度，
+\begin{align}
+\mathbf{a}(p)=DF(p)\qquad (p\in\mathbb{R}^n),\label{align:ch09-1-eq02}
+\end{align}
+则\eqref{align:ch09-1-eq01} 是对应于 Lagrangian $L(p,z,x)=F(p)-f(x)z$ 的 Euler--Lagrange 方程。然而若不存在这样的位势 $F$，\cref{chapter:ch08-变分法}中的变分方法根本不能用于问题\eqref{align:ch09-1-eq01}。
+
+转而问：是否存在某种构造\eqref{align:ch09-1-eq01} 解的直接方法？特别地，对非线性项应施加何种合理条件？作为动机，注意若\eqref{align:ch09-1-eq02} 成立且 $F$ 凸（如 \S8.2.2 所见，这是变分理论的自然假设），则对每个 $p,q\in\mathbb{R}^n$，
+\begin{align*}
+(\mathbf{a}(p)-\mathbf{a}(q))\cdot(p-q)&=\sum_{i=1}^n(F_{p_i}(p)-F_{p_i}(q))(p_i-q_i)\\
+&=\int_0^1\sum_{i,j=1}^n F_{p_ip_j}(p+t(q-p))(p_j-q_j)(p_i-q_i)\,\mathrm{d}t\geqslant 0,
+\end{align*}
+最后一不等式由 $F$ 的凸性成立。
+
+这一计算提示出下列定义。
+
+\begin{definition}\label{definition:ch09-1-单调向量场}
+称向量场 $\mathbf{a}:\mathbb{R}^n\to\mathbb{R}^n$ 是\textbf{单调的}，只要
+\begin{align}
+(\mathbf{a}(p)-\mathbf{a}(q))\cdot(p-q)\geqslant 0\quad\text{对所有 }p,q\in\mathbb{R}^n.\label{align:ch09-1-eq03}
+\end{align}
+\end{definition}
+
+下面将证明：在非线性项单调这一首要结构假设下，该拟线性 PDE 确实存在弱解。后面将认识到，这一条件实际上是说 $-\operatorname{div}\mathbf{a}(Du)=f$ 是一个非线性椭圆偏微分方程。故今后假设光滑向量场 $\mathbf{a}$ 单调，且
+\begin{align}
+|\mathbf{a}(p)|\leqslant C(1+|p|),\label{align:ch09-1-eq04}
+\end{align}
+\begin{align}
+\mathbf{a}(p)\cdot p\geqslant\alpha|p|^2-\beta\label{align:ch09-1-eq05}
+\end{align}
+对所有 $p\in\mathbb{R}^n$ 及适当常数 $C$、$\alpha>0$、$\beta\geqslant 0$。稍后将看到\eqref{align:ch09-1-eq05} 实际上是关于非线性项的强制性条件。现打算把边值问题\eqref{align:ch09-1-eq01} 的解构造为某些有限维逼近的极限，从而把\cref{chapter:ch07-线性发展方程}的 Galerkin 方法推广到一类新的非线性问题。
+
+更精确地，设函数 $w_k=w_k(x)$（$k=1,\cdots$）光滑，且
+\begin{align*}
+\{w_k\}_{k=1}^\infty\text{ 是 }H_0^1(U)\text{ 的一组正交基},
+\end{align*}
+内积取为 $(u,v)=\int_U Du\cdot Dv\,\mathrm{d}x$。（例如可取 $\{w_k\}_{k=1}^\infty$ 为 $-\Delta$ 在 $H_0^1(U)$ 中适当规范化的特征函数系。）
+
+寻找形如
+\begin{align}
+u_m=\sum_{k=1}^m d_m^k w_k\label{align:ch09-1-eq06}
+\end{align}
+的函数 $u_m\in H_0^1(U)$，并希望选取系数 $d_m^k$ 使
+\begin{align}
+\int_U\mathbf{a}(Du_m)\cdot Dw_k\,\mathrm{d}x=\int_U fw_k\,\mathrm{d}x\qquad (k=1,\cdots,m).\label{align:ch09-1-eq07}
+\end{align}
+这相当于要求 $u_m$ 求解问题\eqref{align:ch09-1-eq01} 到由 $\{w_k\}_{k=1}^m$ 张成的有限维子空间上的"投影"。
+
+先给出一个技术性断言。
+
+\begin{lemma}[向量场的零点]\label{lemma:ch09-1-向量场零点}
+设连续函数 $\mathbf{v}:\mathbb{R}^n\to\mathbb{R}^n$ 满足
+\begin{align}
+\mathbf{v}(x)\cdot x\geqslant 0\quad\text{若 }|x|=r,\label{align:ch09-1-eq08}
+\end{align}
+某 $r>0$。则存在点 $x\in B(0,r)$ 使 $\mathbf{v}(x)=0$。
+\begin{proof}
+反设断言不成立；则对所有 $x\in B(0,r)$，$\mathbf{v}(x)\neq 0$。定义连续映射 $\mathbf{w}:B(0,r)\to\partial B(0,r)$ 为
+\begin{align*}
+\mathbf{w}(x)\triangleq-\frac{r}{|\mathbf{v}(x)|}\mathbf{v}(x)\qquad (x\in B(0,r)).
+\end{align*}
+由 Brouwer 不动点定理（\S8.1.4），存在点 $z\in B(0,r)$ 使
+\begin{align}
+\mathbf{w}(z)=z.\label{align:ch09-1-eq09}
+\end{align}
+但随后 $z\in\partial B(0,r)$，故\eqref{align:ch09-1-eq08} 与\eqref{align:ch09-1-eq09} 蕴涵矛盾
+\begin{align*}
+r^2=z\cdot z=\mathbf{w}(z)\cdot z=-\frac{r}{|\mathbf{v}(z)|}\mathbf{v}(z)\cdot z\leqslant 0.
+\end{align*}
+\end{proof}
+\end{lemma}
+
+\begin{theorem}[逼近解的构造]\label{theorem:ch09-1-1-逼近解构造}
+对每个整数 $m=1,\cdots$，存在形如\eqref{align:ch09-1-eq06}、满足恒等式\eqref{align:ch09-1-eq07} 的函数 $u_m$。
+\begin{proof}
+定义连续函数 $\mathbf{v}:\mathbb{R}^m\to\mathbb{R}^m$，$\mathbf{v}=(v^1,\cdots,v^m)$，为
+\begin{align}
+v^k(d)\triangleq\int_U\mathbf{a}\!\left(\sum_{j=1}^m d^jDw_j\right)\cdot Dw_k-fw_k\,\mathrm{d}x\qquad (k=1,\cdots,m)\label{align:ch09-1-eq10}
+\end{align}
+对每个 $d=(d^1,\cdots,d^m)\in\mathbb{R}^m$。现
+\begin{align*}
+\mathbf{v}(d)\cdot d&=\int_U\mathbf{a}\!\left(\sum_{j=1}^m d^jDw_j\right)\cdot\left(\sum_{j=1}^m d^jDw_j\right)-f\!\left(\sum_{j=1}^m d^jw_j\right)\mathrm{d}x\\
+&\geqslant\int_U\alpha\left|\left|\sum_{j=1}^m d^jDw_j\right|\right|^2-\beta-f\!\left(\sum_{j=1}^m d^jw_j\right)\mathrm{d}x\quad\text{由 }\eqref{align:ch09-1-eq05}\\
+&=\alpha|d|^2-\beta|U|-\sum_{j=1}^m d^j\int_U fw_j\,\mathrm{d}x\\
+&\geqslant\frac\alpha2|d|^2-C.
+\end{align*}
+故若选取 $r>0$ 充分大，则 $|d|=r$ 时 $\mathbf{v}(d)\cdot d\geqslant 0$。应用引理，推得存在某点 $d\in\mathbb{R}^m$ 使 $\mathbf{v}(d)=0$。于是由\eqref{align:ch09-1-eq10}，由\eqref{align:ch09-1-eq06} 定义的 $u_m$ 满足\eqref{align:ch09-1-eq07}。
+\end{proof}
+\end{theorem}
+
+我们要令 $m\to\infty$ 取极限，为此需要某些一致估计。
+
+\begin{theorem}[能量估计]\label{theorem:ch09-1-2-能量估计}
+存在常数 $C$（仅依赖于 $U$ 与 $\mathbf{a}$）使
+\begin{align}
+\|u_m\|_{H_0^1(U)}\leqslant C(1+\|f\|_{L^2(U)})\qquad (m=1,2,\cdots).\label{align:ch09-1-eq11}
+\end{align}
+\begin{proof}
+以 $d_m^k$ 乘等式\eqref{align:ch09-1-eq07} 并关于 $k=1,\cdots,m$ 求和：
+\begin{align*}
+\int_U\mathbf{a}(Du_m)\cdot Du_m\,\mathrm{d}x=\int_U fu_m\,\mathrm{d}x.
+\end{align*}
+由强制性不等式\eqref{align:ch09-1-eq05}，得
+\begin{align*}
+\alpha\int_U|Du_m|^2\,\mathrm{d}x\leqslant C+\int_U fu_m\,\mathrm{d}x\leqslant C+\varepsilon\int_U u_m^2\,\mathrm{d}x+\frac1{4\varepsilon}\int_U f^2\,\mathrm{d}x.
+\end{align*}
+回顾 Poincaré 不等式（\S5.6.1\cref{theorem:ch05-W1p0估计}），再取 $\varepsilon>0$ 充分小，即推得\eqref{align:ch09-1-eq11}。
+\end{proof}
+\end{theorem}
+
+现希望用 $L^2$ 估计\eqref{align:ch09-1-eq11} 令 $m\to\infty$ 取极限，从而得到问题\eqref{align:ch09-1-eq01} 的弱解，即满足恒等式
+\begin{align}
+\int_U\mathbf{a}(Du)\cdot Dv\,\mathrm{d}x=\int_U fv\,\mathrm{d}x\quad\text{对所有 }v\in H_0^1(U)\label{align:ch09-1-eq12}
+\end{align}
+的函数 $u\in H_0^1(U)$。
+
+用估计\eqref{align:ch09-1-eq11}，可提取子列 $\{u_{m_j}\}_{j=1}^\infty$ 弱收敛于 $H_0^1(U)$ 到某极限 $u$，并希望证明 $u$ 满足\eqref{align:ch09-1-eq12}。然而这里遇到一个大问题：不能直接断言在任何意义下
+\begin{align*}
+\mathbf{a}(Du_{m_j})\to\mathbf{a}(Du).
+\end{align*}
+请注意：非线性项（通常）关于弱收敛不连续。（见\cref{exercise:ch09-7-2}。）
+
+拯救我们的是向量场 $\mathbf{a}$ 的单调性假设。
+
+\begin{theorem}[弱解的存在性]\label{theorem:ch09-1-3-弱解存在}
+非线性边值问题\eqref{align:ch09-1-eq01} 存在弱解。
+\begin{proof}
+1. 如上所述，可提取子列 $\{u_{m_j}\}_{j=1}^\infty\subset\{u_m\}_{m=1}^\infty$ 及函数 $u\in H_0^1(U)$ 使
+\begin{align}
+u_{m_j}\rightharpoonup u\quad\text{弱收敛于 }H_0^1(U)\label{align:ch09-1-eq13}
+\end{align}
+且
+\begin{align}
+u_{m_j}\to u\quad\text{在 }L^2(U)\text{ 中}.\label{align:ch09-1-eq14}
+\end{align}
+需证 $u$ 满足\eqref{align:ch09-1-eq12}。
+2. 由增长条件\eqref{align:ch09-1-eq04}，$\{\mathbf{a}(Du_m)\}_{m=1}^\infty$ 在 $L^2(U;\mathbb{R}^n)$ 中有界；故必要时再取子列，不妨设
+\begin{align}
+\mathbf{a}(Du_{m_j})\rightharpoonup\boldsymbol{\xi}\quad\text{弱收敛于 }L^2(U;\mathbb{R}^n),\label{align:ch09-1-eq15}
+\end{align}
+某 $\boldsymbol{\xi}\in L^2(U;\mathbb{R}^n)$。用恒等式\eqref{align:ch09-1-eq07}，推得
+\begin{align*}
+\int_U\boldsymbol{\xi}\cdot Dw_k\,\mathrm{d}x=\int_U fw_k\,\mathrm{d}x
+\end{align*}
+对每个 $k=1,\cdots$。故
+\begin{align}
+\int_U\boldsymbol{\xi}\cdot Dv\,\mathrm{d}x=\int_U fv\,\mathrm{d}x\label{align:ch09-1-eq16}
+\end{align}
+对每个 $v\in H_0^1(U)$。
+3. 进一步注意由单调性条件\eqref{align:ch09-1-eq03}，
+\begin{align}
+\int_U(\mathbf{a}(Du_m)-\mathbf{a}(Dw))\cdot(Du_m-Dw)\,\mathrm{d}x\geqslant 0\label{align:ch09-1-eq17}
+\end{align}
+对 $m=1,\cdots$ 及所有 $w\in H_0^1(U)$。但如前所述，方程\eqref{align:ch09-1-eq07} 给出恒等式
+\begin{align*}
+\int_U\mathbf{a}(Du_m)\cdot Du_m\,\mathrm{d}x=\int_U fu_m\,\mathrm{d}x.
+\end{align*}
+代入\eqref{align:ch09-1-eq17}，得
+\begin{align*}
+\int_U fu_m-\mathbf{a}(Du_m)\cdot Dw-\mathbf{a}(Dw)\cdot(Du_m-Dw)\,\mathrm{d}x\geqslant 0.
+\end{align*}
+令 $m=m_j\to\infty$，回顾\eqref{align:ch09-1-eq13}--\eqref{align:ch09-1-eq15}，推得
+\begin{align*}
+\int_U fu-\boldsymbol{\xi}\cdot Dw-\mathbf{a}(Dw)\cdot(Du-Dw)\,\mathrm{d}x\geqslant 0.
+\end{align*}
+在\eqref{align:ch09-1-eq16} 中令 $v=u$ 并化简，发现
+\begin{align}
+\int_U(\boldsymbol{\xi}-\mathbf{a}(Dw))\cdot D(u-w)\,\mathrm{d}x\geqslant 0\label{align:ch09-1-eq18}
+\end{align}
+对所有 $w\in H_0^1(U)$ 成立。
+4. 固定任一 $v\in H_0^1(U)$，在\eqref{align:ch09-1-eq18} 中令 $w=u-\lambda v$（$\lambda>0$）。得
+\begin{align*}
+\int_U(\boldsymbol{\xi}-\mathbf{a}(Du-\lambda Dv))\cdot Dv\,\mathrm{d}x\geqslant 0.
+\end{align*}
+令 $\lambda\to 0$：
+\begin{align}
+\int_U(\boldsymbol{\xi}-\mathbf{a}(Du))\cdot Dv\,\mathrm{d}x\geqslant 0\label{align:ch09-1-eq19}
+\end{align}
+对所有 $v\in H_0^1(U)$ 成立。以 $-v$ 代 $v$，推得事实上上述等式成立。于是\eqref{align:ch09-1-eq16} 与\eqref{align:ch09-1-eq19} 合起来给出
+\begin{align*}
+\int_U\mathbf{a}(Du)\cdot Dv\,\mathrm{d}x=\int_U fv\,\mathrm{d}x
+\end{align*}
+对所有 $v\in H_0^1(U)$ 成立。故 $u$ 确为\eqref{align:ch09-1-eq01} 的弱解。
+\end{proof}
+\end{theorem}
+
+这种单调性的使用即 Browder--Minty 方法，是一个非凡技巧，它利用不等式条件\eqref{align:ch09-1-eq03} 来正当化在非线性项内取弱极限。
+
+现假设向量场 $\mathbf{a}$ 满足严格单调性条件；即
+\begin{align}
+(\mathbf{a}(p)-\mathbf{a}(q))\cdot(p-q)\geqslant\theta|p-q|^2\label{align:ch09-1-eq20}
+\end{align}
+对所有 $p,q\in\mathbb{R}^n$ 及某常数 $\theta>0$。
+
+\begin{theorem}[弱解的唯一性]\label{theorem:ch09-1-4-弱解唯一}
+设严格单调性\eqref{align:ch09-1-eq20} 成立。则\eqref{align:ch09-1-eq01} 只有一个弱解。
+\begin{proof}
+设 $u$ 与 $\widetilde{u}$ 为两个弱解。因此
+\begin{align*}
+\int_U\mathbf{a}(Du)\cdot Dv\,\mathrm{d}x=\int_U\mathbf{a}(D\widetilde{u})\cdot Dv\,\mathrm{d}x=\int_U fv\,\mathrm{d}x,
+\end{align*}
+从而
+\begin{align*}
+\int_U[\mathbf{a}(Du)-\mathbf{a}(D\widetilde{u})]\cdot Dv\,\mathrm{d}x=0
+\end{align*}
+对每个 $v\in H_0^1(U)$。令 $v=u-\widetilde{u}$，用\eqref{align:ch09-1-eq20} 推得
+\begin{align*}
+\int_U|Du-D\widetilde{u}|^2\,\mathrm{d}x=0.
+\end{align*}
+故 $u=\widetilde{u}$ a.e. 在 $U$ 中。
+\end{proof}
+\end{theorem}
+
+\paragraph{$H^2$ 正则性。}在加强的单调性假设\eqref{align:ch09-1-eq20} 下，弱解 $u$ 事实上属于 $H^2(U)$，从而 a.e. 在 $U$ 中满足
+\begin{align*}
+-\operatorname{div}\mathbf{a}(Du)=f.
+\end{align*}
+
+为证明这一点，在\eqref{align:ch09-1-eq20} 中取 $q,\xi\in\mathbb{R}^n$，令 $p=q+h\xi$，$h\neq 0$。除以 $h^2$ 后得不等式
+\begin{align*}
+\sum_{i=1}^n\frac{a^i(q+h\xi)-a^i(q)}{h}\xi_i\geqslant\theta|\xi|^2.
+\end{align*}
+令 $h\to 0$：
+\begin{align}
+\sum_{i,j=1}^n a^i_{p_j}(q)\xi_i\xi_j\geqslant\theta|\xi|^2\qquad (q,\xi\in\mathbb{R}^n).\label{align:ch09-1-eq21}
+\end{align}
+于是可把非线性 PDE $-\operatorname{div}\mathbf{a}(Du)=f$ 解释为一致椭圆的。弱解 $H^2$ 正则性的证明现几乎完全如 \S6.3.1 中内部 $H^2$ 正则性定理的证明。
+
+\end{document}

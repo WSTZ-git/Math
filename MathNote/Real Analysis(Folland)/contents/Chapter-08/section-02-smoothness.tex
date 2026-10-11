@@ -1,0 +1,118 @@
+\documentclass[../../main.tex]{subfiles}
+\begin{document}
+% SOURCE p=256,257; printed=241-242; object=ch08-convolution-smoothness-introduction; region=bottom-top
+卷积最重要的性质之一，粗略地说，是 $f*g$ 至少与 $f,g$ 中任意一个一样光滑，因为形式上有
+\begin{align*}
+\partial^\alpha(f*g)(x)
+=\partial^\alpha\int f(x-y)g(y)\,\mathrm dy
+=\int\partial^\alpha f(x-y)g(y)\,\mathrm dy
+=(\partial^\alpha f)*g(x),
+\end{align*}
+同样有 $\partial^\alpha(f*g)=f*(\partial^\alpha g)$。要把这些形式运算变成严格结论，须对 $f,g$ 施加条件，使积分号下求导合法。下面给出一种这样的结果；另见\cref{exercise:ch08-local-convolution-smoothness,exercise:ch08-strong-derivative-convolution}。
+% SOURCE p=257; printed=242; object=ch08-convolution-smoothness; number=8.10; region=upper
+\begin{proposition}\label{proposition:ch08-convolution-smoothness}
+若 $f\in L^1$、$g\in C^k$，且 $|\alpha|\leqslant k$ 时 $\partial^\alpha g$ 都有界，则 $f*g\in C^k$，且
+\begin{align*}
+\partial^\alpha(f*g)=f*(\partial^\alpha g),\qquad |\alpha|\leqslant k.
+\end{align*}
+\end{proposition}
+\begin{proof}
+这直接来自\cref{theorem:ch02-parameter-integrals}。
+\end{proof}
+% SUPPLEMENT: id=v14-ch08-convolution-smoothness-details; parent=ch08-convolution-smoothness; kind=omitted-proof+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{积分号下求导的完整补证（重构新增）。}对每个 $|\alpha|\leqslant k$，定义
+\begin{align*}
+F_\alpha(x)=\int f(y)\partial^\alpha g(x-y)\,\mathrm dy.
+\end{align*}
+它在每个点绝对收敛，因为被积函数绝对值不超过 $\|\partial^\alpha g\|_u|f(y)|$。当 $x_j\to x$ 时，连续性给逐点收敛，同一个可积函数支配，故支配收敛定理给 $F_\alpha(x_j)\to F_\alpha(x)$。这证明全部 $F_\alpha$ 连续。
+
+若 $|\alpha|<k$，对实数 $h\ne0$，微积分基本定理给
+\begin{align*}
+\frac{\partial^\alpha g(x+he_j-y)-\partial^\alpha g(x-y)}h
+=\int_0^1\partial^{\alpha+e_j}g(x+the_j-y)\,\mathrm dt.
+\end{align*}
+其绝对值不超过 $\|\partial^{\alpha+e_j}g\|_u$；乘 $|f(y)|$ 后仍可积。差商逐点趋于 $\partial^{\alpha+e_j}g(x-y)$，故再次支配收敛，得到 $\partial_jF_\alpha=F_{\alpha+e_j}$。从 $F_0=f*g$ 逐阶归纳，即得命题全部结论。$k=0$ 时第一段已给所需连续性。
+
+动机是把导数放在光滑因子上，把可积控制留给另一因子。$f\in L^1$ 与每一阶导数的全局有界性共同提供与差商参数无关的可积上界；$g\in C^k$ 保证导数的逐点极限及连续性。零阶有界性也在假设内，用于卷积本身的绝对收敛。这里未要求 $f$ 连续或可微，正是卷积产生光滑性的用处。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch08-convolution-smoothness-details
+% SOURCE p=257; printed=242; object=ch08-schwartz-convolution; number=8.11; region=upper-middle
+\begin{proposition}\label{proposition:ch08-schwartz-convolution}
+若 $f,g\in\mathcal S$，则 $f*g\in\mathcal S$。
+\end{proposition}
+\begin{proof}
+由前命题，$f*g\in C^\infty$。由于
+\begin{align}\label{eq:ch08-weight-product}
+1+|x|\leqslant1+|x-y|+|y|\leqslant(1+|x-y|)(1+|y|),
+\end{align}
+有
+\begin{align*}
+(1+|x|)^N|\partial^\alpha(f*g)(x)|
+&\leqslant\int(1+|x-y|)^N|\partial^\alpha f(x-y)|
+ (1+|y|)^N|g(y)|\,\mathrm dy\\
+&\leqslant\|f\|_{(N,\alpha)}\|g\|_{(N+n+1,0)}
+\int(1+|y|)^{-n-1}\,\mathrm dy.
+\end{align*}
+最后的积分由\cref{corollary:ch02-power-integrability}有限，因此各个 Schwartz 范数均有限。
+\end{proof}
+% SUPPLEMENT: id=v14-ch08-schwartz-convolution-details; parent=ch08-schwartz-convolution; kind=omitted-proof+source-correction+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{导数、权分配与下标订正（重构新增）。}$f,g$ 均可积，且它们各阶导数均有界，所以对任意有限 $k$，光滑性命题均适用，给 $C^\infty$。再用交换性，可将所需导数全部落在 $f$ 上。\cref{eq:ch08-weight-product}的第一步为三角不等式，第二步只多出非负项 $|x-y||y|$；因 $N$ 非负，可取 $N$ 次方保持不等式。随后将 $(1+|y|)^N|g(y)|$ 控制为
+\begin{align*}
+(1+|y|)^N|g(y)|\leqslant
+\|g\|_{(N+n+1,0)}(1+|y|)^{-n-1}.
+\end{align*}
+原书最后一行把这里的 $g$ 范数写为 $\|g\|_{(N+n+1,\alpha)}$；该行被估计的是 $g$ 本身而非 $\partial^\alpha g$，所以本处明确将导数下标订正为 $0$。这一正确估计中的常数与 $x$ 无关，对所有 $N,\alpha$ 成立。
+
+动机是在 $x=(x-y)+y$ 处把多项式权分配给两个因子：一个因子提供所需的加权导数上界，另一个再提供超过维数的可积衰减。额外的 $n+1$ 不是唯一选择，任何大于 $n$ 的整数都能让尾积分收敛；选择它便于书写。全部 Schwartz 条件保证无论选多大的 $N$、多高的导数阶，仍有相应有限界。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch08-schwartz-convolution-details
+% SOURCE p=257; printed=242; object=ch08-torus-convolution; region=middle
+\begin{definition}[环面上的卷积]\label{definition:ch08-torus-convolution}
+$\mathbb T^n$ 上函数的卷积与 $\mathbb R^n$ 上同样定义。若将环面上的函数看作 $\mathbb R^n$ 上的周期函数，则积分应在单位立方体 $Q$ 上进行，而不是在整个 $\mathbb R^n$ 上：
+\begin{align*}
+f*g(x)=\int_Q f(x-y)g(y)\,\mathrm dy.
+\end{align*}
+\end{definition}
+前面的卷积结论及证明在环面上仍适用。
+% SUPPLEMENT: id=v14-ch08-torus-convolution-details; parent=ch08-torus-convolution; kind=omitted-proof+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{周期积分与适用范围（重构新增）。}先验证证明所需的平移不变性。对周期非负函数或可积函数 $H$，将 $Q+a$ 分成有限多个互不相交的块 $(Q+a)\cap(Q+k)$，其中 $k\in\mathbb Z^n$；只有有限多个块非空，因为 $Q+a$ 有界。将每块平移 $-k$ 后，这些块恰分割 $Q$，而 $H(u+k)=H(u)$。因此
+\begin{align*}
+\int_Q H(x+a)\,\mathrm dx=\int_{Q+a}H(x)\,\mathrm dx=\int_QH(x)\,\mathrm dx.
+\end{align*}
+反射把 $Q$ 变成 $-Q$，两者只在零测边界上不同，故积分对反射也不变。由此换元、Hölder、Minkowski、Fubini 及平移等距性的各步均可在环面上进行。有限 $p$ 的平移连续性也成立：连续函数在紧环面上一致连续，在 $L^p$ 中稠密，再用三项误差估计。这里密度也可由 $Q$ 的 Lebesgue 正则性，或其推送的有限 Radon 测度得到；后者的内正则性来自 $Q$ 中紧集内逼近，其像紧，再由有限测度取补得外正则。
+
+卷积随 $x$ 增加整数向量不变，故定义于陪集上。支撑相加要在环面群中理解。$C^k$ 指具有 $C^k$ 周期提升的函数，紧性使每阶连续导数自动有界，因此光滑性证明保持不变。$C_0(\mathbb T^n)=C(\mathbb T^n)$，无穷远消失条件在紧空间上没有额外限制。
+
+原文“前面的结论仍成立”在快速衰减空间的语境中要作相应解释：$\mathcal S(\mathbb R^n)$ 的无穷远衰减定义不直接搬到环面；非零周期函数沿整数平移保持同一非零值，因而不可能属于 $\mathcal S(\mathbb R^n)$。环面上与此处光滑卷积闭包相应的空间是 $C^\infty(\mathbb T^n)$，闭包性质由上一光滑性命题逐阶得到。动机是保留群的平移结构，同时将积分总量限制在一个基本周期内。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch08-torus-convolution-details
+% SOURCE p=257; printed=242; object=ch08-dilation-definition; number=8.13; region=middle-lower
+下面的定理支撑着 $\mathbb R^n$ 上卷积的许多重要应用。先引入以后经常使用的记号。
+\begin{definition}[保持积分的伸缩]\label{definition:ch08-dilation}
+若 $\phi$ 为 $\mathbb R^n$ 上的函数、$t>0$，置
+\begin{align}\label{eq:ch08-dilation}
+\phi_t(x)=t^{-n}\phi(t^{-1}x).
+\end{align}
+\end{definition}
+若 $\phi\in L^1$，由\cref{theorem:ch02-linear-change}，$\int\phi_t$ 与 $t$ 无关：
+\begin{align*}
+\int\phi_t=\int\phi(t^{-1}x)t^{-n}\,\mathrm dx
+=\int\phi(y)\,\mathrm dy=\int\phi.
+\end{align*}
+而且当 $t\to0$ 时，$\phi_t$ 的“质量”集中到原点附近；若这一点不清楚，可以画图理解。
+% SUPPLEMENT: id=v14-ch08-dilation-details; parent=ch08-dilation-definition; kind=omitted-proof+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{质量集中的严格含义（重构新增）。}同样换元给 $\|\phi_t\|_1=\|\phi\|_1$。对任意固定 $\delta>0$，
+\begin{align*}
+\int_{|x|\geqslant\delta}|\phi_t(x)|\,\mathrm dx
+=\int_{|y|\geqslant\delta/t}|\phi(y)|\,\mathrm dy\longrightarrow0
+\qquad(t\downarrow0),
+\end{align*}
+因为 $L^1$ 函数的尾积分趋零。这就是质量集中的确切表述，对实值或复值 $\phi$ 都用绝对值控制，不能把可能相互抵消的有符号积分当作质量。$t^{-n}$ 恰抵消 $n$ 维体积在伸缩中的 $t^n$ 因子，$t>0$ 避免零尺度并固定伸缩方向；$L^1$ 给总绝对质量有限及尾部消失。若 $\phi$ 支撑在闭单位球，$\phi_t$ 支撑在半径 $t$ 的闭球，空间宽度缩为 $t$ 而高度乘以 $t^{-n}$，但总积分不变；一般可积函数由上式给同样的尾部集中。这一构造的动机是形成越来越局部的平均核。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch08-dilation-details
+\subfile{section-02-approximation.tex}
+\end{document}

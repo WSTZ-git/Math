@@ -1,0 +1,156 @@
+\documentclass[../../main.tex]{subfiles}
+\begin{document}
+\section{非线性一阶偏微分方程}\label{section:ch22-nonlinear-pdes}
+
+在第 9 章中，我们讨论了一阶偏微分方程，并展示了如何利用流的理论在线性和拟线性情形下求解它们。本节中，我们展示如何利用辛几何与接触几何来求解完全非线性的一阶方程（即不是拟线性的方程）。
+
+我们从一个略特殊的情形开始。一个只涉及未知函数的一阶导数、而不涉及函数本身取值的一阶偏微分方程，称为\emph{Hamilton--Jacobi 方程}。这类关于未知函数 $u(x^1,\dots,x^n)$ 的方程可写成形式
+\begin{align}
+F\big(x^1,\dots,x^n,\tfrac{\partial u}{\partial x^1}(x),\dots,\tfrac{\partial u}{\partial x^n}(x)\big)=0,
+\end{align}
+其中 $F$ 是定义在 $\mathbb{R}^{2n}$ 某个开子集上的光滑函数。（关于 Hamilton--Jacobi 方程的术语并无统一约定。有些作者把 Hamilton--Jacobi 方程这一术语留给形如
+\begin{align}
+\frac{\partial u}{\partial x^1}+H\big(x^1,\dots,x^n,\tfrac{\partial u}{\partial x^2}(x),\dots,\tfrac{\partial u}{\partial x^n}(x)\big)=0
+\end{align}
+的特殊方程。隐函数定理表明，一般形式(22.21)的方程可局部改写为这一特殊形式，当且仅当 $F$ 关于其第 $(n+1)$ 个变量的偏导数非零。另一方面，另一些作者用\emph{eikonal 方程}一词指称任何形如(22.21)的方程。我们把该术语留给它最初所应用的另一个特殊情形；见习题 22-24。）
+
+更一般地，若 $M$ 是光滑流形，$M$ 上的一个 Hamilton--Jacobi 方程由一个定义在开子集 $W\subset T^*M$ 上的光滑实值函数 $F$ 给出；方程的解是定义在开子集 $U\subset M$ 上的光滑实值函数 $u$，使 $\mathrm{d}u$ 的像落在 $F$ 的零集中：
+\begin{align}
+F(x,\mathrm{d}u(x))=0\qquad\text{对所有 }x\in U.
+\end{align}
+（我们把余向量 $\mathrm{d}u_x\in T^*_xM$ 写成 $(x,\mathrm{d}u(x))$，以便与方程的坐标表示(22.21)更一致。）我们感兴趣的是求解(22.23)的一个 Cauchy 问题：给定嵌入超曲面 $S\subset M$ 和光滑函数 $\varphi:S\to\mathbb R$，我们希望找到一个定义在 $M$ 中 $S$ 的某个邻域上的光滑函数 $u$，满足(22.23)连同初始条件
+\begin{align}
+u|_S=\varphi.
+\end{align}
+正如第 9 章一样，为得到解，我们需要假设问题是一类称为\emph{非特征的}类型；我们将在下面说明这是什么意思。
+
+由于方程(22.23)只涉及 $\mathrm{d}u$，而不涉及 $u$ 本身，我们先寻找满足 $F(x,\beta(x))\equiv0$ 的闭 $1$-形式 $\beta$；然后 Poincar\'e 引理保证局部上 $\beta=\mathrm{d}u$ 对某个函数 $u$ 成立，而该函数于是满足(22.23)。由\cref{proposition:ch22-closed-1form-lagrangian}，只需构造 $T^*M$ 的一个 Lagrang 子流形，它既是某个 $1$-形式的像，又包含在 $F^{-1}(0)$ 中。寻找这样一个子流形的关键是 Hamilton 流出定理（\cref{theorem:ch22-hamiltonian-flowout}）：在识别出一个适当的迷向嵌入初始子流形 $\Sigma\subset T^*M$ 之后，我们将把 $\beta$ 的像构造为从 $\Sigma$ 沿 $F$ 的 Hamilton 场的流出。
+
+第一个挑战是构造一个适当的初始子流形 $\Sigma\subset T^*M$。$\mathrm{d}\varphi$ 的像不行，因为它位于 $T^*S$ 而非 $T^*M$ 中（并且没有典范方式把 $T^*S$ 识别为 $T^*M$ 的子集）。因此，我们必须先寻找限制丛 $T^*M|_S$ 的一个适当截面，即一个光滑映射 $\beta:S\to T^*M$，使对每个 $x\in S$ 都有 $\beta(x)\in T^*_xM$。这将是我们最终解 $u$ 沿 $S$ 的 $\mathrm{d}u$ 值。因此，我们应预期它在限制到切于 $S$ 的向量时与 $\mathrm{d}\varphi$ 一致，并且在 $S$ 的点处满足 PDE。总之，我们要求 $\beta$ 满足下列条件：
+\begin{align}
+\beta(x)|_{T_xS}=\mathrm{d}\varphi(x)\qquad\text{对所有 }x\in S,
+\end{align}
+\begin{align}
+F(x,\beta(x))=0\qquad\text{对所有 }x\in S.
+\end{align}
+为找到这样一个 $\beta$（至少局部地），先在 $S$ 的一个邻域中把 $\varphi$ 延拓为光滑函数 $\widetilde\varphi$，并为 $S$ 选取一个光滑局部定义函数 $\psi$。由于 $\beta$ 在限制到 $TS$ 时必须与 $\mathrm{d}\varphi$ 一致，而每一点处 $TS$ 的零化子由 $\mathrm{d}\psi$ 张成，$\beta$ 的唯一可能形式就是形如 $\beta=\mathrm{d}\widetilde\varphi+f\,\mathrm{d}\psi$ 的截面，其中 $f$ 是某个定义在 $S$ 邻域上的未知实值函数。然后你可以把它代入方程 $F(x,\beta(x))=0$，并尝试求解 $f$ 沿 $S$ 的值。
+
+Cauchy 问题(22.23)--(22.24)称为\emph{非特征的}，如果存在一个光滑截面 $\beta\in\Gamma(T^*M|_S)$ 满足(22.25)--(22.26)，并具有如下附加性质：若 $(x^i)$ 是 $M$ 上任意局部坐标，$(x^1,\dots,x^n,\xi_1,\dots,\xi_n)$ 是 $T^*M$ 上相应的自然坐标，则沿 $S$ 的下列向量场处处不切于 $S$：
+\begin{align}
+A_\beta|_x=\frac{\partial F}{\partial\xi_1}(x,\beta(s))\frac{\partial}{\partial x^1}+\cdots+\frac{\partial F}{\partial\xi_n}(x,\beta(s))\frac{\partial}{\partial x^n}.
+\end{align}
+（正如我们在下一个定理的证明中将看到的，$A_\beta$ 实际上整体定义为沿 $S$ 的向量场，并不依赖于坐标的选取。）当这个条件满足时，我们就能求解 Cauchy 问题。
+
+\begin{theorem}[Hamilton--Jacobi 方程的 Cauchy 问题]\label{theorem:ch22-hamilton-jacobi-cauchy}
+设 $M$ 是光滑流形，$W\subset T^*M$ 是开子集，$F:W\to\mathbb R$ 是光滑函数，$S\subset M$ 是嵌入超曲面，$\varphi:S\to\mathbb R$ 是光滑函数。若 Cauchy 问题(22.23)--(22.24)是非特征的，则对每个 $p\in S$，在 $M$ 中 $p$ 的某个邻域上存在光滑解。
+\end{theorem}
+
+\begin{proof}
+给定满足(22.25)--(22.26)的 $\beta:S\to T^*M|_S$，令 $\Sigma\subset W$ 为 $\beta$ 的像。则 $\Sigma$ 是维数为 $n-1$ 的嵌入子流形，其中 $n=\dim M$。为应用 Hamilton 流出定理，我们需先检查 $\Sigma$ 关于 $T^*M$ 上典范辛结构 $\omega$ 是迷向的。由于 $\beta:S\to T^*M$ 是像为 $\Sigma$ 的光滑嵌入，这等价于证明 $\beta^*\omega=0$。设 $\pi:T^*M\to M$ 为投影；则 $\pi\circ\beta$ 等于包含 $\iota:S\hookrightarrow M$。若 $\sigma$ 表示 $T^*M$ 上的重言 $1$-形式，$\sigma$ 的定义方程(22.3)蕴含
+\begin{align*}
+(\beta^*\sigma)(p)=\mathrm{d}\beta_p^*\big(\mathrm{d}\pi^*_{\beta(p)}\beta(p)\big)
+=\mathrm{d}(\pi\circ\beta)_p^*\beta(p)=\mathrm{d}\iota_p^*\beta(p)=\mathrm{d}\varphi(p).
+\end{align*}
+于是 $\beta^*\sigma=\mathrm{d}\varphi$，从而 $\beta^*\omega=\beta^*(-\mathrm{d}\sigma)=-\mathrm{d}(\beta^*\sigma)=-\mathrm{d}(\mathrm{d}\varphi)=0$。故 $\Sigma$ 是迷向的。
+
+接下来我们需检查 Hamilton 向量场 $X_F$ 处处不切于 $\Sigma$。这由非特征条件得到，正如定理 9.53 的证明中一样：由于 $\pi:T^*M\to M$ 限制为从 $\Sigma$ 到 $S$ 的微分同胚，若 $X_F$ 在某点 $(p,\beta(p))\in\Sigma$ 处切于 $\Sigma$，则 $\mathrm{d}\pi(X_F|_{(p,\beta(p))})$ 将在 $p$ 处切于 $S$。用 $T^*M$ 上自然坐标 $(x^i,\xi_i)$（它们是典范辛形式的 Darboux 坐标）中的公式(22.9)，我们得到
+\begin{align*}
+X_F=\frac{\partial F}{\partial\xi_1}\frac{\partial}{\partial x^1}+\cdots+\frac{\partial F}{\partial\xi_n}\frac{\partial}{\partial x^n}
+-\frac{\partial F}{\partial x^1}\frac{\partial}{\partial\xi_1}-\cdots-\frac{\partial F}{\partial x^n}\frac{\partial}{\partial\xi_n}.
+\end{align*}
+因此 $\mathrm{d}\pi(X_F|_{(p,\beta(p))})=A_\beta|_p$，故 Cauchy 问题非特征这一假设保证 $X_F$ 处处不切于 $\Sigma$。（这个计算还表明 $A_\beta$ 与坐标无关地良定义，因为它是 $X_F$ 从 $\Sigma$ 的点处的前推。）
+
+设 $\Gamma$ 为从 $\Sigma$ 沿 $X_F$ 的流出。Hamilton 流出定理保证 $\Gamma$ 是 $T^*M$ 的一个 $n$ 维迷向——因而是 Lagrang——子流形，包含在 $F^{-1}(0)$ 中。利用习题 22-11 的结果，我们断定：只要它在 $(p,\beta(p))$ 处横截于 $\pi$ 的纤维，它在 $p$ 的某个邻域上就是某个闭 $1$-形式的像。再一次，我们用如下事实：$T_{(p,\beta(p))}\Gamma$ 由 $T_{(p,\beta(p))}\Sigma$ 和 $X_F|_{(p,\beta(p))}$ 张成。由于 $\mathrm{d}\pi$ 把 $X_F|_{(p,\beta(p))}$ 映到 $A_\beta|_p$、并把 $T_{(p,\beta(p))}\Sigma$ 同构地映到 $T_pS$，非特征假设保证 $T_{(p,\beta(p))}T^*M=T_{(p,\beta(p))}\Gamma\oplus\ker\mathrm{d}\pi_{(p,\beta(p))}$，故 $\Gamma$ 在 $(p,\beta(p))$ 处横截相交于纤维。由习题 22-11，存在定义在 $p$ 的邻域 $U$ 上的闭 $1$-形式 $\alpha$，其图像是 $\Gamma$ 的一个开子集。由于 $\beta$ 的像包含在 $\Gamma$ 中，由此可知
+\begin{align}
+\alpha(x)=\beta(x)\qquad\text{对 }x\in S\cap U.
+\end{align}
+由 Poincar\'e 引理，必要时进一步收缩 $U$，我们可找到光滑函数 $u:U\to\mathbb R$ 使 $\mathrm{d}u=\alpha$。由于 $\Gamma\subset F^{-1}(0)$，我们断定 $u$ 满足(22.23)。为保证初始条件也满足，进一步收缩 $U$ 使 $S\cap U$ 连通。通过给 $u$ 加一个常数，可安排 $u(p)=\varphi(p)$。于是对任意 $x\in S$，由(22.25)和(22.28)得
+\begin{align*}
+\mathrm{d}u(x)|_{T_xS}=\alpha(x)|_{T_xS}=\beta(x)|_{T_xS}=\mathrm{d}\varphi(x).
+\end{align*}
+由于 $S\cap U$ 连通，这意味着 $u-\varphi$ 在 $S\cap U$ 上为常数。由于这个差在 $p$ 处为零，它恒为零，故(22.24)在 $S\cap U$ 上满足。
+\end{proof}
+
+注意我们在这个定理中并未主张任何唯一性。在完全非线性方程的 Cauchy 问题中，即使局部唯一性也可能失效。例如，考虑平面上的下列 Cauchy 问题：
+\begin{align*}
+\big(\tfrac{\partial u}{\partial x}\big)^2=1,\qquad u(0,y)=0.
+\end{align*}
+这是非特征的，你可以自行验证。$u(x,y)=x$ 和 $u(x,y)=-x$ 都是这个问题的解，但它们在任何开子集上都不相等。问题在于初始 $1$-形式 $\beta$ 有两种可能选择（即 $\beta=\mathrm{d}x$ 和 $\beta=-\mathrm{d}x$），它们给出不同的初始子流形 $\Sigma$，因而给出 Cauchy 问题的不同解。正如习题 22-25 所表明的，一旦选定 $\beta$，局部唯一性就像拟线性情形一样成立。
+
+\begin{example}[一个 Hamilton--Jacobi 方程]\label{example:ch22-hj-example}
+考虑平面上的下列 Cauchy 问题：
+\begin{align*}
+\frac{\partial u}{\partial x}-\big(\tfrac{\partial u}{\partial y}\big)^2=0,\qquad u(0,y)=y^2.
+\end{align*}
+相应的 $T^*\mathbb{R}^2$ 上的函数是 $F(x,y,\xi,\eta)=\xi-\eta^2$，其中我们用 $(x,y,\xi,\eta)$ 表示与 $(x,y)$ 相伴的 $T^*\mathbb{R}^2$ 上的自然坐标。
+
+为检查问题是否非特征，我们需要沿初始流形 $S=\{(x,y):x=0\}$ 寻找适当的 $1$-形式 $\beta$。由于 $x$ 是 $S$ 的定义函数，我们可写 $\beta=\mathrm{d}(y^2)+f(y)\,\mathrm{d}x=2y\,\mathrm{d}y+f(y)\,\mathrm{d}x$，并解方程 $F(0,y,f(y),2y)=f(y)-(2y)^2=0$ 得 $f(y)=4y^2$，从而可令 $\beta(y)=2y\,\mathrm{d}y+4y^2\,\mathrm{d}x$。向量场 $A_\beta$ 由
+\begin{align*}
+A_\beta|_{(x,y)}=\frac{\partial}{\partial x}-4y\frac{\partial}{\partial y}
+\end{align*}
+给出，它处处不切于 $S$。
+
+初始曲线 $S$ 可参数化为 $X(s)=(0,s)$，因此初始曲线 $\Sigma\subset T^*\mathbb{R}^2$（$\beta$ 的像）可参数化为 $\widetilde X(s)=(0,s,4s^2,2s)$。$F$ 的 Hamilton 场为
+\begin{align*}
+X_F|_{(x,y,\xi,\eta)}=\frac{\partial}{\partial x}-2\eta\frac{\partial}{\partial y},
+\end{align*}
+而求解相应常微分方程组并带初始条件 $(x,y,\xi,\eta)=(0,s,4s^2,2s)$ 是一件易事，得到 $\Gamma$ 的下列参数化：
+\begin{align*}
+\Psi(t,s)=(t,s-4st,4s^2,2s).
+\end{align*}
+从 $(x,y)=(t,s-4st)$ 解出 $(t,s)$ 并代入 $(\xi,\eta)$ 的公式，我们发现 $\Gamma$ 是下列 $1$-形式的像：
+\begin{align*}
+\alpha=\frac{4y^2}{(1-4x)^2}\,\mathrm{d}x+\frac{2y}{1-4x}\,\mathrm{d}y.
+\end{align*}
+这确实是一个闭 $1$-形式，用第 11 章末勾勒的步骤，我们发现在集合 $\{(x,y):x<1/4\}$ 上 $\alpha=\mathrm{d}u$，其中
+\begin{align*}
+u(x,y)=\frac{y^2}{1-4x}.
+\end{align*}
+原则上，我们可能需要给 $u$ 加一个常数来满足初始条件，但在此情形中 $u(0,y)=y^2$ 已经成立，故这就是我们 Cauchy 问题的解。
+\end{example}
+
+\subsection*{一般非线性方程}
+
+最后，我们展示如何把前面的方法改造为用接触几何代替辛几何来求解任意一阶 PDE。为此，我们引入最后一个几何构造。若 $M$ 是光滑流形，$M$ 的\emph{$1$-jet 丛}是光滑向量丛 $J^1M=\mathbb R\times T^*M\to M$，它在 $x\in M$ 处的纤维是 $\mathbb R\times T^*_xM$。（它是平凡 $\mathbb R$-丛与 $T^*M$ 的 Whitney 和。）若 $u:M\to\mathbb R$ 是光滑函数，$u$ 的 $1$-jet 是截面 $j^1u:M\to J^1M$，定义为 $j^1u(x)=(u(x),\mathrm{d}u(x))$。$J^1M$ 在 $x\in M$ 上的纤维中的一点，可看作 $M$ 上光滑函数在 $x$ 处的一阶 Taylor 多项式，以不变方式表示为该函数及其微分在 $x$ 处的值。（人们也可以定义更高阶的 jet 丛，给出高阶 Taylor 多项式的不变表示。它们对研究高阶 PDE 有用，但我们在此不展开。）
+
+$J^1M$ 上的\emph{典范接触形式}是\cref{example:ch22-contact-forms}(b)中定义的 $1$-形式 $\tau=\mathrm{d}z-\sigma$。光滑（局部或整体）截面 $\sigma:M\to J^1M$ 如果其像是 $J^1M$ 的 Legendrian 子流形（等价地，$\sigma^*\tau=0$），就称为\emph{Legendrian 的}。下一个命题是\cref{proposition:ch22-closed-1form-lagrangian}的接触类似物。
+
+\begin{proposition}\label{proposition:ch22-legendrian-jet}
+设 $M$ 是光滑流形。$J^1M$ 的一个光滑局部截面是某个光滑函数的 $1$-jet，当且仅当它是 Legendrian 的。
+\end{proposition}
+
+\begin{exercise}\label{exercise:ch22-38}
+证明前一个命题。
+\end{exercise}
+
+$1$-jet 丛提供了考虑一阶偏微分方程的最一般背景。若 $M$ 是光滑流形，关于函数 $u:M\to\mathbb R$ 的一阶 PDE 可看作 $M$ 的 $1$-jet 丛上的一个实值函数 $F$；解就是一个其 $1$-jet 取值于 $F$ 零集的函数。
+
+设 $M$ 是光滑流形，并给定某个开子集 $W\subset J^1M$ 上的函数 $F\in C^\infty(W)$、光滑超曲面 $S\subset M$ 和光滑函数 $\varphi:S\to\mathbb R$。我们希望求解关于 $u$ 的下列 Cauchy 问题：
+\begin{align}
+F(x,u(x),\mathrm{d}u(x))\equiv0,
+\end{align}
+\begin{align}
+u|_S=\varphi.
+\end{align}
+这个问题称为\emph{非特征的}，如果存在取值于 $W$ 的光滑截面 $\beta\in\Gamma(T^*M|_S)$ 满足
+\begin{align}
+\beta(x)|_{T_xS}=\mathrm{d}\varphi(x)\qquad\text{对所有 }x\in S,
+\end{align}
+\begin{align}
+F(x,\varphi(x),\beta(x))=0\qquad\text{对所有 }x\in S,
+\end{align}
+并且沿 $S$ 的下列向量场处处不切于 $S$：
+\begin{align}
+A_{\varphi,\beta}|_x=\frac{\partial F}{\partial\xi_1}(x,\varphi(x),\beta(x))\frac{\partial}{\partial x^1}+\cdots+\frac{\partial F}{\partial\xi_n}(x,\varphi(x),\beta(x))\frac{\partial}{\partial x^n}.
+\end{align}
+
+下一个定理的证明与\cref{theorem:ch22-hamilton-jacobi-cauchy}非常相似，但用接触流出定理代替 Hamilton 流出定理。
+
+\begin{theorem}[一般一阶 Cauchy 问题]\label{theorem:ch22-general-cauchy}
+设 $M$ 是光滑流形，$W\subset J^1M$ 是开子集，$F:W\to\mathbb R$ 是光滑函数，$S\subset M$ 是嵌入超曲面，$\varphi:S\to\mathbb R$ 是光滑函数。若 Cauchy 问题(22.29)--(22.30)是非特征的，则对每个 $p\in S$，在 $M$ 中 $p$ 的某个邻域上存在光滑解。
+\end{theorem}
+
+\begin{proof}
+习题 22-26。
+\end{proof}
+\end{document}

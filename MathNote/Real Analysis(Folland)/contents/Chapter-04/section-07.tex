@@ -1,0 +1,468 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+% SOURCE p=153,154; printed=138,139; object=ch04-stone-weierstrass-title; region=bottom-top
+\section{Stone--Weierstrass 定理}\label{section:ch04-stone-weierstrass}
+% SOURCE p=153,154; printed=138,139; object=ch04-stone-weierstrass-intro; region=bottom-top
+本节证明著名的 Weierstrass 定理的一个广泛推广。原定理断言：紧区间 $[a,b]$ 上任意连续函数都是该区间上多项式的一致极限。本节始终以 $X$ 表示紧 Hausdorff 空间，并给 $C(X)$ 赋予一致度量。
+% SOURCE p=154; printed=139; object=ch04-separating-algebra-lattice; region=upper
+\begin{definition}[分离点、代数与格]\label{definition:ch04-separating-algebra-lattice}
+若 $\mathcal A\subseteq C(X,\mathbb R)$ 或 $\mathcal A\subseteq C(X)$，且对每一对不同的点 $x,y\in X$，存在 $f\in\mathcal A$ 使 $f(x)\ne f(y)$，则称 $\mathcal A$ \textbf{分离点}。
+
+若 $\mathcal A$ 是 $C(X,\mathbb R)$ 的实向量子空间（或 $C(X)$ 的复向量子空间），且 $f,g\in\mathcal A$ 蕴含 $fg\in\mathcal A$，则称 $\mathcal A$ 是一个\textbf{代数}。
+
+若 $\mathcal A\subseteq C(X,\mathbb R)$，且 $f,g\in\mathcal A$ 蕴含 $\max(f,g),\min(f,g)\in\mathcal A$，则称 $\mathcal A$ 是一个\textbf{格}。
+\end{definition}
+% SOURCE p=154; printed=139; object=ch04-algebra-lattice-closure; region=upper
+\begin{proposition}\label{proposition:ch04-algebra-lattice-closure}
+若 $\mathcal A$ 是代数或格，则它在一致度量下的闭包 $\overline{\mathcal A}$ 仍分别为代数或格。
+\end{proposition}
+% SOURCE p=154; printed=139; object=ch04-proof-algebra-lattice-closure; region=upper
+\begin{proof}
+代数运算及格运算连续，由此容易得到结论。
+\end{proof}
+% SUPPLEMENT: id=v14-ch04-algebra-lattice-details; parent=ch04-algebra-lattice-closure; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{运算连续性的补写（重构新增）。}设 $f_n,g_n\in\mathcal A$ 一致趋于 $f,g$。对固定标量 $a,b$，
+\begin{align*}
+\|af_n+bg_n-(af+bg)\|_u
+&\le |a|\|f_n-f\|_u+|b|\|g_n-g\|_u\to0.
+\end{align*}
+而一致收敛使 $\|f_n\|_u$ 最终有界，故
+\begin{align*}
+\|f_ng_n-fg\|_u
+&\le\|f_n\|_u\|g_n-g\|_u+\|g\|_u\|f_n-f\|_u\to0.
+\end{align*}
+所以若 $\mathcal A$ 为代数，其闭包对线性组合与乘积均封闭，且包含零函数，仍为代数。
+
+对实数 $a,b,c,d$，令 $\eta=\max(|a-c|,|b-d|)$。由 $c-\eta\le a\le c+\eta$、$d-\eta\le b\le d+\eta$，取最大值得到
+\begin{align*}
+|\max(a,b)-\max(c,d)|\le\eta.
+\end{align*}
+取最小值也有同样估计。逐点应用再取上确界，便得 $\max(f_n,g_n)\to\max(f,g)$、$\min(f_n,g_n)\to\min(f,g)$ 一致成立。因此格的闭包仍为格。所有闭包点都可在度量空间中用这样的序列逼近；若格为空，闭包也为空，运算封闭条件真空成立。
+\end{proof}
+\begin{remark}
+\textbf{定义的动机与逐条件说明（重构新增）。}分离点表示这族函数能辨别任意两个不同的点；若所有函数在某对点上同值，其一致极限仍同值，便不可能逼近能分开这对点的连续函数。代数要求向量空间结构与乘法封闭，但本书不把包含常函数 $1$ 列入定义，这正是后面可能出现公共零点的原因。格运算按每一点取实数最大、最小值，依赖实数的次序；一般复数值函数没有对应的这一顺序结构。闭包必须针对指定的一致拓扑，因为上述运算极限的结论正使用一致误差控制。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-algebra-lattice-details
+% SOURCE p=154; printed=139; object=ch04-real-stone-weierstrass; number=4.45; region=upper-middle
+\begin{theorem}[Stone--Weierstrass 定理]\label{theorem:ch04-real-stone-weierstrass}
+设 $X$ 为紧 Hausdorff 空间。若 $\mathcal A$ 是 $C(X,\mathbb R)$ 中分离点的闭子代数，则或者 $\mathcal A=C(X,\mathbb R)$，或者对某个 $x_0\in X$，
+\begin{align*}
+\mathcal A=\{f\in C(X,\mathbb R):f(x_0)=0\}.
+\end{align*}
+第一种情形成立，当且仅当 $\mathcal A$ 包含常函数。
+\end{theorem}
+% SUPPLEMENT: id=v14-ch04-real-sw-motivation; parent=ch04-real-stone-weierstrass; kind=motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}代数结构允许把有限次线性组合、乘法得到的简单函数不断组合；分离点排除无法辨别不同位置的障碍；闭性把任意精度的逼近提升为真正属于代数。紧性将在证明中两次把逐点插值信息化成有限覆盖，Hausdorff 与紧性保证空间有足够的连续函数区分点。这里是实子代数，后面会说明复数情形需要额外的共轭封闭条件。
+
+若不要求含常数，代数可在一个点上全部为零；该约束在一致极限下仍保留，所以结论必须允许第二种情形。分离点又使公共零点最多一个。闭性不可直接删去并保留等号，例如 $[0,1]$ 上多项式代数分离点且含常数，但并非所有连续函数都是多项式；删去闭性后正确结论将是稠密性。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-real-sw-motivation
+% SOURCE p=154; printed=139; object=ch04-sw-lemmas-intro; region=middle
+证明需要几个引理。第一个实质上证明 $X$ 只有两个点时的定理；第二个是经典 Weierstrass 定理在 $X=[-1,1]$ 上的一个特例。在这两个引理之后，再回到一般情形。
+% SOURCE p=154; printed=139; object=ch04-two-coordinate-algebras; number=4.46; region=middle
+\begin{lemma}\label{lemma:ch04-two-coordinate-algebras}
+把 $\mathbb R^2$ 看作按坐标加法和乘法的代数。它的子代数只有 $\mathbb R^2$、$\{(0,0)\}$，以及分别由 $(1,0)$、$(0,1)$、$(1,1)$ 张成的三个线性子空间。
+\end{lemma}
+% SOURCE p=154; printed=139; object=ch04-proof-two-coordinate-algebras; region=middle
+\begin{proof}
+所列子空间显然都是子代数。若 $\mathcal A\subseteq\mathbb R^2$ 是非零代数，且 $(0,0)\ne(a,b)\in\mathcal A$，则 $(a^2,b^2)\in\mathcal A$。若 $a\ne0$、$b\ne0$ 且 $a\ne b$，则 $(a,b)$ 与 $(a^2,b^2)$ 线性无关，所以 $\mathcal A=\mathbb R^2$。其余可能——对所有非零 $(a,b)\in\mathcal A$ 有 $a\ne0=b$，或 $a=0\ne b$，或 $a=b\ne0$——给出另外三个子代数。
+\end{proof}
+% SUPPLEMENT: id=v14-ch04-two-coordinate-details; parent=ch04-two-coordinate-algebras; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{维数分类的补写（重构新增）。}实线性子空间的维数只有 $0,1,2$；维数为 $0$ 或 $2$ 时分别是零空间或全空间。若维数为 $1$，取非零生成元 $(a,b)$。乘法封闭意味着存在 $\lambda\in\mathbb R$ 使
+\begin{align*}
+(a^2,b^2)=\lambda(a,b).
+\end{align*}
+若两个坐标都非零，则 $a=\lambda=b$，故该直线由 $(1,1)$ 张成；若恰一个坐标非零，则为对应坐标轴。反过来，零空间、全空间、两坐标轴和对角线显然在线性组合及逐坐标乘法下封闭。这给出完整分类，也排除了把“不同非零元素落在不同候选直线”当成另一种可能的漏洞。
+\end{proof}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}考察函数在两个点上的取值对，就把插值问题变为这个二维代数分类。逐坐标乘法与函数乘法一致；只看向量子空间则有无穷多种直线，乘法封闭把它们压缩为三种特殊情形。对角线对应不能分离这两个点，坐标轴对应其中一点为公共零点。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-two-coordinate-details
+% SOURCE p=154; printed=139; object=ch04-absolute-polynomial; number=4.47; region=lower
+\begin{lemma}\label{lemma:ch04-absolute-polynomial}
+对任意 $\varepsilon>0$，存在 $\mathbb R$ 上的多项式 $P$，使 $P(0)=0$，且对 $x\in[-1,1]$ 有 $\bigl||x|-P(x)\bigr|<\varepsilon$。
+\end{lemma}
+% SOURCE p=154,155; printed=139,140; object=ch04-proof-absolute-polynomial; region=lower-top
+\begin{proof}
+考虑 $(1-t)^{1/2}$ 的 Maclaurin 级数：
+\begin{align*}
+(1-t)^{1/2}
+&=1+\sum_{n=1}^{\infty}\left(-\frac12\right)\left(\frac12\right)\cdots\left(\frac{2n-3}{2}\right)\frac{t^n}{n!}\\
+&=1-\sum_{n=1}^{\infty}c_nt^n\qquad(c_n>0).
+\end{align*}
+由比值判别法，该级数在 $|t|<1$ 时收敛；其和确为 $(1-t)^{1/2}$ 的证明在\cref{exercise:ch04-square-root-series}中给出提纲。此外，把单调收敛定理用于 $\mathbb N$ 上的计数测度，得到
+\begin{align*}
+\sum_{n=1}^{\infty}c_n
+=\lim_{t\uparrow1}\sum_{n=1}^{\infty}c_nt^n
+=1-\lim_{t\uparrow1}(1-t)^{1/2}=1.
+\end{align*}
+由 $\sum c_n$ 有限，级数 $1-\sum c_nt^n$ 在 $[-1,1]$ 上绝对且一致收敛，其和在这里仍为 $(1-t)^{1/2}$。所以给定 $\varepsilon>0$，取适当部分和便得多项式 $Q$，使 $|(1-t)^{1/2}-Q(t)|<\varepsilon/2$ 对 $t\in[-1,1]$ 成立。令 $t=1-x^2$、$R(x)=Q(1-x^2)$，得到多项式 $R$，使 $\bigl||x|-R(x)\bigr|<\varepsilon/2$ 对 $x\in[-1,1]$ 成立。特别地，$|R(0)|<\varepsilon/2$，所以令 $P(x)=R(x)-R(0)$，便有 $P(0)=0$ 及所需误差估计。
+\end{proof}
+% SUPPLEMENT: id=v14-ch04-absolute-polynomial-details; parent=ch04-absolute-polynomial; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{级数恒等式与端点控制的补写（重构新增）。}为不把关键恒等式留作未证依赖，这里给出其论证，习题处再逐问展开。系数可明确写为
+\begin{align*}
+c_1=\frac12,\qquad
+c_n=\frac{1\cdot3\cdots(2n-3)}{2^n n!}\ (n\ge2),\qquad
+\frac{c_{n+1}}{c_n}=\frac{2n-1}{2n+2}.
+\end{align*}
+对任意 $0<r<1$，$\sum c_nr^n$ 与 $\sum nc_nr^{n-1}$ 都由比值判别收敛，因此函数级数和导数级数在 $[-r,r]$ 上一致绝对收敛。逐项微分可用有限部分和的积分恒等式证明：导数部分和一致收敛于某连续函数 $G$，故对每个 $t\in[-r,r]$，部分和恒等式 $S_N(t)=1+\int_0^tS_N'(s)\,ds$ 取极限后得到 $S(t)=1+\int_0^tG(s)\,ds$，因而 $S'=G$。
+
+令 $S(t)=1-\sum_{n\ge1}c_nt^n$。上面的系数递推给出
+\begin{align*}
+-2(1-t)S'(t)
+&=2c_1+\sum_{n=1}^{\infty}\bigl(2(n+1)c_{n+1}-2nc_n\bigr)t^n\\
+&=1-\sum_{n=1}^{\infty}c_nt^n=S(t).
+\end{align*}
+于是 $\bigl((1-t)^{-1/2}S(t)\bigr)'=0$ 于 $(-1,1)$，而 $S(0)=1$，故 $S(t)=\sqrt{1-t}$。取递增 $t_k\uparrow1$ 且 $0\le t_k<1$，非负函数 $n\mapsto c_nt_k^n$ 逐点递增至 $c_n$，单调收敛遂严格给出 $\sum c_n=1$。
+
+对 $|t|\le1$，每个尾项和的绝对值至多 $\sum_{n>N}c_n\to0$，故闭区间上一致绝对收敛。其和连续，与 $\sqrt{1-t}$ 在开区间相等，通过两端的连续性也在端点相等。取尾和小于 $\varepsilon/2$，便得到原证明中统一的 $Q$ 误差界。若 $|x|\le1$，则 $1-x^2\in[0,1]$ 且 $\sqrt{x^2}=|x|$，所以代换有效。最后
+\begin{align*}
+\bigl||x|-P(x)\bigr|
+\le\bigl||x|-R(x)\bigr|+|R(0)|<\varepsilon.
+\end{align*}
+而减去 $R(0)$ 正好消掉常数项。
+\end{proof}
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}逼近绝对值是为了由乘法代数得到最大、最小值运算。条件 $P(0)=0$ 确保 $P$ 没有常数项，因此即使代数不含函数 $1$，把代数中的函数代入 $P$ 后仍留在代数内。紧区间及可求和的系数尾部提供统一误差；只在每个内部点逐点收敛还不足以取得所需一致逼近。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-absolute-polynomial-details
+% SOURCE p=155; printed=140; object=ch04-closed-algebra-lattice; number=4.48; region=upper
+\begin{lemma}\label{lemma:ch04-closed-algebra-lattice}
+若 $\mathcal A$ 是 $C(X,\mathbb R)$ 的闭子代数，则 $f\in\mathcal A$ 蕴含 $|f|\in\mathcal A$，并且 $\mathcal A$ 是格。
+\end{lemma}
+% SOURCE p=155; printed=140; object=ch04-proof-closed-algebra-lattice; region=upper-middle
+\begin{proof}
+若 $f\in\mathcal A$ 且 $f\ne0$，令 $h=f/\|f\|_u$。则 $h$ 把 $X$ 映入 $[-1,1]$。若 $\varepsilon>0$，取上一引理中的 $P$，有 $\||h|-P\circ h\|_u<\varepsilon$。因 $P(0)=0$，$P$ 无常数项，又因 $\mathcal A$ 为代数，$P\circ h\in\mathcal A$。由闭性及 $\varepsilon$ 的任意性，$|h|\in\mathcal A$，从而 $|f|=\|f\|_u|h|\in\mathcal A$。第一条已证，第二条来自
+\begin{align*}
+\max(f,g)&=\tfrac12(f+g+|f-g|),\\
+\min(f,g)&=\tfrac12(f+g-|f-g|).
+\end{align*}
+\end{proof}
+% SUPPLEMENT: id=v14-ch04-closed-algebra-lattice-details; parent=ch04-closed-algebra-lattice; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{补证、动机与条件说明（重构新增）。}若 $f=0$，结论直接成立。否则紧性使 $\|f\|_u$ 有限且正，故归一化合法。把多项式写成 $P(t)=\sum_{j=1}^Na_jt^j$，线性及乘法封闭逐项保证 $P\circ h\in\mathcal A$，不需要常数函数。为直接保证范数误差严格小于任意给定 $\varepsilon$，可在上一引理中先用参数 $\varepsilon/2$，然后取上确界得误差至多 $\varepsilon/2$。对趋零误差选列再用闭性，便得到 $|h|$ 属于代数。两个最大、最小公式分别在 $f(x)\ge g(x)$ 和 $f(x)\le g(x)$ 时直接成立，故逐点成立。闭性负责接纳逼近极限，实值性负责这些次序公式，紧性负责归一化；三者在这里作用不同。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-closed-algebra-lattice-details
+% SOURCE p=155; printed=140; object=ch04-two-point-lattice-approximation; number=4.49; region=middle
+\begin{lemma}\label{lemma:ch04-two-point-lattice-approximation}
+设 $\mathcal A$ 为 $C(X,\mathbb R)$ 中的闭格，$f\in C(X,\mathbb R)$。若对每个 $x,y\in X$ 都存在 $g_{xy}\in\mathcal A$，使 $g_{xy}(x)=f(x)$、$g_{xy}(y)=f(y)$，则 $f\in\mathcal A$。
+\end{lemma}
+% SOURCE p=155; printed=140; object=ch04-proof-two-point-lattice-approximation; region=middle
+\begin{proof}
+给定 $\varepsilon>0$，对每个 $x,y\in X$ 令
+\begin{align*}
+U_{xy}&=\{z\in X:f(z)<g_{xy}(z)+\varepsilon\},\\
+V_{xy}&=\{z\in X:f(z)>g_{xy}(z)-\varepsilon\}.
+\end{align*}
+它们都是包含 $x,y$ 的开集。固定 $y$，则 $\{U_{xy}:x\in X\}$ 覆盖 $X$，故有有限子覆盖 $\{U_{x_jy}\}_{j=1}^n$。令 $g_y=\max(g_{x_1y},\ldots,g_{x_ny})$，则在 $X$ 上有 $f<g_y+\varepsilon$，且在含 $y$ 的开集 $V_y=\bigcap_{j=1}^nV_{x_jy}$ 上有 $f>g_y-\varepsilon$。因此 $\{V_y\}_{y\in X}$ 又是 $X$ 的开覆盖，可取有限子覆盖 $\{V_{y_j}\}_{j=1}^m$。令 $g=\min(g_{y_1},\ldots,g_{y_m})$，则 $\|f-g\|_u<\varepsilon$。因为 $\mathcal A$ 为格，$g\in\mathcal A$；由闭性及 $\varepsilon$ 的任意性，得到 $f\in\mathcal A$。
+\end{proof}
+% SUPPLEMENT: id=v14-ch04-two-point-lattice-details; parent=ch04-two-point-lattice-approximation; kind=proof-detail+motivation+hypotheses+convention; origin=independent-derivation
+\begin{proof}
+\textbf{两次有限化的补写（重构新增）。}先设 $X$ 非空。连续性使 $f-g_{xy}$ 连续，故两个严格不等式给出的集合开；两点处误差为零，所以均包含 $x,y$。第一次有限覆盖之后，每个 $z\in X$ 至少在一个 $U_{x_jy}$ 中，因而 $g_y(z)\ge g_{x_jy}(z)>f(z)-\varepsilon$。若 $z\in V_y$，则对所有 $j$ 都有 $g_{x_jy}(z)<f(z)+\varepsilon$，取有限最大值仍严格小于该上界。有限次最大运算可由二元格运算归纳得到，故 $g_y\in\mathcal A$。
+
+第二次有限覆盖后，全部 $g_{y_j}>f-\varepsilon$，所以其有限最小值 $g>f-\varepsilon$；对每个 $z$，选 $z\in V_{y_j}$，则 $g(z)\le g_{y_j}(z)<f(z)+\varepsilon$。这给出逐点误差小于 $\varepsilon$。若要直接从取上确界得到严格范数误差，可从头以 $\varepsilon/2$ 作参数，得到 $\|f-g\|_u\le\varepsilon/2<\varepsilon$。同样由有限次最小运算 $g\in\mathcal A$。令误差趋零，闭性给出 $f\in\mathcal A$。
+\end{proof}
+\begin{remark}
+\textbf{动机、条件与空空间约定（重构新增）。}两点插值先给局部的双侧控制，第一轮取最大值把一个方向推广到全空间，第二轮取最小值再统一另一个方向。紧性保证每次仅需有限个函数，因而只用二元格运算；闭性负责最后极限，连续性负责严格误差集合开。这里包括 $x=y$ 的插值要求，不能无条件只检查不同点。
+
+原文的格定义只列运算封闭，没有明说非空。若允许 $X=\varnothing$ 且 $\mathcal A=\varnothing$，本引理的假设真空成立，但唯一的空函数 $f$ 不在 $\mathcal A$，形成退化例外。保留原陈述的同时，应明确补用“$X$ 非空或 $\mathcal A$ 非空”的约定；若 $X$ 为空而 $\mathcal A$ 非空，$C(X,\mathbb R)$ 只有一个元素，结论立即成立。后续用于子代数时，零函数始终在其中，所以不会出现这个例外。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-two-point-lattice-details
+% SOURCE p=155; printed=140; object=ch04-proof-real-stone-weierstrass; region=lower
+\begin{proof}
+\textbf{\cref{theorem:ch04-real-stone-weierstrass}的证明。}给定不同的 $x,y\in X$，令 $\mathcal A_{xy}=\{(f(x),f(y)):f\in\mathcal A\}$。因 $f\mapsto(f(x),f(y))$ 是代数同态，$\mathcal A_{xy}$ 是\cref{lemma:ch04-two-coordinate-algebras}中的 $\mathbb R^2$ 子代数。若对所有 $x,y$ 都有 $\mathcal A_{xy}=\mathbb R^2$，则由\cref{lemma:ch04-closed-algebra-lattice,lemma:ch04-two-point-lattice-approximation}，$\mathcal A=C(X,\mathbb R)$。否则某对 $x,y$ 的 $\mathcal A_{xy}$ 是真子代数。因为 $\mathcal A$ 分离点，它不能是 $\{(0,0)\}$ 或 $(1,1)$ 的线性张成；故只能是 $(1,0)$ 或 $(0,1)$ 的线性张成。两种情形都给出某个 $x_0\in X$，使全部 $f\in\mathcal A$ 在 $x_0$ 取零。
+
+因 $\mathcal A$ 分离点，这样的 $x_0$ 仅有一个，所以若 $x,y$ 均非 $x_0$，则 $\mathcal A_{xy}=\mathbb R^2$。上述两个引理于是给出 $\mathcal A=\{f\in C(X,\mathbb R):f(x_0)=0\}$。最后，若 $\mathcal A$ 包含常函数，就不存在使全部 $f\in\mathcal A$ 都为零的 $x_0$，所以必须 $\mathcal A=C(X,\mathbb R)$。
+\end{proof}
+% SUPPLEMENT: id=v14-ch04-real-sw-proof-details; parent=ch04-real-stone-weierstrass; kind=proof-detail+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{单点、对角插值与公共零点的补写（重构新增）。}若 $X$ 为空，连续函数空间只含零函数，子代数必为全空间。若 $X=\{x\}$，其连续实函数代数等同 $\mathbb R$，实向量子空间只有 $\{0\}$ 或 $\mathbb R$，恰对应定理两种情形。以下设 $X$ 至少有两个点。
+
+先设每对不同点的 $\mathcal A_{xy}$ 都是 $\mathbb R^2$。对任意目标函数 $h\in C(X,\mathbb R)$，不同点的两点插值直接可行；若要在同一个点 $x=y$ 插值，另取 $z\ne x$，利用 $\mathcal A_{xz}=\mathbb R^2$ 选一个在 $x$ 取 $h(x)$ 的函数即可。由闭子代数为格以及两点插值引理，$h\in\mathcal A$。
+
+否则按原证明找到公共零点 $x_0$。若还有另一个公共零点，所有函数会在这两点同值，违背分离性，所以唯一。对任意不同的 $x,y\ne x_0$，二维分类中的两个坐标轴都会产生另一公共零点，对角线和零空间又不分离点，故只能为 $\mathbb R^2$。对点对 $(x_0,y)$，取值代数位于纵轴；分离点保证其中有非零元素，实线性封闭便使它等于整个纵轴。因此可在 $x_0$ 取零、在 $y$ 取任意指定实值。
+
+现在给定任意 $h\in C(X,\mathbb R)$ 且 $h(x_0)=0$。上面两种点对给出所有不同点的插值；同一点若是 $x_0$，用零函数，若不是 $x_0$，用点对 $(x_0,y)$ 的插值。两点插值引理遂给 $h\in\mathcal A$。反向包含由公共零点定义直接成立，故取得第二种等式。
+
+若 $\mathcal A=C(X,\mathbb R)$，自然包含全部常函数；若含全部常函数，则含 $1$，不可能有公共零点，所以只能为第一种情形。这补齐“当且仅当”的两向。这里任一子代数均非空，故前一引理的退化例外不影响应用。
+\end{proof}
+% END SUPPLEMENT: id=v14-ch04-real-sw-proof-details
+% SOURCE p=156; printed=141; object=ch04-sw-density-intro; region=top
+上面按最适合证明的形式陈述了 Stone--Weierstrass 定理。但在应用中，通常遇到的是 $C(X,\mathbb R)$ 的一个未必闭的子代数 $\mathcal B$，然后把定理用于 $\mathcal A=\overline{\mathcal B}$。由此得到如下表述。
+% SOURCE p=156; printed=141; object=ch04-sw-density; number=4.50; region=upper
+\begin{corollary}\label{corollary:ch04-sw-density}
+设 $\mathcal B$ 是 $C(X,\mathbb R)$ 中分离点的子代数。若存在 $x_0\in X$，使全部 $f\in\mathcal B$ 满足 $f(x_0)=0$，则 $\mathcal B$ 在 $\{f\in C(X,\mathbb R):f(x_0)=0\}$ 中稠密。否则，$\mathcal B$ 在 $C(X,\mathbb R)$ 中稠密。
+\end{corollary}
+% SUPPLEMENT: id=v14-ch04-sw-density-proof; parent=ch04-sw-density; kind=proof+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{补写证明（重构新增）。}令 $\mathcal A=\overline{\mathcal B}$。由\cref{proposition:ch04-algebra-lattice-closure}，它为闭子代数；因包含 $\mathcal B$，仍分离点。若全部 $f\in\mathcal B$ 在 $x_0$ 为零，一致极限在该点也为零，所以全部 $g\in\mathcal A$ 在 $x_0$ 为零。反之，若 $\mathcal A$ 有公共零点，其子集 $\mathcal B$ 也在此处为零。因此两代数的公共零点完全相同。实 Stone--Weierstrass 定理分别给出所述闭包；这正是稠密性的含义。
+\end{proof}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}实际构造简单函数时只需验证代数、分离点和公共零点条件，闭包由定理自动识别。与前一定理相比，这里未假设原代数闭，因此结论必须写成稠密而不是等号。公共零点条件在一致极限下稳定，是两个版本之间相互对应的关键。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-sw-density-proof
+% SOURCE p=156; printed=141; object=ch04-weierstrass-polynomial-application; region=upper-middle
+经典 Weierstrass 逼近定理是这个推论的特殊情形：取 $X$ 为 $\mathbb R^n$ 的紧子集，$\mathcal B$ 为 $\mathbb R^n$ 上多项式限制到 $X$ 后组成的代数。这里 $\mathcal B$ 含常函数，故它在 $C(X,\mathbb R)$ 中稠密。
+% SUPPLEMENT: id=v14-ch04-polynomial-application-details; parent=ch04-weierstrass-polynomial-application; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{条件核对与结论的含义（重构新增）。}取实系数多项式，它们的限制对实线性组合与乘积封闭；常多项式 $1$ 排除公共零点。若 $x\ne y$，至少某坐标 $j$ 满足 $x_j\ne y_j$，相应坐标多项式便分离这两点，所以推论全部假设成立。稠密性表示：对每个连续实函数 $f$ 与每个 $\varepsilon>0$，存在一个多项式 $P$，使 $\sup_X|f-P|<\varepsilon$。它允许 $X$ 为任意紧子集，不要求内部非空或具有光滑边界；空 $X$ 时结论也真空成立。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-polynomial-application-details
+% SOURCE p=156; printed=141; object=ch04-complex-sw-obstruction-intro; region=middle
+上述 Stone--Weierstrass 定理原样用于复值函数是错误的。例如对 $\mathbb C$ 的大多数紧子集 $K$，单个复变量的多项式代数并不在 $C(K)$ 中稠密。特别地，若 $K^\circ\ne\varnothing$，$K$ 上多项式的一致极限在 $K^\circ$ 上必为全纯函数。这里给出一个简单证明，说明函数 $f(z)=\overline z$ 不能在单位圆周 $\{e^{it}:t\in[0,2\pi]\}$ 上由多项式一致逼近。
+% SOURCE p=156; printed=141; object=ch04-conjugate-circle-obstruction; region=middle
+\begin{example}\label{example:ch04-conjugate-circle-obstruction}
+设 $f(z)=\overline z$ 定义在单位圆周上。若 $P(z)=\sum_{j=0}^na_jz^j$，则
+\begin{align*}
+\int_0^{2\pi}\overline{f(e^{it})}P(e^{it})\,dt
+=\sum_{j=0}^na_j\int_0^{2\pi}e^{i(j+1)t}\,dt=0.
+\end{align*}
+将 $f(e^{it})$、$P(e^{it})$ 简记为 $f,P$，利用圆周上 $|f|=1$，有
+\begin{align*}
+2\pi=\left|\int_0^{2\pi}f\overline f\,dt\right|
+&\le\left|\int_0^{2\pi}(f-P)\overline f\,dt\right|
++\left|\int_0^{2\pi}\overline fP\,dt\right|\\
+&=\left|\int_0^{2\pi}(f-P)\overline f\,dt\right|\\
+&\le\int_0^{2\pi}|f-P|\,dt\le2\pi\|f-P\|_u.
+\end{align*}
+所以对任意多项式 $P$ 都有 $\|f-P\|_u\ge1$。
+\end{example}
+% SUPPLEMENT: id=v14-ch04-complex-obstruction-details; parent=ch04-conjugate-circle-obstruction; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{补证与反例的作用（重构新增）。}对正整数 $k$，$\int_0^{2\pi}e^{ikt}\,dt=(e^{2\pi ik}-1)/(ik)=0$，所以第一式中每项确为零。由于 $f(e^{it})=e^{-it}$，其共轭是 $e^{it}$，乘上非负次数的多项式只产生正频率；而 $f\overline f=1$ 的积分为 $2\pi$。这给出误差的统一下界，取 $P=0$ 还能达到 $1$。
+
+该多项式代数含常数且分离圆周上的点，但不对共轭封闭。其一致闭包仍是闭复子代数、仍分离点，并且上述下界在极限下保留，所以即使加上闭性也不是整个 $C(K)$。这指出复数版本需要的新条件。关于非空内部的前述断言，可用\cref{exercise:ch04-holomorphic-family}解答中已经证明的 Cauchy 积分极限论证：任何内部闭圆盘上的一致极限保留积分公式，因而全纯；无需再抽取子列。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-complex-obstruction-details
+% SOURCE p=156; printed=141; object=ch04-complex-sw-transition; region=middle-lower
+不过，Stone--Weierstrass 定理确实有一个复数版本。
+% SOURCE p=156; printed=141; object=ch04-complex-stone-weierstrass; number=4.51; region=lower
+\begin{theorem}[复 Stone--Weierstrass 定理]\label{theorem:ch04-complex-stone-weierstrass}
+设 $X$ 是紧 Hausdorff 空间。若 $\mathcal A$ 是 $C(X)$ 中分离点、对复共轭封闭的闭复子代数，则或者 $\mathcal A=C(X)$，或者对某个 $x_0\in X$，$\mathcal A=\{f\in C(X):f(x_0)=0\}$。
+\end{theorem}
+% SOURCE p=156; printed=141; object=ch04-proof-complex-stone-weierstrass; region=lower
+\begin{proof}
+因为 $\operatorname{Re}f=(f+\overline f)/2$、$\operatorname{Im}f=(f-\overline f)/(2i)$，$\mathcal A$ 中函数的实部和虚部组成的集合 $\mathcal A_{\mathbb R}$ 是 $C(X,\mathbb R)$ 的子代数，可对其应用 Stone--Weierstrass 定理。又因 $\mathcal A=\{f+ig:f,g\in\mathcal A_{\mathbb R}\}$，所需结论随即得到。
+\end{proof}
+% SUPPLEMENT: id=v14-ch04-complex-sw-details; parent=ch04-complex-stone-weierstrass; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{实部代数条件的补写（重构新增）。}共轭封闭与复线性结构保证每个 $f\in\mathcal A$ 的实部、虚部都仍在 $\mathcal A$。反过来，任何实值 $g\in\mathcal A$ 等于自己的实部，故
+\begin{align*}
+\mathcal A_{\mathbb R}=\mathcal A\cap C(X,\mathbb R).
+\end{align*}
+它对实线性组合与乘积封闭；一致极限既留在闭集 $\mathcal A$ 内，又仍实值，所以它在 $C(X,\mathbb R)$ 中闭。若 $x\ne y$，选 $f\in\mathcal A$ 使 $f(x)\ne f(y)$，则实部或虚部至少一个在两点不同，因此 $\mathcal A_{\mathbb R}$ 分离点。
+
+由实定理，$\mathcal A_{\mathbb R}$ 或为全部连续实函数，或恰为在某个 $x_0$ 消失的连续实函数。由于每个 $f\in\mathcal A$ 分解为其属于 $\mathcal A_{\mathbb R}$ 的实部与虚部，且复线性又保证任意这两个实函数的组合 $u+iv$ 属于 $\mathcal A$，原证明中的集合等式成立。第一情形便得全部连续复函数；第二情形便得恰在同一 $x_0$ 为零的连续复函数。空空间与单点情形也被实定理的补证涵盖。
+\end{proof}
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}共轭封闭的作用是让实部与虚部回到同一个代数，从而使用实数的格逼近。复线性允许除以 $i$ 并把两个实部结果重新组合；闭性、分离点、紧 Hausdorff 则传递给实部代数并沿用实定理。上一圆周反例说明共轭条件不能一般删除。这里同样没有假设含 $1$；若包含 $1$，公共零点情形自动排除。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-complex-sw-details
+% SOURCE p=156; printed=141; object=ch04-noncompact-sw-intro; region=bottom
+Stone--Weierstrass 定理还有一个适用于非紧 LCH 空间的版本。这里陈述实函数情形；与\cref{theorem:ch04-complex-stone-weierstrass}对应的复函数版本可立即推出。
+% SOURCE p=157; printed=142; object=ch04-noncompact-stone-weierstrass; number=4.52; region=top
+\begin{theorem}\label{theorem:ch04-noncompact-stone-weierstrass}
+设 $X$ 为非紧 LCH 空间。若 $\mathcal A$ 是 $C_0(X,\mathbb R)=C_0(X)\cap C(X,\mathbb R)$ 中分离点的闭子代数，则或者 $\mathcal A=C_0(X,\mathbb R)$，或者对某个 $x_0\in X$，$\mathcal A=\{f\in C_0(X,\mathbb R):f(x_0)=0\}$。
+\end{theorem}
+% SOURCE p=157; printed=142; object=ch04-noncompact-sw-proof-omission; region=upper
+证明提纲见\cref{exercise:ch04-prove-noncompact-sw}。
+% SUPPLEMENT: id=v14-ch04-noncompact-sw-proof; parent=ch04-noncompact-stone-weierstrass; kind=proof+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{原书略去的证明（重构新增）。}先证明 $\mathcal A$ 没有公共零点时的结论。令 $Y=X^*$ 为单点紧化，将每个 $f\in\mathcal A$ 延拓为 $\widehat f\in C(Y,\mathbb R)$，规定 $\widehat f(\infty)=0$。由\cref{proposition:ch04-one-point-compactification}，这给出 $C_0(X,\mathbb R)$ 与 $C_\infty(Y)=\{g\in C(Y,\mathbb R):g(\infty)=0\}$ 的线性、乘法保持的等距双射。其等距性来自新增点的值恒为零；满射来自单点紧化的延拓判别。
+
+像代数 $\widehat{\mathcal A}$ 在 $C_\infty(Y)$ 中闭，而 $C_\infty(Y)$ 在 $C(Y,\mathbb R)$ 中闭，因为点值在一致极限下保持零。所以 $\widehat{\mathcal A}$ 是环境中的闭子代数。它在 $X$ 内分离点；对每个 $x\in X$，没有公共零点的假设给出 $f\in\mathcal A$ 使 $f(x)\ne0=\widehat f(\infty)$，故也分离 $x$ 与 $\infty$。实 Stone--Weierstrass 定理适用。因它的所有函数在 $\infty$ 为零，第一种情形不可能，而唯一公共零点恰为 $\infty$，所以 $\widehat{\mathcal A}=C_\infty(Y)$。拉回得到 $\mathcal A=C_0(X,\mathbb R)$。
+
+现在设存在公共零点 $x_0$。分离点使它唯一。令 $U=X\setminus\{x_0\}$，它是 LCH 空间的开子空间，因在每点可选闭包仍位于 $U$ 的紧邻域而局部紧，Hausdorff 性也继承。它非紧：否则 $X=U\cup\{x_0\}$ 为两个紧集之并，从而紧，与假设矛盾。
+
+限制映射把 $I_{x_0}=\{f\in C_0(X,\mathbb R):f(x_0)=0\}$ 等距同构到 $C_0(U,\mathbb R)$。为完整验证，若 $f\in I_{x_0}$，其每个正水平集在 $X$ 中紧且不含 $x_0$，故作为 $U$ 的子集仍紧，所以限制属于 $C_0(U,\mathbb R)$。反之，给 $g\in C_0(U,\mathbb R)$，在 $x_0$ 补零得到 $\widetilde g$。给定 $\varepsilon>0$，集合 $K_\varepsilon=\{u\in U:|g(u)|\ge\varepsilon\}$ 在 $U$ 中紧，因而在 Hausdorff 空间 $X$ 中紧且闭，且不含 $x_0$。于是 $X\setminus K_\varepsilon$ 是 $x_0$ 的开邻域，其上 $|\widetilde g|<\varepsilon$。这证明补零连续；其正水平集就是 $K_\varepsilon$，故 $\widetilde g\in C_0(X,\mathbb R)$。显然限制与补零互逆，范数相同，且保线性与乘法。
+
+因此 $\mathcal A$ 的限制在 $C_0(U,\mathbb R)$ 中为闭子代数，仍分离点。它在 $U$ 内没有公共零点，否则原代数有第二个公共零点。将已经证明的无公共零点情形用于 $U$，得到限制代数为全部 $C_0(U,\mathbb R)$，再由上述同构得 $\mathcal A=I_{x_0}$。
+\end{proof}
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}在无穷远消失，正好意味着可在单点紧化的新增点连续补零；于是非紧空间上的逼近转为紧空间中允许一个公共零点的逼近。局部紧与 Hausdorff 保证紧化为紧 Hausdorff 空间；非紧性使新增点确为稠密嵌入的边界。闭性通过等距同构传递，分离点则使原空间内公共零点至多一个。若原来已有公共零点，先删除它是为了避免同时出现这个零点与无穷远零点而破坏分离性。
+
+对应的复数版本为：若 $\mathcal A\subseteq C_0(X)$ 是分离点、对共轭封闭的闭复子代数，则它或为 $C_0(X)$，或为在某点消失的全部 $C_0$ 函数。证明也完整归约到实版本：$\mathcal A_{\mathbb R}=\mathcal A\cap C(X,\mathbb R)$ 由实部、虚部公式得到，在 $C_0(X,\mathbb R)$ 中闭且为实子代数；若复函数分开两点，其实部或虚部也分开两点；再把实版本所得的两个情形按 $u+iv$ 组合，分别恰得上述两种复函数空间。这里取实部、虚部后仍属于 $C_0$，因为它们已属于 $\mathcal A\subseteq C_0(X)$。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-noncompact-sw-proof
+% SOURCE p=157; printed=142; object=ch04-stone-weierstrass-exercises-title; region=upper
+\Needspace{20\baselineskip}
+\subsection*{习题}
+% SOURCE p=157; printed=142; object=ch04-ex66-square-root-series; number=66; region=upper-middle
+\begin{exercise}\label{exercise:ch04-square-root-series}
+设 $1-\sum_{n=1}^{\infty}c_nt^n$ 为 $(1-t)^{1/2}$ 的 Maclaurin 级数。
+\begin{enumerate}
+\item\label{item:ch04-square-root-series-differentiation} 该级数及其逐项求导的级数 $-\sum_{n=1}^{\infty}nc_nt^{n-1}$ 都在 $(-1,1)$ 的紧子集上绝对且一致收敛。因此若 $f(t)=1-\sum_{n=1}^{\infty}c_nt^n$，则 $f'(t)=-\sum_{n=1}^{\infty}nc_nt^{n-1}$。
+\item\label{item:ch04-square-root-series-identity} 直接计算得到 $f(t)=-2(1-t)f'(t)$，由此推出 $(1-t)^{-1/2}f(t)$ 为常数。因为 $f(0)=1$，所以 $f(t)=(1-t)^{1/2}$。
+\end{enumerate}
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex66-solution; parent=ch04-ex66-square-root-series; kind=solution+hypotheses; origin=independent-derivation
+\begin{solution}
+\textbf{补写解答（重构新增）。}
+\begin{enumerate}
+\item 系数满足 $c_1=1/2$ 及 $c_{n+1}/c_n=(2n-1)/(2n+2)$。任给紧集 $K\subseteq(-1,1)$，可取 $0<r<1$ 使 $K\subseteq[-r,r]$；例如由紧性，连续函数 $|t|$ 在 $K$ 的上确界小于 $1$，再取更大的 $r<1$。空 $K$ 任取 $r$。对 $|t|\le r$，函数项与导数项分别受 $c_nr^n$ 与 $nc_nr^{n-1}$ 控制。两正项级数的相邻项比值分别趋于 $r<1$，故收敛。因此尾和在整个 $[-r,r]$ 上一致趋零，证明绝对一致收敛。
+
+设 $S_N(t)=1-\sum_{n=1}^Nc_nt^n$，导数列 $S_N'$ 一致趋于连续函数 $G(t)=-\sum_{n\ge1}nc_nt^{n-1}$。由微积分基本定理，$S_N(t)=1+\int_0^tS_N'(s)\,ds$。一致收敛使积分误差至多 $r\sup_{[-r,r]}|S_N'-G|\to0$，故 $f(t)=1+\int_0^tG(s)\,ds$，从而 $f'=G$。由于每个 $t\in(-1,1)$ 都位于某个这样的区间内，逐项求导在整个开区间成立。
+\item 由绝对收敛可移位并合并级数。系数递推给出 $2c_1=1$ 及 $2(n+1)c_{n+1}-2nc_n=-c_n$，所以
+\begin{align*}
+-2(1-t)f'(t)
+=2c_1+\sum_{n=1}^{\infty}\bigl(2(n+1)c_{n+1}-2nc_n\bigr)t^n
+=1-\sum_{n=1}^{\infty}c_nt^n=f(t).
+\end{align*}
+在 $(-1,1)$ 上 $1-t>0$，可对乘积求导：
+\begin{align*}
+\frac{d}{dt}\bigl((1-t)^{-1/2}f(t)\bigr)
+=(1-t)^{-3/2}\bigl(\tfrac12 f(t)+(1-t)f'(t)\bigr)=0.
+\end{align*}
+由中值定理，该函数在区间上为常数；代入 $t=0$ 得常数为 $1$，因此 $f(t)=\sqrt{1-t}$。
+\end{enumerate}
+\end{solution}
+\begin{remark}
+\textbf{条件的作用（重构新增）。}先对函数级数及导数级数都给出紧子集上的一致控制，才能合法地逐项微分；仅知道原级数逐点收敛不能推出导数公式。这里先在开区间内部求和，再在绝对值逼近引理中用系数正性与单调收敛处理端点，两步没有互相循环引用。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-ex66-solution
+% SOURCE p=157; printed=142; object=ch04-ex67-prove-noncompact-sw; number=67; region=middle
+\begin{exercise}\label{exercise:ch04-prove-noncompact-sw}
+证明\cref{theorem:ch04-noncompact-stone-weierstrass}。（若存在 $x_0\in X$，使全部 $f\in\mathcal A$ 在 $x_0$ 为零，则令 $Y$ 为 $X\setminus\{x_0\}$ 的单点紧化；否则令 $Y$ 为 $X$ 的单点紧化。在 $Y$ 上应用\cref{proposition:ch04-one-point-compactification}与 Stone--Weierstrass 定理。）
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex67-solution; parent=ch04-ex67-prove-noncompact-sw; kind=solution+hypotheses; origin=independent-derivation
+\begin{solution}
+\textbf{按原提示的补写解答（重构新增）。}若无公共零点，取 $U=X$；若有公共零点 $x_0$，由分离点知它唯一，取 $U=X\setminus\{x_0\}$。第二种情形下，$U$ 开且 LCH；它不能紧，否则与紧单点的并 $X$ 也紧。把 $\mathcal A$ 限制到 $U$ 得到 $\mathcal B$。它分离 $U$ 的点且没有公共零点。
+
+还须验证闭性不在限制时丢失。无删除时显然成立；有删除时，限制映射把 $I_{x_0}=\{f\in C_0(X,\mathbb R):f(x_0)=0\}$ 等距同构到 $C_0(U,\mathbb R)$：正水平集紧且避开 $x_0$，所以限制在无穷远消失；反向将 $g\in C_0(U,\mathbb R)$ 在 $x_0$ 补零。对每个 $\varepsilon>0$，其正水平集 $K_\varepsilon$ 在 $U$ 中紧，故在 $X$ 中闭且不含 $x_0$，开邻域 $X\setminus K_\varepsilon$ 上函数模小于 $\varepsilon$，证明补零连续。相同水平集在 $X$ 中紧，故补零属于 $I_{x_0}$。范数不变，两操作互逆。$\mathcal A$ 在 $I_{x_0}$ 中闭，因此 $\mathcal B$ 在 $C_0(U,\mathbb R)$ 中闭。
+
+现在令 $Y=U^*$。把 $\mathcal B$ 中的函数在 $\infty$ 补零，得到 $C(Y,\mathbb R)$ 中的闭子代数 $\widehat{\mathcal B}$；这是因为补零为等距同构，且“在 $\infty$ 为零”是闭条件。它分离 $U$ 内的点，又因 $\mathcal B$ 在每个 $u\in U$ 都有非零值，能分离 $u$ 与 $\infty$。其唯一公共零点是 $\infty$。紧空间实 Stone--Weierstrass 定理遂给
+\begin{align*}
+\widehat{\mathcal B}=\{h\in C(Y,\mathbb R):h(\infty)=0\}.
+\end{align*}
+限制回 $U$ 得 $\mathcal B=C_0(U,\mathbb R)$。若 $U=X$，得到第一种结论；若删除过 $x_0$，再补零回 $X$，得到 $\mathcal A=I_{x_0}$，即第二种结论。
+\end{solution}
+% END SUPPLEMENT: id=v14-ch04-ex67-solution
+% SOURCE p=157; printed=142; object=ch04-ex68-product-function-algebra; number=68; region=middle
+\begin{exercise}\label{exercise:ch04-product-function-algebra}
+设 $X,Y$ 为紧 Hausdorff 空间。由形如 $f(x,y)=g(x)h(y)$（$g\in C(X)$、$h\in C(Y)$）的函数生成的代数，在 $C(X\times Y)$ 中稠密。
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex68-solution; parent=ch04-ex68-product-function-algebra; kind=solution+motivation+hypotheses; origin=independent-derivation
+\begin{solution}
+\textbf{补写解答（重构新增）。}若某个空间为空，积为空，连续函数空间只含空函数，结论直接成立。否则由 Tychonoff 定理及 Hausdorff 乘积性质，$X\times Y$ 紧 Hausdorff。记题给复代数为 $\mathcal B$。生成函数连续，且两个此类函数的乘积仍为同类函数，因此 $\mathcal B$ 恰由这些函数的有限复线性组合组成。它含常函数 $1=1\cdot1$，并对共轭封闭，因为 $\overline{g(x)h(y)}=\overline g(x)\,\overline h(y)$ 仍为生成函数。
+
+对不同点 $(x,y),(x',y')$，若 $x\ne x'$，紧 Hausdorff 空间的正规性与 Urysohn 引理给出 $g\in C(X)$ 使 $g(x)\ne g(x')$，再取 $h=1$ 即分离该点对。若 $y\ne y'$，同理取 $g=1$ 并选择 $h$。所以 $\mathcal B$ 分离点。
+
+令 $\mathcal A=\overline{\mathcal B}$。闭包仍为复代数、含 $1$ 且分离点。若 $f_n\in\mathcal B$ 一致趋于 $f$，则 $\overline{f_n}$ 一致趋于 $\overline f$，因而 $\mathcal A$ 也对共轭封闭。复 Stone--Weierstrass 定理给 $\mathcal A=C(X\times Y)$，因为常函数 $1$ 排除公共零点情形。这就是所需稠密性。
+\end{solution}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}分别只依赖一个变量的函数相乘，得到最简单的分离变量表达式；有限和却足以一致逼近任意连续双变量函数。紧 Hausdorff 保证积空间适用定理并提供单个因子中的分点函数；复共轭封闭由生成族自动保留，不需要额外假设。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-ex68-solution
+% SOURCE p=157; printed=142; object=ch04-ex69-cube-coordinate-algebra; number=69; region=middle
+\begin{exercise}\label{exercise:ch04-cube-coordinate-algebra}
+设 $A$ 是非空集合，$X=[0,1]^A$。由坐标映射 $\pi_\alpha:X\to[0,1]$（$\alpha\in A$）与常函数 $1$ 生成的代数，在 $C(X)$ 中稠密。
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex69-solution; parent=ch04-ex69-cube-coordinate-algebra; kind=solution+motivation+hypotheses; origin=independent-derivation
+\begin{solution}
+\textbf{补写解答（重构新增）。}$X$ 由 Tychonoff 定理紧，并因各区间 Hausdorff 而 Hausdorff。题给代数按 $C(X)$ 的约定取复标量；其元素为有限多个坐标变量的复系数多项式。它含 $1$。若 $x\ne y$，至少有一个坐标 $\alpha$ 不同，则 $\pi_\alpha(x)\ne\pi_\alpha(y)$，所以分离点。坐标函数均实值，取共轭只把各多项式系数换成其共轭，仍在该代数中。
+
+因此其一致闭包是含 $1$、分离点且对共轭封闭的闭复子代数，复 Stone--Weierstrass 定理给闭包为 $C(X)$。所有生成操作均为有限次，所以该结论还说明：每个连续函数在任意给定一致精度内，都可由仅依赖有限多个坐标的多项式逼近，即使 $A$ 不可数。
+\end{solution}
+\begin{remark}
+\textbf{条件与标量约定（重构新增）。}常函数 $1$ 排除公共零点：若只用坐标函数并禁止常数项，它们会在全零点同时消失。复标量也不可遗漏，否则所有生成函数均实值，不能逼近常函数 $i$。原题取 $A$ 非空；若允许空 $A$，积为单点，仅常函数代数已经等于全部连续函数，结论仍成立。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-ex69-solution
+% SOURCE p=157; printed=142; object=ch04-ex70-ideals-hulls-kernels; number=70; region=lower
+\begin{exercise}\label{exercise:ch04-ideals-hulls-kernels}
+设 $X$ 为紧 Hausdorff 空间。
+\begin{definition*}[连续函数代数的理想]\phantomsection\label{definition:ch04-function-ideal}
+$C(X,\mathbb R)$ 的一个\textbf{理想}是其子代数 $\mathcal J$，满足：若 $f\in\mathcal J$、$g\in C(X,\mathbb R)$，则 $fg\in\mathcal J$。
+\end{definition*}
+\begin{enumerate}
+\item\label{item:ch04-ideal-hull-closed}
+\begin{definition*}[理想的包]\phantomsection\label{definition:ch04-ideal-hull}
+若 $\mathcal J$ 为理想，令 $h(\mathcal J)=\{x\in X:f(x)=0\text{ 对所有 }f\in\mathcal J\}$，称为 $\mathcal J$ 的\textbf{包}（hull）。
+\end{definition*}
+则 $h(\mathcal J)$ 为 $X$ 的闭子集。
+\item\label{item:ch04-set-kernel-closed}
+\begin{definition*}[集合的核]\phantomsection\label{definition:ch04-set-kernel}
+若 $E\subseteq X$，令 $k(E)=\{f\in C(X,\mathbb R):f(x)=0\text{ 对所有 }x\in E\}$，称为 $E$ 的\textbf{核}（kernel）。
+\end{definition*}
+则 $k(E)$ 是 $C(X,\mathbb R)$ 的闭理想。
+\item\label{item:ch04-hull-kernel-set} 若 $E\subseteq X$，则 $h(k(E))=\overline E$。
+\item\label{item:ch04-kernel-hull-ideal} 若 $\mathcal J$ 是理想，则 $k(h(\mathcal J))=\overline{\mathcal J}$。（提示：$k(h(\mathcal J))$ 可视为 $C_0(U,\mathbb R)$ 的一个子代数，其中 $U=X\setminus h(\mathcal J)$。）
+\item\label{item:ch04-closed-ideal-correspondence} $X$ 的闭子集与 $C(X,\mathbb R)$ 的闭理想一一对应。
+\end{enumerate}
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex70-solution; parent=ch04-ex70-ideals-hulls-kernels; kind=solution+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{定义的动机与逐条件说明（重构新增）。}理想不仅允许内部相乘，还允许乘上任意环境连续函数，因而可在不离开理想的情况下作局部截断。包把函数族转成共同零点集合，核把点集转成在其上全部为零的函数族；两者都使用“对所有”，分别记录公共约束。这里的理想按定义为实向量子空间，特别含零函数，但不要求含 $1$；若含 $1$，乘法吸收性就迫使它等于全代数。闭性在本题均指一致范数拓扑。
+\end{remark}
+\begin{solution}
+\textbf{补写解答（重构新增）。}
+\begin{enumerate}
+\item $h(\mathcal J)=\bigcap_{f\in\mathcal J}f^{-1}(\{0\})$。各零点集因连续而闭，任意交仍闭。
+\item 零函数属于 $k(E)$，在 $E$ 为零的函数的实线性组合仍在 $E$ 为零；它与任意连续函数的乘积也在 $E$ 为零，所以为理想。若 $f_n\in k(E)$ 一致趋于 $f\in C(X,\mathbb R)$，逐点取极限得 $f|_E=0$，故 $k(E)$ 序列闭；在度量空间中这等于闭。也可直接写成连续点值映射的闭核之交。
+\item 由定义，$E\subseteq h(k(E))$，右侧闭，所以 $\overline E\subseteq h(k(E))$。若 $x\notin\overline E$，紧 Hausdorff 空间正规，Urysohn 引理给出 $f\in C(X,[0,1])$，使 $f=0$ 于 $\overline E$ 且 $f(x)=1$。因此 $f\in k(E)$，但 $x\notin h(k(E))$，证明反向包含；空集情形可直接取常数 $1$。
+\item 记 $F=h(\mathcal J)$、$U=X\setminus F$。因 $\mathcal J\subseteq k(F)$ 且 $k(F)$ 闭，已有 $\overline{\mathcal J}\subseteq k(F)$。若 $U$ 为空，则 $\mathcal J$ 中所有函数处处为零，两边都为零理想。以下设 $U$ 非空。
+
+限制映射实际上把 $k(F)$ 等距同构到全部 $C_0(U,\mathbb R)$。若 $f\in k(F)$，正水平集 $\{|f|\ge\varepsilon\}$ 为紧 $X$ 的闭子集，且包含于 $U$，故限制在无穷远消失。反向给 $g\in C_0(U,\mathbb R)$，在 $F$ 上补零。对任何 $x\in F$ 和 $\varepsilon>0$，紧水平集 $K_\varepsilon\subseteq U$ 在 $X$ 中闭，$X\setminus K_\varepsilon$ 是 $x$ 的邻域，其上补零函数的模小于 $\varepsilon$；在开集 $U$ 内连续性原已成立。因此补零连续且属于 $k(F)$。两操作互逆并保持范数、线性和乘法。
+
+令 $\mathcal B=\{f|_U:f\in\mathcal J\}$。它在 $U$ 内没有公共零点，正是 $U=X\setminus h(\mathcal J)$ 的定义。它还分离点：对 $x\ne y\in U$，取 $f\in\mathcal J$ 使 $f(x)\ne0$。由 Urysohn 引理及实数倍运算，选 $v\in C(X,\mathbb R)$ 使 $v(x)=1/f(x)$、$v(y)=0$。理想性质给出 $fv\in\mathcal J$，且其在 $x,y$ 的值分别为 $1,0$。
+
+$U$ 为开 LCH 子空间。若 $U$ 非紧，把非紧 Stone--Weierstrass 定理用于 $\overline{\mathcal B}$；若 $U$ 紧，则 $C_0(U,\mathbb R)=C(U,\mathbb R)$，使用紧空间版本。两种情形下，闭包仍为分离点且无公共零点的闭子代数，因此都得 $\overline{\mathcal B}=C_0(U,\mathbb R)$。通过上述等距同构拉回，得到 $\overline{\mathcal J}=k(F)$。
+\Needspace{5\baselineskip}
+\item 前三项说明闭集 $E$ 经 $k$ 后得到闭理想，且 $h(k(E))=E$；第四项说明闭理想 $\mathcal J$ 经 $h$ 后得到闭集，且 $k(h(\mathcal J))=\mathcal J$。所以两映射互逆，给出一一对应。
+\end{enumerate}
+\end{solution}
+\begin{remark}
+\textbf{条件与对应关系说明（重构新增）。}这个对应反转包含关系：点集越大，在其上为零的函数越少；理想越大，公共零点越少。不闭的点集只能恢复其闭包，不闭的理想也只能恢复其一致闭包，因此最后的一一对应必须限制在闭对象之间。第四项中必须区分 $U$ 紧与非紧，因为原非紧版本的假设不能直接用于紧 $U$。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-ex70-solution
+% SOURCE p=157,158; printed=142,143; object=ch04-ex71-recover-space-from-algebra; number=71; region=bottom-top
+\begin{exercise}\label{exercise:ch04-recover-space-from-algebra}
+这是\cref{exercise:ch04-ideals-hulls-kernels}主题的一个变式，不使用 Stone--Weierstrass 定理。设 $X$ 为紧 Hausdorff 空间，$M$ 为从 $C(X,\mathbb R)$ 到 $\mathbb R$ 的全部非零代数同态组成的集合。每个 $x\in X$ 以 $\widehat x(f)=f(x)$ 定义 $M$ 的一个元素 $\widehat x$。
+\begin{enumerate}
+\item\label{item:ch04-character-maximal-kernel} 若 $\phi\in M$，则 $\{f\in C(X,\mathbb R):\phi(f)=0\}$ 是 $C(X,\mathbb R)$ 的一个极大真理想。
+\item\label{item:ch04-proper-ideal-common-zero} 若 $\mathcal J$ 是 $C(X,\mathbb R)$ 的真理想，则存在 $x_0\in X$，使全部 $f\in\mathcal J$ 满足 $f(x_0)=0$。（反设，构造 $\mathcal J$ 中处处严格正的函数 $f$，再推出 $1\in\mathcal J$。不需深刻的定理。）
+\item\label{item:ch04-evaluation-bijection} 映射 $x\mapsto\widehat x$ 是 $X$ 到 $M$ 的双射。
+\item\label{item:ch04-evaluation-homeomorphism} 若给 $M$ 赋予逐点收敛拓扑，则 $x\mapsto\widehat x$ 是 $X$ 到 $M$ 的同胚。由于 $M$ 的定义纯粹是代数性的，故 $X$ 的拓扑结构由 $C(X,\mathbb R)$ 的代数结构完全确定。
+\end{enumerate}
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex71-solution; parent=ch04-ex71-recover-space-from-algebra; kind=solution+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{约定与动机（重构新增）。}这里的实代数同态按通常含义为保持实线性与乘法的映射；未预设连续，也不必预设保持单位，非零性会推出后者。真理想指不等于全代数；极大真理想指它与全代数之间没有别的真理想。把点 $x$ 替换为“在 $x$ 处求值”的同态，旨在从函数运算本身重建空间。以下仅用理想运算、紧性、连续函数分点及紧到 Hausdorff 的连续双射判别，不调用 Stone--Weierstrass 定理。
+\end{remark}
+\begin{solution}
+\textbf{补写解答（重构新增）。}若 $X$ 为空，则 $C(X,\mathbb R)$ 为零代数，无非零同态，故 $M$ 为空；无真理想，前两项真空成立，后两项为空空间间的同胚。以下设 $X$ 非空。
+\begin{enumerate}
+\item 选 $f$ 使 $\phi(f)\ne0$。由 $\phi(1)\phi(f)=\phi(f)$，得 $\phi(1)=1$，再由实线性得 $\phi(c1)=c$ 对每个实数 $c$ 成立，故 $\phi$ 满射。其核 $J$ 为理想，且 $1\notin J$，所以真。若理想 $L$ 严格包含 $J$，取 $g\in L\setminus J$，则 $a=\phi(g)\ne0$，而 $a^{-1}g-1\in J\subseteq L$。因 $a^{-1}g\in L$，相减得 $1\in L$，故任意 $h=h1\in L$。所以 $L$ 只能是全代数，$J$ 极大。
+\item 反设没有公共零点。对每个 $x\in X$ 选 $f_x\in\mathcal J$ 使 $f_x(x)\ne0$。开集 $V_x=\{y:f_x(y)\ne0\}$ 覆盖 $X$，紧性给出有限子覆盖 $V_{x_1},\ldots,V_{x_m}$。函数
+\begin{align*}
+F=\sum_{j=1}^m f_{x_j}^2
+\end{align*}
+属于 $\mathcal J$，并且处处严格正，因为每点至少一个加项非零。于是 $1/F\in C(X,\mathbb R)$，理想性质给出 $1=F(1/F)\in\mathcal J$，迫使理想为全代数，矛盾。
+\item 每个求值映射显然实线性且乘法保持，并在 $1$ 取值 $1$，故非零。若 $x\ne y$，Urysohn 引理给出连续实函数在两点取不同值，所以 $\widehat x\ne\widehat y$，映射单射。任给 $\phi\in M$，由前两项，$\ker\phi$ 为极大真理想，且有公共零点 $x_0$。因此
+\begin{align*}
+\ker\phi\subseteq J_{x_0}=\{f:f(x_0)=0\}.
+\end{align*}
+$J_{x_0}$ 是真理想，极大性使两者相等。对任意 $f$，$f-f(x_0)1\in J_{x_0}=\ker\phi$，故 $\phi(f)=f(x_0)\phi(1)=f(x_0)$。即 $\phi=\widehat{x_0}$，证明满射。
+\item 把 $M$ 看成乘积空间 $\mathbb R^{C(X,\mathbb R)}$ 的子空间；其相对乘积拓扑就是逐点收敛拓扑。该积 Hausdorff，故 $M$ Hausdorff。记求值映射为 $e:X\to M$。对每个坐标 $f\in C(X,\mathbb R)$，有 $\pi_f\circ e=f$，因此由乘积拓扑的连续性判别，$e$ 连续。前项证明其为双射，而 $X$ 紧、$M$ Hausdorff，所以 $e$ 为同胚。
+\end{enumerate}
+\end{solution}
+\begin{remark}
+\textbf{条件的作用（重构新增）。}非零同态迫使单位映到单位，排除了零映射这个不对应任何点的对象。紧性在第二项将逐点非零函数合成为有限个平方之和；实值性使平方非负，保证无抵消。Hausdorff 与紧性给出连续函数分点，也用于最后的同胚判别。由第三项还可见，原本纯代数的非零同态自动是连续求值泛函；证明没有提前把这种连续性当作假设。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-ex71-solution
+\end{document}

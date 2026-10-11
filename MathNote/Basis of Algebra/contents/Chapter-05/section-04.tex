@@ -1,0 +1,492 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{不可约多项式与因式分解}
+
+\begin{definition}[不可约多项式的定义]\label{definition:不可约多项式的定义}
+设\(f(x)\)是数域\(\mathbb{F}\)上的多项式,若\(f(x)\)可以分解为两个次数小于\(f(x)\)的\(\mathbb{F}\)上多项式之积,则称\(f(x)\)是\(\mathbb{F}\)上的可约多项式,否则称\(f(x)\)为\(\mathbb{F}\)上的不可约多项式.
+\end{definition}
+
+\begin{proposition}[不可约多项式的基本性质]\label{proposition:不可约多项式的基本性质}
+\begin{enumerate}[(1)]
+\item\label{proposition:不可约多项式的基本性质-1} 设\(p(x)\)是数域\(\mathbb{K}\)上的不可约多项式, 则对\(\mathbb{K}\)上任一多项式\(f(x)\), 或者\(p(x)\mid f(x)\), 或者\((p(x),f(x)) = 1\).
+
+\item\label{proposition:不可约多项式的基本性质-2} 设\(p(x)\)是数域\(\mathbb{F}\)上的不可约多项式, \(f(x)\)是\(\mathbb{F}\)上的多项式. 证明: 若\(p(x)\)的某个复根\(a\)也是\(f(x)\)的根, 则\(p(x)\mid f(x)\). 特别地, \(p(x)\)的任一复根都是\(f(x)\)的根.
+\end{enumerate}
+\end{proposition}
+\begin{note}
+\hyperref[proposition:不可约多项式的基本性质]{不可约多项式的基本性质\cref{proposition:不可约多项式的基本性质-2}}表明:不可约多项式也满足\hyperref[proposition:极小多项式的基本性质]{极小多项式的基本性质}.
+\end{note}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 设\(d(x)=(p(x),f(x))\). 因为\(p(x)\)不可约, 故\(f(x)\)的因式只能是非零常数多项式或\(cp(x)(c\neq 0)\), 从而或者\(d(x)=1\)或者\(d(x)=cp(x)\) (首一多项式), 故得结论.
+
+\item 若\((p(x),f(x)) = 1\), 则存在\(\mathbb{F}\)上的多项式\(u(x),v(x)\), 使得\(p(x)u(x)+f(x)v(x)=1\). 令\(x = a\)可得\(1 = p(a)u(a)+f(a)v(a)=0\), 矛盾. 因此\(p(x)\)与\(f(x)\)不互素, 从而只能是\(p(x)\mid f(x)\), 结论得证. 
+\end{enumerate}
+\end{proof}
+
+\begin{theorem}[不可约多项式的“素性”]\label{theorem:不可约多项式的“素性”}
+设\(p(x)\)是数域\(\mathbb{F}\)上的非常数多项式,则\(p(x)\)为\(\mathbb{F}\)上不可约多项式的充要条件是对\(\mathbb{F}\)上任意适合\(p(x)\mid f(x)g(x)\)的多项式\(f(x)\)与\(g(x)\), 或者\(p(x)\mid f(x)\), 或者\(p(x)\mid g(x)\).
+\end{theorem}
+\begin{proof}
+必要性:设\(p(x)\)是\(\mathbb{F}[x]\)中的不可约多项式，且\(p(x)\mid f(x)g(x)\)。若\(p(x)\mid f(x)\)，则结论成立。
+若\(p(x)\nmid f(x)\)，则由定理可知\((p(x),f(x)) = 1\)，从而由互素多项式与最大公因式的基本性质可知\(p(x)\mid g(x)\).
+
+充分性:(反证法)假设\(p(x)\)可约,则必存在次数小于\(\text{deg}(p(x))\)的多项式\(f(x)\),\(g(x)\),使得\(p(x) = f(x)g(x)\).从而\(p(x) \mid f(x)g(x)\),于是由条件可知\(p(x) \mid f(x)\)或\(p(x) \mid g(x)\).因此\(\text{deg}(p(x)) \leqslant  \text{deg}(f(x))\)或\(\text{deg}(g(x))\).这与\(\text{deg}(p(x)) > \text{deg}(f(x))\),\(\text{deg}(g(x))\)矛盾.
+\end{proof}
+
+\begin{corollary}\label{corollary:不可约多项式“素性”的推论}
+设\(p(x)\)为不可约多项式且
+\[
+p(x)\mid f_1(x)f_2(x)\cdots f_m(x),
+\]
+则\(p(x)\)必可整除其中某个\(f_i(x)\).
+\end{corollary}
+\begin{proof}
+由\hyperref[theorem:不可约多项式的“素性”]{不可约多项式的“素性”}归纳可得.
+\end{proof}
+
+\begin{proposition}\label{proposition:多项式可以写成不可约多项式的幂的充要条件}
+设\(f(x)\)是数域\(\mathbb{F}\)上的非常数多项式, 求证: \(f(x)\)等于某个不可约多项式的幂的充要条件是对任意的非常数多项式\(g(x)\), 或者\(f(x)\)和\(g(x)\)互素, 或者\(f(x)\)可以整除\(g(x)\)的某个幂.
+\end{proposition}
+\begin{proof}
+设\(f(x)=p(x)^k\), \(p(x)\)在\(\mathbb{F}\)上不可约,且\(f(x)\)和\(g(x)\)不互素, 则\(p(x)\)是\(f(x)\)和\(g(x)\)的公因式, 故\(f(x)\)可以整除\(g(x)^k\).
+
+反之, 由\hyperref[theorem:因式分解定理]{因式分解定理},可设\(f(x)=p(x)^mh(x)\), \(p(x)\)在\(\mathbb{F}\)上不可约, \(\mathrm{deg }\,h(x)>0\), 且\(p(x)\)不能整除\(h(x)\), 则\(h(x)\mid f(x)\),故$f(x)$不和$h(x)$互素.由于$\mathrm{deg}\,h(x)<\mathrm{deg }\,f(x)$,因此$f(x)$也不能整除\(h(x)\).若存在正整数$k\geqslant 2$,使得$f(x)\mid h^k(x)$,则存在$g\in \mathbb{F}[x]$,使得$f(x)=g(x)h^k(x)=p^m(x)h(x)$,于是$p^m(x)=g(x)h^{k-1}(x)$.从而$h^{k-1}(x)\mid p^m(x)$.但由$p(x)\nmid h(x)$且$p(x)$不可约知$(p(x),h(x))=1$,因此由\hyperref[proposition:互素多项式和最大公因式的基本性质6]{互素多项式和最大公因式的基本性质\ref{proposition:互素多项式和最大公因式的基本性质6}}知$(p^m(x),h^{k-1}(x))=1$,矛盾!
+\end{proof}
+
+\begin{proposition}
+证明 \(\mathbb{Q}\) 上的次数大于 1 的多项式能表示为两个 \(\mathbb{Q}\) 上的不可约多项式之和。
+\end{proposition}
+\begin{proof}
+设  
+\[
+f(x) = \sum_{k=0}^n a_k x^k, \quad n > 1, \quad a_0, a_1, \cdots, a_n \in \mathbb{Q}.
+\]
+取非 0 的 \(m \in \mathbb{Z}\), 使得  
+\[
+mf(x) = \sum_{k=0}^n m a_k x^k \in \mathbb{Z}[x].
+\]
+则选取素数 \(p\), 使得 \(p\) 不整除 \(ma_0 + 1\). 考虑分解  
+\[
+f(x) = f(x) + \frac{x^n + p}{mp} + \left[ -\frac{x^n + p}{mp} \right].
+\]
+由\hyperref[theorem:Eisenstein判别法]{Eisenstein判别法}, 显然 \(-\frac{x^n+p}{mp}\) 不可约. 此外  
+\[
+mpf(x) + x^n + p = (1 + mp)x^n + p\sum_{j=1}^{n-1} ma_j x^j + p(ma_0 + 1).
+\]
+注意到 \(p\) 不整除 \(1 + mp\) 但整除其余所有系数且 \(p^2\) 不整除 \(p(ma_0 + 1)\), 因此由\hyperref[theorem:Eisenstein判别法]{Eisenstein判别法}我们知道 \(f(x) + \frac{x^n + p}{mp}\) 不可约. 这就完成了证明.
+\end{proof}
+
+\begin{definition}[代数数]\label{definition:代数数}
+设\(u\)是复数域中某个数, 若\(u\)适合某个非零有理系数多项式 (或整系数多项式)\(f(x)=a_nx^n + a_{n - 1}x^{n - 1}+\cdots+a_1x + a_0\), 则称\(u\)是一个\textbf{代数数}.
+\end{definition}
+
+\begin{definition}[极小多项式(最小多项式)]\label{definition:极小多项式(最小多项式)}
+对任一代数数\(u\), 存在唯一一个\(u\)适合的首一有理系数多项式\(g(x)\), 使得\(g(x)\)是\(u\)适合的所有非零有理系数多项式中次数最小者. 这样的\(g(x)\)称为\(u\)的\textbf{极小多项式}或\textbf{最小多项式}.
+\end{definition}
+\begin{proof}
+现在证明这个定义是良定义的,只须证明对任一代数数所对应的极小多项式的存在性和唯一性.
+
+先证存在性.在\(u\)适合的所有非零有理系数多项式构成的集合中 (由假设这个集合非空,否则$u$就不是一个代数数),由良序公理可知,存在一个次数最小的多项式,然后将其首一化, 即可得到\(u\)的极小多项式\(g(x)\). 
+
+再证唯一性.为了证明极小多项式的唯一性, 我们先证明极小多项式的一个基本性质, 即极小多项式可以整除\(u\)适合的任一多项式\(f(x)\). 假设
+\[
+f(x)=g(x)q(x)+r(x), \mathrm{deg }r(x)<\mathrm{deg }g(x),
+\]
+则由\(f(u)=g(u)=0\)可知\(r(u)=0\). 若\(r(x)\neq 0\), 则\(u\)适合一个比\(g(x)\)的次数更小的多项式\(r(x)\), 这和\(g(x)\)是极小多项式矛盾. 因此\(r(x)=0\), 即\(g(x)\mid f(x)\). 设\(h(x)\)也是\(u\)的极小多项式, 则由上述性质可得\(g(x)\mid h(x), h(x)\mid g(x)\), 从而\(g(x)\)和\(h(x)\)只差一个非零常数, 又它们都是首一的, 故只能相等, 唯一性得证.
+\end{proof}
+
+\begin{proposition}[极小多项式的基本性质]\label{proposition:极小多项式的基本性质}
+\begin{enumerate}[(1)]
+\item 设$g(x)$为$u$的极小多项式,则$g(x)$一定整除\(u\)适合的任一多项式\(f(x)\).
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 假设
+\[
+f(x)=g(x)q(x)+r(x), \mathrm{deg }r(x)<\mathrm{deg }g(x),
+\]
+则由\(f(u)=g(u)=0\)可知\(r(u)=0\). 若\(r(x)\neq 0\), 则\(u\)适合一个比\(g(x)\)的次数更小的多项式\(r(x)\), 这和\(g(x)\)是极小多项式矛盾. 因此\(r(x)=0\), 即\(g(x)\mid f(x)\). 
+\end{enumerate}
+\end{proof}
+
+\begin{proposition}[极小多项式式的充要条件]\label{proposition:极小多项式式的充要条件}
+设\(g(x)\)是一个\(u\)适合的首一有理系数多项式, 则\(g(x)\)是\(u\)的极小多项式的充要条件是\(g(x)\)是有理数域上的不可约多项式.
+\end{proposition}
+\begin{proof}
+
+先证必要性. 若极小多项式\(g(x)\)在有理数域上可约, 则\(g(x)=g_1(x)g_2(x)\)可分解为两个比\(g(x)\)的次数更小的多项式的乘积. 由\(0 = g(u)=g_1(u)g_2(u)\)可知\(g_1(u)\)和\(g_2(u)\)中至少有一个等于零. 不妨设\(g_1(u)=0\), 则\(u\)适合一个比\(g(x)\)的次数更小的多项式\(g_1(x)\), 这和\(g(x)\)是极小多项式矛盾. 
+
+再证充分性. 设\(g(x)\)是\(u\)适合的有理数域上的首一不可约多项式, \(h(x)\)是\(u\)的极小多项式. 由\hyperref[proposition:极小多项式的基本性质]{极小多项式的基本性质(1)}可知\(h(x)\mid g(x)\).因为$g(u)=h(u)=0$,所以$g(x)$和$h(x)$有公共根,从而$x-u$一定是$g(x),h(x)$的公因式,于是$g(x)$和$h(x)$不互素.又\(g(x)\)是不可约多项式,因此$g(x)\mid h(x)$.于是$g(x)\sim h(x)$,即\(g(x)\)和\(h(x)\)只差一个非零常数,而它们又都是首一的,故只能相等.因此\(g(x)\)就是\(u\)的极小多项式.
+\end{proof}
+
+\begin{example}
+设 $f(x)=x^{2027}+ax+b\in\mathbb{Q}[x]$，$f(x)$ 在 $\mathbb{Q}$ 上不可约，记 $\alpha$ 为 $f(x)$ 的一个根。
+\begin{enumerate}[(1)]
+\item 求证：$1,\alpha,\cdots,\alpha^{2026}$ 在 $\mathbb{Q}$ 上线性无关。
+\item 令 $V=\operatorname{Span}_{\mathbb{Q}}\{1,\alpha,\cdots,\alpha^{2026}\}\subset\mathbb{C}$，证明：$\forall v\in V, v\neq 0, \exists u\in V$，使得 $uv=1$。
+\end{enumerate}
+\end{example}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 假设它们线性相关，则存在不全为零的 $c_0,c_1,\cdots,c_{2026}\in\mathbb{Q}$，使得
+\begin{align*}
+\sum_{i=0}^{2026} c_i\alpha^i=0.
+\end{align*}
+令 $h(x)=\sum_{i=0}^{2026} c_i x^i\in\mathbb{Q}[x]$，则 $h\neq 0$，$\deg h\leqslant 2026$，且 $h(\alpha)=0$。但由\cref{proposition:极小多项式式的充要条件}知$\alpha$ 的极小多项式是 $f(x)$，所以 $f(x)\mid h(x)$。然而 $\deg f=2027>\deg h$，矛盾!因此 $1,\alpha,\cdots,\alpha^{2026}$ 在 $\mathbb{Q}$ 上线性无关。
+
+\item 任取 $v\in V$，$v\neq 0$。由 $V$ 的定义，存在 $g(x)\in\mathbb{Q}[x]$，$\deg g\leqslant 2026$，使得 $v=g(\alpha)$，且 $g\neq 0$。因为 $\deg g<2027=\deg f$，且 $f$ 在 $\mathbb{Q}[x]$ 中不可约，所以 $\gcd(f,g)=1$。于是存在 $p(x),q(x)\in\mathbb{Q}[x]$，使得
+\begin{align*}
+p(x)f(x)+q(x)g(x)=1.
+\end{align*}
+代入 $x=\alpha$，得
+\begin{align*}
+p(\alpha)f(\alpha)+q(\alpha)g(\alpha)=1.
+\end{align*}
+又 $f(\alpha)=0$，所以 $q(\alpha)g(\alpha)=1$，即 $q(\alpha)v=1$。现在用 $f(x)$ 除 $q(x)$得
+\begin{align*}
+q(x)=f(x)s(x)+r(x),\quad \deg r<2027.
+\end{align*}
+于是 $\deg r\leqslant 2026$，因此 $r(\alpha)\in V$。并且由于 $f(\alpha)=0$，有 $q(\alpha)=r(\alpha)$。令 $u=r(\alpha)\in V$，则
+\begin{align*}
+uv=r(\alpha)g(\alpha)=q(\alpha)g(\alpha)=1.
+\end{align*}
+所以任意非零 $v\in V$ 都存在 $u\in V$，使得 $uv=1$。
+\end{enumerate}
+\end{proof}
+
+
+
+\subsection{多项式的标准分解}
+
+多项式的标准分解是证明某些问题的有力工具.
+
+\begin{theorem}[因式分解定理]\label{theorem:因式分解定理}
+设\(f(x)\)是数域\(\mathbb{K}\)上的多项式且\(\mathrm{deg }f(x)\geqslant  1\), 则
+
+(1) \(f(x)\)可分解为有限个\(\mathbb{K}\)上的不可约多项式之积;
+
+(2) 若
+\begin{align}
+f(x)=p_1(x)p_2(x)\cdots p_s(x)=q_1(x)q_2(x)\cdots q_t(x).\label{theorem5.12-5.4.1}
+\end{align}
+是\(f(x)\)的两个不可约分解, 即\(p_i(x),q_j(x)\)都是\(\mathbb{K}\)上的次数大于零的不可约多项式, 则\(s = t\), 且经过适当调换因式的次序以后, 有
+\[
+q_i(x)\sim p_i(x),\ i = 1,2,\cdots,s.
+\]
+\end{theorem}
+\begin{note}
+\begin{enumerate}
+\item 这个定理表明, 任一多项式可唯一地分解为若干个不可约多项式之积. 这里唯一是在相伴意义下的唯一, 即相应的多项式可以差一个常数因子. 如果把分解式中相同或仅差一个常数的因式合并在一起, 就得到了一个 \textbf{标准分解式}:
+\begin{align}
+f(x)=cp_1(x)^{e_1}p_2(x)^{e_2}\cdots p_m(x)^{e_m}, \label{theorem5.12-5.4.2}
+\end{align}
+其中\(c\neq 0, p_i(x)\)是互异的首一不可约多项式, \(e_i\geqslant  1(i = 1,2,\cdots,m)\).
+
+若\(e_i>1\ (e_i = 1)\), 我们称\eqref{theorem5.12-5.4.2}式中的因式\(p_i(x)\)为\(f(x)\)的\textbf{\(e_i\)重因式 (单因式)}. 显然这时\(p_i(x)^{e_i}\mid f(x)\), 但\(p_i(x)^{e_i + 1}\)不能整除\(f(x)\).
+
+\item 设\(f(x),g(x)\)是\(\mathbb{K}\)上的两个多项式, 在它们的标准分解式中适当添加零次项,就能得到公共的标准分解. 故对\(\mathbb{K}\)上任意的两个多项式$f(x),g(X)$,都可以不妨设它们有如下的\textbf{公共的标准分解式}:
+\[
+f(x)=c_1p_1(x)^{e_1}p_2(x)^{e_2}\cdots p_n(x)^{e_n};
+\]
+\[
+g(x)=c_2p_1(x)^{f_1}p_2(x)^{f_2}\cdots p_n(x)^{f_n},
+\]
+其中\(e_i\geqslant  0, f_i\geqslant  0(i = 1,2,\cdots,n)\).
+\end{enumerate}
+\end{note}
+\begin{proof}
+(1) 对多项式\(f(x)\)的次数用数学归纳法. 若\(\mathrm{deg }f(x)=1\), 结论显然成立. 设次数小于\(n\)的多项式都可以分解为\(\mathbb{K}\)上的不可约多项式之积而\(\mathrm{deg }f(x)=n\). 若\(f(x)\)不可约, 结论自然成立. 若\(f(x)\)可约, 则
+\[
+f(x)=f_1(x)f_2(x),
+\]
+其中\(f_1(x),f_2(x)\)的次数小于\(n\), 由归纳假设它们可以分解为有限个\(\mathbb{K}\)上的不可约多项式之积. 所有这些多项式之积就是\(f(x)\).
+
+(2) 对\eqref{theorem5.12-5.4.1}式中的\(s\)用数学归纳法. 若\(s = 1\), 则\(f(x)=p_1(x)\), 因此\(f(x)\)是不可约多项式, 于是\(t = 1, q_1(x)=p_1(x)\). 现假设对不可约因式个数小于\(s\)的多项式结论正确. 由\eqref{theorem5.12-5.4.1}式, 有
+\[
+p_1(x)\mid q_1(x)q_2(x)\cdots q_t(x),
+\]
+由\hyperref[corollary:不可约多项式“素性”的推论]{推论\ref{corollary:不可约多项式“素性”的推论}}可知, 必存在某个\(i\), 不妨设\(i = 1\), 使
+\[
+p_1(x)\mid q_1(x).
+\]
+但是\(p_1(x),q_1(x)\)都是不可约多项式, 因此存在\(0\neq c_1\in\mathbb{K}\), 使
+\[
+q_1(x)=c_1p_1(x),
+\]
+此即\(p_1(x)\sim q_1(x)\). 将上式代入\eqref{theorem5.12-5.4.1}式并消去\(p_1(x)\), 得到
+\[
+p_2(x)\cdots p_s(x)=c_1q_2(x)\cdots q_t(x).
+\]
+这时左边为\(s - 1\)个不可约多项式之积, 由归纳假设, \(s - 1=t - 1\), 即\(s = t\). 另一方面, 存在\(0\neq c_i\in\mathbb{K}\), 使\(q_i(x)=c_ip_i(x)\).
+\end{proof}
+
+\begin{corollary}\label{corollary:标准分解式具有相同因子的多项式的最大公因式与最小公倍式}
+设\(f(x),g(x)\)是\(\mathbb{K}\)上的两个多项式,不妨设它们有如下的公共的标准分解式:
+\[
+f(x)=c_1p_1(x)^{e_1}p_2(x)^{e_2}\cdots p_n(x)^{e_n};
+\]
+\[
+g(x)=c_2p_1(x)^{f_1}p_2(x)^{f_2}\cdots p_n(x)^{f_n},
+\]
+其中\(e_i\geqslant  0, f_i\geqslant  0(i = 1,2,\cdots,n)\), 则\(f(x),g(x)\)的最大公因式
+\[
+(f(x),g(x))=p_1(x)^{k_1}p_2(x)^{k_2}\cdots p_n(x)^{k_n},
+\]
+其中\(k_i = \min\{e_i,f_i\}(i = 1,2,\cdots,n)\).
+
+类似地, \(f(x),g(x)\)的最小公倍式
+\[
+[f(x),g(x)]=p_1(x)^{h_1}p_2(x)^{h_2}\cdots p_n(x)^{h_n},
+\]
+其中\(h_i = \max\{e_i,f_i\}(i = 1,2,\cdots,n)\).
+\end{corollary}
+\begin{proof}
+利用最大公因式和最小公倍式的定义容易证明.
+\end{proof}
+
+\begin{proposition}[整除关系在平方下不变]\label{proposition:整除关系在平方下不变}
+证明：\(g(x)^2 \mid f(x)^2\) 的充要条件是 \(g(x) \mid f(x)\).
+\end{proposition}
+\begin{proof}
+充分性是显然的，只需证明必要性。设 \(f(x), g(x)\) 的公共标准分解为
+\[
+f(x) = cp_1(x)^{e_1}p_2(x)^{e_2} \cdots p_k(x)^{e_k}, \quad g(x) = dp_1(x)^{f_1}p_2(x)^{f_2} \cdots p_k(x)^{f_k},
+\]
+其中 \(p_i(x)\) 为互不相同的首一不可约多项式，\(c, d\) 是非零常数，则
+\[
+f(x)^2 = c^2 p_1(x)^{2e_1}p_2(x)^{2e_2} \cdots p_k(x)^{2e_k}, \quad g(x)^2 = d^2 p_1(x)^{2f_1}p_2(x)^{2f_2} \cdots p_k(x)^{2f_k}.
+\]
+若 \(g(x)^2 \mid f(x)^2\)，则 \(2f_i \leqslant  2e_i\)，从而 \(f_i \leqslant  e_i (1 \leqslant  i \leqslant  k)\)。因此 \(g(x) \mid f(x)\).
+\end{proof}
+
+\begin{example}
+证明 \( f(x) = 3x^{4} + 6x^{3} - 3x + 8 \) 在有理数域上不可约。
+\end{example}
+\begin{proof}
+
+{\color{blue}证法一:}
+先证:\( f(x) \) 在 \( \mathbb{Q} \) 上没有一次因子.
+将 \( f(x) \) 模 \(5\) 化简, 得到
+\begin{align*}
+\overline{f}(x) = 3x^{4} + x^{3} + 2x + 3 \in \mathbb{F}_{5}[x].
+\end{align*}
+逐一代入 \( \mathbb{F}_{5} \) 中的元素, 有
+\begin{align*}
+\overline{f}(0)=3,\quad \overline{f}(1)=4,\quad \overline{f}(2)=3,\quad \overline{f}(3)=4,\quad \overline{f}(4)=3.
+\end{align*}
+因此 \( \overline{f}(x) \) 在 \( \mathbb{F}_{5} \) 中没有根.
+
+如果 \( f(x) \) 在 \( \mathbb{Q} \) 中有根 \( r = \frac{m}{n} \), 其中 \( \gcd(m,n)=1 \), 则由有理根定理有 \( n \mid 3 \). 特别地, \( 5 \nmid n \), 所以 \( n \) 在 \( \mathbb{F}_{5} \) 中可逆. 将等式 \( f(\frac{m}{n})=0 \) 模 \(5\) 化简得
+\begin{align*}
+\overline{f}(\overline{m}\,\overline{n}^{-1}) = 0,
+\end{align*}
+这与 \( \overline{f}(x) \) 在 \( \mathbb{F}_{5} \) 中没有根矛盾! 因此 \( f(x) \) 在 \( \mathbb{Q} \) 上没有一次因子.
+
+再证\( f(x) \) 在 \( \mathbb{Q} \) 上不能分解为两个二次因子的乘积.
+
+反设 \( f(x) \) 在 \( \mathbb{Q}[x] \) 中可以分解为两个二次多项式的乘积. 由\refthe{theorem:整系数多项式在有理数域上可约,则一定可以分解成两个次数较低的整系数多项式之积},它可以在 \( \mathbb{Z}[x] \) 中分解为两个二次多项式的乘积. 两个因子的首项系数之积为 \(3\). 交换因子的次序并同时调整符号后, 不妨设
+\begin{align*}
+f(x) = (x^{2} + ax + b)(3x^{2} + cx + d),
+\end{align*}
+其中 \( a,b,c,d \in \mathbb{Z} \). 展开右端:
+\begin{align*}
+(x^{2} + ax + b)(3x^{2} + cx + d) = 3x^{4} + (c + 3a)x^{3} + (d + ac + 3b)x^{2} + (ad + bc)x + bd.
+\end{align*}
+与 \( f(x) = 3x^{4} + 6x^{3} + 0x^{2} - 3x + 8 \) 比较系数, 得到
+\begin{gather}
+c + 3a = 6, \label{eqA1} \\
+d + ac + 3b = 0, \label{eqA2} \\
+ad + bc = -3,  \quad
+bd = 8. \label{eqA4}
+\end{gather}
+由 \eqref{eqA1} 可得 \( c = 6 - 3a = 3(2-a) \), 所以 \( 3 \mid c \). 再由 \eqref{eqA2}, \( d = -ac - 3b \), 由于 \( 3 \mid c \), 可知 \( 3 \mid ac \), 且显然 \( 3 \mid 3b \), 故 \( 3 \mid d \). 于是 \( 3 \mid bd \). 但 \eqref{eqA4} 给出 \( bd = 8 \), 这意味着 \( 3 \mid 8 \), 矛盾. 因此 \( f(x) \) 不可能分解为两个二次多项式的乘积.
+
+综上, \( f(x) \) 既没有一次因子, 也不能分解为两个二次因子的乘积, 故 \( f(x) \) 在有理数域上不可约.
+
+{\color{blue}证法二:}
+当 \( x \geqslant 0 \) 时,
+若 \( 0 \leqslant x < 1 \), 则
+\begin{align*}
+f(x) = 3x^{4} + 6x^{3} - 3x + 8 \geqslant -3x + 8 > -3 + 8 = 5 > 0.
+\end{align*}
+若 \( x \geqslant 1 \), 则 \( 3x^{4} + 6x^{3} - 3x = 3x(x^{3} + 2x^{2} - 1) \geqslant 0 \), 所以
+\begin{align*}
+f(x) \geqslant 8 > 0.
+\end{align*}
+
+当 \( x < 0 \) 时, 求导得
+\begin{align*}
+f'(x) = 12x^{3} + 18x^{2} - 3 = 3(4x^{3} + 6x^{2} - 1).
+\end{align*}
+由\hyperref[theorem:整数系数多项式有有理根的必要条件]{整数系数多项式有有理根的必要条件}可得\( x = -\frac12 \) 是 \( 4x^{3} + 6x^{2} - 1 = 0 \) 的根, 因式分解得
+\begin{align*}
+4x^{3} + 6x^{2} - 1 = (x + \tfrac12)(4x^{2} + 4x - 2) = 2(x + \tfrac12)(2x^{2} + 2x - 1).
+\end{align*}
+故在 \( x < 0 \) 范围内$f'$的零点为
+\begin{align*}
+x_1 = \frac{-1 - \sqrt{3}}{2},\qquad x_2 = -\frac12.
+\end{align*}
+分析导数符号可知 \( x_1 \) 是极小值点, \( x_2 \) 是极大值点. 计算得$f$的极小值、极大值分别为
+\begin{align*}
+f\left(\frac{-1 - \sqrt{3}}{2}\right) = \frac{29}{4} > 0,\quad f(-\frac12) = \frac{143}{16} > 0.
+\end{align*}
+因此当 \( x < 0 \) 时, \( f(x) > 0 \) 恒成立.
+
+综上, 对所有实数 \( x \), \( f(x) > 0 \), 故 \( f(x) = 0 \) 无实数根, 更无有理根. 因此 \( f(x) \) 在 \( \mathbb{Q} \) 上不可约.
+
+{\color{blue}证法三:}
+考虑 \( f(x) \) 的反向多项式
+\begin{align*}
+g(x) = 8x^{4} - 3x^{3} + 6x + 3.
+\end{align*}
+当 \( x \neq 0 \) 时, 有 \( g(x) = x^{4} f(\frac{1}{x}) \). 取素数 \( p = 3 \), 有
+\begin{align*}
+p \nmid 8,\qquad p \mid -3,0,6,3,\qquad p^{2} \nmid 3.
+\end{align*}
+根据\hyperref[theorem:Eisenstein判别法]{Eisenstein判别法}可知 \( g(x) \) 在有理数域上不可约.
+
+若 \( f(x) \) 在有理数域上可约, 则存在次数分别为 \( p, q \) (\( p, q > 0, p+q = 4 \)) 的多项式 \( f_1(x), f_2(x) \in \mathbb{Q}[x] \), 使得 \( f(x) = f_1(x)f_2(x) \). 那么当 \( x \neq 0 \) 时, 有
+\begin{align*}
+x^{4} f\left(\frac{1}{x}\right) = x^{p} f_1\left(\frac{1}{x}\right) \cdot x^{q} f_2\left(\frac{1}{x}\right).
+\end{align*}
+记 \( f_1(x), f_2(x) \) 的反向多项式分别为 \( g_1(x), g_2(x) \in \mathbb{Q}[x] \), 它们的次数分别为 \( p, q \). 上式说明当 \( x \neq 0 \) 时,
+\begin{align*}
+g(x) = g_1(x)g_2(x).
+\end{align*}
+由连续性可知上式对 \( x = 0 \) 也成立, 这与 \( g(x) \) 在 \( \mathbb{Q}[x] \) 上不可约矛盾. 故 \( f(x) \) 在有理数域上不可约.
+\end{proof}
+
+\begin{lemma}\label{lemma:正整数因子个数估计}
+正整数 \(N\) 的正整数因子个数记为\(\tau(N)\),则
+\begin{align*}
+\tau(N) \leqslant 2\sqrt{N}.
+\end{align*}
+进而\(N\)正、负整数因子总个数为$2\tau(N)$,且满足
+\begin{align*}
+2\tau(N) \leqslant 4\sqrt{N}.
+\end{align*}
+\end{lemma}
+\begin{proof}
+设正整数 \(N\) 的正因子个数为 \(\tau(N)\), 则对 \(N\) 的任意一个正因子 \(d\), 都存在与之对应的正整数 \(\frac{N}{d}\), 使得 \(d \cdot \frac{N}{d} = N\). 因此, 所有的正因子都可以成对出现: \((d_1, \frac{N}{d_1}), (d_2, \frac{N}{d_2}), \cdots\).
+在每一对因子 \((d, \frac{N}{d})\) 中, 必然满足一个小于等于 \(\sqrt{N}\), 另一个大于等于 \(\sqrt{N}\). 正因子按大小可分为小于等于 \(\sqrt{N}\) 和大于等于 \(\sqrt{N}\) 两部分. 小于等于 \(\sqrt{N}\) 的因子只能取自 \(1,2,\cdots,\lfloor\sqrt{N}\rfloor\) 中的整数, 所以其个数最多为 \(\lfloor\sqrt{N}\rfloor\) 个; 根据配对原则, 大于等于 \(\sqrt{N}\) 的因子也至多有 \(\lfloor\sqrt{N}\rfloor\) 个.
+因此, 总的正因子个数满足
+\begin{align*}
+\tau(N) \leqslant \lfloor\sqrt{N}\rfloor + \lfloor\sqrt{N}\rfloor = 2\lfloor\sqrt{N}\rfloor \leqslant 2\sqrt{N}.
+\end{align*}
+考虑到每一个正因子 \(d\) 都存在对应的负因子 \(-d\), 所以正负因子总数为 \(2\tau(N)\). 将其代入上式得, 正、负整数因子总数满足
+\begin{align*}
+2\tau(N) \leqslant 4\sqrt{N}.
+\end{align*}
+\end{proof}
+
+\begin{example}
+问多项式 \(f(x) = \prod\limits_{i=1}^{2013} (x-i)^2 + 2014\) 在有理数域上是否可约? 证明你的结论.
+\end{example}
+\begin{proof}
+假设 \(f(x)\) 在 \(\mathbb{Q}\) 上可约, 则有 \(f(x)=g(x)h(x)\), 其中 \(g(x),h(x) \in \mathbb{Z}[x]\) 都是首一多项式, \(\deg g(x), \deg h(x) \geqslant 1\), 且 \(g(x)\) 和 \(h(x)\) 必有一个满足 \(\deg g(x) \leqslant 2013\). 因为$f$恒正,所以$g,h$也必恒正.
+记 \(I=\{1,2,\cdots,2013\}\), 显然有
+\begin{align*}
+g(i)h(i) = 2014, \quad \forall i \in I.
+\end{align*}
+所以 \(g(i)\) 和 \(h(i)\) 都是 2014 的正因子. 注意到2014 的全部正因子只有如下 8 个
+\begin{align*}
+S = \{1,2,19,38,53,106,1007,2014\}.
+\end{align*}
+所由抽屉原理,必存在某个 \(m\in S\), 使得 \(g(x)\) 对 \(I\) 中至少 $\left\lceil \frac{2013}{18} \right\rceil=252 $个互异的整数 \(a_1,a_2,\cdots,a_{252}\) 都取值 \(m\). 于是
+\begin{align*}
+g(x) = p(x) \prod\limits_{j=1}^{252} (x-a_j) + m,
+\end{align*}
+其中 \(p(x)\in \mathbb{Z}[x]\). 现在, 若存在某个 \(k\in I\setminus\{a_1,a_2,\cdots,a_{252}\}\) 使得 \(g(k) = m_1 \in S\)且 \(m_1\neq m\), 则
+\begin{align*}
+\prod\limits_{j=1}^{252} (k-a_j) \mid (m_1-m),
+\end{align*}
+即 \(m-m_1\) 有 252 个不同的整数因子, 这不可能. 这是因为 \(m,m_1\in S\), 所以 \(0<|m_1-m|\leqslant 2013\).
+取 \(N=|m_1-m|\leqslant 2013\), 则由\cref{lemma:正整数因子个数估计}知其整数因子总数不超过 \(4\sqrt{2013}<180<252\), 这与它至少有 252 个不同的整数因子矛盾.
+所以 \(m_1\neq m\) 不可能, 只能有 \(g(k)=m\). 由于 \(k\) 是任取的, 结合原来的 252 个点可知 \(g(i)=m\) 对所有 \(i=1,2,\cdots,2013\) 都成立. 由此说明 \(\deg g(x)=2013\),故
+$g(x) = \prod\limits_{j=1}^{252} (x-a_j) + m.$
+同理可知 \(h(x) = \prod\limits_{i=1}^{2013} (x-i) + n\), 其中 \(n\in S\). 从而
+\begin{align*}
+g(x)h(x) = \prod\limits_{i=1}^{2013} (x-i)^2 + (m+n) \prod\limits_{i=1}^{2013} (x-i) + mn.
+\end{align*}
+与 \(f(x)\) 比较系数, 得 \(m+n=0\), \(mn=2014\). 矛盾！故假设不成立, 所以 \(f(x)\) 在 \(\mathbb{Q}\) 上不可约.
+\end{proof}
+
+\begin{example}
+证明多项式 \(f(x) = \prod\limits_{i=1}^{18}(x-i) + 23\) 在 \(\mathbb{Q}\) 上不可约.
+\end{example}
+\begin{proof}
+
+假设 \(f(x)\) 在 \(\mathbb{Z}[x]\) 上可约, 则存在首一的多项式 \(g(x), h(x) \in \mathbb{Z}[x]\) 使得 \(f(x) = g(x)h(x)\). 其满足 \(\deg g + \deg h = 18\), 不妨设 \(\deg g \leqslant 17\).
+对任意 \(i \in \{1,2,\cdots,18\}\), 有 \(f(i) = g(i)h(i) = 23\). 因为 \(23\) 为素数, 所以对于每个 \(i\) 来说, 有序数对 \((g(i), h(i))\) 只可能是如下四种情形之一:
+\begin{align*}
+(g(i), h(i)) \in \{\left( 23,1 \right) ,\left( -23,-1 \right) ,\left( 1,23 \right) ,\left( -1,-23 \right) \}, \quad \forall i\in \{1,2,\cdots,18\}.
+\end{align*}
+分别称
+\begin{align*}
+\left( g\left( i \right) ,h\left( i \right) \right) =\left( 23,1 \right) \text{、}\left( g\left( i \right) ,h\left( i \right) \right) =\left( -23,-1 \right) \text{、}\left( g\left( i \right) ,h\left( i \right) \right) =\left( 1,23 \right) \text{、}\left( g\left( i \right) ,h\left( i \right) \right) =\left( -1,-23 \right) 
+\end{align*}
+为第一种、第二种、第三种、第四种情形.
+
+首先, 由抽屉原理, 在所有 \(18\) 个整数点中, 这四种情形至少有一种出现的次数大于等于 \(\left\lceil \frac{18}{4} \right\rceil = 5\). 取其中的 \(5\) 个点, 记为 \(a_1, a_2, a_3, a_4, a_5\). 不妨设这 \(5\) 个点属于第一种情形, 即 \(g(a_j) = 23\)且\(h(a_j) = 1\). 从而存在 \(k(x), t(x) \in \mathbb{Z}[x]\) 使得
+\begin{align*}
+g(x)-23 = k(x) \prod\limits_{j=1}^{5}(x-a_j), \quad 
+h(x)-1 = t(x) \prod\limits_{j=1}^{5}(x-a_j).
+\end{align*}
+若存在某个 \(i_0\in \{1,2,\cdots,18\}\setminus\{a_1,a_2,\cdots,a_5\}\) 属于第二种情形, 即 \(g(i_0) = -23\)且\(h(i_0) = -1\). 代入上式得
+\begin{align*}
+2=\left| h(i_0)-1 \right|=\left| t\left( i_0 \right) \right|\prod_{j=1}^5{\left| i_0-a_j \right|}\geqslant \left| t\left( i_0 \right) \right|\cdot 5!=120\left| t\left( i_0 \right) \right|,
+\end{align*}
+显然矛盾！
+接着, 排除了第二种情形后,$\forall i\in \{1,2,\cdots,18\}$只能落在第一、第三、第四种情形之中. 再次使用抽屉原理, 这三种情形中至少有一种出现的次数大于等于\(\left\lceil \frac{18}{3} \right\rceil = 6\)次. 不妨仍设为第一种情形出现 \(6\) 次, 即存在 \(6\) 个不同的点 \(b_1, b_2, \cdots, b_6\) 使得 \(g(a_j) = 23\).从而存在 \(p(x), q(x) \in \mathbb{Z}[x]\) 使得
+\begin{align*}
+g(x)-23 = p(x) \prod\limits_{j=1}^{6}(x-b_j), \quad
+h(x)-1 = q(x) \prod\limits_{j=1}^{6}(x-b_j).
+\end{align*}
+若存在某个\(i_0\in \{1,2,\cdots,18\}\setminus\{b_1,b_2,\cdots,b_6\}\) 属于第三种情形, 即 \(g(i_0) = 1\)且 \(h(i_0) = 23\). 代入上式得
+\begin{align*}
+22=\left| g\left( i_0 \right) -23 \right|=\left| p\left( i_0 \right) \right|\prod_{j=1}^6{\left| i_0-b_j \right|}\geqslant \left| p\left( i_0 \right) \right|\cdot 6!=720\left| p\left( i_0 \right) \right|,
+\end{align*}
+显然矛盾！
+现在,$\forall i\in \{1,2,\cdots,18\}$只能属于第一种或第四种情形, 即 \((g(i), h(i)) \in \{(23, 1), (-1, -23)\}\). 根据抽屉原理, 在这两种情形中至少有一种出现的次数大于等于\(\left\lceil \frac{18}{2} \right\rceil = 9\)次.  同样不妨设第一种情形出现 \(9\) 次, 即存在 \(9\) 个不同的点 \(c_1, c_2, \cdots, c_9\) 使得 \(g(c_j) = 23\). 从而存在 \(m(x) \in \mathbb{Z}[x]\) 使得
+\begin{align*}
+g(x)-23 = m(x) \prod\limits_{j=1}^{9}(x-c_j).
+\end{align*}
+若存在\(i_0\in \{1,2,\cdots,18\}\setminus\{c_1,c_2,\cdots,c_9\}\)属于第四种情形, 即 \(g(i_0) = -1\)且\(h(i_0) = -23\). 代入上式得
+\begin{align*}
+24=\left| g\left( i_0 \right) -23 \right|=\left| m\left( i_0 \right) \right|\prod_{j=1}^9{\left| i_0-c_j \right|}\geqslant \left| m\left( i_0 \right) \right|\cdot 9!=362880\left| m\left( i_0 \right) \right|,
+\end{align*}
+显然矛盾！
+至此, 第二、第三、第四种情形都被证明不可能存在. 因此, 对于全部的 \(i \in \{1,2,\cdots,18\}\), 只有第一种情形成立, 即 \(g(i) = 23\).
+这意味着多项式 \(g(x) - 23\) 至少有 \(18\) 个不同的根. 由于 \(\deg g(x) \leqslant 17\), 多项式 \(g(x) - 23\) 恒等于 \(0\), 即 \(g(x) \equiv 23\).
+这与假设\(g(x)\) 是首一多项式矛盾!因此多项式 \(f(x)\) 在 \(\mathbb{Q}\) 上不可约.
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}

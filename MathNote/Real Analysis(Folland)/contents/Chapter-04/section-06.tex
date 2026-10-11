@@ -1,0 +1,324 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+% SOURCE p=151; printed=136; object=ch04-two-compactness-title; region=upper
+\section{两个紧性定理}\label{section:ch04-tychonoff}
+% SOURCE p=151; printed=136; object=ch04-two-compactness-intro; region=upper-middle
+分析学所研究的几何对象（Euclid 空间、流形等）往往是紧的或局部紧的。然而，在函数空间这类无穷维空间中，紧性颇为少见，一旦出现便十分宝贵。这些情形下的紧性结果几乎都通过两个基本定理获得，即本节介绍的 Tychonoff 定理与 Arzel\`a--Ascoli 定理。
+
+Tychonoff 定理涉及 Cartesian 积的紧性。为此，先引入一些记号。回忆：严格说来，$X=\prod_{\alpha\in A}X_\alpha$ 的元素 $x$ 是从 $A$ 到 $\bigcup_{\alpha\in A}X_\alpha$ 的映射，其中 $x(\alpha)\in X_\alpha$ 就是通常记为 $\pi_\alpha(x)$ 的第 $\alpha$ 个坐标。
+% SOURCE p=151; printed=136; object=ch04-partial-product-extension; region=middle
+\begin{definition}[子乘积投影与延拓]\label{definition:ch04-partial-product-extension}
+若 $B\subseteq A$，自然映射 $\pi_B:X\to\prod_{\alpha\in B}X_\alpha$ 定义为 $\pi_B(x)=x|_B$。特别地，$\pi_{\{\alpha\}}$ 与 $\pi_\alpha$ 本质相同，以下不加区分。若 $p\in\prod_{\alpha\in B}X_\alpha$、$q\in\prod_{\alpha\in C}X_\alpha$，则称 $q$ 是 $p$ 的\textbf{延拓}，如果 $B\subseteq C$，且对 $\alpha\in B$ 有 $q(\alpha)=p(\alpha)$。
+\end{definition}
+% SUPPLEMENT: id=v14-ch04-partial-product-remark; parent=ch04-partial-product-extension; kind=motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}把积中一点看成按坐标定义的函数，便可先指定部分坐标，再逐步延拓。定义域包含与旧坐标值不变缺一不可；它们使“延拓”成为偏序，而非只比较两个无关的元组。$\pi_B$ 仅忘掉其余坐标，且连续，因为其每个坐标都是原来的连续投影。空坐标积按集合论惯例是只含空函数的单点空间；该约定也使下一证明的空链有上界。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-partial-product-remark
+% SOURCE p=151; printed=136; object=ch04-tychonoff; number=4.42; region=middle
+\begin{theorem}[Tychonoff 定理]\label{theorem:ch04-tychonoff}
+若 $\{X_\alpha\}_{\alpha\in A}$ 是任意一族紧拓扑空间，则赋予乘积拓扑的 $X=\prod_{\alpha\in A}X_\alpha$ 紧。
+\end{theorem}
+% SOURCE p=151,152; printed=136,137; object=ch04-proof-tychonoff; region=lower-top
+\begin{proof}
+由\cref{theorem:ch04-compact-nets}，只须证明 $X$ 中每个网 $\langle x_i\rangle_{i\in I}$ 都有簇点。我们将考察各子乘积中网 $\langle\pi_B(x_i)\rangle$ 的簇点。令
+\begin{align*}
+\mathcal P=\bigcup_{B\subseteq A}\left\{p\in\prod_{\alpha\in B}X_\alpha:
+p\text{ 是 }\langle\pi_B(x_i)\rangle\text{ 的簇点}\right\}.
+\end{align*}
+$\mathcal P$ 非空，因为每个 $X_\alpha$ 紧，所以当 $B=\{\alpha\}$ 时，$\langle\pi_B(x_i)\rangle$ 有簇点。再按延拓关系给 $\mathcal P$ 赋予偏序：$p\le q$ 当且仅当 $q$ 是 $p$ 的延拓。
+
+设 $\{p_l:l\in L\}$ 是 $\mathcal P$ 的一个线性有序子集，其中 $p_l\in\prod_{\alpha\in B_l}X_\alpha$。令 $B^*=\bigcup_{l\in L}B_l$，并令 $p^*$ 为 $\prod_{\alpha\in B^*}X_\alpha$ 中延拓每个 $p_l$ 的唯一元素。我们断言 $p^*\in\mathcal P$。由乘积拓扑定义，$p^*$ 的任一邻域包含形如 $\prod_{\alpha\in B^*}U_\alpha$ 的集合，其中各 $U_\alpha$ 在 $X_\alpha$ 中开，且除有限多个指标 $\alpha_1,\ldots,\alpha_n$ 外都有 $U_\alpha=X_\alpha$。每个 $\alpha_j$ 属于某个 $B_l$，由线性有序性，它们全属于某一个 $B_l$。于是 $\prod_{\alpha\in B_l}U_\alpha$ 是 $p_l$ 的邻域，故 $\langle\pi_{B_l}(x_i)\rangle$ 频繁进入该集合。因此 $\langle\pi_{B^*}(x_i)\rangle$ 频繁进入 $\prod_{\alpha\in B^*}U_\alpha$，即 $p^*$ 是该投影网的簇点。所以 $p^*$ 是这条链在 $\mathcal P$ 中的上界。
+
+由 Zorn 引理，$\mathcal P$ 有极大元 $\overline p\in\prod_{\alpha\in\overline B}X_\alpha$。我们断言 $\overline B=A$。否则取 $\gamma\in A\setminus\overline B$。由\cref{proposition:ch04-cluster-subnet}，$\langle\pi_{\overline B}(x_i)\rangle$ 有子网 $\langle\pi_{\overline B}(x_{i(j)})\rangle_{j\in J}$ 收敛于 $\overline p$。又因 $X_\gamma$ 紧，$\langle\pi_\gamma(x_{i(j)})\rangle$ 有子网 $\langle\pi_\gamma(x_{i(j(k))})\rangle_{k\in K}$ 收敛于某个 $p_\gamma\in X_\gamma$。令 $q$ 为 $\prod_{\alpha\in\overline B\cup\{\gamma\}}X_\alpha$ 中同时延拓 $\overline p$ 与 $p_\gamma$ 的唯一元素，则网 $\langle\pi_{\overline B\cup\{\gamma\}}(x_{i(j(k))})\rangle$ 收敛于 $q$，所以 $q$ 是 $\langle\pi_{\overline B\cup\{\gamma\}}(x_i)\rangle$ 的簇点。这与 $\overline p$ 的极大性矛盾。因此 $\overline p$ 是原网的簇点，证明完成。
+\end{proof}
+% SUPPLEMENT: id=v14-ch04-tychonoff-details; parent=ch04-tychonoff; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{空族、链上界与子网复合的补写（重构新增）。}若某个因子为空，则积为空，因而紧；若 $A$ 为空，则积为单点，也紧。其余情形可直接使用原证明。更统一地，一旦给定了 $X$ 中的网，空函数便是空子乘积中常值网的簇点，所以 $\mathcal P$ 总非空；空链也以此为上界。
+
+对非空链，把所有 $p_l$ 作为函数取并，所得 $p^*$ 良定义：若同一坐标属于两个定义域，链中的一个函数延拓另一个，故值相同。该并的定义域恰为 $B^*$，并且所有值仍在相应因子中。对于任意有限个受限坐标，从链中逐次比较包含它们的成员，得到一个同时包含这些坐标的成员。于是对每个阈值 $i_0$，其簇点性给出 $i\gtrsim i_0$，使这些受限坐标全部进入指定开集；其余坐标没有限制，故这同一个 $i$ 也满足整个 $B^*$ 的基本邻域条件。若没有受限坐标，整个乘积就是该邻域，任取 $i\gtrsim i_0$ 即可。这验证了上界仍属于 $\mathcal P$，而不只是函数意义下的上界。
+
+最后验证复合指标确给子网。若 $i:J\to I$、$j:K\to J$ 是原证明的两次子网指标映射，给定 $i_0\in I$，先取 $j_0\in J$，使 $j'\gtrsim j_0$ 蕴含 $i(j')\gtrsim i_0$；再取 $k_0\in K$，使 $k\gtrsim k_0$ 蕴含 $j(k)\gtrsim j_0$。于是 $i(j(k))\gtrsim i_0$ 对全部 $k\gtrsim k_0$ 成立，正是本书的子网条件。
+
+在旧坐标集合 $\overline B$ 上，第二次取子网仍保收敛（\cref{proposition:ch04-subnet-limit}）；新坐标 $\gamma$ 上按构造收敛于 $p_\gamma$。由\cref{exercise:ch04-weak-net-convergence}的已补解答，全部坐标收敛给出乘积中的收敛。因此 $q$ 是原投影网的某收敛子网的极限，再由\cref{proposition:ch04-cluster-subnet}成为原投影网的簇点。它的定义域严格扩大，才与极大性矛盾。这里未假设子网指标映射单调或单射。
+\end{proof}
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}各坐标分别找簇点，不能保证这些选择同时适用于原网；偏序中的元素因此必须是“某个子乘积上的共同簇点”。链上界保存这种相容性，极大性再迫使所有坐标都被纳入。每个因子的紧性用于给新坐标抽取收敛子网；乘积拓扑的有限坐标邻域则用于链上界与坐标收敛。指标族无需可数，也无需 Hausdorff；本证明使用 Zorn 引理，属于本书已采用的选择公理框架。
+
+乘积拓扑不可随意换成更强拓扑。例如 $\{0,1\}^{\mathbb N}$ 若用箱拓扑，每个单点是坐标单点开集的积，故全空间离散；它有无限多个点，所有单点构成无有限子覆盖的开覆盖，所以不紧。这也说明此定理兑现了\cref{exercise:ch04-binary-digit-sequence}中二点离散空间任意乘积的紧性依据。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-tychonoff-details
+% SOURCE p=152; printed=137; object=ch04-ascoli-introduction; region=upper-middle
+现在转向 Arzel\`a--Ascoli 定理，它涉及连续映射空间中的紧性。该结果有几种变式，下面给出两个最有用的版本；另见\cref{exercise:ch04-ascoli-metric-target}。
+% SOURCE p=152; printed=137; object=ch04-equicontinuous-pointwise-bounded; region=middle
+\begin{definition}[等度连续与逐点有界]\label{definition:ch04-equicontinuous-pointwise-bounded}
+设 $X$ 是拓扑空间，$\mathcal F\subseteq C(X)$，$x\in X$。若对每个 $\varepsilon>0$，存在 $x$ 的一个邻域 $U$，使对所有 $y\in U$ 和所有 $f\in\mathcal F$ 都有 $|f(y)-f(x)|<\varepsilon$，则称 $\mathcal F$ \textbf{在 $x$ 处等度连续}。若它在每个 $x\in X$ 处等度连续，则称 $\mathcal F$ \textbf{等度连续}。若对每个 $x\in X$，集合 $\{f(x):f\in\mathcal F\}$ 都是 $\mathbb C$ 的有界子集，则称 $\mathcal F$ \textbf{逐点有界}。
+\end{definition}
+% SUPPLEMENT: id=v14-ch04-equicontinuity-remark; parent=ch04-equicontinuous-pointwise-bounded; kind=motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}等度连续的关键是选出的 $U$ 同时适用于全部 $f$，而且对其中全部 $y$ 有效；$U$ 可以依赖 $x$ 与 $\varepsilon$，不能依赖 $f$。若允许依赖 $f$，就仅是每个函数各自连续，无法把有限个采样点的信息传到全空间。逐点有界的界可以依赖 $x$，只需在固定点控制全部函数值；它不等同于一开始就假定 $\sup_{f,x}|f(x)|<\infty$。
+
+例如常函数族 $f_n(x)=n$ 等度连续，但在非空空间的每点都不有界；$f_n(t)=t^n$ 在 $[0,1]$ 上逐点有界、每个函数连续，却在 $1$ 处不等度连续：任意 $1$ 的邻域含某个 $t<1$，而 $1-t^n$ 最终大于 $1/2$。后例不能有一致收敛子列，因为任何子列的逐点极限都在 $[0,1)$ 为零、在 $1$ 为一，不连续。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-equicontinuity-remark
+% SOURCE p=152; printed=137; object=ch04-ascoli-one; number=4.43; region=middle
+\begin{theorem}[Arzel\`a--Ascoli 定理 I]\label{theorem:ch04-ascoli-one}
+设 $X$ 为紧 Hausdorff 空间。若 $\mathcal F$ 是 $C(X)$ 中等度连续且逐点有界的子集，则 $\mathcal F$ 关于一致度量全有界，并且它在 $C(X)$ 中的闭包紧。
+\end{theorem}
+% SOURCE p=152; printed=137; object=ch04-proof-ascoli-one; region=middle-lower
+\begin{proof}
+设 $\varepsilon>0$。由等度连续性，每个 $x\in X$ 都有开邻域 $U_x$，使对所有 $y\in U_x$ 及 $f\in\mathcal F$ 有 $|f(y)-f(x)|<\varepsilon/4$。由紧性，可选 $x_1,\ldots,x_n$ 使 $\bigcup_{j=1}^nU_{x_j}=X$。逐点有界性说明 $\{f(x_j):f\in\mathcal F,\ 1\le j\le n\}$ 是 $\mathbb C$ 的有界子集，因此存在有限集 $\{z_1,\ldots,z_m\}\subseteq\mathbb C$ 在其中 $\varepsilon/4$-稠密，即每个 $f(x_j)$ 与某个 $z_k$ 的距离小于 $\varepsilon/4$。令 $A=\{x_1,\ldots,x_n\}$、$B=\{z_1,\ldots,z_m\}$，则从 $A$ 到 $B$ 的函数集 $B^A$ 有限。对每个 $\phi\in B^A$，令
+\begin{align*}
+\mathcal F_\phi=\{f\in\mathcal F:|f(x_j)-\phi(x_j)|<\varepsilon/4\text{ 对 }1\le j\le n\}.
+\end{align*}
+显然 $\bigcup_{\phi\in B^A}\mathcal F_\phi=\mathcal F$。我们断言每个 $\mathcal F_\phi$ 的直径至多为 $\varepsilon$；因此从每个非空 $\mathcal F_\phi$ 选一个函数，就得到 $\mathcal F$ 的有限 $\varepsilon$-稠密子集。为证此断言，设 $f,g\in\mathcal F_\phi$。在 $A$ 上，由 $|f-\phi|<\varepsilon/4$、$|g-\phi|<\varepsilon/4$，得 $|f-g|<\varepsilon/2$。若 $x\in X$，则某个 $j$ 满足 $x\in U_{x_j}$，于是
+\begin{align*}
+|f(x)-g(x)|
+&\le |f(x)-f(x_j)|+|f(x_j)-g(x_j)|+|g(x_j)-g(x)|<\varepsilon.
+\end{align*}
+这说明 $\mathcal F$ 全有界。全有界集的闭包仍全有界，而 $C(X)$ 完备，故定理成立。
+\end{proof}
+% SUPPLEMENT: id=v14-ch04-ascoli-one-details; parent=ch04-ascoli-one; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{有限近似与闭包紧性的补写（重构新增）。}若 $X$ 或 $\mathcal F$ 为空，函数族为空或至多含一个函数，结论直接成立。其余情形，有限多个采样点处各有一个界，取最大值得到原证明所用有界集。把包含它的平面正方形切成有限个直径小于 $\varepsilon/4$ 的小正方形，取各小格中心，即得到所需有限近似点。对固定 $f$，在每个不同的采样点选一个近似值，给出某个 $\phi\in B^A$；所以这些 $\mathcal F_\phi$ 确实覆盖全部 $\mathcal F$。
+
+逐点的严格估计在取上确界后直接给出的是 $\|f-g\|_u\le\varepsilon$。为明确保证开球覆盖，只须将原证明的参数换成 $\varepsilon/2$：每个非空类选一个代表后，类中各函数到代表的距离至多 $\varepsilon/2<\varepsilon$，故有限个开 $\varepsilon$-球覆盖 $\mathcal F$。这消除了取上确界时可能丢失严格号的问题。
+
+再给定 $\varepsilon>0$，取覆盖 $\mathcal F$ 的有限个开 $\varepsilon/3$-球。对任意 $h\in\overline{\mathcal F}$，取 $f\in\mathcal F$ 使 $\|h-f\|_u<\varepsilon/3$，再取与 $f$ 距离小于 $\varepsilon/3$ 的一个球心，就使 $h$ 到该球心的距离小于 $2\varepsilon/3$。所以同一有限个开 $\varepsilon$-球覆盖闭包，闭包全有界。由\cref{corollary:ch04-compact-continuous-bounded}，紧 $X$ 上有 $C(X)=BC(X)$，再由\cref{proposition:ch04-bc-closed-complete}得 $C(X)$ 完备。闭包是完备空间的闭子集，故完备；\cref{theorem:ch00-compactness-characterization}遂给出其紧性。
+\end{proof}
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}等度连续使有限个采样值足以控制全空间误差；定义域紧性把局部控制邻域化成有限覆盖；逐点有界再把有限个采样值量化成有限种选择。复数值域还隐含使用了“有界集全有界”，一般度量值域中需改成逐点全有界，见\cref{exercise:ch04-ascoli-metric-target}。本书保留 Hausdorff 假设以与前后紧空间理论一致；上述证明本身只用定义域紧性，不额外使用其 Hausdorff 分离性，故不能把它说成这个结论不可削弱的必要条件。
+
+紧性结论针对闭包，原族本身未必闭。例如单点空间上的常值函数族 $\{1/n:n\ge1\}$ 满足两条件，却遗漏了唯一聚点零函数，因而不是紧子集。要直接断言函数族紧，还必须验证其闭性。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-ascoli-one-details
+% SOURCE p=152; printed=137; object=ch04-ascoli-two; number=4.44; region=bottom
+\begin{theorem}[Arzel\`a--Ascoli 定理 II]\label{theorem:ch04-ascoli-two}
+设 $X$ 是 $\sigma$-紧 LCH 空间。若 $\{f_n\}$ 是 $C(X)$ 中等度连续且逐点有界的序列，则存在 $f\in C(X)$ 及 $\{f_n\}$ 的一个子序列，在紧集上一致收敛于 $f$。
+\end{theorem}
+% SOURCE p=153; printed=138; object=ch04-proof-ascoli-two; region=top
+\begin{proof}
+由\cref{proposition:ch04-precompact-exhaustion}，存在预紧开集列 $\{U_k\}$，使 $\overline U_k\subseteq U_{k+1}$ 且 $X=\bigcup_{k=1}^{\infty}U_k$。由\cref{theorem:ch04-ascoli-one}，$\{f_n\}$ 有一个在 $\overline U_1$ 上一致 Cauchy 的子序列 $\{f_{n_j}\}_{j=1}^{\infty}$，记为 $\{f_j^1\}_{j=1}^{\infty}$。归纳进行，对 $k\in\mathbb N$，得到 $\{f_j^{k-1}\}$ 的一个子序列 $\{f_j^k\}$，在 $\overline U_k$ 上一致 Cauchy。令 $g_k=f_k^k$。则 $\{g_k\}$ 是原序列的子序列，并且对每个 $k$，去掉最初 $k-1$ 项后，它是 $\{f_j^k\}$ 的子序列，故在每个 $\overline U_k$ 上一致 Cauchy。令 $f=\lim g_k$。由\cref{proposition:ch04-continuous-compact-uniform-closed,proposition:ch04-compact-uniform-countable-base}，$f\in C(X)$，且 $g_k\to f$ 在紧集上一致成立。
+\end{proof}
+% SUPPLEMENT: id=v14-ch04-ascoli-two-details; parent=ch04-ascoli-two; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{对角下标与一致极限的补写（重构新增）。}约定第零行就是原序列。限制到每个紧 Hausdorff 空间 $\overline U_k$ 后，等度连续与逐点有界仍成立；第一定理给出紧闭包，而度量紧性给出收敛、从而一致 Cauchy 的子列。每一行都以严格递增的原始下标记录：写 $f_j^k=f_{n_j^k}$，且第 $k+1$ 行由严格递增映射 $s_{k+1}:\mathbb N\to\mathbb N$ 选取，即 $n_j^{k+1}=n_{s_{k+1}(j)}^k$。因 $s_{k+1}(j)\ge j$，有
+\begin{align*}
+n_{k+1}^{k+1}=n_{s_{k+1}(k+1)}^k\ge n_{k+1}^k>n_k^k.
+\end{align*}
+所以对角线的原始下标严格递增。固定一行 $m$，以后各行都从它取子列，而对角线原始下标递增，故 $\{g_k:k\ge m\}$ 按原次序构成该行的一个子序列，在 $\overline U_m$ 上一致 Cauchy。
+
+每个 $x\in X$ 都属于某个 $\overline U_m$，所以复数列 $g_k(x)$ 为 Cauchy 列，定义 $f(x)=\lim_k g_k(x)$。给定 $\varepsilon>0$，对固定 $m$ 取 $N$，使 $k,l\ge N$ 时 $\sup_{\overline U_m}|g_k-g_l|<\varepsilon/2$。固定 $k\ge N$ 后令 $l\to\infty$，对所有 $x\in\overline U_m$ 得 $|g_k(x)-f(x)|\le\varepsilon/2$，再取上确界，得到一致误差小于 $\varepsilon$。各紧集上的极限来自同一个逐点定义，故自动相容。
+
+由预紧穷尽的性质，每个紧 $K\subseteq X$ 包含于某个 $\overline U_m$，故在 $K$ 上也一致收敛。最后使用\cref{proposition:ch04-continuous-compact-uniform-closed}得到 $f$ 连续。若 $X$ 为空，所有函数都是空函数，任取原序列本身即可。
+\end{proof}
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}先在一个紧区域抽列，再不断扩大区域并抽取子列，对角线便保留每一阶段的收敛性。$\sigma$-紧提供可数个阶段；LCH 使其能改善为预紧开穷尽，并保证紧集上一致极限连续。等度连续和逐点有界恰是每一阶段使用第一定理的条件；无需在整个非紧空间上对函数族取同一个全局界。
+
+结论通常只能要求紧集上一致。例如在 $\mathbb R$ 上取 $f_n(x)=\max(0,1-|x-n|)$。由绝对值与截断函数的三角估计，全部 $f_n$ 都是 Lipschitz 常数为 $1$ 的函数，且值在 $[0,1]$。每个紧集有界，所以充分大的 $n$ 使 $f_n$ 在其上恒零；然而 $\|f_n\|_u=1$。任何子列若全局一致收敛，其逐点极限必为零，与这个范数等式矛盾。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-ascoli-two-details
+% SOURCE p=153; printed=138; object=ch04-two-compactness-exercises-title; region=upper-middle
+\Needspace{20\baselineskip}
+\subsection*{习题}
+% SOURCE p=153; printed=138; object=ch04-ex58-product-nowhere-dense; number=58; region=upper-middle
+\begin{exercise}\label{exercise:ch04-product-nowhere-dense}
+若拓扑空间族 $\{X_\alpha\}_{\alpha\in A}$ 中有无限多个空间不紧，则 $\prod_{\alpha\in A}X_\alpha$ 的每个闭紧子集都无处稠密。
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex58-solution; parent=ch04-ex58-product-nowhere-dense; kind=solution+hypotheses; origin=independent-derivation
+\begin{solution}
+\textbf{补写解答（重构新增）。}记积空间为 $X$，设 $K\subseteq X$ 闭且紧。若 $K^\circ$ 非空，则其中有非空基本开集 $V=\prod_\alpha V_\alpha$，其中除有限指标集 $F$ 外都有 $V_\alpha=X_\alpha$。因非紧因子有无限多个，可选 $\gamma\notin F$ 使 $X_\gamma$ 非紧。固定 $v\in V$，对任意 $y\in X_\gamma$，将 $v$ 的第 $\gamma$ 坐标换成 $y$，其余坐标不动，所得点仍在 $V\subseteq K$。故 $\pi_\gamma(K)=X_\gamma$。连续投影把紧集映成紧集，与 $X_\gamma$ 非紧矛盾。因此 $K^\circ=\varnothing$；又 $K$ 闭，$\operatorname{int}(\overline K)=\varnothing$，即无处稠密。若 $X$ 为空，唯一子集为空，结论同样成立。
+\end{solution}
+\begin{remark}
+\textbf{条件的作用（重构新增）。}“无限多个非紧因子”保证在任何仅限制有限坐标的基本开集之外，总还有一个非紧方向；紧集不能完整包含这个方向。闭性用于把空内部变成闭包的空内部，在没有 Hausdorff 假设时不能自动从紧性得到闭性。题目不要求全部因子非紧，也不要求可数。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-ex58-solution
+% SOURCE p=153; printed=138; object=ch04-ex59-finite-locally-compact-product; number=59; region=middle
+\begin{exercise}\label{exercise:ch04-finite-locally-compact-product}
+有限多个局部紧空间的乘积局部紧。
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex59-solution; parent=ch04-ex59-finite-locally-compact-product; kind=solution+hypotheses; origin=independent-derivation
+\begin{solution}
+\textbf{补写解答（重构新增）。}设 $X=\prod_{j=1}^mX_j$，固定 $x\in X$。对每个 $j$，取 $x_j$ 的紧邻域 $N_j$，以及满足 $x_j\in V_j\subseteq N_j$ 的开集 $V_j$。由 Tychonoff 定理，$N=\prod_{j=1}^mN_j$ 紧；该乘积的拓扑正是从 $X$ 诱导的相对拓扑，因为基本开矩形限制到 $N$ 后就是相对开矩形。又 $\prod_{j=1}^mV_j$ 是 $X$ 中含 $x$ 的开集，包含于 $N$，故 $N$ 是 $x$ 的紧邻域。若积为空则局部紧性真空成立；若无因子，则积是单点，也局部紧。
+\end{solution}
+\begin{remark}
+\textbf{条件的作用（重构新增）。}有限性保证把每个坐标都缩小后仍得到乘积拓扑的开邻域。无限积中这通常失败，例如 $\mathbb R^{\mathbb N}$ 为 Hausdorff，若有紧邻域，它必闭且有非空内部，与上一题矛盾。本题的有限积结论不需 Hausdorff，因为紧邻域无需闭。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-ex59-solution
+% SOURCE p=153; printed=138; object=ch04-ex60-countable-sequential-product; number=60; region=middle
+\begin{exercise}\label{exercise:ch04-countable-sequential-product}
+可数多个序列紧空间的乘积序列紧。（使用\cref{theorem:ch04-ascoli-two}证明中的“对角线技巧”。）
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex60-solution; parent=ch04-ex60-countable-sequential-product; kind=solution+hypotheses; origin=independent-derivation
+\begin{solution}
+\textbf{补写解答（重构新增）。}先考虑 $X=\prod_{j\ge1}X_j$ 中的任意序列 $\{x_n\}$。在第一坐标中用序列紧性抽取子列，使该坐标收敛于 $a_1\in X_1$；再从中抽取使第二坐标收敛于 $a_2$ 的子列，依次进行。记第 $j$ 行为 $\{x_{n_k^j}\}_{k\ge1}$，每行的原始下标严格递增，且每行是前一行的子列。取 $y_k=x_{n_k^k}$。与第二定理补证相同，$n_{k+1}^{k+1}>n_k^k$，故它确为原序列的子列。
+
+固定坐标 $j$，对角线从第 $j$ 项以后是第 $j$ 行的子列，故 $\pi_j(y_k)\to a_j$。令 $a=(a_j)\in X$。任何 $a$ 的基本邻域只限制有限多个坐标；对这些坐标的收敛各取阈值，再取其中最大值，便得 $y_k$ 最终进入该基本邻域。因此 $y_k\to a$，证明序列紧性。
+
+有限非空因子族可在后面补单点空间化成可数族；空因子族给单点积；若积为空，则不存在其中的序列，序列紧性真空成立。以上取极限与抽列不要求极限唯一，所以不需 Hausdorff。
+\end{solution}
+\begin{remark}
+\textbf{条件的作用（重构新增）。}可数性使每个坐标都能安排在一个有限编号的阶段，随后对角尾列保存它的收敛性。不可数积不能照搬此法；\cref{exercise:ch04-binary-digit-sequence}已经给出二点紧空间的一个不可数乘积不序列紧的例子。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-ex60-solution
+% SOURCE p=153; printed=138; object=ch04-ex61-ascoli-metric-target; number=61; region=middle
+\begin{exercise}\label{exercise:ch04-ascoli-metric-target}
+把\cref{theorem:ch04-ascoli-one}中的映射改为从紧 Hausdorff 空间 $X$ 到完备度量空间 $Y$ 的映射，只要将逐点有界替换为逐点全有界，定理仍成立。（准确表述此断言并证明。）
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex61-solution; parent=ch04-ex61-ascoli-metric-target; kind=solution+motivation+hypotheses; origin=independent-derivation
+\begin{solution}
+\textbf{准确表述与补写解答（重构新增）。}设 $(Y,d)$ 完备，$X$ 紧 Hausdorff，$\mathcal F\subseteq C(X,Y)$。假设对每个 $x\in X$ 和 $\varepsilon>0$，存在 $x$ 的邻域 $U$，使 $d(f(y),f(x))<\varepsilon$ 对全部 $f\in\mathcal F,y\in U$ 成立；并假设每个 $\mathcal F(x)=\{f(x):f\in\mathcal F\}$ 在 $Y$ 中全有界。则 $\mathcal F$ 在一致度量
+\begin{align*}
+D(f,g)=\sup_{x\in X}d(f(x),g(x))
+\end{align*}
+下全有界，且其在 $C(X,Y)$ 中的闭包紧。$X$ 为空时取上确界为零；此时映射空间只有空函数，结论直接成立。若 $X$ 非空而 $Y$ 为空，则映射空间为空，结论也直接成立。其余情形，$x\mapsto d(f(x),g(x))$ 连续，因为
+\begin{align*}
+|d(u,v)-d(u',v')|\le d(u,u')+d(v,v'),
+\end{align*}
+故在紧 $X$ 上有界，$D$ 有限；对称性、正定性与三角不等式由 $d$ 逐点取上确界得到。
+
+给定 $\varepsilon>0$，令 $\eta=\varepsilon/8$。由等度连续性与紧性，取有限个 $x_1,\ldots,x_n$，以及覆盖 $X$ 的开邻域 $U_j$，使 $y\in U_j$ 时 $d(f(y),f(x_j))<\eta$ 对全部 $f$ 成立。有限并 $\bigcup_j\mathcal F(x_j)$ 全有界：分别取各集合的有限 $\eta$-球覆盖，再取这些覆盖的并即可。故有有限个点 $z_1,\ldots,z_m\in Y$，使每个采样值到某个 $z_l$ 的距离小于 $\eta$。
+
+按各采样点所选近似值的有限种组合，把 $\mathcal F$ 覆盖为有限个类；同类 $f,g$ 在每个 $x_j$ 处的距离小于 $2\eta$。对任意 $y\in X$，取 $y\in U_j$，则
+\begin{align*}
+d(f(y),g(y))
+\le d(f(y),f(x_j))+d(f(x_j),g(x_j))+d(g(x_j),g(y))<4\eta.
+\end{align*}
+所以 $D(f,g)\le4\eta=\varepsilon/2<\varepsilon$。从每个非空类选一代表，就给出 $\mathcal F$ 的有限开 $\varepsilon$-球覆盖。因此它全有界。
+
+再验证 $C(X,Y)$ 完备。若 $\{f_n\}$ 关于 $D$ 为 Cauchy 列，完备性使每个 $f_n(x)$ 有极限 $f(x)\in Y$。给定 $\varepsilon>0$，从一致 Cauchy 估计 $D(f_n,f_m)<\varepsilon/2$ 令 $m\to\infty$，得 $D(f_n,f)\le\varepsilon/2$ 对全部充分大的 $n$ 成立，所以一致收敛。对固定 $x$，先取 $D(f_n,f)<\varepsilon/3$，再用 $f_n$ 连续选邻域使 $d(f_n(y),f_n(x))<\varepsilon/3$；三角不等式给出 $d(f(y),f(x))<\varepsilon$，所以 $f$ 连续。闭包于是完备；其全有界性按第一定理补证中的 $\varepsilon/3$ 逼近论证得到，故闭包紧。
+\end{solution}
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}值域的全有界性用于把有限采样点的值化为有限种近似，完备性用于让 Cauchy 极限留在 $Y$ 中。一般的有界性不足：取 $X$ 为单点，$Y=\mathbb N$ 配离散度量 $d(m,n)=1$（$m\ne n$），全体映射组成的族等度连续、逐点有界，但任意半径小于 $1$ 的球只能容纳一个值，故不全有界。这个 $Y$ 完备，因为 Cauchy 列最终恒定。另一方面，若 $Y=(0,1)$，单点上的常值 $1/n$（$n\ge2$）逐点全有界，却无在 $Y$ 中收敛的子列，故闭包不紧，说明完备性在一般结论中不能略去。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-ex61-solution
+% SOURCE p=153; printed=138; object=ch04-ex62-ascoli-compact-uniform; number=62; region=middle
+\begin{exercise}\label{exercise:ch04-ascoli-compact-uniform}
+使用\subcref{exercise:ch04-bounded-function-metrics}{item:ch04-compact-uniform-function-metric}中的度量，把\cref{theorem:ch04-ascoli-two}改写成类似\cref{theorem:ch04-ascoli-one}的形式。
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex62-solution; parent=ch04-ex62-ascoli-compact-uniform; kind=solution+motivation+hypotheses; origin=independent-derivation
+\begin{solution}
+\textbf{准确表述与补写解答（重构新增）。}若 $X$ 是 $\sigma$-紧 LCH 空间，$\mathcal F\subseteq C(X)$ 等度连续且逐点有界，则对预紧开穷尽 $\{U_n\}$ 所定义的度量
+\begin{align*}
+\rho(f,g)=\sum_{n=1}^{\infty}2^{-n}\Phi\!\left(\sup_{x\in\overline U_n}|f(x)-g(x)|\right),
+\qquad \Phi(t)=\frac{t}{1+t},
+\end{align*}
+$\mathcal F$ 全有界，且其在 $C(X)$ 中的闭包紧。这里的拓扑正是紧集上一致收敛拓扑，并非要求全空间一致收敛。
+
+设 $H$ 为该闭包；若 $\mathcal F$ 为空，则 $H$ 为空，结论直接成立。对 $H$ 中任意序列 $\{h_j\}$，由闭包定义可选 $f_j\in\mathcal F$ 使 $\rho(f_j,h_j)<1/j$。序列 $\{f_j\}$ 继承等度连续和逐点有界性。由第二定理，存在子列 $\{f_{j_k}\}$ 在紧集上一致趋于某个 $f\in C(X)$。题给度量与该拓扑一致，所以 $\rho(f_{j_k},f)\to0$，而
+\begin{align*}
+\rho(h_{j_k},f)\le\rho(h_{j_k},f_{j_k})+\rho(f_{j_k},f)\to0.
+\end{align*}
+因 $H$ 闭，$f\in H$。故 $H$ 序列紧；由度量空间紧性的等价刻画，$H$ 紧，也全有界。
+
+最后说明全有界性传给 $\mathcal F$。给定 $\varepsilon>0$，先用有限个开 $\varepsilon/3$-球覆盖 $H$；只保留遇到 $\mathcal F$ 的球，并从每个保留球中选一个 $\mathcal F$ 的点作新球心。原球中任意两个点距离小于 $2\varepsilon/3$，所以新球心的开 $\varepsilon$-球覆盖 $\mathcal F$。这也保证即使全有界定义要求球心位于集合内，结论仍成立。
+\end{solution}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}可数穷尽使紧集一致拓扑可度量化，因而“任意序列可抽取收敛子列”能转成闭包紧性。对闭包序列先从原族作距离 $1/j$ 的逼近，是避免未经证明就声称闭包仍等度连续的直接方法。条件沿用第二定理；不同的预紧开穷尽产生相同拓扑，故这里的闭包紧性不依赖具体穷尽的选择。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-ex62-solution
+% SOURCE p=153; printed=138; object=ch04-ex63-continuous-kernel; number=63; region=middle-lower
+\begin{exercise}\label{exercise:ch04-continuous-kernel}
+设 $K\in C([0,1]\times[0,1])$。对 $f\in C([0,1])$，令 $Tf(x)=\int_0^1K(x,y)f(y)\,dy$。则 $Tf\in C([0,1])$，并且 $\{Tf:\|f\|_u\le1\}$ 在 $C([0,1])$ 中预紧。
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex63-solution; parent=ch04-ex63-continuous-kernel; kind=solution+motivation+hypotheses; origin=independent-derivation
+\begin{solution}
+\textbf{补写解答（重构新增）。}紧正方形上的连续函数 $K$ 有有限界 $M=\sup|K|$，而且一致连续。后一事实可直接由紧性验证：若不一致连续，则存在 $\varepsilon_0>0$ 和点列 $u_n,v_n$，使 $|u_n-v_n|\to0$ 而 $|K(u_n)-K(v_n)|\ge\varepsilon_0$；紧性给出 $u_{n_k}\to u$，从而 $v_{n_k}\to u$，与两次连续性矛盾。
+
+令
+\begin{align*}
+\omega(\delta)=\sup\{|K(x,y)-K(x',y)|:x,x',y\in[0,1],\ |x-x'|\le\delta\}.
+\end{align*}
+由一致连续性，$\omega(\delta)\to0$ 当 $\delta\downarrow0$。连续 $f$ 有界，积分中的连续函数可积。积分三角不等式给出
+\begin{align*}
+|Tf(x)|&\le M\|f\|_u,\\
+|Tf(x)-Tf(x')|&\le\int_0^1|K(x,y)-K(x',y)|\,|f(y)|\,dy
+\le\|f\|_u\,\omega(|x-x'|).
+\end{align*}
+对固定 $f$，第二式证明 $Tf$ 连续；当 $\|f\|_u\le1$ 时，两式分别给出全部 $Tf$ 的共同界 $M$ 与共同连续模 $\omega$。故该族等度连续且逐点有界。由第一定理，其在 $C([0,1])$ 中的闭包紧，即所求预紧性。
+\end{solution}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}积分把输入函数的全局范数界转成输出的统一连续性控制。核在紧乘积上连续同时提供有界性与统一的 $x$ 方向连续模；单位范数限制使误差估计的因子与输入无关。结论是像族预紧，无须也未断言它本身闭。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-ex63-solution
+% SOURCE p=153; printed=138; object=ch04-ex64-holder-family; number=64; region=lower
+\begin{exercise}\label{exercise:ch04-holder-family}
+\begin{definition*}[H\"older 连续]\phantomsection\label{definition:ch04-holder-continuity}
+设 $(X,\rho)$ 为度量空间。若 $f\in C(X)$ 且 $\alpha>0$，并且
+\begin{align*}
+N_\alpha(f)=\sup_{x\ne y}\frac{|f(x)-f(y)|}{\rho(x,y)^\alpha}<\infty,
+\end{align*}
+则称 $f$ 为\textbf{指数为 $\alpha$ 的 H\"older 连续函数}。
+\end{definition*}
+若 $X$ 紧，则 $\{f\in C(X):\|f\|_u\le1\text{ 且 }N_\alpha(f)\le1\}$ 在 $C(X)$ 中紧。
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex64-solution; parent=ch04-ex64-holder-family; kind=solution+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{定义的动机与逐条件说明（重构新增）。}H\"older 条件给出量化的连续模 $|f(x)-f(y)|\le N_\alpha(f)\rho(x,y)^\alpha$。只取 $x\ne y$ 使分母为正；$\alpha>0$ 保证距离趋零时右侧趋零。有限上界必须统一适用于全部点对，不能逐对另取常数。若 $X$ 至多一个点，按非负量上确界的惯例令 $N_\alpha(f)=0$。题目的函数族还统一限制这个常数为 $1$，否则各函数分别 H\"older 连续并不保证整个族等度连续。
+\end{remark}
+\begin{solution}
+\textbf{补写解答（重构新增）。}记题中函数族为 $H$。它逐点有界，因为 $|f(x)|\le1$。给定 $\varepsilon>0$，令 $\delta=\varepsilon^{1/\alpha}$；若 $\rho(x,y)<\delta$，则对全部 $f\in H$ 有 $|f(x)-f(y)|\le\rho(x,y)^\alpha<\varepsilon$。所以 $H$ 等度连续，第一定理给出其闭包紧。
+
+只须证明 $H$ 闭。若 $f_n\in H$ 在一致度量下趋于 $f\in C(X)$，则逐点取极限得到 $|f(x)|\le1$，以及对每一对 $x\ne y$ 有
+\begin{align*}
+|f(x)-f(y)|=\lim_{n\to\infty}|f_n(x)-f_n(y)|\le\rho(x,y)^\alpha.
+\end{align*}
+因此 $\|f\|_u\le1$、$N_\alpha(f)\le1$，即 $f\in H$。度量空间中序列闭等于闭，故 $H$ 就是自己的紧闭包，从而紧。空空间或单点空间也被上述约定涵盖。
+\end{solution}
+\begin{remark}
+\textbf{结论的条件说明（重构新增）。}范数界控制函数的整体高度，H\"older 常数界控制局部振荡，紧定义域把二者转成预紧性；最后非严格不等式能在极限下保留，才把预紧加强为紧。若改用严格小于 $1$ 的范数限制，在单点空间上就得到开单位圆盘，它不紧。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-ex64-solution
+% SOURCE p=153; printed=138; object=ch04-ex65-holomorphic-family; number=65; region=lower
+\begin{exercise}\label{exercise:ch04-holomorphic-family}
+设 $U\subseteq\mathbb C$ 开，$\{f_n\}$ 是 $U$ 上的全纯函数序列。若它在 $U$ 的紧子集上一致有界，则存在子序列，在 $U$ 的紧子集上一致收敛于一个全纯函数。（用 Cauchy 积分公式得到等度连续性。）
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex65-solution; parent=ch04-ex65-holomorphic-family; kind=solution+motivation+hypotheses; origin=independent-derivation
+\begin{solution}
+\textbf{补写解答（重构新增）。}这里“在紧子集上一致有界”指：每个紧 $K\subseteq U$ 都存在有限常数 $M_K$，使全部 $n$ 和 $z\in K$ 满足 $|f_n(z)|\le M_K$。若 $U$ 为空结论直接成立。否则 $U$ 是第二可数 LCH 空间，由\cref{exercise:ch04-second-countable-sigma-compact}还是 $\sigma$-紧的。单点是紧集，所以函数序列逐点有界。
+
+固定 $z_0\in U$，取 $R>0$ 使闭圆盘 $\{|z-z_0|\le R\}$ 包含于 $U$，并取所有 $f_n$ 在该闭圆盘上的共同界 $M$。以正向圆周 $\Gamma=\{|\zeta-z_0|=R\}$ 应用题目提示的 Cauchy 积分公式。对 $|w-z_0|<R/2$，有
+\begin{align*}
+f_n(w)-f_n(z_0)
+&=\frac{1}{2\pi i}\int_\Gamma f_n(\zeta)
+\frac{w-z_0}{(\zeta-w)(\zeta-z_0)}\,d\zeta,\\
+|f_n(w)-f_n(z_0)|&\le\frac{2M}{R}|w-z_0|.
+\end{align*}
+该估计对全部 $n$ 同时成立；给定 $\varepsilon>0$，例如取 $\delta<\min(R/2,\varepsilon R/(2(M+1)))$，便得在 $z_0$ 处的等度连续性。因 $z_0$ 任意，第二定理给出子列 $f_{n_k}$，在所有紧子集上一致趋于某个连续函数 $f$。
+
+还须证明 $f$ 全纯。仍固定上述闭圆盘，对其内部 $w$，子列的 Cauchy 公式为
+\begin{align*}
+f_{n_k}(w)=\frac{1}{2\pi i}\int_\Gamma\frac{f_{n_k}(\zeta)}{\zeta-w}\,d\zeta.
+\end{align*}
+圆周紧且到 $w$ 的距离为正，故在圆周上一致收敛允许积分中取极限，得到
+\begin{align*}
+f(w)=\frac{1}{2\pi i}\int_\Gamma\frac{f(\zeta)}{\zeta-w}\,d\zeta.
+\end{align*}
+为核对右侧可复微分，记 $d=\operatorname{dist}(w,\Gamma)>0$，对 $0<|h|<d/2$，其核函数差商等于
+\begin{align*}
+\frac{1}{h}\left(\frac1{\zeta-w-h}-\frac1{\zeta-w}\right)
+=\frac1{(\zeta-w-h)(\zeta-w)}.
+\end{align*}
+它与 $(\zeta-w)^{-2}$ 的差的绝对值至多 $2|h|/d^3$，因而在 $\Gamma$ 上一致趋零。乘以圆周上有界的 $f$ 并积分，可得
+\begin{align*}
+f'(w)=\frac{1}{2\pi i}\int_\Gamma\frac{f(\zeta)}{(\zeta-w)^2}\,d\zeta.
+\end{align*}
+所以 $f$ 在该圆盘内部全纯。每个 $z_0\in U$ 都有这样的圆盘，故 $f$ 在全部 $U$ 上全纯。
+\end{solution}
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}全纯性通过 Cauchy 公式把周围圆周上的共同界转成内部的共同连续模；仅仅逐点有界不能直接提供这个圆周上的统一常数。$U$ 开使每点能放进一个闭圆盘；平面的第二可数性与局部紧性提供第二定理所需的可数紧穷尽。最后保全纯性还要使用积分公式，单有连续函数的紧集一致极限连续是不够的。本解明确使用题目指定的复分析背景定理——Cauchy 积分公式，并把从它到等度连续、以及极限全纯性的各步写出。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-ex65-solution
+\end{document}

@@ -1,0 +1,821 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+% SOURCE p=134; printed=119; object=ch04-continuous-maps-title; region=middle
+\section{连续映射}\label{section:ch04-continuous-maps}
+% SOURCE p=134; printed=119; object=ch04-continuity-intro; region=middle
+拓扑空间是研究连续性概念的自然背景；连续性既可以从整体也可以从局部来描述，如下所述。
+% SOURCE p=134; printed=119; object=ch04-continuous-map-definition; region=middle
+\begin{definition}[连续映射]\label{definition:ch04-continuous-map}
+设 $X,Y$ 为拓扑空间，$f$ 是从 $X$ 到 $Y$ 的映射。若对每个开集 $V\subseteq Y$，$f^{-1}(V)$ 都在 $X$ 中开，则称 $f$ \textbf{连续}。
+\end{definition}
+% SOURCE p=134; printed=119; object=ch04-continuity-closed-preimages; region=middle
+\begin{proposition}\label{proposition:ch04-continuity-closed-preimages}
+由于 $f^{-1}(A^c)=[f^{-1}(A)]^c$，连续性的等价条件是：对每个闭集 $A\subseteq Y$，$f^{-1}(A)$ 都在 $X$ 中闭。
+\end{proposition}
+% SUPPLEMENT: id=v14-ch04-continuity-global-details; parent=ch04-continuous-map-definition; kind=proof+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{闭集判别的补写证明（重构新增）。}若开集逆像开，对闭集 $A$，$Y\setminus A$ 的逆像开，取 $X$ 内的补即得 $f^{-1}(A)$ 闭。反向对开集 $V$ 的闭补集作同一论证即可。
+\end{proof}
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}连续性要求目标空间的一项局部开条件，拉回原空间后仍是开条件。使用逆像是因为它自动保持任意并、有限交与补集；连续性不要求开集的正向像开，例如常值映射 $\mathbb R\to\mathbb R$ 的非空开集像为单点。两个空间的拓扑都参与定义，同一集合映射在不同拓扑下可能有不同连续性。所有目标开集都要检验，不能只检验任意挑选的一部分；后面的子基判别将给出可以缩减测试族的精确条件。不要求 $f$ 单射或满射，也不要求空间可度量或 Hausdorff。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-continuity-global-details
+% SOURCE p=134; printed=119; object=ch04-pointwise-continuity-definition; region=middle
+\begin{definition}[在一点连续]\label{definition:ch04-continuous-at-point}
+若 $x\in X$，对 $f(x)$ 的每个邻域 $V$，都存在 $x$ 的一个邻域 $U$，使 $f(U)\subseteq V$，则称 $f$ \textbf{在 $x$ 处连续}。等价地，对 $f(x)$ 的每个邻域 $V$，$f^{-1}(V)$ 都是 $x$ 的邻域。
+\end{definition}
+% SUPPLEMENT: id=v14-ch04-continuity-local-details; parent=ch04-pointwise-continuity-definition; kind=proof+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{等价表述的补写验证（重构新增）。}若存在邻域 $U$ 且 $f(U)\subseteq V$，则 $U\subseteq f^{-1}(V)$；邻域的超集仍包含同一开子邻域，所以逆像也是邻域。反之，直接取 $U=f^{-1}(V)$ 即可。
+\end{proof}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}此处只控制指定点附近的行为，允许 $U$ 随目标邻域 $V$ 改变。必须要求 $V$ 是 $f(x)$ 的邻域，且 $U$ 是 $x$ 的邻域，才能表达围绕该点的局部稳定性；仅取包含点的任意集合会丢失局部开放信息。两处邻域均按本书约定允许不开放，但都包含相应点的开邻域。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-continuity-local-details
+% SOURCE p=134; printed=119; object=ch04-continuous-composition; region=middle-lower
+\begin{proposition}\label{proposition:ch04-continuous-composition}
+若 $f:X\to Y$ 与 $g:Y\to Z$ 连续，则 $g\circ f$ 连续；若 $f$ 在 $x$ 处连续且 $g$ 在 $f(x)$ 处连续，则 $g\circ f$ 在 $x$ 处连续。
+\end{proposition}
+% SUPPLEMENT: id=v14-ch04-continuous-composition-details; parent=ch04-continuous-composition; kind=proof+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{补写证明（重构新增）。}整体情形中，对 $Z$ 中开集 $W$，$g^{-1}(W)$ 在 $Y$ 中开，而 $(g\circ f)^{-1}(W)=f^{-1}(g^{-1}(W))$ 在 $X$ 中开。局部情形中，对 $g(f(x))$ 的邻域 $W$，先由 $g$ 的连续性取 $f(x)$ 的邻域 $V$ 使 $g(V)\subseteq W$，再由 $f$ 的连续性取 $x$ 的邻域 $U$ 使 $f(U)\subseteq V$；于是 $g(f(U))\subseteq W$。
+\end{proof}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}两个连续步骤可以串联，因为中间邻域可逐次拉回。映射的值域和定义域必须衔接；局部版本对 $g$ 的要求在 $f(x)$ 而不是在无关的点。两个连续性假设是充分条件，不是说复合连续就迫使各因子连续；例如 $g$ 恒定时复合总连续。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-continuous-composition-details
+% SOURCE p=134; printed=119; object=ch04-continuous-maps-notation; region=middle-lower
+\begin{definition}[连续映射集的记号]\label{definition:ch04-continuous-maps-set}
+从 $X$ 到 $Y$ 的全体连续映射组成的集合记作 $C(X,Y)$。
+\end{definition}
+% SUPPLEMENT: id=v14-ch04-continuous-maps-notation-remark; parent=ch04-continuous-maps-notation; kind=motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{记号说明（重构新增）。}$C(X,Y)$ 同时记录定义域、值域及二者已指定的拓扑，便于把连续映射作为研究对象。一般值域 $Y$ 没有加法，故此时只称集合，不能未经说明就把它称为向量空间。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-continuous-maps-notation-remark
+% SOURCE p=134; printed=119; object=ch04-continuous-iff-pointwise; number=4.8; region=lower
+\begin{proposition}\label{proposition:ch04-continuous-iff-pointwise}
+映射 $f:X\to Y$ 连续，当且仅当它在每个 $x\in X$ 处连续。
+\end{proposition}
+% SOURCE p=134; printed=119; object=ch04-proof-continuous-iff-pointwise; region=lower
+\begin{proof}
+若 $f$ 连续且 $V$ 为 $f(x)$ 的邻域，则 $f^{-1}(V)$ 是包含 $x$ 的开集，所以 $f$ 在 $x$ 处连续。反之，设 $f$ 在每一点都连续。若 $V\subseteq Y$ 开，则 $V$ 是其中每一点的邻域，所以 $f^{-1}(V)$ 是其中每一点的邻域。因此 $f^{-1}(V)$ 开，故 $f$ 连续。
+\end{proof}
+% SUPPLEMENT: id=v14-ch04-continuous-iff-pointwise-correction; parent=ch04-continuous-iff-pointwise; kind=proof-correction+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{动机与原证明澄清（重构新增）。}这个命题把整体开集判别与逐点邻域判别联系起来，不需可数性或分离公理。原证明第一句称 $f^{-1}(V)$ 开，在本书“邻域不必开”的约定下不一定正确。例如 $f$ 为实直线恒等映射，$V=[-1,1]$ 是 $0$ 的邻域，其逆像却不开。所需结论只是逆像为邻域，下面补出正确步骤；原述仍保留在上方。
+\end{remark}
+\begin{proof}
+\textbf{首方向的修正证明（重构新增）。}因 $V$ 为 $f(x)$ 的邻域，可选开集 $W$ 使 $f(x)\in W\subseteq V$。连续性给出 $f^{-1}(W)$ 开且含 $x$，并包含于 $f^{-1}(V)$，所以后者是 $x$ 的邻域。逆方向中，对每个 $x\in f^{-1}(V)$，局部连续性给出包含于 $f^{-1}(V)$ 的开邻域；这些开邻域的并恰为 $f^{-1}(V)$，所以它开。
+\end{proof}
+% END SUPPLEMENT: id=v14-ch04-continuous-iff-pointwise-correction
+% SOURCE p=134; printed=119; object=ch04-continuity-subbase; number=4.9; region=lower
+\begin{proposition}\label{proposition:ch04-continuity-subbase}
+若 $Y$ 的拓扑由集合族 $\mathcal E$ 生成，则 $f:X\to Y$ 连续，当且仅当对每个 $V\in\mathcal E$，$f^{-1}(V)$ 都在 $X$ 中开。
+\end{proposition}
+% SOURCE p=134; printed=119; object=ch04-proof-continuity-subbase; region=lower
+\begin{proof}
+这由\cref{proposition:ch04-subbase-construction}及集合映射 $f^{-1}$ 与并、交可交换这一事实直接得到。
+\end{proof}
+% SUPPLEMENT: id=v14-ch04-continuity-subbase-details; parent=ch04-continuity-subbase; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{省略步骤的补写（重构新增）。}连续映射当然使每个子基开集的逆像开。反向，每个目标开集是子基有限交的任意并，其逆像等于相应逆像的有限交再任意并；这些逆像按假设开，故结果仍开。空交 $Y$、空并 $\varnothing$ 的逆像分别为 $X,\varnothing$，也开。
+\end{proof}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}子基给出全部开条件的生成元，逆像保持生成运算，所以只需检查生成元。关键是假设 $\mathcal E$ 生成目标的整个拓扑；若仅取 $\mathcal E=\{\varnothing,Y\}$ 却仍让 $Y=\mathbb R$ 带通常拓扑，任何不连续映射也会通过这个不足的测试族。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-continuity-subbase-details
+% SOURCE p=134,135; printed=119,120; object=ch04-homeomorphism; region=bottom-top
+\begin{definition}[同胚]\label{definition:ch04-homeomorphism}
+若 $f:X\to Y$ 双射，且 $f,f^{-1}$ 都连续，则称 $f$ 为\textbf{同胚}，称 $X,Y$ \textbf{同胚}。
+\end{definition}
+% SOURCE p=134,135; printed=119,120; object=ch04-homeomorphism-open-correspondence; region=bottom-top
+\begin{proposition}\label{proposition:ch04-homeomorphism-open-correspondence}
+此时集合映射 $f^{-1}$ 给出 $Y$ 中开集与 $X$ 中开集之间的双射，因此从拓扑性质看，可以把 $X,Y$ 视为相同。
+\end{proposition}
+% SUPPLEMENT: id=v14-ch04-homeomorphism-details; parent=ch04-homeomorphism; kind=proof+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{开集对应的补写证明（重构新增）。}连续性使 $Y$ 的每个开集 $V$ 对应开集 $f^{-1}(V)$；双射性保证不同 $V$ 的逆像不同。对 $X$ 中开集 $U$，逆映射的连续性使 $f(U)=(f^{-1})^{-1}(U)$ 在 $Y$ 中开，且 $f^{-1}(f(U))=U$，故开集对应满射。
+\end{proof}
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}同胚是一种同时保留两个方向局部结构的重命名。双射性保证每点唯一对应且逆映射有定义；两个方向都连续保证拓扑信息可以双向恢复。仅有连续双射不够：至少两点的集合从离散拓扑到平凡拓扑的恒等映射连续且双射，逆映射却不连续。同胚对应保持开集、补集与并交，所以也保持闭包、连通等由这些结构定义的性质。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-homeomorphism-details
+% SOURCE p=135; printed=120; object=ch04-embedding; region=top
+\begin{definition}[嵌入]\label{definition:ch04-embedding}
+若 $f:X\to Y$ 单射但非满射，且给 $f(X)\subseteq Y$ 赋相对拓扑后，$f:X\to f(X)$ 为同胚，则称 $f$ 为\textbf{嵌入}。
+\end{definition}
+% SUPPLEMENT: id=v14-ch04-embedding-remark; parent=ch04-embedding; kind=motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}嵌入把 $X$ 作为拓扑结构不变的一个子空间放进 $Y$。单射性使到像的映射双射，相对拓扑规定如何从 $Y$ 读取像的局部信息，到像的同胚性排除了只是连续单射却改变拓扑的情况。“非满射”是此处原文的额外术语限制；常见的更广约定也把同胚看作嵌入，本工程在转述本书时保留原限制。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-embedding-remark
+% SOURCE p=135; printed=120; object=ch04-generated-weak-topology; region=upper
+\begin{definition}[映射族生成的弱拓扑]\label{definition:ch04-generated-weak-topology}
+设 $X$ 为任意集合，$\{f_\alpha:X\to Y_\alpha\}_{\alpha\in A}$ 是从 $X$ 到若干拓扑空间 $Y_\alpha$ 的映射族。存在唯一最弱的 $X$ 上拓扑 $\mathcal T$，使所有 $f_\alpha$ 连续，称为由此映射族\textbf{生成的弱拓扑}。具体说，$\mathcal T$ 由所有形如 $f_\alpha^{-1}(U_\alpha)$ 的集合生成，其中 $\alpha\in A$ 且 $U_\alpha$ 在 $Y_\alpha$ 中开。
+\end{definition}
+% SUPPLEMENT: id=v14-ch04-weak-topology-details; parent=ch04-generated-weak-topology; kind=proof+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{存在性、最小性与唯一性的补写（重构新增）。}令 $\mathcal S$ 为所列逆像集合族，取其生成拓扑 $\mathcal T(\mathcal S)$。对每个 $\alpha$，所有目标开集的逆像已在 $\mathcal S$ 中，故 $f_\alpha$ 连续。任何使全部映射连续的拓扑都包含 $\mathcal S$，从而包含 $\mathcal T(\mathcal S)$。这证明最弱性，也由相互包含证明唯一性。
+\end{proof}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}弱拓扑只保留经这些观测映射可以检验的开条件。目标拓扑必须事先给定，而 $X$ 起初只需是集合；映射无需单射、满射，也无需共同分离点。映射族为空时生成平凡拓扑。此构造不自动给出 Hausdorff 性，后面的相关习题将指出需要分离点的条件。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-weak-topology-details
+% SOURCE p=135; printed=120; object=ch04-product-topology-intro; region=upper
+这一构造最重要的例子是拓扑空间的 Cartesian 积。
+% SOURCE p=135; printed=120; object=ch04-product-topology-definition; region=upper
+\begin{definition}[乘积拓扑]\label{definition:ch04-product-topology}
+若 $\{X_\alpha\}_{\alpha\in A}$ 是任意拓扑空间族，则 $X=\prod_{\alpha\in A}X_\alpha$ 上的\textbf{乘积拓扑}，是由坐标映射 $\pi_\alpha:X\to X_\alpha$ 生成的弱拓扑。除非另行说明，讨论拓扑空间的 Cartesian 积时，总是赋予它乘积拓扑。
+\end{definition}
+% SOURCE p=135; printed=120; object=ch04-product-base; region=upper-middle
+\begin{proposition}\label{proposition:ch04-product-base}
+由\cref{proposition:ch04-subbase-construction}，乘积拓扑的一个基由形如 $\bigcap_{j=1}^n\pi_{\alpha_j}^{-1}(U_{\alpha_j})$ 的集合给出，其中 $n\in\mathbb N$，且 $U_{\alpha_j}$ 在 $X_{\alpha_j}$ 中开。这些集合也可写为 $\prod_{\alpha\in A}U_\alpha$，其中当 $\alpha\notin\{\alpha_1,\ldots,\alpha_n\}$ 时，$U_\alpha=X_\alpha$。特别地，若 $A$ 无限，则非空开集的乘积 $\prod_{\alpha\in A}U_\alpha$ 在 $\prod_{\alpha\in A}X_\alpha$ 中开，当且仅当除有限多个 $\alpha$ 外都有 $U_\alpha=X_\alpha$。
+\end{proposition}
+% SUPPLEMENT: id=v14-ch04-product-base-details; parent=ch04-product-base; kind=proof+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{基与开乘积判别的补写证明（重构新增）。}弱拓扑的生成元为坐标开集的逆像，有限交成为基，正是子基构造定理。同一坐标若出现多次，可先把该坐标的有限个开集相交，再用互异坐标表示，于是有限交恰等于所述乘积。若没有坐标限制，使用空交即全空间；空指标积是单点空间，亦由此约定处理。
+
+若仅有限多个 $U_\alpha$ 不为整个因子，上述基表示立即给出开性。反之，设 $P=\prod_\alpha U_\alpha$ 非空且开，选 $x\in P$，取含 $x$ 且包含于 $P$ 的基本开集 $B$，其受限制的坐标集合 $F$ 有限。对 $\beta\notin F$ 及任意 $z\in X_\beta$，把 $x$ 的第 $\beta$ 个坐标改为 $z$，所得点仍属于 $B\subseteq P$，所以 $z\in U_\beta$。于是 $U_\beta=X_\beta$，证明必要性。原文各 $U_\alpha$ 非空时，在本书已采用的选择公理下其乘积非空；若乘积为空，它当然开，却不能推出有限坐标限制，故非空条件有实际作用。
+\end{proof}
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}乘积拓扑只要求每个坐标观测连续；一项基本开测试因此只同时观察有限个坐标。若允许任意多个坐标同时受限，会得到通常更强的拓扑，失去这里的“最弱”要求。每个 $U_\alpha$ 开使其逆像开；限制有限多个坐标正好对应拓扑只对有限交封闭。对无限指标族，“每个因子开”不能单独保证它们的乘积开。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-product-base-details
+% SOURCE p=135; printed=120; object=ch04-hausdorff-product; number=4.10; region=middle
+\begin{proposition}\label{proposition:ch04-hausdorff-product}
+若每个 $\alpha\in A$ 对应的 $X_\alpha$ 都为 Hausdorff 空间，则 $X=\prod_{\alpha\in A}X_\alpha$ 是 Hausdorff 空间。
+\end{proposition}
+% SOURCE p=135; printed=120; object=ch04-proof-hausdorff-product; region=middle
+\begin{proof}
+若 $x,y$ 为 $X$ 中不同的点，则必存在某个 $\alpha$ 使 $\pi_\alpha(x)\ne\pi_\alpha(y)$。取 $X_\alpha$ 中 $\pi_\alpha(x),\pi_\alpha(y)$ 的不交邻域 $U,V$，则 $\pi_\alpha^{-1}(U),\pi_\alpha^{-1}(V)$ 是 $X$ 中 $x,y$ 的不交邻域。
+\end{proof}
+% SUPPLEMENT: id=v14-ch04-hausdorff-product-remark; parent=ch04-hausdorff-product; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{动机、条件与证明细节（重构新增）。}两个不同的积点至少在一个坐标不同，所以只需在该因子中分离，再沿坐标逆像拉回。可以直接把原证明的 $U,V$ 取为开邻域，得到所需的不交开集；若先取一般邻域，则再取其开子邻域即可。乘积拓扑保证坐标映射连续，逆像因此确为邻域。空指标积为单点，结论平凡；在非空乘积中，任一非 Hausdorff 因子也不能被其余坐标自动修复，固定其他坐标得到的子空间保留该因子拓扑。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-hausdorff-product-remark
+% SOURCE p=135; printed=120; object=ch04-product-map-continuity; number=4.11; region=middle-lower
+\begin{proposition}\label{proposition:ch04-product-map-continuity}
+若 $X_\alpha$（$\alpha\in A$）与 $Y$ 为拓扑空间，且 $X=\prod_\alpha X_\alpha$，则 $f:Y\to X$ 连续，当且仅当对每个 $\alpha$，$\pi_\alpha\circ f$ 连续。
+\end{proposition}
+% SOURCE p=135; printed=120; object=ch04-proof-product-map-continuity; region=middle-lower
+\begin{proof}
+若每个 $\pi_\alpha\circ f$ 连续，则对 $X_\alpha$ 中每个开集 $U_\alpha$，$f^{-1}(\pi_\alpha^{-1}(U_\alpha))$ 都在 $Y$ 中开。由\cref{proposition:ch04-continuity-subbase}，$f$ 连续。反向显然。
+\end{proof}
+% SUPPLEMENT: id=v14-ch04-product-map-continuity-details; parent=ch04-product-map-continuity; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{反方向的补写（重构新增）。}乘积拓扑的定义使各 $\pi_\alpha$ 连续，若 $f$ 连续，由复合连续性，$\pi_\alpha\circ f$ 全都连续。
+\end{proof}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}这个性质使映入乘积的连续性可以逐坐标验证。必须使用乘积拓扑：若换成更强的拓扑，坐标连续未必足够。没有对指标集作有限或可数限制，因为证明只在每个子基集合上检验，再由有限交和任意并恢复全部开集；也不需要因子 Hausdorff。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-product-map-continuity-details
+% SOURCE p=135; printed=120; object=ch04-function-product-intro; region=lower
+若各 $X_\alpha$ 都等于同一固定空间 $X$，则积 $\prod_{\alpha\in A}X_\alpha$ 就是从 $A$ 到 $X$ 的映射集 $X^A$，乘积拓扑正是逐点收敛拓扑。更精确地说：
+% SOURCE p=135; printed=120; object=ch04-product-pointwise-convergence; number=4.12; region=lower
+\begin{proposition}\label{proposition:ch04-product-pointwise-convergence}
+若 $X$ 为拓扑空间，$A$ 为非空集合，且 $\{f_n\}$ 为 $X^A$ 中的序列，则 $f_n$ 在乘积拓扑中收敛于 $f$，当且仅当 $f_n$ 逐点收敛于 $f$。
+\end{proposition}
+% SOURCE p=135,136; printed=120,121; object=ch04-proof-product-pointwise-convergence; region=bottom-top
+\begin{proof}
+集合
+\begin{align*}
+N(U_1,\ldots,U_k)
+&=\bigcap_{j=1}^k\pi_{\alpha_j}^{-1}(U_j)\\
+&=\{g\in X^A:g(\alpha_j)\in U_j,\ 1\le j\le k\},
+\end{align*}
+其中 $k\in\mathbb N$，每个 $U_j$ 是 $f(\alpha_j)$ 在 $X$ 中的邻域，组成乘积拓扑在 $f$ 处的邻域基。若 $f_n\to f$ 逐点，则当 $n\ge N_j$ 时 $f_n(\alpha_j)\in U_j$，故当 $n\ge\max(N_1,\ldots,N_k)$ 时 $f_n\in N(U_1,\ldots,U_k)$；所以 $f_n\to f$ 在乘积拓扑中成立。反之，若 $f_n\to f$ 在乘积拓扑中成立，$\alpha\in A$，且 $U$ 是 $f(\alpha)$ 的邻域，则当 $n$ 充分大时 $f_n\in N(U)=\pi_\alpha^{-1}(U)$；所以 $f_n(\alpha)\in U$ 最终成立，从而 $f_n(\alpha)\to f(\alpha)$。
+\end{proof}
+% SUPPLEMENT: id=v14-ch04-product-convergence-details; parent=ch04-product-pointwise-convergence; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{动机、条件与邻域基约定（重构新增）。}有限多个坐标的阈值 $N_j$ 可以取最大值，正是逐点收敛足以通过每个基本邻域测试的原因；无限多个阈值未必有共同上界。$A$ 非空排除单点函数空间的平凡情形，若允许空指标积，结论仍为空真。既不要求 $X$ 可度量，也不要求极限唯一。
+
+原证明把由一般邻域 $U_j$ 形成的 $N$ 称为邻域基；按前节“邻域基成员必须开”的严格约定，应在此将 $U_j$ 限为开邻域。这样得到真正的开邻域基，证明逐字成立。若保留一般邻域，它们仍为邻域且可细化所有邻域，只是未必构成前述约定下的开邻域基。两种用法给出相同的收敛测试。
+\end{remark}
+\begin{proof}
+\textbf{章首非度量动机的补写例证（重构新增）。}实值函数空间 $\mathbb R^A$ 在 $A$ 不可数时，其乘积拓扑在零函数处不第一可数。若有可数邻域基 $\{N_j\}$，在每个 $N_j$ 中取含零函数的基本开集 $B_j$，涉及有限坐标集 $F_j$。选 $\alpha\in A\setminus\bigcup_jF_j$。开邻域 $V=\{g:|g(\alpha)|<1\}$ 不包含任何 $N_j$：令 $g$ 除 $\alpha$ 坐标取 $2$ 外处处取 $0$，则 $g\in B_j\subseteq N_j$ 却 $g\notin V$，矛盾。度量空间必第一可数，所以该乘积拓扑不能由度量给出。这解释了本章开头为何需要超出度量空间的框架。
+\end{proof}
+% END SUPPLEMENT: id=v14-ch04-product-convergence-details
+% SOURCE p=136; printed=121; object=ch04-function-spaces-intro; region=upper
+我们将特别关注拓扑空间上的实值及复值函数。
+% SOURCE p=136; printed=121; object=ch04-bounded-continuous-spaces; region=upper
+\begin{definition}[有界函数与有界连续函数的空间]\label{definition:ch04-bounded-continuous-spaces}
+若 $X$ 为任意集合，记 $B(X,\mathbb R)$（分别地，$B(X,\mathbb C)$）为 $X$ 上所有有界实值（分别地，复值）函数组成的空间。若 $X$ 为拓扑空间，还有连续函数空间 $C(X,\mathbb R)$ 与 $C(X,\mathbb C)$，并定义
+\begin{align*}
+BC(X,F)=B(X,F)\cap C(X,F),\qquad F=\mathbb R\text{ 或 }\mathbb C.
+\end{align*}
+讨论复值函数时，通常省去 $\mathbb C$，简记为 $B(X),C(X),BC(X)$。
+\end{definition}
+% SUPPLEMENT: id=v14-ch04-function-spaces-remark; parent=ch04-bounded-continuous-spaces; kind=motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}有界性控制全体点上的大小，连续性控制局部变化；交集 $BC$ 要求二者同时成立。$B(X,F)$ 只用集合 $X$，而 $C(X,F)$ 必须知道 $X$ 的拓扑。连续函数在一般空间上不必有界，如通常实直线上的恒等函数；有界函数也未必连续，如 $\mathbb Q$ 的示性函数。省略值域时默认复数，避免把复值空间误解成实值空间；两者的标量域相应不同。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-function-spaces-remark
+% SOURCE p=136; printed=121; object=ch04-continuous-vector-spaces; region=upper
+\begin{proposition}\label{proposition:ch04-continuous-vector-spaces}
+因为加法和乘法是从 $\mathbb C\times\mathbb C$ 到 $\mathbb C$ 的连续映射，$C(X)$ 与 $BC(X)$ 是复向量空间。
+\end{proposition}
+% SUPPLEMENT: id=v14-ch04-function-spaces-linear-proof; parent=ch04-continuous-vector-spaces; kind=proof+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{补写证明（重构新增）。}若 $f,g$ 连续，则 $x\mapsto(f(x),g(x))$ 的两个坐标连续，由乘积映射判别它连续；与复数加法复合得 $f+g$ 连续。固定 $c\in\mathbb C$ 时，映射 $z\mapsto cz$ 连续，与 $f$ 复合得 $cf$ 连续。零函数也连续，各向量空间恒等式逐点继承自 $\mathbb C$。若 $f,g$ 有界，则 $|f+g|\le|f|+|g|$ 与 $|cf|=|c||f|$ 给出有界性，所以同样的运算封闭于 $BC(X)$。$B(X)$ 本身也由相同估计成为复向量空间。
+\end{proof}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}函数逐点作线性运算，使连续函数可以线性组合；值域 $\mathbb C$ 的线性结构与连续运算是关键，任意拓扑值域并无这样的向量空间结论。有界性要求对所有点有统一上界，才使后面的一致范数有限。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-function-spaces-linear-proof
+% SOURCE p=136; printed=121; object=ch04-uniform-norm; region=upper-middle
+\begin{definition}[一致范数]\label{definition:ch04-uniform-norm}
+对 $f\in B(X)$，定义它的\textbf{一致范数}为
+\begin{align*}
+\|f\|_u=\sup\{|f(x)|:x\in X\}.
+\end{align*}
+\end{definition}
+% SOURCE p=136; printed=121; object=ch04-uniform-metric-completeness; region=middle
+\begin{proposition}\label{proposition:ch04-bounded-functions-complete}
+函数 $\rho(f,g)=\|f-g\|_u$ 是 $B(X)$ 上的度量，关于该度量的收敛就是 $X$ 上的一致收敛。$B(X)$ 关于一致度量完备。
+\end{proposition}
+% SOURCE p=136; printed=121; object=ch04-proof-bounded-functions-complete; region=middle
+\begin{proof}
+若 $\{f_n\}$ 为一致 Cauchy 序列，则对每个 $x$，$\{f_n(x)\}$ 是 Cauchy 序列。令 $f(x)=\lim_nf_n(x)$，容易验证 $\|f_n-f\|_u\to0$。
+\end{proof}
+% SUPPLEMENT: id=v14-ch04-uniform-norm-completeness-details; parent=ch04-uniform-metric-completeness; kind=proof+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}上确界同时控制每一点的误差，所以一致范数适合研究统一逼近。要求 $f$ 有界使它取有限值；用上确界而不用最大值，避免额外假定极值达到。若 $X=\varnothing$，按非负函数范数的自然约定令唯一空函数的范数为 $0$，所得空间是零空间；下列证明取 $X\ne\varnothing$。这里的点态有界函数空间不需要 $X$ 的拓扑。完备性使用值域 $\mathbb C$ 的完备性，而不是定义域的完备性。
+\end{remark}
+\begin{proof}
+\textbf{范数、度量、收敛与完备性的补写（重构新增）。}范数非负，且 $\|f\|_u=0$ 当且仅当每个 $f(x)=0$。对标量 $c$，上确界给出 $\|cf\|_u=|c|\|f\|_u$（$c=0$ 时直接成立）。逐点三角不等式给出
+\begin{align*}
+\|f+g\|_u\le\|f\|_u+\|g\|_u.
+\end{align*}
+故 $\rho$ 有正定性、对称性和三角不等式。若范数差趋零，则各点误差被它统一控制，故一致收敛；若各点误差最终小于 $\varepsilon/2$，则上确界至多 $\varepsilon/2<\varepsilon$，给出反向。
+
+对范数 Cauchy 序列，逐点有 $|f_n(x)-f_m(x)|\le\|f_n-f_m\|_u$，由复数完备性定义 $f(x)=\lim_mf_m(x)$。先选 $N$ 使 $n,m\ge N$ 时 $\|f_n-f_m\|_u<1$。固定 $n=N$，逐点令 $m\to\infty$，得 $|f(x)-f_N(x)|\le1$，故 $|f(x)|\le\|f_N\|_u+1$，证明 $f\in B(X)$，这是原证明省略的成员资格检查。
+
+再给定 $\varepsilon>0$，取 $N_\varepsilon$ 使 $n,m\ge N_\varepsilon$ 时范数差小于 $\varepsilon/2$。固定 $n$ 后逐点令 $m\to\infty$，得 $|f_n(x)-f(x)|\le\varepsilon/2$ 对所有 $x$ 成立，故 $\|f_n-f\|_u\le\varepsilon/2<\varepsilon$。因而 $B(X)$ 完备，没有交换未经说明的上确界与极限。
+\end{proof}
+% END SUPPLEMENT: id=v14-ch04-uniform-norm-completeness-details
+% SOURCE p=136; printed=121; object=ch04-bc-closed-complete; number=4.13; region=middle-lower
+\begin{proposition}\label{proposition:ch04-bc-closed-complete}
+若 $X$ 为拓扑空间，则 $BC(X)$ 是 $B(X)$ 在一致度量下的闭子空间；特别地，$BC(X)$ 完备。
+\end{proposition}
+% SOURCE p=136; printed=121; object=ch04-proof-bc-closed-complete; region=middle-lower
+\begin{proof}
+设 $\{f_n\}\subseteq BC(X)$ 且 $\|f_n-f\|_u\to0$。给定 $\varepsilon>0$，选充分大的 $N$，使 $n>N$ 时 $\|f_n-f\|_u<\varepsilon/3$。固定 $n>N$ 与 $x\in X$；由于 $f_n$ 在 $x$ 连续，存在 $x$ 的邻域 $U$，使当 $y\in U$ 时，$|f_n(y)-f_n(x)|<\varepsilon/3$。于是
+\begin{align*}
+|f(y)-f(x)|
+&\le|f(y)-f_n(y)|+|f_n(y)-f_n(x)|+|f_n(x)-f(x)|\\
+&<\varepsilon.
+\end{align*}
+所以 $f$ 在 $x$ 连续。由\cref{proposition:ch04-continuous-iff-pointwise}，$f$ 连续。
+\end{proof}
+% SUPPLEMENT: id=v14-ch04-bc-closed-complete-details; parent=ch04-bc-closed-complete; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{闭性与完备性结尾的补写（重构新增）。}在度量空间 $B(X)$ 中，若 $f$ 属于 $BC(X)$ 的闭包，可在每个半径 $1/n$ 的球中选 $f_n\in BC(X)$，得到一致收敛序列；原证明表明 $f\in C(X)$，而 $f\in B(X)$ 已由环境空间保证，故 $f\in BC(X)$，证明闭性。$BC(X)$ 的 Cauchy 序列也是 $B(X)$ 的 Cauchy 序列，由前一命题收敛于某个 $f\in B(X)$；闭性使 $f\in BC(X)$，故其完备。线性子空间性质已在前面验证。
+\end{proof}
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}一致收敛使同一个近似函数同时控制 $x$ 和它附近所有 $y$，再加中间的连续性误差，形成三个 $\varepsilon/3$。若仅逐点收敛，这个控制会失效，例如 $[0,1]$ 上 $f_n(x)=x^n$ 的极限在 $1$ 不连续：$x<1$ 时趋零，$x=1$ 时恒为一。$X$ 不必第一可数，因为此处用序列判闭的是带一致度量的函数空间 $B(X)$；定义域 $X$ 上的连续性始终用邻域描述。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-bc-closed-complete-details
+% SOURCE p=136; printed=121; object=ch04-continuous-functions-normality-intro; region=lower
+对给定的拓扑空间 $X$，$C(X)$ 可能只由常值函数组成。例如，若 $X$ 具有平凡拓扑，显然就会如此；即使 $X$ 正则，这种情形也可能发生。不过，正规空间总有丰富的连续函数，下面的基本定理将说明这一点。
+% SUPPLEMENT: id=v14-ch04-indiscrete-functions-details; parent=ch04-continuous-functions-normality-intro; kind=proof-detail+motivation; origin=independent-derivation
+\begin{proof}
+\textbf{平凡拓扑情形的补写（重构新增）。}若连续函数 $f:X\to\mathbb C$ 在 $x,y$ 取不同值，可取包含 $f(x)$ 而不含 $f(y)$ 的开圆盘 $V$。逆像 $f^{-1}(V)$ 是非空真子集，不可能在平凡拓扑中开，矛盾。实值情形同理。任意常值函数的开集逆像为 $X$ 或空集，确实连续。
+\end{proof}
+\begin{remark}
+\textbf{动机（重构新增）。}仅能用开集分开点与闭集，并不自动给出一个连续的实数值尺度。下面先把两个闭集之间的空间划成有理数标记的嵌套开集，再把这些集合转成函数值。这里“丰富”的具体含义是闭集分离与闭子集上连续函数的延拓，不是对 $C(X)$ 的基数作额外断言。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-indiscrete-functions-details
+% SUPPLEMENT: id=v14-ch04-regular-constant-forward-reference; parent=ch04-continuous-functions-normality-intro; kind=proof-reference; origin=independent-derivation
+\begin{remark}
+\textbf{正则情形的补证位置（重构新增）。}一个至少含两点的 $T_1$ 正则空间、且其上所有连续实或复函数恒定的完整构造，见\cref{corollary:ch04-regular-only-constant}及其前面的\hyperref[supplement:ch04-regular-constant-construction]{构造与证明}。那里逐步验证了拓扑、正则性、连续函数同值以及商空间正则性。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-regular-constant-forward-reference
+% SOURCE p=136; printed=121; object=ch04-dyadic-separation; number=4.14; region=bottom
+\begin{lemma}\label{lemma:ch04-dyadic-separation}
+设 $A,B$ 是正规空间 $X$ 中两个不交闭集，令
+\begin{align*}
+\Delta=\{k2^{-n}:n\ge1,\ 0<k<2^n\}
+\end{align*}
+为 $(0,1)$ 中的二进有理数集。存在一族开集 $\{U_r:r\in\Delta\}$，使对每个 $r\in\Delta$ 有 $A\subseteq U_r\subseteq B^c$，且 $r<s$ 时 $\overline{U_r}\subseteq U_s$。
+\end{lemma}
+% SOURCE p=137; printed=122; object=ch04-proof-dyadic-separation; region=top
+\begin{proof}
+由正规性，存在不交开集 $V,W$，使 $A\subseteq V$、$B\subseteq W$。令 $U_{1/2}=V$。由于 $W^c$ 闭，
+\begin{align*}
+A\subseteq U_{1/2}\subseteq\overline{U_{1/2}}\subseteq W^c\subseteq B^c.
+\end{align*}
+现在对 $n$ 归纳选取 $r=k2^{-n}$ 对应的 $U_r$。假设已对 $0<k<2^n$、$n\le N-1$ 选定 $U_{k2^{-n}}$。为选取 $r=(2j+1)2^{-N}$、$0\le j<2^{N-1}$ 对应的 $U_r$，注意 $\overline{U_{j2^{1-N}}}$ 与 $(U_{(j+1)2^{1-N}})^c$ 是不交闭集；这里形式地置 $\overline{U_0}=A$、$U_1^c=B$。由同样论证可选开集 $U_r$，使
+\begin{align*}
+A\subseteq\overline{U_{j2^{1-N}}}\subseteq U_r
+\subseteq\overline{U_r}\subseteq U_{(j+1)2^{1-N}}\subseteq B^c.
+\end{align*}
+这些 $U_r$ 显然具有所需性质。
+\end{proof}
+% SUPPLEMENT: id=v14-ch04-dyadic-separation-details; parent=ch04-dyadic-separation; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}只要求 $U_r\subseteq U_s$ 无法保证最后得到的函数连续；更强的 $\overline{U_r}\subseteq U_s$ 为每两个标号之间留下了闭包余地。二进有理数便于逐层插入中点，且在 $(0,1)$ 中稠密。$A,B$ 闭且不交，恰好允许每一步使用正规性；若它们相交而要求 $A\subseteq U_r\subseteq B^c$，连集合包含都不可能。本书的正规空间按定义已经是 $T_1$；本引理的构造只调用不交闭集可分离这一部分，没有调用 $T_1$，故构造本身还可推广到仅满足该闭集分离条件的空间。$A$ 或 $B$ 为空时同一构造仍成立。形式符号 $\overline{U_0}=A$ 并未断言有一个开集 $U_0$ 的闭包恰等于 $A$；它只是在最左端代表待分离的闭集。此处 $U_1=B^c$，而下一引理将重新约定 $U_1=X$，二者应区分。
+\end{remark}
+\begin{proof}
+\textbf{归纳细节的补写（重构新增）。}先明确所用的缩小性质：若闭集 $F$ 包含于开集 $G$，对不交闭集 $F$ 与 $G^c$ 用正规性，取不交开集 $V\supseteq F$、$W\supseteq G^c$。因 $W^c$ 闭且包含 $V$，有
+\begin{align*}
+F\subseteq V\subseteq\overline V\subseteq W^c\subseteq G.
+\end{align*}
+把旧一层的标号依大小排好，在每对相邻旧标号间用此性质插入新中点。两端用闭集 $A$ 和开集 $B^c$ 替代形式端点。每个新集的闭包包含于它的右邻旧集，而它又包含左邻旧集的闭包；旧层的关系不变，因此新层所有相邻标号也满足闭包包含。对不相邻标号，通过有限条相邻包含传递，得到同一层任意 $r<s$ 的 $\overline{U_r}\subseteq U_s$。任何两个二进有理数都出现在某个共同层，故此结论对全部 $\Delta$ 成立。偶数分子对应的旧标号始终沿用原集，不重新选取，因而归纳没有相容性冲突。
+\end{proof}
+% END SUPPLEMENT: id=v14-ch04-dyadic-separation-details
+% SOURCE p=137; printed=122; object=ch04-urysohn; number=4.15; region=upper-middle
+\begin{lemma}[Urysohn 引理]\label{lemma:ch04-urysohn}
+设 $X$ 为正规空间。若 $A,B$ 是 $X$ 中不交的闭集，则存在 $f\in C(X,[0,1])$，使 $f$ 在 $A$ 上为 $0$、在 $B$ 上为 $1$。
+\end{lemma}
+% SOURCE p=137; printed=122; object=ch04-proof-urysohn; region=middle
+\begin{proof}
+对 $r\in\Delta$，取\cref{lemma:ch04-dyadic-separation}中的 $U_r$，并令 $U_1=X$。对 $x\in X$，定义 $f(x)=\inf\{r:x\in U_r\}$。由于 $0<r<1$ 时 $A\subseteq U_r\subseteq B^c$，显然 $x\in A$ 时 $f(x)=0$，$x\in B$ 时 $f(x)=1$，并且所有 $x$ 都满足 $0\le f(x)\le1$。
+
+剩下只需证明 $f$ 连续。注意 $f(x)<\alpha$ 当且仅当存在 $r<\alpha$ 使 $x\in U_r$，也即 $x\in\bigcup_{r<\alpha}U_r$。所以 $f^{-1}((-\infty,\alpha))=\bigcup_{r<\alpha}U_r$ 是开集。又，$f(x)>\alpha$ 当且仅当存在 $r>\alpha$ 使 $x\notin U_r$，当且仅当存在 $s>\alpha$ 使 $x\notin\overline{U_s}$，因为 $s<r$ 时 $\overline{U_s}\subseteq U_r$。因此 $f^{-1}((\alpha,\infty))=\bigcup_{s>\alpha}(\overline{U_s})^c$ 也是开集。开半直线生成 $\mathbb R$ 的拓扑，所以由\cref{proposition:ch04-continuity-subbase}，$f$ 连续。
+\end{proof}
+% SOURCE p=137; printed=122; object=ch04-urysohn-geometric-remark; region=middle-lower
+\begin{remark}
+Urysohn 引理的证明初看似乎不够直观，但其背后有一个简单的几何图像。若把 $X$ 想成平面 $\mathbb R^2$，把 $U_r$ 想成由曲线围成的区域，则曲线 $\partial U_r$ 构成了函数 $f$ 的一张“地形图”。
+\end{remark}
+% SUPPLEMENT: id=v14-ch04-urysohn-details; parent=ch04-urysohn; kind=proof-correction+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{原证明参数范围的澄清（重构新增）。}下确界的指标集是 $D=\Delta\cup\{1\}$，且 $U_1=X$ 保证每个 $x$ 的指标集非空。原证明关于 $f(x)>\alpha$ 的中间等价式需要先限制 $0\le\alpha<1$；例如 $\alpha<0$、$x\in A$ 时，$f(x)>\alpha$ 成立，却不存在 $x\notin U_r$。下面把所有范围分别核对。
+\end{remark}
+\begin{proof}
+\textbf{连续性及端点的完整补写（重构新增）。}由于 $D\subseteq(0,1]$，下确界存在且属于 $[0,1]$。在 $A$ 上，任意小的正二进有理数都在取下确界的集合中，故下确界为 $0$；在 $B$ 上，唯一可能的标号是 $1$，故值为 $1$。
+
+对任意实数 $\alpha$，下确界的定义给出
+\begin{align*}
+\{x:f(x)<\alpha\}=\bigcup_{\substack{r\in D\\r<\alpha}}U_r.
+\end{align*}
+确切地说，右边的成员满足 $f(x)\le r<\alpha$；左边的成员若不属于右边，则所有可取标号都至少为 $\alpha$，与下确界小于 $\alpha$ 矛盾。$\alpha\le0$ 时两边为空，$\alpha>1$ 时右边包含 $U_1=X$。
+
+对 $0\le\alpha<1$，有
+\begin{align*}
+\{x:f(x)>\alpha\}
+=\bigcup_{\substack{s\in\Delta\\s>\alpha}}(\overline{U_s})^c.
+\end{align*}
+若 $f(x)>\alpha$，用二进有理数的稠密性选 $\alpha<s<r<f(x)$。若 $x\in\overline{U_s}$，则 $x\in U_r$，使 $f(x)\le r$，矛盾。反之，若 $x\notin\overline{U_s}$ 且 $s>\alpha$，则 $x\notin U_r$ 对一切 $r\in D$、$r\le s$ 成立：$r<s$ 用嵌套性，$r=s$ 用 $U_s\subseteq\overline{U_s}$。故所有可取标号均大于 $s$，从而 $f(x)\ge s>\alpha$。这里得到的是 $f(x)\ge s$，无须错误地把下确界也写成严格大于 $s$。若 $\alpha<0$，上半直线的逆像为 $X$；若 $\alpha\ge1$，逆像为空。故全部开半直线的逆像都开。
+
+任意有限开区间是两条开半直线的交，任意实开集是开区间的并，故 $f:X\to\mathbb R$ 连续。因其像落在 $[0,1]$，按相对拓扑的定义，$f:X\to[0,1]$ 也连续。
+\end{proof}
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}本引理把两个闭集的开邻域分离提升为连续函数分离；实值 $0,1$ 是归一化选择，任何两个不同实数都可通过仿射变换得到。闭性不是每一具体可分离集合对都必需的，但删去它后不能保证结论：$\mathbb R$ 中有理点与无理点都稠密，若连续函数分别恒取 $0,1$，由任一点附近的有理和无理序列即发生矛盾。不交性在两个指定值不同的前提下不可缺少。在 $T_1$ 空间的范围内，这种结论对所有不交闭集成立恰等价于本书的正规性：若已有这样的 $f$，则 $f^{-1}([0,1/3))$ 与 $f^{-1}((2/3,1])$ 是分离 $A,B$ 的不交开集，这里的区间按 $[0,1]$ 的相对拓扑解释。函数构造本身没有调用 $T_1$，但从函数分离性质反推本书所称的正规空间时，仍须已有 $T_1$；不要求可度量性或可数性。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-urysohn-details
+% SOURCE p=137; printed=122; object=ch04-tietze; number=4.16; region=lower
+\begin{theorem}[Tietze 延拓定理]\label{theorem:ch04-tietze}
+设 $X$ 为正规空间。若 $A$ 是 $X$ 的闭子集，且 $f\in C(A,[a,b])$，则存在 $F\in C(X,[a,b])$，使 $F|_A=f$。
+\end{theorem}
+% SOURCE p=137; printed=122; object=ch04-proof-tietze; region=lower
+\begin{proof}
+把 $f$ 换为 $(f-a)/(b-a)$，可假设 $[a,b]=[0,1]$。我们断言，存在 $X$ 上的连续函数序列 $\{g_n\}$，使在 $X$ 上 $0\le g_n\le2^{n-1}/3^n$，且在 $A$ 上
+\begin{align*}
+0\le f-\sum_{j=1}^ng_j\le(2/3)^n.
+\end{align*}
+先令 $B=f^{-1}([0,1/3])$、$C=f^{-1}([2/3,1])$。它们在 $A$ 中闭；由于 $A$ 本身闭，故在 $X$ 中也闭。由 Urysohn 引理，存在连续函数 $g_1:X\to[0,1/3]$，使 $g_1$ 在 $B$ 上为 $0$、在 $C$ 上为 $1/3$。于是 $A$ 上有 $0\le f-g_1\le2/3$。
+
+已经找到 $g_1,\ldots,g_{n-1}$ 后，以同样的论证，可取 $g_n:X\to[0,2^{n-1}/3^n]$，使在 $f-\sum_{j=1}^{n-1}g_j\le2^{n-1}/3^n$ 的集合上 $g_n=0$，而在 $f-\sum_{j=1}^{n-1}g_j\ge(2/3)^n$ 的集合上 $g_n=2^{n-1}/3^n$。令 $F=\sum_{n=1}^\infty g_n$。由于 $\|g_n\|_u\le2^{n-1}/3^n$，此级数的部分和一致收敛，故由\cref{proposition:ch04-bc-closed-complete}，$F$ 连续。又在 $A$ 上，对一切 $n$ 有 $0\le f-F\le(2/3)^n$，所以 $F=f$。
+\end{proof}
+% SUPPLEMENT: id=v14-ch04-tietze-details; parent=ch04-tietze; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{退化区间、归纳估计与一致收敛的补写（重构新增）。}这里 $a,b$ 为有限实数且 $a\le b$。若 $a=b$，取常值 $F=a$ 即可，不能使用原证明中的除法。若 $A=\varnothing$，也可直接取 $F=a$。其余情形先作归一化，并在构造结束后用 $a+(b-a)F$ 还原。
+
+置 $S_0=0$、$R_0=f$。在第 $n$ 步令
+\begin{align*}
+c_n=\frac{2^{n-1}}{3^n},\qquad
+R_{n-1}=f-S_{n-1}|_A,\qquad S_{n-1}=\sum_{j=1}^{n-1}g_j.
+\end{align*}
+归纳假设是 $0\le R_{n-1}\le(2/3)^{n-1}=3c_n$。函数 $R_{n-1}$ 在 $A$ 上连续，故集合
+\begin{align*}
+B_n=\{x\in A:R_{n-1}(x)\le c_n\},\qquad
+C_n=\{x\in A:R_{n-1}(x)\ge2c_n\}
+\end{align*}
+是 $A$ 中不交闭集，进而是 $X$ 中闭集。由 Urysohn 引理并乘以 $c_n$，取 $g_n\in C(X,[0,c_n])$，使 $g_n|_{B_n}=0$、$g_n|_{C_n}=c_n$。
+
+逐点分三种情况检查新的余项。若 $0\le R_{n-1}\le c_n$，则 $R_n=R_{n-1}\in[0,c_n]$；若 $c_n<R_{n-1}<2c_n$，由 $0\le g_n\le c_n$ 得 $0<R_n<2c_n$；若 $2c_n\le R_{n-1}\le3c_n$，则 $R_n=R_{n-1}-c_n\in[c_n,2c_n]$。所以恒有 $0\le R_n\le2c_n=(2/3)^n$，完成归纳。
+
+每个 $S_n$ 在 $X$ 上连续且有界。对 $m>n$，
+\begin{align*}
+\|S_m-S_n\|_u\le\sum_{j=n+1}^m c_j
+\le\sum_{j=n+1}^{\infty}c_j=(2/3)^n.
+\end{align*}
+因此由 $BC(X)$ 的完备性，$S_n$ 一致收敛到 $F\in BC(X)$。也可逐点用单调性与 $0\le S_n\le\sum_jc_j=1$ 先定义极限，再用同一尾项界证明一致收敛。由 $0\le S_n\le1$ 得 $0\le F\le1$。在 $A$ 上，$|f-S_n|\le(2/3)^n\to0$，所以 $F|_A=f$。这同时验证了值域约束、延拓等式和连续性。
+\end{proof}
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}延拓困难在于 $f$ 只在 $A$ 上给出；Urysohn 引理每次只延拓一个粗略的高低分层，而几何递减的余项把这些粗略修正累加为精确延拓。选择 $1/3$ 与 $2/3$ 是为了在两层之间留下过渡带，并使余项缩小到原来的 $2/3$；这些数值是构造工具，并非定理的内在常数。
+
+$A$ 闭保证相对闭集 $B_n,C_n$ 在 $X$ 中闭，才能使用正规性。删去这一假设会失败：取 $X=\mathbb R$、$A=(0,1]$、$f(x)=(1+\sin(1/x))/2$；沿 $x_n=(\pi/2+2\pi n)^{-1}$ 与 $y_n=(3\pi/2+2\pi n)^{-1}$ 趋于 $0$，函数值分别为 $1$、$0$，所以无连续延拓。$f$ 在 $A$ 上连续是任何连续延拓的必要条件，因为连续函数的限制连续。闭区间的有界性使本构造的修正项可求和，闭性使极限仍留在指定值域；无界实值函数可以用后面的推论处理，故有界不是所有延拓问题的必要条件。
+
+在 $T_1$ 空间的范围内，正规性也是“每个闭子集上的 $[0,1]$ 值连续函数都能延拓”的必要条件：对不交闭集 $B,C$，集合 $D=B\cup C$ 中的 $B,C$ 都既开又闭，所以取 $0$、$1$ 的函数在 $D$ 上连续；延拓后即由上个引理注记中的逆像构造分离 $B,C$，再结合 $T_1$ 得本书的正规性。若未假设 $T_1$，这个逆向论证只证明闭集分离条件，不能证明 $T_1$。延拓一般不唯一，例如 $A=\{0\}\subset\mathbb R$ 上的零函数既可延拓为零，也可延拓为 $x\mapsto x^2/(1+x^2)$。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-tietze-details
+% SOURCE p=138; printed=123; object=ch04-tietze-unbounded; number=4.17; region=top
+\begin{corollary}\label{corollary:ch04-tietze-unbounded}
+若 $X$ 正规，$A\subseteq X$ 闭，且 $f\in C(A)$，则存在 $F\in C(X)$，使 $F|_A=f$。
+\end{corollary}
+% SOURCE p=138; printed=123; object=ch04-proof-tietze-unbounded; region=upper
+\begin{proof}
+分别考虑实部和虚部，只需假设 $f$ 为实值。令 $g=f/(1+|f|)$，则 $g\in C(A,(-1,1))$，故存在 $G\in C(X,[-1,1])$，使 $G|_A=g$。令 $B=G^{-1}(\{-1,1\})$。由 Urysohn 引理，存在 $h\in C(X,[0,1])$，使 $h$ 在 $A$ 上为 $1$、在 $B$ 上为 $0$。于是 $hG=G$ 在 $A$ 上成立，且处处有 $|hG|<1$，故 $F=hG/(1-|hG|)$ 即为所求。
+\end{proof}
+% SUPPLEMENT: id=v14-ch04-tietze-unbounded-details; parent=ch04-tietze-unbounded; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{开区间值域与逆变换的补写（重构新增）。}函数 $\phi(t)=t/(1+|t|)$ 是 $\mathbb R$ 到 $(-1,1)$ 的同胚，逆为 $\psi(s)=s/(1-|s|)$：分别在正负半轴化简即可验证 $\psi(\phi(t))=t$、$\phi(\psi(s))=s$；两个分母在相应定义域都严格为正，因而两映射连续。
+
+Tietze 定理直接提供的是闭区间 $[-1,1]$ 值延拓 $G$，可能取端点值，所以此时还不能代入 $\psi$。集合 $B$ 闭，因为 $G$ 连续且 $\{-1,1\}$ 闭；它与 $A$ 不交，因为 $G|_A=g$ 严格落在 $(-1,1)$ 中。故可选原证明中的 $h$。若 $x\in B$，则 $h(x)G(x)=0$；若 $x\notin B$，则 $|h(x)G(x)|\le|G(x)|<1$。因此乘积 $hG$ 的像处处落在 $\psi$ 的定义域，$F=\psi\circ(hG)$ 连续，且在 $A$ 上 $F=\psi\circ g=f$。
+
+一般复值情形中，$u=\operatorname{Re}f$、$v=\operatorname{Im}f$ 连续，分别按上述构造得到实值连续延拓 $U,V$，则 $F=U+iV$ 连续且限制为 $f$。$A=\varnothing$ 时可直接取零函数。
+\end{proof}
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}先把无界数值压缩到有界开区间，再延拓、避开端点、解压缩，这是从有界结论推出无界结论的机制。乘子 $h$ 专门排除逆变换分母为零的问题。$A$ 闭与 $X$ 正规的作用和必要性见前一定理；无须假设 $f$ 有界，也未承诺延拓 $F$ 有界。复值结论利用 $\mathbb C$ 的两个实坐标结构，并未据此断言任意目标拓扑空间都有相同的延拓性质。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-tietze-unbounded-details
+% SOURCE p=138; printed=123; object=ch04-completely-regular; region=upper-middle
+\begin{definition}[完全正则空间]\label{definition:ch04-completely-regular}
+若拓扑空间 $X$ 是 $T_1$，且对每个闭集 $A\subseteq X$ 与每个 $x\notin A$，均存在 $f\in C(X,[0,1])$，使 $f(x)=1$ 且 $f$ 在 $A$ 上为 $0$，则称 $X$ \textbf{完全正则}。完全正则空间也称为 \textbf{Tychonoff 空间}或 \textbf{$T_{3\frac12}$ 空间}。
+\end{definition}
+% SOURCE p=138; printed=123; object=ch04-complete-regular-hierarchy; region=middle
+\begin{proposition}\label{proposition:ch04-complete-regular-hierarchy}
+每个完全正则空间都是 $T_3$ 空间，而每个 $T_4$ 空间都是完全正则空间。
+\end{proposition}
+% SOURCE p=138; printed=123; object=ch04-proof-complete-regular-hierarchy; region=middle
+\begin{proof}
+第一项说明了上述 $T_{3\frac12}$ 名称的合理性：若 $A,x,f$ 如定义，则 $f^{-1}((1/2,\infty))$ 和 $f^{-1}((-\infty,1/2))$ 是分别包含 $x$ 和 $A$ 的不交邻域。第二项则由 Urysohn 引理得到。
+\end{proof}
+% SUPPLEMENT: id=v14-ch04-complete-regular-details; parent=ch04-completely-regular; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}完全正则性要求每个“点与闭集”的分离都可由一个连续实值函数实现，比只找两个开集多给出了一种数值描述。闭集条件不可随意改成任意子集：例如 $\mathbb R$ 中 $A=\mathbb R\setminus\{x\}$ 稠密，连续函数在 $A$ 上为零便在 $x$ 也为零。$x\notin A$ 保证指定的 $0$、$1$ 值相容；值域 $[0,1]$ 只是统一归一化。$T_1$ 条件必须单独列出，因为两点平凡拓扑空间也满足该函数分离条件：唯一需要考虑的闭集 $A$ 是空集，此时用常值 $1$ 即可，但该空间不是 $T_1$。空闭集并不造成例外。
+\end{remark}
+\begin{proof}
+\textbf{分离层级的完整补写（重构新增）。}把定义中的 $f$ 看成实值连续函数。两条开半直线的逆像都是开集；其中一个含 $x$，另一个含 $A$，且不交，所以 $X$ 满足点与闭集的分离条件。再结合定义自带的 $T_1$，得到 $T_3$，即本书的正则空间。反之，本书的正规空间就是 $T_4$，定义已包含 $T_1$；于是 $\{x\}$ 闭，与闭集 $A$ 不交。对 $A$ 与 $\{x\}$ 使用 Urysohn 引理，恰得所需的 $f$。此处单点闭性来自已有的 $T_1$，不能在不含 $T_1$ 的其他术语约定下默用。
+\end{proof}
+% END SUPPLEMENT: id=v14-ch04-complete-regular-details
+% SOURCE p=138; printed=123; object=ch04-continuity-exercises-title; region=middle
+\Needspace{7\baselineskip}
+\subsection*{习题}
+% SOURCE p=138; printed=123; object=ch04-ex14-continuity-closure; number=14; region=middle
+\begin{exercise}\label{exercise:ch04-continuity-closure}
+设 $X,Y$ 是拓扑空间。映射 $f:X\to Y$ 连续，当且仅当对所有 $A\subseteq X$ 都有 $f(\overline A)\subseteq\overline{f(A)}$；也当且仅当对所有 $B\subseteq Y$ 都有 $\overline{f^{-1}(B)}\subseteq f^{-1}(\overline B)$。
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex14-solution; parent=ch04-ex14-continuity-closure; kind=solution; origin=independent-derivation
+\begin{solution}
+\textbf{补写解答（重构新增）。}设 $f$ 连续。闭集 $\overline{f(A)}$ 的逆像闭且包含 $A$，故包含 $\overline A$，即得第一种包含。又 $f^{-1}(\overline B)$ 闭且包含 $f^{-1}(B)$，故包含后者的闭包，得第二种包含。
+
+反之，若第一种包含对所有 $A$ 成立，对 $Y$ 中任意闭集 $F$ 取 $A=f^{-1}(F)$。因 $f(A)\subseteq F$ 且 $F$ 闭，
+\begin{align*}
+f(\overline A)\subseteq\overline{f(A)}\subseteq F,
+\end{align*}
+从而 $\overline A\subseteq f^{-1}(F)=A$，故 $A$ 闭，按闭集逆像判别知 $f$ 连续。若第二种包含对所有 $B$ 成立，直接取闭集 $B=F$，便有 $\overline{f^{-1}(F)}\subseteq f^{-1}(F)$，同样得到连续性。整个证明未用任何分离或可数性条件，也没有把一般拓扑闭包误作序列极限集。
+\end{solution}
+% END SUPPLEMENT: id=v14-ch04-ex14-solution
+% SOURCE p=138; printed=123; object=ch04-ex15-zero-extension; number=15; region=middle
+\begin{exercise}\label{exercise:ch04-zero-extension}
+若 $X$ 是拓扑空间，$A\subseteq X$ 闭，$g\in C(A)$，且 $g$ 在 $\partial A$ 上为零，则把 $g$ 延拓到 $X$ 并在 $A^c$ 上定义为零，所得函数连续。
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex15-solution; parent=ch04-ex15-zero-extension; kind=solution; origin=independent-derivation
+\begin{solution}
+\textbf{补写解答（重构新增）。}记延拓为 $G$。在开集 $A^c$ 上它恒为零，故其中各点连续；在 $A^\circ$ 中，$g$ 的相对连续性就是附近的 $X$ 上连续性。剩下的点在 $A\setminus A^\circ=\partial A$，这里使用了 $A$ 闭。
+
+若 $x\in\partial A$，给定 $\varepsilon>0$，由 $g(x)=0$ 和 $g$ 在 $A$ 上连续，可取 $X$ 中开集 $U\ni x$，使 $y\in U\cap A$ 时 $|g(y)|<\varepsilon$。对 $y\in U\setminus A$，有 $G(y)=0$，所以对一切 $y\in U$ 都有 $|G(y)-G(x)|<\varepsilon$。故 $G$ 在每点连续，进而连续。
+
+边界零值也是这种零延拓连续的必要条件：若 $G$ 连续，则闭集 $G^{-1}(\{0\})$ 包含 $A^c$，故包含 $\overline{A^c}$，特别包含 $\partial A$。这说明边界条件正是两侧定义的相容条件。
+\end{solution}
+% END SUPPLEMENT: id=v14-ch04-ex15-solution
+% SOURCE p=138; printed=123; object=ch04-ex16-equalizer; number=16; region=middle-lower
+\begin{exercise}\label{exercise:ch04-equalizer}
+设 $X$ 为拓扑空间，$Y$ 为 Hausdorff 空间，$f,g$ 是从 $X$ 到 $Y$ 的连续映射。
+\begin{enumerate}
+\item\label{item:ch04-equalizer-closed} 集合 $\{x:f(x)=g(x)\}$ 闭。
+\item\label{item:ch04-equalizer-dense} 若 $f=g$ 在 $X$ 的一个稠密子集上成立，则 $f=g$ 在整个 $X$ 上成立。
+\end{enumerate}
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex16-solution; parent=ch04-ex16-equalizer; kind=solution+hypotheses; origin=independent-derivation
+\begin{solution}
+\textbf{补写解答（重构新增）。}令 $E=\{x:f(x)=g(x)\}$。
+\begin{enumerate}
+\item 若 $x\notin E$，Hausdorff 性给出不交开集 $U\ni f(x)$、$V\ni g(x)$。则 $f^{-1}(U)\cap g^{-1}(V)$ 是 $x$ 的开邻域，且其中任何点 $z$ 满足 $f(z)\ne g(z)$。所以 $E^c$ 开，$E$ 闭。
+\item 若稠密集 $D$ 上两者相同，则 $D\subseteq E$。由前项的闭性，$X=\overline D\subseteq E$，故处处相同。
+\end{enumerate}
+\end{solution}
+\begin{remark}
+\textbf{条件说明（重构新增）。}目标的 Hausdorff 性把不同函数值分在不交开集内，定义域无需 Hausdorff。删去目标的此条件，取 $Y=\{0,1\}$ 的平凡拓扑，$X=\mathbb R$，$f\equiv0$，$g$ 在 $\mathbb Q$ 上为 $0$、其他处为 $1$。任意映入 $Y$ 的函数连续，故 $f,g$ 都连续，但等值集 $\mathbb Q$ 不闭，并且两函数在稠密集上相同而不处处相同。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-ex16-solution
+% SOURCE p=138; printed=123; object=ch04-ex17-weak-hausdorff; number=17; region=lower
+\begin{exercise}\label{exercise:ch04-weak-hausdorff}
+设 $X$ 是集合，$\mathcal F$ 是 $X$ 上一族实值函数，$\mathcal T$ 是由 $\mathcal F$ 生成的弱拓扑。则 $\mathcal T$ 是 Hausdorff 拓扑，当且仅当对每对不同的 $x,y\in X$，都有 $f\in\mathcal F$ 使 $f(x)\ne f(y)$。
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex17-solution; parent=ch04-ex17-weak-hausdorff; kind=solution; origin=independent-derivation
+\begin{solution}
+\textbf{补写解答（重构新增）。}若函数族分离点，给定 $x\ne y$，选 $f$ 使其值不同，再在 $\mathbb R$ 中选分别包含两值的不交开区间。两区间的 $f$ 逆像是分离 $x,y$ 的不交 $\mathcal T$ 开集，故 $\mathcal T$ Hausdorff。
+
+反之，若某对 $x\ne y$ 对所有 $f\in\mathcal F$ 都取相同值，则对于每个子基集 $f^{-1}(U)$，$x$ 属于它当且仅当 $y$ 属于它。该性质保持于有限交和任意并，因此保持于 $\mathcal T$ 的每个开集。这两个点连一个只含其一的开集都没有，更不可能有不交邻域，矛盾。若 $\mathcal F$ 为空，生成的是平凡拓扑；上述结论仍精确成立，因为这时分离点条件仅在 $X$ 至多含一点时成立。
+\end{solution}
+% END SUPPLEMENT: id=v14-ch04-ex17-solution
+% SOURCE p=138; printed=123; object=ch04-ex18-product-slice; number=18; region=lower
+\begin{exercise}\label{exercise:ch04-product-slice}
+设 $X,Y$ 为拓扑空间，$y_0\in Y$。则 $X$ 与 $X\times\{y_0\}$ 同胚，其中后者取作为 $X\times Y$ 子集的相对拓扑。
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex18-solution; parent=ch04-ex18-product-slice; kind=solution; origin=independent-derivation
+\begin{solution}
+\textbf{补写解答（重构新增）。}映射 $i(x)=(x,y_0)$ 是 $X$ 到该切片的双射，其逆为第一坐标投影的限制。恒等映射与常值映射都连续，故由\cref{proposition:ch04-product-map-continuity}，把 $i$ 看成映入 $X\times Y$ 的映射时连续。若 $W$ 是切片中的相对开集，写成 $W=O\cap(X\times\{y_0\})$，则 $i^{-1}(W)=i^{-1}(O)$ 开，所以映入切片也连续。投影连续，限制后仍连续，故 $i$ 是同胚。这里不要求 $\{y_0\}$ 在 $Y$ 中开或闭；取相对拓扑正是避免这种额外条件。
+\end{solution}
+% END SUPPLEMENT: id=v14-ch04-ex18-solution
+% SOURCE p=138; printed=123; object=ch04-ex19-product-universal; number=19; region=lower
+\begin{exercise}\label{exercise:ch04-product-universal}
+若 $\{X_\alpha\}_{\alpha\in A}$ 是一族拓扑空间，则带乘积拓扑的 $X=\prod_{\alpha\in A}X_\alpha$ 由下述性质唯一确定到同胚：存在连续映射 $\pi_\alpha:X\to X_\alpha$，使对任意拓扑空间 $Y$ 及每个 $\alpha$ 对应的 $f_\alpha\in C(Y,X_\alpha)$，存在唯一的 $F\in C(Y,X)$ 满足 $f_\alpha=\pi_\alpha\circ F$。（因此，$X$ 是拓扑空间范畴中各 $X_\alpha$ 的范畴乘积。）
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex19-solution; parent=ch04-ex19-product-universal; kind=solution+motivation; origin=independent-derivation
+\begin{solution}
+\textbf{补写解答（重构新增）。}对实际的乘积，定义 $F(y)=(f_\alpha(y))_{\alpha\in A}$。其坐标都是连续映射，故 $F$ 连续，并满足所需等式。任何满足这些等式的映射在每个点的每个坐标都已确定，所以唯一。
+
+设另一空间 $Z$ 连同连续映射 $q_\alpha:Z\to X_\alpha$ 具有同一性质。用 $X$ 的性质对 $Y=Z$、$f_\alpha=q_\alpha$，得到唯一连续映射 $u:Z\to X$，使 $\pi_\alpha u=q_\alpha$。用 $Z$ 的性质对 $Y=X$、$f_\alpha=\pi_\alpha$，得到唯一连续映射 $v:X\to Z$，使 $q_\alpha v=\pi_\alpha$。于是
+\begin{align*}
+\pi_\alpha uv=\pi_\alpha,\qquad q_\alpha vu=q_\alpha.
+\end{align*}
+恒等映射分别也满足这些等式；由相应的唯一性，$uv=\mathrm{id}_X$、$vu=\mathrm{id}_Z$，故 $u,v$ 互为连续逆映射，$X,Z$ 同胚。若指标集为空，乘积为单点空间，每个空间到它恰有一个映射，论证仍成立。该性质不仅给出底层集合，还强制连续性的全部信息，因此唯一性是拓扑意义的。
+\end{solution}
+% END SUPPLEMENT: id=v14-ch04-ex19-solution
+% SOURCE p=138; printed=123; object=ch04-ex20-countable-products; number=20; region=bottom
+\begin{exercise}\label{exercise:ch04-countable-products}
+若 $A$ 可数，且每个 $\alpha\in A$ 对应的 $X_\alpha$ 是第一可数空间（分别是第二可数空间），则 $\prod_{\alpha\in A}X_\alpha$ 也是第一可数空间（分别是第二可数空间）。
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex20-solution; parent=ch04-ex20-countable-products; kind=solution+hypotheses; origin=independent-derivation
+\begin{solution}
+\textbf{补写解答（重构新增）。}若乘积为空，按空空间约定两结论都成立；空指标的乘积是单点空间，也成立。
+
+第一可数情形：固定乘积中的点 $x=(x_\alpha)$，在每个坐标取 $x_\alpha$ 的可数开邻域基 $\mathcal U_\alpha$。所有集合
+\begin{align*}
+\bigcap_{\alpha\in F}\pi_\alpha^{-1}(U_\alpha),
+\qquad F\subseteq A\text{ 有限},\quad U_\alpha\in\mathcal U_\alpha,
+\end{align*}
+组成 $x$ 的邻域基：任一乘积基本邻域只约束有限个坐标，逐个在该坐标的邻域基中缩小即可。可数集的有限子集族可数，而每个有限坐标选择的可数族之有限积可数，故整个族可数。
+
+第二可数情形：在每个坐标取可数拓扑基 $\mathcal B_\alpha$，把上式中的 $\mathcal U_\alpha$ 换成 $\mathcal B_\alpha$。同一计数说明所得族可数。对任意乘积开集 $O$ 中的 $x$，先取包含 $x$ 且包含于 $O$ 的乘积基本开集，再在各受约束坐标用 $\mathcal B_\alpha$ 缩小，故所得族是整个乘积拓扑的基。
+
+可数性条件不能普遍去掉；前面已经证明，对不可数 $A$，$\mathbb R^A$ 在零点没有可数邻域基，尽管每个因子 $\mathbb R$ 都第二可数。它是保证结论的充分条件，而不对全为单点的因子族等退化情形声称必要。
+\end{solution}
+% END SUPPLEMENT: id=v14-ch04-ex20-solution
+% SOURCE p=138; printed=123; object=ch04-ex21-cofinite-functions; number=21; region=bottom
+\begin{exercise}\label{exercise:ch04-cofinite-functions}
+若 $X$ 是具有余有限拓扑的无限集，则每个 $f\in C(X)$ 都是常值函数。
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex21-solution; parent=ch04-ex21-cofinite-functions; kind=solution; origin=independent-derivation
+\begin{solution}
+\textbf{补写解答（重构新增）。}若 $f(x)\ne f(y)$，在 $\mathbb C$ 中取分别包含两值的不交开圆盘 $U,V$。则 $f^{-1}(U),f^{-1}(V)$ 是非空不交开集。然而两个非空余有限开集的交的补是有限集；无限集 $X$ 去掉有限集后仍非空，矛盾。因此任意两点函数值相等。无限性在这里必需：有限集的余有限拓扑就是离散拓扑，当至少有两个点时存在非恒定连续函数。证明实际上适用于任意 Hausdorff 值域。
+\end{solution}
+% END SUPPLEMENT: id=v14-ch04-ex21-solution
+% SOURCE p=138,139; printed=123,124; object=ch04-ex22-uniform-metric-target; number=22; region=bottom-top
+\begin{exercise}\label{exercise:ch04-uniform-metric-target}
+设 $X$ 为拓扑空间，$(Y,\rho)$ 是完备度量空间，$\{f_n\}$ 是 $Y^X$ 中的序列，并且当 $m,n\to\infty$ 时，$\sup_{x\in X}\rho(f_n(x),f_m(x))\to0$。则存在唯一的 $f\in Y^X$，使 $\sup_{x\in X}\rho(f_n(x),f(x))\to0$。若每个 $f_n$ 都连续，则 $f$ 也连续。
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex22-solution; parent=ch04-ex22-uniform-metric-target; kind=solution+hypotheses; origin=independent-derivation
+\begin{solution}
+\textbf{补写解答（重构新增）。}若 $X=\varnothing$，唯一的空映射满足结论，非负距离的上确界约定为零。以下设 $X$ 非空。对固定 $x$，不等式
+\begin{align*}
+\rho(f_n(x),f_m(x))\le\sup_{z\in X}\rho(f_n(z),f_m(z))
+\end{align*}
+说明 $\{f_n(x)\}$ 为 $Y$ 中的 Cauchy 序列，由完备性有唯一极限，记为 $f(x)$。给定 $\varepsilon>0$，取 $N$ 使 $n,m\ge N$ 时上确界小于 $\varepsilon/2$。固定 $n\ge N$ 与 $x$，令 $m\to\infty$，利用距离函数对每个变量的连续性，得 $\rho(f_n(x),f(x))\le\varepsilon/2$。故取上确界后仍至多为 $\varepsilon/2<\varepsilon$，证明一致收敛。若另有一致极限 $g$，则
+\begin{align*}
+\rho(f(x),g(x))\le\rho(f(x),f_n(x))+\rho(f_n(x),g(x))\longrightarrow0,
+\end{align*}
+所以 $f(x)=g(x)$ 对所有 $x$ 成立，证明唯一性。
+
+现在假设每个 $f_n$ 连续。固定 $x\in X$ 与 $\varepsilon>0$，选 $n$ 使全体 $z$ 上 $\rho(f_n(z),f(z))<\varepsilon/3$；再由 $f_n$ 在 $x$ 连续取 $x$ 的开邻域 $U$，使 $y\in U$ 时 $\rho(f_n(y),f_n(x))<\varepsilon/3$。三角不等式给出
+\begin{align*}
+\rho(f(y),f(x))
+\le\rho(f(y),f_n(y))+\rho(f_n(y),f_n(x))+\rho(f_n(x),f(x))
+<\varepsilon.
+\end{align*}
+故 $f$ 在 $x$ 连续，进而连续。
+
+这里不要求各 $f_n$ 的像有界；对早期指标，距离上确界甚至可以无穷大，假设只要求尾部差距一致趋零。完备性不能普遍省略：令 $X$ 为单点，$Y=\mathbb Q$，取趋向 $\sqrt2$ 的有理 Cauchy 序列作为该点的函数值，则满足假设而在 $Y$ 中没有极限。
+\end{solution}
+% END SUPPLEMENT: id=v14-ch04-ex22-solution
+% SOURCE p=139; printed=124; object=ch04-ex23-tietze-real-line; number=23; region=upper
+\begin{exercise}\label{exercise:ch04-tietze-real-line}
+给出 $X=\mathbb R$ 时 Tietze 延拓定理的一个初等证明。
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex23-solution; parent=ch04-ex23-tietze-real-line; kind=solution; origin=independent-derivation
+\begin{solution}
+\textbf{补写解答（重构新增）。}设 $A\subseteq\mathbb R$ 闭，$f:A\to[a,b]$ 连续，其中 $a,b$ 为有限实数且 $a\le b$。若 $A=\varnothing$，取 $F\equiv a$；若 $a=b$，同样取该常值。以下设 $A\ne\varnothing$、$M=b-a>0$。
+
+开集 $\mathbb R\setminus A$ 是两两不交开区间的并，允许无界区间。说明这一事实：对其中每点 $y$，把所有包含 $y$ 且包含于该开集的开区间取并，得到一个最大开区间 $I_y$；两个这样的区间一旦相交，其并仍为区间，极大性使二者相等。每个有限端点都在 $A$ 中，否则可利用端点的开邻域继续扩大区间。由于 $A\ne\varnothing$，不会出现整个 $\mathbb R$ 作为一个补区间。
+
+令 $F=f$ 于 $A$。在有限补区间 $(u,v)$ 上作线性插值：
+\begin{align*}
+F(t)=\frac{v-t}{v-u}f(u)+\frac{t-u}{v-u}f(v),\qquad u<t<v.
+\end{align*}
+在形如 $(-\infty,v)$ 或 $(u,\infty)$ 的补区间上，分别取常值 $f(v)$ 或 $f(u)$。所有值都是 $[a,b]$ 中值的凸组合，故 $F$ 的像仍在 $[a,b]$ 中；在补集各点处，它显然连续。
+
+需仔细核对 $x\in A$ 处的连续性，尤其是无限多个补区间可能聚集于 $x$ 的情形。给定 $\varepsilon>0$，由相对连续性选 $\delta>0$，使 $z\in A$、$|z-x|<\delta$ 时 $|f(z)-f(x)|<\varepsilon/2$。再选
+\begin{align*}
+0<\eta<\min\{\delta/2,\varepsilon\delta/(4M)\}.
+\end{align*}
+若 $|y-x|<\eta$ 且 $y\in A$，所需估计已成立。若 $y$ 在某补区间内，因为 $x\in A$ 不在该区间，$x$ 与 $y$ 之间有一个有限端点 $z\in A$，满足 $|z-x|\le|y-x|<\eta$。若补区间的另一端无穷，$F(y)=f(z)$，结论成立。若另一端为 $w\in A$ 且 $|w-x|<\delta$，则两个端点值均在 $f(x)$ 的 $\varepsilon/2$ 邻域内，凸组合亦然。若 $|w-x|\ge\delta$，则 $|w-z|>\delta/2$；写
+\begin{align*}
+F(y)=(1-\theta)f(z)+\theta f(w),\qquad
+\theta=\frac{|y-z|}{|w-z|}<\frac{2\eta}{\delta},
+\end{align*}
+得到
+\begin{align*}
+|F(y)-f(x)|
+&\le |f(z)-f(x)|+\theta|f(w)-f(z)|\\
+&<\varepsilon/2+2M\eta/\delta<\varepsilon.
+\end{align*}
+因此 $F$ 在每个 $x\in A$ 连续，完成不依赖 Urysohn 引理的证明。
+\end{solution}
+% END SUPPLEMENT: id=v14-ch04-ex23-solution
+% SOURCE p=139; printed=124; object=ch04-ex24-normal-equivalences; number=24; region=upper
+\begin{exercise}\label{exercise:ch04-normal-equivalences}
+Hausdorff 空间 $X$ 正规，当且仅当 $X$ 满足 Urysohn 引理的结论；也当且仅当 $X$ 满足 Tietze 延拓定理的结论。
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex24-solution; parent=ch04-ex24-normal-equivalences; kind=solution+hypotheses; origin=independent-derivation
+\begin{solution}
+\textbf{补写解答（重构新增）。}正规性推出两结论，分别由\cref{lemma:ch04-urysohn,theorem:ch04-tietze}得到。
+
+若 Urysohn 结论成立，对任意不交闭集 $A,B$，取连续 $f:X\to[0,1]$，使 $f|_A=0$、$f|_B=1$。则 $f^{-1}([0,1/3))$ 与 $f^{-1}((2/3,1])$ 是不交开集，分别包含 $A,B$。题设的 Hausdorff 性蕴含 $T_1$，故两者结合说明 $X$ 正规。
+
+若 Tietze 结论成立，对上述 $A,B$，令 $D=A\cup B$。$D$ 闭，且 $A,B$ 在 $D$ 中都开闭。定义 $g:D\to[0,1]$，在 $A$ 上为 $0$、在 $B$ 上为 $1$。任意开集的逆像是 $\varnothing,A,B,D$ 中之一，所以 $g$ 连续。由 Tietze 结论延拓为 $f:X\to[0,1]$，便得到 Urysohn 结论，进而正规。空集情形同样适用。
+
+本书“正规”的定义包含 $T_1$，所以题设 Hausdorff 性在逆向证明中用于提供 $T_1$，可放宽为 $T_1$，但不能完全删去而仍声称得到本书的正规性。例如至少两点的平凡拓扑空间只有闭集 $\varnothing,X$：Urysohn 的分离要求可由常值函数满足，闭子集上的连续函数也显然可延拓；但该空间不是 $T_1$，因而不是本书的正规空间。
+\end{solution}
+% END SUPPLEMENT: id=v14-ch04-ex24-solution
+% SOURCE p=139; printed=124; object=ch04-ex25-weak-continuous-functions; number=25; region=upper
+\begin{exercise}\label{exercise:ch04-weak-continuous-functions}
+若 $(X,\mathcal T)$ 完全正则，则 $\mathcal T$ 是由 $C(X)$ 生成的弱拓扑。
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex25-solution; parent=ch04-ex25-weak-continuous-functions; kind=solution; origin=independent-derivation
+\begin{solution}
+\textbf{补写解答（重构新增）。}记弱拓扑为 $\mathcal W$。由于每个 $f\in C(X)$ 对原拓扑 $\mathcal T$ 连续，所有弱拓扑子基集 $f^{-1}(V)$ 都属于 $\mathcal T$，故 $\mathcal W\subseteq\mathcal T$。
+
+反之，取 $O\in\mathcal T$ 与 $x\in O$。闭集 $A=X\setminus O$ 不含 $x$，完全正则性给出连续 $f_x:X\to[0,1]$，使 $f_x(x)=1$、$f_x|_A=0$。把它视为复值连续函数，令
+\begin{align*}
+W_x=f_x^{-1}(\{z\in\mathbb C:\operatorname{Re}z>1/2\}).
+\end{align*}
+这是 $\mathcal W$ 的子基开集，且 $x\in W_x\subseteq O$。所以 $O=\bigcup_{x\in O}W_x\in\mathcal W$，得到反向包含。这说明完全正则空间的开集可由连续数值观测完全恢复；只使用实值连续函数也足够，因为所构造的 $f_x$ 本来实值。
+\end{solution}
+% END SUPPLEMENT: id=v14-ch04-ex25-solution
+% SOURCE p=139; printed=124; object=ch04-ex26-path-connectedness; number=26; region=upper-middle
+\begin{exercise}\label{exercise:ch04-path-connectedness}
+设 $X,Y$ 为拓扑空间。
+\begin{enumerate}
+\item\label{item:ch04-connected-image} 若 $X$ 连通（见\cref{exercise:ch04-connectedness}），且 $f\in C(X,Y)$，则 $f(X)$ 连通。
+\item\label{item:ch04-path-implies-connected}
+\begin{definition*}[弧连通]\phantomsection\label{definition:ch04-path-connectedness}
+若对任意 $x_0,x_1\in X$，均存在 $f\in C([0,1],X)$，使 $f(0)=x_0$、$f(1)=x_1$，则称 $X$ \textbf{弧连通}。
+\end{definition*}
+每个弧连通空间都是连通空间。
+\item\label{item:ch04-sine-curve} 令
+\begin{align*}
+X=\{(s,t)\in\mathbb R^2:t=\sin(s^{-1})\}\cup\{(0,0)\},
+\end{align*}
+并赋予从 $\mathbb R^2$ 诱导的相对拓扑。则 $X$ 连通，但不弧连通。
+\end{enumerate}
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex26-solution; parent=ch04-ex26-path-connectedness; kind=solution+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{定义的动机与逐条件说明（重构新增）。}这里要求两点间有一条连续参数路径，把“不能分成两块”加强为“能沿路径到达”。区间 $[0,1]$ 提供起点、终点和中间过程，端点条件指定所连接的两点。原书把这一性质称为 arcwise connected；按此处的实际定义，路径不要求单射，这也是常称的“道路连通”。不能额外添加原题没有的单射条件。正弦曲线的式子隐含 $s\ne0$，同时包括 $s>0$ 与 $s<0$ 两支，不能只处理正半支。
+\end{remark}
+\begin{solution}
+\textbf{补写解答（重构新增）。}
+\begin{enumerate}
+\item 若 $f(X)$ 存在不交非空相对开集 $U,V$ 的分割，则 $f^{-1}(U),f^{-1}(V)$ 是 $X$ 中不交非空开集，并覆盖 $X$，与连通性矛盾。这里逆像开使用的是 $f:X\to f(X)$ 的连续性，它由相对拓扑直接得到。
+\item 先回顾实区间连通。若区间 $I$ 有相对开分割 $U,V$，选 $u\in U$、$v\in V$，互换名称后设 $u<v$。在 $[u,v]$ 中令 $c=\sup(U\cap[u,v])$。因 $U$ 在 $u$ 的右侧含一段区间，$c>u$；因 $V$ 在 $v$ 的左侧含一段区间，$c<v$。若 $c\in U$，开性使 $c$ 右侧仍有 $U$ 中点，违反上界；若 $c\in V$，开性使 $c$ 左侧一小段无 $U$ 中点，违反上确界定义。矛盾，故特别地 $[0,1]$ 连通。
+
+若弧连通的 $X$ 有非空开分割 $U,V$，选 $x_0\in U$、$x_1\in V$，并取连接它们的路径。由前项，路径像连通，却同时遇到 $U,V$，而与二者的交给出了该像的非空相对开分割，矛盾。空空间或单点空间也满足所述蕴含。
+\item 记两支图像为 $G_+$、$G_-$。映射 $s\mapsto(s,\sin(1/s))$ 在 $(0,\infty)$ 及 $(-\infty,0)$ 上分别连续；两实区间连通，故两支图像连通。记 $o=(0,0)$，取 $s_n=1/(n\pi)$ 与 $-s_n$，可见 $o$ 分别在两支的闭包中。在本题空间 $X$ 中，$\overline{G_+}^{,X}=G_+\cup\{o\}$：右端之外的点第一坐标负，可取第一坐标仍负的开邻域避开 $G_+$；右端各点均在闭包内。同理 $\overline{G_-}^{,X}=G_-\cup\{o\}$。由\subcref{exercise:ch04-connectedness}{item:ch04-connected-closure}，这两个闭包连通，且共有 $o$；再由\subcref{exercise:ch04-connectedness}{item:ch04-connected-union}，其并 $X$ 连通。
+
+假设有路径 $\gamma:[0,1]\to X$ 从 $o$ 到 $(1,\sin1)$，写 $\gamma(t)=(u(t),v(t))$。连续函数 $u$ 的零点集是 $[0,1]$ 的非空闭子集且不含 $1$，故有最大元 $t_0<1$。在 $(t_0,1]$ 上 $u$ 无零点，由介值定理和 $u(1)>0$，处处 $u>0$；又 $u(t_0)=0$ 迫使 $v(t_0)=0$。由 $v$ 连续，选 $t_1\in(t_0,1)$ 充分接近 $t_0$，使 $|v(t)|<1/2$ 对 $t\in[t_0,t_1]$ 都成立。
+
+选整数 $n$ 充分大，使 $r=(\pi/2+2\pi n)^{-1}<u(t_1)$。对 $u$ 在 $[t_0,t_1]$ 用介值定理，存在 $t\in(t_0,t_1)$ 使 $u(t)=r$。由于 $u(t)\ne0$，路径点必须在正弦图像上，所以 $v(t)=\sin(1/r)=1$，与 $|v(t)|<1/2$ 矛盾。故上述两点间不存在路径，$X$ 不弧连通。
+\end{enumerate}
+\end{solution}
+% END SUPPLEMENT: id=v14-ch04-ex26-solution
+% SOURCE p=139; printed=124; object=ch04-ex27-connected-products; number=27; region=middle
+\begin{exercise}\label{exercise:ch04-connected-products}
+若每个 $\alpha\in A$ 对应的 $X_\alpha$ 连通（见\cref{exercise:ch04-connectedness}），则 $X=\prod_{\alpha\in A}X_\alpha$ 连通。（固定 $x\in X$，令 $Y$ 为 $x$ 在 $X$ 中的连通分支。证明 $Y$ 包含集合 $\{y\in X:\pi_\alpha(y)=\pi_\alpha(x)\text{ 对除有限多个外的全部 }\alpha\text{ 成立}\}$，并证明后者在 $X$ 中稠密。使用\cref{exercise:ch04-connectedness,exercise:ch04-product-slice}。）
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex27-solution; parent=ch04-ex27-connected-products; kind=solution+hypotheses; origin=independent-derivation
+\begin{solution}
+\textbf{补写解答（重构新增）。}空乘积是单点空间，若 $X=\varnothing$ 也连通，以下设 $X\ne\varnothing$ 并固定 $x\in X$。
+
+先证两个非空连通空间 $P,Q$ 的乘积连通。固定 $p_0\in P$，切片 $\{p_0\}\times Q$ 连通，且对每个 $q\in Q$，连通切片 $P\times\{q\}$ 都与它相交；切片与各因子同胚，由\cref{exercise:ch04-product-slice}得到。每个 $(\{p_0\}\times Q)\cup(P\times\{q\})$ 连通，这些集合共有整个 $\{p_0\}\times Q$，故其并 $P\times Q$ 连通。有限次归纳得到任意有限个非空连通因子的乘积连通。
+
+对有限集 $F\subseteq A$，令
+\begin{align*}
+E_F=\{y\in X:y_\alpha=x_\alpha\text{ 当 }\alpha\notin F\}.
+\end{align*}
+它与 $\prod_{\alpha\in F}X_\alpha$ 同胚：插入固定的其余坐标给出双射，坐标连续性判别证明它连续，逆由有限个投影构成而连续。因此 $E_F$ 连通，且含 $x$；由连通分支的极大性，$E_F\subseteq Y$。故全部有限坐标扰动组成的 $E=\bigcup_{F\text{ 有限}}E_F$ 包含于 $Y$。
+
+任取非空乘积开集 $O$，取 $z\in O$ 及包含 $z$、包含于 $O$ 的基本开集 $W$，其仅约束有限坐标集 $F$。令 $y$ 在 $F$ 上等于 $z$、在其余坐标上等于 $x$，则 $y\in W\cap E$。故 $E$ 稠密。连通分支 $Y$ 闭，由\subcref{exercise:ch04-connectedness}{item:ch04-connected-component}，于是 $X=\overline E\subseteq Y$，证明 $X$ 连通。有限坐标限制是这一步稠密论证的关键，因此所用的是乘积拓扑。
+\end{solution}
+% END SUPPLEMENT: id=v14-ch04-ex27-solution
+% SOURCE p=139; printed=124; object=ch04-ex28-quotient-topology; number=28; region=middle-lower
+\begin{exercise}\label{exercise:ch04-quotient-topology}
+设拓扑空间 $X$ 上给定一个等价关系，$\widetilde X$ 是等价类的集合，$\pi:X\to\widetilde X$ 把每个 $x\in X$ 映为其等价类，并令
+\begin{align*}
+\mathcal T=\{U\subseteq\widetilde X:\pi^{-1}(U)\text{ 在 }X\text{ 中开}\}.
+\end{align*}
+\begin{enumerate}
+\item\label{item:ch04-quotient-is-topology} $\mathcal T$ 是 $\widetilde X$ 上的拓扑。
+\begin{definition*}[商拓扑]\phantomsection\label{definition:ch04-quotient-topology}
+上述 $\mathcal T$ 称为\textbf{商拓扑}。
+\end{definition*}
+\item\label{item:ch04-quotient-continuity} 若 $Y$ 是拓扑空间，则 $f:\widetilde X\to Y$ 连续，当且仅当 $f\circ\pi$ 连续。
+\item\label{item:ch04-quotient-t1} $\widetilde X$ 是 $T_1$ 空间，当且仅当每个等价类在 $X$ 中闭。
+\end{enumerate}
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex28-solution; parent=ch04-ex28-quotient-topology; kind=solution+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{定义的动机与逐条件说明（重构新增）。}商空间把指定为等价的点合并为一个点，商拓扑用原空间检查这些新点的开集。等价关系的自反、对称、传递性保证等价类构成一个划分，$\pi$ 因而有定义且满射。此拓扑是使 $\pi$ 连续的最强拓扑：任何这样的拓扑中的开集都必须具有开逆像，因而属于 $\mathcal T$。它的设计目的正是下面的映出连续性判别。这里没有假设原空间 Hausdorff，也不能凭原空间 Hausdorff 就断言商空间 Hausdorff。
+\end{remark}
+\begin{solution}
+\textbf{补写解答（重构新增）。}
+\begin{enumerate}
+\item $\pi^{-1}(\varnothing)=\varnothing$、$\pi^{-1}(\widetilde X)=X$，所以空集和全空间属于 $\mathcal T$。逆像与任意并、有限交交换，因此任意多个 $\mathcal T$ 开集的并、有限多个 $\mathcal T$ 开集的交仍具有开逆像，均属于 $\mathcal T$。这验证了拓扑的全部公理，同时说明 $\pi$ 连续。
+\item 若 $f$ 连续，则与连续的 $\pi$ 复合仍连续。反向，若 $f\circ\pi$ 连续，对任意 $Y$ 中开集 $V$，有 $\pi^{-1}(f^{-1}(V))=(f\circ\pi)^{-1}(V)$ 在 $X$ 中开；按商拓扑定义，$f^{-1}(V)$ 在 $\widetilde X$ 中开，故 $f$ 连续。
+\item 对任意 $E\subseteq\widetilde X$，由取补可知 $E$ 在商空间中闭，当且仅当 $\pi^{-1}(E)$ 在 $X$ 中闭。取 $E=\{[x]\}$，其逆像恰为等价类 $[x]$。因此商空间每个单点闭恰等价于原空间每个等价类闭，再用 $T_1$ 的单点闭刻画即得结论。
+\end{enumerate}
+\end{solution}
+% END SUPPLEMENT: id=v14-ch04-ex28-solution
+% SOURCE p=139; printed=124; object=ch04-ex29-quotient-maps; number=29; region=lower
+\begin{exercise}\label{exercise:ch04-quotient-maps}
+设 $X$ 为拓扑空间，$G$ 是 $X$ 到自身的同胚所成的一个群。$G$ 在 $X$ 上诱导等价关系：$x\sim y$ 当且仅当对某个 $g\in G$ 有 $y=g(x)$。令 $X=\mathbb R^2$，对下列各组可逆线性映射，描述商空间 $\widetilde X$ 及其商拓扑（见\cref{exercise:ch04-quotient-topology}）。特别地，证明：\subcref{exercise:ch04-quotient-maps}{item:ch04-quotient-rotations}中的商空间同胚于 $[0,\infty)$；\subcref{exercise:ch04-quotient-maps}{item:ch04-quotient-shears}中是 $T_1$ 但非 Hausdorff；\subcref{exercise:ch04-quotient-maps}{item:ch04-quotient-affine}中是 $T_0$ 但非 $T_1$；\subcref{exercise:ch04-quotient-maps}{item:ch04-quotient-rational}中不是 $T_0$。实际上，最后一个商空间不可数，却只有六个开集，并且存在点 $p\in\widetilde X$ 使 $\overline{\{p\}}=\widetilde X$。
+\begin{enumerate}
+\item\label{item:ch04-quotient-rotations} $\left\{\begin{pmatrix}\cos\theta&-\sin\theta\\\sin\theta&\cos\theta\end{pmatrix}:\theta\in\mathbb R\right\}$。
+\item\label{item:ch04-quotient-shears} $\left\{\begin{pmatrix}1&a\\0&1\end{pmatrix}:a\in\mathbb R\right\}$。
+\item\label{item:ch04-quotient-affine} $\left\{\begin{pmatrix}a&b\\0&1\end{pmatrix}:a>0,\ b\in\mathbb R\right\}$。
+\item\label{item:ch04-quotient-rational} $\left\{\begin{pmatrix}a&0\\0&b\end{pmatrix}:a,b\in\mathbb Q\setminus\{0\}\right\}$。
+\end{enumerate}
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex29-solution; parent=ch04-ex29-quotient-maps; kind=solution; origin=independent-derivation
+\begin{definition*}[饱和集（重构新增）]\phantomsection\label{definition:ch04-saturated-set}
+对商映射 $\pi:X\to\widetilde X$，若 $S\subseteq X$ 是若干完整等价类之并，则称 $S$ 为\textbf{饱和集}。
+\end{definition*}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}商空间无法区分同一等价类内的点，所以一个从商空间拉回的集合必须整类取入或整类排除。上述条件等价于 $\pi^{-1}(\pi(S))=S$：总有 $S\subseteq\pi^{-1}(\pi(S))$，右边恰是所有与 $S$ 相交的等价类之并，故反向包含恰好要求把这些等价类完整取入。因此商空间的开集与原空间的饱和开集一一对应；“开”与“饱和”是两个各自需要检查的条件。
+\end{remark}
+\begin{solution}
+\textbf{补写解答（重构新增）。}群的恒等元给出自反性，逆元给出对称性，复合给出传递性，故所述关系确为等价关系。等价类就是轨道 $Gx=\{g(x):g\in G\}$。各组矩阵都含单位阵，对乘法和取逆封闭，且行列式非零；其作用因此都是平面的同胚。商空间开集的逆像恰是平面中的饱和开集。
+\begin{enumerate}
+\item 旋转轨道是以原点为圆心的圆，半径 $r>0$，另有半径零的单点轨道。范数映射 $q(z)=\|z\|$ 将轨道一一标记为 $[0,\infty)$，所以诱导双射 $\bar q:\widetilde X\to[0,\infty)$。由 $q=\bar q\circ\pi$ 连续及商拓扑判别，$\bar q$ 连续。反向映射为 $r\mapsto\pi(r,0)$，它是连续映射 $r\mapsto(r,0)$ 与 $\pi$ 的复合，故连续。这给出同胚，并完整确定了商拓扑。
+
+\item 剪切把 $(x,y)$ 变成 $(x+ay,y)$。若 $y\ne0$，通过选择 $a$ 可得到高度为 $y$ 的整条水平线；若 $y=0$，点 $(x,0)$ 固定。因此商空间的底集合可写为不交并
+\begin{align*}
+(\mathbb R\setminus\{0\})\sqcup\{0_x:x\in\mathbb R\},
+\end{align*}
+其中非零实数代表相应的水平线，$0_x$ 代表轴上的单点。
+
+其全部开集精确如下：选 $V\subseteq\mathbb R\setminus\{0\}$ 和 $D\subseteq\mathbb R$，取 $U=V\cup\{0_x:x\in D\}$。则 $U$ 开，当且仅当 $V$ 在 $\mathbb R\setminus\{0\}$ 中开，$D$ 在 $\mathbb R$ 中开，且当 $D\ne\varnothing$ 时存在 $\delta>0$ 使 $(-\delta,\delta)\setminus\{0\}\subseteq V$。
+
+为证此刻画，逆像为 $(\mathbb R\times V)\cup(D\times\{0\})$。若它开，与直线的交显示 $V,D$ 有所述开性；若 $(x,0)$ 在逆像内，其中一个小矩形给出所述高度区间。反之，非零高度处由 $V$ 开得到小矩形；对 $(x,0)$、$x\in D$，结合 $D$ 的小区间与统一的高度区间，也得到包含于逆像的小矩形。因此逆像开，刻画成立。
+
+所有轨道都是闭集，故由\subcref{exercise:ch04-quotient-topology}{item:ch04-quotient-t1}，商空间为 $T_1$。但任意两个不同的 $0_x,0_{x'}$ 的开邻域都包含充分小的非零高度，因而必相交，不能 Hausdorff。
+
+\item 此时 $(x,y)\mapsto(ax+by,y)$。非零高度仍各为一个轨道；在零轴上，轨道恰为正半轴、负半轴和原点，分别记为 $p_+,p_-,o$。底集合是
+\begin{align*}
+(\mathbb R\setminus\{0\})\sqcup\{p_+,p_-,o\}.
+\end{align*}
+全部开集可描述为 $U=V\cup D$，其中 $V$ 在 $\mathbb R\setminus\{0\}$ 中开，$D\subseteq\{p_+,p_-,o\}$，并满足：若 $D\ne\varnothing$，则 $V$ 包含某个去掉零点的零邻域；若 $o\in D$，则 $p_+,p_-\in D$。
+
+必要性来自逆像在任一轴上点附近的矩形，以及原点附近必须同时含两侧轴上点。充分性也逐点由矩形验证：在非零高度用 $V$ 开，在半轴点取不跨越原点的水平小区间，在原点则用两半轴均已包括这一条件。
+
+两个不同非零高度由不遇零的高度区间区分；非零高度与三个特殊点也可如此区分。$p_+,p_-$ 分别可用 $V=\mathbb R\setminus\{0\}$、$D=\{p_+\}$ 或 $D=\{p_-\}$ 的开集区分；同样的开集能区分 $p_+$ 与 $o$，以及 $p_-$ 与 $o$。故商空间 $T_0$。正半轴与负半轴在平面中都不闭，所以商空间不是 $T_1$；更具体地，$\overline{\{p_+\}}=\{p_+,o\}$，$\overline{\{p_-\}}=\{p_-,o\}$。
+
+\item 写 $\mathbb Q^*=\mathbb Q\setminus\{0\}$。轨道分别为
+\begin{align*}
+&\{(0,0)\},\qquad x\mathbb Q^*\times\{0\}\quad(x\ne0),\qquad
+\{0\}\times y\mathbb Q^*\quad(y\ne0),\\
+&x\mathbb Q^*\times y\mathbb Q^*\quad(xy\ne0).
+\end{align*}
+每个轨道可数，且这确实穷尽了轨道：两个非零坐标的比各为非零有理数恰等价于能通过一组允许的矩阵相互变换；零坐标则始终不变。
+
+记 $E=\{(x,y):xy\ne0\}$、$H=\{(x,0):x\ne0\}$、$K=\{(0,y):y\ne0\}$。平面上的全部饱和开集恰为
+\begin{align*}
+\varnothing,\quad E,\quad E\cup H,\quad E\cup K,\quad
+E\cup H\cup K,\quad\mathbb R^2.
+\end{align*}
+证明没有遗漏：设 $O$ 为非空饱和开集。若某个 $z\in E$ 不属于 $O$，则闭的饱和补集包含 $Gz$。由于 $\mathbb Q^*$ 在 $\mathbb R$ 中稠密，该轨道在整个平面稠密，于是闭补集等于整个平面，矛盾。所以 $E\subseteq O$。若 $O$ 包含 $H$ 的一个点却漏掉 $H$ 的另一个点，后一个点的轨道在整条水平轴中稠密，闭补集便包含整条轴，矛盾。故 $H$ 必须全取或全不取；对 $K$ 同理。若原点属于 $O$，其开邻域遇到 $H,K$，从而两者都被全取，$O=\mathbb R^2$。这就证明了穷尽性。
+
+列出的六个集合确实都饱和且开：$E$ 是两条闭轴的补，$E\cup H$ 是竖轴的补，$E\cup K$ 是横轴的补，$E\cup H\cup K$ 是原点的补，另两个为显然情形。由满射 $\pi$，不同的饱和逆像对应不同商空间开集，故商空间恰有六个开集。
+
+若商空间可数，平面便是可数个可数轨道之并而可数，矛盾，故商空间不可数。点 $(1,1)$ 与 $(\sqrt2,1)$ 不在同一轨道，但其轨道点在商空间中属于完全相同的开集：它们都属于每个非空开集。因此商空间不是 $T_0$。最后，任取 $z\in E$，其轨道在平面稠密；若商空间闭集包含 $\pi(z)$，其闭逆像包含这个轨道，就必须为整个平面。故该闭集就是整个商空间，即 $\overline{\{\pi(z)\}}=\widetilde X$。
+\end{enumerate}
+\end{solution}
+% END SUPPLEMENT: id=v14-ch04-ex29-solution
+\end{document}

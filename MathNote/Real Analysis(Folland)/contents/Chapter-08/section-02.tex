@@ -1,0 +1,115 @@
+\documentclass[../../main.tex]{subfiles}
+\begin{document}
+% SOURCE p=254,255; printed=239-240; object=ch08-convolution-title; region=bottom-top
+\section{卷积}\label{section:ch08-convolution}
+% SOURCE p=254,255; printed=239-240; object=ch08-convolution-definition; region=bottom-top
+\begin{definition}[卷积]\label{definition:ch08-convolution}
+设 $f,g$ 为 $\mathbb R^n$ 上的可测函数。它们的\textbf{卷积}是函数 $f*g$，在下列积分存在的每个 $x$ 处定义为
+\begin{align*}
+f*g(x)=\int_{\mathbb R^n}f(x-y)g(y)\,\mathrm dy.
+\end{align*}
+\end{definition}
+可对 $f,g$ 施加各种条件，保证 $f*g$ 至少几乎处处有定义。例如，若 $f$ 有界且有紧支撑，则 $g$ 可以是任意局部可积函数；另见\cref{theorem:ch08-young,proposition:ch08-conjugate-convolution,proposition:ch08-general-young}。
+% SUPPLEMENT: id=v14-ch08-convolution-definition-details; parent=ch08-convolution-definition; kind=omitted-proof+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{动机与定义域（重构新增）。}卷积把 $f$ 的各个平移按 $g(y)$ 加权叠加；当 $g$ 非负、积分为一且集中在原点附近时，它表现为局部平均。这里“积分存在”对复值函数指绝对可积后得到有限复数；对非负函数也可先使用取值 $[0,\infty]$ 的扩展积分。一般可测性本身不保证积分有限，例如两个恒为一的函数在 $\mathbb R^n$ 上的卷积处处发散。
+
+上面的紧支撑例子可直接核验：若 $|f|\leqslant M$、$K=\operatorname{supp}f$ 紧，则对每个固定 $x$，
+\begin{align*}
+\int|f(x-y)g(y)|\,\mathrm dy\leqslant M\int_{x-K}|g(y)|\,\mathrm dy<\infty,
+\end{align*}
+因为 $x-K$ 紧且 $g$ 局部可积。支撑为空或 $M=0$ 时积分为零。紧支撑把所需控制限制在一个随 $x$ 平移的紧集上，有界性则提供乘积的可积支配；这两个条件在此是便利的充分条件，并非所有卷积存在的必要条件。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch08-convolution-definition-details
+% SOURCE p=255; printed=240; object=ch08-convolution-joint-measurability; region=upper
+下面需要这一事实：若 $f$ 在 $\mathbb R^n$ 上可测，则 $K(x,y)=f(x-y)$ 在 $\mathbb R^n\times\mathbb R^n$ 上可测。令 $s(x,y)=x-y$，则 $K=f\circ s$；由于 $s$ 连续，$f$ 为 Borel 可测时 $K$ 也 Borel 可测。根据\cref{proposition:ch02-measurable-version-completion}，总可在不影响卷积定义的前提下改取这样的 $f$。事实上，$f$ 的 Lebesgue 可测性本身也蕴含 $K$ 的 Lebesgue 可测性；见\cref{exercise:ch08-difference-map-measurable}。
+% SUPPLEMENT: id=v14-ch08-convolution-measurability-details; parent=ch08-convolution-joint-measurability; kind=omitted-proof+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{代表与可测性的说明（重构新增）。}若 $f=\widetilde f$ 在零集 $N$ 外成立，则固定任意 $x$，$f(x-y)$ 与 $\widetilde f(x-y)$ 只可能在 $x-N$ 上不同，而 $x-N$ 仍为零集。因此对每个 $x$，原积分与替换后的积分同时绝对收敛或同时不绝对收敛；收敛时取值相同。替换 $g$ 的零集也同样不影响任何已有卷积值。这比只证明几乎所有 $x$ 的结论更强，并说明卷积在已定义的点处不依赖 $L^p$ 代表。可测函数可选取有限值代表；零集上的无穷取值按零改动，不改变这些积分结论。
+
+联合 Borel 可测性便于直接使用普通乘积空间上的 Tonelli 和 Fubini。对于一般 Lebesgue 代表，不能仅说“连续映射的复合必定 Lebesgue 可测”：连续映射总能拉回 Borel 集，却未必拉回任意 Lebesgue 可测集。这里的线性差映射具有额外结构，\cref{exercise:ch08-difference-map-measurable}将用可逆线性变换及零集的完备性补全这一点。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch08-convolution-measurability-details
+% SOURCE p=255; printed=240; object=ch08-convolution-properties; number=8.6; region=middle
+卷积的基本性质汇总如下。
+\begin{proposition}\label{proposition:ch08-convolution-properties}
+假定所涉及的积分均存在，则有：
+\begin{enumerate}
+\item\label{item:ch08-convolution-commutative}$f*g=g*f$。
+\item\label{item:ch08-convolution-associative}$(f*g)*h=f*(g*h)$。
+\item\label{item:ch08-convolution-translation}若 $z\in\mathbb R^n$，则 $\tau_z(f*g)=(\tau_zf)*g=f*(\tau_zg)$。
+\item\label{item:ch08-convolution-support}若 $A$ 为 $\{x+y:x\in\operatorname{supp}f,\ y\in\operatorname{supp}g\}$ 的闭包，则 $\operatorname{supp}(f*g)\subseteq A$。
+\end{enumerate}
+结合律中的积分条件包括下述 Fubini 换序所需的绝对可积性；这个条件的准确含义见证明后的说明。
+\end{proposition}
+\begin{proof}
+(a) 作换元 $z=x-y$，得
+\begin{align*}
+f*g(x)=\int f(x-y)g(y)\,\mathrm dy
+=\int f(z)g(x-z)\,\mathrm dz=g*f(x).
+\end{align*}
+(b) 由 (a) 及 Fubini 定理，
+\begin{align*}
+(f*g)*h(x)
+&=\iint f(y)g(x-z-y)h(z)\,\mathrm dy\,\mathrm dz\\
+&=\iint f(y)g(x-y-z)h(z)\,\mathrm dz\,\mathrm dy
+=f*(g*h)(x).
+\end{align*}
+(c) 直接计算
+\begin{align*}
+\tau_z(f*g)(x)
+&=\int f(x-z-y)g(y)\,\mathrm dy
+=\int\tau_zf(x-y)g(y)\,\mathrm dy=(\tau_zf)*g(x).
+\end{align*}
+再由 (a)，$\tau_z(f*g)=\tau_z(g*f)=(\tau_zg)*f=f*(\tau_zg)$。
+
+(d) 若 $x\notin A$，则每个 $y\in\operatorname{supp}g$ 都满足 $x-y\notin\operatorname{supp}f$，故对所有 $y$ 均有 $f(x-y)g(y)=0$，从而 $f*g(x)=0$。由于 $A$ 闭，非零集的闭包也包含于 $A$，结论成立。
+\end{proof}
+% SUPPLEMENT: id=v14-ch08-convolution-properties-details; parent=ch08-convolution-properties; kind=omitted-proof+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{积分存在的范围与条件（重构新增）。}原文用“所涉及的全部积分存在”概括换序的前提。为使这句话可检验，在固定 $x$ 处用于 (b) 的充分条件是
+\begin{align*}
+\iint|f(y)g(x-y-z)h(z)|\,\mathrm dy\,\mathrm dz<\infty.
+\end{align*}
+它保证两种迭代积分合法、内层积分几乎处处存在，并由 Fubini 得到相等。若函数非负，则用 Tonelli，可允许两边同为无穷。仅知道两个带符号的迭代卷积各自存在，不能跳过对换序前提的核查。特别地，若 $f,g,h\in L^1$，则对绝对值应用 Tonelli 及平移换元，
+\begin{align*}
+\iiint|f(y)g(x-y-z)h(z)|\,\mathrm dx\,\mathrm dy\,\mathrm dz
+=\|f\|_1\|g\|_1\|h\|_1<\infty.
+\end{align*}
+所以前面的充分条件对几乎所有 $x$ 成立，结合律确实是 $L^1$ 等价类上的恒等式。内层卷积在例外零集上如何补值，不影响外层积分，因为平移保持零测集。
+
+(a) 用平移和反射的测度不变性，(c) 用加法结构与 (a)，(d) 用“和集之外乘积因子不能同时非零”。(d) 取闭包，是因为支撑本身定义为非零集的闭包，两个闭集的和未必闭；若两个支撑都紧，其和已紧而闭。对仅几乎处处定义的卷积，(d) 表示在 $A^c$ 上取零的代表，或相应的本质支撑结论。动机是把函数相乘时的代数性质转化为卷积代数，同时控制平移与空间传播范围。空支撑时有关卷积为零，结论仍成立。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch08-convolution-properties-details
+% SOURCE p=255,256; printed=240-241; object=ch08-young; number=8.7; region=bottom-top
+以下两个命题给出 $L^p$ 函数卷积的基本事实。
+\begin{theorem}[Young 不等式]\label{theorem:ch08-young}
+若 $f\in L^1$、$g\in L^p$（$1\leqslant p\leqslant\infty$），则 $f*g(x)$ 对几乎所有 $x$ 存在，$f*g\in L^p$，且
+\begin{align*}
+\|f*g\|_p\leqslant\|f\|_1\|g\|_p.
+\end{align*}
+\end{theorem}
+\begin{proof}
+这是\cref{theorem:ch06-kernel-bound}在 $K(x,y)=f(x-y)$ 时的特例。也可应用积分形式的 Minkowski 不等式：
+\begin{align*}
+\|f*g\|_p
+=\left\|\int f(y)g(\,\cdot-y)\,\mathrm dy\right\|_p
+\leqslant\int|f(y)|\|\tau_yg\|_p\,\mathrm dy
+=\|f\|_1\|g\|_p.
+\end{align*}
+\end{proof}
+% SUPPLEMENT: id=v14-ch08-young-details; parent=ch08-young; kind=omitted-proof+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{存在性与端点的补全（重构新增）。}选取 Borel 代表后，非负函数 $(x,y)\mapsto|f(y)g(x-y)|$ 联合可测。对 $p<\infty$，先对这个非负函数使用\cref{theorem:ch06-integral-minkowski}，得到
+\begin{align*}
+\left\|\int|f(y)g(\,\cdot-y)|\,\mathrm dy\right\|_p
+\leqslant\int|f(y)|\|\tau_yg\|_p\,\mathrm dy
+=\|f\|_1\|g\|_p<\infty.
+\end{align*}
+故绝对值积分几乎处处有限，复值卷积才随之有定义，并由积分绝对值不等式满足同一范数界。对 $p=\infty$，固定任意 $x$ 后，$|g(x-y)|\leqslant\|g\|_\infty$ 对几乎所有 $y$ 成立，故绝对值积分至多 $\|f\|_1\|g\|_\infty$，此时实际上对\emph{每个} $x$ 都有定义。若任一范数为零，则同样估计直接给零卷积，无需作任何除法。
+
+若使用原证第一条途径，核的每个行、列绝对积分均为 $\|f\|_1$，由平移、反射换元得到，故核定理的两项假设均满足。动机是以平移等距性把加权平均的 $L^p$ 大小控制为权的总绝对质量。$f\in L^1$ 保证这份总质量有限；$g\in L^p$ 保证每个平移具有同一有限范数；$p\geqslant1$ 正是所用 Minkowski 范数不等式的范围。结论只说有限 $p$ 时几乎处处存在，不把范数控制误当成每个点的绝对收敛。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch08-young-details
+\subfile{section-02-young.tex}
+\end{document}

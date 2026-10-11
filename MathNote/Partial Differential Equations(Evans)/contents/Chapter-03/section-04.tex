@@ -1,0 +1,710 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}}
+
+\begin{document}
+
+\section{守恒律简介}\label{section:ch03-conservation}
+
+本节研究一个空间维中标量守恒律的初值问题：
+\begin{align}\label{align:ch03-conservation-ivp}
+\begin{cases}
+u_t+F(u)_x=0 & \text{在 }\mathbb{R}\times(0,\infty)\text{ 中},\\
+u=g & \text{在 }\mathbb{R}\times\{t=0\}\text{ 上}.
+\end{cases}
+\end{align}
+这里 $F:\mathbb{R}\to\mathbb{R}$、$g:\mathbb{R}\to\mathbb{R}$ 给定，$u:\mathbb{R}\times[0,\infty)\to\mathbb{R}$ 是未知函数，$u=u(x,t)$。如 \S3.2 所述，特征线法表明\eqref{align:ch03-conservation-ivp} 一般不存在对一切时刻 $t>0$ 都存在的光滑解。故类比 \S3.3.3 的发展，我们寻找某种弱解或广义解。
+
+\subsection{激波、熵条件}\label{subsection:ch03-shock}
+
+\subsubsection{积分解；Rankine--Hugoniot 条件}
+
+我们开场先指出：既然一般找不到\eqref{align:ch03-conservation-ivp} 的光滑解，就必须设计某种方式，把一个较不光滑的函数 $u$ 解释为``解''此初值问题。但照现状，除非 $u$ 可微，PDE 甚至没有意义。然而观察：若暂时假定 $u$ 光滑，我们可如下改写，使所得表达式不直接涉及 $u$ 的导数。想法是用一个光滑函数 $v$ 乘\eqref{align:ch03-conservation-ivp} 中的 PDE，再分部积分，从而把导数转移到 $v$ 上。
+
+更确切地，设
+\begin{align}\label{align:ch03-test-fn}
+v:\mathbb{R}\times[0,\infty)\to\mathbb{R}\text{ 光滑，具有紧支集}.
+\end{align}
+我们称 $v$ 为\textbf{检验函数}。现用 $v$ 乘 PDE $u_t+F(u)_x=0$ 并分部积分：
+\begin{align*}
+0&=\int_0^\infty\int_{-\infty}^{\infty}(u_t+F(u)_x)v\,\mathrm{d}x\,\mathrm{d}t\\
+&=-\int_0^\infty\int_{-\infty}^{\infty}uv_t\,\mathrm{d}x\,\mathrm{d}t-\int_{-\infty}^{\infty}uv\,\mathrm{d}x\big|_{t=0}-\int_0^\infty\int_{-\infty}^{\infty}F(u)v_x\,\mathrm{d}x\,\mathrm{d}t.
+\end{align*}
+鉴于初始条件在 $\mathbb{R}\times\{t=0\}$ 上 $u=g$，我们由此得到恒等式
+\begin{align}\label{align:ch03-integral-sol}
+\int_0^\infty\int_{-\infty}^{\infty}uv_t+F(u)v_x\,\mathrm{d}x\,\mathrm{d}t+\int_{-\infty}^{\infty}gv\,\mathrm{d}x\big|_{t=0}=0.
+\end{align}
+我们是在假定 $u$ 是\eqref{align:ch03-conservation-ivp} 的光滑解时导出此等式的，但所得公式即使 $u$ 仅有界也有意义。
+
+\begin{definition}\label{definition:ch03-integral-sol}
+我们称 $u\in L^\infty(\mathbb{R}\times(0,\infty))$ 为\eqref{align:ch03-conservation-ivp} 的一个\textbf{积分解}，只要对每个满足\eqref{align:ch03-test-fn} 的检验函数 $v$，等式\eqref{align:ch03-integral-sol} 成立。
+\end{definition}
+
+设我们有\eqref{align:ch03-conservation-ivp} 的一个积分解。那么从恒等式\eqref{align:ch03-integral-sol} 能推出关于此解的什么？
+
+我们通过考察一种 $u$（虽不连续，但结构特别简单）的情形来部分回答此问题。事实上设某开区域 $V\subset\mathbb{R}\times(0,\infty)$ 中，$u$ 在一条光滑曲线 $C$ 的两侧都光滑。令 $V_l$ 为 $V$ 中曲线左侧的部分，$V_r$ 为右侧的部分。我们假定 $u$ 是\eqref{align:ch03-conservation-ivp} 的积分解，且 $u$ 及其一阶导数在 $V_l$、$V_r$ 中一致连续。
+
+首先选一个在 $V_l$ 中具有紧支集的检验函数 $v$。则\eqref{align:ch03-integral-sol} 成为
+\begin{align}\label{align:ch03-in-vl}
+0=\int_0^\infty\int_{-\infty}^{\infty}uv_t+F(u)v_x\,\mathrm{d}x\,\mathrm{d}t=-\int_0^\infty\int_{-\infty}^{\infty}[u_t+F(u)_x]v\,\mathrm{d}x\,\mathrm{d}t,
+\end{align}
+分部积分是合法的，因为 $u$ 在 $V_l$ 中为 $C^1$，且 $v$ 在 $V_l$ 边界附近为零。恒等式\eqref{align:ch03-in-vl} 对一切在 $V_l$ 中具紧支集的检验函数 $v$ 成立，故
+\begin{align}\label{align:ch03-pde-vl}
+u_t+F(u)_x=0 \qquad \text{在 }V_l\text{ 中}.
+\end{align}
+类似地，
+\begin{align}\label{align:ch03-pde-vr}
+u_t+F(u)_x=0 \qquad \text{在 }V_r\text{ 中}.
+\end{align}
+
+\textbf{沿激波的跃变条件.} 现选一个在 $V$ 中具紧支集、但不必沿曲线 $C$ 为零的检验函数 $v$。再次用\eqref{align:ch03-integral-sol}，推出
+\begin{align}\label{align:ch03-in-v}
+0=\int_0^\infty\int_{-\infty}^{\infty}uv_t+F(u)v_x\,\mathrm{d}x\,\mathrm{d}t
+=\iint_{V_l}uv_t+F(u)v_x\,\mathrm{d}x\,\mathrm{d}t+\iint_{V_r}uv_t+F(u)v_x\,\mathrm{d}x\,\mathrm{d}t.
+\end{align}
+现由于 $v$ 在 $V$ 内具紧支集，有
+\begin{align}\label{align:ch03-in-vl2}
+\iint_{V_l}uv_t+F(u)v_x\,\mathrm{d}x\,\mathrm{d}t
+=-\iint_{V_l}[u_t+F(u)_x]v\,\mathrm{d}x\,\mathrm{d}t+\int_C(u_l\nu_2+F(u_l)\nu_1)v\,\mathrm{d}l
+=\int_C(u_l\nu_2+F(u_l)\nu_1)v\,\mathrm{d}l,
+\end{align}
+最后一个等号由\eqref{align:ch03-pde-vl}。这里 $\boldsymbol{\nu}=(\nu_1,\nu_2)$ 是曲线 $C$ 的单位法向量，从 $V_l$ 指向 $V_r$，下标``$l$''表示从左侧取极限。类似地，\eqref{align:ch03-pde-vr} 蕴含
+\begin{align*}
+\iint_{V_r}uv_t+F(u)v_x\,\mathrm{d}x\,\mathrm{d}t=-\int_C(u_r\nu_2+F(u_r)\nu_1)v\,\mathrm{d}l,
+\end{align*}
+下标``$r$''表示从右侧取极限。把此恒等式加到\eqref{align:ch03-in-vl2} 并回忆\eqref{align:ch03-in-v}，得
+\begin{align*}
+\int_C[(F(u_l)-F(u_r))\nu_1+(u_l-u_r)\nu_2]v\,\mathrm{d}l=0.
+\end{align*}
+此等式对一切如上检验函数 $v$ 成立，故沿 $C$ 有
+\begin{align}\label{align:ch03-rh-vector}
+(F(u_l)-F(u_r))\nu_1+(u_l-u_r)\nu_2=0.
+\end{align}
+
+现设 $C$ 对某光滑函数 $s(\cdot):[0,\infty)\to\mathbb{R}$ 参数化为 $\{(x,t)\mid x=s(t)\}$。则可取 $\boldsymbol{\nu}=(\nu_1,\nu_2)=(1+\dot{s}^2)^{-1/2}(1,-\dot{s})$。故\eqref{align:ch03-rh-vector} 蕴含在 $V$ 中沿曲线 $C$ 有
+\begin{align}\label{align:ch03-rh-speed}
+F(u_l)-F(u_r)=\dot{s}(u_l-u_r).
+\end{align}
+
+\textbf{记号.}
+\begin{align*}
+\llbracket u\rrbracket=u_l-u_r=\text{沿曲线 }C\text{ 的 }u\text{ 跃变},\quad
+\llbracket F(u)\rrbracket=F(u_l)-F(u_r)=\text{ }F(u)\text{ 的跃变},\quad
+\sigma=\dot{s}=\text{曲线 }C\text{ 的速度}.
+\end{align*}
+于是把\eqref{align:ch03-rh-speed} 改写为沿间断曲线的恒等式
+\begin{align}\label{align:ch03-rh}
+\llbracket F(u)\rrbracket=\sigma\llbracket u\rrbracket.
+\end{align}
+这就是沿激波曲线 $C$ 的\textbf{Rankine--Hugoniot 条件}。注意速度 $\sigma$ 与值 $u_l,u_r,F(u_l),F(u_r)$ 一般沿曲线 $C$ 变化。关键在于：即使这些量可能改变，表达式 $\llbracket F(u)\rrbracket=F(u_l)-F(u_r)$ 与 $\sigma\llbracket u\rrbracket=\dot{s}(u_l-u_r)$ 必须始终恰好平衡。
+
+\begin{example}[激波]\label{example:ch03-shock}考虑 Burgers 方程的初值问题：
+\begin{align}\label{align:ch03-burgers}
+\begin{cases}
+u_t+\left(\dfrac{u^2}{2}\right)_x=0 & \text{在 }\mathbb{R}\times(0,\infty)\text{ 中},\\
+u=g & \text{在 }\mathbb{R}\times\{t=0\}\text{ 上},
+\end{cases}
+\end{align}
+初始数据为
+\begin{align}\label{align:ch03-burgers-g}
+g(x)=
+\begin{cases}
+1 & \text{若 }x\leqslant 0,\\
+1-x & \text{若 }0\leqslant x\leqslant 1,\\
+0 & \text{若 }x\geqslant 1.
+\end{cases}
+\end{align}
+按特征方程（见 \S3.2.5），\eqref{align:ch03-burgers}、\eqref{align:ch03-burgers-g} 的任一光滑解 $u$ 沿投影特征线 $\mathbf{y}(s)=(g(x_0)s+x_0,s)$（$s\geqslant 0$）取常数值 $z_0=g(x_0)$，对每个 $x_0\in\mathbb{R}$。因而
+\begin{align*}
+u(x,t)\triangleq
+\begin{cases}
+1 & \text{若 }x\leqslant t,\ 0\leqslant t\leqslant 1,\\
+\dfrac{1-x}{1-t} & \text{若 }t\leqslant x\leqslant 1,\ 0\leqslant t\leqslant 1,\\
+0 & \text{若 }x\geqslant 1,\ 0\leqslant t\leqslant 1.
+\end{cases}
+\end{align*}
+注意对 $t\geqslant 1$，此方法失效，因为投影特征线此时相交。那么我们应如何定义 $t\geqslant 1$ 时的 $u$？
+
+令 $s(t)=\dfrac{1+t}{2}$，写
+\begin{align*}
+u(x,t)\triangleq
+\begin{cases}
+1 & \text{若 }x<s(t),\\
+0 & \text{若 }s(t)<x,
+\end{cases}
+\quad \text{对 }t\geqslant 1.
+\end{align*}
+现沿由 $s(\cdot)$ 参数化的曲线，$u_l=1$，故 $u_r=0$，$F(u_l)=\dfrac{1}{2}(u_l)^2=\dfrac{1}{2}$，$F(u_r)=0$。于是 $\llbracket F(u)\rrbracket=\dfrac{1}{2}=\sigma\llbracket u\rrbracket$，正是 Rankine--Hugoniot 条件\eqref{align:ch03-rh} 所要求的。
+\end{example}
+
+\subsubsection{激波、熵条件}
+
+我们现试以同样技术解一个类似问题。
+
+\begin{example}[稀疏波与非物理激波]\label{example:ch03-rarefaction}再次考虑初值问题\eqref{align:ch03-burgers}，现取
+\begin{align}\label{align:ch03-rarefaction-g}
+g(x)=
+\begin{cases}
+0 & \text{若 }x<0,\\
+1 & \text{若 }x>0.
+\end{cases}
+\end{align}
+特征线法这次在定义 $u$ 上不导致任何歧义，但确实未能在楔形区域 $\{0<x<t\}$ 内提供任何信息。为说明这种信息缺失，我们先令
+\begin{align*}
+u_1(x,t)\triangleq
+\begin{cases}
+0 & \text{若 }x<t/2,\\
+1 & \text{若 }x>t/2.
+\end{cases}
+\end{align*}
+易验证 Rankine--Hugoniot 条件成立，且事实上 $u$ 是\eqref{align:ch03-burgers}、\eqref{align:ch03-rarefaction-g} 的积分解。然而我们可写出另一个这种解：
+\begin{align*}
+u_2(x,t)\triangleq
+\begin{cases}
+1 & \text{若 }x>t,\\
+\dfrac{x}{t} & \text{若 }0<x<t,\\
+0 & \text{若 }x<0.
+\end{cases}
+\end{align*}
+函数 $u_2$ 称为\textbf{稀疏波}，也是\eqref{align:ch03-burgers}、\eqref{align:ch03-rarefaction-g} 的连续积分解。
+\end{example}
+
+于是我们看到积分解一般不唯一。积分解类大概包含各种``非物理''解，我们想以某种方式排除它们。我们能否找到某条进一步判据来保证唯一性？
+
+\textbf{熵条件.} 我们回忆 \S3.2.5，对形如 $u_t+F(u)_x=0$ 的一般标量守恒律，
+每当光滑时，解 $u$ 沿投影特征线
+\begin{align}\label{align:ch03-char-proj}
+\mathbf{y}(s)=(F'(g(x_0))s+x_0,s) \qquad(s\geqslant 0)
+\end{align}
+取常数值 $z_0=g(x_0)$。
+
+现我们知道：一般若向前推进时间，将遇到特征线相交，并随之在解中产生间断。然而我们可希望：若从 $\mathbb{R}\times(0,\infty)$ 中某点出发、沿一条特征线向后追溯时间，将不与任何其他特征线相交。换言之，让我们考察（譬如说）分片光滑的积分解类，其性质是：若沿任一特征线向后移动时间，将不遇到 $u$ 的任何间断线。
+
+现设在某条间断曲线 $C$ 上某点处，$u$ 有不同的左右极限 $u_l$ 与 $u_r$，且一条来自左侧的特征线与一条来自右侧的特征线在此点撞到 $C$。于是由\eqref{align:ch03-char-proj} 推出
+\begin{align}\label{align:ch03-entropy}
+F'(u_l)>\sigma>F'(u_r).
+\end{align}
+这些不等式称为\textbf{熵条件}（粗源于与``物理熵随时间前进不减''这一热力学原理的类比）。$u$ 的一条间断曲线称为\textbf{激波}，只要 Rankine--Hugoniot 恒等式\eqref{align:ch03-rh} 与熵不等式\eqref{align:ch03-entropy} 都成立。
+
+我们在附加假设
+\begin{align}\label{align:ch03-F-unif-conv}
+F\text{ 一致凸}
+\end{align}
+下进一步解释熵条件。这意味着对某常数 $\theta$，$F''\geqslant\theta>0$。因而特别地 $F'$ 严格递增。则\eqref{align:ch03-entropy} 等价于要求沿任一激波曲线有不等式
+\begin{align}\label{align:ch03-entropy-ur}
+u_l>u_r.
+\end{align}
+
+\begin{example}\label{example:ch03-shock2}
+我们再次回到 Burgers 方程\eqref{align:ch03-burgers}，现初始函数为
+\begin{align}\label{align:ch03-shock2-g}
+g(x)=
+\begin{cases}
+0 & \text{若 }x<0,\\
+1 & \text{若 }0\leqslant x\leqslant 1,\\
+0 & \text{若 }x>1.
+\end{cases}
+\end{align}
+对 $0\leqslant t\leqslant 2$，可结合上面例\cref{example:ch03-shock} 与例\cref{example:ch03-rarefaction} 的分析，求得
+\begin{align}\label{align:ch03-shock2-sol}
+u(x,t)\triangleq
+\begin{cases}
+0 & \text{若 }x<0,\\
+x/t & \text{若 }0<x<t,\\
+1 & \text{若 }t<x<1+t/2,\\
+0 & \text{若 }x>1+t/2
+\end{cases}
+\qquad(0\leqslant t\leqslant 2).
+\end{align}
+对时刻 $t\geqslant 2$，我们期望由 $s(\cdot)$ 参数化的激波继续，$s(\cdot)$ 左侧 $u=x/t$，右侧 $u=0$。这与熵条件\eqref{align:ch03-entropy-ur} 相容。我们用 Rankine--Hugoniot 跃变条件\eqref{align:ch03-rh} 计算激波曲线的性态。现沿 $t\geqslant 0$ 的激波曲线有 $\llbracket u\rrbracket=\dfrac{s(t)}{t}$，$\llbracket F(u)\rrbracket=\dfrac{1}{2}\left(\dfrac{s(t)}{t}\right)^2$，$\sigma=\dot{s}(t)$。故\eqref{align:ch03-rh} 蕴含 $\dot{s}(t)=\dfrac{s(t)}{2t}$（$t\geqslant 2$）。此外 $s(2)=2$，故可解此 ODE 得 $s(t)=(2t)^{1/2}$（$t\geqslant 2$）。因而可把\eqref{align:ch03-shock2-sol} 增补为
+\begin{align*}
+u(x,t)=
+\begin{cases}
+0 & \text{若 }x<0,\\
+x/t & \text{若 }0<x<(2t)^{1/2},\\
+0 & \text{若 }x>(2t)^{1/2}
+\end{cases}
+\qquad(t\geqslant 2).
+\end{align*}
+\end{example}
+
+\subsection{Lax--Oleinik 公式}\label{subsection:ch03-lax-oleinik}
+
+现我们试求初值问题\eqref{align:ch03-conservation-ivp} 的一个恰当弱解的公式，如上假定流函数 $F$ 一致凸。不失一般性，也可另取
+\begin{align}\label{align:ch03-F0}
+F(0)=0.
+\end{align}
+作为动机，现设 $g\in L^\infty(\mathbb{R})$，定义
+\begin{align}\label{align:ch03-h}
+h(x)\triangleq\int_0^x g(y)\,\mathrm{d}y \qquad(x\in\mathbb{R}).
+\end{align}
+回忆 \S3.3 的 Hopf--Lax 公式，令
+\begin{align}\label{align:ch06-Aw正}
+w(x,t)\triangleq\min_{y\in\mathbb{R}}\left\{tL\!\left(\frac{x-y}{t}\right)+h(y)\right\} \qquad(x\in\mathbb{R},\ t>0),
+\end{align}
+其中
+\begin{align}\label{align:ch03-L-dual}
+L=F^*.
+\end{align}
+
+于是 $w$ 是 Hamilton--Jacobi 方程此初值问题
+\begin{align}\label{align:ch03-hj-w}
+\begin{cases}
+w_t+F(w_x)=0 & \text{在 }\mathbb{R}\times(0,\infty)\text{ 中},\\
+w=h & \text{在 }\mathbb{R}\times\{t=0\}\text{ 上}
+\end{cases}
+\end{align}
+的唯一弱解。暂时假定 $w$ 光滑。我们现对 $x$ 微分 PDE 及其初始条件，推出
+\begin{align*}
+\begin{cases}
+w_{xt}+F(w_x)_x=0 & \text{在 }\mathbb{R}\times(0,\infty)\text{ 中},\\
+w_x=g & \text{在 }\mathbb{R}\times\{t=0\}\text{ 上}.
+\end{cases}
+\end{align*}
+故若令 $u=w_x$，发现 $u$ 解问题\eqref{align:ch03-conservation-ivp}。
+
+上述计算只是形式的，因为我们知道由\eqref{align:ch06-Aw正} 定义的 $w$ 一般不光滑。但回忆 \S3.3，$w$ 实际上 a.e. 可微。因而
+\begin{align}\label{align:ch03-u-formal}
+u(x,t)\triangleq\frac{\partial}{\partial x}\left[\min_{y\in\mathbb{R}}\left\{tL\!\left(\frac{x-y}{t}\right)+h(y)\right\}\right]
+\end{align}
+对 a.e. $(x,t)$ 有定义，并且大概是初值问题\eqref{align:ch03-conservation-ivp} 某种弱解的首要候选者。我们此后的意图就是证明此期望。
+
+首先需把表达式\eqref{align:ch03-u-formal} 改写为更有用的形式。
+
+\textbf{记号.} 由于 $F$ 一致凸，$F'$ 严格递增且到上。写
+\begin{align}\label{align:ch03-G}
+G\triangleq(F')^{-1}
+\end{align}
+为 $F'$ 的逆。
+
+\begin{theorem}[Lax--Oleinik 公式]\label{theorem:ch03-lax-oleinik}设 $F:\mathbb{R}\to\mathbb{R}$ 光滑且一致凸，$g\in L^\infty(\mathbb{R})$。
+\begin{enumerate}[(i)]
+\item 对每个时刻 $t>0$，对除至多可数多个 $x\in\mathbb{R}$ 外的一切值，存在唯一点 $y(x,t)$，使
+\begin{align*}
+\min_{y\in\mathbb{R}}\left\{tL\!\left(\frac{x-y}{t}\right)+h(y)\right\}=tL\!\left(\frac{x-y(x,t)}{t}\right)+h(y(x,t)).
+\end{align*}
+\item 映射 $x\mapsto y(x,t)$ 非降。
+\item 对每个时刻 $t>0$，由\eqref{align:ch03-u-formal} 定义的函数 $u$ 对 a.e. $x$ 为
+\begin{align}\label{align:ch03-lax-oleinik-formula}
+u(x,t)=G\!\left(\frac{x-y(x,t)}{t}\right).
+\end{align}
+特别地，公式\eqref{align:ch03-lax-oleinik-formula} 对 a.e. $(x,t)\in\mathbb{R}\times(0,\infty)$ 成立。
+\end{enumerate}
+\end{theorem}
+
+我们称方程\eqref{align:ch03-lax-oleinik-formula} 为初值问题\eqref{align:ch03-conservation-ivp} 解的\textbf{Lax--Oleinik 公式}，其中 $h$ 由\eqref{align:ch03-h} 定义，$L$ 由\eqref{align:ch03-L-dual} 定义。
+
+\begin{proof}
+1. 首先注意
+\begin{align*}
+L(v)=\max_{p\in\mathbb{R}}(vp-F(p))=vp^*-F(p^*),
+\end{align*}
+其中 $F'(p^*)=v$。但由\eqref{align:ch03-G}，$p^*=G(v)$，故
+\begin{align*}
+L(v)=vG(v)-F(G(v)) \qquad(v\in\mathbb{R})
+\end{align*}
+（见 \S3.3.1）。特别地，$L$ 为 $C^2$。此外由\eqref{align:ch03-G}，
+\begin{align}\label{align:ch03-Lprime}
+L'(v)=G(v)+vG'(v)-F'(G(v))G'(v)=G(v),
+\end{align}
+且 $L''(v)=G'(v)>0$。此式与\eqref{align:ch03-F0} 蕴含 $L$ 非负且严格凸。
+
+2. 固定 $t>0$，$x_1<x_2$。如 \S3.3，至少存在一点 $y_1\in\mathbb{R}$，使
+\begin{align}\label{align:ch03-min-y1}
+\left\{tL\!\left(\frac{x_1-y_1}{t}\right)+h(y_1)\right\}=\min_{y\in\mathbb{R}}\left\{tL\!\left(\frac{x_1-y}{t}\right)+h(y)\right\}.
+\end{align}
+我们其次断言：若 $y<y_1$，则
+\begin{align}\label{align:ch03-claim}
+tL\!\left(\frac{x_2-y_1}{t}\right)+h(y_1)<tL\!\left(\frac{x_2-y}{t}\right)+h(y).
+\end{align}
+为见此，计算 $x_2-y_1=\tau(x_1-y_1)+(1-\tau)(x_2-y)$，$x_1-y=(1-\tau)(x_1-y_1)+\tau(x_2-y)$，其中
+\begin{align*}
+0<\tau\triangleq\frac{y_1-y}{x_2-x_1+y_1-y}<1.
+\end{align*}
+由于 $L''>0$，有
+\begin{align*}
+L\!\left(\frac{x_2-y_1}{t}\right)<\tau L\!\left(\frac{x_1-y_1}{t}\right)+(1-\tau)L\!\left(\frac{x_2-y}{t}\right),\quad
+L\!\left(\frac{x_1-y}{t}\right)<(1-\tau)L\!\left(\frac{x_1-y_1}{t}\right)+\tau L\!\left(\frac{x_2-y}{t}\right);
+\end{align*}
+故
+\begin{align}\label{align:ch03-L-sum}
+L\!\left(\frac{x_2-y_1}{t}\right)+L\!\left(\frac{x_1-y}{t}\right)<L\!\left(\frac{x_1-y_1}{t}\right)+L\!\left(\frac{x_2-y}{t}\right).
+\end{align}
+现由\eqref{align:ch03-min-y1} 注意
+\begin{align*}
+tL\!\left(\frac{x_1-y_1}{t}\right)+h(y_1)\leqslant tL\!\left(\frac{x_1-y}{t}\right)+h(y).
+\end{align*}
+我们用 $t$ 乘\eqref{align:ch03-L-sum}，两边加 $h(y_1)+h(y)$，并把所得表达式加到上面不等式，即得\eqref{align:ch03-claim}。
+
+3. 鉴于\eqref{align:ch03-claim}，在计算 $tL\!\left(\dfrac{x_2-y}{t}\right)+h(y)$ 的最小时，只需考虑那些 $y\geqslant y_1$，其中 $y_1$ 满足\eqref{align:ch03-min-y1}。现对每个 $x\in\mathbb{R}$、$t>0$，把点 $y(x,t)$ 定义为使 $tL\!\left(\dfrac{x-y}{t}\right)+h(y)$ 取最小的那些点 $y$ 中最小者。则映射 $x\mapsto y(x,t)$ 非降。
+，因而对除至多可数多个 $x$ 外的一切 $x$ 连续。在 $y(\cdot,t)$ 的一个连续点 $x$ 处，$y(x,t)$ 是使最小达到的唯一 $y$ 值。
+
+4. 按 \S3.3 发展的理论，对每个固定 $t>0$，映射
+\begin{align*}
+x\mapsto w(x,t)\triangleq\min_{y\in\mathbb{R}}\left\{tL\!\left(\frac{x-y}{t}\right)+h(y)\right\}=tL\!\left(\frac{x-y(x,t)}{t}\right)+h(y(x,t))
+\end{align*}
+a.e. 可微。此外映射 $x\mapsto y(x,t)$ 单调，从而也 a.e. 可微。于是给定 $t>0$，对 a.e. $x$，映射 $x\mapsto L\!\left(\dfrac{x-y(x,t)}{t}\right)$ 以及 $x\mapsto h(y(x,t))$ 也可微。因而公式\eqref{align:ch03-u-formal} 成为
+\begin{align*}
+u(x,t)&=\frac{\partial}{\partial x}\left[tL\!\left(\frac{x-y(x,t)}{t}\right)+h(y(x,t))\right]\\
+&=L'\!\left(\frac{x-y(x,t)}{t}\right)(1-y_x(x,t))+\frac{\partial}{\partial x}h(y(x,t)).
+\end{align*}
+但由于 $y\mapsto tL\!\left(\dfrac{x-y}{t}\right)+h(y)$ 在 $y=y(x,t)$ 处取最小，映射 $z\mapsto tL\!\left(\dfrac{x-y(z,t)}{t}\right)+h(y(z,t))$ 在 $z=x$ 处取最小。故
+\begin{align*}
+-L'\!\left(\frac{x-y(x,t)}{t}\right)y_x(x,t)+h_x(y(x,t))=0,
+\end{align*}
+从而由\eqref{align:ch03-Lprime}，
+\begin{align*}
+u(x,t)=L'\!\left(\frac{x-y(x,t)}{t}\right)=G\!\left(\frac{x-y(x,t)}{t}\right).
+\end{align*}
+\end{proof}
+
+我们现研究公式\eqref{align:ch03-lax-oleinik-formula} 在何种精确意义下为我们提供初值问题\eqref{align:ch03-conservation-ivp} 的解。
+
+\begin{theorem}[Lax--Oleinik 公式作为积分解]\label{theorem:ch03-lax-oleinik-integral}在定理\cref{theorem:ch03-lax-oleinik} 的假设下，由\eqref{align:ch03-lax-oleinik-formula} 定义的函数 $u$ 是初值问题\eqref{align:ch03-conservation-ivp} 的积分解。
+\end{theorem}
+
+\begin{proof}
+如上定义 $w(x,t)=\min_{y\in\mathbb{R}}\left\{tL\!\left(\dfrac{x-y}{t}\right)+h(y)\right\}$（$x\in\mathbb{R}$，$t>0$）。则 \S3.3.2 定理\cref{theorem:ch03-hopf-lax-solution} 告诉我们：$w$ Lipschitz 连续，对 a.e. $(x,t)$ 可微，并解
+\begin{align}\label{align:ch03-w-ae}
+\begin{cases}
+w_t+F(w_x)=0 & \text{在 }\mathbb{R}\times(0,\infty)\text{ 中 a.e.},\\
+w=h & \text{在 }\mathbb{R}\times\{t=0\}\text{ 上}.
+\end{cases}
+\end{align}
+任取一个满足\eqref{align:ch03-test-fn} 的检验函数 $v$。用 $v_x$ 乘 PDE $w_t+F(w_x)=0$ 并在 $\mathbb{R}\times(0,\infty)$ 上积分：
+\begin{align}\label{align:ch03-test-vx}
+0=\int_0^\infty\int_{-\infty}^{\infty}[w_t+F(w_x)]v_x\,\mathrm{d}x\,\mathrm{d}t.
+\end{align}
+观察
+\begin{align*}
+\int_0^\infty\int_{-\infty}^{\infty}w_t v_x\,\mathrm{d}x\,\mathrm{d}t
+&=-\int_0^\infty\int_{-\infty}^{\infty}w v_{tx}\,\mathrm{d}x\,\mathrm{d}t-\int_{-\infty}^{\infty}w v_x\,\mathrm{d}x\big|_{t=0}\\
+&=\int_0^\infty\int_{-\infty}^{\infty}w_x v_t\,\mathrm{d}x\,\mathrm{d}t+\int_{-\infty}^{\infty}w_x v\,\mathrm{d}x\big|_{t=0}.
+\end{align*}
+这些分部积分是合法的，因为对每个时刻 $t>0$，映射 $x\mapsto w(x,t)$ Lipschitz 连续，从而绝对连续；同样对每个 $x\in\mathbb{R}$，$t\mapsto w(x,t)$ 绝对连续。现 $w(x,0)=h(x)=\int_0^x g(y)\,\mathrm{d}y$，故对 a.e. $x$，$w_x(x,0)=g(x)$。因而
+\begin{align*}
+\int_0^\infty\int_{-\infty}^{\infty}w_t v_x\,\mathrm{d}x\,\mathrm{d}t=\int_0^\infty\int_{-\infty}^{\infty}w_x v_t\,\mathrm{d}x\,\mathrm{d}t+\int_{-\infty}^{\infty}gv\,\mathrm{d}x\big|_{t=0}.
+\end{align*}
+把此恒等式代入\eqref{align:ch03-test-vx}，并回忆 $u=w_x$ a.e.，即导出积分恒等式\eqref{align:ch03-integral-sol}。
+\end{proof}
+
+\subsection{弱解、唯一性}\label{subsection:ch03-weak-unique}
+
+\subsubsection{重温熵条件}
+
+我们在 \S3.4.1 已看到\eqref{align:ch03-conservation-ivp} 的积分解一般不唯一。由于我们相信 Lax--Oleinik 公式事实上确实提供此初值问题的``正确''解，就必须看它是否满足 \S3.4.1 所讨论的某恰当形式的熵条件。然而这并不直接，因为通常由 Lax--Oleinik 公式定义的函数 $u$ 并不光滑，甚至不分片光滑。
+
+我们现确认由 Lax--Oleinik 公式\eqref{align:ch03-u-formal} 定义的函数 $u$ 的一种``单侧''导数估计。此估计——它是守恒律中对应于 \S3.3.3 引理\cref{lemma:ch03-semiconcave}、\cref{lemma:ch03-semiconcave2} 中 Hamilton--Jacobi 方程半凹估计的类似物——将证明是一条唯一性判据。
+
+\begin{lemma}[单侧跃变估计]\label{lemma:ch03-one-sided-jump}在定理\cref{theorem:ch03-lax-oleinik} 的假设下，存在常数 $C$，使由 Lax--Oleinik 公式\eqref{align:ch03-lax-oleinik-formula} 定义的函数 $u$ 满足不等式
+\begin{align}\label{align:ch03-entropy-one-sided}
+u(x+z,t)-u(x,t)\leqslant\frac{C}{t}z
+\end{align}
+对一切 $t>0$ 及 $x,z\in\mathbb{R}$、$z>0$。
+\end{lemma}
+
+我们称不等式\eqref{align:ch03-entropy-one-sided} 为\textbf{熵条件}。
+
+由\eqref{align:ch03-entropy-one-sided} 可知：对 $t>0$，函数 $x\mapsto u(x,t)-\dfrac{C}{t}x$ 非增，从而在每点有左右极限。因而 $x\mapsto u(x,t)$ 也在每点有左右极限，且 $u_l(x,t)\geqslant u_r(x,t)$。特别地，熵条件的原始形式\eqref{align:ch03-entropy-ur} 在任一间断点成立。
+
+\begin{proof}
+由 \S3.3 我们知道：在计算\eqref{align:ch03-lax-oleinik-formula} 中的最小时，只需考虑那些 $\left|\dfrac{x-y}{t}\right|\leqslant C$（某常数 $C$）的 $y$；验证留作读者。因而必要时在某有界区间外重新定义 $G$，可假定 $G$ Lipschitz 连续。
+
+由于 $G=(F')^{-1}$ 且 $y(\cdot,t)$ 非降，对 $z>0$ 有
+\begin{align*}
+u(x,t)=G\!\left(\frac{x-y(x,t)}{t}\right)
+\geqslant G\!\left(\frac{x-y(x+z,t)}{t}\right)
+\geqslant G\!\left(\frac{x+z-y(x+z,t)}{t}\right)-\frac{\operatorname{Lip}(G)z}{t}
+=u(x+z,t)-\frac{\operatorname{Lip}(G)z}{t}.
+\end{align*}
+\end{proof}
+
+\subsubsection{弱解、唯一性}
+
+我们现建立一个重要断言：满足熵条件的积分解唯一。
+
+\begin{definition}\label{definition:ch03-entropy-sol}
+我们称函数 $u\in L^\infty(\mathbb{R}\times(0,\infty))$ 为初值问题
+\begin{align}\label{align:ch03-entropy-sol-ivp}
+\begin{cases}
+u_t+F(u)_x=0 & \text{在 }\mathbb{R}\times(0,\infty)\text{ 中},\\
+u=g & \text{在 }\mathbb{R}\times\{t=0\}\text{ 上}
+\end{cases}
+\end{align}
+的\textbf{熵解}，只要
+\begin{enumerate}[(i)]
+\item $\int_0^\infty\int_{-\infty}^{\infty}uv_t+F(u)v_x\,\mathrm{d}x\,\mathrm{d}t+\int_{-\infty}^{\infty}gv\,\mathrm{d}x\big|_{t=0}=0$，对一切具紧支集的检验函数 $v:\mathbb{R}\times[0,\infty)\to\mathbb{R}$；
+\item $u(x+z,t)-u(x,t)\leqslant C\left(1+\dfrac{1}{t}\right)z$，对某常数 $C\geqslant 0$ 及 a.e. $x,z\in\mathbb{R}$、$t>0$，$z>0$。
+\end{enumerate}
+\end{definition}
+
+\begin{theorem}[熵解的唯一性]\label{theorem:ch03-entropy-uniqueness}设 $F$ 凸且光滑。则\eqref{align:ch03-entropy-sol-ivp} 至多存在一个熵解（up to 一个零测集）。
+\end{theorem}
+
+\begin{proof}[$^*$]
+\smallskip
+\noindent $^*$ 初读可略。
+
+1. 设 $u$ 与 $\widetilde{u}$ 是\eqref{align:ch03-entropy-sol-ivp} 的两个熵解，写 $w\triangleq u-\widetilde{u}$。对任一点 $(x,t)$ 观察：
+\begin{align*}
+F(u(x,t))-F(\widetilde{u}(x,t))&=\int_0^1\frac{\mathrm{d}}{\mathrm{d}r}F(ru(x,t)+(1-r)\widetilde{u}(x,t))\,\mathrm{d}r\\
+&=\int_0^1 F'(ru(x,t)+(1-r)\widetilde{u}(x,t))\,\mathrm{d}r\,(u(x,t)-\widetilde{u}(x,t))
+\triangleq b(x,t)w(x,t).
+\end{align*}
+因而若 $v$ 是如上检验函数，
+\begin{align}\label{align:ch03-entropy-dual}
+0&=\int_0^\infty\int_{-\infty}^{\infty}(u-\widetilde{u})v_t+[F(u)-F(\widetilde{u})]v_x\,\mathrm{d}x\,\mathrm{d}t
+=\int_0^\infty\int_{-\infty}^{\infty}w[v_t+bv_x]\,\mathrm{d}x\,\mathrm{d}t.
+\end{align}
+
+2. 现取 $\varepsilon>0$，定义 $u_\varepsilon=\eta_\varepsilon*u$，$\widetilde{u}_\varepsilon=\eta_\varepsilon*\widetilde{u}$，其中 $\eta_\varepsilon$ 是 $x,t$ 变量中的标准光滑子。则按 \S C.5，
+\begin{align}\label{align:ch03-entropy-moll-bd}
+\|u_\varepsilon\|_{L^\infty}\leqslant\|u\|_{L^\infty},\ \|\widetilde{u}_\varepsilon\|_{L^\infty}\leqslant\|\widetilde{u}\|_{L^\infty},
+\end{align}
+且当 $\varepsilon\to 0$ 时 $u_\varepsilon\to u$，$\widetilde{u}_\varepsilon\to\widetilde{u}$ a.e.。此外熵不等式 (ii) 蕴含
+\begin{align}\label{align:ch03-entropy-moll-deriv}
+u_{\varepsilon,x}(x,t),\ \widetilde{u}_{\varepsilon,x}(x,t)\leqslant C\left(1+\frac{1}{t}\right)
+\end{align}
+对恰当常数 $C$ 及一切 $\varepsilon>0$、$x\in\mathbb{R}$、$t>0$。
+
+3. 写
+\begin{align*}
+b_\varepsilon(x,t)\triangleq\int_0^1 F'(ru_\varepsilon(x,t)+(1-r)\widetilde{u}_\varepsilon(x,t))\,\mathrm{d}r.
+\end{align*}
+则\eqref{align:ch03-entropy-dual} 成为
+\begin{align}\label{align:ch03-entropy-dual2}
+0=\int_0^\infty\int_{-\infty}^{\infty}w[v_t+b_\varepsilon v_x]\,\mathrm{d}x\,\mathrm{d}t+\int_0^\infty\int_{-\infty}^{\infty}w[b-b_\varepsilon]v_x\,\mathrm{d}x\,\mathrm{d}t.
+\end{align}
+
+4. 现选 $T>0$ 及任一光滑函数 $\psi:\mathbb{R}\times(0,T)\to\mathbb{R}$（具紧支集）。我们选 $v_\varepsilon$ 为如下线性输运方程终值问题的解：
+\begin{align}\label{align:ch03-transport-tp}
+\begin{cases}
+v_{\varepsilon,t}+b_\varepsilon v_{\varepsilon,x}=\psi & \text{在 }\mathbb{R}\times(0,T)\text{ 中},\\
+v_\varepsilon=0 & \text{在 }\mathbb{R}\times\{t=T\}\text{ 上}.
+\end{cases}
+\end{align}
+用特征线法解\eqref{align:ch03-transport-tp}。为此固定 $x\in\mathbb{R}$、$0\leqslant t\leqslant T$，记 $x_\varepsilon(\cdot)$ 为 ODE
+\begin{align}\label{align:ch03-char-ode}
+\begin{cases}
+\dot{x}_\varepsilon(s)=b_\varepsilon(x_\varepsilon(s),s) & (s\geqslant t),\\
+x_\varepsilon(t)=x
+\end{cases}
+\end{align}
+的解，并令
+\begin{align}\label{align:ch03-veps}
+v_\varepsilon(x,t)\triangleq-\int_t^T\psi(x_\varepsilon(s),s)\,\mathrm{d}s \qquad(x\in\mathbb{R},\ 0\leqslant t\leqslant T).
+\end{align}
+则 $v_\varepsilon$ 光滑且是\eqref{align:ch03-transport-tp} 的唯一解。由于 $|b_\varepsilon|$ 有界且 $\psi$ 具紧支集，$v_\varepsilon$ 在 $\mathbb{R}\times[0,T)$ 中具紧支集。
+
+5. 我们现断言：对每个 $s>0$，存在常数 $C_s$，使在 $\mathbb{R}\times(s,T)$ 上
+\begin{align}\label{align:ch03-veps-x-bd}
+|v_{\varepsilon,x}|\leqslant C_s.
+\end{align}
+为证此，首先注意若 $0<s\leqslant t\leqslant T$，则由\eqref{align:ch03-entropy-moll-deriv}（因 $F$ 凸），
+\begin{align}\label{align:ch03-beps-x}
+b_{\varepsilon,x}(x,t)=\int_0^1 F''(ru_\varepsilon+(1-r)\widetilde{u}_\varepsilon)(r u_{\varepsilon,x}+(1-r)\widetilde{u}_{\varepsilon,x})\,\mathrm{d}r\leqslant\frac{C}{t}\leqslant\frac{C}{s}.
+\end{align}
+其次对 $x$ 微分\eqref{align:ch03-transport-tp} 中的 PDE：
+\begin{align}\label{align:ch03-veps-x-pde}
+v_{\varepsilon,tx}+b_\varepsilon v_{\varepsilon,xx}+b_{\varepsilon,x}v_{\varepsilon,x}=\psi_x.
+\end{align}
+现令 $a(x,t)\triangleq e^{\lambda t}v_{\varepsilon,x}(x,t)$，其中
+\begin{align}\label{align:ch06-lambdav}
+\lambda=\frac{C}{s}+1.
+\end{align}
+则
+\begin{align}\label{align:ch03-a-pde}
+a_t+b_\varepsilon a_x=\lambda a+e^{\lambda t}[v_{\varepsilon,tx}+b_\varepsilon v_{\varepsilon,xx}]
+=\lambda a+e^{\lambda t}[-b_{\varepsilon,x}v_{\varepsilon,x}+\psi_x] \quad\text{(由\eqref{align:ch03-veps-x-pde})}
+=[\lambda-b_{\varepsilon,x}]a+e^{\lambda t}\psi_x.
+\end{align}
+由于 $v_\varepsilon$ 具紧支集，$a$ 在 $\mathbb{R}\times[s,T]$ 上于某有限点 $(x_0,t_0)$ 达到一个非负最大值。若 $t_0=T$，则 $v_x=0$。若 $0\leqslant t_0<T$，则 $a_t(x_0,t_0)\leqslant 0$，$a_x(x_0,t_0)=0$。因而方程\eqref{align:ch03-a-pde} 给出在 $(x_0,t_0)$ 处
+\begin{align}\label{align:ch03-a-max}
+[\lambda-b_{\varepsilon,x}]a+e^{\lambda t_0}\psi_x\leqslant 0.
+\end{align}
+但由于 $b_{\varepsilon,x}\leqslant\dfrac{C}{s}$ 且 $\lambda$ 由\eqref{align:ch06-lambdav} 给出，不等式\eqref{align:ch03-a-max} 蕴含 $a(x_0,t_0)\leqslant -e^{\lambda t_0}\psi_x\leqslant e^{\lambda T}\|\psi_x\|_{L^\infty}$。类似论证表明在 $a$ 达到非正最小值的任一点 $(x_1,t_1)$ 处 $a(x_1,t_1)\geqslant -e^{\lambda T}\|\psi_x\|_{L^\infty}$。这两个估计与 $a$ 的定义蕴含\eqref{align:ch03-veps-x-bd}。
+
+6. 我们还需要一个不等式：
+\begin{align}\label{align:ch03-var-bd}
+\int_{-\infty}^{\infty}|v_{\varepsilon,x}(x,t)|\,\mathrm{d}x\leqslant D
+\end{align}
+对一切 $0\leqslant t\leqslant\tau$ 及某常数 $D$，只要 $\tau$ 足够小。为证此，选 $\tau>0$ 足够小，使在 $\mathbb{R}\times(0,\tau)$ 上 $\psi=0$。则若 $0\leqslant t\leqslant\tau$，由\eqref{align:ch03-veps} 看到：$v_\varepsilon$ 沿特征曲线 $x_\varepsilon(\cdot)$（解\eqref{align:ch03-char-ode}）在 $t\leqslant s\leqslant\tau$ 上为常数。任取一个分划 $x_0<x_1<\cdots<x_N$。则 $y_0<y_1<\cdots<y_N$，其中 $y_i\triangleq x_\varepsilon^i(\tau)$（$i=1,\cdots,N$），而
+\begin{align*}
+\begin{cases}
+\dot{x}_\varepsilon^i(s)=b_\varepsilon(x_\varepsilon^i(s),s) & (t\leqslant s\leqslant\tau),\\
+x_\varepsilon^i(t)=x_i.
+\end{cases}
+\end{align*}
+由于 $v_\varepsilon$ 沿每条特征曲线 $x_\varepsilon^i(\cdot)$ 为常数，有
+\begin{align*}
+\sum_{i=1}^N|v_\varepsilon(x_i,t)-v_\varepsilon(x_{i-1},t)|=\sum_{i=1}^N|v_\varepsilon(y_i,\tau)-v_\varepsilon(y_{i-1},\tau)|\leqslant\operatorname{var}v_\varepsilon(\cdot,\tau),
+\end{align*}
+``$\operatorname{var}$''表示关于 $x$ 的变差。对一切这种分划取上确界，发现
+\begin{align*}
+\int_{-\infty}^{\infty}|v_{\varepsilon,x}(x,t)|\,\mathrm{d}x=\operatorname{var}v_\varepsilon(\cdot,t)\leqslant\operatorname{var}v_\varepsilon(\cdot,\tau)=\int_{-\infty}^{\infty}|v_{\varepsilon,x}(x,\tau)|\,\mathrm{d}x\leqslant C,
+\end{align*}
+因为 $v_\varepsilon$ 具紧支集且估计\eqref{align:ch03-veps-x-bd} 对 $s=\tau$ 成立。
+
+7. 现终于完成证明：在\eqref{align:ch03-entropy-dual2} 中令 $v=v_\varepsilon$ 并代入，用\eqref{align:ch03-transport-tp}：
+\begin{align*}
+\int_0^\infty\int_{-\infty}^{\infty}w\psi\,\mathrm{d}x\,\mathrm{d}t&=\int_0^\infty\int_{-\infty}^{\infty}w[b_\varepsilon-b]v_{\varepsilon,x}\,\mathrm{d}x\,\mathrm{d}t\\
+&=\int_\tau^T\int_{-\infty}^{\infty}w[b_\varepsilon-b]v_{\varepsilon,x}\,\mathrm{d}x\,\mathrm{d}t+\int_0^\tau\int_{-\infty}^{\infty}w[b_\varepsilon-b]v_{\varepsilon,x}\,\mathrm{d}x\,\mathrm{d}t
+\triangleq I_\varepsilon^\tau+J_\varepsilon^\tau.
+\end{align*}
+则鉴于 $u_\varepsilon\to u$、\eqref{align:ch03-veps-x-bd} 与控制收敛定理，对每个 $\tau>0$ 当 $\varepsilon\to 0$ 时 $I_\varepsilon^\tau\to 0$。另一方面，若 $0<\tau<T$，由\eqref{align:ch03-var-bd} 看到 $|J_\varepsilon^\tau|\leqslant\tau C\max_{0\leqslant t\leqslant\tau}\int_{-\infty}^{\infty}|v_{\varepsilon,x}|\,\mathrm{d}x\leqslant\tau C$。
+故 $\int_0^\infty\int_{-\infty}^{\infty}w\psi\,\mathrm{d}x\,\mathrm{d}t=0$ 对一切如上光滑函数 $\psi$ 成立，因而 $w=u-\widetilde{u}=0$ a.e.。
+\end{proof}
+
+\subsection{Riemann 问题}\label{subsection:ch03-riemann}
+
+具有分片常数初始函数
+\begin{align}\label{align:ch03-riemann-g}
+g(x)=
+\begin{cases}
+u_l & \text{若 }x<0,\\
+u_r & \text{若 }x>0
+\end{cases}
+\end{align}
+的初值问题\eqref{align:ch03-conservation-ivp} 称为标量守恒律\eqref{align:ch03-conservation-ivp} 的\textbf{Riemann 问题}。这里常数 $u_l,u_r$ 是左右初态，$u_l\neq u_r$。
+
+我们继续假定 $F$ 一致凸且 $C^2$，并如前写 $G=(F')^{-1}$。
+
+\begin{theorem}[Riemann 问题的解]\label{theorem:ch03-riemann}
+\begin{enumerate}[(i)]
+\item 若 $u_l>u_r$，Riemann 问题\eqref{align:ch03-conservation-ivp}、\eqref{align:ch03-riemann-g} 的唯一熵解为
+\begin{align}\label{align:ch03-riemann-shock}
+u(x,t)\triangleq
+\begin{cases}
+u_l & \text{若 }\dfrac{x}{t}<\sigma,\\
+u_r & \text{若 }\dfrac{x}{t}>\sigma
+\end{cases}
+\quad(x\in\mathbb{R},\ t>0),
+\end{align}
+其中
+\begin{align}\label{align:ch03-sigma-riemann}
+\sigma\triangleq\frac{F(u_l)-F(u_r)}{u_l-u_r}.
+\end{align}
+\item 若 $u_l<u_r$，Riemann 问题\eqref{align:ch03-conservation-ivp}、\eqref{align:ch03-riemann-g} 的唯一熵解为
+\begin{align}\label{align:ch03-riemann-rarefaction}
+u(x,t)\triangleq
+\begin{cases}
+u_l & \text{若 }\dfrac{x}{t}<F'(u_l),\\
+G\!\left(\dfrac{x}{t}\right) & \text{若 }F'(u_l)<\dfrac{x}{t}<F'(u_r),\\
+u_r & \text{若 }\dfrac{x}{t}>F'(u_r)
+\end{cases}
+\quad(x\in\mathbb{R},\ t>0).
+\end{align}
+\end{enumerate}
+\end{theorem}
+
+\textbf{激波与稀疏波.} 第一种情形中，态 $u_l$ 与 $u_r$ 由一条速度为常数 $\sigma$ 的激波分隔。第二种情形中，态 $u_l$ 与 $u_r$ 由一条稀疏波分隔。
+
+由 \S\S3.4.2--3.4.3 阐述的理论我们知道：Lax--Oleinik 公式必生成这些解，直接验证此点是个有趣练习。我们改而从第一性原理构造函数\eqref{align:ch03-riemann-shock}、\eqref{align:ch03-riemann-rarefaction}，并验证它们确为熵解。于是由唯一性，它们必与 Lax--Oleinik 公式一致。这是唯一性断言（定理\cref{theorem:ch03-entropy-uniqueness}）威力的一个漂亮例证。
+
+\begin{proof}
+1. 设 $u_l>u_r$。显然由\eqref{align:ch03-riemann-shock}、\eqref{align:ch03-sigma-riemann} 定义的 $u$ 是我们 PDE 的积分解。特别地，由于 $\sigma=\llbracket F(u)\rrbracket/\llbracket u\rrbracket$，Rankine--Hugoniot 条件成立。此外注意
+\begin{align*}
+F'(u_r)<\sigma=\frac{F(u_l)-F(u_r)}{u_l-u_r}=\fint_{u_r}^{u_l}F'(r)\,\mathrm{d}r<F'(u_l),
+\end{align*}
+与熵条件\eqref{align:ch03-entropy} 一致。由于 $u_l>u_r$，熵条件\eqref{align:ch03-entropy-ur} 也成立。唯一性由定理\cref{theorem:ch03-entropy-uniqueness} 得到。
+
+2. 现设 $u_l<u_r$。我们须先验证由\eqref{align:ch03-riemann-rarefaction} 定义的 $u$ 在区域 $\{F'(u_l)<x/t<F'(u_r)\}$ 中解守恒律。为验证此，让我们问一个一般问题：形如 $u(x,t)=v(x/t)$ 的函数何时解\eqref{align:ch03-conservation-ivp}？我们计算
+\begin{align*}
+u_t+F(u)_x=u_t+F'(u)u_x=-v'\!\left(\frac{x}{t}\right)\frac{x}{t^2}+F'(v)v'\!\left(\frac{x}{t}\right)\frac{1}{t}=\frac{1}{t}v'\!\left(\frac{x}{t}\right)\left[F'(v)-\frac{x}{t}\right].
+\end{align*}
+于是假定 $v'$ 永不为零，得 $F'(v(x/t))=x/t$。故 $u(x,t)=v(x/t)=G(x/t)$ 解守恒律。现 $v(x/t)=u_l$ 当 $x/t=F'(u_l)$，类似地 $v(x/t)=u_r$ 当 $x/t=F'(u_r)$。
+
+因而我们看到：由\eqref{align:ch03-riemann-rarefaction} 定义的稀疏波 $u$ 在 $\mathbb{R}\times(0,\infty)$ 中连续，且在其每个定义区域中解 PDE $u_t+F(u)_x=0$。易验证 $u$ 因而是\eqref{align:ch03-conservation-ivp}、\eqref{align:ch03-riemann-g} 的积分解。此外，由于如 \S3.4.3 所注我们可另假定 $G$ Lipschitz 连续，有
+\begin{align*}
+u(x+z,t)-u(x,t)=G\!\left(\frac{x+z}{t}\right)-G\!\left(\frac{x}{t}\right)\leqslant\frac{\operatorname{Lip}(G)z}{t}
+\end{align*}
+若 $F'(u_l)t<x<x+z<F'(u_r)t$。此不等式蕴含 $u$ 也满足熵条件。唯一性再次是定理\cref{theorem:ch03-entropy-uniqueness} 的推论。
+\end{proof}
+
+\subsection{长时间性态}\label{subsection:ch03-longtime}
+
+\subsubsection{上确界范数衰减}
+
+现我们用 Lax--Oleinik 公式\eqref{align:ch03-lax-oleinik-formula} 研究\eqref{align:ch03-conservation-ivp} 的熵解 $u$ 当 $t\to\infty$ 时的性态。下面假定 $F$ 光滑、一致凸、$F(0)=0$，且 $g$ 有界且可和。
+
+\begin{theorem}[$L^\infty$ 范数的渐近性]\label{theorem:ch03-Linf-decay}设 $L=F^*$ 光滑且一致凸。存在常数 $C$，使对一切 $x\in\mathbb{R}$、$t>0$，
+\begin{align}\label{align:ch03-Linf-decay}
+|u(x,t)|\leqslant\frac{C}{t^{1/2}}.
+\end{align}
+\end{theorem}
+
+\begin{proof}
+1. 令
+\begin{align}\label{align:ch03-sigma0}
+\sigma\triangleq F'(0);
+\end{align}
+则 $G(\sigma)=0$，从而
+\begin{align}\label{align:ch03-Lsigma}
+L(\sigma)=\sigma G(\sigma)-F(G(\sigma))=0,\quad L'(\sigma)=0.
+\end{align}
+
+2. 鉴于\eqref{align:ch03-Lsigma} 与 $L$ 的一致凸性，对某常数 $\theta>0$，
+\begin{align*}
+tL\!\left(\frac{x-y}{t}\right)=tL\!\left(\frac{x-y-\sigma t}{t}+\sigma\right)
+\geqslant t\left[L(\sigma)+L'(\sigma)\frac{x-y-\sigma t}{t}+\theta\left(\frac{x-y-\sigma t}{t}\right)^2\right]
+=\frac{\theta|x-y-\sigma t|^2}{t}.
+\end{align*}
+由于 $h=\int_0^x g\,\mathrm{d}y$ 以 $M\triangleq\|g\|_{L^1}$ 为界，由上式看到 $tL\!\left(\dfrac{x-y}{t}\right)+h(y)\geqslant\dfrac{\theta|x-y-\sigma t|^2}{t}-M$。另一方面，$tL\!\left(\dfrac{x-(x-\sigma t)}{t}\right)+h(x-\sigma t)\leqslant M$。故在最小点 $y(x,t)$ 处有 $\dfrac{\theta|x-y(x,t)-\sigma t|^2}{t}\leqslant 2M$，从而
+\begin{align}\label{align:ch03-y-decay}
+\left|\frac{x-y(x,t)}{t}-\sigma\right|\leqslant\frac{C}{t^{1/2}}
+\end{align}
+对某常数 $C$。
+
+3. 但由于 $G(\sigma)=0$，对任一 $x\in\mathbb{R}$、$t>0$，由\eqref{align:ch03-y-decay} 有
+\begin{align*}
+|u(x,t)|=\left|G\!\left(\frac{x-y(x,t)}{t}\right)\right|
+=\left|G\!\left(\frac{x-y(x,t)}{t}-\sigma+\sigma\right)-G(\sigma)\right|
+\leqslant\operatorname{Lip}(G)\left|\frac{x-y(x,t)}{t}-\sigma\right|\leqslant\frac{C}{t^{1/2}}.
+\end{align*}
+\end{proof}
+
+\S3.4.1 例\cref{example:ch03-shock2} 表明此 $t^{-1/2}$ 衰减速率是最优的。
+
+\subsubsection{衰减为 N 波}
+
+估计\eqref{align:ch03-Linf-decay} 断言 $u$ 的 $L^\infty$ 范数当 $t\to\infty$ 时趋于零。另一方面我们从 \S3.4.1 例\cref{example:ch03-shock2} 注意到：$u$ 的 $L^1$ 范数不必趋于零；事实上 $u$ 在 $\mathbb{R}$ 上的积分守恒（习题 19）。我们此处改而证明：在现假定 $g$ 具紧支集下，$u$ 在 $L^1$ 中演化为一个简单形状。
+
+给定常数 $p,q,d,\sigma$，其中 $p,q\geqslant 0$，$d>0$，我们把相应的\textbf{N 波}定义为函数
+\begin{align}\label{align:ch03-Nwave}
+N(x,t)\triangleq
+\begin{cases}
+\dfrac{1}{d}\left(\dfrac{x}{t}-\sigma\right) & \text{若 }-(pdt)^{1/2}<x-\sigma t<(qdt)^{1/2},\\
+0 & \text{否则}.
+\end{cases}
+\end{align}
+常数 $\sigma$ 是 N 波的速度。
+
+现由\eqref{align:ch03-sigma0} 定义 $\sigma$，令
+\begin{align}\label{align:ch03-d}
+d\triangleq F''(0)>0,
+\end{align}
+并写
+\begin{align}\label{align:ch03-pq}
+p\triangleq-2\min_{y\in\mathbb{R}}\int_{-\infty}^y g\,\mathrm{d}x,\quad q\triangleq 2\max_{y\in\mathbb{R}}\int_y^\infty g\,\mathrm{d}x.
+\end{align}
+注意 $p,q\geqslant 0$ 且
+\begin{align}\label{align:ch03-Gprime}
+G'(\sigma)=\frac{1}{d}.
+\end{align}
+
+\begin{theorem}[$L^1$ 范数的渐近性]\label{theorem:ch03-L1-decay}设 $p,q>0$。则存在常数 $C$，使对一切 $t>0$，
+\begin{align}\label{align:ch03-L1-decay}
+\int_{-\infty}^{\infty}|u(\cdot,t)-N(\cdot,t)|\,\mathrm{d}x\leqslant\frac{C}{t^{1/2}}.
+\end{align}
+\end{theorem}
+
+证明概要：由定理\cref{theorem:ch03-Linf-decay} 证明中的估计\eqref{align:ch03-y-decay}，有
+\begin{align*}
+\left|\frac{(x-\sigma t)-y(x,t)}{t}\right|\leqslant\frac{C}{t^{1/2}}.
+\end{align*}
+现 $u(x,t)=G\!\left(\dfrac{x-y(x,t)}{t}\right)=G(\sigma)+G'(\sigma)\dfrac{(x-\sigma t)-y(x,t)}{t}+O\!\left(\left|\dfrac{(x-\sigma t)-y(x,t)}{t}\right|^2\right)$。故由 $G(\sigma)=0$、\eqref{align:ch03-Gprime} 与上式，
+\begin{align*}
+\left|u(x,t)-\frac{1}{d}\frac{(x-\sigma t)-y(x,t)}{t}\right|\leqslant\frac{C}{t}.
+\end{align*}
+余下用 $g$ 具紧支集，把 $h(x)$ 写成两端常数 $h_\pm$，并据 $\min_\mathbb{R}h=-p/2+h_-=-q/2+h_+$，证明 $y(x,t)$ 的支集渐近集中在 $x-\sigma t=O(t^{1/2})$ 范围内，从而在 $L^1$ 中 $u$ 趋于 N 波 $N$。详细计算见原书。
+
+\end{document}

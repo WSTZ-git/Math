@@ -1,0 +1,85 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}}
+
+\begin{document}
+
+\section{定义}\label{section:ch06-定义}
+
+\subsection{椭圆型方程}\label{subsection:ch06-椭圆方程}
+
+本章主要研究边值问题
+\begin{align}
+\begin{cases}
+Lu=f & \text{于}\ U,\\
+u=0 & \text{于}\ \partial U,
+\end{cases}
+\label{align:ch06-Dirichlet问题}
+\end{align}
+其中 $U$ 为 $\mathbb{R}^{n}$ 的开、有界子集，$u:\overline{U}\to\mathbb{R}$ 为未知函数，$u=u(x)$。这里 $f:U\to\mathbb{R}$ 给定，$L$ 表示一个二阶偏微分算子，它或者具有形式
+\begin{align}
+Lu=-\sum_{i,j=1}^{n}(a_{ij}(x)u_{x_{i}})_{x_{j}}+\sum_{i=1}^{n}b_{i}(x)u_{x_{i}}+c(x)u,
+\label{align:ch06-散度型}
+\end{align}
+或者具有形式
+\begin{align}
+Lu=-\sum_{i,j=1}^{n}a_{ij}(x)u_{x_{i}x_{j}}+\sum_{i=1}^{n}b_{i}(x)u_{x_{i}}+c(x)u,
+\label{align:ch06-非散度型}
+\end{align}
+其中系数函数 $a_{ij}$、$b_{i}$、$c$（$i,j=1,\cdots,n$）给定。
+
+我们称 PDE $Lu=f$ 为散度型，若 $L$ 由式~\eqref{align:ch06-散度型} 给出；称为非散度型，若 $L$ 由式~\eqref{align:ch06-非散度型} 给出。式~\eqref{align:ch06-Dirichlet问题} 中 $u=0$ 于 $\partial U$ 的要求有时称为 Dirichlet 边界条件。
+
+\begin{remark}\label{remark:ch06-散度非散度}
+若最高阶系数 $a_{ij}$（$i,j=1,\cdots,n$）为 $C^{1}$ 函数，则散度型算子可改写为非散度结构，反之亦然。事实上散度型方程~\eqref{align:ch06-散度型} 变为
+\begin{align}
+Lu=-\sum_{i,j=1}^{n}a_{ij}(x)u_{x_{i}x_{j}}+\sum_{i=1}^{n}\widetilde{b}_{i}(x)u_{x_{i}}+c(x)u,
+\label{align:ch06-非散度型prime}
+\end{align}
+其中 $\widetilde{b}_{i}\triangleq b_{i}-\sum_{j=1}^{n}a_{ij,x_{j}}$（$i=1,\cdots,n$），而式~\eqref{align:ch06-非散度型prime} 显然为非散度型。然而我们将看到，分别考虑 $L$ 的这两种不同表示确有明确的优点。散度型最自然于基于分部积分的能量方法（\cref{subsection:ch06-弱解}--\cref{section:ch06-正则性}），而非散度型最适合极值原理技巧（\cref{section:ch06-极值原理}）。
+\end{remark}
+
+此后我们还假设对称性条件
+\begin{align*}
+a_{ij}=a_{ji}\qquad (i,j=1,\cdots,n).
+\end{align*}
+
+\begin{definition}\label{definition:ch06-椭圆性}
+我们称偏微分算子 $L$ 为（一致）椭圆的，若存在常数 $\theta>0$，使对 a.e. $x\in U$ 及一切 $\xi\in\mathbb{R}^{n}$ 有
+\begin{align}
+\sum_{i,j=1}^{n}a_{ij}(x)\xi_{i}\xi_{j}\geqslant\theta|\xi|^{2}.
+\label{align:ch06-变换椭圆}
+\end{align}
+\end{definition}
+
+椭圆性因而意味着：对每个点 $x\in U$，对称 $n\times n$ 矩阵 $A(x)=((a_{ij}(x)))$ 正定，其最小特征值大于或等于 $\theta$。
+
+一个显然的例子是 $a_{ij}\equiv\delta_{ij}$、$b_{i}\equiv 0$、$c\equiv 0$，此时算子 $L$ 为 $-\Delta$。事实上我们将看到，一般二阶椭圆 PDE $Lu=0$ 的解在许多方面与调和函数相似。然而对这些偏微分方程，我们无法使用第 2 章中为调和函数发展的各种显式公式：我们必须直接处理 PDE。读者在以下计算中应不断留意椭圆性结构条件~\eqref{align:ch06-变换椭圆} 的使用。
+
+\textbf{物理解释。} 如刚才所指出，二阶椭圆型 PDE 推广了Laplace方程与Poisson方程。如\cref{section:ch02-laplace} 中阐述Laplace方程的推导那样，应用中的 $u$ 通常表示某量的密度，例如化学浓度，在区域 $U$ 内处于平衡。二阶项 $A:Du=\sum_{i,j=1}^{n}a_{ij}u_{x_{i}x_{j}}$ 表示 $u$ 在 $U$ 内的扩散，系数 $((a_{ij}))$ 描述介质可能的各向异性、非齐性质。特别地，$F\triangleq-ADu$ 为扩散通量密度，而椭圆性条件蕴含
+\begin{align*}
+F\cdot Du\leqslant 0;
+\end{align*}
+即流动从浓度较高的区域流向较低的区域。一阶项 $b\cdot Du=\sum_{i=1}^{n}b_{i}u_{x_{i}}$ 表示 $U$ 内的输运，而零阶项 $cu$ 描述化学物质的局部增加或消耗（例如由于反应）。对这些解释的仔细分析需要扩散过程的概率研究。
+
+非线性二阶椭圆型 PDE 也自然出现于变分法（作为凸能量被积函数的 Euler--Lagrange 方程）与微分几何（作为涉及曲率的表达式）中。我们将在第 8、9 章遇到一些这样的非线性方程。
+
+\subsection{弱解}\label{subsection:ch06-弱解}
+
+我们先考虑 $L$ 具有散度型~\eqref{align:ch06-散度型} 时的边值问题~\eqref{align:ch06-Dirichlet问题}。我们的总体计划是先定义并构造~\eqref{align:ch06-Dirichlet问题} 的一个恰当弱解 $u$，然后才研究 $u$ 的光滑性与其他性质。
+
+下面的阐述中我们假设
+\begin{align}
+a_{ij},b_{i},c\in L^{\infty}(U)\qquad (i,j=1,\cdots,n)
+\end{align}
+且
+\begin{align}
+f\in L^{2}(U).
+\end{align}
+
+\textbf{弱解定义的动机。} 我们应如何定义弱解或广义解？暂时设 $u$ 确实是光滑解，把 PDE $Lu=f$ 乘以光滑检验函数 $v\in C^{\infty}_{c}(U)$ 并在 $U$ 上积分，得
+\begin{align}
+\int_{U}\sum_{i,j=1}^{n}a_{ij}u_{x_{i}}v_{x_{j}}+\sum_{i=1}^{n}b_{i}u_{x_{i}}v+cuv\,\mathrm{d}x=\int_{U}fv\,\mathrm{d}x,
+\end{align}
+其中我们对左端第一项作了分部积分。没有边界项，因为 $v=0$ 于 $\partial U$。通过逼近，我们发现同一恒等式在把光滑函数 $v$ 换成任意 $v\in H^{1}_{0}(U)$ 时仍成立，而所得恒等式只要 $u\in H^{1}_{0}(U)$ 就有意义。（我们选空间 $H^{1}_{0}(U)$ 以纳入~\eqref{align:ch06-Dirichlet问题} 中“$u=0$ 于 $\partial U$”的边界条件。）
+
+\end{document}

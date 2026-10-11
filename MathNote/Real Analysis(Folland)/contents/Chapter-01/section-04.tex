@@ -1,0 +1,270 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+% SOURCE p=43; printed=28; object=ch01-sec04-title; region=middle
+\section{外测度}\label{section:ch01-outer-measures}
+
+% SOURCE p=43; printed=28; object=ch01-outer-area-motivation; region=middle-lower
+本节发展我们将用来构造测度的工具。为说明这些思想的由来，不妨回顾微积分中定义平面 $\mathbb{R}^2$ 内有界区域 $E$ 的面积的方法。在平面上画出矩形网格，以网格中包含于 $E$ 的各矩形的面积之和从下方逼近 $E$ 的面积，以网格中与 $E$ 相交的各矩形的面积之和从上方逼近 $E$ 的面积。随着网格不断细化，这些近似值的极限给出 $E$ 的“内面积”和“外面积”；若二者相等，其共同值就是 $E$ 的“面积”。（我们将在\cref{section:ch02-n-dimensional-lebesgue-integral}更详细地讨论这些问题。）这里的关键思想是外面积，因为若 $R$ 是包含 $E$ 的大矩形，$E$ 的内面积恰为 $R$ 的面积减去 $R\setminus E$ 的外面积。
+
+% SOURCE p=43; printed=28; object=ch01-outer-measure-definition; region=lower
+外面积概念的抽象推广如下。
+\begin{definition}[外测度]\label{definition:ch01-outer-measure-definition}
+非空集合 $X$ 上的\textbf{外测度}是满足下列条件的函数 $\mu^*:\mathscr{P}(X)\to[0,\infty]$：
+\begin{itemize}
+\item $\mu^*(\varnothing)=0$；
+\item 若 $A\subseteq B$，则 $\mu^*(A)\leqslant\mu^*(B)$；
+\item $\mu^*(\bigcup_1^\infty A_j)\leqslant\sum_1^\infty\mu^*(A_j)$。
+\end{itemize}
+\end{definition}
+
+
+% SOURCE p=43; printed=28; object=ch01-outer-measure-construction-intro; region=bottom
+获得外测度最常见的方法，是从一个已定义了测度概念的“初等集”族 $\mathscr{E}$（例如平面上的矩形）出发，再以 $\mathscr{E}$ 中成员的可数并“从外部”逼近任意集合。其精确构造如下。
+
+% SOURCE p=44; printed=29; object=ch01-outer-measure-construction; number=1.10; region=top
+\begin{proposition}\label{proposition:ch01-outer-measure-construction}
+设 $\mathscr{E}\subseteq\mathscr{P}(X)$ 及 $\rho:\mathscr{E}\to[0,\infty]$ 满足 $\varnothing\in\mathscr{E}$、$X\in\mathscr{E}$ 和 $\rho(\varnothing)=0$。对任意 $A\subseteq X$，定义
+\begin{align*}
+\mu^*(A)=\inf\left\{\sum_1^\infty\rho(E_j):E_j\in\mathscr{E}\text{ 且 }A\subseteq\bigcup_1^\infty E_j\right\}.
+\end{align*}
+则 $\mu^*$ 是外测度。
+\end{proposition}
+
+% SOURCE p=44; printed=29; object=ch01-proof-outer-measure-construction; region=upper
+\begin{proof}
+对任意 $A\subseteq X$，存在 $\{E_j\}_1^\infty\subseteq\mathscr{E}$ 使 $A\subseteq\bigcup_1^\infty E_j$（对所有 $j$ 取 $E_j=X$ 即可），因而 $\mu^*$ 的定义有意义。显然，$\mu^*(\varnothing)=0$（对所有 $j$ 取 $E_j=\varnothing$），而且当 $A\subseteq B$ 时，$\mu^*(A)\leqslant\mu^*(B)$，因为定义 $\mu^*(A)$ 时取下确界的集合包含定义 $\mu^*(B)$ 时相应的集合。为证明可数次可加性，设 $\{A_j\}_1^\infty\subseteq\mathscr{P}(X)$ 且 $\varepsilon>0$。对每个 $j$，存在 $\{E_j^k\}_{k=1}^\infty\subseteq\mathscr{E}$，使得 $A_j\subseteq\bigcup_{k=1}^\infty E_j^k$ 且 $\sum_{k=1}^\infty\rho(E_j^k)\leqslant\mu^*(A_j)+\varepsilon2^{-j}$。于是，若 $A=\bigcup_1^\infty A_j$，则 $A\subseteq\bigcup_{j,k=1}^\infty E_j^k$，并且 $\sum_{j,k}\rho(E_j^k)\leqslant\sum_j\mu^*(A_j)+\varepsilon$，所以 $\mu^*(A)\leqslant\sum_j\mu^*(A_j)+\varepsilon$。由 $\varepsilon$ 的任意性，证明完成。
+\end{proof}
+
+% SOURCE p=44; printed=29; object=ch01-caratheodory-measurability; region=middle
+从外测度走向测度的关键步骤如下。
+\begin{definition}[$\mu^*$-可测集]\label{definition:ch01-caratheodory-measurability}
+若 $\mu^*$ 是 $X$ 上的外测度，则称集合 $A\subseteq X$ 是 \textbf{$\mu^*$-可测}的，如果
+\begin{align*}
+\mu^*(E)=\mu^*(E\cap A)+\mu^*(E\cap A^{\mathrm{c}})\qquad\text{对所有 }E\subseteq X.
+\end{align*}
+\end{definition}
+
+
+\begin{remark}
+当然，不等式 $\mu^*(E)\leqslant\mu^*(E\cap A)+\mu^*(E\cap A^{\mathrm{c}})$ 对任意 $A$ 和 $E$ 都成立，因此要证明 $A$ 为 $\mu^*$-可测集，只需证明反向不等式。当 $\mu^*(E)=\infty$ 时，后者显然成立，因而 $A$ 为 $\mu^*$-可测集当且仅当
+\begin{align*}
+\mu^*(E)\geqslant\mu^*(E\cap A)+\mu^*(E\cap A^{\mathrm{c}})\qquad\text{对所有满足 }\mu^*(E)<\infty\text{ 的 }E\subseteq X.
+\end{align*}
+\end{remark}
+
+
+% SOURCE p=44; printed=29; object=ch01-measurability-motivation; region=middle-lower
+回顾本节开头的讨论，可以了解 $\mu^*$-可测性概念的一些动机。若 $E$ 是满足 $E\supseteq A$ 的“性质良好”的集合，则等式 $\mu^*(E)=\mu^*(E\cap A)+\mu^*(E\cap A^{\mathrm{c}})$ 表示 $A$ 的外测度 $\mu^*(A)$ 等于 $A$ 的“内测度”$\mu^*(E)-\mu^*(E\cap A^{\mathrm{c}})$。从包含 $A$ 的“性质良好”的集合跃迁到 $X$ 的任意子集，跨度很大，但下面的定理说明了这一做法的合理性。
+
+% SOURCE p=44; printed=29; object=ch01-caratheodory-theorem; number=1.11; region=lower
+\begin{theorem}[Carathéodory 定理]\label{theorem:ch01-caratheodory}
+若 $\mu^*$ 是 $X$ 上的外测度，则所有 $\mu^*$-可测集组成的族 $\mathscr{M}$ 是 $\sigma$-代数，且 $\mu^*$ 在 $\mathscr{M}$ 上的限制是完备测度。
+\end{theorem}
+
+% SOURCE p=44; printed=29; object=ch01-proof-caratheodory-finite-start; region=bottom
+\begin{proof}
+首先，$\mathscr{M}$ 对取补集封闭，因为 $A$ 的 $\mu^*$-可测性定义关于 $A$ 与 $A^{\mathrm{c}}$ 对称。其次，若 $A,B\in\mathscr{M}$ 且 $E\subseteq X$，则
+\begin{align*}
+\mu^*(E)&=\mu^*(E\cap A)+\mu^*(E\cap A^{\mathrm{c}})\\
+&=\mu^*(E\cap A\cap B)+\mu^*(E\cap A\cap B^{\mathrm{c}})\\
+&\quad+\mu^*(E\cap A^{\mathrm{c}}\cap B)+\mu^*(E\cap A^{\mathrm{c}}\cap B^{\mathrm{c}}).
+\end{align*}
+但 $A\cup B=(A\cap B)\cup(A\cap B^{\mathrm{c}})\cup(A^{\mathrm{c}}\cap B)$，所以由次可加性，
+\begin{align*}
+\mu^*(E\cap A\cap B)+\mu^*(E\cap A\cap B^{\mathrm{c}})+\mu^*(E\cap A^{\mathrm{c}}\cap B)\geqslant\mu^*(E\cap(A\cup B)),
+\end{align*}
+% SOURCE p=45; printed=30; object=ch01-proof-caratheodory-finite-end; region=top
+从而
+\begin{align*}
+\mu^*(E)\geqslant\mu^*(E\cap(A\cup B))+\mu^*(E\cap(A\cup B)^{\mathrm{c}}).
+\end{align*}
+因此 $A\cup B\in\mathscr{M}$，故 $\mathscr{M}$ 为代数。此外，若 $A,B\in\mathscr{M}$ 且 $A\cap B=\varnothing$，则
+\begin{align*}
+\mu^*(A\cup B)&=\mu^*((A\cup B)\cap A)+\mu^*((A\cup B)\cap A^{\mathrm{c}})\\
+&=\mu^*(A)+\mu^*(B),
+\end{align*}
+所以 $\mu^*$ 在 $\mathscr{M}$ 上有限可加。
+
+% SOURCE p=45; printed=30; object=ch01-proof-caratheodory-countable; region=upper-middle
+为证明 $\mathscr{M}$ 是 $\sigma$-代数，只需证明 $\mathscr{M}$ 对可数不交并封闭。若 $\{A_j\}_1^\infty$ 是 $\mathscr{M}$ 中两两不交的集合序列，令 $B_n=\bigcup_1^n A_j$ 及 $B=\bigcup_1^\infty A_j$。则对任意 $E\subseteq X$，
+\begin{align*}
+\mu^*(E\cap B_n)&=\mu^*(E\cap B_n\cap A_n)+\mu^*(E\cap B_n\cap A_n^{\mathrm{c}})\\
+&=\mu^*(E\cap A_n)+\mu^*(E\cap B_{n-1}),
+\end{align*}
+因而简单归纳即得 $\mu^*(E\cap B_n)=\sum_1^n\mu^*(E\cap A_j)$。因此，
+\begin{align*}
+\mu^*(E)&=\mu^*(E\cap B_n)+\mu^*(E\cap B_n^{\mathrm{c}})\\
+&\geqslant\sum_1^n\mu^*(E\cap A_j)+\mu^*(E\cap B^{\mathrm{c}}),
+\end{align*}
+令 $n\to\infty$，得到
+\begin{align*}
+\mu^*(E)&\geqslant\sum_1^\infty\mu^*(E\cap A_j)+\mu^*(E\cap B^{\mathrm{c}})\\
+&\geqslant\mu^*\left(\bigcup_1^\infty(E\cap A_j)\right)+\mu^*(E\cap B^{\mathrm{c}})\\
+&=\mu^*(E\cap B)+\mu^*(E\cap B^{\mathrm{c}})\geqslant\mu^*(E).
+\end{align*}
+因此，上述最后一组计算中的所有不等式都是等式。这说明 $B\in\mathscr{M}$；并且取 $E=B$，可得 $\mu^*(B)=\sum_1^\infty\mu^*(A_j)$，所以 $\mu^*$ 在 $\mathscr{M}$ 上可数可加。最后，若 $\mu^*(A)=0$，则对任意 $E\subseteq X$，有
+\begin{align*}
+\mu^*(E)\leqslant\mu^*(E\cap A)+\mu^*(E\cap A^{\mathrm{c}})=\mu^*(E\cap A^{\mathrm{c}})\leqslant\mu^*(E),
+\end{align*}
+故 $A\in\mathscr{M}$。因此 $\mu^*|\mathscr{M}$ 是完备测度。
+\end{proof}
+
+% SOURCE p=45; printed=30; object=ch01-premeasure-definition; region=lower
+我们首先把\hyperref[theorem:ch01-caratheodory]{Carathéodory 定理}用于将测度从代数延拓到 $\sigma$-代数的情形。
+\begin{definition}[预测度]\label{definition:ch01-premeasure-definition}
+更确切地说，若 $\mathscr{A}\subseteq\mathscr{P}(X)$ 为代数，则称函数 $\mu_0:\mathscr{A}\to[0,\infty]$ 为\textbf{预测度}，如果
+\begin{itemize}
+\item $\mu_0(\varnothing)=0$；
+\item 若 $\{A_j\}_1^\infty$ 是 $\mathscr{A}$ 中两两不交的集合序列且 $\bigcup_1^\infty A_j\in\mathscr{A}$，则 $\mu_0(\bigcup_1^\infty A_j)=\sum_1^\infty\mu_0(A_j)$。
+\end{itemize}
+\end{definition}
+
+
+\begin{remark}
+特别地，预测度是有限可加的，因为当 $j$ 足够大时可以取 $A_j=\varnothing$。
+\end{remark}
+
+\begin{definition}[有限预测度与 $\sigma$-有限预测度]\label{definition:ch01-finite-premeasure}
+有限预测度与 $\sigma$-有限预测度的定义和测度的相应定义相同。
+\end{definition}
+
+% SOURCE p=46; printed=31; object=ch01-premeasure-induced-outer-measure; number=1.12; region=top
+若 $\mu_0$ 是 $\mathscr{A}\subseteq\mathscr{P}(X)$ 上的预测度，则按照\cref{proposition:ch01-outer-measure-construction}，它在 $X$ 上诱导一个外测度，即
+\begin{align}\label{align:ch01-premeasure-induced-outer-measure}
+\mu^*(E)=\inf\left\{\sum_1^\infty\mu_0(A_j):A_j\in\mathscr{A},\ E\subseteq\bigcup_1^\infty A_j\right\}.
+\end{align}
+
+% SOURCE p=46; printed=31; object=ch01-premeasure-outer-measure-properties; number=1.13; region=upper
+\begin{proposition}\label{proposition:ch01-premeasure-outer-measure-properties}
+若 $\mu_0$ 是 $\mathscr{A}$ 上的预测度，且 $\mu^*$ 由\eqref{align:ch01-premeasure-induced-outer-measure}定义，则
+\begin{enumerate}[label=\alph*.,ref=(\alph*)]
+\item\label{item:ch01-premeasure-restriction} $\mu^*|\mathscr{A}=\mu_0$；
+\item\label{item:ch01-premeasure-measurable} $\mathscr{A}$ 中每个集合都是 $\mu^*$-可测的。
+\end{enumerate}
+\end{proposition}
+
+% SOURCE p=46; printed=31; object=ch01-proof-premeasure-restriction; region=upper-middle
+\begin{proof}
+\subcref{proposition:ch01-premeasure-outer-measure-properties}{item:ch01-premeasure-restriction}：设 $E\in\mathscr{A}$。若 $E\subseteq\bigcup_1^\infty A_j$，其中 $A_j\in\mathscr{A}$，令 $B_n=E\cap(A_n\setminus\bigcup_1^{n-1}A_j)$。则各 $B_n$ 为 $\mathscr{A}$ 中两两不交的成员，其并为 $E$，所以 $\mu_0(E)=\sum_1^\infty\mu_0(B_j)\leqslant\sum_1^\infty\mu_0(A_j)$。因此 $\mu_0(E)\leqslant\mu^*(E)$；反向不等式显然成立，因为取 $A_1=E$，且对 $j>1$ 取 $A_j=\varnothing$，就有 $E\subseteq\bigcup_1^\infty A_j$。
+
+% SOURCE p=46; printed=31; object=ch01-proof-premeasure-measurable; region=middle
+\subcref{proposition:ch01-premeasure-outer-measure-properties}{item:ch01-premeasure-measurable}：若 $A\in\mathscr{A}$、$E\subseteq X$ 且 $\varepsilon>0$，则存在序列 $\{B_j\}_1^\infty\subseteq\mathscr{A}$，使 $E\subseteq\bigcup_1^\infty B_j$ 且 $\sum_1^\infty\mu_0(B_j)\leqslant\mu^*(E)+\varepsilon$。由于 $\mu_0$ 在 $\mathscr{A}$ 上可加，
+\begin{align*}
+\mu^*(E)+\varepsilon&\geqslant\sum_1^\infty\mu_0(B_j\cap A)+\sum_1^\infty\mu_0(B_j\cap A^{\mathrm{c}})\\
+&\geqslant\mu^*(E\cap A)+\mu^*(E\cap A^{\mathrm{c}}).
+\end{align*}
+由 $\varepsilon$ 的任意性，$A$ 是 $\mu^*$-可测的。
+\end{proof}
+
+% SOURCE p=46; printed=31; object=ch01-measure-extension; number=1.14; region=middle-lower
+\begin{theorem}\label{theorem:ch01-measure-extension}
+设 $\mathscr{A}\subseteq\mathscr{P}(X)$ 为代数，$\mu_0$ 为 $\mathscr{A}$ 上的预测度，$\mathscr{M}$ 为由 $\mathscr{A}$ 生成的 $\sigma$-代数。则存在 $\mathscr{M}$ 上的测度 $\mu$，其在 $\mathscr{A}$ 上的限制是 $\mu_0$；具体地，$\mu=\mu^*|\mathscr{M}$，其中 $\mu^*$ 由\eqref{align:ch01-premeasure-induced-outer-measure}给出。若 $\nu$ 是 $\mathscr{M}$ 上另一个延拓 $\mu_0$ 的测度，则对所有 $E\in\mathscr{M}$，有 $\nu(E)\leqslant\mu(E)$，且当 $\mu(E)<\infty$ 时等号成立。若 $\mu_0$ 为 $\sigma$-有限的，则 $\mu$ 是 $\mu_0$ 到 $\mathscr{M}$ 上测度的唯一延拓。
+\end{theorem}
+
+% SOURCE p=46; printed=31; object=ch01-proof-measure-extension; region=lower
+\begin{proof}
+第一个断言由\hyperref[theorem:ch01-caratheodory]{Carathéodory 定理}及\cref{proposition:ch01-premeasure-outer-measure-properties}得到，因为 $\mu^*$-可测集的 $\sigma$-代数包含 $\mathscr{A}$，从而包含 $\mathscr{M}$。对于第二个断言，若 $E\in\mathscr{M}$ 且 $E\subseteq\bigcup_1^\infty A_j$，其中 $A_j\in\mathscr{A}$，则 $\nu(E)\leqslant\sum_1^\infty\nu(A_j)=\sum_1^\infty\mu_0(A_j)$，故 $\nu(E)\leqslant\mu(E)$。此外，令 $A=\bigcup_1^\infty A_j$，则
+\begin{align*}
+\nu(A)=\lim_{n\to\infty}\nu\left(\bigcup_1^n A_j\right)=\lim_{n\to\infty}\mu\left(\bigcup_1^n A_j\right)=\mu(A).
+\end{align*}
+若 $\mu(E)<\infty$，可以选取各 $A_j$ 使得 $\mu(A)<\mu(E)+\varepsilon$，从而 $\mu(A\setminus E)<\varepsilon$，并且
+\begin{align*}
+\mu(E)&\leqslant\mu(A)=\nu(A)=\nu(E)+\nu(A\setminus E)\\
+&\leqslant\nu(E)+\mu(A\setminus E)\leqslant\nu(E)+\varepsilon.
+\end{align*}
+由 $\varepsilon$ 的任意性，$\mu(E)=\nu(E)$。最后，设 $X=\bigcup_1^\infty A_j$ 且 $\mu_0(A_j)<\infty$，其中可以假设各 $A_j$ 两两不交。于是对任意 $E\in\mathscr{M}$，
+\begin{align*}
+\mu(E)=\sum_1^\infty\mu(E\cap A_j)=\sum_1^\infty\nu(E\cap A_j)=\nu(E),
+\end{align*}
+所以 $\nu=\mu$。
+\end{proof}
+
+% SOURCE p=47; printed=32; object=ch01-extension-discussion; region=top
+这个定理的证明给出的结果比定理的陈述更多。事实上，$\mu_0$ 可以延拓为所有 $\mu^*$-可测集组成的代数 $\mathscr{M}^*$ 上的测度。\cref{exercise:ch01-extension-completion-saturation}探讨了 $\mathscr{M}$ 与 $\mathscr{M}^*$ 的关系（还要结合\subcref{exercise:ch01-induced-outer-measure-idempotence}{item:ch01-induced-outer-measure-from-premeasure}，后者保证 $\mu_0$ 与 $\mu$ 诱导的外测度相同）。
+
+% SOURCE p=47; printed=32; object=ch01-sec04-exercises; region=upper
+\subsection*{习题}
+
+% SOURCE p=47; printed=32; object=ch01-exercise-outer-measure-disjoint; number=17; region=upper
+\begin{exercise}\label{exercise:ch01-outer-measure-disjoint}
+若 $\mu^*$ 为 $X$ 上的外测度，且 $\{A_j\}_1^\infty$ 为两两不交的 $\mu^*$-可测集序列，则对任意 $E\subseteq X$，
+\begin{align*}
+\mu^*\left(E\cap\left(\bigcup_1^\infty A_j\right)\right)=\sum_1^\infty\mu^*(E\cap A_j).
+\end{align*}
+\end{exercise}
+
+% SOURCE p=47; printed=32; object=ch01-exercise-premeasure-approximation; number=18; region=upper-middle
+\begin{exercise}\label{exercise:ch01-premeasure-approximation}
+设 $\mathscr{A}\subseteq\mathscr{P}(X)$ 为代数，$\mathscr{A}_\sigma$ 为 $\mathscr{A}$ 中集合的可数并组成的族，$\mathscr{A}_{\sigma\delta}$ 为 $\mathscr{A}_\sigma$ 中集合的可数交组成的族。设 $\mu_0$ 为 $\mathscr{A}$ 上的预测度，$\mu^*$ 为其诱导的外测度。
+\begin{enumerate}[label=\alph*.,ref=(\alph*)]
+\item\label{item:ch01-premeasure-approximation-outer} 对任意 $E\subseteq X$ 和 $\varepsilon>0$，存在 $A\in\mathscr{A}_\sigma$，使 $E\subseteq A$ 且 $\mu^*(A)\leqslant\mu^*(E)+\varepsilon$。
+\item\label{item:ch01-premeasure-approximation-hull} 若 $\mu^*(E)<\infty$，则 $E$ 为 $\mu^*$-可测集，当且仅当存在 $B\in\mathscr{A}_{\sigma\delta}$，使 $E\subseteq B$ 且 $\mu^*(B\setminus E)=0$。
+\item\label{item:ch01-premeasure-approximation-sigma-finite} 若 $\mu_0$ 为 $\sigma$-有限的，则\subcref{exercise:ch01-premeasure-approximation}{item:ch01-premeasure-approximation-hull}中的限制 $\mu^*(E)<\infty$ 是多余的。
+\end{enumerate}
+\end{exercise}
+
+% SOURCE p=47; printed=32; object=ch01-exercise-inner-measure; number=19; region=middle
+\begin{exercise}\label{exercise:ch01-inner-measure}
+
+\begin{definition*}[内测度]
+设 $\mu^*$ 是由有限预测度 $\mu_0$ 诱导的 $X$ 上的外测度。若 $E\subseteq X$，定义 $E$ 的\textbf{内测度}为 $\mu_*(E)=\mu_0(X)-\mu^*(E^{\mathrm{c}})$。
+\end{definition*}
+则 $E$ 为 $\mu^*$-可测集，当且仅当 $\mu^*(E)=\mu_*(E)$。（使用\cref{exercise:ch01-premeasure-approximation}。）
+\end{exercise}
+
+% SOURCE p=47; printed=32; object=ch01-exercise-induced-outer-measure-idempotence; number=20; region=middle
+\begin{exercise}\label{exercise:ch01-induced-outer-measure-idempotence}
+设 $\mu^*$ 为 $X$ 上的外测度，$\mathscr{M}^*$ 为 $\mu^*$-可测集的 $\sigma$-代数，$\overline{\mu}=\mu^*|\mathscr{M}^*$，$\mu^+$ 为由 $\overline{\mu}$ 按\eqref{align:ch01-premeasure-induced-outer-measure}诱导的外测度（以 $\overline{\mu}$ 和 $\mathscr{M}^*$ 分别代替 $\mu_0$ 和 $\mathscr{A}$）。
+\begin{enumerate}[label=\alph*.,ref=(\alph*)]
+\item\label{item:ch01-induced-outer-measure-hull} 若 $E\subseteq X$，则 $\mu^*(E)\leqslant\mu^+(E)$，等号成立当且仅当存在 $A\in\mathscr{M}^*$，使 $A\supseteq E$ 且 $\mu^*(A)=\mu^*(E)$。
+\item\label{item:ch01-induced-outer-measure-from-premeasure} 若 $\mu^*$ 由预测度诱导，则 $\mu^*=\mu^+$。（使用\subcref{exercise:ch01-premeasure-approximation}{item:ch01-premeasure-approximation-outer}。）
+\item\label{item:ch01-induced-outer-measure-counterexample} 若 $X=\{0,1\}$，则存在 $X$ 上的外测度 $\mu^*$，使 $\mu^*\ne\mu^+$。
+\end{enumerate}
+\end{exercise}
+
+% SOURCE p=47; printed=32; object=ch01-exercise-outer-measure-saturated; number=21; region=middle-lower
+\begin{exercise}\label{exercise:ch01-outer-measure-saturated}
+设 $\mu^*$ 为由预测度诱导的外测度，$\overline{\mu}$ 为 $\mu^*$ 在 $\mu^*$-可测集上的限制。则 $\overline{\mu}$ 是饱和的。（使用\cref{exercise:ch01-premeasure-approximation}。）
+\end{exercise}
+
+% SOURCE p=47; printed=32; object=ch01-exercise-extension-completion-saturation; number=22; region=lower
+\begin{exercise}\label{exercise:ch01-extension-completion-saturation}
+设 $(X,\mathscr{M},\mu)$ 为测度空间，$\mu^*$ 为 $\mu$ 按\eqref{align:ch01-premeasure-induced-outer-measure}诱导的外测度，$\mathscr{M}^*$ 为 $\mu^*$-可测集的 $\sigma$-代数，且 $\overline{\mu}=\mu^*|\mathscr{M}^*$。
+\begin{enumerate}[label=\alph*.,ref=(\alph*)]
+\item\label{item:ch01-extension-completion-sigma-finite} 若 $\mu$ 为 $\sigma$-有限的，则 $\overline{\mu}$ 是 $\mu$ 的完备化。（使用\cref{exercise:ch01-premeasure-approximation}。）
+\item\label{item:ch01-extension-completion-general} 一般地，$\overline{\mu}$ 是 $\mu$ 的完备化的饱和化。（参见\cref{exercise:ch01-saturation,exercise:ch01-outer-measure-saturated}。）
+\end{enumerate}
+\end{exercise}
+
+% SOURCE p=47; printed=32; object=ch01-exercise-nonunique-extension; number=23; region=bottom
+\begin{exercise}\label{exercise:ch01-nonunique-extension}
+设 $\mathscr{A}$ 为形如 $(a,b]\cap\mathbb{Q}$（其中 $-\infty\leqslant a<b\leqslant\infty$）的集合的有限并组成的族。
+\begin{enumerate}[label=\alph*.,ref=(\alph*)]
+\item\label{item:ch01-rational-interval-algebra} $\mathscr{A}$ 是 $\mathbb{Q}$ 上的代数。（使用\cref{proposition:ch01-elementary-algebra}。）
+\item\label{item:ch01-rational-interval-generated} 由 $\mathscr{A}$ 生成的 $\sigma$-代数为 $\mathscr{P}(\mathbb{Q})$。
+\item\label{item:ch01-rational-interval-infinite-measure} 在 $\mathscr{A}$ 上定义 $\mu_0$：$\mu_0(\varnothing)=0$，且当 $A\ne\varnothing$ 时，$\mu_0(A)=\infty$。则 $\mu_0$ 是 $\mathscr{A}$ 上的预测度，而且 $\mathscr{P}(\mathbb{Q})$ 上在 $\mathscr{A}$ 上的限制为 $\mu_0$ 的测度不止一个。
+\end{enumerate}
+\end{exercise}
+
+% SOURCE p=48; printed=33; object=ch01-exercise-full-outer-measure-restriction; number=24; region=top
+\begin{exercise}\label{exercise:ch01-full-outer-measure-restriction}
+设 $\mu$ 为 $(X,\mathscr{M})$ 上的有限测度，$\mu^*$ 为 $\mu$ 诱导的外测度。假设 $E\subseteq X$ 满足 $\mu^*(E)=\mu^*(X)$（但不假设 $E\in\mathscr{M}$）。
+\begin{enumerate}[label=\alph*.,ref=(\alph*)]
+\item\label{item:ch01-full-outer-measure-equality} 若 $A,B\in\mathscr{M}$ 且 $A\cap E=B\cap E$，则 $\mu(A)=\mu(B)$。
+\item\label{item:ch01-full-outer-measure-trace} 令 $\mathscr{M}_E=\{A\cap E:A\in\mathscr{M}\}$，并在 $\mathscr{M}_E$ 上定义函数 $\nu$，使 $\nu(A\cap E)=\mu(A)$（由\subcref{exercise:ch01-full-outer-measure-restriction}{item:ch01-full-outer-measure-equality}，这一定义有意义）。则 $\mathscr{M}_E$ 是 $E$ 上的 $\sigma$-代数，$\nu$ 是 $\mathscr{M}_E$ 上的测度。
+\end{enumerate}
+\end{exercise}
+\end{document}

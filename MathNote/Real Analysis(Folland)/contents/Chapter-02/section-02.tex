@@ -1,0 +1,200 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+% SOURCE p=64; printed=49; object=ch02-nonnegative-integral-title; region=middle
+\section{非负函数的积分}\label{section:ch02-nonnegative-integration}
+% SOURCE p=64; printed=49; object=ch02-nonnegative-integral-intro; region=middle
+本节固定一个测度空间 $(X,\mathscr{M},\mu)$。
+% SOURCE p=64; printed=49; object=ch02-lplus; region=middle
+\begin{definition}[非负可测函数空间]\label{definition:ch02-lplus}
+定义 $L^+$ 为所有从 $X$ 到 $[0,\infty]$ 的可测函数构成的空间。
+\end{definition}
+% SOURCE p=64; printed=49; object=ch02-simple-integral; region=middle
+\begin{definition}[非负简单函数的积分]\label{definition:ch02-simple-integral}
+若 $\phi\in L^+$ 是简单函数，其标准表示为 $\phi=\sum_1^n a_j\chi_{E_j}$，定义 $\phi$ 关于 $\mu$ 的\textbf{积分}为
+\begin{align*}
+\int\phi\,\mathrm{d}\mu=\sum_1^n a_j\mu(E_j),
+\end{align*}
+其中仍约定 $0\cdot\infty=0$。注意，$\int\phi\,\mathrm{d}\mu$ 可以等于 $\infty$。
+\end{definition}
+% SOURCE p=64; printed=49; object=ch02-integral-notation; region=middle-lower
+\begin{remark}
+在不致混淆时，也用 $\int\phi$ 表示 $\int\phi\,\mathrm{d}\mu$。有时显式写出 $\phi$ 的自变量比较方便，特别是在 $\phi(x)$ 由含 $x$ 的公式给出，或者还涉及其他变量时；这时使用记号 $\int\phi(x)\,\mathrm{d}\mu(x)$。（有些作者更愿意写成 $\int\phi(x)\,\mu(\mathrm{d}x)$。）
+\end{remark}
+% SOURCE p=64; printed=49; object=ch02-integral-on-set; region=lower
+\begin{definition}[集合上的积分]\label{definition:ch02-integral-on-set}
+若 $A\in\mathscr{M}$，则 $\phi\chi_A$ 仍为简单函数，即 $\phi\chi_A=\sum a_j\chi_{A\cap E_j}$。定义 $\int_A\phi\,\mathrm{d}\mu$（或 $\int_A\phi$、$\int_A\phi(x)\,\mathrm{d}\mu(x)$）为 $\int\phi\chi_A\,\mathrm{d}\mu$。
+\end{definition}
+% SOURCE p=64; printed=49; object=ch02-integral-notation-summary; region=lower
+这些记号约定也适用于下面将定义的更一般函数的积分。归纳起来，
+\begin{align*}
+\int_A\phi\,\mathrm{d}\mu=\int_A\phi=\int_A\phi(x)\,\mathrm{d}\mu(x)=\int\phi\chi_A\,\mathrm{d}\mu,
+\qquad\int=\int_X.
+\end{align*}
+% SOURCE p=64; printed=49; object=ch02-simple-integral-properties; number=2.13; region=bottom
+\begin{proposition}\label{proposition:ch02-simple-integral-properties}
+设 $\phi$ 和 $\psi$ 为 $L^+$ 中的简单函数。
+\begin{enumerate}
+\item\label{item:ch02-simple-integral-scaling} 若 $c\ge0$，则 $\int c\phi=c\int\phi$。
+\item\label{item:ch02-simple-integral-additivity} $\int(\phi+\psi)=\int\phi+\int\psi$。
+\item\label{item:ch02-simple-integral-monotonicity} 若 $\phi\le\psi$，则 $\int\phi\le\int\psi$。
+\item\label{item:ch02-simple-integral-measure} 映射 $A\mapsto\int_A\phi\,\mathrm{d}\mu$ 是 $\mathscr{M}$ 上的测度。
+\end{enumerate}
+\end{proposition}
+% SOURCE p=65; printed=50; object=ch02-proof-simple-integral-properties; region=upper
+\begin{proof}
+\subcref{proposition:ch02-simple-integral-properties}{item:ch02-simple-integral-scaling}显然。对于\subcref{proposition:ch02-simple-integral-properties}{item:ch02-simple-integral-additivity}，设 $\sum_1^n a_j\chi_{E_j}$ 和 $\sum_1^m b_k\chi_{F_k}$ 分别为 $\phi$ 和 $\psi$ 的标准表示。由于 $\bigcup_1^n E_j=\bigcup_1^m F_k=X$，有 $E_j=\bigcup_{k=1}^m(E_j\cap F_k)$ 及 $F_k=\bigcup_{j=1}^n(E_j\cap F_k)$，且这些并都是不交并。因此，$\mu$ 的有限可加性蕴含
+\begin{align*}
+\int\phi+\int\psi=\sum_{j,k}(a_j+b_k)\mu(E_j\cap F_k),
+\end{align*}
+同样的推理表明，右端的和等于 $\int(\phi+\psi)$。此外，若 $\phi\le\psi$，则当 $E_j\cap F_k\ne\varnothing$ 时有 $a_j\le b_k$，故
+\begin{align*}
+\int\phi=\sum_{j,k}a_j\mu(E_j\cap F_k)\le\sum_{j,k}b_k\mu(E_j\cap F_k)=\int\psi,
+\end{align*}
+这就证明了\subcref{proposition:ch02-simple-integral-properties}{item:ch02-simple-integral-monotonicity}。最后，若 $\{A_k\}$ 是 $\mathscr{M}$ 中两两不交的集合序列，且 $A=\bigcup_1^\infty A_k$，则
+\begin{align*}
+\int_A\phi=\sum_j a_j\mu(A\cap E_j)=\sum_{j,k}a_j\mu(A_k\cap E_j)=\sum_k\int_{A_k}\phi,
+\end{align*}
+从而得到\subcref{proposition:ch02-simple-integral-properties}{item:ch02-simple-integral-measure}。
+\end{proof}
+
+% SOURCE p=65; printed=50; object=ch02-nonnegative-integral; region=middle
+\begin{definition}[非负可测函数的积分]\label{definition:ch02-nonnegative-integral}
+将积分推广到所有 $f\in L^+$，定义
+\begin{align*}
+\int f\,\mathrm{d}\mu=\sup\left\{\int\phi\,\mathrm{d}\mu:0\le\phi\le f,\ \phi\text{ 为简单函数}\right\}.
+\end{align*}
+\end{definition}
+% SOURCE p=65; printed=50; object=ch02-integral-definitions-agree; region=middle
+\begin{remark}
+由\subcref{proposition:ch02-simple-integral-properties}{item:ch02-simple-integral-monotonicity}，当 $f$ 为简单函数时，$\int f$ 的两个定义相符，因为取上确界所遍历的简单函数族包含 $f$ 本身。
+\end{remark}
+% SOURCE p=65; printed=50; object=ch02-nonnegative-integral-basic-properties; region=middle-lower
+\begin{proposition}\label{proposition:ch02-nonnegative-integral-basic-properties}
+从定义还可显然看出，
+\begin{align*}
+f\le g\implies\int f\le\int g,\qquad
+\int cf=c\int f\quad\bigl(c\in[0,\infty)\bigr).
+\end{align*}
+\end{proposition}
+% SOURCE p=65; printed=50; object=ch02-monotone-convergence-intro; region=lower
+下一步要建立基本收敛定理之一。
+% SOURCE p=65; printed=50; object=ch02-monotone-convergence; number=2.14; region=lower
+\begin{theorem}[单调收敛定理]\label{theorem:ch02-monotone-convergence}
+若 $\{f_n\}$ 是 $L^+$ 中的序列，对所有 $j$ 都有 $f_j\le f_{j+1}$，且 $f=\lim_{n\to\infty}f_n\,(=\sup_n f_n)$，则 $\int f=\lim_{n\to\infty}\int f_n$。
+\end{theorem}
+% SOURCE p=65; printed=50; object=ch02-proof-monotone-convergence; region=bottom
+\begin{proof}
+$\{\int f_n\}$ 是递增的数列，所以其极限存在（可能等于 $\infty$）。此外，对所有 $n$ 都有 $\int f_n\le\int f$，故 $\lim\int f_n\le\int f$。为证明反向不等式，固定 $\alpha\in(0,1)$，设 $\phi$ 为满足 $0\le\phi\le f$ 的简单函数，并令 $E_n=\{x:f_n(x)\ge\alpha\phi(x)\}$。则 $\{E_n\}$ 是递增的可测集序列，其并为 $X$，且有 $\int f_n\ge\int_{E_n}f_n\ge\alpha\int_{E_n}\phi$。由\subcref{proposition:ch02-simple-integral-properties}{item:ch02-simple-integral-measure}和\subcref{theorem:ch01-measure-properties}{item:ch01-measure-continuity-below}，$\lim\int_{E_n}\phi=\int\phi$，所以 $\lim\int f_n\ge\alpha\int\phi$。这对所有 $\alpha<1$ 成立，故对 $\alpha=1$ 仍成立；对所有满足 $\phi\le f$ 的简单函数取上确界，即得 $\lim\int f_n\ge\int f$。
+\end{proof}
+% SOURCE p=66; printed=51; object=ch02-monotone-convergence-significance; region=top
+单调收敛定理在许多场合都是重要工具，但它眼下对我们的意义如下。$\int f$ 的定义涉及对一个庞大（通常不可数）的简单函数族取上确界，因此直接从定义计算 $\int f$ 可能很困难。然而，单调收敛定理保证：要计算 $\int f$，只需计算 $\lim\int\phi_n$，其中 $\{\phi_n\}$ 是任意一个递增趋于 $f$ 的简单函数序列，而\cref{theorem:ch02-simple-approximation}保证这样的序列存在。作为第一个应用，下面建立积分的可加性。
+% SOURCE p=66; printed=51; object=ch02-integral-series; number=2.15; region=upper
+\begin{theorem}\label{theorem:ch02-integral-series}
+若 $\{f_n\}$ 是 $L^+$ 中的有限或无限序列，且 $f=\sum_n f_n$，则 $\int f=\sum_n\int f_n$。
+\end{theorem}
+% SOURCE p=66; printed=51; object=ch02-proof-integral-series; region=upper-middle
+\begin{proof}
+先考虑两个函数 $f_1$ 和 $f_2$。由\cref{theorem:ch02-simple-approximation}，可找到分别递增趋于 $f_1$ 和 $f_2$ 的非负简单函数序列 $\{\phi_j\}$ 和 $\{\psi_j\}$。于是 $\{\phi_j+\psi_j\}$ 递增趋于 $f_1+f_2$，故由\cref{theorem:ch02-monotone-convergence}和\subcref{proposition:ch02-simple-integral-properties}{item:ch02-simple-integral-additivity}，
+\begin{align*}
+\int(f_1+f_2)=\lim\int(\phi_j+\psi_j)=\lim\int\phi_j+\lim\int\psi_j=\int f_1+\int f_2.
+\end{align*}
+因此，由归纳法，对任意有限的 $N$，都有 $\int\sum_1^N f_n=\sum_1^N\int f_n$。令 $N\to\infty$ 并再次应用\cref{theorem:ch02-monotone-convergence}，即得 $\int\sum_1^\infty f_n=\sum_1^\infty\int f_n$。
+\end{proof}
+% SOURCE p=66; printed=51; object=ch02-zero-integral; number=2.16; region=middle
+\begin{proposition}\label{proposition:ch02-zero-integral}
+若 $f\in L^+$，则 $\int f=0$ 当且仅当 $f=0$ 几乎处处成立。
+\end{proposition}
+% SOURCE p=66; printed=51; object=ch02-proof-zero-integral; region=middle
+\begin{proof}
+当 $f$ 为简单函数时，这显然成立：若 $f=\sum_1^n a_j\chi_{E_j}$，其中 $a_j\ge0$，则 $\int f=0$ 当且仅当对每个 $j$，或者 $a_j=0$，或者 $\mu(E_j)=0$。一般地，若 $f=0$ 几乎处处成立，且 $\phi$ 为满足 $0\le\phi\le f$ 的简单函数，则 $\phi=0$ 几乎处处成立，因而 $\int f=\sup_{\phi\le f}\int\phi=0$。另一方面，$\{x:f(x)>0\}=\bigcup_1^\infty E_n$，其中 $E_n=\{x:f(x)>n^{-1}\}$；所以若“$f=0$ 几乎处处成立”不成立，则必有某个 $n$ 使 $\mu(E_n)>0$。但此时 $f>n^{-1}\chi_{E_n}$，故 $\int f\ge n^{-1}\mu(E_n)>0$。
+\end{proof}
+% SOURCE p=66; printed=51; object=ch02-monotone-convergence-ae; number=2.17; region=lower
+\begin{corollary}\label{corollary:ch02-monotone-convergence-ae}
+若 $\{f_n\}\subseteq L^+$，$f\in L^+$，且对几乎处处的 $x$，$f_n(x)$ 递增趋于 $f(x)$，则 $\int f=\lim\int f_n$。
+\end{corollary}
+% SOURCE p=66; printed=51; object=ch02-proof-monotone-convergence-ae; region=lower
+\begin{proof}
+若对 $x\in E$，$f_n(x)$ 递增趋于 $f(x)$，且 $\mu(E^c)=0$，则 $f-f\chi_E=0$ 几乎处处成立，且 $f_n-f_n\chi_E=0$ 几乎处处成立。因此，由\cref{theorem:ch02-monotone-convergence}，
+\begin{align*}
+\int f=\int f\chi_E=\lim\int f_n\chi_E=\lim\int f_n.
+\end{align*}
+\end{proof}
+% SOURCE p=66; printed=51; object=ch02-monotonicity-essential; region=bottom
+对于单调收敛定理，序列 $\{f_n\}$ 递增（至少几乎处处递增）的假设必不可少。
+% SOURCE p=66; printed=51; object=ch02-escaping-mass-examples; region=bottom
+\begin{example}\label{example:ch02-escaping-mass}
+若 $X=\mathbb{R}$，$\mu$ 为 Lebesgue 测度，则 $\chi_{(n,n+1)}\to0$ 及 $n\chi_{(0,\frac1n)}\to0$ 都逐点成立，但对所有 $n$，都有
+\begin{align*}
+\int\chi_{(n,n+1)}=\int n\chi_{(0,\frac1n)}=1.
+\end{align*}
+画出图形就能看出，这些例子的问题在于：当 $n\to\infty$ 时，图形下方的面积“逃向无穷远”，所以极限中的面积比预期的少。
+\end{example}
+% SOURCE p=66,67; printed=51,52; object=ch02-fatou-intro; region=bottom/top
+在极限的积分不等于积分的极限时，这种情况很典型。不过，此时仍有一个不等式成立。我们从下面的一般结果推出它。
+% SOURCE p=67; printed=52; object=ch02-fatou-lemma; number=2.18; region=upper
+\begin{lemma}[Fatou 引理]\label{lemma:ch02-fatou}
+若 $\{f_n\}$ 是 $L^+$ 中的任意序列，则
+\begin{align*}
+\int(\liminf f_n)\le\liminf\int f_n.
+\end{align*}
+\end{lemma}
+% SOURCE p=67; printed=52; object=ch02-proof-fatou; region=upper
+\begin{proof}
+对每个 $k\ge1$，当 $j\ge k$ 时都有 $\inf_{n\ge k}f_n\le f_j$，从而 $\int\inf_{n\ge k}f_n\le\int f_j$，所以 $\int\inf_{n\ge k}f_n\le\inf_{j\ge k}\int f_j$。现在令 $k\to\infty$ 并应用\cref{theorem:ch02-monotone-convergence}：
+\begin{align*}
+\int(\liminf f_n)=\lim_{k\to\infty}\int\left(\inf_{n\ge k}f_n\right)\le\liminf\int f_n.
+\end{align*}
+\end{proof}
+% SOURCE p=67; printed=52; object=ch02-fatou-ae; number=2.19; region=middle
+\begin{corollary}\label{corollary:ch02-fatou-ae}
+若 $\{f_n\}\subseteq L^+$，$f\in L^+$，且 $f_n\to f$ 几乎处处成立，则 $\int f\le\liminf\int f_n$。
+\end{corollary}
+% SOURCE p=67; printed=52; object=ch02-proof-fatou-ae; region=middle
+\begin{proof}
+若 $f_n\to f$ 处处成立，结论直接由\cref{lemma:ch02-fatou}得到。由\cref{proposition:ch02-zero-integral}，可以在一个零测集上修改 $f_n$ 和 $f$，使收敛处处成立，同时不改变积分。
+\end{proof}
+% SOURCE p=67; printed=52; object=ch02-finite-integral-support; number=2.20; region=middle
+\begin{proposition}\label{proposition:ch02-finite-integral-support}
+若 $f\in L^+$ 且 $\int f<\infty$，则 $\{x:f(x)=\infty\}$ 为零测集，且 $\{x:f(x)>0\}$ 为 $\sigma$-有限集。
+\end{proposition}
+% SOURCE p=67; printed=52; object=ch02-finite-integral-support-proof-deferred; region=middle
+证明留给读者（\cref{exercise:ch02-finite-integral-support}）。
+
+\subsection*{习题}
+% SOURCE p=67; printed=52; object=ch02-exercise-finite-integral-support; number=12; region=lower
+\begin{exercise}\label{exercise:ch02-finite-integral-support}
+证明\cref{proposition:ch02-finite-integral-support}。（参见\cref{proposition:ch00-nonnegative-sums}，那里已证明一个特殊情形。）
+\end{exercise}
+% SOURCE p=67; printed=52; object=ch02-exercise-integral-restriction-convergence; number=13; region=lower
+\begin{exercise}\label{exercise:ch02-integral-restriction-convergence}
+设 $\{f_n\}\subseteq L^+$，$f_n\to f$ 逐点成立，且 $\int f=\lim\int f_n<\infty$。则对所有 $E\in\mathscr{M}$，$\int_E f=\lim\int_E f_n$。然而，当 $\int f=\lim\int f_n=\infty$ 时，这未必成立。
+\end{exercise}
+% SOURCE p=67; printed=52; object=ch02-exercise-density-measure; number=14; region=lower
+\begin{exercise}\label{exercise:ch02-density-measure}
+若 $f\in L^+$，对 $E\in\mathscr{M}$ 令 $\lambda(E)=\int_E f\,\mathrm{d}\mu$。则 $\lambda$ 为 $\mathscr{M}$ 上的测度，且对任意 $g\in L^+$，$\int g\,\mathrm{d}\lambda=\int fg\,\mathrm{d}\mu$。（先假设 $g$ 为简单函数。）
+\end{exercise}
+% SOURCE p=67; printed=52; object=ch02-exercise-decreasing-convergence; number=15; region=lower
+\begin{exercise}\label{exercise:ch02-decreasing-convergence}
+若 $\{f_n\}\subseteq L^+$，$f_n$ 逐点递减趋于 $f$，且 $\int f_1<\infty$，则 $\int f=\lim\int f_n$。
+\end{exercise}
+% SOURCE p=67; printed=52; object=ch02-exercise-finite-measure-restriction; number=16; region=lower
+\begin{exercise}\label{exercise:ch02-finite-measure-restriction}
+若 $f\in L^+$ 且 $\int f<\infty$，则对任意 $\epsilon>0$，存在 $E\in\mathscr{M}$，使得 $\mu(E)<\infty$ 且 $\int_E f>(\int f)-\epsilon$。
+\end{exercise}
+% SOURCE p=67; printed=52; object=ch02-exercise-fatou-implies-monotone; number=17; region=lower
+\begin{exercise}\label{exercise:ch02-fatou-implies-monotone}
+假设\cref{lemma:ch02-fatou}成立，并由此推出\cref{theorem:ch02-monotone-convergence}。
+\end{exercise}
+\end{document}

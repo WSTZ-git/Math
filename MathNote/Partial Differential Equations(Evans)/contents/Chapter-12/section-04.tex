@@ -1,0 +1,265 @@
+\documentclass[../../main.tex]{subfiles}
+
+\begin{document}
+
+\section{临界幂非线性}\label{section:ch12-临界幂非线性}
+
+现在考虑初值问题
+\begin{align}
+\begin{cases}
+u_{tt}-\Delta u+u^5=0 & \text{在 } \mathbb{R}^3\times(0,\infty) \text{ 中},\\
+u=g,\;u_t=h & \text{在 } \mathbb{R}^3\times\{t=0\} \text{ 上},
+\end{cases}
+\label{align:ch12-临界初值}
+\end{align}
+对应能量
+\begin{align}
+E(t)\coloneqq\int_{\mathbb{R}^3}\frac{1}{2}(u_t^2+|Du|^2)+\frac{u^6}{6}\,\mathrm{d}y.
+\label{align:ch12-临界能量}
+\end{align}
+继续假设 $g,h\in C_c^\infty(\mathbb{R}^3)$。任务是证明存在光滑解，即使对此临界幂 $p=5$ 情形，前节方法失效。
+
+首先需要关于线性波动方程更详细的信息：
+
+\begin{theorem}[三维波动方程的估计。]\label{theorem:ch12-三维波动估计}设 $v$ 求解线性初值问题
+\begin{align}
+\begin{cases}
+v_{tt}-\Delta v=f & \text{在 } \mathbb{R}^3\times(0,\infty) \text{ 中},\\
+v=g,\;v_t=h & \text{在 } \mathbb{R}^3\times\{t=0\} \text{ 上}.
+\end{cases}
+\label{align:ch12-线性波动}
+\end{align}
+对每个 $T>0$ 有估计
+\begin{align}
+\sup_{0\leqslant t\leqslant T}\|v(\cdot,t)\|_{L^6(\mathbb{R}^3)}+\|v\|_{L^4(0,T;L^{12}(\mathbb{R}^3))}\leqslant C(\|Dg\|_{L^2(\mathbb{R}^3)}+\|h\|_{L^2(\mathbb{R}^3)}+\|f\|_{L^1(0,T;L^2(\mathbb{R}^3))})
+\label{align:ch12-波动估计}
+\end{align}
+常数 $C=C(T)$。
+\end{theorem}
+
+\begin{proof}
+1. 必要时用光滑函数逼近 $f,g,h$，可假设 $v$ 光滑。然后计算
+\begin{align*}
+a(t)\coloneqq\left(\int_{\mathbb{R}^3}v_t^2+|Dv|^2\,\mathrm{d}x\right)^{1/2}
+\end{align*}
+的导数：
+\begin{align*}
+2\dot{a}(t)a(t)=2\int_{\mathbb{R}^3}(v_{tt}-\Delta v)v_t\,\mathrm{d}x=2\int_{\mathbb{R}^3}fv_t\,\mathrm{d}x\leqslant 2a(t)\|f(\cdot,t)\|_{L^2}.
+\end{align*}
+因此
+\begin{align*}
+\sup_{0\leqslant t\leqslant T}\|Dv(\cdot,t)\|_{L^2}\leqslant C(\|Dg\|_{L^2}+\|h\|_{L^2}+\|f\|_{L^1(0,T;L^2)}).
+\end{align*}
+因 $n=3$ 维时 $2^*=6$，Sobolev 不等式（\S5.6.3）给出所述 $\sup_{0\leqslant t\leqslant T}\|v\|_{L^6}$ 的估计。
+
+2. $v$ 的 $L^4(0,T;L^{12})$ 界的证明超出本教材范围。详见 Sogge~\cite{So} 及 Shatah--Struwe~\cite{S-S}。
+\end{proof}
+
+回忆 \S12.1 中能量通量计算，引入以下记号：
+
+\begin{definition}\label{notation:ch12-能量通量}
+给定 $(x_0,T)\in\mathbb{R}^3\times(0,\infty)$ 和 $0<s<T$，写
+\begin{align*}
+\phi(s)=\phi(s,x_0,T)\coloneqq\frac{1}{\sqrt{2}}\int_{\Gamma(x_0,T)\cap\{s\leqslant t<T\}}\frac{1}{2}|u_t\nu-Du|^2+\frac{u^6}{6}\,\mathrm{d}S
+\end{align*}
+表示时刻 $s$ 到 $T$ 之间通过曲面 $\Gamma(x_0,T)$ 的能量通量。
+\end{definition}
+
+\begin{theorem}[$L^6$-能量通量估计。]\label{theorem:ch12-L6能量通量估计}若 $u$ 是 $u_{tt}-\Delta u+u^5=0$ 在 $\mathbb{R}^3\times[0,T)$ 中的光滑解，则有估计
+\begin{align}
+\int_{B(x_0,T-s)}u^6\,\mathrm{d}x\leqslant C\phi(s)^{1/3}
+\label{align:ch12-L6通量}
+\end{align}
+对每个点 $x_0\in\mathbb{R}^3$ 和每个时刻 $0\leqslant s<T$。
+\end{theorem}
+
+\cref{theorem:ch12-L6能量通量估计} 很重要，因为它蕴含（如我们后面所见）全能量密度 $\frac{1}{2}(u_t^2+|Du|^2)+\frac{1}{6}u^6$ 不能在 $(x_0,T)$ 附近"集中"。证明依赖于 \S8.6 中为线性波动方程引入的伸缩不变性恒等式的非线性变体。
+
+\begin{proof}
+1. 可假设 $x_0=0$，暂时设 $s=0$。受 \S8.6\cref{example:ch08-6-4-波方程伸缩} 启发，用乘子 $m\coloneqq(t-T)u_t+x\cdot Du+u$ 乘 PDE $\square u+u^5=0$。经改写得到 Morawetz 型恒等式
+\begin{align}
+p_t-\operatorname{div}q=-\frac{u^6}{3},
+\label{align:ch12-Morawetz}
+\end{align}
+其中
+\begin{align*}
+p\coloneqq(t-T)\left(\frac{u_t^2+|Du|^2}{2}+\frac{u^6}{6}\right)+x\cdot Du\,u_t+uu_t
+\end{align*}
+和
+\begin{align*}
+q\coloneqq((t-T)u_t+x\cdot Du+u)Du+\left(\frac{u_t^2-|Du|^2}{2}-\frac{u^6}{6}\right)x.
+\end{align*}
+
+选取时刻 $0<\tau<T$。在截断后向波锥 $K(0,T)\cap\{0\leqslant t\leqslant\tau\}$ 上积分\eqref{align:ch12-Morawetz}，得到三项分别对应在弯曲侧 $\Gamma(0,T)\cap\{0\leqslant t\leqslant\tau\}$、底面 $B(0,T)\times\{t=0\}$ 和顶面 $B(0,T-\tau)\times\{t=\tau\}$ 上的积分。最后一项当 $\tau\to T$ 时趋于零。于是得到
+\begin{align}
+A-B=-\int_{K(0,T)}\frac{u^6}{3}\,\mathrm{d}x\mathrm{d}t\leqslant 0,
+\label{align:ch12-AB}
+\end{align}
+其中
+\begin{align*}
+A\coloneqq\frac{1}{\sqrt{2}}\int_{\Gamma(0,T)}p-q\cdot\nu\,\mathrm{d}S,\quad B\coloneqq\int_{B(0,T)}p(\cdot,0)\,\mathrm{d}x,
+\end{align*}
+$\nu\coloneqq x/|x|$。
+
+2. 断言
+\begin{align}
+A=\frac{1}{\sqrt{2}}\int_{\Gamma(0,T)}(t-T)\left|u_r-u_t+\frac{u}{|x|}\right|^2\,\mathrm{d}S+\frac{1}{2}\int_{\partial B(0,T)}u^2(\cdot,0)\,\mathrm{d}S,
+\label{align:ch12-A}
+\end{align}
+其中 $u_r\coloneqq Du\cdot x/|x|$。为确认，首先注意在 $\Gamma(0,T)$ 上 $|x|=T-t$，然后利用 (7)、(8) 计算验证
+\begin{align}
+p-q\cdot\nu=-|x|(u_t-u_r)^2+u(u_t-u_r) \quad \text{在 } \Gamma(0,T) \text{ 上}.
+\label{align:ch12-pq}
+\end{align}
+将弯曲曲面 $\Gamma(0,T)$ 上的面积分转化为球 $B(0,T)$ 上的积分，令
+\begin{align*}
+u^*(y)\coloneqq u(y,T-|y|).
+\end{align*}
+则 $u_r^*=\dfrac{y}{|y|}\cdot Du^*=u_r-u_t$，由\eqref{align:ch12-pq} 得
+\begin{align*}
+A=-\int_{B(0,T)}|y|(u_r^*)^2+u^*u_r^*\,\mathrm{d}y=-\int_{B(0,T)}|y|\left(u_r^*+\frac{u^*}{|y|}\right)^2\,\mathrm{d}y+\int_{B(0,T)}\frac{(u^*)^2}{|y|}+u^*u_r^*\,\mathrm{d}y.
+\end{align*}
+由于在 $\mathbb{R}^3$ 中 $\operatorname{div}(y/|y|)=2/|y|$，可计算
+\begin{align*}
+\int_{B(0,T)}\frac{(u^*)^2}{|y|}\,\mathrm{d}y=\frac{1}{2}\int_{B(0,T)}(u^*)^2\operatorname{div}\left(\frac{y}{|y|}\right)\,\mathrm{d}y=-\int_{B(0,T)}u^*u_r^*\,\mathrm{d}y+\frac{1}{2}\int_{\partial B(0,T)}(u^*)^2\,\mathrm{d}S.
+\end{align*}
+将此恒等式代入并换回原变量得到公式\eqref{align:ch12-A}。
+
+3. 接下来断言
+\begin{align}
+B\leqslant -T\int_{B(0,T)}\frac{u^6}{6}\,\mathrm{d}x+\frac{1}{2}\int_{\partial B(0,T)}u^2(\cdot,0)\,\mathrm{d}S.
+\label{align:ch12-B}
+\end{align}
+注意
+\begin{align*}
+B=\int_{B(0,T)}(-T)\left(\frac{u_t^2+|Du|^2}{2}+\frac{u^6}{6}\right)+(x\cdot Du+u)u_t\,\mathrm{d}x.
+\end{align*}
+若 $|x|\leqslant T$，则
+\begin{align*}
+|(x\cdot Du+u)u_t|\leqslant\frac{Tu_t^2}{2}+\frac{|x|^2}{2T}\left|\frac{Du\cdot x}{|x|}+\frac{u}{|x|}\right|^2\leqslant\frac{Tu_t^2}{2}+\frac{T}{2}\left|Du+\frac{x}{|x|^2}u\right|^2.
+\end{align*}
+因此
+\begin{align*}
+B\leqslant -T\int_{B(0,T)}\frac{u^6}{6}\,\mathrm{d}x+\frac{T}{2}\int_{B(0,T)}\left|Du+\frac{x}{|x|^2}u\right|^2-|Du|^2\,\mathrm{d}x=-T\int_{B(0,T)}\frac{u^6}{6}\,\mathrm{d}x+\frac{T}{2}\int_{B(0,T)}\frac{u^2}{|x|^2}+\frac{2}{|x|}uu_r\,\mathrm{d}x.
+\end{align*}
+由于在 $\mathbb{R}^3$ 中 $\operatorname{div}(y/|y|^2)=1/|y|^2$，如步骤 2 计算最后一积分等于 $\frac{1}{2}\int_{\partial B(0,T)}u^2\,\mathrm{d}S$。这证明了\eqref{align:ch12-B}。
+
+4. 结合\eqref{align:ch12-AB}、\eqref{align:ch12-A} 和\eqref{align:ch12-B}，推出
+\begin{align*}
+T\int_{B(0,T)}u^6\,\mathrm{d}x
+&\leqslant C\int_{\Gamma(0,T)}(T-t)\left|u_r-u_t+\frac{u}{|x|}\right|^2\,\mathrm{d}S\\
+&\leqslant CT\phi(0)+C\int_{\Gamma(0,T)}\frac{u^2}{|x|}\,\mathrm{d}S\\
+&\leqslant CT\phi(0)+C\left(\int_{\Gamma(0,T)}u^6\,\mathrm{d}S\right)^{1/3}
+\left(\int_{\Gamma(0,T)}|x|^{-3/2}\,\mathrm{d}S\right)^{2/3}.
+\end{align*}
+由于 $\int_{\Gamma(0,T)}|x|^{-3/2}\,\mathrm{d}S=CT^{3/2}$，最终推出
+\begin{align*}
+\int_{B(0,T)}u^6\,\mathrm{d}x\leqslant C\phi(0)^{1/3}.
+\end{align*}
+这是 $s=0$ 时的不等式\eqref{align:ch12-L6通量}，一般情形 $0\leqslant s<T$ 类似。
+\end{proof}
+
+接下来介绍临界幂波动方程存在全局时间光滑解的主要断言：
+
+\begin{theorem}[$u^5$ 非线性的全局存在性。]\label{theorem:ch12-u5全局存在}假设 $f,g$ 是具有紧支集的光滑函数。则初值问题\eqref{align:ch12-临界初值} 存在对所有时间的唯一光滑解。
+\end{theorem}
+
+\begin{proof}
+1. 假设 $0<T<\infty$，$u$ 是存在于 $\mathbb{R}^3\times[0,T)$ 的光滑紧支集解。将证明
+\begin{align}
+u\in L^\infty(\mathbb{R}^3\times[0,T)),
+\label{align:ch12-uLinf}
+\end{align}
+此时 \S12.3 的结果蕴含 $u$ 可光滑延拓超过时间 $T$。
+
+2. 首先断言若已知
+\begin{align}
+u\in L^4(0,T;L^{12}(\mathbb{R}^3)),
+\label{align:ch12-uL4}
+\end{align}
+则\eqref{align:ch12-uLinf} 成立。为此对 PDE $\square u+u^5=0$ 求导得 $\square v+5u^4v=0$，$v\coloneqq u_{x_k}$（$k=1,2,3$）。线性估计\eqref{align:ch12-波动估计} 给出界
+\begin{align*}
+\sup_{0\leqslant t\leqslant\tau}\|Du\|_{L^6}\leqslant C+C\int_0^\tau\|u^4Du\|_{L^2}\,\mathrm{d}t \quad (0\leqslant\tau\leqslant T).
+\end{align*}
+现在 $\|u^4Du\|_{L^2}\leqslant\|Du\|_{L^6}\|u\|_{L^{12}}^4$，因此
+\begin{align*}
+\sup_{0\leqslant t\leqslant\tau}\|Du\|_{L^6}\leqslant C+C\sup_{0\leqslant t\leqslant\tau}\|Du\|_{L^6}\int_0^\tau\|u\|_{L^{12}}^4\,\mathrm{d}t\leqslant C+\frac{1}{2}\sup_{0\leqslant t\leqslant\tau}\|Du\|_{L^6},
+\end{align*}
+只要 $\tau>0$ 足够小使得 $\int_0^\tau\|u\|_{L^{12}}^4\,\mathrm{d}t\leqslant\delta\coloneqq 1/(2C)$。因 $u\in L^4(0,T;L^{12})$，可选 $\tau=T/m>0$ 使得 $\int_{k\tau}^{(k+1)\tau}\|u\|_{L^{12}}^4\,\mathrm{d}t\leqslant\delta$（$k=1,\cdots,m-1$）。然后在时间区间 $[0,\tau],[\tau,2\tau],\cdots,[(m-1)\tau,T)$ 上迭代应用前述论证，最终推出
+\begin{align*}
+\sup_{0\leqslant t<T}\|Du\|_{L^6}\leqslant C.
+\end{align*}
+因 $u$ 有紧支集，这蕴含 $\|u\|_{L^\infty((0,T)\times\mathbb{R}^3)}\leqslant C$，故\eqref{align:ch12-uLinf} 成立。
+
+3. 接下来证明对每个点 $x_0\in\mathbb{R}^3$，
+\begin{align}
+\lim_{s\to T}\int_{B(x_0,T-s)}u^6\,\mathrm{d}x=0.
+\label{align:ch12-u6极限}
+\end{align}
+事实上\cref{theorem:ch12-L6能量通量估计}提供的关键估计\eqref{align:ch12-L6通量} 断言
+\begin{align*}
+\int_{B(x_0,T-s)}u^6\,\mathrm{d}x\leqslant C\phi(s)^{1/3}
+\end{align*}
+对能量通量 $\phi(s)$。但由 \S12.2\cref{theorem:ch05-Sobolev嵌入}，$\phi(s)=e(s)-\lim_{r\to 0}e(r)$，其中
+\begin{align*}
+e(t)\coloneqq\int_{B(x_0,T-t)}\frac{1}{2}(u_t^2+|Du|^2)+\frac{u^6}{6}\,\mathrm{d}x.
+\end{align*}
+由于 $t\mapsto e(t)$ 非增，$\lim_{s\to T}\phi(s)=0$，从而\eqref{align:ch12-u6极限} 成立。（注意此论证中我们不需要知道 $\lim_{r\to 0}e(r)=0$，尽管下一步表明这事实上成立。）
+
+4. 断言\eqref{align:ch12-u6极限} 蕴含
+\begin{align}
+\lim_{s\to T}\int_{B(x_0,T-s)}u_t^2+|Du|^2\,\mathrm{d}x=0
+\label{align:ch12-能量极限}
+\end{align}
+对每个点 $x_0$。为此首先证明\eqref{align:ch12-u6极限} 蕴含
+\begin{align}
+u\in L^4(0,T;L^{12}(B(x_0,T-t))).
+\label{align:ch12-uL4局部}
+\end{align}
+由线性估计\eqref{align:ch12-波动估计}，
+\begin{align*}
+\|u\|_{L^4(s,\tau;L^{12}(B(x_0,T-t)))} \leqslant C+C\int_s^\tau\|u^5\|_{L^2(B(x_0,T-t))}\,\mathrm{d}t
+\end{align*}
+对每个 $s\leqslant\tau<T$。插值不等式 $\|u\|_{L^{10}}\leqslant\|u\|_{L^6}^{1/5}\|u\|_{L^{12}}^{4/5}$（\S B.2）蕴含
+\begin{align*}
+\|u^5\|_{L^2}=\|u\|_{L^{10}}^5\leqslant\|u\|_{L^6}\|u\|_{L^{12}}^4.
+\end{align*}
+因此
+\begin{align*}
+\int_s^\tau\|u^5\|_{L^2(B(x_0,T-t))}\,\mathrm{d}t\leqslant\sup_{s\leqslant t\leqslant T}\|u\|_{L^6(B(x_0,T-t))}\int_s^\tau\|u\|_{L^{12}(B(x_0,T-t))}^4\,\mathrm{d}t.
+\end{align*}
+由\eqref{align:ch12-u6极限} 和前述，给定任何 $\varepsilon>0$ 可选时刻 $0<s<T$ 使得
+\begin{align*}
+\|u\|_{L^4(s,\tau;L^{12}(B(x_0,T-t)))}\leqslant C+\varepsilon\|u\|_{L^4(s,\tau;L^{12}(B(x_0,T-t)))}^4
+\end{align*}
+对所有 $s\leqslant\tau<T$。此式形如 $\phi(\tau)\leqslant C_1+\varepsilon\phi(\tau)^4$（$s\leqslant\tau<T$），$\phi(s)=0$。因此 $\phi(\tau)\leqslant 2C_1$（$s\leqslant\tau<T$）只要 $\varepsilon$ 足够小。这证明了\eqref{align:ch12-uL4局部}。
+
+于是\eqref{align:ch12-uL4局部} 使我们可对 $v\coloneqq u_{x_k}$（$k=1,2,3$）和 $v\coloneqq u_t$ 应用步骤 2 的方法。此推理提供界
+\begin{align*}
+\sup_{0\leqslant t<T}\|Du,u_t\|_{L^6(B(x_0,T-t))}\leqslant C,
+\end{align*}
+从而给出\eqref{align:ch12-能量极限}。
+
+5. 接下来稍改进\eqref{align:ch12-uL4局部}：断言对每个 $x_0\in\mathbb{R}^3$ 存在 $\delta=\delta(x_0)>0$ 使得
+\begin{align}
+u\in L^4(0,T;L^{12}(B(x_0,T-t+\delta))).
+\label{align:ch12-uL4扩大}
+\end{align}
+为此注意\eqref{align:ch12-u6极限} 和\eqref{align:ch12-能量极限} 一起蕴含给定任何常数 $\varepsilon>0$，可找到 $0<s<T$ 使得
+\begin{align*}
+\int_{B(x_0,T-s)}u_t^2+|Du|^2+u^6\,\mathrm{d}x\leqslant\varepsilon.
+\end{align*}
+然后
+\begin{align*}
+\int_{B(x_0,T-s+\delta)}u_t^2+|Du|^2+u^6\,\mathrm{d}x\leqslant 2\varepsilon
+\end{align*}
+对某小 $\delta>0$。标准能量计算给出
+\begin{align*}
+\sup_{s\leqslant t<T}\int_{B(x_0,T-t+\delta)}u^6\,\mathrm{d}x\leqslant C\varepsilon.
+\end{align*}
+步骤 4 中引入的技术然后建立\eqref{align:ch12-uL4扩大}。
+
+6. 总结至此：对每个点 $x_0$，存在 $\delta=\delta(x_0)>0$ 使得 $u$ 满足\eqref{align:ch12-uL4扩大}。因 $u$ 有紧支集，可找到有限个点 $\{x_k\}_{k=1}^N$ 使得 $\operatorname{spt}u(\cdot,T)\subset\bigcup_{k=1}^N B(x_k,\delta(x_k))$。于是 $u\in L^4(0,T;L^{12}(\mathbb{R}^3))$。步骤 2 蕴含 $u\in L^\infty(\mathbb{R}^3\times[0,T))$。如步骤 1 所述，这就是我们的目标。
+\end{proof}
+
+\end{document}

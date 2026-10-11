@@ -1,0 +1,727 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}}
+
+\begin{document}
+
+\section{Sobolev空间}\label{section:ch05-Sobolev空间}
+
+\subsection{弱导数}\label{subsection:ch05-弱导数}
+
+\begin{definition}
+设 \(X\) 为拓扑空间，\(A,B\subseteq X\)。若
+\[
+\overline{A}\text{ 是 }X\text{ 中的紧集，且 }\overline{A}\subseteq B,
+\]
+则称 \(A\) \textbf{紧包含于} \(B\)，记作
+\[
+A\subset\subset B
+\quad(\text{或 } A\Subset B).
+\]
+特别地,当 $B$ 是开集时，$A \subset\subset B$ 等价于 $\overline{A}$ 是紧集，且 $\mathrm{dist}(\overline{A}, \partial B) > 0$。
+\end{definition}
+\begin{remark}
+引入“紧包含”这一概念，核心动机在于将“全局问题”转化为“局部问题”，并为各种分析工具提供合法的操作空间。
+具体原因如下:
+
+(i)磨光的几何限制。正如之前所分析的，磨光算子的定义要求函数在点 $x$ 的完整 $\varepsilon$-邻域内有定义，且由\hyperref[theorem:appC-光滑算子的性质]{光滑算子的性质}知,磨光后的支集会向外膨胀 $\varepsilon$的厚度，即 $\mathrm{spt}(u^\varepsilon) \subseteq \mathrm{spt}(u) + \overline{B(0,\varepsilon)}$。如果我们在 $V \subset\subset U$ 上工作，并选取磨光半径 $0 < \varepsilon < \mathrm{dist}(V, \partial U)$，那么 $V$ 的 $\varepsilon$-邻域将完全落在 $U$ 的内部。这就避开了“零延拓”带来的问题：若在边界附近直接做零延拓，卷积会在边界附近导数爆炸，导致磨光序列在 $W^{k,p}$ 范数下无法收敛，且会破坏原有的边界条件。如果只在紧包含的子集上磨光，这个子集的边界仍在定义域内部，那么磨光就是合法的.例如\hyperref[theorem:实值-Kirszbraun扩张定理]{扩张定理}的证明.
+
+(ii)截断函数与分部积分的需求。在能量方法中，我们经常需要分部积分来导出先验估计。然而，分部积分会产生边界项，而我们对函数在边界上的行为往往缺乏控制。通过选取嵌套的紧包含 $V \subset\subset W \subset\subset U$，我们可以构造一个截断函数 $\zeta \in C_c^\infty(U)$，使得 $\zeta \equiv 1$ 于 $V$，而 $\zeta \equiv 0$ 于 $U \setminus W$。于是，在对乘以 $\zeta$ 后的函数进行分部积分时，边界项会因 $\zeta$ 在边界附近为零而彻底消失。这使得我们可以在局部区域 $V$ 上自由地使用微积分基本定理和能量估计，而不必担心边界带来的麻烦。
+
+(iii)定义局部 Sobolev 空间与推导内部正则性。许多偏微分方程的解在区域内部具有很好的光滑性，但在边界上可能由于边界条件或区域几何形状而表现不佳。空间 $W_{\mathrm{loc}}^{k,p}(U)$ 的定义是：对任意 $V \subset\subset U$，都有 $u \in W^{k,p}(V)$。这里的紧包含将“整体”切分成了“局部”，使得我们可以逐块地证明内部正则性定理（如内部 $H^2$ 估计），再用有限覆盖定理将局部结果拼凑成全局结论。
+
+综上所述，引入紧包含为了在边界行为难以控制的情况下，通过紧包含的子集，确保磨光、截断、分部积分能够合法。
+\end{remark}
+
+\begin{proposition}\label{proposition:开集中的紧集距离边界距离必大于0}
+设 $A\subseteq \mathbb{R}^n$ 是开集, $B\subseteq A$ 是紧集. 则$\operatorname{dist}(B,\partial A)>0.$
+\end{proposition}
+\begin{proof}
+因为 $B$ 紧且 $B\subseteq A$, 而 $\partial A$ 闭, 且
+\begin{align*}
+B\cap \partial A=\varnothing.
+\end{align*}
+反设 $\operatorname{dist}(B,\partial A)=0$. 则存在 $x_i\in B$, $y_i\in\partial A$ 使得
+\begin{align*}
+|x_i-y_i|<\frac{1}{i},\quad i=1,2,\cdots.
+\end{align*}
+由于 $B$ 紧, 存在子列 $x_{i_k}\to x\in B$. 于是
+\begin{align*}
+|y_{i_k}-x|
+\leqslant |y_{i_k}-x_{i_k}|+|x_{i_k}-x|<\frac{1}{i_k}+|x_{i_k}-x|\to 0.
+\end{align*}
+故 $y_{i_k}\to x$. 因为 $\partial A$ 闭, 所以 $x\in\partial A$. 但 $x\in B\subseteq A$, 而 $A\cap\partial A=\varnothing$, 矛盾! 因此
+$\operatorname{dist}(B,\partial A)>0.$
+\end{proof}
+
+\begin{definition}
+设 $U \subseteq \mathbb{R}^n$ 是一个非空开集,记 $C^{\infty}_{c}(U)$ 为所有支集含于 $U$ 中的无穷可微函数 $\phi:U\to\mathbb{R}$ 所构成的空间。我们有时把属于 $C^{\infty}_{c}(U)$ 的函数 $\phi$ 称为\textbf{检验函数}。
+\end{definition}
+
+\begin{definition}\label{definition:local_integrable_2026}
+设 $U \subseteq \mathbb{R}^n$ 是一个非空开集,$1\leqslant p\leqslant \infty$,定义
+\begin{align*}
+L_{\mathrm{loc}}^{p}\left( U \right) \triangleq \left\{ u:U\rightarrow \mathbb{R} \mid \text{对每个}V\subset \subset U,u\in L^p\left( V \right) \right\} .
+\end{align*}
+称在$L_{\mathrm{loc}}^{p}$中的函数为\textbf{局部可积函数}或\textbf{局部可和函数}.
+
+在 $L_{\mathrm{loc}}^p(U)$ 中定义等价关系 $\sim$ 如下:
+\begin{align*}
+f \sim g\iff f(x)=g(x)\quad \text{a.e.}\,x \in U.
+\end{align*}
+将商空间$L_{\mathrm{loc}}^p(U)/\sim$仍记作 $L_{\mathrm{loc}}^p(U)$. 该商空间中的元素为等价类 $[f]$, 线性运算定义为 $[f]+[g] \triangleq [f+g]$, $\lambda [f] \triangleq [\lambda f]$, 这些运算是良定义的. 因此 $L_{\mathrm{loc}}^p(U)$也是一个线性空间.
+\end{definition}
+\begin{remark}
+$L_{\mathrm{loc}}^p(U)$和$L_{\mathrm{loc}}^p(U)/\sim$都用$L_{\mathrm{loc}}^p(U)$表示虽然是符号滥用，但是一般并不会造成歧义.今后，我们可以将$L_{\mathrm{loc}}^p(U)$中几乎处处相等的函数视为同一个元素, 即 $L_{\mathrm{loc}}^p(U)$ 是由等价类构成的线性空间.
+\end{remark}
+
+\begin{definition}\label{definition:ch05-弱偏导数}
+设 $U \subseteq \mathbb{R}^n$ 是一个非空开集, $u,v\in L^{1}_{\mathrm{loc}}(U)$，$\alpha$ 为一多重指标。我们称 $v\in L^{1}_{\mathrm{loc}}(U)$ 为 $u$ 的 \textbf{$\alpha$ 阶弱偏导数}，记作
+$D^{\alpha}u=v,$
+只要对一切检验函数 $\phi\in C^{\infty}_{c}(U)$ 都有
+\begin{align}
+\int_{U}uD^{\alpha}\phi\,\mathrm{d}x=(-1)^{|\alpha|}\int_{U}v\phi\,\mathrm{d}x.
+\label{align:ch05-弱导数定义}
+\end{align}
+\end{definition}
+\begin{remark}
+换言之，给定 $u$ 后，若恰好存在一个函数 $v$ 对一切 $\phi$ 都满足式~\eqref{align:ch05-弱导数定义}，我们就称在弱意义下 $D^{\alpha}u=v$。若不存在这样的函数 $v$，则 $u$ 不具有弱 $\alpha$ 阶偏导数。
+\end{remark}
+\begin{remark}
+\textbf{弱导数定义的动机:} 设给定函数 $u\in C^{1}(U)$。则若 $\phi\in C^{\infty}_{c}(U)$，由分部积分公式可见
+\begin{align}
+\int_{U}u\phi_{x_{i}}\,\mathrm{d}x=-\int_{U}u_{x_{i}}\phi\,\mathrm{d}x \qquad (i=1,\cdots,n).
+\label{align:ch05-partbyparts1}
+\end{align}
+由于 $\phi$ 在 $U$ 中具有紧支集，因而在 $\partial U$ 附近为零，故没有边界项。更一般地，若 $k$ 为正整数，$u\in C^{k}(U)$，且 $\alpha=(\alpha_{1},\cdots,\alpha_{n})$ 为满足 $|\alpha|=\alpha_{1}+\cdots+\alpha_{n}=k$ 的多重指标，则
+\begin{align}
+\int_{U}uD^{\alpha}\phi\,\mathrm{d}x=(-1)^{|\alpha|}\int_{U}D^{\alpha}u\,\phi\,\mathrm{d}x.
+\label{align:ch05-partbyparts2}
+\end{align}
+该等式成立是因为
+\begin{align*}
+D^{\alpha}\phi=\frac{\partial^{\alpha_{1}}}{\partial x_{1}^{\alpha_{1}}}\cdots\frac{\partial^{\alpha_{n}}}{\partial x_{n}^{\alpha_{n}}}\phi,
+\end{align*}
+我们可将式~\eqref{align:ch05-partbyparts1} 应用 $|\alpha|$ 次。
+
+下面考察对 $u\in C^{k}(U)$ 成立的式~\eqref{align:ch05-partbyparts2}，并追问：即使 $u$ 并非 $k$ 次连续可微，它的某种变形是否仍可能成立。只要 $u$ 局部可和，式~\eqref{align:ch05-partbyparts2} 的左端就有意义；问题在于若 $u$ 不是 $C^{k}$，则式~\eqref{align:ch05-partbyparts2} 右端的“$D^{\alpha}u$”一词就没有显然的含义。我们通过追问是否存在一个局部可和函数 $v$，使式~\eqref{align:ch05-partbyparts2} 仍成立而以 $v$ 代替 $D^{\alpha}u$，来解决这一困难.
+\end{remark}
+
+\begin{lemma}[变分法基本原理]\label{lemma:变分法基本原理}
+设 $U \subseteq \mathbb{R}^n$ 是非空开集, $w \in L_{\mathrm{loc}}^1(U)$. 若对任意函数 $\phi \in C_c^\infty(U)$, 都有
+\begin{align*}
+\int_U w(x)\phi(x)\mathrm{d}x = 0,
+\end{align*}
+则 $w(x)=0$ 对几乎处处的 $x \in U$ 成立.
+\end{lemma}
+\begin{proof}
+
+假设 $w$ 在 $U$ 上不是几乎处处为零. 那么存在一个正测度集 $E \subseteq U$, 在 $E$ 上 $w > 0$ 或者 $w < 0$. 不妨设 $w > 0$ (若 $w < 0$, 则对 $-w$ 讨论).
+
+已知 $w \in L_{\mathrm{loc}}^1(U)$，$E \subseteq U$ 且 $|E| > 0$，在 $E$ 上 $w > 0$。现在证明存在紧集 $K \subseteq E$ 和常数 $c > 0$，使得在 $K$ 上 $w \geqslant c$，且 $|K| > 0$。
+
+因为 $w$ 局部可积，所以 $w$ 在 $U$ 上几乎处处有限。因此，在 $E$ 上几乎处处有 $0 < w(x) < \infty$。
+对每个正整数 $m$，定义集合
+\begin{align*}
+E_m \triangleq \left\{x \in E : w(x) \geqslant \frac{1}{m}\right\}.
+\end{align*}
+显然，$E = \bigcup\limits_{m=1}^{\infty} E_m$。这是因为对于任意 $x \in E$，都有 $w(x) > 0$，从而存在某个正整数 $m$，使得 $w(x) \geqslant \frac{1}{m}$。
+由测度的可数可加性，有
+\begin{align*}
+|E| \leqslant \sum\limits_{m=1}^{\infty} |E_m|.
+\end{align*}
+因为 $|E| > 0$，所以必定存在某个正整数 $m_0$，使得 $|E_{m_0}| > 0$。
+由Lebesgue测度的内正则性，对于可测集 $E_{m_0}$，存在紧集 $K \subseteq E_{m_0}$，使得 $|K| > 0$。
+令 $c \triangleq \frac{1}{m_0} > 0$。由于 $K \subseteq E_{m_0}$，对于任意 $x \in K$，都有
+\begin{align*}
+w(x) \geqslant \frac{1}{m_0} = c.
+\end{align*}
+综上，我们找到了满足条件的紧集 $K$ 和常数 $c$。
+
+由 $U$ 是开集且 $K$ 是紧集, 我们可以构造一个标准的截断函数 $\phi \in C_c^\infty(U)$, 满足:
+\begin{enumerate}[(i)]
+\item $0 \leqslant \phi(x) \leqslant 1$
+
+\item 在 $K$ 上, $\phi(x) = 1$
+
+\item $\operatorname{spt}(\phi) \subseteq U$
+\end{enumerate}
+(构造方法: 取 $K$ 的一个紧邻域 $V \subset\subset U$, 利用磨光核 $\eta_\varepsilon$ 与 $V$ 的特征函数 $\chi_V$ 作卷积即可).
+
+现在计算积分:
+\begin{align*}
+\int_U w(x)\phi(x)\mathrm{d}x = \int_K w(x)\phi(x)\mathrm{d}x + \int_{U\setminus K} w(x)\phi(x)\mathrm{d}x,
+\end{align*}
+由于在 $K$ 上 $w \geqslant c$ 且 $\phi=1$, 在 $U\setminus K$ 上 $w\phi \geqslant 0$, 我们有:
+\begin{align*}
+\int_U w(x)\phi(x)\mathrm{d}x \geqslant \int_K c\cdot 1 \mathrm{d}x = c|K| > 0.
+\end{align*}
+这与题设对任意函数 $\phi \in C_c^\infty(U)$积分都为0矛盾! 因此假设不成立, $w = 0$ 对几乎处处的 $x \in U$ 成立.
+\end{proof}
+
+\begin{lemma}[弱导数的唯一性]\label{lemma:ch05-弱导数唯一性}
+设 $U \subseteq \mathbb{R}^n$ 是一个非空开集,若$u\in L_{\mathrm{loc}}^1(U)$ 的 $\alpha$ 阶弱偏导数若存在，则在相差一个零测集的意义下唯一。
+\end{lemma}
+\begin{proof}
+设 $v,\widetilde{v}\in L^{1}_{\mathrm{loc}}(U)$ 满足对一切 $\phi\in C^{\infty}_{c}(U)$，
+\begin{align*}
+\int_{U}uD^{\alpha}\phi\,\mathrm{d}x=(-1)^{|\alpha|}\int_{U}v\phi\,\mathrm{d}x=(-1)^{|\alpha|}\int_{U}\widetilde{v}\phi\,\mathrm{d}x.
+\end{align*}
+于是对一切 $\phi\in C^{\infty}_{c}(U)$，
+\begin{align*}
+\int_{U}(v-\widetilde{v})\phi\,\mathrm{d}x=0,
+\end{align*}
+因而由\hyperref[lemma:变分法基本原理]{变分法基本原理}知$v-\widetilde{v}=0$ 几乎处处成立。
+\end{proof}
+
+\begin{example}\label{example:ch05-弱导例1}
+取 $n=1$，$U=(0,2)$，令
+\begin{align*}
+u(x)=
+\begin{cases}
+x, & 0<x\leqslant 1,\\
+1, & 1\leqslant x<2.
+\end{cases}
+\end{align*}
+求$u$的一阶弱导数.
+\end{example}
+\begin{solution}
+定义
+\begin{align*}
+v(x)=
+\begin{cases}
+1, & 0<x\leqslant 1,\\
+0, & 1<x<2.
+\end{cases}
+\end{align*}
+我们证明在弱意义下 $u'=v$。为此任取 $\phi\in C^{\infty}_{c}(U)$。需证
+\begin{align*}
+\int_{0}^{2}u\phi'\,\mathrm{d}x=-\int_{0}^{2}v\phi\,\mathrm{d}x.
+\end{align*}
+按弱导数定义，由$u$的连续性，分部积分计算得
+\begin{align*}
+&\int_{0}^{2}u\phi'\,\mathrm{d}x
+=\int_{0}^{1}x\phi'\,\mathrm{d}x+\int_{1}^{2}\phi'\,\mathrm{d}x
+=-\int_{0}^{1}\phi\,\mathrm{d}x+\phi(1)-\phi(1)
+=-\int_{0}^{2}v\phi\,\mathrm{d}x
+\\
+&\Longleftrightarrow \int_0^1{\left( v-1 \right) \phi \,\mathrm{d}x}+\int_1^2{v\phi \,\mathrm{d}x}=0，
+\end{align*}
+因此$v(x)$就是$u$的一阶弱导数.
+\end{solution}
+
+\begin{example}\label{example:ch05-弱导例2}
+取 $n=1$，$U=(0,2)$，令
+\begin{align*}
+u(x)=
+\begin{cases}
+x, & 0<x\leqslant 1,\\
+2, & 1<x<2.
+\end{cases}
+\end{align*}
+求$u$的弱导数,若不存在,请证明.
+\end{example}
+\begin{solution}
+我们断言 $u'$ 在弱意义下不存在。为检验这一点，须证明不存在任何函数 $v\in L^{1}_{\mathrm{loc}}(U)$ 使对一切 $\phi\in C^{\infty}_{c}(U)$ 都有
+\begin{align}
+\int_{0}^{2}u\phi'\,\mathrm{d}x=-\int_{0}^{2}v\phi\,\mathrm{d}x.
+\label{align:ch05-弱导不存在}
+\end{align}
+反设式~\eqref{align:ch05-弱导不存在} 对某个 $v$ 和一切 $\phi$ 成立。则
+\begin{align*}
+-\int_{0}^{2}v\phi\,\mathrm{d}x
+=\int_{0}^{2}u\phi'\,\mathrm{d}x
+=\int_{0}^{1}x\phi'\,\mathrm{d}x+2\int_{1}^{2}\phi'\,\mathrm{d}x=-\int_{0}^{1}\phi\,\mathrm{d}x-\phi(1).
+\end{align*}
+取光滑函数序列 $\{\phi_{m}\}_{m=1}^{\infty}$ 满足
+\begin{align*}
+0\leqslant\phi_{m}\leqslant 1,\qquad \phi_{m}(1)=1,\qquad \phi_{m}(x)\to 0\ \text{对一切}\ x\neq 1.
+\end{align*}
+在式~\eqref{align:ch05-弱导不存在} 中以 $\phi_{m}$ 代替 $\phi$ 并令 $m\to\infty$，得
+\begin{align*}
+1=\lim_{m\to\infty}\phi_{m}(1)
+=\lim_{m\to\infty}\left[\int_{0}^{2}v\phi_{m}\,\mathrm{d}x-\int_{0}^{1}\phi_{m}\,\mathrm{d}x\right]=0,
+\end{align*}
+矛盾！
+\end{solution}
+
+\subsection{Sobolev空间的定义}\label{subsection:ch05-Sobolev空间定义}
+
+\begin{definition}\label{definition:ch05-Wkp}
+固定正整数 $k$ 与 $1\leqslant p\leqslant \infty$，设 $U \subseteq \mathbb{R}^n$ 是一个非空开集,\textbf{Sobolev空间}$W^{k,p}(U)$由所有局部可和函数 $u:U\to\mathbb{R}$ 组成，其中对每个满足 $|\alpha|\leqslant k$ 的多重指标 $\alpha$，$D^{\alpha}u$ 在弱意义下存在且属于 $L^{p}(U)$。
+\end{definition}
+
+\begin{remark}\label{remark:ch05-Hk记号}
+(i)若 $p=2$，我们通常写
+\begin{align*}
+H^{k}(U)=W^{k,2}(U)\qquad (k=0,1,\cdots).
+\end{align*}
+使用字母 $H$ 是因为正如我们将看到的$H^{k}(U)$ 是一个Hilbert空间。注意 $H^{0}(U)=L^{2}(U)$。
+
+(ii)此后我们将 $W^{k,p}(U)$ 中几乎处处相等的函数视为等同。
+\end{remark}
+
+\begin{definition}\label{definition:ch05-Wkp范数}
+固定正整数 $k$ 与 $1\leqslant p\leqslant \infty$，设 $U \subseteq \mathbb{R}^n$ 是一个非空开集,若 $u\in W^{k,p}(U)$，定义其范数为
+\begin{align*}
+\|u\|_{W^{k,p}(U)}\triangleq
+\begin{cases}
+\left(\sum_{|\alpha|\leqslant k}\int_{U}|D^{\alpha}u|^{p}\,\mathrm{d}x\right)^{\frac{1}{p}}, & 1\leqslant p<\infty,\\
+\sum_{|\alpha|\leqslant k}\operatorname*{ess\,sup}_{U}|D^{\alpha}u|, & p=\infty.
+\end{cases}
+\end{align*}
+\begin{enumerate}[(1)]
+\item 设 $\{u_{m}\}_{m=1}^{\infty}\subset W^{k,p}(U)$，$u\in W^{k,p}(U)$。我们称 $u_{m}$ 在 $W^{k,p}(U)$ 中收敛于 $u$，记作 $u_{m}\to u$ 于 $W^{k,p}(U)$，只要
+\begin{align*}
+\lim_{m\to\infty}\|u_{m}-u\|_{W^{k,p}(U)}=0.
+\end{align*}
+\item 我们写 $u_{m}\to u$ 于 $W^{k,p}_{\mathrm{loc}}(U)$，意指对每个 $V\subset \subset U$，都有 $u_{m}\to u$ 于 $W^{k,p}(V)$。
+\end{enumerate}
+我们记$W^{k,p}_{0}(U)$为 $C^{\infty}_{c}(U)$ 在 $W^{k,p}(U)$ 中的闭包。因此 $u\in W^{k,p}_{0}(U)$ 当且仅当存在函数 $u_{m}\in C^{\infty}_{c}(U)$ 使 $u_{m}\to u$ 于 $W^{k,p}(U)$。
+\end{definition}
+\begin{remark}
+我们把 $W^{k,p}_{0}(U)$ 理解为由那些 $u\in W^{k,p}(U)$ 中满足“$D^{\alpha}u=0$ 于 $\partial U$”（对一切 $|\alpha|\leqslant k-1$）的函数所组成。
+习惯上写
+\begin{align*}
+H^{k}_{0}(U)=W^{k,2}_{0}(U).
+\end{align*}
+我们将在习题中看到，若 $n=1$ 且 $U$ 为 $\mathbb{R}^{1}$ 中的开区间，则 $u\in W^{1,p}(U)$ 当且仅当 $u$ 几乎处处等于一个绝对连续函数，且其（几乎处处存在的）常义导数属于 $L^{p}(U)$。然而如此简单的刻画仅对 $n=1$ 可用。一般地，一个函数可以属于某个Sobolev空间，却仍然不连续或无界。
+\end{remark}
+\begin{remark}
+Sobolev空间 \(W^{k,p}(U)\) 的范数如此定义的原因:
+\begin{enumerate}[(1)]
+\item \textbf{对所有 \(|\alpha|\leqslant k\) 的导数求和。} 这既是为了保证范数的正定性（避免常数函数与零函数混淆），也是因为Sobolev空间不依附于特定边界条件。与H\"older空间不同，最高阶导数的 \(L^p\) 可积性无法控制低阶导数的可积性。必须对直到 \(k\) 阶的所有弱导数进行统一控制，才能构造出一个完备的Banach空间。
+\item \textbf{当 \(1\leqslant p<\infty\) 时开 \(\frac{1}{p}\) 次幂。} 这是为了满足范数公理中的齐次性，即将 \(p\) 次齐次转化为线性齐次 \(\|\lambda u\|=|\lambda|\|u\|\)，同时保证三角不等式成立，使得该空间成为赋范线性空间。
+
+\item \textbf{当 \(p=\infty\) 时使用本性上确界。} 因为 \(W^{k,\infty}\) 中的元素是几乎处处相等的等价类，如果使用普通上确界，改变零测集上的函数值就会改变范数。使用 \(\operatorname*{ess\,sup}\) 可以忽略零测集的影响，使得范数在商空间上良定义。
+
+\item \textbf{\(W_0^{k,p}(U)\) 定义为 \(C_c^\infty(U)\) 的闭包。} 偏微分方程需要刻画“在边界上为零”的边界条件，但边界是零测集，无法直接取逐点值。利用\cref{theorem:ch05-零迹函数}可知$W_0^{k,p}(U)$就是迹算子的核空间.
+\end{enumerate}
+\end{remark}
+
+\begin{example}\label{example:ch05-径向奇异}
+取 $U=B^{0}(0,1)$，即 $\mathbb{R}^{n}$ 中的开单位球，令
+\begin{align*}
+u(x)=|x|^{-\alpha}\qquad (x\in U,\ x\neq 0).
+\end{align*}
+对哪些 $\alpha>0$、$n$、$p$ 值，$u$ 属于 $W^{1,p}(U)$？
+\end{example}
+\begin{solution}
+
+首先注意 $u$ 在 $0$ 之外光滑，且
+\begin{align*}
+D u(x)=-\alpha\frac{x}{|x|^{\alpha+2}}\qquad (x\neq 0),
+\end{align*}
+因而
+\begin{align*}
+| D u(x)|=\frac{|\alpha|}{|x|^{\alpha+1}}\qquad (x\neq 0).
+\end{align*}
+设 $\phi\in C^{\infty}_{c}(U)$，固定 $\varepsilon>0$。则由\hyperref[Basis of Analytics-theorem:Green恒等式-3]{Green恒等式\ref{Basis of Analytics-theorem:Green恒等式-3}}可得
+\begin{align*}
+\int_{U-B(0,\varepsilon )}{u D \phi \,\mathrm{d}x}=-\int_{U-B(0,\varepsilon )}{\phi  D u\,\mathrm{d}x}+\int_{\partial B(0,\varepsilon )}{u\phi \nu _i\,\mathrm{d}S}+\int_{\partial U}{u\phi \mu _i\,\mathrm{d}S},
+\end{align*}
+其中 $\nu=(\nu_{1},\cdots,\nu_{n})$ 表示 $\partial B(0,\varepsilon)$ 上的单位内法向量,$\mu=(\mu_{1},\cdots,\mu_{n})$ 表示 $\partial U$ 上的单位外法向量。因为 $\phi \in C_c^\infty(U)$，故在 $\partial U$ 上 $\phi \equiv 0$，从而 $\int_{\partial U}u\phi\mu_{i}\,\mathrm{d}S = 0$。因此
+\begin{align}\label{eq::JIOJIOWJ22221}
+\int_{U-B(0,\varepsilon)}u D \phi\,\mathrm{d}x
+=-\int_{U-B(0,\varepsilon)}\phi D u\,\mathrm{d}x
++\int_{\partial B(0,\varepsilon)}u\phi\nu_{i}\,\mathrm{d}S.
+\end{align}
+由\hyperref[theorem:appC-极坐标]{极坐标公式}知
+\begin{align*}
+\int_U{\left|  D u \right|^p\,\mathrm{d}x}&=\int_0^1{\left( \int_{\partial B\left( 0,r \right)}{\frac{\left| \alpha \right|^p}{\left| x \right|^{\left( \alpha +1 \right) p}}\,\mathrm{d}S} \right) \mathrm{d}r}=\int_0^1{\left( \int_{\partial B\left( 0,r \right)}{\frac{\left| \alpha \right|^p}{r^{\left( \alpha +1 \right) p}}\,\mathrm{d}S} \right) \mathrm{d}r}
+\\
+&=\int_0^1{n\alpha \left( n \right) r^{n-1}\cdot \frac{\left| \alpha \right|^p}{r^{\left( \alpha +1 \right) p}}\mathrm{d}r}=n\alpha \left( n \right) \left| \alpha \right|\int_0^1{\frac{1}{r^{\left( \alpha +1 \right) p-\left( n-1 \right)}}\mathrm{d}r}.
+\end{align*}
+故$| D u(x)|=\dfrac{|\alpha|}{|x|^{\alpha+1}}\in L^{p}(U)$ 当且仅当 $(\alpha+1)p<n$。同理可知,当$\alpha+1<n$时，有$|u(x)|,| D u(x)|\in L^{1}(U)$,进而$\left| u D \phi \right|\,,\left| \phi  D u \right|\in L^1\left( U \right) $.由\hyperref[Real Analysis-theorem:积分的绝对连续性]{积分的绝对连续性}可得
+\begin{align*}
+&\underset{\varepsilon \rightarrow 0}{\lim}\int_{B(0,\varepsilon )}{u D \phi \,\mathrm{d}x}=\underset{\varepsilon \rightarrow 0}{\lim}\int_{B(0,\varepsilon )}{\phi  D u\,\mathrm{d}x}=0\\
+\Longrightarrow &\underset{\varepsilon \rightarrow 0}{\lim}\int_{U-B(0,\varepsilon )}{u D \phi \,\mathrm{d}x}=\int_U{u D \phi \,\mathrm{d}x},\,\,\underset{\varepsilon \rightarrow 0}{\lim}\int_{U-B(0,\varepsilon )}{\phi  D u\,\mathrm{d}x}=\int_U{\phi  D u\,\mathrm{d}x}.
+\end{align*}
+又因为此时
+\begin{align*}
+\left|\int_{\partial B(0,\varepsilon)}u\phi\nu_{i}\,\mathrm{d}S\right|
+\leqslant \|\phi\|_{L^{\infty}}\int_{\partial B(0,\varepsilon)}\varepsilon^{-\alpha}\,\mathrm{d}S
+= n\alpha(n)\|\phi\|_{L^{\infty}}\varepsilon^{n-1-\alpha}\to 0,\quad \varepsilon \to 0.
+\end{align*}
+所以当 $0\leqslant\alpha<n-1$ 时，对\eqref{eq::JIOJIOWJ22221}式令$\varepsilon \to 0$可得,对一切 $\phi\in C^{\infty}_{c}(U)$ 都有
+\begin{align*}
+\int_{U}u D \phi\,\mathrm{d}x=-\int_{U}\phi D u\,\mathrm{d}x.
+\end{align*}
+因此$u$在$U$上的一阶弱偏导就是$u$在$x\neq 0$处的偏导$ D u$.而$| D u(x)|=\dfrac{|\alpha|}{|x|^{\alpha+1}}\in L^{p}(U)$ 当且仅当 $(\alpha+1)p<n$,故$u\in W^{1,p}(U)$ 当且仅当 $\alpha<\dfrac{n-p}{p}$。特别地，对每个 $p\geqslant n$ 都有 $u\notin W^{1,p}(U)$。
+\end{solution}
+
+\begin{example}\label{example:ch05-稠密点奇异}
+设 $\{r_{k}\}_{k=1}^{\infty}$ 为 $U=B^{0}(0,1)$ 的一个可数稠密子集。写
+\begin{align*}
+u(x)=\sum_{k=1}^{\infty}\frac{1}{2^{k}}|x-r_{k}|^{-\alpha}\qquad (x\in U).
+\end{align*}
+则当 $0<\alpha<\dfrac{n-p}{p}$ 时,有$u\in W^{1,p}(U)$，但 $u$ 在 $U$ 的每个开子集上都无界。
+\end{example}
+\begin{remark}
+这个例子说明了一个基本事实：尽管属于Sobolev空间的函数 $u$ 具有某些光滑性态，它在其他方面仍可能性态相当恶劣。
+\end{remark}
+\begin{proof}
+
+先证明 \(u\in L^p(U)\).
+因为 \(\{r_k\}_{k=1}^\infty\) 是 \(U=B^0(0,1)\) 中的可数稠密子集，所以对于任意 \(x\in U\) 和任意 \(k\)，都有 \(|x-r_k| \leqslant |x|+|r_k| < 2\).
+由\hyperref[Real Analysis-theorem:实变函数--Minkowski不等式]{Minkowski不等式}，可得
+\begin{align*}
+\|u\|_{L^p(U)} = \left\| \sum_{k=1}^\infty \frac{1}{2^k} |x-r_k|^{-\alpha} \right\|_{L^p(U)} \leqslant \sum_{k=1}^\infty \frac{1}{2^k} \left\| |x-r_k|^{-\alpha} \right\|_{L^p(U)}.
+\end{align*}
+对于每一项，作平移变换 \(y=x-r_k\)，则积分区域包含于 \(B(0,2)\) 中，因此
+\begin{align*}
+\left\| |x-r_k|^{-\alpha} \right\|_{L^p(U)}^p = \int_U |x-r_k|^{-\alpha p} \mathrm{d}x \leqslant \int_{B(0,2)} |y|^{-\alpha p} \mathrm{d}y.
+\end{align*}
+利用\hyperref[theorem:appC-极坐标]{极坐标变换}，令 \(y = r\omega\)，其中 \(r \in (0,2)\)，\(\omega \in \partial B(0,1)\). 则
+\begin{align*}
+\int_{B(0,2)} |y|^{-\alpha p} \mathrm{d}y = \int_0^2 \int_{\partial B(0,1)} r^{-\alpha p} r^{n-1} \mathrm{d}S(\omega) \mathrm{d}r = n\alpha(n) \int_0^2 r^{n-1-\alpha p} \mathrm{d}r.
+\end{align*}
+当\(\alpha < \frac{n-p}{p}\)，即 \(\alpha p < n-p < n\)时，所以 \(n-1-\alpha p > -1\). 因此该积分收敛，且有
+\begin{align*}
+\int_0^2 r^{n-1-\alpha p} \mathrm{d}r = \frac{2^{n-\alpha p}}{n-\alpha p}.
+\end{align*}
+所以，存在常数 \(C=C(n,p,\alpha)\) 使得
+\begin{align*}
+\left\| |x-r_k|^{-\alpha} \right\|_{L^p(U)} \leqslant C.
+\end{align*}
+将其代入级数，得到
+\begin{align*}
+\|u\|_{L^p(U)} \leqslant \sum_{k=1}^\infty \frac{1}{2^k} C = C < \infty.
+\end{align*}
+因此 \(u \in L^p(U)\).
+
+再证明弱导数 \(Du \in L^p(U)\).
+形式上对每一项求导，有
+\begin{align*}
+D\left(|x-r_k|^{-\alpha}\right) = -\alpha |x-r_k|^{-\alpha-1} \frac{x-r_k}{|x-r_k|}.
+\end{align*}
+因此其梯度的模长为
+\begin{align*}
+\left| D\left(|x-r_k|^{-\alpha}\right) \right| = \alpha |x-r_k|^{-\alpha-1}.
+\end{align*}
+类似之前的换元计算，先做平移变换再做极坐标变换，计算其 \(L^p\) 范数
+\begin{align*}
+\left\| D\left(|x-r_k|^{-\alpha}\right) \right\|_{L^p(U)}^p = \alpha^p \int_U |x-r_k|^{-(\alpha+1)p} \mathrm{d}x \leqslant \alpha^p \int_{B(0,2)} |y|^{-(\alpha+1)p} \mathrm{d}y = \alpha^p n\alpha(n) \int_0^2 r^{n-1-(\alpha+1)p} \mathrm{d}r.
+\end{align*}
+该积分收敛当且仅当 \(n-1-(\alpha+1)p > -1\)，即 \(n-(\alpha+1)p > 0\)，等价于 \(\alpha < \frac{n-p}{p}\). 这正是给定的条件。因此，存在常数 \(C'\) 使得
+\begin{align*}
+\left\| D\left(|x-r_k|^{-\alpha}\right) \right\|_{L^p(U)} \leqslant C'.
+\end{align*}
+同理由\hyperref[Real Analysis-theorem:实变函数--Minkowski不等式]{Minkowski不等式}，级数 \(\sum_{k=1}^\infty \frac{1}{2^k} D\left(|x-r_k|^{-\alpha}\right)\) 在 \(L^p(U)\) 中绝对收敛，设其极限为 \(v \in L^p(U)\).
+令 \(u_m(x) = \sum_{k=1}^m \frac{1}{2^k} |x-r_k|^{-\alpha}\). 则 \(u_m \in C^\infty(U \setminus \{r_1,\cdots,r_m\})\)，且 \(u_m \to u\) 于 \(L^p(U)\)，\(Du_m \to v\) 于 \(L^p(U)\).
+对任意测试函数 \(\phi \in C_c^\infty(U)\)，由分部积分公式
+\begin{align*}
+\int_U u_m D\phi \mathrm{d}x = -\int_U Du_m \phi \mathrm{d}x.
+\end{align*}
+令 \(m \to \infty\)，由 \(L^p\) 收敛性及\hyperref[Real Analysis-theorem:控制收敛定理]{控制收敛定理}，可得
+\begin{align*}
+\int_U u D\phi \mathrm{d}x = -\int_U v \phi \mathrm{d}x.
+\end{align*}
+因此 \(v\) 是 \(u\) 的弱导数，即 \(Du = v \in L^p(U)\). 从而 \(u \in W^{1,p}(U)\).
+
+最后，证明 \(u\) 在每个开子集上无界.
+任取 \(U\) 的一个非空开子集 \(V\). 因为 \(\{r_k\}_{k=1}^\infty\) 在 \(U\) 中稠密，所以存在某个 \(m\) 使得 \(r_m \in V\).
+对于任意 \(x \in V \setminus \{r_m\}\)，由于级数各项均为非负，有
+\begin{align*}
+u(x) = \sum_{k=1}^\infty \frac{1}{2^k} |x-r_k|^{-\alpha} \geqslant \frac{1}{2^m} |x-r_m|^{-\alpha}.
+\end{align*}
+现在令 \(x \to r_m\). 因为 \(\alpha > 0\)，所以 \(|x-r_m|^{-\alpha} \to +\infty\). 因此
+\begin{align*}
+\lim_{x \to r_m} u(x) = +\infty.
+\end{align*}
+这表明 \(u\) 在 \(V\) 上无界. 由于 \(V\) 是 \(U\) 的任意非空开子集，因此 \(u\) 在 \(U\) 的每个开子集上都无界.
+\end{proof}
+
+\begin{proposition}\label{proposition:W1p空间函数基本性质}
+设$u\in W^{1,p}(0,1)$，其中 $1\leqslant p<\infty$。
+\begin{enumerate}[(1)]
+\item\label{proposition:W1p空间函数基本性质-1} 证明:$u$几乎处处等于一个绝对连续函数，且 $u'$几乎处处存在，并且属于 $L^{p}(0,1)$.
+
+\item\label{proposition:W1p空间函数基本性质-2} 证明:若 $1<p<\infty$，则对几乎处处的$x,y\in[0,1]$，有
+\begin{align*}
+|u(x)-u(y)|\leqslant|x-y|^{1-\frac{1}{p}}\left(\int_{0}^{1}|u'|^{p}\,\mathrm{d}t\right)^{\frac{1}{p}}.
+\end{align*}
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+设 $u$ 的弱导数为 $g\in L^p(0,1)$, 即
+\begin{align*}
+\int_0^1 u\varphi'\,\mathrm{d}t=-\int_0^1 g\varphi\,\mathrm{d}t,\qquad \forall \varphi\in C_c^\infty(0,1).
+\end{align*}
+\begin{enumerate}[(1)]
+\item 因为 $1\leqslant p<\infty$, 在有限区间 $(0,1)$ 上,由\cref{Real Analysis-proposition:Lp空间包含关系}有
+\begin{align*}
+L^p(0,1)\subseteq L^1(0,1).
+\end{align*}
+于是 $g\in L^1(0,1)$. 定义
+\begin{align*}
+v(x)=\int_0^x g(t)\,\mathrm{d}t,\qquad x\in[0,1].
+\end{align*}
+由\cref{Real Analysis-corollary:Lebesgue积分基本定理}, $v\in AC[0,1]$, 即 $v$ 绝对连续, 并且$v'$ 几乎处处存在，满足
+\begin{align*}
+v'(x)=g(x)\quad \mathrm{a.e.}\ x\in(0,1).
+\end{align*}
+从而 $v'\in L^p(0,1)$.
+
+下面说明 $u-v$ 几乎处处为常数.
+对任意 $\varphi\in C_c^\infty(0,1)$, 由于 $v$ 绝对连续, 且 $\varphi$ 紧支,将$\varphi$零延拓到$[0,1]$,则$v\varphi \in AC[0,1]$.于是再由\cref{Real Analysis-corollary:Lebesgue积分基本定理}可得
+\begin{align*}
+0=\varphi \left( 1 \right) -\varphi \left( 0 \right) =\int_0^1{\left( v\varphi' \,+v' \varphi \right) \,\mathrm{d}t}\Longrightarrow \int_0^1 v\varphi'\,\mathrm{d}t=-\int_0^1 v'\varphi\,\mathrm{d}t
+=-\int_0^1 g\varphi\,\mathrm{d}t.
+\end{align*}
+于是
+\begin{align*}
+\int_0^1 (u-v)\varphi'\,\mathrm{d}t
+=\int_0^1 u\varphi'\,\mathrm{d}t-\int_0^1 v\varphi'\,\mathrm{d}t
+=-\int_0^1 g\varphi\,\mathrm{d}t+\int_0^1 g\varphi\,\mathrm{d}t=0.
+\end{align*}
+所以 $h\triangleq u-v$ 的弱导数在$[0,1]$上几乎处处为零.由\cref{proposition:ch05--examoi-11}知,存在$c\in \mathbb{R}$,使得
+\begin{align*}
+u(x)-v(x)=c\quad \mathrm{a.e.}\ x\in (0,1).
+\end{align*}
+于是令$f(x)=v(x)+c,\,x\in (0,1).$
+则 $f\in AC[0,1]$, 且
+\begin{align*}
+u=f,\,\,f'=v'=g,\quad \mathrm{a.e.}\, x\in (0,1).
+\end{align*}
+所以 $u$ 几乎处处等于一个绝对连续函数, 且其导数几乎处处存在, 属于 $L^p(0,1)$, 并且等于$u$的弱导数 $g$. 
+
+\item 由\ref{proposition:W1p空间函数基本性质-1}, 取 $U\in AC[0,1]$,使得
+\begin{align*}
+U=u,\quad U'=u',\quad \mathrm{a.e.}\,x\in (0,1).
+\end{align*}
+并且 $U'\in L^p(0,1)$.
+对任意 $x,y\in[0,1]$, 不妨设 $x<y$. 因为 $U$ 绝对连续,所以由\hyperref[Real Analysis-theorem:Lebesgue积分基本定理]{Lebesgue积分基本定理}可知
+\begin{align*}
+U(y)-U(x)=\int_x^y U'(t)\,\mathrm{d}t.
+\end{align*}
+由\hyperref[Real Analysis-theorem:实变函数--Hölder不等式]{Hölder不等式}, 令 $q=\frac{p}{p-1}$, 则
+\begin{align*}
+|U(y)-U(x)|
+\leqslant \int_x^y |U'(t)|\,\mathrm{d}t\leqslant \left(\int_x^y 1^q\,\mathrm{d}t\right)^{\frac{1}{q}}
+\left(\int_x^y |U'(t)|^p\,\mathrm{d}t\right)^{\frac{1}{p}}\leqslant |x-y|^{1-\frac{1}{p}}
+\left(\int_0^1 |U'|^p\,\mathrm{d}t\right)^{\frac{1}{p}}.
+\end{align*}
+若 $y<x$, 交换 $x,y$ 即可, 结论相同.
+由于 $u=U$ 几乎处处成立, 存在零测集 $N\subseteq[0,1]$, 使得当 $x,y\notin N$ 时 $u(x)=U(x)$, $u(y)=U(y)$. 于是对几乎处处的 $x,y\in[0,1]$,有
+\begin{align*}
+|u(x)-u(y)|
+\leqslant |x-y|^{1-\frac{1}{p}}
+\left(\int_0^1 |u'|^p\,\mathrm{d}t\right)^{\frac{1}{p}}.
+\end{align*}
+\end{enumerate}
+\end{proof}
+
+
+
+\subsection{初等性质}\label{subsection:ch05-初等性质}
+
+\begin{theorem}[弱导数的性质]\label{theorem:ch05-弱导数性质}
+固定正整数 $k$ 与 $1\leqslant p\leqslant \infty$，设 $U \subseteq \mathbb{R}^n$ 是一个非空开集,$u,v\in W^{k,p}(U)$，$|\alpha|\leqslant k$。则
+\begin{enumerate}[(1)]
+\item\label{theorem:ch05-弱导数性质-1} $D^{\alpha}u\in W^{k-|\alpha|,p}(U)$，且对一切满足 $|\alpha|+|\beta|\leqslant k$ 的多重指标 $\alpha,\beta$，有 $D^{\beta}(D^{\alpha}u)=D^{\alpha}(D^{\beta}u)=D^{\alpha+\beta}u$。
+
+\item\label{theorem:ch05-弱导数性质-2} 对每个 $\lambda,\mu\in\mathbb{R}$，$\lambda u+\mu v\in W^{k,p}(U)$，且 $D^{\alpha}(\lambda u+\mu v)=\lambda D^{\alpha}u+\mu D^{\alpha}v$，$|\alpha|\leqslant k$。
+
+\item\label{theorem:ch05-弱导数性质-3} 若 $V$ 为 $U$ 的开子集，则 $u\in W^{k,p}(V)$。
+
+\item\label{theorem:ch05-弱导数性质-4} 若 $\zeta\in C^{\infty}_{c}(U)$，则 $\zeta u\in W^{k,p}(U)$，且
+\begin{align}
+D^{\alpha}(\zeta u)=\sum_{\beta\leqslant\alpha}\binom{\alpha}{\beta}D^{\beta}\zeta\,D^{\alpha-\beta}u,
+\label{align:ch05-leibniz}
+\end{align}
+此即 Leibniz 公式，其中 $\binom{\alpha}{\beta}=\dfrac{\alpha!}{\beta!(\alpha-\beta)!}$。
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 先固定 $\phi\in C^{\infty}_{c}(U)$。则 $D^{\beta}\phi\in C^{\infty}_{c}(U)$，于是
+\begin{align*}
+\int_{U}D^{\alpha}u\,D^{\beta}\phi\,\mathrm{d}x
+&=(-1)^{|\alpha|}\int_{U}uD^{\alpha+\beta}\phi\,\mathrm{d}x\\
+&=(-1)^{|\alpha|}(-1)^{|\alpha+\beta|}\int_{U}D^{\alpha+\beta}u\,\phi\,\mathrm{d}x\\
+&=(-1)^{|\beta|}\int_{U}D^{\alpha+\beta}u\,\phi\,\mathrm{d}x.
+\end{align*}
+故在弱意义下 $D^{\beta}(D^{\alpha}u)=D^{\alpha+\beta}u$。
+
+\item 任取测试函数 $\phi\in C^{\infty}_{c}(U)$。由弱导数的定义，有
+\begin{align*}
+\int_{U}uD^{\alpha}\phi\,\mathrm{d}x=(-1)^{|\alpha|}\int_{U}D^{\alpha}u\,\phi\,\mathrm{d}x,
+\end{align*}
+\begin{align*}
+\int_{U}vD^{\alpha}\phi\,\mathrm{d}x=(-1)^{|\alpha|}\int_{U}D^{\alpha}v\,\phi\,\mathrm{d}x.
+\end{align*}
+利用积分的线性性质，计算 $\lambda u+\mu v$ 与 $D^{\alpha}\phi$ 的积分：
+\begin{align*}
+\int_{U}(\lambda u+\mu v)D^{\alpha}\phi\,\mathrm{d}x
+&=\lambda\int_{U}uD^{\alpha}\phi\,\mathrm{d}x+\mu\int_{U}vD^{\alpha}\phi\,\mathrm{d}x\\
+&=\lambda(-1)^{|\alpha|}\int_{U}D^{\alpha}u\,\phi\,\mathrm{d}x+\mu(-1)^{|\alpha|}\int_{U}D^{\alpha}v\,\phi\,\mathrm{d}x\\
+&=(-1)^{|\alpha|}\int_{U}(\lambda D^{\alpha}u+\mu D^{\alpha}v)\phi\,\mathrm{d}x.
+\end{align*}
+由于 $\phi\in C^{\infty}_{c}(U)$ 是任意的，根据弱导数的定义，在弱意义下
+\begin{align*}
+D^{\alpha}(\lambda u+\mu v)=\lambda D^{\alpha}u+\mu D^{\alpha}v.
+\end{align*}
+此外，因为 $u,v\in W^{k,p}(U)$，所以 $\lambda u+\mu v\in L^{p}(U)$，且对一切 $|\alpha|\leqslant k$，$D^{\alpha}(\lambda u+\mu v)$ 作为 $L^{p}(U)$ 中元素的线性组合，依然属于 $L^{p}(U)$。因此 $\lambda u+\mu v\in W^{k,p}(U)$。
+
+\item 因为 $u\in W^{k,p}(U)$，所以 $u\in L^{p}(U)$ 且对一切 $|\alpha|\leqslant k$，$D^{\alpha}u\in L^{p}(U)$。
+由于 $V$ 为 $U$ 的开子集，限制在 $V$ 上的积分满足
+\begin{align*}
+\int_{V}|u|^{p}\,\mathrm{d}x\leqslant\int_{U}|u|^{p}\,\mathrm{d}x<\infty,
+\end{align*}
+同理 $\int_{V}|D^{\alpha}u|^{p}\,\mathrm{d}x<\infty$。因此 $u\in L^{p}(V)$ 且 $D^{\alpha}u\in L^{p}(V)$。
+
+下面验证弱导数关系在 $V$ 上依然成立。任取函数 $\phi\in C^{\infty}_{c}(V)$。在 $U\setminus V$ 上令 $\phi\equiv 0$，将 $\phi$ 零延拓为 $U$ 上的函数，此时仍有 $\phi\in C^{\infty}_{c}(U)$。
+因为 $u\in W^{k,p}(U)$，所以
+\begin{align*}
+\int_{U}uD^{\alpha}\phi\,\mathrm{d}x=(-1)^{|\alpha|}\int_{U}D^{\alpha}u\,\phi\,\mathrm{d}x.
+\end{align*}
+由于 $\phi$ 在 $U\setminus V$ 上恒为 $0$，上述积分在 $U\setminus V$ 上为 $0$，因此上式等价于
+\begin{align*}
+\int_{V}uD^{\alpha}\phi\,\mathrm{d}x=(-1)^{|\alpha|}\int_{V}D^{\alpha}u\,\phi\,\mathrm{d}x.
+\end{align*}
+这对任意 $\phi\in C^{\infty}_{c}(V)$ 成立，故在 $V$ 上 $D^{\alpha}u$ 依然是 $u$ 的弱导数。综上，$u\in W^{k,p}(V)$。
+
+\item 我们对 $|\alpha|$ 作归纳来证式~\eqref{align:ch05-leibniz}。先设 $|\alpha|=1$。任取 $\phi\in C^{\infty}_{c}(U)$，则由可微函数的Leibniz公式知
+\begin{align*}
+D^{\alpha}\left( \zeta \phi \right) =\zeta D^{\alpha}\phi +\left( D^{\alpha}\zeta \right) \phi \Longrightarrow \zeta uD^{\alpha}\phi =uD^{\alpha}\left( \zeta \phi \right) -u\left( D^{\alpha}\zeta \right) \phi .
+\end{align*}
+从而
+\begin{align*}
+\int_{U}\zeta u\,D^{\alpha}\phi\,\mathrm{d}x
+=\int_{U}uD^{\alpha}(\zeta\phi)-u(D^{\alpha}\zeta)\phi\,\mathrm{d}x=-\int_{U}(\zeta D^{\alpha}u+uD^{\alpha}\zeta)\phi\,\mathrm{d}x.
+\end{align*}
+故 $D^{\alpha}(\zeta u)=\zeta D^{\alpha}u+uD^{\alpha}\zeta$，即得所需。
+
+现设 $l<k$，且\eqref{align:ch05-leibniz}式对一切 $|\alpha|\leqslant l$ 和一切函数 $\zeta$ 成立。取多重指标 $\alpha$ 满足 $|\alpha|=l+1$。则存在 $|\beta|=l$、$|\gamma|=1$ 使 $\alpha=\beta+\gamma$。设$\gamma$是第$j$个分量为1,其余分量为0的$n$维向量,则对如上的 $\phi$，又由\hyperref[Basis of Analytics-proposition:组合数基本性质]{组合数基本公式}可得
+\begin{align*}
+\binom{\beta}{\sigma -\gamma}+\binom{\beta}{\sigma}&=\left[ \binom{\beta _j}{\sigma _j-1}+\binom{\beta _j}{\sigma _j} \right] \prod_{i\ne j}{\binom{\beta _i}{\sigma _i}}=\binom{\beta _j+1}{\sigma _j}\prod_{i\ne j}{\binom{\beta _i}{\sigma _i}}
+\\
+&=\binom{\alpha _j}{\sigma _j}\prod_{i\ne j}{\binom{\alpha _i}{\sigma _i}}=\prod_{i=1}^n{\binom{\alpha _i}{\sigma _i}}=\binom{\alpha}{\sigma}.
+\end{align*}
+所以由归纳假设有
+\begin{align*}
+\int_{U}\zeta u\,D^{\alpha}\phi\,\mathrm{d}x
+&=\int_U{\zeta u\,D^{\beta}\left( D^{\gamma}\phi \right) \,\mathrm{d}x}=\left( -1 \right) ^{\left| \beta \right|}\int_U{D^{\beta}\left( \zeta u \right) \,\left( D^{\gamma}\phi \right) \,\mathrm{d}x}\\
+&=(-1)^{|\beta|}\int_{U}\sum_{\sigma\leqslant\beta}\binom{\beta}{\sigma}D^{\sigma}\zeta\,D^{\beta-\sigma}u\,D^{\gamma}\phi\,\mathrm{d}x
+\\
+&=(-1)^{|\beta|+|\gamma|}\int_{U}\sum_{\sigma\leqslant\beta}\binom{\beta}{\sigma}D^{\gamma}(D^{\sigma}\zeta\,D^{\beta-\sigma}u)\phi\,\mathrm{d}x
+\\
+&=\left( -1 \right) ^{|\alpha |}\int_U{\sum_{\sigma \leqslant \beta}{\binom{\beta}{\sigma}\left[ D^{\sigma +\gamma}\zeta \,D^{\alpha -\left( \sigma +\gamma \right)}u+D^{\sigma}\zeta \,D^{\alpha -\sigma}u \right] \phi \,\mathrm{d}x}}\quad\ (|\gamma|=1)
+\\
+&=\left( -1 \right) ^{|\alpha |}\int_U{\left[ \sum_{\rho -\gamma \leqslant \beta}{\binom{\beta}{\rho -\gamma}D^{\rho}\zeta \,D^{\alpha -\rho}u}+\sum_{\sigma \leqslant \beta}{\binom{\beta}{\sigma}D^{\sigma}\zeta \,D^{\alpha -\sigma}u} \right] \phi \,\mathrm{d}x}\quad\text{（其中}\ \rho=\sigma+\gamma\text{）}
+\\
+&=\left( -1 \right) ^{|\alpha |}\int_U{\left[ \sum_{\rho \leqslant \alpha}{\binom{\beta}{\rho -\gamma}D^{\rho}\zeta \,D^{\alpha -\rho}u}+\sum_{\sigma \leqslant \alpha}{\binom{\beta}{\sigma}D^{\sigma}\zeta \,D^{\alpha -\sigma}u} \right] \phi \,\mathrm{d}x}
+\\
+&=\left( -1 \right) ^{|\alpha |}\int_U{\left[ \sum_{\sigma \leqslant \alpha}{\binom{\beta}{\sigma -\gamma}D^{\sigma}\zeta \,D^{\alpha -\sigma}u}+\sum_{\sigma \leqslant \alpha}{\binom{\beta}{\sigma}D^{\sigma}\zeta \,D^{\alpha -\sigma}u} \right] \phi \,\mathrm{d}x}
+\\
+&=\left( -1 \right) ^{|\alpha |}\int_U{\left[ \sum_{\sigma \leqslant \alpha}{\binom{\alpha}{\sigma}D^{\sigma}\zeta \,D^{\alpha -\sigma}u} \right] \phi \,\mathrm{d}x}.
+\end{align*}
+\end{enumerate}
+\end{proof}
+
+\begin{theorem}[Sobolev空间作为函数空间]\label{theorem:ch05-WkpBanach}
+设 $U \subseteq \mathbb{R}^n$ 是一个非空开集,对每个 $k=1,2,\cdots$ 及 $1\leqslant p\leqslant\infty$，Sobolev空间 $W^{k,p}(U)$ 是Banach空间。
+\end{theorem}
+\begin{proof}
+
+首先验证 $\|u\|_{W^{k,p}(U)}$ 是范数。显然
+\begin{align*}
+\|\lambda u\|_{W^{k,p}(U)}=|\lambda|\,\|u\|_{W^{k,p}(U)},
+\end{align*}
+且\begin{align*}
+\|u\|_{W^{k,p}(U)}=0 \Longleftrightarrow \|D^{\alpha}u\|_{L^p(U)}=0,\quad |\alpha|\leqslant k.
+\end{align*}
+特别地, 取 $\alpha=(0,\cdots,0)$, 有
+\begin{align*}
+\|u\|_{L^p(U)}=0 \Longleftrightarrow u(x)=0\ \mathrm{a.e.}\ x\in U.
+\end{align*}
+又当 $u(x)=0\ \mathrm{a.e.}\ x\in U$ 时, 显然有
+\begin{align*}
+\|D^{\alpha}u\|_{L^p(U)}=0,\quad |\alpha|\leqslant k \Longrightarrow \|u\|_{W^{k,p}(U)}=0.
+\end{align*}
+故
+\begin{align*}
+\|u\|_{W^{k,p}(U)}=0 \Longleftrightarrow u(x)=0\ \mathrm{a.e.}\ x\in U.
+\end{align*}
+现设 $u,v\in W^{k,p}(U)$。则当 $1\leqslant p<\infty$ 时，\hyperref[Real Analysis-theorem:实变函数--Minkowski不等式]{Minkowski不等式}和\hyperref[Real Analysis-theorem:离散Minkowski不等式]{离散Minkowski不等式}给出
+\begin{align*}
+\|u+v\|_{W^{k,p}(U)}
+&=\left(\sum_{|\alpha|\leqslant k}\|D^{\alpha}u+D^{\alpha}v\|_{L^{p}(U)}^{p}\right)^{\frac{1}{p}}\leqslant\left(\sum_{|\alpha|\leqslant k}\left(\|D^{\alpha}u\|_{L^{p}(U)}+\|D^{\alpha}v\|_{L^{p}(U)}\right)^{p}\right)^{\frac{1}{p}}\\
+&\leqslant\left(\sum_{|\alpha|\leqslant k}\|D^{\alpha}u\|_{L^{p}(U)}^{p}\right)^{\frac{1}{p}}
++\left(\sum_{|\alpha|\leqslant k}\|D^{\alpha}v\|_{L^{p}(U)}^{p}\right)^{\frac{1}{p}}=\|u\|_{W^{k,p}(U)}+\|v\|_{W^{k,p}(U)}.
+\end{align*}
+故 \(1\leqslant p<\infty\) 时的三角不等式成立。
+
+当 \(p=\infty\) 时，根据定义有
+\[
+\|u\|_{W^{k,\infty}(U)}
+\triangleq \sum_{|\alpha|\leqslant k}\mathrm{ess}\,\mathrm{sup}\,_U |D^{\alpha}u|.
+\]
+先证明 \(L^{\infty}\) 的本质上确界满足三角不等式。设 \(f,g\in L^{\infty}(U)\)，记
+\[
+M_f\triangleq \mathrm{ess}\,\mathrm{sup}\,_U |f|,\qquad M_g\triangleq \mathrm{ess}\,\mathrm{sup}\,_U |g|.
+\]
+由本质上确界的定义，\(|f(x)|\leqslant M_f\) 且 \(|g(x)|\leqslant M_g\) 对几乎处处的 \(x\in U\) 成立。于是
+\[
+|f(x)+g(x)|\leqslant |f(x)|+|g(x)|\leqslant M_f+M_g
+\]
+对几乎处处的 \(x\in U\) 成立。故 \(M_f+M_g\) 是 \(|f+g|\) 的一个本质上界，从而
+\[
+\mathrm{ess}\,\mathrm{sup}\,_U |f+g|\leqslant M_f+M_g
+=\mathrm{ess}\,\mathrm{sup}\,_U |f|+\mathrm{ess}\,\mathrm{sup}\,_U |g|.
+\]
+
+现设 \(u,v\in W^{k,\infty}(U)\)。对每个多重指标 \(|\alpha|\leqslant k\)，弱导数满足
+\[
+D^{\alpha}(u+v)=D^{\alpha}u+D^{\alpha}v.
+\]
+由上述 \(L^{\infty}\) 本质上确界的三角不等式，有
+\[
+\mathrm{ess}\,\mathrm{sup}\,_U |D^{\alpha}(u+v)|
+\leqslant \mathrm{ess}\,\mathrm{sup}\,_U |D^{\alpha}u|
++\mathrm{ess}\,\mathrm{sup}\,_U |D^{\alpha}v|.
+\]
+对所有 \(|\alpha|\leqslant k\) 求和，得到
+\begin{align*}
+\|u+v\|_{W^{k,\infty}(U)}
+&=\sum_{|\alpha|\leqslant k}\mathrm{ess}\,\mathrm{sup}\,_U |D^{\alpha}(u+v)|\\
+&\leqslant \sum_{|\alpha|\leqslant k}\left(\mathrm{ess}\,\mathrm{sup}\,_U |D^{\alpha}u|+\mathrm{ess}\,\mathrm{sup}\,_U |D^{\alpha}v|\right)\\
+&=\sum_{|\alpha|\leqslant k}\mathrm{ess}\,\mathrm{sup}\,_U |D^{\alpha}u|
++\sum_{|\alpha|\leqslant k}\mathrm{ess}\,\mathrm{sup}\,_U |D^{\alpha}v|\\
+&=\|u\|_{W^{k,\infty}(U)}+\|v\|_{W^{k,\infty}(U)}.
+\end{align*}
+故 \(p=\infty\) 时的三角不等式成立。
+
+还须证明 $W^{k,p}(U)$ 完备。设 $\{u_{m}\}_{m=1}^{\infty}$ 为 $W^{k,p}(U)$ 中的 Cauchy 序列。则对每个 $|\alpha|\leqslant k$，$\{D^{\alpha}u_{m}\}_{m=1}^{\infty}$ 是 $L^{p}(U)$ 中的 Cauchy 序列。由于 $L^{p}(U)$ 完备，存在函数 $u_{\alpha}\in L^{p}(U)$ 使对每个 $|\alpha|\leqslant k$，在$L^{p}(U)$中,都有
+\begin{align*}
+D^{\alpha}u_{m}\to u_{\alpha}.
+\end{align*}
+特别地，在$L^{p}(U)$中,有$u_{m}\to u_{(0,\cdots,0)}\triangleq u$.
+
+我们现在断言
+\begin{align}
+u\in W^{k,p}(U),\qquad D^{\alpha}u=u_{\alpha}\quad (|\alpha|\leqslant k).
+\label{align:ch05-完备性结论}
+\end{align}
+为验证此断言，先证明两个极限等式.
+设 $p'$ 为 $p$ 的共轭指数。由\hyperref[Real Analysis-theorem:实变函数--Hölder不等式]{Hölder不等式}，对任意 $\phi\in C_{c}^{\infty}(U)$，有
+\begin{align*}
+\left|\int_{U}(u_{m}-u)D^{\alpha}\phi\,\mathrm{d}x\right|
+&\leqslant\|u_{m}-u\|_{L^{p}(U)}\|D^{\alpha}\phi\|_{L^{p'}(U)},\\
+\left|\int_{U}(D^{\alpha}u_{m}-u_{\alpha})\phi\,\mathrm{d}x\right|
+&\leqslant\|D^{\alpha}u_{m}-u_{\alpha}\|_{L^{p}(U)}\|\phi\|_{L^{p'}(U)}.
+\end{align*}
+因为 $\phi\in C_{c}^{\infty}(U)$，所以 $\|D^{\alpha}\phi\|_{L^{p'}(U)}$ 与 $\|\phi\|_{L^{p'}(U)}$ 均为有限常数。令 $m\to\infty$，由$u_m\to u$ 且 $D^{\alpha}u_m\to u_{\alpha}$ 于 $L^{p}(U)$可知两式右端均趋于 $0$，于是
+\begin{align*}
+\lim_{m\to\infty}\int_{U}u_{m}D^{\alpha}\phi\,\mathrm{d}x=\int_{U}uD^{\alpha}\phi\,\mathrm{d}x,\qquad
+\lim_{m\to\infty}\int_{U}D^{\alpha}u_{m}\phi\,\mathrm{d}x=\int_{U}u_{\alpha}\phi\,\mathrm{d}x.
+\end{align*}
+再结合弱导数的定义得
+\begin{align*}
+\int_{U}uD^{\alpha}\phi\,\mathrm{d}x
+=\lim_{m\to\infty}\int_{U}u_{m}D^{\alpha}\phi\,\mathrm{d}x=\lim_{m\to\infty}(-1)^{|\alpha|}\int_{U}D^{\alpha}u_{m}\phi\,\mathrm{d}x=(-1)^{|\alpha|}\int_{U}u_{\alpha}\phi\,\mathrm{d}x.
+\end{align*}
+故式~\eqref{align:ch05-完备性结论} 成立。由于对一切 $|\alpha|\leqslant k$ 都有 $D^{\alpha}u_{m}\to D^{\alpha}u$ 于 $L^{p}(U)$，可见 $u_{m}\to u$ 于 $W^{k,p}(U)$，即得所需。
+\end{proof}
+
+\end{document}

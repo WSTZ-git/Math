@@ -1,0 +1,476 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}}
+
+\begin{document}
+
+\section{H\"older空间}\label{section:ch05-H\"older空间}
+
+\begin{definition}
+设 $U\subset\mathbb{R}^{n}$ 为开集,$k\in \mathbb{N}$,定义
+\begin{align*}
+&\overline{U}\text{为}U\text{的闭包},
+\\
+&C(U) \triangleq \{u: U \to \mathbb{R} \mid u \text{ 连续}\}, \\
+&C(\overline{U}) \triangleq \{u \in C(U) \mid u \text{ 在 } U \text{ 的任意有界子集上一致连续}\}, \\
+&C^k(U) \triangleq \{u: U \to \mathbb{R} \mid u \text{ 为 } k \text{次连续可微函数}\}, \\
+&C^k(\overline{U}) \triangleq \{u \in C^k(U) \mid \forall |\alpha| \leqslant k, D^\alpha u\text{ 在 } U \text{ 的任意有界子集上一致连续}\},
+\\
+&C^\infty(U) \triangleq \{u : U \to \mathbb{R} \mid u \text{无穷次可微}\} = \bigcap\limits_{k=0}^{\infty} C^k(U). \\
+&C^\infty(\overline{U}) \triangleq \bigcap\limits_{k=0}^{\infty} C^k(\overline{U}).
+\end{align*}
+特别地,若 \(u \in C^k(\overline{U})\)，那么 \(D^\alpha u\) 对每一个满足 \(|\alpha| \leqslant k\) 的多重指标 \(\alpha\)，可以唯一地连续延拓到 \(\overline{U}\)(证明见注).
+\end{definition}
+\begin{remark}
+严格来说，$D^\alpha u$ 不能直接在 $U$ 的闭包 $\overline{U}$ 上定义，因为 $\overline{U}$ 是闭集，它没有微分结构，不能在边界点上求导。但是，这个定义通过附加条件，保证了 $D^\alpha u$ 可以唯一地连续延拓到 $\overline{U}$ 上。因此，我们在 $\overline{U}$ 上写 $D^\alpha u$ 时，实际上指的是它在边界上的连续延拓值，而不是在边界上求导得到的值。
+
+具体原因在于，一致连续可以保证Cauchy序列的像仍然是Cauchy序列，从而利用实数的完备性来定义边界值，而普通的连续做不到这一点。
+
+假设 $f$ 在开集 $U$ 上一致连续。现在取一个边界点 $x_0 \in \partial U$。我们想在 $x_0$ 处定义 $f(x_0)$。因为 $x_0$ 不在 $U$ 内，不能直接代入。于是我们在 $U$ 内找一个点列 $\{x_n\}$，让它逼近 $x_0$，即
+\begin{align*}
+x_n \to x_0, \quad x_n \in U.
+\end{align*}
+既然 $x_n$ 收敛，那么它一定是一个Cauchy序列。因为 $f$ 在 $U$ 上一致连续，所以对于任意 $\varepsilon > 0$，存在 $\delta > 0$，使得只要 $|x - y| < \delta$，就有 $|f(x) - f(y)| < \varepsilon$。既然 $\{x_n\}$ 是Cauchy序列，那么存在 $N$，使得当 $m, n > N$ 时，$|x_m - x_n| < \delta$。这就直接推出：当 $m, n > N$ 时，$|f(x_m) - f(x_n)| < \varepsilon$。
+
+这说明 $\{f(x_n)\}$ 也是一个Cauchy序列。由于实数集 $\mathbb{R}$ 是完备的，Cauchy序列必收敛，所以 $\{f(x_n)\}$ 必然收敛到一个实数 $L$。我们就把这个极限 $L$ 定义为 $f(x_0)$，即
+\begin{align*}
+f(x_0) \triangleq \lim\limits_{n \to \infty} f(x_n).
+\end{align*}
+
+这个定义是良定义的，因为如果换一个点列 $\{y_n\}$ 也逼近 $x_0$，由于 $f$ 是一致连续的，两个序列最终会非常靠近，一致连续性保证了 $f(x_n)$ 和 $f(y_n)$ 也会非常靠近，所以它们必须收敛到同一个极限。因此，这个定义不依赖于点列的选择.现在严格证明这个良定义性：
+
+设 $f\in C(\overline{U})$，$x_0 \in \partial U$。若 $\{x_n\}, \{y_n\} \subset U$ 且$x_n \to x_0$，$y_n \to x_0$，要证$\lim\limits_{n \to \infty} f(x_n) = \lim\limits_{n \to \infty} f(y_n)$。
+\begin{proof}
+取充分小的$\varepsilon>0$,使得$U'=B(x_0,\varepsilon)\cap U\subset U$有界,从而$f$在$U'$上一致连续.又因为$\{x_n\}, \{y_n\} \subset U$ 且$x_n \to x_0$，$y_n \to x_0$,所以可取充分大的$N$,使得当$n>N$时,$\{x_n\},\{y_n\}\in U'$.因此不妨设$\{x_n\},\{y_n\}\in U',\forall n\in \mathbb{N}$.
+
+{\color{blue}证法一:}
+首先说明极限的存在性。
+因为 $\{x_n\}$ 收敛，所以它是Cauchy序列。由于 $f$ 在 $U'$ 上一致连续，对任意 $\varepsilon > 0$，存在 $\delta > 0$，使得当 $x, y \in U'$ 且 $|x - y| < \delta$ 时，有 $|f(x) - f(y)| < \varepsilon$。又因为 $\{x_n\}$ 是Cauchy序列，存在 $N_1 > 0$，使得当 $m, n > N_1$ 时，$|x_m - x_n| < \delta$，从而 $|f(x_m) - f(x_n)| < \varepsilon$。这说明 $\{f(x_n)\}$ 是 $\mathbb{R}$ 中的Cauchy序列。由 $\mathbb{R}$ 的完备性，$\{f(x_n)\}$ 必然收敛，记其极限为 $A$。
+同理，$\{f(y_n)\}$ 也收敛，记其极限为 $B$。
+
+接着证明 $A = B$。
+对任意 $\varepsilon > 0$，由一致连续性，存在 $\delta > 0$，使得当 $x, y \in U'$ 且 $|x - y| < \delta$ 时，有 $|f(x) - f(y)| < \varepsilon$。因为 $x_n \to x_0$ 且 $y_n \to x_0$，所以 $|x_n - y_n| \to 0$。因此存在 $N_2 > 0$，使得当 $n > N_2$ 时，$|x_n - y_n| < \delta$。于是当 $n > N_2$ 时，有
+\begin{align*}
+|f(x_n) - f(y_n)| < \varepsilon.
+\end{align*}
+令 $n \to \infty$，由极限的保序性得到 $|A - B| \leqslant \varepsilon$。由于 $\varepsilon > 0$ 是任意的，所以必有 $|A - B| = 0$，即 $A = B$。
+
+{\color{blue}证法二:}
+构造新的序列 $\{z_n\}$，定义为 $z_{2k-1} \triangleq x_k$，$z_{2k} \triangleq y_k$，$k = 1, 2, \cdots$。由于 $x_k \to x_0$ 且 $y_k \to x_0$，显然 $z_n \to x_0$。因此 $\{z_n\}$ 是Cauchy序列。由 $f$ 的一致连续性，$\{f(z_n)\}$ 也是Cauchy序列，从而在 $\mathbb{R}$ 中收敛，记其极限为 $L$。因为 $\{f(x_n)\}$ 和 $\{f(y_n)\}$ 分别是收敛序列 $\{f(z_n)\}$ 的子序列，而收敛序列的子序列必定收敛到同一极限，所以 $\lim\limits_{n \to \infty} f(x_n) = \lim\limits_{n \to \infty} f(y_n) = L$。
+\end{proof}
+
+普通的连续做不到这一点，因为对于每个固定的点 $x$，函数在 $x$ 附近有良好的行为，但如果边界点 $x_0$ 不在定义域内，函数在 $x_0$ 附近可能剧烈震荡，或者趋于无穷。例如 $f(x) = \sin\left(\frac{1}{x}\right)$ 在 $U = (0, 1)$ 上处处连续，但在 $x \to 0$ 时，函数值在 $[-1, 1]$ 之间疯狂震荡，极限不存在，原因是它在 $U$ 上不是一致连续的。同样，$f(x) = \frac{1}{x}$在 $U = (0, 1)$ 上连续，但在 $x \to 0$ 时趋于无穷大，它也不是一致连续的。
+
+一致连续的关键在于，它排除了这种在边界附近越来越陡峭或无限震荡的情况。
+\end{remark}
+
+\begin{definition}
+设 $U\subset\mathbb{R}^{n}$ 为开集,函数 $u:U\to\mathbb{R}$,若存在$0<\gamma\leqslant 1$，$C\in \mathbb{R}$,使得
+\begin{align}
+|u(x)-u(y)|\leqslant C|x-y|^{\gamma} \qquad (x,y\in U)
+\label{align:ch05-holder}
+\end{align}
+成立,则这样的函数称为\textbf{以 $\gamma$ 为指数的H\"older连续函数}.
+\end{definition}
+\begin{remark}
+这个定义的来由可以追溯到对函数光滑性的精细分级需求. Lipschitz 连续 (即 $\gamma=1$ 的情形) 通过导数的有界性来限制函数的振荡速度, 这是一个非常强的条件. 然而, 在偏微分方程中, 很多函数 (例如 $u(x)=\sqrt{x}$ 在 $0$ 附近) 的导数虽然无界, 但函数本身仍然表现出非常良好的连续性. 为了定量地刻画这种介于“连续”和“Lipschitz连续”之间的“分数阶”光滑性, 我们引入H\"older连续的概念. 
+\end{remark}
+
+\begin{remark}
+给定函数 \(u: U \to \mathbb{R}\)，它的连续模是一个依赖于 \(\delta > 0\) 的函数，定义为
+\begin{align*}
+\omega_u(\delta) \triangleq \sup_{\substack{x,y \in U \\ |x-y| \leqslant \delta}} |u(x) - u(y)|.
+\end{align*}
+这个定义的直观含义是：\(\omega_u(\delta)\) 是函数在距离不超过 \(\delta\) 的任意两点之间的“最大波动幅度”。显然，\(\omega_u(\delta)\) 关于 \(\delta\) 单调不减，并且当 \(\delta \to 0^+\) 时，\(\omega_u(\delta) \to 0\) 当且仅当函数 \(u\) 是一致连续的。
+
+\eqref{align:ch05-holder}式其实就是对连续模的一个上界估计。因为对于任意 \(|x-y| \leqslant \delta\)，都有 \(|u(x)-u(y)| \leqslant C\delta^{\gamma}\)。所以，取上确界立刻得到：
+\begin{align*}
+\omega_u(\delta) \leqslant C\delta^{\gamma}.
+\end{align*}
+它把连续模控制在一个由 \(C\) 和 \(\gamma\) 决定的幂函数之下。
+连续模的种类决定了函数的光滑性等级。例如：
+\begin{enumerate}[(1)]
+\item 如果 \(\omega_u(\delta) \leqslant L\delta\)（即 \(\gamma=1\) 的 H\"older 连续），这就是 Lipschitz 连续。它要求函数的变化速度被一个线性尺度控制。
+\item 如果 \(\omega_u(\delta) \leqslant C\delta^{\gamma}\)（\(0<\gamma<1\)），这就是 H\"older 连续。它允许函数在极小的尺度下比线性函数有更剧烈的相对波动。
+\item 如果 \(\omega_u(\delta) \leqslant C|\ln \delta|^{-1}\)，则称为对数连续，比 H\"older 连续更弱。
+\end{enumerate}
+
+一个最经典的例子是 \(u(x) = \sqrt{x}\) 在 \(U = (0, 1)\) 上。取 \(\gamma = \frac{1}{2}\),我们可以验证它满足 \(|u(x) - u(y)| \leqslant |x-y|^{\frac{1}{2}}\)。因此，它的连续模 \(\omega_u(\delta) \leqslant \delta^{\frac{1}{2}}\)。这意味着，为了让函数值的变化不超过 \(\varepsilon \)，你需要让自变量的距离小于 \(\varepsilon ^2\)。对比一下线性函数 \(u(x) = x\)，它的连续模是 \(\omega_u(\delta) = \delta\)，只需要 \(\delta < \varepsilon \) 就够了。H\"older 连续刻画的就是这种“距离需要缩小得更快，才能达到同样的变化控制”的分数阶效应。
+
+在偏微分方程的正则性理论（如 Schauder 估计）中，连续模扮演着核心角色。它精确地控制了解及其导数在边界附近的一致连续性。如果我们知道解的连续模是指数 \(\gamma\) 型的，就能推断出解在边界附近的正则性，进而判断解是否属于经典的 \(C^{k,\gamma}\) 空间。所以，H\"older 连续本质上就是为连续模指定了一个具体的幂函数形态。
+\end{remark}
+\begin{remark}
+至于为什么要求 $0<\gamma\leqslant 1$, 原因如下:
+
+(i) 为什么要求 $\gamma \leqslant 1$. 如果 $\gamma > 1$, 在凸集 $U$ 上, 由中值定理或积分估计, 可以推出 $u$ 的导数处处为零, 从而 $u$ 必为常数函数. 这样一来, 空间将退化为只包含常数函数, 失去研究价值. 因此为了得到非平凡的函数类, 必须限制 $\gamma$ 不超过 $1$.
+
+(ii) 为什么要求 $\gamma > 0$. 如果 $\gamma \leqslant 0$, 不等式 $|u(x)-u(y)|\leqslant C|x-y|^{\gamma}$ 在 $|x-y|\to 0$ 时右端不仅不会趋于零, 反而可能趋于无穷 (当 $\gamma<0$), 或者成为一个常数界 (当 $\gamma=0$). 这意味着这个不等式实际上并没有对 $|x-y|\to 0$ 时的连续性给出任何有效的限制, 任何局部有界函数都满足. 因此为了使得该不等式真正刻画函数的局部连续性质, 必须要求 $\gamma$ 严格大于零.
+\end{remark}
+
+\begin{examples}\label{examples:例在gamma上的例子}
+考虑定义在 $U = (-1, 1)$ 上的一元函数 $u(x) = |x|^{\gamma}$，其中参数 $0 < \gamma < 1$。现在考察它在原点 $x_0 = 0$ 附近的行为。
+
+首先，检验它是否满足 H\"older 连续条件。考察原点 $x_0 = 0$ 与任意点 $x \in (-1, 1)$ 的差商:
+\begin{align*}
+\frac{|u(x) - u(0)|}{|x - 0|^{\gamma}} = \frac{|x|^{\gamma}}{|x|^{\gamma}} = 1.
+\end{align*}
+对于一般的 $x, y \in (-1, 1)$，注意到$f(x)=t^{\gamma}$是上凸函数,故对$\forall a\geqslant b\geqslant 0$,有$(a+b)^{\gamma}\leqslant a^\gamma+b^\gamma$.从而$a^\gamma -b^\gamma \leqslant (a-b)^\gamma$.于是再利用绝对值不等式就有
+\begin{align}\label{eq::jiojsjiofjiodfijosdfijosdfijossjdkosfj}
+|u(x)-u(y)|=||x|^{\gamma}-|y|^{\gamma}|\leqslant \left| |x|-|y| \right|^{\gamma}\leqslant |x-y|^{\gamma}.
+\end{align}
+因此，该函数在整个 $U$ 上满足 H\"older 连续条件，属于 $C^{0, \gamma}(\overline{U})$。
+
+其次，我们来看看它的可微性。当 $x > 0$ 时，$u(x) = x^{\gamma}$，其导数为
+\begin{align*}
+u'(x) = \gamma x^{\gamma - 1}.
+\end{align*}
+由于 $\gamma - 1 < 0$，当 $x \to 0^+$ 时，$u'(x) = \gamma x^{\gamma - 1} \to +\infty$。这意味着该函数在 $x = 0$ 处的导数趋于无穷大，因此它在原点不可微。于是 $u \notin C^1(\overline{U})$。
+
+通过这个例子，我们可以清晰地看到 $\gamma \in (0,1)$ 的作用。当 $\gamma = 1$ 时，$u(x) = |x|$ 是 Lipschitz 连续的，它的图像在原点是一个尖锐的折角。当 $\gamma$ 减小到 $\frac{1}{2}$ 时，$u(x) = \sqrt{|x|}$ 的图像在原点不仅不可微，而且切线垂直于 $x$ 轴，也就是“更尖锐”了。$\gamma$ 越小，函数在不可微点附近的“尖点”就越“陡峭”。它处于“连续”和“可微”之间，相当于把导数的“阶数”从整数扩展到了分数。
+\end{examples}
+\begin{remark}
+至于为什么要求 $0<\gamma\leqslant 1$, 原因如下:
+(i) 为什么 $\gamma \leqslant 1$。如果 $\gamma > 1$，例如 $\gamma = 2$，那么 $u(x) = |x|^2$ 在原点不仅是可微的，而且导数等于 $0$。事实上，如果 $u$ 在凸集 $U$ 上满足 $|u(x) - u(y)| \leqslant C|x - y|^{\gamma}$ 且 $\gamma > 1$，通过除以 $|x - y|$ 并令 $|x - y| \to 0$，我们可以推得 $u'(x) \equiv 0$。这意味着 $u$ 必须恒为常数。为了避免空间退化为只包含常数函数，我们规定 $\gamma$ 不能大于 $1$。
+
+(ii) 为什么 $\gamma > 0$。如果 $\gamma \leqslant 0$，例如 $\gamma = 0$，不等式变为 $|u(x) - u(y)| \leqslant C$，这仅仅表示函数有界，完全没有刻画任何连续性信息。如果 $\gamma < 0$，当 $|x - y| \to 0$ 时，$|x - y|^{\gamma} \to +\infty$，这个不等式对局部连续性没有任何限制。因此，只有 $\gamma > 0$ 才能保证随着距离缩小，函数值的差距也受到控制，从而真正刻画函数的连续性与光滑性。
+\end{remark}
+
+\begin{examples}
+考虑定义在 $U = (-1, 1)$ 上的函数 $u(x) = |x|^{\gamma} \sin \left( \frac{1}{x} \right) $（$x \neq 0$），并补充定义 $u(0) = 0$，其中 $0 < \gamma < 1$。我们考察它在 $x = 0$ 处的行为。
+
+首先，验证它在 $x = 0$ 处的连续性。因为
+\begin{align*}
+|u(x) - u(0)| = |x|^{\gamma} \left| \sin\left(\frac{1}{x}\right) \right| \leqslant |x|^{\gamma}.
+\end{align*}
+当 $x \to 0$ 时，$|x|^{\gamma} \to 0$，由夹逼定理可知 $\lim\limits_{x \to 0} u(x) = 0 = u(0)$，所以函数在原点连续。
+
+其次，考察它在 $x = 0$ 处的可微性。计算差商：
+\begin{align*}
+\frac{u(x) - u(0)}{x} = \frac{|x|^{\gamma} \sin \left( \frac{1}{x} \right) }{x} = |x|^{\gamma - 1} \operatorname{sgn}(x) \sin\left(\frac{1}{x}\right).
+\end{align*}
+因为 $\gamma - 1 < 0$，当 $x \to 0$ 时，$|x|^{\gamma - 1} \to +\infty$。又因为 $\sin \left( \frac{1}{x} \right) $ 在 $x \to 0$ 时在 $[-1, 1]$ 之间无限次震荡，不存在极限。所以 $u'(0)$ 不存在，该函数在原点处不可微。
+
+最后，验证它满足H\"older连续条件.
+对 $\forall x,y\in U,$ 不妨设 $|x|<|y|,$ 令 $h=|x-y|,$ 若 $h\geqslant 1,$ 则
+\begin{align*}
+\left| |x|^{\gamma}\sin \left( \frac{1}{x} \right) -|y|^{\gamma}\sin \left( \frac{1}{y} \right) \right|\leqslant |x|^{\gamma}+|y|^{\gamma}\leqslant 2\leqslant 2h^{\gamma}.
+\end{align*}
+下设 $0<h<1.$ 若 $|x|\leqslant 2h$ 或 $|y|\leqslant 2h,$ 不妨设 $|x|\leqslant 2h,$ 则
+\begin{align*}
+|y|\leqslant |x|+h\leqslant 3h\Longrightarrow \left| |x|^{\gamma}\sin \left( \frac{1}{x} \right) -|y|^{\gamma}\sin \left( \frac{1}{y} \right) \right|\leqslant |x|^{\gamma}+|y|^{\gamma}\leqslant \left( 2^{\gamma}+3^{\gamma} \right) h^{\gamma}.
+\end{align*}
+若 $2h<|x|<|y|,$ 不妨设 $2h<x<y,$ 若 $x\leqslant \sqrt{h},$ 则由 $0<h<1$ 和 $h=|x-y|$ 知
+\begin{align*}
+|y|\leqslant |x|+h\leqslant \sqrt{h}+h\leqslant 2\sqrt{h}.
+\end{align*}
+从而
+\begin{align*}
+\left| |x|^{\gamma}\sin \left( \frac{1}{x} \right) -|y|^{\gamma}\sin \left( \frac{1}{y} \right) \right|\leqslant |x|^{\gamma}+|y|^{\gamma}\leqslant h^{\frac{\gamma}{2}}+2^{\gamma}h^{\frac{\gamma}{2}}\leqslant \left( 1+2^{\gamma} \right) h^{\gamma}.
+\end{align*}
+若 $x>\sqrt{h},$ 则 $x^{\gamma -2}<h^{\frac{\gamma -2}{2}},$ 由\hyperref[Basis of Analytics-proposition:经典初等不等式]{经典初等不等式\ref{Basis of Analytics-proposition:经典初等不等式-1}}和\subcref{Basis of Analytics-theorem:三角函数相关初等不等式}{Basis of Analytics-theorem:三角函数相关初等不等式-2}可得
+\begin{align*}
+\left| |x|^{\gamma}\sin \left( \frac{1}{x} \right) -|y|^{\gamma}\sin \left( \frac{1}{y} \right) \right| &=\left| |x|^{\gamma}\sin \left( \frac{1}{x} \right) -|x|^{\gamma}\sin \left( \frac{1}{y} \right) +|x|^{\gamma}\sin \left( \frac{1}{y} \right) -|y|^{\gamma}\sin \left( \frac{1}{y} \right) \right| \\
+&\leqslant \left| |x|^{\gamma}-|y|^{\gamma} \right|\left| \sin \left( \frac{1}{y} \right) \right|+|x|^{\gamma}\left| \sin \left( \frac{1}{x} \right) -\sin \left( \frac{1}{y} \right) \right| \\
+&\leqslant |x-y|^{\gamma}+|x|^{\gamma}\left| \frac{1}{x}-\frac{1}{y} \right|=h^{\gamma}+|x|^{\gamma}\frac{|y-x|}{|xy|} \\
+&<h^{\gamma}+x^{\gamma -1}\frac{h}{x^2}=h^{\gamma}+x^{\gamma -2}h \\
+&\leqslant h^{\gamma}+h^{\frac{\gamma}{2}}\leqslant 2h^{\gamma}.
+\end{align*}
+综上,它属于 $C^{0, \gamma}(\overline{U})$。
+\end{examples}
+\begin{remark}
+这个例子展现了H\"older指数 $\gamma$ 的深刻内涵：
+
+(i) 它刻画了导数的震荡。在原点附近，$u(x)$ 的值在 $|x|^{\gamma}$ 的“包络线”内无限次地穿越 $x$ 轴，其频率越来越高（由 $\sin \left( \frac{1}{x} \right)$ 引起），振幅越来越小（由 $|x|^{\gamma}$ 压制）。虽然导数不存在，但这种震荡被 $\gamma$ 精确地控制住了。见\cref{figure:图11111}.
+
+(ii)$0 < \gamma < 1$ 恰好是“连续”与“可微”之间的一个精细刻度。$\gamma$ 越小，函数的震荡越剧烈，越接近纯粹的连续；$\gamma$ 越接近1，函数越平缓，越接近可微.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{f0de7d3a531f6c351fb0f45f5d4cfee8.png}
+\caption{}
+\label{figure:图11111}
+\end{figure}
+\end{remark}
+
+\begin{definition}\label{definition:ch05-holder范数}
+设 $U\subset\mathbb{R}^{n}$ 为开集.
+\begin{enumerate}[(i)]
+\item 设$u\in C(\overline{U})$，定义其一致范数为
+\begin{align*}
+\|u\|_{C(\overline{U})}\triangleq \sup_{x\in U}|u(x)|.
+\end{align*}
+
+\item 设$u\in C(\overline{U})$是$\gamma$ 为指数的H\"older连续函数,定义其$\gamma$ 阶H\"older半范数为
+\begin{align*}
+[u]_{C^{0,\gamma}(\overline{U})}\triangleq \sup_{\substack{x,y\in U\\ x\neq y}}\left\{\frac{|u(x)-u(y)|}{|x-y|^{\gamma}}\right\},
+\end{align*}
+再定义其$\gamma$ 阶H\"older范数为
+\begin{align*}
+\|u\|_{C^{0,\gamma}(\overline{U})}\triangleq \|u\|_{C(\overline{U})}+[u]_{C^{0,\gamma}(\overline{U})}.
+\end{align*}
+
+\item 设$u\left( x \right) \in C^k\left( \overline{U} \right)$ ,$k$为非负整数,且对$\forall \left| \alpha \right|=k,D^{\alpha}u$都是以 $\gamma$ 为指数的H\"older连续函数,定义其$\gamma$ 阶H\"older范数为
+\begin{align*}
+\|u\|_{C^{k,\gamma}(\overline{U})}\triangleq \sum_{|\alpha|\leqslant k}\|D^{\alpha}u\|_{C(\overline{U})}+\sum_{|\alpha|=k}[D^{\alpha}u]_{C^{0,\gamma}(\overline{U})}.
+\end{align*}
+\end{enumerate}
+\end{definition}
+\begin{remark}
+(i)这样定义的半范数不满足正定性,故我们在此基础上加上其一致范数才能使H\"older范数满足正定性，从而真正成为一个范数.
+
+(ii)如果把函数加上一个常数,那么这个H\"older半范数完全无法区分$u(x)$和$u(x)+100$,此时$[u]_{C^{0,\gamma}(\overline{U})}=[u+100]_{C^{0,\gamma}(\overline{U})}$.
+
+现在我们严格证明：若函数 \(u \in C^k(\overline{U})\) 的最高阶导数 \(D^\alpha u\)（\(|\alpha| = k\)）都是 \(\gamma\) 阶 H\"older 连续的，则其所有低阶导数 \(D^\beta u\)（\(|\beta| < k\)）一定是 \(\gamma\) 阶 H\"older 连续的，甚至是 Lipschitz 连续的。
+\begin{proof}
+
+证明所有 \(|\beta| = k-1\) 的情形。
+任取 \(x_0 \in U\)。因为 \(U\) 是开集，存在一个以 \(x_0\) 为中心的凸球 \(V \subset \overline{V} \subset U\)。因为 \(\overline{V}\) 是紧集，且 \(D^\alpha u\)（\(|\alpha| = k\)）在 \(\overline{V}\) 上连续，所以它们有界。设
+\begin{align*}
+M \triangleq \max_{|\alpha| = k} \sup_{z \in V} |D^\alpha u(z)| < \infty.
+\end{align*}
+任取 \(x, y \in V\)。因为 \(V\) 是凸的，线段 \(\{y + t(x - y) \mid 0 \leqslant t \leqslant 1\}\) 完全落在 \(V\) 内。对 \(D^\beta u\)（\(|\beta| = k - 1\)）应用微积分基本定理得
+\begin{align*}
+D^\beta u(x) - D^\beta u(y) = \int_0^1 \frac{\mathrm{d}}{\mathrm{d}t} D^\beta u(y + t(x - y)) \mathrm{d}t.
+\end{align*}
+由链式法则，\(\frac{\mathrm{d}}{\mathrm{d}t} D^\beta u(y + t(x - y)) = \sum_{|\alpha| = k} D^\alpha u(y + t(x - y)) \cdot (x - y)\)。因此，
+\begin{align*}
+|D^\beta u(x) - D^\beta u(y)| \leqslant \int_0^1 \sum_{|\alpha| = k} |D^\alpha u(y + t(x - y))| |x - y| \mathrm{d}t \leqslant C M |x - y|,
+\end{align*}
+其中 \(C\triangleq \sum_{|\alpha |=k}{1}\) 是仅依赖于 \(n\) 和 \(k\) 的常数。这说明 \(D^\beta u\) 在 \(V\) 上是 Lipschitz 连续的。
+
+因为 \(V\) 是有界的，我们可以不妨设其直径 \(\mathrm{diam}(V) \leqslant 1\)。那么对于任意 \(x, y \in V\)，我们有 \(|x - y| \leqslant 1\)。由于 \(0 < \gamma \leqslant 1\)，当 \(|x - y| \leqslant 1\) 时，成立 \(|x - y| \leqslant |x - y|^\gamma\)。因此，
+\begin{align*}
+|D^\beta u(x) - D^\beta u(y)| \leqslant C M |x - y| \leqslant C M |x - y|^\gamma.
+\end{align*}
+所以 \(D^\beta u\) 在 \(V\) 上也是 \(\gamma\) 阶 H\"older 连续的。
+
+证明所有 \(|\beta| < k\) 的情形。
+我们可用归纳法重复上述论证。假设对于某个 \(j\)（\(1 \leqslant j \leqslant k\)），所有满足 \(|\beta| = j\) 的导数 \(D^\beta u\) 都是 Lipschitz 连续的。现考察 \(|\beta| = j - 1\) 的导数。因为 \(D^\beta u\) 可微，且其导数 \(D^\alpha u\)（\(|\alpha| = j\)）是 Lipschitz 连续的，从而有界，所以再次利用中值定理或微分学基本定理可知 \(D^\beta u\) 也是 Lipschitz 连续的。
+因此，从 \(j = k - 1\) 出发，一路递推下去，可知所有 \(|\beta| < k\) 的导数 \(D^\beta u\) 在 \(U\) 的任意紧子集上都是 Lipschitz 连续的，从而也是 \(\gamma\) 阶 H\"older 连续的。
+\end{proof}
+既然所有低阶导数的 H\"older 连续性都能被最高阶导数的 H\"older 连续性自动蕴含，那么在 \(C^{k,\gamma}(\overline{U})\) 的定义中，再额外对低阶导数施加 H\"older 半范数限制就是多余的。因此，定义中仅在最高阶导数（\(|\alpha| = k\)）上附加 H\"older 半范数 \([D^\alpha u]_{C^{0,\gamma}(\overline{U})}\)，既保持了空间的完备性，又避免了冗余的限制。
+\end{remark}
+
+\begin{examples}
+我们取定义域 \(U = (0, 1)\)，指数 \(\gamma = \frac{1}{2}\)。
+\begin{enumerate}[(1)]
+\item 考虑光滑的线性函数 \(u_1(x) = x\)，定义在 \((0, 1)\) 上。
+
+验证属于该空间：计算差商
+\begin{align*}
+\frac{|x - y|}{|x-y|^{\frac{1}{2}}} = |x-y|^{\frac{1}{2}}.
+\end{align*}
+因为 \(x, y \in (0, 1)\)，所以 \(|x-y| < 1\)，从而 \(|x-y|^{\frac{1}{2}} \leqslant 1\)。这个比值有界，所以函数属于 \(C^{0, \frac{1}{2}}\)。
+
+计算半范数：我们需要找这个比值的上确界。显然当 \(x \to 1, y \to 0\) 时，\(|x-y|^{\frac{1}{2}} \to 1\)。所以
+\begin{align*}
+[u_1]_{C^{0, \frac{1}{2}}} = 1.
+\end{align*}
+
+\item 考虑带有粗糙点的函数 \(u_2(x) = \sqrt{x} + x\)，定义在 \((0, 1)\) 上。
+
+验证属于该空间：我们拆解这个函数。根据三角不等式得
+\begin{align*}
+|u_2(x) - u_2(y)| \leqslant |\sqrt{x} - \sqrt{y}| + |x - y|.
+\end{align*}
+两边同时除以 \(|x-y|^{\frac{1}{2}}\)
+\begin{align*}
+\frac{|u_2(x) - u_2(y)|}{|x-y|^{\frac{1}{2}}} \leqslant \frac{|\sqrt{x} - \sqrt{y}|}{|x-y|^{\frac{1}{2}}} + \frac{|x-y|}{|x-y|^{\frac{1}{2}}}.
+\end{align*}
+我们知道第一项的最大值是 1（类似\eqref{eq::jiojsjiofjiodfijosdfijosdfijossjdkosfj}式的放缩），第二项的最大值也是 1。所以这个比值被常数 2 控制。因此，它肯定属于 \(C^{0, \frac{1}{2}}\)。
+
+计算半范数：我们来找它的最大值。取 \(x = 1, y = 0\)（极限情况）
+\begin{align*}
+\frac{|u_2(1) - u_2(0)|}{|1 - 0|^{\frac{1}{2}}} = \frac{|(\sqrt{1} + 1) - 0|}{1} = 2.
+\end{align*}
+这个比值至少是 2。结合上面的三角不等式，这个比值最大就是 2。所以
+\begin{align*}
+[u_2]_{C^{0, \frac{1}{2}}} = 2.
+\end{align*}
+\end{enumerate}
+\end{examples}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{0d75a7fe2d2f2dc7b1259d9694913687.png}
+\caption{}
+\label{figure:图111211}
+\end{figure}
+
+\begin{remark}
+对比总结：
+\begin{enumerate}[(1)]
+\item 函数 \(u_1(x) = x\) 的半范数是 1。
+\item 函数 \(u_2(x) = \sqrt{x} + x\) 的半范数是 2。
+\end{enumerate}
+这两个函数都在 \(C^{0, \frac{1}{2}}\) 空间里（因为它们的半范数都是有限的），但 \(u_2\) 的半范数是 \(u_1\) 的两倍。这是因为 \(u_2\) 在 \(x=0\) 附近加了一个 \(\sqrt{x}\)，这就导致它在原点附近的“陡峭度”变大了。半范数精确地捕捉到了这一点：在同样的小尺度下，\(u_2\) 的函数值变化幅度是 \(u_1\) 的两倍。
+
+半范数的作用：它在不关心函数绝对高度（比如 \(u_2\) 的最高点是 2，\(u_1\) 是 1）的情况下，单纯地用一把“\(\gamma\) 阶的尺子”去度量函数在局部的粗糙度。
+
+如果一个函数的半范数是有限值（不是无穷大），它就属于这个空间。半范数越大，函数在局部就越“粗糙”或“陡峭”。
+\end{remark}
+
+\begin{definition}\label{definition:ch05-Ckgamma}
+设 \(U\subset\mathbb{R}^{n}\) 为开集，\(k\) 为非负整数，\(0<\gamma\leqslant 1\)。定义H\"older空间为
+\begin{align*}
+C^{k,\gamma}\left( \overline{U} \right) \triangleq \left\{ u\left( x \right) \in C^k\left( \overline{U} \right) \mid \text{对}\forall \left| \alpha \right|=k,D^{\alpha}u\text{都是以}\gamma \text{为指数的H\"older连续函数},\text{且}\left\| u \right\| _{C^{k,\gamma}\left( \overline{U} \right)}<\infty \right\} .
+\end{align*}
+\end{definition}
+\begin{remark}
+从宏观动机来看，\(C^k(\overline{U})\) 只要求函数直到 \(k\) 阶的导数连续。然而，仅仅“连续”不足以精确刻画函数的正则性。例如，函数 \(u(x) = x^k |x|^{\gamma}\) 的 \(k\) 阶导数包含了 \(|x|^{\gamma}\)，它在 \(x=0\) 处是连续的（甚至可能趋于0），但其变化方式非常“粗糙”，具有典型的分数阶特征。为了定量描述这种介于整数阶导数之间的精细光滑性，我们需要引入 Hölder 空间 \(C^{k,\gamma}(\overline{U})\)。
+
+关于范数结构，这个范数是由两部分相加构成的。第一部分是
+\begin{align*}
+\sum_{|\alpha|\leqslant k}\|D^{\alpha}u\|_{C(\overline{U})},
+\end{align*}
+它通过上确界范数控制了函数及其直到 \(k\) 阶导数的“绝对高度”。如果缺少这一项，常数函数或者在高阶导数上发生剧烈震荡的函数将无法被有效区分,例如:
+\begin{align*}
+u_1(x)=\sin (100x),\quad u_2(x)=1000x+\sin (100x)
+\end{align*}
+的一阶导数的H\"older半范数相等,无法区分.
+
+第二项是
+\begin{align*}
+\sum_{|\alpha|=k}[D^{\alpha}u]_{C^{0,\gamma}(\overline{U})},
+\end{align*}
+它只对最高阶导数施加了 Hölder 半范数，用来限制它们局部的“粗糙度”和“振荡幅度”。这两部分加起来，构成了一个真正的范数，使得该空间成为一个完备的 Banach 空间。
+
+最后，定义中要求范数有限，是为了保证空间的完备性。在偏微分方程的正则性理论（如 Schauder 估计）中，我们经常需要证明方程的解属于 \(C^{k,\gamma}\)。完备性确保了我们在取极限时，得到的函数依然落在这个空间内.
+\end{remark}
+
+\begin{theorem}[H\"older空间作为函数空间]\label{theorem:ch05-holder空间Banach}
+设 $U\subset\mathbb{R}^{n}$ 为开集,H\"older空间$C^{k,\gamma}(\overline{U})$ 是Banach空间。
+\end{theorem}
+\begin{proof}
+
+首先验证 \(C^{k,\gamma}(\overline{U})\) 是赋范线性空间。显然它是线性空间。其范数定义为
+\begin{align*}
+\|u\|_{C^{k,\gamma}(\overline{U})}
+&\triangleq \sum_{|\alpha|\leqslant k}\|D^\alpha u\|_{C(\overline{U})}
++\sum_{|\alpha|=k}[D^\alpha u]_{C^{0,\gamma}(\overline{U})},
+\end{align*}
+其中
+\begin{align*}
+\|v\|_{C(\overline{U})}
+\triangleq \sup_{x\in\overline{U}}|v(x)|,\quad 
+[v]_{C^{0,\gamma}(\overline{U})}\triangleq \sup_{\substack{x,y\in\overline{U}\\x\neq y}}
+\frac{|v(x)-v(y)|}{|x-y|^\gamma}.
+\end{align*}
+下面验证它满足范数公理。
+
+\textbf{(i) 正定性.}
+若 \(\|u\|_{C^{k,\gamma}(\overline{U})}=0\)，则对每个 \(|\alpha|\leqslant k\) 有
+\[
+\|D^\alpha u\|_{C(\overline{U})}=0,
+\]
+从而 \(D^\alpha u\equiv 0\) 于 \(\overline{U}\)。特别地，取 \(\alpha=0\) 得 \(u\equiv0\)。反之，若 \(u\equiv0\)，则显然范数为 \(0\)。
+
+\textbf{(ii) 齐次性.}
+对任意常数 \(\lambda\in\mathbb{R}\)，由绝对值与上确界的性质，
+\begin{align*}
+\|\lambda u\|_{C^{k,\gamma}(\overline{U})}
+&=\sum_{|\alpha|\leqslant k}\|\lambda D^\alpha u\|_{C(\overline{U})}
++\sum_{|\alpha|=k}[\lambda D^\alpha u]_{C^{0,\gamma}(\overline{U})}\\
+&=|\lambda|\sum_{|\alpha|\leqslant k}\|D^\alpha u\|_{C(\overline{U})}
++|\lambda|\sum_{|\alpha|=k}[D^\alpha u]_{C^{0,\gamma}(\overline{U})}\\
+&=|\lambda|\,\|u\|_{C^{k,\gamma}(\overline{U})}.
+\end{align*}
+
+\textbf{(iii) 三角不等式.}
+对任意 \(u,v\in C^{k,\gamma}(\overline{U})\)，由 \(C(\overline{U})\) 中上确界范数的三角不等式，
+\[
+\|D^\alpha(u+v)\|_{C(\overline{U})}
+\leqslant \|D^\alpha u\|_{C(\overline{U})}
++\|D^\alpha v\|_{C(\overline{U})},
+\]
+并对 Hölder 半范数有
+\[
+[D^\alpha(u+v)]_{C^{0,\gamma}(\overline{U})}
+\leqslant [D^\alpha u]_{C^{0,\gamma}(\overline{U})}
++[D^\alpha v]_{C^{0,\gamma}(\overline{U})}.
+\]
+逐项求和即得
+\[
+\|u+v\|_{C^{k,\gamma}(\overline{U})}
+\leqslant \|u\|_{C^{k,\gamma}(\overline{U})}
++\|v\|_{C^{k,\gamma}(\overline{U})}.
+\]
+因此 \(C^{k,\gamma}(\overline{U})\) 是赋范线性空间。
+
+下面证明完备性。设 \(\{u_m\}_{m=1}^\infty\) 是 \(C^{k,\gamma}(\overline{U})\) 中的 Cauchy 列。则对任意 \(\varepsilon>0\)，存在 \(N\)，使得当 \(m,l\geqslant N\) 时，
+\begin{align}\label{eq:holder-cauchy}
+\|u_m-u_l\|_{C^{k,\gamma}(\overline{U})}<\varepsilon.
+\end{align}
+由范数定义，对每个 \(|\alpha|\leqslant k\)，
+\[
+\|D^\alpha u_m-D^\alpha u_l\|_{C(\overline{U})}<\varepsilon.
+\]
+因此 \(\{D^\alpha u_m\}\) 是 \(C(\overline{U})\) 中的 Cauchy 列。由于 \(C(\overline{U})\) 在一致范数下是 Banach 空间，存在 \(v_\alpha\in C(\overline{U})\)，使得
+\[
+D^\alpha u_m\to v_\alpha\quad\text{于 }C(\overline{U}).
+\]
+特别地，取 \(\alpha=0\)，得到
+\[
+u_m\to u\quad\text{于 }C(\overline{U}),
+\]
+其中 \(u\triangleq v_0\)。
+
+现在证明 \(v_\alpha\) 就是 \(u\) 的通常意义下的偏导数 \(D^\alpha u\)。先考虑一阶偏导数。固定 \(i\in\{1,\cdots,n\}\)，由上面知
+\[
+D_i u_m\to v_i\quad\text{于 }C(\overline{U}).
+\]
+任取 \(x\in U\)，取 \(h\neq0\) 充分小，使得 \(x+h e_i\in U\)。由 \(u_m\in C^1(\overline{U})\)和微分学基本定理有
+\[
+\frac{u_m(x+h e_i)-u_m(x)}{h}
+=\int_0^1 D_i u_m(x+t h e_i)\,\mathrm{d}t.
+\]
+令 \(m\to\infty\)。因为 \(u_m\to u\) 于 \(C(\overline{U})\)，且 \(D_i u_m\to v_i\) 于 \(C(\overline{U})\)，故
+\[
+\frac{u(x+h e_i)-u(x)}{h}
+=\int_0^1 v_i(x+t h e_i)\,\mathrm{d}t.
+\]
+由\hyperref[Real Analysis-theorem:积分的平均连续性]{Lebesgue积分的平均连续性}，令 \(h\to0\)，得
+\[
+\underset{h\rightarrow 0}{\lim}\int_0^1{v_i\left( x+the_i \right) \,\mathrm{d}t}-v_i\left( x \right) =\underset{h\rightarrow 0}{\lim}\int_0^1{\left[ v_i\left( x+the_i \right) -v_i\left( x \right) \right] \,\mathrm{d}t}=0\Longrightarrow \lim_{h\to0}\frac{u(x+h e_i)-u(x)}{h}=v_i(x).
+\]
+因此 \(u\) 关于 \(x_i\) 的偏导数存在且等于 \(v_i\)，即 \(D_i u=v_i\)。对多重指标逐次应用同样的论证，得到
+\[
+D^\alpha u=v_\alpha\quad\text{于 }U,\qquad |\alpha|\leqslant k.
+\]
+于是 \(u\in C^k(\overline{U})\)，且 \(D^\alpha u_m\to D^\alpha u\) 于 \(C(\overline{U})\) 对每个 \(|\alpha|\leqslant k\) 成立。
+
+还需证明 \(D^\alpha u\) 对 \(|\alpha|=k\) 是 \(\gamma\)-Hölder 连续的，并且 \(\{u_m\}\) 在 \(C^{k,\gamma}\) 范数下收敛到 \(u\)。由 \eqref{eq:holder-cauchy}，对任意 \(|\alpha|=k\) 和任意 \(x\neq y\)，有
+\[
+\frac{|(D^\alpha u_m-D^\alpha u_l)(x)-(D^\alpha u_m-D^\alpha u_l)(y)|}{|x-y|^\gamma}
+\leqslant [D^\alpha u_m-D^\alpha u_l]_{C^{0,\gamma}(\overline{U})}
+\leqslant \|u_m-u_l\|_{C^{k,\gamma}(\overline{U})}<\varepsilon.
+\]
+在上式中令 \(l\to\infty\)。由于 \(D^\alpha u_l\to D^\alpha u\) 逐点收敛（实际上一致收敛），得到
+\[
+\frac{|(D^\alpha u_m-D^\alpha u)(x)-(D^\alpha u_m-D^\alpha u)(y)|}{|x-y|^\gamma}
+\leqslant \varepsilon.
+\]
+对所有 \(x\neq y\) 取上确界，得
+\begin{align}\label{eq:holder-seminorm-conv}
+[D^\alpha u_m-D^\alpha u]_{C^{0,\gamma}(\overline{U})}\leqslant \varepsilon.
+\end{align}
+因此 \(D^\alpha u_m-D^\alpha u\in C^{0,\gamma}(\overline{U})\)。由于 \(D^\alpha u_m\in C^{0,\gamma}(\overline{U})\)，故 \(D^\alpha u\in C^{0,\gamma}(\overline{U})\)。并且由 \eqref{eq:holder-seminorm-conv} 知
+\[
+[D^\alpha u_m-D^\alpha u]_{C^{0,\gamma}(\overline{U})}\to 0
+\qquad (m\to\infty).
+\]
+结合前面已证的一致收敛 \(D^\alpha u_m\to D^\alpha u\) 于 \(C(\overline{U})\)，得到
+\begin{align*}
+\|u_m-u\|_{C^{k,\gamma}(\overline{U})}
+&=\sum_{|\alpha|\leqslant k}\|D^\alpha u_m-D^\alpha u\|_{C(\overline{U})}
++\sum_{|\alpha|=k}[D^\alpha u_m-D^\alpha u]_{C^{0,\gamma}(\overline{U})}\to 0.
+\end{align*}
+这就证明了 \(u_m\to u\) 于 \(C^{k,\gamma}(\overline{U})\)，从而 \(C^{k,\gamma}(\overline{U})\) 是 Banach 空间。
+\end{proof}
+
+
+
+
+
+
+
+\end{document}

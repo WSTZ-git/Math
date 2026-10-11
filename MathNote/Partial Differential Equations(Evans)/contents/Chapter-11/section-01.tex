@@ -1,0 +1,432 @@
+\documentclass[../../main.tex]{subfiles}
+
+\begin{document}
+
+\section{引言}\label{section:ch11-引言}
+
+本章研究非线性、散度结构一阶双曲型偏微分方程组，它们作为守恒律的模型出现。
+
+\textbf{物理解释。} 在最一般的情形下，我们希望研究向量函数
+\begin{align*}
+\mathbf{u}=\mathbf{u}(x,t)=(u_1(x,t),\cdots,u_m(x,t)) \quad (x\in\mathbb{R}^n,\;t\geqslant 0),
+\end{align*}
+其分量是所研究的某物理系统中各种守恒量的密度。给定任意光滑有界区域 $U\subset\mathbb{R}^n$，注意积分
+\begin{align}
+\int_U \mathbf{u}(x,t)\,\mathrm{d}x
+\label{align:ch11-总量}
+\end{align}
+表示时间 $t$ 时 $U$ 内这些量的总量。守恒律通常断言 $U$ 内的变化率由通量函数 $\mathbf{F}:\mathbb{R}^m\to\mathbb{M}^{m\times n}$ 控制，该函数控制 $u$ 通过 $\partial U$ 的损失或增加速率。换言之，在每个时间 $t$ 应假设
+\begin{align}
+\frac{\mathrm{d}}{\mathrm{d}t}\int_U \mathbf{u}\,\mathrm{d}x = -\int_{\partial U}\mathbf{F}(\mathbf{u})\boldsymbol{\nu}\,\mathrm{d}S,
+\label{align:ch11-守恒律积分}
+\end{align}
+其中 $\boldsymbol{\nu}$ 如通常表示沿 $\partial U$ 的外单位法向量。改写\eqref{align:ch11-守恒律积分}，推出
+\begin{align}
+\int_U \mathbf{u}_t\,\mathrm{d}x = -\int_{\partial U}\mathbf{F}(\mathbf{u})\boldsymbol{\nu}\,\mathrm{d}S = -\int_U \operatorname{div}\mathbf{F}(\mathbf{u})\,\mathrm{d}x.
+\label{align:ch11-守恒律微分}
+\end{align}
+
+由于区域 $U\subset\mathbb{R}^n$ 是任意的，由\eqref{align:ch11-守恒律微分} 我们得到一般守恒律组的初值问题：
+\begin{align}
+\begin{cases}
+\mathbf{u}_t+\operatorname{div}\mathbf{F}(\mathbf{u})=0 & \text{在 } \mathbb{R}^n\times(0,\infty) \text{ 中},\\
+\mathbf{u}=\mathbf{g} & \text{在 } \mathbb{R}^n\times\{t=0\} \text{ 上},
+\end{cases}
+\label{align:ch11-高维守恒律}
+\end{align}
+给定函数 $\mathbf{g}=(g_1,\cdots,g_m)$ 描述 $\mathbf{u}=(u_1,\cdots,u_m)$ 的初始分布。
+
+目前对问题\eqref{align:ch11-高维守恒律} 尚缺乏很好的数学理解（但见 Zheng~\cite{Zh}）。因此我们从今往后改为研究单空间维中守恒律组的初值问题：
+\begin{align}
+\begin{cases}
+\mathbf{u}_t+\mathbf{F}(\mathbf{u})_x=0 & \text{在 } \mathbb{R}\times(0,\infty) \text{ 中},\\
+\mathbf{u}=\mathbf{g} & \text{在 } \mathbb{R}\times\{t=0\} \text{ 上},
+\end{cases}
+\label{align:ch11-一维守恒律}
+\end{align}
+其中 $\mathbf{F}:\mathbb{R}^m\to\mathbb{R}^m$ 和 $\mathbf{g}:\mathbb{R}\to\mathbb{R}^m$ 给定，$\mathbf{u}:\mathbb{R}\times[0,\infty)\to\mathbb{R}^m$ 是未知函数，$\mathbf{u}=\mathbf{u}(x,t)$。我们称 $\mathbb{R}^m$ 为\emph{状态空间}，写
+\begin{align*}
+\mathbf{F}=\mathbf{F}(z)=(F_1(z),\cdots,F_m(z)) \quad (z\in\mathbb{R}^m)
+\end{align*}
+为光滑通量函数。
+
+我们打算研究问题\eqref{align:ch11-一维守恒律} 的可解性、其解的性质等。
+
+\begin{example}\label{example:ch11-p系统}
+$p$-系统是如下两个守恒律的集合：
+\begin{align}
+\begin{cases}
+u_{1,t}-u_{2,x}=0 & \text{（相容条件）},\\
+u_{2,t}-p(u_1)_x=0 & \text{（Newton 定律）},
+\end{cases}
+\label{align:ch11-p系统}
+\end{align}
+在 $\mathbb{R}\times(0,\infty)$ 中，其中 $p:\mathbb{R}\to\mathbb{R}$ 给定。这里
+\begin{align}
+\mathbf{F}(z)=(-z_2,-p(z_1))
+\label{align:ch11-p系统通量}
+\end{align}
+对 $z=(z_1,z_2)$。$p$-系统来自标量拟线性波动方程
+\begin{align}
+u_{tt}-(p(u_x))_x=0
+\label{align:ch11-拟线性波动}
+\end{align}
+的改写形式。取 $u_1\coloneqq u_x$，$u_2\coloneqq u_t$，我们得到系统\eqref{align:ch11-p系统}，具有上述解释。
+\end{example}
+
+\begin{example}\label{example:ch11-Euler方程}
+一维可压缩气流的 Euler 方程为
+\begin{align}
+\begin{cases}
+\rho_t+(\rho v)_x=0 & \text{（质量守恒）},\\
+(\rho v)_t+(\rho v^2+p)_x=0 & \text{（动量守恒）},\\
+(\rho E)_t+(\rho Ev+pv)_x=0 & \text{（能量守恒）},
+\end{cases}
+\label{align:ch11-Euler方程}
+\end{align}
+在 $\mathbb{R}\times(0,\infty)$ 中。这里 $\rho$ 是质量密度，$v$ 是速度，$E$ 是单位质量能量密度。我们假设
+\begin{align*}
+E=e+\frac{v^2}{2},
+\end{align*}
+其中 $e$ 是单位质量内能，$v^2/2$ 项对应单位质量动能。\eqref{align:ch11-Euler方程} 中字母 $p$ 表示压强。我们假设 $p$ 是 $\rho$ 和 $e$ 的已知函数
+\begin{align}
+p=p(\rho,e)
+\label{align:ch11-本构关系}
+\end{align}
+公式\eqref{align:ch11-本构关系} 是本构关系。写 $\mathbf{u}=(u_1,u_2,u_3)=(\rho,\rho v,\rho E)$，我们验证\eqref{align:ch11-Euler方程} 是所需形式的守恒律组 $\mathbf{u}_t+\mathbf{F}(\mathbf{u})_x=0$，其中 $\mathbf{F}=(F_1,F_2,F_3)$，
+\begin{align}
+\begin{cases}
+F_1(z)=z_2,\\
+F_2(z)=\dfrac{(z_2)^2}{z_1}+p\left(z_1,\dfrac{z_3}{z_1}-\dfrac{1}{2}\left(\dfrac{z_2}{z_1}\right)^2\right),\\
+F_3(z)=\dfrac{z_2 z_3}{z_1}+p\left(z_1,\dfrac{z_3}{z_1}-\dfrac{1}{2}\left(\dfrac{z_2}{z_1}\right)^2\right)\dfrac{z_2}{z_1},
+\end{cases}
+\label{align:ch11-Euler通量}
+\end{align}
+其中 $z=(z_1,z_2,z_3)$，$z_1>0$。
+\end{example}
+
+\begin{example}\label{example:ch11-浅水波方程}
+一维浅水波方程为
+\begin{align*}
+\begin{cases}
+h_t+(vh)_x=0 & \text{（质量守恒）},\\
+(vh)_t+\left(v^2h+\dfrac{h^2}{2}\right)_x=0 & \text{（动量守恒）},
+\end{cases}
+\end{align*}
+在 $\mathbb{R}\times[0,\infty)$ 中，其中 $v$ 是水平速度，$h>0$ 是高度。令 $q\coloneqq vh$，可将方程改写为标准守恒律形式：
+\begin{align*}
+\begin{cases}
+h_t+q_x=0,\\
+q_t+\left(\dfrac{q^2}{h}+\dfrac{h^2}{2}\right)_x=0.
+\end{cases}
+\end{align*}
+这里
+\begin{align*}
+\mathbf{F}(z)=\left(z_2,\frac{z_2^2}{z_1}+\frac{z_1^2}{2}\right)
+\end{align*}
+对 $z=(z_1,z_2)$，$z_1>0$。
+\end{example}
+
+\subsection{积分解}\label{subsection:ch11-积分解}
+
+本学科的巨大困难在于为初值问题\eqref{align:ch11-一维守恒律} 发现适当的弱解概念。我们在 \S3.4 中研究更简单的单个或标量守恒律（即上述 $m=1$）时已经遇到类似问题。
+
+遵循 \S3.4.1 的发展，假设
+\begin{align}
+\begin{cases}
+\mathbf{v}:\mathbb{R}\times[0,\infty)\to\mathbb{R}^m \text{ 光滑},\\
+\text{具有紧支集},\;\mathbf{v}=(v_1,\cdots,v_m).
+\end{cases}
+\label{align:ch11-检验函数条件}
+\end{align}
+我们暂时假设 $\mathbf{u}$ 是问题\eqref{align:ch11-一维守恒律} 的光滑解，将偏微分方程 $\mathbf{u}_t+\mathbf{F}(\mathbf{u})_x=0$ 与检验函数 $\mathbf{v}$ 点积，分部积分，得到等式
+\begin{align}
+\int_0^\infty\int_{-\infty}^\infty \mathbf{u}\cdot\mathbf{v}_t+\mathbf{F}(\mathbf{u})\cdot\mathbf{v}_x\,\mathrm{d}x\mathrm{d}t+\left.\int_{-\infty}^\infty\mathbf{g}\cdot\mathbf{v}\,\mathrm{d}x\right|_{t=0}=0.
+\label{align:ch11-积分恒等式}
+\end{align}
+此恒等式在假设 $\mathbf{u}$ 为光滑解下导出，但即使 $\mathbf{u}$ 仅有界也有意义。
+
+\begin{definition}\label{definition:ch11-积分解}
+我们称 $\mathbf{u}\in L^\infty(\mathbb{R}\times(0,\infty);\mathbb{R}^m)$ 为初值问题\eqref{align:ch11-一维守恒律} 的\textbf{积分解}，只要等式\eqref{align:ch11-积分恒等式} 对所有满足\eqref{align:ch11-检验函数条件} 的检验函数 $\mathbf{v}$ 成立。
+\end{definition}
+
+继续平行于 \S3.4.1 中单个守恒律的发展，现在考虑这样的情形：我们有\eqref{align:ch11-一维守恒律} 的一个积分解 $\mathbf{u}$，它在曲线 $C$ 的两侧光滑，沿 $C$ 具有简单跳跃间断。更精确地说，假设 $V\subset\mathbb{R}\times(0,\infty)$ 是某区域，被光滑曲线 $C$ 分割为左侧部分 $V_l$ 和右侧部分 $V_r$。
+
+假设 $\mathbf{u}$ 在 $V_l$ 中光滑，选取在 $V_l$ 中紧支集的检验函数 $\mathbf{v}$，由\eqref{align:ch11-积分恒等式} 推出
+\begin{align}
+\mathbf{u}_t+\mathbf{F}(\mathbf{u})_x=0 \quad \text{在 } V_l \text{ 中}.
+\label{align:ch11-VL方程}
+\end{align}
+类似地，若 $\mathbf{u}$ 在 $V_r$ 中光滑，我们有
+\begin{align}
+\mathbf{u}_t+\mathbf{F}(\mathbf{u})_x=0 \quad \text{在 } V_r \text{ 中}.
+\label{align:ch11-VR方程}
+\end{align}
+现在选取在 $V$ 中紧支集但不一定沿曲线 $C$ 消失的检验函数 $\mathbf{v}$。利用恒等式\eqref{align:ch11-积分恒等式}，我们发现
+\begin{align}
+0=\int_0^\infty\int_{-\infty}^\infty \mathbf{u}\cdot\mathbf{v}_t+\mathbf{F}(\mathbf{u})\cdot\mathbf{v}_x\,\mathrm{d}x\mathrm{d}t=\iint_{V_l}+\iint_{V_r}.
+\label{align:ch11-分部积分}
+\end{align}
+
+由于 $\mathbf{v}$ 在 $V$ 内有紧支集，我们推出
+\begin{align}
+\iint_{V_l}\mathbf{u}\cdot\mathbf{v}_t+\mathbf{F}(\mathbf{u})\cdot\mathbf{v}_x\,\mathrm{d}x\mathrm{d}t &= -\iint_{V_l}[\mathbf{u}_t+\mathbf{F}(\mathbf{u})_x]\cdot\mathbf{v}\,\mathrm{d}x\mathrm{d}t+\int_C(\mathbf{u}_l\nu_2+\mathbf{F}(\mathbf{u}_l)\nu_1)\cdot\mathbf{v}\,\mathrm{d}l\nonumber\\
+&=\int_C(\mathbf{u}_l\nu_2+\mathbf{F}(\mathbf{u}_l)\nu_1)\cdot\mathbf{v}\,\mathrm{d}l,
+\label{align:ch11-左侧积分}
+\end{align}
+由\eqref{align:ch11-VL方程}。这里 $\boldsymbol{\nu}=(\nu_1,\nu_2)$ 是曲线 $C$ 从 $V_l$ 指向 $V_r$ 的单位法向量，下标``$l$''表示从左侧取的极限。类似地，\eqref{align:ch11-分部积分} 蕴含
+\begin{align*}
+\iint_{V_r}\mathbf{u}\cdot\mathbf{v}_t+\mathbf{F}(\mathbf{u})\cdot\mathbf{v}_x\,\mathrm{d}x\mathrm{d}t=-\int_C(\mathbf{u}_r\nu_2+\mathbf{F}(\mathbf{u}_r)\nu_1)\cdot\mathbf{v}\,\mathrm{d}l,
+\end{align*}
+``$r$''表示从右侧取的极限。将此恒等式加到\eqref{align:ch11-左侧积分} 并记住\eqref{align:ch11-分部积分}，推出
+\begin{align*}
+\int_C\big[(\mathbf{F}(\mathbf{u}_l)-\mathbf{F}(\mathbf{u}_r))\nu_1+(\mathbf{u}_l-\mathbf{u}_r)\nu_2\big]\cdot\mathbf{v}\,\mathrm{d}l=0.
+\end{align*}
+此恒等式对所有上述光滑函数 $\mathbf{v}$ 成立，故
+\begin{align}
+(\mathbf{F}(\mathbf{u}_l)-\mathbf{F}(\mathbf{u}_r))\nu_1+(\mathbf{u}_l-\mathbf{u}_r)\nu_2=0 \quad \text{沿 } C.
+\label{align:ch11-RH条件积分}
+\end{align}
+
+现在假设曲线 $C$ 参数化为 $\{(x,t)\mid x=s(t)\}$，其中 $s(\cdot):[0,\infty)\to\mathbb{R}$ 光滑。则 $\boldsymbol{\nu}=(\nu_1,\nu_2)=(1+\dot{s}^2)^{-1/2}(1,-\dot{s})$。因此\eqref{align:ch11-RH条件积分} 读作
+\begin{align}
+\mathbf{F}(\mathbf{u}_l)-\mathbf{F}(\mathbf{u}_r)=\dot{s}(\mathbf{u}_l-\mathbf{u}_r) \quad \text{沿曲线 } C \text{ 在 } V \text{ 中}.
+\label{align:ch11-RH条件}
+\end{align}
+
+\textbf{记号。}
+\begin{align*}
+\llbracket\mathbf{u}\rrbracket &=\mathbf{u}_l-\mathbf{u}_r=\text{ }\mathbf{u}\text{ 跨曲线 }C\text{ 的跳跃},\\
+\llbracket\mathbf{F}(\mathbf{u})\rrbracket &=\mathbf{F}(\mathbf{u}_l)-\mathbf{F}(\mathbf{u}_r)=\text{ }\mathbf{F}(\mathbf{u})\text{ 的跳跃},\\
+\sigma &=\dot{s}=\text{曲线 }C\text{ 的速度}.
+\end{align*}
+然后将\eqref{align:ch11-RH条件} 改写为恒等式
+\begin{align}
+\llbracket\mathbf{F}(\mathbf{u})\rrbracket=\sigma\llbracket\mathbf{u}\rrbracket \quad \text{沿间断曲线},
+\label{align:ch11-RH跳跃条件}
+\end{align}
+即 Rankine--Hugoniot 跳跃条件。请注意这是一个向量等式。
+
+\subsection{行波，双曲组}\label{subsection:ch11-行波双曲组}
+
+我们在 \S3.4 中看到，守恒律积分解的概念是不充分的：此类解不必唯一。因此我们致力于为广义解的好定义发现一些额外要求。这大概如 \S3.4 那样需要基于激波分析的熵准则。这一期望在推广到方程组时基本正确，但首先我们必须更仔细地研究非线性项 $\mathbf{F}$，希望发现数学上适当且物理上正确的结构性条件。
+
+首先考虑更广泛的非散度形式半线性组：
+\begin{align}
+\mathbf{u}_t+\mathbf{B}(\mathbf{u})\mathbf{u}_x=0 \quad \text{在 } \mathbb{R}\times(0,\infty) \text{ 中},
+\label{align:ch11-半线性组}
+\end{align}
+其中 $\mathbf{B}:\mathbb{R}^m\to\mathbb{M}^{m\times m}$。此系统对光滑函数等价于\eqref{align:ch11-一维守恒律} 中的守恒律，只要
+\begin{align*}
+\mathbf{B}=D\mathbf{F}=\begin{pmatrix}
+F_{1,z_1} & \cdots & F_{1,z_m}\\
+\vdots & \ddots & \vdots\\
+F_{m,z_1} & \cdots & F_{m,z_m}
+\end{pmatrix}_{m\times m}.
+\end{align*}
+
+现在考虑寻找具有行波形式的特解的可能性：
+\begin{align}
+\mathbf{u}(x,t)=\mathbf{v}(x-\sigma t) \quad (x\in\mathbb{R},\;t>0),
+\label{align:ch11-行波形式}
+\end{align}
+其中轮廓 $\mathbf{v}:\mathbb{R}\to\mathbb{R}^m$ 和速度 $\sigma\in\mathbb{R}$ 待求。将表达式\eqref{align:ch11-行波形式} 代入偏微分方程\eqref{align:ch11-半线性组}，得到等式
+\begin{align}
+-\sigma\mathbf{v}'(x-\sigma t)+\mathbf{B}(\mathbf{v}(x-\sigma t))\mathbf{v}'(x-\sigma t)=0.
+\label{align:ch11-行波方程}
+\end{align}
+注意\eqref{align:ch11-行波方程} 说 $\sigma$ 是矩阵 $\mathbf{B}(\mathbf{v})$ 对应于特征向量 $\mathbf{v}'$ 的特征值。
+
+这一结论（正如 \S7.3 中的线性理论）提示，如果我们希望找到行波或更一般的波动解，应对 $\mathbf{B}$ 的特征值作某种双曲性假设。
+
+\begin{definition}\label{definition:ch11-严格双曲}
+若对每个 $z\in\mathbb{R}^m$，$\mathbf{B}(z)$ 的特征值均为实的且互异，则称系统\eqref{align:ch11-半线性组} 为\textbf{严格双曲的}。
+\end{definition}
+
+我们从今往后假设偏微分方程组\eqref{align:ch11-半线性组}（以及守恒律 $\mathbf{B}=D\mathbf{F}$ 的特殊情形）是严格双曲的。
+
+\textbf{记号。}
+(i) 我们写
+\begin{align}
+\lambda_1(z)<\lambda_2(z)<\cdots<\lambda_m(z) \quad (z\in\mathbb{R}^m)
+\label{align:ch11-特征值排序}
+\end{align}
+表示 $\mathbf{B}(z)$ 的实且互异的特征值，按递增顺序排列。
+
+(ii) 对每个 $k=1,\cdots,m$，令
+\begin{align*}
+\mathbf{r}_k(z)
+\end{align*}
+表示相应的非零特征向量，使得
+\begin{align}
+\mathbf{B}(z)\mathbf{r}_k(z)=\lambda_k(z)\mathbf{r}_k(z) \quad (k=1,\cdots,m,\;z\in\mathbb{R}^m).
+\label{align:ch11-右特征向量}
+\end{align}
+由于我们始终假设严格双曲性条件，向量 $\{\mathbf{r}_k(z)\}_{k=1}^m$ 对每个 $z\in\mathbb{R}^m$ 张成 $\mathbb{R}^m$。
+
+(iii) 接下来，由于矩阵及其转置具有相同的谱，对每个 $k=1,\cdots,m$ 可引入矩阵 $\mathbf{B}(z)^T$ 对应于特征值 $\lambda_k(z)$ 的非零特征向量
+\begin{align*}
+\mathbf{l}_k(z).
+\end{align*}
+因此
+\begin{align}
+\mathbf{B}(z)^T\mathbf{l}_k(z)=\lambda_k(z)\mathbf{l}_k(z) \quad (k=1,\cdots,m,\;z\in\mathbb{R}^m).
+\label{align:ch11-左特征向量1}
+\end{align}
+此等式通常写为
+\begin{align}
+\mathbf{l}_k(z)\mathbf{B}(z)=\lambda_k(z)\mathbf{l}_k(z) \quad (k=1,\cdots,m,\;z\in\mathbb{R}^m).
+\label{align:ch11-左特征向量2}
+\end{align}
+因此 $\{\mathbf{l}_k(z)\}_{k=1}^m$ 可视为 $\mathbf{B}(z)$ 的左特征向量，$\{\mathbf{r}_k(z)\}_{k=1}^m$ 是右特征向量。
+
+\begin{remark}\label{remark:ch11-双正交性}
+此外，我们观察到
+\begin{align}
+\mathbf{l}_l(z)\cdot\mathbf{r}_k(z)=0 \quad \text{若 } k\neq l \quad (z\in\mathbb{R}^m).
+\label{align:ch11-双正交}
+\end{align}
+为确认这一点，利用\eqref{align:ch11-右特征向量} 和\eqref{align:ch11-左特征向量1} 计算：
+\begin{align*}
+\lambda_k(z)(\mathbf{l}_l(z)\cdot\mathbf{r}_k(z))=\mathbf{l}_l(z)\cdot(\mathbf{B}(z)\mathbf{r}_k(z))=(\mathbf{B}(z)^T\mathbf{l}_l(z))\cdot\mathbf{r}_k(z)=\lambda_l(z)(\mathbf{l}_l(z)\cdot\mathbf{r}_k(z)),
+\end{align*}
+因此\eqref{align:ch11-双正交} 成立，因为若 $k\neq l$ 则 $\lambda_k(z)\neq\lambda_l(z)$。
+\end{remark}
+
+首先证明严格双曲性的概念与坐标无关。
+
+\begin{theorem}[双曲性在坐标变换下的不变性。]\label{theorem:ch11-双曲性坐标不变性}设 $\mathbf{u}$ 是严格双曲系统\eqref{align:ch11-半线性组} 的光滑解。假设 $\boldsymbol{\Phi}:\mathbb{R}^m\to\mathbb{R}^m$ 是光滑微分同胚，逆为 $\boldsymbol{\Psi}$。则
+\begin{align}
+\widetilde{\mathbf{u}}\coloneqq\boldsymbol{\Phi}(\mathbf{u})
+\label{align:ch11-变量替换}
+\end{align}
+求解严格双曲系统
+\begin{align}
+\widetilde{\mathbf{u}}_t+\widetilde{\mathbf{B}}(\widetilde{\mathbf{u}})\widetilde{\mathbf{u}}_x=0 \quad \text{在 } \mathbb{R}\times(0,\infty) \text{ 中},
+\label{align:ch06-变换方程}
+\end{align}
+其中
+\begin{align}
+\widetilde{\mathbf{B}}(\widetilde{z})\coloneqq D\boldsymbol{\Phi}(\boldsymbol{\Psi}(\widetilde{z}))\mathbf{B}(\boldsymbol{\Psi}(\widetilde{z}))D\boldsymbol{\Psi}(\widetilde{z}) \quad (\widetilde{z}\in\mathbb{R}^m).
+\label{align:ch11-变换后矩阵}
+\end{align}
+\end{theorem}
+
+\begin{proof}
+1. 计算 $\widetilde{\mathbf{u}}_t=D\boldsymbol{\Phi}(\mathbf{u})\mathbf{u}_t$，$\widetilde{\mathbf{u}}_x=D\boldsymbol{\Phi}(\mathbf{u})\mathbf{u}_x$，故方程\eqref{align:ch06-变换方程} 对 $\widetilde{\mathbf{B}}(\widetilde{z})=D\boldsymbol{\Phi}(z)\mathbf{B}(z)D\boldsymbol{\Phi}^{-1}(z)$ 成立，其中 $\widetilde{z}=\boldsymbol{\Phi}(z)$。代入 $z=\boldsymbol{\Psi}(\widetilde{z})$，得到\eqref{align:ch11-变换后矩阵}。
+
+2. 必须证明系统\eqref{align:ch06-变换方程} 是严格双曲的。若 $\lambda_k(z)$ 是 $\mathbf{B}(z)$ 的特征值，对应右特征向量 $\mathbf{r}_k(z)$，我们有 $\mathbf{B}(z)\mathbf{r}_k(z)=\lambda_k(z)\mathbf{r}_k(z)$。令
+\begin{align*}
+\widetilde{\mathbf{r}}_k(\widetilde{z})\coloneqq D\boldsymbol{\Phi}(\boldsymbol{\Psi}(\widetilde{z}))\mathbf{r}_k(\boldsymbol{\Psi}(\widetilde{z})),\quad
+\widetilde{\lambda}_k(\widetilde{z})\coloneqq\lambda_k(\boldsymbol{\Psi}(\widetilde{z})),
+\end{align*}
+计算
+\begin{align*}
+\widetilde{\mathbf{B}}(\widetilde{z})\widetilde{\mathbf{r}}_k(\widetilde{z})=\widetilde{\lambda}_k(\widetilde{z})\widetilde{\mathbf{r}}_k(\widetilde{z}).
+\end{align*}
+类似地若 $\mathbf{l}_k(z)$ 是左特征向量，写
+\begin{align*}
+\widetilde{\mathbf{l}}_k(\widetilde{z})\coloneqq\mathbf{l}_k(\boldsymbol{\Psi}(\widetilde{z}))D\boldsymbol{\Psi}(\widetilde{z})
+\end{align*}
+并计算 $\widetilde{\mathbf{l}}_k(\widetilde{z})\widetilde{\mathbf{B}}(\widetilde{z})=\widetilde{\lambda}_k(\widetilde{z})\widetilde{\mathbf{l}}_k(\widetilde{z})$。由上述，我们得出系统\eqref{align:ch06-变换方程} 是严格双曲的。
+\end{proof}
+
+接下来研究 $\lambda_k(z)$、$\mathbf{r}_k(z)$ 和 $\mathbf{l}_k(z)$ 随 $z$ 变化的情况：
+
+\begin{theorem}[特征值和特征向量对参数的依赖性。]\label{theorem:ch11-特征值光滑依赖}假设矩阵函数 $\mathbf{B}$ 光滑、严格双曲。
+\begin{enumerate}[(i)]
+\item 则特征值 $\lambda_k(z)$ 光滑依赖于 $z\in\mathbb{R}^m$（$k=1,\cdots,m$）。
+\item 此外，我们可选取右特征向量 $\mathbf{r}_k(z)$ 和左特征向量 $\mathbf{l}_k(z)$ 光滑依赖于 $z\in\mathbb{R}^m$，并满足归一化
+\begin{align*}
+|\mathbf{r}_k(z)|,\;|\mathbf{l}_k(z)|=1 \quad (k=1,\cdots,m).
+\end{align*}
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+1. 由于 $\mathbf{B}(z)$ 严格双曲，对每个 $z_0\in\mathbb{R}^m$ 我们有
+\begin{align*}
+\lambda_1(z_0)<\lambda_2(z_0)<\cdots<\lambda_m(z_0).
+\end{align*}
+固定 $k\in\{1,\cdots,m\}$ 和任意点 $z_0\in\mathbb{R}^m$，令 $\mathbf{r}_k(z_0)$ 满足
+\begin{align*}
+\begin{cases}
+\mathbf{B}(z_0)\mathbf{r}_k(z_0)=\lambda_k(z_0)\mathbf{r}_k(z_0),\\
+|\mathbf{r}_k(z_0)|=1.
+\end{cases}
+\end{align*}
+必要时旋转坐标，我们可假设
+\begin{align}
+\mathbf{r}_k(z_0)=e_m=(0,\cdots,1).
+\label{align:ch11-归一化到em}
+\end{align}
+我们首先证明在 $z_0$ 附近存在光滑函数 $\lambda_k(z)$、$\mathbf{r}_k(z)$ 使得
+\begin{align*}
+\begin{cases}
+\mathbf{B}(z)\mathbf{r}_k(z)=\lambda_k(z)\mathbf{r}_k(z),\\
+|\mathbf{r}_k(z)|=1.
+\end{cases}
+\end{align*}
+
+2. 我们将对光滑函数 $\boldsymbol{\Phi}:\mathbb{R}^m\times\mathbb{R}\times\mathbb{R}^m\to\mathbb{R}^{m+1}$
+\begin{align*}
+\boldsymbol{\Phi}(r,\lambda,z)=(\mathbf{B}(z)r-\lambda r,\;|r|^2) \quad (r,z\in\mathbb{R}^m,\;\lambda\in\mathbb{R})
+\end{align*}
+应用隐函数定理（\S C.7）。
+
+3. 注意对充分小的 $\varepsilon>0$，矩阵 $\mathbf{B}_\varepsilon=\mathbf{B}(z_0)-(\lambda_k(z_0)+\varepsilon)I$ 可逆。由\eqref{align:ch11-归一化到em}，$\mathbf{B}_\varepsilon e_m=-\varepsilon e_m$。由此推出所需行列式非零，因 $\mathbf{B}(z_0)$ 严格双曲。故可调用隐函数定理在 $z_0$ 附近找到满足定理结论的光滑函数 $\lambda_k(z)$ 和 $\mathbf{r}_k(z)$。
+
+4. 剩下证明我们可对所有 $z\in\mathbb{R}^m$ 定义 $\lambda_k(z)$ 和 $\mathbf{r}_k(z)$，而不仅在任一特定点 $z_0$ 附近。为此，令
+\begin{align*}
+R\coloneqq\sup\{r>0\mid \lambda_k(z),\mathbf{r}_k(z)\text{ 如上存在且在 }B(0,r)\text{ 上光滑}\}.
+\end{align*}
+若 $R=\infty$，完成。否则，用有限个开球覆盖 $\partial B(0,R)$，在其中我们可用上述步骤 1--3 光滑延拓 $\lambda_k(\cdot)$ 和 $\mathbf{r}_k(\cdot)$。这与 $R$ 的定义矛盾。
+
+对左特征向量类似证明。
+\end{proof}
+
+注意我们不仅全局且光滑地定义了 $\mathbf{B}$ 的特征值和特征空间，还全局地赋予了特征空间一个定向。此证明根本上依赖于特征空间的一维性。双曲但非严格双曲情形下可能出错的例子见\cref{exercise:ch11-3}。
+
+\textbf{例 1（续）。} 对 $p$-系统\eqref{align:ch11-p系统}，我们有 $\mathbf{u}_t+\mathbf{B}(\mathbf{u})\mathbf{u}_x=0$，其中
+\begin{align*}
+\mathbf{B}(z)=D\mathbf{F}(z)=\begin{pmatrix}0 & -1\\ -p'(z_1) & 0\end{pmatrix}.
+\end{align*}
+特征值为 $\lambda_1=-\sigma$，$\lambda_2=\sigma$，其中 $\sigma\coloneqq p'(z_1)^{1/2}$。这些是实且互异的，只要我们从今往后假设严格双曲性条件
+\begin{align}
+p'>0.
+\label{align:ch11-p系统严格双曲}
+\end{align}
+对波动方程\eqref{align:ch11-拟线性波动}，这是应力 $p(u_x)$ 是应变 $u_x$ 的严格递增函数的物理假设。
+
+\textbf{例 2（续）。} Euler 方程\eqref{align:ch11-Euler方程} 构成严格双曲组，只要假设 $p>0$ 且
+\begin{align}
+\frac{\partial p}{\partial\rho}>0,\quad \frac{\partial p}{\partial e}>0,
+\label{align:ch11-Euler双曲条件}
+\end{align}
+其中 $p=p(\rho,e)$ 是质量密度、内能密度和压强之间的本构关系。然而由于\eqref{align:ch11-Euler通量} 定义的通量函数 $\mathbf{F}$ 复杂，此断言难以直接验证。
+
+不如换变量，将密度 $\rho$、速度 $v$ 和内能 $e$ 视为未知量。然后可将 Euler 方程\eqref{align:ch11-Euler方程} 用这些量改写，经计算得到系统
+\begin{align}
+\begin{cases}
+\rho_t+v\rho_x+\rho v_x=0,\\
+v_t+vv_x+\dfrac{1}{\rho}p_x=0,\\
+e_t+ve_x+\dfrac{p}{\rho}v_x=0,
+\end{cases}
+\label{align:ch11-Euler非守恒}
+\end{align}
+前提是 $\rho>0$。这些方程不是守恒形式。令 $\mathbf{u}=(u_1,u_2,u_3)=(\rho,v,e)$，将\eqref{align:ch11-Euler非守恒} 写为 $\mathbf{u}_t+\mathbf{B}(\mathbf{u})\mathbf{u}_x=0$，其中
+\begin{align*}
+\mathbf{B}(z)=z_2 I+\widehat{\mathbf{B}}(z),
+\end{align*}
+$\widehat{\mathbf{B}}$ 的特征多项式为 $-\lambda(\lambda^2-\sigma^2)$，其中 $\sigma^2=\dfrac{p}{z_1^2}\dfrac{\partial p}{\partial e}+\dfrac{\partial p}{\partial\rho}$。回到物理记号，$\mathbf{B}$ 的特征值为
+\begin{align}
+\lambda_1=v-\sigma,\quad \lambda_2=v,\quad \lambda_3=v+\sigma,
+\label{align:ch11-Euler特征值}
+\end{align}
+其中
+\begin{align*}
+\sigma\coloneqq\left(\frac{p}{\rho^2}\frac{\partial p}{\partial e}+\frac{\partial p}{\partial\rho}\right)^{1/2}>0
+\end{align*}
+是局部声速。因此系统\eqref{align:ch11-Euler非守恒} 是严格双曲的，只要假设\eqref{align:ch11-Euler双曲条件} 成立。由\cref{theorem:ch11-双曲性坐标不变性}，Euler 方程\eqref{align:ch11-Euler方程} 也是严格双曲的，特征值由\eqref{align:ch11-Euler特征值} 给出。
+
+\end{document}

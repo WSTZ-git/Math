@@ -1,0 +1,310 @@
+\documentclass[../../main.tex]{subfiles}
+
+\begin{document}
+
+\section{引言，粘性解}\label{section:ch10-引言粘性解}
+
+本章研究Hamilton--Jacobi方程初值问题适当定义的弱解的存在性、唯一性及其他性质：
+\begin{align}
+\begin{cases}
+u_t + H(Du, x) = 0 & \text{在 } \mathbb{R}^n \times (0,\infty) \text{ 中},\\
+u = g & \text{在 } \mathbb{R}^n \times \{t=0\} \text{ 上}.
+\end{cases}
+\label{align:ch10-hj初值问题}
+\end{align}
+这里Hamilton函数 $H:\mathbb{R}^n\times\mathbb{R}^n\to\mathbb{R}$ 与初值函数 $g:\mathbb{R}^n\to\mathbb{R}$ 均已知。未知函数为 $u:\mathbb{R}^n\times[0,\infty)\to\mathbb{R}$，$u=u(x,t)$，且 $Du=D_xu=(u_{x_1},\cdots,u_{x_n})$。我们记 $H=H(p,x)$，其中``$p$''是我们在偏微分方程中代入梯度 $Du$ 的变量名。
+
+由\cref{section:ch03-特征线} 中对特征线的研究可知，一般而言\eqref{align:ch10-hj初值问题} 不存在对所有时间 $t\geqslant 0$ 都有定义的光滑解。我们进一步回顾，若 $H$ 仅依赖于 $p$ 且为凸函数，则 Hopf--Lax 公式\eqref{align:ch03-hopf-lax-formula}为我们提供了一种广义解。
+
+本章考虑 $H$ 还依赖于 $x$，且更重要的是 $H$ 关于变量 $p$ 不再一定是凸函数的一般情形。在这些新情形下，我们将发现一种定义\eqref{align:ch10-hj初值问题} 弱解的不同方法。
+
+\textbf{一个逼近。} 我们的方法是首先考虑如下问题：
+\begin{align}
+\begin{cases}
+u^\varepsilon_t + H(Du^\varepsilon, x) - \varepsilon\Delta u^\varepsilon = 0 & \text{在 } \mathbb{R}^n \times (0,\infty) \text{ 中},\\
+u^\varepsilon = g & \text{在 } \mathbb{R}^n \times \{t=0\} \text{ 上},
+\end{cases}
+\label{align:ch10-正则化问题}
+\end{align}
+其中 $\varepsilon>0$。其思想是：\eqref{align:ch10-hj初值问题} 是一个完全非线性一阶偏微分方程，而\eqref{align:ch10-正则化问题} 是一个拟线性抛物型方程的初值问题，后者存在光滑解。\eqref{align:ch10-正则化问题} 中的 $\varepsilon\Delta$ 项实际上正则化了Hamilton--Jacobi方程。我们当然希望当 $\varepsilon\to 0$ 时，\eqref{align:ch10-正则化问题} 的解 $u^\varepsilon$ 收敛到\eqref{align:ch10-hj初值问题} 的某种弱解。这一技术称为\emph{消失粘性法}。
+
+然而，当 $\varepsilon\to 0$ 时，我们可以预期会失去对函数 $u^\varepsilon$ 及其导数的各种估计的控制：这些估计强烈依赖于 $\varepsilon\Delta$ 的正则化效应，并在 $\varepsilon\to 0$ 时发散。但事实证明，在实践中我们通常至少可以确信族 $\{u^\varepsilon\}_{\varepsilon>0}$ 在 $\mathbb{R}^n\times[0,\infty)$ 的紧子集上一致有界且等度连续。因此 Arzel\`a--Ascoli 紧性准则（\cref{section:appC-边界}）保证
+\begin{align}
+u^{\varepsilon_j} \to u \quad \text{在 } \mathbb{R}^n\times[0,\infty) \text{ 上局部一致},
+\label{align:ch10-局部一致收敛}
+\end{align}
+对某个子列 $\{u^{\varepsilon_j}\}_{j=1}^\infty$ 和某个极限函数
+\begin{align}
+u \in C(\mathbb{R}^n\times[0,\infty)).
+\label{align:ch10-连续极限}
+\end{align}
+我们当然可以期望 $u$ 是初值问题\eqref{align:ch10-hj初值问题} 的某种解，但由于我们仅知道 $u$ 连续，而对 $Du$ 和 $u_t$ 是否在任何意义下存在一无所知，这样的解释是困难的。
+
+\textbf{检验函数。} 类似的问题在\cref{chapter:ch08-变分法}和\cref{chapter:ch09-非变分技术}中已经出现过，当时我们必须处理各种近似解向其他非线性偏微分方程弱收敛的问题。特别回顾在 \S9.1 中，我们通过 Browder--Minty 方法取极限来求解一个散度结构的拟线性椭圆型方程。粗略地说，我们在那里通过分部积分将``难以控制''的导数转移到一个固定的检验函数上，然后才尝试取极限来发现解。
+
+对于Hamilton--Jacobi方程\eqref{align:ch10-hj初值问题}，我们将尝试类似的方法。我们固定一个光滑检验函数 $v$，并在 $\varepsilon\to 0$ 时通过先``将导数转移到 $v$ 上''从\eqref{align:ch10-正则化问题} 过渡到\eqref{align:ch10-hj初值问题}。
+
+但由于\eqref{align:ch10-hj初值问题} 是完全非线性的，特别是不具有散度结构，我们不能像 \S9.1 中那样直接分部积分将求导转移到 $v$ 上。相反，我们将利用极值原理来完成这一过渡，至少在某些点上如此。
+
+我们将所构造的解称为\emph{粘性解}，以纪念消失粘性技术。我们的主要目标将是发现这种\eqref{align:ch10-hj初值问题} 广义解的内在刻画。
+
+\subsection{定义}\label{subsection:ch10-粘性解定义}
+
+\textbf{粘性解定义的动机。} 我们从今往后假设 $H$、$g$ 连续，并在需要时进一步补充假设。上述技术的运作方式如下。固定任意光滑检验函数 $v\in C^\infty(\mathbb{R}^n\times(0,\infty))$，假设
+\begin{align}
+\begin{cases}
+u-v \text{ 在某点 } (x_0,t_0)\in\mathbb{R}^n\times(0,\infty) \text{ 处有严格局部最大值}.
+\end{cases}
+\label{align:ch10-严格局部最大假设}
+\end{align}
+这意味着
+\begin{align*}
+(u-v)(x_0,t_0) > (u-v)(x,t)
+\end{align*}
+对所有充分接近 $(x_0,t_0)$ 的点 $(x,t)$，$(x,t)\neq(x_0,t_0)$ 成立。
+
+现在回顾\eqref{align:ch10-局部一致收敛}。我们断言对每个充分小的 $\varepsilon_j>0$，存在点 $(x_{\varepsilon_j},t_{\varepsilon_j})$ 使得
+\begin{align}
+u^{\varepsilon_j}-v \text{ 在 } (x_{\varepsilon_j},t_{\varepsilon_j}) \text{ 处有局部最大值},
+\label{align:ch10-近似局部最大}
+\end{align}
+且
+\begin{align}
+(x_{\varepsilon_j},t_{\varepsilon_j}) \to (x_0,t_0) \quad \text{当 } j\to\infty.
+\label{align:ch10-近似点收敛}
+\end{align}
+
+为确认这一点，注意对每个充分小的 $r>0$，\eqref{align:ch10-严格局部最大假设} 蕴含 $\max_{\partial B}(u-v) < (u-v)(x_0,t_0)$，其中 $B$ 表示 $\mathbb{R}^{n+1}$ 中以 $(x_0,t_0)$ 为中心、半径为 $r$ 的闭球。由\eqref{align:ch10-局部一致收敛}，$u^{\varepsilon_j}\to u$ 在 $B$ 上一致，故只要 $\varepsilon_j$ 充分小，$\max_{\partial B}(u^{\varepsilon_j}-v) < (u^{\varepsilon_j}-v)(x_0,t_0)$。因此 $u^{\varepsilon_j}-v$ 在 $B$ 内部某点取得局部最大值。接下来我们可以将 $r$ 替换为趋于零的半径序列来得到\eqref{align:ch10-近似局部最大}、\eqref{align:ch10-近似点收敛}。
+
+由\eqref{align:ch10-近似局部最大}，我们看到以下等式
+\begin{align}
+Du^{\varepsilon_j}(x_{\varepsilon_j},t_{\varepsilon_j}) &= Dv(x_{\varepsilon_j},t_{\varepsilon_j}),
+\label{align:ch10-梯度相等}
+\end{align}
+\begin{align}
+u_t^{\varepsilon_j}(x_{\varepsilon_j},t_{\varepsilon_j}) &= v_t(x_{\varepsilon_j},t_{\varepsilon_j})
+\label{align:ch10-时间导相等}
+\end{align}
+和不等式
+\begin{align}
+\Delta u^{\varepsilon_j}(x_{\varepsilon_j},t_{\varepsilon_j}) \leqslant \Delta v(x_{\varepsilon_j},t_{\varepsilon_j})
+\label{align:ch10-Laplacian不等式}
+\end{align}
+成立。因此我们可以计算
+\begin{align}
+&v_t(x_{\varepsilon_j},t_{\varepsilon_j}) + H(Dv(x_{\varepsilon_j},t_{\varepsilon_j}), x_{\varepsilon_j}) \nonumber\\
+&\quad= u_t^{\varepsilon_j}(x_{\varepsilon_j},t_{\varepsilon_j}) + H(Du^{\varepsilon_j}(x_{\varepsilon_j},t_{\varepsilon_j}), x_{\varepsilon_j}) \quad \text{由\eqref{align:ch10-梯度相等}、\eqref{align:ch10-时间导相等}} \nonumber\\
+&\quad= \varepsilon_j\Delta u^{\varepsilon_j}(x_{\varepsilon_j},t_{\varepsilon_j}) \quad \text{由\eqref{align:ch10-正则化问题}} \nonumber\\
+&\quad\leqslant \varepsilon_j\Delta v(x_{\varepsilon_j},t_{\varepsilon_j}) \quad \text{由\eqref{align:ch10-Laplacian不等式}}.
+\label{align:ch06-正则形式推导}
+\end{align}
+
+现在令 $\varepsilon_j\to 0$ 并记住\eqref{align:ch10-近似点收敛}。由于 $v$ 光滑且 $H$ 连续，我们推出
+\begin{align}
+v_t(x_0,t_0) + H(Dv(x_0,t_0), x_0) \leqslant 0.
+\label{align:ch10-上不等式}
+\end{align}
+
+我们在假设\eqref{align:ch10-严格局部最大假设} 下建立了此不等式。现在改为假设
+\begin{align}
+u-v \text{ 在 } (x_0,t_0) \text{ 处有局部最大值}
+\label{align:ch10-局部最大非严格}
+\end{align}
+但此最大值不一定是严格的。则 $u-\widetilde{v}$ 在 $(x_0,t_0)$ 处有严格局部最大值，其中 $\widetilde{v}(x,t)\coloneqq v(x,t)+\delta(|x-x_0|^2+(t-t_0)^2)$（$\delta>0$）。因此我们如上得出 $\widetilde{v}_t(x_0,t_0)+H(D\widetilde{v}(x_0,t_0),x_0)\leqslant 0$，由此再得到\eqref{align:ch10-上不等式}。
+
+因此\eqref{align:ch10-局部最大非严格} 蕴含不等式\eqref{align:ch10-上不等式}。类似地，我们推出反向不等式
+\begin{align}
+v_t(x_0,t_0) + H(Dv(x_0,t_0), x_0) \geqslant 0,
+\label{align:ch06-弱解恒等式}
+\end{align}
+前提是
+\begin{align}
+u-v \text{ 在 } (x_0,t_0) \text{ 处有局部最小值}.
+\label{align:ch10-局部最小}
+\end{align}
+证明与上面完全类似，只是\eqref{align:ch10-Laplacian不等式} 中的不等式以及因此\eqref{align:ch06-正则形式推导} 中的不等式方向反转。
+
+总之，我们发现对任意光滑函数 $v$，不等式\eqref{align:ch10-上不等式} 由\eqref{align:ch10-局部最大非严格} 推出，而\eqref{align:ch06-弱解恒等式} 由\eqref{align:ch10-局部最小} 推出。我们实际上是将导数转移到了 $v$ 上，代价是某些不等式成立。
+
+我们现在的意图是用\eqref{align:ch10-上不等式}、\eqref{align:ch10-局部最大非严格} 以及\eqref{align:ch06-弱解恒等式}、\eqref{align:ch10-局部最小} 来定义\eqref{align:ch10-hj初值问题} 的弱解。
+
+\begin{definition}\label{definition:ch10-粘性解}
+假设 $u$ 在 $\mathbb{R}^n\times[0,T]$ 上有界且一致连续，对每个 $T>0$。我们称 $u$ 为Hamilton--Jacobi方程初值问题\eqref{align:ch10-hj初值问题} 的\textbf{粘性解}，只要
+\begin{enumerate}[(i)]
+\item $u=g$ 在 $\mathbb{R}^n\times\{t=0\}$ 上，且
+\item 对每个 $v\in C^\infty(\mathbb{R}^n\times(0,\infty))$，
+\begin{align}
+\begin{cases}
+\text{若 } u-v \text{ 在某点 } (x_0,t_0)\in\mathbb{R}^n\times(0,\infty) \text{ 处有局部最大值},\\
+\text{则 } v_t(x_0,t_0)+H(Dv(x_0,t_0),x_0)\leqslant 0,
+\end{cases}
+\label{align:ch10-粘性解上不等式}
+\end{align}
+且
+\begin{align}
+\begin{cases}
+\text{若 } u-v \text{ 在某点 } (x_0,t_0)\in\mathbb{R}^n\times(0,\infty) \text{ 处有局部最小值},\\
+\text{则 } v_t(x_0,t_0)+H(Dv(x_0,t_0),x_0)\geqslant 0.
+\end{cases}
+\label{align:ch10-粘性解下不等式}
+\end{align}
+\end{enumerate}
+\end{definition}
+
+\begin{remark}\label{remark:ch10-粘性解注意}
+请注意，根据定义，粘性解满足\eqref{align:ch10-粘性解上不等式}、\eqref{align:ch10-粘性解下不等式}，因此所有后续推导都必须基于这些不等式。前面的讨论纯粹是动机性的。
+
+为强调起见，我们重复这一要点，这一点曾在学生中造成一些困惑。要验证给定函数 $u$ 是Hamilton--Jacobi方程 $u_t+H(Du,x)=0$ 的粘性解，我们必须确认\eqref{align:ch10-粘性解上不等式}、\eqref{align:ch10-粘性解下不等式} 对所有光滑函数 $v$ 成立。上面的论证表明，如果 $u$ 是用消失粘性法构造的，它确实是粘性解。但我们将在后面 \S10.3 中看到，粘性解可以用完全不同的方式构造，与消失粘性毫无关系。
+
+关键在于，不等式\eqref{align:ch10-粘性解上不等式}、\eqref{align:ch10-粘性解下不等式} 提供了我们广义解的内在刻画，实际上就是其定义本身。
+
+我们将在本章剩余部分致力于证明粘性解为我们的Hamilton--Jacobi偏微分方程提供了适当且有用的弱解概念。
+\end{remark}
+
+\subsection{一致性}\label{subsection:ch10-一致性}
+
+让我们首先检验粘性解的概念与经典解的概念是否一致。首先注意，如果 $u\in C^1(\mathbb{R}^n\times[0,\infty))$ 求解\eqref{align:ch10-hj初值问题}，且 $u$ 有界且一致连续，则 $u$ 是粘性解。也就是说，我们断言 $u_t+H(Du,x)=0$ 的任意经典解也是粘性解。证明很简单。如果 $v$ 光滑且 $u-v$ 在 $(x_0,t_0)$ 处取得局部最大值，则
+\begin{align*}
+\begin{cases}
+Du(x_0,t_0) = Dv(x_0,t_0),\\
+u_t(x_0,t_0) = v_t(x_0,t_0).
+\end{cases}
+\end{align*}
+因此
+\begin{align*}
+v_t(x_0,t_0)+H(Dv(x_0,t_0),x_0) = u_t(x_0,t_0)+H(Du(x_0,t_0),x_0)=0,
+\end{align*}
+因为 $u$ 求解\eqref{align:ch10-hj初值问题}。在 $u-v$ 取得局部最小值的任意点 $(x_0,t_0)$ 处类似的等式成立。
+
+接下来我们断言，任意充分光滑的粘性解是经典解，更进一步，如果粘性解在某点可微，则它在该点求解Hamilton--Jacobi偏微分方程。我们需要以下微积分事实：
+
+\begin{lemma}[由 $C^1$ 函数相切。]\label{lemma:ch10-C1函数相切}假设 $u:\mathbb{R}^n\to\mathbb{R}$ 连续且在点 $x_0$ 处可微。则存在函数 $v\in C^1(\mathbb{R}^n)$ 使得
+\begin{align}
+u(x_0) = v(x_0)
+\label{align:ch10-相切条件1}
+\end{align}
+且
+\begin{align}
+u-v \text{ 在 } x_0 \text{ 处有严格局部最大值}.
+\label{align:ch10-相切条件2}
+\end{align}
+\end{lemma}
+
+\begin{proof}
+1. 我们不妨假设
+\begin{align}
+x_0 = 0,\quad u(0)=Du(0)=0,
+\label{align:ch10-归一化假设}
+\end{align}
+否则我们可以用 $\widetilde{u}(x)\coloneqq u(x+x_0)-u(x_0)-Du(x_0)\cdot x$ 代替 $u$。
+
+2. 由\eqref{align:ch10-归一化假设} 及我们的假设，我们有
+\begin{align}
+u(x) = |x|\rho_1(x),
+\label{align:ch10-u表示}
+\end{align}
+其中
+\begin{align}
+\rho_1:\mathbb{R}^n\to\mathbb{R} \text{ 连续},\quad \rho_1(0)=0.
+\label{align:ch10-rho1性质}
+\end{align}
+令
+\begin{align}
+\rho_2(r) \coloneqq \max_{x\in B(0,r)} \{|\rho_1(x)|\} \quad (r\geqslant 0).
+\label{align:ch10-rho2定义}
+\end{align}
+则
+\begin{align}
+\rho_2:[0,\infty)\to[0,\infty) \text{ 连续},\quad \rho_2(0)=0,
+\label{align:ch10-rho2连续}
+\end{align}
+且
+\begin{align}
+\rho_2 \text{ 单调不减}.
+\label{align:ch10-rho2单调}
+\end{align}
+
+3. 现在写
+\begin{align}
+v(x) \coloneqq \int_{|x|}^{2|x|} \rho_2(r)\,\mathrm{d}r + |x|^2 \quad (x\in\mathbb{R}^n).
+\label{align:ch06-w定义}
+\end{align}
+由于 $|v(x)|\leqslant |x|\rho_2(2|x|)+|x|^2$，我们观察到
+\begin{align}
+v(0) = Dv(0) = 0.
+\label{align:ch10-v在0处}
+\end{align}
+此外若 $x\neq 0$，我们有
+\begin{align*}
+Dv(x) = \frac{2x}{|x|}\rho_2(2|x|) - \frac{x}{|x|}\rho_2(|x|) + 2x,
+\end{align*}
+故 $v\in C^1(\mathbb{R}^n)$。
+
+4. 最后注意若 $x\neq 0$，
+\begin{align*}
+u(x)-v(x) &= |x|\rho_1(x) - \int_{|x|}^{2|x|}\rho_2(r)\,\mathrm{d}r - |x|^2\\
+&\leqslant |x|\rho_2(|x|) - \int_{|x|}^{2|x|}\rho_2(r)\,\mathrm{d}r - |x|^2\\
+&\leqslant -|x|^2 \quad \text{由\eqref{align:ch10-rho2单调}}\\
+&< 0 = u(0)-v(0).
+\end{align*}
+因此 $u-v$ 在 $0$ 处有严格局部最大值，如所要求。
+\end{proof}
+
+\begin{theorem}[粘性解的一致性。]\label{theorem:ch10-粘性解一致性}设 $u$ 是\eqref{align:ch10-hj初值问题} 的粘性解，并假设 $u$ 在某点 $(x_0,t_0)\in\mathbb{R}^n\times(0,\infty)$ 处可微。则
+\begin{align*}
+u_t(x_0,t_0)+H(Du(x_0,t_0),x_0)=0.
+\end{align*}
+\end{theorem}
+
+\begin{proof}
+1. 将上述引理应用于 $u$，以 $\mathbb{R}^{n+1}$ 代替 $\mathbb{R}^n$、以 $(x_0,t_0)$ 代替 $x_0$，我们推出存在 $C^1$ 函数 $v$ 使得
+\begin{align}
+u-v \text{ 在 } (x_0,t_0) \text{ 处有严格最大值}.
+\label{align:ch06-严格小于}
+\end{align}
+
+2. 现在令 $v_\varepsilon\coloneqq\eta_\varepsilon*v$，其中 $\eta_\varepsilon$ 表示 $n+1$ 个变量 $(x,t)$ 中通常的磨光子。则
+\begin{align}
+\begin{cases}
+v_\varepsilon \to v,\quad Dv_\varepsilon \to Dv \quad \text{在 } (x_0,t_0) \text{ 附近一致},\\
+(v_\varepsilon)_t \to v_t;
+\end{cases}
+\label{align:ch10-磨光收敛}
+\end{align}
+因此\eqref{align:ch06-严格小于} 蕴含
+\begin{align}
+u-v_\varepsilon \text{ 在某点 } (x_\varepsilon,t_\varepsilon) \text{ 处有最大值},
+\label{align:ch10-近似最大点}
+\end{align}
+且
+\begin{align}
+(x_\varepsilon,t_\varepsilon) \to (x_0,t_0) \quad \text{当 } \varepsilon\to 0.
+\label{align:ch10-近似点收敛2}
+\end{align}
+然后应用粘性解的定义，我们看到
+\begin{align*}
+(v_\varepsilon)_t(x_\varepsilon,t_\varepsilon)+H(Dv_\varepsilon(x_\varepsilon,t_\varepsilon),x_\varepsilon)\leqslant 0.
+\end{align*}
+令 $\varepsilon\to 0$ 并利用\eqref{align:ch10-磨光收敛}、\eqref{align:ch10-近似点收敛2} 推出
+\begin{align}
+v_t(x_0,t_0)+H(Dv(x_0,t_0),x_0)\leqslant 0.
+\label{align:ch10-上不等式2}
+\end{align}
+但由\eqref{align:ch06-严格小于}，由于 $u$ 在 $(x_0,t_0)$ 处可微，
+\begin{align*}
+Du(x_0,t_0)=Dv(x_0,t_0),\quad u_t(x_0,t_0)=v_t(x_0,t_0).
+\end{align*}
+代入上式，由\eqref{align:ch10-上不等式2} 得出
+\begin{align}
+u_t(x_0,t_0)+H(Du(x_0,t_0),x_0)\leqslant 0.
+\label{align:ch10-最终上不等式}
+\end{align}
+
+3. 现在将上述引理应用于 $\mathbb{R}^{n+1}$ 中的 $-u$，找到 $C^1$ 函数 $v$ 使得 $u-v$ 在 $(x_0,t_0)$ 处有严格最小值。然后如上论证，我们同样推出
+\begin{align*}
+u_t(x_0,t_0)+H(Du(x_0,t_0),x_0)\geqslant 0.
+\end{align*}
+此不等式与\eqref{align:ch10-最终上不等式} 完成证明。
+\end{proof}
+
+\end{document}

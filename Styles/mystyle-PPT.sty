@@ -1,0 +1,107 @@
+\ProvidesPackage{mystyle-PPT}
+
+\usepackage{ctex}
+\usepackage{amsmath,amssymb}
+\usepackage{stmaryrd}
+\usepackage{mathtools}
+\usepackage{esint}
+\usepackage{microtype}% 微调字间距、启用更好的断词
+\usepackage{xurl}% 允许URL等在任意位置换行
+\usepackage{cases}% 实现大括号内多编号 一定要放在\usepackage{amsmath}之后
+\usepackage{lipsum}% 生成随机文本
+
+% ========== enumitem 包：统一管理列表样式 ==========
+% 在所有文档类下加载，启用 shortlabels 支持 [A.]、[(1)] 等简写
+\usepackage[shortlabels,inline]{enumitem}
+
+\usepackage{rotating}% 符号旋转
+\usepackage{graphicx}% 插入图片
+\usepackage{subcaption}% 子图排版
+\usepackage{epstopdf}% 插入图片pdf
+\usepackage{float}% 调整图片位置 固定图片位置[H]
+\usepackage{bm}
+\usepackage[normalem]{ulem} % 各种下划线,设置normalem是为了和打印参考文献命令\printbibliography不冲突
+\usepackage{soul}% 提供丰富多样的下划线,\soulcolor{red}\ul{红色下划线的文本}
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\usepackage{xeCJKfntef}% 下划线可换行
+\usepackage{multirow}
+\usepackage{bigdelim}
+\usepackage{tikz}% 绘制图表
+\usepackage{tikz-cd}% 绘制图表
+\usepackage{tikz-3dplot}
+\usepackage{array}% 表格
+\usepackage{tabularray}% 绘制表格
+\usepackage{booktabs}% 三线表
+\usepackage{longtable} % 长表格
+\usepackage{tabularx}   % 自适应表格宽度，支持长文本自动换行
+\usepackage{blkarray}% 实现对矩阵行列加编号
+\usepackage{amsfonts}% 加目录
+\usepackage{geometry}% 页面设置
+\usepackage{extarrows} % 自动适应等号长度并在等号上/下加文字
+\usepackage{pifont}%  圆圈数字、圆圈序号
+\let\widering\relax% 清除\widering的旧定义(因为yhmath宏包中新定义了\widering这个命令,否则会与pifont包冲突)
+\usepackage{yhmath}% 用\wideparen{}画出来的圆弧上标更美观
+\usepackage{cprotect}% 允许在“移动参数”中使用易碎命令
+% hyperref和xr-hyperref宏包加载顺序不能改变,否则会报错! 尽量最后加载超链接相关宏包
+\usepackage{fancyhdr}% 页眉页脚控制
+\usepackage{etoolbox}% 条件判断
+\usepackage{newunicodechar}% 全角符号转换为半角符号
+\usepackage{listings}% 代码高亮包（展示R代码）
+\usepackage{xcolor}
+\usepackage{hyperref}%  LaTex超链接
+\usepackage{xr-hyper}% 不同文档之间交叉引用
+\usepackage{ocgx2} % 点击显示/隐藏解答的PDF交互效果（必须在hyper相关包后面加载）
+
+% R代码样式配置，模拟PPT中的深色背景风格
+\lstset{
+    language=R,
+    basicstyle=\ttfamily\small\color{white},
+    keywordstyle=\color{cyan},
+    commentstyle=\color{green!60!black},
+    stringstyle=\color{yellow},
+    frame=single,
+    breaklines=true,
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    backgroundcolor=\color{black!85},
+    rulecolor=\color{gray!30},
+    showstringspaces=false
+}
+\let\plain\relax% 清除\plain的旧定义
+
+% ========== Beamer 兼容性设置 ==========
+% 针对 Beamer 类定制 enumitem 行为，并保留默认项目符号
+\makeatletter
+\@ifclassloaded{beamer}{
+  % 1. 设置列表全局参数：紧凑、左对齐
+  \setlist{nosep, left=0pt, labelindent=0pt}
+  % 2. 一级枚举标签：大写字母加圆点，使用罗马字体
+  \setlist[enumerate,1]{label=\Alph*., font=\rmfamily}
+  % 3. 二级枚举标签（若有）：小写字母加括号，使用罗马字体（可自定义）
+  \setlist[enumerate,2]{label=(\alph*), font=\rmfamily}
+  % 4. 保留 Beamer 原有的项目符号样式（itemize）
+  \setbeamertemplate{itemize item}[circle]
+  \setbeamertemplate{itemize subitem}[square]
+  \setbeamertemplate{itemize subsubitem}[triangle]
+}{}
+\makeatother
+
+% ========== bm 包内存优化 ==========
+% beamer 中 \boldsymbol 消耗大量内存，用 \mathbf 替代
+\AtBeginDocument{
+  \let\boldsymbol\mathbf
+}
+
+% ========== 其他格式设置 ==========
+\allowdisplaybreaks[4] %允许公式跨页显示
+\everymath{\displaystyle} % 使全文的行内公式都显示成行间公式
+% 使用\textstyle可恢复行内公式,例如${\textstyle \sum_{i=1}^nx_i}$
+
+\setlength{\emergencystretch}{3em}% 允许行尾有更多伸展空间，防止溢出
+\sloppy% 提高换行容忍度（不强行拉宽，优先换行）
+
+% 全角符号转换为半角符号设置
+\newunicodechar{（}{(}
+\newunicodechar{）}{)}
+\endinput

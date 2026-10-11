@@ -1,0 +1,258 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}}
+
+\begin{document}
+
+\section{解的不存在性}\label{section:ch09-4-解的不存在性}
+
+现用各种非线性偏微分方程解的不存在性断言来补充 \S\S9.1--9.3 的理论。总体程序是：假设存在一个解，然后推出某些不等式，后者进而导致矛盾。
+
+\subsection{爆破}\label{subsection:ch09-4-1-爆破}
+
+\paragraph{大初值下的爆破。}先考察一个带简单二次非线性项的抛物方程初边值问题：
+\begin{align}
+\begin{cases}
+u_t-\Delta u=u^2&\text{在 }U_T\text{ 中},\\
+u=0&\text{在 }\partial U\times(0,T)\text{ 上},\\
+u=g&\text{在 }U\times\{t=0\}\text{ 上}.
+\end{cases}\label{align:ch09-4-eq01}
+\end{align}
+
+将证明：若 $T>0$ 与 $g\geqslant 0$ 在适当意义下足够大，则\eqref{align:ch09-4-eq01} 不存在光滑解 $u$。可把\eqref{align:ch09-4-eq01} 中的非线性热方程看作一个简单的反应扩散方程（参见 \S9.2.1\cref{example:ch09-2-1-反应扩散}）。仅非线性项对应 ODE $\dot u=u^2$，其中 $\dot=\frac{\mathrm{d}}{\mathrm{d}t}$，若 $u(0)>0$，它当然在有限时间爆破。另一方面，纯扩散效应给出热方程，后者倾向于磨光不规则性。因此下面的分析必须理清 $u^2$ 项的爆破与 $\Delta u$ 项的磨光这两种相互竞争的效应。
+
+选取 $w_1$ 为 $-\Delta$ 在 $H_0^1(U)$ 中对应于主特征值 $\lambda_1>0$ 的特征函数。由 \S6.5.1 的理论，$w_1$ 光滑，
+\begin{align*}
+\begin{cases}
+-\Delta w_1=\lambda_1w_1&\text{在 }U\text{ 中},\\
+w_1=0&\text{在 }\partial U\text{ 上},
+\end{cases}
+\end{align*}
+且可进一步假设
+\begin{align}
+w_1>0\text{ 在 }U\text{ 中},\qquad \int_U w_1\,\mathrm{d}x=1.\label{align:ch09-4-eq02}
+\end{align}
+设 $u$ 是\eqref{align:ch09-4-eq01} 的光滑解，$g\geqslant 0$、$g\not\equiv 0$，从而由强极值原理 $u>0$ 在 $U_T$ 内。
+
+\begin{theorem}[大初值下的爆破]\label{theorem:ch09-4-1-大初值爆破}
+假设
+\begin{align}
+\int_U gw_1\,\mathrm{d}x>\lambda_1.\label{align:ch09-4-eq03}
+\end{align}
+则不存在对所有时间 $T>0$ 都存在的\eqref{align:ch09-4-eq01} 的光滑解 $u$。
+\begin{proof}
+定义
+\begin{align*}
+\eta(t)\triangleq\int_U u(x,t)w_1(x)\,\mathrm{d}x\qquad (0\leqslant t\leqslant T).
+\end{align*}
+则
+\begin{align}
+\dot\eta&=\int_U u_tw_1\,\mathrm{d}x=\int_U(\Delta u+u^2)w_1\,\mathrm{d}x\notag\\
+&=\int_U u\Delta w_1+u^2w_1\,\mathrm{d}x=-\lambda_1\eta+\int_U u^2w_1\,\mathrm{d}x.\label{align:ch09-4-eq04}
+\end{align}
+此外
+\begin{align*}
+\eta=\int_U uw_1\,\mathrm{d}x=\int_U uw_1^{1/2}w_1^{1/2}\,\mathrm{d}x\leqslant\left(\int_U u^2w_1\,\mathrm{d}x\right)^{1/2}\left(\int_U w_1\,\mathrm{d}x\right)^{1/2}=\left(\int_U u^2w_1\,\mathrm{d}x\right)^{1/2}
+\end{align*}
+由\eqref{align:ch09-4-eq02}。把此不等式用于\eqref{align:ch09-4-eq04}，得
+\begin{align}
+\dot\eta\geqslant-\lambda_1\eta+\eta^2.\label{align:ch09-4-eq05}
+\end{align}
+写 $\xi(t)\triangleq e^{\lambda_1 t}\eta(t)$，则
+\begin{align*}
+\dot\xi=e^{\lambda_1 t}\dot\eta+\lambda_1e^{\lambda_1 t}\eta\geqslant e^{\lambda_1 t}\eta^2=e^{-\lambda_1 t}\xi^2.
+\end{align*}
+故
+\begin{align*}
+\left(-\frac1\xi\right)^\cdot=\frac{\dot\xi}{\xi^2}\geqslant e^{-\lambda_1 t},
+\end{align*}
+因此
+\begin{align*}
+-\frac1{\xi(t)}\geqslant-\frac1{\xi(0)}+\frac{1-e^{-\lambda_1 t}}{\lambda_1}.
+\end{align*}
+整理得
+\begin{align*}
+\xi(t)\geqslant\frac{\xi(0)\lambda_1}{\lambda_1-\xi(0)(1-e^{-\lambda_1 t})},
+\end{align*}
+只要分母非零。现假设\eqref{align:ch09-4-eq03} 成立，即 $\eta(0)=\xi(0)>\lambda_1$。则当
+\begin{align*}
+t^*\triangleq-\frac1{\lambda_1}\log\!\left(\frac{\eta(0)-\lambda_1}{\eta(0)}\right)
+\end{align*}
+时，$\xi(t)\to+\infty$ 当 $t\to t^*$。
+\end{proof}
+\end{theorem}
+
+我们的证明表明：或者解不够光滑以正当化上述计算，或者
+\begin{align*}
+\lim_{t\to t^{**}}\int_U u(x,t)w_1(x)\,\mathrm{d}x=\infty
+\end{align*}
+某时刻 $0<t^{**}\leqslant t^*$。此时称 $u$ 在时刻 $t^{**}$\textbf{爆破}。
+
+\paragraph{小初值下的爆破。}接着讨论上述证明的一个有趣变种，现针对全空间中的初值问题：
+\begin{align}
+\begin{cases}
+u_t-\Delta u=u^p&\text{在 }\mathbb{R}^n\times(0,T)\text{ 中},\\
+u=g&\text{在 }\mathbb{R}^n\times\{t=0\}\text{ 上}.
+\end{cases}\label{align:ch09-4-eq06}
+\end{align}
+设非负初值函数 $g\not\equiv 0$ 光滑、紧支集。
+
+\begin{theorem}[小初值下的爆破]\label{theorem:ch09-4-2-小初值爆破}
+假设
+\begin{align}
+1<p<\frac{n+2}{n}.\label{align:ch09-4-eq07}
+\end{align}
+则不存在对所有时间 $T>0$ 都存在的\eqref{align:ch09-4-eq06} 的非负、可积、光滑解 $u$。
+\begin{proof}
+因在全 $\mathbb{R}^n$ 中工作，须替换前面用过的特征函数。代之引入热方程在时刻 $s>0$（稍后选取）处的基本解：
+\begin{align*}
+\Phi(x,s)=\frac1{(4\pi s)^{n/2}}e^{-\frac{|x|^2}{4s}}.
+\end{align*}
+回顾
+\begin{align*}
+\int_{\mathbb{R}^n}\Phi(x,s)\,\mathrm{d}x=1.
+\end{align*}
+此外，一个计算表明
+\begin{align}
+\Delta\Phi(x,s)+\frac{n}{2s}\Phi(x,s)\geqslant 0.\label{align:ch09-4-eq08}
+\end{align}
+定义
+\begin{align*}
+\eta(t)\triangleq\int_{\mathbb{R}^n}u(x,t)\Phi(x,s)\,\mathrm{d}x.
+\end{align*}
+则由\eqref{align:ch09-4-eq08}，
+\begin{align*}
+\dot\eta(t)=\int_{\mathbb{R}^n}u_t\Phi\,\mathrm{d}x=\int_{\mathbb{R}^n}(\Delta u+u^p)\Phi\,\mathrm{d}x=\int_{\mathbb{R}^n}u\Delta\Phi+u^p\Phi\,\mathrm{d}x\geqslant-\frac{n}{2s}\eta(t)+\int_{\mathbb{R}^n}u^p\Phi\,\mathrm{d}x
+\end{align*}
+其中 $\Phi=\Phi(x,s)$。如前一证明，
+\begin{align*}
+\eta^p\leqslant\int_{\mathbb{R}^n}u^p\Phi\,\mathrm{d}x.
+\end{align*}
+因此
+\begin{align}
+\dot\eta\geqslant-\lambda\eta+\eta^p,\label{align:ch09-4-eq09}
+\end{align}
+其中 $\lambda\triangleq\frac{n}{2s}$。令 $\xi(t)\triangleq e^{\lambda t}\eta(t)$ 积分\eqref{align:ch09-4-eq09}。则
+\begin{align*}
+\dot\xi\geqslant e^{-\lambda(p-1)t}\xi^p.
+\end{align*}
+积分并重写，得
+\begin{align*}
+\xi^{p-1}(t)\geqslant\frac{\xi^{p-1}(0)\lambda}{\lambda-\xi^{p-1}(0)(1-e^{-\lambda(p-1)t})}.
+\end{align*}
+此微分不等式表明：若
+\begin{align*}
+\eta(0)=\xi(0)>\lambda^{\frac1{p-1}},
+\end{align*}
+则 $\xi$ 在有限时间趋于 $\infty$。回顾 $\lambda$ 与 $\Phi$ 的定义，把此条件重写为
+\begin{align}
+\frac1{(4\pi)^{n/2}}\int_{\mathbb{R}^n}ge^{-\frac{|x|^2}{4s}}\,\mathrm{d}x>s^{n/2}\left(\frac{n}{2s}\right)^{\frac1{p-1}}=\gamma s^{\frac n2-\frac1{p-1}},\label{align:ch09-4-eq10}
+\end{align}
+其中 $\gamma>0$。但关于 $p$ 的条件\eqref{align:ch09-4-eq07} 蕴涵 $\frac n2-\frac1{p-1}<0$，故对任一初值函数 $g\not\equiv 0$，可取 $s$ 充分大使\eqref{align:ch09-4-eq10} 成立。
+\end{proof}
+\end{theorem}
+
+\subsection{Derrick--Pohozaev 恒等式}\label{subsection:ch09-4-2-DerrickPohozaev}
+
+接着研究一个适用于不同微分不等式方法的非线性椭圆 PDE，即非线性边值问题
+\begin{align}
+\begin{cases}
+-\Delta u=|u|^{p-1}u&\text{在 }U\text{ 中},\\
+u=0&\text{在 }\partial U\text{ 上}.
+\end{cases}\label{align:ch09-4-eq11}
+\end{align}
+现 \S8.5.2 的理论适用于\eqref{align:ch09-4-eq11}，只要
+\begin{align}
+1<p<\frac{n+2}{n-2},\label{align:ch09-4-eq12}
+\end{align}
+并证明存在非平凡解 $u\not\equiv 0$。现转而假设
+\begin{align}
+\frac{n+2}{n-2}<p<\infty.\label{align:ch09-4-eq13}
+\end{align}
+我们的目标是：在关于 $U$ 的某几何条件下证明\eqref{align:ch09-4-eq13} 蕴涵 $u\equiv 0$ 是\eqref{align:ch09-4-eq11} 唯一的光滑解。于是看到 \S8.5.2 中限制到条件\eqref{align:ch09-4-eq12} 在某种意义下是自然的，因而称 $p=\frac{n+2}{n-2}$ 为\textbf{临界指数}。
+
+\begin{definition}\label{definition:ch09-4-星形}
+称开集 $U$ 关于 $0$ 是\textbf{星形的}，只要对每个 $x\in\overline{U}$，线段
+\begin{align*}
+\{\lambda x\mid 0\leqslant\lambda\leqslant 1\}
+\end{align*}
+位于 $\overline{U}$ 中。
+\end{definition}
+
+显然若 $U$ 凸且 $0\in U$，则 $U$ 关于 $0$ 星形。但一般星形区域不必凸。
+
+\begin{lemma}[星形区域的法向量]\label{lemma:ch09-4-星形法向}
+设 $\partial U$ 为 $C^1$，$U$ 关于 $0$ 星形。则
+\begin{align*}
+x\cdot\boldsymbol{\nu}(x)\geqslant 0
+\end{align*}
+对所有 $x\in\partial U$，其中 $\boldsymbol{\nu}$ 表示单位外法向量。
+\begin{proof}
+因 $\partial U$ 为 $C^1$，若 $x\in\partial U$，则对每个 $\varepsilon>0$，存在 $\delta>0$，使 $|y-x|<\delta$ 且 $y\in\overline{U}$ 蕴涵 $\frac{\boldsymbol{\nu}(x)\cdot(y-x)}{|y-x|}\leqslant\varepsilon$。特别地
+\begin{align*}
+\limsup_{\substack{y\to x\\y\in\overline{U}}}\frac{\boldsymbol{\nu}(x)\cdot(y-x)}{|y-x|}\leqslant 0.
+\end{align*}
+令 $y=\lambda x$，$0<\lambda<1$。则 $y\in\overline{U}$，因 $U$ 星形。故
+\begin{align*}
+\frac{\boldsymbol{\nu}(x)\cdot x}{|x|}=-\lim_{\lambda\to 1^-}\frac{\boldsymbol{\nu}(x)\cdot(\lambda x-x)}{|\lambda x-x|}\geqslant 0.
+\end{align*}
+\end{proof}
+\end{lemma}
+
+接着证明：若 $U$ 星形，则对超临界增长，问题\eqref{align:ch09-4-eq11} 不存在非平凡解。证明是一个非凡的计算，起始以 $x\cdot Du$ 乘 PDE $-\Delta u=|u|^{p-1}u$，并不断分部积分。乘子 $x\cdot Du$ 的选取受 \S8.6.2\cref{example:ch08-6-2-伸缩不变} 的启发。
+
+\begin{theorem}[非平凡解的不存在性]\label{theorem:ch09-4-3-非平凡解不存在}
+设 $u\in C^2(\overline{U})$ 是问题\eqref{align:ch09-4-eq11} 的解，指数 $p$ 满足不等式\eqref{align:ch09-4-eq13}。又设 $U$ 关于 $0$ 星形，$\partial U$ 为 $C^1$。则
+\begin{align*}
+u\equiv 0\quad\text{在 }U\text{ 内}.
+\end{align*}
+\begin{proof}
+1. 以 $x\cdot Du$ 乘 PDE 并在 $U$ 上积分，得
+\begin{align}
+\int_U(-\Delta u)(x\cdot Du)\,\mathrm{d}x=\int_U|u|^{p-1}u(x\cdot Du)\,\mathrm{d}x.\label{align:ch09-4-eq14}
+\end{align}
+把此表达式改写为 $A=B$。
+2. 左端为
+\begin{align}
+A\triangleq-\sum_{i,j=1}^n\int_U u_{x_ix_i}x_ju_{x_j}\,\mathrm{d}x=\sum_{i,j=1}^n\int_U u_{x_i}(x_ju_{x_j})_{x_i}\,\mathrm{d}x-\sum_{i,j=1}^n\int_{\partial U}u_{x_i}\nu_ix_ju_{x_j}\,\mathrm{d}S\triangleq A_1+A_2.\label{align:ch09-4-eq15}
+\end{align}
+3. 现
+\begin{align}
+A_1&=\sum_{i,j=1}^n\int_U u_{x_i}\delta_{ij}u_{x_j}+u_{x_ix_j}u_{x_jx_i}\,\mathrm{d}x\notag\\
+&=\int_U|Du|^2+\sum_{j=1}^n\left(\frac{|Du|^2}{2}\right)_{x_jx_j}\,\mathrm{d}x\notag\\
+&=\left(1-\frac n2\right)\int_U|Du|^2\,\mathrm{d}x+\int_{\partial U}\frac{|Du|^2}{2}(\boldsymbol{\nu}\cdot x)\,\mathrm{d}S.\label{align:ch09-4-eq16}
+\end{align}
+另一方面，因 $u=0$ 在 $\partial U$ 上，在每个点 $x\in\partial U$ 处 $Du(x)$ 平行于法向量 $\boldsymbol{\nu}(x)$。故 $Du(x)=\pm|Du(x)|\boldsymbol{\nu}(x)$。用此等式，算得
+\begin{align}
+A_2=-\int_{\partial U}|Du|^2(\boldsymbol{\nu}\cdot x)\,\mathrm{d}S.\label{align:ch09-4-eq17}
+\end{align}
+合并\eqref{align:ch09-4-eq15}--\eqref{align:ch09-4-eq17}，推得
+\begin{align*}
+A=\frac{2-n}{2}\int_U|Du|^2\,\mathrm{d}x-\frac12\int_{\partial U}|Du|^2(\boldsymbol{\nu}\cdot x)\,\mathrm{d}S.
+\end{align*}
+4. 回到\eqref{align:ch09-4-eq14}，计算
+\begin{align*}
+B\triangleq\sum_{j=1}^n\int_U|u|^{p-1}u\,u_{x_j}u_{x_j}\,\mathrm{d}x=\sum_{j=1}^n\int_U\left(\frac{|u|^{p+1}}{p+1}\right)_{x_jx_j}\,\mathrm{d}x=-\frac{n}{p+1}\int_U|u|^{p+1}\,\mathrm{d}x.
+\end{align*}
+5. 此计算与\eqref{align:ch09-4-eq14} 给出
+\begin{align}
+\frac{n-2}{2}\int_U|Du|^2\,\mathrm{d}x+\frac12\int_{\partial U}|Du|^2(\boldsymbol{\nu}\cdot x)\,\mathrm{d}S=\frac{n}{p+1}\int_U|u|^{p+1}\,\mathrm{d}x.\label{align:ch09-4-eq18}
+\end{align}
+由上面的引理，得不等式
+\begin{align}
+\frac{n-2}{2}\int_U|Du|^2\,\mathrm{d}x\leqslant\frac{n}{p+1}\int_U|u|^{p+1}\,\mathrm{d}x.\label{align:ch09-4-eq19}
+\end{align}
+但若以 $u$ 乘 PDE $-\Delta u=|u|^{p-1}u$ 并分部积分，得等式
+\begin{align*}
+\int_U|Du|^2\,\mathrm{d}x=\int_U|u|^{p+1}\,\mathrm{d}x.
+\end{align*}
+代入\eqref{align:ch09-4-eq19}，故结论
+\begin{align*}
+\left(\frac{n-2}{2}-\frac{n}{p+1}\right)\int_U|u|^{p+1}\,\mathrm{d}x\leqslant 0.
+\end{align*}
+故若 $u\not\equiv 0$，则 $\frac{n-2}{2}-\frac{n}{p+1}\leqslant 0$；即 $p\leqslant\frac{n+2}{n-2}$。
+\end{proof}
+\end{theorem}
+
+恒等式\eqref{align:ch09-4-eq18} 有时称为\textbf{Derrick--Pohozaev 恒等式}。
+
+\end{document}

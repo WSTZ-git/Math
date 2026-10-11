@@ -1,0 +1,447 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}}
+
+\begin{document}
+
+\section{变换方法}\label{section:ch04-transform}
+
+本节发展 Fourier 变换 $\mathcal{F}$、Radon 变换 $\mathcal{R}$ 与 Laplace 变换 $\mathcal{L}$ 的一些理论。它们是极为有力的工具，可把某些线性偏微分方程化为代数方程，或化为涉及较少变量的微分方程。
+
+\subsection{Fourier 变换}\label{subsection:ch04-fourier}
+
+本节中所有函数均为复值，$\overline{\cdot}$ 表示复共轭。
+
+\subsubsection{定义与性质}
+
+\begin{definition}\label{definition:ch04-fourier}
+若 $u\in L^1(\mathbb{R}^n)$，定义其 Fourier 变换 $\mathcal{F}u=\widehat{u}$ 为
+\begin{align}\label{align:ch04-fourier-def}
+\widehat{u}(y)\triangleq\frac{1}{(2\pi)^{n/2}}\int_{\mathbb{R}^n}e^{-\mathrm{i}x\cdot y}u(x)\,\mathrm{d}x \qquad(y\in\mathbb{R}^n),
+\end{align}
+其逆 Fourier 变换 $\mathcal{F}^{-1}u=\check{u}$ 为
+\begin{align}\label{align:ch04-fourier-inv-def}
+\check{u}(y)\triangleq\frac{1}{(2\pi)^{n/2}}\int_{\mathbb{R}^n}e^{\mathrm{i}x\cdot y}u(x)\,\mathrm{d}x \qquad(y\in\mathbb{R}^n).
+\end{align}
+\end{definition}
+
+由于 $|e^{\pm ix\cdot y}|=1$ 且 $u\in L^1(\mathbb{R}^n)$，这些积分对每个 $y\in\mathbb{R}^n$ 收敛。我们现把定义\eqref{align:ch04-fourier-def}、\eqref{align:ch04-fourier-inv-def} 推广到函数 $u\in L^2(\mathbb{R}^n)$。
+
+\begin{theorem}[Plancherel定理]\label{theorem:Plancherel定理}设 $u\in L^1(\mathbb{R}^n)\cap L^2(\mathbb{R}^n)$。则 $\widehat{u},\check{u}\in L^2(\mathbb{R}^n)$，且
+\begin{align}\label{align:ch04-plancherel}
+\|\widehat{u}\|_{L^2(\mathbb{R}^n)}=\|\check{u}\|_{L^2(\mathbb{R}^n)}=\|u\|_{L^2(\mathbb{R}^n)}.
+\end{align}
+\end{theorem}
+
+\begin{proof}
+1. 首先注意：若 $v,w\in L^1(\mathbb{R}^n)$，则 $\widehat{v},\widehat{w}\in L^\infty(\mathbb{R}^n)$。且
+\begin{align}\label{align:ch04-fourier-dual}
+\int_{\mathbb{R}^n}v(x)\widehat{w}(x)\,\mathrm{d}x=\int_{\mathbb{R}^n}\widehat{v}(y)w(y)\,\mathrm{d}y,
+\end{align}
+因为两边都等于 $\dfrac{1}{(2\pi)^{n/2}}\int_{\mathbb{R}^n}\int_{\mathbb{R}^n}e^{-\mathrm{i}x\cdot y}v(x)w(y)\,\mathrm{d}x\,\mathrm{d}y$。此外，如下文\cref{example:ch04-bessel}显式计算，
+\begin{align}\label{align:ch04-gauss-fourier}
+\int_{\mathbb{R}^n}e^{\mathrm{i}x\cdot y-t|x|^2}\,\mathrm{d}x=\left(\frac{\pi}{t}\right)^{n/2}e^{-|y|^2/4t} \qquad(t>0).
+\end{align}
+故若 $\varepsilon>0$ 且 $v_\varepsilon(x)\triangleq e^{-\varepsilon|x|^2}$，有 $\widehat{v}_\varepsilon(y)=\dfrac{e^{-|y|^2/4\varepsilon}}{(2\varepsilon)^{n/2}}$。于是\eqref{align:ch04-fourier-dual} 对每个 $\varepsilon>0$ 蕴含
+\begin{align}\label{align:ch04-approx-id}
+\int_{\mathbb{R}^n}\widehat{w}(y)e^{-\varepsilon|y|^2}\,\mathrm{d}y=\frac{1}{(2\varepsilon)^{n/2}}\int_{\mathbb{R}^n}w(x)e^{-|x|^2/4\varepsilon}\,\mathrm{d}x.
+\end{align}
+
+2. 现取 $u\in L^1(\mathbb{R}^n)\cap L^2(\mathbb{R}^n)$，令 $v(x)\triangleq\overline{u(-x)}$。令 $w\triangleq u*v\in L^1(\mathbb{R}^n)\cap C(\mathbb{R}^n)$，并验证（见下文定理\cref{theorem:1222-Fourier变换的性质}）$\widehat{w}=(2\pi)^{n/2}\widehat{u}\widehat{v}\in L^\infty(\mathbb{R}^n)$。但
+\begin{align*}
+\widehat{v}(y)=\frac{1}{(2\pi)^{n/2}}\int_{\mathbb{R}^n}e^{-\mathrm{i}x\cdot y}\overline{u(-x)}\,\mathrm{d}x=\overline{\widehat{u}}(y),
+\end{align*}
+故 $\widehat{w}=(2\pi)^{n/2}|\widehat{u}|^2$。现 $w$ 连续，因而
+\begin{align*}
+\lim_{\varepsilon\to 0}\frac{1}{(2\varepsilon)^{n/2}}\int_{\mathbb{R}^n}w(x)e^{-|x|^2/4\varepsilon}\,\mathrm{d}x=(2\pi)^{n/2}w(0),
+\end{align*}
+其中我们用了 \S2.3.1 的引理。由于 $\widehat{w}=(2\pi)^{n/2}|\widehat{u}|^2\geqslant 0$，在\eqref{align:ch04-approx-id} 中令 $\varepsilon\to 0^+$，推出 $\widehat{w}$ 可和，且 $\int_{\mathbb{R}^n}\widehat{w}(y)\,\mathrm{d}y=(2\pi)^{n/2}w(0)$。故 $\int_{\mathbb{R}^n}|\widehat{u}|^2\,\mathrm{d}y=w(0)=\int_{\mathbb{R}^n}u(x)v(-x)\,\mathrm{d}x=\int_{\mathbb{R}^n}|u|^2\,\mathrm{d}x$。$\check{u}$ 的证明类似。
+\end{proof}
+
+\textbf{$L^2$ 上 Fourier 变换的定义.} 鉴于等式\eqref{align:ch04-plancherel}，可如下定义函数 $u\in L^2(\mathbb{R}^n)$ 的 Fourier 变换。选序列 $\{u_k\}_{k=1}^\infty\subset L^1(\mathbb{R}^n)\cap L^2(\mathbb{R}^n)$，使 $u_k\to u$ 在 $L^2(\mathbb{R}^n)$ 中。由\eqref{align:ch04-plancherel}，$\|\widehat{u}_k-\widehat{u}_j\|_{L^2(\mathbb{R}^n)}=\|u_k-u_j\|_{L^2(\mathbb{R}^n)}$，故 $\{\widehat{u}_k\}_{k=1}^\infty$ 是 $L^2(\mathbb{R}^n)$ 中的 Cauchy 列。此列因而收敛到一个极限，我们定义它为 $\mathcal{F}u=\widehat{u}$：$\widehat{u}_k\to\widehat{u}$ 在 $L^2(\mathbb{R}^n)$ 中。$\widehat{u}$ 的定义不依赖于逼近序列的选取。我们类似定义 $\check{u}$。
+
+\begin{theorem}[Fourier变换的性质]\label{theorem:1222-Fourier变换的性质}
+设 $u,v\in L^2(\mathbb{R}^n)$。则
+\begin{enumerate}[(i)]
+\item\label{theorem:1222-Fourier变换的性质-1} $\int_{\mathbb{R}^n}u\overline{v}\,\mathrm{d}x=\int_{\mathbb{R}^n}\widehat{u}\overline{\widehat{v}}\,\mathrm{d}y$。
+\item\label{theorem:1222-Fourier变换的性质-2} $(D^\alpha u)\wedge=(iy)^\alpha\widehat{u}$，对每个使 $D^\alpha u\in L^2(\mathbb{R}^n)$ 的多重指标 $\alpha$。
+\item 若 $u,v\in L^1(\mathbb{R}^n)\cap L^2(\mathbb{R}^n)$，则 $(u*v)\wedge=(2\pi)^{n/2}\widehat{u}\widehat{v}$。
+\item 此外，$u=(\widehat{u})\vee$。
+\end{enumerate}
+\end{theorem}
+
+断言 (iv) 是 Fourier 反演公式，它在 $\widehat{u}\in L^1(\mathbb{R}^n)$ 时用指数平面波 $e^{\mathrm{i}x\cdot y}$ 表示函数 $u$：
+\begin{align}\label{align:ch05-Fourier导数}
+u(x)=\frac{1}{(2\pi)^{n/2}}\int_{\mathbb{R}^n}e^{\mathrm{i}x\cdot y}\widehat{u}(y)\,\mathrm{d}y.
+\end{align}
+
+
+\begin{definition}
+设 $f(x)=f(x_1,x_2,\cdots,x_n)\in L^1(\mathbb{R}^n)$，则无穷积分
+\begin{align}
+\hat{f}(\lambda)=\frac{1}{(\sqrt{2\pi})^n}\int_{\mathbb{R}^n}f(x)e^{-\mathrm{i}\lambda \cdot x}\,\mathrm{d}x \label{eq:fourier-multidim}
+\end{align}
+有意义，称为 $f(x)$ 的 \textbf{Fourier 变换}，这里 $\lambda=(\lambda_1,\lambda_2,\cdots,\lambda_n)\in\mathbb{R}^n$，记为 $(f(x))^\wedge=\hat{f}(\lambda)$。
+\end{definition}
+
+\begin{theorem}[反演公式]
+设 $f(x)\in L^1(\mathbb{R}^n)\cap C^1(\mathbb{R}^n)$，则
+\begin{align}
+(\hat{f}(\lambda))^\vee=\lim_{N\to+\infty}\frac{1}{(\sqrt{2\pi})^n}\int_{|\lambda|\leqslant N}\hat{f}(\lambda)e^{\mathrm{i}\lambda \cdot x}\,\mathrm{d}\lambda=f(x), \label{eq:fourier-inv-multidim}
+\end{align}
+其中 $x=(x_1,x_2,\cdots,x_n)\in\mathbb{R}^n$。$(\hat{f}(\lambda))^\vee$ 表示在 Cauchy 主值意义下的无穷积分，称为 $\hat{f}(\lambda)$ 的 \textbf{Fourier 逆变换}。
+\end{theorem}
+
+\begin{proposition}[$\mathbb{R}^n$上的Fourier变换的基本性质]\label{proposition:Fourier变换的基本性质2}
+设 $f,g\in L^1(\mathbb{R}^n)$，$a_1,a_2\in\mathbb{C}$，$k\in\mathbb{R}\setminus\{0\}$，$x_0\in\mathbb{R}^n$，则其Fourier变换
+\begin{align*}
+\hat{f}(\lambda)\triangleq \frac{1}{(2\pi)^{\frac{n}{2}}}\int_{\mathbb{R}^n} f(x)e^{-\mathrm{i}\lambda\cdot x}\,\mathrm{d}x
+\end{align*}
+满足以下性质：
+\begin{enumerate}[(1)]
+\item \textbf{线性性质:}
+\begin{align*}
+(a_1f_1+a_2f_2)^\wedge=a_1\hat{f}_1+a_2\hat{f}_2.
+\end{align*}
+
+\item\label{proposition:Fourier 变换的基本性质2-2} \textbf{微商性质:} 若 $f\in C^m(\mathbb{R}^n)$ 且对所有 $|\alpha|\leqslant m$ 有 $D^\alpha f\in L^1(\mathbb{R}^n)$，则
+\begin{align*}
+(D^\alpha f)^\wedge=(\mathrm{i}\lambda)^\alpha \hat{f}(\lambda),\qquad |\alpha|\leqslant m,
+\end{align*}
+其中 $\lambda^\alpha=\lambda_1^{\alpha_1}\cdots\lambda_n^{\alpha_n}$.
+
+\item \textbf{乘多项式性质:} 若 $x^\alpha f\in L^1(\mathbb{R}^n)$ 对所有 $|\alpha|\leqslant m$ 成立，则
+\begin{align*}
+(x^\alpha f)^\wedge=\mathrm{i}^{|\alpha|}D^\alpha \hat{f}(\lambda),\qquad |\alpha|\leqslant m.
+\end{align*}
+
+\item \textbf{平移性质:}
+\begin{align*}
+(f(x-x_0))^\wedge=e^{-\mathrm{i}\lambda\cdot x_0}\hat{f}(\lambda).
+\end{align*}
+
+\item \textbf{伸缩性质:}
+\begin{align*}
+(f(kx))^\wedge=\frac{1}{|k|^n}\hat{f}\left(\frac{\lambda}{k}\right).
+\end{align*}
+
+\item \textbf{对称性质:}
+\begin{align*}
+(f)^\vee=\hat{f}(-\lambda),
+\end{align*}
+其中 $(f)^\vee$ 表示 Fourier 逆变换.
+
+\item \textbf{卷积性质:} 若$f,g\in L^1(\mathbb{R})$,定义卷积
+\begin{align*}
+(f*g)(x)\triangleq\int_{\mathbb{R}^n} f(x-y)g(y)\,\mathrm{d}y,
+\end{align*}
+则 $f*g\in L^1(\mathbb{R}^n)$，且
+\begin{align*}
+(f*g)^\wedge=(2\pi)^{\frac{n}{2}}\,\hat{f}(\lambda)\hat{g}(\lambda).
+\end{align*}
+
+\item\label{proposition:Fourier 变换的基本性质2-8} \textbf{分离变量性质:} 若 $f(x)=\prod_{j=1}^n f_j(x_j)$，其中 $f_j\in L^1(\mathbb{R})$，则
+\begin{align*}
+\hat{f}(\lambda)=\prod_{j=1}^n \hat{f}_j(\lambda_j).
+\end{align*}
+\end{enumerate}
+\end{proposition}
+
+\subsubsection{应用}
+
+Fourier 变换 $\mathcal{F}$ 是研究线性常系数偏微分方程的一个特别有力的技巧。
+
+\begin{example}[Bessel 位势]\label{example:ch04-bessel}我们先研究 PDE
+\begin{align}\label{align:ch04-bessel-pde}
+-\Delta u+u=f \qquad\text{在 }\mathbb{R}^n\text{ 中},
+\end{align}
+其中 $f\in L^2(\mathbb{R}^n)$。为求 $u$ 的显式公式，我们取 Fourier 变换，回忆定理\cref{theorem:1222-Fourier变换的性质}(ii) 得
+\begin{align}\label{align:ch04-bessel-alg}
+(1+|y|^2)\widehat{u}(y)=\widehat{f}(y) \qquad(y\in\mathbb{R}^n).
+\end{align}
+Fourier 变换的效果是把 PDE 化为代数方程\eqref{align:ch04-bessel-alg}，其解显然：$\widehat{u}=\dfrac{\widehat{f}}{1+|y|^2}$。故
+\begin{align}\label{align:ch04-bessel-u}
+u=\mathcal{F}^{-1}\!\left(\frac{\widehat{f}}{1+|y|^2}\right),
+\end{align}
+而真正的问题是把\eqref{align:ch04-bessel-u} 右端改写为更显式的形式。
+
+援引定理\cref{theorem:1222-Fourier变换的性质}(iii)，看到
+\begin{align}\label{align:ch04-bessel-conv}
+u=\frac{f*B}{(2\pi)^{n/2}},
+\end{align}
+其中 $\widehat{B}=\dfrac{1}{1+|y|^2}$。尽管 $\widehat{B}$ 不必在 $L^1$ 或 $L^2$ 中，我们如下形式地解 $B$。由于 $\dfrac{1}{a}=\int_0^\infty e^{-ta}\,\mathrm{d}t$（对每个 $a>0$），有 $\dfrac{1}{1+|y|^2}=\int_0^\infty e^{-t(1+|y|^2)}\,\mathrm{d}t$。故
+\begin{align*}
+B=\left(\frac{1}{1+|y|^2}\right)\!\vee=\frac{1}{(2\pi)^{n/2}}\int_0^\infty e^{-t}\left(\int_{\mathbb{R}^n}e^{\mathrm{i}x\cdot y-t|y|^2}\,\mathrm{d}y\right)\mathrm{d}t.
+\end{align*}
+现若 $a,b\in\mathbb{R}$、$b>0$，令 $z=b^{1/2}x-\dfrac{a}{2b^{1/2}}i$，发现 $\int_{-\infty}^\infty e^{\mathrm{i}ax-bx^2}\,\mathrm{d}x=e^{-a^2/4b}\dfrac{\pi^{1/2}}{b^{1/2}}$。因而
+\begin{align}\label{align:ch04-gauss-integral}
+\int_{\mathbb{R}^n}e^{\mathrm{i}x\cdot y-t|y|^2}\,\mathrm{d}y=\prod_{j=1}^n\int_{-\infty}^\infty e^{\mathrm{i}x_j y_j-t y_j^2}\,\mathrm{d}y_j=\left(\frac{\pi}{t}\right)^{n/2}e^{-|x|^2/4t}.
+\end{align}
+于是推出
+\begin{align}\label{align:ch04-bessel-kernel}
+B(x)=\frac{1}{2^{n/2}}\int_0^\infty\frac{e^{-t-|x|^2/4t}}{t^{n/2}}\,\mathrm{d}t \qquad(x\neq 0).
+\end{align}
+函数 $B$ 称为一个\textbf{Bessel 位势}。用\eqref{align:ch04-bessel-conv}，导出公式
+\begin{align}\label{align:ch04-bessel-formula}
+u(x)=\frac{1}{(4\pi)^{n/2}}\int_0^\infty\int_{\mathbb{R}^n}\frac{e^{-t-|x-y|^2/4t}}{t^{n/2}}f(y)\,\mathrm{d}y\,\mathrm{d}t \qquad(x\in\mathbb{R}^n).
+\end{align}
+\end{example}
+
+\begin{example}[热方程的基本解]\label{example:ch04-heat-fourier}再次考虑热方程初值问题
+\begin{align}\label{align:ch04-heat-ivp2}
+\begin{cases}
+u_t-\Delta u=0 & \text{在 }\mathbb{R}^n\times(0,\infty)\text{ 中},\\
+u=g & \text{在 }\mathbb{R}^n\times\{t=0\}\text{ 上}.
+\end{cases}
+\end{align}
+我们通过计算 $\widehat{u}$（$u$ 只在空间变量 $x$ 中的 Fourier 变换）来建立解\eqref{align:ch04-heat-ivp2} 的新方法。则
+\begin{align*}
+\begin{cases}
+\widehat{u}_t+|y|^2\widehat{u}=0 & t>0,\\
+\widehat{u}=\widehat{g} & t=0,
+\end{cases}
+\end{align*}
+由此 $\widehat{u}=e^{-t|y|^2}\widehat{g}$。故 $u=(e^{-t|y|^2}\widehat{g})\vee$，从而
+\begin{align}\label{align:ch04-heat-fourier-sol}
+u=\frac{g*F}{(2\pi)^{n/2}},
+\end{align}
+其中 $\widehat{F}=e^{-t|y|^2}$。但由\eqref{align:ch04-gauss-integral}，$F=\mathcal{F}^{-1}(e^{-t|y|^2})=\dfrac{1}{(2t)^{n/2}}e^{-|x|^2/4t}$。援引\eqref{align:ch04-heat-fourier-sol}，算得
+\begin{align}\label{align:ch04-heat-fourier-formula}
+u(x,t)=\frac{1}{(4\pi t)^{n/2}}\int_{\mathbb{R}^n}e^{-|x-y|^2/4t}g(y)\,\mathrm{d}y \qquad(x\in\mathbb{R}^n,\ t>0),
+\end{align}
+与 \S2.3.1 一致。Fourier 变换为我们提供了热方程基本解的一个新推导。
+\end{example}
+
+\begin{example}[Schrödinger 方程的基本解]\label{example:ch04-schrodinger}现考察 Schrödinger 方程初值问题
+\begin{align}\label{align:ch04-schr-ivp}
+\begin{cases}
+iu_t+\Delta u=0 & \text{在 }\mathbb{R}^n\times(0,\infty)\text{ 中},\\
+u=g & \text{在 }\mathbb{R}^n\times\{t=0\}\text{ 上},
+\end{cases}
+\end{align}
+其中 $u,g$ 复值。
+
+若在\eqref{align:ch04-heat-fourier-formula} 右端形式地把 $t$ 换成 $it$，得公式
+\begin{align}\label{align:ch04-schr-formula}
+u(x,t)=\frac{1}{(4\pi it)^{n/2}}\int_{\mathbb{R}^n}e^{i|x-y|^2/4t}g(y)\,\mathrm{d}y \qquad(x\in\mathbb{R}^n,\ t>0),
+\end{align}
+其中我们把 $i^{1/2}$ 解释为 $e^{\mathrm{i}\pi/4}$。只要 $g\in L^1(\mathbb{R}^n)$，此表达式对一切时刻 $t>0$ 显然有意义。此外若 $|y|^2g\in L^1(\mathbb{R}^n)$，可通过直接计算验证 $u$ 在 $\mathbb{R}^n\times(0,\infty)$ 中解 $iu_t+\Delta u=0$。
+
+现把公式\eqref{align:ch04-schr-formula} 改写为
+\begin{align*}
+u(x,t)=\frac{e^{i|x|^2/4t}}{(4\pi it)^{n/2}}\int_{\mathbb{R}^n}e^{-\mathrm{i}x\cdot y/2t}e^{i|y|^2/4t}g(y)\,\mathrm{d}y.
+\end{align*}
+由于 $|e^{i|x|^2/4t}|=|e^{i|y|^2/4t}|=1$，可如定理\cref{theorem:Plancherel定理} 那样验证：若 $g\in L^1(\mathbb{R}^n)\cap L^2(\mathbb{R}^n)$，则
+\begin{align}\label{align:ch04-schr-cons}
+\|u(\cdot,t)\|_{L^2(\mathbb{R}^n)}=\|g\|_{L^2(\mathbb{R}^n)} \qquad(t>0).
+\end{align}
+故映射 $g\mapsto u(\cdot,t)$ 保持 $L^2$ 范数。因而可如推广 Fourier 变换定义那样，把公式\eqref{align:ch04-schr-formula} 推广到函数 $g\in L^2(\mathbb{R}^n)$。
+
+我们称
+\begin{align}\label{align:ch04-schr-kernel}
+\Psi(x,t)\triangleq\frac{1}{(4\pi it)^{n/2}}e^{i|x|^2/4t} \qquad(x\in\mathbb{R}^n,\ t\neq 0)
+\end{align}
+为 Schrödinger 方程的\textbf{基本解}。注意公式\eqref{align:ch04-schr-formula} $u=g*\Psi$ 对一切时刻 $t\neq 0$ 都有意义，甚至 $t<0$。因而我们事实上解了
+\begin{align*}
+\begin{cases}
+iu_t+\Delta u=0 & \text{在 }\mathbb{R}^n\times(-\infty,\infty)\text{ 中},\\
+u=g & \text{在 }\mathbb{R}^n\times\{t=0\}\text{ 上}.
+\end{cases}
+\end{align*}
+特别地，Schrödinger 方程在时间上可逆，而热方程则不然（尽管有\cref{theorem:ch02-heat-backs-unique}）。
+\end{example}
+
+\begin{example}[波动方程]\label{example:ch04-wave-fourier}现分析波动方程初值问题
+\begin{align}\label{align:ch04-wave-ivp}
+\begin{cases}
+u_{tt}-\Delta u=0 & \text{在 }\mathbb{R}^n\times(0,\infty)\text{ 中},\\
+u=g,\ u_t=h & \text{在 }\mathbb{R}^n\times\{t=0\}\text{ 上},
+\end{cases}
+\end{align}
+为简单起见假定初速度为零。如前取 $\widehat{u}$ 为 $u$ 在变量 $x\in\mathbb{R}^n$ 中的 Fourier 变换。则
+\begin{align*}
+\begin{cases}
+\widehat{u}_{tt}+|y|^2\widehat{u}=0 & t>0,\\
+\widehat{u}=\widehat{g},\ \widehat{u}_t=\widehat{h} & t=0.
+\end{cases}
+\end{align*}
+这是对每个固定 $y\in\mathbb{R}^n$ 的一个 ODE，其解为
+\begin{align}\label{align:ch04-wave-hat}
+\widehat{u}=\widehat{g}\cos(t|y|)+\frac{\widehat{h}}{|y|}\sin(t|y|).
+\end{align}
+反演，得 $u(x,t)=\left[\widehat{g}\cos(t|y|)+\dfrac{\widehat{h}}{|y|}\sin(t|y|)\right]\vee$。在 $h\equiv 0$ 的特殊情形，有
+\begin{align}\label{align:ch04-wave-special}
+u(x,t)=\frac{1}{(2\pi)^{n/2}}\int_{\mathbb{R}^n}\widehat{g}(y)\frac{e^{\mathrm{i}(x\cdot y+t|y|)}+e^{\mathrm{i}(x\cdot y-t|y|)}}{2}\,\mathrm{d}y
+\end{align}
+对 $x\in\mathbb{R}^n$、$t\geqslant 0$，此公式我们稍后在 \S4.5.3 的某些渐近极限中进一步分析。
+\end{example}
+
+\textbf{能量的渐近均分.} 设 $h,g,Dg\in L^2(\mathbb{R}^n)$。回忆 \S2.4.3，波动方程\eqref{align:ch04-wave-ivp} 解 $u$ 的能量为 $E(t)\triangleq\dfrac{1}{2}\int_{\mathbb{R}^n}u_t^2+|Du|^2\,\mathrm{d}x$（$t\geqslant 0$），且它在时间上为常数：$E(t)=E(0)=\dfrac{1}{2}\int_{\mathbb{R}^n}h^2+|Dg|^2\,\mathrm{d}x$。作为表示公式\eqref{align:ch04-wave-hat} 的一个应用，我们现证明
+\begin{align}\label{align:ch04-energy-split}
+\lim_{t\to\infty}\int_{\mathbb{R}^n}|Du|^2\,\mathrm{d}x=\lim_{t\to\infty}\int_{\mathbb{R}^n}u_t^2\,\mathrm{d}x=E(0).
+\end{align}
+这说的是：渐近地，总能量均等地分裂为势能与动能两部分。
+
+为建立\eqref{align:ch04-energy-split}，用\eqref{align:ch04-wave-hat} 计算 $\int_{\mathbb{R}^n}|Du|^2\,\mathrm{d}x=\int_{\mathbb{R}^n}|y|^2|\widehat{u}|^2\,\mathrm{d}y$，并取 $t\to\infty$ 时振荡项的平均，得渐近一半能量在势能、一半在动能。
+
+\textbf{能量均分证明收尾.} 若 $f\in C_c^\infty(\mathbb{R}^n)$，分部积分可证 $\int_{\mathbb{R}^n}\cos(t|y|)\sin(t|y|)f\,\mathrm{d}y=O(t^{-1})$。用具紧支集的光滑函数逼近可积函数 $|y|(\widehat{h}\,\overline{\widehat{g}}+\widehat{g}\,\overline{\widehat{h}})$，看到\eqref{align:ch04-energy-split} 证明中最后一个积分当 $t\to\infty$ 时趋于零。用恒等式 $\cos^2(t|y|)=\tfrac{1}{2}(\cos(2t|y|)+1)$，类似推出 $\int_{\mathbb{R}^n}|y|^2|\widehat{g}|^2\cos^2(t|y|)\,\mathrm{d}y\to\tfrac{1}{2}\int_{\mathbb{R}^n}|y|^2|\widehat{g}|^2\,\mathrm{d}y$，以及 $\int_{\mathbb{R}^n}|\widehat{h}|^2\sin^2(t|y|)\,\mathrm{d}y\to\tfrac{1}{2}\int_{\mathbb{R}^n}|\widehat{h}|^2\,\mathrm{d}y$。于是
+\begin{align*}
+\lim_{t\to\infty}\int_{\mathbb{R}^n}|Du|^2\,\mathrm{d}x=\frac{1}{2}\int_{\mathbb{R}^n}|Dg|^2+|h|^2\,\mathrm{d}x=E(0).
+\end{align*}
+
+\begin{example}[电报方程]\label{example:ch04-telegraph}一维电报方程初值问题为
+\begin{align}\label{align:ch04-telegraph}
+\begin{cases}
+u_{tt}+2du_t-u_{xx}=0 & \text{在 }\mathbb{R}\times(0,\infty)\text{ 中},\\
+u=g,\ u_t=h & \text{在 }\mathbb{R}\times\{t=0\}\text{ 上},
+\end{cases}
+\end{align}
+其中 $d>0$，项``$2du_t$''表示波传播的物理阻尼。如前，
+\begin{align*}
+\begin{cases}
+\widehat{u}_{tt}+2d\widehat{u}_t+|y|^2\widehat{u}=0 & t>0,\\
+\widehat{u}=\widehat{g},\ \widehat{u}_t=\widehat{h} & t=0.
+\end{cases}
+\end{align*}
+再寻求形如 $\widehat{u}=\beta e^{t\gamma}$（$\beta,\gamma\in\mathbb{C}$）的解。代入上式，推出 $\gamma^2+2d\gamma+|y|^2=0$；故 $\gamma=-d\pm(d^2-|y|^2)^{1/2}$。于是得到表示公式，其中出现因子 $e^{-dt}$，它在 $t\to\infty$ 时引起阻尼。
+\end{example}
+
+\subsection{Radon 变换}\label{subsection:ch04-radon}
+
+Fourier 反演公式\eqref{align:ch05-Fourier导数} 对 PDE 理论的重要性主要在于它用指数平面波 $e^{\mathrm{i}x\cdot y}$ 表示函数。本小节引入 Radon 变换 $\mathcal{R}$，它对奇数维提供分解为平面波的另一优雅方式。这有时有用，因为从函数的 Radon 变换（而非 Fourier 变换）常更容易确定关于其支集的信息。
+
+\textbf{记号.} 记 $S^{n-1}$ 为 $\mathbb{R}^n$ 中的单位球面 $\partial B(0,1)$，其典型点记为 $\omega=(\omega_1,\cdots,\omega_n)$。以单位法向量 $\omega\in S^{n-1}$、距原点距离 $s\in\mathbb{R}$ 的平面为 $\Pi(s,\omega)\triangleq\{y\in\mathbb{R}^n\mid y\cdot\omega=s\}$。注意允许 $s<0$。
+
+\begin{definition}\label{definition:ch04-radon}
+函数 $u\in C_c^\infty(\mathbb{R}^n)$ 的 Radon 变换 $\mathcal{R}u=\widetilde{u}$ 为
+\begin{align}\label{align:ch04-radon-def}
+\widetilde{u}(s,\omega)\triangleq\int_{\Pi(s,\omega)}u\,\mathrm{d}S \qquad(s\in\mathbb{R},\ \omega\in S^{n-1}).
+\end{align}
+右端项是在平面 $\Pi(s,\omega)$ 上关于 $(n-1)$ 维曲面测度的积分。
+\end{definition}
+
+\begin{theorem}[Radon 变换的性质]\label{theorem:ch04-radon-props}设 $u\in C_c^\infty(\mathbb{R}^n)$。则
+\begin{enumerate}[(i)]
+\item $\widetilde{u}(-s,-\omega)=\widetilde{u}(s,\omega)$。
+\item $(D^\alpha u)\sim=\omega^\alpha\dfrac{\partial^{|\alpha|}}{\partial s^{|\alpha|}}\widetilde{u}$，对每个多重指标 $\alpha$。
+\item $(\Delta u)\sim=\dfrac{\partial^2}{\partial s^2}\widetilde{u}$。
+\item 若 $u\equiv 0$ 在 $\mathbb{R}^n\setminus B(0,R)$ 中，则 $\widetilde{u}(s,\omega)=0$ 对 $|s|\geqslant R$。
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+断言 (i) 显然，因 $\Pi(s,\omega)=\Pi(-s,-\omega)$。为证 (ii)，令 $\{b_1,\cdots,b_{n-1}\}$ 为子空间 $\Pi(0,\omega)$ 的一组标准正交基。则 $\{b_1,\cdots,b_{n-1},\omega\}$ 是 $\mathbb{R}^n$ 的标准正交基，故 $Du=\sum_{j=1}^{n-1}(Du\cdot b_j)b_j+(Du\cdot\omega)\omega$。由于 $b_j$ 切于 $\Pi(s,\omega)$ 且 $u$ 具紧支集，$\int_{\Pi(s,\omega)}Du\cdot b_j\,\mathrm{d}S=0$。而 $\widetilde{u}_s=\int_{\Pi(s,\omega)}Du\cdot\omega\,\mathrm{d}S$。一般情形由归纳得到；(iii) 因 $|\omega|=1$ 立刻成立。(iv) 显然，因 $|s|>R$ 时 $\Pi(s,\omega)\cap B(0,R)=\varnothing$。
+\end{proof}
+
+\begin{theorem}[Radon 变换与 Fourier 变换]\label{theorem:ch04-radon-fourier}设 $u\in C_c^\infty(\mathbb{R}^n)$。则
+\begin{align}\label{align:ch04-radon-fourier}
+\overline{\overline{u}}(r,\omega)\triangleq\int_{\mathbb{R}}\widetilde{u}(s,\omega)e^{-\mathrm{i}rs}\,\mathrm{d}s=(2\pi)^{n/2}\widehat{u}(r\omega) \qquad(r\in\mathbb{R},\ \omega\in S^{n-1}),
+\end{align}
+其中 $\widehat{u}=\mathcal{F}u$ 是 Fourier 变换。
+\end{theorem}
+
+\begin{proof}
+取 $\{b_1,\cdots,b_{n-1}\}$ 为 $\Pi(0,\omega)$ 的标准正交基。则 $\widetilde{u}(s,\omega)=\int_{\mathbb{R}^{n-1}}u\!\left(\sum_{j=1}^{n-1}y_j b_j+s\omega\right)\mathrm{d}y$。作变量代换 $x\triangleq\sum_{j=1}^{n-1}y_jb_j+s\omega$，得
+\begin{align*}
+\int_{\mathbb{R}}\widetilde{u}(s,\omega)e^{-\mathrm{i}rs}\,\mathrm{d}s=\int_{\mathbb{R}^n}u(x)e^{-\mathrm{i}r(x\cdot\omega)}\,\mathrm{d}x=(2\pi)^{n/2}\widehat{u}(r\omega).
+\end{align*}
+\end{proof}
+
+\begin{theorem}[Radon 变换的反演]\label{theorem:ch04-radon-inv}
+\begin{enumerate}[(i)]
+\item 我们有
+\begin{align}\label{align:ch04-radon-inv-general}
+u(x)=\frac{1}{2(2\pi)^n}\int_{\mathbb{R}}\int_{S^{n-1}}\overline{\overline{u}}(r,\omega)r^{n-1}e^{\mathrm{i}r\omega\cdot x}\,\mathrm{d}S\,\mathrm{d}r,
+\end{align}
+其中 $\overline{\overline{u}}$ 由\eqref{align:ch04-radon-fourier} 定义。
+\item 若 $n=2k+1$ 为奇数，则
+\begin{align}\label{align:ch04-radon-inv-odd}
+u(x)=\int_{S^{n-1}}r(x\cdot\omega,\omega)\,\mathrm{d}S,
+\end{align}
+其中
+\begin{align}\label{align:ch04-radon-inv-odd-def}
+r(s,\omega)\triangleq\frac{(-1)^k}{2(2\pi)^{2k}}\frac{\partial^{2k}}{\partial s^{2k}}\widetilde{u}(s,\omega).
+\end{align}
+公式\eqref{align:ch04-radon-inv-odd}、\eqref{align:ch04-radon-inv-odd-def} 提供了 $u$ 分解为平面波的一个优雅而有用的分解。
+\end{enumerate}
+\end{theorem}
+
+\textbf{应用（Radon 变换的消失）.} 作为一个简单推论：若 $n$ 为奇数且 $\widetilde{u}=0$ 对 $|s|\leqslant R$，则 $u\equiv 0$ 在 $B(0,R)$ 中。
+
+\subsubsection{Radon 变换的应用}
+
+\begin{example}[波动方程的另一表示公式]\label{example:ch04-wave-radon}若固定单位向量 $\omega\in S^{n-1}$，则平面波 $\gamma(x\cdot\omega-t,\omega)$ 解波动方程，故平面波的叠加
+\begin{align}\label{align:ch04-radon-wave}
+u(x,t)\triangleq\int_{S^{n-1}}\gamma(x\cdot\omega-t,\omega)\,\mathrm{d}S
+\end{align}
+亦然。我们现断言：若 $n=2k+1$ 为奇数且
+\begin{align}\label{align:ch04-radon-gamma}
+\gamma\triangleq\frac{(-1)^k}{2(2\pi)^{2k}}\frac{\partial^{2k}}{\partial s^{2k}}\widetilde{g}=\frac{(-1)^k}{2(2\pi)^{2k}}\mathcal{R}(\Delta^k g),
+\end{align}
+则\eqref{align:ch04-radon-wave} 给出波动方程初值问题
+\begin{align}\label{align:ch04-wave-radon-ivp}
+\begin{cases}
+u_{tt}-\Delta u=0 & \text{在 }\mathbb{R}^n\times(0,\infty)\text{ 中},\\
+u=g,\ u_t=0 & \text{在 }\mathbb{R}^n\times\{t=0\}\text{ 上}
+\end{cases}
+\end{align}
+解的一个公式。由定理\cref{theorem:ch04-radon-inv}(ii) 立刻得 $u=g$ 在 $t=0$。只需验证第二初值条件 $u_t(x,0)=-\int_{S^{n-1}}\gamma_s(x\cdot\omega,\omega)\,\mathrm{d}S=0$，这由被积函数是 $\omega$ 的奇函数得到。
+\end{example}
+
+\begin{example}[双曲组的 Huygens 原理]\label{example:ch04-huygens}未知函数 $\mathbf{u}:\mathbb{R}^n\times[0,\infty)\to\mathbb{R}^m$、$\mathbf{u}=(u_1,\cdots,u_m)$ 的一阶线性组
+\begin{align}\label{align:ch04-hyperbolic-system}
+\mathbf{u}_t+\sum_{j=1}^n B_j\mathbf{u}_{x_j}=0
+\end{align}
+称为\textbf{双曲组}，若对每个 $y\in\mathbb{R}^n$，$m\times m$ 矩阵 $\mathbf{B}(y)\triangleq\sum_{j=1}^n y_jB_j$ 有 $m$ 个实特征值 $\lambda_1(y)\leqslant\lambda_2(y)\leqslant\cdots\leqslant\lambda_m(y)$。进一步设 $\mathbf{B}(y)$ 可对角化。
+
+在 \S7.3 我们将用 Fourier 变换构造初值问题的解。这里改用 Radon 变换的一个快速应用，以推断当初值具紧支集时解的支集信息。设在变量 $x$ 中取 Radon 变换，对角化后逐分量得到 $v_j(s,\omega,t)=h_j(s-\lambda_j(\omega)t,\omega)$。反演公式\eqref{align:ch04-radon-inv-odd}、\eqref{align:ch04-radon-inv-odd-def} 对奇数 $n=2k+1$ 给出
+\begin{align}\label{align:ch04-huygens-sol}
+\mathbf{u}(x,t)=\int_{S^{n-1}}\sum_{j=1}^m l_j(x\cdot\omega-\lambda_j(\omega)t,\omega)a_j(\omega)\,\mathrm{d}S.
+\end{align}
+特别地，若 $\sigma\triangleq\min_{\omega\in S^{n-1}}\min_{1\leqslant j\leqslant m}|\lambda_j(\omega)|>0$ 且 $\operatorname{spt}\mathbf{g}\subset B(0,R)$，则
+\begin{align}\label{align:ch04-huygens}
+u(x,t)=0 \qquad\text{对 }|x|\leqslant\sigma t-R.
+\end{align}
+这是奇数维 $n$ 下双曲组\eqref{align:ch04-hyperbolic-system} 的 Huygens 原理的一种形式。
+\end{example}
+
+\subsection{Laplace 变换}\label{subsection:ch04-laplace}
+
+回忆我们写 $\mathbb{R}_+=(0,\infty)$。
+
+\begin{definition}\label{definition:ch04-laplace}
+若 $u\in L^1(\mathbb{R}_+)$，定义其 Laplace 变换 $\mathcal{L}u=u^\#$ 为
+\begin{align}\label{align:ch04-laplace-def}
+u^\#(s)\triangleq\int_0^\infty e^{-st}u(t)\,\mathrm{d}t \qquad(s\geqslant 0).
+\end{align}
+\end{definition}
+
+Fourier 与 Radon 变换最适合定义在整个 $\mathbb{R}$（或 $\mathbb{R}^n$）上的函数，而 Laplace 变换对只定义在 $\mathbb{R}_+$ 上的函数有用。实际上，对一个含时间的 PDE，在 $t$ 中作 Laplace 变换而固定空间变量 $x$ 可能有用。（这与\cref{example:ch04-heat-fourier,example:ch04-schrodinger,example:ch04-wave-fourier,example:ch04-telegraph}的技巧相反。）
+
+\begin{example}[预解式与 Laplace 变换]\label{example:ch04-resolvent}再次考虑热方程
+\begin{align}\label{align:ch04-heat-laplace}
+\begin{cases}
+v_t-\Delta v=0 & \text{在 }U\times(0,\infty)\text{ 中},\\
+v=f & \text{在 }U\times\{t=0\}\text{ 上},
+\end{cases}
+\end{align}
+关于时间作 Laplace 变换 $v^\#(x,s)=\int_0^\infty e^{-st}v(x,t)\,\mathrm{d}t$（$s>0$）。计算 $\Delta v^\#(x,s)=\int_0^\infty e^{-st}\Delta v(x,t)\,\mathrm{d}t=\int_0^\infty e^{-st}v_t(x,t)\,\mathrm{d}t=sv^\#(x,s)-f(x)$。固定 $s>0$，写 $u(x)\triangleq v^\#(x,s)$，则
+\begin{align}\label{align:ch04-resolvent}
+-\Delta u+su=f \qquad\text{在 }U\text{ 中}.
+\end{align}
+于是右端为 $f$ 的预解方程\eqref{align:ch04-resolvent} 的解，就是初值为 $f$ 的热方程\eqref{align:ch04-heat-laplace} 解的 Laplace 变换。预解方程与 Laplace 变换的联系将在 \S7.4 半群理论中更清楚。
+\end{example}
+
+\begin{example}[由热方程导出波动方程]\label{example:ch04-wave-from-heat}现用一些 Laplace 变换思想，出人意料地基于热方程为波动方程\eqref{align:ch04-wave-ivp} 解提供一个新推导（参见 \S2.4.1）。设 $u$ 是初值问题的有界光滑解，$n$ 为奇数、$g$ 光滑具紧支集。把 $u$ 偶延拓到负时间：$u(x,t)=u(x,-t)$ 若 $t<0$。则 $u_{tt}-\Delta u=0$ 在 $\mathbb{R}^n\times\mathbb{R}$ 中。
+
+现定义
+\begin{align}\label{align:ch04-wave-from-heat-def}
+v(x,t)\triangleq\frac{1}{(4\pi t)^{1/2}}\int_{-\infty}^\infty e^{-s^2/4t}u(x,s)\,\mathrm{d}s \qquad(x\in\mathbb{R}^n,\ t>0).
+\end{align}
+分部积分可验证 $v$ 解热方程 $v_t-\Delta v=0$、$v(\cdot,0)=g$。由 \S2.3，
+\begin{align}\label{align:ch04-v-heat}
+v(x,t)=\frac{1}{(4\pi t)^{n/2}}\int_{\mathbb{R}^n}e^{-|x-y|^2/4t}g(y)\,\mathrm{d}y.
+\end{align}
+令\eqref{align:ch04-wave-from-heat-def} 与\eqref{align:ch04-v-heat} 相等，记 $G(x;r)=\frac{1}{n\alpha(n)r^{n-1}}\int_{\partial B(x,r)}g(y)\,\mathrm{d}S(y)$ 为球面平均，积分并分部 $k$ 次后，可反演得到奇数维波动方程的求解公式，与 \S2.4.4 一致。
+\end{example}
+
+\end{document}

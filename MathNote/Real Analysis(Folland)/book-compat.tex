@@ -1,0 +1,52 @@
+% 工程内兼容修复；外部 Template/ 与 Styles/ 保持只读。
+\NewCommandCopy\BookOriginalNewCJKfontfamily\newCJKfontfamily
+\RenewDocumentCommand{\newCJKfontfamily}{m O{} m O{}}{%
+  \ifstrequal{#3}{FZCuSong-B09S}{%
+    \IfFontExistsTF{FZCuSong-B09S}{%
+      \BookOriginalNewCJKfontfamily#1[#2,#4]{#3}%
+    }{\BookOriginalNewCJKfontfamily#1[BoldFont=SimSun,AutoFakeBold=true]{SimSun}}%
+  }{\BookOriginalNewCJKfontfamily#1[#2,#4]{#3}}%
+}
+\usepackage{../../Styles/mystyle-elegantbook}
+\RenewCommandCopy\newCJKfontfamily\BookOriginalNewCJKfontfamily
+% 仿宋常规字形已有，补用同套黑体的粗体，避免证明内局部定义的粗体替代警告。
+\newCJKfontfamily\BookFangSong[BoldFont=FandolHei-Bold.otf]{FandolFang-Regular.otf}
+\renewcommand{\cfs}{\BookFangSong}
+% 分款引用的可见编号来自真实计数器，链接指向最深层分款。
+\renewcommand{\subcref}[2]{\hyperref[#2]{\namecref{#1}~\ref*{#1}\ref*{#2}}}
+\renewcommand{\subsubcref}[3]{\hyperref[#3]{\namecref{#1}~\ref*{#1}\ref*{#2}\ref*{#3}}}
+\crefname{chapter}{章}{章}
+\crefname{equation}{公式}{公式}
+\crefname{exer}{练习}{练习}
+\crefname{exam}{例题}{例题}
+\crefname{axiom}{公理}{公理}
+\crefname{tcb@cnt@axiom}{公理}{公理}
+\elegantnewtheorem{principle}{原理}{thmstyle}{principle}
+\crefname{principle}{原理}{原理}
+\crefname{tcb@cnt@principle}{原理}{原理}
+\setlist[enumerate,1]{label=(\alph*),ref=(\alph*)}
+\setlist[enumerate,2]{label=(\roman*),ref=(\roman*)}
+\DeclareMathOperator{\card}{card}
+
+% 对中文正文统一多重引用的连接词；编号仍由 cleveref 动态生成。
+\providecommand{\crefrangeconjunction}{}
+\renewcommand{\crefrangeconjunction}{至}
+\providecommand{\crefpairconjunction}{}
+\renewcommand{\crefpairconjunction}{和}
+\providecommand{\crefmiddleconjunction}{}
+\renewcommand{\crefmiddleconjunction}{、}
+\providecommand{\creflastconjunction}{}
+\renewcommand{\creflastconjunction}{和}
+% 预留证明标题及其首行的空间，防止标题单独留在页底。
+\usepackage{needspace}
+\BeforeBeginEnvironment{proof}{\Needspace{5\baselineskip}}
+\BeforeBeginEnvironment{exercise}{\Needspace{9\baselineskip}}
+\BeforeBeginEnvironment{remark}{\par}
+\AfterEndEnvironment{remark}{\par}
+% 原模板仅有编号 example；局部例子沿用其字形和颜色，不递增计数器。
+\NewDocumentEnvironment{example*}{O{}}{%
+  \par\noindent{\normalfont\songti\bfseries\color{main}\examplename\ #1 }\rmfamily
+}{\par\ignorespacesafterend}
+
+\crefname{enumi}{项}{项}
+\crefname{enumii}{项}{项}

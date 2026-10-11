@@ -1,0 +1,168 @@
+\documentclass[../../main.tex]{subfiles}
+\begin{document}
+\section{反函数定理与隐函数定理}\label{section:appC-inverse-implicit}
+
+本附录最后两个定理是关于光滑函数的核心结果。它们说：在某些假设下，光滑函数的局部行为由其全导数的行为所刻画。
+
+\begin{theorem}[反函数定理]\label{theorem:appC-inverse-function}
+假设 $U,V$ 是 $\mathbb R^n$ 的开子集，$F:U\to V$ 是光滑函数。如果 $\mathrm{D}F(a)$ 在某点 $a\in U$ 处可逆，则存在 $a$ 的连通邻域 $U_0\subset U$ 与 $F(a)$ 的连通邻域 $V_0\subset V$，使 $F|_{U_0}:U_0\to V_0$ 是微分同胚。
+\end{theorem}
+
+此定理的证明基于关于度量空间的一个初等结果，我们先描述它。
+
+设 $X$ 是度量空间。如果存在常数 $\lambda\in(0,1)$，使对所有 $x,y\in X$ 有
+\begin{align*}
+d(G(x),G(y))\leqslant\lambda d(x,y),
+\end{align*}
+则称映射 $G:X\to X$ 是一个\emph{压缩映射}。显然每个压缩映射都连续。映射 $G:X\to X$ 的\emph{不动点}是满足 $G(x)=x$ 的点 $x\in X$。
+
+\begin{lemma}[压缩映射引理]\label{lemma:appC-contraction}
+设 $X$ 是非空完备度量空间。每个压缩映射 $G:X\to X$ 都有唯一不动点。
+\end{lemma}
+
+\begin{proof}
+唯一性立即成立：若 $x$ 与 $x'$ 都是 $G$ 的不动点，则压缩性蕴含 $d(x,x')=d(G(x),G(x'))\leqslant\lambda d(x,x')$，这只在 $x=x'$ 时可能。
+
+为证不动点存在，取 $X$ 中任意点 $x_0$，归纳定义序列 $(x_n)_{n=0}^\infty$：$x_{n+1}=G(x_n)$。对任意 $i\geqslant1$，有 $d(x_i,x_{i+1})=d(G(x_{i-1}),G(x_i))\leqslant\lambda d(x_{i-1},x_i)$，故由归纳
+\begin{align*}
+d(x_i,x_{i+1})\leqslant\lambda^i d(x_0,x_1).
+\end{align*}
+如果 $N$ 是正整数且 $j\geqslant i\geqslant N$，
+\begin{align*}
+d(x_i,x_j)\leqslant d(x_i,x_{i+1})+d(x_{i+1},x_{i+2})+\cdots+d(x_{j-1},x_j)
+\leqslant(\lambda^i+\cdots+\lambda^{j-1})d(x_0,x_1)
+\leqslant\lambda^i\sum_{n=0}^\infty\lambda^n
+\leqslant\frac{\lambda^N}{1-\lambda}d(x_0,x_1).
+\end{align*}
+由于取 $N$ 足够大可使最后一式任意小，序列 $(x_n)$ 是 Cauchy 列，故收敛到极限 $x\in X$。由 $G$ 连续，
+\begin{align*}
+G(x)=G\left(\lim_{n\to\infty}x_n\right)=\lim_{n\to\infty}G(x_n)=\lim_{n\to\infty}x_{n+1}=x,
+\end{align*}
+故 $x$ 即所求不动点。
+\end{proof}
+
+\begin{proof}[反函数定理的证明]
+我们先对函数 $F$ 作一些简单修改以简化证明。首先，函数 $F_1(x)=F(x+a)-F(a)$ 在 $0$ 的某邻域上光滑，满足 $F_1(0)=0$、$\mathrm{D}F_1(0)=\mathrm{D}F(a)$；显然，$F$ 在 $a$ 的连通邻域上是微分同胚，当且仅当 $F_1$ 在 $0$ 的连通邻域上是微分同胚。其次，函数 $F_2=\mathrm{D}F_1(0)^{-1}\circ F_1$ 在 $0$ 的同一邻域上光滑，满足 $F_2(0)=0$、$\mathrm{D}F_2(0)=I_n$；而如果 $F_2$ 在 $0$ 的邻域上是微分同胚，则 $F_1$ 也是，从而 $F$ 也是。此后用 $F_2$ 替换 $F$，我们假设 $F$ 定义在 $0$ 的邻域 $U$ 上，$F(0)=0$，$\mathrm{D}F(0)=I_n$。由于 $\det\mathrm{D}F(x)$ 是 $x$ 的连续函数，必要时缩小 $U$，可假定对每个 $x\in U$，$\mathrm{D}F(x)$ 可逆。
+
+令 $H(x)=x-F(x)$（$x\in U$）。则 $\mathrm{D}H(0)=I_n-I_n=0$。由于 $\mathrm{D}H(x)$ 的矩阵元素是 $x$ 的连续函数，存在数 $\delta>0$，使 $B_\delta(0)\subset U$，且对所有 $x\in\overline{B_\delta(0)}$ 有 $|\mathrm{D}H(x)|\leqslant\frac12$。如果 $x,x'\in\overline{B_\delta(0)}$，光滑函数的 Lipschitz 估计（命题 C.29）蕴含
+\begin{align}\label{align:appC-lipschitz-h}
+|H(x')-H(x)|\leqslant\frac12|x'-x|.
+\end{align}
+特别地，取 $x'=0$，这蕴含
+\begin{align}\label{align:appC-h-bound}
+|H(x)|\leqslant\frac12|x|.
+\end{align}
+由于 $x'-x=F(x')-F(x)+H(x')-H(x)$，得
+\begin{align*}
+|x'-x|\leqslant|F(x')-F(x)|+|H(x')-H(x)|
+\leqslant|F(x')-F(x)|+\frac12|x'-x|,
+\end{align*}
+整理得
+\begin{align}\label{align:appC-injectivity}
+|x'-x|\leqslant2|F(x')-F(x)|
+\end{align}
+对所有 $x,x'\in\overline{B_\delta(0)}$ 成立。特别地，这表明 $F$ 在 $\overline{B_\delta(0)}$ 上单射。
+
+现令 $y\in B_{\delta/2}(0)$ 任意。我们将证明存在唯一的点 $x\in B_\delta(0)$ 使 $F(x)=y$。令 $G(x)=y+H(x)=y+x-F(x)$，则 $G(x)=x$ 当且仅当 $F(x)=y$。如果 $|x|\leqslant\delta$，\eqref{align:appC-h-bound} 蕴含
+\begin{align}\label{align:appC-g-maps}
+|G(x)|\leqslant|y|+|H(x)|<\frac{\delta}{2}+\frac12|x|\leqslant\delta,
+\end{align}
+故 $G$ 把 $\overline{B_\delta(0)}$ 映到自身。由\eqref{align:appC-lipschitz-h}，$|G(x)-G(x')|=|H(x)-H(x')|\leqslant\frac12|x-x'|$，故 $G$ 是压缩映射。由于 $\overline{B_\delta(0)}$ 是完备度量空间（见例 A.6），压缩映射引理蕴含 $G$ 有唯一不动点 $x\in\overline{B_\delta(0)}$。由\eqref{align:appC-g-maps}，$|x|=|G(x)|<\delta$，故实际上 $x\in B_\delta(0)$，所断言成立。
+
+令 $V_0=B_{\delta/2}(0)$、$U_0=B_\delta(0)\cap F^{-1}(V_0)$。则 $U_0$ 在 $\mathbb R^n$ 中开，上述论证表明 $F:U_0\to V_0$ 双射，故 $F^{-1}:V_0\to U_0$ 存在。把 $x=F^{-1}(y)$、$x'=F^{-1}(y')$ 代入\eqref{align:appC-injectivity} 表明 $F^{-1}$ 连续。因而 $F:U_0\to V_0$ 是同胚，由此 $U_0$ 连通，因为 $V_0$ 连通。
+
+剩下要证明的是 $F^{-1}$ 光滑。若已知它光滑，命题 C.4 将蕴含 $\mathrm{D}(F^{-1})(y)=\mathrm{D}F(x)^{-1}$，其中 $x=F^{-1}(y)$。我们先证 $F^{-1}$ 在 $V_0$ 每一点处可微，且全导数由该公式给出。
+
+令 $y\in V_0$ 任意，设 $x=F^{-1}(y)$、$L=\mathrm{D}F(x)$。需证
+\begin{align*}
+\lim_{y'\to y}\frac{F^{-1}(y')-F^{-1}(y)-L^{-1}(y'-y)}{|y'-y|}=0.
+\end{align*}
+给定 $y'\in V_0\setminus\{y\}$，写 $x'=F^{-1}(y')\in U_0\setminus\{x\}$。则
+\begin{align*}
+&\frac{F^{-1}(y')-F^{-1}(y)-L^{-1}(y'-y)}{|y'-y|}\\
+&=\left|L^{-1}\frac{L(x'-x)-(y'-y)}{|y'-y|}\right|
+=\frac{|x'-x|}{|y'-y|}\left|L^{-1}\frac{F(x')-F(x)-L(x'-x)}{|x'-x|}\right|.
+\end{align*}
+上面因子 $|x'-x|/|y'-y|$ 由\eqref{align:appC-injectivity} 有界，又因 $L^{-1}$ 线性故有界（习题 B.52），第二个因子的范数被常数倍
+\begin{align}\label{align:appC-residual}
+\frac{|F(x')-F(x)-L(x'-x)|}{|x'-x|}
+\end{align}
+控制。当 $y'\to y$ 时，由 $F^{-1}$ 连续得 $x'\to x$；于是因 $L=\mathrm{D}F(x)$ 且 $F$ 可微，\eqref{align:appC-residual} 趋于零。这就完成了 $F^{-1}$ 可微的证明。
+
+由命题 C.8，$F^{-1}$ 的偏导数在每个 $y\in V_0$ 处都有定义。注意公式 $\mathrm{D}(F^{-1})(y)=\mathrm{D}F(F^{-1}(y))^{-1}$ 蕴含矩阵值函数 $y\mapsto\mathrm{D}(F^{-1})(y)$ 可写成复合
+\begin{align}\label{align:appC-diff-inversion}
+y\xrightarrow{F^{-1}}F^{-1}(x)\xrightarrow{\mathrm{D}F}\mathrm{D}F(F^{-1}(y))\xrightarrow{i}\mathrm{D}F(F^{-1}(y))^{-1},
+\end{align}
+其中 $i$ 是矩阵求逆。在此复合中，$F^{-1}$ 连续；$\mathrm{D}F$ 光滑，因为其分量函数是 $F$ 的偏导数；$i$ 光滑，因为 Cramer 法则把逆矩阵的元素表为原矩阵元素的有理函数。由于 $\mathrm{D}(F^{-1})$ 是连续函数的复合，它连续。因而 $F^{-1}$ 的偏导数连续，故 $F^{-1}$ 是 $C^1$ 类的。
+
+现归纳假设已证 $F^{-1}$ 是 $C^k$ 类的。这意味着\eqref{align:appC-diff-inversion} 中每个函数都是 $C^k$ 类的。由于 $\mathrm{D}(F^{-1})$ 是 $C^k$ 函数的复合，它本身是 $C^k$；这蕴含 $F^{-1}$ 的偏导数是 $C^k$ 类的，故 $F^{-1}$ 本身是 $C^{k+1}$ 类的。继续归纳，得出 $F^{-1}$ 光滑。
+\end{proof}
+
+\begin{corollary}\label{corollary:appC-open-map}
+假设 $U\subset\mathbb R^n$ 是开子集，$F:U\to\mathbb R^n$ 是光滑函数，其 Jacobian 行列式在 $U$ 内每一点都非零。
+\begin{enumerate}[(a)]
+\item $F$ 是开映射。
+\item 如果 $F$ 单射，则 $F:U\to F(U)$ 是微分同胚。
+\end{enumerate}
+\end{corollary}
+
+\begin{proof}
+对每个 $a\in U$，$F$ 的 Jacobian 行列式非零蕴含 $\mathrm{D}F(a)$ 可逆，故反函数定理蕴含存在含 $a$ 的开子集 $U_a\subset U$ 与含 $F(a)$ 的开子集 $V_a\subset F(U)$，使 $F$ 限制为微分同胚 $F|_{U_a}:U_a\to V_a$。特别地，这意味着 $F(U)$ 的每一点都有含于 $F(U)$ 的邻域，故 $F(U)$ 开。如果 $U_0\subset U$ 是任意开子集，把 $U$ 换成 $U_0$ 作同样论证表明 $F(U_0)$ 也开；这证明 (a)。此外如果 $F$ 单射，则由集合论原因存在逆映射 $F^{-1}:F(U)\to U$；在 $F(U)$ 中每一点 $F(a)$ 的邻域上，它等于 $F|_{U_a}$ 的逆，故光滑。
+\end{proof}
+
+下两个例子说明前一推论的用法。
+
+\begin{example}[极坐标]\label{example:appC-polar}
+如你从微积分所知，平面上极坐标 $(r,\theta)$ 由关系 $x=r\cos\theta$、$y=r\sin\theta$ 隐式定义。由 $F(r,\theta)=(r\cos\theta,r\sin\theta)$ 定义的映射 $F:(0,\infty)\times\mathbb R\to\mathbb R^2$ 光滑，其 Jacobian 行列式等于 $r$，在定义域上处处非零。故推论 C.36 表明：$F$ 在其上为单射的任意开子集上的限制，都是映到其像的微分同胚。这样一个子集是 $\{(r,\theta):r>0,\,-\pi<\theta<\pi\}$，$F$ 把它双射映到 $x$ 轴非正部分的补集。
+\end{example}
+
+\begin{example}[球坐标]\label{example:appC-spherical}
+类似地，$\mathbb R^3$ 上的球坐标是由关系
+\begin{align*}
+x=\rho\sin\varphi\cos\theta,\qquad y=\rho\sin\varphi\sin\theta,\qquad z=\rho\cos\varphi
+\end{align*}
+定义的函数 $(\rho,\varphi,\theta)$。几何上，$\rho$ 是到原点的距离，$\varphi$ 是与正 $z$ 轴的夹角，$\theta$ 是与 $(x,z)$ 平面中 $x>0$ 半平面的夹角。如果用 $G(\rho,\varphi,\theta)=(\rho\sin\varphi\cos\theta,\rho\sin\varphi\sin\theta,\rho\cos\varphi)$ 定义 $G:(0,\infty)\times(0,\pi)\times\mathbb R\to\mathbb R^3$，计算表明 $G$ 的 Jacobian 行列式为 $\rho^2\sin\varphi\neq0$。故 $G$ 在其上为单射的任意开子集上的限制，都是映到其像的微分同胚。这样一个子集是
+\begin{align*}
+\{(\rho,\varphi,\theta):\rho>0,\,0<\varphi<\pi,\,-\pi<\theta<\pi\}.
+\end{align*}
+注意：用这种方式论证比试图用反三角函数显式构造逆映射容易得多。
+\end{example}
+
+\begin{exercise}\label{exercise:appC-C-39}
+验证前两个例子中的断言。
+\end{exercise}
+
+下一个结果是反函数定理最重要的推论之一。它给出光滑函数水平集局部为某光滑函数图像的条件。
+
+\begin{theorem}[隐函数定理]\label{theorem:appC-implicit}
+设 $U\subset\mathbb R^n\times\mathbb R^k$ 是开子集，令 $(x,y)=(x^1,\dots,x^n,y^1,\dots,y^k)$ 表示 $U$ 上的标准坐标。假设 $\Phi:U\to\mathbb R^k$ 是光滑函数，$(a,b)\in U$，$c=\Phi(a,b)$。如果 $k\times k$ 矩阵
+\begin{align*}
+\left(\frac{\partial\Phi^i}{\partial y^j}(a,b)\right)
+\end{align*}
+非奇异，则存在 $a$ 的邻域 $V_0\subset\mathbb R^n$、$b$ 的邻域 $W_0\subset\mathbb R^k$ 与光滑函数 $F:V_0\to W_0$，使 $\Phi^{-1}(c)\cap(V_0\times W_0)$ 是 $F$ 的图像，即对 $(x,y)\in V_0\times W_0$，$\Phi(x,y)=c$ 当且仅当 $y=F(x)$。
+\end{theorem}
+
+\begin{proof}
+考虑由 $\Psi(x,y)=(x,\Phi(x,y))$ 定义的光滑函数 $\Psi:U\to\mathbb R^n\times\mathbb R^k$。它在 $(a,b)$ 处的全导数为
+\begin{align*}
+\mathrm{D}\Psi(a,b)=\begin{pmatrix}I_n&0\\ \dfrac{\partial\Phi^i}{\partial x^j}(a,b)&\dfrac{\partial\Phi^i}{\partial y^j}(a,b)\end{pmatrix},
+\end{align*}
+它非奇异，因为它是分块下三角的，且主对角线上两块都非奇异。故由反函数定理，存在 $(a,b)$ 的连通邻域 $U_0$ 与 $(a,c)$ 的连通邻域 $Y_0$，使 $\Psi:U_0\to Y_0$ 是微分同胚。必要时缩小 $U_0$ 与 $Y_0$，可设 $U_0=V\times W$ 是乘积邻域。
+
+写 $\Psi^{-1}(x,y)=(A(x,y),B(x,y))$（其中 $A,B$ 是某个光滑函数），计算得
+\begin{align}\label{align:appC-implicit-comp}
+(x,y)=\Psi(\Psi^{-1}(x,y))=\Psi(A(x,y),B(x,y))=(A(x,y),\Phi(A(x,y),B(x,y))).
+\end{align}
+比较此方程的第一分量，得 $A(x,y)=x$，故 $\Psi^{-1}$ 形如 $\Psi^{-1}(x,y)=(x,B(x,y))$。
+
+现令 $V_0=\{x\in V:(x,c)\in Y_0\}$、$W_0=W$，用 $F(x)=B(x,c)$ 定义 $F:V_0\to W_0$。比较\eqref{align:appC-implicit-comp} 的第二分量，得只要 $x\in V_0$ 就有
+\begin{align*}
+c=\Phi(x,B(x,c))=\Phi(x,F(x)),
+\end{align*}
+故 $F$ 的图像含于 $\Phi^{-1}(c)$。反之，假设 $(x,y)\in V_0\times W_0$ 且 $\Phi(x,y)=c$。则 $\Psi(x,y)=(x,\Phi(x,y))=(x,c)$，故
+\begin{align*}
+(x,y)=\Psi^{-1}(x,c)=(x,B(x,c))=(x,F(x)),
+\end{align*}
+这蕴含 $y=F(x)$。证明完成。
+\end{proof}
+\end{document}

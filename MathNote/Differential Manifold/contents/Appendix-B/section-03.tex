@@ -1,0 +1,225 @@
+\documentclass[../../main.tex]{subfiles}
+\begin{document}
+\section{行列式}\label{section:appB-the-determinant}
+
+本附录中最后要回顾的线性代数课题是方阵行列式的理论。我们将通过公理化性质来引入行列式，而非显式公式。
+
+设 $M(n\times n;\mathbb R)$ 表示 $n\times n$ 实矩阵所成空间。把一个 $n\times n$ 矩阵 $A$ 按其列写成 $A=(A^1,\dots,A^n)$，其中 $A^i$ 表示第 $i$ 列。
+
+\begin{proposition}\label{proposition:appB-determinant-axioms}
+存在唯一函数 $\det:M(n\times n;\mathbb R)\to\mathbb R$，使下列性质成立：
+\begin{enumerate}[(i)]
+\item 对每个整数 $i=1,\dots,n$，$\det$ 对第 $i$ 列是线性的：
+\begin{align*}
+\det(A^1,\dots,cA^i,\dots,A^n)=c\det(A^1,\dots,A^i,\dots,A^n),
+\end{align*}
+\begin{align*}
+\det(A^1,\dots,A^i+\widetilde A^i,\dots,A^n)
+=\det(A^1,\dots,A^i,\dots,A^n)+\det(A^1,\dots,\widetilde A^i,\dots,A^n).
+\end{align*}
+\item 如果某两列相等，则 $\det A=0$。
+\item $\det I_n=1$。
+\end{enumerate}
+\end{proposition}
+
+我们略去此命题的证明。条件 (i)--(iii) 称为\emph{行列式的特征性质}。
+
+为理解这个定义的含义，把 $A$ 的列看作 $\mathbb R^n$ 中的向量更有帮助。命题于是说：存在唯一函数，把一组 $n$ 个向量 $A^1,\dots,A^n$ 映为实数 $\det(A^1,\dots,A^n)$，它满足：对每个向量 $A^i$ 的数乘与加法线性；当有两向量相等时给出零；当向量为 $\mathbb R^n$ 的标准基时给出 $1$。等价地，$A$ 的行列式是唯一把 $n$ 个标准基向量映为 $1$、在每列线性、在某列重复时映为 $0$ 的函数。
+
+注意这些性质只对实矩阵陈述，但它们同样适用于复矩阵。事实上，把 $\mathbb C^n$ 看作实向量空间并复线性地延拓，我们得到一个函数 $\det:M(n\times n;\mathbb C)\to\mathbb C$，满足同样性质。
+
+我们将从特征性质导出行列式的显式公式和许多重要性质。以下命题把行列式的定义具体化，虽不如公理化定义那样深刻，却对实际计算有用。
+
+\begin{proposition}\label{proposition:appB-determinant-formula}
+设 $A=(A^i_j)$ 是 $n\times n$ 矩阵，$S_n$ 表示集合 $\{1,\dots,n\}$ 上所有置换（双射）所成群。则
+\begin{align}\label{align:appB-det-formula}
+\det A=\sum_{\sigma\in S_n}(\operatorname{sgn}\sigma)A^{\sigma(1)}_1\cdots A^{\sigma(n)}_n,
+\end{align}
+其中 $\operatorname{sgn}\sigma=\pm1$ 是置换 $\sigma$ 的符号。
+\end{proposition}
+
+这个公式给出 $n!$ 个乘积的和，每个乘积对应一个置换，在第 $j$ 列取 $A^{\sigma(j)}_j$ 个元素，再乘以 $+1$ 或 $-1$，取决于该置换的奇偶性。证明从行列式的特征性质逐列展开得到，这里略去。
+
+\begin{exercise}\label{exercise:appB-B-27}
+利用公式\eqref{align:appB-det-formula} 推出行列式的下列性质。
+\begin{enumerate}[(a)]
+\item $\det(A^T)=\det A$。
+\item 交换两列改变行列式符号：
+\begin{align*}
+\det(A^1,\dots,A^i,\dots,A^j,\dots,A^n)
+=-\det(A^1,\dots,A^j,\dots,A^i,\dots,A^n).
+\end{align*}
+\item 把某一列的倍数加到另一列不改变行列式：
+\begin{align*}
+\det(A^1,\dots,A^i+cA^j,\dots,A^n)=\det(A^1,\dots,A^i,\dots,A^n).
+\end{align*}
+\end{enumerate}
+\end{exercise}
+
+\begin{proposition}\label{proposition:appB-determinant-conditions}
+设 $A=(A^i_j)$ 是 $n\times n$ 矩阵。
+\begin{enumerate}[(i)]
+\item $A$ 奇异，当且仅当它的列线性相关。
+\item 如果 $A$ 非奇异，则 $\det A\neq0$。
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+首先，假设 $A$ 奇异。由命题 B.24 及其后的讨论，$A$ 的列秩小于 $n$，故列线性相关。于是存在某列，不妨设 $A^n$，是前面列的线性组合：$A^n=\sum_{i=1}^{n-1}c^iA^i$。由线性性和习题 B.27(b)，
+\begin{align*}
+\det(A^1,\dots,A^{n-1},A^n)
+&=\sum_{i=1}^{n-1}c^i\det(A^1,\dots,A^{n-1},A^i)\\
+&=\sum_{i=1}^{n-1}c^i\det(A^1,\dots,A^i,\dots,A^{n-1},A^i)=0.
+\end{align*}
+
+反过来，假设 $A$ 的列线性无关。则它们构成 $\mathbb R^n$ 的基，故可用其表示标准基向量 $e_1,\dots,e_n$。反复使用线性性、习题 B.27(b) 和性质 $\det I_n=1$ 即可得出 $\det A\neq0$。
+\end{proof}
+
+\begin{exercise}\label{exercise:appB-B-29}
+证明：把矩阵的一列换成该列的 $c$ 倍，等价于右乘一个行列式为 $c$ 的矩阵；交换两列等价于右乘一个行列式为 $-1$ 的矩阵；把某一列的倍数加到另一列等价于右乘一个行列式为 $1$ 的矩阵。这三种类型的矩阵称为初等矩阵。
+\end{exercise}
+
+\begin{exercise}\label{exercise:appB-B-30}
+假设 $A$ 是非奇异 $n\times n$ 矩阵。
+\begin{enumerate}[(a)]
+\item 证明 $A$ 可经一系列初等列行变换化为单位阵 $I_n$。
+\item 证明 $A$ 等于一些初等矩阵的乘积。
+\end{enumerate}
+\end{exercise}
+
+初等矩阵是证明下列定理的关键成分，该定理可说是行列式最深刻、最重要的性质。
+
+\begin{theorem}\label{theorem:appB-det-product}
+如果 $A$ 和 $B$ 是 $n\times n$ 矩阵，则
+\begin{align*}
+\det(AB)=(\det A)(\det B).
+\end{align*}
+\end{theorem}
+
+\begin{proof}
+如果 $B$ 奇异，则 $\operatorname{rank}B<n$，这蕴含 $\operatorname{rank}(AB)<n$。故由命题 B.28(i)，$\det B$ 与 $\det(AB)$ 都为零。另一方面，命题 B.28 的 (a)、(b)、(c) 部分连同习题 B.29 表明：当 $B$ 是初等矩阵时定理成立。最后，若 $B$ 是任意非奇异矩阵，则由习题 B.30，$B$ 可写成初等矩阵之积，结果关于初等矩阵个数作归纳即得。
+\end{proof}
+
+\begin{corollary}\label{corollary:appB-det-inverse}
+如果 $A$ 是非奇异 $n\times n$ 矩阵，则 $\det A\neq0$ 且 $\det(A^{-1})=(\det A)^{-1}$。
+\end{corollary}
+
+\begin{proof}
+只需注意 $1=\det I_n=\det(AA^{-1})=(\det A)(\det A^{-1})$。
+\end{proof}
+
+\begin{corollary}\label{corollary:appB-det-zero}
+方阵奇异，当且仅当其行列式为零。
+\end{corollary}
+
+\begin{proof}
+一个方向由命题 B.28(i) 得出，另一方向由推论 B.32 得出。
+\end{proof}
+
+\begin{corollary}\label{corollary:appB-det-conjugacy}
+假设 $A$ 和 $B$ 是 $n\times n$ 矩阵且 $B$ 非奇异。则 $\det(BAB^{-1})=\det A$。
+\end{corollary}
+
+\begin{proof}
+这只是用定理 B.31 和推论 B.32 的计算：
+\begin{align*}
+\det(BAB^{-1})=(\det B)(\det A)(\det B^{-1})
+=(\det B)(\det A)(\det B)^{-1}=\det A.
+\end{align*}
+\end{proof}
+
+最后一个推论使我们能把行列式的定义推广到任意有限维向量空间上的线性映射。假设 $V$ 是 $n$ 维向量空间，$T:V\to V$ 是线性映射。关于 $V$ 的一组基，$T$ 由一个 $n\times n$ 矩阵表示。如前所述，关于两个不同基表示 $T$ 的矩阵 $A$ 与 $\widetilde A$ 满足 $\widetilde A=BAB^{-1}$（对某个非奇异矩阵 $B$，见\eqref{align:appB-similarity}）。因此由推论 B.34，$\det\widetilde A=\det A$。于是我们可作如下定义：对每个从有限维向量空间到自身的线性映射 $T:V\to V$，定义 $T$ 的行列式为 $T$ 的任意矩阵表示（定义域与陪域用同一组基）的行列式。
+
+对行列式的实际计算，下列命题中的公式通常比定义更有用。
+
+\begin{proposition}[按余子式展开]\label{proposition:appB-minor-expansion}
+设 $A$ 是 $n\times n$ 矩阵，对每个 $i,j$，令 $M^j_i$ 表示删去 $A$ 的第 $i$ 列与第 $j$ 行所得的 $(n-1)\times(n-1)$ 子矩阵。对任意固定的 $1\leqslant i\leqslant n$，
+\begin{align}\label{align:appB-minor-expansion}
+\det A=\sum_{j=1}^n(-1)^{i+j}A^j_i\det M^j_i.
+\end{align}
+\end{proposition}
+
+\begin{proof}
+先看一个特殊情形有用：设 $A$ 是形如
+\begin{align}\label{align:appB-block-form}
+A=\begin{pmatrix}B&0\\ C&1\end{pmatrix},
+\end{align}
+的 $n\times n$ 矩阵，其中 $B$ 是 $(n-1)\times(n-1)$ 矩阵、$C$ 是 $1\times(n-1)$ 行矩阵。则在 $\det A$ 的定义公式\eqref{align:appB-det-formula} 中，因子 $A^{\sigma(n)}_n$ 当 $\sigma(n)=n$ 时等于 $1$、否则为零，故事实上唯一非零项是那些 $\sigma\in S_{n-1}$（视为 $S_n$ 中置换 $\{1,\dots,n-1\}$ 而固定 $n$ 的子群）的项。于是 $A$ 的行列式化简为
+\begin{align*}
+\det A=\sum_{\sigma\in S_{n-1}}(\operatorname{sgn}\sigma)A^{\sigma(1)}_1\cdots A^{\sigma(n-1)}_{n-1}=\det B.
+\end{align*}
+
+现设 $A$ 任意，固定 $i\in\{1,\dots,n\}$。对每个 $j=1,\dots,n$，令 $X^j_i$ 表示把 $A$ 的第 $i$ 列换成基向量 $e_j$ 所得矩阵。由于行列式是其各列的多重线性函数，
+\begin{align*}
+\det A&=\det\left(A^1,\dots,A^{i-1},\sum_{j=1}^n A^j_i e_j,A^{i+1},\dots,A^n\right)\\
+&=\sum_{j=1}^n A^j_i\det(A^1,\dots,A^{i-1},e_j,A^{i+1},\dots,A^n)
+=\sum_{j=1}^n A^j_i\det X^j_i.
+\end{align*}
+另一方面，交换列 $n-i$ 次再交换行 $n-j$ 次，可把 $X^j_i$ 化为形如\eqref{align:appB-block-form} 且 $B=M^j_i$ 的矩阵。因此由上一段的观察，
+\begin{align*}
+\det X^j_i=(-1)^{n-i+n-j}\det M^j_i=(-1)^{i+j}\det M^j_i.
+\end{align*}
+代入前式即完成证明。
+\end{proof}
+
+每个行列式 $\det M^j_i$ 称为 $A$ 的一个\emph{余子式}，而\eqref{align:appB-minor-expansion} 称为 $\det A$ 沿第 $i$ 列的\emph{余子式展开}。由于 $\det A=\det A^T$，沿任意行有类似展开。\eqref{align:appB-minor-expansion} 中乘 $A^j_i$ 的因子 $(-1)^{i+j}\det M^j_i$ 称为 $A^j_i$ 的\emph{代数余子式}，记作 $\operatorname{cof}^j_i$。
+
+\begin{proposition}[Cramer 法则]\label{proposition:appB-cramer}
+如果 $A$ 是非奇异 $n\times n$ 矩阵，则 $A^{-1}$ 等于 $1/(\det A)$ 乘以 $A$ 的转置代数余子式矩阵。于是 $A^{-1}$ 的第 $i$ 行第 $j$ 列元素为
+\begin{align}\label{align:appB-cramer}
+(A^{-1})^i_j=\frac{1}{\det A}\operatorname{cof}^j_i=\frac{1}{\det A}(-1)^{i+j}\det M^j_i.
+\end{align}
+\end{proposition}
+
+\begin{proof}
+令 $B^i_j$ 表示\eqref{align:appB-cramer} 右端的表达式。则
+\begin{align}\label{align:appB-cramer-proof}
+\sum_{j=1}^n B^i_j A^j_k=\frac{1}{\det A}\sum_{j=1}^n(-1)^{i+j}A^j_k\det M^j_i.
+\end{align}
+当 $k=i$ 时，右端求和恰是 $\det A$ 沿第 $i$ 列的余子式展开，故\eqref{align:appB-cramer-proof} 右端等于 $1$。另一方面，若 $k\neq i$，该求和等于把 $A$ 的第 $i$ 列换成第 $k$ 列所得矩阵的行列式。由于此矩阵有两列相同，其行列式为零。故\eqref{align:appB-cramer-proof} 等价于矩阵方程 $BA=I_n$，其中 $B$ 是矩阵 $(B^i_j)$。于是由习题 B.19(c)，$B=A^{-1}$。
+\end{proof}
+
+方阵 $A=(A^i_j)$ 如果 $i>j$ 时 $A^i_j=0$（即唯一非零元素在主对角线上或其上方），就称为\emph{上三角}矩阵。上三角矩阵的行列式特别容易计算。
+
+\begin{proposition}\label{proposition:appB-upper-triangular}
+如果 $A$ 是上三角 $n\times n$ 矩阵，则 $A$ 的行列式等于其对角元素之积：
+\begin{align*}
+\det A=A^1_1\cdots A^n_n.
+\end{align*}
+\end{proposition}
+
+\begin{proof}
+当 $n=1$ 时平凡。假设结论对 $(n-1)\times(n-1)$ 矩阵成立，设 $A$ 是上三角 $n\times n$ 矩阵。在 $\det A$ 沿第一列的余子式展开中，只有一个非零项 $A^1_1\det M^1_1$。由归纳，$\det M^1_1=A^2_2\cdots A^n_n$，命题得证。
+\end{proof}
+
+设 $X$ 是 $(m+k)\times(m+k)$ 矩阵。如果 $X$ 有形如
+\begin{align}\label{align:appB-block-upper}
+X=\begin{pmatrix}A&B\\ 0&C\end{pmatrix}
+\end{align}
+的矩阵（其中 $A,B,C$ 分别是 $m\times m$、$m\times k$、$k\times k$ 矩阵），就称 $X$ \emph{分块上三角}。
+
+\begin{proposition}\label{proposition:appB-block-upper-triangular}
+如果 $X$ 是\eqref{align:appB-block-upper} 给出的分块上三角矩阵，则 $\det X=(\det A)(\det C)$。
+\end{proposition}
+
+\begin{proof}
+如果 $A$ 奇异，则 $A$ 与 $X$ 的列都线性相关，这蕴含 $\det X=0=(\det A)(\det C)$。故设 $A$ 非奇异。
+
+先看下列特殊情形：
+\begin{align*}
+X=\begin{pmatrix}I_m&0\\ 0&C\end{pmatrix}.
+\end{align*}
+沿第一列按余子式展开并对 $m$ 作归纳，易知此情形 $\det X=\det C$。类似论证给出
+\begin{align*}
+\det\begin{pmatrix}A&0\\ 0&I_k\end{pmatrix}=\det A.
+\end{align*}
+一般情形中，直接计算得分解
+\begin{align}\label{align:appB-block-factorization}
+\begin{pmatrix}A&B\\ 0&C\end{pmatrix}
+=\begin{pmatrix}A&0\\ 0&I_k\end{pmatrix}
+\begin{pmatrix}I_m&0\\ 0&C\end{pmatrix}
+\begin{pmatrix}I_m&A^{-1}B\\ 0&I_k\end{pmatrix}.
+\end{align}
+由前面的观察，前两个因子的行列式分别等于 $\det A$ 与 $\det C$；第三个因子是上三角的，故由命题 B.37 其行列式为 $1$。结果由定理 B.31 得出。
+\end{proof}
+\end{document}

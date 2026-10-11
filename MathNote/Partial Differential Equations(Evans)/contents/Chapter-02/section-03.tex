@@ -1,0 +1,724 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}}
+
+\begin{document}
+
+\section{热方程}\label{section:ch02-heat}
+
+接下来研究热方程
+\begin{align}\label{align:ch06-eta界}
+u_t-\Delta u=0
+\end{align}
+以及非齐次热方程
+\begin{align}\label{align:ch02-heat-nonhom}
+u_t-\Delta u=f,
+\end{align}
+并配以适当的初始条件与边界条件。这里 $t>0$，$x\in U$，其中 $U\subseteq\mathbb{R}^n$ 为开集。未知函数为 $u:\overline{U}\times[0,\infty)\to\mathbb{R}$，$u=u(x,t)$，Laplace 算子 $\Delta$ 是关于空间变量 $x=(x_1,\cdots,x_n)$ 取的：$\Delta u=\Delta_xu=\sum_{i=1}^n u_{x_i x_i}$。在\eqref{align:ch02-heat-nonhom} 中函数 $f:U\times[0,\infty)\to\mathbb{R}$ 是给定的。
+
+一个指导性原则是：关于调和函数的任一断言，都会给出关于热方程解的一个类似（但更复杂）的命题。相应地，我们的论述将大体平行于Laplace方程的相应理论。
+
+\textbf{物理解释.} 热方程又称扩散方程，在典型应用中描述某种量（如热量、化学浓度等）的密度 $u$ 随时间的演化。若 $V\subset U$ 是任一光滑子区域，则 $V$ 内总量的变化率等于通过 $\partial V$ 的净通量的负值：
+\begin{align*}
+\frac{\mathrm{d}}{\mathrm{d}t}\int_V u\,\mathrm{d}x=-\int_{\partial V}\mathbf{F}\cdot\boldsymbol{\nu}\,\mathrm{d}S,
+\end{align*}
+其中 $\mathbf{F}$ 为通量密度。于是
+\begin{align}\label{align:ch02-heat-div}
+u_t=-\operatorname{div}\mathbf{F},
+\end{align}
+这是因为 $V$ 是任意的。在许多情形下，$\mathbf{F}$ 与 $u$ 的梯度成正比但方向相反（因为流动是从高浓度区域流向低浓度区域）：$\mathbf{F}=-aDu$（$a>0$）。代入\eqref{align:ch02-heat-div}，得到 PDE
+\begin{align*}
+u_t=a\operatorname{div}(Du)=a\Delta u,
+\end{align*}
+当 $a=1$ 时即为热方程。热方程也出现在 Brown 运动的研究之中。
+
+\subsection{基本解}\label{subsection:ch02-heat-fundamental}
+
+\subsubsection{基本解的推导}
+
+如 \S2.2.1 所指出，研究任一 PDE 的重要第一步，常常是构造出某些特解。
+
+我们注意到，热方程关于时间变量 $t$ 含一阶导数，而关于空间变量 $x_i$（$i=1,\cdots,n$）含两阶导数。因而若 $u$ 解\eqref{align:ch06-eta界}，则对 $\lambda\in\mathbb{R}$，$u(\lambda x,\lambda^2 t)$ 也是解。这一缩放表明，比值 $r^2/t$（$r=|x|$）对热方程很重要，并提示我们去寻找\eqref{align:ch06-eta界} 形如
+\begin{align*}
+u(x,t)=v\!\left(\frac{r^2}{t}\right)=v\!\left(\frac{|x|^2}{t}\right)\quad (t>0,\ x\in\mathbb{R}^n)
+\end{align*}
+的解，其中 $v$ 待定。
+
+尽管这一途径最终会导出我们想要的结果（见习题 13），但更快捷的做法是去寻找具有如下特殊结构的解 $u$：
+\begin{align}\label{align:ch02-heat-scaling}
+u(x,t)=\frac{1}{t^\alpha}v\!\left(\frac{x}{t^\beta}\right)\qquad (x\in\mathbb{R}^n,\ t>0),
+\end{align}
+其中常数 $\alpha,\beta$ 与函数 $v:\mathbb{R}^n\to\mathbb{R}$ 待定。若寻找在伸缩缩放
+\begin{align*}
+u(x,t)\mapsto\lambda^\alpha u(\lambda^\beta x,\lambda t)
+\end{align*}
+下不变的热方程解 $u$，便得到\eqref{align:ch02-heat-scaling}。也就是说，要求对一切 $\lambda>0$、$x\in\mathbb{R}^n$、$t>0$，有 $u(x,t)=\lambda^\alpha u(\lambda^\beta x,\lambda t)$。取 $\lambda=t^{-1}$，便得到\eqref{align:ch02-heat-scaling}，其中 $v(y)\triangleq u(y,1)$。
+
+把\eqref{align:ch02-heat-scaling} 代入\eqref{align:ch06-eta界}，随后计算得
+\begin{align}\label{align:ch02-heat-scaling-ode}
+\alpha t^{-(\alpha+1)}v(y)+\beta t^{-(\alpha+1)}y\cdot Dv(y)+t^{-(\alpha+2\beta)}\Delta v(y)=0,
+\end{align}
+其中 $y\triangleq t^{-\beta}x$。为使\eqref{align:ch02-heat-scaling-ode} 成为只含变量 $y$ 的表达式，取 $\beta=\dfrac{1}{2}$。于是含 $t$ 的各项相同，\eqref{align:ch02-heat-scaling-ode} 化为
+\begin{align}\label{align:ch02-heat-radial-ode}
+\alpha v+\frac{1}{2}y\cdot Dv+\Delta v=0.
+\end{align}
+我们进一步猜测 $v$ 是径向的，即 $v(y)=w(|y|)$，其中 $w:\mathbb{R}\to\mathbb{R}$。于是\eqref{align:ch02-heat-radial-ode} 成为
+\begin{align*}
+\alpha w+\frac{1}{2}r w'+w''+\frac{n-1}{r}w'=0,
+\end{align*}
+其中 $r=|y|$，$'=\dfrac{\mathrm{d}}{\mathrm{d}r}$。现取 $\alpha=\dfrac{n}{2}$，化简得
+\begin{align*}
+(r^{n-1}w')'+\frac{1}{2}(r^n w)'=0.
+\end{align*}
+于是
+\begin{align*}
+r^{n-1}w'+\frac{1}{2}r^n w=a
+\end{align*}
+其中 $a$ 为某常数。假定当 $r\to\infty$ 时 $w,w'$ 足够快地趋于零，推出 $a=0$；从而
+\begin{align*}
+w'=-\frac{1}{2}rw.
+\end{align*}
+于是对某常数 $b$，
+\begin{align}\label{align:ch02-heat-w}
+w=b e^{-r^2/4}.
+\end{align}
+合并\eqref{align:ch02-heat-scaling}、\eqref{align:ch02-heat-w} 及对 $\alpha,\beta$ 的选取，可知 $\dfrac{b}{t^{n/2}}e^{-|x|^2/(4t)}$ 是热方程\eqref{align:ch06-eta界} 的解。
+
+由此引出下面的
+
+\begin{definition}\label{definition:ch02-heat-fundamental}
+函数
+\begin{align*}
+\Phi(x,t)\triangleq
+\begin{cases}
+\dfrac{1}{(4\pi t)^{n/2}}e^{-|x|^2/(4t)} & (x\in\mathbb{R}^n,\ t>0),\\
+0 & (x\in\mathbb{R}^n,\ t<0)
+\end{cases}
+\end{align*}
+称为热方程的\textbf{基本解}。
+\end{definition}
+
+注意 $\Phi$ 在点 $(0,0)$ 处奇异。我们有时写作 $\Phi(x,t)=\Phi(|x|,t)$，以强调基本解在变量 $x$ 中是径向的。归一化常数 $(4\pi)^{-n/2}$ 的选取由下面的
+
+\begin{lemma}[基本解的积分]\label{lemma:ch02-heat-integral}对每个时刻 $t>0$，
+\begin{align*}
+\int_{\mathbb{R}^n}\Phi(x,t)\,\mathrm{d}x=1.
+\end{align*}
+\end{lemma}
+
+\noindent 所决定。
+
+\begin{proof}
+计算
+\begin{align*}
+\int_{\mathbb{R}^n}\Phi(x,t)\,\mathrm{d}x
+=\frac{1}{(4\pi t)^{n/2}}\int_{\mathbb{R}^n}e^{-|x|^2/(4t)}\,\mathrm{d}x
+=\frac{1}{\pi^{n/2}}\int_{\mathbb{R}^n}e^{-|z|^2}\,\mathrm{d}z
+=\frac{1}{\pi^{n/2}}\prod_{i=1}^n\int_{-\infty}^{\infty}e^{-z_i^2}\,\mathrm{d}z_i=1.
+\end{align*}
+\end{proof}
+
+热方程基本解的另一种推导见 \S4.3.1。
+
+\subsubsection{初值问题}
+
+现利用 $\Phi$ 构造初值（Cauchy）问题的解：
+\begin{align}\label{align:ch02-heat-ivp}
+\begin{cases}
+u_t-\Delta u=0 & \text{在 }\mathbb{R}^n\times(0,\infty)\text{ 中},\\
+u=g & \text{在 }\mathbb{R}^n\times\{t=0\}\text{ 上}.
+\end{cases}
+\end{align}
+注意到函数 $(x,t)\mapsto\Phi(x,t)$ 在奇点 $(0,0)$ 之外解热方程，因而对每个固定的 $y\in\mathbb{R}^n$，$(x,t)\mapsto\Phi(x-y,t)$ 也是解。从而卷积
+\begin{align}\label{align:ch02-heat-solution}
+u(x,t)&=\int_{\mathbb{R}^n}\Phi(x-y,t)g(y)\,\mathrm{d}y\\
+&=\frac{1}{(4\pi t)^{n/2}}\int_{\mathbb{R}^n}e^{-|x-y|^2/(4t)}g(y)\,\mathrm{d}y \qquad (x\in\mathbb{R}^n,\ t>0)\nonumber
+\end{align}
+也应是解。
+
+\begin{theorem}[初值问题的解]\label{theorem:ch02-heat-ivp}设 $g\in C(\mathbb{R}^n)\cap L^\infty(\mathbb{R}^n)$，由\eqref{align:ch02-heat-solution} 定义 $u$。则
+\begin{enumerate}[(i)]
+\item $u\in C^\infty(\mathbb{R}^n\times(0,\infty))$；
+\item $u_t(x,t)-\Delta u(x,t)=0$（$x\in\mathbb{R}^n$，$t>0$）；
+\item 对每一点 $x_0\in\mathbb{R}^n$，$\displaystyle\lim_{\substack{(x,t)\to(x_0,0)\\x\in\mathbb{R}^n,\ t>0}}u(x,t)=g(x_0)$。
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+1. 由于函数 $\dfrac{1}{t^{n/2}}e^{-|x|^2/(4t)}$ 对每个 $\delta>0$ 在 $\mathbb{R}^n\times[\delta,\infty)$ 上无穷次可微、各阶导数一致有界，故 $u\in C^\infty(\mathbb{R}^n\times(0,\infty))$。此外
+\begin{align}\label{align:ch02-heat-ivp-check}
+u_t(x,t)-\Delta u(x,t)=\int_{\mathbb{R}^n}[(\Phi_t-\Delta_x\Phi)(x-y,t)]g(y)\,\mathrm{d}y=0 \qquad (x\in\mathbb{R}^n,\ t>0),
+\end{align}
+这是因为 $\Phi$ 自身解热方程。
+
+2. 取定 $x_0\in\mathbb{R}^n$，$\varepsilon>0$。选 $\delta>0$ 使
+\begin{align}\label{align:ch02-heat-continuity}
+|g(y)-g(x_0)|<\varepsilon \qquad \text{若 }|y-x_0|<\delta,\ y\in\mathbb{R}^n.
+\end{align}
+于是若 $|x-x_0|<\dfrac{\delta}{2}$，由引理\cref{lemma:ch02-heat-integral}，有
+\begin{align*}
+|u(x,t)-g(x_0)|&\leqslant\int_{B(x_0,\delta)}\Phi(x-y,t)|g(y)-g(x_0)|\,\mathrm{d}y\\
+&\quad+\int_{\mathbb{R}^n-B(x_0,\delta)}\Phi(x-y,t)|g(y)-g(x_0)|\,\mathrm{d}y\triangleq I+J.
+\end{align*}
+由\eqref{align:ch02-heat-continuity} 与引理\cref{lemma:ch02-heat-integral}，
+\begin{align*}
+I\leqslant\varepsilon\int_{\mathbb{R}^n}\Phi(x-y,t)\,\mathrm{d}y=\varepsilon.
+\end{align*}
+此外，若 $|x-x_0|\leqslant\dfrac{\delta}{2}$ 且 $|y-x_0|\geqslant\delta$，则
+\begin{align*}
+|y-x_0|\leqslant|y-x|+\frac{\delta}{2}\leqslant|y-x|+\frac{1}{2}|y-x_0|;
+\end{align*}
+故 $|y-x|\geqslant\dfrac{1}{2}|y-x_0|$。因而
+\begin{align*}
+J\leqslant 2\|g\|_{L^\infty}\int_{\mathbb{R}^n-B(x_0,\delta)}\Phi(x-y,t)\,\mathrm{d}y
+\leqslant\frac{C}{t^{n/2}}\int_{\mathbb{R}^n-B(x_0,\delta)}e^{-|x-y|^2/(4t)}\,\mathrm{d}y
+\leqslant\frac{C}{t^{n/2}}\int_{\mathbb{R}^n-B(x_0,\delta)}e^{-|y-x_0|^2/(16t)}\,\mathrm{d}y\\
+=C\int_{\mathbb{R}^n-B(0,\delta/\sqrt{t})}e^{-|z|^2/16}\,\mathrm{d}z\to 0
+\end{align*}
+当 $t\to 0^+$。于是只要 $|x-x_0|<\dfrac{\delta}{2}$ 且 $t>0$ 足够小，就有 $|u(x,t)-g(x_0)|<2\varepsilon$。
+\end{proof}
+
+\textbf{基本解的解释.} 由定理\cref{theorem:ch02-heat-ivp}，我们有时写作
+\begin{align*}
+\begin{cases}
+\Phi_t-\Delta\Phi=0 & \text{在 }\mathbb{R}^n\times(0,\infty)\text{ 中},\\
+\Phi=\delta_0 & \text{在 }\mathbb{R}^n\times\{t=0\}\text{ 上},
+\end{cases}
+\end{align*}
+其中 $\delta_0$ 表示 $\mathbb{R}^n$ 上赋予点 $0$ 单位质量的 Dirac 测度。
+
+\textbf{无穷传播速度.} 注意，若 $g$ 有界、连续、$g\geqslant 0$、$g\not\equiv 0$，则
+\begin{align*}
+u(x,t)=\frac{1}{(4\pi t)^{n/2}}\int_{\mathbb{R}^n}e^{-|x-y|^2/(4t)}g(y)\,\mathrm{d}y
+\end{align*}
+实际上对所有点 $x\in\mathbb{R}^n$ 与时刻 $t>0$ 都为正。我们把这一观察解释为：热方程对扰动施加了无穷传播速度。若初始温度非负且在某处为正，则在任何稍后的时刻（无论多么小）温度处处为正。（我们将在 \S2.4.3 看到，波动方程相反，其扰动传播速度是有限的。）
+
+\subsubsection{非齐次问题}
+
+现转而考察非齐次初值问题
+\begin{align}\label{align:ch02-heat-nonhom-ivp}
+\begin{cases}
+u_t-\Delta u=f & \text{在 }\mathbb{R}^n\times(0,\infty)\text{ 中},\\
+u=0 & \text{在 }\mathbb{R}^n\times\{t=0\}\text{ 上}.
+\end{cases}
+\end{align}
+如何构造解的公式呢？回忆导出\eqref{align:ch02-heat-solution} 的动机，进一步注意到映射 $(x,t)\mapsto\Phi(x-y,t-s)$ 是热方程的解（给定 $y\in\mathbb{R}^n$，$0<s<t$）。现对固定的 $s$，函数
+\begin{align*}
+u=u(x,t;s)=\int_{\mathbb{R}^n}\Phi(x-y,t-s)f(y,s)\,\mathrm{d}y
+\end{align*}
+求解
+\begin{align}\label{align:ch02-heat-ivp-s}
+\begin{cases}
+u_t(\cdot;s)-\Delta u(\cdot;s)=0 & \text{在 }\mathbb{R}^n\times(s,\infty)\text{ 中},\\
+u(\cdot;s)=f(\cdot,s) & \text{在 }\mathbb{R}^n\times\{t=s\}\text{ 上},
+\end{cases}
+\end{align}
+这正是形如\eqref{align:ch02-heat-ivp} 的初值问题，只是把起始时刻 $t=0$ 换成 $t=s$、把 $g$ 换成 $f(\cdot,s)$。因而 $u(\cdot;s)$ 当然不是\eqref{align:ch02-heat-nonhom-ivp} 的解。
+
+然而 Duhamel 原理\footnote{Duhamel 原理广泛适用于线性 ODE 与 PDE，并不依赖于热方程的特殊结构。例如，它给出了用 \S2.1.2 中不同方法得到的非齐次输运方程的解。我们将在 \S2.4.2 对波动方程调用 Duhamel 原理。}断言：我们可以由\eqref{align:ch02-heat-ivp-s} 的解出发，关于 $s$ 积分，来构造\eqref{align:ch02-heat-nonhom-ivp} 的解。其想法是考虑
+\begin{align*}
+u(x,t)=\int_0^t u(x,t;s)\,\mathrm{d}s \qquad (x\in\mathbb{R}^n,\ t\geqslant 0).
+\end{align*}
+改写得
+\begin{align}\label{align:ch02-heat-duhamel}
+u(x,t)=\int_0^t\int_{\mathbb{R}^n}\Phi(x-y,t-s)f(y,s)\,\mathrm{d}y\,\mathrm{d}s
+=\int_0^t\frac{1}{(4\pi(t-s))^{n/2}}\int_{\mathbb{R}^n}e^{-|x-y|^2/(4(t-s))}f(y,s)\,\mathrm{d}y\,\mathrm{d}s,
+\end{align}
+对 $x\in\mathbb{R}^n$，$t>0$。
+
+为确认公式\eqref{align:ch02-heat-duhamel} 可行，为简单起见设 $f\in C^2_1(\mathbb{R}^n\times[0,\infty))$，且 $f$ 关于变量 $x$ 具有紧支集。
+
+\begin{theorem}[非齐次问题的解]\label{theorem:ch02-heat-nonhom}由\eqref{align:ch02-heat-duhamel} 定义 $u$。则
+\begin{enumerate}[(i)]
+\item $u\in C^2_1(\mathbb{R}^n\times(0,\infty))$；
+\item $u_t(x,t)-\Delta u(x,t)=f(x,t)$（$x\in\mathbb{R}^n$，$t>0$）；
+\item 对每一点 $x_0\in\mathbb{R}^n$，$\displaystyle\lim_{\substack{(x,t)\to(x_0,0)\\x\in\mathbb{R}^n,\ t>0}}u(x,t)=0$。
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+1. 由于 $\Phi$ 在 $(0,0)$ 处奇异，我们不能直接在积分号下求导。我们改用与 \S2.2.1 定理\cref{theorem:ch02-solve-poisson} 的证明类似的做法。先作变量代换，写
+\begin{align*}
+u(x,t)=\int_0^t\int_{\mathbb{R}^n}\Phi(y,s)f(x-y,t-s)\,\mathrm{d}y\,\mathrm{d}s.
+\end{align*}
+由于 $f\in C^2_1(\mathbb{R}^n\times[0,\infty))$ 具有紧支集，且 $\Phi=\Phi(y,s)$ 在 $s=t>0$ 附近光滑，计算得
+\begin{align*}
+u_t(x,t)=\int_0^t\int_{\mathbb{R}^n}\Phi(y,s)f_t(x-y,t-s)\,\mathrm{d}y\,\mathrm{d}s
++\int_{\mathbb{R}^n}\Phi(y,t)f(x-y,0)\,\mathrm{d}y
+\end{align*}
+以及
+\begin{align*}
+u_{x_i x_j}(x,t)=\int_0^t\int_{\mathbb{R}^n}\Phi(y,s)f_{x_i x_j}(x-y,t-s)\,\mathrm{d}y\,\mathrm{d}s \qquad (i,j=1,\cdots,n).
+\end{align*}
+因而 $u_t$、$D_x^2u$，以及 $u$、$D_xu$，都属于 $C(\mathbb{R}^n\times(0,\infty))$。
+
+2. 然后计算
+\begin{align}\label{align:ch02-heat-nonhom-decomp}
+u_t(x,t)-\Delta u(x,t)&=\int_0^t\int_{\mathbb{R}^n}\Phi(y,s)\left[\left(\frac{\partial}{\partial t}-\Delta_x\right)f(x-y,t-s)\right]\mathrm{d}y\,\mathrm{d}s
++\int_{\mathbb{R}^n}\Phi(y,t)f(x-y,0)\,\mathrm{d}y\\
+&=\int_\varepsilon^t\int_{\mathbb{R}^n}\Phi(y,s)\left[\left(-\frac{\partial}{\partial s}-\Delta_y\right)f(x-y,t-s)\right]\mathrm{d}y\,\mathrm{d}s\nonumber\\
+&\quad+\int_0^\varepsilon\int_{\mathbb{R}^n}\Phi(y,s)\left[\left(-\frac{\partial}{\partial s}-\Delta_y\right)f(x-y,t-s)\right]\mathrm{d}y\,\mathrm{d}s\nonumber\\
+&\quad+\int_{\mathbb{R}^n}\Phi(y,t)f(x-y,0)\,\mathrm{d}y\nonumber\\
+&\triangleq I_\varepsilon+J_\varepsilon+K.\nonumber
+\end{align}
+现由引理\cref{lemma:ch02-heat-integral}，
+\begin{align}\label{align:ch02-heat-J-eps}
+|J_\varepsilon|\leqslant(\|f_t\|_{L^\infty}+\|D^2f\|_{L^\infty})\int_0^\varepsilon\int_{\mathbb{R}^n}\Phi(y,s)\,\mathrm{d}y\,\mathrm{d}s\leqslant\varepsilon C.
+\end{align}
+分部积分，还得到
+\begin{align}\label{align:ch02-heat-I-eps}
+I_\varepsilon&=\int_\varepsilon^t\int_{\mathbb{R}^n}\left[\left(\frac{\partial}{\partial s}-\Delta_y\right)\Phi(y,s)\right]f(x-y,t-s)\,\mathrm{d}y\,\mathrm{d}s\\
+&\quad+\int_{\mathbb{R}^n}\Phi(y,\varepsilon)f(x-y,t-\varepsilon)\,\mathrm{d}y
+-\int_{\mathbb{R}^n}\Phi(y,t)f(x-y,0)\,\mathrm{d}y\nonumber\\
+&=\int_{\mathbb{R}^n}\Phi(y,\varepsilon)f(x-y,t-\varepsilon)\,\mathrm{d}y-K,\nonumber
+\end{align}
+这是因为 $\Phi$ 解热方程。合并\eqref{align:ch02-heat-nonhom-decomp}--\eqref{align:ch02-heat-I-eps}，可知
+\begin{align*}
+u_t(x,t)-\Delta u(x,t)=\lim_{\varepsilon\to 0}\int_{\mathbb{R}^n}\Phi(y,\varepsilon)f(x-y,t-\varepsilon)\,\mathrm{d}y=f(x,t) \qquad (x\in\mathbb{R}^n,\ t>0),
+\end{align*}
+其中 $\varepsilon\to 0$ 的极限按定理\cref{theorem:ch02-heat-ivp} 证明中的方式计算。最后注意 $\|u(\cdot,t)\|_{L^\infty}\leqslant t\|f\|_{L^\infty}\to 0$。
+\end{proof}
+
+\textbf{一般初值下非齐次问题的解.} 当然，把定理\cref{theorem:ch02-heat-ivp} 与定理\cref{theorem:ch02-heat-nonhom} 合并，可得
+\begin{align}\label{align:ch02-heat-general}
+u(x,t)=\int_{\mathbb{R}^n}\Phi(x-y,t)g(y)\,\mathrm{d}y
++\int_0^t\int_{\mathbb{R}^n}\Phi(x-y,t-s)f(y,s)\,\mathrm{d}y\,\mathrm{d}s
+\end{align}
+在上述关于 $g,f$ 的假设下，是
+\begin{align}\label{align:ch02-heat-general-bvp}
+\begin{cases}
+u_t-\Delta u=f & \text{在 }\mathbb{R}^n\times(0,\infty)\text{ 中},\\
+u=g & \text{在 }\mathbb{R}^n\times\{t=0\}\text{ 上}
+\end{cases}
+\end{align}
+的解。
+
+\subsection{平均值公式}\label{subsection:ch02-heat-mean}
+
+首先回忆 \S A.2 中一些有用记号。设 $U\subset\mathbb{R}^n$ 开、有界，取定时刻 $T>0$。
+
+\begin{definition}\label{definition:ch02-parabolic-cylinder}
+\begin{enumerate}[(i)]
+\item 我们定义抛物柱体
+\begin{align*}
+U_T\triangleq U\times(0,T].
+\end{align*}
+\item $U_T$ 的抛物边界为
+\begin{align*}
+\Gamma_T\triangleq\overline{U_T}-U_T.
+\end{align*}
+\end{enumerate}
+\end{definition}
+
+我们把 $U_T$ 理解为 $\overline{U}\times[0,T]$ 的抛物内部；请注意 $U_T$ 包含顶面 $U\times\{t=T\}$。抛物边界 $\Gamma_T$ 由 $U\times[0,T]$ 的底面与侧面组成，但不包含顶面。
+
+接下来我们要推导调和函数平均值性质（\S2.2.2）的某种类似物。并没有那样简单的公式。但我们观察到，对固定的 $x$，球面 $\partial B(x,r)$ 是Laplace方程基本解 $\Phi(x-y)$ 的等值面。这提示我们：对热方程基本解 $\Phi(x-y,t-s)$，其关于固定 $(x,t)$ 的等值面或许是相关的。
+
+\begin{definition}\label{definition:ch02-heat-ball}
+对固定的 $x\in\mathbb{R}^n$、$t\in\mathbb{R}$、$r>0$，定义
+\begin{align*}
+E(x,t;r)\triangleq\left\{(y,s)\in\mathbb{R}^{n+1}\ \middle|\ s\leqslant t,\ \Phi(x-y,t-s)\geqslant\frac{1}{r^n}\right\}.
+\end{align*}
+这是时空中的一个区域，其边界是 $\Phi(x-y,t-s)$ 的一个等值面。注意点 $(x,t)$ 位于顶面中心。$E(x,t;r)$ 有时称为``热球''。
+\end{definition}
+
+\begin{theorem}[热方程的一个平均值性质]\label{theorem:ch02-heat-mean}设 $u\in C^2_1(U_T)$ 解热方程。则对每个 $E(x,t;r)\subset U_T$，
+\begin{align}\label{align:ch02-heat-mean}
+u(x,t)=\frac{1}{4r^n}\iint_{E(x,t;r)}u(y,s)\frac{|x-y|^2}{(t-s)^2}\,\mathrm{d}y\,\mathrm{d}s.
+\end{align}
+\end{theorem}
+
+公式\eqref{align:ch02-heat-mean} 是Laplace方程平均值公式在热方程中的类似物。注意右端只涉及时刻 $s\leqslant t$ 的 $u(y,s)$。这是合理的，因为值 $u(x,t)$ 不应依赖于未来时刻。
+
+\begin{proof}
+平移空间与时间坐标，使 $x=0$、$t=0$。必要时磨光，可设 $u$ 光滑。记 $E(r)=E(0,0;r)$，令
+\begin{align}\label{align:ch02-heat-mean-phi}
+\phi(r)\triangleq\frac{1}{r^n}\iint_{E(r)}u(y,s)\frac{|y|^2}{s^2}\,\mathrm{d}y\,\mathrm{d}s
+=\iint_{E(1)}u(ry,r^2s)\frac{|y|^2}{s^2}\,\mathrm{d}y\,\mathrm{d}s.
+\end{align}
+计算得
+\begin{align*}
+\phi'(r)&=\iint_{E(1)}\sum_{i=1}^n u_{y_i y_i}\frac{|y|^2}{s^2}+\frac{2r u_s|y|^2}{s}\,\mathrm{d}y\,\mathrm{d}s\\
+&=\frac{1}{r^{n+1}}\iint_{E(r)}\sum_{i=1}^n u_{y_i y_i}\frac{|y|^2}{s^2}+\frac{2u_s|y|^2}{s}\,\mathrm{d}y\,\mathrm{d}s\triangleq A+B.
+\end{align*}
+再引入有用的函数
+\begin{align}\label{align:ch02-heat-mean-psi}
+\psi\triangleq-\frac{n}{2}\log(-4\pi s)+\frac{|y|^2}{4s}+n\log r,
+\end{align}
+并注意在 $\partial E(r)-\{(0,0)\}$ 上 $\psi=0$，因为在 $\partial E(r)$ 上 $\Phi(y,-s)=r^{-n}$。利用\eqref{align:ch02-heat-mean-psi} 写
+\begin{align*}
+B=\frac{1}{r^{n+1}}\iint_{E(r)}\frac{4u_s}{n}\sum_{i=1}^n y_i\psi_{y_i}\,\mathrm{d}y\,\mathrm{d}s
+=-\frac{1}{r^{n+1}}\iint_{E(r)}4n u_s\psi+4\sum_{i=1}^n u_{s y_i y_i}\psi\,\mathrm{d}y\,\mathrm{d}s;
+\end{align*}
+没有边界项，因为在 $\partial E(r)-\{(0,0)\}$ 上 $\psi=0$。关于 $s$ 分部积分，得
+\begin{align*}
+B&=\frac{1}{r^{n+1}}\iint_{E(r)}-4n u_s\psi+4\sum_{i=1}^n u_{y_i y_i}\psi_s\,\mathrm{d}y\,\mathrm{d}s\\
+&=\frac{1}{r^{n+1}}\iint_{E(r)}-4n u_s\psi+4\sum_{i=1}^n u_{y_i y_i}\left(-\frac{n}{2s}-\frac{|y|^2}{4s^2}\right)\mathrm{d}y\,\mathrm{d}s\\
+&=\frac{1}{r^{n+1}}\iint_{E(r)}-4n u_s\psi-\frac{2n}{s}\sum_{i=1}^n u_{y_i y_i}\,\mathrm{d}y\,\mathrm{d}s-A.
+\end{align*}
+于是由于 $u$ 解热方程，
+\begin{align*}
+\phi'(r)=A+B=\frac{1}{r^{n+1}}\iint_{E(r)}-4n\Delta u\,\psi-\frac{2n}{s}\sum_{i=1}^n u_{y_i y_i}\,\mathrm{d}y\,\mathrm{d}s
+=\sum_{i=1}^n\frac{1}{r^{n+1}}\iint_{E(r)}4n u_{y_i}\psi_{y_i}-\frac{2n}{s}u_{y_i y_i}\,\mathrm{d}y\,\mathrm{d}s=0,
+\end{align*}
+其中最后一步由\eqref{align:ch02-heat-mean-psi} 得到。故 $\phi$ 为常数，从而
+\begin{align*}
+\phi(r)=\lim_{t\to 0}\phi(t)=u(0,0)\left(\lim_{t\to 0}\frac{1}{t^n}\iint_{E(t)}\frac{|y|^2}{s^2}\,\mathrm{d}y\,\mathrm{d}s\right)=4u(0,0),
+\end{align*}
+这是因为 $\dfrac{1}{t^n}\iint_{E(t)}\dfrac{|y|^2}{s^2}\,\mathrm{d}y\,\mathrm{d}s=\iint_{E(1)}\dfrac{|y|^2}{s^2}\,\mathrm{d}y\,\mathrm{d}s=4$。最后这一计算的细节从略。
+\end{proof}
+
+\subsection{解的性质}\label{subsection:ch02-heat-properties}
+
+\subsubsection{强极值原理与唯一性}
+
+我们先用平均值性质给出强极值原理的一个简短证明。
+
+\begin{theorem}[热方程的强极值原理]\label{theorem:ch02-heat-strong-max}设 $u\in C^2_1(U_T)\cap C(\overline{U_T})$ 在 $U_T$ 中解热方程。
+\begin{enumerate}[(i)]
+\item 则 $\max_{\overline{U_T}}u=\max_{\Gamma_T}u$。
+\item 进一步，若 $U$ 连通且存在一点 $(x_0,t_0)\in U_T$ 使 $u(x_0,t_0)=\max_{\overline{U_T}}u$，则 $u$ 在 $\overline{U_{t_0}}$ 中为常数。
+\end{enumerate}
+\end{theorem}
+
+断言 (i) 是热方程的极值原理，(ii) 是强极值原理。把``max''换成``min''也有类似断言。
+
+\textbf{解释.} 于是若 $u$ 在内部点达到其最大（或最小）值，则 $u$ 在所有更早的时刻都为常数。这与我们对变量 $t$ 表示时间这一直观理解相符：当初始与边界条件为常数时，解在时间区间 $[0,t_0]$ 上为常数。然而，只要边界条件在 $t_0$ 之后发生改变，解在 $t>t_0$ 时仍可改变。不过，解在边界条件发生变化之前，不会对其作出响应。
+
+请注意，尽管这一切在直观、物理层面上是显然的，但这类洞见并不构成证明。任务是从 PDE 推出这种行为。
+
+\begin{proof}
+1. 设存在一点 $(x_0,t_0)\in U_T$ 使 $u(x_0,t_0)=M\triangleq\max_{\overline{U_T}}u$。则对一切充分小的 $r>0$，$E(x_0,t_0;r)\subset U_T$；我们用平均值性质推出
+\begin{align*}
+M=u(x_0,t_0)=\frac{1}{4r^n}\iint_{E(x_0,t_0;r)}u(y,s)\frac{|x_0-y|^2}{(t_0-s)^2}\,\mathrm{d}y\,\mathrm{d}s\leqslant M,
+\end{align*}
+这是因为
+\begin{align*}
+1=\frac{1}{4r^n}\iint_{E(x_0,t_0;r)}\frac{|x_0-y|^2}{(t_0-s)^2}\,\mathrm{d}y\,\mathrm{d}s.
+\end{align*}
+等号成立仅当 $u$ 在 $E(x_0,t_0;r)$ 内恒等于 $M$。因而对一切 $(y,s)\in E(x_0,t_0;r)$ 有 $u(y,s)=M$。
+
+在 $U_T$ 中任取一条连接 $(x_0,t_0)$ 与另一某点 $(y_0,s_0)\in U_T$（$s_0<t_0$）的线段 $L$。考虑
+\begin{align*}
+r_0\triangleq\min\{s\geqslant s_0\mid u(x,t)=M\text{ 对 }L\text{ 上一切满足 }s\leqslant t\leqslant t_0\text{ 的点 }(x,t)\}.
+\end{align*}
+由于 $u$ 连续，最小值可达到。设 $r_0>s_0$。则在 $L\cap U_T$ 上某点 $(z_0,r_0)$ 处 $u(z_0,r_0)=M$，从而对一切充分小的 $r>0$，在 $E(z_0,r_0;r)$ 上 $u\equiv M$。由于 $E(z_0,r_0;r)$ 包含 $L\cap\{r_0-\sigma\leqslant t\leqslant r_0\}$（对某个小的 $\sigma>0$），矛盾。故 $r_0=s_0$，从而在 $L$ 上 $u\equiv M$。
+
+2. 现固定任一点 $x\in U$ 与任一时间 $0\leqslant t<t_0$。存在点列 $\{x_0,x_1,\cdots,x_m=x\}$，使 $\mathbb{R}^n$ 中连接 $x_{i-1}$ 与 $x_i$ 的线段对 $i=1,\cdots,m$ 都位于 $U$ 中。（这是因为 $U$ 中可如此用折线连接到 $x_0$ 的点集，在 $U$ 中非空、开且相对闭。）选取时间 $t_0>t_1>\cdots>t_m=t$。则 $\mathbb{R}^{n+1}$ 中连接 $(x_{i-1},t_{i-1})$ 与 $(x_i,t_i)$（$i=1,\cdots,m$）的线段都位于 $U_T$ 中。由第 1 步，在每条这种线段上 $u\equiv M$，故 $u(x,t)=M$。
+\end{proof}
+
+\textbf{再谈无穷传播速度.} 强极值原理蕴含：若 $U$ 连通，且 $u\in C^2_1(U_T)\cap C(\overline{U_T})$ 满足
+\begin{align*}
+\begin{cases}
+u_t-\Delta u=0 & \text{在 }U_T\text{ 中},\\
+u=0 & \text{在 }\partial U\times[0,T]\text{ 上},\\
+u=g & \text{在 }U\times\{t=0\}\text{ 上},
+\end{cases}
+\end{align*}
+其中 $g\geqslant 0$，则只要 $g$ 在 $U$ 上某处为正，$u$ 就在 $U_T$ 内处处为正。这是扰动无穷传播速度的又一例证。
+
+极值原理的一个重要应用是下面的唯一性断言。
+
+\begin{theorem}[有界区域上的唯一性]\label{theorem:ch02-heat-uniqueness-bounded}设 $g\in C(\Gamma_T)$，$f\in C(U_T)$。则初/边值问题
+\begin{align}\label{align:ch02-heat-bvp}
+\begin{cases}
+u_t-\Delta u=f & \text{在 }U_T\text{ 中},\\
+u=g & \text{在 }\Gamma_T\text{ 上}
+\end{cases}
+\end{align}
+至多存在一个解 $u\in C^2_1(U_T)\cap C(\overline{U_T})$。
+\end{theorem}
+
+\begin{proof}
+若 $u$ 与 $\widetilde{u}$ 都是\eqref{align:ch02-heat-bvp} 的解，对 $w\triangleq\pm(u-\widetilde{u})$ 应用定理\cref{theorem:ch02-heat-strong-max}。
+\end{proof}
+
+接下来把唯一性断言推广到 Cauchy 问题，即 $U=\mathbb{R}^n$ 的初值问题。由于我们不再在有界区域上，必须对解在 $|x|$ 很大时的行为施加某种控制。
+
+\begin{theorem}[Cauchy 问题的极值原理]\label{theorem:ch02-heat-cauchy-max}设 $u\in C^2_1(\mathbb{R}^n\times(0,T])\cap C(\mathbb{R}^n\times[0,T])$ 解
+\begin{align}\label{align:ch02-heat-cauchy}
+\begin{cases}
+u_t-\Delta u=0 & \text{在 }\mathbb{R}^n\times(0,T)\text{ 中},\\
+u=g & \text{在 }\mathbb{R}^n\times\{t=0\}\text{ 上},
+\end{cases}
+\end{align}
+并满足增长估计
+\begin{align}\label{align:ch02-heat-growth}
+u(x,t)\leqslant A e^{a|x|^2} \qquad (x\in\mathbb{R}^n,\ 0\leqslant t\leqslant T)
+\end{align}
+其中 $A,a>0$ 为常数。则 $\sup_{\mathbb{R}^n\times[0,T]}u=\sup_{\mathbb{R}^n}g$。
+\end{theorem}
+
+\begin{proof}
+1. 先设
+\begin{align}\label{align:ch02-heat-4aT}
+4aT<1,
+\end{align}
+此时对某 $\varepsilon>0$ 有
+\begin{align}\label{align:ch02-heat-4aTe}
+4a(T+\varepsilon)<1.
+\end{align}
+固定 $y\in\mathbb{R}^n$，$\mu>0$，定义
+\begin{align*}
+v(x,t)\triangleq u(x,t)-\frac{\mu}{(T+\varepsilon-t)^{n/2}}e^{|x-y|^2/(4(T+\varepsilon-t))} \qquad (x\in\mathbb{R}^n,\ t>0).
+\end{align*}
+直接计算（参看 \S2.3.1）表明 $v_t-\Delta v=0$ 在 $\mathbb{R}^n\times(0,T]$ 中。固定 $r>0$，令 $U\triangleq B_0(y,r)$，$U_T=B_0(y,r)\times(0,T]$。则由定理\cref{theorem:ch02-heat-strong-max}，
+\begin{align}\label{align:ch02-heat-v-max}
+\max_{\overline{U_T}}v=\max_{\Gamma_T}v,
+\end{align}
+其中 $\Gamma_T$ 是 $U_T$ 的抛物边界。
+
+2. 现若 $x\in\mathbb{R}^n$，
+\begin{align}\label{align:ch02-heat-v0}
+v(x,0)=u(x,0)-\frac{\mu}{(T+\varepsilon)^{n/2}}e^{|x-y|^2/(4(T+\varepsilon))}\leqslant u(x,0)=g(x);
+\end{align}
+而若 $|x-y|=r$、$0\leqslant t\leqslant T$，则
+\begin{align*}
+v(x,t)=u(x,t)-\frac{\mu}{(T+\varepsilon-t)^{n/2}}e^{r^2/(4(T+\varepsilon-t))}
+\leqslant A e^{a|x|^2}-\frac{\mu}{(T+\varepsilon-t)^{n/2}}e^{r^2/(4(T+\varepsilon-t))} \quad \text{（由\eqref{align:ch02-heat-growth}）}\\
+\leqslant A e^{a(|y|+r)^2}-\frac{\mu}{(T+\varepsilon)^{n/2}}e^{r^2/(4(T+\varepsilon))}.
+\end{align*}
+现由\eqref{align:ch02-heat-4aTe}，$\dfrac{1}{4(T+\varepsilon)}=a+\gamma$（$\gamma>0$）。于是可继续上面的计算，求得
+\begin{align}\label{align:ch02-heat-vt}
+v(x,t)\leqslant A e^{a(|y|+r)^2}-\mu(4(a+\gamma))^{n/2}e^{(a+\gamma)r^2}\leqslant\sup_{\mathbb{R}^n}g,
+\end{align}
+其中 $r$ 取得充分大。于是\eqref{align:ch02-heat-v-max}--\eqref{align:ch02-heat-vt} 推出：只要\eqref{align:ch02-heat-4aT} 成立，就有 $v(y,t)\leqslant\sup_{\mathbb{R}^n}g$，对一切 $y\in\mathbb{R}^n$、$0\leqslant t\leqslant T$。令 $\mu\to 0$。
+
+3. 在\eqref{align:ch02-heat-4aT} 不成立的一般情形，我们在时间区间 $[0,T_1]$、$[T_1,2T_1]$ 等上反复应用上述结果，其中 $T_1=\dfrac{1}{8a}$。
+\end{proof}
+
+\begin{theorem}[Cauchy 问题的唯一性]\label{theorem:ch02-heat-cauchy-uniqueness}设 $g\in C(\mathbb{R}^n)$，$f\in C(\mathbb{R}^n\times[0,T])$。则初值问题
+\begin{align}\label{align:ch02-heat-cauchy-ivp}
+\begin{cases}
+u_t-\Delta u=f & \text{在 }\mathbb{R}^n\times(0,T)\text{ 中},\\
+u=g & \text{在 }\mathbb{R}^n\times\{t=0\}\text{ 上}
+\end{cases}
+\end{align}
+至多存在一个满足增长估计
+\begin{align}\label{align:ch02-heat-cauchy-growth}
+|u(x,t)|\leqslant A e^{a|x|^2} \qquad (x\in\mathbb{R}^n,\ 0\leqslant t\leqslant T)
+\end{align}
+的解 $u\in C^2_1(\mathbb{R}^n\times(0,T])\cap C(\mathbb{R}^n\times[0,T])$，其中 $A,a>0$ 为常数。
+\end{theorem}
+
+\begin{proof}
+若 $u$ 与 $\widetilde{u}$ 都满足\eqref{align:ch02-heat-cauchy-ivp}、\eqref{align:ch02-heat-cauchy-growth}，对 $w\triangleq\pm(u-\widetilde{u})$ 应用定理\cref{theorem:ch02-heat-cauchy-max}。
+\end{proof}
+
+\textbf{非物理解.} 事实上，
+\begin{align}\label{align:ch02-heat-nonphysical}
+\begin{cases}
+u_t-\Delta u=0 & \text{在 }\mathbb{R}^n\times(0,T)\text{ 中},\\
+u=0 & \text{在 }\mathbb{R}^n\times\{t=0\}\text{ 上}
+\end{cases}
+\end{align}
+有无穷多个解；例如见 John \cite[Chapter 7]{J2}。除 $u\equiv 0$ 外，这些解在 $|x|\to\infty$ 时都增长得非常快。
+
+这里有一个有趣之处：尽管 $u\equiv 0$ 当然是\eqref{align:ch02-heat-nonphysical} 的``物理上正确''的解，但这个初值问题实际上还容许其他``非物理''解。定理\cref{theorem:ch02-heat-cauchy-uniqueness} 提供了一条排除``错误''解的准则。我们在\cref{chapter:ch03,chapter:ch10-HamiltonJacobi方程,chapter:ch11-守恒律方程组}研究 Hamilton--Jacobi 方程与守恒律时，将遇到有些类似的情形。
+
+\subsubsection{正则性}
+
+接下来证明热方程的解自动光滑。
+
+\begin{theorem}[光滑性]\label{theorem:ch02-heat-smoothness}设 $u\in C^2_1(U_T)$ 在 $U_T$ 中解热方程。则 $u\in C^\infty(U_T)$。
+\end{theorem}
+
+即使 $u$ 在 $\Gamma_T$ 上取到非光滑的边值，这一正则性断言仍然成立。
+
+\begin{proof}
+1. 由 \S A.2 回忆，我们写
+\begin{align*}
+C(x,t;r)=\{(y,s)\mid |x-y|\leqslant r,\ t-r^2\leqslant s\leqslant t\}
+\end{align*}
+表示半径为 $r$、高为 $r^2$、顶面中心点为 $(x,t)$ 的闭圆柱。固定 $(x_0,t_0)\in U_T$，选 $r>0$ 充分小使 $C\triangleq C(x_0,t_0;r)\subset U_T$。再定义较小的圆柱 $C'\triangleq C(x_0,t_0;\frac{3}{4}r)$、$C''\triangleq C(x_0,t_0;\frac{1}{2}r)$，它们具有相同的顶面中心点 $(x_0,t_0)$。选一个光滑截断函数 $\zeta=\zeta(x,t)$，使 $\begin{cases}0\leqslant\zeta\leqslant 1,\ \zeta\equiv 1\text{ 在 }C'\text{ 上},\\ \zeta\equiv 0\text{ 在 }C\text{ 的抛物边界附近}.\end{cases}$ 在 $(\mathbb{R}^n\times[0,t_0])-C$ 中延拓 $\zeta\equiv 0$。
+
+2. 临时设 $u\in C^\infty(U_T)$，令
+\begin{align*}
+v(x,t)\triangleq\zeta(x,t)u(x,t) \qquad (x\in\mathbb{R}^n,\ 0\leqslant t\leqslant t_0).
+\end{align*}
+则 $v_t=\zeta u_t+\zeta_t u$，$\Delta v=\zeta\Delta u+2D\zeta\cdot Du+u\Delta\zeta$。因而
+\begin{align}\label{align:ch02-heat-v0-bis}
+v=0 \qquad \text{在 }\mathbb{R}^n\times\{t=0\}\text{ 上},
+\end{align}
+且
+\begin{align}\label{align:ch02-heat-v-eq}
+v_t-\Delta v=\zeta_t u-2D\zeta\cdot Du-u\Delta\zeta\triangleq\widetilde{f} \qquad \text{在 }\mathbb{R}^n\times(0,t_0)\text{ 中}.
+\end{align}
+现令 $\widetilde{v}(x,t)\triangleq\int_0^t\int_{\mathbb{R}^n}\Phi(x-y,t-s)\widetilde{f}(y,s)\,\mathrm{d}y\,\mathrm{d}s$。由定理\cref{theorem:ch02-heat-nonhom}，
+\begin{align}\label{align:ch02-heat-vtilde}
+\begin{cases}
+\widetilde{v}_t-\Delta\widetilde{v}=\widetilde{f} & \text{在 }\mathbb{R}^n\times(0,t_0)\text{ 中},\\
+\widetilde{v}=0 & \text{在 }\mathbb{R}^n\times\{t=0\}\text{ 上}.
+\end{cases}
+\end{align}
+由于 $|v|,|\widetilde{v}|\leqslant A$（$A$ 为某常数），定理\cref{theorem:ch02-heat-cauchy-uniqueness} 推出 $v\equiv\widetilde{v}$；即
+\begin{align}\label{align:ch02-heat-v-rep}
+v(x,t)=\int_0^t\int_{\mathbb{R}^n}\Phi(x-y,t-s)\widetilde{f}(y,s)\,\mathrm{d}y\,\mathrm{d}s.
+\end{align}
+现设 $(x,t)\in C''$。由于 $\zeta$ 在圆柱 $C$ 之外恒为零，\eqref{align:ch02-heat-v-eq} 与\eqref{align:ch02-heat-v-rep} 蕴含
+\begin{align*}
+u(x,t)=\iint_C\Phi(x-y,t-s)\big[(\zeta_s(y,s)-\Delta\zeta(y,s))u(y,s)-2D\zeta(y,s)\cdot Du(y,s)\big]\mathrm{d}y\,\mathrm{d}s.
+\end{align*}
+注意在此式中，方括号内的表达式在 $\Phi$ 奇点附近的某个区域内为零。把最后一项分部积分：
+\begin{align}\label{align:ch02-heat-rep-smooth}
+u(x,t)=\iint_C\Big[\Phi(x-y,t-s)(\zeta_s(y,s)+\Delta\zeta(y,s))
++2D_y\Phi(x-y,t-s)\cdot D\zeta(y,s)\Big]u(y,s)\,\mathrm{d}y\,\mathrm{d}s.
+\end{align}
+
+3. 公式\eqref{align:ch02-heat-rep-smooth} 已在假定 $u\in C^\infty$ 下证得。若 $u$ 只满足定理假设，我们用 $u_\varepsilon=\eta_\varepsilon*u$ 代替 $u$ 推导\eqref{align:ch02-heat-rep-smooth}（$\eta_\varepsilon$ 是关于变量 $x,t$ 的标准磨光子），再令 $\varepsilon\to 0$。公式\eqref{align:ch02-heat-rep-smooth} 具有形式
+\begin{align}\label{align:ch02-heat-kernel}
+u(x,t)=\iint_C K(x,t,y,s)u(y,s)\,\mathrm{d}y\,\mathrm{d}s \qquad ((x,t)\in C''),
+\end{align}
+其中对一切 $(y,s)\in C'$ 有 $K(x,t,y,s)=0$，因为在 $C'$ 上 $\zeta\equiv 1$。还注意到 $K$ 在 $C-C'$ 上光滑。由表达式\eqref{align:ch02-heat-kernel}，可见 $u$ 在 $C''=C(x_0,t_0;\frac{1}{2}r)$ 内为 $C^\infty$。
+\end{proof}
+
+\subsubsection{热方程解的局部估计}
+
+现记录热方程解关于导数的一些估计，并注意关于 $x_i$（$i=1,\cdots,n$）的导数与关于 $t$ 的导数之间的差别。
+
+\begin{theorem}[导数估计]\label{theorem:ch02-heat-deriv-est}对每对整数 $k,l=0,1,\cdots$，存在常数 $C_{k,l}$，使对一切圆柱 $C(x,t;r/2)\subset C(x,t;r)\subset U_T$ 以及热方程在 $U_T$ 中的一切解 $u$，都有
+\begin{align*}
+\max_{C(x,t;r/2)}|D_x^k D_t^l u|\leqslant\frac{C_{kl}}{r^{k+2l+n+2}}\|u\|_{L^1(C(x,t;r))}.
+\end{align*}
+\end{theorem}
+
+\begin{proof}
+1. 固定 $U_T$ 中某点。平移坐标后，不妨设该点为 $(0,0)$。先设圆柱 $C(1)\triangleq C(0,0;1)$ 位于 $U_T$ 中。令 $C(\frac{1}{2})\triangleq C(0,0;\frac{1}{2})$。则如同定理\cref{theorem:ch02-heat-smoothness} 的证明，
+\begin{align*}
+u(x,t)=\iint_{C(1)}K(x,t,y,s)u(y,s)\,\mathrm{d}y\,\mathrm{d}s \qquad ((x,t)\in C(\tfrac{1}{2}))
+\end{align*}
+其中 $K$ 为某光滑函数。因而
+\begin{align}\label{align:ch02-heat-deriv-est-unit}
+|D_x^k D_t^l u(x,t)|\leqslant\iint_{C(1)}|D_t^l D_x^k K(x,t,y,s)||u(y,s)|\,\mathrm{d}y\,\mathrm{d}s\leqslant C_{kl}\|u\|_{L^1(C(1))}
+\end{align}
+其中 $C_{kl}$ 为某常数。
+
+2. 现设圆柱 $C(r)\triangleq C(0,0;r)$ 位于 $U_T$ 中。令 $C(r/2)=C(0,0;r/2)$。通过定义 $v(x,t)\triangleq u(rx,r^2t)$ 来重新缩放。则 $v_t-\Delta v=0$ 在圆柱 $C(1)$ 中。由\eqref{align:ch02-heat-deriv-est-unit}，
+\begin{align*}
+|D_x^k D_t^l v(x,t)|\leqslant C_{kl}\|v\|_{L^1(C(1))} \qquad ((x,t)\in C(\tfrac{1}{2})).
+\end{align*}
+但 $D_x^k D_t^l v(x,t)=r^{2l+k}D_x^k D_t^l u(rx,r^2t)$，且 $\|v\|_{L^1(C(1))}=\dfrac{1}{r^{n+2}}\|u\|_{L^1(C(r))}$。因而
+\begin{align*}
+\max_{C(r/2)}|D_x^k D_t^l u|\leqslant\frac{C_{kl}}{r^{2l+k+n+2}}\|u\|_{L^1(C(r))}.
+\end{align*}
+\end{proof}
+
+若 $u$ 在 $U_T$ 中解热方程，则对每个时刻 $0<t\leqslant T$，映射 $x\mapsto u(x,t)$ 是解析的（见 Mikhailov \cite{M}）。然而映射 $t\mapsto u(x,t)$ 一般不是解析的。
+
+\subsection{能量方法}\label{subsection:ch02-heat-energy}
+
+\subsubsection{唯一性}
+
+我们再次考察初/边值问题
+\begin{align}\label{align:ch02-heat-energy-bvp}
+\begin{cases}
+u_t-\Delta u=f & \text{在 }U_T\text{ 中},\\
+u=g & \text{在 }\Gamma_T\text{ 上}.
+\end{cases}
+\end{align}
+我们先前调用极值原理证明了唯一性，现在---类比 \S2.2.5---给出另一种基于分部积分的论证。如常设 $U\subset\mathbb{R}^n$ 开、有界，$\partial U$ 为 $C^1$。终端时刻 $T>0$ 给定。
+
+\begin{theorem}[唯一性]\label{theorem:ch02-heat-energy-uniqueness}初/边值问题\eqref{align:ch02-heat-energy-bvp} 只有一个解 $u\in C^2_1(\overline{U_T})$。
+\end{theorem}
+
+\begin{proof}
+1. 若 $\widetilde{u}$ 是另一解，$w\triangleq u-\widetilde{u}$ 解
+\begin{align}\label{align:ch02-heat-w2}
+\begin{cases}
+w_t-\Delta w=0 & \text{在 }U_T\text{ 中},\\
+w=0 & \text{在 }\Gamma_T\text{ 上}.
+\end{cases}
+\end{align}
+
+2. 令
+\begin{align*}
+e(t)\triangleq\int_U w^2(x,t)\,\mathrm{d}x \qquad (0\leqslant t\leqslant T).
+\end{align*}
+则
+\begin{align*}
+\dot{e}(t)=2\int_U w w_t\,\mathrm{d}x \qquad \left(\dot{\ }=\frac{\mathrm{d}}{\mathrm{d}t}\right)
+=2\int_U w\Delta w\,\mathrm{d}x=-2\int_U|Dw|^2\,\mathrm{d}x\leqslant 0,
+\end{align*}
+因而 $e(t)\leqslant e(0)=0$（$0\leqslant t\leqslant T$）。于是在 $U_T$ 中 $w=u-\widetilde{u}\equiv 0$。
+\end{proof}
+
+注意到，上述是 \S2.2.5 定理\cref{theorem:ch02-energy-uniqueness} 证明的一个时间相关版本。
+
+\subsubsection{反向唯一性}
+
+一个相当微妙的问题是热方程关于时间反向的唯一性。为此，设 $u$ 与 $\widetilde{u}$ 都是 $U_T$ 中热方程的光滑解，在 $\partial U$ 上有相同的边界条件：
+\begin{align}\label{align:ch02-heat-backsolve}
+\begin{cases}
+u_t-\Delta u=0 & \text{在 }U_T\text{ 中},\\
+u=g & \text{在 }\partial U\times[0,T]\text{ 上},
+\end{cases}
+\end{align}
+\begin{align}\label{align:ch02-heat-backsolve2}
+\begin{cases}
+\widetilde{u}_t-\Delta\widetilde{u}=0 & \text{在 }U_T\text{ 中},\\
+\widetilde{u}=g & \text{在 }\partial U\times[0,T]\text{ 上},
+\end{cases}
+\end{align}
+其中 $g$ 为某函数。请特别注意，我们并未假定在时刻 $t=0$ 处 $u=\widetilde{u}$。
+
+\begin{theorem}[反向唯一性]\label{theorem:ch02-heat-backs-unique}设 $u,\widetilde{u}\in C^2(\overline{U_T})$ 解\eqref{align:ch02-heat-backsolve}、\eqref{align:ch02-heat-backsolve2}。若 $u(x,T)=\widetilde{u}(x,T)$（$x\in U$），则在 $U_T$ 内 $u\equiv\widetilde{u}$。
+\end{theorem}
+
+换言之，若 $U$ 上两个温度分布在某时刻 $T>0$ 一致，且在 $0\leqslant t\leqslant T$ 期间有相同的边值，则这两个温度必定在所有更早的时刻都在 $U$ 内恒等。这一点绝非显然。
+
+\begin{proof}
+1. 写 $w\triangleq u-\widetilde{u}$，并如同定理\cref{theorem:ch02-heat-energy-uniqueness} 的证明，令
+\begin{align*}
+e(t)\triangleq\int_U w^2(x,t)\,\mathrm{d}x \qquad (0\leqslant t\leqslant T).
+\end{align*}
+如前，
+\begin{align}\label{align:ch02-heat-e1}
+\dot{e}(t)=-2\int_U|Dw|^2\,\mathrm{d}x \qquad \left(\dot{\ }=\frac{\mathrm{d}}{\mathrm{d}t}\right).
+\end{align}
+此外，
+\begin{align}\label{align:ch02-heat-e2}
+\ddot{e}(t)=-4\int_U Dw\cdot Dw_t\,\mathrm{d}x=4\int_U\Delta w\, w_t\,\mathrm{d}x=4\int_U(\Delta w)^2\,\mathrm{d}x
+\end{align}
+这是由\eqref{align:ch02-heat-w} 得到的。现由于在 $\partial U$ 上 $w=0$，
+\begin{align*}
+\int_U|Dw|^2\,\mathrm{d}x=-\int_U w\Delta w\,\mathrm{d}x
+\leqslant\left(\int_U w^2\,\mathrm{d}x\right)^{1/2}\left(\int_U(\Delta w)^2\,\mathrm{d}x\right)^{1/2}.
+\end{align*}
+因而\eqref{align:ch02-heat-e1} 与\eqref{align:ch02-heat-e2} 蕴含
+\begin{align*}
+(\dot{e}(t))^2=4\left(\int_U|Dw|^2\,\mathrm{d}x\right)^2
+\leqslant\left(\int_U w^2\,\mathrm{d}x\right)\left(4\int_U(\Delta w)^2\,\mathrm{d}x\right)=e(t)\ddot{e}(t).
+\end{align*}
+故
+\begin{align}\label{align:ch02-heat-eineq}
+\ddot{e}(t)e(t)\geqslant(\dot{e}(t))^2 \qquad (0\leqslant t\leqslant T).
+\end{align}
+
+2. 若对一切 $0\leqslant t\leqslant T$ 都有 $e(t)=0$，即证毕。否则存在区间 $[t_1,t_2]\subset[0,T]$，使
+\begin{align}\label{align:ch02-heat-et2}
+e(t)>0 \quad (t_1\leqslant t<t_2),\qquad e(t_2)=0.
+\end{align}
+
+3. 写
+\begin{align}\label{align:ch02-heat-f}
+f(t)\triangleq\log e(t) \qquad (t_1\leqslant t<t_2).
+\end{align}
+则由\eqref{align:ch02-heat-eineq}，
+\begin{align*}
+\ddot{f}(t)=\frac{\ddot{e}(t)}{e(t)}-\frac{\dot{e}(t)^2}{e(t)^2}\geqslant 0,
+\end{align*}
+故 $f$ 在区间 $(t_1,t_2)$ 上凸。于是若 $0<\tau<1$、$t_1<t<t_2$，有
+\begin{align*}
+f((1-\tau)t_1+\tau t)\leqslant(1-\tau)f(t_1)+\tau f(t).
+\end{align*}
+回忆\eqref{align:ch02-heat-f}，推出
+\begin{align*}
+e((1-\tau)t_1+\tau t)\leqslant e(t_1)^{1-\tau}e(t)^\tau,
+\end{align*}
+从而
+\begin{align*}
+0\leqslant e((1-\tau)t_1+\tau t_2)\leqslant e(t_1)^{1-\tau}e(t_2)^\tau=0 \qquad (0<\tau<1),
+\end{align*}
+其中最后一步用了\eqref{align:ch02-heat-et2}。因此 $e\equiv 0$ 在 $[t_1,t_2]$ 上，从而 $w\equiv 0$，这就完成了证明。
+\end{proof}
+
+\end{document}

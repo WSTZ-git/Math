@@ -1,0 +1,507 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{重积分计算}
+
+\subsection{常规计算}
+
+\begin{theorem}[二重积分的Newton-Leibniz公式]
+设 $D = [a,b] \times [c,d] \subset \mathbb{R}^2$ 是闭矩形区域，函数 $f(x,y)$ 在 $D$ 上连续。若存在二元函数 $F(x,y)$ 在 $D$ 上具有连续混合偏导数 $\frac{\partial^2 F}{\partial x \partial y}$，且满足
+\[
+\frac{\partial^2 F}{\partial x \partial y}(x,y) = f(x,y), \qquad \forall (x,y) \in D,
+\]
+则
+\[
+\iint_D f(x,y) \, \mathrm{d}x \mathrm{d}y = F(b,d) - F(b,c) - F(a,d) + F(a,c).
+\]
+\end{theorem}
+
+\begin{theorem}[平面曲线积分的分部积分法]
+设 $L$ 是平面上的有向光滑曲线，起点为 $A$，终点为 $B$。函数 $u = u(x,y)$ 与 $v = v(x,y)$ 在 $L$ 上具有一阶连续偏导数。则
+\[
+\int_L u \, \mathrm{d}v = uv \Big|_A^B - \int_L v \, \mathrm{d}u,
+\]
+其中 $\mathrm{d}v = v_x \, \mathrm{d}x + v_y \, \mathrm{d}y$，$\mathrm{d}u = u_x \, \mathrm{d}x + u_y \, \mathrm{d}y$，且
+\[
+uv \Big|_A^B = u(B)v(B) - u(A)v(A).
+\]
+\end{theorem}
+
+\begin{example}
+设$f(x,y)$在$D$上有定义，且在某一圆盘外为$0$。求证：
+\begin{align*}
+\iint_D \left[ \frac{\partial^2 f}{\partial x^2} \frac{\partial^2 f}{\partial y^2} - \left( \frac{\partial^2 f}{\partial x \partial y} \right)^2 \right] \mathrm{d}x \mathrm{d}y = 0.
+\end{align*}
+\end{example}
+\begin{proof}
+由题设可知$f$在$\partial D$上恒为$0$，进而
+$$\frac{\partial f}{\partial x}(x,y) = \frac{\partial f}{\partial y}(x,y) = 0, \quad \forall (x,y) \in \partial D.$$
+由Green公式可得
+\begin{align*}
+&\iint_D \left[ \frac{\partial^2 f}{\partial x^2} \frac{\partial^2 f}{\partial y^2} - \left( \frac{\partial^2 f}{\partial x \partial y} \right)^2 \right] \mathrm{d}x \mathrm{d}y
+= \iint_D (f_{xx} f_{yy} - f_{xy}^2) \mathrm{d}x \mathrm{d}y \\
+&= \iint_D \left[ (f_{xx} f_y)_y - (f_{xy} f_y)_x \right] \mathrm{d}x \mathrm{d}y 
+\xlongequal{\text{Green公式}} \oint_{\partial D} f_{xy} f_y \mathrm{d}x + f_{xx} f_y \mathrm{d}y = 0.
+\end{align*}
+\end{proof}
+
+\begin{example}
+设不全为0的实数$\alpha,\beta,\gamma$，考虑
+\begin{align*}
+C:
+\begin{cases}
+x^2 + y^2 + z^2 = 1 \\
+\alpha x + \beta y + \gamma z = 0
+\end{cases}.
+\end{align*}
+计算$\int_C y(y - x)\mathrm{d}s$.
+\end{example}
+\begin{solution}
+记$K\triangleq \sqrt{\alpha^2+\beta^2}$，$M\triangleq \sqrt{\alpha^2+\beta^2+\gamma^2}$，考虑如下正交变换
+\begin{align*}
+\begin{pmatrix}
+x'\\
+y'\\
+z'
+\end{pmatrix}
+=
+\begin{pmatrix}
+\frac{\alpha\gamma}{KM} & \frac{\beta\gamma}{KM} & -\frac{K}{M}\\
+-\frac{\beta}{K} & \frac{\alpha}{K} & 0\\
+\frac{\alpha}{M} & \frac{\beta}{M} & \frac{\gamma}{M}
+\end{pmatrix}
+\begin{pmatrix}
+x\\
+y\\
+z
+\end{pmatrix}
+= T
+\begin{pmatrix}
+x\\
+y\\
+z
+\end{pmatrix}.
+\end{align*}
+于是曲线$C$方程等价于
+\begin{align*}
+\begin{cases}
+\left( \frac{\alpha\gamma}{KM}x'-\frac{\beta}{K}y' \right)^2+\left( \frac{\beta\gamma}{KM}x'+\frac{\alpha}{K}y' \right)^2+\left( -\frac{K}{M}x' \right)^2=1\\
+z' = 0
+\end{cases}
+\Longleftrightarrow
+\begin{cases}
+x'^2+y'^2=1\\
+z' = 0
+\end{cases}.
+\end{align*}
+因为正交变换是等距变换，进而保持弧长微元，即
+\begin{align*}
+\mathrm{d}s=\sqrt{(\mathrm{d}x)^2+(\mathrm{d}y)^2+(\mathrm{d}z)^2}
+= \left| \begin{pmatrix} \mathrm{d}x\\ \mathrm{d}y\\ \mathrm{d}z \end{pmatrix} \right|
+= \left| T\begin{pmatrix} \mathrm{d}x'\\ \mathrm{d}y'\\ \mathrm{d}z' \end{pmatrix} \right|
+= \left| \begin{pmatrix} \mathrm{d}x'\\ \mathrm{d}y'\\ \mathrm{d}z' \end{pmatrix} \right|
+= \sqrt{(\mathrm{d}x')^2+(\mathrm{d}y')^2+(\mathrm{d}z')^2}
+= \mathrm{d}s'.
+\end{align*}
+又由曲线$C:\begin{cases}x'^2+y'^2=1\\z'=0\end{cases}$的对称性知
+\begin{align*}
+\int_{x'^2+y'^2=1,z'=0}x'y'\mathrm{d}s'
+= \int_{x'^2+y'^2=1,z'=0}(-x')y'\mathrm{d}s'
+\Longrightarrow
+\int_{x'^2+y'^2=1,z'=0}x'y'\mathrm{d}s'=0.
+\end{align*}
+所以
+\begin{align*}
+\int_C y(y-x)\mathrm{d}s
+=& \int_{x'^2+y'^2=1,z'=0}\left( \frac{\beta\gamma}{KM}x'+\frac{\alpha}{K}y' \right)\left( \frac{(\beta-\alpha)\gamma}{KM}x'+\frac{\alpha+\beta}{K}y' \right)\mathrm{d}s'\\
+=& \int_{x'^2+y'^2=1,z'=0}\left[ \frac{\beta(\beta-\alpha)\gamma^2}{K^2M^2}x'^2+\frac{\alpha(\alpha+\beta)}{K^2}y'^2 \right]\mathrm{d}s'\\
+=& \int_0^{2\pi}\left[ \frac{\beta(\beta-\alpha)\gamma^2}{K^2M^2}\cos^2\theta+\frac{\alpha(\alpha+\beta)}{K^2}\sin^2\theta \right]\mathrm{d}\theta\\
+=& \frac{\beta(\beta-\alpha)\gamma^2}{K^2M^2}\pi + \frac{\alpha(\alpha+\beta)}{K^2}\pi
+= \pi \frac{\alpha^2+\alpha\beta+\gamma^2}{\alpha^2+\beta^2+\gamma^2}.
+\end{align*}
+\end{solution}
+
+\begin{example}
+对 $t\in(0,+\infty)$，令
+\begin{align*}
+I(t)=\iint_{\Sigma_t} P\mathrm{d}y\mathrm{d}z+Q\mathrm{d}z\mathrm{d}x+R\mathrm{d}x\mathrm{d}y,
+\end{align*}
+其中 $\Sigma_t$ 是柱体 $\{(x,y,z)\mid x^2+y^2\leqslant t^2,0\leqslant z\leqslant 1\}$ 的表面，定向为外侧.$P = Q = R = f\big((x^2+y^2)z\big), f \in C^1(\mathbb{R})$.求极限：
+\begin{align*}
+\lim\limits_{t\to0^+}\frac{I(t)}{t^4}.
+\end{align*}
+\end{example}
+\begin{solution}
+由\hyperref[theorem:Gauss公式--数分]{Gauss公式}可得
+\begin{align*}
+I(t)=\iiint_V \left(\frac{\partial P}{\partial x}+\frac{\partial Q}{\partial y}+\frac{\partial R}{\partial z}\right)\mathrm{d}x\mathrm{d}y\mathrm{d}z=\iiint_V f'\big((x^2+y^2)z\big)\big(2xz+2yz+x^2+y^2\big)\mathrm{d}x\mathrm{d}y\mathrm{d}z,
+\end{align*}
+其中 $V\triangleq\{(x,y,z)\mid x^2+y^2\leqslant t^2,0\leqslant z\leqslant1\}$.再利用柱坐标换元得
+\begin{align*}
+I(t)&=\iint_{x^2+y^2\leqslant t^2}\mathrm{d}x\mathrm{d}y\int_0^1 f'\big((x^2+y^2)z\big)\big(2xz+2yz+x^2+y^2\big)\mathrm{d}z\\
+&=\int_0^t \mathrm{d}r\int_0^1 \mathrm{d}z\int_0^{2\pi} f'(r^2z)\big(2zr\cos\theta+2zr\sin\theta+r^2\big)\cdot r\mathrm{d}\theta\\
+&=\int_0^t \mathrm{d}r\int_0^1 2\pi f'(r^2z)\cdot r^3\mathrm{d}z
+=\int_0^t 2\pi r f(r^2)\mathrm{d}r.
+\end{align*}
+从而再由L'Hospital法则得
+\begin{align*}
+\lim_{t\to0^+}\frac{I(t)}{t^4}=\lim_{t\to0^+}\frac{I'(t)}{4t^3}=\lim_{t\to0^+}\frac{2\pi t f(t^2)}{4t^3}=\lim_{t\to0^+}\frac{\pi f(t^2)}{2t^2}=\frac{\pi}{2}f'(0).
+\end{align*}
+\end{solution}
+
+\begin{example}
+设 $A(x_1, y_1), B(x_2, y_2), C(x_3, y_3)$ 为 $\mathbb{R}^2$ 中三角形的三个顶点，它们围成的区域记为 $D$，计算
+\begin{align*}
+\iint_D x^2 \, \mathrm{d}x\,\mathrm{d}y.
+\end{align*}
+\end{example}
+\begin{solution}
+
+{\color{blue}解法一:} 利用仿射变换令
+\begin{align*}
+\begin{cases}
+x=x_1+u(x_2-x_1)+v(x_3-x_1),\\
+y=y_1+u(y_2-y_1)+v(y_3-y_1),\\
+\end{cases}
+\end{align*}
+则三角形区域 $D$ 对应 $uv$ 平面上的标准三角形
+\[
+D' = \{(u,v): u\geqslant 0,\ v\geqslant 0,\ u+v\leqslant 1\}.
+\]
+该变换的 Jacobi 行列式的绝对值为
+\begin{align*}
+|\det J| = \left| \begin{vmatrix}
+x_2-x_1 & x_3-x_1 \\
+y_2-y_1 & y_3-y_1
+\end{vmatrix} \right| 
+= \left|(x_2-x_1)(y_3-y_1) - (x_3-x_1)(y_2-y_1)\right|\triangleq \Delta.
+\end{align*}
+因此
+\begin{align}
+\iint_D x^2 \, \mathrm{d}x\,\mathrm{d}y
+&= \Delta \iint_{D'} \bigl[x_1+u(x_2-x_1)+v(x_3-x_1)\bigr]^2 \, \mathrm{d}u\,\mathrm{d}v. \label{tra}
+\end{align}
+展开平方并利用以下积分结果：
+\begin{gather*}
+\iint_{D^{\prime}}{1\,\mathrm{d}u\mathrm{d}v=\frac{1}{2},}\quad \iint_{D^{\prime}}{uv\,\mathrm{d}u\mathrm{d}v=\int_0^1{\mathrm{d}u\int_0^{1-u}{uv\mathrm{d}v}}=\frac{1}{24},}
+\\
+\iint_{D^{\prime}}{u\,\mathrm{d}u\mathrm{d}v=\iint_{D^{\prime}}{v\,\mathrm{d}u\mathrm{d}v}}=\int_0^1{\mathrm{d}u\int_0^{1-u}{v\mathrm{d}v}}=\frac{1}{6},
+\\
+\iint_{D^{\prime}}{u^2\,\mathrm{d}u\mathrm{d}v=\iint_{D^{\prime}}{v^2\,\mathrm{d}u\mathrm{d}v}}=\int_0^1{\mathrm{d}u\int_0^{1-u}{v^2\mathrm{d}v}}=\frac{1}{12},
+\end{gather*}
+代入\eqref{tra}式化简得
+\begin{align*}
+\iint_D x^2 \, \mathrm{d}x\,\mathrm{d}y
+&= \frac{\Delta}{12}\left(x_1^2+x_2^2+x_3^2+x_1x_2+x_2x_3+x_3x_1\right).
+\end{align*}
+
+{\color{blue}解法二:} 利用\hyperref[theorem:Green公式--数分]{Green公式}。取
+$P(x,y)=0, Q(x,y)=\frac{x^3}{3},$
+则
+$\frac{\partial Q}{\partial x} - \frac{\partial P}{\partial y} = x^2.$
+由\hyperref[theorem:Green公式--数分]{Green公式}得
+\begin{align*}
+\iint_D x^2 \, \mathrm{d}x\,\mathrm{d}y
+= \oint_{\partial D} \frac{x^3}{3} \, \mathrm{d}y,
+\end{align*}
+其中 $\partial D$ 为折线 $A\to B\to C\to A$。对于任一边 $X_i\to X_j$,其中$X_i=(x_i,y_i)$，$X_j=(x_j,y_j)$.若 $x_i\neq x_j$，则
+\begin{align*}
+\int_{X_i}^{X_j} \frac{x^3}{3} \, \mathrm{d}y
+= \frac{y_j-y_i}{x_j-x_i}\int_{x_i}^{x_j} \frac{x^3}{3} \, \mathrm{d}x
+= \frac{y_j-y_i}{x_j-x_i}\cdot \frac{x_j^4-x_i^4}{12} 
+= \frac{(y_j-y_i)(x_i^3+x_i^2x_j+x_ix_j^2+x_j^3)}{12}.
+\end{align*}
+因此
+\begin{align*}
+\iint_D x^2 \, \mathrm{d}x\,\mathrm{d}y
+= \frac{1}{12}\Bigg[
+\frac{y_2-y_1}{x_2-x_1}(x_2^4-x_1^4)
++ \frac{y_3-y_2}{x_3-x_2}(x_3^4-x_2^4) 
++ \frac{y_1-y_3}{x_1-x_3}(x_1^4-x_3^4)
+\Bigg],
+\end{align*}
+\end{solution}
+
+\begin{proposition}[球冠面积和体积公式]\label{proposition:球冠面积和体积公式}
+设半径为 \(a\) 的球体被一个平面截成两部分，其中较小的一部分称为球冠（或球缺）。设该球冠的高度为 \(H\),即球冠的顶点到截平面的垂直距离，则球冠的表面积 \(S\) 和体积 \(V\) 分别为
+\begin{align}
+\label{eq:cap_area}
+S &= 2\pi a H, \\
+\label{eq:cap_volume}
+V &= \frac{\pi H^2}{3}(3a - H).
+\end{align}
+\end{proposition}
+\begin{proof}
+
+{\heiti 面积公式证明:} 我们采用微圆环法。建立球坐标系，设球心位于原点。将球冠沿着垂直于对称轴的方向切成无数个极窄的圆环。取与对称轴夹角为 \(\theta\) 处的微元，该圆环的半径 \(r = a\sin\theta\)，圆环的斜宽（即经线上的微元弧长）为 \(\mathrm{d}s = a\,\mathrm{d}\theta\)。
+因此，该微圆环的面积微元为
+\begin{align*}
+\mathrm{d}S = 2\pi r \cdot \mathrm{d}s = 2\pi a^2 \sin\theta \, \mathrm{d}\theta.
+\end{align*}
+设球冠底部的边缘对应的夹角为 \(\theta_0\)。将微元从球冠顶点（\(\theta=0\)）积分到边缘（\(\theta=\theta_0\)），得到球冠的表面积
+\begin{align*}
+S = \int_{0}^{\theta_0} 2\pi a^2 \sin\theta \, \mathrm{d}\theta = 2\pi a^2 \left[ -\cos\theta \right]_{0}^{\theta_0} = 2\pi a^2 (1 - \cos\theta_0).
+\end{align*}
+由几何关系可知，球心到截平面的距离为 \(d = a - H\)，并且 \(\cos\theta_0 = \frac{d}{a} = 1 - \frac{H}{a}\)。将其代入上式，得到
+\begin{align*}
+S &= 2\pi a^2 \left[ 1 - \left(1 - \frac{H}{a}\right) \right] = 2\pi a H.
+\end{align*}
+即得面积公式 \eqref{eq:cap_area}。
+
+{\heiti 体积公式证明:} 采用圆盘法。以球冠的对称轴为 \(z\) 轴，设球心在原点，球冠位于 \(z = a-H\) 与 \(z = a\) 之间。在高度 \(z\) 处，截面圆的半径为 \(r(z) = \sqrt{a^2 - z^2}\)，对应的薄圆盘体积微元为 \(\mathrm{d}V = \pi (a^2 - z^2) \mathrm{d}z\)。
+将体积微元从 \(z = a-H\) 到 \(z = a\) 进行积分，得到球冠的体积
+\begin{align}
+V = \pi \int_{a-H}^{a} (a^2 - z^2) \mathrm{d}z = \pi \left[ a^2 z - \frac{z^3}{3} \right]_{a-H}^{a}. \label{eq:vol_integral}
+\end{align}
+将上限 \(a\) 和下限 \(a-H\) 代入 \eqref{eq:vol_integral} 中进行计算：
+\begin{align*}
+V = \pi \left( a^3 - \frac{a^3}{3} \right) - \pi \left[ a^2(a-H) - \frac{(a-H)^3}{3} \right] = \pi \left( \frac{2a^3}{3} \right) - \pi \left( \frac{2a^3 - 3aH^2 + H^3}{3} \right).
+\end{align*}
+化简后可得
+\begin{align*}
+V = \frac{\pi}{3} (3aH^2 - H^3) = \frac{\pi H^2}{3}(3a - H).
+\end{align*}
+即得体积公式 \eqref{eq:cap_volume}.
+\end{proof}
+
+\begin{example}
+计算曲面积分 \(\iint_{\Sigma} x \, \mathrm{d}y \, \mathrm{d}z + y \, \mathrm{d}z \, \mathrm{d}x + z \, \mathrm{d}x \, \mathrm{d}y\)，其中 \(\Sigma\) 为球面 \(x^2 + y^2 + z^2 = a^2\) 被平面 \(x + y + z = h\) 所分成的两部分中较小的一部分（这里 \(0 < h < \sqrt{3}a\)），法线方向指向原球面的外侧。
+\end{example}
+\begin{solution}
+将第二型曲面积分转化为第一型曲面积分。令向量场 \(\vec{F} = (x, y, z)\)，则原积分等于向量场 \(\vec{F}\) 穿过曲面 \(\Sigma\) 的通量，即
+\begin{align*}
+\iint_{\Sigma} x \, \mathrm{d}y \, \mathrm{d}z + y \, \mathrm{d}z \, \mathrm{d}x + z \, \mathrm{d}x \, \mathrm{d}y = \iint_{\Sigma} \vec{F} \cdot \vec{n} \, \mathrm{d}S.
+\end{align*}
+由于 \(\Sigma\) 是球面的一部分，且法线方向指向外侧，故其单位法向量为 \(\vec{n} = \left( \frac{x}{a}, \frac{y}{a}, \frac{z}{a} \right)\)。
+计算被积函数的内积，得
+\begin{align*}
+\vec{F} \cdot \vec{n} = x \cdot \frac{x}{a} + y \cdot \frac{y}{a} + z \cdot \frac{z}{a} = \frac{x^2 + y^2 + z^2}{a}.
+\end{align*}
+因为积分区域 \(\Sigma\) 始终在球面上，所以满足球面方程 \(x^2 + y^2 + z^2 = a^2\)，代入可得
+\begin{align*}
+\iint_{\Sigma} \vec{F} \cdot \vec{n} \, \mathrm{d}S=\iint_{\Sigma} a \, \mathrm{d}S = a \cdot S_{\Sigma},
+\end{align*}
+其中 \(S_{\Sigma}\) 是较小部分球冠的表面积。
+原点到平面 \(x+y+z=h\) 的距离为
+\begin{align*}
+d = \frac{|0+0+0-h|}{\sqrt{1^2+1^2+1^2}} = \frac{h}{\sqrt{3}}.
+\end{align*}
+因此，该球冠的高度 \(H\) 为
+\begin{align*}
+H = a - d = a - \frac{h}{\sqrt{3}}.
+\end{align*}
+根据\hyperref[proposition:球冠面积和体积公式]{球冠面积公式}，可得球冠 \(\Sigma\) 的表面积为
+\begin{align*}
+S_{\Sigma} = 2\pi a H = 2\pi a \left( a - \frac{h}{\sqrt{3}} \right).
+\end{align*}
+代回原积分表达式，最终得到
+\begin{align*}
+\iint_{\Sigma} x \, \mathrm{d}y \, \mathrm{d}z + y \, \mathrm{d}z \, \mathrm{d}x + z \, \mathrm{d}x \, \mathrm{d}y = a \cdot 2\pi a \left( a - \frac{h}{\sqrt{3}} \right) = 2\pi a^2 \left( a - \frac{h}{\sqrt{3}} \right).
+\end{align*}
+\end{solution}
+
+\begin{example}
+设 \(D = \{(x,y)|x^2 + y^2 \leqslant 1\}\), 二元可微函数 \(f(x,y)\) 满足
+\begin{align*}
+(xy+1)\iint_D f(x,y)\,\mathrm{d}A = \frac{\pi}{2} f(x,y) + 2x^2 + 2y^2.
+\end{align*}
+求 \(f(x,y)\).
+\end{example}
+\begin{solution}
+设 \(A = \iint_D f(x,y)\,\mathrm{d}A\). 将 \(A\) 代入原方程得
+\begin{align*}
+(xy+1)A = \frac{\pi}{2} f(x,y) + 2x^2 + 2y^2.
+\end{align*}
+进而
+\begin{align}\label{eq::qqAQQQQQQ}
+f(x,y) = \frac{2}{\pi} \left[ A(xy+1) - 2x^2 - 2y^2 \right].
+\end{align}
+接下来, 我们将\eqref{eq::qqAQQQQQQ}式代回 \(A\) 的定义式中去求 \(A\) 的值:
+\begin{align}\label{eq::jJJIijjjj}
+A = \iint_D \frac{2}{\pi} \left[ A(xy+1) - 2x^2 - 2y^2 \right] \,\mathrm{d}A= \frac{2}{\pi} \left[ A \iint_D xy \,\mathrm{d}A + A \iint_D 1 \,\mathrm{d}A - 2 \iint_D (x^2+y^2) \,\mathrm{d}A \right].
+\end{align}
+分别计算这三个二重积分:
+\begin{gather*}
+\iint_D xy \,\mathrm{d}A = 0, \quad
+\iint_D 1 \,\mathrm{d}A = \pi, \\
+\iint_D (x^2+y^2) \,\mathrm{d}A = \int_0^{2\pi} \mathrm{d}\theta \int_0^1 r^2 \cdot r \,\mathrm{d}r =\frac{\pi}{2}.
+\end{gather*}
+将上述结果代入\eqref{eq::jJJIijjjj}式中得
+\begin{align*}
+A = \frac{2}{\pi} \left[ A \cdot 0 + A \cdot \pi - 2 \cdot \frac{\pi}{2} \right], =2A - 2\Longrightarrow A=2.
+\end{align*}
+最后, 将 \(A=2\) 代回 \eqref{eq::qqAQQQQQQ}式中得
+\begin{align*}
+f(x,y) = \frac{2}{\pi} \left[ 2(xy+1) - 2x^2 - 2y^2 \right]=f(x,y) = \frac{4}{\pi}(1+xy-x^2-y^2).
+\end{align*}
+\end{solution}
+
+
+\subsection{利用调和函数性质计算}
+
+\begin{definition}
+设$D$为$\mathbb{R}^n$中的开区域，函数$u\in C^n(D)$。若
+\begin{align*}
+\Delta u\triangleq \sum_{i=1}^n{\frac{\partial ^2u}{\partial x_{i}^{2}}}=0, \quad \forall (x,y)\in D,
+\end{align*}
+则称$u$为$D$上的\textbf{调和函数},也称$u$在区域$D$上\textbf{调和}.
+\end{definition}
+
+\begin{theorem}[调和函数的平均值定理]\label{theorem:数分-调和函数的平均值定理}
+设$u$在开区域$D\subset \mathbb{R}^2$内调和，$(x_0,y_0)\in D$，$r>0$使得闭圆盘$\overline{B_r(x_0,y_0)}\subset D$。则
+\begin{enumerate}[(1)]
+\item 圆周平均值公式：
+\begin{align*}
+u(x_0,y_0)=\frac{1}{2\pi}\int_{0}^{2\pi} u(x_0+r\cos\theta, y_0+r\sin\theta)\,\mathrm{d}\theta. 
+\end{align*}
+\item 圆盘平均值公式：
+\begin{align*}
+u(x_0,y_0)=\frac{1}{\pi r^2}\iint_{B_r(x_0,y_0)} u(x,y)\,\mathrm{d}x\mathrm{d}y. 
+\end{align*}
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 对$0<\rho<r$，记$B_\rho$为以$(x_0,y_0)$为圆心、$\rho$为半径的圆盘，其边界为$\partial B_\rho$。由\hyperref[theorem:Green第一恒等式]{Green第一恒等式}有
+\begin{align*}
+0=\iint_{B_\rho} \Delta u\,\mathrm{d}x\mathrm{d}y
+=\oint_{\partial B_\rho} \frac{\partial u}{\partial n}\,\mathrm{d}s,
+\end{align*}
+其中$\frac{\partial u}{\partial n}$为外法向导数。在极坐标$(x,y)=(x_0+\rho\cos\theta, y_0+\rho\sin\theta)$下，$\frac{\partial u}{\partial n}=u_\rho$，$\mathrm{d}s=\rho\,\mathrm{d}\theta$，故由\hyperref[theorem:含参反常积分的可微性]{含参反常积分的可微性}知
+\begin{align*}
+0=\int_{0}^{2\pi} u_\rho(\rho,\theta)\,\rho\,\mathrm{d}\theta
+=\rho \frac{\mathrm{d}}{\mathrm{d}\rho}\left(\int_{0}^{2\pi} u(\rho,\theta)\,\mathrm{d}\theta\right).
+\end{align*}
+因此
+\begin{align*}
+\int_{0}^{2\pi} u(\rho,\theta)\,\mathrm{d}\theta = C \in \mathbb{R},
+\end{align*}
+令$\rho\to 0^+$，由连续性得
+\begin{align*}
+C=2\pi u(x_0,y_0),
+\end{align*}
+从而圆周平均值公式成立。
+
+\item 将圆周平均值公式两边乘以$\rho$，并对$\rho$从$0$到$r$积分：
+\begin{align*}
+u(x_0,y_0)\int_{0}^{r} \rho\,\mathrm{d}\rho
+=\frac{1}{2\pi}\int_{0}^{r}\int_{0}^{2\pi} u(x_0+\rho\cos\theta, y_0+\rho\sin\theta)\rho\,\mathrm{d}\theta\mathrm{d}\rho,
+\end{align*}
+再取$x=x_0+\rho \cos\theta,y=y_0+\rho \sin \theta$换元得
+\begin{align*}
+u(x_0,y_0)\frac{r^2}{2}
+=\frac{1}{2\pi}\iint_{B_r} u\,\mathrm{d}x\mathrm{d}y,
+\end{align*}
+整理得
+\begin{align*}
+u(x_0,y_0)=\frac{1}{\pi r^2}\iint_{B_r} u\,\mathrm{d}x\mathrm{d}y.
+\end{align*}
+从而圆盘平均值公式成立。
+\end{enumerate}
+\end{proof}
+
+
+\begin{example}
+定义在 $D \triangleq \{(x,y): x^2+y^2 \leqslant R^2\}$ 的函数 $f$ 二阶连续可微, 满足 $f(0,0)=0$, $\Delta f = x + x^2 + y^2$, 计算积分
+\begin{align}
+I = \iint_D f(x,y)\mathrm{d}x\mathrm{d}y.
+\label{eq:double_int_f_disk_20260704}
+\end{align}
+\end{example}
+\begin{note}
+可以利用PDE中关于求解Possion方程的方法反解出满足$\Delta P=\Delta f=x^2+y^2+x$的函数$P$.
+\end{note}
+\begin{solution}
+设$r^2=x^2+y^2$，令
+\begin{align*}
+P(x,y)=\frac{r^4}{16}+\frac{xr^2}{8}=\frac{\left( x^2+y^2 \right) ^2}{16}+\frac{x\left( x^2+y^2 \right)}{8}.
+\end{align*}
+直接计算得
+\begin{align*}
+\Delta P = x^2+y^2+x=\Delta f.
+\end{align*}
+故$h\triangleq f-P$在$D$内调和。
+
+又因$f(0,0)=0$且$P(0,0)=0$，故$h(0,0)=0$。由\hyperref[theorem:数分-调和函数的平均值定理]{调和函数的平均值定理}，对半径为$R$的圆盘$D$，有
+\begin{align*}
+h(0,0)=\frac{1}{\pi R^2}\iint_D h(x,y)\,\mathrm{d}x\mathrm{d}y.
+\end{align*}
+因为$h(0,0)=0$，所以
+\begin{align*}
+\iint_D h\,\mathrm{d}x\mathrm{d}y=0.
+\end{align*}
+于是
+\begin{align*}
+I=\iint_D f\,\mathrm{d}x\mathrm{d}y
+=\iint_D (P+h)\,\mathrm{d}x\mathrm{d}y
+=\iint_D P\,\mathrm{d}x\mathrm{d}y.
+\end{align*}
+而
+\begin{align*}
+\iint_D P\,\mathrm{d}x\mathrm{d}y
+=\frac{1}{16}\iint_D r^4\,\mathrm{d}x\mathrm{d}y
++\frac{1}{8}\iint_D x r^2\,\mathrm{d}x\mathrm{d}y.
+\end{align*}
+由于$D$关于$y$轴对称，且$x r^2$关于$x$为奇函数，故
+\begin{align*}
+\iint_D x r^2\,\mathrm{d}x\mathrm{d}y=0.
+\end{align*}
+因此
+\begin{align*}
+I=\frac{1}{16}\iint_D r^4\,\mathrm{d}x\mathrm{d}y.
+\end{align*}
+用极坐标变换得
+\begin{align*}
+I=\frac{1}{16}\int_{0}^{2\pi}\int_{0}^{R} \rho^4\cdot \rho\,\mathrm{d}\rho\mathrm{d}\theta 
+=\frac{1}{16}\cdot 2\pi\cdot \frac{R^6}{6} =\frac{\pi R^6}{48}.
+\end{align*}
+\end{solution}
+
+\begin{example}
+设 $f(t)$ 是连续函数, 令
+\[
+F(t) = \iiint\limits_{D} f(xyz) \mathrm{d}x \mathrm{d}y \mathrm{d}z,
+\]
+其中 $D = \{(x,y,z) \mid 0 \leqslant x \leqslant t, 0 \leqslant y \leqslant t, 0 \leqslant z \leqslant t\}$. 证明:
+\[
+F'(t) = \frac{3}{t} \int_0^{t^3} \frac{g(u)}{u} \mathrm{d}u,
+\]
+其中 $g(u) = \int_0^u f(s) \mathrm{d}s.$
+\end{example}
+\begin{proof}
+记 $h(t) \triangleq \int_0^t \frac{g(u)}{u} \,\mathrm{d}u,$ 则由题设可知
+\begin{align*}
+F(t) &= \int_0^t \mathrm{d}z \int_0^t \mathrm{d}y \int_0^t f(xyz) \,\mathrm{d}x \xlongequal{s=yz\cdot x} \int_0^t \mathrm{d}z \int_0^t \mathrm{d}y \int_0^{tyz} \frac{f(s)}{yz} \,\mathrm{d}s, \\
+&= \int_0^t \mathrm{d}z \int_0^t \frac{g(tyz)}{yz} \,\mathrm{d}y \xlongequal{u=tz\cdot y} \int_0^t \mathrm{d}z \int_0^{t^2z} \frac{g(u)}{zu} \,\mathrm{d}u, \\
+&= \int_0^t \frac{h(t^2z)}{z} \,\mathrm{d}z \xlongequal{w=t^2z} \int_0^{t^3} \frac{h(w)}{w} \,\mathrm{d}w.
+\end{align*}
+从而
+\begin{align*}
+F'(t) = \frac{\mathrm{d}}{\mathrm{d}t} \int_0^{t^3} \frac{h(w)}{w} \,\mathrm{d}w = \frac{3}{t} h(t^3) = \frac{3}{t} \int_0^{t^3} \frac{g(u)}{u} \,\mathrm{d}u.
+\end{align*}
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}

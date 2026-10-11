@@ -1,0 +1,503 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}}
+
+\begin{document}
+
+\section{梯度流}\label{section:ch09-6-梯度流}
+
+本节通过引入某些由凸函数生成的非线性半群，来扩充我们关于线性算子抽象半群理论（\S7.4）的讨论。应用包括各种非线性二阶抛物偏微分方程。
+
+\subsection{Hilbert 空间上的凸函数}\label{subsection:ch09-6-1-Hilbert凸函数}
+
+迄今为止，凸性一直是我们分析非线性 PDE 的一个基本要素。现拓宽视野，考察定义在（可能无穷维的）Hilbert 空间上的凸函数。
+
+此后 $H$ 表示一个实 Hilbert 空间，内积 $(,)$，范数 $\|\|$。
+
+\begin{definition}\label{definition:ch09-6-凸函数}
+函数 $I:H\to(-\infty,\infty]$ 是\textbf{凸的}，只要
+\begin{align*}
+I[\tau u+(1-\tau)v]\leqslant\tau I[u]+(1-\tau)I[v]
+\end{align*}
+对所有 $u,v\in H$ 及每个 $0\leqslant\tau\leqslant 1$。
+\end{definition}
+
+请注意，我们允许 $I$ 取 $+\infty$（但不允许 $-\infty$）。函数 $I$ 称为\textbf{真的}，若 $I$ 不恒等于 $+\infty$。$I$ 的\textbf{定义域}为
+\begin{align*}
+D(I)\triangleq\{u\in H\mid I[u]<+\infty\}.
+\end{align*}
+
+\begin{definition}\label{definition:ch09-6-下半连续}
+称 $I:H\to(-\infty,+\infty]$ 是\textbf{下半连续的}，若
+\begin{align*}
+u_k\to u\text{ 于 }H\quad\Longrightarrow\quad I[u]\leqslant\liminf_{k\to\infty}I[u_k].
+\end{align*}
+\end{definition}
+
+如有限维情形（参见 \S B.1），重要的是理解 $I$ 的图像何时有一个支撑超平面。
+
+\begin{definition}\label{definition:ch09-6-次微分}
+设 $I:H\to(-\infty,+\infty]$ 凸且真。
+(i) 对每个 $u\in H$，写
+\begin{align}
+\partial I[u]\triangleq\{v\in H\mid I[w]\geqslant I[u]+(v,w-u)\text{ 对所有 }w\in H\}.\label{align:ch09-6-eq01}
+\end{align}
+映射 $\partial I:H\to 2^H$ 称为 $I$ 的\textbf{次微分}。
+(ii) 称 $u\in D(\partial I)$（$\partial I$ 的定义域），只要 $\partial I[u]\neq\emptyset$。
+\end{definition}
+
+\eqref{align:ch09-6-eq01} 的几何解释是：$v\in\partial I[u]$ 当且仅当 $v$ 是一个仿射泛函的"斜率"，该仿射泛函在点 $u$ 处从下方触及 $I$ 的图像。由于该图像在 $u$ 处可能有一个"角点"，$\partial I[u]$ 可能是多值的。
+
+\begin{theorem}[次微分的性质]\label{theorem:ch09-6-1-次微分性质}
+设 $I:H\to(-\infty,+\infty]$ 凸、真、下半连续。则
+(i) $D(\partial I)\subseteq D(I)$。
+(ii) 若 $v\in\partial I[u]$、$\widetilde{v}\in\partial I[\widetilde{u}]$，则
+\begin{align*}
+(v-\widetilde{v},u-\widetilde{u})\geqslant 0\qquad\text{（单调性）}.
+\end{align*}
+(iii) $I[u]=\min_{w\in H}I[w]$ 当且仅当 $0\in\partial I[u]$。
+(iv) 对每个 $w\in H$ 及 $\lambda>0$，问题
+\begin{align*}
+u+\lambda\partial I[u]\ni w
+\end{align*}
+有唯一解 $u\in D(\partial I)$。
+断言 (iv) 意味着存在 $u\in D(\partial I)$ 及 $v\in\partial I[u]$ 使 $u+\lambda v=w$。
+\begin{proof}
+1. 设 $u\in D(\partial I)$，$v\in\partial I[u]$。则对所有 $w\in H$，$I[w]\geqslant I[u]+(v,w-u)$。因 $I$ 真，存在点 $u_0$ 使 $I[u_0]<+\infty$。故 $I[u]\leqslant I[u_0]+(v,u-u_0)<\infty$，从而 $u\in D(I)$。此证 (i)。
+2. 给定 $v\in\partial I[u]$、$\widetilde{v}\in\partial I[\widetilde{u}]$，知
+\begin{align*}
+I[\widetilde{u}]\geqslant I[u]+(v,\widetilde{u}-u),\qquad I[u]\geqslant I[\widetilde{u}]+(\widetilde{v},u-\widetilde{u}).
+\end{align*}
+因 (i) 蕴涵 $I[u],I[\widetilde{u}]<+\infty$，可把上述不等式相加并整理，得 (ii)。
+3. 若 $I[u]=\min I$，则
+\begin{align}
+I[w]\geqslant I[u]+(0,w-u)\quad\text{对所有 }w\in H.\label{align:ch09-6-eq02}
+\end{align}
+故 $0\in\partial I[u]$。反之若 $0\in\partial I[u]$，则\eqref{align:ch09-6-eq02} 成立，从而 $I[u]=\min I$。
+4. 给定 $w\in H$ 及 $\lambda>0$，定义
+\begin{align}
+J[u]\triangleq\frac12\|u\|^2+\lambda I[u]-(u,w)\qquad (u\in H).\label{align:ch09-6-eq03}
+\end{align}
+打算证明 $J$ 在 $H$ 上取到最小值。
+先断言
+\begin{align}
+u_k\rightharpoonup u\text{ 弱于 }H\quad\Longrightarrow\quad I[u]\leqslant\liminf_{k\to\infty}I[u_k].\label{align:ch09-6-eq04}
+\end{align}
+换言之，对凸函数 $I$，我们断言：关于序列强收敛的下半连续蕴涵关于弱收敛的下半连续。为看清此点，设 $u_k\rightharpoonup u$ 于 $H$，且
+\begin{align*}
+\liminf_{k\to\infty}I[u_k]=\lim_{j\to\infty}I[u_{k_j}]=l<\infty
+\end{align*}
+某子列 $\{u_{k_j}\}_{j=1}^\infty\subset\{u_k\}_{k=1}^\infty$。对每个 $\varepsilon>0$，集合 $K_\varepsilon=\{w\in H\mid I[w]\leqslant l+\varepsilon\}$ 闭、凸，故由 Mazur 定理（\S D.4）弱闭。因 $\{u_{k_j}\}_{j=1}^\infty$ 中除有限个外都位于 $K_\varepsilon$ 中，$u\in K_\varepsilon$，从而
+\begin{align*}
+I[u]\leqslant l+\varepsilon=\liminf_{k\to\infty}I[u_k]+\varepsilon.
+\end{align*}
+此对每个 $\varepsilon>0$ 成立，故\eqref{align:ch09-6-eq04} 得证。
+5. 接着断言
+\begin{align}
+I[u]\geqslant-C-C\|u\|\qquad (u\in H)\label{align:ch09-6-eq05}
+\end{align}
+对某常数 $C$。为验证此断言，反设对每个 $k=1,2,\cdots$，存在点 $u_k\in H$ 使
+\begin{align}
+I[u_k]\leqslant-k-k\|u_k\|.\label{align:ch09-6-eq06}
+\end{align}
+若序列 $\{u_k\}_{k=1}^\infty$ 在 $H$ 中有界，则由 \S D.4 存在弱收敛子列 $u_{k_j}\rightharpoonup u$。但随后\eqref{align:ch09-6-eq04} 与\eqref{align:ch09-6-eq06} 蕴涵矛盾 $I[u]=-\infty$。故必要时再取子列，不妨设 $\|u_k\|\to\infty$。选 $u_0\in H$ 使 $I[u_0]<\infty$。令
+\begin{align*}
+z_k\triangleq\frac{u_k}{\|u_k\|}+\left(1-\frac1{\|u_k\|}\right)u_0\qquad (k=1,2,\cdots).
+\end{align*}
+则凸性蕴涵
+\begin{align*}
+I[z_k]\leqslant\frac1{\|u_k\|}I[u_k]+\left(1-\frac1{\|u_k\|}\right)I[u_0]\leqslant-k+|I[u_0]|.
+\end{align*}
+因 $\{z_k\}_{k=1}^\infty$ 有界，可提取弱收敛子列 $z_{k_j}\rightharpoonup z$，再次导出矛盾 $I[z]=-\infty$。由此建立断言\eqref{align:ch09-6-eq05}。
+6. 回到由\eqref{align:ch09-6-eq03} 定义的函数 $J$。选取极小化序列 $\{u_k\}_{k=1}^\infty\subset H$ 使
+\begin{align*}
+J[u_k]\to\inf_{w\in H}J[w]=m.
+\end{align*}
+由\eqref{align:ch09-6-eq03} 与\eqref{align:ch09-6-eq05}，$m$ 有限。故由\eqref{align:ch09-6-eq03}、\eqref{align:ch09-6-eq05} 推得序列 $\{u_k\}_{k=1}^\infty$ 有界。然后可提取弱收敛子列 $u_{k_j}\rightharpoonup u$。因映射 $u\mapsto\|u\|^2$ 弱下半连续，$J$ 在 $u$ 处取最小。于是断言 (iii) 说 $0\in\partial J[u]$。一个计算验证 $\partial J[u]=u-w+\lambda\partial I[u]$，从而
+\begin{align*}
+u+\lambda\partial I[u]\ni w.
+\end{align*}
+7. 为确认唯一性，设还有 $\widetilde{u}+\lambda\partial I[\widetilde{u}]\ni w$。则 $u+\lambda v=w$、$\widetilde{u}+\lambda\widetilde{v}=w$，某 $v\in\partial I[u]$、$\widetilde{v}\in\partial I[\widetilde{u}]$。由单调性断言 (ii)，
+\begin{align*}
+0\leqslant(u-\widetilde{u},v-\widetilde{v})=\left(u-\widetilde{u},-\frac u\lambda+\frac{\widetilde{u}}\lambda\right)=-\frac1\lambda\|u-\widetilde{u}\|^2.
+\end{align*}
+因 $\lambda>0$，$u=\widetilde{u}$。
+\end{proof}
+\end{theorem}
+
+接着引入 \S7.4 中算子 $R_\lambda$、$A_\lambda$ 的非线性类比。
+
+\begin{definition}[1]\label{definition:ch09-6-预解Yosida} 对每个 $\lambda>0$，定义非线性预解 $J_\lambda:H\to D(\partial I)$ 为
+\begin{align*}
+J_\lambda[w]\triangleq u,
+\end{align*}
+其中 $u$ 是 $u+\lambda\partial I[u]\ni w$ 的唯一解。
+(2) 对每个 $\lambda>0$，定义 Yosida 逼近 $A_\lambda:H\to H$ 为
+\begin{align}
+A_\lambda[w]\triangleq\frac{w-J_\lambda[w]}{\lambda}\qquad (w\in H).\label{align:ch09-6-eq07}
+\end{align}
+把 $A_\lambda$ 想成算子 $A=\partial I$ 的某种正则化或磨光。
+\end{definition}
+
+\begin{theorem}[$J_\lambda$、$A_\lambda$ 的性质]\label{theorem:ch09-6-2-Jlambda性质}
+对每个 $\lambda>0$ 及 $w,\widehat{w}\in H$，下列断言成立：
+(i) $\|J_\lambda[w]-J_\lambda[\widehat{w}]\|\leqslant\|w-\widehat{w}\|$；
+(ii) $\|A_\lambda[w]-A_\lambda[\widehat{w}]\|\leqslant\frac2\lambda\|w-\widehat{w}\|$；
+(iii) $0\leqslant(w-\widehat{w},A_\lambda[w]-A_\lambda[\widehat{w}])$；
+(iv) $A_\lambda[w]\in\partial I[J_\lambda[w]]$；
+(v) 若 $w\in D(\partial I)$，则
+\begin{align*}
+\sup_{\lambda>0}\|A_\lambda[w]\|\leqslant|A_0[w]|,
+\end{align*}
+其中 $|A_0[w]|\triangleq\min_{z\in\partial I[w]}\|z\|$；
+(vi) 对每个 $w\in D(\partial I)$，
+\begin{align*}
+\lim_{\lambda\to 0}J_\lambda[w]=w.
+\end{align*}
+\begin{proof}
+1. 令 $u=J_\lambda[w]$、$\widetilde{u}=J_\lambda[\widehat{w}]$。则 $u+\lambda v=w$、$\widetilde{u}+\lambda\widetilde{v}=\widehat{w}$，某 $v\in\partial I[u]$、$\widetilde{v}\in\partial I[\widetilde{u}]$。故
+\begin{align*}
+\|w-\widehat{w}\|^2&=\|u-\widetilde{u}+\lambda(v-\widetilde{v})\|^2\\
+&=\|u-\widetilde{u}\|^2+2\lambda(u-\widetilde{u},v-\widetilde{v})+\lambda^2\|v-\widetilde{v}\|^2\\
+&\geqslant\|u-\widetilde{u}\|^2,
+\end{align*}
+由\cref{theorem:ch09-6-1-次微分性质}(ii)。此证断言 (i)，断言 (ii) 立即由 Yosida 逼近 $A_\lambda$ 的定义\eqref{align:ch09-6-eq07} 得到。
+2. 用\eqref{align:ch09-6-eq07} 计算验证 (iii)：
+\begin{align*}
+(w-\widehat{w},A_\lambda[w]-A_\lambda[\widehat{w}])&=\frac1\lambda\left(\|w-\widehat{w}\|^2-(w-\widehat{w},J_\lambda[w]-J_\lambda[\widehat{w}])\right)\\
+&\geqslant\frac1\lambda\left(\|w-\widehat{w}\|^2-\|w-\widehat{w}\|\|J_\lambda[w]-J_\lambda[\widehat{w}]\|\right)\geqslant 0,
+\end{align*}
+由 (i)。
+3. 为证 (iv)，注意 $u=J_\lambda[w]$ 当且仅当 $u+\lambda v=w$，某 $v\in\partial I[u]=\partial I[J_\lambda[w]]$。但
+\begin{align*}
+v=\frac{w-u}\lambda=\frac{w-J_\lambda[w]}\lambda=A_\lambda[w].
+\end{align*}
+4. 现设 $w\in D(\partial I)$，$z\in\partial I[w]$。令 $u=J_\lambda[w]$，从而 $u+\lambda v=w$，$v\in\partial I[u]$。由单调性
+\begin{align*}
+0\leqslant(w-u,z-v)=\left(w-J_\lambda[w],z-\frac{w-J_\lambda[w]}\lambda\right)=(\lambda A_\lambda[w],z-A_\lambda[w]).
+\end{align*}
+故
+\begin{align*}
+\lambda\|A_\lambda[w]\|^2\leqslant(\lambda A_\lambda[w],z)\leqslant\lambda\|A_\lambda[w]\|\|z\|,
+\end{align*}
+从而
+\begin{align*}
+\|A_\lambda[w]\|\leqslant\|z\|.
+\end{align*}
+此估计对所有 $\lambda>0$、$z\in\partial I[w]$ 成立。断言 (v) 得证。
+5. 若 $w\in D(\partial I)$，则
+\begin{align*}
+\|J_\lambda[w]-w\|=\lambda\|A_\lambda[w]\|\leqslant\lambda|A_0[w]|,
+\end{align*}
+从而 $\lambda\to 0$ 时 $J_\lambda[w]\to w$。现设 $w\in D(\partial I)$（闭包）。对每个 $\varepsilon>0$，存在点 $\widehat{w}\in D(\partial I)$ 使 $\|w-\widehat{w}\|\leqslant\varepsilon$。则
+\begin{align*}
+\|J_\lambda[w]-w\|&\leqslant\|J_\lambda[w]-J_\lambda[\widehat{w}]\|+\|J_\lambda[\widehat{w}]-\widehat{w}\|+\|w-\widehat{w}\|\\
+&\leqslant 2\|w-\widehat{w}\|+\|J_\lambda[\widehat{w}]-\widehat{w}\|\\
+&\leqslant 2\varepsilon+\|J_\lambda[\widehat{w}]-\widehat{w}\|.
+\end{align*}
+因 $\widehat{w}\in D(\partial I)$，$\lambda\to 0$ 时 $J_\lambda[\widehat{w}]\to\widehat{w}$。故
+\begin{align*}
+\limsup_{\lambda\to 0}\|J_\lambda[w]-w\|\leqslant 2\varepsilon
+\end{align*}
+对每个 $\varepsilon>0$。
+\end{proof}
+\end{theorem}
+
+\subsection{次微分与非线性半群}\label{subsection:ch09-6-2-次微分非线性半群}
+
+如前，设 $H$ 为实 Hilbert 空间，取 $I:H\to(-\infty,+\infty]$ 凸、真、下半连续。为简单起见，再假设
+\begin{align}
+\partial I\text{ 稠定，即 }D(\partial I)=H.\label{align:ch09-6-eq08}
+\end{align}
+
+类比 \S7.4 中阐述的线性半群理论，现提议研究微分方程
+\begin{align}
+\begin{cases}
+\mathbf{u}'(t)+A[\mathbf{u}(t)]\ni 0&(t\geqslant 0),\\
+\mathbf{u}(0)=u,
+\end{cases}\label{align:ch09-6-eq09}
+\end{align}
+其中 $u\in H$ 给定，$A=\partial I$ 是非线性、不连续、或许多值的算子。暂且假设\eqref{align:ch09-6-eq09} 对每个初值 $u$ 有唯一解，写
+\begin{align}
+\mathbf{u}(t)=S(t)u\qquad (t>0)\label{align:ch09-6-eq10}
+\end{align}
+并把如此定义的 $S(t)$ 视为对每个时刻 $t\geqslant 0$ 从 $H$ 到 $H$ 的映射。将用记号\eqref{align:ch09-6-eq10} 来强调与 \S7.4 先前引入的线性半群理论的相似性。但请仔细注意：映射 $u\mapsto S(t)u$ 一般是非线性的。
+
+如 \S7.4，有理由进一步期望
+\begin{align}
+S(0)u=u\qquad (u\in H),\label{align:ch09-6-eq11}
+\end{align}
+\begin{align}
+S(t+s)u=S(t)S(s)u\qquad (t,s\geqslant 0,\ u\in H),\label{align:ch09-6-eq12}
+\end{align}
+且对每个 $u\in H$，
+\begin{align}
+\text{映射 }t\mapsto S(t)u\text{ 从 }[0,\infty)\text{ 连续到 }H.\label{align:ch09-6-eq13}
+\end{align}
+
+\begin{definition}[i]\label{definition:ch09-6-非线性半群} 一族从 $H$ 到 $H$ 的非线性算子 $\{S(t)\}_{t\geqslant 0}$ 称为\textbf{非线性半群}，若条件\eqref{align:ch09-6-eq11}--\eqref{align:ch09-6-eq13} 满足。
+(ii) 称 $\{S(t)\}_{t\geqslant 0}$ 为\textbf{压缩半群}，若此外
+\begin{align}
+\|S(t)u-S(t)\widehat{u}\|\leqslant\|u-\widehat{u}\|\qquad (t\geqslant 0,\ u,\widehat{u}\in H).\label{align:ch09-6-eq14}
+\end{align}
+\end{definition}
+
+目的是证明算子 $A=\partial I$ 在 $H$ 上生成一个非线性压缩半群。特别地将证明 ODE
+\begin{align}
+\begin{cases}
+\mathbf{u}'(t)\in-\partial I[\mathbf{u}(t)]&(t\geqslant 0),\\
+\mathbf{u}(0)=u,
+\end{cases}\label{align:ch09-6-eq15}
+\end{align}
+对给定初值 $u\in H$ 是适定的。这是一种由 $\partial I$ 支配的无穷维"梯度流"。后面 \S9.6.3 将看到某些拟线性抛物 PDE 可改写为抽象形式\eqref{align:ch09-6-eq15}。
+
+\begin{theorem}[梯度流的解]\label{theorem:ch09-6-3-梯度流解}
+对每个 $u\in D(\partial I)$，存在唯一函数
+\begin{align}
+\mathbf{u}\in C([0,\infty);H),\quad \mathbf{u}'\in L^\infty(0,\infty;H),\label{align:ch09-6-eq16}
+\end{align}
+使
+(i) $\mathbf{u}(0)=u$；
+(ii) $\mathbf{u}(t)\in D(\partial I)$ 对每个 $t>0$；
+(iii) $-\mathbf{u}'(t)\in\partial I[\mathbf{u}(t)]$ 对 a.e. $t\geqslant 0$。
+\begin{proof}
+1. 先通过对每个 $\lambda>0$ 求解 ODE 来构造逼近解：
+\begin{align}
+\begin{cases}
+\mathbf{u}_\lambda'(t)+A_\lambda[\mathbf{u}_\lambda(t)]=0&(t\geqslant 0),\\
+\mathbf{u}_\lambda(0)=u.
+\end{cases}\label{align:ch09-6-eq17}
+\end{align}
+由\cref{theorem:ch09-6-2-Jlambda性质}(ii)，Yosida 逼近 $A_\lambda:H\to H$ 是处处定义、Lipschitz 连续的映射，故\eqref{align:ch09-6-eq17} 有唯一解 $\mathbf{u}_\lambda\in C^1([0,\infty);H)$。
+计划是证明当 $\lambda\to 0^+$ 时，函数 $\mathbf{u}_\lambda$ 收敛到\eqref{align:ch09-6-eq15} 的一个解。然而这是微妙的，因为算子 $A=\partial I$ 一般是非线性、多值、且非处处定义的。
+2. 先取另一点 $v\in H$，并考察 ODE
+\begin{align}
+\begin{cases}
+\mathbf{v}_\lambda'(t)+A_\lambda[\mathbf{v}_\lambda(t)]=0&(t\geqslant 0),\\
+\mathbf{v}_\lambda(0)=v.
+\end{cases}\label{align:ch09-6-eq18}
+\end{align}
+则
+\begin{align*}
+\frac12\frac{\mathrm{d}}{\mathrm{d}t}\|\mathbf{u}_\lambda-\mathbf{v}_\lambda\|^2=(\mathbf{u}_\lambda'-\mathbf{v}_\lambda',\mathbf{u}_\lambda-\mathbf{v}_\lambda)=(-A_\lambda[\mathbf{u}_\lambda]+A_\lambda[\mathbf{v}_\lambda],\mathbf{u}_\lambda-\mathbf{v}_\lambda)\leqslant 0,
+\end{align*}
+由\cref{theorem:ch09-6-2-Jlambda性质}(iii)。故
+\begin{align}
+\|\mathbf{u}_\lambda(t)-\mathbf{v}_\lambda(t)\|\leqslant\|u-v\|\qquad (t\geqslant 0).\label{align:ch09-6-eq19}
+\end{align}
+特别地，若 $h>0$ 且 $v=\mathbf{u}_\lambda(h)$，则由唯一性 $\mathbf{v}_\lambda(t)=\mathbf{u}_\lambda(t+h)$。故\eqref{align:ch09-6-eq19} 蕴涵
+\begin{align*}
+\|\mathbf{u}_\lambda(t+h)-\mathbf{u}_\lambda(t)\|\leqslant\|\mathbf{u}_\lambda(h)-u\|.
+\end{align*}
+除以 $h$ 并令 $h\to 0$：
+\begin{align}
+\|\mathbf{u}_\lambda'(t)\|\leqslant\|\mathbf{u}_\lambda'(0)\|=\|A_\lambda[u]\|\leqslant|A_0[u]|,\label{align:ch09-6-eq20}
+\end{align}
+最后一不等式由\cref{theorem:ch09-6-2-Jlambda性质}(v)。
+3. 接着取 $\lambda,\mu>0$，计算
+\begin{align}
+\frac12\frac{\mathrm{d}}{\mathrm{d}t}\|\mathbf{u}_\lambda-\mathbf{u}_\mu\|^2=(\mathbf{u}_\lambda'-\mathbf{u}_\mu',\mathbf{u}_\lambda-\mathbf{u}_\mu)=(-A_\lambda[\mathbf{u}_\lambda]+A_\mu[\mathbf{u}_\mu],\mathbf{u}_\lambda-\mathbf{u}_\mu).\label{align:ch09-6-eq21}
+\end{align}
+现
+\begin{align*}
+\mathbf{u}_\lambda-\mathbf{u}_\mu=(\mathbf{u}_\lambda-J_\lambda[\mathbf{u}_\lambda])+(J_\lambda[\mathbf{u}_\lambda]-J_\mu[\mathbf{u}_\mu])+(J_\mu[\mathbf{u}_\mu]-\mathbf{u}_\mu)=\lambda A_\lambda[\mathbf{u}_\lambda]+J_\lambda[\mathbf{u}_\lambda]-J_\mu[\mathbf{u}_\mu]-\mu A_\mu[\mathbf{u}_\mu].
+\end{align*}
+故
+\begin{align}
+(A_\lambda[\mathbf{u}_\lambda]-A_\mu[\mathbf{u}_\mu],\mathbf{u}_\lambda-\mathbf{u}_\mu)=(A_\lambda[\mathbf{u}_\lambda]-A_\mu[\mathbf{u}_\mu],J_\lambda[\mathbf{u}_\lambda]-J_\mu[\mathbf{u}_\mu])\notag\\
++(A_\lambda[\mathbf{u}_\lambda]-A_\mu[\mathbf{u}_\mu],\lambda A_\lambda[\mathbf{u}_\lambda]-\mu A_\mu[\mathbf{u}_\mu]).\label{align:ch09-6-eq22}
+\end{align}
+因 $A_\lambda[\mathbf{u}_\lambda]\in\partial I[J_\lambda[\mathbf{u}_\lambda]]$、$A_\mu[\mathbf{u}_\mu]\in\partial I[J_\mu[\mathbf{u}_\mu]]$，单调性蕴涵\eqref{align:ch09-6-eq22} 右端第一项非负。故
+\begin{align*}
+(A_\lambda[\mathbf{u}_\lambda]-A_\mu[\mathbf{u}_\mu],\mathbf{u}_\lambda-\mathbf{u}_\mu)\geqslant\lambda\|A_\lambda[\mathbf{u}_\lambda]\|^2+\mu\|A_\mu[\mathbf{u}_\mu]\|^2-(\lambda+\mu)\|A_\lambda[\mathbf{u}_\lambda]\|\|A_\mu[\mathbf{u}_\mu]\|.
+\end{align*}
+因
+\begin{align*}
+(\lambda+\mu)\|A_\lambda[\mathbf{u}_\lambda]\|\|A_\mu[\mathbf{u}_\mu]\|\leqslant\lambda\left(\|A_\lambda[\mathbf{u}_\lambda]\|^2+\frac14\|A_\mu[\mathbf{u}_\mu]\|^2\right)+\mu\left(\|A_\mu[\mathbf{u}_\mu]\|^2+\frac14\|A_\lambda[\mathbf{u}_\lambda]\|^2\right),
+\end{align*}
+推得
+\begin{align*}
+(A_\lambda[\mathbf{u}_\lambda]-A_\mu[\mathbf{u}_\mu],\mathbf{u}_\lambda-\mathbf{u}_\mu)\geqslant-\frac\lambda4\|A_\mu[\mathbf{u}_\mu]\|^2-\frac\mu4\|A_\lambda[\mathbf{u}_\lambda]\|^2.
+\end{align*}
+但由\eqref{align:ch09-6-eq20}，$\|A_\lambda[\mathbf{u}_\lambda]\|=\|\mathbf{u}_\lambda'\|\leqslant|A_0[u]|$，故
+\begin{align*}
+(A_\lambda[\mathbf{u}_\lambda]-A_\mu[\mathbf{u}_\mu],\mathbf{u}_\lambda-\mathbf{u}_\mu)\geqslant-\frac{\lambda+\mu}{4}|A_0[u]|^2.
+\end{align*}
+回顾\eqref{align:ch09-6-eq21}、\eqref{align:ch09-6-eq22}，得不等式
+\begin{align*}
+\frac{\mathrm{d}}{\mathrm{d}t}\|\mathbf{u}_\lambda-\mathbf{u}_\mu\|^2\leqslant\frac{\lambda+\mu}{2}|A_0[u]|^2\qquad (t\geqslant 0);
+\end{align*}
+从而
+\begin{align}
+\|\mathbf{u}_\lambda(t)-\mathbf{u}_\mu(t)\|^2\leqslant\frac{\lambda+\mu}{2}t|A_0[u]|^2\qquad (t\geqslant 0).\label{align:ch09-6-eq23}
+\end{align}
+由估计\eqref{align:ch09-6-eq23}，存在函数 $\mathbf{u}\in C([0,\infty);H)$ 使对每个时刻 $T>0$，
+\begin{align*}
+\mathbf{u}_\lambda\to\mathbf{u}\quad\text{一致于 }C([0,T];H)\quad\text{当 }\lambda\to 0.
+\end{align*}
+此外估计\eqref{align:ch09-6-eq20} 蕴涵对每个 $T>0$，
+\begin{align}
+\mathbf{u}_\lambda'\rightharpoonup\mathbf{u}'\quad\text{弱于 }L^2(0,T;H),\label{align:ch09-6-eq24}
+\end{align}
+且
+\begin{align}
+\|\mathbf{u}'(t)\|\leqslant|A_0[u]|\quad\text{对 a.e. }t.\label{align:ch09-6-eq25}
+\end{align}
+4. 须证明对每个 $t\geqslant 0$，$\mathbf{u}(t)\in D(\partial I)$，且
+\begin{align*}
+\mathbf{u}'(t)+\partial I[\mathbf{u}(t)]\ni 0\quad\text{对 a.e. }t\geqslant 0.
+\end{align*}
+现
+\begin{align*}
+\|J_\lambda[\mathbf{u}_\lambda](t)-\mathbf{u}_\lambda(t)\|=\lambda\|A_\lambda[\mathbf{u}_\lambda](t)\|=\lambda\|\mathbf{u}_\lambda'(t)\|\leqslant\lambda|A_0[u]|
+\end{align*}
+由\eqref{align:ch09-6-eq20}。故
+\begin{align}
+J_\lambda[\mathbf{u}_\lambda]\to\mathbf{u}\quad\text{一致于 }C([0,T];H)\text{ 对每个 }T>0.\label{align:ch09-6-eq26}
+\end{align}
+对每个时刻 $t\geqslant 0$，
+\begin{align*}
+-\mathbf{u}_\lambda'(t)=A_\lambda[\mathbf{u}_\lambda(t)]\in\partial I[J_\lambda[\mathbf{u}_\lambda(t)]].
+\end{align*}
+于是给定 $w\in H$，有
+\begin{align*}
+I[w]\geqslant I[J_\lambda[\mathbf{u}_\lambda(t)]]-(\mathbf{u}_\lambda'(t),w-J_\lambda[\mathbf{u}_\lambda(t)]).
+\end{align*}
+故若 $0\leqslant s\leqslant t$，
+\begin{align*}
+(t-s)I[w]\geqslant\int_s^t I[J_\lambda[\mathbf{u}_\lambda(r)]]\,\mathrm{d}r-\int_s^t(\mathbf{u}_\lambda'(r),w-J_\lambda[\mathbf{u}_\lambda(r)])\,\mathrm{d}r.
+\end{align*}
+由\eqref{align:ch09-6-eq26}、$I$ 的下半连续性及 Fatou 引理（\S E.3），令 $\lambda\to 0$ 推得
+\begin{align*}
+(t-s)I[w]\geqslant\int_s^t I[\mathbf{u}(r)]\,\mathrm{d}r-\int_s^t(\mathbf{u}'(r),w-\mathbf{u}(r))\,\mathrm{d}r
+\end{align*}
+对每个 $0\leqslant s\leqslant t$。因此若 $t$ 是 $\mathbf{u}'$、$I[\mathbf{u}]$ 的 Lebesgue 点，则
+\begin{align*}
+I[w]\geqslant I[\mathbf{u}(t)]+(-\mathbf{u}'(t),w-\mathbf{u}(t)).
+\end{align*}
+故对 a.e. $t\geqslant 0$，对所有 $w\in H$，
+\begin{align*}
+I[w]\geqslant I[\mathbf{u}(t)]+(-\mathbf{u}'(t),w-\mathbf{u}(t)).
+\end{align*}
+于是 $\mathbf{u}(t)\in D(\partial I)$，且 $-\mathbf{u}'(t)\in\partial I[\mathbf{u}(t)]$ 对 a.e. $t\geqslant 0$。
+5. 最后证明对每个 $t\geqslant 0$，$\mathbf{u}(t)\in D(\partial I)$。为此固定 $t\geqslant 0$，选 $t_k\to t$ 使 $\mathbf{u}(t_k)\in D(\partial I)$、$-\mathbf{u}'(t_k)\in\partial I[\mathbf{u}(t_k)]$。由\eqref{align:ch09-6-eq25}，必要时再取子列，不妨设
+\begin{align*}
+\mathbf{u}'(t_k)\rightharpoonup v\quad\text{弱于 }H.
+\end{align*}
+固定 $w\in H$。则
+\begin{align*}
+I[w]\geqslant I[\mathbf{u}(t_k)]+(-\mathbf{u}'(t_k),w-\mathbf{u}(t_k)).
+\end{align*}
+令 $t_k\to t$，回顾 $\mathbf{u}\in C([0,\infty];H)$ 且 $I$ 下半连续。得不等式
+\begin{align*}
+I[w]\geqslant I[\mathbf{u}(t)]+(-v,w-\mathbf{u}(t)).
+\end{align*}
+故 $\mathbf{u}(t)\in D(\partial I)$ 且 $-v\in\partial I[\mathbf{u}(t)]$。
+6. 已证 $\mathbf{u}$ 满足断言 (i)--(iii)。为证唯一性，设 $\widetilde{\mathbf{u}}$ 是另一解，计算
+\begin{align*}
+\frac12\frac{\mathrm{d}}{\mathrm{d}t}\|\mathbf{u}-\widetilde{\mathbf{u}}\|^2=(\mathbf{u}'-\widetilde{\mathbf{u}}',\mathbf{u}-\widetilde{\mathbf{u}})\leqslant 0
+\end{align*}
+对 a.e. $t\geqslant 0$，因 $-\mathbf{u}'\in\partial I[\mathbf{u}]$、$-\widetilde{\mathbf{u}}'\in\partial I[\widetilde{\mathbf{u}}]$。
+\end{proof}
+\end{theorem}
+
+\begin{remark}
+(i) 算子 $A=\partial I$ 事实上在整个 $H$ 上生成一个非线性压缩半群。若 $u,v\in D(\partial I)$，如上写
+\begin{align*}
+\lim_{\lambda\to 0}\mathbf{u}_\lambda(t)=\mathbf{u}(t)=S(t)u,\qquad \lim_{\lambda\to 0}\mathbf{v}_\lambda(t)=\mathbf{v}(t)=S(t)v.
+\end{align*}
+由\eqref{align:ch09-6-eq19}，看到若 $u,v\in D(\partial I)$，
+\begin{align*}
+\|S(t)u-S(t)v\|\leqslant\|u-v\|\qquad (t\geqslant 0).
+\end{align*}
+用此不等式，把非线性算子半群 $\{S(t)\}_{t\geqslant 0}$ 唯一延拓到 $H=D(\partial I)$ 的闭包。
+(ii) 假设 $D(\partial I)$ 在 $H$ 中稠密，仅为简化叙述。一般地，$\{S(t)\}_{t\geqslant 0}$ 是 $D(\partial I)\subseteq H$ 上的压缩半群。
+\end{remark}
+
+\subsection{应用}\label{subsection:ch09-6-3-应用}
+
+现说明 \S9.6.1 与 \S9.6.2 中的某些抽象理论如何应用于某些非线性抛物偏微分方程。
+
+此后设 $U$ 为 $\mathbb{R}^n$ 中有界开集，边界 $\partial U$ 光滑。取 $H=L^2(U)$，令
+\begin{align}
+I[u]\triangleq\begin{cases}\int_U L(Du)\,\mathrm{d}x&\text{若 }u\in H_0^1(U),\\ +\infty&\text{否则},\end{cases}\label{align:ch09-6-eq27}
+\end{align}
+其中 $L:\mathbb{R}^n\to\mathbb{R}$ 光滑、凸，满足
+\begin{align}
+|D^2L(p)|\leqslant C\qquad (p\in\mathbb{R}^n),\label{align:ch09-6-eq28}
+\end{align}
+\begin{align}
+\sum_{i,j=1}^n L_{p_ip_j}(p)\xi_i\xi_j\geqslant\theta|\xi|^2\qquad (p,\xi\in\mathbb{R}^n)\label{align:ch09-6-eq29}
+\end{align}
+对常数 $C,\theta>0$。
+
+\begin{theorem}[$\partial I$ 的刻画]\label{theorem:ch09-6-4-次微分刻画}
+(i) $I:H\to(-\infty,+\infty]$ 凸、真、下半连续。
+(ii) $D(\partial I)=H^2(U)\cap H_0^1(U)$。
+(iii) 若 $u\in D(\partial I)$，则 $\partial I$ 单值，且
+\begin{align*}
+\partial I[u]=-\sum_{i=1}^n(L_{p_i}(Du))_{x_i}\quad\text{a.e.}
+\end{align*}
+\begin{proof}
+1. $I$ 显然真且凸。此外，因 $I$ 弱序列下半连续（参见 \S8.2.2\cref{theorem:ch08-2-1-弱下半连续}），$I$ 下半连续。
+2. 定义非线性算子 $A$ 为
+\begin{align*}
+\begin{cases}D(A)\triangleq H^2(U)\cap H_0^1(U),\\ A[u]\triangleq-\sum_{i=1}^n(L_{p_i}(Du))_{x_i}\qquad (u\in D(A)).\end{cases}
+\end{align*}
+须证 $A=\partial I$。
+先设 $u\in D(A)$，$v=A[u]$，$w\in L^2(U)$。若 $w\notin H_0^1(U)$，则 $I[w]=+\infty$，故显然
+\begin{align}
+I[w]\geqslant I[u]+(v,w-u).\label{align:ch09-6-eq30}
+\end{align}
+接着设 $w\in H_0^1(U)$。于是
+\begin{align*}
+(v,w-u)=-\int_U\sum_{i=1}^n(L_{p_i}(Du))_{x_i}(w-u)\,\mathrm{d}x=\int_U D_pL(Du)\cdot(Dw-Du)\,\mathrm{d}x.
+\end{align*}
+因 $L$ 凸，
+\begin{align*}
+L(Dw)\geqslant L(Du)+D_pL(Du)\cdot(Dw-Du)\quad\text{a.e. 在 }U\text{ 中}.
+\end{align*}
+在 $U$ 上积分得\eqref{align:ch09-6-eq30}。
+3. 至此已证 $A\subseteq\partial I$；即 $D(A)\subseteq D(\partial I)$ 且对 $u\in D(A)$，$A[u]\in\partial I[u]$。为结论，须证 $A\supseteq\partial I$。
+选取任一函数 $f\in L^2(U)$。若在容许类 $\mathcal{A}=H_0^1(U)$ 上极小化泛函
+\begin{align*}
+J[w]\triangleq\int_U L(Dw)+\frac{w^2}2-fw\,\mathrm{d}x,
+\end{align*}
+将找到 $u\in H_0^1(U)$，它是
+\begin{align}
+u-\sum_{i=1}^n(L_{p_i}(Du))_{x_i}=f\quad\text{在 }U\text{ 中}\label{align:ch09-6-eq31}
+\end{align}
+的弱解。由与 \S8.3\cref{theorem:ch08-3-1-二阶导数}(ii) 证明类似的计算，看到事实上 $u\in H^2(U)$，且估计
+\begin{align}
+\|u\|_{H^2(U)}\leqslant C\|f\|_{L^2(U)}.\label{align:ch09-6-eq32}
+\end{align}
+故 $u\in D(A)$，且 $u+A[u]=f$。因此 $I+A$ 的值域是整个 $H$。但这蕴涵 $A=\partial I$。因若 $v\in D(\partial I)$、$w\in\partial I[v]$，则存在 $u\in D(A)$ 使 $u+A[u]=v+w$。因 $A[u]\in\partial I[u]$、$w\in\partial I[v]$，\cref{theorem:ch09-6-1-次微分性质}(iv) 的唯一性断言蕴涵 $u=v$、$w=A[u]$。故 $A=\partial I$。
+\end{proof}
+\end{theorem}
+
+现考察初边值问题：
+\begin{align}
+\begin{cases}
+u_t-\sum_{i=1}^n(L_{p_i}(Du))_{x_i}=0&\text{在 }U\times(0,\infty)\text{ 中},\\
+u=0&\text{在 }\partial U\times(0,\infty)\text{ 上},\\
+u=g&\text{在 }U\times\{t=0\}\text{ 上},
+\end{cases}\label{align:ch09-6-eq33}
+\end{align}
+其中 $g\in L^2(U)$。按\cref{theorem:ch09-6-4-次微分刻画}，可把此问题改写为抽象形式
+\begin{align}
+\begin{cases}
+\mathbf{u}'(t)=-\partial I[\mathbf{u}(t)]&(t\geqslant 0),\\
+\mathbf{u}(0)=g.
+\end{cases}\label{align:ch09-6-eq34}
+\end{align}
+
+应用\cref{theorem:ch09-6-3-梯度流解}。若 $g\in H^2(U)\cap H_0^1(U)$，存在唯一函数
+\begin{align*}
+\mathbf{u}\in C([0,\infty);L^2(U)),\quad \mathbf{u}'\in L^\infty((0,\infty);L^2(U)),
+\end{align*}
+即\eqref{align:ch09-6-eq33} 的弱解。由估计
+\begin{align*}
+\|\mathbf{u}(t)\|_{H^2(U)}\leqslant C\|\mathbf{u}'(t)\|_{L^2(U)},
+\end{align*}
+看到 $\mathbf{u}\in L^\infty((0,\infty);H^2(U)\cap H_0^1(U))$。
+
+\end{document}

@@ -1,0 +1,538 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}}
+
+\begin{document}
+
+\section{半群理论}\label{section:ch07-4-半群理论}
+
+半群理论是对取值于 Banach 空间、由线性（但可能无界）算子驱动的一阶常微分方程的抽象研究。本节概述该理论的基础，并给出它在线性 PDE 中的两个应用。这一方法为\cref{section:ch07-1-二阶抛物型方程}--\cref{section:ch07-一阶双曲方程组} 中建立的发展方程存在性理论提供了一个优美的替代方案。
+
+\subsection{定义与初等性质}\label{subsection:ch07-4-1-定义与初等性质}
+
+我们从抽象框架开始。设 $X$ 为实 Banach 空间，考虑常微分方程
+\begin{align}
+\begin{cases}
+u'(t)=Au(t) & (t\geqslant 0),\\
+u(0)=u,
+\end{cases}\label{align:ch07-4-eq01}
+\end{align}
+其中 $'=\frac{\mathrm{d}}{\mathrm{d}t}$，$u\in X$ 给定，$A$ 为线性算子。更确切地说，设 $D(A)$（$A$ 的定义域）是 $X$ 的线性子空间，且给定一个可能无界的线性算子
+\begin{align}
+A:D(A)\to X.\label{align:ch07-4-eq02}
+\end{align}
+我们研究 ODE \eqref{align:ch07-4-eq01} 的解 $u:[0,\infty)\to X$ 的存在唯一性。关键问题是：在算子 $A$ 上确定合理条件，使得 (a) 对每个初值 $u\in X$，ODE 有唯一解 $u$；(b) 许多有趣的 PDE 可写成抽象形式\eqref{align:ch07-4-eq01}。（我们心目中的情形是：$X$ 是函数的 $L^p$ 空间，$A$ 是涉及 $t$ 以外变量的线性偏微分算子。此时 $A$ 必为无界算子。）
+
+\subsubsection*{a. 半群}
+
+暂且非正式地假设 $u:[0,\infty)\to X$ 是微分方程\eqref{align:ch07-4-eq01} 的解，且\eqref{align:ch07-4-eq01} 对每个初值 $u\in X$ 都有唯一解。
+
+\paragraph{记号。}我们写
+\begin{align}
+u(t)\triangleq S(t)u\qquad (t\geqslant 0),\label{align:ch07-4-eq03}
+\end{align}
+以显式展示 $u(t)$ 对初值 $u\in X$ 的依赖。于是对每个时刻 $t\geqslant 0$，可把 $S(t)$ 视为 $X$ 到 $X$ 的映射。
+
+算子族 $\{S(t)\}_{t\geqslant 0}$ 满足哪些性质？显然 $S(t):X\to X$ 线性。此外
+\begin{align}
+S(0)u=u\qquad (u\in X),\label{align:ch07-4-eq04}
+\end{align}
+且
+\begin{align}
+S(t+s)u=S(t)S(s)u=S(s)S(t)u\qquad (t,s\geqslant 0,\ u\in X).\label{align:ch07-4-eq05}
+\end{align}
+条件\eqref{align:ch07-4-eq05} 不过是我们的假设：ODE \eqref{align:ch07-4-eq01} 对每个初值有唯一解。最后，合理假设对每个 $u\in X$，
+\begin{align}
+\text{映射 } t\mapsto S(t)u \text{ 连续地从 } [0,\infty) \text{ 映入 } X.\label{align:ch07-4-eq06}
+\end{align}
+
+\begin{definition}\label{definition:ch07-4-半群}
+\begin{enumerate}[(i)]
+\item 一族把 $X$ 映入 $X$ 的有界线性算子 $\{S(t)\}_{t\geqslant 0}$ 称为一个\textbf{半群}，若条件\eqref{align:ch07-4-eq04}--\eqref{align:ch07-4-eq06} 成立。
+\item 称 $\{S(t)\}_{t\geqslant 0}$ 为\textbf{压缩半群}，若此外
+\begin{align}
+\|S(t)\|\leqslant 1\qquad (t\geqslant 0),\label{align:ch07-4-eq07}
+\end{align}
+其中 $\|\cdot\|$ 表示算子范数。于是
+\begin{align*}
+\|S(t)u\|\leqslant\|u\|\qquad (t\geqslant 0,\ u\in X).
+\end{align*}
+\end{enumerate}
+\end{definition}
+
+压缩半群的概念刻画了 ODE \eqref{align:ch07-4-eq01} 在 $X$ 上生成的一个良好流的诸多性质。
+
+\subsubsection*{b. 初等性质与生成元}
+
+真正的问题在于确定哪些算子 $A$ 生成压缩半群。我们将在\cref{subsection:ch07-4-2-生成压缩半群} 回答，本节先记录一些进一步的一般事实。
+
+从今往后设 $\{S(t)\}_{t\geqslant 0}$ 是 $X$ 上的压缩半群。
+
+\begin{definition}\label{definition:ch07-4-无穷小生成元}
+写
+\begin{align}
+D(A)\triangleq \left\{u\in X\ \middle|\ \lim_{t\to 0+}\frac{S(t)u-u}{t}\text{ 在 } X \text{ 中存在}\right\},\label{align:ch07-4-eq08}
+\end{align}
+且
+\begin{align}
+Au\triangleq \lim_{t\to 0+}\frac{S(t)u-u}{t}\qquad (u\in D(A)).\label{align:ch07-4-eq09}
+\end{align}
+称 $A:D(A)\to X$ 为半群 $\{S(t)\}_{t\geqslant 0}$ 的（无穷小）\textbf{生成元}；$D(A)$ 是 $A$ 的定义域。
+\end{definition}
+
+\begin{theorem}[半群的微分性质。]\label{theorem:ch07-4-半群的微分性质}设 $u\in D(A)$。则
+\begin{enumerate}[(i)]
+\item 对每个 $t\geqslant 0$，$S(t)u\in D(A)$。
+\item 对每个 $t\geqslant 0$，$AS(t)u=S(t)Au$。
+\item 映射 $t\mapsto S(t)u$ 对每个 $t>0$ 可微。
+\item $\dfrac{\mathrm{d}}{\mathrm{d}t}S(t)u=AS(t)u\quad (t>0)$。
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+1. 设 $u\in D(A)$。则
+\begin{align*}
+\lim_{s\to 0+}\frac{S(s)S(t)u-S(t)u}{s}
+=\lim_{s\to 0+}\frac{S(t)S(s)u-S(t)u}{s}
+\end{align*}
+（由半群性质\eqref{align:ch07-4-eq05}）
+\begin{align*}
+=S(t)\lim_{s\to 0+}\frac{S(s)u-u}{s}=S(t)Au.
+\end{align*}
+因此 $S(t)u\in D(A)$ 且 $AS(t)u=S(t)Au$。结论 (i)、(ii) 得证。
+
+2. 设 $u\in D(A)$，$h>0$。若 $t>0$，则
+\begin{align*}
+\lim_{h\to 0+}\left\{\frac{S(t)u-S(t-h)u}{h}-S(t)Au\right\}
+=\lim_{h\to 0+}\left\{S(t-h)\left(\frac{S(h)u-u}{h}\right)-S(t)Au\right\}
+\end{align*}
+\begin{align*}
+=\lim_{h\to 0+}\left\{S(t-h)\left(\frac{S(h)u-u}{h}-Au\right)+(S(t-h)-S(t))Au\right\}=0,
+\end{align*}
+因为 $\frac{S(h)u-u}{h}\to Au$ 且 $\|S(t-h)\|\leqslant 1$。于是
+\begin{align*}
+\lim_{h\to 0+}\frac{S(t)u-S(t-h)u}{h}=S(t)Au.
+\end{align*}
+类似地
+\begin{align*}
+\lim_{h\to 0+}\frac{S(t+h)u-S(t)u}{h}
+=S(t)\lim_{h\to 0+}\frac{S(h)u-u}{h}=S(t)Au.
+\end{align*}
+因此 $\frac{\mathrm{d}}{\mathrm{d}t}S(t)u$ 对每个 $t>0$ 存在，且等于 $S(t)Au=AS(t)u$。
+\end{proof}
+
+\begin{remark}\label{remark:ch07-4-C1光滑}
+由于 $t\mapsto AS(t)u=S(t)Au$ 连续，若 $u\in D(A)$，则映射 $t\mapsto S(t)u$ 在 $(0,\infty)$ 上是 $C^1$ 的。
+\end{remark}
+
+\begin{theorem}[生成元的性质。]\label{theorem:ch07-4-生成元的性质}
+
+(i) 定义域 $D(A)$ 在 $X$ 中稠密；
+
+(ii) $A$ 是闭算子。
+\end{theorem}
+
+\begin{remark}\label{remark:ch07-4-闭算子}
+称 $A$ 是闭的，是指：若 $u_k\in D(A)\ (k=1,\cdots)$，且当 $k\to\infty$ 时 $u_k\to u$、$Au_k\to v$，则
+\begin{align*}
+u\in D(A),\qquad v=Au.
+\end{align*}
+\end{remark}
+
+\begin{proof}
+1. 任取 $u\in X$，定义 $u_t\triangleq\int_0^t S(s)u\,\mathrm{d}s$。由\eqref{align:ch07-4-eq06}，当 $t\to 0+$ 时 $u_t\to u$ 于 $X$。
+
+2. 断言
+\begin{align}
+u_t\in D(A)\qquad (t>0).\label{align:ch07-4-eq10}
+\end{align}
+事实上若 $r>0$，有
+\begin{align*}
+\frac{S(r)u_t-u_t}{r}
+=\frac{1}{r}\left[S(r)\left(\int_0^t S(s)u\,\mathrm{d}s\right)-\left(\int_0^t S(s)u\,\mathrm{d}s\right)\right]
+=\frac{1}{r}\int_0^t S(r+s)u-S(s)u\,\mathrm{d}s,
+\end{align*}
+其中用到半群性质\eqref{align:ch07-4-eq05}。于是
+\begin{align*}
+\frac{S(r)u_t-u_t}{r}
+=\frac{1}{r}\int_t^{t+r}S(s)u\,\mathrm{d}s-\frac{1}{r}\int_0^r S(s)u\,\mathrm{d}s
+\longrightarrow S(t)u-u\qquad (r\to 0+).
+\end{align*}
+故 $u_t\in D(A)$，且 $Au_t=S(t)u-u$。这证明了\eqref{align:ch07-4-eq10}，完成结论 (i) 的证明。
+
+3. 为证 $A$ 闭，设 $u_k\in D(A)\ (k=1,\cdots)$，且
+\begin{align}
+u_k\to u,\quad Au_k\to v\qquad \text{于 } X.\label{align:ch07-4-eq11}
+\end{align}
+须证 $u\in D(A)$、$v=Au$。由\cref{theorem:ch07-4-半群的微分性质}，
+\begin{align*}
+S(t)u_k-u_k=\int_0^t S(s)Au_k\,\mathrm{d}s.
+\end{align*}
+令 $k\to\infty$ 并回忆\eqref{align:ch07-4-eq11}：
+\begin{align*}
+S(t)u-u=\int_0^t S(s)v\,\mathrm{d}s.
+\end{align*}
+因此
+\begin{align*}
+\lim_{t\to 0+}\frac{S(t)u-u}{t}
+=\lim_{t\to 0+}\frac{1}{t}\int_0^t S(s)v\,\mathrm{d}s=v.
+\end{align*}
+于是由定义 $u\in D(A)$、$v=Au$。
+\end{proof}
+
+\subsubsection*{c. 预解式}
+
+设 $A$ 是 $X$ 上的闭线性算子，定义域为 $D(A)$。
+
+\begin{definition}\label{definition:ch07-4-预解集与预解式}
+\begin{enumerate}[(i)]
+\item 称实数 $\lambda$ 属于 $A$ 的\textbf{预解集} $\rho(A)$，若算子
+\begin{align*}
+\lambda I-A:D(A)\to X
+\end{align*}
+是一一且到上的。
+\item 若 $\lambda\in\rho(A)$，则\textbf{预解算子} $R_\lambda:X\to X$ 定义为
+\begin{align*}
+R_\lambda u\triangleq (\lambda I-A)^{-1}u.
+\end{align*}
+\end{enumerate}
+\end{definition}
+
+由闭图像定理（\cref{theorem:appD-闭图像}），$R_\lambda:X\to D(A)\subseteq X$ 是有界线性算子。此外，若 $u\in D(A)$，则
+\begin{align*}
+AR_\lambda u=R_\lambda Au.
+\end{align*}
+
+\begin{theorem}[预解算子的性质。]\label{theorem:ch07-4-预解算子的性质}
+
+(i) 若 $\lambda,\mu\in\rho(A)$，则有
+\begin{align}
+R_\lambda-R_\mu=(\mu-\lambda)R_\lambda R_\mu\qquad\text{（预解恒等式）}\label{align:ch07-4-eq12}
+\end{align}
+且
+\begin{align}
+R_\lambda R_\mu=R_\mu R_\lambda.\label{align:ch07-4-eq13}
+\end{align}
+
+(ii) 若 $\lambda>0$，则 $\lambda\in\rho(A)$，
+\begin{align}
+R_\lambda u=\int_0^\infty e^{-\lambda t}S(t)u\,\mathrm{d}t\qquad (u\in X),\label{align:ch07-4-eq14}
+\end{align}
+且 $\|R_\lambda\|\leqslant\dfrac{1}{\lambda}$。
+\end{theorem}
+
+于是预解算子是半群的 Laplace 变换（见\cref{example:ch04-3-3-8}）。
+
+\begin{proof}
+1. 恒等式\eqref{align:ch07-4-eq12}、\eqref{align:ch07-4-eq13} 的验证留给读者（习题\cref{exercise:ch07-5-12}）。
+
+2. 首先注意：由于 $\lambda>0$ 且 $\|S(t)\|\leqslant 1$，\eqref{align:ch07-4-eq14} 右端积分有定义。记该积分为 $\widetilde{R}_\lambda u$。则对 $h>0$ 及 $u\in X$，
+\begin{align*}
+\frac{S(h)\widetilde{R}_\lambda u-\widetilde{R}_\lambda u}{h}
+=\frac{1}{h}\left\{\int_0^\infty e^{-\lambda t}[S(t+h)u-S(t)u]\,\mathrm{d}t\right\}
+\end{align*}
+\begin{align*}
+=-\frac{1}{h}\int_0^h e^{-\lambda(t-h)}S(t)u\,\mathrm{d}t+\frac{1}{h}\int_0^\infty\bigl(e^{-\lambda(t-h)}-e^{-\lambda t}\bigr)S(t)u\,\mathrm{d}t
+\end{align*}
+\begin{align*}
+=-e^{\lambda h}\frac{1}{h}\int_0^h e^{-\lambda t}S(t)u\,\mathrm{d}t+\left(\frac{e^{\lambda h}-1}{h}\right)\int_0^\infty e^{-\lambda t}S(t)u\,\mathrm{d}t.
+\end{align*}
+因此
+\begin{align*}
+\lim_{h\to 0+}\frac{S(h)\widetilde{R}_\lambda u-\widetilde{R}_\lambda u}{h}=-u+\lambda\widetilde{R}_\lambda u.
+\end{align*}
+故 $A\widetilde{R}_\lambda u=-u+\lambda\widetilde{R}_\lambda u$；即
+\begin{align}
+(\lambda I-A)\widetilde{R}_\lambda u=u\qquad (u\in X).\label{align:ch07-4-eq15}
+\end{align}
+另一方面，若 $u\in D(A)$，
+\begin{align}
+A\widetilde{R}_\lambda u=A\int_0^\infty e^{-\lambda t}S(t)u\,\mathrm{d}t=\int_0^\infty e^{-\lambda t}AS(t)u\,\mathrm{d}t
+=\int_0^\infty e^{-\lambda t}S(t)Au\,\mathrm{d}t=\widetilde{R}_\lambda Au.\label{align:ch07-4-eq16}
+\end{align}
+把 $A$ 移到积分号下是合法的，因为 $A$ 是闭算子：见习题\cref{exercise:ch07-5-13}。于是
+\begin{align*}
+\widetilde{R}_\lambda(\lambda I-A)u=u\qquad (u\in D(A)).
+\end{align*}
+由\eqref{align:ch07-4-eq15} 及上式，$\lambda I-A$ 一一且到上。因此 $\lambda\in\rho(A)$，$\widetilde{R}_\lambda=(\lambda I-A)^{-1}=R_\lambda$。
+\end{proof}
+
+\subsection{生成压缩半群的算子}\label{subsection:ch07-4-2-生成压缩半群}
+
+现刻画压缩半群的生成元：
+
+\begin{theorem}[Hille--Yosida 定理。]\label{theorem:ch07-4-Hille-Yosida}设 $A$ 是 $X$ 上闭的、定义域稠密的线性算子。则 $A$ 是某个压缩半群 $\{S(t)\}_{t\geqslant 0}$ 的生成元，当且仅当
+\begin{align}
+(0,\infty)\subseteq\rho(A)\quad\text{且}\quad \|R_\lambda\|\leqslant\frac{1}{\lambda}\ \text{对所有 }\lambda>0.\label{align:ch07-4-eq17}
+\end{align}
+\end{theorem}
+
+\begin{proof}
+1. 若 $A$ 是生成元，则由\cref{theorem:ch07-4-预解算子的性质} (ii) 立即得\eqref{align:ch07-4-eq17}。
+
+2. 反之，设 $A$ 闭、定义域稠密且满足\eqref{align:ch07-4-eq17}。我们须构造一个以 $A$ 为生成元的压缩半群。为此固定 $\lambda>0$，定义
+\begin{align}
+A_\lambda\triangleq -\lambda I+\lambda^2 R_\lambda=\lambda AR_\lambda.\label{align:ch07-4-eq18}
+\end{align}
+算子 $A_\lambda$ 是 $A$ 的一种正则化逼近。
+
+3. 先断言
+\begin{align}
+A_\lambda u\to Au\qquad (\lambda\to\infty,\ u\in D(A)).\label{align:ch07-4-eq19}
+\end{align}
+事实上，由于 $\lambda R_\lambda u-u=AR_\lambda u=R_\lambda Au$，
+\begin{align*}
+\|\lambda R_\lambda u-u\|\leqslant\|R_\lambda\|\|Au\|\leqslant\frac{1}{\lambda}\|Au\|\to 0.
+\end{align*}
+故当 $u\in D(A)$ 时 $\lambda R_\lambda u\to u$（$\lambda\to\infty$）。但由于 $\|\lambda R_\lambda\|\leqslant 1$ 且 $D(A)$ 稠密，进而对所有 $u\in X$ 也有
+\begin{align}
+\lambda R_\lambda u\to u\qquad (\lambda\to\infty).\label{align:ch07-4-eq20}
+\end{align}
+现若 $u\in D(A)$，则
+\begin{align*}
+A_\lambda u=\lambda AR_\lambda u=\lambda R_\lambda Au.
+\end{align*}
+由\eqref{align:ch07-4-eq20}，断言\eqref{align:ch07-4-eq19} 得证。
+
+4. 再定义
+\begin{align*}
+S_\lambda(t)\triangleq e^{tA_\lambda}=e^{-\lambda t}e^{\lambda^2 tR_\lambda}=e^{-\lambda t}\sum_{k=0}^\infty\frac{(\lambda^2 t)^k}{k!}R_\lambda^k.
+\end{align*}
+注意由于 $\|R_\lambda\|\leqslant\lambda^{-1}$，
+\begin{align*}
+\|S_\lambda(t)\|\leqslant e^{-\lambda t}\sum_{k=0}^\infty\frac{\lambda^{2k}t^k}{k!}\|R_\lambda\|^k
+\leqslant e^{-\lambda t}\sum_{k=0}^\infty\frac{\lambda^k t^k}{k!}=1.
+\end{align*}
+因此 $\{S_\lambda(t)\}_{t\geqslant 0}$ 是压缩半群，且易验其生成元为 $A_\lambda$，$D(A_\lambda)=X$。
+
+5. 设 $\lambda,\mu>0$。由于 $R_\lambda R_\mu=R_\mu R_\lambda$，有 $A_\lambda A_\mu=A_\mu A_\lambda$，故
+\begin{align*}
+A_\mu S_\lambda(t)=S_\lambda(t)A_\mu\qquad (t>0).
+\end{align*}
+于是可算
+\begin{align*}
+S_\lambda(t)u-S_\mu(t)u=\int_0^t\frac{\mathrm{d}}{\mathrm{d}s}[S_\mu(t-s)S_\lambda(s)u]\,\mathrm{d}s
+=\int_0^t S_\mu(t-s)S_\lambda(s)(A_\lambda u-A_\mu u)\,\mathrm{d}s,
+\end{align*}
+因为 $\frac{\mathrm{d}}{\mathrm{d}t}S_\lambda(t)u=A_\lambda S_\lambda(t)u=S_\lambda(t)A_\lambda u$。因此由\eqref{align:ch07-4-eq19}，若 $u\in D(A)$，则
+\begin{align*}
+\|S_\lambda(t)u-S_\mu(t)u\|\leqslant t\|A_\lambda u-A_\mu u\|\to 0\qquad (\lambda,\mu\to\infty).
+\end{align*}
+故
+\begin{align}
+S(t)u\triangleq \lim_{\lambda\to\infty}S_\lambda(t)u\label{align:ch07-4-eq21}
+\end{align}
+对每个 $t\geqslant 0$、$u\in D(A)$ 存在。由于 $\|S_\lambda(t)\|\leqslant 1$，极限\eqref{align:ch07-4-eq21} 事实上对所有 $u\in X$ 都存在，且关于 $t$ 在 $[0,\infty)$ 的紧子集上一致。现易验证 $\{S(t)\}_{t\geqslant 0}$ 是 $X$ 上的压缩半群。
+
+6. 还须证 $A$ 是 $\{S(t)\}_{t\geqslant 0}$ 的生成元。记此生成元为 $B$。现
+\begin{align}
+S_\lambda(t)u-u=\int_0^t S_\lambda(s)A_\lambda u\,\mathrm{d}s.\label{align:ch07-4-eq22}
+\end{align}
+此外，若 $u\in D(A)$，
+\begin{align*}
+\|S_\lambda(s)A_\lambda u-S(s)Au\|\leqslant \|S_\lambda(s)\|\|A_\lambda u-Au\|+\|(S_\lambda(s)-S(s))Au\|\to 0\qquad (\lambda\to\infty).
+\end{align*}
+于是在\eqref{align:ch07-4-eq22} 中取极限，推得若 $u\in D(A)$，
+\begin{align*}
+S(t)u-u=\int_0^t S(s)Au\,\mathrm{d}s.
+\end{align*}
+因此 $D(A)\subseteq D(B)$，且
+\begin{align*}
+Bu=\lim_{t\to 0+}\frac{S(t)u-u}{t}=Au\qquad (u\in D(A)).
+\end{align*}
+现若 $\lambda>0$，则 $\lambda\in\rho(A)\cap\rho(B)$。又由\eqref{align:ch07-4-eq17}，$(\lambda I-B)(D(A))=(\lambda I-A)(D(A))=X$。故 $(\lambda I-B)|_{D(A)}$ 一一且到上，从而 $D(A)=D(B)$。因此 $A=B$，$A$ 确为 $\{S(t)\}_{t\geqslant 0}$ 的生成元。
+\end{proof}
+
+\begin{remark}\label{remark:ch07-4-omega压缩半群}
+设 $\omega\in\mathbb{R}$。称半群 $\{S(t)\}_{t\geqslant 0}$ 是 $\omega$-压缩的，若 $\|S(t)\|\leqslant e^{\omega t}\ (t\geqslant 0)$。\cref{theorem:ch07-4-Hille-Yosida} 的一个简单变体断言：闭的、定义域稠密的线性算子 $A$ 生成 $\omega$-压缩半群，当且仅当
+\begin{align}
+(\omega,\infty)\subseteq\rho(A)\quad\text{且}\quad \|R_\lambda\|\leqslant\frac{1}{\lambda-\omega}\ \text{对所有 }\lambda>\omega.\label{align:ch07-4-eq23}
+\end{align}
+这一版本的 Hille--Yosida 定理将用于下面的第一个例子。
+\end{remark}
+
+\subsection{应用}\label{subsection:ch07-4-3-应用}
+
+本节证明某些二阶抛物与双曲型 PDE 可纳入半群框架。
+
+\subsubsection*{a. 二阶抛物型 PDE}
+
+考虑初边值问题
+\begin{align}
+\begin{cases}
+u_t+Lu=0 & \text{于 } U_T,\\
+u=0 & \text{于 } \partial U\times[0,T],\\
+u=g & \text{于 } U\times\{t=0\},
+\end{cases}\label{align:ch07-4-eq24}
+\end{align}
+这是\cref{subsection:ch07-1-1-定义} 中\eqref{align:ch07-1-eq01} 对应于 $f\equiv 0$ 的特殊情形。设 $L$ 具有\cref{subsection:ch07-1-1-定义} 中的散度结构，满足通常的强椭圆条件，系数光滑且不依赖于 $t$。另设有界开集 $U$ 边界光滑。
+
+我们拟把\eqref{align:ch07-4-eq24} 解释为由 $X=L^2(U)$ 上的一个半群所确定的流。为此令
+\begin{align}
+D(A)\triangleq H^1_0(U)\cap H^2(U)\label{align:ch07-4-eq25}
+\end{align}
+并定义
+\begin{align}
+Au\triangleq -Lu\qquad (u\in D(A)).\label{align:ch07-4-eq26}
+\end{align}
+
+显然 $A$ 是 $X$ 上的无界线性算子。回忆\cref{subsection:ch07-2-2-弱解的存在性} 的能量估计
+\begin{align}
+\beta\|u\|_{H^1_0(U)}^2\leqslant B[u,u]+\gamma\|u\|_{L^2(U)}^2,\label{align:ch07-4-eq27}
+\end{align}
+其中常数 $\beta>0$、$\gamma\geqslant 0$，$B[\cdot,\cdot]$ 是与 $L$ 相关的双线性型。
+
+\begin{theorem}[二阶抛物型 PDE 作为半群。]\label{theorem:ch07-4-抛物型PDE作为半群}算子 $A$ 在 $L^2(U)$ 上生成一个 $\gamma$-压缩半群 $\{S(t)\}_{t\geqslant 0}$。
+\end{theorem}
+
+\begin{proof}
+1. 我们须验证\cref{remark:ch07-4-omega压缩半群} 中所述 Hille--Yosida 定理变体的假设（以 $\gamma$ 代替 $\omega$）。首先，由\eqref{align:ch07-4-eq25} 给出的 $D(A)$ 显然在 $L^2(U)$ 中稠密。
+
+2. 现断言算子 $A$ 闭。事实上设 $\{u_k\}_{k=1}^\infty\subset D(A)$ 满足
+\begin{align}
+u_k\to u,\quad Au_k\to v\qquad \text{于 } L^2(U).\label{align:ch07-4-eq28}
+\end{align}
+由\cref{theorem:ch06-3-2-正则性}，
+\begin{align*}
+\|u_k-u_l\|_{H^2(U)}\leqslant C\bigl(\|Au_k-Au_l\|_{L^2(U)}+\|u_k-u_l\|_{L^2(U)}\bigr)
+\end{align*}
+对所有 $k,l$ 成立。故\eqref{align:ch07-4-eq28} 蕴含 $\{u_k\}_{k=1}^\infty$ 是 $H^2(U)$ 中的 Cauchy 列，于是
+\begin{align}
+u_k\to u\qquad \text{于 } H^2(U).\label{align:ch07-4-eq29}
+\end{align}
+因此 $u\in D(A)$。此外\eqref{align:ch07-4-eq29} 蕴含 $Au_k\to Au$ 于 $L^2(U)$，故 $v=Au$。
+
+3. 再以 $\gamma$ 代替 $\omega$ 检查预解条件\eqref{align:ch07-4-eq23}。由\cref{theorem:ch06-2-2-存在唯一性}，对每个 $\lambda\geqslant\gamma$，边值问题
+\begin{align}
+\begin{cases}
+Lu+\lambda u=f & \text{于 } U,\\
+u=0 & \text{于 } \partial U
+\end{cases}\label{align:ch07-4-eq30}
+\end{align}
+对每个 $f\in L^2(U)$ 有唯一弱解 $u\in H^1_0(U)$。由椭圆正则性理论，事实上 $u\in H^2(U)\cap H^1_0(U)$，故 $u\in D(A)$。现用\eqref{align:ch07-4-eq26} 改写\eqref{align:ch07-4-eq30}，得
+\begin{align}
+\lambda u-Au=f.\label{align:ch07-4-eq31}
+\end{align}
+于是当 $\lambda\geqslant\gamma$ 时，$(\lambda I-A):D(A)\to X$ 一一且到上。故 $\rho(A)\supset[\gamma,\infty)$。
+
+4. 考虑边值问题\eqref{align:ch07-4-eq30} 的弱形式：
+\begin{align*}
+B[u,v]+\lambda(u,v)=(f,v)
+\end{align*}
+对每个 $v\in H^1_0(U)$ 成立，其中 $(\cdot,\cdot)$ 是 $L^2(U)$ 中的内积。令 $v=u$ 并回忆\eqref{align:ch07-4-eq27}，对 $\lambda>\gamma$ 计算得
+\begin{align*}
+(\lambda-\gamma)\|u\|_{L^2(U)}^2\leqslant \|f\|_{L^2(U)}\|u\|_{L^2(U)}.
+\end{align*}
+因此，由于 $u=R_\lambda f$，有估计
+\begin{align*}
+\|R_\lambda f\|_{L^2(U)}\leqslant \frac{1}{\lambda-\gamma}\|f\|_{L^2(U)}.
+\end{align*}
+此界对所有 $f\in L^2(U)$ 成立，故
+\begin{align}
+\|R_\lambda\|\leqslant\frac{1}{\lambda-\gamma}\qquad (\lambda>\gamma),\label{align:ch07-4-eq32}
+\end{align}
+正如所需。
+\end{proof}
+
+半群理论为构造初边值问题\eqref{align:ch07-4-eq24} 的解提供了一个优美方法。但值得注意的是，这一技巧要求 $L$ 的系数 $a^{ij},b^i,c\ (i,j=1,\cdots,n)$ 与 $t$ 无关。\cref{section:ch07-1-二阶抛物型方程} 中的Galerkin方法则无此限制。另一方面，半群理论一开始就构造出比Galerkin技术所得弱解更正则的解。但我们也可应用\cref{subsection:ch07-1-3-正则性} 的正则性理论来证明此弱解事实上更光滑。
+
+\subsubsection*{b. 二阶双曲型 PDE}
+
+接着考虑双曲型初边值问题
+\begin{align}
+\begin{cases}
+u_{tt}+Lu=0 & \text{于 } U_T,\\
+u=0 & \text{于 } \partial U\times[0,T],\\
+u=g,\ u_t=h & \text{于 } U\times\{t=0\},
+\end{cases}\label{align:ch07-4-eq33}
+\end{align}
+其中算子 $L$ 与开集 $U$ 同上。令 $v\triangleq u_t$，把\eqref{align:ch07-4-eq33} 改写为一阶组。于是上式读作
+\begin{align*}
+\begin{cases}
+u_t=v,\ v_t+Lu=0 & \text{于 } U_T,\\
+u=0 & \text{于 } \partial U\times[0,T],\\
+u=g,\ v=h & \text{于 } U\times\{t=0\}.
+\end{cases}
+\end{align*}
+进一步假设 $L$ 具有对称形式
+\begin{align*}
+Lu=-\sum_{i,j=1}^n(a^{ij}u_{x_i})_{x_j}+cu,
+\end{align*}
+其中
+\begin{align}
+c\geqslant 0,\quad a^{ij}=a^{ji}\qquad (i,j=1,\cdots,n).\label{align:ch07-4-eq34}
+\end{align}
+于是存在常数 $\beta>0$ 使得
+\begin{align}
+\beta\|u\|_{H^1_0(U)}^2\leqslant B[u,u]\qquad \text{对所有 } u\in H^1_0(U).\label{align:ch07-4-eq35}
+\end{align}
+
+现取
+\begin{align*}
+X=H^1_0(U)\times L^2(U),
+\end{align*}
+范数为
+\begin{align}
+\|(u,v)\|\triangleq (B[u,u]+\|v\|_{L^2(U)}^2)^{1/2}.\label{align:ch07-4-eq36}
+\end{align}
+定义
+\begin{align*}
+D(A)\triangleq [H^2(U)\cap H^1_0(U)]\times H^1_0(U)
+\end{align*}
+并令
+\begin{align}
+A(u,v)\triangleq (v,-Lu)\qquad ((u,v)\in D(A)).\label{align:ch07-4-eq37}
+\end{align}
+我们将证明 $A$ 满足 Hille--Yosida 定理的假设。
+
+\begin{theorem}[二阶双曲型 PDE 作为半群。]\label{theorem:ch07-4-双曲型PDE作为半群}算子 $A$ 在 $H^1_0(U)\times L^2(U)$ 上生成一个压缩半群 $\{S(t)\}_{t\geqslant 0}$。
+\end{theorem}
+
+\begin{proof}
+1. $A$ 的定义域显然在 $H^1_0(U)\times L^2(U)$ 中稠密。
+
+2. 为看 $A$ 闭，设 $\{(u_k,v_k)\}_{k=1}^\infty\subset D(A)$，满足
+\begin{align*}
+(u_k,v_k)\to(u,v),\quad A(u_k,v_k)\to(f,g)\qquad \text{于 } H^1_0(U)\times L^2(U).
+\end{align*}
+由于 $A(u_k,v_k)=(v_k,-Lu_k)$，得 $f=v$ 且 $Lu_k\to -g$ 于 $L^2(U)$。如前一证明中那样，由此 $u_k\to u$ 于 $H^2(U)$，且 $g=-Lu$。故 $(u,v)\in D(A)$，$A(u,v)=(v,-Lu)=(f,g)$。
+
+3. 现设 $\lambda>0$，$(f,g)\in X\triangleq H^1_0(U)\times L^2(U)$，考虑算子方程
+\begin{align}
+\lambda(u,v)-A(u,v)=(f,g).\label{align:ch07-4-eq38}
+\end{align}
+这等价于两个标量方程
+\begin{align}
+\begin{cases}
+\lambda u-v=f & (u\in H^2(U)\cap H^1_0(U)),\\
+\lambda v+Lu=g & (v\in H^1_0(U)).
+\end{cases}\label{align:ch07-4-eq39}
+\end{align}
+但\eqref{align:ch07-4-eq39} 蕴含
+\begin{align}
+\lambda^2 u+Lu=\lambda f+g\qquad (u\in H^2(U)\cap H^1_0(U)).\label{align:ch07-4-eq40}
+\end{align}
+由于 $\lambda^2>0$，由估计\eqref{align:ch07-4-eq35} 与正则性理论，存在\eqref{align:ch07-4-eq40} 的唯一解 $u$。再定义 $v\triangleq\lambda u-f\in H^1_0(U)$，即证\eqref{align:ch07-4-eq38} 有唯一解 $(u,v)$。因此 $\rho(A)\supset(0,\infty)$。
+
+4. 当\eqref{align:ch07-4-eq39} 成立时，写 $(u,v)=R_\lambda(f,g)$。由\eqref{align:ch07-4-eq39} 中第二个方程推得
+\begin{align*}
+\lambda\|v\|_{L^2}^2+B[u,v]=(g,v)_{L^2}.
+\end{align*}
+代入 $v=\lambda u-f$，得
+\begin{align*}
+\lambda\bigl(\|v\|_{L^2}^2+B[u,u]\bigr)=(g,v)_{L^2}+B[u,f]
+\leqslant \bigl(\|g\|_{L^2}^2+B[f,f]\bigr)^{1/2}\bigl(\|v\|_{L^2}^2+B[u,u]\bigr)^{1/2}.
+\end{align*}
+此处用到广义 Cauchy--Schwarz 不等式（\cref{chapter:appB-不等式}），它由对称条件\eqref{align:ch07-4-eq34} 保证成立。由定义\eqref{align:ch07-4-eq36}，
+\begin{align*}
+\|(u,v)\|\leqslant\frac{1}{\lambda}\|(f,g)\|;
+\end{align*}
+故
+\begin{align*}
+\|R_\lambda\|\leqslant\frac{1}{\lambda}\qquad (\lambda>0),
+\end{align*}
+正如所需。
+\end{proof}
+
+解析半群的理论见 Friedman [Fr1] 或 Yosida [Y]。非线性半群理论的方面将在后面的\cref{definition:ch09-6-非线性半群} 中展开。
+
+\end{document}

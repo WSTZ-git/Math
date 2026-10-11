@@ -1,0 +1,848 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}}
+
+\begin{document}
+
+\section{二阶双曲型方程}\label{section:ch07-2-二阶双曲型方程}
+
+二阶双曲型方程是波动方程（见\cref{section:ch02-4-波动方程}）的自然推广。本节构造适当定义的弱解，并研究其唯一性、光滑性及其他性质。尽管二阶抛物型与双曲型 PDE 的物理本性全然不同，我们却能为弱解提供相当类似的泛函分析构造，这一点颇为有趣。
+
+\subsection{定义}\label{subsection:ch07-2-1-定义}
+
+\subsubsection*{a. 双曲型方程}
+
+如\cref{section:ch07-1-二阶抛物型方程} 那样写 $U_T=U\times(0,T]$，其中 $T>0$，$U\subset\mathbb{R}^n$ 为开、有界集。
+
+我们研究如下初边值问题
+\begin{align}
+\begin{cases}
+u_{tt}+Lu=f & \text{于 } U_T,\\
+u=0 & \text{于 } \partial U\times[0,T],\\
+u=g,\ u_t=h & \text{于 } U\times\{t=0\},
+\end{cases}\label{align:ch07-2-eq01}
+\end{align}
+其中 $f:U_T\to\mathbb{R}$、$g,h:U\to\mathbb{R}$ 给定，$u:\overline{U_T}\to\mathbb{R}$ 为未知函数，$u=u(x,t)$。记号 $L$ 表示对每一时刻 $t$ 的二阶偏微分算子，它或者具有散度形式
+\begin{align}
+Lu = -\sum_{i,j=1}^n \bigl(a^{ij}(x,t)u_{x_i}\bigr)_{x_j} + \sum_{i=1}^n b^i(x,t)u_{x_i} + c(x,t)u,\label{align:ch07-2-eq02}
+\end{align}
+或者具有非散度形式
+\begin{align}
+Lu = -\sum_{i,j=1}^n a^{ij}(x,t)u_{x_ix_j} + \sum_{i=1}^n b^i(x,t)u_{x_i} + c(x,t)u,\label{align:ch07-2-eq03}
+\end{align}
+其中系数 $a^{ij},b^i,c\ (i,j=1,\cdots,n)$ 给定。
+
+\begin{definition}\label{definition:ch07-2-双曲算子}
+称偏微分算子 $\dfrac{\partial^2}{\partial t^2}+L$ 是（一致）双曲的，若存在常数 $\theta>0$，使得
+\begin{align}
+\sum_{i,j=1}^n a^{ij}(x,t)\xi_i\xi_j \geqslant \theta|\xi|^2\label{align:ch07-2-eq04}
+\end{align}
+对一切 $(x,t)\in U_T$、$\xi\in\mathbb{R}^n$ 成立。
+\end{definition}
+
+若 $a^{ij}\equiv\delta_{ij}$、$b^i\equiv c\equiv f\equiv 0$，则 $L=-\Delta$，偏微分方程即为第 2 章已研究过的波动方程。一般二阶双曲型 PDE 刻画波在非均匀、各向异性介质中的传播。
+
+\subsubsection*{b. 弱解}
+
+如\cref{section:ch06-定义} 与\cref{section:ch07-1-二阶抛物型方程} 中那样，我们先设 $L$ 具有散度形式\eqref{align:ch07-2-eq02}，并为问题\eqref{align:ch07-2-eq01} 寻找适当的弱解概念。初始假设
+\begin{align}
+a^{ij},b^i,c\in C^1(\overline{U_T})\quad (i,j=1,\cdots,n),\label{align:ch07-2-eq05}\\
+f\in L^2(U_T),\label{align:ch07-2-eq06}\\
+g\in H^1_0(U),\ h\in L^2(U),\label{align:ch07-2-eq07}
+\end{align}
+并始终假定 $a^{ij}=a^{ji}\ (i,j=1,\cdots,n)$。
+
+如\cref{section:ch07-1-二阶抛物型方程} 那样，引入依赖时间的双线性型
+\begin{align}
+B[u,v;t]\triangleq \int_U \sum_{i,j=1}^n a^{ij}(\cdot,t)u_{x_i}v_{x_j} + \sum_{i=1}^n b^i(\cdot,t)u_{x_i}v + c(\cdot,t)uv\,\mathrm{d}x,\label{align:ch07-2-eq08}
+\end{align}
+其中 $u,v\in H^1_0(U)$，$0\leqslant t\leqslant T$。
+
+\paragraph{弱解定义的动机。}先设 $u=u(x,t)$ 是\eqref{align:ch07-2-eq01} 的光滑解，并定义相应的映射
+\begin{align*}
+\mathbf{u}:[0,T]\to H^1_0(U),\qquad [\mathbf{u}(t)](x)\triangleq u(x,t)\quad (x\in U,\ 0\leqslant t\leqslant T).
+\end{align*}
+类似地引入函数
+\begin{align*}
+\mathbf{f}:[0,T]\to L^2(U),\qquad [\mathbf{f}(t)](x)\triangleq f(x,t)\quad (x\in U,\ 0\leqslant t\leqslant T).
+\end{align*}
+现固定任一函数 $v\in H^1_0(U)$，将 PDE $u_{tt}+Lu=f$ 乘以 $v$ 并分部积分，得到恒等式
+\begin{align}
+(\mathbf{u}'',v)+B[\mathbf{u},v;t]=(\mathbf{f},v)\label{align:ch07-2-eq09}
+\end{align}
+对 $0\leqslant t\leqslant T$ 成立，其中 $(\cdot,\cdot)$ 表示 $L^2(U)$ 中的内积。几乎完全如\cref{section:ch07-1-二阶抛物型方程} 中抛物 PDE 的平行讨论那样，由 PDE $u_{tt}+Lu=f$ 可见
+\begin{align*}
+u_{tt}=g_0+\sum_{j=1}^n (g_j)_{x_j},
+\end{align*}
+其中 $g_0\triangleq f-\sum_{i=1}^n b^i u_{x_i}-cu$，$g_j\triangleq\sum_{i=1}^n a^{ij}u_{x_i}\ (j=1,\cdots,n)$。这提示我们应寻求满足 $\mathbf{u}''\in H^{-1}(U)$（对几乎处处的 $0\leqslant t\leqslant T$）的弱解，再将\eqref{align:ch07-2-eq09} 的第一项解释为 $\langle\mathbf{u}'',v\rangle$，其中 $\langle\cdot,\cdot\rangle$ 如 usual 表示 $H^{-1}(U)$ 与 $H^1_0(U)$ 的对偶配对。
+
+\begin{definition}\label{definition:ch07-2-双曲弱解}
+称函数 $\mathbf{u}\in L^2(0,T;H^1_0(U))$（满足 $\mathbf{u}'\in L^2(0,T;L^2(U))$、$\mathbf{u}''\in L^2(0,T;H^{-1}(U))$）为双曲型初边值问题\eqref{align:ch07-2-eq01} 的一个\textbf{弱解}，若
+\begin{enumerate}[(i)]
+\item $\langle\mathbf{u}'',v\rangle+B[\mathbf{u},v;t]=(\mathbf{f},v)$ 对每个 $v\in H^1_0(U)$ 及几乎处处的 $0\leqslant t\leqslant T$ 成立；
+\item $\mathbf{u}(0)=g$，$\mathbf{u}'(0)=h$。
+\end{enumerate}
+\end{definition}
+
+\begin{remark}\label{remark:ch07-2-弱解初值合理}
+由\cref{theorem:ch06-3-2-正则性} 知 $\mathbf{u}\in C([0,T];L^2(U))$、$\mathbf{u}'\in C([0,T];H^{-1}(U))$。因而上面的等式 (ii) 有意义。
+\end{remark}
+
+\subsection{弱解的存在性}\label{subsection:ch07-2-2-弱解的存在性}
+
+\subsubsection*{a. Galerkin逼近}
+
+仿照\cref{subsection:ch07-1-2-弱解的存在性} 中的方法，我们通过先求解一个有限维逼近，来构造双曲型初边值问题
+\begin{align}
+\begin{cases}
+u_{tt}+Lu=f & \text{于 } U_T,\\
+u=0 & \text{于 } \partial U\times[0,T],\\
+u=g,\ u_t=h & \text{于 } U\times\{t=0\}
+\end{cases}\label{align:ch07-2-eq10}
+\end{align}
+的弱解。于是我们再次使用Galerkin方法，选取光滑函数 $w_k=w_k(x)\ (k=1,\cdots)$ 使得
+\begin{align}
+\{w_k\}_{k=1}^\infty \text{ 是 } H^1_0(U) \text{ 的一组正交基},\label{align:ch07-2-eq11}
+\end{align}
+且
+\begin{align}
+\{w_k\}_{k=1}^\infty \text{ 是 } L^2(U) \text{ 的一组标准正交基}.\label{align:ch07-2-eq12}
+\end{align}
+
+固定正整数 $m$，写
+\begin{align}
+\mathbf{u}_m(t)\triangleq \sum_{k=1}^m d_m^k(t)w_k,\label{align:ch07-2-eq13}
+\end{align}
+我们打算选取系数 $d_m^k(t)\ (0\leqslant t\leqslant T,\ k=1,\cdots,m)$ 满足
+\begin{align}
+d_m^k(0)=(g,w_k)\qquad (k=1,\cdots,m),\label{align:ch07-2-eq14}\\
+(d_m^k)'(0)=(h,w_k)\qquad (k=1,\cdots,m),\label{align:ch07-2-eq15}
+\end{align}
+以及
+\begin{align}
+(\mathbf{u}_m'',w_k)+B[\mathbf{u}_m,w_k;t]=(\mathbf{f},w_k)\qquad (0\leqslant t\leqslant T,\ k=1,\cdots,m).\label{align:ch07-2-eq16}
+\end{align}
+
+\begin{theorem}[近似解的构造。]\label{theorem:ch07-2-近似解的构造}对每个整数 $m=1,2,\cdots$，存在唯一的形如\eqref{align:ch07-2-eq13} 的函数 $\mathbf{u}_m$ 满足\eqref{align:ch07-2-eq14}--\eqref{align:ch07-2-eq16}。
+\end{theorem}
+
+\begin{proof}
+设 $\mathbf{u}_m$ 由\eqref{align:ch07-2-eq13} 给出，利用\eqref{align:ch07-2-eq12} 注意到
+\begin{align}
+(\mathbf{u}_m''(t),w_k)=(d_m^k)''(t).\label{align:ch07-2-eq17}
+\end{align}
+此外，恰如\cref{theorem:ch07-1-近似解的构造} 的证明中那样，
+\begin{align*}
+B[\mathbf{u}_m,w_k;t]=\sum_{l=1}^m e_{kl}(t)d_m^l(t),
+\end{align*}
+其中 $e_{kl}(t)\triangleq B[w_l,w_k;t]\ (k,l=1,\cdots,m)$。又写 $f_k(t)\triangleq(\mathbf{f}(t),w_k)\ (k=1,\cdots,m)$。于是\eqref{align:ch07-2-eq16} 成为线性常微分方程组
+\begin{align}
+(d_m^k)''(t)+\sum_{l=1}^m e_{kl}(t)d_m^l(t)=f_k(t)\qquad (0\leqslant t\leqslant T,\ k=1,\cdots,m),\label{align:ch07-2-eq18}
+\end{align}
+并附有初始条件\eqref{align:ch07-2-eq14}、\eqref{align:ch07-2-eq15}。根据常微分方程的标准理论，存在唯一函数 $\mathbf{d}_m(t)=(d_m^1(t),\cdots,d_m^m(t))$ 满足\eqref{align:ch07-2-eq14}、\eqref{align:ch07-2-eq15} 并在 $0\leqslant t\leqslant T$ 上解\eqref{align:ch07-2-eq18}。
+\end{proof}
+
+\subsubsection*{b. 能量估计}
+
+下面令 $m\to\infty$，因此需要某些关于 $m$ 一致的估计。
+
+\begin{theorem}[能量估计。]\label{theorem:ch07-2-能量估计}存在常数 $C$（仅依赖于 $U$、$T$ 及 $L$ 的系数），使得
+\begin{align}
+\max_{0\leqslant t\leqslant T}\bigl(\|\mathbf{u}_m(t)\|_{H^1_0(U)}+\|\mathbf{u}_m'(t)\|_{L^2(U)}\bigr) + \|\mathbf{u}_m''\|_{L^2(0,T;H^{-1}(U))}
+\leqslant C\bigl(\|\mathbf{f}\|_{L^2(0,T;L^2(U))}+\|g\|_{H^1_0(U)}+\|h\|_{L^2(U)}\bigr)\label{align:ch07-2-eq19}
+\end{align}
+对 $m=1,2,\cdots$ 成立。
+\end{theorem}
+
+\begin{proof}
+1. 将恒等式\eqref{align:ch07-2-eq16} 乘以 $(d_m^k)'(t)$，对 $k=1,\cdots,m$ 求和，并回忆\eqref{align:ch07-2-eq13}，得到
+\begin{align}
+(\mathbf{u}_m'',\mathbf{u}_m')+B[\mathbf{u}_m,\mathbf{u}_m';t]=(\mathbf{f},\mathbf{u}_m')\label{align:ch07-2-eq20}
+\end{align}
+对几乎处处的 $0\leqslant t\leqslant T$ 成立。其次注意 $(\mathbf{u}_m'',\mathbf{u}_m')=\frac{\mathrm{d}}{\mathrm{d}t}\left(\frac12\|\mathbf{u}_m'\|_{L^2(U)}^2\right)$。此外可写
+\begin{align}
+B[\mathbf{u}_m,\mathbf{u}_m';t] = \int_U \sum_{i,j=1}^n a^{ij}\mathbf{u}_{m,x_i}\mathbf{u}_{m,x_j}'\,\mathrm{d}x + \int_U \sum_{i=1}^n b^i\mathbf{u}_{m,x_i}\mathbf{u}_m' + c\mathbf{u}_m\mathbf{u}_m'\,\mathrm{d}x \triangleq B_1+B_2.\label{align:ch07-2-eq21}
+\end{align}
+由于 $a^{ij}=a^{ji}\ (i,j=1,\cdots,n)$，可见
+\begin{align}
+B_1 = \frac{\mathrm{d}}{\mathrm{d}t}\left(\frac12\mathcal{A}[\mathbf{u}_m,\mathbf{u}_m;t]\right) - \frac12\int_U \sum_{i,j=1}^n a_t^{ij}\mathbf{u}_{m,x_i}\mathbf{u}_{m,x_j}\,\mathrm{d}x,\label{align:ch07-2-eq22}
+\end{align}
+其中对称双线性型
+\begin{align*}
+\mathcal{A}[u,v;t]\triangleq \int_U \sum_{i,j=1}^n a^{ij}u_{x_i}v_{x_j}\,\mathrm{d}x\qquad (u,v\in H^1_0(U)).
+\end{align*}
+等式\eqref{align:ch07-2-eq22} 蕴含
+\begin{align}
+B_1 \geqslant \frac{\mathrm{d}}{\mathrm{d}t}\left(\frac12\mathcal{A}[\mathbf{u}_m,\mathbf{u}_m;t]\right) - C\|\mathbf{u}_m\|_{H^1_0(U)}^2,\label{align:ch07-2-eq23}
+\end{align}
+且注意到
+\begin{align}
+|B_2|\leqslant C\bigl(\|\mathbf{u}_m\|_{H^1_0(U)}^2+\|\mathbf{u}_m'\|_{L^2(U)}^2\bigr).\label{align:ch07-2-eq24}
+\end{align}
+合并估计\eqref{align:ch07-2-eq20}--\eqref{align:ch07-2-eq24}，得到
+\begin{align}
+\frac{\mathrm{d}}{\mathrm{d}t}\bigl(\|\mathbf{u}_m'\|_{L^2(U)}^2+\mathcal{A}[\mathbf{u}_m,\mathbf{u}_m;t]\bigr)
+&\leqslant C\bigl(\|\mathbf{u}_m'\|_{L^2(U)}^2+\|\mathbf{u}_m\|_{H^1_0(U)}^2+\|\mathbf{f}\|_{L^2(U)}^2\bigr)\nonumber\\
+&\leqslant C\bigl(\|\mathbf{u}_m'\|_{L^2(U)}^2+\mathcal{A}[\mathbf{u}_m,\mathbf{u}_m;t]+\|\mathbf{f}\|_{L^2(U)}^2\bigr),\label{align:ch07-2-eq25}
+\end{align}
+这里用到由一致双曲条件推出的不等式
+\begin{align}
+\theta\int_U |Du|^2\,\mathrm{d}x\leqslant \mathcal{A}[u,u;t]\qquad (u\in H^1_0(U)).\label{align:ch07-2-eq26}
+\end{align}
+
+2. 现令
+\begin{align}
+\eta(t)\triangleq \|\mathbf{u}_m'(t)\|_{L^2(U)}^2+\mathcal{A}[\mathbf{u}_m(t),\mathbf{u}_m(t);t],\label{align:ch07-2-eq27}\\
+\xi(t)\triangleq \|\mathbf{f}(t)\|_{L^2(U)}^2.\label{align:ch07-2-eq28}
+\end{align}
+则不等式\eqref{align:ch07-2-eq25} 写作
+\begin{align*}
+\eta'(t)\leqslant C_1\eta(t)+C_2\xi(t)
+\end{align*}
+对 $0\leqslant t\leqslant T$ 及适当常数 $C_1,C_2$ 成立。于是 Gronwall 不等式（\cref{chapter:appB-不等式}）给出估计
+\begin{align}
+\eta(t)\leqslant e^{C_1 t}\left(\eta(0)+C_2\int_0^t\xi(s)\,\mathrm{d}s\right)\qquad (0\leqslant t\leqslant T).\label{align:ch07-2-eq29}
+\end{align}
+然而由\eqref{align:ch07-2-eq14}、\eqref{align:ch07-2-eq15} 及估计 $\|\mathbf{u}_m(0)\|_{H^1_0(U)}\leqslant\|g\|_{H^1_0(U)}$，
+\begin{align*}
+\eta(0)=\|\mathbf{u}_m'(0)\|_{L^2(U)}^2+\mathcal{A}[\mathbf{u}_m(0),\mathbf{u}_m(0);0]\leqslant C\bigl(\|h\|_{L^2(U)}^2+\|g\|_{H^1_0(U)}^2\bigr).
+\end{align*}
+于是公式\eqref{align:ch07-2-eq27}--\eqref{align:ch07-2-eq29} 给出界
+\begin{align*}
+\|\mathbf{u}_m'(t)\|_{L^2(U)}^2+\mathcal{A}[\mathbf{u}_m(t),\mathbf{u}_m(t);t]
+\leqslant C\bigl(\|g\|_{H^1_0(U)}^2+\|h\|_{L^2(U)}^2+\|\mathbf{f}\|_{L^2(0,T;L^2(U))}^2\bigr).
+\end{align*}
+由于 $0\leqslant t\leqslant T$ 任意，由此估计与\eqref{align:ch07-2-eq26} 得
+\begin{align*}
+\max_{0\leqslant t\leqslant T}\bigl(\|\mathbf{u}_m(t)\|_{H^1_0(U)}^2+\|\mathbf{u}_m'(t)\|_{L^2(U)}^2\bigr)
+\leqslant C\bigl(\|g\|_{H^1_0(U)}^2+\|h\|_{L^2(U)}^2+\|\mathbf{f}\|_{L^2(0,T;L^2(U))}^2\bigr).
+\end{align*}
+
+3. 任取 $v\in H^1_0(U)$，$\|v\|_{H^1_0(U)}\leqslant 1$，写 $v=v_1+v_2$，其中 $v_1\in\operatorname{span}\{w_k\}_{k=1}^m$，$(v_2,w_k)=0\ (k=1,\cdots,m)$。注意 $\|v_1\|_{H^1_0(U)}\leqslant 1$。则\eqref{align:ch07-2-eq13} 与\eqref{align:ch07-2-eq16} 蕴含
+\begin{align*}
+\langle\mathbf{u}_m'',v\rangle=(\mathbf{u}_m'',v)=(\mathbf{u}_m'',v_1)=(\mathbf{f},v_1)-B[\mathbf{u}_m,v_1;t].
+\end{align*}
+因而
+\begin{align*}
+|\langle\mathbf{u}_m'',v\rangle|\leqslant C\bigl(\|\mathbf{f}\|_{L^2(U)}+\|\mathbf{u}_m\|_{H^1_0(U)}\bigr),
+\end{align*}
+因为 $\|v_1\|_{H^1_0(U)}\leqslant 1$。故
+\begin{align*}
+\int_0^T \|\mathbf{u}_m''\|_{H^{-1}(U)}^2\,\mathrm{d}t \leqslant C\int_0^T \|\mathbf{f}\|_{L^2(U)}^2+\|\mathbf{u}_m\|_{H^1_0(U)}^2\,\mathrm{d}t
+\leqslant C\bigl(\|g\|_{H^1_0(U)}^2+\|h\|_{L^2(U)}^2+\|\mathbf{f}\|_{L^2(0,T;L^2(U))}^2\bigr).
+\end{align*}
+\end{proof}
+
+\subsubsection*{c. 存在性与唯一性}
+
+现对Galerkin逼近取极限。
+
+\begin{theorem}[弱解的存在性。]\label{theorem:ch07-2-弱解的存在性}问题\eqref{align:ch07-2-eq01} 存在弱解。
+\end{theorem}
+
+\begin{proof}
+1. 由能量估计\eqref{align:ch07-2-eq19}，序列 $\{\mathbf{u}_m\}_{m=1}^\infty$ 在 $L^2(0,T;H^1_0(U))$ 中有界，$\{\mathbf{u}_m'\}_{m=1}^\infty$ 在 $L^2(0,T;L^2(U))$ 中有界，$\{\mathbf{u}_m''\}_{m=1}^\infty$ 在 $L^2(0,T;H^{-1}(U))$ 中有界。因此存在子列 $\{\mathbf{u}_{m_l}\}_{l=1}^\infty\subset\{\mathbf{u}_m\}_{m=1}^\infty$ 及 $\mathbf{u}\in L^2(0,T;H^1_0(U))$（满足 $\mathbf{u}'\in L^2(0,T;L^2(U))$、$\mathbf{u}''\in L^2(0,T;H^{-1}(U))$），使得
+\begin{align}
+\begin{cases}
+\mathbf{u}_{m_l}\rightharpoonup \mathbf{u} & \text{弱收敛于 } L^2(0,T;H^1_0(U)),\\
+\mathbf{u}_{m_l}'\rightharpoonup \mathbf{u}' & \text{弱收敛于 } L^2(0,T;L^2(U)),\\
+\mathbf{u}_{m_l}''\rightharpoonup \mathbf{u}'' & \text{弱收敛于 } L^2(0,T;H^{-1}(U)).
+\end{cases}\label{align:ch07-2-eq30}
+\end{align}
+
+2. 现固定一整数 $N$，选取形如
+\begin{align}
+\mathbf{v}(t)=\sum_{k=1}^N d_k(t)w_k\label{align:ch07-2-eq31}
+\end{align}
+的函数 $\mathbf{v}\in C^1([0,T];H^1_0(U))$，其中 $\{d_k\}_{k=1}^N$ 为光滑函数。取 $m\geqslant N$，将\eqref{align:ch07-2-eq16} 乘以 $d_k(t)$，对 $k=1,\cdots,N$ 求和，再关于 $t$ 积分，得到
+\begin{align}
+\int_0^T \langle\mathbf{u}_m'',\mathbf{v}\rangle+B[\mathbf{u}_m,\mathbf{v};t]\,\mathrm{d}t = \int_0^T (\mathbf{f},\mathbf{v})\,\mathrm{d}t.\label{align:ch07-2-eq32}
+\end{align}
+令 $m=m_l$ 并回忆\eqref{align:ch07-2-eq30}，取极限得到
+\begin{align}
+\int_0^T \langle\mathbf{u}'',\mathbf{v}\rangle+B[\mathbf{u},\mathbf{v};t]\,\mathrm{d}t = \int_0^T (\mathbf{f},\mathbf{v})\,\mathrm{d}t.\label{align:ch07-2-eq33}
+\end{align}
+由于形如\eqref{align:ch07-2-eq31} 的函数在 $L^2(0,T;H^1_0(U))$ 中稠密，该等式对所有 $\mathbf{v}\in L^2(0,T;H^1_0(U))$ 成立。由\eqref{align:ch07-2-eq33} 进而
+\begin{align*}
+\langle\mathbf{u}'',v\rangle+B[\mathbf{u},v;t]=(\mathbf{f},v)
+\end{align*}
+对所有 $v\in H^1_0(U)$ 及几乎处处的 $0\leqslant t\leqslant T$ 成立。此外 $\mathbf{u}\in C([0,T];L^2(U))$，$\mathbf{u}'\in C([0,T];H^{-1}(U))$。
+
+3. 现须验证
+\begin{align}
+\mathbf{u}(0)=g,\label{align:ch07-2-eq34}\\
+\mathbf{u}'(0)=h.\label{align:ch07-2-eq35}
+\end{align}
+为此选取任一函数 $\mathbf{v}\in C^2([0,T];H^1_0(U))$，满足 $\mathbf{v}(T)=\mathbf{v}'(T)=0$。在\eqref{align:ch07-2-eq33} 中关于 $t$ 分部积分两次，得到
+\begin{align}
+\int_0^T (\mathbf{v}'',\mathbf{u})+B[\mathbf{u},\mathbf{v};t]\,\mathrm{d}t = \int_0^T (\mathbf{f},\mathbf{v})\,\mathrm{d}t - (\mathbf{u}(0),\mathbf{v}'(0)) + \langle\mathbf{u}'(0),\mathbf{v}(0)\rangle.\label{align:ch07-2-eq36}
+\end{align}
+类似地由\eqref{align:ch07-2-eq32} 推得
+\begin{align*}
+\int_0^T (\mathbf{v}'',\mathbf{u}_m)+B[\mathbf{u}_m,\mathbf{v};t]\,\mathrm{d}t = \int_0^T (\mathbf{f},\mathbf{v})\,\mathrm{d}t - (\mathbf{u}_m(0),\mathbf{v}'(0)) + (\mathbf{u}_m'(0),\mathbf{v}(0)).
+\end{align*}
+令 $m=m_l$ 并回忆\eqref{align:ch07-2-eq14}、\eqref{align:ch07-2-eq15}、\eqref{align:ch07-2-eq30}，推得
+\begin{align}
+\int_0^T (\mathbf{v}'',\mathbf{u})+B[\mathbf{u},\mathbf{v};t]\,\mathrm{d}t = \int_0^T (\mathbf{f},\mathbf{v})\,\mathrm{d}t - (g,\mathbf{v}'(0)) + (h,\mathbf{v}(0)).\label{align:ch07-2-eq37}
+\end{align}
+比较恒等式\eqref{align:ch07-2-eq36} 与\eqref{align:ch07-2-eq37}，由于 $\mathbf{v}(0)$、$\mathbf{v}'(0)$ 任意，即得\eqref{align:ch07-2-eq34}、\eqref{align:ch07-2-eq35}。故 $\mathbf{u}$ 是\eqref{align:ch07-2-eq01} 的弱解。
+\end{proof}
+
+回忆\cref{theorem:ch07-2-能量估计} 的能量估计，我们注意到事实上 $\mathbf{u}\in L^\infty(0,T;H^1_0(U))$、$\mathbf{u}'\in L^\infty(0,T;L^2(U))$、$\mathbf{u}''\in L^2(0,T;H^{-1}(U))$：见下面的\cref{theorem:ch07-2-改进正则性}。
+
+\begin{theorem}[弱解的唯一性。]\label{theorem:ch07-2-弱解的唯一性}问题\eqref{align:ch07-2-eq01} 的弱解唯一。
+\end{theorem}
+
+若我们事先知道 $\mathbf{u}'(t)$ 本身足够光滑、可在弱解定义中替换 $v$，下面这个颇具技巧的证明将大为简化。然而事实并非如此。
+
+\begin{proof}
+1. 只需证明当 $\mathbf{f}\equiv g\equiv h\equiv 0$ 时\eqref{align:ch07-2-eq01} 的唯一弱解为
+\begin{align}
+\mathbf{u}\equiv 0.\label{align:ch07-2-eq38}
+\end{align}
+为验证此点，固定 $0\leqslant s\leqslant T$，令
+\begin{align*}
+\mathbf{v}(t)\triangleq
+\begin{cases}
+\displaystyle\int_s^t \mathbf{u}(\tau)\,\mathrm{d}\tau & \text{若 } 0\leqslant t\leqslant s,\\
+0 & \text{若 } s\leqslant t\leqslant T.
+\end{cases}
+\end{align*}
+则对每个 $0\leqslant t\leqslant T$ 有 $\mathbf{v}(t)\in H^1_0(U)$，故
+\begin{align*}
+\int_0^s \langle\mathbf{u}'',\mathbf{v}\rangle+B[\mathbf{u},\mathbf{v};t]\,\mathrm{d}t=0.
+\end{align*}
+由于 $\mathbf{u}'(0)=\mathbf{v}(s)=0$，对上式第一项分部积分后得到
+\begin{align}
+\int_0^s -(\mathbf{u}',\mathbf{v}')+B[\mathbf{u},\mathbf{v};t]\,\mathrm{d}t=0.\label{align:ch07-2-eq39}
+\end{align}
+现 $\mathbf{v}'=-\mathbf{u}\ (0\leqslant t\leqslant s)$，故
+\begin{align*}
+\int_0^s \langle\mathbf{u}',\mathbf{u}\rangle-B[\mathbf{v}',\mathbf{v};t]\,\mathrm{d}t=0.
+\end{align*}
+于是
+\begin{align*}
+\int_0^s \frac{\mathrm{d}}{\mathrm{d}t}\left(\frac12\|\mathbf{u}\|_{L^2(U)}^2-\frac12 B[\mathbf{v},\mathbf{v};t]\right)\,\mathrm{d}t = -\int_0^s C[\mathbf{u},\mathbf{v};t]+D[\mathbf{v},\mathbf{v};t]\,\mathrm{d}t,
+\end{align*}
+其中
+\begin{align*}
+C[u,v;t]\triangleq -\int_U \sum_{i=1}^n b^i v_{x_i}u + \frac12 b^i_{x_i}uv\,\mathrm{d}x,
+\end{align*}
+\begin{align*}
+D[u,v;t]\triangleq \frac12\int_U \sum_{i,j=1}^n a_t^{ij}u_{x_i}v_{x_j}+\sum_{i=1}^n b_t^i u_{x_i}v+c_t uv\,\mathrm{d}x,
+\end{align*}
+对 $u,v\in H^1_0(U)$。因而
+\begin{align*}
+\frac12\|\mathbf{u}(s)\|_{L^2(U)}^2+\frac12 B[\mathbf{v}(0),\mathbf{v}(0);0] = -\int_0^s C[\mathbf{u},\mathbf{v};t]+D[\mathbf{v},\mathbf{v};t]\,\mathrm{d}t,
+\end{align*}
+故
+\begin{align}
+\|\mathbf{u}(s)\|_{L^2(U)}^2+\|\mathbf{v}(0)\|_{H^1_0(U)}^2
+\leqslant C\left(\int_0^s \|\mathbf{v}\|_{H^1_0(U)}^2+\|\mathbf{u}\|_{L^2(U)}^2\,\mathrm{d}t+\|\mathbf{v}(0)\|_{L^2(U)}^2\right).\label{align:ch07-2-eq40}
+\end{align}
+
+2. 现写
+\begin{align}
+\mathbf{w}(t)\triangleq \int_0^t \mathbf{u}(\tau)\,\mathrm{d}\tau\qquad (0\leqslant t\leqslant T),\label{align:ch07-2-eq41}
+\end{align}
+于是\eqref{align:ch07-2-eq40} 成为
+\begin{align*}
+\|\mathbf{u}(s)\|_{L^2(U)}^2+\|\mathbf{w}(s)\|_{H^1_0(U)}^2
+\leqslant C\left(\int_0^s \|\mathbf{w}(t)-\mathbf{w}(s)\|_{H^1_0(U)}^2+\|\mathbf{u}(t)\|_{L^2(U)}^2\,\mathrm{d}t+\|\mathbf{w}(s)\|_{L^2(U)}^2\right).
+\end{align*}
+但 $\|\mathbf{w}(t)-\mathbf{w}(s)\|_{H^1_0(U)}^2\leqslant 2\|\mathbf{w}(t)\|_{H^1_0(U)}^2+2\|\mathbf{w}(s)\|_{H^1_0(U)}^2$，且 $\|\mathbf{w}(s)\|_{L^2(U)}\leqslant\int_0^s\|\mathbf{u}(t)\|_{L^2(U)}\,\mathrm{d}t$。因此\eqref{align:ch07-2-eq41} 蕴含
+\begin{align*}
+\|\mathbf{u}(s)\|_{L^2(U)}^2+(1-2sC_1)\|\mathbf{w}(s)\|_{H^1_0(U)}^2
+\leqslant C_1\int_0^s \|\mathbf{w}\|_{H^1_0(U)}^2+\|\mathbf{u}\|_{L^2(U)}^2\,\mathrm{d}t.
+\end{align*}
+取 $T_1$ 足够小使得 $1-2T_1C_1\geqslant\frac12$。则当 $0\leqslant s\leqslant T_1$ 时，
+\begin{align*}
+\|\mathbf{u}(s)\|_{L^2(U)}^2+\|\mathbf{w}(s)\|_{H^1_0(U)}^2
+\leqslant C\int_0^s \|\mathbf{u}\|_{L^2(U)}^2+\|\mathbf{w}\|_{H^1_0(U)}^2\,\mathrm{d}t.
+\end{align*}
+于是积分形式的 Gronwall 不等式（\cref{chapter:appB-不等式}）蕴含 $\mathbf{u}\equiv 0$ 于 $[0,T_1]$。
+
+3. 我们在区间 $[T_1,2T_1]$、$[2T_1,3T_1]$ 等上重复同样论证，最终推出\eqref{align:ch07-2-eq38}。
+\end{proof}
+
+\subsection{正则性}\label{subsection:ch07-2-3-正则性}
+
+如前面处理二阶椭圆与抛物 PDE 那样，下一步任务是研究弱解的光滑性。
+
+\paragraph{动机：估计的形式推导。}(i) 暂且设 $u=u(x,t)$ 是波动方程初值问题
+\begin{align*}
+\begin{cases}
+u_{tt}-\Delta u=f & \text{于 } \mathbb{R}^n\times(0,T],\\
+u=g,\ u_t=h & \text{于 } \mathbb{R}^n\times\{t=0\}
+\end{cases}
+\end{align*}
+的光滑解，并设当 $|x|\to\infty$ 时 $u$ 充分快地趋于零，以保证以下计算合法。于是如\cref{subsection:ch08-2-4-方程组} 那样，计算
+\begin{align*}
+\frac{\mathrm{d}}{\mathrm{d}t}\left(\int_{\mathbb{R}^n}|Du|^2+u_t^2\,\mathrm{d}x\right)
+=2\int_{\mathbb{R}^n}Du\cdot Du_t+u_tu_{tt}\,\mathrm{d}x
+=2\int_{\mathbb{R}^n}u_t(u_{tt}-\Delta u)\,\mathrm{d}x
+=2\int_{\mathbb{R}^n}u_t f\,\mathrm{d}x
+\leqslant \int_{\mathbb{R}^n}u_t^2\,\mathrm{d}x+\int_{\mathbb{R}^n}f^2\,\mathrm{d}x.
+\end{align*}
+应用 Gronwall 不等式，推得
+\begin{align}
+\sup_{0\leqslant t\leqslant T}\int_{\mathbb{R}^n}|Du|^2+u_t^2\,\mathrm{d}x
+\leqslant C\left(\int_0^T\int_{\mathbb{R}^n}f^2\,\mathrm{d}x\,\mathrm{d}t+\int_{\mathbb{R}^n}|Dg|^2+h^2\,\mathrm{d}x\right),\label{align:ch07-2-eq42}
+\end{align}
+其中常数 $C$ 仅依赖于 $T$。
+
+(ii) 再将 PDE 关于 $t$ 求导，令 $\widetilde{u}\triangleq u_t$。则
+\begin{align}
+\begin{cases}
+\widetilde{u}_{tt}-\Delta\widetilde{u}=\widetilde{f} & \text{于 } \mathbb{R}^n\times(0,T],\\
+\widetilde{u}=\widetilde{g},\ \widetilde{u}_t=\widetilde{h} & \text{于 } \mathbb{R}^n\times\{t=0\},
+\end{cases}\label{align:ch07-2-eq43}
+\end{align}
+其中 $\widetilde{f}\triangleq f_t$，$\widetilde{g}\triangleq h$，$\widetilde{h}\triangleq u_{tt}(\cdot,0)=f(\cdot,0)+\Delta g$。将估计\eqref{align:ch07-2-eq42} 应用于 $\widetilde{u}$，得到
+\begin{align}
+\sup_{0\leqslant t\leqslant T}\int_{\mathbb{R}^n}|Du_t|^2+u_{tt}^2\,\mathrm{d}x
+\leqslant C\left(\int_0^T\int_{\mathbb{R}^n}f_t^2\,\mathrm{d}x\,\mathrm{d}t+\int_{\mathbb{R}^n}|D^2g|^2+|Dh|^2+f(\cdot,0)^2\,\mathrm{d}x\right).\label{align:ch07-2-eq44}
+\end{align}
+现由\cref{theorem:ch06-3-2-正则性}，
+\begin{align}
+\max_{0\leqslant t\leqslant T}\|f(\cdot,t)\|_{L^2(\mathbb{R}^n)} \leqslant C\bigl(\|f\|_{L^2(\mathbb{R}^n\times(0,T))}+\|f_t\|_{L^2(\mathbb{R}^n\times(0,T))}\bigr).\label{align:ch07-2-eq45}
+\end{align}
+此外，写 $-\Delta u=f-u_{tt}$，如\cref{section:ch06-正则性} 推得
+\begin{align}
+\int_{\mathbb{R}^n}|D^2u|^2\,\mathrm{d}x \leqslant C\int_{\mathbb{R}^n}f^2+u_{tt}^2\,\mathrm{d}x\label{align:ch07-2-eq46}
+\end{align}
+对每个 $0\leqslant t\leqslant T$ 成立。合并\eqref{align:ch07-2-eq44}--\eqref{align:ch07-2-eq46}，得到
+\begin{align}
+\sup_{0\leqslant t\leqslant T}\int_{\mathbb{R}^n}|D^2u|^2+|Du_t|^2+u_{tt}^2\,\mathrm{d}x
+\leqslant C\left(\int_0^T\int_{\mathbb{R}^n}f_t^2+f^2\,\mathrm{d}x\,\mathrm{d}t+\int_{\mathbb{R}^n}|D^2g|^2+|Dh|^2\,\mathrm{d}x\right),\label{align:ch07-2-eq47}
+\end{align}
+其中常数 $C$ 仅依赖于 $T$。
+
+这一估计提示：对一般二阶双曲型 PDE 的弱解，应存在类似于\eqref{align:ch07-2-eq42} 与\eqref{align:ch07-2-eq47} 的界。
+
+我们利用Galerkin逼近进行计算。为简化叙述，以下假设 $\{w_k\}_{k=1}^\infty$ 是 $-\Delta$ 在 $H^1_0(U)$ 上的完备特征函数系，且 $U$ 有界、开、$\partial U$ 光滑。此外假设
+\begin{align}
+\text{系数 } a^{ij},b^i,c\ (i,j=1,\cdots,n) \text{ 在 } \overline{U} \text{ 上光滑且不依赖于 } t.\label{align:ch07-2-eq48}
+\end{align}
+
+\begin{theorem}[改进的正则性。]\label{theorem:ch07-2-改进正则性}
+
+(i) 设
+\begin{align*}
+g\in H^1_0(U),\ h\in L^2(U),\ \mathbf{f}\in L^2(0,T;L^2(U)),
+\end{align*}
+又设 $\mathbf{u}\in L^2(0,T;H^1_0(U))$（满足 $\mathbf{u}'\in L^2(0,T;L^2(U))$、$\mathbf{u}''\in L^2(0,T;H^{-1}(U))$）为问题
+\begin{align}
+\begin{cases}
+u_{tt}+Lu=f & \text{于 } U_T,\\
+u=0 & \text{于 } \partial U\times[0,T],\\
+u=g,\ u_t=h & \text{于 } U\times\{t=0\}
+\end{cases}\label{align:ch07-2-eq49}
+\end{align}
+的弱解。则事实上
+\begin{align*}
+\mathbf{u}\in L^\infty(0,T;H^1_0(U)),\qquad \mathbf{u}'\in L^\infty(0,T;L^2(U)),
+\end{align*}
+且有估计
+\begin{align}
+\operatorname*{ess\,sup}_{0\leqslant t\leqslant T}\bigl(\|\mathbf{u}(t)\|_{H^1_0(U)}+\|\mathbf{u}'(t)\|_{L^2(U)}\bigr)
+\leqslant C\bigl(\|\mathbf{f}\|_{L^2(0,T;L^2(U))}+\|g\|_{H^1_0(U)}+\|h\|_{L^2(U)}\bigr).\label{align:ch07-2-eq50}
+\end{align}
+
+(ii) 若此外
+\begin{align*}
+g\in H^2(U),\ h\in H^1_0(U),\ \mathbf{f}'\in L^2(0,T;L^2(U)),
+\end{align*}
+则
+\begin{align*}
+\mathbf{u}\in L^\infty(0,T;H^2(U)),\ \mathbf{u}'\in L^\infty(0,T;H^1_0(U)),\ \mathbf{u}''\in L^\infty(0,T;L^2(U)),\ \mathbf{u}'''\in L^2(0,T;H^{-1}(U)),
+\end{align*}
+且有估计
+\begin{align}
+\operatorname*{ess\,sup}_{0\leqslant t\leqslant T}\bigl(\|\mathbf{u}(t)\|_{H^2(U)}+\|\mathbf{u}'(t)\|_{H^1_0(U)}+\|\mathbf{u}''(t)\|_{L^2(U)}\bigr)+\|\mathbf{u}'''\|_{L^2(0,T;H^{-1}(U))}
+\leqslant C\bigl(\|\mathbf{f}\|_{H^1(0,T;L^2(U))}+\|g\|_{H^2(U)}+\|h\|_{H^1(U)}\bigr).\label{align:ch07-2-eq51}
+\end{align}
+\end{theorem}
+
+本定理的 (i)、(ii) 是形式估计\eqref{align:ch07-2-eq42}、\eqref{align:ch07-2-eq47}（对应于 $U=\mathbb{R}^n$ 上的波动方程）的精确表述。
+
+\begin{proof}
+1. 在\cref{theorem:ch07-2-能量估计} 的证明中，我们已导出界
+\begin{align}
+\sup_{0\leqslant t\leqslant T}\bigl(\|\mathbf{u}_m(t)\|_{H^1_0(U)}+\|\mathbf{u}_m'(t)\|_{L^2(U)}\bigr)
+\leqslant C\bigl(\|\mathbf{f}\|_{L^2(0,T;L^2(U))}+\|g\|_{H^1_0(U)}+\|h\|_{L^2(U)}\bigr).\label{align:ch07-2-eq52}
+\end{align}
+令 $m=m_l\to\infty$ 取极限，即得\eqref{align:ch07-2-eq50}。
+
+2. 现设 (ii) 的假设成立。固定正整数 $m$，将恒等式\eqref{align:ch07-2-eq16} 关于 $t$ 求导。写 $\widetilde{\mathbf{u}}_m\triangleq\mathbf{u}_m'$，得到
+\begin{align}
+(\widetilde{\mathbf{u}}_m'',w_k)+B[\widetilde{\mathbf{u}}_m,w_k]=(\mathbf{f}',w_k)\qquad (k=1,\cdots,m).\label{align:ch07-2-eq53}
+\end{align}
+乘以 $(d_m^k)''(t)$ 并对 $k=1,\cdots,m$ 求和，得到
+\begin{align}
+(\widetilde{\mathbf{u}}_m'',\widetilde{\mathbf{u}}_m')+B[\widetilde{\mathbf{u}}_m,\widetilde{\mathbf{u}}_m']=(\mathbf{f}',\widetilde{\mathbf{u}}_m').\label{align:ch07-2-eq54}
+\end{align}
+如能量估计证明中那样论证，注意到
+\begin{align}
+\frac{\mathrm{d}}{\mathrm{d}t}\bigl(\|\widetilde{\mathbf{u}}_m'\|_{L^2(U)}^2+\mathcal{A}[\widetilde{\mathbf{u}}_m,\widetilde{\mathbf{u}}_m]\bigr)
+\leqslant C\bigl(\|\widetilde{\mathbf{u}}_m'\|_{L^2(U)}^2+\mathcal{A}[\widetilde{\mathbf{u}}_m,\widetilde{\mathbf{u}}_m]+\|\mathbf{f}'\|_{L^2(U)}^2\bigr),\label{align:ch07-2-eq55}
+\end{align}
+其中双线性型 $\mathcal{A}[\cdot,\cdot]$ 定义如前。
+
+3. 现
+\begin{align}
+B[\mathbf{u}_m,w_k]=(\mathbf{f}-\mathbf{u}_m'',w_k)\qquad (k=1,\cdots,m).\label{align:ch07-2-eq56}
+\end{align}
+回忆我们取 $\{w_k\}_{k=1}^\infty$ 为 $-\Delta$ 在 $H^1_0(U)$ 上的完备特征函数系。将\eqref{align:ch07-2-eq56} 乘以 $\lambda_k d_m^k(t)$ 并对 $k=1,\cdots,m$ 求和，推得
+\begin{align}
+B[\mathbf{u}_m,-\Delta\mathbf{u}_m]=(\mathbf{f}-\mathbf{u}_m'',-\Delta\mathbf{u}_m).\label{align:ch07-2-eq57}
+\end{align}
+由于 $\Delta\mathbf{u}_m=0$ 于 $\partial U$，有
+\begin{align}
+B[\mathbf{u}_m,-\Delta\mathbf{u}_m]=(L\mathbf{u}_m,-\Delta\mathbf{u}_m).\label{align:ch07-2-eq58}
+\end{align}
+再调用不等式
+\begin{align}
+\beta\|u\|_{H^2(U)}^2 \leqslant (Lu,-\Delta u)+\gamma\|u\|_{L^2(U)}^2\qquad (u\in H^2(U)\cap H^1_0(U));\label{align:ch07-2-eq59}
+\end{align}
+见习题\cref{exercise:ch07-5-9}。由\eqref{align:ch07-2-eq56}--\eqref{align:ch07-2-eq59} 推得
+\begin{align}
+\|\mathbf{u}_m\|_{H^2(U)}^2 \leqslant C\bigl(\|\mathbf{f}\|_{L^2(U)}^2+\|\mathbf{u}_m''\|_{L^2(U)}^2+\|\mathbf{u}_m\|_{L^2(U)}^2\bigr).\label{align:ch07-2-eq60}
+\end{align}
+将此估计用于\eqref{align:ch07-2-eq55}，回忆 $\widetilde{\mathbf{u}}_m=\mathbf{u}_m'$，并应用 Gronwall 不等式，推得
+\begin{align}
+\sup_{0\leqslant t\leqslant T}\bigl(\|\mathbf{u}_m(t)\|_{H^2(U)}^2+\|\mathbf{u}_m'(t)\|_{H^1(U)}^2+\|\mathbf{u}_m''(t)\|_{L^2(U)}^2\bigr)
+\leqslant C\bigl(\|\mathbf{f}\|_{H^1(0,T;L^2(U))}^2+\|g\|_{H^2(U)}^2+\|h\|_{H^1(U)}^2\bigr).\label{align:ch07-2-eq61}
+\end{align}
+这里如\cref{theorem:ch07-1-改进正则性} 的证明中那样估计了 $\|\mathbf{u}_m(0)\|_{H^2(U)}\leqslant C\|g\|_{H^2(U)}$。令 $m=m_l\to\infty$ 取极限，对 $\mathbf{u}$ 导出同一界。
+
+4. 如\cref{theorem:ch07-1-改进正则性} 的前一证明中那样，同样推得 $\mathbf{u}'''\in L^2(0,T;H^{-1}(U))$，且具有所述估计。
+\end{proof}
+
+\begin{remark}\label{remark:ch07-2-对称算子可免不等式59}
+若 $L$ 对称，我们也可取 $\{w_k\}_{k=1}^\infty$ 为 $L$ 在 $H^1_0(U)$ 上的特征函数基，从而避免使用不等式\eqref{align:ch07-2-eq59}。
+\end{remark}
+
+现设 $m$ 为非负整数。
+
+\begin{theorem}[更高的正则性。]\label{theorem:ch06-3-2-正则性}设
+\begin{align*}
+g\in H^{m+1}(U),\ h\in H^m(U),\qquad \frac{\mathrm{d}^k\mathbf{f}}{\mathrm{d}t^k}\in L^2(0,T;H^{m-k}(U))\quad (k=0,\cdots,m).
+\end{align*}
+又设如下 $m$ 阶相容条件成立：
+\begin{align}
+\begin{cases}
+g_0\triangleq g\in H^1_0(U),\ h_1\triangleq h\in H^1_0(U),\ \cdots,\\
+g_{2l}\triangleq \dfrac{\mathrm{d}^{2l-2}\mathbf{f}}{\mathrm{d}t^{2l-2}}(\cdot,0)-Lg_{2l-2}\in H^1_0(U) & (\text{若 } m=2l),\\
+h_{2l+1}\triangleq \dfrac{\mathrm{d}^{2l-1}\mathbf{f}}{\mathrm{d}t^{2l-1}}(\cdot,0)-Lh_{2l-1}\in H^1_0(U) & (\text{若 } m=2l+1).
+\end{cases}\label{align:ch07-2-eq62}
+\end{align}
+则
+\begin{align}
+\frac{\mathrm{d}^k\mathbf{u}}{\mathrm{d}t^k}\in L^\infty(0,T;H^{m+1-k}(U))\qquad (k=0,\cdots,m+1),\label{align:ch07-2-eq63}
+\end{align}
+且有估计
+\begin{align}
+\operatorname*{ess\,sup}_{0\leqslant t\leqslant T}\sum_{k=0}^{m+1}\left\|\frac{\mathrm{d}^k\mathbf{u}}{\mathrm{d}t^k}\right\|_{H^{m+1-k}(U)}
+\leqslant C\left(\sum_{k=0}^m\left\|\frac{\mathrm{d}^k\mathbf{f}}{\mathrm{d}t^k}\right\|_{L^2(0,T;H^{m-k}(U))}+\|g\|_{H^{m+1}(U)}+\|h\|_{H^m(U)}\right).\label{align:ch07-2-eq64}
+\end{align}
+\end{theorem}
+
+\begin{remark}\label{remark:ch07-2-相容条件的迹意义}
+由\cref{theorem:ch06-3-2-正则性} 知
+\begin{align}
+\mathbf{f}(0)\in H^{m-1}(U),\ \mathbf{f}'(0)\in H^{m-2}(U),\ \cdots,\ \mathbf{f}^{(m-2)}(0)\in H^1(U),\label{align:ch07-2-eq65}
+\end{align}
+因而
+\begin{align}
+g_0\in H^{m+1}(U),\ h_1\in H^m(U),\ g_2\in H^{m-1}(U),\ h_3\in H^{m-2}(U),\ \cdots,\ g_{2l}\in H^1(U)\ (\text{若 } m=2l),\ h_{2l+1}\in H^1(U)\ (\text{若 } m=2l+1).\label{align:ch07-2-eq66}
+\end{align}
+相容条件即额外要求这些函数在迹意义下都在 $\partial U$ 上等于零。
+\end{remark}
+
+\begin{proof}
+1. 证明对 $m$ 作归纳，$m=0$ 的情形由上面的\cref{theorem:ch07-2-改进正则性} (i) 给出。
+
+2. 现假设定理对某非负整数 $m$ 成立，并设
+\begin{align}
+g\in H^{m+2}(U),\ h\in H^{m+1}(U),\qquad \frac{\mathrm{d}^k\mathbf{f}}{\mathrm{d}t^k}\in L^2(0,T;H^{m+1-k}(U))\quad (k=0,\cdots,m+1).\label{align:ch07-2-eq67}
+\end{align}
+又设 $(m+1)$ 阶相容条件成立。令 $\widetilde{\mathbf{u}}\triangleq\mathbf{u}'$。将 PDE 关于 $t$ 求导，可验证 $\widetilde{\mathbf{u}}$ 是
+\begin{align}
+\begin{cases}
+\widetilde{u}_{tt}+L\widetilde{u}=\widetilde{f} & \text{于 } U_T,\\
+\widetilde{u}=0 & \text{于 } \partial U\times[0,T],\\
+\widetilde{u}=\widetilde{g},\ \widetilde{u}_t=\widetilde{h} & \text{于 } U\times\{t=0\}
+\end{cases}\label{align:ch07-2-eq68}
+\end{align}
+的唯一弱解，其中
+\begin{align}
+\widetilde{f}\triangleq f_t,\quad \widetilde{g}\triangleq h,\quad \widetilde{h}\triangleq f(\cdot,0)-Lg.\label{align:ch07-2-eq69}
+\end{align}
+特别地，对 $m=0$ 的情形，我们依靠\cref{theorem:ch07-2-改进正则性} (ii) 来确信 $\widetilde{\mathbf{u}}\in L^2(0,T;H^1_0(U))$、$\widetilde{\mathbf{u}}'\in L^2(0,T;L^2(U))$、$\widetilde{\mathbf{u}}''\in L^2(0,T;H^{-1}(U))$。
+
+由于 $f$、$g$、$h$ 满足 $(m+1)$ 阶相容条件，$\widetilde{f}$、$\widetilde{g}$、$\widetilde{h}$ 满足 $m$ 阶相容条件。于是应用归纳假设，得
+\begin{align*}
+\frac{\mathrm{d}^k\widetilde{\mathbf{u}}}{\mathrm{d}t^k}\in L^\infty(0,T;H^{m+1-k}(U))\quad (k=0,\cdots,m+1),
+\end{align*}
+且有估计
+\begin{align*}
+\operatorname*{ess\,sup}_{0\leqslant t\leqslant T}\sum_{k=0}^{m+1}\left\|\frac{\mathrm{d}^k\widetilde{\mathbf{u}}}{\mathrm{d}t^k}\right\|_{H^{m+1-k}(U)}
+\leqslant C\left(\sum_{k=0}^m\left\|\frac{\mathrm{d}^k\widetilde{\mathbf{f}}}{\mathrm{d}t^k}\right\|_{L^2(0,T;H^{m-k}(U))}+\|\widetilde{g}\|_{H^{m+1}(U)}+\|\widetilde{h}\|_{H^m(U)}\right).
+\end{align*}
+由于 $\widetilde{\mathbf{u}}=\mathbf{u}'$，可改写为
+\begin{align}
+\operatorname*{ess\,sup}_{0\leqslant t\leqslant T}\sum_{k=1}^{m+2}\left\|\frac{\mathrm{d}^k\mathbf{u}}{\mathrm{d}t^k}\right\|_{H^{m+2-k}(U)}
+&\leqslant C\left(\sum_{k=1}^{m+1}\left\|\frac{\mathrm{d}^k\mathbf{f}}{\mathrm{d}t^k}\right\|_{L^2(0,T;H^{m+1-k}(U))}+\|h\|_{H^{m+1}(U)}+\|Lg\|_{H^m(U)}+\|\mathbf{f}(0)\|_{H^m(U)}\right)\nonumber\\
+&\leqslant C\left(\sum_{k=0}^{m+1}\left\|\frac{\mathrm{d}^k\mathbf{f}}{\mathrm{d}t^k}\right\|_{L^2(0,T;H^{m+1-k}(U))}+\|g\|_{H^{m+2}(U)}+\|h\|_{H^{m+1}(U)}\right).\label{align:ch07-2-eq70}
+\end{align}
+这里用到估计
+\begin{align*}
+\|\mathbf{f}\|_{C([0,T];H^m(U))} \leqslant C\bigl(\|\mathbf{f}\|_{L^2(0,T;H^m(U))}+\|\mathbf{f}'\|_{L^2(0,T;H^m(U))}\bigr),
+\end{align*}
+它来自\cref{theorem:ch06-3-2-正则性}。
+
+3. 现对几乎处处的 $0\leqslant t\leqslant T$ 写 $L\mathbf{u}=\mathbf{f}-\mathbf{u}''\triangleq\mathbf{h}$。有
+\begin{align*}
+\|\mathbf{u}\|_{H^{m+2}(U)} \leqslant C\bigl(\|\mathbf{h}\|_{H^m(U)}+\|\mathbf{u}\|_{L^2(U)}\bigr)
+\leqslant C\bigl(\|\mathbf{f}\|_{H^m(U)}+\|\mathbf{u}''\|_{H^m(U)}+\|\mathbf{u}\|_{L^2(U)}\bigr).
+\end{align*}
+关于 $t$ 取本质上确界，将此不等式加入\eqref{align:ch07-2-eq70} 并作标准估计，推得
+\begin{align*}
+\operatorname*{ess\,sup}_{0\leqslant t\leqslant T}\sum_{k=0}^{m+2}\left\|\frac{\mathrm{d}^k\mathbf{u}}{\mathrm{d}t^k}\right\|_{H^{m+2-k}(U)}
+\leqslant C\left(\sum_{k=0}^{m+1}\left\|\frac{\mathrm{d}^k\mathbf{f}}{\mathrm{d}t^k}\right\|_{L^2(0,T;H^{m+1-k}(U))}+\|g\|_{H^{m+2}(U)}+\|h\|_{H^{m+1}(U)}\right).
+\end{align*}
+这就是 $m+1$ 时定理的结论。
+\end{proof}
+
+\begin{theorem}[无穷次可微性。]\label{theorem:ch07-2-无穷可微性}设
+\begin{align*}
+g,h\in C^\infty(\overline{U}),\qquad f\in C^\infty(\overline{U_T}),
+\end{align*}
+且对 $m=0,1,\cdots$ 均成立 $m$ 阶相容条件。则双曲型初边值问题\eqref{align:ch07-2-eq01} 存在唯一解
+\begin{align*}
+u\in C^\infty(\overline{U_T}).
+\end{align*}
+\end{theorem}
+
+\begin{proof}
+对 $m=0,1,\cdots$ 依次应用\cref{theorem:ch06-3-2-正则性}。
+\end{proof}
+
+\subsection{扰动的传播}\label{subsection:ch07-2-4-扰动的传播}
+
+迄今为止，我们对二阶双曲型方程的研究与\cref{section:ch07-1-二阶抛物型方程} 中对二阶抛物 PDE 的处理大体平行。在相应的前节\cref{subsection:ch07-1-4-极值原理} 中，我们讨论了二阶抛物方程的极值原理，并特别指出强极值原理意味着这类 PDE 初值扰动的"无限传播速度"。但对二阶双曲型偏微分方程，强极值原理并不成立；我们转而讨论相反的现象，即初值扰动的"有限传播速度"。这一研究推广了\cref{subsection:ch08-2-4-方程组} 中已引入的一些想法。
+
+为简单起见，本小节考虑 $U=\mathbb{R}^n$ 且 $L$ 具有简单非散度形式
+\begin{align}
+Lu = -\sum_{i,j=1}^n a^{ij}u_{x_ix_j},\label{align:ch07-2-eq71}
+\end{align}
+其中系数光滑、与时间无关，且无低阶项。如 usual 要求一致双曲条件。
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.45\textwidth]{ch07-fig-domain-of-dependence.png}
+\caption{依赖区域}\label{figure:ch07-2-依赖区域}
+\end{figure}
+
+现设 $u$ 是 PDE
+\begin{align}
+u_{tt}+Lu=0\qquad \text{于 } \mathbb{R}^n\times(0,\infty)\label{align:ch07-2-eq72}
+\end{align}
+的光滑解。我们希望证明一个类似于\cref{subsection:ch08-2-4-方程组} 中波动方程所得结论的唯一性/有限传播速度命题。为此固定一点 $(x_0,t_0)\in\mathbb{R}^n\times(0,\infty)$，试图寻找某类弯曲的"锥状"区域 $C$，以 $(x_0,t_0)$ 为顶点，使得若在 $C_0=C\cap\{t=0\}$ 上 $u\equiv u_t\equiv 0$，则在 $C$ 内 $u\equiv 0$。
+
+受\cref{example:ch04-geo-optics} 中几何光学计算的启发，我们猜测这样的区域 $C$ 的边界由水平集 $\{p=0\}$ 给出，其中 $p$ 满足 Hamilton--Jacobi PDE
+\begin{align}
+p_t - \left(\sum_{i,j=1}^n a^{ij}(x)p_{x_i}p_{x_j}\right)^{1/2} = 0\qquad \text{于 } \mathbb{R}^n\times(0,\infty).\label{align:ch07-2-eq73}
+\end{align}
+我们通过分离变量来化简\eqref{align:ch07-2-eq73}，写
+\begin{align}
+p(x,t)=q(x)+t-t_0\qquad (x\in\mathbb{R}^n,\ 0\leqslant t\leqslant t_0),\label{align:ch07-2-eq74}
+\end{align}
+其中 $q$ 满足
+\begin{align}
+\begin{cases}
+\displaystyle\sum_{i,j=1}^n a^{ij}q_{x_i}q_{x_j}=1,\ q>0 & \text{于 } \mathbb{R}^n\setminus\{x_0\},\\
+q(x_0)=0.
+\end{cases}\label{align:ch07-2-eq75}
+\end{align}
+从今往后假设 $q$ 是\eqref{align:ch07-2-eq75} 在 $\mathbb{R}^n\setminus\{x_0\}$ 上的光滑解。（事实上 $q(x)$ 就是 $x$ 到 $x_0$ 在由 $(a^{ij})$ 确定的Riemann度量下的距离。）
+
+我们引入"弯曲的"向后波锥
+\begin{align*}
+K\triangleq \{(x,t)\mid p(x,t)<0\}=\{(x,t)\mid q(x)<t_0-t\}.
+\end{align*}
+对每个 $t>0$，进一步定义
+\begin{align}
+K_t\triangleq \{x\mid q(x)<t_0-t\}=K \text{ 在时刻 } t \text{ 的截面}.\label{align:ch07-2-eq76}
+\end{align}
+由于\eqref{align:ch07-2-eq75} 蕴含在 $\mathbb{R}^n\setminus\{x_0\}$ 上 $Dq\neq 0$，故对 $0\leqslant t<t_0$，$\partial K_t$ 是光滑的 $(n-1)$ 维曲面。
+
+\begin{theorem}[有限传播速度。]\label{theorem:ch07-2-有限传播速度}设 $u$ 是双曲方程\eqref{align:ch07-2-eq72} 的光滑解。若在 $K_0$ 上 $u\equiv u_t\equiv 0$，则在 $K$ 内 $u\equiv 0$。
+\end{theorem}
+
+特别地，若 $u$ 是\eqref{align:ch07-2-eq72} 带有初始条件
+\begin{align}
+u=g,\ u_t=h\qquad \text{于 } \mathbb{R}^n\times\{t=0\}\label{align:ch07-2-eq77}
+\end{align}
+的解，则 $u(x_0,t_0)$ 仅依赖于 $g$、$h$ 在 $K_0$ 内的值。
+
+\begin{proof}
+1. 我们修改\cref{subsection:ch08-2-4-方程组} 的一个证明，定义能量
+\begin{align*}
+e(t)\triangleq \frac12\int_{K_t} u_t^2+\sum_{i,j=1}^n a^{ij}u_{x_i}u_{x_j}\,\mathrm{d}x\qquad (0\leqslant t\leqslant t_0).
+\end{align*}
+
+2. 为计算 $\dot{e}(t)$，首先注意：若 $f$ 是 $x$ 的连续函数，则由\cref{theorem:appC-余面积} 的余面积公式，
+\begin{align*}
+\frac{\mathrm{d}}{\mathrm{d}t}\left(\int_{K_t} f\,\mathrm{d}x\right) = -\int_{\partial K_t} f\frac{1}{|Dq|}\,\mathrm{d}S.
+\end{align*}
+因此
+\begin{align}
+\dot{e}(t) &= \int_{K_t} u_tu_{tt}+\sum_{i,j=1}^n a^{ij}u_{x_i}u_{x_jt}\,\mathrm{d}x
+-\frac12\int_{\partial K_t}\left(u_t^2+\sum_{i,j=1}^n a^{ij}u_{x_i}u_{x_j}\right)\frac{1}{|Dq|}\,\mathrm{d}S\nonumber\\
+&\triangleq A-B.\label{align:ch07-2-eq78}
+\end{align}
+分部积分，计算得
+\begin{align}
+A &= \int_{K_t}u_t\left(u_{tt}-\sum_{i,j=1}^n(a^{ij}u_{x_i})_{x_j}\right)\mathrm{d}x + \int_{\partial K_t}\sum_{i,j=1}^n a^{ij}u_{x_i}\nu_j u_t\,\mathrm{d}S\nonumber\\
+&= -\int_{K_t}u_t\sum_{i,j=1}^n a^{ij}_{x_j}u_{x_i}\,\mathrm{d}x + \int_{\partial K_t}\sum_{i,j=1}^n a^{ij}u_{x_i}\nu_j u_t\,\mathrm{d}S,\label{align:ch07-2-eq79}
+\end{align}
+其中 $\boldsymbol{\nu}=(\nu_1,\cdots,\nu_n)$ 如 usual 为 $\partial K_t$ 的外单位法向量。但由广义 Cauchy--Schwarz 不等式（\cref{chapter:appB-不等式}），
+\begin{align}
+\left|\sum_{i,j=1}^n a^{ij}u_{x_i}\nu_j\right|
+\leqslant \left(\sum_{i,j=1}^n a^{ij}u_{x_i}u_{x_j}\right)^{1/2}\left(\sum_{i,j=1}^n a^{ij}\nu_i\nu_j\right)^{1/2}.\label{align:ch07-2-eq80}
+\end{align}
+
+此外，由于在 $\partial K_t$ 上 $q=t_0-t$，在 $\partial K_t$ 上 $\boldsymbol{\nu}=\dfrac{Dq}{|Dq|}$。故
+\begin{align*}
+\sum_{i,j=1}^n a^{ij}\nu_i\nu_j = \frac{\sum_{i,j=1}^n a^{ij}q_{x_i}q_{x_j}}{|Dq|^2} = \frac{1}{|Dq|^2},
+\end{align*}
+其中用到\eqref{align:ch07-2-eq75}。于是不等式\eqref{align:ch07-2-eq80} 写作
+\begin{align}
+\left|\sum_{i,j=1}^n a^{ij}u_{x_i}\nu_j\right|
+\leqslant \left(\sum_{i,j=1}^n a^{ij}u_{x_i}u_{x_j}\right)^{1/2}\frac{1}{|Dq|}.\label{align:ch07-2-eq81}
+\end{align}
+再回到\eqref{align:ch07-2-eq79}，利用\eqref{align:ch07-2-eq81} 与 Cauchy 不等式估计：
+\begin{align*}
+|A| \leqslant Ce(t)+\int_{\partial K_t}\left(\sum_{i,j=1}^n a^{ij}u_{x_i}u_{x_j}\right)^{1/2}|u_t|\frac{1}{|Dq|}\,\mathrm{d}S
+\leqslant Ce(t)+\frac12\int_{\partial K_t}\left(u_t^2+\sum_{i,j=1}^n a^{ij}u_{x_i}u_{x_j}\right)\frac{1}{|Dq|}\,\mathrm{d}S = Ce(t)+B.
+\end{align*}
+
+3. 因此不等式\eqref{align:ch07-2-eq78} 给出 $\dot{e}(t)\leqslant Ce(t)$。由于假设\eqref{align:ch07-2-eq76} 蕴含 $e(0)=0$，利用 Gronwall 不等式推得
+\begin{align*}
+e(t)=0
+\end{align*}
+对所有 $0\leqslant t\leqslant t_0$ 成立。因而在 $K$ 内 $u_t\equiv Du\equiv 0$，故在 $K$ 内 $u\equiv 0$。
+\end{proof}
+
+\subsection{两个变量的方程}\label{subsection:ch07-2-5-两个变量的方程}
+
+本小节简要讨论仅含两个变量的二阶双曲型偏微分方程，并证明在这一情形可以得到更为精确的信息。大致想法是：由于两个变量的函数"只有"三个二阶偏导数，PDE 结构可能在代数与解析上得到简化，而多于两个变量时则无法做到。
+
+我们先考虑两变量的一般线性二阶 PDE
+\begin{align}
+\sum_{i,j=1}^2 a^{ij}u_{x_ix_j}+\sum_{i=1}^2 b^i u_{x_i}+cu=0,\label{align:ch07-2-eq82}
+\end{align}
+其中系数 $a^{ij},b^i,c\ (i,j=1,2)$（满足 $a^{ij}=a^{ji}$）与未知函数 $u$ 都是某区域 $U\subset\mathbb{R}^2$ 中两变量 $x_1,x_2$ 的函数。注意目前与上面发展的理论不同，我们暂不把 $x_1$ 或 $x_2$ 等同于表示时间的变量 $t$。
+
+现提出如下基本问题：能否通过引入新的自变量来化简 PDE \eqref{align:ch07-2-eq82} 的结构？换言之，能否通过用新变量 $y=\boldsymbol{\Phi}(x)$ 改写，把 PDE 化为某种"更好"的形式？
+
+更确切地说，令
+\begin{align}
+\begin{cases}
+y_1=\Phi_1(x_1,x_2),\\
+y_2=\Phi_2(x_1,x_2),
+\end{cases}\label{align:ch07-2-eq83}
+\end{align}
+其中 $\boldsymbol{\Phi}=(\Phi_1,\Phi_2)$ 为某适当函数。为研究这一可能性，现写
+\begin{align}
+u(x)=v(\boldsymbol{\Phi}(x)).\label{align:ch07-2-eq84}
+\end{align}
+即定义 $v(y)\triangleq u(\boldsymbol{\Psi}(y))$，其中 $\boldsymbol{\Psi}=\boldsymbol{\Phi}^{-1}$。由\eqref{align:ch07-2-eq84} 计算得
+\begin{align*}
+\begin{cases}
+u_{x_i}=\displaystyle\sum_{k=1}^2 v_{y_k}\Phi^k_{x_i},\\
+u_{x_ix_j}=\displaystyle\sum_{k,l=1}^2 v_{y_ky_l}\Phi^k_{x_i}\Phi^l_{x_j}+\sum_{k=1}^2 v_{y_k}\Phi^k_{x_ix_j},
+\end{cases}
+\end{align*}
+其中 $i,j=1,2$。代入\eqref{align:ch07-2-eq82}，发现 $v$ 满足 PDE
+\begin{align}
+\sum_{k,l=1}^2 \widetilde{a}^{kl}v_{y_ky_l}+\cdots=0,\label{align:ch07-2-eq85}
+\end{align}
+其中
+\begin{align}
+\widetilde{a}^{kl}\triangleq \sum_{i,j=1}^2 a^{ij}\Phi^k_{x_i}\Phi^l_{x_j}\qquad (k,l=1,2),\label{align:ch07-2-eq86}
+\end{align}
+\eqref{align:ch07-2-eq85} 中的省略号表示低阶项。
+
+我们考察 PDE \eqref{align:ch07-2-eq85} 中的第一项，希望能选取变换 $\boldsymbol{\Phi}=(\Phi_1,\Phi_2)$ 使此表达式特别简单。试实现
+\begin{align}
+\widetilde{a}^{11}\equiv\widetilde{a}^{22}\equiv 0.\label{align:ch07-2-eq87}
+\end{align}
+由公式\eqref{align:ch07-2-eq86}，只要能选取 $\Phi_1$ 与 $\Phi_2$ 都解非线性一阶 PDE
+\begin{align}
+a^{11}(v_{x_1})^2+2a^{12}v_{x_1}v_{x_2}+a^{22}(v_{x_2})^2=0\label{align:ch07-2-eq88}
+\end{align}
+于 $U$ 内，这便是可能的。注意这就是与偏微分方程\eqref{align:ch07-2-eq82} 相关的特征方程，如\cref{subsection:ch09-6-3-应用} 中所讨论的。
+
+为进一步讨论，假设
+\begin{align}
+\det A = a^{11}a^{22}-(a^{12})^2<0\qquad \text{于 } U,\label{align:ch07-2-eq89}
+\end{align}
+此时称 PDE \eqref{align:ch07-2-eq82} 是双曲型的。
+
+利用条件\eqref{align:ch07-2-eq89}，可将方程\eqref{align:ch07-2-eq88} 因式分解如下：
+{\small\begin{align}
+\bigl(a^{11}v_{x_1}+[a^{12}+((a^{12})^2-a^{11}a^{22})^{1/2}]v_{x_2}\bigr)
+\cdot\bigl(a^{11}v_{x_1}+[a^{12}-((a^{12})^2-a^{11}a^{22})^{1/2}]v_{x_2}\bigr)\nonumber\\
+= a^{11}\bigl(a^{11}(v_{x_1})^2+2a^{12}v_{x_1}v_{x_2}+a^{22}(v_{x_2})^2\bigr)=0.\label{align:ch07-2-eq90}
+\end{align}}
+现\eqref{align:ch07-2-eq90} 的左端是两个线性一阶 PDE 的乘积：
+\begin{align}
+a^{11}v_{x_1}+[a^{12}+((a^{12})^2-a^{11}a^{22})^{1/2}]v_{x_2}=0\qquad \text{于 } U,\label{align:ch07-2-eq91a}
+\end{align}
+以及
+\begin{align}
+a^{11}v_{x_1}+[a^{12}-((a^{12})^2-a^{11}a^{22})^{1/2}]v_{x_2}=0\qquad \text{于 } U.\label{align:ch07-2-eq91b}
+\end{align}
+
+现假设可选取 $\Phi_1$ 为\eqref{align:ch07-2-eq91a} 的光滑解，且在 $U$ 内 $D\Phi_1\neq 0$。则 $\Phi_1$ 沿 ODE
+\begin{align}
+\begin{cases}
+\dot{x}_1=a^{11},\\
+\dot{x}_2=[a^{12}+((a^{12})^2-a^{11}a^{22})^{1/2}]
+\end{cases}\label{align:ch07-2-eq92}
+\end{align}
+的轨线 $\mathbf{x}=(x_1,x_2)$ 为常数。类似地，设 $\Phi_2$ 是\eqref{align:ch07-2-eq91b} 的光滑解，且在 $U$ 内 $D\Phi_2\neq 0$；则 $\Phi_2$ 沿 ODE
+\begin{align}
+\begin{cases}
+\dot{x}_1=a^{11},\\
+\dot{x}_2=[a^{12}-((a^{12})^2-a^{11}a^{22})^{1/2}]
+\end{cases}\label{align:ch07-2-eq93}
+\end{align}
+的轨线 $\mathbf{x}=(x_1,x_2)$ 为常数。
+
+ODE \eqref{align:ch07-2-eq92} 或\eqref{align:ch07-2-eq93} 的轨线称为原偏微分方程\eqref{align:ch07-2-eq82} 的\textbf{特征线}。回到\eqref{align:ch07-2-eq83}，可见特征 ODE \eqref{align:ch07-2-eq92}、\eqref{align:ch07-2-eq93} 解的轨线提供了我们的新坐标线。
+
+此外利用\eqref{align:ch07-2-eq89} 可验证
+\begin{align}
+\widetilde{a}^{12}=\sum_{i,j=1}^2 a^{ij}\Phi^1_{x_i}\Phi^2_{x_j}\neq 0\qquad \text{于 } U.\label{align:ch07-2-eq94}
+\end{align}
+合并\eqref{align:ch07-2-eq85}、\eqref{align:ch07-2-eq86}、\eqref{align:ch07-2-eq87}、\eqref{align:ch07-2-eq94}，可见 PDE \eqref{align:ch07-2-eq82} 在 $y$ 坐标下成为
+\begin{align}
+v_{y_1y_2}+\cdots=0,\label{align:ch07-2-eq95}
+\end{align}
+省略号如前表示低阶项。称方程\eqref{align:ch07-2-eq95} 为双曲型 PDE \eqref{align:ch07-2-eq82} 的\textbf{第一标准型}。
+
+若再作变量替换 $z_1=y_1+y_2$、$z_2=y_1-y_2$，则\eqref{align:ch07-2-eq95} 成为
+\begin{align}
+w_{z_1z_1}-w_{z_2z_2}+\cdots=0.\label{align:ch07-2-eq96}
+\end{align}
+若进一步再把变量重命名为 $t=z_1$、$x=z_2$，则\eqref{align:ch07-2-eq96} 写作
+\begin{align}
+w_{tt}-w_{xx}+\cdots=0,\label{align:ch07-2-eq97}
+\end{align}
+其二阶项即为一维波动算子。称方程\eqref{align:ch07-2-eq97} 为\textbf{第二标准型}。
+
+因此，若能如上找到映射 $\boldsymbol{\Phi}$，则形如\eqref{align:ch07-2-eq82} 的任意两变量双曲型 PDE 均可经变量替换化为波动方程加上一个低阶项。
+\end{document}

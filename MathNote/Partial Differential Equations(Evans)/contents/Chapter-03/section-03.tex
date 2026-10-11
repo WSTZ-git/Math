@@ -1,0 +1,712 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}}
+
+\begin{document}
+
+\section{Hamilton--Jacobi 方程简介}\label{section:ch03-hj}
+
+本节较详细地研究 Hamilton--Jacobi 方程的初值问题：
+\begin{align}\label{align:ch03-hj-ivp}
+\begin{cases}
+u_t+H(Du)=0 & \text{在 }\mathbb{R}^n\times(0,\infty)\text{ 中},\\
+u=g & \text{在 }\mathbb{R}^n\times\{t=0\}\text{ 上}.
+\end{cases}
+\end{align}
+这里 $u:\mathbb{R}^n\times[0,\infty)\to\mathbb{R}$ 是未知函数，$u=u(x,t)$，$Du=D_xu=(u_{x_1},\cdots,u_{x_n})$。给定 Hamiltonian $H:\mathbb{R}^n\to\mathbb{R}$ 与初始函数 $g:\mathbb{R}^n\to\mathbb{R}$。
+
+我们的目标是：为一个恰当的弱解或广义解找一个公式，即使在特征线法失效之后，它仍对一切时刻 $t>0$ 存在。
+
+\subsection{变分法、Hamilton ODE}\label{subsection:ch03-calcvar}
+
+回忆 \S3.2.5，与 Hamilton--Jacobi PDE
+\begin{align*}
+u_t+H(Du,x)=0
+\end{align*}
+相关的两条特征方程是 Hamilton ODE
+\begin{align*}
+\dot{\mathbf{x}}=D_p H(\mathbf{p},\mathbf{x}),\qquad \dot{\mathbf{p}}=-D_x H(\mathbf{p},\mathbf{x}),
+\end{align*}
+它们出现在经典变分法与力学中。（注意这里 $H$ 中依赖 $x$。）本节我们回忆这些 ODE 从一个变分原理的推导。然后在 \S3.3.2 中我们将发现，这一讨论包含着如何为初值问题\eqref{align:ch03-hj-ivp} 构造弱解的线索。
+
+\subsubsection{变分法}
+
+设 $L:\mathbb{R}^n\times\mathbb{R}^n\to\mathbb{R}$ 是给定的光滑函数，此后称为 Lagrangian。
+
+\textbf{记号.} 我们写
+\begin{align*}
+L=L(v,x)=L(v_1,\cdots,v_n,x_1,\cdots,x_n) \qquad (v,x\in\mathbb{R}^n)
+\end{align*}
+且
+\begin{align*}
+D_v L=(L_{v_1},\cdots,L_{v_n}),\qquad D_x L=(L_{x_1},\cdots,L_{x_n}).
+\end{align*}
+于是下面公式\eqref{align:ch03-action} 中``$v$''是我们用以代入 $\dot{\mathbf{w}}(s)$ 的变量名，``$x$''是我们用以代入 $\mathbf{w}(s)$ 的变量。
+
+现固定两点 $x,y\in\mathbb{R}^n$ 与时刻 $t>0$。我们引入作用量泛函
+\begin{align}\label{align:ch03-action}
+I[\mathbf{w}(\cdot)]\triangleq\int_0^t L(\dot{\mathbf{w}}(s),\mathbf{w}(s))\,\mathrm{d}s \qquad \left(\dot{\ }=\frac{\mathrm{d}}{\mathrm{d}s}\right),
+\end{align}
+它定义在属于容许类
+\begin{align}\label{align:ch03-admissible}
+\mathcal{A}\triangleq\{\mathbf{w}\in C^2([0,t];\mathbb{R}^n)\mid\mathbf{w}(0)=y,\ \mathbf{w}(t)=x\}
+\end{align}
+的函数 $\mathbf{w}(\cdot)=(w_1(\cdot),w_2(\cdot),\cdots,w_n(\cdot))$ 上。于是一条 $C^2$ 曲线 $\mathbf{w}(\cdot)$ 属于 $\mathcal{A}$，只要它在时刻 0 从点 $y$ 出发、在时刻 $t$ 到达点 $x$。
+
+\textbf{变分法中的一个问题.} 变分法中的一个基本问题是找一条曲线 $\mathbf{x}(\cdot)\in\mathcal{A}$，满足
+\begin{align}\label{align:ch03-min-action}
+I[\mathbf{x}(\cdot)]=\min_{\mathbf{w}(\cdot)\in\mathcal{A}}I[\mathbf{w}(\cdot)].
+\end{align}
+即我们要找一个函数 $\mathbf{x}(\cdot)$，在所有容许候选 $\mathbf{w}(\cdot)\in\mathcal{A}$ 中使泛函 $I[\cdot]$ 取最小。
+
+我们接着假定确实存在一个函数 $\mathbf{x}(\cdot)\in\mathcal{A}$ 满足我们的变分法问题，并推导它的一些性质。
+
+\begin{theorem}[Euler--Lagrange 方程]\label{theorem:ch03-euler-lagrange}函数 $\mathbf{x}(\cdot)$ 解 Euler--Lagrange 方程组
+\begin{align}\label{align:ch03-euler-lagrange}
+-\frac{\mathrm{d}}{\mathrm{d}s}\big(D_v L(\dot{\mathbf{x}}(s),\mathbf{x}(s))\big)+D_x L(\dot{\mathbf{x}}(s),\mathbf{x}(s))=0 \qquad (0\leqslant s\leqslant t).
+\end{align}
+这是一个向量方程，由 $n$ 个耦合的二阶方程组成。
+\end{theorem}
+
+\begin{proof}
+1. 选一个光滑函数 $\mathbf{y}:[0,t]\to\mathbb{R}^n$，$\mathbf{y}(\cdot)=(y_1(\cdot),\cdots,y_n(\cdot))$，满足
+\begin{align}\label{align:ch03-var-zero}
+\mathbf{y}(0)=\mathbf{y}(t)=0,
+\end{align}
+并对 $\tau\in\mathbb{R}$ 定义
+\begin{align}\label{align:ch03-var}
+\mathbf{w}(\cdot)\triangleq\mathbf{x}(\cdot)+\tau\mathbf{y}(\cdot).
+\end{align}
+则 $\mathbf{w}(\cdot)\in\mathcal{A}$，故 $I[\mathbf{x}(\cdot)]\leqslant I[\mathbf{w}(\cdot)]$。于是实值函数
+\begin{align*}
+i(\tau)\triangleq I[\mathbf{x}(\cdot)+\tau\mathbf{y}(\cdot)]
+\end{align*}
+在 $\tau=0$ 处取最小，从而
+\begin{align}\label{align:ch03-iprime0}
+i'(0)=0 \qquad \left('=\frac{\mathrm{d}}{\mathrm{d}\tau}\right),
+\end{align}
+只要 $i'(0)$ 存在。
+
+2. 我们显式计算此导数。注意
+\begin{align*}
+i(\tau)=\int_0^t L(\dot{\mathbf{x}}(s)+\tau\dot{\mathbf{y}}(s),\mathbf{x}(s)+\tau\mathbf{y}(s))\,\mathrm{d}s,
+\end{align*}
+故
+\begin{align*}
+i'(\tau)=\int_0^t\sum_{i=1}^n L_{v_i}(\dot{\mathbf{x}}+\tau\dot{\mathbf{y}},x+\tau y)\dot{y}_i+L_{x_i}(\dot{\mathbf{x}}+\tau\dot{\mathbf{y}},x+\tau y)y_i\,\mathrm{d}s.
+\end{align*}
+令 $\tau=0$，并记住\eqref{align:ch03-iprime0}：
+\begin{align*}
+0=i'(0)=\int_0^t\sum_{i=1}^n L_{v_i}(\dot{\mathbf{x}},x)\dot{y}_i+L_{x_i}(\dot{\mathbf{x}},x)y_i\,\mathrm{d}s.
+\end{align*}
+我们回忆\eqref{align:ch03-var-zero}，然后对积分内第一项分部积分，发现
+\begin{align*}
+0=\sum_{i=1}^n\int_0^t\left[-\frac{\mathrm{d}}{\mathrm{d}s}(L_{v_i}(\dot{\mathbf{x}},x))+L_{x_i}(\dot{\mathbf{x}},x)\right]y_i\,\mathrm{d}s.
+\end{align*}
+此恒等式对一切满足边界条件\eqref{align:ch03-var-zero} 的光滑函数 $\mathbf{y}(\cdot)=(y_1(\cdot),\cdots,y_n(\cdot))$ 都成立，故对 $0\leqslant s\leqslant t$，
+\begin{align*}
+-\frac{\mathrm{d}}{\mathrm{d}s}(L_{v_i}(\dot{\mathbf{x}},x))+L_{x_i}(\dot{\mathbf{x}},x)=0 \qquad (i=1,\cdots,n).
+\end{align*}
+\end{proof}
+
+\textbf{临界点.} 我们刚刚证明：$I[\cdot]$ 的任一最小化元 $\mathbf{x}(\cdot)\in\mathcal{A}$ 都解 Euler--Lagrange ODE 组。当然，一条曲线 $\mathbf{x}(\cdot)\in\mathcal{A}$ 可能解 Euler--Lagrange 方程却未必是最小化元：在此情形我们称 $\mathbf{x}(\cdot)$ 是 $I[\cdot]$ 的一个\textbf{临界点}。故每个最小化元都是临界点，但临界点未必是最小化元。
+
+\begin{example}\label{example:ch03-newton}
+若 $L(v,x)=\dfrac{1}{2}m|v|^2-\phi(x)$，其中 $m>0$，相应的 Euler--Lagrange 方程为 $m\ddot{\mathbf{x}}(s)=\mathbf{f}(\mathbf{x}(s))$，其中 $\mathbf{f}\triangleq-D\phi$。这是质量为 $m$ 的粒子在势 $\phi$ 生成的力场 $\mathbf{f}$ 中运动的 Newton 定律。（见 Feynman--Leighton--Sands \cite{F-L-S} 第 19 章。）
+\end{example}
+
+\subsubsection{Hamilton 方程}
+
+我们现把 Euler--Lagrange 方程（一个 $n$ 个二阶 ODE 的组）化为 Hamilton 方程（一个 $2n$ 个一阶 ODE 的组）。此后假定 $C^2$ 函数 $\mathbf{x}(\cdot)$ 是作用量泛函的临界点，从而解 Euler--Lagrange 方程\eqref{align:ch03-euler-lagrange}。
+
+首先令
+\begin{align}\label{align:ch03-momentum}
+\mathbf{p}(s)\triangleq D_v L(\dot{\mathbf{x}}(s),\mathbf{x}(s)) \qquad (0\leqslant s\leqslant t);
+\end{align}
+$\mathbf{p}(\cdot)$ 称为对应于位置 $\mathbf{x}(\cdot)$ 与速度 $\dot{\mathbf{x}}(\cdot)$ 的\textbf{广义动量}。我们接着作这一重要假设：
+\begin{align}\label{align:ch03-legendre-assume}
+\begin{cases}
+\text{设对一切 }x,p\in\mathbb{R}^n\text{，方程 }p=D_v L(v,x)\\
+\text{能唯一地解出 }v\text{，作为 }p,x\text{ 的光滑函数 }v=\mathbf{v}(p,x).
+\end{cases}
+\end{align}
+我们后将更细地考察此假设：见 \S3.3.2。
+
+\begin{definition}\label{definition:ch03-hamiltonian}
+与 Lagrangian $L$ 相关的 Hamiltonian $H$ 为
+\begin{align}\label{align:ch03-hamiltonian-def}
+H(p,x)\triangleq p\cdot\mathbf{v}(p,x)-L(\mathbf{v}(p,x),x) \qquad (p,x\in\mathbb{R}^n),
+\end{align}
+其中函数 $\mathbf{v}(\cdot)$ 由\eqref{align:ch03-legendre-assume} 隐式定义。
+\end{definition}
+
+\begin{example}[续上例]\label{example:ch03-hamiltonian-energy}对应于 Lagrangian $L(v,x)=\dfrac{1}{2m}|v|^2-\phi(x)$ 的 Hamiltonian 为
+\begin{align*}
+H(p,x)=\frac{1}{2m}|p|^2+\phi(x).
+\end{align*}
+于是 Hamiltonian 是总能量，即动能与势能之和（而 Lagrangian 是动能与势能之差）。
+\end{example}
+
+现我们用 $\mathbf{p}(\cdot)$、$\mathbf{x}(\cdot)$ 重写 Euler--Lagrange 方程：
+
+\begin{theorem}[Hamilton ODE 的推导]\label{theorem:ch03-hamilton-ode}函数 $\mathbf{x}(\cdot)$ 与 $\mathbf{p}(\cdot)$ 满足 Hamilton 方程：
+\begin{align}\label{align:ch03-hamilton-eq}
+\dot{\mathbf{x}}(s)=D_p H(\mathbf{p}(s),\mathbf{x}(s)),\qquad \dot{\mathbf{p}}(s)=-D_x H(\mathbf{p}(s),\mathbf{x}(s))
+\end{align}
+对 $0\leqslant s\leqslant t$。此外映射 $s\mapsto H(\mathbf{p}(s),\mathbf{x}(s))$ 为常数。
+\end{theorem}
+
+方程\eqref{align:ch03-hamilton-eq} 构成关于 $\mathbf{x}(\cdot)=(x_1(\cdot),\cdots,x_n(\cdot))$ 与 $\mathbf{p}(\cdot)=(p_1(\cdot),\cdots,p_n(\cdot))$ 的一个 $2n$ 个一阶 ODE 的耦合组（由\eqref{align:ch03-momentum} 定义）。
+
+\begin{proof}
+首先由\eqref{align:ch03-momentum} 与\eqref{align:ch03-legendre-assume} 注意 $\dot{\mathbf{x}}(s)=\mathbf{v}(\mathbf{p}(s),\mathbf{x}(s))$。此后写 $\mathbf{v}(\cdot)=(v_1(\cdot),\cdots,v_n(\cdot))$。我们对 $i=1,\cdots,n$ 计算：
+\begin{align*}
+H_{x_i}(p,x)&=\sum_{k=1}^n p_k\frac{\partial v_k}{\partial x_i}(p,x)-L_{v_k}(\mathbf{v}(p,x),x)\frac{\partial v_k}{\partial x_i}(p,x)-L_{x_i}(\mathbf{v}(p,x),x)\\
+&=-L_{x_i}(\mathbf{v}(p,x),x) \quad\text{(由\eqref{align:ch03-legendre-assume})},
+\end{align*}
+且
+\begin{align*}
+H_{p_i}(p,x)=v_i(p,x)+\sum_{k=1}^n p_k\frac{\partial v_k}{\partial p_i}(p,x)-L_{v_k}(\mathbf{v}(p,x),x)\frac{\partial v_k}{\partial p_i}(p,x)=v_i(p,x),
+\end{align*}
+仍由\eqref{align:ch03-legendre-assume}。于是
+\begin{align*}
+H_{p_i}(\mathbf{p}(s),\mathbf{x}(s))=v_i(\mathbf{p}(s),\mathbf{x}(s))=\dot{x}_i(s),
+\end{align*}
+类似地
+\begin{align*}
+H_{x_i}(\mathbf{p}(s),\mathbf{x}(s))&=-L_{x_i}(\mathbf{v}(\mathbf{p}(s),\mathbf{x}(s)),\mathbf{x}(s))=-L_{x_i}(\dot{\mathbf{x}}(s),\mathbf{x}(s))\\
+&=-\frac{\mathrm{d}}{\mathrm{d}s}(L_{v_i}(\dot{\mathbf{x}}(s),\mathbf{x}(s))) \quad\text{(由\eqref{align:ch03-euler-lagrange})}=-\dot{p}_i(s).
+\end{align*}
+最后观察
+\begin{align*}
+\frac{\mathrm{d}}{\mathrm{d}s}H(\mathbf{p},\mathbf{x})=\sum_{i=1}^n H_{p_i}(\mathbf{p},\mathbf{x})\dot{p}_i+H_{x_i}(\mathbf{p},\mathbf{x})\dot{x}_i
+=\sum_{i=1}^n H_{p_i}(\mathbf{p},\mathbf{x})(-H_{x_i}(\mathbf{p},\mathbf{x}))+H_{x_i}(\mathbf{p},\mathbf{x})H_{p_i}(\mathbf{p},\mathbf{x})=0.
+\end{align*}
+\end{proof}
+
+关于经典力学中 Hamilton ODE 与 Hamilton--Jacobi PDE 的更多内容，见 Arnold \cite{Ar1} 第 9 章。我们这里采用与力学中习惯不同的记号：就 PDE 理论而言，我们的记号总体上更好。
+
+\subsection{Legendre 变换、Hopf--Lax 公式}\label{subsection:ch03-legendre}
+
+现我们试图找出 Hamilton--Jacobi PDE 与变分法问题\eqref{align:ch03-action}--\eqref{align:ch03-euler-lagrange} 之间的联系。为进一步简化，我们还去掉 Hamiltonian 中对 $x$ 的依赖，从而此后 $H=H(p)$。我们先重新考察 \S3.3.1 中 Hamiltonian 的定义。
+
+\subsubsection{Legendre 变换}
+
+此后假定 Lagrangian $L:\mathbb{R}^n\to\mathbb{R}$ 满足条件：
+\begin{align}\label{align:ch03-L-convex}
+\text{映射 }v\mapsto L(v)\text{ 凸},
+\end{align}
+且
+\begin{align}\label{align:ch03-L-coercive}
+\lim_{|v|\to\infty}\frac{L(v)}{|v|}=+\infty.
+\end{align}
+凸性蕴含 $L$ 连续。
+
+\begin{definition}\label{definition:ch03-legendre}
+$L$ 的 Legendre 变换为
+\begin{align}\label{align:ch03-legendre-def}
+L^*(p)\triangleq\sup_{v\in\mathbb{R}^n}\{p\cdot v-L(v)\} \qquad (p\in\mathbb{R}^n).
+\end{align}
+这也称为 Fenchel 变换。
+\end{definition}
+
+\textbf{Legendre 变换的动机.} 我们为何作此定义？为获得一些洞见，鉴于\eqref{align:ch03-L-coercive} 注意\eqref{align:ch03-legendre-def} 中的``sup''实际上是``max''；即存在某 $v^*\in\mathbb{R}^n$，使
+\begin{align*}
+L^*(p)=p\cdot v^*-L(v^*),
+\end{align*}
+且映射 $v\mapsto p\cdot v-L(v)$ 在 $v=v^*$ 处取最大。但若 $L$ 在 $v^*$ 处可微，则 $p=DL(v^*)$。因而方程 $p=DL(v)$ 关于 $v$ 可解（虽未必唯一），由 $p$ 表出：$v^*=\mathbf{v}(p)$。故
+\begin{align*}
+L^*(p)=p\cdot\mathbf{v}(p)-L(\mathbf{v}(p)).
+\end{align*}
+然而这几乎恰是 \S3.3.1 中与 $L$ 相关的 Hamiltonian $H$ 的定义（回忆此处我们假定变量 $x$ 不出现）。因而此后写
+\begin{align}\label{align:ch03-H=Lstar}
+H=L^*.
+\end{align}
+于是\eqref{align:ch03-legendre-def} 告诉我们如何从 Lagrangian $L$ 得到 Hamiltonian $H$。
+
+现我们问反问题：给定 $H$，如何算 $L$？
+
+\begin{theorem}[Hamiltonian 与 Lagrangian 的凸对偶]\label{theorem:ch03-convex-dual}设 $L$ 满足\eqref{align:ch03-L-convex}、\eqref{align:ch03-L-coercive}，并由\eqref{align:ch03-legendre-def}、\eqref{align:ch03-H=Lstar} 定义 $H$。
+\begin{enumerate}[(i)]
+\item 则映射 $p\mapsto H(p)$ 凸，且 $\lim_{|p|\to\infty}\dfrac{H(p)}{|p|}=+\infty$。
+\item 此外
+\begin{align}\label{align:ch03-L=Hstar}
+L=H^*.
+\end{align}
+\end{enumerate}
+\end{theorem}
+
+于是 $H$ 是 $L$ 的 Legendre 变换，反之亦然：$L=H^*$，$H=L^*$。我们称 $H$ 与 $L$ 为对偶凸函数。恒等式\eqref{align:ch03-L=Hstar} 蕴含：只要 $H$ 在 $p$ 处可微、$L$ 在 $v$ 处可微，三个命题
+\begin{align}\label{align:ch03-dual-equivalent}
+p\cdot v=L(v)+H(p),\qquad p=DL(v),\qquad v=DH(p)
+\end{align}
+等价：见习题 11。
+
+\begin{proof}
+1. 对每个固定的 $v$，函数 $p\mapsto p\cdot v-L(v)$ 是线性的；从而映射
+\begin{align*}
+p\mapsto H(p)=L^*(p)=\sup_{v\in\mathbb{R}^n}\{p\cdot v-L(v)\}
+\end{align*}
+凸。事实上，若 $0\leqslant\tau\leqslant 1$，$p,\hat{p}\in\mathbb{R}^n$，有
+\begin{align*}
+H(\tau p+(1-\tau)\hat{p})=\sup_v\{(\tau p+(1-\tau)\hat{p})\cdot v-L(v)\}
+\leqslant\tau\sup_v\{p\cdot v-L(v)\}+(1-\tau)\sup_v\{\hat{p}\cdot v-L(v)\}
+=\tau H(p)+(1-\tau)H(\hat{p}).
+\end{align*}
+
+2. 固定任一 $\lambda>0$，$p\neq 0$。则
+\begin{align*}
+H(p)=\sup_{v\in\mathbb{R}^n}\{p\cdot v-L(v)\}\geqslant\lambda|p|-L\!\left(\frac{\lambda p}{|p|}\right) \quad\left(v=\frac{\lambda p}{|p|}\right)
+\geqslant\lambda|p|-\max_{B(0,\lambda)}L.
+\end{align*}
+故 $\liminf_{|p|\to\infty}\dfrac{H(p)}{|p|}\geqslant\lambda$，对一切 $\lambda>0$。
+
+3. 鉴于\eqref{align:ch03-H=Lstar}，对一切 $p,v\in\mathbb{R}^n$ 有 $H(p)+L(v)\geqslant p\cdot v$，从而
+\begin{align*}
+L(v)\geqslant\sup_{p\in\mathbb{R}^n}\{p\cdot v-H(p)\}=H^*(v).
+\end{align*}
+另一方面，
+\begin{align*}
+H^*(v)=\sup_{p\in\mathbb{R}^n}\left\{p\cdot v-\sup_{r\in\mathbb{R}^n}\{p\cdot r-L(r)\}\right\}
+=\sup_{p\in\mathbb{R}^n}\inf_{r\in\mathbb{R}^n}\{p\cdot(v-r)+L(r)\}.
+\end{align*}
+由于 $v\mapsto L(v)$ 凸，按 \S B.1 存在 $s\in\mathbb{R}^n$，使 $L(r)\geqslant L(v)+s\cdot(r-v)$（$r\in\mathbb{R}^n$）。（若 $L$ 在 $q$ 处可微，取 $s=DL(v)$。）上面令 $p=s$，计算得
+\begin{align*}
+H^*(v)\geqslant\inf_{r\in\mathbb{R}^n}\{s\cdot(v-r)+L(r)\}=L(v).
+\end{align*}
+\end{proof}
+
+\subsubsection{Hopf--Lax 公式}
+
+现我们回到 Hamilton--Jacobi 方程的初值问题\eqref{align:ch03-hj-ivp}，并回忆 \S3.2.5 中\eqref{align:ch03-char-eq} 式（原文编号 (64)）：相应的特征方程为
+\begin{align*}
+\dot{\mathbf{p}}=0,\qquad \dot{z}=DH(\mathbf{p})\cdot\mathbf{p}-H(\mathbf{p}),\qquad \dot{\mathbf{x}}=DH(\mathbf{p}).
+\end{align*}
+其中第一与第三条是 Hamilton ODE，我们在 \S3.3.1 中从相关 Lagrangian $L=H^*$ 的一个最小化问题推导过。记住\eqref{align:ch03-dual-equivalent}，我们因而可把特征方程中的第二条理解为断言 $\dot{z}=DH(\mathbf{p})\cdot\mathbf{p}-H(\mathbf{p})=L(\dot{\mathbf{x}})$。
+
+但至少在\eqref{align:ch03-hj-ivp} 有光滑解 $u$ 的短时间内，我们有 $z(t)=u(\mathbf{x}(t),t)$，从而
+\begin{align*}
+u(x,t)=\int_0^t L(\dot{\mathbf{x}}(s))\,\mathrm{d}s+g(\mathbf{x}(0)).
+\end{align*}
+我们的意图是改造此表达式，使即使在大时刻 $t>0$、\eqref{align:ch03-hj-ivp} 没有光滑解时也有意义。\S3.3.1 中讨论的作用量变分原理提供了线索。给定 $x\in\mathbb{R}^n$、$t>0$，我们因而提议在满足 $\mathbf{w}(t)=x$ 的曲线 $\mathbf{w}(\cdot)$ 中最小化表达式
+\begin{align*}
+\int_0^t L(\dot{\mathbf{w}}(s))\,\mathrm{d}s+g(\mathbf{w}(0)),
+\end{align*}
+这是作用量加上初始数据的值。我们据此现定义
+\begin{align}\label{align:ch03-hopf-lax}
+u(x,t)\triangleq\inf\left\{\int_0^t L(\dot{\mathbf{w}}(s))\,\mathrm{d}s+g(\mathbf{w}(0))\mid\mathbf{w}(t)=x\right\},
+\end{align}
+其中下确界取在所有 $C^1$ 函数 $\mathbf{w}(\cdot)$ 上。（此猜测的更好论证将在很后面的\cref{chapter:ch10-HamiltonJacobi方程}给出。）
+
+我们必须研究：由\eqref{align:ch03-hopf-lax} 给出的函数 $u$ 在何种意义下真正解 Hamilton--Jacobi PDE 的初值问题：
+\begin{align}\label{align:ch03-hj-ivp2}
+\begin{cases}
+u_t+H(Du)=0 & \text{在 }\mathbb{R}^n\times(0,\infty)\text{ 中},\\
+u=g & \text{在 }\mathbb{R}^n\times\{t=0\}\text{ 上}.
+\end{cases}
+\end{align}
+回忆我们假定 $H$ 光滑，
+\begin{align}\label{align:ch03-H-convex-coer}
+H\text{ 凸，且 }\lim_{|p|\to\infty}\frac{H(p)}{|p|}=+\infty.
+\end{align}
+此后还假定
+\begin{align}\label{align:ch03-g-lipschitz}
+g:\mathbb{R}^n\to\mathbb{R}\text{ Lipschitz 连续};
+\end{align}
+这意味着 $\operatorname{Lip}(g)\triangleq\sup_{\substack{x,y\in\mathbb{R}^n\\x\neq y}}\left\{\dfrac{|g(x)-g(y)|}{|x-y|}\right\}<\infty$。
+
+首先注意公式\eqref{align:ch03-hopf-lax} 可化简：
+
+\begin{theorem}[Hopf--Lax 公式]\label{theorem:ch03-hopf-lax}若 $x\in\mathbb{R}^n$、$t>0$，则最小化问题\eqref{align:ch03-hopf-lax} 的解 $u=u(x,t)$ 为
+\begin{align}\label{align:ch03-hopf-lax-formula}
+u(x,t)=\min_{y\in\mathbb{R}^n}\left\{tL\!\left(\frac{x-y}{t}\right)+g(y)\right\}.
+\end{align}
+\end{theorem}
+
+我们称\eqref{align:ch03-hopf-lax-formula} 右端的表达式为\textbf{Hopf--Lax 公式}。
+
+\begin{proof}
+1. 固定任一 $y\in\mathbb{R}^n$，定义 $\mathbf{w}(s)\triangleq y+\dfrac{s}{t}(x-y)$（$0\leqslant s\leqslant t$）。则 $u$ 的定义\eqref{align:ch03-hopf-lax} 蕴含
+\begin{align*}
+u(x,t)\leqslant\int_0^t L(\dot{\mathbf{w}}(s))\,\mathrm{d}s+g(y)=tL\!\left(\frac{x-y}{t}\right)+g(y),
+\end{align*}
+故 $u(x,t)\leqslant\inf_{y\in\mathbb{R}^n}\left\{tL\!\left(\dfrac{x-y}{t}\right)+g(y)\right\}$。
+
+2. 另一方面，若 $\mathbf{w}(\cdot)$ 是任一满足 $\mathbf{w}(t)=x$ 的 $C^1$ 函数，由 Jensen 不等式（\S B.1）有
+\begin{align*}
+L\!\left(\frac{1}{t}\int_0^t\dot{\mathbf{w}}(s)\,\mathrm{d}s\right)\leqslant\frac{1}{t}\int_0^t L(\dot{\mathbf{w}}(s))\,\mathrm{d}s.
+\end{align*}
+故写 $y=\mathbf{w}(0)$，发现
+\begin{align*}
+tL\!\left(\frac{x-y}{t}\right)+g(y)\leqslant\int_0^t L(\dot{\mathbf{w}}(s))\,\mathrm{d}s+g(y),
+\end{align*}
+从而 $\inf_{y\in\mathbb{R}^n}\left\{tL\!\left(\dfrac{x-y}{t}\right)+g(y)\right\}\leqslant u(x,t)$。
+
+3. 至此我们已证 $u(x,t)=\inf_{y\in\mathbb{R}^n}\left\{tL\!\left(\dfrac{x-y}{t}\right)+g(y)\right\}$，并把证明上述下确界实为最小留作练习。
+\end{proof}
+
+我们现开始研究由 Hopf--Lax 公式\eqref{align:ch03-hopf-lax-formula} 定义的函数 $u$ 的各种性质。我们的最终目标是证明此公式为 Hamilton--Jacobi 方程的初值问题\eqref{align:ch03-hj-ivp2} 提供了一个合理的弱解。
+
+先记录一些初步观察。
+
+\begin{lemma}[一个泛函恒等式]\label{lemma:ch03-semigroup}对每个 $x\in\mathbb{R}^n$、$0\leqslant s<t$，有
+\begin{align}\label{align:ch03-semigroup}
+u(x,t)=\min_{y\in\mathbb{R}^n}\left\{(t-s)L\!\left(\frac{x-y}{t-s}\right)+u(y,s)\right\}.
+\end{align}
+换言之，为计算 $u(\cdot,t)$，我们可先算出时刻 $s$ 的 $u$，再用 $u(\cdot,s)$ 作为剩余时间区间 $[s,t]$ 上的初始条件。
+\end{lemma}
+
+\begin{proof}
+1. 固定 $y\in\mathbb{R}^n$，$0<s<t$，选 $z\in\mathbb{R}^n$，使
+\begin{align}\label{align:ch03-uz}
+u(y,s)=sL\!\left(\frac{y-z}{s}\right)+g(z).
+\end{align}
+现由于 $L$ 凸且 $\dfrac{x-z}{t}=\left(1-\dfrac{s}{t}\right)\dfrac{x-y}{t-s}+\dfrac{s}{t}\dfrac{y-z}{s}$，有
+\begin{align*}
+L\!\left(\frac{x-z}{t}\right)\leqslant\left(1-\frac{s}{t}\right)L\!\left(\frac{x-y}{t-s}\right)+\frac{s}{t}L\!\left(\frac{y-z}{s}\right).
+\end{align*}
+故
+\begin{align*}
+u(x,t)&\leqslant tL\!\left(\frac{x-z}{t}\right)+g(z)\leqslant(t-s)L\!\left(\frac{x-y}{t-s}\right)+sL\!\left(\frac{y-z}{s}\right)+g(z)\\
+&=(t-s)L\!\left(\frac{x-y}{t-s}\right)+u(y,s),
+\end{align*}
+最后一个等号由\eqref{align:ch03-uz}。此不等式对每个 $y\in\mathbb{R}^n$ 成立。因此由于 $y\mapsto u(y,s)$ 连续（按下文引理\cref{lemma:ch03-lipschitz} 证明的第一部分），
+\begin{align}\label{align:ch03-semigroup-ineq1}
+u(x,t)\leqslant\min_{y\in\mathbb{R}^n}\left\{(t-s)L\!\left(\frac{x-y}{t-s}\right)+u(y,s)\right\}.
+\end{align}
+
+2. 现选 $w$，使
+\begin{align}\label{align:ch03-uw}
+u(x,t)=tL\!\left(\frac{x-w}{t}\right)+g(w),
+\end{align}
+并令 $y\triangleq\dfrac{s}{t}x+\left(1-\dfrac{s}{t}\right)w$。则 $\dfrac{x-y}{t-s}=\dfrac{x-w}{t}=\dfrac{y-w}{s}$。因而
+\begin{align*}
+(t-s)L\!\left(\frac{x-y}{t-s}\right)+u(y,s)
+\leqslant(t-s)L\!\left(\frac{x-w}{t}\right)+sL\!\left(\frac{y-w}{s}\right)+g(w)
+=tL\!\left(\frac{x-w}{t}\right)+g(w)=u(x,t),
+\end{align*}
+最后一个等号由\eqref{align:ch03-uw}。故
+\begin{align}\label{align:ch03-semigroup-ineq2}
+\min_{y\in\mathbb{R}^n}\left\{(t-s)L\!\left(\frac{x-y}{t-s}\right)+u(y,s)\right\}\leqslant u(x,t).
+\end{align}
+\end{proof}
+
+\begin{lemma}[Lipschitz 连续性]\label{lemma:ch03-lipschitz}函数 $u$ 在 $\mathbb{R}^n\times[0,\infty)$ 上 Lipschitz 连续，且在 $\mathbb{R}^n\times\{t=0\}$ 上 $u=g$。
+\end{lemma}
+
+\begin{proof}
+1. 固定 $t>0$，$x,\hat{x}\in\mathbb{R}^n$。选 $y\in\mathbb{R}^n$，使
+\begin{align}\label{align:ch03-uxy}
+tL\!\left(\frac{x-y}{t}\right)+g(y)=u(x,t).
+\end{align}
+则
+\begin{align*}
+u(\hat{x},t)-u(x,t)=\min_z\left\{tL\!\left(\frac{\hat{x}-z}{t}\right)+g(z)\right\}-tL\!\left(\frac{x-y}{t}\right)-g(y)
+\leqslant g(\hat{x}-x+y)-g(y)\leqslant\operatorname{Lip}(g)|\hat{x}-x|.
+\end{align*}
+故 $u(\hat{x},t)-u(x,t)\leqslant\operatorname{Lip}(g)|\hat{x}-x|$；交换 $\hat{x}$ 与 $x$ 的角色，得
+\begin{align}\label{align:ch03-lip-space}
+|u(x,t)-u(\hat{x},t)|\leqslant\operatorname{Lip}(g)|x-\hat{x}|.
+\end{align}
+
+2. 现选 $x\in\mathbb{R}^n$，$t>0$。在\eqref{align:ch03-hopf-lax-formula} 中取 $y=x$，发现
+\begin{align}\label{align:ch03-upper-g}
+u(x,t)\leqslant tL(0)+g(x).
+\end{align}
+此外，
+\begin{align*}
+u(x,t)&=\min_{y\in\mathbb{R}^n}\left\{tL\!\left(\frac{x-y}{t}\right)+g(y)\right\}
+\geqslant g(x)+\min_{y\in\mathbb{R}^n}\left\{-\operatorname{Lip}(g)|x-y|+tL\!\left(\frac{x-y}{t}\right)\right\}\\
+&=g(x)-t\max_{z\in\mathbb{R}^n}\{\operatorname{Lip}(g)|z|-L(z)\} \quad\left(z=\frac{x-y}{t}\right)\\
+&=g(x)-t\max_{w\in B(0,\operatorname{Lip}(g))}\max_{z\in\mathbb{R}^n}\{w\cdot z-L(z)\}
+=g(x)-t\max_{B(0,\operatorname{Lip}(g))}H.
+\end{align*}
+此不等式与\eqref{align:ch03-upper-g} 蕴含
+\begin{align}\label{align:ch03-lip-time}
+|u(x,t)-g(x)|\leqslant Ct,
+\end{align}
+其中
+\begin{align}\label{align:ch03-C}
+C\triangleq\max\left(|L(0)|,\max_{B(0,\operatorname{Lip}(g))}|H|\right).
+\end{align}
+
+3. 最后选 $x\in\mathbb{R}^n$，$0<\hat{t}<t$。则由上面\eqref{align:ch03-lip-space}，$\operatorname{Lip}(u(\cdot,t))\leqslant\operatorname{Lip}(g)$。因而引理\cref{lemma:ch03-semigroup} 与类似第 2 步的计算蕴含 $|u(x,t)-u(x,\hat{t})|\leqslant C|t-\hat{t}|$，常数 $C$ 由\eqref{align:ch03-C} 定义。
+\end{proof}
+
+现 Rademacher 定理（我们将在 \S5.8.3 后证）断言 Lipschitz 函数几乎处处可微。因而鉴于引理\cref{lemma:ch03-lipschitz}，由 Hopf--Lax 公式\eqref{align:ch03-hopf-lax-formula} 定义的函数 $u$ 在 a.e. $(x,t)\in\mathbb{R}^n\times(0,\infty)$ 可微。下一定理断言：$u$ 实际上在它可微的一切点处解 Hamilton--Jacobi PDE。
+
+\begin{theorem}[解 Hamilton--Jacobi 方程]\label{theorem:ch03-hj-solved}设 $x\in\mathbb{R}^n$，$t>0$，由 Hopf--Lax 公式\eqref{align:ch03-hopf-lax-formula} 定义的 $u$ 在点 $(x,t)\in\mathbb{R}^n\times(0,\infty)$ 可微。则 $u_t(x,t)+H(Du(x,t))=0$。
+\end{theorem}
+
+\begin{proof}
+1. 固定 $v\in\mathbb{R}^n$，$h>0$。由\cref{lemma:ch03-semigroup}，
+\begin{align*}
+u(x+hv,t+h)=\min_{y\in\mathbb{R}^n}\left\{hL\!\left(\frac{x+hv-y}{h}\right)+u(y,t)\right\}
+\leqslant hL(v)+u(x,t).
+\end{align*}
+故 $\dfrac{u(x+hv,t+h)-u(x,t)}{h}\leqslant L(v)$。令 $h\to 0^+$，算得
+\begin{align*}
+v\cdot Du(x,t)+u_t(x,t)\leqslant L(v).
+\end{align*}
+此不等式对一切 $v\in\mathbb{R}^n$ 成立，故
+\begin{align}\label{align:ch03-hj-ineq1}
+u_t(x,t)+H(Du(x,t))=u_t(x,t)+\max_{v\in\mathbb{R}^n}\{v\cdot Du(x,t)-L(v)\}\leqslant 0.
+\end{align}
+第一个等号成立是由于 $H=L^*$。
+
+2. 现选 $z$，使 $u(x,t)=tL\!\left(\dfrac{x-z}{t}\right)+g(z)$。固定 $h>0$，令 $s=t-h$，$y=\dfrac{s}{t}x+\left(1-\dfrac{s}{t}\right)z$。则 $\dfrac{x-z}{t}=\dfrac{y-z}{s}$，从而
+\begin{align*}
+u(x,t)-u(y,s)\geqslant tL\!\left(\frac{x-z}{t}\right)+g(z)-\left[sL\!\left(\frac{y-z}{s}\right)+g(z)\right]=(t-s)L\!\left(\frac{x-z}{t}\right).
+\end{align*}
+即
+\begin{align*}
+\frac{u(x,t)-u\!\left(\left(1-\frac{h}{t}\right)x+\frac{h}{t}z,t-h\right)}{h}\geqslant L\!\left(\frac{x-z}{t}\right).
+\end{align*}
+令 $h\to 0^+$，看到 $\dfrac{x-z}{t}\cdot Du(x,t)+u_t(x,t)\geqslant L\!\left(\dfrac{x-z}{t}\right)$。因而
+\begin{align*}
+u_t(x,t)+H(Du(x,t))&=u_t(x,t)+\max_{v\in\mathbb{R}^n}\{v\cdot Du(x,t)-L(v)\}\\
+&\geqslant u_t(x,t)+\frac{x-z}{t}\cdot Du(x,t)-L\!\left(\frac{x-z}{t}\right)\geqslant 0.
+\end{align*}
+此不等式与\eqref{align:ch03-hj-ineq1} 完成证明。
+\end{proof}
+
+我们总结：
+
+\begin{theorem}[Hopf--Lax 公式作为解]\label{theorem:ch03-hopf-lax-solution}由 Hopf--Lax 公式\eqref{align:ch03-hopf-lax-formula} 定义的函数 $u$ Lipschitz 连续，在 $\mathbb{R}^n\times(0,\infty)$ 中 a.e. 可微，并解初值问题
+\begin{align}\label{align:ch03-hj-aebvp}
+\begin{cases}
+u_t+H(Du)=0 & \text{在 }\mathbb{R}^n\times(0,\infty)\text{ 中 a.e.},\\
+u=g & \text{在 }\mathbb{R}^n\times\{t=0\}\text{ 上}.
+\end{cases}
+\end{align}
+\end{theorem}
+\subsection{弱解、唯一性}\label{subsection:ch03-weak}
+
+\subsubsection{半凹性}
+
+鉴于上面定理\cref{theorem:ch03-hopf-lax-solution}，把初值问题\eqref{align:ch03-hj-ivp2} 的弱解定义为一个在 $\mathbb{R}^n\times\{t=0\}$ 上与 $g$ 一致、且在 $\mathbb{R}^n\times(0,\infty)$ 上 a.e. 解 PDE 的 Lipschitz 函数，看似合理。然而此定义结果并不恰当：这种弱解一般不唯一。
+
+\begin{example}\label{example:ch03-nonuniq}
+考虑初值问题
+\begin{align}\label{align:ch03-nonuniq}
+\begin{cases}
+u_t+|u_x|^2=0 & \text{在 }\mathbb{R}\times(0,\infty)\text{ 中},\\
+u=0 & \text{在 }\mathbb{R}\times\{t=0\}\text{ 上}.
+\end{cases}
+\end{align}
+一个显然解是 $u_1(x,t)\equiv 0$。然而函数
+\begin{align*}
+u_2(x,t)\triangleq
+\begin{cases}
+0 & \text{若 }|x|\geqslant t,\\
+x-t & \text{若 }0\leqslant x\leqslant t,\\
+-x-t & \text{若 }-t\leqslant x\leqslant 0
+\end{cases}
+\end{align*}
+Lipschitz 连续，且也 a.e.（事实上除直线 $x=0,\pm t$ 外处处）解 PDE。易见实际上满足\eqref{align:ch03-nonuniq} 的 Lipschitz 函数有无穷多个。
+\end{example}
+
+此例表明，我们对弱解的要求大概必须多于仅仅 a.e. 满足 PDE。我们将到 Hopf--Lax 公式\eqref{align:ch03-hopf-lax-formula} 中进一步寻找线索，看为保证唯一性还需要什么。下列引理表明 $u$ 从初始函数 $g$ 继承了一种``单侧''二阶导数估计。
+
+\begin{lemma}[半凹性]\label{lemma:ch03-semiconcave}设存在常数 $C$，使对一切 $x,z\in\mathbb{R}^n$ 有
+\begin{align}\label{align:ch03-semiconcave-g}
+g(x+z)-2g(x)+g(x-z)\leqslant C|z|^2.
+\end{align}
+由 Hopf--Lax 公式\eqref{align:ch03-hopf-lax-formula} 定义 $u$。则对一切 $x,z\in\mathbb{R}^n$、$t>0$，有 $u(x+z,t)-2u(x,t)+u(x-z,t)\leqslant C|z|^2$。
+\end{lemma}
+
+若\eqref{align:ch03-semiconcave-g} 成立，我们称 $g$ 半凹。易验证：若 $g$ 为 $C^2$ 且 $\sup_{\mathbb{R}^n}|D^2 g|<\infty$，则\eqref{align:ch03-semiconcave-g} 成立。注意 $g$ 半凹当且仅当对某常数 $C$，映射 $x\mapsto g(x)-\dfrac{C}{2}|x|^2$ 凹。
+
+\begin{proof}
+选 $y\in\mathbb{R}^n$，使 $u(x,t)=tL\!\left(\dfrac{x-y}{t}\right)+g(y)$。然后把 $y+z$ 与 $y-z$ 代入 $u(x+z,t)$ 与 $u(x-z,t)$ 的 Hopf--Lax 公式，发现
+\begin{align*}
+u(x+z,t)-2u(x,t)+u(x-z,t)
+&\leqslant\left[tL\!\left(\frac{x-y}{t}\right)+g(y+z)\right]-2\left[tL\!\left(\frac{x-y}{t}\right)+g(y)\right]+\left[tL\!\left(\frac{x-y}{t}\right)+g(y-z)\right]\\
+&=g(y+z)-2g(y)+g(y-z)\leqslant C|z|^2,
+\end{align*}
+最后一个不等式由\eqref{align:ch03-semiconcave-g}。
+\end{proof}
+
+由于 $u$ 的一个半凹条件将证明很重要，我们停下来确认它成立的其他一些情形。我们不再假定 $g$ 半凹，而假定 Hamiltonian $H$ 一致凸。
+
+\begin{definition}\label{definition:ch03-uniform-convex}
+一个 $C^2$ 凸函数 $H:\mathbb{R}^n\to\mathbb{R}$ 称为一致凸的（常数 $\theta>0$），若对一切 $p,\xi\in\mathbb{R}^n$，
+\begin{align}\label{align:ch03-uniform-convex}
+\sum_{i,j=1}^n H_{p_i p_j}(p)\xi_i\xi_j\geqslant\theta|\xi|^2.
+\end{align}
+\end{definition}
+
+我们现证明：即使 $g$ 不半凹，$H$ 的一致凸性也迫使 $u$ 对时刻 $t>0$ 成为半凹：这是初值问题\eqref{align:ch03-hj-ivp2} 的 Hopf--Lax 解的一种温和正则化效应。
+
+\begin{lemma}[再论半凹性]\label{lemma:ch03-semiconcave2}设 $H$ 一致凸（常数 $\theta$），$u$ 由 Hopf--Lax 公式\eqref{align:ch03-hopf-lax-formula} 定义。则对一切 $x,z\in\mathbb{R}^n$、$t>0$，
+\begin{align*}
+u(x+z,t)-2u(x,t)+u(x-z,t)\leqslant\frac{1}{\theta t}|z|^2.
+\end{align*}
+\end{lemma}
+
+\begin{proof}
+1. 用 Taylor 公式的计算表明\eqref{align:ch03-uniform-convex} 蕴含
+\begin{align}\label{align:ch03-H-uniform-convex-eq}
+H\!\left(\frac{p_1+p_2}{2}\right)\leqslant\frac{1}{2}H(p_1)+\frac{1}{2}H(p_2)-\frac{\theta}{8}|p_1-p_2|^2.
+\end{align}
+其次我们断言：对 Lagrangian $L$ 有估计
+\begin{align}\label{align:ch03-L-uniform-concave}
+\frac{1}{2}L(v_1)+\frac{1}{2}L(v_2)\leqslant L\!\left(\frac{v_1+v_2}{2}\right)+\frac{1}{8\theta}|v_1-v_2|^2
+\end{align}
+对一切 $v_1,v_2\in\mathbb{R}^n$。验证留作练习。
+
+2. 现选 $y$，使 $u(x,t)=tL\!\left(\dfrac{x-y}{t}\right)+g(y)$。然后在 $u(x+z,t)$ 与 $u(x-z,t)$ 的 Hopf--Lax 公式中用同一个 $y$ 值，算得
+\begin{align*}
+u(x+z,t)-2u(x,t)+u(x-z,t)
+&\leqslant\left[tL\!\left(\frac{x+z-y}{t}\right)+g(y)\right]-2\left[tL\!\left(\frac{x-y}{t}\right)+g(y)\right]+\left[tL\!\left(\frac{x-z-y}{t}\right)+g(y)\right]\\
+&=2t\left[\frac{1}{2}L\!\left(\frac{x+z-y}{t}\right)+\frac{1}{2}L\!\left(\frac{x-z-y}{t}\right)-L\!\left(\frac{x-y}{t}\right)\right]
+\leqslant 2t\frac{1}{8\theta}\left|\frac{2z}{t}\right|^2=\frac{1}{\theta t}|z|^2,
+\end{align*}
+倒数第二个不等式由\eqref{align:ch03-L-uniform-concave}。
+\end{proof}
+
+\subsubsection{弱解、唯一性}
+
+本节我们证明：为 Hopf--Lax 解 $u$ 在引理\cref{lemma:ch03-semiconcave}、\cref{lemma:ch03-semiconcave2} 中发现的那类半凹条件，可用作唯一性判据。
+
+\begin{definition}\label{definition:ch03-weak-hj}
+我们称一个 Lipschitz 连续函数 $u:\mathbb{R}^n\times[0,\infty)\to\mathbb{R}$ 为初值问题
+\begin{align}\label{align:ch03-weak-hj}
+\begin{cases}
+u_t+H(Du)=0 & \text{在 }\mathbb{R}^n\times(0,\infty)\text{ 中},\\
+u=g & \text{在 }\mathbb{R}^n\times\{t=0\}\text{ 上}
+\end{cases}
+\end{align}
+的弱解，只要
+\begin{enumerate}[(a)]
+\item $u(x,0)=g(x)$（$x\in\mathbb{R}^n$）；
+\item $u_t(x,t)+H(Du(x,t))=0$，对 a.e. $(x,t)\in\mathbb{R}^n\times(0,\infty)$；
+\item $u(x+z,t)-2u(x,t)+u(x-z,t)\leqslant C\left(1+\dfrac{1}{t}\right)|z|^2$，对某常数 $C\geqslant 0$ 及一切 $x,z\in\mathbb{R}^n$、$t>0$。
+\end{enumerate}
+\end{definition}
+
+现我们证明\eqref{align:ch03-weak-hj} 的弱解唯一，关键点在于此唯一性断言来自不等式条件 (c)。
+
+\begin{theorem}[弱解的唯一性]\label{theorem:ch03-weak-uniqueness}设 $H$ 为 $C^2$ 且满足\eqref{align:ch03-H-convex-coer}，$g$ 满足\eqref{align:ch03-g-lipschitz}。则初值问题\eqref{align:ch03-weak-hj} 至多存在一个弱解。
+\end{theorem}
+
+\begin{proof}[$^*$]
+\smallskip
+\noindent $^*$ 初读可略。
+
+1. 设 $u$ 与 $\widetilde{u}$ 是\eqref{align:ch03-weak-hj} 的两个弱解，写 $w\triangleq u-\widetilde{u}$。现观察：在 $u$ 与 $\widetilde{u}$ 都可微且解我们 PDE 的任一点 $(y,s)$ 处，有
+\begin{align*}
+w_t(y,s)&=u_t(y,s)-\widetilde{u}_t(y,s)=-H(Du(y,s))+H(D\widetilde{u}(y,s))\\
+&=-\int_0^1\frac{\mathrm{d}}{\mathrm{d}r}H(rDu(y,s)+(1-r)D\widetilde{u}(y,s))\,\mathrm{d}r\\
+&=-\int_0^1 DH(rDu(y,s)+(1-r)D\widetilde{u}(y,s))\,\mathrm{d}r\cdot(Du(y,s)-D\widetilde{u}(y,s))
+\triangleq-\mathbf{b}(y,s)\cdot Dw(y,s).
+\end{align*}
+因而
+\begin{align}\label{align:ch03-w-eq}
+w_t+\mathbf{b}\cdot Dw=0 \qquad\text{a.e.}
+\end{align}
+
+2. 写 $v\triangleq\phi(w)\geqslant 0$，其中 $\phi:\mathbb{R}\to[0,\infty)$ 是待后选取的光滑函数。我们用 $\phi'(w)$ 乘\eqref{align:ch03-w-eq}，发现
+\begin{align}\label{align:ch03-v-eq}
+v_t+\mathbf{b}\cdot Dv=0 \qquad\text{a.e.}
+\end{align}
+
+3. 现选 $\varepsilon>0$，定义 $u_\varepsilon\triangleq\eta_\varepsilon*u$，$\widetilde{u}_\varepsilon\triangleq\eta_\varepsilon*\widetilde{u}$，其中 $\eta_\varepsilon$ 是 $x,t$ 变量中的标准光滑子。则按 \S C.5，
+\begin{align}\label{align:ch03-moll-deriv-bd}
+|Du_\varepsilon|\leqslant\operatorname{Lip}(u),\ |D\widetilde{u}_\varepsilon|\leqslant\operatorname{Lip}(\widetilde{u}),
+\end{align}
+且当 $\varepsilon\to 0$ 时 $Du_\varepsilon\to Du$，$D\widetilde{u}_\varepsilon\to D\widetilde{u}$ a.e.。此外弱解定义中的不等式 (c) 蕴含
+\begin{align}\label{align:ch03-moll-2deriv-bd}
+D^2 u_\varepsilon,\ D^2\widetilde{u}_\varepsilon\leqslant C\left(1+\frac{1}{s}\right)I
+\end{align}
+对恰当常数 $C$ 及一切 $\varepsilon>0$、$y\in\mathbb{R}^n$、$s>2\varepsilon$。验证留作练习。
+
+4. 写
+\begin{align}\label{align:ch03-beps}
+\mathbf{b}_\varepsilon(y,s)\triangleq\int_0^1 DH(rDu_\varepsilon(y,s)+(1-r)D\widetilde{u}_\varepsilon(y,s))\,\mathrm{d}r.
+\end{align}
+则\eqref{align:ch03-v-eq} 成为 $v_t+\mathbf{b}_\varepsilon\cdot Dv=(\mathbf{b}_\varepsilon-\mathbf{b})\cdot Dv$ a.e.；故
+\begin{align}\label{align:ch03-v-eq2}
+v_t+\operatorname{div}(v\mathbf{b}_\varepsilon)=(\operatorname{div}\mathbf{b}_\varepsilon)v+(\mathbf{b}_\varepsilon-\mathbf{b})\cdot Dv \qquad\text{a.e.}
+\end{align}
+
+5. 现由\eqref{align:ch03-moll-deriv-bd}、\eqref{align:ch03-moll-2deriv-bd}，
+\begin{align}\label{align:ch03-div-beps}
+\operatorname{div}\mathbf{b}_\varepsilon=\int_0^1\sum_{k,l=1}^n H_{p_k p_l}(rDu_\varepsilon+(1-r)D\widetilde{u}_\varepsilon)(r u_{\varepsilon,x_l x_k}+(1-r)\widetilde{u}_{\varepsilon,x_l x_k})\,\mathrm{d}r
+\leqslant C\left(1+\frac{1}{s}\right)
+\end{align}
+对某常数 $C$。这里注意 $H$ 凸蕴含 $D^2 H\geqslant 0$。
+
+6. 固定 $x_0\in\mathbb{R}^n$，$t_0>0$，令
+\begin{align}\label{align:ch03-R}
+R\triangleq\max\left\{|DH(p)|\mid|p|\leqslant\max(\operatorname{Lip}(u),\operatorname{Lip}(\widetilde{u}))\right\}.
+\end{align}
+又定义锥 $C\triangleq\{(x,t)\mid 0\leqslant t\leqslant t_0,\ |x-x_0|\leqslant R(t_0-t)\}$。再写
+\begin{align*}
+e(t)=\int_{B(x_0,R(t_0-t))}v(x,t)\,\mathrm{d}x,
+\end{align*}
+并对 a.e. $t>0$ 计算：
+\begin{align*}
+\dot{e}(t)&=\int_{B(x_0,R(t_0-t))}v_t\,\mathrm{d}x-R\int_{\partial B(x_0,R(t_0-t))}v\,\mathrm{d}S\\
+&=\int_{B(x_0,R(t_0-t))}-\operatorname{div}(v\mathbf{b}_\varepsilon)+(\operatorname{div}\mathbf{b}_\varepsilon)v+(\mathbf{b}_\varepsilon-\mathbf{b})\cdot Dv\,\mathrm{d}x-R\int_{\partial B(x_0,R(t_0-t))}v\,\mathrm{d}S \quad\text{(由\eqref{align:ch03-v-eq2})}\\
+&=-\int_{\partial B(x_0,R(t_0-t))}v(\mathbf{b}_\varepsilon\cdot\nu+R)\,\mathrm{d}S+\int_{B(x_0,R(t_0-t))}(\operatorname{div}\mathbf{b}_\varepsilon)v+(\mathbf{b}_\varepsilon-\mathbf{b})\cdot Dv\,\mathrm{d}x\\
+&\leqslant\int_{B(x_0,R(t_0-t))}(\operatorname{div}\mathbf{b}_\varepsilon)v+(\mathbf{b}_\varepsilon-\mathbf{b})\cdot Dv\,\mathrm{d}x \quad\text{(由\eqref{align:ch03-moll-deriv-bd}、\eqref{align:ch03-beps})}\\
+&\leqslant C\left(1+\frac{1}{t}\right)e(t)+\int_{B(x_0,R(t_0-t))}(\mathbf{b}_\varepsilon-\mathbf{b})\cdot Dv\,\mathrm{d}x \quad\text{(由\eqref{align:ch03-div-beps})}.
+\end{align*}
+右端最后一项当 $\varepsilon\to 0$ 时对 a.e. $t>0$ 趋于零，这由\eqref{align:ch03-moll-deriv-bd}、$Du_\varepsilon\to Du$ 与控制收敛定理得到。故
+\begin{align}\label{align:ch03-egronwall}
+\dot{e}(t)\leqslant C\left(1+\frac{1}{t}\right)e(t) \qquad\text{对 a.e. }0<t<t_0.
+\end{align}
+
+7. 固定 $0<\varepsilon<r<t_0$，选函数 $\phi(z)$：当 $|z|\leqslant\varepsilon[\operatorname{Lip}(u)+\operatorname{Lip}(\widetilde{u})]$ 时为零，否则为正。由于在 $\mathbb{R}^n\times\{t=0\}$ 上 $u\equiv\widetilde{u}$，在 $\{t=\varepsilon\}$ 上 $v=\phi(w)=\phi(u-\widetilde{u})=0$。故 $e(\varepsilon)=0$。因而 Gronwall 不等式（\S B.2）与\eqref{align:ch03-egronwall} 蕴含
+\begin{align*}
+e(r)\leqslant e(\varepsilon)e^{\int_\varepsilon^r C(1+1/s)\,\mathrm{d}s}=0.
+\end{align*}
+故在 $B(x_0,R(t_0-r))$ 上 $|u-\widetilde{u}|\leqslant\varepsilon[\operatorname{Lip}(u)+\operatorname{Lip}(\widetilde{u})]$。此不等式对一切 $\varepsilon>0$ 成立，故在 $B(x_0,R(t_0-r))$ 内 $u\equiv\widetilde{u}$。因而特别地 $u(x_0,t_0)=\widetilde{u}(x_0,t_0)$。
+\end{proof}
+
+鉴于引理\cref{lemma:ch03-semiconcave}、\cref{lemma:ch03-semiconcave2} 与定理\cref{theorem:ch03-weak-uniqueness}，我们有：
+
+\begin{theorem}[Hopf--Lax 公式作为弱解]\label{theorem:ch03-hopf-lax-weak}设 $H$ 为 $C^2$ 且满足\eqref{align:ch03-H-convex-coer}，$g$ 满足\eqref{align:ch03-g-lipschitz}。若 $g$ 半凹或 $H$ 一致凸，则
+\begin{align*}
+u(x,t)=\min_{y\in\mathbb{R}^n}\left\{tL\!\left(\frac{x-y}{t}\right)+g(y)\right\}
+\end{align*}
+是 Hamilton--Jacobi 方程初值问题\eqref{align:ch03-weak-hj} 的唯一弱解。
+\end{theorem}
+
+\begin{examples}\label{examples:ch03-hj}
+\begin{enumerate}[(i)]
+\item 考虑初值问题
+\begin{align}\label{align:ch03-hj-ex1}
+\begin{cases}
+u_t+\dfrac{1}{2}|Du|^2=0 & \text{在 }\mathbb{R}^n\times(0,\infty)\text{ 中},\\
+u=|x| & \text{在 }\mathbb{R}^n\times\{t=0\}\text{ 上}.
+\end{cases}
+\end{align}
+这里 $H(p)=\dfrac{1}{2}|p|^2$，故 $L(v)=\dfrac{1}{2}|v|^2$。\eqref{align:ch03-hj-ex1} 唯一弱解的 Hopf--Lax 公式为
+\begin{align}\label{align:ch03-hj-ex1-formula}
+u(x,t)=\min_{y\in\mathbb{R}^n}\left\{\frac{|x-y|^2}{2t}+|y|\right\}.
+\end{align}
+设 $|x|>t$。则 $D_y\!\left(\dfrac{|x-y|^2}{2t}+|y|\right)=\dfrac{y-x}{t}+\dfrac{y}{|y|}$（$y\neq 0$）；此式当 $x=y+\dfrac{y}{|y|}t$、$y=(|x|-t)\dfrac{x}{|x|}\neq 0$ 时等于零。故若 $|x|>t$，$u(x,t)=\dfrac{|x|-t}{2}$。若 $|x|\leqslant t$，\eqref{align:ch03-hj-ex1-formula} 中的最小在 $y=0$ 处达到。因而
+\begin{align*}
+u(x,t)=
+\begin{cases}
+|x|-t/2 & \text{若 }|x|\geqslant t,\\
+\dfrac{|x|^2}{2t} & \text{若 }|x|\leqslant t.
+\end{cases}
+\end{align*}
+观察：尽管初始函数 $g(x)=|x|$ 不半凹，解在时刻 $t>0$ 成为半凹。这与引理\cref{lemma:ch03-semiconcave2} 一致。
+
+\item 现考察初值条件相反的问题：
+\begin{align}\label{align:ch03-hj-ex2}
+\begin{cases}
+u_t+\dfrac{1}{2}|Du|^2=0 & \text{在 }\mathbb{R}^n\times(0,\infty)\text{ 中},\\
+u=-|x| & \text{在 }\mathbb{R}^n\times\{t=0\}\text{ 上}.
+\end{cases}
+\end{align}
+则 $u(x,t)=\min_{y\in\mathbb{R}^n}\left\{\dfrac{|x-y|^2}{2t}-|y|\right\}$。现 $D_y\!\left(\dfrac{|x-y|^2}{2t}-|y|\right)=\dfrac{y-x}{t}-\dfrac{y}{|y|}$（$y\neq 0$），此式当 $x=y-\dfrac{y}{|y|}t$、$y=(|x|+t)\dfrac{x}{|x|}$ 时等于零。故 $u(x,t)=-|x|-\dfrac{t}{2}$（$x\in\mathbb{R}^n$，$t\geqslant 0$）。初始函数 $g(x)=-|x|$ 半凹，且解在时刻 $t>0$ 仍半凹。
+\end{enumerate}
+\end{examples}
+
+在\cref{chapter:ch10-HamiltonJacobi方程}中我们将再次研究 Hamilton--Jacobi PDE，并发现另一种更好的弱解概念，即使 $H$ 不凸也适用。
+
+\end{document}

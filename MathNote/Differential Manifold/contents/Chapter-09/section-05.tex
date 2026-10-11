@@ -1,0 +1,132 @@
+\documentclass[../../main.tex]{subfiles}
+\begin{document}
+\section{Lie 导数}\label{section:ch09-Lie导数}
+
+我们知道如何理解流形上实值函数的方向导数。事实上，切向量 $v\in T_pM$ 按定义是一个算子，它作用于光滑函数 $f$ 给出一个数 $vf$，我们将其解释为 $f$ 在 $p$ 处的方向导数。在第 3 章中，我们证明这个数可解释为 $f$ 沿任意初始速度为 $v$ 的曲线的普通导数。
+
+向量场的方向导数呢？在欧氏空间中，定义光滑向量场 $W$ 沿向量 $v\in T_p\mathbb{R}^n$ 方向的方向导数是完全有意义的。它是向量
+\begin{align}
+D_vW(p)=\left.\frac{\mathrm{d}}{\mathrm{d}t}\right|_{t=0}W_{p+tv}=\lim_{t\to 0}\frac{W_{p+tv}-W_p}{t}. \label{align:ch09-15}
+\end{align}
+容易计算表明 $D_vW(p)$ 可通过将 $D_v$ 分别作用于 $W$ 的每个分量来计算：
+\begin{align*}
+D_vW(p)=D_vW^i(p)\frac{\partial}{\partial x^i}\bigg|_p.
+\end{align*}
+
+不幸的是，这个定义严重依赖于 $\mathbb{R}^n$ 是向量空间这一事实，使得切向量 $W_{p+tv}$ 和 $W_p$ 都可视为 $\mathbb{R}^n$ 的元素。若在流形上寻找使\eqref{align:ch09-15}具有不变意义的方法，我们很快就会看到问题所在。首先，可以用从 $p$ 出发、初始速度为 $v$ 的曲线 $\gamma(t)$ 代替 $p+tv$。但即使做了这个替换，差商仍然没有意义，因为 $W_{\gamma(t)}$ 和 $W_{\gamma(0)}$ 分别是两个不同向量空间 $T_{\gamma(t)}M$ 和 $T_{\gamma(0)}M$ 的元素。在欧氏空间中我们之所以可行，是因为每个切空间与 $\mathbb{R}^n$ 本身之间有典范等同；但在流形上没有这种等同。因此不存在坐标无关的方式来理解 $W$ 沿向量 $v$ 方向的方向导数。
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.8\textwidth]{fig-09-12.png}
+\caption{向量场方向导数的问题}\label{figure:ch09-directional-derivative-problem}
+\end{figure}
+
+若用向量场 $V\in\mathfrak{X}(M)$ 代替向量 $v\in T_pM$，此问题可被绕过，因为可以用 $V$ 的流将 $W$ 的值推回 $p$，然后求导。因此我们给出如下定义。假设 $M$ 是光滑流形，$V$ 是 $M$ 上的光滑向量场，$\theta$ 是 $V$ 的流。对 $M$ 上任意光滑向量场 $W$，定义 $M$ 上的粗向量场，记为 $L_VW$，称为 $W$ 关于 $V$ 的\textbf{Lie 导数}，为
+\begin{align}
+(L_VW)_p=\left.\frac{\mathrm{d}}{\mathrm{d}t}\right|_{t=0}\mathrm{d}(\theta_{-t})_{\theta_{-t}(p)}\bigl(W_{\theta_{-t}(p)}\bigr)=\lim_{t\to 0}\frac{\mathrm{d}(\theta_{-t})_{\theta_{-t}(p)}(W_{\theta_{-t}(p)})-W_p}{t}, \label{align:ch09-16}
+\end{align}
+前提是导数存在。对小的 $t\neq 0$，至少差商是有意义的：$\theta_t$ 在 $p$ 的邻域内有定义，$\theta_{-t}$ 是 $\theta_t$ 的逆，故 $\mathrm{d}(\theta_{-t})_{\theta_{-t}(p)}(W_{\theta_{-t}(p)})$ 和 $W_p$ 都是 $T_pM$ 的元素。
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.8\textwidth]{fig-09-13.png}
+\caption{向量场的 Lie 导数}\label{figure:ch09-lie-derivative-vector}
+\end{figure}
+
+若 $M$ 有非空边界，只要 $V$ 与 $\partial M$ 相切使其流由\cref{theorem:ch09-34}存在，$L_VW$ 的此定义就有意义。（我们将在下面定义更一般的带边流形上的 Lie 导数；见\cref{theorem:ch09-38}证明后的注。）
+
+\begin{lemma}\label{lemma:ch09-36}
+假设 $M$ 是带边或不带边的光滑流形，$V,W\in\mathfrak{X}(M)$。若 $\partial M\neq\emptyset$，另假设 $V$ 与 $\partial M$ 相切。则对每个 $p\in M$，$(L_VW)_p$ 存在，且 $L_VW$ 是光滑向量场。
+\end{lemma}
+
+\begin{proof}
+设 $\theta$ 是 $V$ 的流。对任意 $p\in M$，设 $(U,(x^i))$ 是包含 $p$ 的光滑坐标卡。选取包含 $0$ 的开区间 $J_0$ 和包含 $p$ 的开子集 $U_0\subseteq U$，使得 $\theta$ 将 $J_0\times U_0$ 映入 $U$。对 $(t;x)\in J_0\times U_0$，将 $\theta$ 的分量函数写为 $(\theta^1(t;x),\dots,\theta^n(t;x))$。则对任意 $(t;x)\in J_0\times U_0$，映射 $\mathrm{d}(\theta_{-t})_{\theta_{-t}(x)}\colon T_{\theta_{-t}(x)}M\to T_xM$ 的矩阵为
+\begin{align*}
+\left(\frac{\partial\theta^i}{\partial x^j}(-t;\theta(t;x))\right).
+\end{align*}
+因此，
+\begin{align*}
+\mathrm{d}(\theta_{-t})_{\theta_{-t}(x)}\bigl(W_{\theta_{-t}(x)}\bigr)=\frac{\partial\theta^i}{\partial x^j}(-t;\theta(t;x))\,W^j\bigl(\theta(t;x)\bigr)\frac{\partial}{\partial x^i}\bigg|_x.
+\end{align*}
+由于 $\theta^i$ 和 $W^j$ 是光滑函数，$\partial/\partial x^j|_x$ 的系数光滑依赖于 $(t;x)$。由此，$(L_VW)_x$（由该表达式关于 $t$ 求导并令 $t=0$ 得到）对每个 $x\in U_0$ 存在且光滑依赖于 $x$。
+\end{proof}
+
+\begin{exercise}\label{exercise:ch09-37}
+假设 $v\in\mathbb{R}^n$，$W$ 是 $\mathbb{R}^n$ 某开子集上的光滑向量场。证明由\eqref{align:ch09-15}定义的方向导数 $D_vW(p)$ 等于 $(L_VW)_p$，其中 $V$ 是在标准坐标下具有常系数的向量场 $V=v^i\partial/\partial x^i$。
+\end{exercise}
+
+$L_VW$ 的定义对计算不太有用，因为通常流难以或不可能显式写出。幸运的是，有一个简单公式可以不显式求出流来计算 Lie 导数。
+
+\begin{theorem}\label{theorem:ch09-38}
+若 $M$ 是光滑流形，$V,W\in\mathfrak{X}(M)$，则 $L_VW=[V;W]$。
+\end{theorem}
+
+\begin{proof}
+假设 $V,W\in\mathfrak{X}(M)$，令 $R(V)\subseteq M$ 为 $V$ 的正则点集（即满足 $V_p\neq 0$ 的点 $p\in M$ 的集合）。注意由连续性 $R(V)$ 在 $M$ 中开，其闭包是 $V$ 的支集。我们将分三种情形证明对所有 $p\in M$，$(L_VW)_p=[V;W]_p$。
+
+\noindent\textbf{情形 1：}$p\in R(V)$。在此情形下，可选取 $p$ 邻域上的光滑坐标 $(u^i)$，使得 $V$ 有坐标表示 $V=\partial/\partial u^1$（\cref{theorem:ch09-22}）。在这些坐标下，$V$ 的流为 $\theta_t(u)=(u^1+t;u^2,\dots,u^n)$。对每个固定的 $t$，在这些坐标下 $\mathrm{d}(\theta_{-t})_{\theta_{-t}(x)}$ 的矩阵（即 $\theta_{-t}$ 的 Jacobian 矩阵）在每点都是恒等矩阵。因此，对任意 $u\in U$，
+\begin{align*}
+\mathrm{d}(\theta_{-t})_{\theta_{-t}(u)}(W_{\theta_{-t}(u)})
+&=\mathrm{d}(\theta_{-t})_{\theta_{-t}(x)}\left(W^j(u^1+t;u^2,\dots,u^n)\frac{\partial}{\partial u^j}\bigg|_{\theta_{-t}(u)}\right)\\
+&=W^j(u^1+t;u^2,\dots,u^n)\frac{\partial}{\partial u^j}\bigg|_u.
+\end{align*}
+利用 Lie 导数的定义，得
+\begin{align*}
+(L_VW)_u=\left.\frac{\mathrm{d}}{\mathrm{d}t}\right|_{t=0}W^j(u^1+t;u^2,\dots,u^n)\frac{\partial}{\partial u^j}\bigg|_u
+=\frac{\partial W^j}{\partial u^1}(u^1,\dots,u^n)\frac{\partial}{\partial u^j}\bigg|_u.
+\end{align*}
+另一方面，由坐标中 Lie 括号的公式\eqref{align:ch08-08}，$[V;W]_u$ 易见等于同一表达式。
+
+\noindent\textbf{情形 2：}$p\in\operatorname{supp}V$。由于 $\operatorname{supp}V$ 是 $R(V)$ 的闭包，由情形 1 经连续性推出对 $p\in\operatorname{supp}V$，$(L_VW)_p=[V;W]_p$。
+
+\noindent\textbf{情形 3：}$p\in M\smallsetminus\operatorname{supp}V$。在此情形下，$V$ 在 $p$ 的邻域上恒为零。一方面，这意味着对所有 $t$，$\theta_t$ 在 $p$ 的邻域上等于恒等映射，故 $\mathrm{d}(\theta_{-t})_{\theta_{-t}(p)}(W_{\theta_{-t}(p)})=W_p$，从而 $(L_VW)_p=0$。另一方面，由公式\eqref{align:ch08-08}，$[V;W]_p=0$。
+\end{proof}
+
+此定理使我们能将 Lie 导数的定义推广到带边光滑流形 $M$ 上的任意光滑向量场。给定 $V,W\in\mathfrak{X}(M)$，我们通过将 $M$ 嵌入无边光滑流形 $\widetilde{M}$（如 $M$ 的二重），将 $V$ 和 $W$ 延拓为 $\widetilde{M}$ 上的光滑向量场，并在那里计算 Lie 导数，来定义 $p\in\partial M$ 处的 $(L_VW)_p$。由前一定理，$(L_VW)_p=[X;Y]_p$ 与延拓的选择无关。
+
+\cref{theorem:ch09-38}还给出了两个向量场 Lie 括号的几何解释：它是第二个向量场沿第一个向量场的流的方向导数。Lie 导数的许多非显然性质直接来自我们已知的关于 Lie 括号的事实。
+
+\begin{corollary}\label{corollary:ch09-39}
+假设 $M$ 是带边或不带边的光滑流形，$V,W,X\in\mathfrak{X}(M)$。
+\begin{enumerate}[(a)]
+\item $L_VW=-L_WV$。
+\item $L_V[W;X]=[L_VW;X]+[W;L_VX]$。
+\item $L_{[V;W]}X=L_VL_WX-L_WL_VX$。
+\item 若 $g\in C^\infty(M)$，则 $L_V(gW)=(Vg)W+gL_VW$。
+\item 若 $F\colon M\to N$ 是微分同胚，则 $F_*(L_VX)=L_{F_*V}F_*X$。
+\end{enumerate}
+\end{corollary}
+
+\begin{exercise}\label{exercise:ch09-40}
+证明此推论。
+\end{exercise}
+
+此推论的 (d) 部分为神秘的公式\eqref{align:ch08-11}（向量场乘以函数后的 Lie 括号）赋予了意义：因为 Lie 括号 $[fV;gW]$ 可视为 Lie 导数 $L_{fV}(gW)$，它在 $g$ 和 $W$ 上满足乘积法则；又因为它也可视为 $-L_{gW}(fV)$，它在 $f$ 和 $V$ 上也满足乘积法则。展开这两个乘积法则即得\eqref{align:ch08-11}。
+
+若 $V$ 和 $W$ 是 $M$ 上的向量场，$\theta$ 是 $V$ 的流，Lie 导数 $(L_VW)_p$ 按定义表达了含时向量场 $\mathrm{d}(\theta_{-t})_{\theta_{-t}(p)}(W_{\theta_{-t}(p)})\in T_pM$ 在 $t=0$ 处的 $t$-导数。下一个命题说明如何用它计算该表达式在其他时刻的导数。我们将在下面\cref{theorem:ch09-42}的证明中使用此结果。
+
+\begin{proposition}\label{proposition:ch09-41}
+假设 $M$ 是带边或不带边的光滑流形，$V,W\in\mathfrak{X}(M)$。若 $\partial M\neq\emptyset$，另假设 $V$ 与 $\partial M$ 相切。设 $\theta$ 是 $V$ 的流。对 $\theta$ 定义域内的任意 $(t_0;p)$，
+\begin{align}
+\left.\frac{\mathrm{d}}{\mathrm{d}t}\right|_{t=t_0}\mathrm{d}(\theta_{-t})_{\theta_{-t}(p)}\bigl(W_{\theta_{-t}(p)}\bigr)=\mathrm{d}(\theta_{-t_0})_*\bigl((L_VW)_{\theta_{-t_0}(p)}\bigr). \label{align:ch09-17}
+\end{align}
+\end{proposition}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.8\textwidth]{fig-09-14.png}
+\caption{命题 9.41 的证明}\label{figure:ch09-proof-prop-941}
+\end{figure}
+
+\begin{proof}
+任取 $p\in M$，设 $\mathscr{D}(p)\subseteq\mathbb{R}$ 表示积分曲线 $\theta^{(p)}$ 的定义域，考虑映射 $X\colon\mathscr{D}(p)\to T_pM$，由 $X(t)=\mathrm{d}(\theta_{-t})_{\theta_{-t}(p)}(W_{\theta_{-t}(p)})$ 给出。\cref{lemma:ch09-36}证明中的论证表明 $X$ 是向量空间 $T_pM$ 中的光滑曲线。做变量替换 $t=t_0+s$，得
+\begin{align*}
+X'(t_0)=\left.\frac{\mathrm{d}}{\mathrm{d}s}\right|_{s=0}X(t_0+s)
+&=\left.\frac{\mathrm{d}}{\mathrm{d}s}\right|_{s=0}\mathrm{d}(\theta_{-t_0-s})\bigl(W_{-s+t_0(p)}\bigr)\\
+&=\left.\frac{\mathrm{d}}{\mathrm{d}s}\right|_{s=0}\mathrm{d}(\theta_{-t_0})\circ\mathrm{d}(\theta_{-s})\bigl(W_{-s(\theta_{t_0}(p))}\bigr)\\
+&=\mathrm{d}(\theta_{-t_0})\left(\left.\frac{\mathrm{d}}{\mathrm{d}s}\right|_{s=0}\mathrm{d}(\theta_{-s})\bigl(W_{-s(\theta_{t_0}(p))}\bigr)\right).
+\end{align*}
+（最后一个等号成立是因为 $\mathrm{d}(\theta_{-t_0})\colon T_{\theta_{-t_0}(p)}M\to T_pM$ 是与 $s$ 无关的线性映射。）由 Lie 导数的定义，最后一个表达式等于\eqref{align:ch09-17}的右端。
+\end{proof}
+
+\end{document}

@@ -1,0 +1,189 @@
+\documentclass[../../main.tex]{subfiles}
+\begin{document}
+% SOURCE p=172; printed=157; object=ch05-linear-functionals-title; region=upper
+\section{线性泛函}\label{section:ch05-linear-functionals}
+% SOURCE p=172; printed=157; object=ch05-linear-functional-dual-definition; region=upper-middle
+\begin{definition}[线性泛函与对偶空间]\label{definition:ch05-dual-space}
+设 $\mathcal X$ 为 $K$ 上的向量空间，其中 $K=\mathbb R$ 或 $\mathbb C$。从 $\mathcal X$ 到 $K$ 的线性映射称为 $\mathcal X$ 上的\textbf{线性泛函}。若 $\mathcal X$ 为赋范向量空间，则其有界线性泛函空间 $L(\mathcal X,K)$ 称为 $\mathcal X$ 的\textbf{对偶空间}，记作 $\mathcal X^*$。
+\end{definition}
+由\cref{proposition:ch05-operator-space-complete}，$\mathcal X^*$ 配备算子范数后为 Banach 空间。
+% SUPPLEMENT: id=v14-ch05-dual-definition-details; parent=ch05-linear-functional-dual-definition; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}泛函用一个标量测量向量；对偶空间收集所有连续的线性测量。有界性与连续性等价，因此这里取的是连续对偶，而非包括所有线性映射的代数对偶。标量域 $\mathbb R$、$\mathbb C$ 都完备，所以算子空间完备性命题适用；原空间 $\mathcal X$ 不必完备。范数为 $\|f\|=\sup_{\|x\|\le1}|f(x)|$，闭单位球的写法也涵盖 $\mathcal X=\{0\}$。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch05-dual-definition-details
+% SOURCE p=172; printed=157; object=ch05-real-complex-introduction; region=middle
+若 $\mathcal X$ 是复向量空间，它同时也是实向量空间；于是可同时考虑其上实线性与复线性泛函，也就是关于 $\mathbb R$ 线性的映射 $\mathcal X\to\mathbb R$ 和关于 $\mathbb C$ 线性的映射 $\mathcal X\to\mathbb C$。两者有如下关系。
+% SOURCE p=172; printed=157; object=ch05-real-complex-functionals; number=5.5; region=middle
+\begin{proposition}\label{proposition:ch05-real-complex-functionals}
+设 $\mathcal X$ 为复向量空间。若 $f$ 是其上的复线性泛函且 $u=\operatorname{Re}f$，则 $u$ 为实线性泛函，并且 $f(x)=u(x)-iu(ix)$ 对每个 $x\in\mathcal X$ 成立。反过来，若 $u$ 为实线性泛函，以 $f(x)=u(x)-iu(ix)$ 定义的 $f:\mathcal X\to\mathbb C$ 就是复线性的。在此情形下，若 $\mathcal X$ 赋有范数，则 $\|u\|=\|f\|$。
+\end{proposition}
+% SOURCE p=172; printed=157; object=ch05-real-complex-functionals-proof; region=middle-lower
+\begin{proof}
+若 $f$ 复线性且 $u=\operatorname{Re}f$，则 $u$ 显然实线性，且 $\operatorname{Im}f(x)=-\operatorname{Re}[if(x)]=-u(ix)$，故 $f(x)=u(x)-iu(ix)$。另一方面，若 $u$ 实线性并如此定义 $f$，则 $f$ 显然实线性，并且
+\begin{align*}
+f(ix)=u(ix)-iu(-x)=u(ix)+iu(x)=if(x),
+\end{align*}
+所以 $f$ 也是复线性的。最后，若 $\mathcal X$ 赋范，由 $|u(x)|=|\operatorname{Re}f(x)|\le|f(x)|$ 得 $\|u\|\le\|f\|$。反过来，若 $f(x)\ne0$，令 $\alpha=\overline{\operatorname{sgn}f(x)}$，则
+\begin{align*}
+|f(x)|=\alpha f(x)=f(\alpha x)=u(\alpha x),
+\end{align*}
+最后一步因为 $f(\alpha x)$ 为实数。因此 $|f(x)|\le\|u\|\|\alpha x\|=\|u\|\|x\|$，从而 $\|f\|\le\|u\|$。
+\end{proof}
+% SUPPLEMENT: id=v14-ch05-real-complex-details; parent=ch05-real-complex-functionals; kind=proof-detail+source-clarification+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{有界性约定与证明细节（重构新增）。}按此前只给有界算子定义有限范数的约定，末句应明确为：$u$ 有界当且仅当 $f$ 有界，且有界时二者范数相同。上面的点态估计先证明这个等价性，再对单位球取上确界即可；也可把上确界允许为 $+\infty$，理解为扩展值等式。$f(x)=0$ 时所需不等式直接成立，无须定义相位。
+
+实线性加上 $f(ix)=if(x)$ 给完整的复线性，因为 $f((a+ib)x)=af(x)+bf(ix)=(a+ib)f(x)$。在复空间上，虚部已由实部沿 $ix$ 方向的值决定，这使实域延拓能转化为复域延拓。范数的复齐次性保证乘单位相位不改变向量大小；若只给与复乘法不相容的实范数，这个等范数结论不由上述证明保证。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch05-real-complex-details
+% SOURCE p=172; printed=157; object=ch05-hahn-banach-motivation; region=lower
+任意赋范向量空间上是否存在非零有界线性泛函，并不是显然的。这样的泛函大量存在，是泛函分析的基本定理之一。现在以一个具有其他重要应用的更一般形式给出这一结果。
+% SOURCE p=172; printed=157; object=ch05-sublinear-definition; region=lower
+\begin{definition}[次线性泛函]\label{definition:ch05-sublinear-functional}
+若 $\mathcal X$ 为实向量空间，称映射 $p:\mathcal X\to\mathbb R$ 为\textbf{次线性泛函}，若对所有 $x,y\in\mathcal X$ 及 $\lambda\ge0$ 有
+\begin{align*}
+p(x+y)\le p(x)+p(y),\qquad p(\lambda x)=\lambda p(x).
+\end{align*}
+\end{definition}
+例如，每个半范数都是次线性泛函。
+% SUPPLEMENT: id=v14-ch05-sublinear-details; parent=ch05-sublinear-definition; kind=well-definedness+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}次可加性使不同方向的上界能够相容，非负齐次性把任意正倍数化归同一方向；延拓时正负系数分别产生上界和下界。这里 $p$ 取有限实值，但不要求非负，也不要求 $p(-x)=p(x)$。例如 $p(t)=t$ 次线性而不是半范数。由 $\lambda=0$ 得 $p(0)=0$，再由次可加性得 $0\le p(x)+p(-x)$。半范数满足更强的绝对齐次性和非负性，故必然满足这里两条公理。此定义不需要拓扑或完备性。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch05-sublinear-details
+% SOURCE p=172; printed=157; object=ch05-real-hahn-banach; number=5.6; region=bottom
+\begin{theorem}[Hahn--Banach 定理]\label{theorem:ch05-real-hahn-banach}
+设 $\mathcal X$ 为实向量空间，$p$ 为其上的次线性泛函，$\mathcal M$ 为 $\mathcal X$ 的子空间，$f$ 为 $\mathcal M$ 上的线性泛函，且对所有 $x\in\mathcal M$ 有 $f(x)\le p(x)$。则存在 $\mathcal X$ 上的线性泛函 $F$，使所有 $x\in\mathcal X$ 均满足 $F(x)\le p(x)$，并且 $F|_{\mathcal M}=f$。
+\end{theorem}
+% SOURCE p=173; printed=158; object=ch05-real-hahn-banach-proof; region=upper-middle
+\begin{proof}
+先证明：若 $x\in\mathcal X\setminus\mathcal M$，则可将 $f$ 延拓为 $\mathcal M+\mathbb Rx$ 上的线性泛函 $g$，且在那里有 $g(y)\le p(y)$。若 $y_1,y_2\in\mathcal M$，则
+\begin{align*}
+f(y_1)+f(y_2)=f(y_1+y_2)\le p(y_1+y_2)\le p(y_1-x)+p(x+y_2),
+\end{align*}
+即 $f(y_1)-p(y_1-x)\le p(x+y_2)-f(y_2)$。因此
+\begin{align*}
+\sup_{y\in\mathcal M}\{f(y)-p(y-x)\}\le\inf_{y\in\mathcal M}\{p(x+y)-f(y)\}.
+\end{align*}
+取任意满足
+\begin{align*}
+\sup_{y\in\mathcal M}\{f(y)-p(y-x)\}\le\alpha\le\inf_{y\in\mathcal M}\{p(x+y)-f(y)\}
+\end{align*}
+的数 $\alpha$，并定义 $g(y+\lambda x)=f(y)+\lambda\alpha$。则 $g$ 显然线性且 $g|_{\mathcal M}=f$，故在 $\mathcal M$ 上有 $g\le p$。此外，若 $\lambda>0$、$y\in\mathcal M$，则
+\begin{align*}
+g(y+\lambda x)&=\lambda[f(y/\lambda)+\alpha]\le\lambda[f(y/\lambda)+p(x+y/\lambda)-f(y/\lambda)]\\
+&=p(y+\lambda x).
+\end{align*}
+若 $\lambda=-\mu<0$，则
+\begin{align*}
+g(y+\lambda x)&=\mu[f(y/\mu)-\alpha]\le\mu[f(y/\mu)-f(y/\mu)+p(y/\mu-x)]\\
+&=p(y+\lambda x).
+\end{align*}
+所以对每个 $z\in\mathcal M+\mathbb Rx$ 都有 $g(z)\le p(z)$。
+
+同一论证显然适用于任意满足定义域上 $F\le p$ 的线性延拓 $F$，从而这样的极大延拓的定义域必须为整个 $\mathcal X$。所有满足 $F\le p$ 的线性延拓所成族 $\mathscr F$，按包含关系成为偏序集（把从子空间到 $\mathbb R$ 的映射看成 $\mathcal X\times\mathbb R$ 的子集）。递增子空间族的并仍为子空间，故容易看出 $\mathscr F$ 中线性有序子族的并属于 $\mathscr F$。应用 Zorn 引理即完成证明。
+\end{proof}
+% SUPPLEMENT: id=v14-ch05-real-hahn-banach-details; parent=ch05-real-hahn-banach; kind=proof-detail+well-definedness+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{单步及极大延拓的细节补写（重构新增）。}记上述上确界、下确界为 $A,B$。将左、右表达式分别取 $y=0$，结合每个左值不超过每个右值，可得
+\begin{align*}
+-p(-x)\le A\le B\le p(x).
+\end{align*}
+故两端均为有限实数，确实能选实数 $\alpha\in[A,B]$。若 $y+\lambda x=y'+\lambda'x$ 且 $\lambda\ne\lambda'$，就会推出 $x\in\mathcal M$，矛盾；所以表示唯一，$g$ 良定义。对表示逐项相加、实数倍乘可直接验证线性；$\lambda=0$ 的控制由原假设给出，正负情形由原证明处理。
+
+严格地令 $\mathscr F$ 的元素为 $(\mathcal N,F)$，其中 $\mathcal M\subseteq\mathcal N\subseteq\mathcal X$ 是子空间，$F$ 线性、延拓 $f$ 且 $F\le p$；以延拓关系为偏序。它是一个集合，且包含 $(\mathcal M,f)$。对非空链，其定义域之并 $\mathcal N_\infty$ 为子空间：任意有限多个向量都在链中某个共同定义域内。各映射在重叠处一致，故并定义唯一映射 $F_\infty$，在共同定义域内验证其线性与 $F_\infty\le p$。它是链的上界。空链由 $(\mathcal M,f)$ 作上界。Zorn 引理给极大元素；若它的定义域不等于 $\mathcal X$，单步延拓严格扩大定义域而仍属于 $\mathscr F$，与极大性矛盾。
+\end{proof}
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}目标是在指定子空间上保持已有值，同时不突破给定上界。原泛函线性及子空间条件使单步表示和链并保留代数结构；$f\le p$ 是任何合格延拓限制回原空间后都必须满足的必要条件。次可加性保证允许的上下界不冲突，正齐次性处理正负系数的缩放，有限取值保证能选实数新值。本定理不要求 $\mathcal M$ 闭，也不要求空间赋范或完备；在范数支配的应用中，连续性由结论中的界自动获得。Zorn 引理承担无限多个方向的兼容延拓，证明一般不给延拓唯一性。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch05-real-hahn-banach-details
+% SOURCE p=173; printed=158; object=ch05-seminorm-domination-equivalence; region=middle-lower
+若 $p$ 为半范数且 $f:\mathcal X\to\mathbb R$ 线性，不等式 $f\le p$ 等价于 $|f|\le p$，因为 $|f(x)|=\pm f(x)=f(\pm x)$ 且 $p(-x)=p(x)$。在这种情形下，Hahn--Banach 定理也适用于复线性泛函。
+% SOURCE p=173; printed=158; object=ch05-complex-hahn-banach; number=5.7; region=lower
+\begin{theorem}[复 Hahn--Banach 定理]\label{theorem:ch05-complex-hahn-banach}
+设 $\mathcal X$ 为复向量空间，$p$ 为其上的半范数，$\mathcal M$ 为子空间，$f$ 为 $\mathcal M$ 上的复线性泛函，且对每个 $x\in\mathcal M$ 有 $|f(x)|\le p(x)$。则存在 $\mathcal X$ 上的复线性泛函 $F$，满足所有 $x\in\mathcal X$ 上 $|F(x)|\le p(x)$，并且 $F|_{\mathcal M}=f$。
+\end{theorem}
+% SOURCE p=173; printed=158; object=ch05-complex-hahn-banach-proof; region=bottom
+\begin{proof}
+令 $u=\operatorname{Re}f$。由\cref{theorem:ch05-real-hahn-banach}，$u$ 有到 $\mathcal X$ 的实线性延拓 $U$，且每个 $x\in\mathcal X$ 都满足 $|U(x)|\le p(x)$。如\cref{proposition:ch05-real-complex-functionals}，令 $F(x)=U(x)-iU(ix)$，则 $F$ 为 $f$ 的复线性延拓。又如该命题证明，若 $\alpha=\overline{\operatorname{sgn}F(x)}$，则
+\begin{align*}
+|F(x)|=\alpha F(x)=F(\alpha x)=U(\alpha x)\le p(\alpha x)=p(x).
+\end{align*}
+\end{proof}
+% SUPPLEMENT: id=v14-ch05-complex-hahn-banach-details; parent=ch05-complex-hahn-banach; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{实化、限制与零值的补写（重构新增）。}把 $\mathcal X$ 看成实空间时，复半范数仍为实半范数，$\mathcal M$ 仍为实子空间，并有 $u\le|f|\le p$。实延拓先给 $U\le p$；对 $-x$ 应用此界，得 $-U(x)\le p(-x)=p(x)$，所以 $|U|\le p$。若 $x\in\mathcal M$，则 $ix\in\mathcal M$，故 $F(x)=u(x)-iu(ix)=f(x)$，这一步使用了 $\mathcal M$ 是复子空间。$F(x)=0$ 时结论由 $p(x)\ge0$ 直接成立；否则相位满足 $|\alpha|=1$，原证明的末式由复半范数齐次性成立。
+\end{proof}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}复数没有与运算相容的通常大小顺序，因此用模长控制代替单侧实数控制。复半范数的单位相位不变性，让“把值旋转到正实轴”的步骤保持同一上界。仅给一个任意的实次线性函数时不能直接套用这个相位论证。取 $p=\|f\|\|\cdot\|$，可得有界泛函保持范数的延拓：上界给延拓范数至多 $\|f\|$，限制回原子空间又给至少 $\|f\|$。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch05-complex-hahn-banach-details
+% SOURCE p=174; printed=159; object=ch05-scalar-field-convention; region=top
+从现在起直到\cref{section:ch05-hilbert-spaces}，所有结果同样适用于实向量空间或复向量空间；为表述确定，假设标量域为 $\mathbb C$。Hahn--Banach 定理对赋范向量空间的主要应用归纳如下。
+% SOURCE p=174; printed=159; object=ch05-dual-separation-embedding; number=5.8; region=upper
+\begin{theorem}\label{theorem:ch05-dual-separation-embedding}
+设 $\mathcal X$ 为赋范向量空间。
+\begin{enumerate}
+\item\label{item:ch05-dual-separates-subspace} 若 $\mathcal M$ 为 $\mathcal X$ 的闭子空间且 $x\in\mathcal X\setminus\mathcal M$，则存在 $f\in\mathcal X^*$，使 $f(x)\ne0$ 且 $f|_{\mathcal M}=0$。事实上，若 $\delta=\inf_{y\in\mathcal M}\|x-y\|$，可令 $\|f\|=1$ 且 $f(x)=\delta$。
+\item\label{item:ch05-norming-functional} 若 $x\in\mathcal X$ 非零，则存在 $f\in\mathcal X^*$，使 $\|f\|=1$ 且 $f(x)=\|x\|$。
+\item\label{item:ch05-dual-separates-points} $\mathcal X$ 上的有界线性泛函分离点。
+\item\label{item:ch05-canonical-isometry} 对 $x\in\mathcal X$ 定义 $\widehat x:\mathcal X^*\to\mathbb C$ 为 $\widehat x(f)=f(x)$。则 $x\mapsto\widehat x$ 是从 $\mathcal X$ 到 $\mathcal X^{**}$（即 $\mathcal X^*$ 的对偶）的线性等距映射。
+\end{enumerate}
+\end{theorem}
+% SOURCE p=174; printed=159; object=ch05-dual-separation-embedding-proof; region=middle
+\begin{proof}
+为证\subcref{theorem:ch05-dual-separation-embedding}{item:ch05-dual-separates-subspace}，在 $\mathcal M+\mathbb Cx$ 上定义 $f(y+\lambda x)=\lambda\delta$，其中 $y\in\mathcal M$、$\lambda\in\mathbb C$。则 $f(x)=\delta$、$f|_{\mathcal M}=0$，且当 $\lambda\ne0$ 时，
+\begin{align*}
+|f(y+\lambda x)|=|\lambda|\delta\le|\lambda|\|\lambda^{-1}y+x\|=\|y+\lambda x\|.
+\end{align*}
+因而可取 $p(x)=\|x\|$，将原子空间换为 $\mathcal M+\mathbb Cx$，应用 Hahn--Banach 定理。第二问是第一问取 $\mathcal M=\{0\}$ 的特例；第三问立刻推出，因为 $x\ne y$ 时存在 $f\in\mathcal X^*$ 使 $f(x-y)\ne0$，即 $f(x)\ne f(y)$。
+
+至于第四问，$\widehat x$ 显然为 $\mathcal X^*$ 上的线性泛函，且 $x\mapsto\widehat x$ 线性。又 $|\widehat x(f)|=|f(x)|\le\|f\|\|x\|$，故 $\|\widehat x\|\le\|x\|$。另一方面，第二问给 $\|\widehat x\|\ge\|x\|$。
+\end{proof}
+% SUPPLEMENT: id=v14-ch05-dual-separation-details; parent=ch05-dual-separation-embedding; kind=proof-detail+well-definedness+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{距离、精确范数与零向量补写（重构新增）。}闭性和 $x\notin\mathcal M$ 给某 $r>0$ 使 $B(x,r)\cap\mathcal M=\varnothing$，故 $\delta\ge r>0$。单步表示唯一使所定义泛函良定义、线性；$\lambda=0$ 时其值为零，也满足控制。延拓得到 $\|f\|\le1$ 后，还须证明等号。按下确界定义选 $y_n\in\mathcal M$，使 $\|x-y_n\|\to\delta$，则
+\begin{align*}
+\|f\|\ge\frac{|f(x-y_n)|}{\|x-y_n\|}=\frac{\delta}{\|x-y_n\|}\longrightarrow1.
+\end{align*}
+这补全原证明未展开的下界。对第四问，$\widehat x$ 的有界性已由原估计给出，所以确实属于 $\mathcal X^{**}$。若 $x=0$，则 $\widehat x=0$；若 $x\ne0$，第二问的范数为1的 $f$ 给 $\|\widehat x\|\ge|\widehat x(f)|=\|x\|$。最后 $\widehat x=\widehat y$ 蕴含 $\|x-y\|=\|\widehat{x-y}\|=0$，所以映射单射。
+\end{proof}
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}闭子空间外的点有正距离，泛函把这个距离精确地测出来，同时在子空间上消失。闭性不能一般删除：连续泛函若在一个稠密真子空间上为零，就在全空间上为零。第二问的 $x\ne0$ 保证有非零方向；零空间上不存在范数为1的泛函。赋范结构提供距离和统一的连续性上界，完备性在本定理中没有用到。双对偶中的 $\widehat x$ 把向量解释为“对所有测量的取值规则”，而等距性说明这些测量完整地恢复原来的大小。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch05-dual-separation-details
+% SOURCE p=174; printed=159; object=ch05-completion-construction; region=middle-lower
+沿用\subcref{theorem:ch05-dual-separation-embedding}{item:ch05-canonical-isometry}的记号，令 $\widehat{\mathcal X}=\{\widehat x:x\in\mathcal X\}$。因为 $\mathcal X^{**}$ 总是完备的，$\widehat{\mathcal X}$ 在其中的闭包 $\widetilde{\mathcal X}$ 是 Banach 空间，且 $x\mapsto\widehat x$ 将 $\mathcal X$ 作为稠密子空间嵌入 $\widetilde{\mathcal X}$。
+\begin{definition}[完备化]\label{definition:ch05-completion}
+上述空间 $\widetilde{\mathcal X}=\overline{\widehat{\mathcal X}}\subseteq\mathcal X^{**}$ 称为 $\mathcal X$ 的\textbf{完备化}。
+\end{definition}
+特别地，若 $\mathcal X$ 自身为 Banach 空间，则 $\widetilde{\mathcal X}=\widehat{\mathcal X}$。
+% SUPPLEMENT: id=v14-ch05-completion-details; parent=ch05-completion-construction; kind=proof-detail+well-definedness+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{完备化构造的完整验证（重构新增）。}$\mathcal X^{**}$ 是赋范空间 $\mathcal X^*$ 的对偶，故由标量域完备性而完备。$\widehat{\mathcal X}$ 为线性像，因而是子空间；加法和数乘连续使其闭包仍为子空间。闭包中的 Cauchy 列在 $\mathcal X^{**}$ 中有极限，而闭性使该极限仍属于闭包，所以闭包完备。像在其闭包中稠密，而自然映射线性等距，这就得到所需嵌入。
+
+若 $\mathcal X$ 已完备，设 $\widehat{x_n}\to F$ 于 $\mathcal X^{**}$。等距性给 $\|x_n-x_m\|=\|\widehat{x_n}-\widehat{x_m}\|\to0$，所以存在 $x\in\mathcal X$ 使 $x_n\to x$。再次用等距性得 $\widehat{x_n}\to\widehat x$，由极限唯一性 $F=\widehat x$。因此像闭，等于其闭包。
+\end{proof}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}先嵌入一个必然完备的空间，再取闭包，恰好添加原空间所缺的 Cauchy 极限。等距性保证原有范数不变，稠密性保证没有添加与原空间无关的额外方向。通常 $\mathcal X^{**}$ 比这个闭包大，完备化的定义必须取像的闭包。若原空间已经完备，就没有缺失的极限需要添加。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch05-completion-details
+% SOURCE p=174; printed=159; object=ch05-reflexivity-introduction; region=lower
+若 $\mathcal X$ 有限维，则当然 $\widehat{\mathcal X}=\mathcal X^{**}$，因为两者维数相同。对于无限维 Banach 空间，$\widehat{\mathcal X}=\mathcal X^{**}$ 可能成立，也可能不成立。
+\begin{definition}[自反空间]\label{definition:ch05-reflexive-space}
+若 Banach 空间 $\mathcal X$ 的自然像满足 $\widehat{\mathcal X}=\mathcal X^{**}$，就称 $\mathcal X$ 为\textbf{自反的}。
+\end{definition}
+此前考察的 Banach 空间例子，除退化为有限维的平凡情形外，都不是自反的。后面各节将证明这一断言的一些情形，并给出自反 Banach 空间的例子。
+
+通常将 $\widehat x$ 与 $x$ 等同，从而把 $\mathcal X^{**}$ 视为包含 $\mathcal X$ 的空间；此时自反性意味着 $\mathcal X^{**}=\mathcal X$。
+% SUPPLEMENT: id=v14-ch05-reflexivity-details; parent=ch05-reflexivity-introduction; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{有限维断言的补写（重构新增）。}若 $\dim\mathcal X=n$，取基 $e_1,\ldots,e_n$。由\cref{exercise:ch05-finite-dimensional-norms}，每个代数线性泛函都连续；坐标泛函 $e_j^*$ 构成 $\mathcal X^*$ 的一组基，因为任意泛函由在 $e_j$ 上的 $n$ 个值唯一确定。因此 $\dim\mathcal X^*=n$，同理 $\dim\mathcal X^{**}=n$。自然映射单射，所以其像维数也是 $n$，必须为整个 $\mathcal X^{**}$。当 $n=0$ 时三个空间都是零空间，结论直接成立。
+\end{proof}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}自反性问的是每个连续的“测量之测量”是否都来自原空间中的一个向量。这里要求\emph{自然}嵌入满射；仅存在某个抽象同构并不能代替这一定义。事实上，自然嵌入一旦满射，原空间就等距于完备的双对偶，自动完备。原文关于前述无限维例子的预告需要后续逐例证明；它不是由有限维的维数论证推出的。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch05-reflexivity-details
+\subfile{section-02-exercises.tex}
+\end{document}

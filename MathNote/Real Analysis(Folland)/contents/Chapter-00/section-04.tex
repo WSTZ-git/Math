@@ -1,0 +1,108 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+% SOURCE p=24; printed=9; object=ch00-sec04-title; region=middle
+\section{良序集的进一步讨论}\label{section:ch00-well-ordered-sets}
+
+% SOURCE p=24; printed=9; object=ch00-sec04-intro; region=middle
+本节内容可以选读；它只用于少数习题和一些章末注记。
+
+% SOURCE p=24; printed=9; object=ch00-initial-segments; region=middle
+
+\begin{definition}[确界、初始段与前驱]\label{definition:ch00-initial-segments}
+设 $X$ 为良序集。若 $A\subseteq X$ 非空，则 $A$ 有最小元，它是 $A$ 的最大下界，即\textbf{下确界}，记作 $\inf A$。若 $A$ 有上界，则它也有最小上界，即\textbf{上确界}，记作 $\sup A$。若 $x\in X$，定义 $x$ 的\textbf{初始段}为
+\begin{align*}
+I_x=\{y\in X:y<x\}.
+\end{align*}
+$I_x$ 的元素称为 $x$ 的\textbf{前驱}。
+\end{definition}
+
+
+% SOURCE p=24; printed=9; object=ch00-induction-intro; region=middle
+数学归纳原理等价于 $\mathbb{N}$ 是良序集这一事实。它可以推广到任意良序集，如下所述。
+
+% SOURCE p=24; printed=9; object=ch00-transfinite-induction; number=0.15; region=middle
+\begin{principle}[超限归纳原理]\label{principle:ch00-transfinite-induction}
+设 $X$ 为良序集。若 $A$ 是 $X$ 的子集，且只要 $I_x\subseteq A$ 就有 $x\in A$，则 $A=X$。
+\end{principle}
+
+% SOURCE p=24; printed=9; object=ch00-proof-transfinite-induction; region=middle
+\begin{proof}
+若 $X\ne A$，令 $x=\inf(X\setminus A)$。则 $I_x\subseteq A$，但 $x\notin A$。
+\end{proof}
+
+% SOURCE p=24; printed=9; object=ch00-union-initial-segments; number=0.16; region=lower
+\begin{proposition}\label{proposition:ch00-union-initial-segments}
+若 $X$ 为良序集且 $A\subseteq X$，则 $\bigcup_{x\in A}I_x$ 或者是一个初始段，或者就是 $X$ 本身。
+\end{proposition}
+
+% SOURCE p=24; printed=9; object=ch00-proof-union-initial-segments; region=lower
+\begin{proof}
+令 $J=\bigcup_{x\in A}I_x$。若 $J\ne X$，令 $b=\inf(X\setminus J)$。若存在 $y\in J$ 使 $y>b$，则对某个 $x\in A$ 有 $y\in I_x$，从而 $b\in I_x$，这与构造矛盾。因此 $J\subseteq I_b$，而 $I_b\subseteq J$ 是显然的。
+\end{proof}
+
+% SOURCE p=24; printed=9; object=ch00-well-order-comparison; number=0.17; region=bottom
+\begin{proposition}\label{proposition:ch00-well-order-comparison}
+若 $X$ 和 $Y$ 都是良序集，则或者 $X$ 与 $Y$ 序同构，或者 $X$ 与 $Y$ 中的一个初始段序同构，或者 $Y$ 与 $X$ 中的一个初始段序同构。
+\end{proposition}
+
+% SOURCE p=24; printed=9; object=ch00-proof-well-order-comparison-start; region=bottom
+\begin{proof}
+考虑所有如下序同构组成的集合 $\mathscr{F}$：其定义域是 $X$ 中的一个初始段或 $X$ 本身，其值域是 $Y$ 中的一个初始段或 $Y$ 本身。由于唯一的映射 $f:\{\inf X\}\to\{\inf Y\}$ 属于 $\mathscr{F}$，所以 $\mathscr{F}$ 非空；把其中的元素视为 $X\times Y$ 的子集，$\mathscr{F}$ 依包含关系成为偏序集。
+% SOURCE p=25; printed=10; object=ch00-proof-well-order-comparison-end; region=top
+应用\hyperref[lemma:ch00-zorn]{Zorn 引理}可知，$\mathscr{F}$ 有极大元 $f$，设其定义域为 $A$、值域为 $B$。若 $A=I_x$ 且 $B=I_y$，则 $A\cup\{x\}$ 和 $B\cup\{y\}$ 仍分别是 $X$ 和 $Y$ 的初始段，而且可以令 $f(x)=y$ 来延拓 $f$，这与极大性矛盾。因此 $A=X$ 或 $B=Y$（或者两者都成立），结论随之得到。
+\end{proof}
+
+% SOURCE p=25; printed=10; object=ch00-countable-ordinals-exist; number=0.18; region=upper
+\begin{proposition}\label{proposition:ch00-countable-ordinals-exist}
+存在不可数的良序集 $\Omega$，使得对每个 $x\in\Omega$，$I_x$ 都可数。若 $\Omega'$ 是另一个具有同样性质的集合，则 $\Omega$ 与 $\Omega'$ 序同构。
+\end{proposition}
+
+% SOURCE p=25; printed=10; object=ch00-proof-countable-ordinals-exist; region=upper
+\begin{proof}
+由\hyperref[principle:ch00-well-ordering]{良序原理}可知，存在不可数的良序集；设 $X$ 为其中一个。或者 $X$ 已具有所需性质，或者存在最小的元素 $x_0$ 使 $I_{x_0}$ 不可数；在后一种情形中，可取 $\Omega=I_{x_0}$。若 $\Omega'$ 是另一个这样的集合，则 $\Omega'$ 不可能与 $\Omega$ 的某个初始段序同构，反之亦然，因为 $\Omega$ 和 $\Omega'$ 不可数，而它们的初始段都可数。因此，由\cref{proposition:ch00-well-order-comparison}，$\Omega$ 和 $\Omega'$ 序同构。
+\end{proof}
+
+% SOURCE p=25; printed=10; object=ch00-countable-ordinals-definition; region=middle
+
+\begin{definition}[可数序数集]\label{definition:ch00-countable-ordinals-definition}
+\cref{proposition:ch00-countable-ordinals-exist}中的集合 $\Omega$，作为良序集在本质上是唯一的，称为\textbf{可数序数集}。
+\end{definition}
+它具有下述值得注意的性质。
+
+% SOURCE p=25; printed=10; object=ch00-countable-ordinals-bounded; number=0.19; region=middle
+\begin{proposition}\label{proposition:ch00-countable-ordinals-bounded}
+$\Omega$ 的每个可数子集都有上界。
+\end{proposition}
+
+% SOURCE p=25; printed=10; object=ch00-proof-countable-ordinals-bounded; region=middle
+\begin{proof}
+若 $A\subseteq\Omega$ 可数，则 $\bigcup_{x\in A}I_x$ 可数，因而不等于整个 $\Omega$。由\cref{proposition:ch00-union-initial-segments}，存在 $y\in\Omega$ 使 $\bigcup_{x\in A}I_x=I_y$，于是 $y$ 是 $A$ 的上界。
+\end{proof}
+
+% SOURCE p=25; printed=10; object=ch00-omega-embedding; region=lower-middle
+正整数集 $\mathbb{N}$ 可按如下方式与 $\Omega$ 的一个子集等同。令 $f(1)=\inf\Omega$，并归纳地令 $f(n)=\inf(\Omega\setminus\{f(1),\ldots,f(n-1)\})$。读者可验证，$f$ 是从 $\mathbb{N}$ 到 $I_\omega$ 的序同构，其中 $\omega$ 是 $\Omega$ 中使 $I_\omega$ 为无限集的最小元素。
+
+% SOURCE p=25; printed=10; object=ch00-first-uncountable-ordinal; region=lower-middle
+
+\begin{definition}[第一不可数序数]\label{definition:ch00-first-uncountable-ordinal}
+有时，向 $\Omega$ 添加一个额外元素 $\omega_1$，形成集合 $\Omega^*=\Omega\cup\{\omega_1\}$，并规定对所有 $x\in\Omega$ 都有 $x<\omega_1$，从而将 $\Omega$ 上的序扩展到 $\Omega^*$，这样做会很方便。$\omega_1$ 称为\textbf{第一不可数序数}。
+\end{definition}
+
+\begin{remark}
+（$\omega_1$ 通常记作 $\Omega$，因为一般就把 $\omega_1$ 取为可数序数集本身。）
+\end{remark}
+
+\end{document}

@@ -1,0 +1,405 @@
+\documentclass[../../main.tex]{subfiles}
+\begin{document}
+\section{外导数}\label{section:ch14-exterior-derivatives}
+
+本节中我们在光滑形式上定义一个自然的微分算子，称为\emph{外导数}。它是函数微分的推广。
+
+为说明外导数的动机来源，让我们回顾在第~11 章中处理过的一个问题。回忆一下，并非所有 $1$-形式都是某个函数的微分：给定一个光滑 $1$-形式 $\omega$，存在光滑函数 $f$ 使 $\omega=\mathrm{d}f$ 的一个必要条件是 $\omega$ 闭，即它在每个光滑坐标图中满足
+\begin{align}
+\frac{\partial\omega_j}{\partial x^i}-\frac{\partial\omega_i}{\partial x^j}=0.\label{align:ch14-closed-1form}
+\end{align}
+由于由命题\ref{proposition:ch11-local-exact}知这是一个与坐标无关的性质，人们或许希望\eqref{align:ch14-closed-1form}左端的表达式本身有独立的意义。关键在于它关于指标 $i,j$ 是反对称的，因而可以解释为一个斜对称张量场——即一个 $2$-形式——的 $ij$-分量。我们可以在每个光滑坐标图中局部地定义一个 $2$-形式 $\mathrm{d}\omega$：
+\begin{align}
+\mathrm{d}\omega=\sum_{i<j}\left(\frac{\partial\omega_j}{\partial x^i}-\frac{\partial\omega_i}{\partial x^j}\right)\mathrm{d}x^i\wedge\mathrm{d}x^j,\label{align:ch14-d1form}
+\end{align}
+于是 $\omega$ 闭当且仅当在每个坐标图中 $\mathrm{d}\omega=0$。
+
+事实证明，$\mathrm{d}\omega$ 实际上是整体良定义的，与坐标图的选取无关；并且这一定义可大大推广到任意次数的微分形式。对每个带边或不带边的光滑流形 $M$，我们将证明存在一个微分算子 $\mathrm{d}:\Omega^k(M)\to\Omega^{k+1}(M)$，满足对所有 $\omega$ 都有 $\mathrm{d}(\mathrm{d}\omega)=0$。于是，一个光滑 $k$-形式 $\omega$ 等于某个 $(k-1)$-形式 $\eta$ 的 $\mathrm{d}\eta$ 的一个必要条件就是 $\mathrm{d}\omega=0$。
+
+在 Euclid 空间上 $\mathrm{d}$ 的定义很直接：若 $\omega=\sum'_J\omega_J\,\mathrm{d}x^J$ 是开子集 $U\subseteq\mathbb{R}^n$ 或 $\mathbb{H}^n$ 上的一个光滑 $k$-形式，我们把它的外导数 $\mathrm{d}\omega$ 定义为如下 $(k+1)$-形式：
+\begin{align}
+\mathrm{d}\left(\sideset{}{'}\sum_J\omega_J\,\mathrm{d}x^J\right)
+=\sideset{}{'}\sum_J\mathrm{d}\omega_J\wedge\mathrm{d}x^J,\label{align:ch14-exterior-def}
+\end{align}
+其中 $\mathrm{d}\omega_J$ 是函数 $\omega_J$ 的微分。更详细地写，这就是
+\begin{align}
+\mathrm{d}\left(\sideset{}{'}\sum_J\omega_J\,\mathrm{d}x^{j_1}\wedge\cdots\wedge\mathrm{d}x^{j_k}\right)
+=\sideset{}{'}\sum_J\sum_i\frac{\partial\omega_J}{\partial x^i}\,
+\mathrm{d}x^i\wedge\mathrm{d}x^{j_1}\wedge\cdots\wedge\mathrm{d}x^{j_k}.\label{align:ch14-exterior-def2}
+\end{align}
+注意当 $\omega$ 是一个 $1$-形式时，上式成为
+\begin{align*}
+\mathrm{d}(\omega_j\,\mathrm{d}x^j)
+&=\sum_{i,j}\frac{\partial\omega_j}{\partial x^i}\,\mathrm{d}x^i\wedge\mathrm{d}x^j\\
+&=\sum_{i<j}\frac{\partial\omega_j}{\partial x^i}\,\mathrm{d}x^i\wedge\mathrm{d}x^j
++\sum_{i>j}\frac{\partial\omega_j}{\partial x^i}\,\mathrm{d}x^i\wedge\mathrm{d}x^j\\
+&=\sum_{i<j}\left(\frac{\partial\omega_j}{\partial x^i}-\frac{\partial\omega_i}{\partial x^j}\right)\mathrm{d}x^i\wedge\mathrm{d}x^j,
+\end{align*}
+其中我们在第二个和式中交换了 $i,j$，并用了 $\mathrm{d}x^j\wedge\mathrm{d}x^i=-\mathrm{d}x^i\wedge\mathrm{d}x^j$ 的事实，故这与我们早先的定义一致。对一个光滑 $0$-形式 $f$（即一个实值函数），\eqref{align:ch14-exterior-def2}简化为
+\begin{align*}
+\mathrm{d}f=\frac{\partial f}{\partial x^i}\,\mathrm{d}x^i,
+\end{align*}
+这正是 $f$ 的微分。
+
+为把这一定义移植到流形上，我们需要验证它满足下列性质。
+
+\begin{proposition}[Euclid 空间上外导数的性质]\label{proposition:ch14-exterior-euclidean}
+\begin{enumerate}[(a)]
+\item $\mathrm{d}$ 是 $\mathbb{R}$-线性的。
+\item 若 $\omega$ 是开子集 $U\subseteq\mathbb{R}^n$ 或 $\mathbb{H}^n$ 上的一个光滑 $k$-形式，$\eta$ 是一个光滑 $l$-形式，则
+\begin{align*}
+\mathrm{d}(\omega\wedge\eta)=\mathrm{d}\omega\wedge\eta+(-1)^k\omega\wedge\mathrm{d}\eta.
+\end{align*}
+\item $\mathrm{d}\circ\mathrm{d}=0$。
+\item $\mathrm{d}$ 与拉回交换：若 $U$ 是 $\mathbb{R}^n$ 或 $\mathbb{H}^n$ 的开子集，$V$ 是 $\mathbb{R}^m$ 或 $\mathbb{H}^m$ 的开子集，$F:U\to V$ 光滑，$\omega\in\Omega^k(V)$，则
+\begin{align}
+F^*(\mathrm{d}\omega)=\mathrm{d}(F^*\omega).\label{align:ch14-euclidean-naturality}
+\end{align}
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+$\mathrm{d}$ 的线性性直接来自定义。为证 (b)，由线性性只需考虑形如 $\omega=u\,\mathrm{d}x^I\in\Omega^k(U)$、$\eta=v\,\mathrm{d}x^J\in\Omega^l(U)$ 的项，其中 $u,v$ 是光滑实值函数。不过，我们首先需要知道，对任意多重指标 $I$（不必递增），$\mathrm{d}(u\,\mathrm{d}x^I)=\mathrm{d}u\wedge\mathrm{d}x^I$。若 $I$ 有重复指标，则显然 $\mathrm{d}(u\,\mathrm{d}x^I)=0=\mathrm{d}u\wedge\mathrm{d}x^I$。若不然，令 $\sigma$ 为把 $I$ 变成一个递增多重指标 $J$ 的排列。则
+\begin{align*}
+\mathrm{d}(u\,\mathrm{d}x^I)=(\operatorname{sgn}\sigma)\mathrm{d}(u\,\mathrm{d}x^J)
+=(\operatorname{sgn}\sigma)\mathrm{d}u\wedge\mathrm{d}x^J=\mathrm{d}u\wedge\mathrm{d}x^I.
+\end{align*}
+利用这一点，我们计算
+\begin{align*}
+\mathrm{d}(\omega\wedge\eta)
+&=\mathrm{d}\bigl((u\,\mathrm{d}x^I)\wedge(v\,\mathrm{d}x^J)\bigr)
+=\mathrm{d}(uv\,\mathrm{d}x^I\wedge\mathrm{d}x^J)\\
+&=(v\,\mathrm{d}u+u\,\mathrm{d}v)\wedge\mathrm{d}x^I\wedge\mathrm{d}x^J\\
+&=(\mathrm{d}u\wedge\mathrm{d}x^I)\wedge(v\,\mathrm{d}x^J)+(-1)^k(u\,\mathrm{d}x^I)\wedge(\mathrm{d}v\wedge\mathrm{d}x^J)\\
+&=\mathrm{d}\omega\wedge\eta+(-1)^k\omega\wedge\mathrm{d}\eta,
+\end{align*}
+其中因子 $(-1)^k$ 来自 $\mathrm{d}v\wedge\mathrm{d}x^I=(-1)^k\mathrm{d}x^I\wedge\mathrm{d}v$，因为 $\mathrm{d}v$ 是一个 $1$-形式而 $\mathrm{d}x^I$ 是一个 $k$-形式。
+
+我们先对 $0$-形式（即一个实值函数）这一特殊情形证明 (c)。此时
+\begin{align*}
+\mathrm{d}(\mathrm{d}u)=\mathrm{d}\left(\frac{\partial u}{\partial x^j}\,\mathrm{d}x^j\right)
+=\frac{\partial^2 u}{\partial x^i\partial x^j}\,\mathrm{d}x^i\wedge\mathrm{d}x^j
+=\sum_{i<j}\left(\frac{\partial^2 u}{\partial x^i\partial x^j}-\frac{\partial^2 u}{\partial x^j\partial x^i}\right)\mathrm{d}x^i\wedge\mathrm{d}x^j=0.
+\end{align*}
+对一般情形，我们利用 $k=0$ 的情形连同 (b) 来计算：
+\begin{align*}
+\mathrm{d}(\mathrm{d}\omega)
+&=\mathrm{d}\left(\sideset{}{'}\sum_J\mathrm{d}\omega_J\wedge\mathrm{d}x^{j_1}\wedge\cdots\wedge\mathrm{d}x^{j_k}\right)\\
+&=\sideset{}{'}\sum_J\mathrm{d}(\mathrm{d}\omega_J)\wedge\mathrm{d}x^{j_1}\wedge\cdots\wedge\mathrm{d}x^{j_k}\\
+&\quad+\sideset{}{'}\sum_J\sum_{i=1}^k(-1)^i\mathrm{d}\omega_J\wedge\mathrm{d}x^{j_1}\wedge\cdots\wedge\widehat{\mathrm{d}x^{j_i}}\wedge\cdots\wedge\mathrm{d}x^{j_k}=0.
+\end{align*}
+
+最后，为证 (d)，同样只需考虑 $\omega=u\,\mathrm{d}x^{i_1}\wedge\cdots\wedge\mathrm{d}x^{i_k}$。对这样一个形式，\eqref{align:ch14-euclidean-naturality}的左端为
+\begin{align*}
+F^*\bigl(\mathrm{d}(u\,\mathrm{d}x^{i_1}\wedge\cdots\wedge\mathrm{d}x^{i_k})\bigr)
+&=F^*(\mathrm{d}u\wedge\mathrm{d}x^{i_1}\wedge\cdots\wedge\mathrm{d}x^{i_k})\\
+&=\mathrm{d}(u\circ F)\wedge\mathrm{d}(x^{i_1}\circ F)\wedge\cdots\wedge\mathrm{d}(x^{i_k}\circ F),
+\end{align*}
+而右端为
+\begin{align*}
+\mathrm{d}\bigl(F^*(u\,\mathrm{d}x^{i_1}\wedge\cdots\wedge\mathrm{d}x^{i_k})\bigr)
+&=\mathrm{d}\bigl((u\circ F)\,\mathrm{d}(x^{i_1}\circ F)\wedge\cdots\wedge\mathrm{d}(x^{i_k}\circ F)\bigr)\\
+&=\mathrm{d}(u\circ F)\wedge\mathrm{d}(x^{i_1}\circ F)\wedge\cdots\wedge\mathrm{d}(x^{i_k}\circ F),
+\end{align*}
+故二者相等。
+\end{proof}
+
+这些结果使我们能够把外导数的定义移植到流形上。
+
+\begin{theorem}[外微分运算的存在唯一性]\label{theorem:ch14-exterior-uniqueness}
+设 $M$ 是一个带边或不带边的光滑流形。存在唯一一组算子 $\mathrm{d}:\Omega^k(M)\to\Omega^{k+1}(M)$（对所有 $k$），称为\emph{外微分运算}，满足下列四条性质：
+\begin{enumerate}[(i)]
+\item $\mathrm{d}$ 是 $\mathbb{R}$-线性的。
+\item 若 $\omega\in\Omega^k(M)$、$\eta\in\Omega^l(M)$，则
+\begin{align*}
+\mathrm{d}(\omega\wedge\eta)=\mathrm{d}\omega\wedge\eta+(-1)^k\omega\wedge\mathrm{d}\eta.
+\end{align*}
+\item $\mathrm{d}\circ\mathrm{d}=0$。
+\item 对 $f\in\Omega^0(M)=C^\infty(M)$，$\mathrm{d}f$ 是 $f$ 的微分，由 $\mathrm{d}f(X)=Xf$ 给出。
+\end{enumerate}
+在任意光滑坐标图中，$\mathrm{d}$ 由\eqref{align:ch14-exterior-def}给出。
+\end{theorem}
+
+\begin{proof}
+首先证明存在性。设 $\omega\in\Omega^k(M)$。我们希望在每个坐标图中借助坐标公式\eqref{align:ch14-exterior-def}来定义 $\mathrm{d}\omega$；更确切地说，这意味着对 $M$ 的每个光滑坐标图 $(U,\varphi)$，我们希望令
+\begin{align}
+\mathrm{d}\omega=\varphi^*\mathrm{d}\bigl((\varphi^{-1})^*\omega\bigr).\label{align:ch14-chart-def}
+\end{align}
+要看清这是良定义的，只需注意对任意另一个光滑坐标图 $(V,\psi)$，映射 $\varphi\circ\psi^{-1}$ 是 $\mathbb{R}^n$ 或 $\mathbb{H}^n$ 的开子集之间的微分同胚，故由命题\ref{proposition:ch14-exterior-euclidean}(d)，
+\begin{align*}
+(\varphi\circ\psi^{-1})^*\mathrm{d}\bigl((\psi^{-1})^*\omega\bigr)
+=\mathrm{d}\bigl((\varphi\circ\psi^{-1})^*(\psi^{-1})^*\omega\bigr).
+\end{align*}
+结合 $(\varphi\circ\psi^{-1})^*=(\psi^{-1})^*\circ\varphi^*$，这就蕴含 $\varphi^*\mathrm{d}((\varphi^{-1})^*\omega)=\psi^*\mathrm{d}((\psi^{-1})^*\omega)$，故 $\mathrm{d}\omega$ 良定义。它由命题\ref{proposition:ch14-exterior-euclidean}满足 (i)--(iv)。
+
+为证唯一性，设 $\mathrm{d}$ 是任意一个满足 (i)--(iv) 的算子。首先我们需要证明 $\mathrm{d}\omega$ 是局部确定的：若 $\omega_1,\omega_2$ 是在开子集 $U\subseteq M$ 上一致的两个 $k$-形式，则在 $U$ 上 $\mathrm{d}\omega_1=\mathrm{d}\omega_2$。为看清这一点，任取 $p\in U$，令 $\alpha=\omega_1-\omega_2$，再令 $\rho\in C^\infty(M)$ 是一个在 $p$ 的某个邻域上恒为 $1$、支集含于 $U$ 的鼓包函数。于是 $\rho\alpha\equiv0$，故由 (i)--(iv) 得 $0=\mathrm{d}(\rho\alpha)=\mathrm{d}\rho\wedge\alpha+\rho\,\mathrm{d}\alpha$。在 $p$ 处取值，并利用 $\rho(p)=1$、$\mathrm{d}\rho_p=0$，便得
+\begin{align*}
+\mathrm{d}\omega_1|_p-\mathrm{d}\omega_2|_p=\mathrm{d}\alpha_p=0.
+\end{align*}
+现在任取 $\omega\in\Omega^k(M)$，令 $(U,\varphi)$ 是 $M$ 上任意一个光滑坐标图。我们可以在 $U$ 上把 $\omega$ 写成 $\sum'_I\omega_I\,\mathrm{d}x^I$。对任意 $p\in U$，借助一个鼓包函数，我们可以在 $M$ 上构造整体光滑函数 $\widetilde\omega_I$ 与 $\widetilde x^i$，使之在 $p$ 的某个邻域内分别与 $\omega_I$、$x^i$ 一致。由 (i)--(iv) 连同上一段的观察，\eqref{align:ch14-exterior-def}在 $p$ 处成立。由于 $p$ 任意，这个 $\mathrm{d}$ 必等于我们上面定义的那个。
+\end{proof}
+
+若 $A=\bigoplus_k A^k$ 是一个分次代数，一个线性映射 $T:A\to A$ 若对每个 $k$ 都满足 $T(A^k)\subseteq A^{k+m}$，就称为次数为 $m$ 的映射。它若在 $x\in A^k$、$y\in A^l$ 时满足 $T(xy)=(Tx)y+(-1)^kx(Ty)$，就称为一个反导子。上一定理可概括为：函数上的微分唯一地延拓为 $\Omega^*(M)$ 的一个次数为 $+1$、平方为零的反导子。
+
+\begin{exercise}\label{exercise:ch14-25}
+设 $M$ 是一个光滑流形，$X\in\mathfrak X(M)$。证明内乘 $i_X:\Omega^*(M)\to\Omega^*(M)$ 是一个次数为 $-1$、平方为零的反导子。
+\end{exercise}
+
+外导数的另一个重要特点是它与所有拉回交换。
+
+\begin{proposition}[外导数的自然性]\label{proposition:ch14-exterior-naturality}
+若 $F:M\to N$ 是一个光滑映射，则对每个 $k$，拉回映射 $F^*:\Omega^k(N)\to\Omega^k(M)$ 与 $\mathrm{d}$ 交换：对所有 $\omega\in\Omega^k(N)$，
+\begin{align}
+F^*(\mathrm{d}\omega)=\mathrm{d}(F^*\omega).\label{align:ch14-naturality}
+\end{align}
+\end{proposition}
+
+\begin{proof}
+若 $(U,\varphi)$ 与 $(V,\psi)$ 分别是 $M$ 与 $N$ 的光滑坐标图，我们可对坐标表示 $\psi\circ F\circ\varphi^{-1}$ 应用命题\ref{proposition:ch14-exterior-euclidean}(d)。两次利用\eqref{align:ch14-chart-def}，在 $U\cap F^{-1}(V)$ 上计算如下：
+\begin{align*}
+F^*(\mathrm{d}\omega)
+&=F^*\bigl(\psi^*\mathrm{d}((\psi^{-1})^*\omega)\bigr)\\
+&=\varphi^*\circ(\psi\circ F\circ\varphi^{-1})^*\mathrm{d}((\psi^{-1})^*\omega)\\
+&=\varphi^*\mathrm{d}\bigl((\psi\circ F\circ\varphi^{-1})^*(\psi^{-1})^*\omega\bigr)\\
+&=\varphi^*\mathrm{d}\bigl(\varphi^{-1*}F^*\omega\bigr)=\mathrm{d}(F^*\omega).
+\end{align*}
+\end{proof}
+
+把我们在第~11 章中为余向量场引入的术语加以推广，若 $\mathrm{d}\omega=0$，就称光滑微分形式 $\omega\in\Omega^k(M)$ 是\emph{闭的}；若存在 $M$ 上一个光滑 $(k-1)$-形式 $\eta$ 使 $\omega=\mathrm{d}\eta$，就称 $\omega$ 是\emph{恰当的}。由于 $1$-形式的外导数满足\eqref{align:ch14-d1form}，这个闭 $1$-形式的定义与我们在第~11 章中给出的一致。
+
+$\mathrm{d}\circ\mathrm{d}=0$ 这一事实蕴含每个恰当形式都是闭的。在第~11 章中我们看到，反之未必成立：例\ref{example:ch11-winding}中的 $1$-形式在 $\mathbb{R}^2\setminus\{0\}$ 上闭但不恰当。另一方面，我们在那里证明了每个闭 $1$-形式局部恰当。我们将在第~17 章回到这些问题，在那里将说明这种行为是典型的：闭形式总是局部恰当，但未必整体恰当，因而一个给定的闭形式是否恰当取决于流形的整体性质。
+
+\subsection{外导数与 $\mathbb{R}^3$ 中的向量微积分}
+
+\begin{example}\label{example:ch14-27forms}
+我们来算出 $\mathbb{R}^3$ 上任意 $1$-形式与 $2$-形式的外导数。任意光滑 $1$-形式都可写成
+\begin{align*}
+\omega=P\,\mathrm{d}x+Q\,\mathrm{d}y+R\,\mathrm{d}z,
+\end{align*}
+其中 $P,Q,R$ 是光滑函数。利用\eqref{align:ch14-exterior-def}以及任意 $1$-形式与其自身外积为零的事实，计算得
+\begin{align*}
+\mathrm{d}\omega&=\mathrm{d}P\wedge\mathrm{d}x+\mathrm{d}Q\wedge\mathrm{d}y+\mathrm{d}R\wedge\mathrm{d}z\\
+&=\left(\frac{\partial P}{\partial x}\,\mathrm{d}x+\frac{\partial P}{\partial y}\,\mathrm{d}y+\frac{\partial P}{\partial z}\,\mathrm{d}z\right)\wedge\mathrm{d}x
++\left(\frac{\partial Q}{\partial x}\,\mathrm{d}x+\frac{\partial Q}{\partial y}\,\mathrm{d}y+\frac{\partial Q}{\partial z}\,\mathrm{d}z\right)\wedge\mathrm{d}y\\
+&\quad+\left(\frac{\partial R}{\partial x}\,\mathrm{d}x+\frac{\partial R}{\partial y}\,\mathrm{d}y+\frac{\partial R}{\partial z}\,\mathrm{d}z\right)\wedge\mathrm{d}z\\
+&=\left(\frac{\partial Q}{\partial x}-\frac{\partial P}{\partial y}\right)\mathrm{d}x\wedge\mathrm{d}y
++\left(\frac{\partial R}{\partial x}-\frac{\partial P}{\partial z}\right)\mathrm{d}x\wedge\mathrm{d}z
++\left(\frac{\partial R}{\partial y}-\frac{\partial Q}{\partial z}\right)\mathrm{d}y\wedge\mathrm{d}z.
+\end{align*}
+$\mathbb{R}^3$ 上任意 $2$-形式可写成
+\begin{align*}
+\eta=u\,\mathrm{d}x\wedge\mathrm{d}y+v\,\mathrm{d}x\wedge\mathrm{d}z+w\,\mathrm{d}y\wedge\mathrm{d}z.
+\end{align*}
+类似计算表明
+\begin{align*}
+\mathrm{d}\eta=\left(\frac{\partial u}{\partial z}-\frac{\partial v}{\partial y}+\frac{\partial w}{\partial x}\right)\mathrm{d}x\wedge\mathrm{d}y\wedge\mathrm{d}z.
+\end{align*}
+\end{example}
+
+回忆 $\mathbb{R}^n$ 上经典的向量微积分算子：函数 $f\in C^\infty(\mathbb{R}^n)$ 的（Euclid）梯度与向量场 $X\in\mathfrak X(\mathbb{R}^n)$ 的散度定义为
+\begin{align}
+\operatorname{grad}f=\sum_{i=1}^n\frac{\partial f}{\partial x^i}\frac{\partial}{\partial x^i},\qquad
+\operatorname{div}X=\sum_{i=1}^n\frac{\partial X^i}{\partial x^i}.\label{align:ch14-div-grad}
+\end{align}
+此外，当 $n=3$ 时，向量场 $X\in\mathfrak X(\mathbb{R}^3)$ 的旋度由\eqref{align:ch11-curl}定义。值得注意的是，上例中 $2$-形式 $\mathrm{d}\omega$ 的分量恰好就是分量为 $(P,Q,R)$ 的向量场的旋度分量（至多次序与符号不同）。类似地，除符号与各项次序外，$\mathrm{d}\eta$ 的公式与一个向量场的散度之间有很强的类比。这些类比可如下精确化。
+
+$\mathbb{R}^3$ 上的 Euclid 度量给出一个降指标同构 $[\,:\mathfrak X(\mathbb{R}^3)\to\Omega^1(\mathbb{R}^3)$。内乘给出另一个映射 $\beta:\mathfrak X(\mathbb{R}^3)\to\Omega^2(\mathbb{R}^3)$，定义为
+\begin{align}
+\beta(X)=X\lrcorner(\mathrm{d}x\wedge\mathrm{d}y\wedge\mathrm{d}z).\label{align:ch14-beta}
+\end{align}
+容易验证 $\beta$ 关于 $C^\infty(\mathbb{R}^3)$ 是线性的，故它对应于一个从 $TM$ 到 $\Lambda^2T^*\mathbb{R}^3$ 的光滑丛同态。它是一个丛同构，因为它单射，而 $TM$ 与 $\Lambda^2T^*\mathbb{R}^3$ 都是秩 $3$ 的丛。类似地，我们定义一个光滑丛同构 $\gamma:C^\infty(\mathbb{R}^3)\to\Omega^3(\mathbb{R}^3)$：
+\begin{align}
+\gamma(f)=f\,\mathrm{d}x\wedge\mathrm{d}y\wedge\mathrm{d}z.\label{align:ch14-gamma}
+\end{align}
+所有这些算子之间的关系概括在下图中：
+\begin{align*}
+\begin{array}{ccccccc}
+C^\infty(\mathbb{R}^3)&\xrightarrow{\operatorname{grad}}&\mathfrak X(\mathbb{R}^3)&\xrightarrow{\operatorname{curl}}&\mathfrak X(\mathbb{R}^3)&\xrightarrow{\operatorname{div}}&C^\infty(\mathbb{R}^3)\\
+\uparrow\mathrm{Id}&&\uparrow[\,&&\uparrow\beta&&\uparrow\gamma\\
+\Omega^0(\mathbb{R}^3)&\xrightarrow{\mathrm{d}}&\Omega^1(\mathbb{R}^3)&\xrightarrow{\mathrm{d}}&\Omega^2(\mathbb{R}^3)&\xrightarrow{\mathrm{d}}&\Omega^3(\mathbb{R}^3)
+\end{array}
+\end{align*}
+
+\begin{exercise}\label{exercise:ch14-28}
+证明上述图表交换，并用它给出一个简短证明：在 $\mathbb{R}^3$ 上有 $\operatorname{curl}\circ\operatorname{grad}=0$、$\operatorname{div}\circ\operatorname{curl}=0$。再证明当把 $\mathbb{R}^3$ 换成任意 $n$ 的 $\mathbb{R}^n$ 时，左方块与右方块的类似图也交换。
+\end{exercise}
+
+把这些向量微积分算子从 $\mathbb{R}^3$ 推广到更高维的愿望，是发展微分形式理论的主要动机之一。特别是，旋度只有在三维时才能作为向量场上的算子有意义；而外导数表达了同样的信息，却在所有维数下都有意义。
+
+\subsection{外导数的一个不变式公式}
+
+除了我们在定义 $\mathrm{d}$ 时所用的坐标公式\eqref{align:ch14-exterior-def}之外，$\mathrm{d}$ 还有另一个常用的公式，尤其是因为它显然与坐标无关。$1$-形式的公式是迄今为止最重要的，也最容易陈述和证明，故我们从它开始。注意它与命题\ref{proposition:ch11-local-exact}的公式之间的相似性。
+
+\begin{proposition}[$1$-形式的外导数]\label{proposition:ch14-d1form-invariant}
+对任意光滑 $1$-形式 $\omega$ 与光滑向量场 $X,Y$，
+\begin{align}
+\mathrm{d}\omega(X,Y)=X\bigl(\omega(Y)\bigr)-Y\bigl(\omega(X)\bigr)-\omega\bigl([X,Y]\bigr).\label{align:ch14-d1form-invariant}
+\end{align}
+\end{proposition}
+
+\begin{proof}
+由于任意光滑 $1$-形式都可局部写成 $u\,\mathrm{d}v$（其中 $u,v$ 是光滑函数）之和，只需考虑这一情形。设 $\omega=u\,\mathrm{d}v$，$X,Y$ 是光滑向量场。则\eqref{align:ch14-d1form-invariant}的左端为
+\begin{align*}
+\mathrm{d}(u\,\mathrm{d}v)(X,Y)=\mathrm{d}u\wedge\mathrm{d}v(X,Y)=\mathrm{d}u(X)\mathrm{d}v(Y)-\mathrm{d}v(X)\mathrm{d}u(Y)=Xu\,Yv-Xv\,Yu.
+\end{align*}
+右端为
+\begin{align*}
+X\bigl(u\,\mathrm{d}v(Y)\bigr)-Y\bigl(u\,\mathrm{d}v(X)\bigr)-u\,\mathrm{d}v([X,Y])
+&=X(u\,Yv)-Y(u\,Xv)-u[X,Y]v\\
+&=(Xu\,Yv+u\,XYv)-(Yu\,Xv+u\,YXv)-u(XYv-YXv).
+\end{align*}
+两项 $uXYv$ 与两项 $uYXv$ 相消后，上式等于左端。
+\end{proof}
+
+我们将在后面几章中看到\eqref{align:ch14-d1form-invariant}的一些应用。下面是第一个。它表明外导数在某种意义上与 Lie 括号对偶。特别地，它表明若知道一个光滑局部标架中各基向量场的所有 Lie 括号，便可算出对偶余标架的外导数，反之亦然。
+
+\begin{proposition}\label{proposition:ch14-frame-duality}
+设 $M$ 是一个带边或不带边的光滑 $n$ 流形，$(E_i)$ 是 $M$ 的一个光滑局部标架，$(\varepsilon^i)$ 是对偶余标架。对每个 $i$，令 $b^i_{jk}$ 表示此标架中 $\varepsilon^i$ 的外导数的分量函数；对每个 $j,k$，令 $c^i_{jk}$ 表示 Lie 括号 $[E_j,E_k]$ 的分量函数：
+\begin{align*}
+\mathrm{d}\varepsilon^i=\sum_{j<k}b^i_{jk}\,\varepsilon^j\wedge\varepsilon^k;\qquad
+[E_j,E_k]=c^i_{jk}E_i.
+\end{align*}
+则 $b^i_{jk}=-c^i_{jk}$。
+\end{proposition}
+
+\begin{exercise}\label{exercise:ch14-31}
+利用\eqref{align:ch14-d1form-invariant}证明上一命题。
+\end{exercise}
+
+把\eqref{align:ch14-d1form-invariant}推广到更高次形式要更复杂一些。
+
+\begin{proposition}[外导数的不变式公式]\label{proposition:ch14-dk-invariant}
+设 $M$ 是一个带边或不带边的光滑流形，$\omega\in\Omega^k(M)$。对 $M$ 上任意光滑向量场 $X_1,\dots,X_{k+1}$，
+\begin{align}
+\mathrm{d}\omega(X_1,\dots,X_{k+1})
+&=\sum_{1\leqslant i\leqslant k+1}(-1)^{i-1}X_i\bigl(\omega(X_1,\dots,\widehat{X_i},\dots,X_{k+1})\bigr)\nonumber\\
+&\quad+\sum_{1\leqslant i<j\leqslant k+1}(-1)^{i+j}\omega\bigl([X_i,X_j],X_1,\dots,\widehat{X_i},\dots,\widehat{X_j},\dots,X_{k+1}\bigr),\label{align:ch14-dk-invariant}
+\end{align}
+其中帽子表示删去该自变量。
+\end{proposition}
+
+\begin{proof}
+在本证明中，把\eqref{align:ch14-dk-invariant}右端整个表达式记作 $D\omega(X_1,\dots,X_{k+1})$，右端两个和式分别记作 $I(X_1,\dots,X_{k+1})$ 与 $II(X_1,\dots,X_{k+1})$。注意 $D\omega$ 显然关于 $\mathbb{R}$ 多重线性。我们首先证明：和 $\mathrm{d}\omega$ 一样，它实际上关于 $C^\infty(M)$ 多重线性，即对 $1\leqslant p\leqslant k+1$、$f\in C^\infty(M)$，
+\begin{align*}
+D\omega(X_1,\dots,fX_p,\dots,X_{k+1})=fD\omega(X_1,\dots,X_p,\dots,X_{k+1}).
+\end{align*}
+在 $I(X_1,\dots,fX_p,\dots,X_{k+1})$ 的展开式中，$i=p$ 那一项显然把 $f$ 提出。其余各项展开如下：
+\begin{align*}
+\sum_{i\ne p}(-1)^{i-1}X_i\bigl(f\,\omega(X_1,\dots,\widehat{X_i},\dots,X_{k+1})\bigr)
+=\sum_{i\ne p}(-1)^{i-1}\bigl(fX_i\bigl(\omega(X_1,\dots,\widehat{X_i},\dots,X_{k+1})\bigr)\bigr)
++(X_if)\omega(X_1,\dots,\widehat{X_i},\dots,X_{k+1}).
+\end{align*}
+因此，
+\begin{align}
+I(X_1,\dots,fX_p,\dots,X_{k+1})
+=fI(X_1,\dots,X_p,\dots,X_{k+1})
++\sum_{i\ne p}(-1)^{i-1}(X_if)\omega(X_1,\dots,\widehat{X_i},\dots,X_{k+1}).\label{align:ch14-dk-I}
+\end{align}
+
+接着考虑 $II$ 的展开。同样，在所有 $i\ne p$ 且 $j\ne p$ 的项中 $f$ 都被提出。为展开其余各项，我们用\eqref{align:ch08-liebracket-product}，它给出
+\begin{align*}
+[fX_p,X_j]=f[X_p,X_j]-(X_jf)X_p,\qquad
+[X_i,fX_p]=f[X_i,X_p]+(X_if)X_p.
+\end{align*}
+把这些公式代入 $i=p$ 与 $j=p$ 的项，得
+\begin{align*}
+II(X_1,\dots,fX_p,\dots,X_{k+1})
+&=fII(X_1,\dots,X_p,\dots,X_{k+1})\\
+&\quad+\sum_{p<j}(-1)^{p+j+1}(X_jf)\omega(X_p,X_1,\dots,\widehat{X_p},\dots,\widehat{X_j},\dots,X_{k+1})\\
+&\quad+\sum_{i<p}(-1)^{i+p}(X_if)\omega(X_p,X_1,\dots,\widehat{X_i},\dots,\widehat{X_p},\dots,X_{k+1}).
+\end{align*}
+把这两个和式中的自变量重新排列，使 $X_p$ 回到它原来的位置，便可见它们恰好抵消\eqref{align:ch14-dk-I}中的和。这就完成了 $D\omega$ 关于 $C^\infty(M)$ 多重线性的证明，故它定义了一个光滑 $(k+1)$-张量场。
+
+由于 $D\omega$ 与 $\mathrm{d}\omega$ 都是光滑张量场，我们可以在任意方便的标架中验证等式 $D\omega=\mathrm{d}\omega$。由多重线性性，只需在每一点的邻域内，把两边作用于某个选定局部标架中基向量的任意序列时给出相同结果。在坐标标架下计算会大大简化，因为其中所有 Lie 括号都为零。于是设 $(U,(x^i))$ 是 $M$ 上任意一个光滑坐标图。由于 $\mathrm{d}\omega$ 与 $D\omega$ 都线性依赖于 $\omega$，可设 $\omega=u\,\mathrm{d}x^I$，其中 $u$ 是某个光滑函数，$I=(i_1,\dots,i_k)$ 是某个递增多重指标，于是
+\begin{align*}
+\mathrm{d}\omega=\mathrm{d}u\wedge\mathrm{d}x^I=\sum_m\frac{\partial u}{\partial x^m}\,\mathrm{d}x^m\wedge\mathrm{d}x^I.
+\end{align*}
+若 $J=(j_1,\dots,j_{k+1})$ 是任意长度为 $k+1$ 的多重指标，则
+\begin{align*}
+\mathrm{d}\omega\left(\frac{\partial}{\partial x^{j_1}},\dots,\frac{\partial}{\partial x^{j_{k+1}}}\right)
+=\sum_m\frac{\partial u}{\partial x^m}\,\delta^m_I{}^J.
+\end{align*}
+这个和式中唯一可能非零的项，是 $m$ 等于 $J$ 中某个指标的那些项，设 $m=j_p$。此时容易验证 $\delta^m_I{}^J=(-1)^{p-1}\delta^I{}_{\widehat J_p}$，其中 $\widehat J_p=(j_1,\dots,\widehat{j_p},\dots,j_{k+1})$，故
+\begin{align}
+\mathrm{d}\omega\left(\frac{\partial}{\partial x^{j_1}},\dots,\frac{\partial}{\partial x^{j_{k+1}}}\right)
+=\sum_{1\leqslant p\leqslant k+1}(-1)^{p-1}\frac{\partial u}{\partial x^{j_p}}\,\delta^I{}_{\widehat J_p}.\label{align:ch14-dk-coord}
+\end{align}
+另一方面，由于所有 Lie 括号都为零，
+\begin{align*}
+D\omega\left(\frac{\partial}{\partial x^{j_1}},\dots,\frac{\partial}{\partial x^{j_{k+1}}}\right)
+=\sum_{1\leqslant p\leqslant k+1}(-1)^{p-1}\frac{\partial}{\partial x^{j_p}}
+\left(u\,\mathrm{d}x^I\left(\frac{\partial}{\partial x^{j_1}},\dots,\frac{\widehat{\partial}}{\partial x^{j_p}},\dots,\frac{\partial}{\partial x^{j_{k+1}}}\right)\right)
+=\sum_{1\leqslant p\leqslant k+1}(-1)^{p-1}\frac{\partial u}{\partial x^{j_p}}\,\delta^I{}_{\widehat J_p},
+\end{align*}
+它与\eqref{align:ch14-dk-coord}一致。
+\end{proof}
+
+值得指出，公式\eqref{align:ch14-dk-invariant}可用于给出 $\mathrm{d}$ 的一个不变定义，以及关于 $\mathrm{d}$ 的存在性、唯一性与性质（定理\ref{theorem:ch14-exterior-uniqueness}）的另一个证明。正如命题\ref{proposition:ch14-dk-invariant}的证明所示，\eqref{align:ch14-dk-invariant}右端作为 $(X_1,\dots,X_{k+1})$ 的函数关于 $C^\infty(M)$ 多重线性。因此由张量刻画引理（引理\ref{lemma:ch12-tensor-characterization}），它定义了一个光滑协变 $(k+1)$-张量场。一个直接的（虽稍显冗长的）验证表明，只要交换它的任意两个自变量它就变号，故实际上它定义了一个光滑 $(k+1)$-形式，我们本可用它作为 $\mathrm{d}\omega$ 的定义。命题\ref{proposition:ch14-dk-invariant}证明的其余部分随后表明，$\mathrm{d}\omega$ 局部确实由坐标公式\eqref{align:ch14-exterior-def}给出，于是定理\ref{theorem:ch14-exterior-uniqueness}所断言的性质一如从前地成立。我们选择借助其坐标公式来定义 $\mathrm{d}$，因为那个公式通常更容易记忆和使用。除 $k=1$ 的情形外，不变式公式\eqref{align:ch14-dk-invariant}过于复杂，对计算用处不大；此外它还有一个严重缺陷：为计算 $\mathrm{d}\omega$ 在一点 $p\in M$ 处作用于向量 $(v_1,\dots,v_k)$ 的结果，必须先把它们延拓为 $p$ 邻域上的向量场。尽管如此，它确实有一些重要的理论推论，故知道它存在是有用的。
+
+\subsection{微分形式的 Lie 导数}
+
+在第~12 章中，我们导出了一些计算光滑张量场 Lie 导数的公式（见推论\ref{corollary:ch12-lie-deriv-tensor}与例\ref{example:ch12-35}），它们同样适用于微分形式。然而在微分形式的情形，外导数给出了一个计算 Lie 导数的远为强大的公式，它还有重要的理论推论。正如我们在第~12 章中所做的，为简单起见我们只考虑不带边的流形；但这些结果可容易地推广到带边流形以及切于边界的向量场。
+
+首先，我们注意一个在证明与计算中都有用的简单事实：Lie 求导关于外积满足乘法律。
+
+\begin{proposition}\label{proposition:ch14-lie-product}
+设 $M$ 是一个光滑流形，$V\in\mathfrak X(M)$，$\omega,\eta\in\Omega^*(M)$。则
+\begin{align*}
+\mathcal L_V(\omega\wedge\eta)=(\mathcal L_V\omega)\wedge\eta+\omega\wedge(\mathcal L_V\eta).
+\end{align*}
+\end{proposition}
+
+\begin{exercise}\label{exercise:ch14-34}
+证明上一命题。
+\end{exercise}
+
+下一个定理是本节的主要结果。它给出了微分形式 Lie 导数的一个非凡公式，可追溯到发明微分形式理论的法国数学家 Élie Cartan（1869--1951）。
+
+\begin{theorem}[Cartan 魔公式]\label{theorem:ch14-cartan}
+在光滑流形 $M$ 上，对任意光滑向量场 $V$ 与任意光滑微分形式 $\omega$，
+\begin{align}
+\mathcal L_V\omega=V\lrcorner(\mathrm{d}\omega)+\mathrm{d}(V\lrcorner\omega).\label{align:ch14-cartan}
+\end{align}
+\end{theorem}
+
+\begin{proof}
+我们对 $k$ 作归纳，证明\eqref{align:ch14-cartan}对光滑 $k$-形式成立。我们从光滑 $0$-形式 $f$ 开始，此时
+\begin{align*}
+V\lrcorner(\mathrm{d}f)+\mathrm{d}(V\lrcorner f)=V\lrcorner\mathrm{d}f=\mathrm{d}f(V)=Vf=\mathcal L_V f,
+\end{align*}
+这正是\eqref{align:ch14-cartan}。
+
+现在设 $k\geqslant1$，并假设\eqref{align:ch14-cartan}已对次数小于 $k$ 的形式证明。任取一个光滑 $k$-形式 $\omega$，在光滑局部坐标下写成
+\begin{align*}
+\omega=\sideset{}{'}\sum_I\omega_I\,\mathrm{d}x^{i_1}\wedge\cdots\wedge\mathrm{d}x^{i_k}.
+\end{align*}
+令 $u=x^{i_1}$、$\beta=\omega_I\,\mathrm{d}x^{i_2}\wedge\cdots\wedge\mathrm{d}x^{i_k}$，可见这个和式中的每一项都可写成 $\mathrm{d}u\wedge\beta$，其中 $u$ 是一个光滑函数，$\beta$ 是一个光滑 $(k-1)$-形式。推论\ref{corollary:ch12-34}表明 $\mathcal L_V\mathrm{d}u=\mathrm{d}(\mathcal L_Vu)=\mathrm{d}(Vu)$。于是命题\ref{proposition:ch14-lie-product}与归纳假设给出
+\begin{align}
+\mathcal L_V(\mathrm{d}u\wedge\beta)
+=(\mathcal L_V\mathrm{d}u)\wedge\beta+\mathrm{d}u\wedge(\mathcal L_V\beta)
+=\mathrm{d}(Vu)\wedge\beta+\mathrm{d}u\wedge\bigl(V\lrcorner\mathrm{d}\beta+\mathrm{d}(V\lrcorner\beta)\bigr).\label{align:ch14-cartan-left}
+\end{align}
+另一方面，利用 $\mathrm{d}$ 与 $V$ 的内乘都是反导子这两个事实，以及 $V\lrcorner\mathrm{d}u=\mathrm{d}u(V)=Vu$，我们计算
+\begin{align*}
+V\lrcorner\mathrm{d}(\mathrm{d}u\wedge\beta)+\mathrm{d}\bigl(V\lrcorner(\mathrm{d}u\wedge\beta)\bigr)
+&=V\lrcorner(-\mathrm{d}u\wedge\mathrm{d}\beta)+\mathrm{d}\bigl((Vu)\beta-\mathrm{d}u\wedge(V\lrcorner\beta)\bigr)\\
+&=-(Vu)\mathrm{d}\beta+\mathrm{d}u\wedge(V\lrcorner\mathrm{d}\beta)+\mathrm{d}(Vu)\wedge\beta+(Vu)\mathrm{d}\beta+\mathrm{d}u\wedge\mathrm{d}(V\lrcorner\beta).
+\end{align*}
+$(Vu)\mathrm{d}\beta$ 各项相消后，上式等于\eqref{align:ch14-cartan-left}。
+\end{proof}
+
+\begin{corollary}[Lie 导数与 $\mathrm{d}$ 交换]\label{corollary:ch14-lie-commutes-d}
+若 $V$ 是一个光滑向量场，$\omega$ 是一个光滑微分形式，则
+\begin{align*}
+\mathcal L_V(\mathrm{d}\omega)=\mathrm{d}(\mathcal L_V\omega).
+\end{align*}
+\end{corollary}
+
+\begin{proof}
+这由 Cartan 公式与 $\mathrm{d}\circ\mathrm{d}=0$ 这一事实得到：
+\begin{align*}
+\mathcal L_V\mathrm{d}\omega=V\lrcorner\mathrm{d}(\mathrm{d}\omega)+\mathrm{d}(V\lrcorner\mathrm{d}\omega)=\mathrm{d}(V\lrcorner\mathrm{d}\omega);\\
+\mathrm{d}\mathcal L_V\omega=\mathrm{d}(V\lrcorner\mathrm{d}\omega)+\mathrm{d}\bigl(\mathrm{d}(V\lrcorner\omega)\bigr)=\mathrm{d}(V\lrcorner\mathrm{d}\omega).
+\end{align*}
+\end{proof}
+\end{document}

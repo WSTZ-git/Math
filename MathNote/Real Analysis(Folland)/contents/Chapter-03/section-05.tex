@@ -1,0 +1,1110 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+% SOURCE p=115; printed=100; object=ch03-bv-title; region=lower
+\section{有界变差函数}\label{section:ch03-bounded-variation}
+% SOURCE p=115; printed=100; object=ch03-bv-intro; region=bottom
+上一节的定理特别适用于实直线；利用\cref{section:ch01-borel-measures-real-line}中建立的正则 Borel 测度与递增函数之间的对应，它们给出了关于函数微分和积分的结论。与\cref{section:ch01-borel-measures-real-line}一样，我们采用如下记号：若 $F$ 为 $\mathbb{R}$ 上递增、右连续的函数，则 $\mu_F$ 表示由关系 $\mu_F((a,b])=F(b)-F(a)$ 确定的 Borel 测度。此外，本节中的“几乎处处”始终针对 Lebesgue 测度。
+
+第一个结果利用 Lebesgue 微分定理证明递增函数几乎处处可微。
+% SOURCE p=116; printed=101; object=ch03-monotone-differentiability; number=3.23; region=top
+\begin{theorem}\label{theorem:ch03-monotone-differentiability}
+设 $F:\mathbb{R}\to\mathbb{R}$ 递增，且 $G(x)=F(x+)$。
+\begin{enumerate}
+\item\label{item:ch03-monotone-discontinuities} $F$ 的不连续点集可数。
+\item\label{item:ch03-monotone-derivatives} $F$ 与 $G$ 几乎处处可微，且 $F'=G'$ 几乎处处成立。
+\end{enumerate}
+\end{theorem}
+% SOURCE p=116; printed=101; object=ch03-monotone-differentiability-proof; region=upper-middle
+\begin{proof}
+由于 $F$ 递增，各区间 $(F(x-),F(x+))$（$x\in\mathbb{R}$）两两不交；当 $|x|<N$ 时，它们位于区间 $(F(-N),F(N))$ 内。因此
+\begin{align*}
+\sum_{|x|<N}[F(x+)-F(x-)]\le F(N)-F(-N)<\infty,
+\end{align*}
+这意味着 $\{x\in(-N,N):F(x+)\ne F(x-)\}$ 可数。由于对每个 $N$ 都如此，\subcref{theorem:ch03-monotone-differentiability}{item:ch03-monotone-discontinuities}得证。
+
+其次，$G$ 递增且右连续，除了可能在 $F$ 的不连续点外，均有 $G=F$。此外，
+\begin{align*}
+G(x+h)-G(x)=
+\begin{cases}
+\mu_G((x,x+h]),&h>0,\\
+-\mu_G((x+h,x]),&h<0,
+\end{cases}
+\end{align*}
+而集合族 $\{(x-r,x]\}$ 与 $\{(x,x+r]\}$ 当 $r=|h|\to0$ 时正规收缩到 $x$。于是，把\cref{theorem:ch03-measure-differentiation}用于测度 $\mu_G$（由\cref{theorem:ch01-stieltjes-regularity}，它是正则的），可得 $G'(x)$ 对几乎处处的 $x$ 存在。为完成证明，只须证明：若 $H=G-F$，则 $H'$ 几乎处处存在且等于零。
+
+把 $H\ne0$ 的点枚举为 $\{x_j\}$。则 $H(x_j)>0$，且与上面一样，对任意 $N$，都有 $\sum_{\{j:|x_j|<N\}}H(x_j)<\infty$。令 $\delta_j$ 为 $x_j$ 处的点质量，$\mu=\sum_jH(x_j)\delta_j$。由前一句，$\mu$ 在紧集上有限，从而由\cref{theorem:ch01-stieltjes-measure,theorem:ch01-stieltjes-regularity}可知 $\mu$ 正则；又因为对 $E=\{x_j\}_1^\infty$ 有 $m(E)=\mu(E^c)=0$，故 $\mu\perp m$。但是
+\begin{align*}
+\left|\frac{H(x+h)-H(x)}h\right|
+&\le\frac{H(x+h)+H(x)}{|h|}\\
+&\le4\frac{\mu((x-2|h|,x+2|h|))}{4|h|}.
+\end{align*}
+由\cref{theorem:ch03-measure-differentiation}，当 $h\to0$ 时，右端对几乎处处的 $x$ 趋于零。因此 $H'=0$ 几乎处处成立，证明完毕。
+\end{proof}
+% SUPPLEMENT: id=v14-ch03-monotone-details; parent=ch03-monotone-differentiability; kind=proof+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{极限、可数性与测度步骤的补全（重构新增）。}这里“递增”允许相等。单调性给出有限单侧极限
+\begin{align*}
+F(x-)=\sup_{t<x}F(t),\qquad F(x+)=\inf_{t>x}F(t),
+\end{align*}
+因为两者均被 $F(x-1),F(x+1)$ 夹住，并满足 $F(x-)\le F(x)\le F(x+)$。因而不连续恰好对应正跳跃 $F(x+)-F(x-)>0$。若 $x<y$，取 $x<t<y$ 得 $F(x+)\le F(t)\le F(y-)$，故正跳跃区间不交。对固定 $N,k\in\mathbb N$，跳跃至少 $1/k$ 的点至多有 $k(F(N)-F(-N))$ 个：任取其中有限多个，按顺序把各区间长度相加即得原文的上界。对 $N,k$ 取可数并，得到全部不连续点可数，也说明原文的非负族求和可理解为有限部分和的上确界。
+
+对 $G(x)=\inf_{t>x}F(t)$，它递增。给定 $\varepsilon>0$，取 $t>x$ 使 $F(t)<G(x)+\varepsilon$；对 $x<y<t$，有 $G(x)\le G(y)\le F(t)<G(x)+\varepsilon$，证明右连续。半开区间端点可能不属于同半径开球；应用正规收缩定义时，可用半径 $2r$ 的球，区间长度 $r$ 与球长 $4r$ 之比恒为 $1/4$。左右差商因此都趋于测度绝对连续部分的同一密度，此密度局部可积，故几乎处处有限。
+
+最后，$0\le H(x)\le F(x+)-F(x-)$，所以构造的原子测度在每个紧集上有限。空的或有限的异常集使用相应的空和或有限和，不必强作无限枚举。为具体说明其正则性，对任意在紧集上有限的正 Borel 测度 $\nu$，定义 $K(x)=\nu((0,x])$（$x\ge0$）和 $K(x)=-\nu((x,0])$（$x<0$）；则 $K$ 递增且右连续，并满足 $K(b)-K(a)=\nu((a,b])$。由\cref{theorem:ch01-stieltjes-measure}的唯一性，$\nu=\mu_K$，再由\cref{theorem:ch01-stieltjes-regularity}得正则性。该论证适用于这里的 $\mu$。当 $h\ne0$ 时，$x,x+h$ 均在 $(x-2|h|,x+2|h|)$ 内；两点不同，故其质量之和受区间质量控制。奇异测度微分定理给出该比值几乎处处趋零，绝对值夹逼得 $H'=0$。在 $G'$ 存在且 $H'=0$ 的共同满测集上，$F=G-H$ 可微且导数等于 $G'$。
+\end{proof}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}单调性把函数增量变为正测度的质量，使测度微分定理能处理经典导数。实值假设提供通常的大小次序，并保证局部上下界有限；没有要求全局有界，也没有要求原函数右连续。先取右连续代表 $G$ 是为了使用 $\mu_G$，随后必须证明改动可数个点对导数的影响确实几乎处处为零；仅凭两个函数几乎处处相等，不能直接断言它们处处或几乎处处具有同样的经典可微性。例如 $0$ 与 $\chi_{\mathbb Q}$ 几乎处处相等，后者却处处不连续，因而处处不可微。此处能成功是因为跳跃大小局部可求和，原子测度估计控制了差商。结论只保证几乎处处可微；阶跃函数在跳跃点不连续，已说明不能删去这一限定。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch03-monotone-details
+
+% SOURCE p=116; printed=101; object=ch03-variation-motivation; region=lower
+正如 $\mathbb R$ 上的正测度与递增函数相联系，$\mathbb R$ 上的复测度与所谓有界变差函数相联系。后一个概念的定义稍带技术性，因而先说明一些动机是合适的。直观地说，若 $F(t)$ 表示沿实直线运动的粒子在时刻 $t$ 的位置，则 $F$ 在区间 $[a,b]$ 上的“全变差”是从时刻 $a$ 到时刻 $b$ 走过的总路程，就像里程表所显示的那样。若 $F$ 有连续导数，这就是“速率”的积分 $\int_a^b|F'(t)|\,\mathrm dt$。要在不对 $F$ 作任何光滑性假设的条件下定义全变差，就需要另一种方法：把 $[a,b]$ 分成子区间 $[t_{j-1},t_j]$，在每个子区间上，用图像连接 $(t_{j-1},F(t_{j-1}))$ 与 $(t_j,F(t_j))$ 的线性函数逼近 $F$，然后取极限。为了把它精确化，我们从稍有不同的角度出发，取 $a=-\infty$，并把全变差看作 $b$ 的函数。
+% SUPPLEMENT: id=v14-ch03-smooth-length-proof; parent=ch03-variation-motivation; kind=proof+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{光滑情形路程公式的补写证明（重构新增）。}对 $F\in C^1([a,b])$，经典微积分基本定理给出每段增量为 $F'$ 的积分，故任意分割和不超过 $\int_a^b|F'|$。为证反向，令 $\omega(\delta)=\sup\{|F'(u)-F'(v)|:|u-v|\le\delta\}$；连续导数在紧区间上一致连续，所以 $\omega(\delta)\to0$。对网格宽度不超过 $\delta$ 的分割，
+\begin{align*}
+\left|F(t_j)-F(t_{j-1})-F'(t_{j-1})(t_j-t_{j-1})\right|
+\le\omega(\delta)(t_j-t_{j-1}).
+\end{align*}
+反三角不等式并求和，使变差和至少为 $\sum_j|F'(t_{j-1})|(t_j-t_{j-1})-\omega(\delta)(b-a)$。令网格趋零，Riemann 和趋于连续函数 $|F'|$ 的积分，误差趋零。因此分割和的上确界等于 $\int_a^b|F'|$。此补证仅使用光滑函数的经典微积分，不用下文待证的 Lebesgue 积分基本定理；也说明一般粗糙函数不能未经证明就使用速率积分作为变差。
+\end{proof}
+% END SUPPLEMENT: id=v14-ch03-smooth-length-proof
+
+% SOURCE p=116,117; printed=101,102; object=ch03-total-variation-function; region=bottom-top
+\begin{definition}[全变差函数]\label{definition:ch03-total-variation-function}
+具体地，若 $F:\mathbb R\to\mathbb C$ 且 $x\in\mathbb R$，定义
+\begin{align*}
+T_F(x)\triangleq\sup\left\{\sum_{j=1}^n|F(x_j)-F(x_{j-1})|:
+n\in\mathbb N,\ -\infty<x_0<\cdots<x_n=x\right\}.
+\end{align*}
+$T_F$ 称为 $F$ 的\textbf{全变差函数}。
+\end{definition}
+% SUPPLEMENT: id=v14-ch03-variation-definition-remark; parent=ch03-total-variation-function; kind=motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}绝对值记录每一步的路程，避免正负增量相消；复值情形使用复数模，记录平面路径的折线长度。严格递增的有限分点按实变量顺序取样，最后一点固定为 $x$，而起点遍历全部有限实数，因而测量整条左半轴上的累积变化。这里并不把 $F(-\infty)$ 当作已知值；该极限要在有界变差假设下另行证明。取所有有限取样的上确界，不依赖某个未经指定的极限分割，也不要求上确界被某个分割达到。允许值为 $+\infty$，所以定义适用于任意复值函数。单个函数值为有限复数，使每个有限分割和有意义；加常数不改变任一增量，故不改变 $T_F$。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch03-variation-definition-remark
+
+% SOURCE p=117; printed=102; object=ch03-variation-additivity; number=3.24; region=upper
+\begin{proposition}\label{proposition:ch03-variation-additivity}
+在 $T_F$ 的定义中加入分点，会使其中的和增大。因此，若 $a<b$，在定义 $T_F(b)$ 时，假定 $a$ 始终是分点之一，不会改变定义。由此得到
+\begin{align}\label{align:ch03-variation-increment}
+T_F(b)-T_F(a)
+&=\sup\left\{\sum_{j=1}^n|F(x_j)-F(x_{j-1})|:
+n\in\mathbb N,\ a=x_0<\cdots<x_n=b\right\}.
+\end{align}
+因此，$T_F$ 是取值于 $[0,\infty]$ 的递增函数。
+\end{proposition}
+% SUPPLEMENT: id=v14-ch03-variation-additivity-details; parent=ch03-variation-additivity; kind=source-qualification+proof+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{适用范围澄清（重构新增）。}原文在尚未假定变差有限时使用了\cref{align:ch03-variation-increment}的减法形式；若 $T_F(a)=T_F(b)=\infty$，其左侧没有定义。例如 $F(t)=t$ 时，对任何有限 $x$，让起点趋于 $-\infty$ 就得到 $T_F(x)=\infty$，而右侧为有限数 $b-a$。一般情况下应使用下面的加法形式；当 $T_F(a)<\infty$ 时，才能改写为原文的减法式。后面 $F\in BV$ 的应用均满足有限性条件。
+\end{remark}
+\begin{definition*}[本补证的局部记号]\phantomsection\label{definition:ch03-local-variation-notation-supplement}
+以 $V_F[a,b]$ 表示\cref{align:ch03-variation-increment}右端的上确界；当 $a=b$ 时，约定 $V_F[a,a]=0$。
+\end{definition*}
+\begin{remark}
+\textbf{记号与条件说明（重构新增）。}该记号固定两个有限端点，只计算该区间内的增量；退化区间没有路程，故规定为零。它只是为下方证明缩短书写，数学对象将在原文紧接的局部定义中正式讨论。
+\end{remark}
+\begin{proof}
+\textbf{补写证明（重构新增）。}插入 $u<v<w$ 中的中间点时，三角不等式给出
+$|F(w)-F(u)|\le|F(v)-F(u)|+|F(w)-F(v)|$；故细分不减小分割和。任意以 $b$ 结尾的分割，都可加入 $a$；若原起点大于或等于 $a$，还可在 $a$ 左边加一个点。新分割和至少等于原和，并分成左侧以 $a$ 结尾的和与 $[a,b]$ 上的和，因此不超过 $T_F(a)+V_F[a,b]$。取上确界得 $T_F(b)\le T_F(a)+V_F[a,b]$。
+
+反之，任何以 $a$ 结尾的分割与任何 $[a,b]$ 的分割都可拼接，故对应两个和之和不超过 $T_F(b)$。两族和均非负且非空；分别取上确界得到
+\begin{align*}
+T_F(b)=T_F(a)+V_F[a,b]
+\end{align*}
+在扩展非负实数中的恒等式。若一个上确界无穷，则先选该侧的分割和大于任意给定常数，再拼接另一侧任一分割，即验证同一结论，而不进行无穷减法。特别地，$T_F(b)\ge T_F(a)$。当 $T_F(a)<\infty$ 时移项才得到原式；若再有 $T_F(b)<\infty$，两侧全为有限数。
+\end{proof}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}把路径在 $a$ 处分段，总路程应相加；允许细分保证拼接前后的上确界相容。端点次序 $a<b$ 用于按行进顺序拼接，复值没有造成问题，因为证明只用三角不等式。单调的是累积路程 $T_F$，并不要求原函数 $F$ 单调。“加入分点使和增大”在此应理解为不减，不能理解为每次都严格增加。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch03-variation-additivity-details
+
+% SOURCE p=117; printed=102; object=ch03-bv-definition; region=middle
+\begin{definition}[有界变差]\label{definition:ch03-bv-definition}
+若 $T_F(\infty)=\lim_{x\to\infty}T_F(x)$ 有限，则称 $F$ 在 $\mathbb R$ 上\textbf{有界变差}，并以 $BV$ 表示所有这种函数构成的空间。
+\end{definition}
+% SOURCE p=117; printed=102; object=ch03-local-bv-definition; region=middle
+\begin{definition}[区间上的全变差与有界变差]\label{definition:ch03-local-bv-definition}
+更一般地，\cref{align:ch03-variation-increment}右端的上确界称为 $F$ 在 $[a,b]$ 上的\textbf{全变差}。它只依赖于 $F$ 在 $[a,b]$ 上的值，因此可把 $BV([a,b])$ 定义为 $[a,b]$ 上全变差有限的所有函数的集合。
+\end{definition}
+% SUPPLEMENT: id=v14-ch03-bv-definitions-remark; parent=ch03-local-bv-definition; kind=motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{两个定义的动机与条件说明（重构新增）。}全局有界变差要求存在一个统一常数，控制整条实线上的所有有限分割和；$T_F$ 的单调性保证 $T_F(\infty)$ 作为扩展实数极限存在，定义再要求它有限。局部版本固定有限闭区间和端点值，只要求这个区间上的总变化有限，因此不要求函数已定义在区间外。每段有限变差不等于全线变差有限，下面的 $\sin x$ 就给出区别。有界变差也不是只要求函数值有界：不断振荡的有界函数仍可能累积无限路程。常函数变差为零，故全变差本身不区分相差常数的函数；若以后要唯一对应测度，还必须选择常数归一化。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch03-bv-definitions-remark
+
+% SOURCE p=117; printed=102; object=ch03-bv-extension; region=middle
+\begin{proposition}\label{proposition:ch03-bv-extension}
+若 $F\in BV$，则对所有 $a,b$，$F$ 在 $[a,b]$ 上的限制属于 $BV([a,b])$；事实上，其在 $[a,b]$ 上的全变差正是 $T_F(b)-T_F(a)$。反之，若 $F\in BV([a,b])$，并对 $x<a$ 置 $F(x)=F(a)$、对 $x>b$ 置 $F(x)=F(b)$，则 $F\in BV$。通过这一方法，下面为 $BV$ 证明的结果也能用于 $BV([a,b])$。
+\end{proposition}
+% SUPPLEMENT: id=v14-ch03-bv-extension-proof; parent=ch03-bv-extension; kind=proof+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{补写证明（重构新增）。}全局情形由已证明的有限变差增量公式得到 $V_F[a,b]=T_F(b)-T_F(a)\le T_F(\infty)<\infty$。对常值延拓，任一实线分割可加入 $a,b$；区间外相邻点的函数值相同，增量为零，余下区间内的和不超过 $V_F[a,b]$。若原分割未覆盖全区间，先在两端扩展到包含 $[a,b]$ 再作同样处理，和只会不减。故延拓后的所有分割和均受同一有限数控制，属于 $BV$。反过来，$[a,b]$ 的分割本来就是实线允许的分割，所以延拓后的全线变差恰等于 $V_F[a,b]$。
+\end{proof}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}区间外取端点处的同一常值，保证接合处没有额外跳跃，也没有区间外新振荡。这里端点值属于原函数的数据，不能随意改成其单侧极限。有限闭区间给出两个接合端点；该命题只把局部问题嵌入全局框架，并不声称每个任意延拓都有界变差。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch03-bv-extension-proof
+
+% SOURCE p=117; printed=102; object=ch03-bv-examples; number=3.25; region=lower
+\begin{examples}\label{examples:ch03-bv-examples}
+\begin{enumerate}
+\item\label{item:ch03-bv-bounded-monotone} 若 $F:\mathbb R\to\mathbb R$ 有界且递增，则 $F\in BV$（事实上，$T_F(x)=F(x)-F(-\infty)$）。
+\item\label{item:ch03-bv-linear} 若 $F,G\in BV$ 且 $a,b\in\mathbb C$，则 $aF+bG\in BV$。
+\item\label{item:ch03-bv-bounded-derivative} 若 $F$ 在 $\mathbb R$ 上可微，且 $F'$ 有界，则当 $-\infty<a<b<\infty$ 时，$F\in BV([a,b])$（由中值定理）。
+\item\label{item:ch03-bv-sine} 若 $F(x)=\sin x$，则当 $-\infty<a<b<\infty$ 时，$F\in BV([a,b])$，但 $F\notin BV$。
+\item\label{item:ch03-bv-oscillation} 若 $x\ne0$ 时 $F(x)=x\sin(x^{-1})$，且 $F(0)=0$，则当 $a\le0<b$ 或 $a<0\le b$ 时，$F\notin BV([a,b])$。
+\end{enumerate}
+\end{examples}
+这些例子的验证留给读者（\cref{exercise:ch03-bv-examples-proof}）。
+% SUPPLEMENT: id=v14-ch03-bv-examples-proofs; parent=ch03-bv-examples; kind=proof+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{五个例子的完整验证（重构新增）。}
+\begin{enumerate}
+\item 对有界递增实函数，$L=\inf_{t\in\mathbb R}F(t)=F(-\infty)$ 有限。任一分割和望远镜相消为 $F(x)-F(x_0)$，对 $x_0<x$ 取上确界即得 $T_F(x)=F(x)-L$。再让 $x\to\infty$，总变差为 $F(\infty)-L<\infty$。
+\item 三角不等式给出每个分割上的
+\begin{align*}
+\sum_j|(aF+bG)(x_j)-(aF+bG)(x_{j-1})|
+\le |a|\sum_j|F(x_j)-F(x_{j-1})|+|b|\sum_j|G(x_j)-G(x_{j-1})|.
+\end{align*}
+右侧受 $|a|T_F(\infty)+|b|T_G(\infty)$ 控制，对所有分割取上确界即可。
+\item 设 $|F'(t)|\le M$。对 $u<v$，若 $F(v)=F(u)$，所需估计显然；否则取模为 $1$ 的常数 $\zeta$ 使 $\zeta(F(v)-F(u))=|F(v)-F(u)|$。实函数 $g(t)=\operatorname{Re}(\zeta F(t))$ 可微，且 $|g'(t)|\le M$。实中值定理给出 $|F(v)-F(u)|=g(v)-g(u)\le M(v-u)$。对 $[a,b]$ 的分割求和，得到 $V_F[a,b]\le M(b-a)<\infty$；这也覆盖复值 $F$，无需错误地套用复值中值等式。
+\item $|\cos x|\le1$ 给出每个有限区间上有界变差。取递增分点 $x_j=\pi/2+j\pi$，相邻函数值交替为 $1,-1$，前 $N$ 段的变差和为 $2N$。任意大的 $N$ 都允许，故全线总变差无穷。
+\item 先取 $b>0$。令 $t_k=(\pi/2+k\pi)^{-1}$；当 $k$ 足够大时 $0<t_k<b$，且 $F(t_k)=(-1)^kt_k$。在 $[0,b]$ 内按递增顺序取有限段分点 $t_N<t_{N-1}<\cdots<t_K$，并加入区间端点，则变差至少为
+\begin{align*}
+\sum_{k=K}^{N-1}|F(t_k)-F(t_{k+1})|
+=\sum_{k=K}^{N-1}(t_k+t_{k+1}).
+\end{align*}
+因 $t_k\ge1/(\pi(k+1))$，该和随 $N\to\infty$ 发散。故任何包含 $[0,b]$ 的题设区间变差无限。又有 $F(-x)=F(x)$，对称反射保持分割和，故 $a<0\le b$ 的另一种情形也成立，包括 $b=0$。此外 $|F(x)|\le|x|$ 说明该函数在 $0$ 连续；连续性并不排除无限变差。
+\end{enumerate}
+\end{proof}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}第一例同时需要有界和单调：单调使绝对增量望远镜相消，有界使两端极限差有限。第二例说明 $BV$ 是复线性空间。第三例的导数上界把变化控制为区间长度的倍数，有限区间长度于是关键；第四例恰好说明该结论不能据此改成全线有界变差。第五例将振幅趋零与振荡次数增加结合：连续只控制单次邻近变化，有界变差还控制所有分段变化的累计和；题设要求区间从至少一侧接触 $0$，才能包含整段趋零振荡序列。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch03-bv-examples-proofs
+
+% SOURCE p=117; printed=102; object=ch03-variation-monotone-parts; number=3.26; region=bottom
+\begin{lemma}\label{lemma:ch03-variation-monotone-parts}
+若 $F\in BV$ 为实值函数，则 $T_F+F$ 与 $T_F-F$ 递增。
+\end{lemma}
+% SOURCE p=117,118; printed=102,103; object=ch03-variation-monotone-parts-proof; region=bottom-top
+\begin{proof}
+若 $x<y$ 且 $\varepsilon>0$，选取 $x_0<\cdots<x_n=x$，使
+\begin{align*}
+\sum_{j=1}^n|F(x_j)-F(x_{j-1})|\ge T_F(x)-\varepsilon.
+\end{align*}
+则 $\sum_{j=1}^n|F(x_j)-F(x_{j-1})|+|F(y)-F(x)|$ 是 $T_F(y)$ 的一个逼近和；又因为 $F(y)=[F(y)-F(x)]+F(x)$，所以
+\begin{align*}
+T_F(y)\pm F(y)
+&\ge\sum_{j=1}^n|F(x_j)-F(x_{j-1})|\\
+&\quad+|F(y)-F(x)|\pm[F(y)-F(x)]\pm F(x)\\
+&\ge T_F(x)-\varepsilon\pm F(x).
+\end{align*}
+由于 $\varepsilon$ 任意，$T_F(y)\pm F(y)\ge T_F(x)\pm F(x)$，即得所需结论。
+\end{proof}
+% SUPPLEMENT: id=v14-ch03-variation-monotone-remark; parent=ch03-variation-monotone-parts; kind=motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}总变化至少覆盖任何一次净增量，即 $T_F(y)-T_F(x)\ge|F(y)-F(x)|$；加上或减去净增量后仍非负，因此可把振荡函数拆成两个单调部分。实值是为了使用实数的序及 $|u|\pm u\ge0$；复数没有这里所需的通常大小次序。有界变差保证 $T_F(x)$ 有限，可以选取逼近上确界的有限分割并让 $\varepsilon\downarrow0$，没有假定最优分割存在。两种符号分别进行同一估计，结论同时涵盖 $T_F+F$ 与 $T_F-F$。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch03-variation-monotone-remark
+
+% SOURCE p=118; printed=103; object=ch03-bv-properties; number=3.27; region=upper-middle
+\begin{theorem}\label{theorem:ch03-bv-properties}
+\begin{enumerate}
+\item\label{item:ch03-bv-real-imag} $F\in BV$ 当且仅当 $\operatorname{Re}F\in BV$ 且 $\operatorname{Im}F\in BV$。
+\item\label{item:ch03-bv-difference-monotone} 若 $F:\mathbb R\to\mathbb R$，则 $F\in BV$ 当且仅当 $F$ 是两个有界递增函数之差；对 $F\in BV$，这两个函数可取为 $\tfrac12(T_F+F)$ 与 $\tfrac12(T_F-F)$。
+\item\label{item:ch03-bv-one-sided-limits} 若 $F\in BV$，则对所有 $x\in\mathbb R$，$F(x+)=\lim_{y\downarrow x}F(y)$ 与 $F(x-)=\lim_{y\uparrow x}F(y)$ 均存在，$F(\pm\infty)=\lim_{y\to\pm\infty}F(y)$ 也存在。
+\item\label{item:ch03-bv-discontinuities} 若 $F\in BV$，则 $F$ 的不连续点集可数。
+\item\label{item:ch03-bv-derivatives} 若 $F\in BV$ 且 $G(x)=F(x+)$，则 $F'$ 与 $G'$ 几乎处处存在且相等。
+\end{enumerate}
+\end{theorem}
+% SOURCE p=118; printed=103; object=ch03-bv-properties-proof; region=middle
+\begin{proof}
+\subcref{theorem:ch03-bv-properties}{item:ch03-bv-real-imag}显然。对于\subcref{theorem:ch03-bv-properties}{item:ch03-bv-difference-monotone}，充分性容易证明（见\subcref{examples:ch03-bv-examples}{item:ch03-bv-bounded-monotone}及\subcref{examples:ch03-bv-examples}{item:ch03-bv-linear}）。为证明必要性，注意由\cref{lemma:ch03-variation-monotone-parts}，等式 $F=\tfrac12(T_F+F)-\tfrac12(T_F-F)$ 把 $F$ 表为两个递增函数之差。此外，不等式
+\begin{align*}
+T_F(y)\pm F(y)\ge T_F(x)\pm F(x)\qquad(y>x)
+\end{align*}
+蕴含
+\begin{align*}
+|F(y)-F(x)|\le T_F(y)-T_F(x)\le T_F(\infty)-T_F(-\infty)<\infty,
+\end{align*}
+所以 $F$ 有界，从而 $T_F\pm F$ 也有界。最后，\subcref{theorem:ch03-bv-properties}{item:ch03-bv-one-sided-limits}、\subcref{theorem:ch03-bv-properties}{item:ch03-bv-discontinuities}与\subcref{theorem:ch03-bv-properties}{item:ch03-bv-derivatives}由前两项及\cref{theorem:ch03-monotone-differentiability}推出。
+\end{proof}
+% SUPPLEMENT: id=v14-ch03-bv-properties-details; parent=ch03-bv-properties; kind=proof+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{省略各项的补全（重构新增）。}对每个复增量 $z$，有 $|\operatorname{Re}z|,|\operatorname{Im}z|\le|z|\le|\operatorname{Re}z|+|\operatorname{Im}z|$。在任意分割上求和并取上确界，得到
+\begin{align*}
+T_{\operatorname{Re}F}(\infty),T_{\operatorname{Im}F}(\infty)&\le T_F(\infty),\\
+T_F(\infty)&\le T_{\operatorname{Re}F}(\infty)+T_{\operatorname{Im}F}(\infty),
+\end{align*}
+从而证明实部虚部的等价条件。若实函数为两个有界递增函数之差，由已经逐项验证的有界递增例和线性闭包可知它在 $BV$ 中。必要方向的单调性原文已证；固定基点 $0$，对任何 $x$，按 $x,0$ 的先后次序使用增量估计，得到 $|F(x)|\le|F(0)|+T_F(\infty)$，这具体证明了两部分的全局有界性。
+
+每个有界递增实函数在有限点的左右极限以及正负无穷处的极限都存在且有限，分别由相应区间上的上、下确界得到。复值 $F$ 先分实部虚部，再将各自分成两个有界递增实函数；于是 $F$ 是四个此类函数的实或纯虚线性组合。有限线性组合保留上述有限极限，证明单侧及无穷端点极限存在。各单调分量的不连续点集可数，有限并仍可数；在此并集外所有分量均连续，故 $F$ 连续。
+
+把\cref{theorem:ch03-monotone-differentiability}用于这四个分量，删去各分量及其右连续代表的可微性和导数相等结论中的零测例外集；有限并仍为零测集。在剩余点，逐项求导合法，且右极限与有限线性组合交换，所以 $G$ 正是四个右连续代表的相同线性组合。故 $F',G'$ 均存在且相等，完成最后一项。
+\end{proof}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}这些结论把一般有界变差函数归约到单调实函数，进而继承单侧极限、可数跳跃和几乎处处可微性。实部虚部一项允许复值，但“两个递增函数之差”一项必须实值；复值版本通过四个实单调分量实现。有界性要求作用于整条实线，保证无穷端点极限仍为有限数；只在紧区间局部有界变差不能推出这一点，例如 $F(x)=x$。几乎处处的导数结论涉及具体点值函数，右连续代表的替换仍通过前一定理的差商论证，而非仅用几乎处处相等。单调分解不必唯一：给两部分同时加同一有界递增函数仍保留差；此处给出的是由 $T_F$ 指定的一种分解。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch03-bv-properties-details
+
+% SOURCE p=118; printed=103; object=ch03-function-jordan-decomposition; region=lower
+\begin{definition}[函数的 Jordan 分解及正负变差]\label{definition:ch03-function-jordan-decomposition}
+实值函数 $F\in BV$ 的表示 $F=\tfrac12(T_F+F)-\tfrac12(T_F-F)$ 称为 $F$ 的 \textbf{Jordan 分解}；$\tfrac12(T_F+F)$ 与 $\tfrac12(T_F-F)$ 分别称为 $F$ 的\textbf{正变差}与\textbf{负变差}。
+\end{definition}
+% SUPPLEMENT: id=v14-ch03-function-jordan-remark; parent=ch03-function-jordan-decomposition; kind=motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}正负变差把累计向上和向下的变化分开，两者递增而差恢复原函数；系数 $1/2$ 同时使其和为 $T_F$、差为 $F$。此处 $F$ 必须实值且全变差有限，才能使用前述递增分解。名称“正变差”“负变差”指变化方向，不表示这两个函数在任意常数归一化下都非负；例如常函数 $F=-2$ 的正变差为 $-1$、负变差为 $1$。当后面规定 $F(-\infty)=0$ 后，两者才从零开始，与正测度的分布函数直接对应。不要把这里的变差函数与逐点正负部 $F^+,F^-$ 混同。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch03-function-jordan-remark
+
+% SOURCE p=118; printed=103; object=ch03-positive-negative-increments; region=lower
+\begin{proposition}\label{proposition:ch03-positive-negative-increments}
+由于对 $x\in\mathbb R$，$x^+=\max(x,0)=\tfrac12(|x|+x)$ 且 $x^-=\max(-x,0)=\tfrac12(|x|-x)$，我们有
+\begin{align*}
+\tfrac12(T_F\pm F)(x)
+&=\sup\left\{\sum_{j=1}^n[F(x_j)-F(x_{j-1})]^\pm:
+x_0<\cdots<x_n=x\right\}\pm\tfrac12F(-\infty).
+\end{align*}
+\end{proposition}
+% SUPPLEMENT: id=v14-ch03-signed-increments-proof; parent=ch03-positive-negative-increments; kind=proof+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{补写证明（重构新增）。}记 $L=F(-\infty)$，固定 $x$。对任一以 $x$ 结尾的分割 $P$，记总变差和为 $S(P)$，正、负增量和为 $S_+(P),S_-(P)$。逐项使用原文恒等式并望远镜相消，得
+\begin{align*}
+S_\pm(P)=\tfrac12\bigl(S(P)\pm[F(x)-F(x_0)]\bigr).
+\end{align*}
+细分或向左添加分点不会减小 $S_\pm$，因为 $(u+v)^\pm\le u^\pm+v^\pm$。在 $x_0$ 左边再添 $y$ 得分割 $P_y$，则 $S(P_y)\le T_F(x)$，故
+\begin{align*}
+S_\pm(P)\le S_\pm(P_y)\le\tfrac12\bigl(T_F(x)\pm[F(x)-F(y)]\bigr).
+\end{align*}
+让 $y\to-\infty$ 得所有 $S_\pm(P)$ 的共同上界 $\tfrac12(T_F(x)\pm[F(x)-L])$。
+
+反向，给定 $\varepsilon>0$，先选 $P$ 使 $S(P)>T_F(x)-\varepsilon$，再取 $y<x_0$ 使 $|F(y)-L|<\varepsilon$。细分后 $S(P_y)\ge S(P)$，从而
+\begin{align*}
+S_\pm(P_y)>\tfrac12\bigl(T_F(x)\pm[F(x)-L]\bigr)-\varepsilon.
+\end{align*}
+取上确界并让 $\varepsilon\downarrow0$，得到精确等式；移入常数项即为原式。
+\end{proof}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}公式把抽象单调分解解释为累计正、负增量。有限起点尚有 $F(x_0)$ 的影响，因此必须利用 $BV$ 已保证的有限极限 $F(-\infty)$ 才能得到固定常数项；不能在上确界内直接把一个任意起点替换为 $-\infty$。实值使逐点正负部有定义；全局有界变差控制全部分割和，保证上述各项有限。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch03-signed-increments-proof
+
+% SOURCE p=118; printed=103; object=ch03-nbv-definition; region=bottom
+\subcref{theorem:ch03-bv-properties}{item:ch03-bv-real-imag}及\subcref{theorem:ch03-bv-properties}{item:ch03-bv-difference-monotone}引出了 $BV$ 与 $\mathbb R$ 上复 Borel 测度空间之间的联系。为把它精确化，引入如下空间。
+\begin{definition}[规范化有界变差函数]\label{definition:ch03-nbv-definition}
+以 $NBV$（$N$ 表示“normalized”，即规范化）表示
+\begin{align*}
+NBV\triangleq\{F\in BV:F\text{ 右连续且 }F(-\infty)=0\}.
+\end{align*}
+\end{definition}
+% SUPPLEMENT: id=v14-ch03-nbv-definition-remark; parent=ch03-nbv-definition; kind=motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}半开区间公式 $\mu_F((a,b])=F(b)-F(a)$ 看不到加法常数，条件 $F(-\infty)=0$ 固定这一自由度。右连续使点值与半开区间端点约定匹配：有限测度的累积分布 $x\mapsto\mu(( -\infty,x])$ 由从上连续性必右连续。$BV$ 控制全线累计变化，对应有限全变差的复测度。每项都在全线定义；仅仅局部有界变差一般对应局部有限测度，未必是本书所说的有限复测度。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch03-nbv-definition-remark
+
+% SOURCE p=119; printed=104; object=ch03-nbv-normalization; region=top
+\begin{proposition}\label{proposition:ch03-nbv-normalization}
+若 $F\in BV$，则由 $G(x)=F(x+)-F(-\infty)$ 定义的函数 $G$ 属于 $NBV$，且 $G'=F'$ 几乎处处成立。
+\end{proposition}
+\begin{proof}
+$G\in BV$ 容易由\subcref{theorem:ch03-bv-properties}{item:ch03-bv-real-imag}及\subcref{theorem:ch03-bv-properties}{item:ch03-bv-difference-monotone}推出：若 $F$ 为实值且 $F=F_1-F_2$，其中 $F_1,F_2$ 递增，则 $G(x)=F_1(x+)-[F_2(x+)+F(-\infty)]$，仍为两个递增函数之差。
+\end{proof}
+% SUPPLEMENT: id=v14-ch03-nbv-normalization-details; parent=ch03-nbv-normalization; kind=proof+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{其余条件的补全（重构新增）。}取前一定理给出的有界递增分量。每个分量的右极限代表仍有界、递增且右连续，因此原文差分仍属于 $BV$ 且右连续；复值情形按实部虚部分别处理。若 $u$ 是一个有界递增分量，则 $u(x)\le u(x+)\le u(x+1)$，当 $x\to-\infty$ 时两端均趋于 $u(-\infty)$，夹逼给出中间项同一极限。对各分量组合，得到 $F(x+)\to F(-\infty)$，故 $G(-\infty)=0$。至此 $NBV$ 的全部条件成立。由\subcref{theorem:ch03-bv-properties}{item:ch03-bv-derivatives}，取右极限不改变几乎处处导数，再减常数也不改变导数，故 $G'=F'$ 几乎处处成立。
+\end{proof}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}这是把已有 $BV$ 函数转成测度所需规范代表的步骤：先处理右端点取值，再减去左端无穷极限。两项操作各有用途，不能只做减常数就宣称右连续，也不能只取右极限就宣称在负无穷处为零。导数保持为几乎处处结论；函数本身可能在跳跃点以及一个全局常数上发生变化。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch03-nbv-normalization-details
+
+% SOURCE p=119; printed=104; object=ch03-variation-right-continuity; number=3.28; region=upper-middle
+\begin{lemma}\label{lemma:ch03-variation-right-continuity}
+若 $F\in BV$，则 $T_F(-\infty)=0$。若 $F$ 还右连续，则 $T_F$ 也右连续。
+\end{lemma}
+% SOURCE p=119; printed=104; object=ch03-variation-right-continuity-proof; region=middle
+\begin{proof}
+若 $\varepsilon>0$ 且 $x\in\mathbb R$，选取 $x_0<\cdots<x_n=x$，使
+\begin{align*}
+\sum_{j=1}^n|F(x_j)-F(x_{j-1})|\ge T_F(x)-\varepsilon.
+\end{align*}
+由\cref{align:ch03-variation-increment}可知，$T_F(x)-T_F(x_0)\ge T_F(x)-\varepsilon$，所以当 $y\le x_0$ 时，$T_F(y)\le\varepsilon$。因此 $T_F(-\infty)=0$。
+
+现设 $F$ 右连续。给定 $x\in\mathbb R$ 和 $\varepsilon>0$，令 $\alpha=T_F(x+)-T_F(x)$，选取 $\delta>0$，使当 $0<h<\delta$ 时，$|F(x+h)-F(x)|<\varepsilon$ 且 $T_F(x+h)-T_F(x+)<\varepsilon$。对任意这样的 $h$，由\cref{align:ch03-variation-increment}，存在 $x=x_0<\cdots<x_n=x+h$，使
+\begin{align*}
+\sum_{j=1}^n|F(x_j)-F(x_{j-1})|
+\ge\tfrac34[T_F(x+h)-T_F(x)]\ge\tfrac34\alpha,
+\end{align*}
+从而
+\begin{align*}
+\sum_{j=2}^n|F(x_j)-F(x_{j-1})|
+\ge\tfrac34\alpha-|F(x_1)-F(x_0)|\ge\tfrac34\alpha-\varepsilon.
+\end{align*}
+同样，存在 $x=t_0<\cdots<t_m=x_1$，使 $\sum_{j=1}^n|F(t_j)-F(t_{j-1})|\ge\tfrac34\alpha$，从而
+\begin{align*}
+\alpha+\varepsilon
+&>T_F(x+h)-T_F(x)\\
+&\ge\sum_{j=1}^m|F(t_j)-F(t_{j-1})|+\sum_{j=2}^n|F(x_j)-F(x_{j-1})|\\
+&\ge\tfrac32\alpha-\varepsilon.
+\end{align*}
+因此 $\alpha<4\varepsilon$；由于 $\varepsilon$ 任意，$\alpha=0$。
+\end{proof}
+% SUPPLEMENT: id=v14-ch03-variation-continuity-details; parent=ch03-variation-right-continuity; kind=source-qualification+proof+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{原文下标澄清（重构新增）。}原页在引入 $t_0,\ldots,t_m$ 后的第一处求和把上限印为 $n$，而下一行拼接公式的上限为 $m$。此处应按 $t$ 分割取上限 $m$；原页写法保留在译文中，下面的完整论证采用与分点数一致的上限。
+\end{remark}
+\begin{proof}
+\textbf{退化情形与拼接步骤的补全（重构新增）。}第一部分中 $0\le T_F(y)\le\varepsilon$ 对所有 $y\le x_0$ 成立，足以由单调极限得到 $T_F(-\infty)=0$，并不要求同一个 $x_0$ 适用于所有 $\varepsilon$。
+
+第二部分的 $T_F$ 是有限有界递增函数，故右极限存在，且 $\alpha\ge0$。若 $\alpha=0$ 已得结论；只需考虑 $\alpha>0$。此时对每个 $h>0$，$V_F[x,x+h]\ge\alpha>0$，因此按上确界可选择变差和至少其 $3/4$ 的有限分割；若局部变差为零，则任意分割的和为零，但那仅属于已排除的 $\alpha=0$ 情形。所选第一个分点满足 $0<x_1-x\le h<\delta$，所以其第一项增量小于 $\varepsilon$。又 $T_F(x_1)\ge T_F(x+)$，故 $V_F[x,x_1]\ge\alpha$；再由上确界在 $[x,x_1]$ 选取 $t_0,\ldots,t_m$，其和至少 $3\alpha/4$。替换原分割的第一段，后接 $x_2,\ldots,x_n$，是 $[x,x+h]$ 的合法分割，故其总和不超过 $V_F[x,x+h]$。即使 $n=1$，后接部分为空和，论证仍成立。拼接得原文的 $\alpha<4\varepsilon$。这对每个正 $\varepsilon$ 都成立，与 $\alpha>0$ 矛盾，故 $T_F$ 右连续。
+\end{proof}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}第一结论表示有限的总路程不可能在负无穷处留下正的未计起始量；一个近似最优的有限分割之前，只能剩下任意小的路程。第二结论把 $F$ 的右连续传递给累积路程，使后者也能定义 Stieltjes 测度。单靠单调性不能保证右连续，故必须排除右侧瞬间积累正变差的可能；原证明用两次细分把假设的跳跃重复计入，导出矛盾。右连续假设确实有用：$F=\chi_{(0,\infty)}$ 在 $BV$ 中，但 $T_F(0)=0$、$T_F(x)=1$ 对 $x>0$ 成立，故 $T_F$ 在 $0$ 不右连续。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch03-variation-continuity-details
+
+% SOURCE p=119; printed=104; object=ch03-nbv-measure-correspondence; number=3.29; region=lower
+\begin{theorem}\label{theorem:ch03-nbv-measure-correspondence}
+若 $\mu$ 为 $\mathbb R$ 上的复 Borel 测度，且 $F(x)=\mu((-\infty,x])$，则 $F\in NBV$。反之，若 $F\in NBV$，则存在唯一的复 Borel 测度 $\mu_F$，使 $F(x)=\mu_F((-\infty,x])$；此外，$|\mu_F|=\mu_{T_F}$。
+\end{theorem}
+% SOURCE p=119,120; printed=104,105; object=ch03-nbv-measure-correspondence-proof; region=bottom-top
+\begin{proof}
+若 $\mu$ 为复测度，则 $\mu=\mu_1^+-\mu_1^-+\mathrm i(\mu_2^+-\mu_2^-)$，其中 $\mu_j^\pm$ 为有限测度。令 $F_j^\pm(x)=\mu_j^\pm((-\infty,x])$，则 $F_j^\pm$ 递增且右连续，$F_j^\pm(-\infty)=0$，且 $F_j^\pm(\infty)=\mu_j^\pm(\mathbb R)<\infty$。由\subcref{theorem:ch03-bv-properties}{item:ch03-bv-real-imag}及\subcref{theorem:ch03-bv-properties}{item:ch03-bv-difference-monotone}，函数 $F=F_1^+-F_1^-+\mathrm i(F_2^+-F_2^-)$ 属于 $NBV$。反之，由\cref{theorem:ch03-bv-properties,lemma:ch03-variation-right-continuity}，任意 $F\in NBV$ 均可写成上述形式，其中 $F_j^\pm$ 递增且在 $NBV$ 中。根据\cref{theorem:ch01-stieltjes-measure}，每个 $F_j^\pm$ 都给出测度 $\mu_j^\pm$，于是 $F(x)=\mu_F((-\infty,x])$，其中 $\mu_F=\mu_1^+-\mu_1^-+\mathrm i(\mu_2^+-\mu_2^-)$。$|\mu_F|=\mu_{T_F}$ 的证明纲要见\cref{exercise:ch03-variation-measure-equality}。
+\end{proof}
+% SUPPLEMENT: id=v14-ch03-nbv-correspondence-details; parent=ch03-nbv-measure-correspondence; kind=proof+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{存在性与唯一性细节的补全（重构新增）。}有限正测度的累积函数右连续，来自集合 $(-\infty,x+h]$ 随 $h\downarrow0$ 递减到 $(-\infty,x]$ 的从上连续性；在负无穷处的极限为零，来自这些半直线递减到空集。其有界性来自总质量有限，故原文的四个分量确在 $NBV$ 中。
+
+反向，把 $F$ 的实部、虚部分别记为 $u,v$。它们有界变差、右连续，且负无穷极限为零。由\cref{lemma:ch03-variation-right-continuity}，$T_u,T_v$ 也右连续且负无穷极限为零。故 $(T_u\pm u)/2$ 及 $(T_v\pm v)/2$ 是有界递增、从零开始的右连续函数，各自定义有限正测度。用这四个测度按原文线性组合，即得到所需有限复测度。
+
+为证明唯一性，若 $\nu$ 是两个候选复测度之差，则 $\nu((-\infty,x])=0$ 对所有 $x$ 成立。令 $x\to\infty$，有限全变差保证从下连续性，得到 $\nu(\mathbb R)=0$；取差得到 $\nu((a,b])=0$。任意开区间可由这类半开区间递增穷尽，故其 $\nu$ 值为零。每个开集是可数不交开区间之并，绝对收敛的可加性给出 $\nu(U)=0$。正有限 Borel 测度 $|\nu|$ 在实线上正则，因此对任意 Borel 集 $E$ 和 $\varepsilon>0$，可选开集 $U\supseteq E$ 使 $|\nu|(U\setminus E)<\varepsilon$。于是 $|\nu(E)|=|\nu(U)-\nu(U\setminus E)|\le|\nu|(U\setminus E)<\varepsilon$。让 $\varepsilon\downarrow0$ 得 $\nu(E)=0$，完成唯一性。全变差等式的三步完整证明放在下方\hyperref[solution:ch03-variation-measure-equality]{对应习题解答}中；它只使用这里已证明的存在性与唯一性。
+\end{proof}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}定理使函数的变化与测度的质量成为同一对象的两种表示。复 Borel 测度在本书定义中有限，因此全线变差有限；$NBV$ 中右连续和负无穷处为零分别匹配半直线的端点约定与常数归一化。若不固定常数，$F$ 与 $F+c$ 给出相同的区间增量，无法保持这里的累积函数等式。全变差恒等式比 $|\mu_F((a,b])|\le T_F(b)-T_F(a)$ 更强，必须在所有 Borel 集上比较测度，不能只检查单个区间后跳过推广步骤。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch03-nbv-correspondence-details
+
+% SOURCE p=120; printed=105; object=ch03-nbv-singular-absolute-intro; region=upper
+接下来一个自然的问题是：$NBV$ 中哪些函数对应于满足 $\mu\perp m$ 或 $\mu\ll m$ 的测度？下面给出一种回答。
+% SOURCE p=120; printed=105; object=ch03-nbv-singular-absolute; number=3.30; region=upper
+\begin{proposition}\label{proposition:ch03-nbv-singular-absolute}
+若 $F\in NBV$，则 $F'\in L^1(m)$。此外，$\mu_F\perp m$ 当且仅当 $F'=0$ 几乎处处成立；$\mu_F\ll m$ 当且仅当
+\begin{align*}
+F(x)=\int_{-\infty}^xF'(t)\,\mathrm dt.
+\end{align*}
+\end{proposition}
+\begin{proof}
+只需注意，$F'(x)=\lim_{r\to0}\mu_F(E_r)/m(E_r)$，其中 $E_r=(x,x+r]$ 或 $(x-r,x]$，再应用\cref{theorem:ch03-measure-differentiation}。（由\cref{theorem:ch01-stieltjes-regularity}，测度 $\mu_F$ 自动正则。）
+\end{proof}
+% SUPPLEMENT: id=v14-ch03-nbv-singular-absolute-details; parent=ch03-nbv-singular-absolute; kind=proof+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{两个等价关系的补全（重构新增）。}将有限复测度写为 $\mu_F=\lambda+f\,m$，其中 $\lambda\perp m$ 且 $f\in L^1(m)$。全变差是实线上的有限正 Borel 测度，因而正则；可应用测度微分定理。左右半开区间正规收缩，所以在一个共同满测集上，$F'$ 存在并等于 $f$。在其余零测点令 $F'=0$，便得到 $L^1$ 中的代表；其可测性也由可测差商的几乎处处极限和 Lebesgue 测度完备性得到。
+
+由 Lebesgue 分解唯一性，$\mu_F\perp m$ 当且仅当 $f=0$ 几乎处处，等价于 $F'=0$ 几乎处处。若 $\mu_F\ll m$，则 $\lambda=0$，从而对每个 $x$，$F(x)=\mu_F((-\infty,x])=\int_{-\infty}^x f(t)\,\mathrm dt=\int_{-\infty}^x F'(t)\,\mathrm dt$。反之，若这一逐点恒等式成立，则 $\mu_F$ 与 $F'\,m$ 有相同累积函数，由上一对应定理的唯一性，两测度相等，故 $\mu_F\ll m$。
+\end{proof}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}经典导数恢复的是测度的绝对连续密度；奇异部分几乎处处不可见，因此导数为零不意味着原函数恒定。$NBV$ 同时提供有限测度、规范化常数和右连续点值，才使积分恢复公式没有额外常数且对每个 $x$ 成立。$F'\in L^1$ 按几乎处处等价类理解；可微性例外集上的任意有限赋值不改变积分。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch03-nbv-singular-absolute-details
+
+% SOURCE p=120; printed=105; object=ch03-function-absolute-continuity; number=3.31; region=middle
+条件 $\mu_F\ll m$ 也可以直接用 $F$ 表达，如下所述。
+\begin{definition}[函数的绝对连续性]\label{definition:ch03-function-absolute-continuity}
+若对每个 $\varepsilon>0$，存在 $\delta>0$，使对任意有限个两两不交的区间 $(a_1,b_1),\ldots,(a_N,b_N)$，都有
+\begin{align}\label{align:ch03-function-absolute-continuity}
+\sum_{j=1}^N(b_j-a_j)<\delta
+\quad\Longrightarrow\quad
+\sum_{j=1}^N|F(b_j)-F(a_j)|<\varepsilon,
+\end{align}
+则称函数 $F:\mathbb R\to\mathbb C$ \textbf{绝对连续}。更一般地，若只要各区间 $(a_j,b_j)$ 都位于 $[a,b]$ 内，上述条件就成立，则称 $F$ \textbf{在 $[a,b]$ 上绝对连续}。
+\end{definition}
+% SUPPLEMENT: id=v14-ch03-function-ac-remark; parent=ch03-function-absolute-continuity; kind=motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}定义要求一小批总长度很短的区间，合计函数变化也很小；这比逐个控制短区间的变化更强。$\delta$ 只依赖 $\varepsilon$ 和函数，不能依赖区间的位置、数量 $N$ 或具体分割。使用绝对值防止不同区间的增量抵消；两两不交防止反复计算同一段长度和变化，并允许相邻区间共享端点。端点须在函数定义域中，局部版本只检验 $a\le a_j<b_j\le b$。有限族已足以控制任意长的有限累计和，无需在定义中预先处理无穷级数。全线绝对连续并不要求全线有界变差，例如 $F(x)=x$ 取 $\delta=\varepsilon$ 即满足定义，但全线变差无穷。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch03-function-ac-remark
+
+% SOURCE p=120; printed=105; object=ch03-ac-basic-properties; region=middle
+\begin{proposition}\label{proposition:ch03-ac-basic-properties}
+显然，若 $F$ 绝对连续，则 $F$ 一致连续（在\cref{align:ch03-function-absolute-continuity}中取 $N=1$）。另一方面，若 $F$ 处处可微且 $F'$ 有界，则 $F$ 绝对连续，因为由中值定理，$|F(b_j)-F(a_j)|\le(\max|F'|)(b_j-a_j)$。
+\end{proposition}
+% SUPPLEMENT: id=v14-ch03-ac-basic-details; parent=ch03-ac-basic-properties; kind=source-qualification+proof+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{补写证明与上界说明（重构新增）。}给定 $\varepsilon>0$，取绝对连续性提供的 $\delta$；对任意 $x<y$ 且 $y-x<\delta$，使用仅含区间 $(x,y)$ 的族，得 $|F(y)-F(x)|<\varepsilon$。交换点的顺序不改变绝对值，因此得到一致连续。
+
+原文写作 $\max|F'|$，但仅假设有界时不保证最大值取到；取任意有限上界 $M\ge\sup|F'|$ 即可。由\hyperref[item:ch03-bv-bounded-derivative]{前述中值估计}的实部旋转论证，实值或复值函数均满足 $|F(v)-F(u)|\le M(v-u)$。若 $M>0$，取 $\delta=\varepsilon/M$，对有限区间族求和即得绝对连续；若 $M=0$，所有两点函数值相等，任意正 $\delta$ 都可。这没有假定复值函数存在实中值定理形式的同一点导数等式。
+\end{proof}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}第一结论仅需定义中的单区间特例，故也适用于闭区间上的一致连续性。第二结论用统一导数上界控制所有区间上的总变化；“处处可微”使每个有限区间都可使用中值估计。只有几乎处处导数有界还不足以按同一论证推出绝对连续，因为中值定理的前提没有得到满足；后面的 Cantor 函数提供这一差别的实例。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch03-ac-basic-details
+
+% SOURCE p=120; printed=105; object=ch03-ac-measure-equivalence; number=3.32; region=middle-lower
+\begin{proposition}\label{proposition:ch03-ac-measure-equivalence}
+若 $F\in NBV$，则 $F$ 绝对连续当且仅当 $\mu_F\ll m$。
+\end{proposition}
+% SOURCE p=120; printed=105; object=ch03-ac-measure-equivalence-proof; region=lower
+\begin{proof}
+若 $\mu_F\ll m$，把\cref{theorem:ch03-absolute-continuity-epsilon-delta}用于集合 $E=\bigcup_{j=1}^N(a_j,b_j]$，即可得到 $F$ 的绝对连续性。为证逆命题，设 $E$ 为满足 $m(E)=0$ 的 Borel 集。若 $\varepsilon,\delta$ 如 $F$ 的绝对连续性定义所述，则由\cref{theorem:ch01-stieltjes-regularity}，可找到开集 $U_1\supseteq U_2\supseteq\cdots\supseteq E$，使 $m(U_1)<\delta$（因而对所有 $j$，$\mu(U_j)<\delta$），且 $\mu_F(U_j)\to\mu_F(E)$。每个 $U_j$ 都是不交开区间 $(a_j^k,b_j^k)$ 的并，而且对所有 $N$，
+\begin{align*}
+\sum_{k=1}^N|\mu_F((a_j^k,b_j^k))|
+\le\sum_{k=1}^N|F(b_j^k)-F(a_j^k)|<\varepsilon.
+\end{align*}
+令 $N\to\infty$，得到 $|\mu_F(U_j)|\le\varepsilon$，从而 $|\mu_F(E)|\le\varepsilon$。由于 $\varepsilon$ 任意，$\mu_F(E)=0$，即 $\mu_F\ll m$。
+\end{proof}
+% SUPPLEMENT: id=v14-ch03-ac-measure-details; parent=ch03-ac-measure-equivalence; kind=source-qualification+proof+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{原文记号澄清（重构新增）。}原页括号内写 $\mu(U_j)<\delta$；此处应是 Lebesgue 测度 $m(U_j)<\delta$，由 $U_j\subseteq U_1$ 得到。证明中还需要说明：正向应用小集合估计的是 $|\mu_F|$，而非仅用复数 $\mu_F(E)$ 的绝对值去控制各区间绝对增量之和。
+\end{remark}
+\begin{proof}
+\textbf{两向论证的补全（重构新增）。}若 $\mu_F\ll m$，由复 Radon–Nikodym 定理写成 $\mathrm d\mu_F=f\,\mathrm dm$，$f\in L^1(m)$，于是 $\mathrm d|\mu_F|=|f|\,\mathrm dm$。积分的绝对连续性给出：$m(E)<\delta$ 时 $|\mu_F|(E)<\varepsilon$。题设开区间两两不交，改成 $(a_j,b_j]$ 后仍两两不交（共享端点只落在其中一段）。因此
+\begin{align*}
+\sum_j|F(b_j)-F(a_j)|
+=\sum_j|\mu_F((a_j,b_j])|
+\le |\mu_F|\left(\bigcup_j(a_j,b_j]\right)<\varepsilon,
+\end{align*}
+证明绝对连续。
+
+反向设 $F$ 绝对连续，则它连续。对任意 $t$，测度从上连续性给出
+$\mu_F(\{t\})=\lim_{a\uparrow t}[F(t)-F(a)]=0$，故对有限开区间 $(a,b)$ 有 $\mu_F((a,b))=F(b)-F(a)$。给定零测 Borel 集 $E$，先用 $m$ 的外正则性选开集 $V\supseteq E$，$m(V)<\delta$；再用有限正则测度 $|\mu_F|$ 选开集 $W_j\supseteq E$，使 $|\mu_F|(W_j\setminus E)<1/j$。置 $U_j=V\cap W_1\cap\cdots\cap W_j$，则它们递减、包含 $E$，$m(U_j)<\delta$，且 $|\mu_F(U_j)-\mu_F(E)|<1/j$。
+
+每个 $U_j$ 的不交开区间分解至多可数；由于其 Lebesgue 测度有限，不会出现无界分量。任意有限个分量的总长度小于 $\delta$，故相应绝对增量和小于 $\varepsilon$。取全部分量的非负级数极限，绝对值之和至多 $\varepsilon$；可数可加性于是给出 $|\mu_F(U_j)|\le\varepsilon$。再令 $j\to\infty$ 和 $\varepsilon\downarrow0$，得到 $\mu_F(E)=0$。这对任意零测 Borel 集成立，正是绝对连续性。
+\end{proof}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}函数定义中的“小总长度导致小总增量”恰好排除集中在 Lebesgue 零测集上的测度质量。$NBV$ 已保证有对应有限复测度，正向才能对其全变差使用小集合估计，反向才能用正则性同时逼近集合与测度值。函数绝对连续蕴含连续性，反向证明中的开、半开区间端点转换因此合法；若保留跳跃，单点质量不能被直接忽略。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch03-ac-measure-details
+
+% SOURCE p=120; printed=105; object=ch03-indefinite-integral; number=3.33; region=bottom
+\begin{corollary}\label{corollary:ch03-indefinite-integral}
+若 $f\in L^1(m)$，则函数 $F(x)=\int_{-\infty}^xf(t)\,\mathrm dt$ 属于 $NBV$ 且绝对连续，并且 $f=F'$ 几乎处处成立。反之，若 $F\in NBV$ 绝对连续，则 $F'\in L^1(m)$ 且 $F(x)=\int_{-\infty}^xF'(t)\,\mathrm dt$。
+\end{corollary}
+\begin{proof}
+这直接由\cref{proposition:ch03-nbv-singular-absolute,proposition:ch03-ac-measure-equivalence}推出。
+\end{proof}
+% SUPPLEMENT: id=v14-ch03-indefinite-integral-details; parent=ch03-indefinite-integral; kind=proof+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{补写推导（重构新增）。}先定义有限复测度 $\nu(E)=\int_Ef\,\mathrm dm$；它的累积函数正是 $F$，所以由对应定理 $F\in NBV$ 且 $\mu_F=\nu$。由 $\nu\ll m$ 和上一命题，$F$ 绝对连续。测度微分定理给 $F'=f$ 几乎处处。反之，绝对连续的 $F\in NBV$ 满足 $\mu_F\ll m$，再用\cref{proposition:ch03-nbv-singular-absolute}即可同时得到可积性和逐点积分恢复公式。
+\end{proof}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}该推论明确积分与微分何时相互恢复。全线 $L^1$ 保证测度有限及规范化累积函数；只局部可积时仍可在有限区间积分，但未必有这里从负无穷开始的有限积分。逆向中的绝对连续排除了奇异部分，$NBV$ 固定积分常数；不能仅凭几乎处处可微就得到恢复公式。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch03-indefinite-integral-details
+
+% SOURCE p=121; printed=106; object=ch03-ac-local-intro; region=top
+若考虑有界区间上的函数，这个结果还可稍作改进。
+% SOURCE p=121; printed=106; object=ch03-ac-implies-bv; number=3.34; region=upper
+\begin{lemma}\label{lemma:ch03-ac-implies-bv}
+若 $F$ 在 $[a,b]$ 上绝对连续，则 $F\in BV([a,b])$。
+\end{lemma}
+\begin{proof}
+取绝对连续性定义中对应于 $\varepsilon=1$ 的 $\delta$，并令 $N$ 为小于 $\delta^{-1}(b-a)+1$ 的最大整数。若 $a=x_0<\cdots<x_n=b$，必要时加入更多分点，可以把区间 $(x_{j-1},x_j)$ 分成至多 $N$ 组相邻区间，使每组总长度小于 $\delta$。每组中的和 $\sum|F(x_j)-F(x_{j-1})|$ 至多为 $1$，所以 $F$ 在 $[a,b]$ 上的全变差至多为 $N$。
+\end{proof}
+% SUPPLEMENT: id=v14-ch03-ac-bv-grouping-details; parent=ch03-ac-implies-bv; kind=source-qualification+proof+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{整数端点修正（重构新增）。}原文的 $N$ 若按“严格小于”理解，当 $(b-a)/\delta$ 恰为整数时等于这个比值；此时不可能把总长 $b-a$ 分为至多 $N$ 个每个长度严格小于 $\delta$ 的组。改取 $N=\lfloor(b-a)/\delta\rfloor+1$，便始终有 $(b-a)/N<\delta$，结论不变。
+\end{remark}
+\begin{proof}
+\textbf{完整分组证明（重构新增）。}设 $a<b$；退化区间的变差为零。取上述修正后的 $N$，先把 $[a,b]$ 等分成 $N$ 段，每段长度小于 $\delta$。对任意原分割加入这些固定等分点，细分后的变差和不小于原和。把细分区间按所在等分段分组，每组是有限不交开区间族，总长小于 $\delta$；绝对连续性使每组绝对增量和小于 $1$。因此任意原分割和都小于 $N$，其上确界至多为 $N<\infty$，即得有界变差。
+\end{proof}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}绝对连续控制小总长度的变化，有限区间可被有限个这样的短段覆盖，故得到总变化的统一上界。有限长度用于有限分组；全线绝对连续的 $F(x)=x$ 表明不能省去有界区间的范围。细分不减变差和，确保估计适用于任意原分割，而非仅适用于等距分割。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch03-ac-bv-grouping-details
+
+% SOURCE p=121; printed=106; object=ch03-fundamental-calculus; number=3.35; region=upper-middle
+\begin{theorem}[Lebesgue 积分的微积分基本定理]\label{theorem:ch03-fundamental-calculus}
+若 $-\infty<a<b<\infty$ 且 $F:[a,b]\to\mathbb C$，则下列条件等价：
+\begin{enumerate}
+\item\label{item:ch03-ftc-ac} $F$ 在 $[a,b]$ 上绝对连续。
+\item\label{item:ch03-ftc-integral} 对某个 $f\in L^1([a,b],m)$，有 $F(x)-F(a)=\int_a^xf(t)\,\mathrm dt$。
+\item\label{item:ch03-ftc-derivative} $F$ 在 $[a,b]$ 上几乎处处可微，$F'\in L^1([a,b],m)$，且 $F(x)-F(a)=\int_a^xF'(t)\,\mathrm dt$。
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+为证明\subcref{theorem:ch03-fundamental-calculus}{item:ch03-ftc-ac}蕴含\subcref{theorem:ch03-fundamental-calculus}{item:ch03-ftc-derivative}，从 $F$ 中减去一个常数，可设 $F(a)=0$。若对 $x<a$ 置 $F(x)=0$、对 $x>b$ 置 $F(x)=F(b)$，则由\cref{lemma:ch03-ac-implies-bv}，$F\in NBV$，所以\subcref{theorem:ch03-fundamental-calculus}{item:ch03-ftc-derivative}由\cref{corollary:ch03-indefinite-integral}推出。\subcref{theorem:ch03-fundamental-calculus}{item:ch03-ftc-derivative}蕴含\subcref{theorem:ch03-fundamental-calculus}{item:ch03-ftc-integral}是显然的。最后，在 $t\notin[a,b]$ 时置 $f(t)=0$，再应用\cref{corollary:ch03-indefinite-integral}，便由\subcref{theorem:ch03-fundamental-calculus}{item:ch03-ftc-integral}得到\subcref{theorem:ch03-fundamental-calculus}{item:ch03-ftc-ac}。
+\end{proof}
+% SUPPLEMENT: id=v14-ch03-ftc-details; parent=ch03-fundamental-calculus; kind=proof+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{延拓步骤及三个方向的补全（重构新增）。}假设第一项，先减去 $F(a)$，再作原文的常值延拓 $\widetilde F$。绝对连续蕴含端点处连续，故延拓全线连续；局部有界变差和常值延拓命题给出全线有界变差，且负无穷极限为零，因此 $\widetilde F\in NBV$。还必须验证全线绝对连续：对实线上的有限不交区间族，把每段裁到 $[a,b]$；未相交的段增量为零，相交段的端点经裁切后增量保持不变，总长不增，所得非退化区间内部仍两两不交。于是原局部绝对连续性给出全线定义的同一估计。应用不定积分推论，$\widetilde F'$ 可积且恢复 $\widetilde F$；区间外导数为零，故在 $[a,b]$ 上得到第三项，重新加回常数即得原式。端点的两个点不影响几乎处处结论。
+
+第三项到第二项取 $f=F'$，在导数不存在的零测集上令其为零即可。第二项到第一项，把 $f$ 零延拓为全线 $L^1$ 函数，其从负无穷开始的不定积分全线绝对连续；在 $[a,b]$ 上它等于 $F(x)-F(a)$，限制和加常数均保留绝对连续定义。因此三项等价。
+\end{proof}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}“绝对连续”恰好刻画能由可积密度完整恢复的函数。条件 $a<b$ 且两个端点有限，使局部有界变差和常值延拓适用；复值通过实部虚部或复积分统一处理。第二项要求同一个 $f$ 对每个 $x$ 给出积分表示，第三项不仅要求几乎处处有导数且导数可积，还保留恢复恒等式；后者不能省略，奇异连续函数的导数虽几乎处处为零，却可以非恒定。$F(a)$ 是任意原函数的积分常数，不能在结论中无说明地删去。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch03-ftc-details
+
+% SOURCE p=121; printed=106; object=ch03-discrete-continuous-measures; region=middle
+下面关于 $\mathbb R^n$ 上 Borel 测度的分解有时很重要。
+\begin{definition}[离散测度与连续测度]\label{definition:ch03-discrete-continuous-measures}
+若存在可数集 $\{x_j\}\subseteq\mathbb R^n$ 和复数 $c_j$，使 $\sum_j|c_j|<\infty$ 且 $\mu=\sum_jc_j\delta_{x_j}$，其中 $\delta_x$ 为 $x$ 处的点质量，则称 $\mathbb R^n$ 上的复 Borel 测度 $\mu$ \textbf{离散}。另一方面，若对所有 $x\in\mathbb R^n$，均有 $\mu(\{x\})=0$，则称 $\mu$ \textbf{连续}。
+\end{definition}
+% SUPPLEMENT: id=v14-ch03-discrete-definition-remark; parent=ch03-discrete-continuous-measures; kind=proof+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}离散测度把全部质量集中在至多可数个点，并由各点的复权重描述；$\sum_j|c_j|<\infty$ 保证定义出的级数在每个 Borel 集上绝对收敛且总变差有限，可交换可数求和以验证可加性。重复点可以合并权重，得到不同支撑点的表示。这里“连续”指所有单点的测度为零，不是关于某个拓扑变量的连续函数概念，也不等于关于 Lebesgue 测度绝对连续。对复测度，$|\mu|(\{x\})=|\mu(\{x\})|$，可由极分解在单点上积分直接得到，因此单点值为零同时排除了其全变差在该点的质量。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch03-discrete-definition-remark
+
+% SOURCE p=121; printed=106; object=ch03-discrete-continuous-decomposition; region=middle-lower
+\begin{proposition}\label{proposition:ch03-discrete-continuous-decomposition}
+任意复测度 $\mu$ 均可唯一地写为 $\mu=\mu_d+\mu_c$，其中 $\mu_d$ 离散，$\mu_c$ 连续。
+\end{proposition}
+\begin{proof}
+事实上，令 $E=\{x:\mu(\{x\})\ne0\}$。对 $E$ 的任意可数子集 $F$，级数 $\sum_{x\in F}\mu(\{x\})$ 绝对收敛（其和为 $\mu(F)$），所以对每个 $k$，$\{x\in E:|\mu(\{x\})|>k^{-1}\}$ 有限，从而 $E$ 本身可数。因此，$\mu_d(A)=\mu(A\cap E)$ 离散，$\mu_c(A)=\mu(A\setminus E)$ 连续。
+\end{proof}
+% SUPPLEMENT: id=v14-ch03-discrete-decomposition-details; parent=ch03-discrete-continuous-decomposition; kind=proof+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{可数性及唯一性的补全（重构新增）。}记 $E_k=\{x:|\mu(\{x\})|>1/k\}$。对其任意有限子集 $A$，有 $\#A/k<\sum_{x\in A}|\mu(\{x\})|\le|\mu|(\mathbb R^n)<\infty$，所以 $E_k$ 只能有限；否则可选任意大的有限子集而矛盾。每个非零单点质量都大于某个 $1/k$，故 $E=\bigcup_kE_k$ 可数，因而是 Borel 集。枚举 $E$，得到 $\sum_{x\in E}|\mu(\{x\})|=|\mu|(E)<\infty$，所以限制 $\mu_d(A)=\mu(A\cap E)$ 确为离散测度，余下限制在每个单点的值均为零。
+
+若另有 $\mu=\nu_d+\nu_c$，对每个 $x$，连续部分的单点值为零，故 $\nu_d(\{x\})=\mu(\{x\})=\mu_d(\{x\})$。两个离散测度支撑集的可数并承载它们全部质量；在该可数集上按单点可加，便知二者在所有 Borel 集上相等。于是 $\nu_d=\mu_d$，相减得 $\nu_c=\mu_c$，证明唯一性。
+\end{proof}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}逐个取出非零点质量，便得到离散部分；剩余部分没有单点原子。有限全变差保证非零点质量至多可数且权重绝对可求和，是复测度条件的具体用途。$\mathbb R^n$ 的单点和可数集均为 Borel 集，使限制测度和支撑集的说法合法。唯一性来自每一点质量被原测度固定，不依赖任意枚举方式。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch03-discrete-decomposition-details
+
+% SOURCE p=121; printed=106; object=ch03-three-part-decomposition; region=lower
+\begin{proposition}\label{proposition:ch03-three-part-decomposition}
+显然，若 $\mu$ 离散，则 $\mu\perp m$；若 $\mu\ll m$，则 $\mu$ 连续。因此，由\cref{theorem:ch03-measure-differentiation}，任意（正则的）$\mathbb R^n$ 上复 Borel 测度均可唯一地写为
+\begin{align*}
+\mu=\mu_d+\mu_{ac}+\mu_{sc},
+\end{align*}
+其中 $\mu_d$ 离散，$\mu_{ac}$ 关于 $m$ 绝对连续，而 $\mu_{sc}$ 是一个“奇异连续”测度。
+\end{proposition}
+\begin{definition}[奇异连续测度]\label{definition:ch03-singular-continuous-measure}
+称测度 $\mu_{sc}$ \textbf{奇异连续}，是指 $\mu_{sc}$ 连续但 $\mu_{sc}\perp m$。
+\end{definition}
+% SUPPLEMENT: id=v14-ch03-three-part-details; parent=ch03-three-part-decomposition; kind=proof+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{补写证明（重构新增）。}设 $n\ge1$。离散测度支撑在可数集，而 Lebesgue 测度对可数集为零，故离散测度与 $m$ 奇异。若 $\nu\ll m$，由 $m(\{x\})=0$ 得 $\nu(\{x\})=0$，所以绝对连续测度连续。
+
+先作 Lebesgue 分解 $\mu=\nu+\lambda$，其中 $\nu\ll m$、$\lambda\perp m$；再作 $\lambda=\lambda_d+\lambda_c$ 的离散与连续分解。两个部分都是 $\lambda$ 在互补 Borel 集上的限制，故仍支撑在 $\lambda$ 的同一 Lebesgue 零测支撑集上，从而均奇异。置 $\mu_{ac}=\nu,\mu_d=\lambda_d,\mu_{sc}=\lambda_c$，得到所需分解。任何另一组三项分解的离散项与奇异连续项之和仍奇异；Lebesgue 分解唯一性先固定绝对连续项及奇异项总和，再由离散连续分解唯一性固定余下两项。
+\end{proof}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}这三部分分别记录点质量、可积密度和不集中于点的零测集质量。奇异连续要求同时满足无单点质量和与 $m$ 奇异；两个条件不能相互替代。正则性便于原文调用测度微分定理；上述纯分解证明使用有限复测度的 Lebesgue 分解和可数支撑限制，不需要额外逐点微分。维数是正整数，保证 Lebesgue 测度的单点为零。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch03-three-part-details
+
+% SOURCE p=121; printed=106; object=ch03-singular-continuous-examples; region=bottom
+\begin{examples}\label{examples:ch03-singular-continuous-examples}
+当 $n>1$ 时，$\mathbb R^n$ 上非零奇异连续测度的存在相当明显；\cref{section:ch02-polar-coordinates}中讨论的单位球面上的表面测度就是一个例子。$n=1$ 时，它们的存在不那么明显；通过\cref{theorem:ch03-nbv-measure-correspondence}，它们对应于连续但 $F'=0$ 几乎处处的非恒定函数 $F\in NBV$。一个这样的函数是\cref{section:ch01-borel-measures-real-line}构造的 Cantor 函数（对 $x<0$ 置 $F(x)=0$，对 $x>1$ 置 $F(x)=1$，从而延拓到 $\mathbb R$）。更令人惊讶的是，还存在严格递增的连续函数 $F$，使 $F'=0$ 几乎处处；见\cref{exercise:ch03-strict-singular-function}。
+\end{examples}
+
+% SUPPLEMENT: id=v14-ch03-singular-examples-proof; parent=ch03-singular-continuous-examples; kind=proof+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{例子的补写验证（重构新增）。}当 $n>1$，单位球面的 $n$ 维 Lebesgue 测度为零：它包含于每个薄球壳 $\{1-\varepsilon<|x|<1+\varepsilon\}$，后者的体积至多为 $m(B(1,0))[(1+\varepsilon)^n-(1-\varepsilon)^n]$（$0<\varepsilon<1$），因为该球壳包含于外开球删去内开球后的集合。此上界趋于零。表面测度支撑在球面上，故奇异；它有限且旋转不变。若一个球面单点质量为正，旋转传递性使所有点有同样正质量；球面上有任意多个不同点，于是总质量无限，矛盾。因此它无单点质量，又因球体体积公式知总表面积非零，得到非零奇异连续测度。
+
+在一维，$NBV$ 函数连续当且仅当对应测度的单点质量 $F(x)-F(x-)$ 全为零：右连续已在定义中，左侧跳跃消失即得连续。由\cref{proposition:ch03-nbv-singular-absolute}，导数几乎处处为零等价于测度奇异。函数非恒定等价于规范化测度非零，故得到原文的对应。Cantor 函数连续递增，延拓后属于 $NBV$；它在 Cantor 零测集的开补集上局部常值，所以导数几乎处处为零，而端点值为 $0,1$，故非恒定。严格递增的例子由\hyperref[solution:ch03-strict-singular-function]{对应习题解答}具体构造并验证。
+\end{proof}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}这些例子展示“连续”与“绝对连续”的差别。$n>1$ 时球面有无限多个点并承载非零表面测度；$n=1$ 的单位球面只有两个点，其表面测度是离散的，不能作同一个无原子例子。一维 Cantor 构造把增长集中在不可数零测集上，避开单点质量，却仍保留非零总增长。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch03-singular-examples-proof
+
+% SOURCE p=122; printed=107; object=ch03-stieltjes-integral; region=top
+\begin{definition}[Lebesgue–Stieltjes 积分]\label{definition:ch03-stieltjes-integral}
+若 $F\in NBV$，通常把函数 $g$ 关于测度 $\mu_F$ 的积分记为 $\int g\,\mathrm dF$ 或 $\int g(x)\,\mathrm dF(x)$；这种积分称为 \textbf{Lebesgue–Stieltjes 积分}。
+\end{definition}
+最后给出 Lebesgue–Stieltjes 积分的一个分部积分公式；这个结果的其他变体见\cref{exercise:ch03-stieltjes-jump-parts,exercise:ch03-ac-product-parts}。
+% SUPPLEMENT: id=v14-ch03-stieltjes-definition-remark; parent=ch03-stieltjes-integral; kind=proof+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}记号 $\mathrm dF$ 把积分对函数增量的依赖显示出来，实际定义仍是对 $\mu_F$ 的 Lebesgue 积分，包含跳跃质量和奇异连续质量，不仅是 $F'(x)\,\mathrm dx$。复值情形通常要求 $g\in L^1(|\mu_F|)$；若测度为正，还可对非负可测函数取扩展值积分。$F\in NBV$ 保证对应测度唯一且有限，并固定半开区间端点和常数约定。只有在已经证明 $F$ 绝对连续时，才可将 $\mathrm dF$ 全部替换为 $F'\,\mathrm dx$。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch03-stieltjes-definition-remark
+
+% SOURCE p=122; printed=107; object=ch03-stieltjes-parts; number=3.36; region=upper
+\begin{theorem}\label{theorem:ch03-stieltjes-parts}
+若 $F,G\in NBV$，且其中至少一个连续，则对 $-\infty<a<b<\infty$，
+\begin{align*}
+\int_{(a,b]}F\,\mathrm dG+\int_{(a,b]}G\,\mathrm dF
+=F(b)G(b)-F(a)G(a).
+\end{align*}
+\end{theorem}
+% SOURCE p=122; printed=107; object=ch03-stieltjes-parts-proof; region=middle
+\begin{proof}
+由\subcref{theorem:ch03-bv-properties}{item:ch03-bv-real-imag}及\subcref{theorem:ch03-bv-properties}{item:ch03-bv-difference-monotone}，$F,G$ 是 $NBV$ 中递增函数的线性组合，所以经简单计算，只须假定 $F,G$ 递增。不妨设 $G$ 连续，并令 $\Omega=\{(x,y):a<x\le y\le b\}$。用 Fubini 定理以两种方式计算 $\mu_F\times\mu_G(\Omega)$：
+\begin{align*}
+\mu_F\times\mu_G(\Omega)
+&=\int_{(a,b]}\int_{(a,y]}\mathrm dF(x)\,\mathrm dG(y)\\
+&=\int_{(a,b]}[F(y)-F(a)]\,\mathrm dG(y)\\
+&=\int_{(a,b]}F\,\mathrm dG-F(a)[G(b)-G(a)],
+\end{align*}
+而由于 $G(x)=G(x-)$，
+\begin{align*}
+\mu_F\times\mu_G(\Omega)
+&=\int_{(a,b]}\int_{[x,b]}\mathrm dG(y)\,\mathrm dF(x)\\
+&=\int_{(a,b]}[G(b)-G(x)]\,\mathrm dF(x)\\
+&=G(b)[F(b)-F(a)]-\int_{(a,b]}G\,\mathrm dF.
+\end{align*}
+两式相减，得到所需结果。
+\end{proof}
+
+% SUPPLEMENT: id=v14-ch03-stieltjes-parts-details; parent=ch03-stieltjes-parts; kind=proof+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{复值推广、端点与可积性的补全（重构新增）。}令 $\mu=\mu_F,\nu=\mu_G$；两个函数有界且 Borel 可测，两个测度全变差有限，因此原文的一重积分及有界核 $\chi_\Omega$ 的二重积分都绝对可积。复测度的 Fubini 计算可把两测度分别拆为四个有限正测度的线性组合，对每一对使用正测度版本，再相加；无需未经验证地假定任意函数分解中的单调分量保留连续性。
+
+不妨设 $G$ 连续。测度区间值为 $\mu((a,y])=F(y)-F(a)$ 和 $\nu([x,b])=G(b)-G(x-)=G(b)-G(x)$。按两种次序积分 $\chi_\Omega$，严格得到原文两式；将它们的右端相等后移项，交叉常数相消，便得结论。若连续者是 $F$，交换两个函数即可。这一推导也可从下方\hyperref[solution:ch03-stieltjes-jump-parts]{含跳跃项的习题证明}得到，但本补证不依赖它。
+\end{proof}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}分部积分来自同一三角区域的两种切片。至少一个函数连续，使对角线处相应测度的单点质量为零，开闭端点的差异消失。若两者有共同跳跃，公式一般失败：取 $F=G=\chi_{[0,\infty)}\in NBV$，$a=-1,b=1$，两个积分均为 $1$，左侧为 $2$，右侧为 $1$。因此不能直接删除连续性条件；允许跳跃的修正式在对应习题中给出。有限区间及 $NBV$ 使函数有界、积分合法，半开区间 $(a,b]$ 决定右端使用 $F(a),G(a)$。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch03-stieltjes-parts-details
+
+% SOURCE p=122; printed=107; object=ch03-bv-exercises-title; region=lower
+\Needspace{10\baselineskip}
+\subsection*{习题}
+% SOURCE p=122; printed=107; object=ch03-ex27; number=27; region=lower
+\begin{exercise}\label{exercise:ch03-bv-examples-proof}
+验证\cref{examples:ch03-bv-examples}中的断言。
+\end{exercise}
+% SUPPLEMENT: id=v14-ch03-ex27-solution; parent=ch03-ex27; kind=solution; origin=independent-derivation
+\begin{solution}
+\phantomsection\label{solution:ch03-bv-examples-proof}
+\textbf{习题解答（重构新增）。}本题的五个断言已在\cref{examples:ch03-bv-examples}之后的“重构新增”完整验证中逐项证明：第一项由单调增量望远镜相消得到精确变差；第二项用三角不等式；第三项用实部旋转后的实中值定理；第四项以交替极值构造任意大的全线变差；第五项用趋零极值点上的调和级数下界得到局部无限变差。各证明只使用全变差定义及先前基本分析结论，没有将本题作为未证前提。
+\end{solution}
+% END SUPPLEMENT: id=v14-ch03-ex27-solution
+% SOURCE p=122; printed=107; object=ch03-ex28; number=28; region=lower
+\begin{exercise}\label{exercise:ch03-variation-measure-equality}
+若 $F\in NBV$，令 $G(x)=|\mu_F|((-\infty,x])$。通过以下步骤证明 $G=T_F$，从而证明 $|\mu_F|=\mu_{T_F}$。
+\begin{enumerate}
+\item\label{item:ch03-variation-first-bound} 由 $T_F$ 的定义，$T_F\le G$。
+\item\label{item:ch03-variation-interval-bound} 当 $E$ 为区间时，$|\mu_F(E)|\le\mu_{T_F}(E)$，从而当 $E$ 为 Borel 集时也成立。
+\item\label{item:ch03-variation-second-bound} $|\mu_F|\le\mu_{T_F}$，从而 $G\le T_F$。（使用\cref{exercise:ch03-complex-variation-suprema}。）
+\end{enumerate}
+\end{exercise}
+% SUPPLEMENT: id=v14-ch03-ex28-solution; parent=ch03-ex28; kind=solution; origin=independent-derivation
+\begin{solution}
+\phantomsection\label{solution:ch03-variation-measure-equality}
+\textbf{习题解答（重构新增）。}记 $\mu=\mu_F$、$\nu=\mu_{T_F}$；已证 $T_F$ 有界、递增、右连续且负无穷极限为零，所以 $\nu$ 是有限正 Borel 测度，无须预先假定所求全变差等式。
+\begin{enumerate}
+\item 对任意 $x_0<\cdots<x_n=x$，半开区间两两不交，故
+\begin{align*}
+\sum_{j=1}^n|F(x_j)-F(x_{j-1})|
+&=\sum_{j=1}^n|\mu((x_{j-1},x_j])|\\
+&\le\sum_{j=1}^n|\mu|((x_{j-1},x_j])
+=|\mu|((x_0,x])\le G(x).
+\end{align*}
+此式中 $|\mu|((x_{j-1},x_j])$ 是正测度值；对所有分割取上确界得到 $T_F(x)\le G(x)$。
+\item 对有限半开区间，有
+\begin{align*}
+|\mu((a,b])|=|F(b)-F(a)|\le V_F[a,b]=T_F(b)-T_F(a)=\nu((a,b]).
+\end{align*}
+用半开区间的递增或递减逼近，并用两有限测度的连续性，可推广到所有开、闭、半开、有界或无界区间及单点；空集也满足不等式。任意开集是不交开区间的可数并，故三角不等式及可数可加性给出 $|\mu(U)|\le\nu(U)$。
+
+正有限 Borel 测度 $\eta=|\mu|+\nu$ 在实线上正则。给定任意 Borel 集 $E$，选开集 $U\supseteq E$，使 $\eta(U\setminus E)<\varepsilon$，则
+\begin{align*}
+|\mu(E)|&\le|\mu(U)|+|\mu|(U\setminus E)\\
+&\le\nu(U)+|\mu|(U\setminus E)\le\nu(E)+\varepsilon.
+\end{align*}
+让 $\varepsilon\downarrow0$，完成推广到所有 Borel 集的步骤。
+\item 下面补出有限分割刻画的必要部分，使本解答不依赖尚未解答的前面习题。由极分解写 $\mathrm d\mu=h\,\mathrm d|\mu|$，其中 $|h|=1$ 几乎处处，在零测例外集改取 $h=1$。给定 $\varepsilon>0$，把单位圆分为有限个 Borel 小弧，在每段选单位复数 $c_j$，使其内的 $h$ 满足 $|h-c_j|<\varepsilon$。由这些弧的原像把 $E$ 分成有限不交可测集 $E_j$。于是
+\begin{align*}
+\left|\mu(E_j)-c_j|\mu|(E_j)\right|
+&\le\int_{E_j}|h-c_j|\,\mathrm d|\mu|\le\varepsilon|\mu|(E_j),\\
+\sum_j|\mu(E_j)|&\ge(1-\varepsilon)|\mu|(E).
+\end{align*}
+由上一项，左端至多为 $\sum_j\nu(E_j)=\nu(E)$。令 $\varepsilon\downarrow0$ 得 $|\mu|(E)\le\nu(E)$。特别取 $E=(-\infty,x]$，得 $G(x)\le\nu((-\infty,x])=T_F(x)$。与第一项合并，$G=T_F$。有限正测度的累积函数确定测度，故 $|\mu_F|=\mu_{T_F}$。
+\end{enumerate}
+\end{solution}
+% END SUPPLEMENT: id=v14-ch03-ex28-solution
+% SOURCE p=122; printed=107; object=ch03-ex29; number=29; region=lower
+\begin{exercise}\label{exercise:ch03-jordan-measure-functions}
+若 $F\in NBV$ 为实值函数，则 $\mu_F^+=\mu_P$ 且 $\mu_F^-=\mu_N$，其中 $P,N$ 为 $F$ 的正变差与负变差。（使用\cref{exercise:ch03-variation-measure-equality}。）
+\end{exercise}
+% SUPPLEMENT: id=v14-ch03-ex29-solution; parent=ch03-ex29; kind=solution; origin=independent-derivation
+\begin{solution}
+\phantomsection\label{solution:ch03-jordan-measure-functions}
+\textbf{习题解答（重构新增）。}记 $\mu=\mu_F$。由上一题，$|\mu|=\mu_{T_F}$；符号测度的 Jordan 分解给出 $\mu^+=(|\mu|+\mu)/2$、$\mu^-=(|\mu|-\mu)/2$。这两个正测度的累积函数分别为 $(T_F+F)/2=P$ 和 $(T_F-F)/2=N$。由累积函数的唯一性，$\mu_F^+=\mu_P$、$\mu_F^-=\mu_N$。这里 $P,N$ 均递增、右连续且在负无穷处为零，故确实定义题目所写的正测度。实值假设用于符号测度的正负分解；复测度一般没有这种正负二分。
+\end{solution}
+% END SUPPLEMENT: id=v14-ch03-ex29-solution
+
+% SOURCE p=122; printed=107; object=ch03-ex30; number=30; region=bottom
+\begin{exercise}\label{exercise:ch03-rational-discontinuities}
+构造 $\mathbb R$ 上一个递增函数，使其不连续点集恰为 $\mathbb Q$。
+\end{exercise}
+% SUPPLEMENT: id=v14-ch03-ex30-solution; parent=ch03-ex30; kind=solution; origin=independent-derivation
+\begin{solution}
+\phantomsection\label{solution:ch03-rational-discontinuities}
+\textbf{习题解答（重构新增）。}不重复枚举 $\mathbb Q=\{q_j\}_{j\ge1}$，令
+\begin{align*}
+F(x)=\sum_{j=1}^{\infty}2^{-j}\chi_{[q_j,\infty)}(x).
+\end{align*}
+每项非负递增，且和被 $1$ 控制，所以 $F$ 为实值递增函数。若 $x\notin\mathbb Q$，给定 $\varepsilon>0$，取 $N$ 使尾和 $\sum_{j>N}2^{-j}<\varepsilon$。在一个避开 $q_1,\ldots,q_N$ 的 $x$ 邻域内，前 $N$ 项均不变；任意两点的尾部值之差绝对值小于 $\varepsilon$，所以 $F$ 在 $x$ 连续。若 $x=q_k$，当 $y<x$ 时第 $k$ 项贡献跳跃 $2^{-k}$，其他项的增量均非负，故 $F(x)-F(y)\ge2^{-k}$。让 $y\uparrow x$，得到不连续。因此不连续点集恰为 $\mathbb Q$。证明既排除了额外不连续点，也保证没有指定点因级数相消而被遗漏。
+\end{solution}
+% END SUPPLEMENT: id=v14-ch03-ex30-solution
+
+% SOURCE p=123; printed=108; object=ch03-ex31; number=31; region=top
+\begin{exercise}\label{exercise:ch03-differentiable-non-bv}
+对 $x\ne0$，令 $F(x)=x^2\sin(x^{-1})$、$G(x)=x^2\sin(x^{-2})$，并令 $F(0)=G(0)=0$。
+\begin{enumerate}
+\item\label{item:ch03-oscillatory-differentiability} $F,G$ 处处可微（包括 $x=0$）。
+\item\label{item:ch03-oscillatory-variation} $F\in BV([-1,1])$，但 $G\notin BV([-1,1])$。
+\end{enumerate}
+\end{exercise}
+% SUPPLEMENT: id=v14-ch03-ex31-solution; parent=ch03-ex31; kind=solution; origin=independent-derivation
+\begin{solution}
+\phantomsection\label{solution:ch03-differentiable-non-bv}
+\textbf{习题解答（重构新增）。}\begin{enumerate}
+\item 当 $x\ne0$ 时按乘积与链式法则，
+\begin{align*}
+F'(x)&=2x\sin(x^{-1})-\cos(x^{-1}),\\
+G'(x)&=2x\sin(x^{-2})-2x^{-1}\cos(x^{-2}).
+\end{align*}
+在 $0$ 处，$F(h)/h=h\sin(h^{-1})$ 与 $G(h)/h=h\sin(h^{-2})$ 都由绝对值不超过 $|h|$ 而趋零。因此两导数在 $0$ 也存在且为零。
+\item 在 $[-1,1]$ 上，$|F'|\le3$。实中值定理使任意分割和至多为 $3\cdot2=6$，故 $F\in BV([-1,1])$。令 $t_k=(\pi/2+k\pi)^{-1/2}$，则 $t_k\downarrow0$ 且 $G(t_k)=(-1)^kt_k^2$。固定足够大的 $K$，对 $N>K$ 按递增次序取 $t_N,\ldots,t_K$，再加入 $-1,1$；所得合法分割和至少为
+\begin{align*}
+\sum_{k=K}^{N-1}|G(t_k)-G(t_{k+1})|
+=\sum_{k=K}^{N-1}(t_k^2+t_{k+1}^2).
+\end{align*}
+由于 $t_k^2\ge1/(\pi(k+1))$，该和无界，故 $G\notin BV([-1,1])$。仅有处处可微并不控制总变化。
+\end{enumerate}
+\end{solution}
+% END SUPPLEMENT: id=v14-ch03-ex31-solution
+
+% SOURCE p=123; printed=108; object=ch03-ex32; number=32; region=upper
+\begin{exercise}\label{exercise:ch03-variation-lower-semicontinuity}
+若 $F_1,F_2,\ldots,F\in NBV$ 且 $F_j\to F$ 逐点成立，则 $T_F\le\liminf T_{F_j}$。
+\end{exercise}
+% SUPPLEMENT: id=v14-ch03-ex32-solution; parent=ch03-ex32; kind=solution; origin=independent-derivation
+\begin{solution}
+\phantomsection\label{solution:ch03-variation-lower-semicontinuity}
+\textbf{习题解答（重构新增）。}固定 $x$ 及任一有限分割 $P:x_0<\cdots<x_n=x$。逐点收敛保证有限和收敛：
+\begin{align*}
+\sum_{k=1}^n|F(x_k)-F(x_{k-1})|
+=\lim_{j\to\infty}\sum_{k=1}^n|F_j(x_k)-F_j(x_{k-1})|
+\le\liminf_{j\to\infty}T_{F_j}(x).
+\end{align*}
+右侧与分割 $P$ 无关；对全部 $P$ 取上确界，即得 $T_F(x)\le\liminf_jT_{F_j}(x)$。对每个 $x$ 都成立。如果右侧为无穷，不等式仍成立；没有交换两个无依据的极限，也没有要求存在实现上确界的分割。事实上这一步只用逐点收敛和变差定义，不需要右连续性或规范化，$NBV$ 是题设给出的充分背景。
+\end{solution}
+% END SUPPLEMENT: id=v14-ch03-ex32-solution
+
+% SOURCE p=123; printed=108; object=ch03-ex33; number=33; region=upper
+\begin{exercise}\label{exercise:ch03-monotone-integral-bound}
+若 $F$ 在 $\mathbb R$ 上递增，则 $F(b)-F(a)\ge\int_a^bF'(t)\,\mathrm dt$。
+\end{exercise}
+% SUPPLEMENT: id=v14-ch03-ex33-solution; parent=ch03-ex33; kind=solution; origin=independent-derivation
+\begin{solution}
+\phantomsection\label{solution:ch03-monotone-integral-bound}
+\textbf{习题解答（重构新增）。}设 $a<b$，令 $H(x)=F(x+)$。由单调函数微分定理，$H'=F'$ 几乎处处。正的局部有限 Stieltjes 测度 $\mu_H$ 的 Lebesgue 分解可写为 $\mu_H=\lambda+f\,m$，其中 $\lambda\ge0$ 奇异，$f\ge0$；测度微分定理给出 $f=H'=F'$ 几乎处处。因此
+\begin{align*}
+\int_a^bF'(t)\,\mathrm dt
+&\le\mu_H((a,b))=H(b-)-H(a)\\
+&=F(b-)-F(a+)\le F(b)-F(a).
+\end{align*}
+中间的单侧极限关系来自 $F(t)\le H(t)\le F(u)$ 对 $t<u<b$ 成立，然后令 $t,u\uparrow b$。积分不计端点，开区间公式因此保留了原函数端点处可能的跳跃，也无需擅自假设 $F$ 右连续。$f$ 在该有限区间可积，因为其积分被有限增量控制。
+\end{solution}
+% END SUPPLEMENT: id=v14-ch03-ex33-solution
+
+% SOURCE p=123; printed=108; object=ch03-ex34; number=34; region=upper-middle
+\begin{exercise}\label{exercise:ch03-stieltjes-jump-parts}
+设 $F,G\in NBV$，且 $-\infty<a<b<\infty$。
+\begin{enumerate}
+\item\label{item:ch03-stieltjes-midpoint-parts} 修改\cref{theorem:ch03-stieltjes-parts}的证明，证明
+\begin{align*}
+&\int_{[a,b]}\frac{F(x)+F(x-)}2\,\mathrm dG(x)
++\int_{[a,b]}\frac{G(x)+G(x-)}2\,\mathrm dF(x)\\
+&\qquad=F(b)G(b)-F(a-)G(a-).
+\end{align*}
+\item\label{item:ch03-stieltjes-no-common-jumps} 若 $[a,b]$ 中没有 $F,G$ 同时不连续的点，则
+\begin{align*}
+\int_{[a,b]}F\,\mathrm dG+\int_{[a,b]}G\,\mathrm dF
+=F(b)G(b)-F(a-)G(a-).
+\end{align*}
+\end{enumerate}
+\end{exercise}
+% SUPPLEMENT: id=v14-ch03-ex34-solution; parent=ch03-ex34; kind=solution; origin=independent-derivation
+\begin{solution}
+\phantomsection\label{solution:ch03-stieltjes-jump-parts}
+\textbf{习题解答（重构新增）。}记 $I=[a,b]$、$\mu=\mu_F$、$\nu=\mu_G$。两函数有界且 Borel 可测，所以以下积分均存在。对有限复测度的二重积分，可先分解为有限正测度的线性组合应用 Fubini；各核有界，且 $|\mu|(I)|\nu|(I)<\infty$ 保证绝对可积。
+\begin{enumerate}
+\item 令 $k(x,y)=\chi_{\{x<y\}}+\tfrac12\chi_{\{x=y\}}$。在 $I^2$ 上，$k(x,y)+k(y,x)=1$。并且
+\begin{align*}
+\int_I k(x,y)\,\mathrm d\mu(x)
+&=\mu([a,y))+\tfrac12\mu(\{y\})\\
+&=\frac{F(y)+F(y-)}2-F(a-).
+\end{align*}
+交换 $F,G$ 得到另一恒等式。分别积分并相加，用核之和为 $1$，有
+\begin{align*}
+&\int_I\frac{F(y)+F(y-)}2\,\mathrm dG(y)
++\int_I\frac{G(x)+G(x-)}2\,\mathrm dF(x)\\
+&\quad=\mu(I)\nu(I)+F(a-)\nu(I)+G(a-)\mu(I)\\
+&\quad=F(b)G(b)-F(a-)G(a-),
+\end{align*}
+最后一步代入 $\mu(I)=F(b)-F(a-)$ 和 $\nu(I)=G(b)-G(a-)$ 展开，交叉项相消。对角线分配一半给两个积分，正是平均左右值的来源。
+\item 记 $\Delta F(x)=F(x)-F(x-)$。右连续的 $BV$ 函数仅在可数集上有非零跳跃，故
+\begin{align*}
+\int_I\Delta F\,\mathrm dG
+=\sum_{x\in I}\Delta F(x)\mu_G(\{x\})
+=\sum_{x\in I}\Delta F(x)\Delta G(x)=0.
+\end{align*}
+级数绝对收敛，因为 $\Delta F$ 有界而 $|\mu_G|$ 有限；每项为零是无共同不连续点的假设。交换两者同理。因 $F-(F+F(-))/2=\Delta F/2$，两个平均值积分均可替换为原函数积分，得到所求公式。端点 $a$ 的跳跃同样属于闭区间，因而右端须用 $F(a-),G(a-)$。
+\end{enumerate}
+\end{solution}
+% END SUPPLEMENT: id=v14-ch03-ex34-solution
+
+% SOURCE p=123; printed=108; object=ch03-ex35; number=35; region=middle
+\begin{exercise}\label{exercise:ch03-ac-product-parts}
+若 $F,G$ 在 $[a,b]$ 上绝对连续，则 $FG$ 也绝对连续，且
+\begin{align*}
+\int_a^b(FG'+GF')(x)\,\mathrm dx=F(b)G(b)-F(a)G(a).
+\end{align*}
+\end{exercise}
+% SUPPLEMENT: id=v14-ch03-ex35-solution; parent=ch03-ex35; kind=solution; origin=independent-derivation
+\begin{solution}
+\phantomsection\label{solution:ch03-ac-product-parts}
+\textbf{习题解答（重构新增）。}由绝对连续蕴含连续，$F,G$ 在紧区间上有界。取 $M\ge1$ 同时控制 $|F|,|G|$。给定 $\varepsilon>0$，分别对二函数以 $\varepsilon/(2M)$ 取绝对连续的长度阈值，再取两阈值的较小者。对总长小于该阈值的有限不交区间族，逐段使用
+\begin{align*}
+|F(v)G(v)-F(u)G(u)|
+\le M|F(v)-F(u)|+M|G(v)-G(u)|,
+\end{align*}
+求和得到小于 $\varepsilon$，故 $FG$ 绝对连续。由微积分基本定理，$F',G'$ 在区间上可积且几乎处处存在；有界性使 $FG',GF'$ 也可积。在两函数同时可微的满测集上，乘积法则给出 $(FG)'=FG'+GF'$。再次对绝对连续的 $FG$ 使用基本定理，便得到题设等式。这一论证同时处理复值函数。
+\end{solution}
+% END SUPPLEMENT: id=v14-ch03-ex35-solution
+
+% SOURCE p=123; printed=108; object=ch03-ex36; number=36; region=middle
+\begin{exercise}\label{exercise:ch03-stieltjes-change-variables}
+设 $G$ 为 $[a,b]$ 上连续递增函数，且 $G(a)=c,G(b)=d$。
+\begin{enumerate}
+\item\label{item:ch03-stieltjes-pushforward} 若 $E\subseteq[c,d]$ 为 Borel 集，则 $m(E)=\mu_G(G^{-1}(E))$。（先考虑 $E$ 是区间的情形。）
+\item\label{item:ch03-stieltjes-substitution} 若 $f$ 为 $[c,d]$ 上 Borel 可测且可积的函数，则 $\int_c^df(y)\,\mathrm dy=\int_a^bf(G(x))\,\mathrm dG(x)$。特别地，若 $G$ 绝对连续，则 $\int_c^df(y)\,\mathrm dy=\int_a^bf(G(x))G'(x)\,\mathrm dx$。
+\item\label{item:ch03-stieltjes-discontinuous-failure} 若 $G$ 仅右连续而不连续，则上一项可能不成立。
+\end{enumerate}
+\end{exercise}
+% SUPPLEMENT: id=v14-ch03-ex36-solution; parent=ch03-ex36; kind=solution; origin=independent-derivation
+\begin{solution}
+\phantomsection\label{solution:ch03-stieltjes-change-variables}
+\textbf{习题解答（重构新增）。}\begin{remark}
+\textbf{端点与测度约定（重构新增）。}本题 $G$ 只给在 $[a,b]$ 上；在区间外以 $c,d$ 作常值延拓，用其区间增量定义 $\mu_G$，等价地先减去 $c$ 得到 $NBV$ 中的函数。该测度支撑在 $[a,b]$，端点也没有原子，因为延拓连续。故题中的 $\int_a^b$ 用开、闭或半开端点均相同；$G^{-1}$ 在本题限制为 $[a,b]$ 上的原像。允许 $c=d$，此时 $G$ 恒定，两边测度和积分均为零。
+\end{remark}
+先设 $c<d$。
+\begin{enumerate}
+\item 定义 $[c,d]$ 上的有限正 Borel 测度 $\eta(E)=\mu_G(G^{-1}(E))$；连续性保证原像为 Borel 集。若 $c\le y<d$，由介值定理和紧性，集合 $\{x:G(x)=y\}$ 非空且有最大元 $r_y$。单调性给出 $G^{-1}([c,y])=[a,r_y]$，因此
+\begin{align*}
+\eta([c,y])=\mu_G([a,r_y])=G(r_y)-G(a)=y-c=m([c,y]).
+\end{align*}
+当 $y=d$ 时，同样由总质量得 $\eta([c,d])=d-c$。当 $y<c$ 两测度均为零。有限测度由累积函数唯一确定，所以 $\eta=m|_{[c,d]}$，即所求结论。平坦区间不会造成问题，其 $\mu_G$ 质量为零。
+\item 对示性函数，积分换元式就是上一项；有限线性组合给出简单函数情形，非负简单函数递增逼近及单调收敛给出任意非负 Borel 函数情形。再对实部虚部的正负部分分别使用该结论，得到可积复函数情形；同时 $\int|f\circ G|\,\mathrm d\mu_G=\int_c^d|f|\,\mathrm dm<\infty$ 保证右端合法。若 $G$ 绝对连续，零常数化的延拓也绝对连续，由基本定理 $\mathrm d\mu_G=G'\,\mathrm dm$，代入即得第二个公式。可积函数若在零测集上取无穷或未指定值，可在那里改取零；其原像的 $\mu_G$ 质量为零，故不改变积分。
+\item 在 $[0,1]$ 上取 $G(x)=0$（$x<1/2$）、$G(x)=1$（$x\ge1/2$）。它右连续递增，且 $\mu_G=\delta_{1/2}$。取 $f(y)=y$，则
+\begin{align*}
+\int_0^1f(y)\,\mathrm dy=\tfrac12,
+\qquad \int_0^1f(G(x))\,\mathrm dG(x)=f(G(1/2))=1.
+\end{align*}
+两者不同，给出所需反例。
+\end{enumerate}
+\end{solution}
+% END SUPPLEMENT: id=v14-ch03-ex36-solution
+
+% SOURCE p=123; printed=108; object=ch03-ex37; number=37; region=lower
+\begin{exercise}\label{exercise:ch03-lipschitz-ac}
+设 $F:\mathbb R\to\mathbb C$。
+\begin{definition*}[Lipschitz 连续]
+若存在常数 $M$，使对所有 $x,y\in\mathbb R$，有 $|F(x)-F(y)|\le M|x-y|$，则称 $F$ \textbf{Lipschitz 连续}。
+\end{definition*}
+这一不等式成立当且仅当 $F$ 绝对连续，且 $|F'|\le M$ 几乎处处成立。
+\end{exercise}
+% SUPPLEMENT: id=v14-ch03-ex37-solution; parent=ch03-ex37; kind=solution; origin=independent-derivation
+\begin{solution}
+\phantomsection\label{solution:ch03-lipschitz-ac}
+\textbf{习题解答（重构新增）。}\begin{remark}
+\textbf{局部定义的动机与条件说明（重构新增）。}Lipschitz 条件以同一个有限常数控制任意两点的函数值差，强于只在每点分别连续。可取 $M\ge0$；在非退化实线定义域上，负 $M$ 不可能满足所列不等式。这里 $M$ 固定，等价结论使用的也是这个 $M$，而不是随点改变的上界。该性质不要求函数有界，例如 $F(x)=x$。
+\end{remark}
+若 $|F(x)-F(y)|\le M|x-y|$，对有限不交区间族求和得
+\begin{align*}
+\sum_j|F(b_j)-F(a_j)|\le M\sum_j(b_j-a_j).
+\end{align*}
+$M>0$ 时取 $\delta=\varepsilon/M$；$M=0$ 时函数恒定。故 $F$ 全线绝对连续。在每个 $[-n,n]$ 上应用基本定理，得到几乎处处可微；对 $n$ 取可数并，得到全线几乎处处可微。在导数存在的每一点，差商的模至多为 $M$，取极限得 $|F'|\le M$。
+
+反之，设全线绝对连续且 $|F'|\le M$ 几乎处处。对任意 $x<y$，其限制在 $[x,y]$ 上绝对连续，基本定理给
+\begin{align*}
+|F(y)-F(x)|=\left|\int_x^yF'(t)\,\mathrm dt\right|
+\le\int_x^y|F'(t)|\,\mathrm dt\le M(y-x).
+\end{align*}
+交换两点即得完整 Lipschitz 不等式。复值情形使用复积分的绝对值估计，无需给复数定义次序。
+\end{solution}
+% END SUPPLEMENT: id=v14-ch03-ex37-solution
+
+% SOURCE p=123; printed=108; object=ch03-ex38; number=38; region=lower
+\begin{exercise}\label{exercise:ch03-graph-length}
+若 $f:[a,b]\to\mathbb R$，把 $f$ 的图像看作 $\mathbb C$ 的子集，即 $\{t+\mathrm if(t):t\in[a,b]\}$。
+\begin{definition*}[图像的长度与内接折线]
+该图像的\textbf{长度} $L$ 定义为所有内接折线长度的上确界。“内接折线”是连接 $t_{j-1}+\mathrm if(t_{j-1})$ 与 $t_j+\mathrm if(t_j)$（$1\le j\le n$）的线段的并，其中 $a=t_0<\cdots<t_n=b$。
+\end{definition*}
+\begin{enumerate}
+\item\label{item:ch03-graph-length-variation} 令 $F(t)=t+\mathrm if(t)$；则 $L$ 为 $F$ 在 $[a,b]$ 上的全变差。
+\item\label{item:ch03-graph-length-integral} 若 $f$ 绝对连续，则 $L=\int_a^b[1+f'(t)^2]^{1/2}\,\mathrm dt$。
+\end{enumerate}
+\end{exercise}
+% SUPPLEMENT: id=v14-ch03-ex38-solution; parent=ch03-ex38; kind=solution; origin=independent-derivation
+\begin{solution}
+\phantomsection\label{solution:ch03-graph-length}
+\textbf{习题解答（重构新增）。}\begin{remark}
+\textbf{局部定义的动机与条件说明（重构新增）。}内接折线只按参数顺序连接有限个图像点，其长度是各段 Euclid 长度的和；取所有分割的上确界，使定义不依赖某次取样。$f$ 实值使 $t+\mathrm if(t)$ 精确编码平面图像，$[a,b]$ 的两个端点包含在每个分割中。长度允许为无穷；定义并未预先假定光滑或可求长。
+\end{remark}
+\begin{enumerate}
+\item 每一段的长度恰为
+\begin{align*}
+\left|(t_j-t_{j-1})+\mathrm i(f(t_j)-f(t_{j-1}))\right|
+=|F(t_j)-F(t_{j-1})|.
+\end{align*}
+故各分割上的折线长度与变差和逐一相同，对同一分割族取上确界得 $L=V_F[a,b]$，包括无穷情形。
+\item 若 $f$ 绝对连续，$F(t)=t+\mathrm if(t)$ 也绝对连续，并且 $F'=1+\mathrm if'$ 几乎处处。把 $F-F(a)$ 在区间外常值延拓为 $\widetilde F\in NBV$；基本定理给 $\mathrm d\mu_{\widetilde F}=\chi_{(a,b)}(1+\mathrm if')\,\mathrm dm$。因此
+\begin{align*}
+L=V_F[a,b]=|\mu_{\widetilde F}|(\mathbb R)
+=\int_a^b|1+\mathrm if'(t)|\,\mathrm dt
+=\int_a^b\sqrt{1+f'(t)^2}\,\mathrm dt.
+\end{align*}
+中间使用已证函数与测度全变差恒等式及常值延拓保持全变差；端点因连续而无原子。积分有限，因为 $\sqrt{1+u^2}\le1+|u|$ 且 $f'\in L^1([a,b])$。
+\end{enumerate}
+\end{solution}
+% END SUPPLEMENT: id=v14-ch03-ex38-solution
+
+% SOURCE p=123; printed=108; object=ch03-ex39; number=39; region=bottom
+\begin{exercise}\label{exercise:ch03-monotone-series-derivative}
+若 $\{F_j\}$ 为 $[a,b]$ 上一列非负递增函数，且对所有 $x\in[a,b]$，$F(x)=\sum_{j=1}^{\infty}F_j(x)<\infty$，则对几乎处处的 $x\in[a,b]$，$F'(x)=\sum_{j=1}^{\infty}F_j'(x)$。（只须假设 $F_j\in NBV$。考虑测度 $\mu_{F_j}$。）
+\end{exercise}
+% SUPPLEMENT: id=v14-ch03-ex39-solution; parent=ch03-ex39; kind=solution; origin=independent-derivation
+\begin{solution}
+\phantomsection\label{solution:ch03-monotone-series-derivative}
+\textbf{习题解答（重构新增）。}设 $a<b$。非负递增性给 $0\le F_j(x)\le F_j(b)$，且 $\sum_jF_j(b)=F(b)<\infty$，所以级数在 $[a,b]$ 一致收敛。各函数有限且递增，故有右极限。对 $a\le x<b$，令
+\begin{align*}
+H_j(x)=F_j(x+)-F_j(a+),
+\end{align*}
+并在 $x\le a$ 置 $H_j=0$，在 $x\ge b$ 置 $H_j=F_j(b)-F_j(a+)$。它递增、右连续、从零开始且有界，故 $H_j\in NBV$，对应有限正测度 $\mu_j$。其总质量 $F_j(b)-F_j(a+)\le F_j(b)$，因此 $\mu=\sum_j\mu_j$ 为有限正测度，且累积函数为 $H=\sum_jH_j$。
+
+分别作 Lebesgue 分解 $\mu_j=f_jm+\lambda_j$，其中 $f_j\ge0$，$\lambda_j\ge0$ 且 $\lambda_j\perp m$。单调收敛给出 $f=\sum_jf_j\in L^1(m)$，因为其积分至多为 $\mu(\mathbb R)$。对每个奇异部分取一个零测支撑集，取可数并后仍为零测集，故 $\lambda=\sum_j\lambda_j\perp m$。于是 $\mu=fm+\lambda$，测度微分定理给 $H'=f=\sum_j f_j=\sum_jH_j'$ 几乎处处；等号同时成立的例外集是可数个零测集的并。
+
+在 $(a,b)$ 内，单调函数定理给 $H_j'=F_j'$ 几乎处处。一致收敛还保证右极限与原级数可交换：先把尾和用 $\sum_{j>N}F_j(b)$ 一致控制，再对有限头部取右极限。因此
+\begin{align*}
+H(x)=F(x+)-\sum_jF_j(a+),\qquad a<x<b.
+\end{align*}
+总函数 $F$ 也递增，所以它与右极限代表的导数几乎处处相同；减去有限常数不影响导数。故 $F'=H'=\sum_jF_j'$ 几乎处处成立。两个端点不影响结论。非负性在这里给出可求和的统一上界和正测度级数，避免无穷抵消或未经证明的逐项微分。
+\end{solution}
+% END SUPPLEMENT: id=v14-ch03-ex39-solution
+
+% SOURCE p=124; printed=109; object=ch03-ex40; number=40; region=top
+\begin{exercise}\label{exercise:ch03-strict-singular-function}
+设 $F$ 为 $[0,1]$ 上的 Cantor 函数（见\cref{section:ch01-borel-measures-real-line}），并对 $x<0$ 置 $F(x)=0$、对 $x>1$ 置 $F(x)=1$。把 $[0,1]$ 中具有有理端点的闭子区间枚举为 $\{[a_n,b_n]\}$，令 $F_n(x)=F((x-a_n)/(b_n-a_n))$。则 $G=\sum_{n=1}^{\infty}2^{-n}F_n$ 在 $[0,1]$ 上连续且严格递增，并且 $G'=0$ 几乎处处成立。（使用\cref{exercise:ch03-monotone-series-derivative}。）
+\end{exercise}
+% SUPPLEMENT: id=v14-ch03-ex40-solution; parent=ch03-ex40; kind=solution; origin=independent-derivation
+\begin{solution}
+\phantomsection\label{solution:ch03-strict-singular-function}
+\textbf{习题解答（重构新增）。}\begin{remark}
+\textbf{区间约定说明（重构新增）。}本题枚举应限于非退化闭区间 $a_n<b_n$；否则原式的分母为零。以下枚举 $[0,1]$ 内所有有理端点的非退化闭区间，仍是可数族，并保留题目构造所需全部区间。
+\end{remark}
+延拓后的 Cantor 函数连续递增，取值在 $[0,1]$，且在 Cantor 零测集之外的每个开补区间上常值，在 $[0,1]$ 外也常值，所以导数几乎处处为零。每个 $F_n$ 因而连续递增，$0\le F_n\le1$；其非常值部分的异常集包含于 Cantor 集的仿射像，是 Lebesgue 零测集，故 $F_n'=0$ 几乎处处。
+
+因尾项一致满足 $\sum_{n>N}2^{-n}|F_n(x)|\le\sum_{n>N}2^{-n}\to0$，级数一致收敛；有限和连续，先控制尾部再用有限和连续性，得到 $G$ 连续。若 $0\le x<y\le1$，选有理数 $x<a_n<b_n<y$；对应区间必在枚举中。此时 $F_n(x)=0,F_n(y)=1$，其余各项增量非负，故 $G(y)-G(x)\ge2^{-n}>0$，证明严格递增。最后，对非负递增函数列 $2^{-n}F_n$ 使用上一题，得 $G'=\sum_n2^{-n}F_n'=0$ 几乎处处；所有导数为零的例外集合可数并仍为零测集。
+\end{solution}
+% END SUPPLEMENT: id=v14-ch03-ex40-solution
+
+% SOURCE p=124; printed=109; object=ch03-ex41; number=41; region=upper
+\begin{exercise}\label{exercise:ch03-ac-strict-nonmonotone}
+设 $A\subseteq[0,1]$ 为 Borel 集，使对 $[0,1]$ 中每个子区间 $I$，均有 $0<m(A\cap I)<m(I)$（\cref{exercise:ch01-borel-intermediate-density}）。
+\begin{enumerate}
+\item\label{item:ch03-ac-strict-zero-derivative} 令 $F(x)=m([0,x]\cap A)$。则 $F$ 在 $[0,1]$ 上绝对连续且严格递增，但 $F'=0$ 在一个正测度集上成立。
+\item\label{item:ch03-ac-nowhere-monotone} 令 $G(x)=m([0,x]\cap A)-m([0,x]\setminus A)$。则 $G$ 在 $[0,1]$ 上绝对连续，但 $G$ 在 $[0,1]$ 的任何子区间上都不单调。
+\end{enumerate}
+\end{exercise}
+% SUPPLEMENT: id=v14-ch03-ex41-solution; parent=ch03-ex41; kind=solution; origin=independent-derivation
+\begin{solution}
+\phantomsection\label{solution:ch03-ac-strict-nonmonotone}
+\textbf{习题解答（重构新增）。}\begin{remark}
+\textbf{区间范围说明（重构新增）。}题设的子区间须有正长度；单点区间的测度为零，不可能满足严格不等式。下文的“任何子区间不单调”同样针对非退化区间，单点上单调性总是空真。
+\end{remark}
+\begin{enumerate}
+\item 有 $F(x)=\int_0^x\chi_A(t)\,\mathrm dt$。示性函数可积，基本定理给 $F$ 绝对连续且 $F'=\chi_A$ 几乎处处。对 $x<y$，
+\begin{align*}
+F(y)-F(x)=m(A\cap(x,y])>0,
+\end{align*}
+因为长度正的区间满足题设。故 $F$ 严格递增。又 $m([0,1]\setminus A)>0$，在这个集合中除去导数结论的零测例外后，仍有正测度，且 $F'=0$。
+\item $G(x)=\int_0^x(2\chi_A(t)-1)\,\mathrm dt$，故绝对连续，且 $G'=2\chi_A-1$ 几乎处处。在任意非退化区间 $I$ 中，$A\cap I$ 与 $I\setminus A$ 都有正测度；去掉例外集和端点后，$G'$ 仍分别在正测度集上取 $1$ 与 $-1$。递增函数在导数存在处导数非负，递减函数在导数存在处导数非正，所以 $G$ 在 $I$ 上既不能递增，也不能递减。
+\end{enumerate}
+\end{solution}
+% END SUPPLEMENT: id=v14-ch03-ex41-solution
+
+% SOURCE p=124; printed=109; object=ch03-ex42; number=42; region=middle
+\begin{exercise}\label{exercise:ch03-convex-jensen}
+\begin{definition*}[凸函数]
+若函数 $F:(a,b)\to\mathbb R$（$-\infty\le a<b\le\infty$）对所有 $s,t\in(a,b)$ 和 $\lambda\in(0,1)$ 均满足
+\begin{align*}
+F(\lambda s+(1-\lambda)t)\le\lambda F(s)+(1-\lambda)F(t),
+\end{align*}
+则称 $F$ 为\textbf{凸函数}。（几何上，这表示 $F$ 在从 $s$ 到 $t$ 的区间上的图像位于连接 $(s,F(s))$ 与 $(t,F(t))$ 的线段下方。）
+\end{definition*}
+\begin{enumerate}
+\item\label{item:ch03-convex-secants} $F$ 为凸函数当且仅当对所有满足 $s\le s'<t'$ 且 $s<t\le t'$ 的 $s,t,s',t'\in(a,b)$，都有
+\begin{align*}
+\frac{F(t)-F(s)}{t-s}\le\frac{F(t')-F(s')}{t'-s'}.
+\end{align*}
+\item\label{item:ch03-convex-derivative} $F$ 为凸函数当且仅当 $F$ 在 $(a,b)$ 的每个紧子区间上绝对连续，且 $F'$（在其有定义的集合上）递增。
+\item\label{item:ch03-convex-support} 若 $F$ 为凸函数且 $t_0\in(a,b)$，则存在 $\beta\in\mathbb R$，使对所有 $t\in(a,b)$，均有 $F(t)-F(t_0)\ge\beta(t-t_0)$。
+\item\label{item:ch03-jensen} \textbf{（Jensen 不等式）}若 $(X,\mathscr M,\mu)$ 为满足 $\mu(X)=1$ 的测度空间，$g:X\to(a,b)$ 属于 $L^1(\mu)$，且 $F$ 在 $(a,b)$ 上凸，则
+\begin{align*}
+F\left(\int g\,\mathrm d\mu\right)\le\int F\circ g\,\mathrm d\mu.
+\end{align*}
+（在\hyperref[item:ch03-convex-support]{支撑直线结论}中取 $t_0=\int g\,\mathrm d\mu$、$t=g(x)$，再积分。）
+\end{enumerate}
+\end{exercise}
+% SUPPLEMENT: id=v14-ch03-ex42-solution; parent=ch03-ex42; kind=solution; origin=independent-derivation
+\begin{solution}
+\phantomsection\label{solution:ch03-convex-jensen}
+\textbf{习题解答（重构新增）。}\begin{remark}
+\textbf{局部定义的动机与条件说明（重构新增）。}凸性要求弦位于图像上方，控制函数的弯曲方向。实值使不等式有意义；区间定义域保证两个点的严格凸组合仍在定义域中。只写 $0<\lambda<1$ 已足够，端点权重给恒等式。开区间及有限实值保证内点附近可用两侧弦控制斜率；端点 $a,b$ 可以无穷，因为每次取样点和紧子区间仍是有限的。Jensen 一项用 $\mu(X)=1$ 把积分变为平均；$g\in L^1$ 保证平均值有限，并为支撑直线下界提供可积控制。
+\end{remark}
+记 $S(u,v)=(F(v)-F(u))/(v-u)$，其中 $u<v$。
+\begin{enumerate}
+\item 若 $F$ 凸，对 $u<v<w$，将 $v$ 写成 $u,w$ 的凸组合并移项，得到
+\begin{align*}
+S(u,v)\le S(u,w)\le S(v,w).
+\end{align*}
+因此固定左端时，斜率随右端增大而不减；固定右端时，斜率随左端增大而不减。题设中先把 $(s,t)$ 的右端移至 $t'$，再把左端移至 $s'$，得 $S(s,t)\le S(s,t')\le S(s',t')$，相等端点情形直接保持不变。反之，对 $u<v<w$，用题设取 $(s,t)=(u,v)$、$(s',t')=(u,w)$，得 $S(u,v)\le S(u,w)$。移项正是 $F(v)$ 不超过 $u,w$ 弦在 $v$ 处的高度，故为凸性定义；两个点顺序相反时交换它们，同点时等式成立。
+\item 若 $F$ 凸，对任意紧子区间 $[c,d]\subset(a,b)$，选 $a<u<c<d<v<b$。由上一项，对 $c\le x<y\le d$，
+\begin{align*}
+S(u,c)\le S(x,y)\le S(d,v).
+\end{align*}
+两端为有限数，因此 $F$ 在 $[c,d]$ 上 Lipschitz，进而绝对连续。若 $x<y$ 是两个导数存在的内点，取足够小的 $h>0$，由斜率单调性 $S(x,x+h)\le S(y,y+h)$，让 $h\downarrow0$ 得 $F'(x)\le F'(y)$。
+
+反之，假设局部绝对连续且在导数存在集上 $F'$ 递增。任取 $u<v<w$，基本定理在 $[u,w]$ 适用。对几乎所有 $s\in(u,v),t\in(v,w)$，$F'(s)\le F'(t)$，积分得到
+\begin{align*}
+\frac1{v-u}\int_u^vF'(s)\,\mathrm ds
+\le\frac1{w-v}\int_v^wF'(t)\,\mathrm dt.
+\end{align*}
+这里两边可积，二重积分或先后积分均合法。即 $S(u,v)\le S(v,w)$；乘以正分母并移项，得到 $F(v)$ 不超过弦的高度，故 $F$ 凸。
+\item 固定 $t_0$，令
+\begin{align*}
+A=\sup_{t<t_0}S(t,t_0),\qquad B=\inf_{t>t_0}S(t_0,t),
+\end{align*}
+其中 $t$ 限于 $(a,b)$。由凸性，对每对左右点都有左斜率不大于右斜率，故 $A\le B$。各取一个固定左右点 $u<t_0<v$，得
+$S(u,t_0)\le A\le B\le S(t_0,v)$，所以 $A,B$ 都是有限实数。取 $\beta\in[A,B]$。当 $t<t_0$，$S(t,t_0)\le\beta$，乘以 $t_0-t>0$ 后得到 $F(t)-F(t_0)\ge\beta(t-t_0)$；当 $t>t_0$，由 $S(t_0,t)\ge\beta$ 得同一结论。$t=t_0$ 时为等式。
+\item 先验证 $t_0=\int g\,\mathrm d\mu\in(a,b)$。它有限，因为 $g\in L^1$。若 $a$ 有限，$g-a>0$ 在全空间成立；集合 $\{g-a\ge1/n\}$ 的并为 $X$，总测度为 $1$，至少一个集合正测，故 $\int(g-a)\,\mathrm d\mu>0$，即 $t_0>a$。有限上端点同理由 $b-g>0$ 得 $t_0<b$；无穷端点只需已知 $t_0$ 有限。
+
+由前项选支撑斜率 $\beta$，对每个 $x$ 有
+\begin{align*}
+F(g(x))\ge F(t_0)+\beta(g(x)-t_0).
+\end{align*}
+凸函数由前面局部 Lipschitz 性在开区间内连续，故 $F\circ g$ 可测；右端为可积函数，因此 $(F\circ g)^-$ 可积，右侧所求积分作为有限数或 $+\infty$ 有定义，不存在无穷减无穷。积分不等式并用 $\mu(X)=1$、$\int g\,\mathrm d\mu=t_0$，得到
+\begin{align*}
+\int F\circ g\,\mathrm d\mu\ge F(t_0)+\beta(t_0-t_0)=F\left(\int g\,\mathrm d\mu\right).
+\end{align*}
+这也涵盖 $F\circ g$ 正部积分无穷的情形。
+\end{enumerate}
+\end{solution}
+% END SUPPLEMENT: id=v14-ch03-ex42-solution
+
+\end{document}

@@ -1,0 +1,385 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}}
+
+\begin{document}
+
+\section{紧性}\label{section:ch05-紧性}
+
+我们在\cref{section:ch05-Sobolev不等式} 中已看到：Gagliardo--Nirenberg--Sobolev 不等式蕴含当 $1\leqslant p<n$、$p^{*}=\dfrac{pn}{n-p}$ 时 $W^{1,p}(U)$ 嵌入 $L^{p^{*}}(U)$。下面我们证明，事实上对 $1\leqslant q<p^{*}$，$W^{1,p}(U)$ 紧嵌入 $L^{q}(U)$。这一紧性对我们在第 6--9 章把线性与非线性泛函分析应用于 PDE 将是基础性的。
+
+\begin{lemma}\label{lemma:有限维lp与ln范数}
+设 $n\geqslant 1$，$0<p'<n<\infty$。对任意非负实数 $a_0,a_1,\cdots,a_n$，有
+\begin{align*}
+a_0^{p'}+a_1^{p'}+\cdots+a_n^{p'}
+\leqslant (n+1)^{1-\frac{p'}{n}}
+\left(a_0^{n}+a_1^{n}+\cdots+a_n^{n}\right)^{\frac{p'}{n}}.
+\end{align*}
+\end{lemma}
+\begin{proof}
+若 $a_0=a_1=\cdots=a_n=0$，则不等式两边均为 $0$，显然成立。以下设诸 $a_i$ 不全为零。
+令
+\begin{align*}
+q\triangleq\frac{n}{p'}>1,
+\end{align*}
+其共轭指数为
+\begin{align*}
+q'\triangleq\frac{q}{q-1}=\frac{n}{n-p'}.
+\end{align*}
+对序列 $\{|a_i|^{p'}\}_{i=0}^{n}$ 与常数列 $\{1\}_{i=0}^{n}$ 应用\hyperref[Basis of Analytics-theorem:离散的Hölder不等式]{离散的Hölder不等式}，得到
+\begin{align*}
+\sum_{i=0}^{n} a_i^{p'}
+=\sum_{i=0}^{n} |a_i|^{p'}\cdot 1\leqslant
+\left(\sum_{i=0}^{n}\left(|a_i|^{p'}\right)^{q}\right)^{\frac{1}{q}}
+\left(\sum_{i=0}^{n}1^{q'}\right)^{\frac{1}{q'}}.
+\end{align*}
+因为 $q=\frac{n}{p'}$，所以
+\begin{align*}
+\left(|a_i|^{p'}\right)^{q}
+=|a_i|^{p'\cdot\frac{n}{p'}}
+=|a_i|^{n}.
+\end{align*}
+又因为共有 $n+1$ 项，所以
+\begin{align*}
+\sum_{i=0}^{n}1^{q'}=n+1.
+\end{align*}
+于是
+\begin{align*}
+\sum_{i=0}^{n} a_i^{p'}
+\leqslant
+\left(\sum_{i=0}^{n}|a_i|^{n}\right)^{\frac{1}{q}}
+(n+1)^{\frac{1}{q'}}=(n+1)^{\frac{1}{q'}}
+\left(\sum_{i=0}^{n}|a_i|^{n}\right)^{\frac{p'}{n}}.
+\end{align*}
+最后计算指数：
+\begin{align*}
+\frac{1}{q'}=1-\frac{1}{q}=1-\frac{p'}{n}.
+\end{align*}
+因此
+\begin{align*}
+\sum_{i=0}^{n} a_i^{p'}
+\leqslant (n+1)^{1-\frac{p'}{n}}
+\left(\sum_{i=0}^{n}|a_i|^{n}\right)^{\frac{p'}{n}}.
+\end{align*}
+由于 $a_i\geqslant 0$，这就得到
+\begin{align*}
+a_0^{p'}+a_1^{p'}+\cdots+a_n^{p'}
+\leqslant (n+1)^{1-\frac{p'}{n}}
+\left(a_0^{n}+a_1^{n}+\cdots+a_n^{n}\right)^{\frac{p'}{n}}.
+\end{align*}
+\end{proof}
+
+\begin{definition}\label{definition:ch05-紧嵌入}
+设 $X$ 与 $Y$ 为Banach空间，$X\subset Y$。我们称 $X$ 紧嵌入 $Y$，记作
+\begin{align*}
+X\subset \subset Y,
+\end{align*}
+只要
+\begin{enumerate}[(i)]
+\item 对某个常数 $C$ 有 $\|u\|_{Y}\leqslant C\|u\|_{X}$（$u\in X$）；
+\item $X$ 中每个有界序列在 $Y$ 中预紧。
+\end{enumerate}
+更确切地说，条件 (ii) 的意思是：若 $\{u_{k}\}_{k=1}^{\infty}$ 是 $X$ 中满足 $\sup_{k}\|u_{k}\|_{X}<\infty$ 的序列，则存在某个子序列 $\{u_{k_{j}}\}_{j=1}^{\infty}\subseteq\{u_{k}\}_{k=1}^{\infty}$ 在 $Y$ 中收敛于某个极限 $u$,即
+\begin{align*}
+\lim_{j\to\infty}\|u_{k_{j}}-u\|_{Y}=0.
+\end{align*}
+\end{definition}
+
+\begin{theorem}[Rellich--Kondrachov紧性定理]\label{theorem:Rellich--Kondrachov紧性定理}
+设 $U$ 为 $\mathbb{R}^{n}$ 的有界开子集。
+\begin{enumerate}[(1)]
+\item 若 $1\leqslant p<n$ 且 $\partial U$ 为 $C^{1}$，则对每个 $1\leqslant q<p^{*}$ 都有
+\begin{align*}
+W^{1,p}(U)\subset \subset L^{q}(U),
+\end{align*}
+其中 $p^{*}=\dfrac{np}{n-p}>p$。
+\item 若 $p=n$ 且 $\partial U$ 为 $C^{1}$，则对每个 $1\leqslant q<\infty$ 都有
+\begin{align*}
+W^{1,n}(U)\subset \subset L^{q}(U).
+\end{align*}
+\item 若 $n<p\leqslant\infty$ 且 $\partial U$ 为 $C^{1}$，则对每个 $1\leqslant q\leqslant\infty$ 都有
+\begin{align*}
+W^{1,p}(U)\subset \subset L^{q}(U).
+\end{align*}
+\item 若 $1\leqslant p\leqslant\infty$，则对每个 $1\leqslant q<\infty$ 都有
+\begin{align*}
+W_{0}^{1,p}(U)\subset \subset L^{q}(U).
+\end{align*}
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 固定 $1\leqslant q<p^{*}$。由于 $U$ 有界，由\hyperref[theorem:Gagliardo--Nirenberg--Sobolev不等式]{Gagliardo--Nirenberg--Sobolev不等式}知，对任意$u\in W^{1,p}(U)$,有
+\begin{align}\label{eq::rellich-continuous}
+W^{1,p}(U)\subset L^{q}(U),\qquad \|u\|_{L^{q}(U)}\leqslant C\|u\|_{W^{1,p}(U)}
+\end{align}
+成立。因此只需证明：若 $\{u_{m}\}_{m=1}^{\infty}$ 是 $W^{1,p}(U)$ 中的有界序列，则存在子序列 $\{u_{m_{j}}\}_{j=1}^{\infty}$ 在 $L^{q}(U)$ 中收敛。
+
+由\hyperref[theorem:ch05-扩张定理]{扩张定理}，取一个有界开集 $V\supset \supset U$，对每个 $u_{m}\in W^{1,p}(U)$，存在 $\overline{u}_{m}\in W^{1,p}(\mathbb{R}^{n})$，使得
+\begin{align}\label{eq::j8j39029292--1111}
+\overline{u}_{m}=u_{m}\ \text{于}\ U,\quad \operatorname{spt}\overline{u}_{m}\subseteq V\,\text{对所有} m \text{成立},\quad
+\|\overline{u}_{m}\|_{W^{1,p}(\mathbb{R}^{n})}\leqslant C\|u_{m}\|_{W^{1,p}(U)}.
+\end{align}
+由于 $\{u_{m}\}$ 在 $W^{1,p}(U)$ 中有界，故由不等式\eqref{eq::j8j39029292--1111}知$\{\overline{u}_{m}\}$ 在 $W^{1,p}(\mathbb{R}^{n})$ 中也有界，即存在常数 $M>0$ 使得
+\begin{align}\label{eq::jijiMMJiojio2}
+\sup_{m}\|\overline{u}_{m}\|_{W^{1,p}(\mathbb{R}^{n})}\leqslant M.
+\end{align}
+于是 $\{\overline{u}_{m}\}$ 是 $W^{1,p}(V)$ 中的有界序列，且支集均在 $V$ 内,又因为$V$有界,所以$\{\overline{u}_{m}\}$在$V$中都有紧支集.为简化记号，以下仍记 $\overline{u}_{m}$ 为 $u_{m}$，并设所有 $u_{m}$ 均在 $V$ 中有紧支集。
+定义磨光函数
+\begin{align*}
+u_{m}^{\varepsilon}\triangleq\eta_{\varepsilon}*u_{m}\qquad (\varepsilon>0,\ m=1,2,\cdots),
+\end{align*}
+其中 $\eta_{\varepsilon}$ 是标准磨光子。由于 $u_{m}$ 在 $V$ 中有紧支集，当 $\varepsilon$ 充分小时，$u_{m}^{\varepsilon}$ 也在 $V$ 中有紧支集。
+
+首先断言：对任意 $m$，有
+\begin{align}\label{eq::rellich-approx}
+\|u_{m}^{\varepsilon}-u_{m}\|_{L^{q}(V)}\to 0\quad(\varepsilon\to 0),\ \text{对}\ m\ \text{一致}.
+\end{align}
+为证此，先设 $u_{m}\in C_{c}^{\infty}(V)$。由磨光定义和微分学基本定理得
+\begin{align*}
+u_{m}^{\varepsilon}(x)-u_{m}(x)
+&=\frac{1}{\varepsilon^{n}}\int_{B(x,\varepsilon)}\eta\left(\frac{x-z}{\varepsilon}\right)(u_{m}(z)-u_{m}(x))\,\mathrm{d}z\\
+&=\int_{B(0,1)}\eta(y)(u_{m}(x-\varepsilon y)-u_{m}(x))\,\mathrm{d}y\\
+&=\int_{B(0,1)}\eta(y)\int_{0}^{1}\frac{\mathrm{d}}{\mathrm{d}t}(u_{m}(x-\varepsilon ty))\,\mathrm{d}t\,\mathrm{d}y\\
+&=-\varepsilon\int_{B(0,1)}\eta(y)\int_{0}^{1}Du_{m}(x-\varepsilon ty)\cdot y\,\mathrm{d}t\,\mathrm{d}y.
+\end{align*}
+于是由\hyperref[Real Analysis-theorem:Fubini定理 可积函数的情形]{Fubini定理}可得
+\begin{align*}
+\int_V{\left| u_{m}^{\varepsilon}\left( x \right) -u_m\left( x \right) \right|\,\mathrm{d}x}&\leqslant \varepsilon \int_{B\left( 0,1 \right)}{\eta \left( y \right) \int_0^1{\int_V{\left| Du_m\left( x-\varepsilon ty \right) \right|\,\mathrm{d}x\,\mathrm{d}t\,\mathrm{d}y}}}=\varepsilon \int_{B\left( 0,1 \right)}{\eta \left( y \right) \int_0^1{\int_{V-\varepsilon ty}{\left| Du_m\left( z \right) \right|\,\mathrm{d}z\,\mathrm{d}t\,\mathrm{d}y}}}
+\\
+&\leqslant \varepsilon \int_{B\left( 0,1 \right)}{\eta \left( y \right) \int_0^1{\int_{\mathbb{R} ^n}{\left| Du_m\left( z \right) \right|\,\mathrm{d}z\,\mathrm{d}t\,\mathrm{d}y}}}=\varepsilon \int_{B\left( 0,1 \right)}{\eta \left( y \right) \int_0^1{\int_V{\left| Du_m\left( z \right) \right|\,\mathrm{d}z\,\mathrm{d}t\,\mathrm{d}y}}}
+\\
+&=\varepsilon \int_V{\left| Du_m\left( z \right) \right|\,\mathrm{d}z}=\varepsilon \|Du_{m}\|_{L^{1}(V)}.
+\end{align*}
+由于 $V$ 有界，利用\hyperref[Real Analysis-theorem:实变函数--Hölder不等式]{Hölder不等式}和\eqref{eq::jijiMMJiojio2}式可得
+\begin{align*}
+\left\| Du_m \right\| _{L^1(V)}\leqslant \left| V \right|^{1-\frac{1}{p}}\left\| Du_m \right\| _{L^p(V)}\triangleq C\left\| Du_m \right\| _{L^p(V)}\leqslant C\left\| u_m \right\| _{W^{1,p}(V)}\leqslant CM.
+\end{align*}
+因此
+\begin{align}\label{eq::jijoi2o23jjjisjijiji}
+\|u_{m}^{\varepsilon}-u_{m}\|_{L^{1}(V)}\leqslant C\varepsilon M.
+\end{align}
+令 $\varepsilon\to 0$，即得 \begin{align*}
+\|u_{m}^{\varepsilon}-u_{m}\|_{L^{1}(V)}\to 0\quad \text{对} m \text{一致}.
+\end{align*}
+
+对一般的 $u_{m}\in W^{1,p}(V)$，由于 $u_m$ 在 $V$ 中有紧支集，将 $u_m$ 零延拓到 $\mathbb{R}^n$，仍记为 $u_m$。对 $U=\mathbb{R}^n$ 应用\hyperref[theorem:ch05-局部光滑逼近]{光滑函数的局部逼近定理}，令
+\begin{align*}
+u_{m,k}\triangleq\eta_{\frac{1}{k}}*u_m,\qquad k=1,2,\cdots.
+\end{align*}
+则 $u_{m,k}\in C^\infty(\mathbb{R}^n)$，且当 $k\to\infty$ 时，$u_{m,k}\to u_m$ 于 $W^{1,p}_{\mathrm{loc}}(\mathbb{R}^n)$。因为 $u_m$ 有紧支集，故$u_{m,k}\in C_c^\infty(V)$，并且 $u_{m,k}\to u_m$ 于 $W^{1,p}(V)$。
+从而
+\begin{align*}
+\left\| u_{m}^{\varepsilon}-u_{m,k}^{\varepsilon} \right\| _{L^1(V)}&=\int_V{\left| \int_{\mathbb{R} ^n}{\eta _{\varepsilon}\left( x-y \right) \left[ u_m\left( y \right) -u_{m,k}\left( y \right) \right] \,\mathrm{d}y} \right|\,\mathrm{d}x}
+\\
+&\leqslant \int_V{\int_{\mathbb{R} ^n}{\eta _{\varepsilon}\left( x-y \right) \left| u_m\left( y \right) -u_{m,k}\left( y \right) \right|\,\mathrm{d}y}\,\mathrm{d}x}
+\\
+&\xlongequal{\text{\hyperref[Real Analysis-theorem:Fubini定理 可积函数的情形]{Fubini定理}}}\int_{\mathbb{R} ^n}{\left| u_m\left( y \right) -u_{m,k}\left( y \right) \right|\int_V{\eta _{\varepsilon}\left( x-y \right) \,\mathrm{d}x}\,\mathrm{d}y}
+\\
+&\leqslant \int_{\mathbb{R} ^n}{\left| u_m\left( y \right) -u_{m,k}\left( y \right) \right|\,\mathrm{d}y}=\left\| u_m-u_{m,k} \right\| _{L^1(V)}.
+\end{align*}
+于是再结合\eqref{eq::jijoi2o23jjjisjijiji}式可得
+\begin{align*}
+\left\| u_{m}^{\varepsilon}-u_m \right\| _{L^1(V)}&\leqslant \left\| u_{m}^{\varepsilon}-u_{m,k}^{\varepsilon} \right\| _{L^1(V)}+\left\| u_{m,k}^{\varepsilon}-u_{m,k} \right\| _{L^1(V)}+\left\| u_{m,k}-u_m \right\| _{L^1(V)}
+\\
+&\leqslant \left\| u_m-u_{m,k} \right\| _{L^1(V)}+C\varepsilon M+\left\| u_{m,k}-u_m \right\| _{L^1(V)}
+\\
+&\overset{\text{\hyperref[Real Analysis-theorem:实变函数--Hölder不等式]{Hölder不等式}}}{\leqslant}2\left| V \right|^{1-\frac{1}{p}}\left\| u_m-u_{m,k} \right\| _{L^p(V)}+C\varepsilon M
+\\
+&\leqslant 2\left| V \right|^{1-\frac{1}{p}}\left\| u_m-u_{m,k} \right\| _{{W^{1,}}^p(V)}+C\varepsilon M.
+\end{align*}
+令 $k\to\infty$，再令 $\varepsilon\to 0$，即得 $\|u_{m}^{\varepsilon}-u_{m}\|_{L^{1}(V)}\to 0$ 对 $m$ 一致。
+
+由于 $1\leqslant q<p^{*}$，存在 $\theta\in(0,1)$ 使得
+\begin{align*}
+\dfrac{1}{q}=\theta+\frac{1-\theta}{p^{*}}\iff 1=\theta q+\frac{(1-\theta)q}{p^{*}}.
+\end{align*}
+由\hyperref[theorem:广义Holder不等式]{广义Hölder不等式}可得
+\begin{align}\label{eq::Jijiowj233fdejifjs}
+\|u_{m}^{\varepsilon}-u_{m}\|_{L^{q}(V)}
+\leqslant\|u_{m}^{\varepsilon}-u_{m}\|_{L^{1}(V)}^{\theta}
+\|u_{m}^{\varepsilon}-u_{m}\|_{L^{p^{*}}(V)}^{1-\theta}.
+\end{align}
+又注意到
+\begin{align*}
+\left\| u_{m}^{\varepsilon} \right\| _{W^{1,p}\left( V \right)}^{p}&=\left\| \eta _{\varepsilon}*u_m \right\| _{L^p\left( V \right)}^{p}+\left\| \eta _{\varepsilon}*Du_m \right\| _{L^p\left( V \right)}^{p}
+\\
+&\overset{\text{\hyperref[Real Analysis-theorem:实变函数--Hölder不等式]{Hölder不等式}}}{\leqslant}\left\| \eta _{\varepsilon} \right\| _{L^1\left( \mathbb{R} ^n \right)}^{p}\left\| u_m \right\| _{L^p\left( V \right)}^{p}+\left\| \eta _{\varepsilon} \right\| _{L^1\left( \mathbb{R} ^n \right)}^{p}\left\| Du_m \right\| _{L^p\left( V \right)}^{p}
+\\
+&=\left\| u_m \right\| _{L^p\left( V \right)}^{p}+\left\| Du_m \right\| _{L^p\left( V \right)}^{p}=\left\| u_m \right\| _{W^{1,p}\left( V \right)}^{p}.
+\end{align*}
+再结合\hyperref[theorem:Gagliardo--Nirenberg--Sobolev不等式]{Gagliardo--Nirenberg--Sobolev不等式}，得
+\begin{align}
+\|u_{m}^{\varepsilon}-u_{m}\|_{L^{p^{*}}(V)}
+&\leqslant\|u_{m}^{\varepsilon}\|_{L^{p^{*}}(V)}+\|u_{m}\|_{L^{p^{*}}(V)}\nonumber\\
+&\leqslant C\|u_{m}^{\varepsilon}\|_{W^{1,p}(V)}+C\|u_{m}\|_{W^{1,p}(V)}\nonumber\\
+&\leqslant 2C\|u_{m}\|_{W^{1,p}(V)}\leqslant 2CM.\label{eq::Jijiowj233fdejifjs-1}
+\end{align}
+因此再由\eqref{eq::Jijiowj233fdejifjs}\eqref{eq::Jijiowj233fdejifjs-1}式及$\|u_{m}^{\varepsilon}-u_{m}\|_{L^{1}(V)}\to 0$ 对 $m$ 一致,可得
+\begin{align*}
+\|u_{m}^{\varepsilon}-u_{m}\|_{L^{q}(V)}
+\leqslant (2CM)^{1-\theta}\|u_{m}^{\varepsilon}-u_{m}\|_{L^{1}(V)}^{\theta}\to 0\quad(\varepsilon\to 0),\ \text{对}\ m\ \text{一致}.
+\end{align*}
+这就证明了\eqref{eq::rellich-approx}式。
+
+接着我们断言
+\begin{align}\label{eq::jijCIOSJIiowj}
+\text{对每个固定的}\ \varepsilon>0,\ \text{序列}\ \{u_{m}^{\varepsilon}\}_{m=1}^{\infty}\ \text{一致有界且等度连续}.
+\end{align}
+由于 $V$ 有界，利用\hyperref[Real Analysis-theorem:实变函数--Hölder不等式]{Hölder不等式}和\eqref{eq::jijiMMJiojio2}式可得
+\begin{align*}
+\left\| u_m \right\| _{L^1(V)}\leqslant \left| V \right|^{1-\frac{1}{p}}\left\| u_m \right\| _{L^p(V)}\triangleq C\left\| u_m \right\| _{L^p(V)}\leqslant C\left\| u_m \right\| _{W^{1,p}(V)}\leqslant CM.
+\end{align*}
+于是对 $m=1,2,\cdots$,任意 $x\in\mathbb{R}^{n}$，有
+\begin{align*}
+|u_{m}^{\varepsilon}(x)|
+&\leqslant\int_{B(x,\varepsilon)}\eta_{\varepsilon}(x-y)|u_{m}(y)|\,\mathrm{d}y
+\leqslant\|\eta_{\varepsilon}\|_{L^{\infty}(\mathbb{R}^n)}\|u_{m}\|_{L^{1}(V)}
+\leqslant\frac{CM}{\varepsilon^{n}},
+\end{align*}
+故 $\{u_{m}^{\varepsilon}\}$ 一致有界。又由$\eta_\varepsilon$光滑可知$C_0\triangleq \left\| D\eta \right\| _{L^{\infty}(V)}<\infty$,故
+\begin{align*}
+\left\| D\eta _{\varepsilon} \right\| _{L^{\infty}\left( \mathbb{R} ^n \right)}=\frac{1}{\varepsilon ^n}\left\| D\left( \eta \left( \frac{x}{\varepsilon} \right) \right) \right\| _{L^{\infty}\left( \mathbb{R} ^n \right)}=\frac{1}{\varepsilon ^{n+1}}\left\| D\eta \left( \frac{x}{\varepsilon} \right) \right\| _{L^{\infty}\left( \mathbb{R} ^n \right)}\leqslant \frac{C_0}{\varepsilon ^{n+1}}.
+\end{align*}
+从而类似地,还有
+\begin{align*}
+|Du_{m}^{\varepsilon}(x)|
+&\leqslant\int_{B(x,\varepsilon)}|D\eta_{\varepsilon}(x-y)||u_{m}(y)|\,\mathrm{d}y
+\leqslant\|D\eta_{\varepsilon}\|_{L^{\infty}(\mathbb{R}^n)}\|u_{m}\|_{L^{1}(V)}
+\leqslant\frac{C_0CM}{\varepsilon^{n+1}},
+\end{align*}
+故 $\{u_{m}^{\varepsilon}\}$ 的梯度一致有界.对任意$x,y\in \mathbb{R}^n$,由微积分基本定理可得
+\begin{align*}
+\left| u_{m}^{\varepsilon}\left( x \right) -u_{m}^{\varepsilon}\left( y \right) \right|&=\left| \int_0^1{\frac{\mathrm{d}}{\mathrm{d}t}u_{m}^{\varepsilon}\left( x+t\left( y-x \right) \right) \,\mathrm{d}t} \right|=\left| \int_0^1{Du_{m}^{\varepsilon}\left( x+t\left( y-x \right) \right) \cdot \left( y-x \right) \,\mathrm{d}t} \right|
+\\
+&\leqslant \int_0^1{\left| Du_{m}^{\varepsilon}\left( x+t\left( y-x \right) \right) \right|\left| y-x \right|\,\mathrm{d}t}\leqslant \frac{C_0CM}{\varepsilon ^{n+1}}\left| y-x \right|.
+\end{align*}
+因此$\{u_{m}^{\varepsilon}\}$等度连续。
+
+固定 $\delta>0$。由\eqref{eq::rellich-approx}式，可取 $\varepsilon>0$ 充分小，使得
+\begin{align}\label{eq::rellich-delta}
+\|u_{m}^{\varepsilon}-u_{m}\|_{L^{q}(V)}\leqslant\frac{\delta}{2}\qquad (m=1,2,\cdots).
+\end{align}
+由\eqref{eq::jijCIOSJIiowj}式及\hyperref[Functional Analysis-theorem:泛函分析--Arzelà-Ascoli定理]{Arzelà--Ascoli定理}，存在子序列 $\{u_{m_{j}}^{\varepsilon}\}_{j=1}^{\infty}\subset\{u_{m}^{\varepsilon}\}_{m=1}^{\infty}$，它在 $V$ 上一致收敛。特别地，
+\begin{align}\label{eq::rellich-subseq}
+\varlimsup_{j,k\to\infty}\|u_{m_{j}}^{\varepsilon}-u_{m_{k}}^{\varepsilon}\|_{L^{q}(V)}=0.
+\end{align}
+于是由三角不等式及\eqref{eq::rellich-delta}\eqref{eq::rellich-subseq}式得
+\begin{align*}
+\varlimsup_{j,k\to\infty}\|u_{m_{j}}-u_{m_{k}}\|_{L^{q}(V)}
+\leqslant\varlimsup_{j,k\to\infty}\left(\|u_{m_{j}}-u_{m_{j}}^{\varepsilon}\|_{L^{q}}+\|u_{m_{j}}^{\varepsilon}-u_{m_{k}}^{\varepsilon}\|_{L^{q}}+\|u_{m_{k}}^{\varepsilon}-u_{m_{k}}\|_{L^{q}}\right)\leqslant\frac{\delta}{2}+0+\frac{\delta}{2}=\delta.
+\end{align*}
+取 $\delta=1,\frac{1}{2},\frac{1}{3},\cdots$，重复上述操作，并用\hyperref[Functional Analysis-proposition:对角线法则]{对角线法则}，可抽出一个子序列 $\{u_{m_{l}}\}_{l=1}^{\infty}\subset\{u_{m}\}_{m=1}^{\infty}$，使得
+\begin{align*}
+\varlimsup_{l,k\to\infty}\|u_{m_{l}}-u_{m_{k}}\|_{L^{q}(V)}=0.
+\end{align*}
+因此 $\{u_{m_{l}}\}$ 是 $L^{q}(V)$ 中的 Cauchy 列。由于 $L^{q}(V)$ 完备，存在 $u\in L^{q}(V)$ 使得 $u_{m_{l}}\to u$ 于 $L^{q}(V)$。又 $U\subset \subset V$，故$u_{m_{l}}\to u$ 于 $L^{q}(U)$。这就证明了 $W^{1,p}(U)\subset\subset L^{q}(U)$。
+
+\item 固定 $1\leqslant q<\infty$。选取 $p'$ 满足
+\begin{align*}
+\max\left\{1,\frac{nq}{n+q}\right\}<p'<n.
+\end{align*}
+则 $p'<n$ 且 $(p')^{*}=\dfrac{np'}{n-p'}>q$。由 $U$ 有界，连续嵌入
+\begin{align}\label{eq::rellich-n-continuous}
+W^{1,n}(U)\subset W^{1,p'}(U),\qquad
+\|u\|_{W^{1,p'}(U)}\leqslant C\|u\|_{W^{1,n}(U)}
+\end{align}
+成立。因为 $U$ 有界，故 $|U|<\infty$。由 Hölder 不等式，对任意 $f\in L^{n}(U)$，有
+\begin{align*}
+\|f\|_{L^{p'}(U)}
+=\left(\int_U |f|^{p'}\cdot 1\,\mathrm{d}x\right)^{\frac{1}{p'}}\leqslant\left(\int_U |f|^{n}\,\mathrm{d}x\right)^{\frac{1}{n}}
+\left(\int_U 1^{\frac{n}{n-p'}}\,\mathrm{d}x\right)^{\frac{n-p'}{n p'}}=|U|^{\frac{1}{p'}-\frac{1}{n}}\|f\|_{L^{n}(U)}.
+\end{align*}
+这里用到了 $p'<n$，故指数 $\frac{n}{n-p'}$ 有意义，且 $\frac{1}{p'}-\frac{1}{n}>0$。
+现在设 $u\in W^{1,n}(U)$。分别对 $f=u$ 和 $f=D_i u$（$i=1,\cdots,n$）应用上述不等式，得到
+\begin{align*}
+\int_U |u|^{p'}\,\mathrm{d}x
+&\leqslant |U|^{1-\frac{p'}{n}}\left(\int_U |u|^{n}\,\mathrm{d}x\right)^{\frac{p'}{n}},\\
+\int_U |D_i u|^{p'}\,\mathrm{d}x
+&\leqslant |U|^{1-\frac{p'}{n}}\left(\int_U |D_i u|^{n}\,\mathrm{d}x\right)^{\frac{p'}{n}}.
+\end{align*}
+把它们代入 $W^{1,p'}(U)$ 范数的定义得
+\begin{align*}
+\|u\|_{W^{1,p'}(U)}^{p'}
+=\int_U|u|^{p'}\,\mathrm{d}x+\sum_{i=1}^{n}\int_U|D_i u|^{p'}\,\mathrm{d}x\leqslant |U|^{1-\frac{p'}{n}}\left[\left(\int_U |u|^{n}\,\mathrm{d}x\right)^{\frac{p'}{n}}
++\sum_{i=1}^{n}\left(\int_U |D_i u|^{n}\,\mathrm{d}x\right)^{\frac{p'}{n}}\right].
+\end{align*}
+由\cref{lemma:有限维lp与ln范数}知,对任意非负实数 $a_0,a_1,\cdots,a_n$ 和 $0<p'<n$，有
+\begin{align*}
+a_0^{p'}+a_1^{p'}+\cdots+a_n^{p'}
+\leqslant (n+1)^{1-\frac{p'}{n}}\left(a_0^{n}+a_1^{n}+\cdots+a_n^{n}\right)^{\frac{p'}{n}}.
+\end{align*}
+这里取
+\begin{align*}
+a_0=\left(\int_U |u|^{n}\,\mathrm{d}x\right)^{\frac{1}{n}},\qquad
+a_i=\left(\int_U |D_i u|^{n}\,\mathrm{d}x\right)^{\frac{1}{n}},\quad i=1,\cdots,n.
+\end{align*}
+则
+\begin{align*}
+\left(\int_U |u|^{n}\,\mathrm{d}x\right)^{\frac{p'}{n}}
++\sum_{i=1}^{n}\left(\int_U |D_i u|^{n}\,\mathrm{d}x\right)^{\frac{p'}{n}}\leqslant (n+1)^{1-\frac{p'}{n}}
+\left[\int_U |u|^{n}\,\mathrm{d}x+\sum_{i=1}^{n}\int_U |D_i u|^{n}\,\mathrm{d}x\right]^{\frac{p'}{n}}.
+\end{align*}
+于是
+\begin{align*}
+\|u\|_{W^{1,p'}(U)}^{p'}
+&\leqslant |U|^{1-\frac{p'}{n}}(n+1)^{1-\frac{p'}{n}}
+\left[\int_U |u|^{n}\,\mathrm{d}x+\sum_{i=1}^{n}\int_U |D_i u|^{n}\,\mathrm{d}x\right]^{\frac{p'}{n}}\\
+&=\left[|U|^{1-\frac{p'}{n}}(n+1)^{1-\frac{p'}{n}}\right]
+\|u\|_{W^{1,n}(U)}^{p'}.
+\end{align*}
+两边开 $p'$ 次方，得到
+\begin{align*}
+\|u\|_{W^{1,p'}(U)}
+\leqslant |U|^{\frac{1}{p'}-\frac{1}{n}}(n+1)^{\frac{1}{p'}-\frac{1}{n}}\|u\|_{W^{1,n}(U)}=C\|u\|_{W^{1,n}(U)},
+\end{align*}
+其中常数$C=|U|^{\frac{1}{p'}-\frac{1}{n}}(n+1)^{\frac{1}{p'}-\frac{1}{n}}$
+只依赖于 $|U|$、$n$ 与 $p'$。这就证明了\eqref{eq::rellich-n-continuous}式.
+
+由情形 (1)（应用于 $p'<n$），紧嵌入
+\begin{align}\label{eq::rellich-n-compact}
+W^{1,p'}(U)\subset\subset L^{q}(U)
+\end{align}
+成立。设$\{u_{m}\}_{m=1}^{\infty}$ 是 $W^{1,n}(U)$ 中的有界序列。由\eqref{eq::rellich-n-continuous}式知，$\{u_{m}\}$ 在 $W^{1,p'}(U)$ 中也有界。由\eqref{eq::rellich-n-compact}式，存在子序列 $\{u_{m_{j}}\}_{j=1}^{\infty}$ 在 $L^{q}(U)$ 中收敛。因此
+\begin{align*}
+W^{1,n}(U)\subset\subset L^{q}(U).
+\end{align*}
+
+\item 当$n< p\leqslant\infty$，由\hyperref[theorem:Morrey不等式]{Morrey不等式}，有连续嵌入
+\begin{align}\label{eq::rellich-pn-continuous}
+W^{1,p}(U)\subset C^{0,\gamma}(\overline{U}),\qquad
+\gamma=1-\frac{n}{p}\in(0,1],
+\end{align}
+并且
+\begin{align*}
+\|u\|_{C^{0,\gamma}(\overline{U})}\leqslant C\|u\|_{W^{1,p}(U)}.
+\end{align*}
+设 $\{u_{m}\}_{m=1}^{\infty}$ 是 $W^{1,p}(U)$ 中的有界序列。由 \eqref{eq::rellich-pn-continuous}式知，$\{u_{m}\}$ 在 $C^{0,\gamma}(\overline{U})$ 中有界，即存在 $M>0$ 使得
+\begin{align*}
+\sup_{m}\|u_{m}\|_{C^{0,\gamma}(\overline{U})}\leqslant M.
+\end{align*}
+特别地，$\{u_{m}\}$ 在 $\overline{U}$ 上一致有界,且由上式知$\{u_{m}\}$一致H\"older连续，从而等度连续。由\hyperref[Functional Analysis-theorem:泛函分析--Arzelà-Ascoli定理]{Arzelà--Ascoli定理}，存在子序列 $\{u_{m_{j}}\}_{j=1}^{\infty}$ 在 $C(\overline{U})$ 中一致收敛。因为 $U$ 有界，所以有连续嵌入
+\begin{align*}
+C(\overline{U})\subset L^{q}(U),\qquad 1\leqslant q\leqslant\infty,
+\end{align*}
+故 $u_{m_{j}}\to u$ 于 $L^{q}(U)$。因此
+\begin{align*}
+W^{1,p}(U)\subset\subset L^{q}(U),\qquad 1\leqslant q\leqslant\infty.
+\end{align*}
+
+\item 设 $1\leqslant p\leqslant\infty$，固定 $1\leqslant q<\infty$。取有界开集 $V$，使得 $U\subset\subset V$，且 $V$ 具有 $C^{1}$ 边界（例如取 $V$ 为包含 $U$ 的足够大的球）。对任意 $u\in W_{0}^{1,p}(U)$，将 $u$ 零延拓到 $V\setminus U$，得到 $\widetilde{u}\in W_{0}^{1,p}(V)$。由于 $V$ 有 $C^{1}$ 边界，由情形 (1)(2)(3) 知，对相应的 $q$，紧嵌入
+\begin{align*}
+W^{1,p}(V)\subset\subset L^{q}(V)
+\end{align*}
+成立。设 $\{u_{m}\}_{m=1}^{\infty}$ 是 $W_{0}^{1,p}(U)$ 中的有界序列。则其零延拓 $\{\widetilde{u}_{m}\}_{m=1}^{\infty}$ 在 $W^{1,p}(V)$ 中有界，故存在子序列 $\{\widetilde{u}_{m_{j}}\}_{j=1}^{\infty}$ 在 $L^{q}(V)$ 中收敛，从而在 $L^{q}(U)$ 中收敛。因此
+\begin{align*}
+W_{0}^{1,p}(U)\subset\subset L^{q}(U).
+\end{align*}
+\end{enumerate}
+\end{proof}
+
+
+
+
+
+
+\end{document}

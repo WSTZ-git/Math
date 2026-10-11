@@ -1,0 +1,158 @@
+\documentclass[../../main.tex]{subfiles}
+\begin{document}
+% SOURCE p=227; printed=212; object=ch07-riesz-positive; number=7.2; region=lower
+\begin{theorem}[Riesz 表示定理]\label{theorem:ch07-riesz-positive}
+若 $I$ 是 $C_c(X)$ 上的正线性泛函，则存在唯一的 Radon 测度 $\mu$，使所有 $f\in C_c(X)$ 都满足 $I(f)=\int f\,\mathrm d\mu$。此外，$\mu$ 满足
+\begin{align}
+\mu(U)&=\sup\{I(f):f\in C_c(X),\ f\prec U\}
+&& (U\subseteq X\text{ 开}),\label{align:ch07-riesz-open-sup}\\
+\mu(K)&=\inf\{I(f):f\in C_c(X),\ f\geqslant\chi_K\}
+&& (K\subseteq X\text{ 紧}).\label{align:ch07-riesz-compact-inf}
+\end{align}
+\end{theorem}
+
+% SOURCE p=227,228,229,230; printed=212-215; object=ch07-riesz-positive-proof; region=bottom-full-top
+\begin{proof}
+先证明唯一性。若 $\mu$ 为表示 $I$ 的 Radon 测度，$U\subseteq X$ 开，则 $f\prec U$ 时显然有 $I(f)\leqslant\mu(U)$。另一方面，若 $K\subseteq U$ 紧，由 Urysohn 引理可取 $f\prec U$ 且 $f=1$ 于 $K$，于是 $\mu(K)\leqslant\int f\,\mathrm d\mu=I(f)$。由 $\mu$ 在 $U$ 上内正则，\eqref{align:ch07-riesz-open-sup}成立。因此 $I$ 决定所有开集的测度，再由外正则性决定所有 Borel 集的测度。
+
+这个论证也提示如何证明存在性。先对开集 $U$ 定义
+\begin{align*}
+\mu(U)=\sup\{I(f):f\in C_c(X),\ f\prec U\},
+\end{align*}
+然后对任意 $E\subseteq X$ 定义
+\begin{align*}
+\mu^*(E)=\inf\{\mu(U):E\subseteq U,\ U\text{ 开}\}.
+\end{align*}
+显然 $U\subseteq V$ 蕴含 $\mu(U)\leqslant\mu(V)$，所以开集上 $\mu^*(U)=\mu(U)$。
+
+证明分为四步：
+\begin{enumerate}[label=\roman*.,ref=(\roman*)]
+\item $\mu^*$ 是外测度。
+\item 每个开集都 $\mu^*$ 可测。
+\end{enumerate}
+完成这两步后，\cref{theorem:ch01-caratheodory}说明所有 Borel 集都 $\mu^*$ 可测，且 $\mu=\mu^*|_{\mathscr B_X}$ 为 Borel 测度。由于开集上 $\mu^*(U)=\mu(U)$，记号相容。按定义，$\mu$ 外正则并满足\eqref{align:ch07-riesz-open-sup}。接着证明：
+\begin{enumerate}[label=\roman*.,ref=(\roman*),start=3]
+\item $\mu$ 满足\eqref{align:ch07-riesz-compact-inf}。
+\end{enumerate}
+这显然蕴含紧集测度有限，开集内正则性也随之得到。事实上，给定开集 $U$ 及 $\alpha<\mu(U)$，选 $f\prec U$ 使 $I(f)>\alpha$，并令 $K=\operatorname{supp}(f)$。若 $g\in C_c(X)$ 且 $g\geqslant\chi_K$，则 $g-f\geqslant0$，故 $I(g)\geqslant I(f)>\alpha$。由\eqref{align:ch07-riesz-compact-inf}，$\mu(K)>\alpha$，所以 $\mu$ 在 $U$ 上内正则。最后证明：
+\begin{enumerate}[label=\roman*.,ref=(\roman*),start=4]
+\item 对所有 $f\in C_c(X)$，$I(f)=\int f\,\mathrm d\mu$。
+\end{enumerate}
+至此定理即得证。
+
+\textbf{第 (i) 步。}只须证明，对开集序列 $(U_j)$，令 $U=\bigcup_{j=1}^\infty U_j$，有 $\mu(U)\leqslant\sum_{j=1}^\infty\mu(U_j)$。这将蕴含对任意 $E\subseteq X$ 有
+\begin{align*}
+\mu^*(E)=\inf\left\{\sum_{j=1}^\infty\mu(U_j):
+U_j\text{ 开},\ E\subseteq\bigcup_{j=1}^\infty U_j\right\},
+\end{align*}
+而右端由\cref{proposition:ch01-outer-measure-construction}定义一个外测度。设 $f\prec U$，令 $K=\operatorname{supp}(f)$。由紧性，存在有限 $n$ 使 $K\subseteq\bigcup_{j=1}^n U_j$。由\cref{proposition:ch04-finite-partition-unity}，存在 $g_1,\ldots,g_n\in C_c(X)$，使 $g_j\prec U_j$ 且 $\sum_{j=1}^n g_j=1$ 于 $K$。于是 $f=\sum_{j=1}^nfg_j$，并有 $fg_j\prec U_j$，所以
+\begin{align*}
+I(f)=\sum_{j=1}^nI(fg_j)
+\leqslant\sum_{j=1}^n\mu(U_j)
+\leqslant\sum_{j=1}^\infty\mu(U_j).
+\end{align*}
+对所有 $f\prec U$ 取上确界，便得所需不等式。
+
+\textbf{第 (ii) 步。}须证明：若 $U$ 开、$E\subseteq X$ 且 $\mu^*(E)<\infty$，则
+\begin{align*}
+\mu^*(E)\geqslant\mu^*(E\cap U)+\mu^*(E\setminus U).
+\end{align*}
+先假设 $E$ 开。给定 $\varepsilon>0$，选 $f\prec E\cap U$ 使 $I(f)>\mu(E\cap U)-\varepsilon$。又 $E\setminus\operatorname{supp}(f)$ 开，可选 $g\prec E\setminus\operatorname{supp}(f)$ 使
+\begin{align*}
+I(g)>\mu(E\setminus\operatorname{supp}(f))-\varepsilon.
+\end{align*}
+此时 $f+g\prec E$，所以
+\begin{align*}
+\mu(E)&\geqslant I(f)+I(g)\\
+&>\mu(E\cap U)+\mu(E\setminus\operatorname{supp}(f))-2\varepsilon\\
+&\geqslant\mu^*(E\cap U)+\mu^*(E\setminus U)-2\varepsilon.
+\end{align*}
+令 $\varepsilon\downarrow0$，即得结论。一般情况下，选开集 $V\supseteq E$ 使 $\mu(V)<\mu^*(E)+\varepsilon$。于是
+\begin{align*}
+\mu^*(E)+\varepsilon&>\mu(V)
+\geqslant\mu^*(V\cap U)+\mu^*(V\setminus U)\\
+&\geqslant\mu^*(E\cap U)+\mu^*(E\setminus U).
+\end{align*}
+再令 $\varepsilon\downarrow0$，完成证明。
+
+\textbf{第 (iii) 步。}设 $K$ 紧、$f\in C_c(X)$ 且 $f\geqslant\chi_K$。令 $U_\varepsilon=\{x:f(x)>1-\varepsilon\}$。这是开集，而且 $g\prec U_\varepsilon$ 时，$(1-\varepsilon)^{-1}f-g\geqslant0$，故 $I(g)\leqslant(1-\varepsilon)^{-1}I(f)$。于是
+\begin{align*}
+\mu(K)\leqslant\mu(U_\varepsilon)
+\leqslant(1-\varepsilon)^{-1}I(f).
+\end{align*}
+令 $\varepsilon\downarrow0$ 得 $\mu(K)\leqslant I(f)$。反过来，对任意开集 $U\supseteq K$，由 Urysohn 引理可取 $f\in C_c(X)$，使 $f\geqslant\chi_K$ 且 $f\prec U$，因而 $I(f)\leqslant\mu(U)$。再由 $\mu$ 在 $K$ 上外正则，得到\eqref{align:ch07-riesz-compact-inf}。
+
+\textbf{第 (iv) 步。}由于 $C_c(X,[0,1])$ 线性张成 $C_c(X)$，只须对 $f\in C_c(X,[0,1])$ 证明积分表示。给定 $N\in\mathbb N$，令 $K_0=\operatorname{supp}(f)$，并对 $1\leqslant j\leqslant N$ 令 $K_j=\{x:f(x)\geqslant j/N\}$。定义 $f_j\in C_c(X)$：在 $K_{j-1}$ 之外取零，在 $K_{j-1}\setminus K_j$ 上取 $f-(j-1)/N$，在 $K_j$ 上取 $1/N$。换言之，
+\begin{align*}
+f_j=\min\left\{\max\left\{f-\frac{j-1}{N},0\right\},\frac1N\right\}.
+\end{align*}
+于是 $N^{-1}\chi_{K_j}\leqslant f_j\leqslant N^{-1}\chi_{K_{j-1}}$，故
+\begin{align*}
+\frac1N\mu(K_j)\leqslant\int f_j\,\mathrm d\mu
+\leqslant\frac1N\mu(K_{j-1}).
+\end{align*}
+另外，若开集 $U$ 包含 $K_{j-1}$，则 $Nf_j\prec U$，从而 $I(f_j)\leqslant N^{-1}\mu(U)$。结合\eqref{align:ch07-riesz-compact-inf}和外正则性，得到
+\begin{align*}
+\frac1N\mu(K_j)\leqslant I(f_j)\leqslant\frac1N\mu(K_{j-1}).
+\end{align*}
+由于 $f=\sum_{j=1}^Nf_j$，有
+\begin{align*}
+\frac1N\sum_{j=1}^N\mu(K_j)
+&\leqslant\int f\,\mathrm d\mu
+\leqslant\frac1N\sum_{j=0}^{N-1}\mu(K_j),\\
+\frac1N\sum_{j=1}^N\mu(K_j)
+&\leqslant I(f)
+\leqslant\frac1N\sum_{j=0}^{N-1}\mu(K_j).
+\end{align*}
+因此
+\begin{align*}
+\left|I(f)-\int f\,\mathrm d\mu\right|
+\leqslant\frac{\mu(K_0)-\mu(K_N)}N
+\leqslant\frac{\mu(\operatorname{supp}(f))}N.
+\end{align*}
+由于紧支集测度有限，且 $N$ 任意，得到 $I(f)=\int f\,\mathrm d\mu$。
+\end{proof}
+% SUPPLEMENT: id=v14-ch07-riesz-positive-details; parent=ch07-riesz-positive; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{四步构造的闭合性与遗漏细节（重构新增）。}开集的定义给出 $\mu(\varnothing)=0$，因为支集在空集内的函数只能为零；取 $f=0$ 又知所有开集的值非负。第 (i) 步中，单一开集覆盖可补上空集成为可数覆盖，故“可数覆盖下确界”不大于原定义；反方向则由开集并的次可加性给出。这样确实满足外测度构造的全部条件。
+
+第 (ii) 步只需处理 $\mu^*(E)<\infty$：若左端为无穷，所需的反向不等式自动成立，再结合外测度的次可加性便有 Carathéodory 等式。在有限情形，所有被减去 $\varepsilon$ 的测度都有限。$\operatorname{supp}(f)$ 是紧闭集，故 $E\setminus\operatorname{supp}(f)$ 开；$g$ 在这个支集上为零，所以逐点至多一个函数非零，才有 $f+g\leqslant1$。其支集为两个紧支集之并的子集，并且位于 $E$ 内，因而 $f+g\prec E$，并非仅由 $f,g\leqslant1$ 就能得到这一点。
+
+第 (iii) 步取 $0<\varepsilon<1$。条件 $f\geqslant\chi_K$ 是在整个 $X$ 上比较，因而还保证 $f\geqslant0$ 于 $K$ 外。$K$ 上有 $f\geqslant1$，故 $K\subseteq U_\varepsilon$，所用比较合法。紧集上的截断 $\phi\geqslant\chi_K$ 总存在，且 $I(\phi)$ 为有限数；紧集下确界公式因此同时证明 $\mu(K)<\infty$。在开集内正则性的论证中，所有 $I(g)$ 具有\emph{同一个}下界 $I(f)>\alpha$，所以其下确界至少是 $I(f)$，从而严格大于 $\alpha$；不能一般地从每项大于 $\alpha$ 就断言下确界严格大于 $\alpha$。当 $\mu(U)=0$ 时取空紧集即可；当其为无穷时，任意有限 $\alpha>0$ 都能这样逼近。
+
+第 (iv) 步的每个 $K_j$（$j\geqslant1$）是 $K_0$ 的闭子集，因此紧。$f_j$ 的截断公式保证连续，且其支集包含于 $K_{j-1}$。对某个点若 $f(x)=t\in[0,1]$，各层依次贡献长度 $1/N$，最后一层贡献不足 $1/N$ 的余量，所以各层之和恰为 $t$，证明 $\sum f_j=f$。下界 $\mu(K_j)/N\leqslant I(f_j)$ 来自 $Nf_j\geqslant\chi_{K_j}$ 和紧集下确界公式；上界来自开集上确界再作外逼近，未把尚未证明的积分表示用于 $I$。所有 $K_j$ 测度都有限，所以最后的差和望远镜求和没有 $\infty-\infty$。任意复值 $h\in C_c(X)$ 可分为实部、虚部各自的正负部分，四个非负紧支连续函数再各除以足够大的正常数落入 $[0,1]$，故所说的线性张成也已验证。
+\end{remark}
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}开集允许容纳紧支函数，因而先以全部 $I(f)$ 的上确界定义其大小；外测度随后负责补齐可数可加性。正性给出所有比较不等式，线性性则使单位分解和函数分层能够求和。LCH 性通过局部 Urysohn 引理及有限单位分解进入证明；不需要全空间紧或可数基。目标测度要求开集内正则，使其开集值被 $I$ 确定；要求全部 Borel 集外正则，使开集值决定整个测度；紧集有限则保证最终的积分和误差界有限。唯一性是这个 Radon 类中的唯一性，不能删去正则性条件而将其无条件推广到所有 Borel 测度。两个取界公式也说明，正泛函不仅给出积分值，还直接编码了开集和紧集的大小。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch07-riesz-positive-details
+
+% SOURCE p=230; printed=215; object=ch07-riesz-complete-extension; region=upper-middle
+这个证明实际上给出了比定理陈述更强的结果：不仅得到 Borel 测度 $\mu$，还得到它在所有 $\mu^*$ 可测集组成的 $\sigma$ 代数上的延拓 $\overline\mu$。由外正则性，对任意 $E\subseteq X$ 有
+\begin{align*}
+\mu^*(E)=\inf\{\mu(B):B\in\mathscr B_X,\ E\subseteq B\}.
+\end{align*}
+因此 $\mu^*$ 正是\cref{section:ch01-outer-measures}意义下由 $\mu$ 诱导的外测度。根据\cref{exercise:ch01-extension-completion-saturation}，若 $\mu$ 为 $\sigma$ 有限的，则 $\overline\mu$ 是 $\mu$ 的完备化；一般情况下，它是 $\mu$ 的完备化的饱和化。
+% SUPPLEMENT: id=v14-ch07-riesz-completion-details; parent=ch07-riesz-complete-extension; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{外覆盖、完备化与饱和化的核验（重构新增）。}记右端的 Borel 外覆盖下确界为 $b(E)$。每个开集均为 Borel 集，故 $b(E)\leqslant\mu^*(E)$；反过来，若 Borel 集 $B\supseteq E$，则由单调性与 $\mu^*|_{\mathscr B_X}=\mu$，有 $\mu^*(E)\leqslant\mu(B)$，取下确界得相反不等式。Borel 可数覆盖的并仍为 Borel 集，且其测度不超过覆盖测度和，所以这也等于由 $\mu$ 的可数覆盖构造所得的外测度。
+
+为补全所引习题的本段应用，记 $\widehat{\mathscr B}_X$ 为 $\mu$ 的完备化定义域。先注意：若 $E$ 为 $\mu^*$ 可测集且 $\mu^*(E)<\infty$，选 Borel 集 $B_n\supseteq E$ 使 $\mu(B_n)<\mu^*(E)+1/n$，令 $B=\bigcap_nB_n$，便有 $\mu(B)=\mu^*(E)$。由 $E$ 的 Carathéodory 可测性，$\mu^*(B\setminus E)=0$。零外测度集也有零测度 Borel 上包集（对其使用同一构造），所以 $E$ 属于完备化，且完备化测度等于 $\mu^*(E)$。
+
+现在设 $E$ 为任意 $\mu^*$ 可测集。对每个完备化可测、测度有限的 $A$，$E\cap A$ 也是有限外测度的 $\mu^*$ 可测集，故由上一段属于完备化。因此 $E$ 关于完备化局部可测。反过来，设 $E$ 关于完备化局部可测，检验任意 $S\subseteq X$ 的 Carathéodory 条件。若 $\mu^*(S)=\infty$，反向不等式自动成立；若其有限，取测度有限的 Borel 上包集 $B\supseteq S$。此时 $E\cap B$ 属于完备化，因而 $\mu^*$ 可测；以 $E\cap B$ 分割 $S$，恰等于以 $E$ 分割 $S$，所需等式成立。于是所有 $\mu^*$ 可测集恰为完备化的局部可测集。
+
+若这种集合 $E$ 不属于完备化，则其外测度必为无穷，否则第一段已经说明它属于完备化。因此延拓测度在新增集合上取无穷，与\cref{exercise:ch01-saturation}的饱和化定义一致。若 $X=\bigcup_n A_n$ 且各 $A_n$ 为有限测度 Borel 集，则每个局部可测 $E$ 都是 $\bigcup_n(E\cap A_n)$，从而本身属于完备化，这就证明了 $\sigma$ 有限情形的结论。此处 $\sigma$ 有限性的作用是把逐块可测性重新拼成可数并；一般 LCH 空间没有这项保证。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch07-riesz-completion-details
+
+% SOURCE p=230; printed=215; object=ch07-baire-definition; region=middle
+\begin{definition}[Baire 集]\label{definition:ch07-baire-sets}
+有些作者选择一个比 $\mathscr B_X$ 更小的 $\sigma$ 代数，即由 $C_c(X)$ 生成的 $\mathscr B_X^0$：这是使每个 $f\in C_c(X)$ 都可测的最小 $\sigma$ 代数。$\mathscr B_X^0$ 中的集合称为 \textbf{Baire 集}。
+\end{definition}
+关于 Baire 集的更多性质，参见\cref{exercise:ch07-compact-gdelta,exercise:ch07-second-countable-baire,exercise:ch07-baire-borel-different}。
+% SUPPLEMENT: id=v14-ch07-baire-motivation; parent=ch07-baire-definition; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}“由函数生成”具体指所有 $f^{-1}(V)$（$f\in C_c(X)$、$V\subseteq\mathbb C$ 开）生成的 $\sigma$ 代数。连续性使这些原像在 $X$ 中开，故 $\mathscr B_X^0\subseteq\mathscr B_X$。它只保留积分测试函数能够直接识别的可测信息。定义使用 $C_c(X)$ 这一指定函数族；在非紧空间上不能无说明地将其换为所有连续函数。后面的习题证明在第二可数 LCH 空间上两种 $\sigma$ 代数相等，同时展示缺少可数性时严格包含的例子。因此“小于”在一般叙述中应理解为包含关系，未必每次都是严格包含。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch07-baire-motivation
+\end{document}

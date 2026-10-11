@@ -1,0 +1,198 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+% SOURCE p=92; printed=77; object=ch02-polar-title; region=lower
+\section{极坐标中的积分}\label{section:ch02-polar-coordinates}
+% SOURCE p=92; printed=77; object=ch02-planar-spherical-coordinates; region=bottom
+\begin{definition}[平面极坐标与球坐标]\label{definition:ch02-planar-spherical-coordinates}
+$\mathbb{R}^2$ 和 $\mathbb{R}^3$ 中最重要的非线性坐标系分别是\textbf{极坐标} $x=r\cos\theta$、$y=r\sin\theta$，以及\textbf{球坐标} $x=r\sin\phi\cos\theta$、$y=r\sin\phi\sin\theta$、$z=r\cos\phi$。
+\end{definition}
+% SOURCE p=92,93; printed=77,78; object=ch02-polar-intro; region=bottom/top
+将\cref{theorem:ch02-differentiable-change}用于这些坐标，得到熟知的公式（非严格地写出）$\mathrm{d}x\,\mathrm{d}y=r\,\mathrm{d}r\,\mathrm{d}\theta$ 和 $\mathrm{d}x\,\mathrm{d}y\,\mathrm{d}z=r^2\sin\phi\,\mathrm{d}r\,\mathrm{d}\phi$。高维中也有类似的坐标系，但随维数增加，它们会越来越复杂（见\cref{exercise:ch02-spherical-coordinates}）。不过，对大多数目的，只需知道 Lebesgue 测度实质上是 $(0,\infty)$ 上测度 $r^{n-1}\,\mathrm{d}r$ 与单位球面上某个“表面测度”的乘积就足够了；$n=2$ 时后者为 $\mathrm{d}\theta$，$n=3$ 时为 $\sin\phi\,\mathrm{d}\theta\,\mathrm{d}\phi$。
+
+% SOURCE p=93; printed=78; object=ch02-sector-motivation; region=upper
+这一表面测度的构造受平面几何中一个熟知事实的启发。若 $S_\theta$ 为半径 $r$、圆心角 $\theta$ 的扇形，即圆盘中夹在角的两边之间的区域，则面积 $m(S_\theta)$ 与 $\theta$ 成正比；事实上，$m(S_\theta)=\frac12r^2\theta$。从这一等式中可解出 $\theta$，因而可以用面积 $m(S_\theta)$ 来定义角度 $\theta$。同一想法也适用于高维：我们将通过单位球中相应扇形的 Lebesgue 测度，定义单位球面某个子集的表面测度。
+% SOURCE p=93; printed=78; object=ch02-unit-sphere; region=upper-middle
+\begin{definition}[单位球面]\label{definition:ch02-unit-sphere}
+以 $S^{n-1}$ 表示单位球面 $\{x\in\mathbb{R}^n:|x|=1\}$。
+\end{definition}
+% SOURCE p=93; printed=78; object=ch02-n-dimensional-polar-coordinates; region=middle
+\begin{definition}[$n$ 维极坐标]\label{definition:ch02-n-dimensional-polar-coordinates}
+若 $x\in\mathbb{R}^n\setminus\{0\}$，则 $x$ 的\textbf{极坐标}为
+\begin{align*}
+r=|x|\in(0,\infty),\qquad x'=\frac{x}{|x|}\in S^{n-1}.
+\end{align*}
+\end{definition}
+% SOURCE p=93; printed=78; object=ch02-polar-map; region=middle
+\begin{proposition}\label{proposition:ch02-polar-map}
+映射 $\Phi(x)=(r,x')$ 是从 $\mathbb{R}^n\setminus\{0\}$ 到 $(0,\infty)\times S^{n-1}$ 的连续双射，其连续逆映射为 $\Phi^{-1}(r,x')=rx'$。
+\end{proposition}
+% SOURCE p=93; printed=78; object=ch02-polar-induced-measure; region=middle
+\begin{definition}[极坐标诱导测度]\label{definition:ch02-polar-induced-measure}
+以 $m_*$ 表示由 $\Phi$ 将 $\mathbb{R}^n$ 上的 Lebesgue 测度诱导到 $(0,\infty)\times S^{n-1}$ 上的 Borel 测度，即 $m_*(E)=m(\Phi^{-1}(E))$。
+\end{definition}
+% SOURCE p=93; printed=78; object=ch02-radial-measure; region=middle
+\begin{definition}[径向测度]\label{definition:ch02-radial-measure}
+在 $(0,\infty)$ 上定义测度 $\rho=\rho_n$ 为 $\rho(E)=\int_E r^{n-1}\,\mathrm{d}r$。
+\end{definition}
+% SOURCE p=93; printed=78; object=ch02-polar-integration; number=2.49; region=middle
+\begin{theorem}\label{theorem:ch02-polar-integration}
+$S^{n-1}$ 上存在唯一的 Borel 测度 $\sigma=\sigma_{n-1}$，使 $m_*=\rho\times\sigma$。若 $f$ 在 $\mathbb{R}^n$ 上 Borel 可测，且 $f\ge0$ 或 $f\in L^1(m)$，则
+% SOURCE p=93; printed=78; object=ch02-polar-integration-equation; number=2.50; region=middle-lower
+\begin{align}\label{align:ch02-polar-integration}
+\int_{\mathbb{R}^n}f(x)\,\mathrm{d}x=\int_0^\infty\int_{S^{n-1}}f(rx')r^{n-1}\,\mathrm{d}\sigma(x')\,\mathrm{d}r.
+\end{align}
+\end{theorem}
+% SOURCE p=93,94; printed=78,79; object=ch02-proof-polar-integration; region=lower/top
+\begin{proof}
+当 $f$ 为集合的示性函数时，\eqref{align:ch02-polar-integration}只是等式 $m_*=\rho\times\sigma$ 的另一种表述；由通常的线性性与逼近论证，它随之对一般 $f$ 成立。因此只需构造 $\sigma$。
+
+若 $E$ 为 $S^{n-1}$ 中的 Borel 集，对 $a>0$ 令
+\begin{align*}
+E_a=\Phi^{-1}((0,a]\times E)=\{rx':0<r\le a,\ x'\in E\}.
+\end{align*}
+若\eqref{align:ch02-polar-integration}在 $f=\chi_{E_1}$ 时成立，就必须有
+\begin{align*}
+m(E_1)=\int_0^1\int_E r^{n-1}\,\mathrm{d}\sigma(x')\,\mathrm{d}r
+=\sigma(E)\int_0^1r^{n-1}\,\mathrm{d}r=\frac{\sigma(E)}n.
+\end{align*}
+\begin{definition*}[球面测度的构造]
+因此，定义 $\sigma(E)=n\,m(E_1)$。
+\end{definition*}
+由于映射 $E\mapsto E_1$ 将 Borel 集映为 Borel 集，且与并、交、补运算可交换，显然 $\sigma$ 是 $S^{n-1}$ 上的 Borel 测度。此外，$E_a$ 是 $E_1$ 在映射 $x\mapsto ax$ 下的像，故由\cref{theorem:ch02-linear-change}，$m(E_a)=a^nm(E_1)$。因此，若 $0<a<b$，则
+\begin{align*}
+m_*((a,b]\times E)&=m(E_b\setminus E_a)=\frac{b^n-a^n}{n}\sigma(E)\\
+&=\sigma(E)\int_a^b r^{n-1}\,\mathrm{d}r=\rho\times\sigma((a,b]\times E).
+\end{align*}
+固定 $E\in\mathscr{B}_{S^{n-1}}$，令 $\mathscr{A}_E$ 为有限个形如 $(a,b]\times E$ 的集合的不交并所组成的族。由\cref{proposition:ch01-elementary-algebra}，$\mathscr{A}_E$ 是 $(0,\infty)\times E$ 上的代数，它生成 $\sigma$-代数 $\mathscr{M}_E=\{A\times E:A\in\mathscr{B}_{(0,\infty)}\}$。由前面的计算，$m_*=\rho\times\sigma$ 在 $\mathscr{A}_E$ 上成立，因而由\cref{theorem:ch01-measure-extension}的唯一性断言，它在 $\mathscr{M}_E$ 上成立。但 $\bigcup\{\mathscr{M}_E:E\in\mathscr{B}_{S^{n-1}}\}$ 恰好是 $(0,\infty)\times S^{n-1}$ 中所有 Borel 矩形组成的集合，所以再应用一次唯一性定理，就得到 $m_*=\rho\times\sigma$ 在所有 Borel 集上成立。
+\end{proof}
+% SOURCE p=94; printed=79; object=ch02-polar-completion-remark; region=upper
+\begin{remark}
+当然，考虑测度 $\sigma$ 的完备化，就可以将\eqref{align:ch02-polar-integration}推广到 Lebesgue 可测函数。细节留给读者。
+\end{remark}
+% SOURCE p=94; printed=79; object=ch02-radial-integrals; number=2.51; region=upper
+\begin{corollary}\label{corollary:ch02-radial-integrals}
+若 $f$ 为 $\mathbb{R}^n$ 上非负或可积的可测函数，并且对 $(0,\infty)$ 上某个函数 $g$ 有 $f(x)=g(|x|)$，则
+\begin{align*}
+\int f(x)\,\mathrm{d}x=\sigma(S^{n-1})\int_0^\infty g(r)r^{n-1}\,\mathrm{d}r.
+\end{align*}
+\end{corollary}
+% SOURCE p=94; printed=79; object=ch02-power-integrability; number=2.52; region=middle
+\begin{corollary}\label{corollary:ch02-power-integrability}
+设 $c,C$ 为正常数，$B=\{x\in\mathbb{R}^n:|x|<c\}$，$f$ 为 $\mathbb{R}^n$ 上的可测函数。
+\begin{enumerate}
+\item\label{item:ch02-power-integrability-origin} 若对某个 $a<n$，在 $B$ 上有 $|f(x)|\le C|x|^{-a}$，则 $f\in L^1(B)$。但是，若在 $B$ 上有 $|f(x)|\ge C|x|^{-n}$，则 $f\notin L^1(B)$。
+\item\label{item:ch02-power-integrability-infinity} 若对某个 $a>n$，在 $B^c$ 上有 $|f(x)|\le C|x|^{-a}$，则 $f\in L^1(B^c)$。但是，若在 $B^c$ 上有 $|f(x)|\ge C|x|^{-n}$，则 $f\notin L^1(B^c)$。
+\end{enumerate}
+\end{corollary}
+\begin{proof}
+将\cref{corollary:ch02-radial-integrals}用于 $|x|^{-a}\chi_B$ 和 $|x|^{-a}\chi_{B^c}$。
+\end{proof}
+% SOURCE p=94; printed=79; object=ch02-sphere-area-intro; region=middle-lower
+稍后将计算 $\sigma(S^{n-1})$。当然，已知 $\sigma(S^1)=2\pi$；这正是把 $2\pi$ 定义为圆周长与半径之比。利用这个事实，可以计算一个非常重要的积分。
+% SOURCE p=94; printed=79; object=ch02-gaussian-integral; number=2.53; region=lower
+\begin{proposition}\label{proposition:ch02-gaussian-integral}
+若 $a>0$，则
+\begin{align*}
+\int_{\mathbb{R}^n}\exp(-a|x|^2)\,\mathrm{d}x=\left(\frac\pi a\right)^{n/2}.
+\end{align*}
+\end{proposition}
+\begin{proof}
+以 $I_n$ 表示左端积分。当 $n=2$ 时，由\cref{corollary:ch02-radial-integrals}，
+\begin{align*}
+I_2=2\pi\int_0^\infty re^{-ar^2}\,\mathrm{d}r
+=-\frac\pi a e^{-ar^2}\Big|_0^\infty=\frac\pi a.
+\end{align*}
+由于 $\exp(-a|x|^2)=\prod_1^n\exp(-ax_j^2)$，Tonelli 定理蕴含 $I_n=(I_1)^n$。特别地，$I_1=(I_2)^{1/2}$，故 $I_n=(I_2)^{n/2}=(\pi/a)^{n/2}$。
+\end{proof}
+% SOURCE p=94; printed=79; object=ch02-sphere-gamma-intro; region=lower
+知道这一结果后，可以将其证明中使用的技巧反过来，用\cref{section:ch02-complex-integration}中引入的 gamma 函数来计算所有 $n$ 对应的 $\sigma(S^{n-1})$。
+% SOURCE p=94; printed=79; object=ch02-sphere-area; number=2.54; region=bottom
+\begin{proposition}\label{proposition:ch02-sphere-area}
+$\displaystyle\sigma(S^{n-1})=\frac{2\pi^{n/2}}{\Gamma(n/2)}$。
+\end{proposition}
+% SOURCE p=95; printed=80; object=ch02-proof-sphere-area; region=top
+\begin{proof}
+由\cref{corollary:ch02-radial-integrals}、\cref{proposition:ch02-gaussian-integral}及代换 $s=r^2$，
+\begin{align*}
+\pi^{n/2}&=\int_{\mathbb{R}^n}e^{-|x|^2}\,\mathrm{d}x
+=\sigma(S^{n-1})\int_0^\infty r^{n-1}e^{-r^2}\,\mathrm{d}r\\
+&=\frac{\sigma(S^{n-1})}{2}\int_0^\infty s^{(n/2)-1}e^{-s}\,\mathrm{d}s
+=\frac{\sigma(S^{n-1})}{2}\Gamma\left(\frac n2\right).
+\end{align*}
+\end{proof}
+% SOURCE p=95; printed=80; object=ch02-unit-ball-volume; number=2.55; region=upper
+\begin{corollary}\label{corollary:ch02-unit-ball-volume}
+若 $B^n=\{x\in\mathbb{R}^n:|x|<1\}$，则 $\displaystyle m(B^n)=\frac{\pi^{n/2}}{\Gamma(\frac12n+1)}$。
+\end{corollary}
+\begin{proof}
+由 $\sigma$ 的定义，$m(B^n)=n^{-1}\sigma(S^{n-1})$；而由 gamma 函数的函数方程，$\frac12n\Gamma(\frac12n)=\Gamma(\frac12n+1)$。
+\end{proof}
+% SOURCE p=95; printed=80; object=ch02-half-gamma-intro; region=upper-middle
+在\cref{section:ch02-complex-integration}中已经指出 $\Gamma(n)=(n-1)!$。现在还可以计算 gamma 函数在半整数处的值。
+% SOURCE p=95; printed=80; object=ch02-half-gamma; number=2.56; region=middle
+\begin{proposition}\label{proposition:ch02-half-gamma}
+$\Gamma(n+\frac12)=(n-\frac12)(n-\frac32)\cdots(\frac12)\sqrt\pi$。
+\end{proposition}
+\begin{proof}
+由函数方程，$\Gamma(n+\frac12)=(n-\frac12)(n-\frac32)\cdots(\frac12)\Gamma(\frac12)$。由\cref{proposition:ch02-gaussian-integral}和代换 $s=r^2$，
+\begin{align*}
+\Gamma\left(\tfrac12\right)=\int_0^\infty s^{-1/2}e^{-s}\,\mathrm{d}s
+=2\int_0^\infty e^{-r^2}\,\mathrm{d}r
+=\int_{-\infty}^\infty e^{-r^2}\,\mathrm{d}r=\sqrt\pi.
+\end{align*}
+\end{proof}
+% SOURCE p=95; printed=80; object=ch02-sphere-rational-pi; region=middle-lower
+\begin{remark}
+\cref{proposition:ch02-half-gamma}和公式 $\Gamma(n)=(n-1)!$ 有一个有趣推论：$\mathbb{R}^n$ 中单位球面的表面测度和单位球的 Lebesgue 测度总是 $\pi$ 的整数次幂的有理数倍；当 $n$ 增加 $2$ 时，$\pi$ 的幂次增加 $1$。
+\end{remark}
+\subsection*{习题}
+% SOURCE p=95; printed=80; object=ch02-exercise-surface-rotation; number=62; region=lower
+\begin{exercise}\label{exercise:ch02-surface-rotation}
+$S^{n-1}$ 上的测度 $\sigma$ 在旋转下不变。
+\end{exercise}
+% SOURCE p=95; printed=80; object=ch02-exercise-spherical-monomials; number=63; region=lower
+\begin{exercise}\label{exercise:ch02-spherical-monomials}
+证明\cref{proposition:ch02-sphere-area}所用的方法，也可用于在 $S^{n-1}$ 上积分任意多项式。事实上，设 $f(x)=\prod_1^n x_j^{\alpha_j}$，$\alpha_j\in\mathbb{N}\cup\{0\}$，为单项式。若任一 $\alpha_j$ 为奇数，则 $\int f\,\mathrm{d}\sigma=0$；若所有 $\alpha_j$ 均为偶数，则
+\begin{align*}
+\int f\,\mathrm{d}\sigma=\frac{2\Gamma(\beta_1)\cdots\Gamma(\beta_n)}{\Gamma(\beta_1+\cdots+\beta_n)},
+\qquad\beta_j=\frac{\alpha_j+1}{2}.
+\end{align*}
+\end{exercise}
+% SOURCE p=95; printed=80; object=ch02-exercise-power-log-integrability; number=64; region=lower
+\begin{exercise}\label{exercise:ch02-power-log-integrability}
+对于哪些实数 $a,b$，$|x|^a|\log|x||^b$ 在 $\{x\in\mathbb{R}^n:|x|<\frac12\}$ 上可积？在 $\{x\in\mathbb{R}^n:|x|>2\}$ 上呢？
+\end{exercise}
+% SOURCE p=95,96; printed=80,81; object=ch02-exercise-spherical-coordinates; number=65; region=bottom/top
+\begin{exercise}\label{exercise:ch02-spherical-coordinates}
+定义 $G:\mathbb{R}^n\to\mathbb{R}^n$ 为 $G(r,\phi_1,\ldots,\phi_{n-2},\theta)=(x_1,\ldots,x_n)$，其中
+\begin{align*}
+x_1&=r\cos\phi_1,\qquad x_2=r\sin\phi_1\cos\phi_2,\qquad
+x_3=r\sin\phi_1\sin\phi_2\cos\phi_3,\quad\ldots,\\
+x_{n-1}&=r\sin\phi_1\cdots\sin\phi_{n-2}\cos\theta,\qquad
+x_n=r\sin\phi_1\cdots\sin\phi_{n-2}\sin\theta.
+\end{align*}
+\begin{enumerate}
+\item\label{item:ch02-spherical-map-surjective} $G$ 将 $\mathbb{R}^n$ 映满到 $\mathbb{R}^n$，且 $|G(r,\phi_1,\ldots,\phi_{n-2},\theta)|=|r|$。
+\item\label{item:ch02-spherical-jacobian} $\det D_{(r,\phi_1,\ldots,\phi_{n-2},\theta)}G=r^{n-1}\sin^{n-2}\phi_1\sin^{n-3}\phi_2\cdots\sin\phi_{n-2}$。
+\item\label{item:ch02-spherical-diffeomorphism} 令 $\Omega=(0,\infty)\times(0,\pi)^{n-2}\times(0,2\pi)$。则 $G|_\Omega$ 为微分同胚，且 $m(\mathbb{R}^n\setminus G(\Omega))=0$。
+\item\label{item:ch02-spherical-surface-coordinate} 令 $F(\phi_1,\ldots,\phi_{n-2},\theta)=G(1,\phi_1,\ldots,\phi_{n-2},\theta)$，$\Omega'=(0,\pi)^{n-2}\times(0,2\pi)$。则 $(F|_{\Omega'})^{-1}$ 在 $S^{n-1}$ 上除一个 $\sigma$-零测集外定义了一个坐标系，且在这个坐标系下，测度 $\sigma$ 表示为
+\begin{align*}
+\mathrm{d}\sigma(\phi_1,\ldots,\phi_{n-2},\theta)
+=\sin^{n-2}\phi_1\sin^{n-3}\phi_2\cdots\sin\phi_{n-2}\,
+\mathrm{d}\phi_1\cdots\mathrm{d}\phi_{n-2}\,\mathrm{d}\theta.
+\end{align*}
+\end{enumerate}
+\end{exercise}
+\end{document}

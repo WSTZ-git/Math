@@ -1,0 +1,161 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+% SOURCE p=21; printed=6; object=ch00-sec03-title; region=middle
+\section{基数}\label{section:ch00-cardinality}
+% SOURCE p=21; printed=6; object=ch00-cardinality-comparisons; region=middle-lower
+
+\begin{definition}[基数的比较]\label{definition:ch00-cardinality-comparisons}
+若 $X$ 和 $Y$ 是非空集合，我们定义表达式
+\begin{align*}
+\card(X)\leqslant\card(Y),\qquad
+\card(X)=\card(Y),\qquad
+\card(X)\geqslant\card(Y)
+\end{align*}
+分别表示存在单射、双射或满射 $f:X\to Y$。还定义
+\begin{align*}
+\card(X)<\card(Y),\qquad\card(X)>\card(Y)
+\end{align*}
+分别表示从 $X$ 到 $Y$ 存在单射但不存在双射，或存在满射但不存在双射。注意，我们并未赋予单独出现的表达式“$\card(X)$”任何意义；虽然有各种办法赋予它意义，但这些与我们的目的无关（$X$ 为有限集的情形除外——见下文）。规定
+\begin{align*}
+\card(\varnothing)<\card(X)\quad\text{且}\quad
+\card(X)>\card(\varnothing)\quad\text{对所有 }X\neq\varnothing
+\end{align*}
+便可将这些关系延伸到空集。
+\end{definition}
+本节余下部分默认所讨论的所有集合均非空，以免对 $\varnothing$ 作特殊论证。我们的首要任务是证明，上述关系具有其记号所暗示的性质。
+
+% SOURCE p=22; printed=7; object=ch00-cardinality-duality; number=0.6; region=top
+\begin{proposition}\label{proposition:ch00-cardinality-duality}
+$\card(X)\leqslant\card(Y)$ 当且仅当 $\card(Y)\geqslant\card(X)$。
+\end{proposition}
+% SOURCE p=22; printed=7; object=ch00-proof-cardinality-duality; region=top
+\begin{proof}
+若 $f:X\to Y$ 是单射，选取 $x_0\in X$，定义 $g:Y\to X$：当 $y\in f(X)$ 时令 $g(y)=f^{-1}(y)$，其余情形令 $g(y)=x_0$。于是 $g$ 是满射。反之，若 $g:Y\to X$ 是满射，则集合 $g^{-1}(\{x\})$（$x\in X$）均非空且互不相交，故任意 $f\in\prod\limits_{x\in X}g^{-1}(\{x\})$ 都是从 $X$ 到 $Y$ 的单射。
+\end{proof}
+
+% SOURCE p=22; printed=7; object=ch00-cardinality-comparability; number=0.7; region=upper
+\begin{proposition}\label{proposition:ch00-cardinality-comparability}
+对任意集合 $X$ 和 $Y$，或者 $\card(X)\leqslant\card(Y)$，或者 $\card(Y)\leqslant\card(X)$。
+\end{proposition}
+% SOURCE p=22; printed=7; object=ch00-proof-cardinality-comparability; region=upper-middle
+\begin{proof}
+考虑从 $X$ 的子集到 $Y$ 的所有单射构成的集合 $\mathscr{J}$。$\mathscr{J}$ 的成员可视为 $X\times Y$ 的子集，故 $\mathscr{J}$ 按包含关系成为偏序集。容易验证，\hyperref[lemma:ch00-zorn]{Zorn 引理}适用，因而 $\mathscr{J}$ 有一个极大元 $f$，设其定义域和值域分别为 $A$ 和 $B$。若 $x_0\in X\setminus A$ 且 $y_0\in Y\setminus B$，则令 $f(x_0)=y_0$，即可将 $f$ 延拓为从 $A\cup\{x_0\}$ 到 $Y\cup\{y_0\}$ 的单射，这与极大性矛盾。因此，或者 $A=X$，此时 $\card(X)\leqslant\card(Y)$；或者 $B=Y$，此时 $f^{-1}$ 是从 $Y$ 到 $X$ 的单射，从而 $\card(Y)\leqslant\card(X)$。
+\end{proof}
+
+% SOURCE p=22; printed=7; object=ch00-schroeder-bernstein; number=0.8; region=middle
+\begin{theorem}[Schröder–Bernstein 定理]\label{theorem:ch00-schroeder-bernstein}
+若 $\card(X)\leqslant\card(Y)$ 且 $\card(Y)\leqslant\card(X)$，则 $\card(X)=\card(Y)$。
+\end{theorem}
+% SOURCE p=22; printed=7; object=ch00-proof-schroeder-bernstein; region=middle
+\begin{proof}
+设 $f:X\to Y$ 和 $g:Y\to X$ 是单射。考虑一点 $x\in X$：若 $x\in g(Y)$，则构成 $g^{-1}(x)\in Y$；若 $g^{-1}(x)\in f(X)$，再构成 $f^{-1}(g^{-1}(x))$；如此继续。这个过程或者能够无限继续下去，或者终止于 $X\setminus g(Y)$ 中的某个元素（也许就是 $x$ 本身），或者终止于 $Y\setminus f(X)$ 中的某个元素。在这三种情形下，分别称 $x$ 属于 $X_\infty$、$X_X$ 或 $X_Y$；于是 $X$ 是 $X_\infty$、$X_X$ 与 $X_Y$ 的不交并。同样，$Y$ 是三个集合 $Y_\infty$、$Y_X$ 和 $Y_Y$ 的不交并。显然，$f$ 将 $X_\infty$ 映到 $Y_\infty$ 上，将 $X_X$ 映到 $Y_X$ 上，而 $g$ 将 $Y_Y$ 映到 $X_Y$ 上。因此，定义 $h:X\to Y$：当 $x\in X_\infty\cup X_X$ 时令 $h(x)=f(x)$，当 $x\in X_Y$ 时令 $h(x)=g^{-1}(x)$，则 $h$ 为双射。
+\end{proof}
+
+% SOURCE p=22; printed=7; object=ch00-power-set-larger; number=0.9; region=lower
+\begin{proposition}\label{proposition:ch00-power-set-larger}
+对任意集合 $X$，$\card(X)<\card(\mathscr{P}(X))$。
+\end{proposition}
+% SOURCE p=22; printed=7; object=ch00-proof-power-set-larger; region=lower
+\begin{proof}
+一方面，映射 $f(x)=\{x\}$ 是从 $X$ 到 $\mathscr{P}(X)$ 的单射。另一方面，若 $g:X\to\mathscr{P}(X)$，令 $Y=\{x\in X:x\notin g(x)\}$。则 $Y\notin g(X)$，因为若对某个 $x_0\in X$ 有 $Y=g(x_0)$，则任何回答“$x_0\in Y$ 吗？”这一问题的尝试都会迅速导致矛盾。因此 $g$ 不可能是满射。
+\end{proof}
+
+% SOURCE p=22; printed=7; object=ch00-countability; region=bottom
+
+\begin{definition}[可数集与可数无限集]\label{definition:ch00-countability}
+若 $\card(X)\leqslant\card(\mathbb{N})$，则称集合 $X$ 为\textbf{可数的}（countable 或 denumerable）。特别地，所有有限集都是可数的；对于有限集，将“$\card(X)$”理解为 $X$ 中元素的个数是方便的：
+\begin{align*}
+\card(X)=n\quad\text{当且仅当}\quad\card(X)=\card(\{1,\ldots,n\}).
+\end{align*}
+若 $X$ 可数但不是有限集，就称 $X$ 为\textbf{可数无限的}。
+\end{definition}
+
+
+% SOURCE p=23; printed=8; object=ch00-countable-operations; number=0.10; region=top
+\begin{proposition}\label{proposition:ch00-countable-operations}
+\begin{enumerate}[label=\alph*.,ref=(\alph*)]
+\item\label{item:ch00-countable-product} 若 $X$ 和 $Y$ 可数，则 $X\times Y$ 也可数。
+\item\label{item:ch00-countable-union} 若 $A$ 可数，且对每个 $\alpha\in A$，$X_\alpha$ 都可数，则 $\bigcup_{\alpha\in A}X_\alpha$ 可数。
+\item\label{item:ch00-countably-infinite} 若 $X$ 可数无限，则 $\card(X)=\card(\mathbb{N})$。
+\end{enumerate}
+\end{proposition}
+% SOURCE p=23; printed=8; object=ch00-proof-countable-operations; region=upper-middle
+\begin{proof}
+为证明\subcref{proposition:ch00-countable-operations}{item:ch00-countable-product}，只需证明 $\mathbb{N}^2$ 可数。令 $n$ 依次取 $2,3,4,\ldots$，并按 $j$ 递增的顺序列出满足 $j+k=n$ 的元素 $(j,k)\in\mathbb{N}^2$，便可定义从 $\mathbb{N}$ 到 $\mathbb{N}^2$ 的双射；即
+\begin{align*}
+&(1,1),\ (1,2),\ (2,1),\ (1,3),\ (2,2),\ (3,1),\\
+&(1,4),\ (2,3),\ (3,2),\ (4,1),\ldots.
+\end{align*}
+对于\subcref{proposition:ch00-countable-operations}{item:ch00-countable-union}，对每个 $\alpha\in A$，存在满射 $f_\alpha:\mathbb{N}\to X_\alpha$，于是由 $f(n,\alpha)=f_\alpha(n)$ 定义的映射 $f:\mathbb{N}\times A\to\bigcup_{\alpha\in A}X_\alpha$ 是满射，故结论由\subcref{proposition:ch00-countable-operations}{item:ch00-countable-product}得出。最后，对\subcref{proposition:ch00-countable-operations}{item:ch00-countably-infinite}，只需假设 $X$ 是 $\mathbb{N}$ 的无限子集。令 $f(1)$ 为 $X$ 的最小元，并归纳地定义 $f(n)$ 为 $E\setminus\{f(1),\ldots,f(n-1)\}$ 的最小元。于是容易看出 $f$ 是从 $\mathbb{N}$ 到 $X$ 的双射。
+\end{proof}
+% 原页此处确印 E，而前文使用 X；忠实保留，疑点登记于 audit/issues.csv。
+
+% SOURCE p=23; printed=8; object=ch00-integers-rationals-countable; number=0.11; region=middle
+\begin{corollary}\label{corollary:ch00-integers-rationals-countable}
+$\mathbb{Z}$ 和 $\mathbb{Q}$ 可数。
+\end{corollary}
+% SOURCE p=23; printed=8; object=ch00-proof-integers-rationals-countable; region=middle
+\begin{proof}
+$\mathbb{Z}$ 是可数集 $\mathbb{N}$、$\{-n:n\in\mathbb{N}\}$ 和 $\{0\}$ 的并，而且可定义满射 $f:\mathbb{Z}^2\to\mathbb{Q}$：当 $n\neq0$ 时令 $f(m,n)=\frac{m}{n}$，并令 $f(m,0)=0$。
+\end{proof}
+
+% SOURCE p=23; printed=8; object=ch00-continuum-cardinality; region=middle
+
+\begin{definition}[连续统的基数]\label{definition:ch00-continuum-cardinality}
+若 $\card(X)=\card(\mathbb{R})$，就称集合 $X$ 具有\textbf{连续统的基数}。我们将用字母 $\mathfrak{c}$ 作为 $\card(\mathbb{R})$ 的缩写：
+\begin{align*}
+\card(X)=\mathfrak{c}\quad\text{当且仅当}\quad\card(X)=\card(\mathbb{R}).
+\end{align*}
+\end{definition}
+
+% SOURCE p=23; printed=8; object=ch00-continuum-power-set; number=0.12; region=lower
+\begin{proposition}\label{proposition:ch00-continuum-power-set}
+$\card(\mathscr{P}(\mathbb{N}))=\mathfrak{c}$。
+\end{proposition}
+% SOURCE p=23; printed=8; object=ch00-proof-continuum-power-set; region=lower
+\begin{proof}
+若 $A\subseteq\mathbb{N}$，当 $\mathbb{N}\setminus A$ 为无限集时，定义 $f(A)\in\mathbb{R}$ 为 $\sum\limits_{n\in A}2^{-n}$；当 $\mathbb{N}\setminus A$ 为有限集时，定义为 $1+\sum\limits_{n\in A}2^{-n}$。（在这两种情形中，$f(A)$ 分别是二进制展开为 $0.a_1a_2\cdots$ 或 $1.a_1a_2\cdots$ 的数，其中当 $n\in A$ 时 $a_n=1$，否则 $a_n=0$。）于是 $f:\mathscr{P}(\mathbb{N})\to\mathbb{R}$ 是单射。另一方面，定义 $g:\mathscr{P}(\mathbb{Z})\to\mathbb{R}$：若 $A$ 有下界，令 $g(A)=\log\bigl(\sum\limits_{n\in A}2^{-n}\bigr)$，否则令 $g(A)=0$。因为每个正实数都有二进制展开，所以 $g$ 为满射。由于 $\card(\mathscr{P}(\mathbb{Z}))=\card(\mathscr{P}(\mathbb{N}))$，结论由\hyperref[theorem:ch00-schroeder-bernstein]{Schröder–Bernstein 定理}得到。
+\end{proof}
+% log 的底数尚未从原书全局约定核实；暂保留原记号，不机械改为 ln。
+
+% SOURCE p=23; printed=8; object=ch00-continuum-uncountable; number=0.13; region=bottom
+\begin{corollary}\label{corollary:ch00-continuum-uncountable}
+若 $\card(X)\geqslant\mathfrak{c}$，则 $X$ 不可数。
+\end{corollary}
+% SOURCE p=23; printed=8; object=ch00-proof-continuum-uncountable; region=bottom
+\begin{proof}
+应用\cref{proposition:ch00-power-set-larger}。
+\end{proof}
+% SOURCE p=23; printed=8; object=ch00-continuum-hypothesis; region=bottom
+
+\begin{definition}[连续统假设]\label{definition:ch00-continuum-hypothesis}
+此推论的逆命题就是所谓的\textbf{连续统假设}。
+\end{definition}
+\begin{remark}
+它的有效性是集合论中著名的不可判定问题之一；见\cref{section:ch00-notes-references}。
+\end{remark}
+
+% SOURCE p=24; printed=9; object=ch00-continuum-operations; number=0.14; region=top
+\begin{proposition}\label{proposition:ch00-continuum-operations}
+\begin{enumerate}[label=\alph*.,ref=(\alph*)]
+\item\label{item:ch00-continuum-product} 若 $\card(X)\leqslant\mathfrak{c}$ 且 $\card(Y)\leqslant\mathfrak{c}$，则 $\card(X\times Y)\leqslant\mathfrak{c}$。
+\item\label{item:ch00-continuum-union} 若 $\card(A)\leqslant\mathfrak{c}$ 且对所有 $\alpha\in A$ 都有 $\card(X_\alpha)\leqslant\mathfrak{c}$，则 $\card(\bigcup_{\alpha\in A}X_\alpha)\leqslant\mathfrak{c}$。
+\end{enumerate}
+\end{proposition}
+% SOURCE p=24; printed=9; object=ch00-proof-continuum-operations; region=upper
+\begin{proof}
+对\subcref{proposition:ch00-continuum-operations}{item:ch00-continuum-product}，只需取 $X=Y=\mathscr{P}(\mathbb{N})$。定义 $\phi,\psi:\mathbb{N}\to\mathbb{N}$ 为 $\phi(n)=2n$、$\psi(n)=2n-1$。容易检查，由 $f(A,B)=\phi(A)\cup\psi(B)$ 定义的映射 $f:\mathscr{P}(\mathbb{N})^2\to\mathscr{P}(\mathbb{N})$ 是双射。仿照\cref{proposition:ch00-countable-operations}的证明，\subcref{proposition:ch00-continuum-operations}{item:ch00-continuum-union}可由\subcref{proposition:ch00-continuum-operations}{item:ch00-continuum-product}得出。
+\end{proof}
+\end{document}

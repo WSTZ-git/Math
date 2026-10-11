@@ -1,0 +1,90 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+% SOURCE p=34; printed=19; object=ch01-sec01-title; region=middle
+\section{引言}\label{section:ch01-introduction}
+
+% SOURCE p=34; printed=19; object=ch01-geometric-measure; region=lower-middle
+几何学中最古老的问题之一，是确定平面区域的面积或三维空间区域的体积。对于由“良好”的曲线或曲面围成的区域，积分学的方法提供了令人满意的解答；但对于更复杂的集合，即使在一维情形中，这些方法也不足以处理。理想地，对于 $n\in\mathbb{N}$，我们希望有一个函数 $\mu$，为每个 $E\subseteq\mathbb{R}^n$ 指派一个数 $\mu(E)\in[0,\infty]$，即 $E$ 的 \textbf{$n$ 维测度}，而且在通常的积分公式适用时，$\mu(E)$ 就由这些公式给出。这样的函数 $\mu$ 理应具有下列性质：
+
+% SOURCE p=34; printed=19; object=ch01-measure-desiderata; region=bottom
+\begin{enumerate}[label=\roman*.,ref=(\roman*)]
+\item\label{item:ch01-desired-additivity} 若 $E_1,E_2,\ldots$ 是有限或无限的两两不交集合序列，则
+\begin{align*}
+\mu(E_1\cup E_2\cup\cdots)=\mu(E_1)+\mu(E_2)+\cdots.
+\end{align*}
+\item\label{item:ch01-desired-congruence} 若 $E$ 与 $F$ 全等（即 $E$ 可经过平移、旋转和反射变换为 $F$），则 $\mu(E)=\mu(F)$。
+\item\label{item:ch01-desired-normalization} $\mu(Q)=1$，其中 $Q$ 为单位立方体
+\begin{align*}
+Q=\{x\in\mathbb{R}^n:0\leqslant x_j<1,\ j=1,\ldots,n\}.
+\end{align*}
+\end{enumerate}
+
+% SOURCE p=35; printed=20; object=ch01-vitali-construction; region=top
+
+\begin{proposition}\label{proposition:ch01-vitali-construction}
+遗憾的是，这些条件彼此不相容。
+\end{proposition}
+
+\begin{proof}
+让我们来看 $n=1$ 时的原因。（此论证很容易推广到更高维。）首先，在 $[0,1)$ 上定义等价关系：$x\sim y$ 当且仅当 $x-y$ 为有理数。设 $N$ 是 $[0,1)$ 的子集，恰好包含每个等价类中的一个元素。（要找到这样的 $N$，必须使用选择公理。）其次，令 $R=\mathbb{Q}\cap[0,1)$，并对每个 $r\in R$ 令
+\begin{align*}
+N_r=\{x+r:x\in N\cap[0,1-r)\}\cup\{x+r-1:x\in N\cap[1-r,1)\}.
+\end{align*}
+也就是说，为得到 $N_r$，先把 $N$ 向右平移 $r$ 个单位，再把超出 $[0,1)$ 的部分向左平移一个单位。于是 $N_r\subseteq[0,1)$，且每个 $x\in[0,1)$ 恰好属于一个 $N_r$。事实上，若 $y$ 是 $N$ 中属于 $x$ 的等价类的元素，则 $x\in N_r$，其中当 $x\geqslant y$ 时 $r=x-y$，当 $x<y$ 时 $r=x-y+1$；另一方面，若 $x\in N_r\cap N_s$，则 $x-r$（或 $x-r+1$）与 $x-s$（或 $x-s+1$）将是 $N$ 中属于同一等价类的不同元素，这是不可能的。
+
+% SOURCE p=35; printed=20; object=ch01-vitali-contradiction; region=middle
+现设 $\mu:\mathscr{P}(\mathbb{R})\to[0,\infty]$ 满足\cref{item:ch01-desired-additivity,item:ch01-desired-congruence,item:ch01-desired-normalization}。由\cref{item:ch01-desired-additivity,item:ch01-desired-congruence}，对任意 $r\in R$，
+\begin{align*}
+\mu(N)=\mu(N\cap[0,1-r))+\mu(N\cap[1-r,1))=\mu(N_r).
+\end{align*}
+此外，由于 $R$ 可数，且 $[0,1)$ 是各 $N_r$ 的不交并，再由\cref{item:ch01-desired-additivity}可得
+\begin{align*}
+\mu([0,1))=\sum_{r\in R}\mu(N_r).
+\end{align*}
+但由\cref{item:ch01-desired-normalization}，$\mu([0,1))=1$；又因 $\mu(N_r)=\mu(N)$，右端的和或者为 $0$（若 $\mu(N)=0$），或者为 $\infty$（若 $\mu(N)>0$）。因此，这样的 $\mu$ 不可能存在。
+\end{proof}
+
+
+% SOURCE p=35; printed=20; object=ch01-finite-additivity-problem; region=lower-middle
+面对这一令人沮丧的情形，人们可能考虑削弱\cref{item:ch01-desired-additivity}，只要求可加性对有限序列成立。正如后面将看到的，这并不是一个很好的主意：正是对可数序列的可加性，才使理论中所有关于极限和连续性的结果顺利成立。而且，当维数 $n\geqslant3$ 时，即便是\cref{item:ch01-desired-additivity}的这一弱形式，也与\cref{item:ch01-desired-congruence,item:ch01-desired-normalization}不相容。事实上，Banach 和 Tarski 于 1924 年证明了下述惊人的结果：
+
+% SOURCE p=35; printed=20; object=ch01-banach-tarski-statement; region=lower
+\begin{theorem}[Banach–Tarski 悖论]\label{theorem:ch01-banach-tarski-statement}
+设 $U$ 和 $V$ 是 $\mathbb{R}^n$ 中任意两个有界开集，其中 $n\geqslant3$。存在 $k\in\mathbb{N}$ 及 $\mathbb{R}^n$ 的子集 $E_1,\ldots,E_k,F_1,\ldots,F_k$，使得
+\begin{itemize}
+\item 各 $E_j$ 两两不交，且其并为 $U$；
+\item 各 $F_j$ 两两不交，且其并为 $V$；
+\item 对 $j=1,\ldots,k$，$E_j$ 与 $F_j$ 全等。
+\end{itemize}
+\end{theorem}
+
+% SOURCE p=35; printed=20; object=ch01-banach-tarski-discussion; region=bottom
+
+\begin{remark}
+于是，可以把一颗豌豆大小的球切成有限块，再重新拼成一个地球大小的球！不言而喻，这些集合 $E_j$ 和 $F_j$ 十分奇特。它们无法被准确地形象化，其构造也依赖选择公理。但它们的存在显然排除了任何如下函数 $\mu:\mathscr{P}(\mathbb{R}^n)\to[0,\infty]$ 的构造：该函数为有界开集指派正的有限值，并同时满足对有限序列成立的\cref{item:ch01-desired-additivity}和\cref{item:ch01-desired-congruence}。
+\end{remark}
+
+
+% SOURCE p=36; printed=21; object=ch01-restricting-domain; region=top
+这些例子表明，$\mathbb{R}^n$ 的某些子集组合得如此奇异，以至于无法为它们定义在几何上合理的测度概念；解决办法是放弃要求 $\mu$ 定义在 $\mathbb{R}^n$ 的\emph{所有}子集上。我们只需在 $\mathbb{R}^n$ 的某个子集类上构造 $\mu$，使这个类包含实际应用中可能遇到的所有集合，除非有人刻意寻找病态例子。对于 $n=1$，此构造将在\cref{section:ch01-borel-measures-real-line}中完成；对于 $n>1$，将在\cref{section:ch02-n-dimensional-lebesgue-integral}中完成。
+
+% SOURCE p=36; printed=21; object=ch01-abstract-measure-motivation; region=upper
+将这一理论发展到远为一般的程度是值得的，而且并不会增加很多工作。\cref{item:ch01-desired-congruence,item:ch01-desired-normalization}直接与 Euclid 几何有关，而满足\cref{item:ch01-desired-additivity}的集合函数，称为\textbf{测度}，也出现在许多其他情境中。
+\begin{examples}\label{examples:ch01-abstract-measure-motivation}
+例如，在涉及质量分布的物理问题中，$\mu(E)$ 可以表示区域 $E$ 内的总质量。再如，在概率论中，考虑一个表示试验所有可能结果的集合 $X$；对于 $E\subseteq X$，$\mu(E)$ 表示结果落在 $E$ 中的概率。
+\end{examples}
+因此，我们首先研究抽象集合上的测度理论。
+\end{document}

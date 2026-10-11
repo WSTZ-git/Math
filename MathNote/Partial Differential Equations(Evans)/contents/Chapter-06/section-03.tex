@@ -1,0 +1,630 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}}
+
+\begin{document}
+
+\section{正则性}\label{section:ch06-正则性}
+
+我们现讨论这样一个问题：PDE
+\begin{align}
+Lu=f\quad\text{于}\ U
+\end{align}
+的弱解 $u$ 是否确实光滑：这就是弱解的正则性问题。
+
+\textbf{动机：估计的形式推导。} 为看出弱解有可能比 $H^{1}_{0}(U)$ 中的典型函数更好，我们考虑模型问题
+\begin{align}
+-\Delta u=f\quad\text{于}\ \mathbb{R}^{n}.
+\end{align}
+我们为启发目的假设 $u$ 光滑，且当 $|x|\to\infty$ 时衰减足够快，以证明以下计算的合理性。然后计算
+\begin{align}
+\int_{\mathbb{R}^{n}}f^{2}\,\mathrm{d}x
+=\int_{\mathbb{R}^{n}}(\Delta u)^{2}\,\mathrm{d}x
+=\sum_{i,j=1}^{n}\int_{\mathbb{R}^{n}}u_{x_{i}x_{i}}u_{x_{j}x_{j}}\,\mathrm{d}x
+=-\sum_{i,j=1}^{n}\int_{\mathbb{R}^{n}}u_{x_{i}x_{i}x_{j}}u_{x_{j}}\,\mathrm{d}x
+=\sum_{i,j=1}^{n}\int_{\mathbb{R}^{n}}u_{x_{i}x_{j}}u_{x_{i}x_{j}}\,\mathrm{d}x
+=\int_{\mathbb{R}^{n}}|D^{2}u|^{2}\,\mathrm{d}x.
+\end{align}
+因而我们看到 $u$ 的二阶导数的 $L^{2}$ 范数可由（事实上等于）$f$ 的 $L^{2}$ 范数估计。类似地，我们可对 PDE~\eqref{align:ch06-更高边界问题} 微分，得
+\begin{align*}
+-\Delta\widetilde{u}=\widetilde{f},
+\end{align*}
+其中 $\widetilde{u}\triangleq u_{x_{k}}$、$\widetilde{f}\triangleq f_{x_{k}}$（$k=1,\cdots,n$）。应用同一方法，我们发现 $u$ 的三阶导数的 $L^{2}$ 范数可由 $f$ 的一阶导数估计。继续下去，我们看到 $u$ 的 $m+2$ 阶偏导数的 $L^{2}$ 范数可由 $f$ 的 $m$ 阶导数的 $L^{2}$ 范数控制，$m=0,1,\cdots$。
+
+这些计算提示：对Poisson方程~\eqref{align:ch06-更高边界问题}，每当非齐次项 $f$ 属于 $H^{m}$（$m=1,\cdots$），我们可期望弱解 $u\in H^{1}_{0}$ 属于 $H^{m+2}$。我们非正式地说 $u$“在 $L^{2}$ 中比 $f$ 多两个导数”。这对 $m=\infty$ 特别有趣，此时 $u$ 对一切 $m=1,\cdots$ 属于 $H^{m}$，因而属于 $C^{\infty}$。
+
+然而注意上述计算并不真正构成证明。我们假设 $u$ 光滑，或至少说 $C^{3}$，以进行计算~\eqref{align:ch06-正则形式推导}；而如果我们只从 $H^{1}_{0}$ 中的弱解出发，则不能立即证明这些计算的合理性。我们将不得不依赖对某些差商的分析。
+
+以下计算在技术上常常困难，但最终产生关于弱解光滑性的极强、极有用的断言。如通常那样，每个计算的核心是调用椭圆性：目标是从椭圆性的结构、代数假设导出解析估计。
+
+\subsection{内部正则性}\label{subsection:ch06-内部正则性}
+
+如通常那样假设 $U\subset\mathbb{R}^{n}$ 为有界开集。另设 $u\in H^{1}_{0}(U)$ 为 PDE~\eqref{align:ch06-正则PDE} 的弱解，其中 $L$ 具有散度型
+\begin{align}
+Lu=-\sum_{i,j=1}^{n}(a_{ij}(x)u_{x_{i}})_{x_{j}}+\sum_{i=1}^{n}b_{i}(x)u_{x_{i}}+c(x)u.
+\end{align}
+我们继续要求\cref{definition:ch06-椭圆性} 的一致椭圆性条件，并按需对系数 $a_{ij}$、$b_{i}$、$c$ 的光滑性作各种附加假设。
+
+\begin{theorem}[内部 $H^{2}$ 正则性]\label{theorem:ch06-内部H2正则}假设
+\begin{align}
+a_{ij}\in C^{1}(U),\quad b_{i},c\in L^{\infty}(U)\qquad (i,j=1,\cdots,n)
+\end{align}
+且
+\begin{align}
+f\in L^{2}(U).
+\end{align}
+另设 $u\in H^{1}(U)$ 为椭圆 PDE $Lu=f$ 于 $U$ 中的弱解。则
+\begin{align}
+u\in H^{2}_{\mathrm{loc}}(U);
+\end{align}
+且对每个开子集 $V\subset \subset U$，有估计
+\begin{align}
+\|u\|_{H^{2}(V)}\leqslant C(\|f\|_{L^{2}(U)}+\|u\|_{L^{2}(U)}),
+\end{align}
+其中常数 $C$ 只依赖于 $V$、$U$ 及 $L$ 的系数。
+\end{theorem}
+
+\begin{remark}\label{remark:ch06-内部正则注}
+\leavevmode
+\begin{enumerate}[(i)]
+\item 仔细注意我们不要求 $u\in H^{1}_{0}(U)$；即我们不一定在迹的意义下假设边界条件 $u=0$ 于 $\partial U$。
+\item 另注意由于 $u\in H^{2}_{\mathrm{loc}}(U)$，我们有 $Lu=f$ a.e. 于 $U$。因而 $u$ 实际上至少在 $U$ 内 a.e. 点处求解 PDE。（为此，注意对每个 $v\in C^{\infty}_{c}(U)$，有 $B[u,v]=(f,v)$。由于 $u\in H^{2}_{\mathrm{loc}}(U)$，可分部积分：$B[u,v]=(Lu,v)$。因而 $(Lu-f,v)=0$ 对一切 $v\in C^{\infty}_{c}(U)$，故 $Lu=f$ a.e.）
+\end{enumerate}
+\end{remark}
+
+\begin{proof}
+1. 固定任一开集 $V\subset \subset U$，选开集 $W$ 使 $V\subset \subset W\subset \subset U$。然后选光滑函数 $\zeta$ 满足
+\begin{align*}
+\begin{cases}
+\zeta\equiv 1\ \text{于}\ V,\quad \zeta\equiv 0\ \text{于}\ \mathbb{R}^{n}\setminus W,\\
+0\leqslant\zeta\leqslant 1.
+\end{cases}
+\end{align*}
+我们称 $\zeta$ 为截断函数。它在后续计算中的用途是把所有表达式限制在子集 $W$ 上，$W$ 距 $\partial U$ 有正距离。这是必要的，因为我们没有关于 $u$ 在 $\partial U$ 附近行为的信息。（作为一个有趣的技术点，请在以下计算中仔细注意为什么我们在下式中放“$\zeta^{2}$”而不只是“$\zeta$”。）
+
+2. 现因 $u$ 是式~\eqref{align:ch06-正则PDE} 的弱解，对一切 $v\in H^{1}_{0}(U)$ 有 $B[u,v]=(f,v)$。因而
+\begin{align}
+\sum_{i,j=1}^{n}\int_{U}a_{ij}u_{x_{i}}v_{x_{j}}\,\mathrm{d}x=\int_{U}\widetilde{f}v\,\mathrm{d}x,
+\end{align}
+其中
+\begin{align}
+\widetilde{f}\triangleq f-\sum_{i=1}^{n}b_{i}u_{x_{i}}-cu.
+\end{align}
+
+3. 现设 $|h|>0$ 小，选 $k\in\{1,\cdots,n\}$，然后把
+\begin{align}
+v\triangleq-D_{k}^{-h}(\zeta^{2}D_{k}^{h}u)
+\end{align}
+代入式~\eqref{align:ch06-弱解恒等式}, 其中如\cref{subsection:ch05-差商} 中那样，$D_{k}^{h}u$ 表示差商
+\begin{align*}
+D_{k}^{h}u(x)=\frac{u(x+he_{k})-u(x)}{h}\qquad (h\in\mathbb{R},\ h\neq 0).
+\end{align*}
+我们把所得表达式写为
+\begin{align}
+A=B,
+\end{align}
+其中
+\begin{align*}
+A\triangleq\sum_{i,j=1}^{n}\int_{U}a_{ij}u_{x_{i}}v_{x_{j}}\,\mathrm{d}x,\qquad
+B\triangleq\int_{U}\widetilde{f}v\,\mathrm{d}x.
+\end{align*}
+
+4. $A$ 的估计。我们有
+\begin{align}
+A&=-\sum_{i,j=1}^{n}\int_{U}a_{ij}u_{x_{i}}\left[D_{k}^{-h}(\zeta^{2}D_{k}^{h}u)\right]_{x_{j}}\,\mathrm{d}x\\
+&=\sum_{i,j=1}^{n}\int_{U}D_{k}^{h}(a_{ij}u_{x_{i}})(\zeta^{2}D_{k}^{h}u)_{x_{j}}\,\mathrm{d}x\\
+&=\sum_{i,j=1}^{n}\int_{U}a_{ij,h}(D_{k}^{h}u_{x_{i}})(\zeta^{2}D_{k}^{h}u)_{x_{j}}+(D_{k}^{h}a_{ij})u_{x_{i}}(\zeta^{2}D_{k}^{h}u)_{x_{j}}\,\mathrm{d}x.
+\end{align}
+这里我们用了公式
+\begin{align}
+\int_{U}vD_{k}^{-h}w\,\mathrm{d}x=-\int_{U}wD_{k}^{h}v\,\mathrm{d}x,
+\end{align}
+以及
+\begin{align}
+D_{k}^{h}(vw)=v^{h}D_{k}^{h}w+wD_{k}^{h}v,
+\end{align}
+其中 $v^{h}(x)\triangleq v(x+he_{k})$。
+
+回到上式，我们得
+\begin{align}
+A&=\sum_{i,j=1}^{n}\int_{U}a_{ij,h}D_{k}^{h}u_{x_{i}}D_{k}^{h}u_{x_{j}}\zeta^{2}\,\mathrm{d}x\\
+&\quad+\sum_{i,j=1}^{n}\int_{U}\left[a_{ij,h}D_{k}^{h}u_{x_{i}}D_{k}^{h}u\,2\zeta\zeta_{x_{j}}+(D_{k}^{h}a_{ij})u_{x_{i}}D_{k}^{h}u_{x_{j}}\zeta^{2}+(D_{k}^{h}a_{ij})u_{x_{i}}D_{k}^{h}u\,2\zeta\zeta_{x_{j}}\right]\,\mathrm{d}x\\
+&\triangleq A_{1}+A_{2}.
+\end{align}
+一致椭圆性条件蕴含
+\begin{align}
+A_{1}\geqslant\theta\int_{U}\zeta^{2}|D_{k}^{h}Du|^{2}\,\mathrm{d}x.
+\end{align}
+此外由假设，
+\begin{align*}
+|A_{2}|\leqslant C\int_{U}\zeta|D_{k}^{h}Du|\,|D_{k}^{h}u|+\zeta|D_{k}^{h}Du|\,|Du|+\zeta|D_{k}^{h}u|\,|Du|\,\mathrm{d}x
+\end{align*}
+其中 $C$ 为适当常数。于是带 $\varepsilon$ 的 Cauchy 不等式（\cref{section:appB-有用不等式}）给出界
+\begin{align*}
+|A_{2}|\leqslant\varepsilon\int_{U}\zeta^{2}|D_{k}^{h}Du|^{2}\,\mathrm{d}x+\frac{C}{\varepsilon}\int_{W}|D_{k}^{h}u|^{2}+|Du|^{2}\,\mathrm{d}x.
+\end{align*}
+我们选 $\varepsilon=\dfrac{\theta}{2}$，并回忆\cref{theorem:ch05-差商弱导数} (i) 中的估计
+\begin{align*}
+\int_{W}|D_{k}^{h}u|^{2}\,\mathrm{d}x\leqslant C\int_{U}|Du|^{2}\,\mathrm{d}x,
+\end{align*}
+从而得不等式
+\begin{align*}
+|A_{2}|\leqslant\frac{\theta}{2}\int_{U}\zeta^{2}|D_{k}^{h}Du|^{2}\,\mathrm{d}x+C\int_{U}|Du|^{2}\,\mathrm{d}x.
+\end{align*}
+此估计、上述 $A_{1}$ 估计与 $A=A_{1}+A_{2}$ 最终蕴含
+\begin{align}
+A\geqslant\frac{\theta}{2}\int_{U}\zeta^{2}|D_{k}^{h}Du|^{2}\,\mathrm{d}x-C\int_{U}|Du|^{2}\,\mathrm{d}x.
+\end{align}
+
+5. $B$ 的估计。现回忆前面各式，估计
+\begin{align}
+|B|\leqslant C\int_{U}(|f|+|Du|+|u|)|v|\,\mathrm{d}x.
+\end{align}
+现\cref{theorem:ch05-差商弱导数} (i) 蕴含
+\begin{align*}
+\int_{U}|v|^{2}\,\mathrm{d}x
+\leqslant C\int_{U}|D(\zeta^{2}D_{k}^{h}u)|^{2}\,\mathrm{d}x
+\leqslant C\int_{W}|D_{k}^{h}u|^{2}+\zeta^{2}|D_{k}^{h}Du|^{2}\,\mathrm{d}x
+\leqslant C\int_{U}|Du|^{2}+\zeta^{2}|D_{k}^{h}Du|^{2}\,\mathrm{d}x.
+\end{align*}
+于是上式与带 $\varepsilon$ 的 Cauchy 不等式蕴含
+\begin{align*}
+|B|\leqslant\varepsilon\int_{U}\zeta^{2}|D_{k}^{h}Du|^{2}\,\mathrm{d}x+\frac{C}{\varepsilon}\int_{U}f^{2}+u^{2}\,\mathrm{d}x+\frac{C}{\varepsilon}\int_{U}|Du|^{2}\,\mathrm{d}x.
+\end{align*}
+选 $\varepsilon=\dfrac{\theta}{4}$，得
+\begin{align}
+|B|\leqslant\frac{\theta}{4}\int_{U}\zeta^{2}|D_{k}^{h}Du|^{2}\,\mathrm{d}x+C\int_{U}f^{2}+u^{2}+|Du|^{2}\,\mathrm{d}x.
+\end{align}
+
+6. 我们最后合并前面三式，发现
+\begin{align*}
+\int_{V}|D_{k}^{h}Du|^{2}\,\mathrm{d}x\leqslant\int_{U}\zeta^{2}|D_{k}^{h}Du|^{2}\,\mathrm{d}x\leqslant C\int_{U}f^{2}+u^{2}+|Du|^{2}\,\mathrm{d}x
+\end{align*}
+对 $k=1,\cdots,n$ 及一切充分小 $|h|\neq 0$。
+
+由\cref{theorem:ch05-差商弱导数} (ii)，我们推得 $Du\in H^{1}_{\mathrm{loc}}(U;\mathbb{R}^{n})$，从而 $u\in H^{2}_{\mathrm{loc}}(U)$，并有估计
+\begin{align}
+\|u\|_{H^{2}(V)}\leqslant C(\|f\|_{L^{2}(U)}+\|u\|_{H^{1}(U)}).
+\end{align}
+
+7. 我们现精细化此估计，注意若 $V\subset \subset W\subset \subset U$，则同一论证表明
+\begin{align}
+\|u\|_{H^{2}(V)}\leqslant C(\|f\|_{L^{2}(W)}+\|u\|_{H^{1}(W)}),
+\end{align}
+其中 $C$ 为依赖于 $V$、$W$ 等的适当常数。选新截断函数 $\zeta$ 满足
+\begin{align*}
+\begin{cases}
+\zeta\equiv 1\ \text{于}\ W,\quad \operatorname{spt}\zeta\subset U,\\
+0\leqslant\zeta\leqslant 1.
+\end{cases}
+\end{align*}
+现令 $v=\zeta^{2}u$ 代入式~\eqref{align:ch06-弱解恒等式} 并作初等计算，发现
+\begin{align*}
+\int_{U}\zeta^{2}|Du|^{2}\,\mathrm{d}x\leqslant C\int_{U}f^{2}+u^{2}\,\mathrm{d}x.
+\end{align*}
+因而
+\begin{align*}
+\|u\|_{H^{1}(W)}\leqslant C(\|f\|_{L^{2}(U)}+\|u\|_{L^{2}(U)}).
+\end{align*}
+此不等式与上式给出估计~\eqref{align:ch06-内部H2估计}。
+\end{proof}
+
+我们下一步意图是迭代上述论证，从而推得我们的弱解属于各种更高Sobolev空间（只要系数足够光滑且右端属于足够好的空间）。
+
+\begin{theorem}[更高内部正则性]\label{theorem:ch06-更高内部正则}设 $m$ 为非负整数，假设
+\begin{align}
+a_{ij},b_{i},c\in C^{m+1}(U)\qquad (i,j=1,\cdots,n)
+\end{align}
+且
+\begin{align}
+f\in H^{m}(U).
+\end{align}
+设 $u\in H^{1}(U)$ 为椭圆 PDE $Lu=f$ 于 $U$ 中的弱解。则
+\begin{align}
+u\in H^{m+2}_{\mathrm{loc}}(U);
+\end{align}
+且对每个 $V\subset \subset U$，有估计
+\begin{align}
+\|u\|_{H^{m+2}(V)}\leqslant C(\|f\|_{H^{m}(U)}+\|u\|_{L^{2}(U)}),
+\end{align}
+其中常数 $C$ 只依赖于 $m$、$U$、$V$ 及 $L$ 的系数。
+\end{theorem}
+
+\begin{proof}
+1. 我们对 $m$ 归纳建立上述两断言，$m=0$ 的情形即上面的\cref{theorem:ch06-内部H2正则}。
+
+2. 现假设断言对某个非负整数 $m$ 及如上一切开集 $U$、系数 $a_{ij}$、$b_{i}$、$c$ 等成立。然后设
+\begin{align}
+a_{ij},b_{i},c\in C^{m+2}(U),\qquad f\in H^{m+1}(U),
+\end{align}
+且 $u\in H^{1}(U)$ 为 $Lu=f$ 于 $U$ 中的弱解。由归纳假设，我们有
+\begin{align}
+u\in H^{m+2}_{\mathrm{loc}}(U),
+\end{align}
+且对每个 $W\subset \subset U$，有估计
+\begin{align}
+\|u\|_{H^{m+2}(W)}\leqslant C(\|f\|_{H^{m}(U)}+\|u\|_{L^{2}(U)}),
+\end{align}
+其中 $C$ 为只依赖于 $W$、$L$ 的系数等的适当常数。固定 $V\subset \subset W\subset \subset U$。
+
+3. 现取 $\alpha$ 为任一多重指标，满足 $|\alpha|=m+1$，并选任一检验函数 $\widetilde{v}\in C^{\infty}_{c}(W)$。把 $v\triangleq(-1)^{|\alpha|}D^{\alpha}\widetilde{v}$ 代入恒等式 $B[u,v]=(f,v)_{L^{2}(U)}$，并作若干分部积分，最终发现
+\begin{align}
+B[\widetilde{u},\widetilde{v}]=(\widetilde{f},\widetilde{v}),
+\end{align}
+其中
+\begin{align}
+\widetilde{u}\triangleq D^{\alpha}u\in H^{1}(W),
+\end{align}
+且
+\begin{align}
+\widetilde{f}\triangleq D^{\alpha}f-\sum_{\substack{\beta\leqslant\alpha\\ \beta\neq\alpha}}\binom{\alpha}{\beta}\left[-\sum_{i,j=1}^{n}(D^{\alpha-\beta}a_{ij}D^{\beta}u_{x_{i}})_{x_{j}}+\sum_{i=1}^{n}D^{\alpha-\beta}b_{i}D^{\beta}u_{x_{i}}+D^{\alpha-\beta}cD^{\beta}u\right].
+\end{align}
+由于式~\eqref{align:ch06-弱解恒等式} 对每个 $\widetilde{v}\in C^{\infty}_{c}(W)$ 成立，我们看到 $\widetilde{u}$ 是 $L\widetilde{u}=\widetilde{f}$ 于 $W$ 中的弱解。
+
+鉴于前述假设，我们有 $\widetilde{f}\in L^{2}(W)$，且
+\begin{align}
+\|\widetilde{f}\|_{L^{2}(W)}\leqslant C(\|f\|_{H^{m+1}(U)}+\|u\|_{L^{2}(U)}).
+\end{align}
+
+4. 于是由\cref{theorem:ch06-内部H2正则}，我们看到 $\widetilde{u}\in H^{2}(V)$，且
+\begin{align*}
+\|\widetilde{u}\|_{H^{2}(V)}
+\leqslant C(\|\widetilde{f}\|_{L^{2}(W)}+\|\widetilde{u}\|_{L^{2}(W)})
+\leqslant C(\|f\|_{H^{m+1}(U)}+\|u\|_{L^{2}(U)}).
+\end{align*}
+此不等式对每个满足 $|\alpha|=m+1$ 的多重指标 $\alpha$ 及如上 $\widetilde{u}=D^{\alpha}u$ 成立。因而 $u\in H^{m+3}(V)$，且
+\begin{align*}
+\|u\|_{H^{m+3}(V)}\leqslant C(\|f\|_{H^{m+1}(U)}+\|u\|_{L^{2}(U)}).
+\end{align*}
+\end{proof}
+
+我们现可对 $m=0,1,2,\cdots$ 重复应用\cref{theorem:ch06-更高内部正则}，以推得 $u$ 的无穷次可微性。
+
+\begin{theorem}[内部无穷可微性]\label{theorem:ch06-内部无穷可微}假设
+\begin{align*}
+a_{ij},b_{i},c\in C^{\infty}(U)\qquad (i,j=1,\cdots,n)
+\end{align*}
+且
+\begin{align*}
+f\in C^{\infty}(U).
+\end{align*}
+设 $u\in H^{1}(U)$ 为椭圆 PDE $Lu=f$ 于 $U$ 中的弱解。则
+\begin{align*}
+u\in C^{\infty}(U).
+\end{align*}
+\end{theorem}
+
+这里我们再次对 $u$ 在 $\partial U$ 上的行为不作任何假设。因而特别地，我们断言 $u$ 在边界上的任何可能奇性都不“传播”到内部。
+
+\begin{proof}
+由\cref{theorem:ch06-更高内部正则}，对每个整数 $m=1,2,\cdots$ 有 $u\in H^{m}_{\mathrm{loc}}(U)$。于是\cref{theorem:ch05-Sobolev嵌入} 的推论蕴含对每个 $k=1,2,\cdots$ 有 $u\in C^{k}(U)$。
+\end{proof}
+
+\subsection{边界正则性}\label{subsection:ch06-边界正则性}
+
+现我们把\cref{subsection:ch06-内部正则性} 的估计推广，以研究弱解直到边界的光滑性。
+
+\begin{theorem}[边界 $H^{2}$ 正则性]\label{theorem:ch06-边界H2正则}假设
+\begin{align}
+a_{ij}\in C^{1}(\overline{U}),\quad b_{i},c\in L^{\infty}(U)\qquad (i,j=1,\cdots,n)
+\end{align}
+且
+\begin{align}
+f\in L^{2}(U).
+\end{align}
+设 $u\in H^{1}_{0}(U)$ 为椭圆边值问题
+\begin{align}
+\begin{cases}
+Lu=f & \text{于}\ U,\\
+u=0 & \text{于}\ \partial U
+\end{cases}
+\end{align}
+的弱解。最后假设
+\begin{align}
+\partial U\ \text{为}\ C^{2}.
+\end{align}
+则
+\begin{align*}
+u\in H^{2}(U),
+\end{align*}
+且我们有估计
+\begin{align}
+\|u\|_{H^{2}(U)}\leqslant C(\|f\|_{L^{2}(U)}+\|u\|_{L^{2}(U)}),
+\end{align}
+其中常数 $C$ 只依赖于 $U$ 及 $L$ 的系数。
+\end{theorem}
+
+\begin{remark}\label{remark:ch06-边界正则注}
+\leavevmode
+\begin{enumerate}[(i)]
+\item 若 $u\in H^{1}_{0}(U)$ 是式~\eqref{align:ch06-更高边界问题} 的唯一弱解，估计~\eqref{align:ch06-边界H2估计} 简化为
+\begin{align*}
+\|u\|_{H^{2}(U)}\leqslant C\|f\|_{L^{2}(U)}.
+\end{align*}
+这由\cref{theorem:ch06-逆有界} 得到。
+\item 另注意与\cref{theorem:ch06-内部H2正则} 不同，我们现在假设 $u=0$ 沿 $\partial U$（在迹的意义下）。
+\end{enumerate}
+\end{remark}
+
+\begin{proof}
+1. 我们先研究特殊情形：$U$ 为半球：
+\begin{align}
+U=B^{0}(0,1)\cap\mathbb{R}^{n}_{+}.
+\end{align}
+令 $V\triangleq B^{0}(0,\tfrac{1}{2})\cap\mathbb{R}^{n}_{+}$。然后选光滑截断函数 $\zeta$ 满足
+\begin{align*}
+\begin{cases}
+\zeta\equiv 1\ \text{于}\ B(0,\tfrac{1}{2}),\quad \zeta\equiv 0\ \text{于}\ \mathbb{R}^{n}\setminus B(0,1),\\
+0\leqslant\zeta\leqslant 1.
+\end{cases}
+\end{align*}
+于是 $\zeta\equiv 1$ 于 $V$，且 $\zeta$ 在 $\partial U$ 的弯曲部分附近为零。
+
+2. 因 $u$ 是式~\eqref{align:ch06-更高边界问题} 的弱解，对一切 $v\in H^{1}_{0}(U)$ 有 $B[u,v]=(f,v)$；因而
+\begin{align}\label{align:ch06-边界弱解恒等式}
+\sum_{i,j=1}^{n}\int_{U}a_{ij}u_{x_{i}}v_{x_{j}}\,\mathrm{d}x=\int_{U}\widetilde{f}v\,\mathrm{d}x,
+\end{align}
+其中
+\begin{align*}
+\widetilde{f}\triangleq f-\sum_{i=1}^{n}b_{i}u_{x_{i}}-cu.
+\end{align*}
+
+3. 现设 $h>0$ 小，选 $k\in\{1,\cdots,n-1\}$，写
+\begin{align*}
+v\triangleq-D_{k}^{-h}(\zeta^{2}D_{k}^{h}u).
+\end{align*}
+我们仔细注意当 $x\in U$ 时
+\begin{align*}
+v(x)=-\frac{1}{h}D_{k}^{-h}(\zeta^{2}(x)[u(x+he_{k})-u(x)])
+=\frac{1}{h^{2}}\left(\zeta^{2}(x-he_{k})[u(x)-u(x-he_{k})]-\zeta^{2}(x)[u(x+he_{k})-u(x)]\right).
+\end{align*}
+现因 $u=0$ 沿 $\{x_{n}=0\}$ 在迹的意义下且 $\zeta\equiv 0$ 于 $\partial U$ 弯曲部分附近，我们看到 $v\in H^{1}_{0}(U)$。
+
+因而我们可把 $v$ 代入式~\eqref{align:ch06-边界弱解恒等式}，并把所得表达式写为
+\begin{align}
+A=B,
+\end{align}
+其中
+\begin{align*}
+A\triangleq\sum_{i,j=1}^{n}\int_{U}a_{ij}u_{x_{i}}v_{x_{j}}\,\mathrm{d}x,\qquad
+B\triangleq\int_{U}\widetilde{f}v\,\mathrm{d}x.
+\end{align*}
+
+4. 我们现几乎以与\cref{theorem:ch06-内部H2正则} 证明中估计对应项完全相同的方式估计 $A$ 与 $B$。经过一些计算，我们发现
+\begin{align}
+A\geqslant\frac{\theta}{2}\int_{U}\zeta^{2}|D_{k}^{h}Du|^{2}\,\mathrm{d}x-C\int_{U}|Du|^{2}\,\mathrm{d}x
+\end{align}
+且
+\begin{align}
+|B|\leqslant\frac{\theta}{4}\int_{U}\zeta^{2}|D_{k}^{h}Du|^{2}\,\mathrm{d}x+C\int_{U}f^{2}+u^{2}+|Du|^{2}\,\mathrm{d}x,
+\end{align}
+其中 $C$ 为适当常数。然后合并上述三式，发现
+\begin{align*}
+\int_{V}|D_{k}^{h}Du|^{2}\,\mathrm{d}x\leqslant C\int_{U}f^{2}+u^{2}+|Du|^{2}\,\mathrm{d}x
+\end{align*}
+对 $k=1,\cdots,n-1$。于是回忆\cref{subsection:ch05-差商} 中\cref{theorem:ch05-差商弱导数} 证明后的注，我们推得
+\begin{align}
+u_{x_{k}}\in H^{1}(V)\qquad (k=1,\cdots,n-1),
+\end{align}
+且有估计
+\begin{align}
+\sum_{\substack{k,l=1\\ k+l<2n}}^{n}\|u_{x_{k}x_{l}}\|_{L^{2}(V)}\leqslant C(\|f\|_{L^{2}(U)}+\|u\|_{H^{1}(U)}).
+\end{align}
+
+5. 我们现必须用 $u_{x_{n}x_{n}}$ 在 $V$ 上的 $L^{2}$ 范数估计来补充上式。为此我们回忆\cref{remark:ch06-内部正则注}：$Lu=f$ a.e. 于 $U$。记住 $L$ 的定义，我们可把此等式改写为非散度型：
+\begin{align}
+-\sum_{i,j=1}^{n}a_{ij}u_{x_{i}x_{j}}+\sum_{i=1}^{n}\widetilde{b}_{i}u_{x_{i}}+cu=f,
+\end{align}
+其中 $\widetilde{b}_{i}\triangleq b_{i}-\sum_{j=1}^{n}a_{ij,x_{j}}$（$i=1,\cdots,n$）。于是我们发现
+\begin{align}
+a_{nn}u_{x_{n}x_{n}}=-\sum_{\substack{i,j=1\\ i+j<2n}}^{n}a_{ij}u_{x_{i}x_{j}}+\sum_{i=1}^{n}\widetilde{b}_{i}u_{x_{i}}+cu-f.
+\end{align}
+现由一致椭圆性条件，对一切 $x\in U$、$\xi\in\mathbb{R}^{n}$ 有 $\sum_{i,j=1}^{n}a_{ij}(x)\xi_{i}\xi_{j}\geqslant\theta|\xi|^{2}$。我们令 $\xi=e_{n}=(0,\cdots,0,1)$，得
+\begin{align}
+a_{nn}(x)\geqslant\theta>0\qquad\text{对一切}\ x\in U.
+\end{align}
+于是前述假设与上两式蕴含
+\begin{align}
+|u_{x_{n}x_{n}}|\leqslant C\left(\sum_{\substack{i,j=1\\ i+j<2n}}^{n}|u_{x_{i}x_{j}}|+|Du|+|u|+|f|\right)
+\end{align}
+于 $U$。把此估计用于式~\eqref{align:ch06-边界H2估计}，我们得 $u\in H^{2}(V)$，且
+\begin{align}
+\|u\|_{H^{2}(V)}\leqslant C(\|f\|_{L^{2}(U)}+\|u\|_{L^{2}(U)})
+\end{align}
+其中 $C$ 为适当常数。
+
+6. 我们现去掉 $U$ 为半球、具有特殊形式~\eqref{align:ch06-正交} 的假设。在一般情形，我们任选一点 $x_{0}\in\partial U$，注意因 $\partial U$ 为 $C^{2}$，我们可在必要时重新标记坐标轴后假设
+\begin{align*}
+U\cap B(x_{0},r)=\{x\in B(x_{0},r)\mid x_{n}>\gamma(x_{1},\cdots,x_{n-1})\}
+\end{align*}
+对某个 $r>0$ 及某个 $C^{2}$ 函数 $\gamma:\mathbb{R}^{n-1}\to\mathbb{R}$。如通常那样，我们利用\cref{section:appC-边界} 变量替换，写
+\begin{align}
+y=\Phi(x),\quad x=\Psi(y).
+\end{align}
+
+7. 选 $s>0$ 充分小，使半球 $U'\triangleq B^{0}(0,s)\cap\{y_{n}>0\}$ 位于 $\Phi(U\cap B(x_{0},r))$ 中。令 $V'\triangleq B^{0}(0,s/2)\cap\{y_{n}>0\}$。最后定义
+\begin{align}
+u'(y)\triangleq u(\Psi(y))\qquad (y\in U').
+\end{align}
+直接检验得
+\begin{align}
+u'\in H^{1}(U')
+\end{align}
+且
+\begin{align}
+u'=0\quad\text{于}\ \partial U'\cap\{y_{n}=0\}
+\end{align}
+在迹的意义下。
+
+8. 我们现断言 $u'$ 是 PDE
+\begin{align}
+L'u'=f'
+\end{align}
+于 $U'$ 中的弱解，其中
+\begin{align}
+f'(y)\triangleq f(\Psi(y))
+\end{align}
+且
+\begin{align}
+L'u'\triangleq-\sum_{k,l=1}^{n}(a'_{kl}u'_{y_{k}})_{y_{l}}+\sum_{k=1}^{n}b'_{k}u'_{y_{k}}+c'u',
+\end{align}
+这里
+\begin{align}
+a'_{kl}(y)\triangleq\sum_{r,s=1}^{n}a_{rs}(\Psi(y))\Phi^{k}_{x_{r}}(\Psi(y))\Phi^{l}_{x_{s}}(\Psi(y))\qquad (k,l=1,\cdots,n),
+\end{align}
+\begin{align}
+b'_{k}(y)\triangleq\sum_{r=1}^{n}b_{r}(\Psi(y))\Phi^{k}_{x_{r}}(\Psi(y))\qquad (k=1,\cdots,n),
+\end{align}
+且
+\begin{align}
+c'(y)\triangleq c(\Psi(y))
+\end{align}
+对 $y\in U'$、$k,l=1,\cdots,n$。
+
+若 $v'\in H^{1}_{0}(U')$，且 $B'[,]$ 表示与算子 $L'$ 相伴的双线性型，我们有
+\begin{align}
+B'[u',v']=\int_{U'}\sum_{k,l=1}^{n}a'_{kl}u'_{y_{k}}v'_{y_{l}}+\sum_{k=1}^{n}b'_{k}u'_{y_{k}}v'+c'u'v'\,\mathrm{d}y.
+\end{align}
+现定义 $v(x)\triangleq v'(\Phi(x))$。然后由上式计算，并利用 $D\Phi=(D\Psi)^{-1}$，可得
+\begin{align*}
+B'[u',v']=B[u,v]=(f,v)_{L^{2}(U)}=(f',v')_{L^{2}(U')}.
+\end{align*}
+这就建立了式~\eqref{align:ch06-变换方程}。
+
+9. 我们现检验算子 $L'$ 在 $U'$ 中一致椭圆。事实上若 $y\in U'$、$\xi\in\mathbb{R}^{n}$，我们注意
+\begin{align}
+\sum_{k,l=1}^{n}a'_{kl}(y)\xi_{k}\xi_{l}
+=\sum_{r,s=1}^{n}a_{rs}(\Psi(y))\eta_{r}\eta_{s}\geqslant\theta|\eta|^{2},
+\end{align}
+其中 $\eta=\xi D\Phi$；即 $\eta_{r}=\sum_{k=1}^{n}\Phi^{k}_{x_{r}}\xi_{k}$（$r=1,\cdots,n$）。但因 $D\Phi D\Psi=I$，我们有 $\xi=\eta D\Psi$；故 $|\xi|\leqslant C|\eta|$（某个常数 $C$）。此不等式与上式蕴含
+\begin{align}
+\sum_{k,l=1}^{n}a'_{kl}(y)\xi_{k}\xi_{l}\geqslant\theta'|\xi|^{2}
+\end{align}
+对某个 $\theta'>0$ 及一切 $y\in U'$、$\xi\in\mathbb{R}^{n}$。另由式~\eqref{align:ch06-正交}，系数 $a'_{kl}$ 为 $C^{1}$，因为 $\Phi$ 与 $\Psi$ 为 $C^{2}$。
+
+10. 鉴于式~\eqref{align:ch06-变换方程} 与~\eqref{align:ch06-变换椭圆}, 我们可应用上面证明第 1--5 步的结果，以确定 $u'\in H^{2}(V')$，且
+\begin{align*}
+\|u'\|_{H^{2}(V')}\leqslant C(\|f'\|_{L^{2}(U')}+\|u'\|_{L^{2}(U')}).
+\end{align*}
+因而
+\begin{align}
+\|u\|_{H^{2}(V)}\leqslant C(\|f\|_{L^{2}(U)}+\|u\|_{L^{2}(U)})
+\end{align}
+其中 $V\triangleq\Psi(V')$。
+
+由于 $\partial U$ 紧，我们可如通常那样用有限个如上集合 $V_{1},\cdots,V_{N}$ 覆盖 $\partial U$。把所得估计连同内部估计求和，得 $u\in H^{2}(U)$，且有不等式~\eqref{align:ch06-边界H2估计}。
+\end{proof}
+
+现我们为弱解推导直到 $\partial U$ 的更高正则性。
+
+\begin{theorem}[更高边界正则性]\label{theorem:ch06-更高边界正则}设 $m$ 为非负整数，假设
+\begin{align}
+a_{ij},b_{i},c\in C^{m+1}(\overline{U})\qquad (i,j=1,\cdots,n)
+\end{align}
+且
+\begin{align}
+f\in H^{m}(U).
+\end{align}
+设 $u\in H^{1}_{0}(U)$ 为边值问题
+\begin{align}
+\begin{cases}
+Lu=f & \text{于}\ U,\\
+u=0 & \text{于}\ \partial U
+\end{cases}
+\end{align}
+的弱解。最后假设
+\begin{align}
+\partial U\ \text{为}\ C^{m+2}.
+\end{align}
+则
+\begin{align}
+u\in H^{m+2}(U),
+\end{align}
+且我们有估计
+\begin{align}
+\|u\|_{H^{m+2}(U)}\leqslant C(\|f\|_{H^{m}(U)}+\|u\|_{L^{2}(U)}),
+\end{align}
+其中常数 $C$ 只依赖于 $m$、$U$ 及 $L$ 的系数。
+\end{theorem}
+
+\begin{remark}\label{remark:ch06-更高边界正则}
+若 $u$ 是式~\eqref{align:ch06-更高边界问题} 的唯一解，则估计~\eqref{align:ch06-边界H2估计} 简化为
+\begin{align*}
+\|u\|_{H^{m+2}(U)}\leqslant C\|f\|_{H^{m}(U)}.
+\end{align*}
+\end{remark}
+
+\begin{proof}
+1. 我们先研究特殊情形
+\begin{align}
+U\triangleq B^{0}(0,s)\cap\mathbb{R}^{n}_{+}
+\end{align}
+对某个 $s>0$。固定 $0<t<s$，令 $V\triangleq B^{0}(0,t)\cap\mathbb{R}^{n}_{+}$。
+
+2. 我们打算对 $m$ 归纳证明：每当 $u=0$ 沿 $\{x_{n}=0\}$ 在迹的意义下，前述假设蕴含
+\begin{align}
+u\in H^{m+2}(V),
+\end{align}
+且有估计
+\begin{align}
+\|u\|_{H^{m+2}(V)}\leqslant C(\|f\|_{H^{m}(U)}+\|u\|_{L^{2}(U)}),
+\end{align}
+其中 $C$ 为只依赖于 $U$、$V$ 及 $L$ 的系数的常数。$m=0$ 的情形如\cref{theorem:ch06-边界H2正则} 的证明中那样。
+
+然后设
+\begin{align}
+a_{ij},b_{i},c\in C^{m+2}(\overline{U}),\qquad f\in H^{m+1}(U),
+\end{align}
+且 $u$ 为 $Lu=f$ 于 $U$ 中的弱解，在迹的意义下沿 $\{x_{n}=0\}$ 为零。固定任一 $0<t<r<s$，写 $W\triangleq B^{0}(0,r)\cap\mathbb{R}^{n}_{+}$。由归纳假设，我们有
+\begin{align}
+u\in H^{m+2}(W),
+\end{align}
+且有估计
+\begin{align}
+\|u\|_{H^{m+2}(W)}\leqslant C(\|f\|_{H^{m}(U)}+\|u\|_{L^{2}(U)}).
+\end{align}
+此外由内部正则性\cref{theorem:ch06-更高内部正则}，$u\in H^{m+3}_{\mathrm{loc}}(U)$。
+
+3. 其次，取 $\alpha$ 为任一多重指标，满足
+\begin{align}
+|\alpha|=m+1,\qquad \alpha_{n}=0.
+\end{align}
+则
+\begin{align}
+\widetilde{u}\triangleq D^{\alpha}u
+\end{align}
+属于 $H^{1}(U)$，且在迹的意义下沿平面 $\{x_{n}=0\}$ 为零。此外，如\cref{theorem:ch06-更高内部正则} 的证明中那样，$\widetilde{u}$ 是 $L\widetilde{u}=\widetilde{f}$ 于 $U$ 中的弱解，其中
+\begin{align*}
+\widetilde{f}\triangleq D^{\alpha}f-\sum_{\substack{\beta\leqslant\alpha\\ \beta\neq\alpha}}\binom{\alpha}{\beta}\left[\sum_{i,j=1}^{n}-(D^{\alpha-\beta}a_{ij}D^{\beta}u_{x_{i}})_{x_{j}}+\sum_{i=1}^{n}D^{\alpha-\beta}b_{i}D^{\beta}u_{x_{i}}+D^{\alpha-\beta}cD^{\beta}u\right].
+\end{align*}
+鉴于前述假设，我们看到 $\widetilde{f}\in L^{2}(W)$，且
+\begin{align}
+\|\widetilde{f}\|_{L^{2}(W)}\leqslant C(\|f\|_{H^{m+1}(U)}+\|u\|_{L^{2}(U)}).
+\end{align}
+因而\cref{theorem:ch06-边界H2正则} 的证明表明 $\widetilde{u}\in H^{2}(V)$，且
+\begin{align*}
+\|\widetilde{u}\|_{H^{2}(V)}
+\leqslant C(\|\widetilde{f}\|_{L^{2}(W)}+\|\widetilde{u}\|_{L^{2}(W)})
+\leqslant C(\|f\|_{H^{m+1}(U)}+\|u\|_{L^{2}(U)}).
+\end{align*}
+于是由前述各式，我们推得
+\begin{align}
+\|D^{\beta}u\|_{L^{2}(V)}\leqslant C(\|f\|_{H^{m+1}(U)}+\|u\|_{L^{2}(U)})
+\end{align}
+对任一满足 $|\beta|=m+3$ 且 $\beta_{n}=0,1$ 或 $2$ 的多重指标 $\beta$。
+
+4. 我们必须推广此估计以去掉限制。为此，设由归纳
+\begin{align}
+\|D^{\beta}u\|_{L^{2}(V)}\leqslant C(\|f\|_{H^{m+1}(U)}+\|u\|_{L^{2}(U)})
+\end{align}
+对任一满足 $|\beta|=m+3$ 且 $\beta_{n}=0,1,\cdots,j$ 的多重指标 $\beta$，其中 $j\in\{2,\cdots,m+2\}$。然后设 $|\beta|=m+3$、$\beta_{n}=j+1$。写 $\beta=\gamma+\delta$，其中 $\delta=(0,\cdots,0,2)$、$|\gamma|=m+1$。由于 $u\in H^{m+3}_{\mathrm{loc}}(U)$ 且 $Lu=f$ 于 $U$，我们有 $D^{\gamma}Lu=D^{\gamma}f$ a.e. 于 $U$。现
+\begin{align*}
+D^{\gamma}Lu=a_{nn}D^{\beta}u+\{\text{涉及至多 }u\text{ 关于 }x_{n}\text{ 的 }j\text{ 阶导数及总共至多 }m+3\text{ 阶导数的项之和}\}.
+\end{align*}
+由于 $a_{nn}\geqslant\theta>0$，我们利用归纳假设得
+\begin{align}
+\|D^{\beta}u\|_{L^{2}(V)}\leqslant C(\|f\|_{H^{m+1}(U)}+\|u\|_{L^{2}(U)}).
+\end{align}
+这就完成了归纳。一般 $U$ 的情形如\cref{theorem:ch06-边界H2正则} 证明第 6--10 步那样，通过边界拉直与有限覆盖化归为半球情形。
+\end{proof}
+
+\end{document}

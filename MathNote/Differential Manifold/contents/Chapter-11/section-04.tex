@@ -1,0 +1,94 @@
+\documentclass[../../main.tex]{subfiles}
+\begin{document}
+\section{线积分}\label{section:ch11-线积分}
+
+在本节中，我们定义余向量场沿曲线的积分，并研究它的性质。这把初等微积分中线积分的概念推广到任意流形。
+
+设 $M$ 为光滑流形。$M$ 中的一个\textbf{光滑曲线段}是一个光滑映射 $\gamma\colon[a,b]\to M$，其中 $[a,b]\subseteq\mathbb{R}$ 是闭区间。若 $\gamma$ 是光滑的且 $\gamma(a)=\gamma(b)$，则称为\textbf{闭}曲线段。
+
+更一般地，$M$ 中的一个\textbf{分段光滑曲线段}是一个连续映射 $\gamma\colon[a,b]\to M$，使得存在分割
+\begin{align*}
+a=a_0<a_1<\cdots<a_k=b,
+\end{align*}
+使得每个限制 $\gamma|_{[a_{i-1},a_i]}$ 都是光滑曲线段（\cref{figure:ch11-分段光滑曲线}）。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.65\textwidth]{fig-11-4.png}
+\caption{一个分段光滑曲线段}\label{figure:ch11-分段光滑曲线}
+\end{figure}
+
+在定义线积分之前，我们需要一个关于光滑流形上曲线连通性的简单引理。
+
+\begin{proposition}\label{proposition:ch11-路径连通}
+设 $M$ 为带边或不带边的连通光滑流形。则 $M$ 中任意两点都可用分段光滑曲线段连接。
+\end{proposition}
+
+\begin{proof}
+固定 $p\in M$，令 $\mathcal C\subseteq M$ 为所有可由分段光滑曲线段从 $p$ 到达的点的集合。显然 $p\in\mathcal C$，故 $\mathcal C$ 非空。要证 $\mathcal C=M$，只需证它在 $M$ 中既开又闭。
+
+任取 $q\in\mathcal C$，即存在从 $p$ 到 $q$ 的分段光滑曲线段 $\gamma$。令 $U$ 为以 $q$ 为中心的光滑坐标球（或半球）。若 $q'$ 是 $U$ 中任意点，则容易构造从 $p$ 到 $q'$ 的分段光滑曲线段：先沿 $\gamma$ 从 $p$ 到 $q$，再在坐标中沿直线路径从 $q$ 到 $q'$。于是 $U\subseteq\mathcal C$，故 $\mathcal C$ 在 $M$ 中开。另一方面，若 $q\in\partial\mathcal C$，令 $U$ 为 $q$ 处的坐标球或半球。$q$ 是 $\mathcal C$ 的边界点，意味着存在某点 $q'\in\mathcal C\cap U$。此时可从 $p$ 沿一条到 $q'$，再在坐标中沿直线路径从 $q'$ 到 $q$，构造出从 $p$ 到 $q$ 的分段光滑曲线。这表明 $q\in\mathcal C$，故 $\mathcal C$ 也闭。
+\end{proof}
+
+若 $\gamma\colon[a,b]\to M$ 是光滑曲线段，$\omega$ 是 $M$ 上的光滑余向量场，我们定义 $\omega$ \textbf{沿} $\gamma$ 的\textbf{线积分}为实数
+\begin{align}
+\int_\gamma\omega=\int_{[a,b]}\gamma^*\omega.\label{align:ch11-线积分定义}
+\end{align}
+由于 $\gamma^*\omega$ 是 $[a,b]$ 上的光滑余向量场，此定义有意义。更一般地，若 $\gamma$ 是分段光滑的，则定义
+\begin{align}
+\int_\gamma\omega=\sum_{i=1}^k\int_{[a_{i-1},a_i]}\gamma^*\omega,\label{align:ch11-分段线积分}
+\end{align}
+其中 $[a_{i-1},a_i]$，$i=1,\dots,k$，是 $\gamma$ 光滑的子区间。
+
+\begin{proposition}[线积分的性质]\label{proposition:ch11-线积分性质}
+设 $M$ 为带边或不带边的光滑流形。设 $\gamma\colon[a,b]\to M$ 是分段光滑曲线段，$\omega,\omega_1,\omega_2\in\mathfrak X^*(M)$。
+\begin{enumerate}[(a)]
+\item 对任意 $c_1,c_2\in\mathbb{R}$，
+\begin{align*}
+\int_\gamma(c_1\omega_1+c_2\omega_2)=c_1\int_\gamma\omega_1+c_2\int_\gamma\omega_2.
+\end{align*}
+\item 若 $\gamma$ 是常值映射，则 $\int_\gamma\omega=0$。
+\item 若 $\widetilde\gamma\colon[c,d]\to M$ 是 $\gamma$ 的一个再参数化，则
+\begin{align*}
+\int_{\widetilde\gamma}\omega=
+\begin{cases}
+\int_\gamma\omega,&\text{若 }\widetilde\gamma\text{ 保向},\\
+-\int_\gamma\omega,&\text{若 }\widetilde\gamma\text{ 反向}.
+\end{cases}
+\end{align*}
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+线性性是显然的。若 $\gamma$ 是常值映射，则 $\gamma'=0$，故 $\gamma^*\omega=0$。关于再参数化：若 $\varphi\colon[c,d]\to[a,b]$ 是光滑的，则 $\widetilde\gamma=\gamma\circ\varphi$，于是 $\widetilde\gamma^*\omega=\varphi^*(\gamma^*\omega)$。而在 $[a,b]$ 上 $\gamma^*\omega=f\,dt$，故
+\begin{align*}
+\int_{\widetilde\gamma}\omega=\int_c^d f(\varphi(t))\varphi'(t)\,dt=\int_{\varphi(c)}^{\varphi(d)}f(s)\,ds.
+\end{align*}
+若 $\varphi(c)=a$，$\varphi(d)=b$，即保向，则此积分等于 $\int_\gamma\omega$；若 $\varphi(c)=b$，$\varphi(d)=a$，即反向，则等于 $-\int_\gamma\omega$。
+\end{proof}
+
+线积分最重要的性质是下面的定理，它是微积分基本定理在流形上的类似物。
+
+\begin{theorem}[恰当余向量场的线积分]\label{theorem:ch11-恰当余向量场线积分}
+设 $M$ 为带边或不带边的光滑流形，$f\colon M\to\mathbb{R}$ 为光滑函数。对 $M$ 中从 $p$ 到 $q$ 的任意分段光滑曲线段 $\gamma$，有
+\begin{align}
+\int_\gamma df=f(q)-f(p).\label{align:ch11-恰当线积分}
+\end{align}
+\end{theorem}
+
+\begin{proof}
+先设 $\gamma\colon[a,b]\to M$ 光滑。由\cref{proposition:ch11-沿曲线导数}，$d(f\circ\gamma)/dt=(f\circ\gamma)'(t)=df_{\gamma(t)}(\gamma'(t))$。但 $\gamma^*df$ 是 $[a,b]$ 上的余向量场，在坐标 $t$ 下为
+\begin{align*}
+(\gamma^*df)_t\left(\frac{d}{dt}\bigg|_t\right)=df_{\gamma(t)}\left(d\gamma_t\left(\frac{d}{dt}\bigg|_t\right)\right)=df_{\gamma(t)}(\gamma'(t))=\frac{d}{dt}(f\circ\gamma)(t).
+\end{align*}
+因此
+\begin{align*}
+\int_\gamma df=\int_a^b(\gamma^*df)\left(\frac{d}{dt}\right)dt=\int_a^b\frac{d}{dt}(f\circ\gamma)(t)\,dt=f(\gamma(b))-f(\gamma(a))=f(q)-f(p).
+\end{align*}
+若 $\gamma$ 分段光滑，则在每段上应用上述结果并求和，望远镜相消即得同样结论。
+\end{proof}
+
+\begin{exercise}\label{exercise:ch11-37}
+设 $\gamma\colon[a,b]\to M$ 是光滑曲线段。证明 $\int_\gamma df=0$ 对任意光滑函数 $f$ 成立，当且仅当 $\gamma(a)=\gamma(b)$。
+\end{exercise}
+\end{document}

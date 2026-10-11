@@ -1,0 +1,313 @@
+\documentclass[../../main.tex]{subfiles}
+\begin{document}
+\section{存在性、唯一性与光滑性}\label{section:appD-existence-uniqueness-smoothness}
+
+这是本书中 ODE 出现的一般背景：给定定义在某开子集 $W\subset\mathbb R^{n+1}$ 上的 $n$ 个实值连续函数 $V^1,\dots,V^n$，目标是求可微实值函数 $y^1,\dots,y^n$，求解下列初值问题：
+\begin{align}\label{align:appD-system}
+\dot y^i(t)=V^i\big(t,y^1(t),\dots,y^n(t)\big),\qquad i=1,\dots,n,
+\end{align}
+\begin{align}\label{align:appD-initial}
+y^i(t_0)=c^i,\qquad i=1,\dots,n,
+\end{align}
+其中 $(t_0,c^1,\dots,c^n)$ 是 $W$ 中任意点。（本书中此处及他处，只要方便，主要是当有上标而撇号记号会显得累赘时，我们用一个点表示关于 $t$ 的普通导数。）
+
+关于常微分方程的基本事实是：对光滑方程，初值问题总存在唯一解，至少在短时间内如此；而且解作为初值与时间的函数都是光滑的。此定理的存在性与唯一性部分在多数 ODE 教材中都有证明，但光滑性部分常被略去。由于这一结果对光滑流形理论如此基本，我们在这里给出完整证明。
+
+我们对本理论的大多数应用局限于下列特殊情形：如果\eqref{align:appD-system} 右端的函数 $V^i$ 不显式依赖于 $t$，就称该系统是\emph{自治的}；否则称\emph{非自治的}。我们先在自治情形中陈述并证明主定理。之后我们说明一般情形如何由它推出。
+
+\begin{theorem}[自治 ODE 基本定理]\label{theorem:appD-autonomous-fundamental}
+假设 $U\subset\mathbb R^n$ 开，$V:U\to\mathbb R^n$ 是光滑向量值函数。考虑初值问题
+\begin{align}\label{align:appD-autonomous-system}
+\dot y^i(t)=V^i\big(y^1(t),\dots,y^n(t)\big),\qquad i=1,\dots,n,
+\end{align}
+\begin{align}\label{align:appD-autonomous-initial}
+y^i(t_0)=c^i,\qquad i=1,\dots,n,
+\end{align}
+其中 $t_0\in\mathbb R$ 任意、$c=(c^1,\dots,c^n)\in U$。
+\begin{enumerate}[(a)]
+\item \emph{存在性}：对任意 $t_0\in\mathbb R$ 与 $x_0\in U$，存在含 $t_0$ 的开区间 $J_0$ 与含 $x_0$ 的开子集 $U_0\subset U$，使对每个 $c\in U_0$，都有一个 $C^1$ 映射 $y:J_0\to U$ 求解\eqref{align:appD-autonomous-system}--\eqref{align:appD-autonomous-initial}。
+\item \emph{唯一性}：\eqref{align:appD-autonomous-system}--\eqref{align:appD-autonomous-initial} 的任意两个可微解在它们的公共定义域上一致。
+\item \emph{光滑性}：设 $J_0,U_0$ 如 (a)，令 $\Theta:J_0\times U_0\to U$ 为 $\Theta(t,x)=y(t)$，其中 $y:J_0\to U$ 是以 $y(t_0)=x$ 为初值求解\eqref{align:appD-autonomous-system} 的唯一解。则 $\Theta$ 光滑。
+\end{enumerate}
+\end{theorem}
+
+本定理的存在性、唯一性与光滑性部分将分别证明。下列比较定理在后续证明中有用。
+
+\begin{theorem}[ODE 比较定理]\label{theorem:appD-ode-comparison}
+设 $J\subset\mathbb R$ 是开区间，假设可微函数 $u:J\to\mathbb R^n$ 对所有 $t\in J$ 满足下列微分不等式：
+\begin{align*}
+|u'(t)|\leqslant f\big(|u(t)|\big),
+\end{align*}
+其中 $f:[0,\infty)\to[0,\infty)$ Lipschitz 连续。如果对某个 $t_0\in J$，$v:[0,\infty)\to\mathbb R$ 是满足初值问题
+\begin{align*}
+v'(t)=f(v(t)),\qquad v(0)=|u(t_0)|
+\end{align*}
+的可微实值函数，则对所有 $t\in J$ 有下列不等式成立：
+\begin{align}\label{align:appD-comparison}
+|u(t)|\leqslant v\big(|t-t_0|\big).
+\end{align}
+\end{theorem}
+
+\begin{proof}
+先设 $t_0=0$，令 $J^+=\{t\in J:t\geqslant0\}$。我们先证\eqref{align:appD-comparison} 对所有 $t\in J^+$ 成立。在 $J^+$ 中 $|u(t)|>0$ 的开子集上，$|u(t)|$ 是 $t$ 的可微函数，Cauchy--Schwarz 不等式表明
+\begin{align*}
+\frac{\mathrm{d}}{\mathrm{d}t}|u(t)|=\frac{\mathrm{d}}{\mathrm{d}t}(u(t)\cdot u(t))^{1/2}
+=\frac12(u(t)\cdot u(t))^{-1/2}(2u(t)\cdot u'(t))
+\leqslant\frac{1}{2|u(t)|}\cdot 2|u(t)|\,|u'(t)|=|u'(t)|\leqslant f(|u(t)|).
+\end{align*}
+令 $A$ 为 $f$ 的 Lipschitz 常数，考虑由
+\begin{align*}
+w(t)=e^{-At}\big(|u(t)|-v(t)\big)
+\end{align*}
+定义的连续函数 $w:J^+\to\mathbb R$。
+
+则 $w(0)=0$，而对 $t\in J^+$ 的\eqref{align:appD-comparison} 等价于 $w(t)\leqslant0$。
+
+在任意 $t\in J^+$ 使 $w(t)>0$（因而 $|u(t)|>v(t)\geqslant0$）处，$w$ 可微且满足
+\begin{align*}
+w'(t)&=-Ae^{-At}\big(|u(t)|-v(t)\big)+e^{-At}\frac{\mathrm{d}}{\mathrm{d}t}\big(|u(t)|-v(t)\big)\\
+&\leqslant-Ae^{-At}\big(|u(t)|-v(t)\big)+e^{-At}\big(f(|u(t)|)-f(v(t))\big)\leqslant0,
+\end{align*}
+其中最后一个不等式由 $f$ 的 Lipschitz 估计得出。
+
+现假设存在某个 $t_1\in J^+$ 使 $w(t_1)>0$。令
+\begin{align*}
+\delta=\sup\{t\in[0,t_1]:w(t)\leqslant0\}.
+\end{align*}
+则由连续性 $w(\delta)=0$，而对 $t\in(\delta,t_1]$ 有 $w(t)>0$。由于 $w$ 在 $[\delta,t_1]$ 上连续、在 $(\delta,t_1)$ 上可微，中值定理蕴含必存在 $t\in(\delta,t_1)$ 使 $w(t)>0$ 且 $w'(t)>0$。但这与上面的计算矛盾，上面计算表明只要 $w(t)>0$ 就有 $w'(t)\leqslant0$，因而证得对所有 $t\in J^+$ 有 $w(t)\leqslant0$。
+
+现 $t\leqslant0$ 的结果由在上面论证中把 $t$ 换成 $-t$ 即得。最后，对 $t_0\neq0$ 的一般情形，只需把上面论证应用于区间 $\widetilde J=\{t:t+t_0\in J\}$ 上的函数 $\widetilde u(t)=u(t+t_0)$。
+\end{proof}
+
+\begin{remark}\label{remark:appD-comparison}
+在比较定理的陈述中，为简单起见我们假设 $f$ 与 $v$ 对所有非负 $t$ 都有定义，但这些假设可减弱：只要 $v$ 定义在某个区间 $[0,b)$ 上、使 $J\subset(t_0-b,t_0+b)$，且 $f$ 定义在包含所有 $t\in J$ 的 $|u(t)|$ 与 $v(t)$ 的某个区间上，证明本质上无需修改即可通过。
+\end{remark}
+
+\begin{theorem}[ODE 解的存在性]\label{theorem:appD-existence}
+设 $U\subset\mathbb R^n$ 是开子集，假设 $V:U\to\mathbb R^n$ 局部 Lipschitz 连续。给定 $(t_0,x_0)\in\mathbb R\times U$。存在含 $t_0$ 的开区间 $J_0\subset\mathbb R$、含 $x_0$ 的开子集 $U_0\subset U$，且对每个 $c\in U_0$，有一个 $C^1$ 映射 $y:J_0\to U$ 求解初值问题\eqref{align:appD-autonomous-system}--\eqref{align:appD-autonomous-initial}。
+\end{theorem}
+
+\begin{proof}
+必要时缩小 $U$，可设 $V$ 在 $U$ 上 Lipschitz 连续。我们先证系统\eqref{align:appD-autonomous-system}--\eqref{align:appD-autonomous-initial} 等价于某个积分方程。假设 $y$ 是\eqref{align:appD-autonomous-system}--\eqref{align:appD-autonomous-initial} 在含 $t_0$ 的某区间 $J_0$ 上的任意解。由于 $y$ 可微，它连续；而\eqref{align:appD-system} 右端是 $t$ 的连续函数这一事实蕴含 $y$ 是 $C^1$ 类的。对\eqref{align:appD-system} 关于 $t$ 积分并应用微积分基本定理，表明 $y$ 满足下列积分方程：
+\begin{align}\label{align:appD-integral}
+y^i(t)=c^i+\int_{t_0}^t V^i(y(s))\,\mathrm{d}s.
+\end{align}
+反之，如果 $y:J_0\to U$ 是满足\eqref{align:appD-integral} 的连续映射，则微积分基本定理蕴含 $y$ 满足\eqref{align:appD-system}--\eqref{align:appD-initial}，因而实际上是 $C^1$ 类的。
+
+这促使我们给出下列定义。设 $J_0$ 是含 $t_0$ 的开区间。对任意连续映射 $y:J_0\to U$，用
+\begin{align}\label{align:appD-integral-operator}
+Iy(t)=c+\int_{t_0}^t V(y(s))\,\mathrm{d}s
+\end{align}
+定义新映射 $Iy:J_0\to\mathbb R^n$。于是我们被引导在某个适当的映射度量空间中寻求 $I$ 的不动点。
+
+令 $C$ 为 $V$ 的 Lipschitz 常数，使
+\begin{align}\label{align:appD-lipschitz-constant}
+|V(y)-V(\widetilde y)|\leqslant C|y-\widetilde y|,\qquad y,\widetilde y\in U.
+\end{align}
+给定 $t_0\in\mathbb R$ 与 $x_0\in U$，选 $r>0$ 足够小，使 $\overline B_r(x_0)\subset U$。令 $M$ 为 $|V|$ 在紧集 $\overline B_r(x_0)$ 上的上确界。选 $\delta>0$ 与 $\varepsilon>0$ 足够小，使
+\begin{align*}
+\delta<\frac r2,\qquad \varepsilon<\min\left\{\frac{r}{2M},\frac1C\right\},
+\end{align*}
+并令 $J_0=(t_0-\varepsilon,t_0+\varepsilon)\subset\mathbb R$、$U_0=B_\delta(x_0)\subset U$。对任意 $c\in U_0$，令 $\mathcal M_c$ 表示所有满足 $y(t_0)=c$ 的连续映射 $y:J_0\to\overline B_r(x_0)$ 所成集合。用
+\begin{align*}
+d(y,\widetilde y)=\sup_{t\in J_0}|y(t)-\widetilde y(t)|
+\end{align*}
+在 $\mathcal M_c$ 上定义度量。$\mathcal M_c$ 中在此度量下 Cauchy 的任意映射序列都一致 Cauchy，因而收敛到连续极限 $y$。显然，$y$ 取值于 $\overline B_r(x_0)$ 与 $y(t_0)=c$ 的条件在取极限时保持。故 $\mathcal M_c$ 是完备度量空间。
+
+我们希望用公式\eqref{align:appD-integral-operator} 定义映射 $I:\mathcal M_c\to\mathcal M_c$。首先需验证 $I$ 确实把 $\mathcal M_c$ 映入自身。由定义显然 $Iy(t_0)=c$ 且 $Iy$ 连续（事实上，由微积分基本定理它可微）。因而我们只需检查 $Iy$ 取值于 $\overline B_r(x_0)$。如果 $y\in\mathcal M_c$，则对任意 $t\in J_0$，
+\begin{align*}
+|Iy(t)-x_0|=\left|c+\int_{t_0}^t V(y(s))\,\mathrm{d}s-x_0\right|
+\leqslant|c-x_0|+\int_{t_0}^t|V(y(s))|\,\mathrm{d}s
+<\delta+M\varepsilon<r,
+\end{align*}
+这由我们对 $\delta$ 与 $\varepsilon$ 的选取得出。
+
+现验证 $I$ 是压缩映射（见 p. 657）。如果 $y,\widetilde y\in\mathcal M_c$，则
+\begin{align*}
+d(Iy,I\widetilde y)
+&=\sup_{t\in J_0}\left|\int_{t_0}^t V(y(s))\,\mathrm{d}s-\int_{t_0}^t V(\widetilde y(s))\,\mathrm{d}s\right|\\
+&\leqslant\sup_{t\in J_0}\int_{t_0}^t|V(y(s))-V(\widetilde y(s))|\,\mathrm{d}s\\
+&\leqslant\sup_{t\in J_0}\int_{t_0}^t C|y(s)-\widetilde y(s)|\,\mathrm{d}s
+\leqslant C\varepsilon\,d(y,\widetilde y).
+\end{align*}
+由于我们选取 $\varepsilon$ 使 $C\varepsilon<1$，这表明 $I$ 是压缩映射。由压缩映射引理（引理 C.35），$I$ 有不动点 $y\in\mathcal M_c$，它是\eqref{align:appD-integral} 的解，因而也是\eqref{align:appD-autonomous-system}--\eqref{align:appD-autonomous-initial} 的解。
+\end{proof}
+
+\begin{theorem}[ODE 解的唯一性]\label{theorem:appD-uniqueness}
+设 $U\subset\mathbb R^n$ 是开子集，假设 $V:U\to\mathbb R^n$ 局部 Lipschitz 连续。对任意 $t_0\in\mathbb R$ 与 $c\in U$，\eqref{align:appD-autonomous-system}--\eqref{align:appD-autonomous-initial} 的任意两个可微解在它们的公共定义域上相等。
+\end{theorem}
+
+\begin{proof}
+先假设 $y,\widetilde y:J_0\to U$ 是两个可微函数，都在同一开区间 $J_0\subset\mathbb R$ 上满足\eqref{align:appD-autonomous-system}，但初值不必相同。令 $J_1$ 为含 $t_0$ 的有界开区间，使 $\overline{J_1}\subset J_0$。$y(\overline{J_1})$ 与 $\widetilde y(\overline{J_1})$ 之并是 $U$ 的紧子集，命题 A.48(b) 表明在该集合上 $V$ 有 Lipschitz 常数 $C$。因而
+\begin{align*}
+\left|\frac{\mathrm{d}}{\mathrm{d}t}(\widetilde y(t)-y(t))\right|
+=|V(\widetilde y(t))-V(y(t))|\leqslant C|\widetilde y(t)-y(t)|.
+\end{align*}
+对 $u(t)=\widetilde y(t)-y(t)$、$f(v)=Cv$、$v(t)=e^{Ct}|\widetilde y(t_0)-y(t_0)|$ 应用 ODE 比较定理（定理 D.2），得
+\begin{align}\label{align:appD-uniqueness-estimate}
+|\widetilde y(t)-y(t)|\leqslant e^{C|t-t_0|}|\widetilde y(t_0)-y(t_0)|,\qquad t\in\overline{J_1}.
+\end{align}
+因而 $y(t_0)=\widetilde y(t_0)$ 蕴含在整个 $\overline{J_1}$ 上 $y\equiv\widetilde y$。由于 $J_0$ 的每一点都含于某个这样的子区间 $J_1$，故在整个 $J_0$ 上 $y\equiv\widetilde y$。
+\end{proof}
+
+\begin{theorem}[ODE 解的光滑性]\label{theorem:appD-smoothness}
+假设 $U\subset\mathbb R^n$ 是开子集，$V:U\to\mathbb R^n$ 局部 Lipschitz 连续。又设 $U_0\subset U$ 是开子集，$J_0\subset\mathbb R$ 是含 $t_0$ 的开区间，$\Theta:J_0\times U_0\to U$ 是映射，使对每个 $x\in U_0$，$y(t)=\Theta(t,x)$ 是以 $c=x$ 为初值求解初值问题\eqref{align:appD-autonomous-system}--\eqref{align:appD-autonomous-initial} 的解。如果 $V$ 是 $C^k$ 类（对某个 $k\geqslant0$），则 $\Theta$ 也是。
+\end{theorem}
+
+\begin{proof}
+令 $(t_1,x_1)\in J_0\times U_0$ 任意。只需证 $\Theta$ 在 $(t_1,x_1)$ 的某邻域上是 $C^k$。我们对 $k$ 作归纳证明此断言。
+
+令 $J_1$ 为含 $t_0$ 与 $t_1$ 的有界开区间，使 $\overline{J_1}\subset J_0$。由于 $\Theta$ 在 $J_0\times\{x_1\}$ 上的限制是 $V$ 的一条积分曲线，它连续，故集合 $K=\Theta(\overline{J_1}\times\{x_1\})$ 紧。因而存在 $c>0$，使对每个 $y\in K$ 有 $\overline B_{2c}(y)\subset U$。令 $W=\bigcup_{y\in K}B_c(y)$，则 $W$ 是 $K$ 在 $U$ 中的预紧邻域。$V$ 在 $W$ 上的限制由紧性有界，由命题 A.48(b) Lipschitz 连续。令 $C$ 为 $V$ 在 $W$ 上的 Lipschitz 常数，用
+\begin{align*}
+M=\sup_W|V|,\qquad T=\sup_{t\in\overline{J_1}}|t-t_0|
+\end{align*}
+定义常数 $M$ 与 $T$。
+
+对任意 $x,\widetilde x\in W$，$t\mapsto\Theta(t,x)$ 与 $t\mapsto\Theta(t,\widetilde x)$ 对 $t\in J_1$ 都是 $V$ 的积分曲线。只要两条曲线都留在 $W$ 中，\eqref{align:appD-uniqueness-estimate} 蕴含
+\begin{align}\label{align:appD-flux-estimate}
+|\Theta(t,x)-\Theta(t,\widetilde x)|\leqslant e^{CT}|\widetilde x-x|.
+\end{align}
+选 $r>0$ 使 $2re^{CT}<c$，令 $U_1=B_r(x_1)$、$U_2=B_{2r}(x_1)$。我们将证 $\Theta$ 把 $\overline{J_1}\times\overline{U_2}$ 映入 $W$。反设不然，即存在某个 $(t_2,x_2)\in\overline{J_1}\times\overline{U_2}$ 使 $\Theta(t_2,x_2)\notin W$；为简单起见设 $t_2>t_0$。令 $\delta$ 为 $J_1$ 中 $t>t_0$ 使 $\Theta(t,x_2)\notin W$ 的时刻的下确界。由连续性，这意味着 $\Theta(\delta,x_2)\in\partial W$。但由于对 $t\in[t_0,\delta]$，$\Theta(t,x_1)$ 与 $\Theta(t,x_2)$ 都在 $W$ 中，\eqref{align:appD-flux-estimate} 给出 $|\Theta(\delta,x_2)-\Theta(\delta,x_1)|\leqslant2re^{CT}<c$，这意味着 $\Theta(\delta,x_2)\in W$，矛盾。这证明了断言。
+
+对 $k=0$ 步，需证 $\Theta$ 在 $\overline{J_1}\times\overline{U_1}$ 上连续。由\eqref{align:appD-flux-estimate}，它在那里作为 $x$ 的函数 Lipschitz 连续。我们需证它在 $(t,x)$ 中联合连续。
+
+令 $(t,x)\in\overline{J_1}\times\overline{U_1}$ 任意。由于初值问题的每个解都满足积分方程\eqref{align:appD-integral}，我们有
+\begin{align}\label{align:appD-flux-integral}
+\Theta^i(t,x)=x^i+\int_{t_0}^t V^i(\Theta(s,x))\,\mathrm{d}s,
+\end{align}
+因而（为简单起见设 $t_1\geqslant t$），
+\begin{align*}
+|\Theta(t_1,x_1)-\Theta(t,x)|
+&\leqslant|x_1-x|+\left|\int_{t_0}^{t_1}V(\Theta(s,x_1))\,\mathrm{d}s-\int_{t_0}^t V(\Theta(s,x))\,\mathrm{d}s\right|\\
+&\leqslant|x_1-x|+\int_{t_0}^t|V(\Theta(s,x_1))-V(\Theta(s,x))|\,\mathrm{d}s
++\int_t^{t_1}|V(\Theta(s,x_1))|\,\mathrm{d}s\\
+&\leqslant|x_1-x|+C\int_{t_0}^t|\Theta(s,x_1)-\Theta(s,x)|\,\mathrm{d}s+\int_t^{t_1}M\,\mathrm{d}s\\
+&\leqslant|x_1-x|+CTe^{CT}|x_1-x|+M|t_1-t|.
+\end{align*}
+由此 $\Theta$ 在 $(t_1,x_1)$ 处连续。
+
+现处理 $k=1$ 步，这是证明中最难的部分。假设 $V$ 是 $C^1$ 类，令 $\overline{J_1}$、$\overline{U_1}$ 如前定义。用 $\Theta$ 表示，初值 $c=x$ 的初值问题\eqref{align:appD-autonomous-system}--\eqref{align:appD-autonomous-initial} 读作
+\begin{align}\label{align:appD-flux-pde}
+\frac{\partial\Theta^i}{\partial t}(t,x)=V^i(\Theta(t,x)),\qquad \Theta^i(t_0,x)=x^i.
+\end{align}
+由于上面论证已知 $\Theta$ 连续，这表明 $\partial\Theta^i/\partial t$ 连续。我们将证对每个 $j$，$\partial\Theta^i/\partial x^j$ 在 $\overline{J_1}\times\overline{U_1}$ 上存在且连续。
+
+对任意满足 $0<|h|<r$ 的实数 $h$ 与任意指标 $i,j\in\{1,\dots,n\}$，令 $(\Delta_h)^i_j:\overline{J_1}\times\overline{U_1}\to\mathbb R$ 为差商
+\begin{align*}
+(\Delta_h)^i_j(t,x)=\frac{\Theta^i(t,x+he_j)-\Theta^i(t,x)}{h}.
+\end{align*}
+则若极限存在，$\partial\Theta^i/\partial x^j(t,x)=\lim_{h\to0}(\Delta_h)^i_j(t,x)$。事实上，我们将证当 $h\to0$ 时 $(\Delta_h)^i_j$ 在 $\overline{J_1}\times\overline{U_1}$ 上一致收敛，由此 $\partial\Theta^i/\partial x^j$ 在那里存在且连续，因为它是连续函数的一致极限。令 $\Delta_h:\overline{J_1}\times\overline{U_1}\to M(n;\mathbb R)$ 为矩阵值函数，其矩阵元素为 $(\Delta_h)^i_j(t,x)$。注意\eqref{align:appD-flux-estimate} 蕴含对每个 $i,j$ 有 $|(\Delta_h)^i_j(t,x)|\leqslant e^{CT}$，故
+\begin{align}\label{align:appD-delta-bound}
+|\Delta_h(t,x)|\leqslant ne^{CT},
+\end{align}
+其中左端范数是矩阵的 Frobenius 范数。
+
+计算 $(\Delta_h)^i_j$ 关于 $t$ 的导数：
+\begin{align}\label{align:appD-delta-derivative}
+\frac{\partial}{\partial t}(\Delta_h)^i_j(t,x)
+&=\frac1h\left(\frac{\partial\Theta^i}{\partial t}(t,x+he_j)-\frac{\partial\Theta^i}{\partial t}(t,x)\right)\\
+&=\frac1h\big(V^i(\Theta(t,x+he_j))-V^i(\Theta(t,x))\big).\nonumber
+\end{align}
+对 $C^1$ 函数 $u(s)=V^i((1-s)\Theta(t,x)+s\Theta(t,x+he_j))$ 应用中值定理，存在某个 $c\in(0,1)$ 使 $u(1)-u(0)=u'(c)$。若代入 $y_0=(1-c)\Theta(t,x)+c\Theta(t,x+he_j)$（$\Theta(t,x)$ 与 $\Theta(t,x+he_j)$ 连线上一点），这成为
+\begin{align*}
+V^i(\Theta(t,x+he_j))-V^i(\Theta(t,x))
+=\sum_{k=1}^n\frac{\partial V^i}{\partial y^k}(y_0)\big(\Theta^k(t,x+he_j)-\Theta^k(t,x)\big)
+=h\sum_{k=1}^n\frac{\partial V^i}{\partial y^k}(y_0)(\Delta_h)^k_j(t,x).
+\end{align*}
+把此代入\eqref{align:appD-delta-derivative}，得
+\begin{align*}
+\frac{\partial}{\partial t}(\Delta_h)^i_j(t,x)
+=\sum_{k=1}^n\frac{\partial V^i}{\partial y^k}(y_0)(\Delta_h)^k_j(t,x).
+\end{align*}
+因而对任意充分小的非零实数 $h,\widetilde h$，
+\begin{align}\label{align:appD-delta-difference}
+&\frac{\partial}{\partial t}\big((\Delta_h)^i_j(t,x)-(\Delta_{\widetilde h})^i_j(t,x)\big)\\
+&=\sum_{k=1}^n\frac{\partial V^i}{\partial y^k}(y_0)(\Delta_h)^k_j(t,x)
+-\sum_{k=1}^n\frac{\partial V^i}{\partial y^k}(\widetilde y_0)(\Delta_{\widetilde h})^k_j(t,x)\nonumber\\
+&=\sum_{k=1}^n\frac{\partial V^i}{\partial y^k}(y_0)\big((\Delta_h)^k_j(t,x)-(\Delta_{\widetilde h})^k_j(t,x)\big)\nonumber\\
+&\quad+\sum_{k=1}^n\left(\frac{\partial V^i}{\partial y^k}(y_0)-\frac{\partial V^i}{\partial y^k}(\widetilde y_0)\right)(\Delta_{\widetilde h})^k_j(t,x),\nonumber
+\end{align}
+其中 $\widetilde y_0$ 类似 $y_0$ 定义，但以 $\widetilde h$ 代替 $h$。
+
+现给定 $\varepsilon>0$。由于连续函数 $\partial V^i/\partial y^k$ 在 $\overline{U_1}$ 上一致连续（命题 A.48(a)），存在 $\delta>0$，使只要 $|y_1-y_2|<\delta$ 就有下列不等式成立：
+\begin{align*}
+\left|\frac{\partial V^i}{\partial y^k}(y_1)-\frac{\partial V^i}{\partial y^k}(y_2)\right|<\varepsilon.
+\end{align*}
+假设 $|h|$ 与 $|\widetilde h|$ 都小于 $\delta e^{-CT}/n$。则
+\begin{align}\label{align:appD-y0-close}
+|y_0-\Theta(t,x)|=c|\Theta(t,x+he_j)-\Theta(t,x)|\leqslant c|h|\,|\Delta_h(t,x)|<\delta,
+\end{align}
+类似地 $|\widetilde y_0-\Theta(t,x)|<\delta$，故
+\begin{align}\label{align:appD-derivative-close}
+&\left|\frac{\partial V^i}{\partial y^k}(y_0)-\frac{\partial V^i}{\partial y^k}(\widetilde y_0)\right|\\
+&\leqslant\left|\frac{\partial V^i}{\partial y^k}(y_0)-\frac{\partial V^i}{\partial y^k}(\Theta(t,x))\right|
++\left|\frac{\partial V^i}{\partial y^k}(\Theta(t,x))-\frac{\partial V^i}{\partial y^k}(\widetilde y_0)\right|<2\varepsilon.\nonumber
+\end{align}
+把\eqref{align:appD-derivative-close} 与\eqref{align:appD-delta-bound} 代入\eqref{align:appD-delta-difference}，发现矩阵值函数 $\Delta_h-\Delta_{\widetilde h}$ 满足下列微分不等式：
+\begin{align*}
+\left|\frac{\partial}{\partial t}\big(\Delta_h(t,x)-\Delta_{\widetilde h}(t,x)\big)\right|
+\leqslant E|\Delta_h(t,x)-\Delta_{\widetilde h}(t,x)|+2\varepsilon ne^{CT},
+\end{align*}
+其中 $E$ 是 $|\mathrm{D}V|$ 在 $\overline{U_1}$ 上的上确界。注意 $\Theta^i(t_0,x)=x^i$ 蕴含 $(\Delta_h)^i_j$ 满足下列初值条件：
+\begin{align}\label{align:appD-delta-initial}
+(\Delta_h)^i_j(t_0,x)=\frac{\Theta^i(t_0,x+he_j)-\Theta^i(t_0,x)}{h}
+=\frac{(x^i+h\delta^i_j)-x^i}{h}=\delta^i_j.
+\end{align}
+因而 $\Delta_h(t_0,x)-\Delta_{\widetilde h}(t_0,x)=0$，可用 $f(v)=Ev+B$ 与 $v(t)=(B/E)(e^{Et}-1)$（其中 $B=2\varepsilon ne^{CT}$）应用 ODE 比较定理，得出
+\begin{align}\label{align:appD-delta-cauchy}
+|\Delta_h(t,x)-\Delta_{\widetilde h}(t,x)|
+\leqslant\frac{2\varepsilon ne^{CT}}{E}\big(e^{E|t-t_0|}-1\big)
+\leqslant\frac{2\varepsilon ne^{CT}}{E}\big(e^{ET}-1\big).
+\end{align}
+由于取 $h$ 与 $\widetilde h$ 足够小可使右端任意小，这表明对每个 $i,j$ 与任意序列 $h_k\to0$，函数序列 $((\Delta_{h_k})^i_j)_{k=1}^\infty$ 一致 Cauchy，因而一致收敛到连续极限函数。由\eqref{align:appD-delta-cauchy} 易见极限与 $(h_k)$ 的选取无关，故极限实际上等于 $\lim_{h\to0}(\Delta_h)^i_j(t,x)$，由定义即 $\partial\Theta^i/\partial x^j(t,x)$。这表明 $\Theta^i$ 有连续一阶偏导数，完成 $k=1$ 情形的证明。
+
+现假设定理对某个 $k\geqslant1$ 成立，且 $V$ 是 $C^{k+1}$ 类。由归纳假设，$\Theta$ 是 $C^k$ 类，因而由\eqref{align:appD-flux-pde}，$\partial\Theta^i/\partial t$ 也是 $C^k$。我们可在\eqref{align:appD-flux-integral} 中在积分号下求导，得
+\begin{align*}
+\frac{\partial\Theta^i}{\partial x^j}(t,x)=\delta^i_j+\sum_{k=1}^n\int_{t_0}^t\frac{\partial V^i}{\partial y^k}(\Theta(s,x))\frac{\partial\Theta^k}{\partial x^j}(s,x)\,\mathrm{d}s.
+\end{align*}
+由微积分基本定理，这蕴含 $\partial\Theta^i/\partial x^j$ 满足微分方程
+\begin{align*}
+\frac{\partial}{\partial t}\frac{\partial\Theta^i}{\partial x^j}(t,x)
+=\sum_{k=1}^n\frac{\partial V^i}{\partial y^k}(\Theta(t,x))\frac{\partial\Theta^k}{\partial x^j}(t,x).
+\end{align*}
+考虑下列关于 $n+n^2$ 个未知函数 $(\alpha^i,\beta^i_j)$ 的初值问题：
+\begin{align*}
+\dot\alpha^i(t)=V^i(\alpha(t)),\qquad \alpha^i(t_0)=a^i,
+\end{align*}
+\begin{align*}
+\dot\beta^i_j(t)=\sum_{k=1}^n\frac{\partial V^i}{\partial y^k}(\alpha(t))\beta^k_j(t),\qquad \beta^i_j(t_0)=b^i_j.
+\end{align*}
+此系统右端的函数是 $(\alpha^i,\beta^i_j)$ 的 $C^k$ 函数，故归纳假设蕴含其解是 $(t,a^i,b^i_j)$ 的 $C^k$ 函数。
+
+上一段的讨论表明 $\alpha^i(t)=\Theta^i(t,x)$、$\beta^i_j(t)=\partial\Theta^i/\partial x^j(t,x)$ 是以 $a^i=x^i$、$b^i_j=\delta^i_j$ 为初值求解此系统。这表明 $\partial\Theta^i/\partial x^j$ 是 $(t,x)$ 的 $C^k$ 函数，故 $\Theta$ 本身是 $C^{k+1}$ 类的，归纳完成。
+\end{proof}
+
+\begin{proof}[基本定理的证明]
+假设 $U\subset\mathbb R^n$ 开，$V:U\to\mathbb R^n$ 光滑。令 $t_0\in\mathbb R$、$x_0\in U$ 任意。由于 $V$ 光滑，由推论 C.30 它局部 Lipschitz 连续，故本附录的定理适用。定理 D.3 表明存在 $t_0$ 的邻域 $J_0$ 与 $x_0$ 的邻域 $U_0$，使对每个 $c\in U_0$，有一个 $C^1$ 解 $y:J_0\to U$ 求解\eqref{align:appD-autonomous-system}--\eqref{align:appD-autonomous-initial}。解的唯一性是定理 D.4 的直接推论。最后，定理 D.5 表明解作为 $(t,c)$ 的函数对每个 $k$ 都是 $C^k$，故它光滑。
+\end{proof}
+
+\subsection*{非自治系统}
+
+ODE 的许多应用需要考虑非自治系统。本节中我们说明主定理如何推广以涵盖非自治情形。
+
+\begin{theorem}[非自治 ODE 基本定理]\label{theorem:appD-nonautonomous}
+设 $J\subset\mathbb R$ 是开区间，$U\subset\mathbb R^n$ 是开子集，$V:J\times U\to\mathbb R^n$ 是光滑向量值函数。
+\begin{enumerate}[(a)]
+\item \emph{存在性}：对任意 $s_0\in J$ 与 $x_0\in U$，存在含 $s_0$ 的开区间 $J_0\subset J$ 与含 $x_0$ 的开子集 $U_0\subset U$，使对每个 $t_0\in J_0$ 与 $c=(c^1,\dots,c^n)\in U_0$，有一个 $C^1$ 映射 $y:J_0\to U$ 求解\eqref{align:appD-system}--\eqref{align:appD-initial}。
+\item \emph{唯一性}：\eqref{align:appD-system}--\eqref{align:appD-initial} 的任意两个可微解在它们的公共定义域上一致。
+\item \emph{光滑性}：设 $J_0,U_0$ 如 (a)，用 $\Theta(t,t_0,c)=y(t)$ 定义映射 $\Theta:J_0\times J_0\times U_0\to U$，其中 $y:J_0\to U$ 是\eqref{align:appD-system}--\eqref{align:appD-initial} 的唯一解。则 $\Theta$ 光滑。
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+考虑下列关于 $n+1$ 个函数 $y^0,\dots,y^n$ 的自治初值问题：
+\begin{align}\label{align:appD-nonautonomous-embedding}
+\dot y^0(t)=1;\qquad
+\dot y^i(t)=V^i\big(y^0(t),y^1(t),\dots,y^n(t)\big),\quad i=1,\dots,n;
+\end{align}
+\begin{align*}
+y^0(t_0)=t_0;\qquad y^i(t_0)=c^i,\quad i=1,\dots,n.
+\end{align*}
+\eqref{align:appD-nonautonomous-embedding} 的任意解满足对所有 $t$ 有 $y^0(t)=t$，因而 $(y^1,\dots,y^n)$ 求解非自治系统\eqref{align:appD-system}--\eqref{align:appD-initial}；反之，\eqref{align:appD-system}--\eqref{align:appD-initial} 的任意解通过令 $y^0(t)=t$ 给出\eqref{align:appD-nonautonomous-embedding} 的解。定理 D.1 保证存在含 $s_0$ 的开区间 $J_0\subset\mathbb R$ 与含 $(s_0,x_0)$ 的开子集 $W_0\subset J\times U$，使对任意 $(t_0,c)\in W_0$，存在\eqref{align:appD-nonautonomous-embedding} 的唯一解，定义于 $t\in J_0$，且解光滑依赖于 $(t,t_0,c)$。必要时缩小 $J_0$ 与 $W_0$，可设 $J_0\subset J$ 且对某个开子集 $U_0\subset U$ 有 $W_0=J_0\times U_0$。结果由此得出。
+\end{proof}
+\end{document}

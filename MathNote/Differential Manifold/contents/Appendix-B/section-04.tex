@@ -1,0 +1,165 @@
+\documentclass[../../main.tex]{subfiles}
+\begin{document}
+\section{内积与范数}\label{section:appB-inner-products-and-norms}
+
+如果 $V$ 是实向量空间，$V$ 上的一个\emph{内积}是一个映射 $V\times V\to\mathbb R$，通常记作 $(v,w)\mapsto\langle v,w\rangle$，满足下列条件：
+\begin{enumerate}[(i)]
+\item \emph{对称性}：$\langle v,w\rangle=\langle w,v\rangle$；
+\item \emph{双线性性}：
+\begin{align*}
+\langle av+a'v',w\rangle=a\langle v,w\rangle+a'\langle v',w\rangle,
+\end{align*}
+\begin{align*}
+\langle v,bw+b'w'\rangle=b\langle v,w\rangle+b'\langle v,w'\rangle;
+\end{align*}
+\item \emph{正定性}：$\langle v,v\rangle\geqslant0$，且等号当且仅当 $v=0$。
+\end{enumerate}
+
+赋予某个特定内积的向量空间称为\emph{内积空间}。标准例子当然是带 Euclid 点积的 $\mathbb R^n$：
+\begin{align*}
+\langle x,y\rangle=x\cdot y=\sum_{i=1}^n x^i y^i.
+\end{align*}
+
+设 $V$ 是内积空间。对每个 $v\in V$，$v$ 的\emph{长度}是非负实数 $|v|=\sqrt{\langle v,v\rangle}$。\emph{单位向量}是长度为 $1$ 的向量。如果 $v,w\in V$ 是非零向量，$v$ 与 $w$ 间的\emph{夹角}定义为唯一的 $\theta\in[0,\pi]$，满足
+\begin{align*}
+\cos\theta=\frac{\langle v,w\rangle}{|v|\,|w|}.
+\end{align*}
+两个向量 $v,w\in V$ 如果 $\langle v,w\rangle=0$，就称它们\emph{正交}；这意味着其中一个向量为零，或它们之间的夹角为 $\pi/2$。
+
+\begin{exercise}\label{exercise:appB-B-39}
+设 $V$ 是内积空间。证明与内积相伴的长度函数满足
+\begin{align*}
+|v|>0\qquad\text{对 }v\in V,\ v\neq0,
+\end{align*}
+\begin{align*}
+|cv|=|c|\,|v|\qquad\text{对 }c\in\mathbb R,\ v\in V,
+\end{align*}
+\begin{align*}
+|v+w|\leqslant|v|+|w|\qquad\text{对 }v,w\in V,
+\end{align*}
+以及 Cauchy--Schwarz 不等式：
+\begin{align*}
+|\langle v,w\rangle|\leqslant|v|\,|w|\qquad\text{对 }v,w\in V.
+\end{align*}
+\end{exercise}
+
+设 $V$ 是有限维内积空间。如果每个 $E_i$ 都是单位向量、且当 $i\neq j$ 时 $E_i$ 与 $E_j$ 正交，则 $V$ 的基 $(E_1,\dots,E_n)$ 称为\emph{标准正交}基。
+
+\begin{proposition}[Gram--Schmidt 算法]\label{proposition:appB-gram-schmidt}
+设 $V$ 是维数 $n\geqslant1$ 的内积空间。则 $V$ 有标准正交基。事实上，如果 $(E_1,\dots,E_n)$ 是 $V$ 的任意基，则存在标准正交基 $(\widetilde E_1,\dots,\widetilde E_n)$，使对 $k=1,\dots,n$ 有
+\begin{align}\label{align:appB-gram-schmidt}
+\operatorname{span}(\widetilde E_1,\dots,\widetilde E_k)=\operatorname{span}(E_1,\dots,E_k).
+\end{align}
+\end{proposition}
+
+\begin{proof}
+对 $n=\dim V$ 作归纳。若 $n=1$，只有一个基元素 $E_1$，则 $\widetilde E_1=E_1/|E_1|$ 就是标准正交基。
+
+假设结论对维数为 $n-1$ 的内积空间成立，设 $V$ 维数为 $n$。则 $W=\operatorname{span}(E_1,\dots,E_{n-1})$ 是从 $V$ 限制内积的 $(n-1)$ 维内积空间，故存在标准正交基 $(\widetilde E_1,\dots,\widetilde E_{n-1})$ 满足对 $k=1,\dots,n-1$ 的\eqref{align:appB-gram-schmidt}。用
+\begin{align}\label{align:appB-gs-step}
+\widetilde E_n=\frac{E_n-\sum_{i=1}^{n-1}\langle E_n,\widetilde E_i\rangle\widetilde E_i}
+{\left|E_n-\sum_{i=1}^{n-1}\langle E_n,\widetilde E_i\rangle\widetilde E_i\right|}
+\end{align}
+定义 $\widetilde E_n$。计算表明 $(\widetilde E_1,\dots,\widetilde E_n)$ 正是所需的 $V$ 的标准正交基。
+\end{proof}
+
+\begin{exercise}\label{exercise:appB-B-41}
+对 $w=(w^1,\dots,w^n)$ 和 $z=(z^1,\dots,z^n)\in\mathbb C^n$，用 $w\cdot z=\sum_{j=1}^n w^j\overline{z^j}$ 定义 Hermite 点积，其中对任意复数 $z=x+\mathrm{i}y$，记号 $\overline{z}$ 表示共轭：$\overline{z}=x-\mathrm{i}y$。$\mathbb C^n$（在 $\mathbb C$ 上）的基 $(E_1,\dots,E_n)$ 如果满足 $E_i\cdot E_i=1$ 且 $i\neq j$ 时 $E_i\cdot E_j=0$，就称标准正交。证明命题 B.40 的陈述与证明对 Hermite 点积成立。
+\end{exercise}
+
+内积空间之间的同构 $T:V\to W$ 如果把 $V$ 的内积映到 $W$ 的内积：
+\begin{align*}
+\langle Tv,Tw\rangle=\langle v,w\rangle\qquad\text{对所有 }v,w\in V,
+\end{align*}
+就称为\emph{线性等距}。
+
+\begin{exercise}\label{exercise:appB-B-42}
+证明内积空间之间的每个线性等距都是保持长度、角度和正交性的同胚，并把标准正交基映为标准正交基。
+\end{exercise}
+
+\begin{exercise}\label{exercise:appB-B-43}
+给定有限维向量空间 $V$ 的任意基 $(E_i)$，证明存在 $V$ 上唯一的内积，使 $(E_i)$ 标准正交。
+\end{exercise}
+
+\begin{exercise}\label{exercise:appB-B-44}
+假设 $V$ 是有限维内积空间，$E:\mathbb R^n\to V$ 是由某个标准正交基确定的基映射。证明当 $\mathbb R^n$ 赋予 Euclid 内积时 $E$ 是线性等距。
+\end{exercise}
+
+前一习题表明：有限维内积空间在几何上与同维 Euclid 空间不可区分。
+
+如果 $V$ 是有限维内积空间，$S\subset V$ 是子空间，则 $S$ 在 $V$ 中的\emph{正交补}是集合
+\begin{align*}
+S^\perp=\{v\in V:\langle v,w\rangle=0\text{ 对所有 }w\in S\}.
+\end{align*}
+
+\begin{exercise}\label{exercise:appB-B-45}
+设 $V$ 是有限维内积空间，$S\subset V$ 是子空间。证明 $S^\perp$ 是子空间且 $V=S\oplus S^\perp$。
+\end{exercise}
+
+由前一习题的结果，对内积空间 $V$ 的任意子空间 $S$，存在一个以 $S^\perp$ 为核的自然投影 $\pi:V\to S$。这个投影称为 $V$ 到 $S$ 的\emph{正交投影}。
+
+\subsection*{范数}
+
+如果 $V$ 是实向量空间，$V$ 上的一个\emph{范数}是一个从 $V$ 到 $\mathbb R$ 的函数，记作 $v\mapsto|v|$，满足下列性质。
+\begin{enumerate}[(i)]
+\item \emph{正性}：对所有 $v\in V$，$|v|\geqslant0$，且等号当且仅当 $v=0$。
+\item \emph{齐次性}：对所有 $c\in\mathbb R$ 与 $v\in V$，$|cv|=|c|\,|v|$。
+\item \emph{三角不等式}：对所有 $v,w\in V$，$|v+w|\leqslant|v|+|w|$。
+\end{enumerate}
+
+一个向量空间连同某个特定范数的选取称为\emph{赋范线性空间}。习题 B.39 表明与任意内积相伴的长度函数是范数；因而特别地，每个有限维向量空间都有许多范数。给定 $V$ 上的一个范数，距离函数 $d(v,w)=|v-w|$ 把 $V$ 变成度量空间，在 $V$ 上产生一个拓扑，称为\emph{范数拓扑}。
+
+\begin{example}[Euclid 空间]\label{example:appB-euclidean-norm}
+赋予由
+\begin{align}\label{align:appB-euclidean-norm}
+|x|=\sqrt{x\cdot x}
+\end{align}
+定义的 Euclid 范数，$\mathbb R^n$ 是赋范线性空间，其范数拓扑正是附录 A 中描述的 Euclid 拓扑。
+\end{example}
+
+\begin{example}[矩阵上的 Frobenius 范数]\label{example:appB-frobenius}
+$m\times n$ 实矩阵空间 $M(m\times n;\mathbb R)$ 有一个自然 Euclid 内积，它由把矩阵等同于 $\mathbb R^{mn}$ 中的点得到：
+\begin{align*}
+A\cdot B=\sum_{i,j}A^i_j B^i_j.
+\end{align*}
+这给出矩阵上的一个范数，称为 Frobenius 范数：
+\begin{align}\label{align:appB-frobenius}
+|A|=\sqrt{\sum_{i,j}(A^i_j)^2}.
+\end{align}
+凡我们在矩阵上使用范数时，用的总是这个范数。
+\end{example}
+
+\begin{exercise}\label{exercise:appB-B-48}
+对任意矩阵 $A\in M(m\times n;\mathbb R)$ 与 $B\in M(n\times k;\mathbb R)$，证明 $|AB|\leqslant|A|\,|B|$。
+\end{exercise}
+
+向量空间 $V$ 上的两个范数 $|\cdot|_1$ 与 $|\cdot|_2$ 如果存在正常数 $c,C$，使对所有 $v\in V$ 都有
+\begin{align*}
+c|v|_1\leqslant|v|_2\leqslant C|v|_1,
+\end{align*}
+就称它们\emph{等价}。
+
+\begin{exercise}\label{exercise:appB-B-49}
+证明等价的范数确定相同的拓扑。
+\end{exercise}
+
+\begin{exercise}\label{exercise:appB-B-50}
+证明有限维向量空间上的任意两个范数等价。[提示：先做 $V=\mathbb R^n$ 且其中一个范数是 Euclid 范数的情形，并考虑另一个范数在单位球面上的限制。]
+\end{exercise}
+
+前一习题表明：同维数的有限维赋范线性空间在拓扑上彼此不可区分。因而这种空间自动继承 Euclid 空间的所有通常拓扑性质，例如闭有界子集的紧性。
+
+如果 $V$ 与 $W$ 是赋范线性空间，线性映射 $T:V\to W$ 如果存在正常数 $C$，使对所有 $v\in V$ 都有
+\begin{align*}
+|Tv|\leqslant C|v|,
+\end{align*}
+就称它\emph{有界}。
+
+\begin{exercise}\label{exercise:appB-B-51}
+证明赋范线性空间之间的线性映射连续，当且仅当它有界。[提示：为证 $T$ 连续蕴含有界，先证存在 $\delta>0$，使 $|x|<\delta$ 蕴含 $|T(x)|<1$。]
+\end{exercise}
+
+\begin{exercise}\label{exercise:appB-B-52}
+证明有限维赋范线性空间之间的每个线性映射都有界，因而连续。
+\end{exercise}
+\end{document}

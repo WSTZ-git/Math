@@ -1,0 +1,126 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}}
+
+\begin{document}
+
+\section{把非线性 PDE 化为线性 PDE}\label{section:ch04-convert}
+
+本节描述几种有时有用的技巧，把某些非线性方程化为线性方程。
+
+\subsection{Cole--Hopf 变换}\label{subsection:ch04-cole-hopf}
+
+\subsubsection{具二次非线性项的抛物 PDE}
+
+我们先考虑一个拟线性抛物方程初值问题：
+\begin{align}\label{align:ch04-quasilinear}
+\begin{cases}
+u_t-a\Delta u+b|Du|^2=0 & \text{在 }\mathbb{R}^n\times(0,\infty)\text{ 中},\\
+u=g & \text{在 }\mathbb{R}^n\times\{t=0\}\text{ 上},
+\end{cases}
+\end{align}
+其中 $a>0$。这类非线性 PDE 出现于随机最优控制理论中。
+
+暂时假定 $u$ 是\eqref{align:ch04-quasilinear} 的光滑解，令 $w\triangleq\phi(u)$，其中 $\phi:\mathbb{R}\to\mathbb{R}$ 是光滑函数，暂未指定。我们将试图选 $\phi$ 使 $w$ 解一个线性方程。有 $w_t=\phi'(u)u_t$，$\Delta w=\phi'(u)\Delta u+\phi''(u)|Du|^2$；于是\eqref{align:ch04-quasilinear} 蕴含
+\begin{align*}
+w_t=\phi'(u)u_t=\phi'(u)[a\Delta u-b|Du|^2]=a\Delta w-[a\phi''(u)+b\phi'(u)]|Du|^2=a\Delta w,
+\end{align*}
+只要选 $\phi$ 满足 $a\phi''+b\phi'=0$。解此微分方程，取 $\phi=e^{-bz/a}$。于是看到：若 $u$ 解\eqref{align:ch04-quasilinear}，则
+\begin{align}\label{align:ch04-cole-hopf}
+w=e^{-bu/a}
+\end{align}
+解热方程（导热系数 $a$）的初值问题
+\begin{align}\label{align:ch04-cole-hopf-heat}
+\begin{cases}
+w_t-a\Delta w=0 & \text{在 }\mathbb{R}^n\times(0,\infty)\text{ 中},\\
+w=e^{-bg/a} & \text{在 }\mathbb{R}^n\times\{t=0\}\text{ 上}.
+\end{cases}
+\end{align}
+公式\eqref{align:ch04-cole-hopf} 即\textbf{Cole--Hopf 变换}。
+
+现\eqref{align:ch04-cole-hopf-heat} 的唯一有界解为
+\begin{align*}
+w(x,t)=\frac{1}{(4\pi at)^{n/2}}\int_{\mathbb{R}^n}e^{-|x-y|^2/4at}e^{-bg(y)/a}\,\mathrm{d}y \qquad(x\in\mathbb{R}^n,\ t>0);
+\end{align*}
+而因\eqref{align:ch04-cole-hopf} 蕴含 $u=-\dfrac{a}{b}\log w$，由此得拟线性初值问题\eqref{align:ch04-quasilinear} 解的显式公式
+\begin{align}\label{align:ch04-cole-hopf-sol}
+u(x,t)=-\frac{a}{b}\log\!\left(\frac{1}{(4\pi at)^{n/2}}\int_{\mathbb{R}^n}e^{-|x-y|^2/4at-bg(y)/a}\,\mathrm{d}y\right).
+\end{align}
+
+\subsubsection{带黏性的 Burgers 方程}
+
+作为进一步应用，现考察 $n=1$ 时黏性 Burgers 方程初值问题：
+\begin{align}\label{align:ch04-burgers-visc}
+\begin{cases}
+u_t-au_{xx}+uu_x=0 & \text{在 }\mathbb{R}\times(0,\infty)\text{ 中},\\
+u=g & \text{在 }\mathbb{R}\times\{t=0\}\text{ 上}.
+\end{cases}
+\end{align}
+若令 $w(x,t)\triangleq\int_{-\infty}^x u(y,t)\,\mathrm{d}y$、$h(x)\triangleq\int_{-\infty}^x g(y)\,\mathrm{d}y$（参见 \S3.4），有
+\begin{align}\label{align:ch04-burgers-pot}
+\begin{cases}
+w_t-aw_{xx}+\frac{1}{2}w_x^2=0 & \text{在 }\mathbb{R}\times(0,\infty)\text{ 中},\\
+w=h & \text{在 }\mathbb{R}\times\{t=0\}\text{ 上}.
+\end{cases}
+\end{align}
+这是 $n=1$、$b=\tfrac{1}{2}$ 时形式\eqref{align:ch04-quasilinear} 的方程；故\eqref{align:ch04-cole-hopf-sol} 给出公式
+\begin{align*}
+w(x,t)=-2a\log\!\left(\frac{1}{(4\pi at)^{1/2}}\int_{\mathbb{R}}e^{-|x-y|^2/4at-h(y)/2a}\,\mathrm{d}y\right).
+\end{align*}
+但由于 $u=w_x$，对上式微分，得
+\begin{align}\label{align:ch04-burgers-sol}
+u(x,t)=\frac{\displaystyle\int_{-\infty}^\infty\frac{x-y}{t}e^{-|x-y|^2/4at-h(y)/2a}\,\mathrm{d}y}{\displaystyle\int_{-\infty}^\infty e^{-|x-y|^2/4at-h(y)/2a}\,\mathrm{d}y} \qquad(x\in\mathbb{R},\ t>0)
+\end{align}
+是问题\eqref{align:ch04-burgers-visc} 的解，其中 $h$ 由上定义。我们将在 \S4.5.2 进一步审视此公式。
+
+\subsection{势函数}\label{subsection:ch04-potential}
+
+另一技巧是利用势函数把非线性 PDE 组化为单个线性 PDE。我们以无黏不可压流体的 Euler 方程为例：
+\begin{align}\label{align:ch04-euler}
+\begin{cases}
+\text{(a) } \mathbf{u}_t+\mathbf{u}\cdot D\mathbf{u}=-Dp+\mathbf{f} & \text{在 }\mathbb{R}^3\times(0,\infty)\text{ 中},\\
+\text{(b) } \operatorname{div}\mathbf{u}=0 & \text{在 }\mathbb{R}^3\times(0,\infty)\text{ 中},\\
+\text{(c) } \mathbf{u}=\mathbf{g} & \text{在 }\mathbb{R}^3\times\{t=0\}\text{ 上}.
+\end{cases}
+\end{align}
+未知量为速度场 $\mathbf{u}=(u_1,u_2,u_3)$ 与标量压力 $p$；外力 $\mathbf{f}$ 与初速度 $\mathbf{g}$ 给定。假设 $\operatorname{div}\mathbf{g}=0$。若进一步存在标量函数 $h:\mathbb{R}^3\times(0,\infty)\to\mathbb{R}$ 使 $\mathbf{f}=Dh$，称外力由势 $h$ 导出。
+
+我们试图找\eqref{align:ch04-euler} 的解 $(\mathbf{u},p)$，使速度场 $\mathbf{u}$ 也由势导出：$\mathbf{u}=Dv$。于是流动无旋（$\operatorname{curl}\mathbf{u}\equiv 0$）。方程\eqref{align:ch04-euler}(b) 说 $0=\operatorname{div}\mathbf{u}=\Delta v$，故对每个 $t>0$，$v$ 作为 $x$ 的函数必须调和。
+
+如何计算压力 $p$？注意若 $\mathbf{u}=Dv$，则 $\mathbf{u}\cdot D\mathbf{u}=\tfrac{1}{2}D(|Dv|^2)$。故\eqref{align:ch04-euler}(a) 读作 $D(v_t+\tfrac{1}{2}|Dv|^2)=D(-p+h)$。因而可取
+\begin{align}\label{align:ch04-bernoulli}
+v_t+\frac{1}{2}|Dv|^2+p=h.
+\end{align}
+这就是\textbf{Bernoulli 定律}。现可用\eqref{align:ch04-bernoulli} 计算 $p$（相差一个相加常数），因 $v$ 与 $h$ 已知。
+
+\subsection{Hodograph 变换与 Legendre 变换}\label{subsection:ch04-hodograph}
+
+\subsubsection{Hodograph 变换}
+
+Hodograph 变换是通过互换因变量与自变量的角色，把某些拟线性 PDE 组化为线性组的技巧。因本方法最易由例子理解，考察定常二维无旋流体方程。
+
+系统是拟线性的。现不再把 $u_1,u_2$ 视为 $x_1,x_2$ 的函数，而把 $x_1,x_2$ 视为 $u_1,u_2$ 的函数。由反函数定理（\S C.6），只要 Jacobi 行列式
+\begin{align*}
+J=\frac{\partial(u_1,u_2)}{\partial(x_1,x_2)}=u_{x_1}^1u_{x_2}^2-u_{x_2}^1u_{x_1}^2\neq 0
+\end{align*}
+在某区域成立，即可局部反演。代入后得到关于 $x=(x_1,x_2)$ 作为 $u=(u_1,u_2)$ 函数的线性组。可用势函数法进一步化为单个线性二阶 PDE。
+
+\subsubsection{Legendre 变换}
+
+与 hodograph 变换密切相关的是经典 Legendre 变换，其一个版本我们已在 \S3.3 遇到。想法是把解的梯度分量视为新自变量。以极小曲面方程为例，$n=2$ 时可写
+\begin{align}\label{align:ch04-minimal-surface}
+(1+u_{x_2}^2)u_{x_1x_1}-2u_{x_1}u_{x_2}u_{x_1x_2}+(1+u_{x_1}^2)u_{x_2x_2}=0.
+\end{align}
+设在某区域可反演关系 $p_1=u_{x_1}(x_1,x_2)$、$p_2=u_{x_2}(x_1,x_2)$ 以解出 $x_1=x_1(p_1,p_2)$、$x_2=x_2(p_1,p_2)$。反函数定理保证在 $J=\det D^2u\neq 0$ 处可作。定义
+\begin{align}\label{align:ch04-legendre}
+v(p)\triangleq x(p)\cdot p-u(x(p)).
+\end{align}
+计算后把恒等式代入\eqref{align:ch04-minimal-surface}，导出 $v$ 的线性方程
+\begin{align}\label{align:ch04-legendre-linear}
+(1+p_2^2)v_{p_2p_2}+2p_1p_2v_{p_1p_2}+(1+p_1^2)v_{p_1p_1}=0.
+\end{align}
+
+\begin{remark}\label{remark:ch04-hodograph}
+用 hodograph 与 Legendre 变换把非线性 PDE 化为线性 PDE 在实际中难以使用，因为通常不太容易变换给定的边界条件。
+\end{remark}
+
+\end{document}

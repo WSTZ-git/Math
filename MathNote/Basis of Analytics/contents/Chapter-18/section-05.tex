@@ -1,0 +1,110 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{基本组合学公式}
+
+\begin{definition}[组合数定义的扩充]\label{definition:组合数定义的扩充}
+对 \( \forall n \in \mathbb{R} \)，\( k \in \mathbb{N} \)，定义
+\[
+\mathrm{C}_{n}^{k} = \begin{pmatrix} n \\ k \end{pmatrix} \triangleq \begin{cases}
+0&,k<0,\\
+\frac{n(n - 1) \cdots (n - k + 1)}{k!}&,0< k\leqslant n ,\\
+0&,k>n.\\
+\end{cases}
+\]
+特别地，\( \mathrm{C}_{n}^{0} \triangleq 1 \)。若 \( n, k \in \mathbb{N} \)且$0\leqslant k\leqslant n$，则还有
+\[
+\mathrm{C}_{n}^{k} = \begin{pmatrix} n \\ k \end{pmatrix} = \frac{n!}{k! (n - k)!}.
+\]
+\end{definition}
+
+\begin{proposition}[组合数基本公式]\label{proposition:组合数基本性质}
+对$\forall n,k\in \mathbb{N}$ ,有$\mathrm{C}_{n-1}^{k}+\mathrm{C}_{n-1}^{k-1}=\mathrm{C}_{n}^{k}\Longleftrightarrow \left( \begin{array}{c}
+n-1\\
+k-1\\
+\end{array} \right) +\left( \begin{array}{c}
+n-1\\
+k\\
+\end{array} \right) =\left( \begin{array}{c}
+n\\
+k\\
+\end{array} \right) .$
+\end{proposition}
+\begin{proof}
+当 \(k=0\) 时，规定 \(\binom{n-1}{-1}=0\)，此时原式左边 \(=\binom{n-1}{0}+\binom{n-1}{-1}=1+0=1=\binom{n}{0}\)，等式成立。同理，当 \(k=n\) 时，规定 \(\binom{n-1}{n}=0\)，等式也成立。
+
+现假设 \(1 \leqslant k \leqslant n-1\)，根据组合数的阶乘定义 \(\binom{n}{k} = \frac{n!}{k!(n-k)!}\)，我们展开等式左边：
+\begin{align*}
+\binom{n-1}{k-1}+\binom{n-1}{k}&=\frac{(n-1)!}{(k-1)![(n-1)-(k-1)]!}+\frac{(n-1)!}{k![(n-1)-k]!}=\frac{(n-1)!}{(k-1)!(n-k)!}+\frac{(n-1)!}{k!(n-k-1)!}
+\\
+&=\frac{(n-1)!\cdot k}{(k-1)!(n-k)!\cdot k}+\frac{(n-1)!\cdot (n-k)}{k!(n-k-1)!\cdot (n-k)}=\frac{k(n-1)!}{k!(n-k)!}+\frac{(n-k)(n-1)!}{k!(n-k)!}
+\\
+&=\frac{(n-1)![k+(n-k)]}{k!(n-k)!}=\frac{n(n-1)!}{k!(n-k)!}
+\\
+&=\frac{n!}{k!(n-k)!}=\binom{n}{k}.
+\end{align*}
+故由数学归纳法知等式成立。
+\end{proof}
+
+\begin{proposition}\label{proposition:组合数恒等式1111}
+$\sum\limits_{i=0}^m{(-1)^i\binom{n}{i}}=(-1)^m\binom{n-1}{m},\quad 0\leqslant m\leqslant n-1.$
+\end{proposition}
+\begin{proof}
+\begin{align*}
+\sum\limits_{i=0}^m{(-1)^i\binom{n}{i}}&=\sum\limits_{i=0}^m{(-1)^i\left[\binom{n-1}{i}+\binom{n-1}{i-1}\right]}=\sum\limits_{i=0}^m{(-1)^i\binom{n-1}{i}}+\sum\limits_{i=0}^m{(-1)^i\binom{n-1}{i-1}}\\
+&=\sum\limits_{i=0}^m{(-1)^i\binom{n-1}{i}}+\sum\limits_{i=0}^{m-1}{(-1)^{i+1}\binom{n-1}{i}}=\sum\limits_{i=0}^m{(-1)^i\binom{n-1}{i}}-\sum\limits_{i=0}^{m-1}{(-1)^i\binom{n-1}{i}}\\
+&=(-1)^m\binom{n-1}{m}.
+\end{align*}
+\end{proof}
+
+\begin{theorem}[二项式定理]\label{theorem:组合公式-二项式定理}
+设 $n,N$ 为正整数，$x_1,\cdots,x_n\in \mathbb{C}$,则
+\begin{align}
+(x_1+x_2+\cdots+x_n)^N=\sum_{|\alpha|=N}\frac{N!}{\alpha!}x^\alpha, \label{thm:multinomial}
+\end{align}
+其中 $\alpha=(\alpha_1,\cdots,\alpha_n)\in\mathbb{N}^n$，$|\alpha|=\alpha_1+\cdots+\alpha_n$，$\alpha!=\alpha_1!\cdots\alpha_n!$，$x^\alpha=x_1^{\alpha_1}\cdots x_n^{\alpha_n}$.
+
+特别地,令 $x_1=x_2=\cdots=x_n=1$,则有
+\begin{align*}
+\sum_{|\alpha|=N}\frac{N!}{\alpha!}=n^N. 
+\end{align*}
+\end{theorem}
+\begin{proof}
+将 $(x_1+\cdots+x_n)^N$ 展开为 $N$ 个因子的乘积，每个因子从中选一个变量。展开式的每一项形如 $x_1^{\alpha_1}\cdots x_n^{\alpha_n}$，其中 $\alpha_i$ 表示变量 $x_i$ 被选中的次数，且 $\alpha_1+\cdots+\alpha_n=N$. 只需计算对于固定的多重指标 $\alpha$，有多少种不同的选择方式.这相当于把 $N$ 个位置分成 $n$ 组，第 $i$ 组有 $\alpha_i$ 个位置，其数目为多重组合数：
+\begin{align*}
+\binom{N}{\alpha_1,\alpha_2,\cdots,\alpha_n}=\frac{N!}{\alpha_1!\alpha_2!\cdots\alpha_n!}=\frac{N!}{\alpha!}.
+\end{align*}
+因此展开式中 $x^\alpha$ 的系数正是 $\frac{N!}{\alpha!}$，故等式 \eqref{thm:multinomial} 成立.
+\end{proof}
+
+\begin{theorem}[二项式定理的推广]\label{theorem:二项式定理的推广}
+设$n\in \mathbb{N}$,$\{a_i\}_{i=1}^{n},\{b_i\}_{i=1}^{n}\subset \mathbb{C}$,则有
+\begin{align*}
+\prod_{i=1}^n{\left( a_i+b_i \right)}&=\sum_{S\subset \left\{ 1,2,\cdots ,n \right\}}{\left( \prod_{i\in S}{a_i\prod_{j\in \left\{ 1,2,\cdots ,n \right\} \setminus S}{b_j}} \right)}
+\\
+&=\prod_{i=1}^n{a_i}+\sum_{m=1}^n{\sum\limits_{\substack{|S|=m, \\ S \subseteq \{1,2,\cdots,n\}}}{\left( \prod_{i\in S}{a_i}\prod_{j\notin S}{b_j} \right)}}
+\\
+&=\prod_{i=1}^n{b_i}+\sum_{m=1}^n{\sum\limits_{\substack{|S|=m, \\ S \subseteq \{1,2,\cdots,n\}}}{\left( \prod_{i\in S}{b_i}\prod_{j\notin S}{a_j} \right)}}.
+\end{align*}
+\end{theorem}
+\begin{proof}
+利用数学归纳法证明即可.
+\end{proof}
+
+
+
+
+
+\end{document}

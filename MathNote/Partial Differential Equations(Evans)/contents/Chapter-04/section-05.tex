@@ -1,0 +1,167 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}}
+
+\begin{document}
+
+\section{渐近分析}\label{section:ch04-asymptotics}
+
+常有的情形是：即使能为 PDE 的解求得显式表示公式，这些公式也过于复杂而不能立刻有用。在此情形下，有时转而在各种渐近极限中研究公式是有益的，此时简化常出现。本节给出几个相当复杂的例子，说明 PDE 渐近中典型的问题。本节结果只作启发式说明，大多不给正式证明。
+
+\subsection{奇异摄动}\label{subsection:ch04-singular}
+
+\textbf{奇异摄动}是对给定 PDE 加上一小量 $\varepsilon$ 乘某高阶项的修改。按照``解的行为主要由最高阶项支配''这一非正式原理，摄动问题的解 $u^\varepsilon$ 在解析上常与原方程的解 $u$ 行为迥异。
+
+\begin{example}[输运与小扩散]\label{example:ch04-singular-transport}我们形式地研究在 $\mathbb{R}^2$ 中运动流体里染料输运上小扩散的效应。给定光滑向量场 $\mathbf{b}:\mathbb{R}^2\to\mathbb{R}^2$ 表示定常流速。设染料以单位速率在原点连续注入流体，$u(x)$ 表示 $x\in\mathbb{R}^2$ 处染料密度。则形式地有
+\begin{align}\label{align:ch04-dye}
+\operatorname{div}(u\mathbf{b})=\delta_0 \qquad\text{在 }\mathbb{R}^2\text{ 中},
+\end{align}
+其中 $\delta_0$ 是 $\mathbb{R}^2$ 上给原点单位质量的 Dirac 测度。此 PDE 蕴含染料密度在 $x\neq 0$ 处随流体运动输运。
+
+现对 $\varepsilon>0$ 考虑奇异摄动
+\begin{align}\label{align:ch04-dye-perturbed}
+-\varepsilon\Delta u^\varepsilon+\operatorname{div}(u^\varepsilon\mathbf{b})=\delta_0 \qquad\text{在 }\mathbb{R}^2\text{ 中}.
+\end{align}
+新项``$\varepsilon\Delta$''表示染料在背景流体运动中的小各向同性扩散。我们想近似理解\eqref{align:ch04-dye-perturbed} 解 $u^\varepsilon$ 的结构，特别描述 $u^\varepsilon$ 当小 $\varepsilon>0$ 时如何逼近 $u$。
+
+\textbf{未摄动问题\eqref{align:ch04-dye} 的分析.} 考虑特征 ODE $\dot{\mathbf{x}}(t)=\mathbf{b}(\mathbf{x}(t))$、$\mathbf{x}(0)=0$，其解 $\mathbf{x}(t)$ 描出一条曲线 $C$。在 $C$ 附近取坐标 $x=\mathbf{x}(t)+y\nu(\mathbf{x}(t))$，其中 $\nu$ 是 $C$ 的单位法向量。Jacobi 行列式 $\dfrac{\partial(x_1,x_2)}{\partial(t,y)}=\sigma(1-\kappa y)$，其中 $\sigma=|\mathbf{b}|$、$\kappa$ 为曲率。
+
+PDE \eqref{align:ch04-dye} 改写为 $\mathbf{b}\cdot Du+(\operatorname{div}\mathbf{b})u=\delta_0$。猜测 $u(x)=\rho(t)\delta(y)$。由染料质量平衡 $\int_{t_1}^{t_2}\rho(t)\sigma(t)\,\mathrm{d}t=t_2-t_1$，得 $\rho(t)=\sigma(t)^{-1}$。故
+\begin{align}\label{align:ch04-dye-sol}
+u(x,t)=\frac{\delta(y)}{\sigma(t)}
+\end{align}
+是\eqref{align:ch04-dye} 的解，其中 $\sigma(t)=|\mathbf{b}(\mathbf{x}(t))|$。即 $u$ 表示沿曲线 $C$ 的染料密度，其浓度与流速成反比。
+
+\textbf{$0<\varepsilon\ll 1$ 时摄动问题\eqref{align:ch04-dye-perturbed} 的分析.} 我们预期在时刻 $t>0$，扩散的染料将填满关于点 $\mathbf{x}(t)$、半径约 $O((\varepsilon t)^{1/2})$ 的球，主要集中在沿曲线 $C$ 的一股羽流中。由于宽度约 $O(\varepsilon^{1/2})$ 而相应时段总质量为 $t_2-t_1$，预期 $u^\varepsilon$ 沿 $C$ 约 $O(\varepsilon^{-1/2})$。这提示我们转向 rescale 变量
+\begin{align}\label{align:ch04-rescale}
+z\triangleq\varepsilon^{-1/2}y,\quad v^\varepsilon\triangleq\varepsilon^{1/2}u^\varepsilon,
+\end{align}
+使 $z,v^\varepsilon=O(1)$。把 PDE \eqref{align:ch04-dye-perturbed} 用新变量改写，展开后略去 $O(\varepsilon^{1/2})$ 项，得 $v^\varepsilon$ 近似满足
+\begin{align}\label{align:ch04-plume-pde}
+v_t-v_{zz}+(\beta z v)_z+\frac{\dot{\sigma}}{\sigma}v=0 \qquad\text{在 }\mathbb{R}\times(0,\infty)\text{ 中},
+\end{align}
+初值 $v=\dfrac{\delta(z)}{\sigma(0)}$ 在 $t=0$。PDE \eqref{align:ch04-plume-pde} 因而是我们椭圆方程\eqref{align:ch04-dye-perturbed} 在变量 $(t,z=\varepsilon^{-1/2}y)$ 中的抛物逼近。
+\end{example}
+
+\subsection{Laplace 法}\label{subsection:ch04-laplace-method}
+
+Laplace 法研究形如 $e^{-I/\varepsilon}$ 表达式的积分当 $\varepsilon\to 0$ 的渐近，$I$ 表某给定函数。
+
+\begin{example}[Burgers 方程的消黏性法]\label{example:ch04-burgers-vanishing}现考察黏性 Burgers 方程初值问题
+\begin{align}\label{align:ch04-burgers-visc2}
+\begin{cases}
+u_t^\varepsilon+u^\varepsilon u_x^\varepsilon-\varepsilon u_{xx}^\varepsilon=0 & \text{在 }\mathbb{R}\times(0,\infty)\text{ 中},\\
+u^\varepsilon=g & \text{在 }\mathbb{R}\times\{t=0\}\text{ 上}
+\end{cases}
+\end{align}
+解 $u^\varepsilon$ 当 $\varepsilon\to 0$ 的极限。回忆 \S4.4.1 公式\eqref{align:ch04-burgers-sol}，有
+\begin{align}\label{align:ch04-burgers-sol2}
+u^\varepsilon(x,t)=\frac{\displaystyle\int_{-\infty}^\infty\frac{x-y}{t}e^{-K(x,y,t)/2\varepsilon}\,\mathrm{d}y}{\displaystyle\int_{-\infty}^\infty e^{-K(x,y,t)/2\varepsilon}\,\mathrm{d}y},
+\end{align}
+其中
+\begin{align}\label{align:ch04-k-def}
+K(x,y,t)\triangleq\frac{|x-y|^2}{2t}+h(y),
+\end{align}
+$h$ 是 $g$ 的一个原函数。
+
+\textbf{$\varepsilon u_{xx}$} 项使 PDE 有点像热方程：尽管有非线性，解 $u^\varepsilon$ 在 $\mathbb{R}\times(0,\infty)$ 中无穷次可微。一个显然的猜测是：当 $\varepsilon\to 0$，$u^\varepsilon$ 应收敛到守恒律
+\begin{align}\label{align:ch04-burgers-limit}
+\begin{cases}
+u_t+\left(\frac{u^2}{2}\right)_x=0 & \text{在 }\mathbb{R}\times(0,\infty)\text{ 中},\\
+u=g & \text{在 }\mathbb{R}\times\{t=0\}\text{ 上}
+\end{cases}
+\end{align}
+的解。物理上，我们把项``$\varepsilon u_{xx}^\varepsilon$''视为施加``人工黏性''效应，现把它送至零。我们预期此消黏性能从光滑解 $u^\varepsilon$ 恢复\eqref{align:ch04-burgers-limit} 的正确熵解 $u$（它可在激波处间断）。
+\end{example}
+
+\begin{lemma}[渐近]\label{lemma:ch04-laplace-asymptotic}设 $k,l:\mathbb{R}\to\mathbb{R}$ 连续，$l$ 至多线性增长、$k$ 至少二次增长。并设存在唯一点 $y_0\in\mathbb{R}$ 使 $k(y_0)=\min_{y\in\mathbb{R}}k(y)$。则
+\begin{align}\label{align:ch04-laplace-lemma}
+\lim_{\varepsilon\to 0}\frac{\displaystyle\int_{-\infty}^\infty l(y)e^{-k(y)/\varepsilon}\,\mathrm{d}y}{\displaystyle\int_{-\infty}^\infty e^{-k(y)/\varepsilon}\,\mathrm{d}y}=l(y_0).
+\end{align}
+\end{lemma}
+
+\begin{proof}
+写 $k_0=k(y_0)$。函数 $\mu_\varepsilon(y)\triangleq\dfrac{e^{(k_0-k(y))/\varepsilon}}{\int_{-\infty}^\infty e^{(k_0-k(z))/\varepsilon}\,\mathrm{d}z}$ 满足 $\mu_\varepsilon\geqslant 0$、$\int_{-\infty}^\infty\mu_\varepsilon(y)\,\mathrm{d}y=1$，且当 $\varepsilon\to 0$ 时 $\mu_\varepsilon(y)$ 对 $y\neq y_0$ 指数快速趋于零。故
+\begin{align*}
+\lim_{\varepsilon\to 0}\frac{\int l(y)e^{-k(y)/\varepsilon}\,\mathrm{d}y}{\int e^{-k(y)/\varepsilon}\,\mathrm{d}y}=\lim_{\varepsilon\to 0}\int l(y)\mu_\varepsilon(y)\,\mathrm{d}y=l(y_0).
+\end{align*}
+\end{proof}
+
+回到\eqref{align:ch04-burgers-sol2}、\eqref{align:ch04-k-def}。注意 $K(x,y,t)=tL\!\left(\dfrac{x-y}{t}\right)+h(y)$，其中 $L=F^*$（$F(z)=z^2/2$）。由 \S3.4 的分析，对每个 $t>0$，映射 $y\mapsto K(x,y,t)$ 至多除可数个 $x$ 外在唯一点 $y=y(x,t)$ 取最小。于是引理\cref{lemma:ch04-laplace-asymptotic} 蕴含
+\begin{align}\label{align:ch04-vanishing-result}
+\lim_{\varepsilon\to 0}u^\varepsilon(x,t)=\frac{x-y(x,t)}{t}=G\!\left(\frac{x-y(x,t)}{t}\right)=u(x,t),
+\end{align}
+其中 $G=(F')^{-1}$。\eqref{align:ch04-vanishing-result} 中最后一个等号就是初值问题\eqref{align:ch04-burgers-limit} 唯一熵解的 Lax--Oleinik 公式。此公式在消黏性背景中重现，有力地支持了 \S3.4 的方法。
+
+\subsection{几何光学、驻相法}\label{subsection:ch04-stationary}
+
+本节研究波动方程某些高度振荡解的行为。
+
+\subsubsection{几何光学}
+
+\begin{example}[振荡解]\label{example:ch04-geo-optics}再次考察波动方程 $u_{tt}-\Delta u=0$ 在 $\mathbb{R}^n\times(0,\infty)$ 中，现视解 $u$ 取复值。固定 $\varepsilon>0$，寻求形如
+\begin{align}\label{align:ch04-ansatz}
+u^\varepsilon(x,t)=e^{\mathrm{i}p^\varepsilon(x,t)/\varepsilon}a^\varepsilon(x,t)
+\end{align}
+的解，实值函数 $p^\varepsilon$ 表相位、$a^\varepsilon$ 表振幅。此提议形式\eqref{align:ch04-ansatz} 称为\textbf{几何光学 ansatz}。想法是：波动方程的高度振荡解可通过在 $\varepsilon\to 0$ 极限中研究相位函数的一个 PDE 来理解。
+
+把\eqref{align:ch04-ansatz} 代入波动方程，消去 $e^{\mathrm{i}p^\varepsilon/\varepsilon}$ 并取实部，得 $a^\varepsilon((p_t^\varepsilon)^2-|Dp^\varepsilon|^2)=\varepsilon^2(a_{tt}^\varepsilon-\Delta a^\varepsilon)$。若 $\varepsilon\to 0$ 时 $p^\varepsilon\to p$、$a^\varepsilon\to a\neq 0$，则推出
+\begin{align}\label{align:ch04-eikonal}
+p_t\pm|Dp|=0 \qquad\text{在 }\mathbb{R}^n\times(0,\infty)\text{ 中}.
+\end{align}
+我们可非正式地把这些 Hamilton--Jacobi PDE 的直线特征视为射线：高频极限 $\varepsilon\to 0$ 中解\eqref{align:ch04-ansatz} 沿这些射线集中。
+\end{example}
+
+更一般地，对二阶双曲 PDE $u_{tt}-\sum_{k,l=1}^n a^{kl}(x)u_{x_kx_l}=0$（$a^{kl}=a^{lk}$），重复同样计算得
+\begin{align}\label{align:ch04-eikonal-general}
+p_t\pm\left(\sum_{k,l=1}^n a^{kl}p_{x_k}p_{x_l}\right)^{1/2}=0.
+\end{align}
+
+\subsubsection{驻相法}
+
+前述例子提示 Hamilton--Jacobi PDE \eqref{align:ch04-eikonal} 某种程度上``控制波动方程的高频渐近''。但几何光学 ansatz 的有效范围在严格形式计算中很不确定。为更清楚理解解的行为，现用\textbf{驻相法}，它是 Laplace 法的一个变种：把指数中的 $-1$（参见 \S4.5.2）换成 $i$。
+
+\begin{example}[波动方程的驻相法]\label{example:ch04-stationary-wave}再看波动方程初值问题 $u_{tt}^\varepsilon-\Delta u^\varepsilon=0$、$u^\varepsilon=g^\varepsilon$、$u_t^\varepsilon=0$，其中 $g^\varepsilon$ 具快速振荡结构 $g^\varepsilon(x)=a(x)e^{\mathrm{i}p(x)/\varepsilon}$，$\varepsilon>0$，$a,p\in C_c^\infty(\mathbb{R}^n)$，并设 $Dp\neq 0$ 在 $a$ 的支集上。
+
+利用 \S4.3.1 公式\eqref{align:ch04-wave-special}，写 $u^\varepsilon(x,t)=\dfrac{1}{2}(I_+^\varepsilon(x,t)+I_-^\varepsilon(x,t))$，其中
+\begin{align}\label{align:ch04-stationary-integral}
+I_\pm^\varepsilon(x,t)=\frac{1}{(2\pi\varepsilon)^n}\int_{\mathbb{R}^n}\int_{\mathbb{R}^n}a(z)e^{\frac{i}{\varepsilon}\phi_\pm(x,y,z,t)}\,\mathrm{d}y\,\mathrm{d}z,
+\end{align}
+相位为 $\phi_\pm(x,y,z,t)\triangleq(x-z)\cdot y\pm t|y|+p(z)$。我们想研究 $I_\pm^\varepsilon$ 当 $\varepsilon\to 0$ 的渐近。
+\end{example}
+
+此例促使我们考虑一般积分表达式
+\begin{align}\label{align:ch04-general-phase}
+I_\varepsilon\triangleq\int_{\mathbb{R}^n}e^{\mathrm{i}\phi(y)/\varepsilon}a(y)\,\mathrm{d}y,
+\end{align}
+其中 $a,\phi$ 光滑、$a$ 具紧支集、$\varepsilon>0$。
+
+\begin{lemma}[线性项的渐近]\label{lemma:ch04-stationary-linear}设 $a\in C_c^\infty(\mathbb{R}^n)$、$p\in\mathbb{R}^n$、$p\neq 0$。则对 $m=1,2,\cdots$，
+\begin{align}\label{align:ch04-linear-asymptotic}
+\int_{\mathbb{R}^n}e^{\frac{i}{\varepsilon}p\cdot y}a(y)\,\mathrm{d}y=O(\varepsilon^m) \qquad\text{当 }\varepsilon\to 0.
+\end{align}
+\end{lemma}
+
+\begin{proof}
+不妨设 $p=(p_1,\cdots,p_n)$、$p_1\neq 0$。分部积分 $m$ 次：
+\begin{align*}
+\int e^{\frac{i}{\varepsilon}p\cdot y}a(y)\,\mathrm{d}y=\left(\frac{-\varepsilon}{ip_1}\right)^m\int e^{\frac{i}{\varepsilon}p\cdot y}\frac{\partial^m}{\partial y_1^m}a(y)\,\mathrm{d}y=O(\varepsilon^m).
+\end{align*}
+\end{proof}
+
+\begin{lemma}[二次项的渐近]\label{lemma:ch04-stationary-quadratic}设 $a\in C_c^\infty(\mathbb{R}^n)$，$A$ 为实非奇异对称矩阵。则
+\begin{align}\label{align:ch04-quadratic-asymptotic}
+\frac{1}{(2\pi\varepsilon)^{n/2}}\int_{\mathbb{R}^n}e^{\frac{i}{2\varepsilon}y\cdot Ay}a(y)\,\mathrm{d}y=\frac{e^{\frac{i\pi}{4}\operatorname{sgn}A}}{|\det A|^{1/2}}(a(0)+O(\varepsilon))
+\end{align}
+当 $\varepsilon\to 0$。这里 $\operatorname{sgn}A$ 是 $A$ 的符号差，即 $A$ 正特征值个数减负特征值个数。
+\end{lemma}
+
+\begin{lemma}[坐标变换]\label{lemma:ch04-morse}设 $\phi:\mathbb{R}^n\to\mathbb{R}$ 光滑。
+\begin{enumerate}[(i)]
+\item 若 $D\phi(0)\neq 0$，则存在光滑 $\Phi:\mathbb{R}^n\to\mathbb{R}^n$，使 $\Phi(0)=0$、$D\Phi(0)=I$，且 $\phi(\Phi(x))=\phi(0)+D\phi(0)\cdot x$（$|x|$ 小）。
+\item（Morse 引理）若 $D\phi(0)=0$、$\det D^2\phi(0)\neq 0$，则存在光滑 $\Phi$，使 $\Phi(0)=0$、$D\Phi(0)=I$，且 $\phi(\Phi(x))=\phi(0)+\tfrac{1}{2}x\cdot D^2\phi(0)x$（$|x|$ 小）。
+\end{enumerate}
+\end{lemma}
+
+换言之，可在 $0$ 附近作变量代换：情形 (i) 中使 $\phi$ 仿射，情形 (ii) 中使 $\phi$ 二次。结合引理\cref{lemma:ch04-stationary-linear}、\cref{lemma:ch04-stationary-quadratic}、\cref{lemma:ch04-morse}，可把一般相位 $\phi$ 的积分\eqref{align:ch04-general-phase} 局部化为驻相点附近的二次近似，由此得驻相法的主项。
+
+\end{document}

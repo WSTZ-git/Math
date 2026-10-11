@@ -1,0 +1,454 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{混合问题和 Green 函数}
+
+\begin{definition}
+设 $l>0$，$T>0$，$a>0$ 为常数，定义区域
+\begin{align*}
+Q_T\triangleq (0,l)\times(0,T].
+\end{align*}
+称如下定解问题为\textbf{一维热方程的第一类混合问题}（或\textbf{Dirichlet 混合问题}）：
+\begin{align}
+\begin{cases}
+u_t-a^2u_{xx}=f(x,t), & (x,t)\in Q_T,\\
+u(x,0)=\varphi(x), & x\in[0,l],\\
+u(0,t)=g_1(t),\quad u(l,t)=g_2(t), & t\in[0,T],
+\end{cases} \label{eq:mixed-1d}
+\end{align}
+其中 $u=u(x,t)$ 为未知函数，$f$ ,$\varphi$,$g_1,g_2$ 均为已知函数.
+
+若 $f\equiv 0$，则称 \eqref{eq:mixed-1d} 为\textbf{齐次热方程混合问题}；若 $g_1\equiv g_2\equiv 0$，则称边界条件为\textbf{齐次 Dirichlet 边界条件}.
+
+称满足混合问题方程 \eqref{eq:mixed-1d}的函数$u\in C^{2,1}(Q_T)\cap C(\overline{Q_T})$ 为混合问题\eqref{eq:mixed-1d}的\textbf{古典解}.
+\end{definition}
+\begin{remark}
+在物理上,称$f$ 为已知热源项，$\varphi$ 为已知初始温度，$g_1,g_2$ 为已知边界温度.
+\end{remark}
+
+\begin{definition}
+常微分方程齐次边值问题
+\begin{align}
+\begin{cases}
+X''+\lambda X=0,\, x\in(0,l), \\
+-\alpha_1X'(0)+\beta_1X(0)=0, \\
+\alpha_2X'(l)+\beta_2X(l)=0
+\end{cases} \label{eq:sturm-liouville}
+\end{align}
+$(\alpha_i\geqslant 0,\ \beta_i\geqslant 0,\ \alpha_i+\beta_i>0,\ i=1,2)$ 称为 \textbf{Sturm-Liouville 问题}或\textbf{特征值问题}。使此问题有非零解的 $\lambda\in\mathbb{R}$ 称为此问题的\textbf{特征值}，相应的非零解称为对应于这个特征值的\textbf{特征函数}。
+\end{definition}
+
+\begin{theorem}
+Sturm-Liouville 问题 \eqref{eq:sturm-liouville} 具有如下性质：
+\begin{enumerate}[(1)]
+\item 所有特征值都是非负实数。特别地，当 $\beta_1+\beta_2>0$ 时，所有特征值都是正数。
+\item 不同特征值对应的特征函数必正交，即不同特征值 $\lambda,\mu$ 对应的特征函数 $X_\lambda(x),X_\mu(x)$ 满足
+\begin{align*}
+\int_0^l X_\lambda(x)X_\mu(x)\,\mathrm{d}x=0.
+\end{align*}
+\item 所有特征值组成一个单调递增以无穷远点为聚点的序列：
+\begin{align*}
+0\leqslant \lambda_1<\lambda_2<\cdots<\lambda_n<\cdots,\qquad \lim_{n\to+\infty}\lambda_n=+\infty.
+\end{align*}
+\item 任意函数 $f(x)\in L^2((0,l))$ 可以按特征函数系展开为
+\begin{align*}
+f(x)=\sum_{n=1}^{\infty}C_nX_n(x),
+\end{align*}
+其中
+\begin{align*}
+C_n=\frac{\int_0^l f(x)X_n(x)\,\mathrm{d}x}{\int_0^l X_n^2(x)\,\mathrm{d}x}.
+\end{align*}
+这里无穷级数的收敛是指
+\begin{align*}
+\lim_{N\to+\infty}\int_0^l \left| f(x)-\sum_{n=1}^N C_nX_n(x) \right|^2\,\mathrm{d}x=0.
+\end{align*}
+\end{enumerate}
+\end{theorem}
+\begin{remark}
+在这里我们只给出性质 (1), 性质 (2) 和性质 (3) 的证明，性质 (4) 的证明需要更深入的理论，我们省略掉。
+\end{remark}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 设 $X_\lambda(x)$ 是对应于特征值 $\lambda$ 的特征函数，它满足特征值问题 \eqref{eq:sturm-liouville}。以特征函数 $X_\lambda(x)$ 同乘方程两端，并在 $[0,l]$ 上积分，则
+\begin{align*}
+\lambda\int_0^l X_\lambda^2(x)\,\mathrm{d}x+\int_0^l X_\lambda(x)X_\lambda''(x)\,\mathrm{d}x=0.
+\end{align*}
+利用分部积分公式得到
+\begin{align*}
+\lambda\int_0^l X_\lambda^2(x)\,\mathrm{d}x=\int_0^l |X_\lambda'(x)|^2\,\mathrm{d}x-X_\lambda(l)X'(l)+X_\lambda(0)X'(0).
+\end{align*}
+注意到特征函数 $X_\lambda(x)$ 满足的边值条件，我们得到
+\begin{align*}
+X_\lambda'(0)X_\lambda(0)&=\frac{1}{\alpha_1+\beta_1}[\alpha_1|X_\lambda'(0)|^2+\beta_1X_\lambda^2(0)],\\
+X_\lambda'(l)X_\lambda(l)&=-\frac{1}{\alpha_2+\beta_2}[\alpha_2|X_\lambda'(l)|^2+\beta_2X_\lambda^2(l)].
+\end{align*}
+因此
+\begin{align*}
+\lambda\int_0^l X_\lambda^2(x)\,\mathrm{d}x
+=\int_0^l |X_\lambda'(x)|^2\,\mathrm{d}x
++\frac{1}{\alpha_2+\beta_2}[\alpha_2|X_\lambda'(l)|^2+\beta_2X_\lambda^2(l)]  +\frac{1}{\alpha_1+\beta_1}[\alpha_1|X_\lambda'(0)|^2+\beta_1X_\lambda^2(0)].
+\end{align*}
+于是 $\lambda\geqslant 0$。而 $\lambda=0$ 当且仅当
+\begin{align*}
+X_\lambda'(x)=0
+\end{align*}
+和
+\begin{align*}
+\frac{\beta_1}{\alpha_1+\beta_1}X_\lambda^2(0)+\frac{\beta_2}{\alpha_2+\beta_2}X_\lambda^2(l)=0.
+\end{align*}
+这意味着 $X_\lambda(x)=C$。当 $\beta_1=\beta_2=0$ 时，$X_\lambda(x)=1$ 是特征值问题 \eqref{eq:sturm-liouville} 的非零解，因而 $\lambda=0$ 是一个特征值。而当 $\beta_1+\beta_2>0$ 时，则 $X_\lambda(x)=C=0$，也就是说特征值问题 \eqref{eq:sturm-liouville} 只有零解，因此 $\lambda=0$ 不是特征值，从而所有的特征值都是正数。
+
+\item 设 $X_\lambda,X_\mu$ 为对应于不同特征值 $\lambda,\mu$ 的特征函数。用 $X_\mu,X_\lambda$ 分别乘对应于 $X_\lambda$ 和 $X_\mu$ 的方程，并在 $[0,l]$ 上积分，则
+\begin{align*}
+\lambda\int_0^l X_\lambda(x)X_\mu(x)\,\mathrm{d}x&=-\int_0^l X_\mu(x)X_\lambda''(x)\,\mathrm{d}x,\\
+\mu\int_0^l X_\lambda(x)X_\mu(x)\,\mathrm{d}x&=-\int_0^l X_\lambda(x)X_\mu''(x)\,\mathrm{d}x.
+\end{align*}
+上述两式相减得到
+\begin{align*}
+(\lambda-\mu)\int_0^l X_\lambda(x)X_\mu(x)\,\mathrm{d}x
+=\int_0^l [X_\lambda(x)X_\mu''(x)-X_\mu(x)X_\lambda''(x)]\,\mathrm{d}x 
+=\int_0^l [X_\lambda(x)X_\mu'(x)-X_\mu(x)X_\lambda'(x)]'\,\mathrm{d}x.
+\end{align*}
+令行列式
+\begin{align*}
+J(x)=\begin{vmatrix}
+-X'_\lambda(x) & X_\lambda(x) \\
+-X'_\mu(x) & X_\mu(x)
+\end{vmatrix}
+=X_\lambda(x)X'_\mu(x)-X_\mu(x)X'_\lambda(x),
+\end{align*}
+则
+\begin{align*}
+(\lambda-\mu)\int_0^l X_\lambda(x)X_\mu(x)\,\mathrm{d}x=\int_0^l J'(x)\,\mathrm{d}x=J(l)-J(0).
+\end{align*}
+注意到齐次边值条件
+\begin{align*}
+-\alpha_1X'_\lambda(0)+\beta_1X_\lambda(0)=0,\quad
+-\alpha_1X'_\mu(0)+\beta_1X_\mu(0)=0,
+\end{align*}
+我们得到一个以 $\alpha_1,\beta_1$ 为未知量的二元一次方程组，由于 $\alpha_1+\beta_1>0$，因而此二元一次方程组具有非零解，从而它的系数行列式必定为零，即
+\begin{align*}
+J(0)=\begin{vmatrix}
+-X'_\lambda(0) & X_\lambda(0) \\
+-X'_\mu(0) & X_\mu(0)
+\end{vmatrix}=0.
+\end{align*}
+同理利用另一个边值条件可得 $J(l)=0$。将它们代入上式，则有
+\begin{align*}
+(\lambda-\mu)\int_0^l X_\lambda(x)X_\mu(x)\,\mathrm{d}x=0.
+\end{align*}
+由于 $\lambda\neq\mu$，故
+\begin{align*}
+\int_0^l X_\lambda(x)X_\mu(x)\,\mathrm{d}x=0.
+\end{align*}
+这也就是说不同特征值对应的特征函数相互正交。
+
+\item 从性质 (1) 知 $\lambda\geqslant 0$，我们记 $\mu=\sqrt{\lambda}$。此时特征值问题 \eqref{eq:sturm-liouville} 的常微分方程的通解为
+\begin{align*}
+X(x)=C_1\sin\mu x+C_2\cos\mu x,
+\end{align*}
+其中 $C_1,C_2$ 为任意常数。将通解代入特征值问题 \eqref{eq:sturm-liouville} 的边值条件，则得一个关于 $C_1,C_2$ 的二元一次线性方程组
+\begin{align*}
+\begin{cases}
+(-\alpha_1\mu)C_1+\beta_1C_2=0, \\
+(\alpha_2\mu\cos\mu l+\beta_2\sin\mu l)C_1+(\beta_2\cos\mu l-\alpha_2\mu\sin\mu l)C_2=0.
+\end{cases}
+\end{align*}
+由于我们求解的特征函数不恒为零，因此 $C_1,C_2$ 不同时为零，于是上述关于 $C_1,C_2$ 的二元一次线性方程组有非零解。此时使其有非零解的充分必要条件是其行列式为零，也就是
+\begin{align*}
+\begin{vmatrix}
+-\alpha_1\mu & \beta_1 \\
+\alpha_2\mu\cos\mu l+\beta_2\sin\mu l & \beta_2\cos\mu l-\alpha_2\mu\sin\mu l
+\end{vmatrix}=0.
+\end{align*}
+上式化简后得到
+\begin{align*}
+(\alpha_1\alpha_2\mu^2-\beta_1\beta_2)\sin\mu l=(\alpha_1\beta_2+\alpha_2\beta_1)\mu\cos\mu l.
+\end{align*}
+我们分别考虑下列九种情形：
+
+\begin{enumerate}[(i)]
+\item 当 $\alpha_1=\alpha_2=0,\ \beta_1>0,\ \beta_2>0$ 时，上述方程简化成
+\begin{align*}
+\sin\mu l=0,
+\end{align*}
+因而得到无穷多个 $\mu_n$ 满足方程。仔细计算后得到此时所有特征值和特征函数为
+\begin{align*}
+\lambda_n=\left(\frac{n\pi}{l}\right)^2,\qquad X_n(x)=\sin\frac{n\pi}{l}x\quad (n=1,2,\cdots).
+\end{align*}
+
+\item 当 $\beta_1=\beta_2=0,\ \alpha_1>0,\ \alpha_2>0$ 时，上述方程简化成
+\begin{align*}
+\mu\sin\mu l=0,
+\end{align*}
+因而得到无穷多个 $\mu_n$ 满足方程。仔细计算后得到此时所有特征值和特征函数为
+\begin{align*}
+\lambda_n=\left(\frac{n\pi}{l}\right)^2,\qquad X_n(x)=\cos\frac{n\pi}{l}x\quad (n=0,1,2,\cdots).
+\end{align*}
+
+\item 当 $\alpha_1=\beta_2=0,\ \alpha_2>0,\ \beta_1>0$ 时，上述方程简化成
+\begin{align*}
+\mu\cos\mu l=0,
+\end{align*}
+因而得到无穷多个 $\mu_n$ 满足方程。仔细计算后得到此时所有特征值和特征函数为
+\begin{align*}
+\lambda_n=\frac{1}{l^2}\left(n\pi-\frac{\pi}{2}\right)^2,\qquad X_n(x)=\sin\left[\left(n\pi-\frac{\pi}{2}\right)\frac{x}{l}\right]\quad (n=1,2,\cdots).
+\end{align*}
+
+\item 当 $\alpha_2=\beta_1=0,\ \alpha_1>0,\ \beta_2>0$ 时，上述方程简化成
+\begin{align*}
+\mu\cos\mu l=0,
+\end{align*}
+因而得到无穷多个 $\mu_n$ 满足方程。仔细计算后得到此时所有特征值和特征函数为
+\begin{align*}
+\lambda_n=\frac{1}{l^2}\left(n\pi-\frac{\pi}{2}\right)^2,\qquad X_n(x)=\cos\left[\left(n\pi-\frac{\pi}{2}\right)\frac{x}{l}\right]\quad (n=1,2,\cdots).
+\end{align*}
+
+\item 当 $\alpha_1=0,\ \alpha_2>0,\ \beta_1>0,\ \beta_2>0$ 时，上述方程简化成
+\begin{align*}
+\tan\mu l=-\frac{\alpha_2}{\beta_2}\mu.
+\end{align*}
+对于任意正整数 $n$，由于
+\begin{align*}
+\lim_{\mu\to (n-\frac{1}{2})^-+0}\tan\mu l=-\infty,\qquad \lim_{\mu\to (n+\frac{1}{2})^--0}\tan\mu l=+\infty,
+\end{align*}
+因而存在一个 $\mu_n$ 满足方程，且
+\begin{align*}
+\left(n-\frac{1}{2}\right)\frac{\pi}{l}<\mu_n<\left(n+\frac{1}{2}\right)\frac{\pi}{l}\quad (n=1,2,\cdots).
+\end{align*}
+仔细计算后得到此时所有特征值和特征函数为
+\begin{align*}
+\lambda_n=\mu_n^2,\qquad X_n(x)=\sin\mu_n x\quad (n=1,2,\cdots).
+\end{align*}
+
+\item 当 $\alpha_2=0,\ \alpha_1>0,\ \beta_1>0,\ \beta_2>0$ 时，上述方程简化成
+\begin{align*}
+\tan\mu l=-\frac{\alpha_1}{\beta_1}\mu.
+\end{align*}
+不难证明有无穷多个 $\mu_n$ 满足方程，且
+\begin{align*}
+\left(n-\frac{1}{2}\right)\frac{\pi}{l}<\mu_n<\left(n+\frac{1}{2}\right)\frac{\pi}{l}\quad (n=1,2,\cdots).
+\end{align*}
+仔细计算后得到此时所有特征值和特征函数为
+\begin{align*}
+\lambda_n=\mu_n^2,\qquad X_n(x)=\sin\mu_n x+\frac{\alpha_1}{\beta_1}\mu_n\cos\mu_n x\quad (n=1,2,\cdots).
+\end{align*}
+
+\item 当 $\beta_1=0,\ \alpha_1>0,\ \alpha_2>0,\ \beta_2>0$ 时，上述方程简化成
+\begin{align*}
+\cot\mu l=\frac{\alpha_2}{\beta_2}\mu.
+\end{align*}
+不难证明有无穷多个 $\mu_n$ 满足方程，且
+\begin{align*}
+(n-1)\frac{\pi}{l}<\mu_n<\frac{n\pi}{l}\quad (n=1,2,\cdots).
+\end{align*}
+仔细计算后得到此时所有特征值和特征函数为
+\begin{align*}
+\lambda_n=\mu_n^2,\qquad X_n(x)=\cos\mu_n x\quad (n=1,2,\cdots).
+\end{align*}
+
+\item 当 $\beta_2=0,\ \alpha_1>0,\ \alpha_2>0,\ \beta_1>0$ 时，上述方程简化成
+\begin{align*}
+\cot\mu l=\frac{\alpha_1}{\beta_1}\mu.
+\end{align*}
+不难证明有无穷多个 $\mu_n$ 满足方程，且
+\begin{align*}
+(n-1)\frac{\pi}{l}<\mu_n<\frac{n\pi}{l}\quad (n=1,2,\cdots).
+\end{align*}
+仔细计算后得到此时所有特征值和特征函数为
+\begin{align*}
+\lambda_n=\mu_n^2,\qquad X_n(x)=\sin\mu_n x+\frac{\alpha_1}{\beta_1}\mu_n\cos\mu_n x\quad (n=1,2,\cdots).
+\end{align*}
+
+\item 当 $\alpha_1>0,\ \alpha_2>0,\ \beta_1>0,\ \beta_2>0$ 时，上述方程简化成
+\begin{align*}
+\cot\mu l=\frac{\alpha_1\alpha_2}{\alpha_1\beta_2+\alpha_2\beta_1}\mu-\frac{\beta_1\beta_2}{(\alpha_1\beta_2+\alpha_2\beta_1)\mu}.
+\end{align*}
+上式右端函数是一个严格递增函数，当 $\mu\to 0^+$ 时，它趋于负无穷，而当 $\mu\to+\infty$ 时，它的渐近线为 $y=\frac{\alpha_1\alpha_2}{\alpha_1\beta_2+\alpha_2\beta_1}\mu$。不难证明有无穷多个 $\mu_n$ 满足方程，且
+\begin{align*}
+(n-1)\frac{\pi}{l}<\mu_n<\frac{n\pi}{l}\quad (n=1,2,\cdots).
+\end{align*}
+仔细计算后得到此时所有特征值和特征函数为
+\begin{align*}
+\lambda_n=\mu_n^2,\qquad X_n(x)=\sin\mu_n x+\frac{\alpha_1}{\beta_1}\mu_n\cos\mu_n x\quad (n=1,2,\cdots).
+\end{align*}
+\end{enumerate}
+综上所述我们就完成了性质 (3) 的证明。
+
+\item 
+\end{enumerate}
+\end{proof}
+\begin{remark}
+从性质 (1) 知，当且仅当 $\beta_1=\beta_2=0$ 时，$\lambda=0$ 才是 Sturm-Liouville 问题 \eqref{eq:sturm-liouville} 的特征值。也就是说，$\lambda=0$ 只是具有第二边值条件的 Sturm-Liouville 问题的特征值，这时它对应的特征函数为 $X_\lambda=1$。
+\end{remark}
+\begin{remark}
+从性质 (4) 知：$\{X_n(x)\}\ (n=1,2,\cdots)$ 组成 $L^2(0,l)$ 空间的一组完备正交基。把它们规范化，令
+\begin{align*}
+X_n^*(x)=\frac{X_n(x)}{\sqrt{\int_0^l X_n^2\,\mathrm{d}x}},
+\end{align*}
+则 $\{X_n^*(x)\}\ (n=1,2,\cdots)$ 是 $L^2(0,l)$ 空间的一组标准正交基。对于空间 $L^2(0,l)$ 的任一函数 $f(x)$，都可以按这组标准正交基展开成
+\begin{align*}
+f(x)=\sum_{n=1}^{\infty}C_n^*X_n^*(x),
+\end{align*}
+其中 Fourier 系数为
+\begin{align*}
+C_n^*=\int_0^l f(x)X_n^*(x)\,\mathrm{d}x=\frac{\int_0^l f(x)X_n(x)\,\mathrm{d}x}{\sqrt{\int_0^l X_n^2\,\mathrm{d}x}}.
+\end{align*}
+\end{remark}
+
+\begin{definition}
+定义 Heaviside 函数
+\begin{align}
+H(t)\triangleq 
+\begin{cases}
+1, & t>0,\\
+0, & t\leqslant 0.
+\end{cases} \label{def:heaviside}
+\end{align}
+对于\textbf{齐次 Dirichlet 边界情形一维热方程混合问题的Green函数}定义为
+\begin{align}
+G(x,t;\xi,\tau)\triangleq \frac{2}{l}\sum_{n=1}^{\infty}\sin\frac{n\pi}{l}\xi\,\sin\frac{n\pi}{l}x\,e^{-\left(\frac{n\pi a}{l}\right)^2(t-\tau)}H(t-\tau), \label{def:green-heat}
+\end{align}
+其中 $x,\xi\in(0,l)$，$t,\tau>0$.
+\end{definition}
+\begin{remark}
+实际上，从广义函数的观点我们更容易理解 Green 函数的物理意义。Green 函数是混合问题
+\begin{align*}
+\begin{cases}
+u_t-a^2u_{xx}=\delta(x-\xi,t-\tau), & (x,t)\in Q_T,\\
+u(0,t)=0,\quad u(l,t)=0, & t\in[0,T],\\
+u(x,0)=0, & x\in[0,l]
+\end{cases}
+\end{align*}
+在广义函数意义下，在函数类 $L^1(Q_T)\cap C(\overline{Q}_T\setminus(\xi,\tau))$ 中的解，这里 $(\xi,\tau)\in Q_T=(0,l)\times(0,T]$。其物理意义如下：考虑长度为 $l$，侧表面绝热，两端始终保持零度的均匀细杆。在 $t=\tau$ 时刻，在 $x=\xi$ 处放置一个单位点热源，那么由此产生的温度分布实际上就是 Green 函数。
+\end{remark}
+
+\begin{proposition}\label{proposition:齐次 Dirichlet 边界情形一维热方程Green函数的性质}
+齐次 Dirichlet 边界情形一维热方程混合问题的Green函数$G(x,t;\xi,\tau)$ 具有以下性质：
+\begin{enumerate}[(1)]
+\item \textbf{对称性:}
+\begin{align*}
+G(x,t;\xi,\tau)=G(\xi,t;x,\tau).
+\end{align*}
+
+\item \textbf{平移不变性:} 当 $t>\tau$ 时，
+\begin{align*}
+G(x,t;\xi,\tau)=G(x,t-\tau;\xi,0).
+\end{align*}
+
+\item \textbf{光滑性:} 当 $t>\tau$ 时，$G(x,t;\xi,\tau)$ 关于所有自变量无穷次连续可微，且满足方程
+\begin{align*}
+\frac{\partial G}{\partial t}-a^2\frac{\partial^2 G}{\partial x^2}=0,\qquad 
+\frac{\partial G}{\partial\tau}+a^2\frac{\partial^2 G}{\partial\xi^2}=0.
+\end{align*}
+
+\item \textbf{齐次边值条件:} 当 $t>\tau$ 时，
+\begin{align*}
+G(0,t;\xi,\tau)=G(l,t;\xi,\tau)=0.
+\end{align*}
+
+\item \textbf{一致有界性:} 当 $t>\tau$ 时，成立估计式
+\begin{align*}
+|G(x,t;\xi,\tau)|\leqslant \frac{1}{a\sqrt{\pi(t-\tau)}}.
+\end{align*}
+
+\item 若 $\varphi\in C^1[0,l]$ 且 $\varphi(0)=\varphi(l)=0$，则对于任意 $x\in[0,l]$，成立
+\begin{align*}
+\lim_{t\to 0^+}\int_0^l G(x,t;\xi,0)\varphi(\xi)\,\mathrm{d}\xi=\varphi(x).
+\end{align*}
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item   
+
+\item  
+
+\item  
+
+\item  
+
+\item 由表达式 \eqref{def:green-heat} 得
+\begin{align*}
+|G(x,t;\xi,\tau)|&=\frac{2}{l}\sum_{n=1}^{\infty}e^{-\left(\frac{n\pi a}{l}\right)^2(t-\tau)}
+=\frac{2}{a\pi}\sum_{n=1}^{\infty}e^{-\left(\frac{n\pi a}{l}\right)^2(t-\tau)}\frac{a\pi}{l} \\
+&\leqslant \frac{2}{a\pi}\int_0^{+\infty}e^{-(t-\tau)x^2}\,\mathrm{d}x 
+=\frac{2}{a\pi\sqrt{t-\tau}}\int_0^{+\infty}e^{-y^2}\,\mathrm{d}y \\
+&\leqslant \frac{1}{a\sqrt{\pi(t-\tau)}}.
+\end{align*}
+
+\item 由 $\varphi(x)$ 满足的条件，从数学分析我们知道 $\varphi(x)$ 可以按完备正交系 $\left\{\sin\frac{n\pi}{l}x\right\}$ 展开成 Fourier 级数，且对于所有 $x\in[0,l]$，成立
+\begin{align*}
+\varphi(x)=\sum_{n=1}^{\infty}\varphi_n\sin\frac{n\pi}{l}x,
+\end{align*}
+其中 Fourier 系数
+\begin{align*}
+\varphi_n=\frac{2}{l}\int_0^l\varphi(\xi)\sin\frac{n\pi}{l}\xi\,\mathrm{d}\xi.
+\end{align*}
+而对于任意 $t>0$，表达式 \eqref{def:green-heat} 中的级数关于 $x,\xi$ 是一致收敛的。因此由\hyperref[Basis of Analytics-theorem:函数项级数连续性定理]{函数项级数连续性},我们可以交换求和与求积分的次序得到
+\begin{align*}
+\int_0^l G(x,t;\xi,0)\varphi(\xi)\,\mathrm{d}\xi
+=\sum_{n=1}^{\infty}\frac{2}{l}\int_0^l\sin\frac{n\pi}{l}x\sin\frac{n\pi}{l}\xi\,e^{-\left(\frac{n\pi a}{l}\right)^2t}\varphi(\xi)\,\mathrm{d}\xi 
+=\sum_{n=1}^{\infty}\varphi_n\sin\frac{n\pi}{l}x\,e^{-\left(\frac{n\pi a}{l}\right)^2t}.
+\end{align*}
+由 Abel 判别法上式右端的级数关于 $t\in[0,+\infty)$ 一致收敛，因而求极限可与求积分交换次序。于是
+\begin{align*}
+\lim_{t\to 0^+}\int_0^l G(x,t;\xi,0)\varphi(\xi)\,\mathrm{d}\xi
+=\sum_{n=1}^{\infty}\varphi_n\sin\frac{n\pi}{l}x=\varphi(x).
+\end{align*}
+\end{enumerate}
+\end{proof}
+
+\begin{theorem}
+设 $\varphi\in C^1[0,l]$ 满足相容性条件 $\varphi(0)=\varphi(l)=0$，非齐次项$f\in C^2(\overline{Q_T})$，则齐次边界混合问题
+\begin{align*}
+\begin{cases}
+u_t-a^2u_{xx}=f(x,t), & (x,t)\in Q_T,\\
+u(x,0)=\varphi(x), & x\in[0,l],\\
+u(0,t)=0,\quad u(l,t)=0, & t\in[0,T]
+\end{cases}
+\end{align*}
+的古典解可由齐次 Dirichlet 边界情形一维热方程混合问题的Green函数表示为
+\begin{align*}
+u(x,t)=\int_0^l G(x,t;\xi,0)\varphi(\xi)\,\mathrm{d}\xi
++\int_0^t\int_0^l G(x,t;\xi,\tau)f(\xi,\tau)\,\mathrm{d}\xi\,\mathrm{d}\tau. 
+\end{align*}
+也即$u(x,t)$ 是混合问题 \eqref{eq:mixed-1d} 在函数类 $C^{2,1}(Q_T)\cap C(\overline{Q}_T)$ 中的解.
+
+特别地,若 $f\equiv 0$，则 $u\in C^\infty(Q_T)$.
+\end{theorem}
+
+\begin{theorem}
+设 $\varphi\in C^1[0,l]$，$g_i\in C[0,T]$ $(i=1,2)$，满足相容性条件 $\varphi(0)=g_1(0)$，$\varphi(l)=g_2(0)$，非齐次项$f\in C^2(\overline{Q_T})$，则非齐次边界混合问题
+\begin{align*}
+\begin{cases}
+u_t-a^2u_{xx}=f(x,t), & (x,t)\in Q_T,\\
+u(x,0)=\varphi(x), & x\in[0,l],\\
+u(0,t)=0,\quad u(l,t)=0, & t\in[0,T]
+\end{cases}
+\end{align*}
+的古典解可由齐次 Dirichlet 边界情形一维热方程混合问题的Green函数表示为
+\begin{align*}
+u(x,t)&=\int_0^l G(x,t;\xi,0)\varphi(\xi)\,\mathrm{d}\xi
++\int_0^t\int_0^l G(x,t;\xi,\tau)f(\xi,\tau)\,\mathrm{d}\xi\,\mathrm{d}\tau \nonumber \\
+&\quad +a^2\int_0^t\left[G_\xi(x,t;0,\tau)g_1(\tau)-G_\xi(x,t;l,\tau)g_2(\tau)\right]\mathrm{d}\tau,
+\end{align*}
+其中 $G_\xi$ 表示 $G$ 对 $\xi$ 的偏导数.也即$u(x,t)$ 是混合问题 \eqref{eq:mixed-1d} 在函数类 $C^{2,1}(Q_T)\cap C(\overline{Q}_T)$ 中的解.
+
+特别地,若 $f\equiv 0$，则 $u\in C^\infty(Q_T)$.
+\end{theorem}
+
+
+\end{document}

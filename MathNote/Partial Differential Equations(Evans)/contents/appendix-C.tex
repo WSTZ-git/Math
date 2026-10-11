@@ -1,0 +1,684 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+\chapter{微积分}\label{chapter:appC-微积分}
+
+\section{边界}\label{section:appC-边界}
+
+\begin{definition}\label{definition:appC-Ck边界}
+设 $U\subset\mathbb{R}^n$ 开且有界，$k\in\{1,2,\cdots\}$。称边界 $\partial U$ 是 $C^k$ 的，若对每个点 $x_0\in\partial U$ 存在 $r>0$ 和一个 $C^k$ 函数 $\gamma:\mathbb{R}^{n-1}\to\mathbb{R}$(必要时重新标记和重新定向坐标轴后)使得
+\begin{align*}
+U\cap B(x_0,r)=\{x\in B(x_0,r)\mid x_n>\gamma(x_1,\cdots,x_{n-1})\}.
+\end{align*}
+类似地，$\partial U$ 是 $C^\infty$ 的，若 $\partial U$ 对 $k=1,2,\cdots$ 都是 $C^k$ 的；$\partial U$ 是解析的，若映射 $\gamma$ 解析。
+\end{definition}
+
+\begin{definition}\label{definition:appC-法向量}
+\begin{enumerate}[(i)]
+\item 若 $\partial U$ 是 $C^1$ 的，则沿 $\partial U$ 定义了单位外法向量场
+\begin{align*}
+\boldsymbol{\nu}=(\nu_1,\cdots,\nu_n).
+\end{align*}
+任一点 $x_0\in\partial U$ 处的单位法向量为 $\boldsymbol{\nu}(x_0)=\nu=(\nu_1,\cdots,\nu_n)$。
+
+\item 设 $u\in C^1(\overline{U})$，$r$是单位向量，则称$r\cdot Du\triangleq \frac{\partial u}{\partial r}$为$u$在方向$r$上的方向导，特别地，我们记
+\begin{align*}
+\frac{\partial u}{\partial\nu}\coloneqq\boldsymbol{\nu}\cdot Du
+\end{align*}
+为 $u$ 的（外）法向导数。
+\end{enumerate}
+\end{definition}
+
+\textbf{拉直边界。} 我们经常需要在 $\partial U$ 某点附近改变坐标以"拉平"边界。更具体地，固定 $x_0\in\partial U$，如上选取 $r,\gamma$ 等。定义
+\begin{align*}
+\begin{cases}
+y_i=x_i\coloneqq\Phi_i(x)\quad (i=1,\cdots,n-1),\\
+y_n=x_n-\gamma(x_1,\cdots,x_{n-1})\coloneqq\Phi_n(x),
+\end{cases}
+\end{align*}
+写 $y=\boldsymbol{\Phi}(x)$。类似地设
+\begin{align*}
+\begin{cases}
+x_i=y_i\coloneqq\Psi_i(y)\quad (i=1,\cdots,n-1),\\
+x_n=y_n+\gamma(y_1,\cdots,y_{n-1})\coloneqq\Psi_n(y),
+\end{cases}
+\end{align*}
+写 $x=\boldsymbol{\Psi}(y)$。则 $\boldsymbol{\Phi}=\boldsymbol{\Psi}^{-1}$，映射 $x\mapsto\boldsymbol{\Phi}(x)=y$ 在 $x_0$ 附近"拉直 $\partial U$"。还注意 $\det D\boldsymbol{\Phi}=\det D\boldsymbol{\Psi}=1$。
+
+\section{Gauss--Green 定理}\label{section:appC-GaussGreen}
+
+本节假设 $U$ 是 $\mathbb{R}^n$ 的有界开子集，$\partial U$ 是 $C^1$ 的。
+
+\begin{theorem}[Gauss--Green 定理。]\label{theorem:appC-GaussGreen}
+\begin{enumerate}[(i)]
+\item 设 $u\in C^1(\overline{U})$。则
+\begin{align}
+\int_U u_{x_i}\,\mathrm{d}x=\int_{\partial U}u\nu_i\,\mathrm{d}S \quad (i=1,\cdots,n).
+\label{align:appC-GG1}
+\end{align}
+\item 有
+\begin{align}
+\int_U\operatorname{div}\mathbf{u}\,\mathrm{d}x=\int_{\partial U}\mathbf{u}\cdot\boldsymbol{\nu}\,\mathrm{d}S
+\label{align:appC-GG2}
+\end{align}
+对每个向量场 $\mathbf{u}\in C^1(\overline{U};\mathbb{R}^n)$。
+\end{enumerate}
+\end{theorem}
+
+断言 (ii) 也称为散度定理，由 (i) 应用于 $\mathbf{u}=(u_1,\cdots,u_n)$ 的每个分量得到。
+
+\begin{theorem}[分部积分公式。]\label{theorem:appC-分部积分}设 $u,v\in C^1(\overline{U})$。则
+\begin{align}
+\int_U u_{x_i}v\,\mathrm{d}x=-\int_U uv_{x_i}\,\mathrm{d}x+\int_{\partial U}uv\nu_i\,\mathrm{d}S \quad (i=1,\cdots,n).
+\label{align:appC-分部积分}
+\end{align}
+\end{theorem}
+
+\begin{proof}
+对 $uv$ 应用\cref{theorem:appC-GaussGreen}(i)。
+\end{proof}
+
+\begin{theorem}[Green 公式。]\label{theorem:appC-Green公式}设 $u,v\in C^2(\overline{U})$。则
+\begin{enumerate}[(i)]
+\item $\displaystyle\int_U\Delta u\,\mathrm{d}x=\int_{\partial U}\frac{\partial u}{\partial\nu}\,\mathrm{d}S$。
+\item $\displaystyle\int_U Dv\cdot Du\,\mathrm{d}x=-\int_U u\Delta v\,\mathrm{d}x+\int_{\partial U}\frac{\partial v}{\partial\nu}u\,\mathrm{d}S$。
+\item $\displaystyle\int_U u\Delta v-v\Delta u\,\mathrm{d}x=\int_{\partial U}u\frac{\partial v}{\partial\nu}-v\frac{\partial u}{\partial\nu}\,\mathrm{d}S$。
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+利用\eqref{align:appC-分部积分}，以 $u_{x_i}$ 代替 $u$，$v\equiv 1$，得
+\begin{align*}
+\int_U u_{x_ix_i}\,\mathrm{d}x=\int_{\partial U}u_{x_i}\nu_i\,\mathrm{d}S.
+\end{align*}
+对 $i=1,\cdots,n$ 求和建立 (i)。
+
+为推导 (ii)，以 $v_{x_i}$ 代替 $v$ 应用\eqref{align:appC-分部积分}。交换 $u$ 和 $v$ 写 (ii) 然后相减，得到 (iii)。
+\end{proof}
+
+\section{极坐标、余面积公式}\label{section:appC-极坐标}
+
+接下来将 $n$ 维积分转化为球面上的积分。
+
+\begin{theorem}[极坐标公式]\label{theorem:appC-极坐标}
+\begin{enumerate}[(i)]
+\item 设 $f:\mathbb{R}^n\to\mathbb{R}$ 连续且可积。则
+\begin{align*}
+\int_{\mathbb{R}^n}f\,\mathrm{d}x=\int_0^\infty\left(\int_{\partial B(x_0,r)}f\,\mathrm{d}S\right)\mathrm{d}r
+\end{align*}
+对每个点 $x_0\in\mathbb{R}^n$。
+\item 特别地
+\begin{align*}
+\frac{\mathrm{d}}{\mathrm{d}r}\left(\int_{B(x_0,r)}f\,\mathrm{d}x\right)=\int_{\partial B(x_0,r)}f\,\mathrm{d}S
+\end{align*}
+对每个 $r>0$。
+\end{enumerate}
+\end{theorem}
+
+\cref{theorem:appC-极坐标} 是以下定理的特殊情形。
+
+\begin{theorem}[余面积公式。]\label{theorem:appC-余面积}设 $u:\mathbb{R}^n\to\mathbb{R}$ Lipschitz 连续，假设对 a.e. $r\in\mathbb{R}$，水平集
+\begin{align*}
+\{x\in\mathbb{R}^n\mid u(x)=r\}
+\end{align*}
+是 $\mathbb{R}^n$ 中光滑 $(n-1)$ 维超曲面。又设 $f:\mathbb{R}^n\to\mathbb{R}$ 连续且可积。则
+\begin{align*}
+\int_{\mathbb{R}^n}f|Du|\,\mathrm{d}x=\int_{-\infty}^\infty\left(\int_{\{u=r\}}f\,\mathrm{d}S\right)\mathrm{d}r.
+\end{align*}
+\end{theorem}
+
+\cref{theorem:appC-极坐标} 由\cref{theorem:appC-余面积} 取 $u(x)=|x-x_0|$ 得到。更多余面积公式内容见 \cite{E-G} 第 3 章。
+
+\section{移动区域}\label{section:appC-移动区域}
+
+考虑一族光滑有界区域 $U(\tau)\subset\mathbb{R}^n$ 光滑依赖于参数 $\tau\in\mathbb{R}$。写 $\mathbf{v}$ 为移动边界 $\partial U(\tau)$ 的速度，$\boldsymbol{\nu}$ 为外指单位法向量。
+
+\begin{theorem}[移动区域的微分公式。]\label{theorem:appC-移动区域微分}若 $f=f(x,\tau)$ 是光滑函数，则
+\begin{align*}
+\frac{\mathrm{d}}{\mathrm{d}\tau}\int_{U(\tau)}f\,\mathrm{d}x=\int_{\partial U(\tau)}f\,\mathbf{v}\cdot\boldsymbol{\nu}\,\mathrm{d}S+\int_{U(\tau)}f_\tau\,\mathrm{d}x.
+\end{align*}
+\end{theorem}
+
+证明见 Chorin--Marsden~\cite{C-M}。
+
+\section{卷积与磨光}\label{section:appC-卷积磨光}
+
+\begin{definition}\label{notation:appC-Ueps}
+设$U\subset\mathbb{R}^n$ 开且 $\varepsilon>0$，记
+\begin{align*}
+U_\varepsilon\coloneqq\{x\in U\mid\operatorname{dist}(x,\partial U)>\varepsilon\}.
+\end{align*}
+\end{definition}
+
+\begin{definition}\label{definition:appC-磨光子}
+\begin{enumerate}[(i)]
+\item 定义 $\eta\in C^\infty(\mathbb{R}^n)$ 为
+\begin{align*}
+\eta(x)\coloneqq
+\begin{cases}
+C\exp\left(\dfrac{1}{|x|^2-1}\right) & \text{若 } |x|<1,\\
+0 & \text{若 } |x|\geqslant 1,
+\end{cases}
+\end{align*}
+常数 $C>0$ 选取得使 $\int_{\mathbb{R}^n}\eta\,\mathrm{d}x=1$。
+
+\item 对每个 $\varepsilon>0$，设
+\begin{align*}
+\eta_\varepsilon(x)\coloneqq\frac{1}{\varepsilon^n}\eta\left(\frac{x}{\varepsilon}\right).
+\end{align*}
+称 $\eta$ 为\text{标准光滑化算子}或\textbf{标准磨光子}。函数 $\eta_\varepsilon$ 是 $C^\infty$ 的，满足
+\begin{align*}
+\int_{\mathbb{R}^n}\eta_\varepsilon\,\mathrm{d}x=1,\quad\operatorname{spt}(\eta_\varepsilon)\subset B(0,\varepsilon).
+\end{align*}
+\end{enumerate}
+\end{definition}
+
+\begin{definition}\label{definition:appC-磨光}
+设$U\subset\mathbb{R}^n$ 开且 $\varepsilon>0$，若 $f:U\to\mathbb{R}$ 局部可积，定义其光滑化
+\begin{align*}
+f_\varepsilon\coloneqq\eta_\varepsilon*f,\quad \text{在} U_\varepsilon \text{中}.
+\end{align*}
+即
+\begin{align*}
+f_\varepsilon(x)=\int_U\eta_\varepsilon(x-y)f(y)\,\mathrm{d}y=\int_{B(0,\varepsilon)}\eta_\varepsilon(y)f(x-y)\,\mathrm{d}y
+\end{align*}
+对 $x\in U_\varepsilon$。
+\end{definition}
+
+\begin{theorem}[磨光子的性质]\label{theorem:appC-光滑算子的性质}
+设 $U\subseteq\mathbb{R}^n$ 为开集, $f\in L^1_{\mathrm{loc}}(U)$. 设 $\eta\in C_c^\infty(\mathbb{R}^n)$ 满足
+\begin{align*}
+\eta\geqslant0,\quad
+\operatorname{spt}\eta\subseteq\overline{B(0,1)},\quad
+\int_{\mathbb{R}^n}\eta(x)\,\mathrm{d}x=1.
+\end{align*}
+对于每个 $\varepsilon>0$, 定义
+\begin{align*}
+\eta_\varepsilon(x)
+&\triangleq\frac{1}{\varepsilon^n}\eta\left(\frac{x}{\varepsilon}\right),\quad
+U_\varepsilon
+\triangleq\{x\in U\mid\operatorname{dist}(x,\partial U)>\varepsilon\},\\
+f_\varepsilon(x)
+&\triangleq
+\begin{cases}
+(\eta_\varepsilon*f)(x)
+=\displaystyle\int_U\eta_\varepsilon(x-y)f(y)\,\mathrm{d}y,
+& x\in U_\varepsilon,\\
+0, & x\in\mathbb{R}^n\setminus U_\varepsilon.
+\end{cases}
+\end{align*}
+则有以下结论, 其中所有收敛均指 $\varepsilon\to0^+$.
+\begin{enumerate}[(1)]
+\item\label{theorem:appC-光滑算子的性质-1}
+$f_\varepsilon\in C^\infty(U_\varepsilon)$, 且对每个多重指标 $\alpha$, 有
+\begin{align*}
+D^{\alpha}f_{\varepsilon}(x)=\int_U{(D^{\alpha}\eta _{\varepsilon})(x-y)f(y)\,\mathrm{d}y},\quad x\in U_{\varepsilon}.
+\end{align*}
+
+\item\label{theorem:appC-光滑算子的性质-2} $f_\varepsilon(x)\to f(x)$ 对几乎处处的 $x\in U$ 成立.
+
+\item\label{theorem:appC-光滑算子的性质-3} 若 $f\in C(U)$, 则 $f_\varepsilon\to f$ 在 $U$ 的任意紧子集上一致成立.
+
+\item\label{theorem:appC-光滑算子的性质-4} 若 $1\leqslant p<\infty$ 且 $f\in L^p_{\mathrm{loc}}(U)$, 则 $f_\varepsilon\to f$ 于 $L^p_{\mathrm{loc}}(U)$.
+
+\item\label{theorem:appC-光滑算子的性质-6}
+记 $\operatorname{spt}f$ 为 $f$的支集, 则
+\begin{align*}
+\operatorname{spt}f_\varepsilon
+\subseteq\operatorname{spt}f+\operatorname{spt}\eta_\varepsilon\subseteq\operatorname{spt}f+\overline{B(0,\varepsilon)}=\{x\in\mathbb{R}^n\mid
+\operatorname{dist}(x,\operatorname{spt}f)\leqslant\varepsilon\}.
+\end{align*}
+特别地, 若 $f$ 在 $U$ 内具有紧支集, 且开集 $W$ 满足
+\begin{align*}
+\operatorname{spt}f\subset\subset W\subset\subset U,
+\end{align*}
+则当 $\varepsilon>0$ 充分小时, 有
+\begin{align*}
+\operatorname{spt}f_\varepsilon\subseteq W,\quad
+f_\varepsilon\in C_c^\infty(W).
+\end{align*}
+
+\item\label{theorem:appC-光滑算子的性质-5} 若 $1\leqslant p<\infty$ 且 $f\in L^p(U)$, 则$\|f_\varepsilon-f\|_{L^p(U)}\to0.$
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+
+由于 \(\eta\in C_c^\infty(\mathbb R^n)\)，\(\operatorname{spt}\eta\) 为紧集。对任意多重指标 \(\alpha\)，有
+\[
+D^\alpha\eta\in C_c^\infty(\mathbb R^n),
+\qquad
+\operatorname{spt}(D^\alpha\eta)\subseteq \operatorname{spt}\eta.
+\]
+因此 \(D^\alpha\eta\) 连续且具有紧支集。连续函数在紧集上有界，故
+\[
+\|D^\alpha\eta\|_{L^\infty(\mathbb R^n)}
+=\sup_{x\in \operatorname{spt}(D^\alpha\eta)}|D^\alpha\eta(x)|
+<+\infty.
+\]
+特别地，取 \(\alpha=0\)，得到
+\[
+\|\eta\|_{L^\infty(\mathbb R^n)}<+\infty.
+\]
+又由
+\[
+\eta_\varepsilon(x)=\frac1{\varepsilon^n}\eta\left(\frac{x}{\varepsilon}\right)
+\]
+可知，对任意多重指标 \(\alpha\)，有
+\[
+D^\alpha\eta_\varepsilon(x)
+=\varepsilon^{-n-|\alpha|}(D^\alpha\eta)\left(\frac{x}{\varepsilon}\right),
+\qquad x\in\mathbb R^n.
+\]
+于是
+\[
+\|D^\alpha\eta_\varepsilon\|_{L^\infty(\mathbb R^n)}
+=\varepsilon^{-n-|\alpha|}\|D^\alpha\eta\|_{L^\infty(\mathbb R^n)}
+<+\infty.
+\]
+
+\textbf{(1)}
+固定 \(x_0\in U_\varepsilon\)。由 \(U_\varepsilon\) 的定义，存在 \(r>0\)，使得
+\[
+\varepsilon<r<\operatorname{dist}(x_0,\partial U),
+\]
+从而 \(\overline{B(x_0,r)}\subset U\)。取开集 \(V\) 使得
+\[
+\overline{B(x_0,r)}\subset V\subset\subset U.
+\]
+当 \(|h|\) 充分小时，\(x_0+h e_i\in U_\varepsilon\)，并且
+\[
+B(x_0,\varepsilon)\cup B(x_0+h e_i,\varepsilon)\subset B(x_0,r)\subset V.
+\]
+于是
+\[
+\frac{f_\varepsilon(x_0+h e_i)-f_\varepsilon(x_0)}{h}
+=\int_U \frac{\eta_\varepsilon(x_0+h e_i-y)-\eta_\varepsilon(x_0-y)}{h}f(y)\,\mathrm dy.
+\]
+由于上述被积函数的支集含于 \(V\)，可将积分区域改为 \(V\)。又由微积分基本定理知
+\[
+\frac{\eta_\varepsilon(x_0+h e_i-y)-\eta_\varepsilon(x_0-y)}{h}
+=\int_0^1 \partial_i\eta_\varepsilon(x_0+t h e_i-y)\,\mathrm dt,
+\]
+且当 \(h\to0\) 时，有
+\[
+\partial_i\eta_\varepsilon(x_0+t h e_i-y)\to \partial_i\eta_\varepsilon(x_0-y)
+\]
+关于 \(y\in V\) 一致成立，同时有
+\[
+\left|\int_0^1 \partial_i\eta_\varepsilon(x_0+t h e_i-y)\,\mathrm dt\right|
+\leqslant \|\partial_i\eta_\varepsilon\|_{L^{\infty}\left( \mathbb{R} ^n \right) },
+\]
+而 \(f\in L^1_{\mathrm{loc}}(U)\)，故 \(f\in L^1(V)\)。由\hyperref[Real Analysis-theorem:控制收敛定理]{控制收敛定理}，有
+\[
+\partial_i f_\varepsilon(x_0)
+=\int_U \partial_i\eta_\varepsilon(x_0-y)f(y)\,\mathrm dy.
+\]
+因此 \(f_\varepsilon\) 在 \(U_\varepsilon\) 内一阶偏导数存在，且公式成立。对多重指标 \(\alpha\) 反复应用同样论证，即得
+\[
+D^\alpha f_\varepsilon(x)
+=\int_U D^\alpha\eta_\varepsilon(x-y)f(y)\,\mathrm dy,
+\qquad x\in U_\varepsilon.
+\]
+右端为含参变量积分，被积函数关于 \(x\) 连续，故 \(D^\alpha f_\varepsilon\in C(U_\varepsilon)\)。因此
+\[
+f_\varepsilon\in C^\infty(U_\varepsilon).
+\]
+
+\textbf{(2)}
+由\hyperref[Real Analysis-corollary:可积函数的Lebesgue点]{Lebesgue微分定理}，对几乎处处的 \(x\in U\)，有
+\[
+\lim_{r\to0}\fint_{B(x,r)}|f(y)-f(x)|\,\mathrm dy=0.
+\]
+固定这样的 \(x\)。当 \(\varepsilon<\operatorname{dist}(x,\partial U)\) 时，\(x\in U_\varepsilon\)，且 \(B(x,\varepsilon)\subset U\)。由 \(\int_{\mathbb R^n}\eta=1\)，有
+\[
+\int_U \eta_\varepsilon(x-y)\,\mathrm dy=1.
+\]
+因此
+\[
+f_\varepsilon(x)-f(x)
+=\int_U \eta_\varepsilon(x-y)\bigl(f(y)-f(x)\bigr)\,\mathrm dy.
+\]
+于是
+\[
+\begin{aligned}
+|f_\varepsilon(x)-f(x)|
+&\leqslant \int_{B(x,\varepsilon)}\eta_\varepsilon(x-y)|f(y)-f(x)|\,\mathrm dy\leqslant \frac{\|\eta\|_{L^{\infty}\left( \mathbb{R} ^n \right) }}{\varepsilon^n}
+\int_{B(x,\varepsilon)}|f(y)-f(x)|\,\mathrm dy\\
+&=\|\eta\|_{L^{\infty}\left( \mathbb{R} ^n \right) }|B(0,1)|
+\fint_{B(x,\varepsilon)}|f(y)-f(x)|\,\mathrm dy\to0,
+\qquad \varepsilon\to0^+.
+\end{aligned}
+\]
+故 \(f_\varepsilon(x)\to f(x)\) 对几乎处处的 \(x\in U\) 成立。
+
+\textbf{(3)}
+设 \(f\in C(U)\)，并设 \(K\subset\subset U\) 为紧集。取开集 \(W\) 使得
+\[
+K\subset W\subset\subset U.
+\]
+则 \(f\) 在紧集 \(\overline W\) 上一致连续。任给 \(\delta>0\)，存在 \(\rho>0\)，使得当 \(x,y\in\overline W\) 且 \(|x-y|<\rho\) 时，
+\[
+|f(x)-f(y)|<\delta.
+\]
+取 \(\varepsilon>0\) 充分小，使得
+\[
+\varepsilon<\rho,\qquad \varepsilon<\operatorname{dist}(K,\partial W),\qquad \varepsilon<\operatorname{dist}(K,\partial U).
+\]
+则对每个 \(x\in K\)，有 \(B(x,\varepsilon)\subset W\)，且 \(x\in U_\varepsilon\)。由 (2) 中的估计，
+\[
+|f_\varepsilon(x)-f(x)|
+\leqslant \|\eta\|_{L^\infty}|B(0,1)|
+\fint_{B(x,\varepsilon)}|f(y)-f(x)|\,\mathrm dy
+\leqslant C\delta.
+\]
+其中 \(C=\|\eta\|_{L^\infty}|B(0,1)|\)。由于 \(\delta>0\) 任意，故
+\[
+f_\varepsilon\to f
+\]
+在 \(K\) 上一致成立。由于 \(K\subset\subset U\) 任意，故 \(f_\varepsilon\to f\) 在 \(U\) 的任意紧子集上一致成立。
+
+\textbf{(4)}
+设 \(1\leqslant p<\infty\)，\(f\in L^p_{\mathrm{loc}}(U)\)。先证明局部 \(L^p\) 估计。取开集 \(V,W\) 使得
+\[
+V\subset\subset W\subset\subset U.
+\]
+当 \(\varepsilon<\operatorname{dist}(V,\partial W)\) 时，对 \(x\in V\)，有 \(B(x,\varepsilon)\subset W\)。由\hyperref[Real Analysis-theorem:实变函数--Hölder不等式]{Hölder 不等式}，得
+\[
+\begin{aligned}
+|f_\varepsilon(x)|
+&\leqslant \int_{B(x,\varepsilon)}\eta_\varepsilon(x-y)|f(y)|\,\mathrm dy\\
+&\leqslant \left(\int_{B(x,\varepsilon)}\eta_\varepsilon(x-y)\,\mathrm dy\right)^{1-\frac{1}{p}}
+\left(\int_{B(x,\varepsilon)}\eta_\varepsilon(x-y)|f(y)|^p\,\mathrm dy\right)^{\frac{1}{p}}\\
+&=\left(\int_{B(x,\varepsilon)}\eta_\varepsilon(x-y)|f(y)|^p\,\mathrm dy\right)^{\frac{1}{p}}.
+\end{aligned}
+\]
+故
+\[
+|f_\varepsilon(x)|^p
+\leqslant \int_{B(x,\varepsilon)}\eta_\varepsilon(x-y)|f(y)|^p\,\mathrm dy.
+\]
+对 \(x\in V\) 积分，并利用 \hyperref[Real Analysis-theorem:Fubini定理 可积函数的情形]{Fubini定理}，得
+\[
+\begin{aligned}
+\int_V |f_\varepsilon(x)|^p\,\mathrm dx
+&\leqslant \int_V\int_W \eta_\varepsilon(x-y)|f(y)|^p\,\mathrm dy\,\mathrm dx\\
+&=\int_W |f(y)|^p\left(\int_V \eta_\varepsilon(x-y)\,\mathrm dx\right)\mathrm dy\\
+&\leqslant \int_W |f(y)|^p\,\mathrm dy.
+\end{aligned}
+\]
+因此
+\[
+\|f_\varepsilon\|_{L^p(V)}\leqslant \|f\|_{L^p(W)}.
+\]
+
+现在给定 \(K\subset\subset U\)，取开集 \(V,W\) 使得
+\[
+K\subset V\subset\subset W\subset\subset U.
+\]
+任给 \(\delta>0\)。由于 \(C_c(W)\) 在 \(L^p(W)\) 中稠密，存在 \(g\in C_c(W)\)，使得
+\[
+\|f-g\|_{L^p(W)}<\delta.
+\]
+将 \(g\) 零延拓到 \(U\)。由 (3)，\(g_\varepsilon\to g\) 在 \(V\) 上一致，故
+\[
+\|g_\varepsilon-g\|_{L^p(V)}\to0.
+\]
+于是
+\[
+\begin{aligned}
+\|f_\varepsilon-f\|_{L^p(K)}
+&\leqslant \|f_\varepsilon-f\|_{L^p(V)}\leqslant \|f_\varepsilon-g_\varepsilon\|_{L^p(V)}
++\|g_\varepsilon-g\|_{L^p(V)}
++\|g-f\|_{L^p(V)}\\
+&\leqslant \|f-g\|_{L^p(W)}
++\|g_\varepsilon-g\|_{L^p(V)}
++\|g-f\|_{L^p(W)}\\
+&\leqslant 2\delta+\|g_\varepsilon-g\|_{L^p(V)}.
+\end{aligned}
+\]
+令 \(\varepsilon\to0^+\)，得
+\[
+\limsup_{\varepsilon\to0^+}\|f_\varepsilon-f\|_{L^p(K)}\leqslant 2\delta.
+\]
+再令 \(\delta\to0^+\)，即得
+\[
+\|f_\varepsilon-f\|_{L^p(K)}\to0.
+\]
+由于 \(K\subset\subset U\) 任意，故 \(f_\varepsilon\to f\) 于 \(L^p_{\mathrm{loc}}(U)\)。
+
+\textbf{(5)}
+记 $S_\eta=\operatorname{spt}\eta$ , $S_f=\operatorname{spt}f$ .
+由于 $\eta\in C_c(\mathbb R^n)$ , 所以 $S_\eta$ 是紧集 ; 而 $S_f$ 按定义是闭集 .
+
+首先证明 $S_\eta+S_f$ 是闭集 . 设
+\begin{align*}
+x_k=a_k+b_k,\qquad a_k\in S_\eta,\quad b_k\in S_f,
+\end{align*}
+且 $x_k\to x$ . 因为 $S_\eta$ 紧 , 存在子列 $a_{k_j}\to a\in S_\eta$ . 于是
+\begin{align*}
+b_{k_j}=x_{k_j}-a_{k_j}\to x-a.
+\end{align*}
+又因为 $S_f$ 闭 , 所以 $x-a\in S_f$ . 因此
+\begin{align*}
+x=a+(x-a)\in S_\eta+S_f.
+\end{align*}
+故 $S_\eta+S_f$ 是闭集 .
+
+现在任取
+\begin{align*}
+x\notin S_\eta+S_f.
+\end{align*}
+对任意 $y\in S_f$ , 若 $x-y\in S_\eta$ , 则
+\begin{align*}
+x=(x-y)+y\in S_\eta+S_f,
+\end{align*}
+与 $x\notin S_\eta+S_f$ 矛盾 . 因此必有
+\begin{align*}
+x-y\notin S_\eta.
+\end{align*}
+由于 $S_\eta=\operatorname{spt}\eta$ , 故
+\begin{align*}
+\eta(x-y)=0.
+\end{align*}
+另一方面 , 若 $y\notin S_f=\operatorname{spt}f$ , 则按支集定义有
+\begin{align*}
+f(y)=0.
+\end{align*}
+于是对任意 $y\in\mathbb R^n$ , 都有
+\begin{align*}
+\eta(x-y)f(y)=0.
+\end{align*}
+因此
+\begin{align*}
+(\eta*f)(x)=\int_{\mathbb R^n}\eta(x-y)f(y)\mathrm{d}y=0.
+\end{align*}
+
+由于 $S_\eta+S_f$ 是闭集 , 且 $x\notin S_\eta+S_f$ , 存在 $\delta>0$ , 使得
+\begin{align*}
+B(x,\delta)\cap (S_\eta+S_f)=\varnothing.
+\end{align*}
+对任意 $z\in B(x,\delta)$ , 同样有 $z\notin S_\eta+S_f$ . 由上面的论证可得
+\begin{align*}
+(\eta*f)(z)=0.
+\end{align*}
+所以 $x$ 的某个邻域内 $\eta*f$ 恒为零 , 故
+\begin{align*}
+x\notin \operatorname{spt}(\eta*f).
+\end{align*}
+由 $x\notin S_\eta+S_f$ 的任意性 , 得到
+\begin{align*}
+\operatorname{spt}(\eta*f)\subseteq S_\eta+S_f=\operatorname{spt}\eta+\operatorname{spt}f.
+\end{align*}
+由于 \(f_\varepsilon\) 在 \(U_\varepsilon\) 内等于 \(\eta_\varepsilon*f\)，在 \(U_\varepsilon\) 外为 \(0\)，故
+\[
+\operatorname{spt}f_\varepsilon
+\subset \operatorname{spt}f+\operatorname{spt}\eta_\varepsilon.
+\]
+又因为
+\[
+\operatorname{spt}\eta_\varepsilon
+=\varepsilon\operatorname{spt}\eta
+\subset \overline{B(0,\varepsilon)},
+\]
+所以
+\[
+\operatorname{spt}f_\varepsilon
+\subset \operatorname{spt}f+\overline{B(0,\varepsilon)}
+=\{x\in\mathbb R^n\mid \operatorname{dist}(x,\operatorname{spt}f)\le\varepsilon\}.
+\]
+
+特别地，若 \(f\) 在 \(U\) 内具有紧支集，且开集 \(W\) 满足
+\[
+\operatorname{spt}f\subset\subset W\subset\subset U,
+\]
+则由于 \(\operatorname{spt}f\) 紧且含于 \(W\)，有
+\[
+\operatorname{dist}(\operatorname{spt}f,\partial W)>0.
+\]
+取 \(\varepsilon>0\) 充分小，使得
+\[
+\operatorname{spt}f+\overline{B(0,\varepsilon)}\subset W,
+\]
+同时由于 \(W\subset\subset U\)，还可取 \(\varepsilon<\operatorname{dist}(W,\partial U)\)，从而 \(W\subset U_\varepsilon\)。于是
+\[
+\operatorname{spt}f_\varepsilon\subset W,
+\]
+且由 (1) 知 \(f_\varepsilon\in C^\infty(U_\varepsilon)\)，故 \(f_\varepsilon\in C^\infty(W)\)。又 \(\operatorname{spt}f_\varepsilon\subset W\) 且 \(W\) 紧包含于 \(U\)，所以
+\[
+f_\varepsilon\in C_c^\infty(W).
+\]
+
+\textbf{(6)}
+设 \(1\leqslant p<\infty\)，\(f\in L^p(U)\)。将 \(f\) 零延拓到 \(\mathbb R^n\)，记为 \(\widetilde f\)，则 \(\widetilde f\in L^p(\mathbb R^n)\)。定义全局磨光
+\[
+\widetilde f_\varepsilon=\eta_\varepsilon*\widetilde f.
+\]
+若 \(x\in U_\varepsilon\)，则 \(B(x,\varepsilon)\subset U\)，故
+\[
+f_\varepsilon(x)=\int_U \eta_\varepsilon(x-y)f(y)\,\mathrm dy
+=\int_{\mathbb R^n}\eta_\varepsilon(x-y)\widetilde f(y)\,\mathrm dy
+=\widetilde f_\varepsilon(x).
+\]
+而在 \(U\setminus U_\varepsilon\) 上，按定义 \(f_\varepsilon=0\)。因此
+\[
+\begin{aligned}
+\|f_\varepsilon-f\|_{L^p(U)}^p
+&=\int_{U_\varepsilon}|\widetilde f_\varepsilon(x)-f(x)|^p\,\mathrm dx
++\int_{U\setminus U_\varepsilon}|f(x)|^p\,\mathrm dx\\
+&\leqslant \int_{\mathbb R^n}|\widetilde f_\varepsilon(x)-\widetilde f(x)|^p\,\mathrm dx
++\int_{U\setminus U_\varepsilon}|f(x)|^p\,\mathrm dx.
+\end{aligned}
+\]
+对任意 $h\in L^p(\mathbb R^n)$ , 由\hyperref[Real Analysis-theorem:实变函数--Hölder不等式]{Hölder 不等式}得
+\begin{align*}
+\|\eta_\varepsilon*h\|_{L^p(\mathbb R^n)}
+\leqslant \|\eta_\varepsilon\|_{L^1(\mathbb R^n)}\|h\|_{L^p(\mathbb R^n)}
+=\|h\|_{L^p(\mathbb R^n)}.
+\end{align*}
+
+对 $g\in C_c(\mathbb R^n)$  当 $0<\varepsilon\leqslant1$ 时 ,
+\begin{align*}
+\operatorname{spt}(\eta_\varepsilon*g)
+\subseteq \operatorname{spt}g+\overline{B(0,1)},
+\end{align*}
+含于一个固定紧集 , 由(3)得 $\eta_\varepsilon*g\to g$ 在 $\mathbb R^n$ 上任意紧子集一致成立,因此
+\begin{align*}
+\|\eta_\varepsilon*g-g\|_{L^p(\mathbb R^n)}\to0.
+\end{align*}
+
+利用 $C_c(\mathbb R^n)$ 在 $L^p(\mathbb R^n)$ 中稠密 , 取 $g\in C_c(\mathbb R^n)$ 逼近 $\widetilde f$ , 则
+\begin{align*}
+\|\eta_\varepsilon*\widetilde f-\widetilde f\|_{L^p(\mathbb R^n)}
+&\leqslant \|\eta_\varepsilon*(\widetilde f-g)\|_{L^p(\mathbb R^n)}
++\|\eta_\varepsilon*g-g\|_{L^p(\mathbb R^n)}
++\|g-\widetilde f\|_{L^p(\mathbb R^n)}\\
+&\leqslant 2\|\widetilde f-g\|_{L^p(\mathbb R^n)}
++\|\eta_\varepsilon*g-g\|_{L^p(\mathbb R^n)}.
+\end{align*}
+先令 $\varepsilon\to0^+$ , 再令 $\|\widetilde f-g\|_{L^p(\mathbb R^n)}\to0$ , 即得
+\begin{align*}
+\|\eta_\varepsilon*\widetilde f-\widetilde f\|_{L^p(\mathbb R^n)}\to0.
+\end{align*}
+事实上，若 \(h\in L^p(\mathbb R^n)\)，则 \(\|\eta_\varepsilon*h\|_{L^p}\leqslant \|h\|_{L^p}\)；对 \(g\in C_c(\mathbb R^n)\)，\(\eta_\varepsilon*g\to g\) 一致且支集一致有界，故 \(\|\eta_\varepsilon*g-g\|_{L^p}\to0\)；再用 \(C_c(\mathbb R^n)\) 在 \(L^p(\mathbb R^n)\) 中稠密即可得到一般情形。
+
+另一方面，当 \(\varepsilon\to0^+\) 时，集合 \(U\setminus U_\varepsilon\) 随 \(\varepsilon\) 减小而递减，并且
+\[
+\bigcap_{\varepsilon>0}(U\setminus U_\varepsilon)=\varnothing.
+\]
+因为每个 \(x\in U\) 都满足 \(\operatorname{dist}(x,\partial U)>0\)。又 \(|f|^p\in L^1(U)\)，由\hyperref[Real Analysis-theorem:控制收敛定理]{控制收敛定理}得
+\[
+\int_{U\setminus U_{\varepsilon}}{|f(x)|^p\,\mathrm{d}x}=\int_{\mathbb{R} ^n}{|f(x)|^p\chi _{U\setminus U_{\varepsilon}}\left( x \right) \,\mathrm{d}x}\rightarrow 0.
+\]
+故
+\[
+\|f_\varepsilon-f\|_{L^p(U)}\to 0.
+\]
+\end{proof}
+
+\section{反函数定理}\label{section:appC-反函数}
+
+设 $U\subset\mathbb{R}^n$ 开集，假设 $\mathbf{f}:U\to\mathbb{R}^n$ 是 $C^1$ 的，$\mathbf{f}=(f_1,\cdots,f_n)$。设 $x_0\in U$，$z_0=\mathbf{f}(x_0)$。回忆 \S A.4 中我们写
+\begin{align*}
+D\mathbf{f}=\begin{pmatrix}
+f^1_{x_1} & \cdots & f^1_{x_n}\\
+& \ddots & \\
+f^n_{x_1} & \cdots & f^n_{x_n}
+\end{pmatrix}_{n\times n}=\mathbf{f}\text{ 的梯度矩阵}.
+\end{align*}
+
+\begin{definition}\label{definition:appC-Jacobian}
+$J\mathbf{f}=$ $\mathbf{f}$ 的 Jacobi 行列式 $=|\det D\mathbf{f}|=\left|\dfrac{\partial(f_1,\cdots,f_n)}{\partial(x_1,\cdots,x_n)}\right|$。
+\end{definition}
+
+\begin{theorem}[反函数定理]\label{theorem:appC-反函数}假设 $\mathbf{f}\in C^1(U;\mathbb{R}^n)$ 且 $J\mathbf{f}(x_0)\neq 0$。则存在开集 $V\subset U$（$x_0\in V$）和开集 $W\subset\mathbb{R}^n$（$z_0\in W$）使得
+\begin{enumerate}[(i)]
+\item 映射 $\mathbf{f}:V\to W$ 是一一对应且到上的，
+\item 逆函数 $\mathbf{f}^{-1}:W\to V$ 是 $C^1$ 的。
+\item 若 $\mathbf{f}\in C^k$，则 $\mathbf{f}^{-1}\in C^k$（$k=2,\cdots$）。
+\end{enumerate}
+\end{theorem}
+
+\section{隐函数定理}\label{section:appC-隐函数}
+
+设 $n,m$ 为正整数。我们将 $\mathbb{R}^{n+m}$ 中典型点写为
+\begin{align*}
+(x,y)=(x_1,\cdots,x_n,y_1,\cdots,y_m)
+\end{align*}
+其中 $x\in\mathbb{R}^n$，$y\in\mathbb{R}^m$。
+
+设 $U\subset\mathbb{R}^{n+m}$ 开集，假设 $\mathbf{f}:U\to\mathbb{R}^m$ 是 $C^1$ 的，$\mathbf{f}=(f_1,\cdots,f_m)$。设 $(x_0,y_0)\in U$，$z_0=\mathbf{f}(x_0,y_0)$。
+
+\begin{definition}\label{notation:appC-Df}
+\begin{align*}
+D\mathbf{f}=\begin{pmatrix}
+f^1_{x_1} & \cdots & f^1_{x_n} & f^1_{y_1} & \cdots & f^1_{y_m}\\
+\vdots & \ddots & \vdots & \vdots & \ddots & \vdots\\
+f^m_{x_1} & \cdots & f^m_{x_n} & f^m_{y_1} & \cdots & f^m_{y_m}
+\end{pmatrix}_{m\times(n+m)}=(D_x\mathbf{f},D_y\mathbf{f})=\mathbf{f}\text{ 的梯度矩阵}.
+\end{align*}
+\end{definition}
+
+\begin{definition}\label{definition:appC-Jyf}
+$J_y\mathbf{f}=|\det D_y\mathbf{f}|=\left|\dfrac{\partial(f_1,\cdots,f_m)}{\partial(y_1,\cdots,y_m)}\right|$。
+\end{definition}
+
+\begin{theorem}[隐函数定理。]\label{theorem:appC-隐函数}假设 $\mathbf{f}\in C^1(U;\mathbb{R}^m)$ 且 $J_y\mathbf{f}(x_0,y_0)\neq 0$。则存在开集 $V\subset U$（$(x_0,y_0)\in V$），开集 $W\subset\mathbb{R}^n$（$x_0\in W$），和 $C^1$ 映射 $\mathbf{g}:W\to\mathbb{R}^m$ 使得
+\begin{enumerate}[(i)]
+\item $\mathbf{g}(x_0)=y_0$，
+\item $\mathbf{f}(x,\mathbf{g}(x))=z_0$（$x\in W$），
+\item 若 $(x,y)\in V$ 且 $\mathbf{f}(x,y)=z_0$，则 $y=\mathbf{g}(x)$。
+\item 若 $\mathbf{f}\in C^k$，则 $\mathbf{g}\in C^k$（$k=2,\cdots$）。
+\end{enumerate}
+函数 $\mathbf{g}$ 在 $x_0$ 附近由方程 $\mathbf{f}(x,y)=z_0$ 隐式定义。
+\end{theorem}
+
+\section{一致收敛}\label{section:appC-一致收敛}
+
+我们在此记录 Arzel\`a--Ascoli 紧性判别准则用于一致收敛：
+
+假设 $\{f_k\}_{k=1}^\infty$ 是定义在 $\mathbb{R}^n$ 上的实值函数序列，使得
+\begin{align*}
+|f_k(x)|\leqslant M \quad (k=1,\cdots,\;x\in\mathbb{R}^n)
+\end{align*}
+\end{document}

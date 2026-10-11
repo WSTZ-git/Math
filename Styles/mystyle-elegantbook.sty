@@ -1,0 +1,319 @@
+\ProvidesPackage{mystyle-elegantbook}
+
+\usepackage{ctex}
+\usepackage{amsmath,amssymb}
+\usepackage{stmaryrd}
+\usepackage{mathtools}
+\usepackage{esint}
+\usepackage{microtype}% 微调字间距、启用更好的断词
+\usepackage{xurl}% 允许URL等在任意位置换行
+\usepackage{cases}% 实现大括号内多编号 一定要放在\usepackage{amsmath}之后
+\usepackage{lipsum}% 生成随机文本
+% beamer 自带列表样式，避免 enumitem 与 beamer 冲突导致索引或符号问题
+\makeatletter
+\@ifclassloaded{beamer}{}{
+\usepackage{enumitem}% 插入有序列表
+}
+\makeatother
+\usepackage{rotating}% 符号旋转
+\usepackage{graphicx}% 插入图片
+\usepackage{subcaption}% 子图排版
+\usepackage{epstopdf}% 插入图片pdf
+\usepackage{float}% 调整图片位置 固定图片位置[H]
+\usepackage{bm}
+\usepackage[normalem]{ulem} % 各种下划线,设置normalem是为了和打印参考文献命令\printbibliography不冲突
+\usepackage{soul}% 提供丰富多样的下划线,\soulcolor{red}\ul{红色下划线的文本}
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\usepackage{xeCJKfntef}% 下划线可换行
+\usepackage{multirow}
+\usepackage{bigdelim}
+\usepackage{tikz}% 绘制图表
+\usepackage{tikz-cd}% 绘制图表
+\usepackage{tikz-3dplot}
+\usepackage{array}% 表格
+\usepackage{tabularray}% 绘制表格
+\usepackage{booktabs}% 三线表
+\usepackage{longtable} % 长表格
+\usepackage{tabularx}   % 自适应表格宽度，支持长文本自动换行
+\usepackage{blkarray}% 实现对矩阵行列加编号
+\usepackage{amsfonts}% 加目录
+\usepackage{geometry}% 页面设置
+\usepackage{extarrows} % 自动适应等号长度并在等号上/下加文字
+\usepackage{pifont}%  圆圈数字、圆圈序号
+\let\widering\relax% 清除\widering的旧定义(因为yhmath宏包中新定义了\widering这个命令,否则会与pifont包冲突)
+\usepackage{yhmath}% 用\wideparen{}画出来的圆弧上标更美观
+\usepackage{cprotect}% 允许在“移动参数”（moving arguments，例如 \section、\caption、\footnote、\item 等会被写入辅助文件或作为标题使用的命令）的参数中使用易碎命令或 verbatim 类内容（如 \verb、\lstinline、\url 等），避免出现 “You can't use \verb in a moving argument.” 的错误。
+% hyperref和xr-hyperref宏包加载顺序也不能改变,否则会报错! 尽量最后加载超链接相关宏包
+\usepackage{fancyhdr}% 添加 fancyhdr 宏包用于页眉页脚控制
+\usepackage{etoolbox}% 用于条件判断
+\usepackage{newunicodechar}% 全角符号转换为半角符号
+\usepackage{listings}% 代码高亮包（展示R代码）
+\usepackage{xcolor}
+\usepackage{hyperref}%  LaTex超链接
+\usepackage{xr-hyper}% 不同文档之间交叉引用
+\usepackage[nameinlink]{cleveref}% 提供\cref{}命令，自动自动识别标签前缀匹配对应名称
+\usepackage{ocgx2} % 实现点击显示/隐藏解答的PDF交互效果（必须在hyper相关包后面加载）
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%自定义命令%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% 注意:自定义命令中不能含数字(1,2,3等)
+
+% 矩阵/行列式的行、列划线(划线方式:固定两点后在连线)
+\newcommand{\ccr}[1]{\makecell{{\color{#1}\rule{1cm}{1cm}}}}
+\newcommand{\MyTikzmark}[2]{%
+     \tikz[overlay,remember picture,baseline] \node [anchor=base] (#1) {$#2$};%
+}
+\newcommand{\DrawVLine}[3][]{%
+  \begin{tikzpicture}[overlay,remember picture]
+    \draw[shorten <=0.3ex, #1] (#2.north) -- (#3.south);
+  \end{tikzpicture}
+}
+\newcommand{\DrawHLine}[3][]{%
+  \begin{tikzpicture}[overlay,remember picture]
+    \draw[shorten <=0.2em, #1] (#2.west) -- (#3.east);
+  \end{tikzpicture}
+}
+\newcommand\ddfrac[2]{\frac{\displaystyle #1}{\displaystyle #2}}
+
+% “例” environment with counter
+\newcounter{examples}[chapter]
+\setcounter{examples}{0}
+\renewcommand{\theexamples}{\thechapter.\arabic{examples}}
+\newenvironment{examples}[1][]{
+  \refstepcounter{examples}
+  \par\noindent\textbf{\color{main}{例} \theexamples #1 }\rmfamily}{
+  \par\ignorespacesafterend}
+
+% 自定义交叉引用命令
+% 引用定义、定理、命题、推论、引理、公理、例题、练习、图片等的命令
+
+\newcommand{\refdef}[1]{\hyperref[#1]{定义\ref{#1}}}
+\newcommand{\refthe}[1]{\hyperref[#1]{定理\ref{#1}}}
+\newcommand{\refpro}[1]{\hyperref[#1]{命题\ref{#1}}}
+\newcommand{\refcor}[1]{\hyperref[#1]{推论\ref{#1}}}
+\newcommand{\reflem}[1]{\hyperref[#1]{引理\ref{#1}}}
+\newcommand{\refaxi}[1]{\hyperref[#1]{公理\ref{#1}}}
+\newcommand{\refexa}[1]{\hyperref[#1]{例题\ref{#1}}}
+\newcommand{\refexe}[1]{\hyperref[#1]{练习\ref{#1}}}
+\newcommand{\reffig}[1]{\hyperref[#1]{图\ref{#1}}}
+\newcommand{\reftab}[1]{\hyperref[#1]{表\ref{#1}}}
+\newcommand{\refexas}[1]{\hyperref[#1]{例\ref{#1}}}
+
+\newcommand{\rrefdef}[2]{\hyperref[#1]{定义\ref{#1}\ref{#2}}}
+\newcommand{\rrefthe}[2]{\hyperref[#1]{定理\ref{#1}\ref{#2}}}
+\newcommand{\rrefpro}[2]{\hyperref[#1]{命题\ref{#1}\ref{#2}}}
+\newcommand{\rrefcor}[2]{\hyperref[#1]{推论\ref{#1}\ref{#2}}}
+\newcommand{\rreflem}[2]{\hyperref[#1]{引理\ref{#1}\ref{#2}}}
+\newcommand{\rrefaxi}[2]{\hyperref[#1]{公理\ref{#1}\ref{#2}}}
+\newcommand{\rrefexa}[2]{\hyperref[#1]{例题\ref{#1}\ref{#2}}}
+\newcommand{\rrefexe}[2]{\hyperref[#1]{练习\ref{#1}\ref{#2}}}
+\newcommand{\rreffig}[2]{\hyperref[#1]{图\ref{#1}\ref{#2}}}
+\newcommand{\rreftab}[2]{\hyperref[#1]{表\ref{#1}\ref{#2}}}
+\newcommand{\rrefexas}[2]{\hyperref[#1]{例\ref{#1}\ref{#2}}}
+
+\newcommand{\rrrefdef}[3]{\hyperref[#1]{定义\ref{#1}\ref{#2}\ref{#3}}}
+\newcommand{\rrrefthe}[3]{\hyperref[#1]{定理\ref{#1}\ref{#2}\ref{#3}}}
+\newcommand{\rrrefpro}[3]{\hyperref[#1]{命题\ref{#1}\ref{#2}\ref{#3}}}
+\newcommand{\rrrefcor}[3]{\hyperref[#1]{推论\ref{#1}\ref{#2}\ref{#3}}}
+\newcommand{\rrreflem}[3]{\hyperref[#1]{引理\ref{#1}\ref{#2}\ref{#3}}}
+\newcommand{\rrrefaxi}[3]{\hyperref[#1]{公理\ref{#1}\ref{#2}\ref{#3}}}
+\newcommand{\rrrefexa}[3]{\hyperref[#1]{例题\ref{#1}\ref{#2}\ref{#3}}}
+\newcommand{\rrrefexe}[3]{\hyperref[#1]{练习\ref{#1}\ref{#2}\ref{#3}}}
+\newcommand{\rrreffig}[3]{\hyperref[#1]{图\ref{#1}\ref{#2}\ref{#3}}}
+\newcommand{\rrreftab}[3]{\hyperref[#1]{表\ref{#1}\ref{#2}\ref{#3}}}
+\newcommand{\rrrefexas}[3]{\hyperref[#1]{例\ref{#1}\ref{#2}\ref{#3}}}
+
+\newcommand{\nrefdef}[2]{\hyperref[#1]{定义\ref{#1}#2}}
+\newcommand{\nrefthe}[2]{\hyperref[#1]{定理\ref{#1}#2}}
+\newcommand{\nrefpro}[2]{\hyperref[#1]{命题\ref{#1}#2}}
+\newcommand{\nrefcor}[2]{\hyperref[#1]{推论\ref{#1}#2}}
+\newcommand{\nreflem}[2]{\hyperref[#1]{引理\ref{#1}#2}}
+\newcommand{\nrefaxi}[2]{\hyperref[#1]{公理\ref{#1}#2}}
+\newcommand{\nrefexa}[2]{\hyperref[#1]{例题\ref{#1}#2}}
+\newcommand{\nrefexe}[2]{\hyperref[#1]{练习\ref{#1}#2}}
+\newcommand{\nreffig}[2]{\hyperref[#1]{图\ref{#1}#2}}
+\newcommand{\nreftab}[2]{\hyperref[#1]{表\ref{#1}#2}}
+\newcommand{\nrefexas}[2]{\hyperref[#1]{例\ref{#1}#2}}
+
+\newcommand{\drefdef}[2]{\hyperref[#1]{定义\ref{#1}\ref{#2}}}
+\newcommand{\drefthe}[2]{\hyperref[#1]{定理\ref{#1}\ref{#2}}}
+\newcommand{\drefpro}[2]{\hyperref[#1]{命题\ref{#1}\ref{#2}}}
+\newcommand{\drefcor}[2]{\hyperref[#1]{推论\ref{#1}\ref{#2}}}
+\newcommand{\dreflem}[2]{\hyperref[#1]{引理\ref{#1}\ref{#2}}}
+\newcommand{\drefaxi}[2]{\hyperref[#1]{公理\ref{#1}\ref{#2}}}
+\newcommand{\drefexa}[2]{\hyperref[#1]{例题\ref{#1}\ref{#2}}}
+\newcommand{\drefexe}[2]{\hyperref[#1]{练习\ref{#1}\ref{#2}}}
+\newcommand{\drefexas}[2]{\hyperref[#1]{例\ref{#1}\ref{#2}}}
+
+\crefname{theorem}{定理}{定理}
+\crefname{proposition}{命题}{命题}
+\crefname{lemma}{引理}{引理}
+\crefname{corollary}{推论}{推论}
+\crefname{definition}{定义}{定义}
+\crefname{axiom}{公理}{公理}
+\crefname{example}{例题}{例题}
+\crefname{exam}{例}{例}
+\Crefname{exam}{例}{例}
+\crefname{examples}{例}{例}
+\crefname{exercise}{练习}{练习}
+\crefname{figure}{图}{图}
+\crefname{table}{表}{表}
+\crefname{section}{节}{节}
+\crefname{subsection}{小节}{小节}
+\crefname{subsubsection}{小节}{小节}
+
+\crefname{tcb@cnt@theorem}{定理}{定理}
+\crefname{tcb@cnt@proposition}{命题}{命题}
+\crefname{tcb@cnt@lemma}{引理}{引理}
+\crefname{tcb@cnt@corollary}{推论}{推论}
+\crefname{tcb@cnt@definition}{定义}{定义}
+\crefname{tcb@cnt@axiom}{公理}{公理}
+\crefname{tcb@cnt@example}{例题}{例题}
+\crefname{tcb@cnt@examples}{例}{例}
+\crefname{tcb@cnt@exercise}{练习}{练习}
+\crefname{tcb@cnt@figure}{图}{图}
+\crefname{tcb@cnt@table}{表}{表}
+
+\newcommand{\subcref}[2]{%
+\hyperref[#1]{\namecref{#1}\ref{#2}}%
+}
+\newcommand{\subsubcref}[3]{%
+\hyperref[#1]{\namecref{#1}\ref{#1}(\ref{#2})(\ref{#3})}%
+}
+
+%自定义圆圈序号命令
+
+\newcommand{\one}{{\large \ding{172}}} % 输出①
+\newcommand{\two}{{\large \ding{173}}} % 输出②
+\newcommand{\three}{{\large \ding{174}}}
+\newcommand{\four}{{\large \ding{175}}}
+\newcommand{\five}{{\large \ding{176}}}
+\newcommand{\six}{{\large \ding{177}}}
+\newcommand{\seven}{{\large \ding{178}}}
+\newcommand{\eight}{{\large \ding{179}}}
+\newcommand{\nine}{{\large \ding{180}}}
+\newcommand{\ten}{{\large \ding{181}}}
+
+
+% 定义符号函数 \sgn
+\newcommand{\sgn}{\operatorname{sgn}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%自定义命令%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%字体设置%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% 如果模板已经定义了\kaishu \sonti，则保留模板设置；否则在.sty中提供可用字体。
+\let\kaishu\relax % 清除旧\kaishu的定义
+\let\songti\relax % 清除旧\songti的定义
+\newCJKfontfamily\kaishu{KaiTi}[AutoFakeBold] % 重定义 \kaishu
+\newCJKfontfamily\sonti{FZCuSong-B09S}[BoldFont=FZCuSong-B09S]% 改变宋体的设置
+
+% 让楷体在遇到加粗时，自动使用伪粗体（算法加粗）
+\setCJKfamilyfont{KaiTi}{KaiTi}[AutoFakeBold=true]
+\setCJKfamilyfont{zhkai}{KaiTi}[AutoFakeBold=true]
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%字体设置%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%其他命令%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\allowdisplaybreaks[4] %允许公式跨页显示
+\everymath{\displaystyle} % 使全文的行内公式都显示成行间公式
+% 使用\textstyle可恢复行内公式,例如${\textstyle \sum_{i=1}^nx_i}$
+
+\setlength{\emergencystretch}{3em}% 允许行尾有更多伸展空间，防止溢出
+
+\sloppy% 提高换行容忍度（不强行拉宽，优先换行）
+
+% 全角符号转换为半角符号设置
+\newunicodechar{。}{.}
+\newunicodechar{，}{,}
+\newunicodechar{：}{:}
+\newunicodechar{；}{;}
+\newunicodechar{！}{!}
+\newunicodechar{（}{(}
+\newunicodechar{）}{)}
+
+% 自定义颜色
+\definecolor{togglecolor}{RGB}{0,102,204}% bright blue
+
+% 显示/隐藏proof、solution、note设置
+% 全局总开关定义
+\newcommand{\AllToggle}{%
+  \switchocg{global}{\textcolor{togglecolor}{\bfseries Show/Hide}}%
+}
+\AtBeginDocument{%
+  \begin{ocg}{全局控制}{global}{off}\end{ocg}% 全局默认关闭
+}
+
+% 自动计数器
+\newcounter{ocgcount}
+
+% 证明和解中的内容如果开头不是带序号的环境则在开头空一行，否则不空行
+% 证明环境 proof
+\renewenvironment{proof}{%
+  \stepcounter{ocgcount}%
+  \par\noindent
+  \textbf{\color{second}\proofname\;}\color{black!90}\cfs\quad
+  % 按钮放在 ocg 外部，始终显示
+  \switchocg{pr\theocgcount}{\textcolor{togglecolor}{Show/Hide Proof}}%
+  \par\nobreak
+  \begin{ocg}{pr\theocgcount}{pr\theocgcount}{on}%
+    \begin{ocg}{}{global}{on}%
+      \noindent\ignorespaces
+}{%
+      \par\nobreak
+      \noindent\hfill$\Box$\quad
+    \end{ocg}%
+  \end{ocg}%
+  \par
+}
+
+% 证明和解中的内容如果开头不是带序号的环境则在开头空一行，否则不空行
+% 解答环境 solution
+\renewenvironment{solution}{%
+  \stepcounter{ocgcount}%
+  \par\noindent
+  \textbf{\color{main}\solutionname} \citshape\quad
+  \switchocg{sol\theocgcount}{\textcolor{togglecolor}{Show/Hide Solution}}%
+  \par\nobreak
+  \begin{ocg}{sol\theocgcount}{sol\theocgcount}{on}%
+    \begin{ocg}{}{global}{on}%
+      \noindent\ignorespaces
+}{%
+      \par\nobreak
+      \noindent\hfill$\Box$\quad
+    \end{ocg}%
+  \end{ocg}%
+  \par
+}
+
+% 笔记环境 note
+\renewenvironment{note}{%
+  \stepcounter{ocgcount}%
+  \par\noindent
+  \makebox[-3pt][r]{\scriptsize\color{red!90}\textdbend\quad}
+  \textbf{\color{second}\notename} \citshape\quad
+  \switchocg{nt\theocgcount}{\textcolor{togglecolor}{Show/Hide Note}}%
+  \par\nobreak
+  \begin{ocg}{nt\theocgcount}{nt\theocgcount}{on}%
+    \begin{ocg}{}{global}{on}%
+      \noindent\ignorespaces
+}{%
+    \leavevmode
+    \end{ocg}%
+  \end{ocg}%
+  \par
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%其他命令%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%参考文献%%%%%%%%%%%%%%%%%
+
+\addbibresource[location=local]{reference.bib}% 使用Biber加载和引用参考文献,不要删除
+\ExecuteBibliographyOptions{maxnames=99} % 在同一条参考文献中可显示至多99位作者名
+
+%%%%%%%%%%%%%%%%参考文献%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%文档命令%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,804 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{内积的表示和正交基}
+
+\begin{definition}[Gram矩阵和度量矩阵]\label{definition:Gram矩阵和度量矩阵}
+设 \(\beta_1,\beta_2,\cdots,\beta_s\) 是内积空间的一个向量组，矩阵
+\begin{align*}
+G=\left( \begin{matrix}
+\left( \beta _1,\beta _1 \right)&		\cdots&		\left( \beta _1,\beta _n \right)\\
+\vdots&		\ddots&		\vdots\\
+\left( \beta _n,\beta _1 \right)&		\cdots&		\left( \beta _n,\beta _n \right)\\
+\end{matrix} \right) 
+\end{align*}
+称为向量组 \(\beta_1,\beta_2,\cdots,\beta_s\) 的 \textbf{Gram 矩阵}。
+若 \(\beta_1,\beta_2,\cdots,\beta_s\) 是一组基，则将 Gram 矩阵称为该基的\textbf{度量矩阵}。 
+\end{definition}
+
+\begin{theorem}[Gram阵的性质]\label{theorem:欧氏空间中Gram阵的性质-例9.5}
+\begin{enumerate}
+\item 设 $v_1,v_2,\cdots,v_m$ 是欧氏空间 $V$ 中 $m$ 个向量，则向量 $v_1,v_2,\cdots,v_m$ 的 Gram 矩阵为
+\[
+G = G(v_1,v_2,\cdots,v_m)=\begin{pmatrix}
+(v_1,v_1) & (v_1,v_2) & \cdots & (v_1,v_m)\\
+(v_2,v_1) & (v_2,v_2) & \cdots & (v_2,v_m)\\
+\vdots & \vdots & & \vdots\\
+(v_m,v_1) & (v_m,v_2) & \cdots & (v_m,v_m)
+\end{pmatrix}.
+\]
+求证：
+
+(1) $G$ 是半正定实对称矩阵；
+
+(2) 向量组 $v_1,v_2,\cdots,v_m$ 线性无关当且仅当 $G$ 是正定阵，也当且仅当 $G$ 是可逆矩阵。
+
+(3)在欧氏空间V的标准内积下,有$G=A'A$,其中$A=(v_1,v_2,\cdots,v_n)$.
+
+\item 设 $v_1,v_2,\cdots,v_m$ 是酉空间 $V$ 中 $m$ 个向量，则向量 $v_1,v_2,\cdots,v_m$ 的 Gram 矩阵为
+\[
+G = G(v_1,v_2,\cdots,v_m)=\begin{pmatrix}
+(v_1,v_1) & (v_1,v_2) & \cdots & (v_1,v_m)\\
+(v_2,v_1) & (v_2,v_2) & \cdots & (v_2,v_m)\\
+\vdots & \vdots & & \vdots\\
+(v_m,v_1) & (v_m,v_2) & \cdots & (v_m,v_m)
+\end{pmatrix}.
+\]
+求证：
+
+(1) $G$ 是半正定Hermite矩阵；
+
+(2) 向量组 $v_1,v_2,\cdots,v_m$ 线性无关当且仅当 $G$ 是正定阵，也当且仅当 $G$ 是可逆矩阵。
+
+(3)在酉空间V的标准内积下,有$G=A'\overline{A}$,其中$A=(v_1,v_2,\cdots,v_n)$.
+\end{enumerate}
+\end{theorem}
+\begin{remark}
+向量组 $v_1,v_2,\cdots,v_m$ 的 Gram 矩阵的几何意义是，这 $m$ 个向量张成的平行 $2m$ 面体的体积等于其 Gram 矩阵的行列式的算术平方根（证明可参考\refpro{proposition:例9.15}）:
+\[
+V(v_1,v_2,\cdots,v_m)=|G(v_1,v_2,\cdots,v_m)|^{\frac{1}{2}}.
+\]
+特别地，设 $V = \mathbb{R}^n$（取标准内积），$n$ 阶实矩阵 $A = (\alpha_1,\alpha_2,\cdots,\alpha_n)$ 为其列分块，则 $G(\alpha_1,\alpha_2,\cdots,\alpha_n)=A'A$，于是 $V(\alpha_1,\alpha_2,\cdots,\alpha_n)=|A'A|^{\frac{1}{2}}=\text{abs}(|A|)$。因此，$n$ 阶行列式的绝对值等于其 $n$ 个列向量张成的平行 $2n$ 面体的体积，这就是 $n$ 阶行列式的几何意义。 
+\end{remark}
+\begin{proof}
+\begin{enumerate}
+\item (1) 由欧氏空间内积的对称性可知 $G$ 是实对称矩阵。对任意的实列向量 $\alpha=(a_1,a_2,\cdots,a_m)'$，令 $v = a_1v_1 + a_2v_2 + \cdots + a_mv_m$，则有
+\begin{align}\label{equation:::--2348957892}
+\alpha'G\alpha&=\sum_{i,j = 1}^{m}a_ia_j(v_i,v_j)=(\sum_{i = 1}^{m}a_iv_i,\sum_{j = 1}^{m}a_jv_j)=(v,v)\geqslant 0,
+\end{align}
+因此 $G$ 是半正定阵。
+
+(2) 注意到半正定阵 $G$ 是正定阵当且仅当 $G$ 是非异阵，故两个充要条件只要证明其中一个即可。我们用两种方法来证明它们。
+
+{\color{blue}证法一:}先证必要性,若 $v_1,v_2,\cdots,v_m$ 线性无关，则对任意的非零实列向量 $\alpha=(a_1,a_2,\cdots,a_m)'$，$v = a_1v_1 + a_2v_2 + \cdots + a_mv_m\neq0$，从而由\eqref{equation:::--2348957892}式可知 $\alpha'G\alpha=(v,v)>0$，故 $G$ 是正定阵。
+
+再证充分性,反证,若 $v_1,v_2,\cdots,v_m$ 线性相关，则存在非零实列向量 $\alpha=(a_1,a_2,\cdots,a_m)'$，使得 $v = a_1v_1 + a_2v_2 + \cdots + a_mv_m = 0$，从而由\eqref{equation:::--2348957892}式可知 $\alpha'G\alpha=(v,v)=0$，故 $G$ 不是正定阵,矛盾!
+
+{\color{blue}证法二:}先证充分性,反证,假设 $v_1,v_2,\cdots,v_m$ 线性相关，则存在不全为零的数 $k_1,k_2,\cdots,k_m$，使得 $k_1v_1 + k_2v_2 + \cdots + k_mv_m = 0$。将 $k_i$ 乘以 $G$ 的第 $i$ 行后求和得到
+\begin{align}
+(k_1v_1 + k_2v_2 + \cdots + k_mv_m,v_j)=0,\quad 1\leqslant  j\leqslant  m,\label{eq:9.3}
+\end{align}
+即 $G$ 的 $m$ 个行向量线性相关，因此 $G$ 不是可逆矩阵。
+
+再证必要性，反证,若 $G$ 不可逆，则 $G$ 的 $m$ 个行向量线性相关，即存在不全为零的数 $k_1,k_2,\cdots,k_m$，使得 \eqref{eq:9.3} 式成立。于是
+\[
+(k_1v_1 + k_2v_2 + \cdots + k_mv_m,k_1v_1 + k_2v_2 + \cdots + k_mv_m)=0,
+\]
+从而 $k_1v_1 + k_2v_2 + \cdots + k_mv_m = 0$，因此 $v_1,v_2,\cdots,v_m$ 线性相关。
+
+(3)证明是显然的.
+
+\item (1)由酉空间内积的对称性可知 $G$ 是Hermite矩阵。对任意的复列向量 $\alpha=(a_1,a_2,\cdots,a_m)'$，令 $v = a_1v_1 + a_2v_2 + \cdots + a_mv_m$，则有
+\begin{align}\label{equation:::--234895789}
+\alpha'G \overline{\alpha}&=\sum_{i,j = 1}^{m}a_i\overline{a_j}(v_i,v_j)=(\sum_{i = 1}^{m}a_iv_i,\sum_{j = 1}^{m}a_jv_j)=(v,v)\geqslant 0,
+\end{align}
+因此 $G$ 是半正定Hermite阵。
+
+(2)注意到半正定Hermite阵 $G$ 是正定Hermite阵当且仅当 $G$ 是非异阵，故两个充要条件只要证明其中一个即可。我们用两种方法来证明它们。
+
+{\color{blue}证法一:}先证必要性,若 $v_1,v_2,\cdots,v_m$ 线性无关，则对任意的非零复列向量 $\alpha=(a_1,a_2,\cdots,a_m)'$，$v = a_1v_1 + a_2v_2 + \cdots + a_mv_m\neq0$，从而由\eqref{equation:::--234895789}式可知 $\alpha'G\alpha=(v,v)>0$，故 $G$ 是正定Hermite阵。
+
+再证充分性,反证,若 $v_1,v_2,\cdots,v_m$ 线性相关，则存在非零复列向量 $\alpha=(a_1,a_2,\cdots,a_m)'$，使得 $v = a_1v_1 + a_2v_2 + \cdots + a_mv_m = 0$，从而由\eqref{equation:::--234895789}式可知 $\alpha'G\alpha=(v,v)=0$，故 $G$ 不是正定Hermite阵,矛盾!
+
+{\color{blue}证法二:}先证充分性,反证,假设 $v_1,v_2,\cdots,v_m$ 线性相关，则存在不全为零的数 $k_1,k_2,\cdots,k_m$，使得 $k_1v_1 + k_2v_2 + \cdots + k_mv_m = 0$。将 $k_i$ 乘以 $G$ 的第 $i$ 行后求和得到
+\begin{align}
+(k_1v_1 + k_2v_2 + \cdots + k_mv_m,v_j)=0,\quad 1\leqslant  j\leqslant  m,\label{eq:9.3121}
+\end{align}
+即 $G$ 的 $m$ 个行向量线性相关，因此 $G$ 不是可逆矩阵。
+
+再证必要性，反证,若 $G$ 不可逆，则 $G$ 的 $m$ 个行向量线性相关，即存在不全为零的数 $k_1,k_2,\cdots,k_m$，使得 \eqref{eq:9.3121} 式成立。于是
+\[
+(k_1v_1 + k_2v_2 + \cdots + k_mv_m,k_1v_1 + k_2v_2 + \cdots + k_mv_m)=0,
+\]
+从而 $k_1v_1 + k_2v_2 + \cdots + k_mv_m = 0$，因此 $v_1,v_2,\cdots,v_m$ 线性相关。
+
+(3)证明是显然的.
+\end{enumerate}
+\end{proof}
+
+\begin{theorem}\label{theorem:度量矩阵的性质}
+\begin{enumerate}
+\item 若 \(V\) 是一个 \(n\) 维欧式空间，\(\alpha_1,\alpha_2,\cdots,\alpha_n\) 是它的一组基，对 \(V\) 中任意向量 \(\alpha,\beta\)，其中
+\begin{align*}
+\alpha&=x_1\alpha_1+\cdots + x_n\alpha_n,\\
+\beta&=y_1\alpha_1+\cdots + y_n\alpha_n.
+\end{align*}
+则
+\begin{align}
+(\alpha,\beta)=X^TGY,\label{equation:---9.2.1}
+\end{align}
+其中
+\begin{align*}
+G=\left( \begin{matrix}
+\left( \alpha _1,\alpha _1 \right)&		\cdots&		\left( \alpha _1,\alpha _n \right)\\
+\vdots&		\ddots&		\vdots\\
+\left( \alpha _n,\alpha _1 \right)&		\cdots&		\left( \alpha _n,\alpha _n \right)\\
+\end{matrix} \right) ,X=\left( \begin{array}{c}
+x_1\\
+\vdots\\
+x_n\\
+\end{array} \right) ,Y=\left( \begin{array}{c}
+y_1\\
+\vdots\\
+y_n\\
+\end{array} \right) .
+\end{align*}
+此时，$G$就是基\(\alpha_1,\alpha_2,\cdots,\alpha_n\)的度量矩阵.并且$G$ 是一个$n$阶正定实对称阵.
+
+由此可知,若给定了 $n$ 维实线性空间 $V$ 的一组基, 则 $V$ 上的内积结构和 $n$ 阶正定实对称阵之间存在着一个一一对应. 
+
+\item 若 \(V\) 是一个 \(n\) 维酉空间，\(\alpha_1,\alpha_2,\cdots,\alpha_n\) 是它的一组基，对 \(V\) 中任意向量 \(\alpha,\beta\)，其中
+\begin{align*}
+\alpha&=x_1\alpha_1+\cdots + x_n\alpha_n,\\
+\beta&=y_1\alpha_1+\cdots + y_n\alpha_n.
+\end{align*}
+则
+\begin{align*}
+(\alpha,\beta)=X^TH\overline{Y},
+\end{align*}
+其中
+\begin{align*}
+H=\left( \begin{matrix}
+\left( \alpha _1,\alpha _1 \right)&		\cdots&		\left( \alpha _1,\alpha _n \right)\\
+\vdots&		\ddots&		\vdots\\
+\left( \alpha _n,\alpha _1 \right)&		\cdots&		\left( \alpha _n,\alpha _n \right)\\
+\end{matrix} \right) ,X=\left( \begin{array}{c}
+x_1\\
+\vdots\\
+x_n\\
+\end{array} \right) ,Y=\left( \begin{array}{c}
+y_1\\
+\vdots\\
+y_n\\
+\end{array} \right) .
+\end{align*}
+此时，$H$就是基\(\alpha_1,\alpha_2,\cdots,\alpha_n\)的度量矩阵.并且$H$ 是一个$n$阶正定Hermite阵.
+
+由此可知,若给定了 $n$ 维复线性空间 $V$ 的一组基, 则 $V$ 上的内积结构和 $n$ 阶正定Hermite阵之间存在着一个一一对应. 
+\end{enumerate} 
+\end{theorem}
+\begin{proof}
+\begin{enumerate}
+\item 利用内积的线性性容易得到$(\alpha,\beta)=X^TGY$.
+ 
+再来看矩阵 $G$. 因为 $(\alpha_i, \alpha_j) = (\alpha_j, \alpha_i)$, 所以 $G$ 是实对称阵. 又因为对任意的非零向量 $\alpha$, 总有 $(\alpha, \alpha) > 0$, 所以 $x'Gx > 0$ 对一切 $n$ 维非零实列向量 $x$ 成立. 这表明 $G$ 是一个正定阵. 
+
+反之, 若给定 $n$ 阶正定实对称阵 $G$, 利用 \eqref{equation:---9.2.1}式也可以定义 $V$ 上的内积 (参考\hyperref[example:一些常见的内积及内积空间]{例题2.(1)}). 由此我们可以看出, 若给定了 $n$ 维实线性空间 $V$ 的一组基, 则 $V$ 上的内积结构和 $n$ 阶正定实对称阵之间存在着一个一一对应. 
+
+\item 由1类似可证.
+\end{enumerate}
+\end{proof}
+
+\begin{definition}
+设 $\{e_1, e_2, \cdots, e_n\}$ 是 $n$ 维内积空间 $V$ 的一组基. 若 $e_i \perp e_j$ 对一切 $i \neq j$ 成立, 则称这组基是 $V$ 的一组\textbf{正交基}. 又若 $V$ 的一组正交基中每个基向量的长度都等于 $1$, 则称这组正交基为\textbf{标准正交基}.
+\end{definition}
+\begin{note}
+显然在标准正交基下,度量矩阵就是单位矩阵.
+\end{note}
+
+\begin{lemma}\label{lemma:正交向量组必线性无关}
+内积空间 $V$ 中的任意一组两两正交的非零向量必线性无关.
+\end{lemma}
+\begin{proof}
+设 $v_1, v_2, \cdots, v_m$ 是 $V$ 中两两正交的非零向量，若
+\begin{align*}
+k_1v_1 + k_2v_2 + \cdots + k_mv_m = 0,
+\end{align*}
+则对任一 $1 \leqslant  i \leqslant  m$，有
+\begin{align*}
+(k_1v_1 + k_2v_2 + \cdots + k_mv_m, v_i) = 0.
+\end{align*}
+由于 $v_i \perp v_j (i \neq j)$，故由上式可得 $k_i(v_i, v_i) = 0$，又 $v_i \neq 0$，从而 $k_i = 0$.
+\end{proof}
+
+\begin{lemma}\label{lemma:和基正交的向量一定和由基生成的空间正交}
+设向量 $\alpha$ 和 $\beta_1, \beta_2, \cdots, \beta_k$ 都正交，则 $\alpha$ 和 $L(\beta_1, \beta_2, \cdots, \beta_k)$ 中的每个向量都正交.
+\end{lemma}
+\begin{proof}
+任取 $\beta = b_1\beta_1 + b_2\beta_2 + \cdots + b_k\beta_k \in L(\beta_1, \beta_2, \cdots, \beta_k)$，则
+\begin{align*}
+(\beta, \alpha) = (b_1\beta_1 + b_2\beta_2 + \cdots + b_k\beta_k, \alpha) = \sum_{i = 1}^{k}b_i(\beta_i, \alpha) = 0,
+\end{align*}
+结论得证.
+\end{proof}
+
+\begin{corollary}
+$n$ 维内积空间中任意一个正交非零向量组的向量个数不超过 $n$.
+\end{corollary}
+\begin{proof}
+假设$n$维内积空间$V$中有$n+1$个正交非零的向量,则由\reflem{lemma:正交向量组必线性无关}可知,这$n+1$个正交非零的向量一定线性无关,这与$\dim V=n$矛盾!
+\end{proof}
+
+\begin{theorem}[Gram-Schmidt正交化]\label{theorem:Gram-Schmidt正交化方法}
+设 $V$ 是内积空间，$u_1, u_2, \cdots, u_m$ 是 $V$ 中 $m$ 个线性无关的向量，则在 $V$ 中存在 $m$ 个两两正交的非零向量 $v_1, v_2, \cdots, v_m$，使由 $v_1, v_2, \cdots, v_m$ 张成的子空间恰好为由 $u_1, u_2, \cdots, u_m$ 张成的子空间，即 $v_1, v_2, \cdots, v_m$ 是该子空间的一组正交基.并且基$\{u_1,u_2,\cdots,u_n\}$到基$\{v_1,v_2,\cdots,v_n\}$的过渡矩阵为主对角元全为1的上三角矩阵,即存在主对角元全为1的上三角矩阵$B$,使得
+\begin{align*}
+(v_1,v_2,\cdots,v_n)=(u_1,u_2,\cdots,u_n)\boldsymbol{B}.
+\end{align*}
+\end{theorem}
+\begin{note}
+由下述证明可知:我们有
+\begin{align*}
+&v_1=u_1,
+\\
+&v_2=u_2-\frac{(u_2,v_1)}{(v_1,v_1)}v_1,
+\\
+&\cdots \cdots 
+\\
+&v_n=u_n-\frac{(u_n,v_1)}{(v_1,v_1)}v_1-\cdots -\frac{(u_n,v_{n-1})}{(v_{n-1},v_{n-1})}v_{n-1}.
+\end{align*}
+从而
+\begin{align*}
+\boldsymbol{B}^{-1}=\begin{pmatrix}
+1&		\frac{( u_2,v_1 )}{( v_1,v_1 )}&		&		\frac{( u_n,v_1 )}{( v_1,v_1 )}\\
+&		1&		&		\vdots\\
+&		&		\ddots&		\frac{( u_n,v_{n-1} )}{( v_{n-1},v_{n-1} )}\\
+&		&		&		1\\
+\end{pmatrix},
+\end{align*}
+因此由\nrefpro{proposition:上三角阵性质}{(3)}可知$\boldsymbol{B}$就是主对角元全为$1$的上三角矩阵.
+\end{note}
+\begin{remark}
+上述正交化过程通常称为 Gram - Schmidt (格列姆--施密特) 方法.
+\end{remark}
+\begin{proof}
+设 $v_1 = u_1$，其余 $v_i$ 可用数学归纳法定义如下：假设 $v_1, \cdots, v_k (k < m)$ 已定义好，这时 $v_1, \cdots, v_k$ 两两正交非零且 $L(v_1, \cdots, v_k) = L(u_1, \cdots, u_k)$. 令
+\begin{align}
+v_{k + 1} = u_{k + 1} - \sum_{j = 1}^{k}\frac{(u_{k + 1}, v_j)}{\|v_j\|^2}v_j. \label{equation----9.2.3}
+\end{align}
+由此可知,存在主对角元全为1的上三角矩阵$B$,使得
+\begin{align*}
+(v_1,v_2,\cdots,v_n)=(u_1,u_2,\cdots,u_n)\boldsymbol{B}.
+\end{align*}
+注意 $v_{k + 1} \neq 0$，否则 $u_{k + 1}$ 将是 $v_1, \cdots, v_k$ 的线性组合，从而也是 $u_1, \cdots, u_k$ 的线性组合，此与 $u_1, u_2, \cdots, u_m$ 线性无关矛盾. 又对任意的 $1 \leqslant  i \leqslant  k$，有
+\begin{align*}
+(v_{k + 1}, v_i) &= (u_{k + 1}, v_i) - \sum_{j = 1}^{k}\frac{(u_{k + 1}, v_j)}{\|v_j\|^2}(v_j, v_i) \\
+&= (u_{k + 1}, v_i) - (u_{k + 1}, v_i) = 0,
+\end{align*}
+因此 $v_1, \cdots, v_k, v_{k + 1}$ 两两正交. 由\eqref{equation----9.2.3}式可知 
+\begin{align*}
+u_{k + 1} \in L(v_1, \cdots, v_k, v_{k + 1})\text{及} v_{k + 1} \in L(v_1, \cdots, v_k) + L(u_{k + 1}) = L(u_1, \cdots, u_k) + L(u_{k + 1}) = L(u_1, \cdots, u_k, u_{k + 1}),
+\end{align*}
+于是 $L(v_1, \cdots, v_k, v_{k + 1}) = L(u_1, \cdots, u_k, u_{k + 1})$，这就证明了结论.
+\end{proof}
+
+\begin{corollary}\label{corollary:有限维内积空间必有标准正交基}
+任一有限维内积空间均有标准正交基. 
+\end{corollary}
+
+\begin{definition}[正交和]
+设 $V$ 是 $n$ 维内积空间，$V_1, V_2, \cdots, V_k$ 是 $V$ 的子空间. 如果对任意的 $\alpha \in V_i$ 和任意的 $\beta \in V_j$ 均有 $(\alpha, \beta) = 0$，则称子空间 $V_i$ 和 $V_j$ 正交. 若 $V = V_1 + V_2 + \cdots + V_k$ 且 $V_i$ 两两正交，则称 $V$ 是 $V_1, V_2, \cdots, V_k$ 的\text{正交和}，记为
+\begin{align*}
+V = V_1 \perp V_2 \perp \cdots \perp V_k.
+\end{align*}
+\end{definition}
+\begin{remark}
+由于\reflem{lemma:正交和必为直和}，正交和通常也称为\textbf{正交直和}.
+\end{remark}
+
+\begin{lemma}\label{lemma:正交和必为直和}
+正交和必为直和且任一 $V_i$ 和其余子空间的和正交.
+\end{lemma}
+\begin{proof}
+对任意的 $v_i \in V_i$ 和 $\sum_{j \neq i}v_j (v_j \in V_j)$，有
+\begin{align*}
+(v_i, \sum_{j \neq i}v_j) = \sum_{j \neq i}(v_i, v_j) = 0,
+\end{align*}
+因此后一个结论成立. 任取 $v \in V_i \cap (\sum_{j \neq i}V_j)$，则由上述论证可得 $(v, v) = 0$，故 $v = 0$，从而 $V_i \cap (\sum_{j \neq i}V_j) = 0$，即正交和必为直和.
+\end{proof}
+
+\begin{definition}[正交补空间]\label{definition:正交补空间}
+设 $U$ 是内积空间 $V$ 的子空间，令
+\begin{align*}
+U^\perp = \{v \in V | (v, U) = 0\},
+\end{align*}
+这里 $(v, U) = 0$ 表示对一切 $u \in U$，均有 $(v, u) = 0$. 容易验证 $U^\perp$ 是 $V$ 的子空间，称为 $U$ 的\textbf{正交补空间}.
+\end{definition}
+
+\begin{theorem}
+设 $V$ 是 $n$ 维内积空间，$U$ 是 $V$ 的子空间，则
+
+(1) $V = U \oplus U^\perp=U\bot U^{\bot}$;
+
+(2) $U$ 的任一组标准正交基均可扩张为 $V$ 的一组标准正交基.
+\end{theorem}
+\begin{proof}
+(1) 若 $x \in U \cap U^\perp$，则 $(x, x) = 0$，因此 $x = 0$，即 $U \cap U^\perp = 0$. 另一方面，由\refcor{corollary:有限维内积空间必有标准正交基}可知，存在 $U$ 的一组标准正交基 $\{e_1, e_2, \cdots, e_m\}$. 对任意的 $v \in V$，令
+\begin{align*}
+u = (v, e_1)e_1 + (v, e_2)e_2 + \cdots + (v, e_m)e_m,
+\end{align*}
+则 $u \in U$. 又令 $w = v - u$，则对任一 $e_i (i = 1, 2, \cdots, m)$，有
+\begin{align*}
+(w, e_i) = (v, e_i) - (u, e_i) = (v, e_i) - (v, e_i) = 0.
+\end{align*}
+因此 $w \in U^\perp$，又 $v = u + w$，这就证明了 $V = U \oplus U^\perp$.
+
+(2) 设 $\{e_1, e_2, \cdots, e_m\}$ 是 $U$ 的任一组标准正交基，$\{e_{m + 1}$, $\cdots$, $e_n\}$ 是 $U^\perp$ 的任一组标准正交基，则显然 $\{e_1$, $e_2$, $\cdots$, $e_n\}$ 是 $V$ 的一组标准正交基. 
+\end{proof}
+
+\begin{proposition}\label{proposition:一些常见的正交补空间}
+设$V$是$n$维内积空间,$A$为$V$上的线性变换(或数域上$\mathbb{F}$的$n$阶矩阵),则
+\begin{align*}
+\mathrm{Ker}A^T=\left( \mathrm{Im}A \right) ^{\bot} ,\quad \mathrm{Ker}A=\left( \mathrm{Im}A^T \right) ^{\bot}.
+\end{align*}
+特别地,若$A$是数域上$\mathbb{F}$的$n$阶对称矩阵,则
+\begin{align*}
+\mathrm{Ker}A=\left( \mathrm{Im}A \right) ^{\bot} ,\quad \mathrm{Ker}A=\left( \mathrm{Im}A \right) ^{\bot}.
+\end{align*}
+\end{proposition}
+\begin{proof}
+对$\forall \alpha \in \mathrm{Ker}A^T$，都有$A^T\alpha =0$，从而$\alpha ^TA=0$，于是对$\forall A\beta \in \mathrm{Im}A$，都有
+$\left( \alpha ,A\beta \right) =\alpha ^TA\beta =0.$
+故$\mathrm{Ker}A^T\subseteq \left( \mathrm{Im}A \right) ^{\bot}$.又由维数公式可知
+$\mathrm{dimKer}A^T=n-r\left( A \right) =\mathrm{dim}\left( \mathrm{Im}A \right) ^{\bot}.$
+因此$\mathrm{Ker}A^T=\left( \mathrm{Im}A \right) ^{\bot}.$
+\end{proof}
+
+\begin{example}
+设 \(A\) 是 \(n\) 阶实方阵且 \(A^2=0\)，证明：\(r(A+A^T)=2r(A)\).
+\end{example}
+\begin{proof}
+
+{\color{blue}证法一:}
+设 \(r(A)=r\)，由于 \(A^2=0\)，可得 \(\operatorname{Im}A \subseteq \operatorname{Ker}A\)。
+由\cref{proposition:一些常见的正交补空间}知 \(\operatorname{Ker}A = (\operatorname{Im}A^T)^\perp\)，由此说明 \(\operatorname{Im}A\) 与 \(\operatorname{Im}A^T\)正交。
+因此它们的和是直和，其维数为
+\begin{align}\label{eq::jijijqqqqqqqww}
+\dim(\operatorname{Im}A + \operatorname{Im}A^T) = \dim\operatorname{Im}A + \dim\operatorname{Im}A^T = r + r = 2r(A).
+\end{align}
+根据\cref{proposition:例9.18}，有
+\begin{align}\label{eq:sol1_1} 
+(\operatorname{Im}A + \operatorname{Im}A^T)^\perp = (\operatorname{Im}A)^\perp \cap (\operatorname{Im}A^T)^\perp 
+= \operatorname{Ker}A^T \cap \operatorname{Ker}A. 
+\end{align}
+注意到任意 \(x \in \operatorname{Ker}(A+A^T)\)，有 \((A+A^T)x = 0\)，即 \(Ax = -A^Tx\in \operatorname{Im}A\cap \operatorname{Im}A^T\)。
+而\(\operatorname{Im}A\) 与 \(\operatorname{Im}A^T\)正交，故\(x \in \operatorname{Ker}A \cap \operatorname{Ker}A^T\),因此\(\operatorname{Ker}A \cap \operatorname{Ker}A^T \supset \operatorname{Ker}(A+A^T)\)；
+反之显然成立。故 \(\operatorname{Ker}A \cap \operatorname{Ker}A^T = \operatorname{Ker}(A+A^T)\)。
+再结合\eqref{eq::jijijqqqqqqqww}\eqref{eq:sol1_1}式得
+\begin{align*}
+2r(A) &= \dim(\operatorname{Im}A + \operatorname{Im}A^T) = n - \dim(\operatorname{Im}A + \operatorname{Im}A^T)^\perp \\
+&= n - \dim(\operatorname{Ker}A \cap \operatorname{Ker}A^T) = n - \dim(\operatorname{Ker}(A + A^T)) \\
+&= r(A + A^T).
+\end{align*}
+故原等式成立。
+
+{\color{blue}证法二:}设 \(A\) 的 Jordan 标准型为$J$,则存在可逆矩阵$P$,使得\(A=PJP^{-1}\).由 \(A^2=0\) 可知 \(J\) 的所有 Jordan 块的阶数大小最多为 2。因此 \(J\) 可以写成如下分块形式：
+\begin{align*}
+J = \begin{pmatrix} J_1 & 0 \\ 0 & 0 \end{pmatrix}, \quad J_1 = \begin{pmatrix} 0 & I_k \\ 0 & 0 \end{pmatrix},
+\end{align*}
+其中 \(I_k\) 是 \(k=r(A)\) 阶单位矩阵.此时矩阵 \(A\) 的秩 \(r(A)=2k\)。
+对 \(A+A^T\) 左乘 \(P^T\)、右乘 \(P\) 得：
+\begin{align}
+P^T(A+A^T)P = P^TAP + P^TA^TP  = P^TPJ + P^T(P^{-1})^TJ^TP^TP 
+= UJ + J^TU, \label{eq:jordan1}
+\end{align}
+其中 \(U = P^TP\) 为对称正定矩阵。由于矩阵 \(P\) 可逆，左乘 \(P^T\) 右乘 \(P\) 不改变矩阵的秩，故由 \eqref{eq:jordan1} 式可知
+\begin{align}\label{eq::JifjisjiehwJIFWJI}
+r(A+A^T) = r(UJ+J^TU).
+\end{align}
+对正定矩阵 \(U\) 按 \(J\) 的分块进行相应分块，设 \(U = \begin{pmatrix} U_{11} & U_{12} \\ U_{21} & U_{22} \end{pmatrix}\)，其中 \(U_{11}\) 为 \(2k \times 2k\) 的正定矩阵。计算可得
+\begin{align*}
+UJ + J^TU = \begin{pmatrix} U_{11} & U_{12} \\ U_{21} & U_{22} \end{pmatrix} \begin{pmatrix} J_1 & 0 \\ 0 & 0 \end{pmatrix} + \begin{pmatrix} J_1^T & 0 \\ 0 & 0 \end{pmatrix} \begin{pmatrix} U_{11} & U_{12} \\ U_{21} & U_{22} \end{pmatrix} = \begin{pmatrix} U_{11}J_1 + J_1^TU_{11} & J_1^TU_{12} \\ U_{21}J_1 & 0 \end{pmatrix}.
+\end{align*}
+下面讨论左上角的子块 \(M \triangleq U_{11}J_1 + J_1^TU_{11}\) 是否可逆。采用反证法，证明其核空间仅包含零向量。
+设 \(U_{11} = \begin{pmatrix} A & B \\ B^T & C \end{pmatrix}\)，由\subcref{proposition:正定阵的性质}{proposition:正定阵的性质-1}可知其主对角线块 \(A\) 和 \(C\) 均为正定矩阵.直接计算可得
+\begin{align}
+M = \begin{pmatrix} A & B \\ B^T & C \end{pmatrix} \begin{pmatrix} 0 & I_k \\ 0 & 0 \end{pmatrix} + \begin{pmatrix} 0 & 0 \\ I_k & 0 \end{pmatrix} \begin{pmatrix} A & B \\ B^T & C \end{pmatrix} = \begin{pmatrix} 0 & A \\ A & B + B^T \end{pmatrix}. \label{eq:jordan2}
+\end{align}
+假设存在向量 \(x = \begin{pmatrix} u \\ v \end{pmatrix} \in \operatorname{Ker}(M)\)，则由 \eqref{eq:jordan2} 式可得：
+\begin{align*}
+\begin{pmatrix} 0 & A \\ A & B + B^T \end{pmatrix} \begin{pmatrix} u \\ v \end{pmatrix} = \begin{pmatrix} 0 \\ 0 \end{pmatrix}.
+\end{align*}
+由此推出方程组：
+\begin{gather}
+A v = 0, \label{eq:jordan3} \\
+A u + (B + B^T) v = 0. \label{eq:jordan4}
+\end{gather}
+因为 \(A\) 为正定矩阵，故 \(A\) 可逆。由 \eqref{eq:jordan3} 式可得 \(v=0\)。将 \(v=0\) 代入 \eqref{eq:jordan4} 式，得 \(A u = 0\)，同理可得 \(u=0\)。因此向量 \(x=0\)，这就证明了 \(M\) 可逆。
+
+由于 \(M\) 可逆，且$M$是$2k=2r(A)$阶矩阵,故由\subcref{proposition:矩阵秩的基本公式}{proposition:矩阵秩的基本公式-4}和\subcref{proposition:矩阵秩的基本公式}{proposition:矩阵秩的基本公式-5}可得
+\begin{align*}
+2r\left( A \right) =r\left( M \right) \leqslant r\left( \begin{matrix}
+M&		J_{1}^{T}U_{12}\\
+U_{12}J_1&		O\\
+\end{matrix} \right) =r\left( UJ+J^TU \right) \leqslant r\left( UJ \right) +r\left( J^TU \right) =r\left( J \right) +r\left( J^T \right) =2r\left( A \right) .
+\end{align*}
+再结合\eqref{eq::JifjisjiehwJIFWJI}式知原等式 \(r(A+A^T)=2r(A)\) 成立。
+\end{proof}
+
+\begin{example}
+设 $A \in M_n(\mathbb{R})$, $\text{Im}(A) = \{Y \in \mathbb{R}^n \mid \exists X \in \mathbb{R}^n \text{ 使得 } Y = AX\}$.
+\begin{enumerate}[(1)]
+\item 证明: $\text{Im}(AA^T) = \text{Im}(A)$.
+
+\item 证明: 若 $A^2 = O$, 那么
+\begin{align*}
+\mathbb{R}^n = \text{Im}(A) \oplus \text{Im}(A^T) \oplus \text{Ker}(B).
+\end{align*}
+其中 $B = A^T A + AA^T$, $\text{Ker}(B) = \{X \in \mathbb{R}^n \mid BX = 0\}$.
+\end{enumerate}
+\end{example}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 显然 $\text{Im}(AA^T) \subseteq \text{Im}(A)$.
+由\cref{proposition:AA转置秩与A秩相等}知$r(AA^T) = r(A)$,因此$\dim \text{Im}(AA^T) =\dim \text{Im}(A^T)$,故$\text{Im}(AA^T) = \text{Im}(A)$.
+
+\item 先证
+\begin{align}
+\mathrm{Ker}(B)=\mathrm{Ker}(A^TA+AA^T)=\mathrm{Ker}(A)\cap \mathrm{Ker}(A^T).\label{eq:kernelB-decomp-34-1}
+\end{align}
+对 $\forall x\in \mathrm{Ker}(B)$, 有
+\begin{align*}
+0&=x^TBx=x^T(A^TA+AA^T)x=x^TA^TAx+x^TAA^Tx\\
+&=(Ax)^T(Ax)+(A^Tx)^T(A^Tx)=\|Ax\|^2+\|A^Tx\|^2.
+\end{align*}
+从而 $Ax=A^Tx=O$, 于是 $x\in \mathrm{Ker}(A)\cap \mathrm{Ker}(A^T)$. 反之, 对 $\forall x\in \mathrm{Ker}(A)\cap \mathrm{Ker}(A^T)$, 有
+\begin{align*}
+Bx=(A^TA+AA^T)x=A^TAx+AA^Tx=0\Longrightarrow x\in \mathrm{Ker}(B).
+\end{align*}
+故\eqref{eq:kernelB-decomp-34-1}式成立. 由\subcref{proposition:例9.18}{proposition:例9.18-3}和
+\cref{proposition:一些常见的正交补空间}知
+\begin{align*}
+(\mathrm{Ker}(B))^\bot=(\mathrm{Ker}(A)\cap \mathrm{Ker}(A^T))^\bot=(\mathrm{Ker}(A))^\bot+(\mathrm{Ker}(A^T))^\bot=\mathrm{Im}(A^T)+\mathrm{Im}(A).
+\end{align*}
+再证直和. 对 $\forall x\in \mathrm{Im}(A)\cap \mathrm{Im}(A^T)$, 存在 $y,z\in \mathbb{R}^n$, 使得 $x=Ay=A^Tz$. 再由 $A^2=O$ 可得
+\begin{align*}
+Ax=A^2y=0\Longrightarrow x\in \mathrm{Ker}(A)\Longrightarrow x\in \mathrm{Ker}(A)\cap \mathrm{Im}(A^T).
+\end{align*}
+由\cref{proposition:一些常见的正交补空间}知 $\mathrm{Ker}(A)\perp \mathrm{Im}(A^T)$, 故 $x=0$, 因此 $\mathrm{Im}(A)\cap \mathrm{Im}(A^T)=\{0\}$. 故
+\begin{align*}
+(\mathrm{Ker}(B))^\bot=\mathrm{Im}(A^T)\oplus \mathrm{Im}(A).
+\end{align*}
+因此
+\begin{align*}
+\mathbb{R}^n=(\mathrm{Ker}(B))^\bot\oplus \mathrm{Ker}(B)=\mathrm{Im}(A^T)\oplus \mathrm{Im}(A)\oplus \mathrm{Ker}(B).
+\end{align*}
+\end{enumerate}
+\end{proof}
+
+\begin{example}
+已知$A$为$n$阶实方阵, 证明: 若存在实方阵$P$, 使得$A^{T} = AP$, 则存在正交方阵$Q$, 使\begin{align*}Q^{-1}AQ = \begin{pmatrix} B & O \\ O & O \end{pmatrix}\end{align*}其中$B$为可逆方阵.
+\end{example}
+\begin{proof}
+    
+{\color{blue}证法一:}对$\forall \alpha \in \mathrm{Ker}A$，都有$A\alpha =0$。从而$\alpha ^TA^T=0$。于是由条件可得
+$\alpha ^TA^T=\alpha ^TAP=0\Longrightarrow P^TA^T\alpha =0$。
+故$\mathrm{Ker}A\subseteq \mathrm{Ker}A^T$。又因为$\mathrm{r}(A) =\mathrm{r}(A^T)$，所以由维数公式知$\mathrm{dimKer}A=\mathrm{dimKer}A^T$。故$\mathrm{Ker}A=\mathrm{Ker}A^T$。由\refpro{proposition:一些常见的正交补空间}可知$\mathrm{Ker}A^T=\left( \mathrm{Im}A \right) ^{\bot}$，因此
+\begin{align}\label{eq:4423423r23r233534f34t3t34t23rewfj80rj893uf34t5321.1}
+V=\mathrm{Im}A\bot \left( \mathrm{Im}A \right) ^{\bot}=\mathrm{Im}A\bot \mathrm{Ker}A^T=\mathrm{Im}A\bot \mathrm{Ker}A
+\end{align}
+故可取$\mathrm{Im}A$的一组正交基$\{ e_1,\cdots ,e_k \}$和$\mathrm{Ker}A$的一组正交基$\{ e_{k+1},\cdots ,e_n \}$，从而
+$\{ e_1,\cdots ,e_k,e_{k+1},\cdots ,e_n \}$就是$V$的一组正交基。记$Q=\left( e_1,\cdots ,e_k,e_{k+1},\cdots ,e_n \right) ^T$，则
+\begin{align*}
+Q^{-1}AQ=\begin{pmatrix}
+B&		O\\
+O&		O
+\end{pmatrix}
+\end{align*}
+其中$B$为$A|_{\mathrm{Im}A}$的表示矩阵。由\eqref{eq:4423423r23r233534f34t3t34t23rewfj80rj893uf34t5321.1}式知
+$\mathrm{Ker}A|_{\mathrm{Im}A}=\mathrm{Ker}A\cap \mathrm{Im}A=\{ 0 \}$，
+故$A|_{\mathrm{Im}A}$是单射，从而$A|_{\mathrm{Im}A}$是可逆变换，即$B$是可逆矩阵。
+
+{\color{blue}证法二:}设 $A$ 为 $n$ 阶实方阵，$\operatorname{rank}(A)=r$。若 $r=0$，则 $A=O$，结论显然。下设 $r\geqslant 1$。
+
+由\hyperref[theorem:奇异值分解]{奇异值分解}知，存在正交矩阵 $U,V$，使得
+\begin{align*}
+A=U\Sigma V^T,\qquad 
+\Sigma=\begin{pmatrix}
+\Sigma_1&O\\
+O&O
+\end{pmatrix},
+\end{align*}
+其中 $\Sigma_1=\operatorname{diag}(\sigma_1,\cdots,\sigma_r)$，$\sigma_i>0,i=1,\cdots,r$.
+再由$A^T=AP$知$A^T=V\Sigma U^T$ .从而
+\begin{align*}
+V\Sigma U^T=U\Sigma V^T P.
+\end{align*}
+上式左乘 $U^T$，右乘 $U$，得
+\begin{align}
+U^T V\,\Sigma\, U^T U = \Sigma\, V^T P\,U\iff U^T V\,\Sigma = \Sigma\, V^T P\,U. \label{svdWX}
+\end{align}
+令$W=U^T V, X=V^T P U$,
+则 $W$ 是正交矩阵，且 \eqref{svdWX}式化为
+\begin{align}
+W\Sigma=\Sigma X. \label{svdWXeq}
+\end{align}
+将 $W,X$ 按前 $r$ 行、列分块：
+\begin{align*}
+W=\begin{pmatrix}
+W_{11}&W_{12}\\
+W_{21}&W_{22}
+\end{pmatrix},\qquad
+X=\begin{pmatrix}
+X_{11}&X_{12}\\
+X_{21}&X_{22}
+\end{pmatrix},
+\end{align*}
+其中 $W_{11},X_{11}$ 为 $r\times r$ 块。
+由\eqref{svdWXeq}式可得
+\begin{align*}
+\left( \begin{matrix}
+W_{11}\Sigma _1&		O\\
+W_{21}\Sigma _1&		O\\
+\end{matrix} \right) =\left( \begin{matrix}
+W_{11}&		W_{12}\\
+W_{21}&		W_{22}\\
+\end{matrix} \right) \left( \begin{matrix}
+\Sigma _1&		O\\
+O&		O\\
+\end{matrix} \right) =W\Sigma =\Sigma X=\left( \begin{matrix}
+\Sigma _1&		O\\
+O&		O\\
+\end{matrix} \right) \left( \begin{matrix}
+X_{11}&		X_{12}\\
+X_{21}&		X_{22}\\
+\end{matrix} \right) =\left( \begin{matrix}
+\Sigma _1X_{11}&		\Sigma _1X_{12}\\
+O&		O\\
+\end{matrix} \right) .
+\end{align*}
+比较等式两边得到
+\begin{align*}
+W_{11}\Sigma_1=\Sigma_1X_{11},\qquad 
+W_{21}\Sigma_1=O,\qquad 
+\Sigma_1X_{12}=O.
+\end{align*}
+又$\Sigma_1$ 可逆,故
+$W_{21}=O,X_{12}=O.$
+又因为 $W$ 是正交矩阵，所以
+\begin{align*}
+W^TW=
+\begin{pmatrix}
+W_{11}^T&W_{21}^T\\
+W_{12}^T&W_{22}^T
+\end{pmatrix}
+\begin{pmatrix}
+W_{11}&W_{12}\\
+W_{21}&W_{22}
+\end{pmatrix}
+=
+\begin{pmatrix}
+W_{11}^TW_{11}&W_{11}^TW_{12}\\
+W_{12}^TW_{11}&W_{12}^TW_{12}+W_{22}^TW_{22}
+\end{pmatrix}
+=
+\begin{pmatrix}
+I&O\\
+O&I
+\end{pmatrix}.
+\end{align*}
+比较等式两边得
+\begin{align*}
+W_{11}^{T}W_{12}=O,\quad W_{11}^{T}W_{11}=I,\quad W_{12}^{T}W_{12}+W_{22}^{T}W_{22}=I.
+\end{align*}
+故 $W_{11}$是正交阵，从而 $W_{12}=O$,进而$W_{22}$也是正交阵.因此
+\begin{align}
+W=\begin{pmatrix}
+W_{11}&O\\
+O&W_{22}
+\end{pmatrix},
+\end{align}
+其中 $W_{11},W_{22}$ 均为正交矩阵。
+
+由 $W=U^TV$ 得 $V=UW$,再代入$A=U\Sigma V^T$得
+\begin{align*}
+A&=U\Sigma (UW)^T=U\Sigma W^T U^T
+=U\begin{pmatrix}
+\Sigma_1&O\\
+O&O
+\end{pmatrix}
+\begin{pmatrix}
+W_{11}^T&O\\
+O&W_{22}^T
+\end{pmatrix}U^T
+=U\begin{pmatrix}
+\Sigma_1W_{11}^T&O\\
+O&O
+\end{pmatrix}U^T.
+\end{align*}
+取
+\begin{align*}
+Q=U,\qquad B=\Sigma_1W_{11}^T.
+\end{align*}
+因为 $\Sigma_1$ 可逆，$W_{11}^T$ 正交，所以 $B$ 为可逆方阵。于是
+\begin{align*}
+Q^{-1}AQ=U^TAU=
+\begin{pmatrix}
+B&O\\
+O&O
+\end{pmatrix}.
+\end{align*}
+
+{\color{blue}证法三:}
+记$r(A) = r$, 那么线性方程组$AX = 0$解空间的维数为$n-r$, 设$\eta_{r+1},\cdots,\eta_n$为该空间的一组标准正交基, 将其扩为$\mathbb{R}^n$的一组标准正交基, 设为$\eta_1,\cdots,\eta_r,\eta_{r+1},\cdots,\eta_n$, 记$Q = (\eta_1,\eta_2,\cdots,\eta_n)$, 则$Q$为正交矩阵, 且
+\begin{align}
+Q^{-1}AQ = Q^{\mathrm{T}}AQ =
+\begin{pmatrix}
+\eta_1^{\mathrm{T}}A\eta_1 & \eta_1^{\mathrm{T}}A\eta_2 & \cdots & \eta_1^{\mathrm{T}}A\eta_n \\
+\eta_2^{\mathrm{T}}A\eta_1 & \eta_2^{\mathrm{T}}A\eta_2 & \cdots & \eta_2^{\mathrm{T}}A\eta_n \\
+\vdots & \vdots & & \vdots \\
+\eta_n^{\mathrm{T}}A\eta_1 & \eta_n^{\mathrm{T}}A\eta_2 & \cdots & \eta_n^{\mathrm{T}}A\eta_n
+\end{pmatrix}.
+\label{eq:q_aq_decomp_ustc_69}
+\end{align}
+由于$A^{\mathrm{T}} = AP$, 所以$A = P^{\mathrm{T}}A^{\mathrm{T}}$, 这说明$A$的行向量均可由$A^{\mathrm{T}}$的行向量组线性表出, 而$r(A) = r(A^{\mathrm{T}})$, 所以$A$与$A^{\mathrm{T}}$的行向量组等价, 进而方程组$AX = 0$与$A^{\mathrm{T}}X = 0$也同解. 而对任意的$i = r+1,\cdots,n$, 有$A\eta_i = 0$, 所以$A^{\mathrm{T}}\eta_i = 0$, 也就是$\eta_i^{\mathrm{T}}A = 0$. 将此代入到\eqref{eq:q_aq_decomp_ustc_69}式, 有
+\begin{align*}
+Q^{-1}AQ = \begin{pmatrix} B & O \\ O & O \end{pmatrix}.
+\end{align*}
+其中$B = (\eta_i^{\mathrm{T}}A\eta_j)_{r\times r}$, 上式取矩阵的秩可得$r(B) = r(A) = r$, 因此$B$为可逆矩阵.
+\end{proof}
+
+\begin{definition}[正交投影]
+设 $V = V_1 \perp V_2 \perp \cdots \perp V_k$，定义 $V$ 上的线性变换 $E_i (i = 1, 2, \cdots, k)$ 如下：对$\forall v\in V$,设$v = v_1 + \cdots + v_i + \cdots + v_k (v_i \in V_i)$，定义 $E_i(v) = v_i$. 
+线性变换 $E_i$ 称为 $V$ 到 $V_i$ 上的\textbf{正交投影}（简称\textbf{投影}）.
+\end{definition}
+
+\begin{theorem}\label{theorem:正交投影的性质}
+设 \(V\) 为内积空间，\(V_1,\cdots,V_k,W\) 都是 \(V\) 的子空间，\(P\) 为从 \(V\) 到 \(W\) 的正交投影算子,$E_i$ 称为 $V$ 到 $V_i$ 上的正交投影,则
+\begin{enumerate}[(1)]
+\item\label{theorem:正交投影的性质-1} 对 $\forall \alpha, \beta \in V$，有
+\begin{gather*}
+E_iE_j = 0\ (i \neq j), \ E_1 + E_2 + \cdots + E_k = I_V,\\
+E_i^2 = E_i,\ E_i\mid_{V_i}=\text{id}_{V_i},\ (E_i(\alpha), \beta) = (\alpha, E_i(\beta)),\ i=1,2,\cdots,k.
+\end{gather*}
+进而$E_i$都是$V$上的自伴随算子、幂等变换.
+
+\item\label{theorem:正交投影的性质-2} 对\(\forall x \in V\)，有正交分解
+\begin{align*}
+x = Px + (x-Px),
+\end{align*}
+其中 \(Px \in W\)，\(x-Px \in W^\perp\)）.
+
+\item\label{theorem:正交投影的性质-3} 对\(\forall x \in V\)，有
+\begin{align*}
+\|P x\| \leqslant \|x\|,
+\end{align*}
+且等号成立的充分必要条件是 \(x \in W\)。
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 设 $\alpha = u_1 + w_1$，$\beta = u_2 + w_2$，其中 $u_1, u_2 \in V_i$，$w_1, w_2 \in V_i^\perp$，则 $E_i(\alpha) = u_1$，$E_i(\beta) = u_2$，于是
+\begin{align*}
+(E_i(\alpha), \beta) &= (u_1, u_2 + w_2) = (u_1, u_2) + (u_1, w_2) = (u_1, u_2), \\
+(\alpha, E_i(\beta)) &= (u_1 + w_1, u_2) = (u_1, u_2) + (w_1, u_2) = (u_1, u_2).
+\end{align*}
+故$E_i$都是自伴随算子.
+
+\item 
+
+\item 任取 \(x \in V\)。由(2)可知有正交分解 \(x = Px + (x - Px)\)，且 \(Px \perp (x - Px)\)，根据\hyperref[corollary:范数性质的相关推广-勾股定理]{勾股定理}有
+\[
+\|x\|^2 = \|Px\|^2 + \|x - Px\|^2.
+\]
+由于 \(\|x - Px\|^2 \geqslant 0\)，立即得到
+\[
+\|Px\|^2 \leqslant \|x\|^2 \Longrightarrow \|Px\| \leqslant \|x\|.
+\]
+等号成立当且仅当 \(\|x - Px\|^2 = 0\)，即 \(x - Px = 0\)，亦即 \(x = Px \in W\)。反之，若 \(x \in W\)，则 \(Px = x\)，显然等号成立。故等号成立当且仅当 \(x \in W\).
+\end{enumerate}
+\end{proof}
+
+\begin{example}
+设$V$是一个$n$维欧氏空间, $V_1, V_2$是$V$的两个非平凡子空间, 且$V = V_1 \oplus V_2$, 设$\sigma_i$是$V$到$V_i$的正交投影, 即$\forall \alpha = \beta + \gamma \in V_i \oplus V_i^\perp$, 其中$\beta \in V_i$, $\gamma \in V_i^\perp$, 有$\sigma_i(\alpha) = \beta$, $i = 1,2$. 证明:
+\begin{enumerate}[(1)]
+\item $\forall v_1 \in V_1$, $v_2 \in V_2$, 有$v_1 - \sigma_2(v_1) \in V_2^\perp$, $v_2 - \sigma_1(v_2) \in V_1^\perp$;
+\item $\sigma_2\sigma_1|_{V_2}$的任何一个特征值$\lambda$都满足$0 \leqslant \lambda < 1$.
+\end{enumerate}
+\end{example}
+\begin{proof}
+\begin{enumerate}[(1)]
+\item 由\subcref{theorem:正交投影的性质}{theorem:正交投影的性质-1}知
+\begin{align}
+\sigma_i \text{是自伴随算子}, \quad \sigma_i^2 = \sigma_i, \quad \sigma_i|_{V_i} = \mathrm{id}_{V_i}, \quad i = 1,2. \label{eq:orth_proj_basic_prop}
+\end{align}
+从而对$\forall v_1 \in V_1, v_2 \in V_2$, 有
+\begin{align*}
+\left< v_1 - \sigma_2(v_1), v_2 \right> = \left< v_1, v_2 \right> - \left< \sigma_2(v_1), v_2 \right> 
+= \left< v_1, v_2 \right> - \left< v_1, \sigma_2(v_2) \right> 
+= \left< v_1, v_2 \right> - \left< v_1, v_2 \right> = 0 
+\Longrightarrow v_1 - \sigma_2(v_1) \in V_2^\perp,
+\end{align*}
+\begin{align*}
+\left< v_2 - \sigma_1(v_2), v_1 \right> = \left< v_2, v_1 \right> - \left< \sigma_1(v_2), v_1 \right> = \left< v_2, v_1 \right> - \left< v_2, \sigma_1(v_1) \right> = \left< v_2, v_1 \right> - \left< v_2, v_1 \right> = 0 
+\Longrightarrow v_2 - \sigma_1(v_2) \in V_1^\perp.
+\end{align*}
+
+\item 记$T = \sigma_2\sigma_1$, 对$\forall x, y \in V_2$, 由\eqref{eq:orth_proj_basic_prop}式知
+\begin{align*}
+\begin{cases}
+\left< T(x), y \right> = \left< \sigma_2\sigma_1(x), y \right> = \left< \sigma_1(x), \sigma_2(y) \right> = \left< \sigma_1(x), y \right> = \left< x, \sigma_1(y) \right>, \\
+\left< x, T(y) \right> = \left< x, \sigma_2\sigma_1(y) \right> = \left< \sigma_2(x), \sigma_1(y) \right> = \left< x, \sigma_1(y) \right>.
+\end{cases}
+\Longrightarrow \left< T(x), y \right> = \left< x, T(y) \right>.
+\end{align*}
+故$T|_{V_2}$是自伴随算子. 设$T(\alpha) = \lambda \alpha$, 其中$\alpha \in V_2 \setminus \{0\}$, $\lambda \in \mathbb{C}$. 再利用\eqref{eq:orth_proj_basic_prop}式得到
+\begin{align*}
+\lambda \|\alpha\|^2 &= \left< \lambda \alpha, \alpha \right> = \left< T(\alpha), \alpha \right> = \left< \sigma_2\sigma_1(\alpha), \alpha \right> \\
+&= \left< \sigma_1(\alpha), \sigma_2(\alpha) \right> = \left< \sigma_1^2(\alpha), \alpha \right> = \left< \sigma_1(\alpha), \sigma_1(\alpha) \right> = \|\sigma_1(\alpha)\|^2 \geqslant 0.
+\end{align*}
+故$\lambda = \frac{\|\sigma_1(\alpha)\|^2}{\|\alpha\|^2} \geqslant 0$. 又由\subcref{theorem:正交投影的性质}{theorem:正交投影的性质-3}知
+\begin{align*}
+\lambda \|\alpha\| = \|T(\alpha)\| = \|\sigma_2\sigma_1(\alpha)\| \leqslant \|\sigma_1(\alpha)\| \leqslant \|\alpha\| \Longrightarrow \lambda \leqslant 1.
+\end{align*}
+若$\lambda = 1$, 则再由\subcref{theorem:正交投影的性质}{theorem:正交投影的性质-3}知
+\begin{align*}
+\|T(\alpha)\| = \|\sigma_2\sigma_1(\alpha)\| = \|\sigma_1(\alpha)\| = \|\alpha\| \Longrightarrow \alpha \in V_1.
+\end{align*}
+因此$\alpha \in V_1 \cap V_2 = \{0\}$, 这与$\alpha \in V_2 \setminus \{0\}$矛盾! 故$\lambda < 1$. 综上可知$0 \leqslant \lambda < 1$.
+\end{enumerate}
+\end{proof}
+
+\begin{theorem}[Bessel (贝塞尔) 不等式]\label{theorem:Bessel不等式}
+设 $v_1, v_2, \cdots, v_m$ 是内积空间 $V$ 中的正交非零向量组，$y$ 是 $V$ 中任一向量，则
+\begin{align*}
+\sum_{k = 1}^{m}\frac{|(y, v_k)|^2}{\|v_k\|^2} \leqslant  \|y\|^2,
+\end{align*}
+且等号成立的充分必要条件是 $y$ 属于由 $\{v_1, v_2, \cdots, v_m\}$ 张成的子空间.
+\end{theorem}
+\begin{remark}
+Bessel (贝塞尔) 不等式是“斜边大于直角边”这一几何命题在内积空间中的推广.
+\end{remark}
+\begin{proof}
+令
+\begin{align*}
+x = \sum_{k = 1}^{m}\frac{(y, v_k)}{\|v_k\|^2}v_k,
+\end{align*}
+则 $x$ 属于由 $\{v_1, v_2, \cdots, v_m\}$ 张成的子空间. 容易验证
+\begin{align*}
+(y - x, v_k) =(y,v_k)-(y,v_k)= 0, \ k = 1, 2, \cdots, m,
+\end{align*}
+因此 $(y - x, x) = 0$. 由\hyperref[corollary:范数性质的相关推广-勾股定理]{勾股定理}可得
+\begin{align*}
+\|y\|^2 = \|y - x\|^2 + \|x\|^2,
+\end{align*}
+故
+\begin{align*}
+\|x\|^2 \leqslant  \|y\|^2.
+\end{align*}
+又由 $v_1, v_2, \cdots, v_m$ 两两正交不难算出
+\begin{align*}
+\|x\|^2 = \sum_{k = 1}^{m}\frac{|(y, v_k)|^2}{\|v_k\|^2}.
+\end{align*}
+若 $y$ 属于由 $\{v_1, v_2, \cdots, v_m\}$ 张成的子空间，则 $y = x$，故等号成立. 反之，若等号成立，则 $\|y - x\|^2 = 0$，故 $y = x$，即 $y$ 属于由 $\{v_1, v_2, \cdots, v_m\}$ 张成的子空间. 
+\end{proof}
+
+
+
+
+
+
+
+
+\end{document}

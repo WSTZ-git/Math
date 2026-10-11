@@ -1,0 +1,260 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}}
+
+\begin{document}
+
+\section{分离变量法}\label{section:ch04-sepvar}
+
+分离变量法试图把给定偏微分方程的解 $u$ 构造为若干变量数较少的函数的某种组合。换言之，想法是先猜测 $u$ 可写成（譬如）若干待定的组成函数的和或乘积，把此猜测代入 PDE，最后选定这些较简单的函数，使 $u$ 真正是一个解。
+
+\subsection{例子}\label{subsection:ch04-sepvar-ex}
+
+分离变量技巧最好通过一些例子来理解。
+
+\begin{example}\label{example:ch04-heat-sep}
+设 $U\subset\mathbb{R}^n$ 是具光滑边界的有界开集。我们考虑热方程的初边值问题
+\begin{align}\label{align:ch04-heat-ibvp}
+\begin{cases}
+u_t-\Delta u=0 & \text{在 }U\times(0,\infty)\text{ 中},\\
+u=0 & \text{在 }\partial U\times[0,\infty)\text{ 上},\\
+u=g & \text{在 }U\times\{t=0\}\text{ 上},
+\end{cases}
+\end{align}
+其中 $g:U\to\mathbb{R}$ 给定。我们猜测存在一个具乘积形式
+\begin{align}\label{align:ch04-sep-product}
+u(x,t)=v(t)w(x) \qquad(x\in U,\ t\geqslant 0)
+\end{align}
+的解；即我们寻找\eqref{align:ch04-heat-ibvp} 的一个解，其中变量 $x=(x_1,\cdots,x_n)\in U$ 与变量 $t\in[0,T]$``分离''。
+
+这可行吗？为弄清楚，计算 $u_t(x,t)=v'(t)w(x)$，$\Delta u(x,t)=v(t)\Delta w(x)$。故
+\begin{align*}
+0=u_t(x,t)-\Delta u(x,t)=v'(t)w(x)-v(t)\Delta w(x)
+\end{align*}
+当且仅当
+\begin{align}\label{align:ch04-sep-ratio}
+\frac{v'(t)}{v(t)}=\frac{\Delta w(x)}{w(x)}
+\end{align}
+对一切使 $w(x),v(t)\neq 0$ 的 $x\in U$、$t>0$ 成立。现注意\eqref{align:ch04-sep-ratio} 左端只依赖 $t$，右端只依赖 $x$。这不可能，除非两边都为常数，譬如
+\begin{align*}
+\frac{v'(t)}{v(t)}=\mu=\frac{\Delta w(x)}{w(x)} \qquad(t\geqslant 0,\ x\in U).
+\end{align*}
+则
+\begin{align}\label{align:ch04-v-ode}
+v'=\mu v,
+\end{align}
+\begin{align}\label{align:ch04-w-pde}
+\Delta w=\mu w.
+\end{align}
+我们须对未知量 $w,v,\mu$ 解这些方程。
+
+首先注意：若 $\mu$ 已知，\eqref{align:ch04-v-ode} 的解为 $v=d e^{\mu t}$（$d$ 任意常数）。因而我们只需研究方程\eqref{align:ch04-w-pde}。
+
+我们称 $\lambda$ 为算子 $-\Delta$ 在 $U$ 上（带零边值条件）的一个\textbf{特征值}，只要存在一个不恒为零的函数 $w$，解
+\begin{align*}
+\begin{cases}
+-\Delta w=\lambda w & \text{在 }U\text{ 中},\\
+w=0 & \text{在 }\partial U\text{ 上}.
+\end{cases}
+\end{align*}
+函数 $w$ 为相应的\textbf{特征函数}。（特征值、特征函数的理论见\cref{chapter:ch06-二阶椭圆型方程}。）
+
+若 $\lambda$ 是特征值、$w$ 是相应特征函数，我们在上面取 $\mu=-\lambda$，发现
+\begin{align}\label{align:ch04-sep-single}
+u=d e^{-\lambda t}w
+\end{align}
+解
+\begin{align}\label{align:ch04-heat-hom}
+\begin{cases}
+u_t-\Delta u=0 & \text{在 }U\times(0,\infty)\text{ 中},\\
+u=0 & \text{在 }\partial U\times[0,\infty)\text{ 上},
+\end{cases}
+\end{align}
+且初始条件为 $u(\cdot,0)=dw$。于是只要 $g=dw$，由\eqref{align:ch04-sep-single} 定义的函数 $u$ 解问题\eqref{align:ch04-heat-ibvp}。更一般地，若 $\lambda_1,\cdots,\lambda_m$ 是特征值，$w_1,\cdots,w_m$ 是相应特征函数，$d_1,\cdots,d_m$ 是常数，则
+\begin{align}\label{align:ch04-sep-finite}
+u=\sum_{k=1}^m d_k e^{-\lambda_k t}w_k
+\end{align}
+解\eqref{align:ch04-heat-hom}，初始条件为 $u(\cdot,0)=\sum_{k=1}^m d_k w_k$。若我们能找到 $m,w_1,\cdots$ 使 $\sum_{k=1}^m d_k w_k=g$，就完成了。
+
+我们可进一步推广：试找一个可数序列 $\lambda_1,\cdots$ 的特征值及相应特征函数 $w_1,\cdots$，使对恰当常数 $d_1,\cdots$ 有
+\begin{align}\label{align:ch04-sep-series}
+\sum_{k=1}^\infty d_k w_k=g \qquad\text{在 }U\text{ 中}.
+\end{align}
+则大概
+\begin{align}\label{align:ch04-sep-sol}
+u=\sum_{k=1}^\infty d_k e^{-\lambda_k t}w_k
+\end{align}
+将是初值问题\eqref{align:ch04-heat-ibvp} 的解。
+
+这是一个有吸引力的解的表示公式，但它依赖于 (a) 我们能找到满足\eqref{align:ch04-sep-series} 的特征值、特征函数与常数，以及 (b) 我们验证\eqref{align:ch04-sep-sol} 中的级数在某种恰当意义下收敛。我们将在\cref{chapter:ch06-二阶椭圆型方程,chapter:ch07-线性发展方程}中在 Galerkin 近似的背景下进一步讨论这些问题。
+
+注意：只有解\eqref{align:ch04-sep-single} 由分离变量确定；较复杂的形式\eqref{align:ch04-sep-finite} 与\eqref{align:ch04-sep-sol} 依赖于热方程的线性性。
+\end{example}
+
+\begin{example}\label{example:ch04-porous}
+现把分离变量技巧应用于发现多孔介质方程
+\begin{align}\label{align:ch04-porous}
+u_t-\Delta(u^\gamma)=0 \qquad\text{在 }\mathbb{R}^n\times(0,\infty)\text{ 中}
+\end{align}
+的一个解，其中 $u\geqslant 0$，$\gamma>1$ 为常数。式\eqref{align:ch04-porous} 是一个非线性扩散方程，其中某密度 $u$ 的扩散速率依赖于 $u$ 本身。此 PDE 描述多孔介质中的流动、薄膜润滑以及各种其他现象。
+
+如前例，我们寻求形如
+\begin{align}\label{align:ch04-porous-product}
+u(x,t)=v(t)w(x) \qquad(x\in\mathbb{R}^n,\ t\geqslant 0)
+\end{align}
+的解。代入\eqref{align:ch04-porous}，发现对某常数 $\mu$ 及一切使 $w(x),v(t)\neq 0$ 的 $x\in\mathbb{R}^n$、$t\geqslant 0$，
+\begin{align}\label{align:ch04-porous-ratio}
+\frac{v'(t)}{v(t)^\gamma}=\mu=\frac{\Delta w^\gamma(x)}{w(x)}.
+\end{align}
+我们解 $v$ 的 ODE，得 $v=((1-\gamma)\mu t+\lambda)^{\frac{1}{1-\gamma}}$，对某常数 $\lambda$，我们取为正。为求 $w$，则须解 PDE
+\begin{align}\label{align:ch04-porous-w}
+\Delta(w^\gamma)=\mu w.
+\end{align}
+现我们猜测 $w=|x|^\alpha$，对某待定常数 $\alpha$。则
+\begin{align}\label{align:ch04-porous-calc}
+\mu w-\Delta(w^\gamma)=\mu|x|^\alpha-\alpha\gamma(\alpha\gamma+n-2)|x|^{\alpha\gamma-2}.
+\end{align}
+故为使\eqref{align:ch04-porous-w} 在 $\mathbb{R}^n$ 中成立，我们首先应要求 $\alpha=\alpha\gamma-2$，从而
+\begin{align}\label{align:ch04-alpha}
+\alpha=\frac{2}{\gamma-1}.
+\end{align}
+回到\eqref{align:ch04-porous-calc}，看到我们还须令
+\begin{align}\label{align:ch06-mu关系}
+\mu=\alpha\gamma(\alpha\gamma+n-2)>0.
+\end{align}
+于是总结：对每个 $\lambda>0$，函数 $u=((1-\gamma)\mu t+\lambda)^{\frac{1}{1-\gamma}}|x|^\alpha$ 解多孔介质方程\eqref{align:ch04-porous}，参数 $\alpha,\mu$ 由\eqref{align:ch04-alpha}、\eqref{align:ch06-mu关系} 定义。
+\end{example}
+
+\begin{remark}\label{remark:ch04-porous-blowup}
+注意：由于 $\gamma>1$，此解当 $x\neq 0$ 时在 $t\to t^*$ 处爆破，其中 $t^*\triangleq\dfrac{\lambda}{(\gamma-1)\mu}$。物理上，巨量质量在有限时间内``从无穷远扩散进来''。多孔介质方程另一个性态更好的解见 \S4.2.2；非线性扩散方程爆破现象的更多内容见 \S9.4.1。
+\end{remark}
+
+在前例中，分离变量之所以成功，是由于非线性项的齐次性，它与具乘积形式\eqref{align:ch04-porous-product} 的函数 $u$ 相容。在其他情形中，寻找变量按加法分离的解也是有益的：
+
+\begin{example}\label{example:ch04-hj-sep}
+让我们再次转向 Hamilton--Jacobi 方程
+\begin{align}\label{align:ch04-hj-sep}
+u_t+H(Du)=0 \qquad\text{在 }\mathbb{R}^n\times(0,\infty)\text{ 中}
+\end{align}
+并寻找形如 $u(x,t)=w(x)+v(t)$（$x\in\mathbb{R}^n$，$t\geqslant 0$）的解。则
+\begin{align*}
+0=u_t(x,t)+H(Du(x,t))=v'(t)+H(Dw(x))
+\end{align*}
+当且仅当 $H(Dw(x))=\mu=-v'(t)$（$x\in\mathbb{R}^n$，$t>0$），对某常数 $\mu$。因而若对某 $\mu\in\mathbb{R}$ 有 $H(Dw)=\mu$，则 $u(x,t)=w(x)-\mu t+b$ 对任意常数 $b$ 都解 $u_t+H(Du)=0$。特别地，若选 $w(x)=a\cdot x$（某 $a\in\mathbb{R}^n$）并令 $\mu=H(a)$，就得到解 $u=a\cdot x-H(a)t+b$，已在 \S3.1 中提到。
+\end{example}
+
+\subsection{应用：Turing 不稳定}\label{subsection:ch04-turing}
+
+上面例\cref{example:ch04-heat-sep} 中讨论的分离变量与特征函数展开，在纯粹数学与应用数学中都是非常有力的工具。本节讨论一个有趣的这类应用。
+
+设给定 $\mathbb{R}^2$ 上一个光滑向量场 $\mathbf{f}=(f_1,f_2)$，且 $0$ 是一个平衡点：$\mathbf{f}(0)=0$。我们感兴趣比较 ODE 系统
+\begin{align}\label{align:ch04-ode-sys}
+\dot{\mathbf{x}}=\mathbf{f}(\mathbf{x}) \qquad(t\geqslant 0)
+\end{align}
+的解 $\mathbf{x}=(x_1,x_2)$ 与相应反应--扩散 PDE 系统
+\begin{align}\label{align:ch04-rd-sys}
+\begin{cases}
+\mathbf{u}_t-A\Delta\mathbf{u}=\mathbf{f}(\mathbf{u}) & \text{在 }U\times(0,\infty)\text{ 中},\\
+\mathbf{u}=0 & \text{在 }\partial U\times(0,\infty)\text{ 上}
+\end{cases}
+\end{align}
+的解 $\mathbf{u}=(u_1,u_2)$ 的稳定性，其中 $U\subset\mathbb{R}^2$ 是某有界光滑区域。矩阵
+\begin{align*}
+A=\begin{pmatrix}a_1&0\\0&a_2\end{pmatrix}
+\end{align*}
+引入扩散常数 $a_1,a_2\geqslant 0$。（反应--扩散方程的更多内容见 \S9.2.1。）
+
+\textbf{线性化、分离变量.} \eqref{align:ch04-ode-sys} 在平衡点解 $\mathbf{x}\equiv 0$ 附近的线性化是线性 ODE 系统
+\begin{align}\label{align:ch04-ode-lin}
+\dot{\mathbf{y}}=D\mathbf{f}(0)\mathbf{y} \qquad(t\geqslant 0),
+\end{align}
+其中 $\mathbf{y}=(y_1,y_2)$。平衡点 $\mathbf{x}\equiv 0$ 渐近稳定，若每个解 $\mathbf{y}$ 当 $t\to\infty$ 时趋于零。只要矩阵 $D\mathbf{f}(0)$ 的特征值实部为负，即是如此。
+
+类似地，\eqref{align:ch04-rd-sys} 在 $\mathbf{u}\equiv 0$ 附近的线性化是线性 PDE 系统
+\begin{align}\label{align:ch04-pde-lin}
+\mathbf{v}_t-A\Delta\mathbf{v}=D\mathbf{f}(0)\mathbf{v}
+\end{align}
+对 $\mathbf{v}=(v_1,v_2)$。我们用 \S4.1.1 中引入的分离变量及随后的特征函数展开法解\eqref{align:ch04-pde-lin}。因而写
+\begin{align}\label{align:ch04-v-expansion}
+\mathbf{v}(x,t)=\sum_{j=1}^\infty s_j(t)w_j(x),
+\end{align}
+其中 $\{w_j\}_{j=1}^\infty$ 是 $U$ 上 Laplace 算子带零边值条件的特征函数：
+\begin{align*}
+\begin{cases}
+-\Delta w_j=\lambda_j w_j & \text{在 }U\text{ 中},\\
+w_j=0 & \text{在 }\partial U\text{ 上}.
+\end{cases}
+\end{align*}
+这类特征值与特征函数的理论见 \S6.5，其中我们特别将知道 $\lambda_j>0$（$j=1,\cdots$），且可取 $\{w_j\}_{j=1}^\infty$ 在 $L^2(U)$ 中规范正交：$\int_U w_iw_j\,\mathrm{d}x=\delta_{ij}$（$i,j=1,\cdots$）。
+
+把\eqref{align:ch04-v-expansion} 代入\eqref{align:ch04-pde-lin}，推出对 $j=1,\cdots$，
+\begin{align}\label{align:ch04-sj-ode}
+s_j'=A_j s_j,
+\end{align}
+其中矩阵
+\begin{align}\label{align:ch04-Aj}
+A_j\triangleq D\mathbf{f}(0)-\lambda_j A.
+\end{align}
+解 $\mathbf{v}\equiv 0$ 稳定当且仅当每个函数 $s_j$ 当 $t\to\infty$ 时衰减到零。只要矩阵 $A_j$ 的特征值对 $j=1,\cdots$ 实部为负，即发生此情形。
+
+我们现讨论如下问题：若 $0$ 是 ODE 系统\eqref{align:ch04-ode-sys} 的渐近稳定平衡点，是否必定 $0$ 是 PDE 系统\eqref{align:ch04-rd-sys} 的渐近稳定平衡点？答案或许令人惊讶：``否''。引入 PDE \eqref{align:ch04-rd-sys} 的扩散项事实上可把\eqref{align:ch04-ode-sys} 的一个稳定点变为\eqref{align:ch04-rd-sys} 的一个不稳定点。此效应称为\textbf{Turing 不稳定}。
+
+\textbf{$D\mathbf{f}(0)$ 的特征值.} 我们先引入 $D\mathbf{f}(0)$ 上迫使 $0$ 对 ODE \eqref{align:ch04-ode-sys} 稳定的显式条件，来研究此现象。此后写
+\begin{align*}
+D\mathbf{f}(0)=\begin{pmatrix}f^1_{z_1}(0)&f^1_{z_2}(0)\\ f^2_{z_1}(0)&f^2_{z_2}(0)\end{pmatrix}\triangleq\begin{pmatrix}\alpha&\beta\\ \gamma&\delta\end{pmatrix}.
+\end{align*}
+则
+\begin{align}\label{align:ch04-df-char}
+\det(D\mathbf{f}(0)-\sigma I)=\sigma^2-\sigma(\alpha+\delta)+\alpha\delta-\gamma\beta.
+\end{align}
+我们要求 $0$ 是 $D\mathbf{f}(0)$ 的稳定平衡点，从而\eqref{align:ch04-df-char} 的根 $\sigma_1,\sigma_2$ 实部为负。这意味着
+\begin{align}\label{align:ch04-stable-cond}
+\begin{cases}
+\alpha+\delta=\sigma_1+\sigma_2<0,\\
+\alpha\delta-\gamma\beta=\sigma_1\sigma_2>0.
+\end{cases}
+\end{align}
+注意这些条件既覆盖实特征值 $\sigma_2\leqslant\sigma_1<0$ 的情形，也覆盖共轭复特征值 $\sigma_1=b+ic$、$\sigma_2=b-ic$（$b<0$）的情形。
+
+\textbf{$A_j$ 的特征值.} 我们想看：通过加入扩散项 $a_1,a_2\geqslant 0$，能否迫使某 $j$ 的 $A_j$ 特征值实部为正。由\eqref{align:ch04-Aj} 看到
+\begin{align}\label{align:ch04-Aj-char}
+\det(A_j-\sigma I)=\sigma^2-\sigma(\alpha+\delta-\lambda_j(a_1+a_2))+p(\lambda_j),
+\end{align}
+其中
+\begin{align}\label{align:ch06-Hopf条件}
+p(\lambda)\triangleq\lambda^2 a_1a_2-\lambda(a_1\delta+a_2\alpha)+\alpha\delta-\beta\gamma.
+\end{align}
+多项式\eqref{align:ch04-Aj-char} 的根 $\sigma_{1,j},\sigma_{2,j}$ 满足 $\sigma_{1,j}+\sigma_{2,j}=\alpha+\delta-\lambda_j(a_1+a_2)<0$，因为按\eqref{align:ch04-stable-cond} $\alpha+\delta<0$，$\lambda_j\geqslant 0$，$a_1,a_2>0$。因而对共轭复根 $\sigma_{1,j}=b_j+ic_j$、$\sigma_{2,j}=b_j-ic_j$ 的情形，实部 $b_j$ 为负。此情形下 ODE \eqref{align:ch04-sj-ode} 的解 $s_j$ 当 $t\to\infty$ 时趋于零，我们有渐近稳定：这不是我们要找的。
+
+\textbf{稳定性的丧失.} 因而 PDE 系统\eqref{align:ch04-pde-lin} 可能丧失稳定的唯一情形是我们有实根 $\sigma_{2,j}\leqslant\sigma_{1,j}$。我们想在此情形选 $a_1,a_2\geqslant 0$，使 $\sigma_{1,j}\geqslant 0$。设想从 $a_1=a_2=0$ 开始，然后增大这些扩散常数，直到系统\eqref{align:ch04-pde-lin} 首次开始丧失稳定，即 $\sigma_{1,j}=0$。这发生当且仅当
+\begin{align}\label{align:ch04-pzero}
+p(\lambda_j)=0.
+\end{align}
+
+我们寻求蕴含\eqref{align:ch04-pzero} 的代数条件。不失一般性可假定
+\begin{align}\label{align:ch04-delta-neg}
+\delta<0.
+\end{align}
+则若 $a_2=0$，按\eqref{align:ch04-stable-cond} 将有 $p(\lambda_j)=-\lambda_j a_1\delta+\alpha\delta-\beta\gamma>0$。故我们必须 $a_2>0$；即为发生 Turing 不稳定，我们必须在 PDE 系统\eqref{align:ch04-pde-lin} 的第二个方程中引入某种扩散。
+
+现若 $\alpha\leqslant 0$，则\eqref{align:ch04-stable-cond} 迫使 $p(\lambda_j)=\lambda_j^2 a_1a_2-\lambda_j(a_1\delta+a_2\alpha)+(\alpha\delta-\beta\gamma)>0$，故我们无法实现\eqref{align:ch04-pzero}。因而我们必须要求
+\begin{align}\label{align:ch04-alpha-pos}
+\alpha>0.
+\end{align}
+记住\eqref{align:ch04-delta-neg} 与\eqref{align:ch04-alpha-pos}，把公式 $p(\lambda_j)=0$ 改写为
+\begin{align}\label{align:ch04-a2}
+a_2=\frac{\alpha\delta-\gamma\beta-\delta\lambda_j a_1}{\lambda_j(\alpha-\lambda_j a_1)}.
+\end{align}
+但给定某 $\lambda_j>0$，我们易找到 $a_2>0$、$a_1\geqslant 0$ 解\eqref{align:ch04-a2}。注意若 $\lambda_j\gg 0$，我们须取 $a_1$ 足够小，以确保 $\alpha-\lambda_j a_1>0$。
+
+\textbf{解释：激活子与抑制子.} 符号条件
+\begin{align*}
+\begin{cases}
+\alpha=f^1_{z_1}(0)>0,\ \beta=f^1_{z_2}(0)<0,\\
+\gamma=f^2_{z_1}(0)>0,\ \delta=f^2_{z_2}(0)<0
+\end{cases}
+\end{align*}
+与我们的要求\eqref{align:ch04-stable-cond}、\eqref{align:ch04-delta-neg}、\eqref{align:ch04-alpha-pos} 相容。于是我们可把 $u_1$ 解释为某化学激活子的密度，$u_2$ 为某抑制子的密度：由于 $\alpha>0$，激活子自身会增长；但由于 $\beta<0$，此增长可被抑制子抵消。$\gamma,\delta$ 的符号意味着抑制子仅响应激活子的存在而增加。条件\eqref{align:ch04-stable-cond} 意味着激活子/抑制子平衡至少在原点附近对 ODE \eqref{align:ch04-ode-sys} 成立。
+
+我们发现：只要 $a_2$ 足够大、$a_1$ 足够小，扩散效应可打破此平衡。物理解释是：抑制子 $u_2$ 比激活子 $u_1$ 更快地从任给一点扩散走，因而可能没有足够的抑制子来阻止激活子失控增长。这类反应--扩散不稳定有时被提作生物图案形成的简单模型：见例如 Markowich \cite{Mr}。
+
+\end{document}

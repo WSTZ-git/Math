@@ -1,0 +1,536 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}}
+
+\begin{document}
+
+\section{特征线}\label{section:ch03-characteristics}
+
+\subsection{特征 ODE 的推导}\label{subsection:ch03-char-derive}
+
+我们回到基本非线性一阶 PDE
+\begin{align}\label{align:ch03-pde2}
+F(Du,u,x)=0 \qquad \text{在 }U\text{ 中},
+\end{align}
+现在配以边界条件
+\begin{align}\label{align:ch03-bc}
+u=g \qquad \text{在 }\Gamma\text{ 上},
+\end{align}
+其中 $\Gamma\subseteq\partial U$，$g:\Gamma\to\mathbb{R}$ 给定。此后假定 $F,g$ 为光滑函数。
+
+我们接下来发展特征线法：通过把 PDE 化为一个恰当的 ODE 组来求解\eqref{align:ch03-pde2}、\eqref{align:ch03-bc}。计划如下。设 $u$ 解\eqref{align:ch03-pde2}、\eqref{align:ch03-bc}，固定任一点 $x\in U$。我们想通过在 $U$ 内找一条连接 $x$ 与某点 $x_0\in\Gamma$、且沿之可计算 $u$ 的曲线，来算出 $u(x)$。由于\eqref{align:ch03-bc} 说在 $\Gamma$ 上 $u=g$，我们知道一端 $x_0$ 处 $u$ 的值。于是希望沿整条曲线算出 $u$，从而特别地在 $x$ 处算出 $u$。
+
+\textbf{寻找特征 ODE.} 我们怎样在 $U$ 中选一条路径，使这一切可行？设曲线由函数 $\mathbf{x}(s)=(x_1(s),\cdots,x_n(s))$ 参数化，参数 $s$ 位于某子区间 $I\subseteq\mathbb{R}$。设 $u$ 是\eqref{align:ch03-pde2} 的 $C^2$ 解，又定义
+\begin{align}\label{align:ch05-Riesz}
+z(s)\triangleq u(\mathbf{x}(s)).
+\end{align}
+此外令
+\begin{align}\label{align:ch03-p}
+\mathbf{p}(s)\triangleq Du(\mathbf{x}(s));
+\end{align}
+即 $\mathbf{p}(s)=(p_1(s),\cdots,p_n(s))$，其中
+\begin{align}\label{align:ch03-pi}
+p_i(s)=u_{x_i}(\mathbf{x}(s)) \qquad (i=1,\cdots,n).
+\end{align}
+于是 $z(\cdot)$ 给出 $u$ 沿曲线的值，$\mathbf{p}(\cdot)$ 记录梯度 $Du$ 的值。我们必须这样选取函数 $\mathbf{x}(\cdot)$，使能算出 $z(\cdot)$ 与 $\mathbf{p}(\cdot)$。
+
+为此先对\eqref{align:ch03-pi} 求导：
+\begin{align}\label{align:ch03-pdot}
+\dot{p}_i(s)=\sum_{j=1}^n u_{x_i x_j}(\mathbf{x}(s))\dot{x}_j(s) \qquad \left(\dot{\ }=\frac{\mathrm{d}}{\mathrm{d}s}\right).
+\end{align}
+此式不太妙，因为它涉及 $u$ 的二阶导数。另一方面，我们也可对 PDE \eqref{align:ch03-pde2} 关于 $x_i$ 求导：
+\begin{align}\label{align:ch03-pde-dxi}
+\sum_{j=1}^n F_{p_j}(Du,u,x)u_{x_j x_i}+F_z(Du,u,x)u_{x_i}+F_{x_i}(Du,u,x)=0.
+\end{align}
+只要我们先令
+\begin{align}\label{align:ch03-xdot}
+\dot{x}_j(s)=F_{p_j}(\mathbf{p}(s),z(s),\mathbf{x}(s)) \qquad (j=1,\cdots,n),
+\end{align}
+就能用此恒等式消去\eqref{align:ch03-pdot} 中的二阶导数项。现假定\eqref{align:ch03-xdot} 成立，在 $x=\mathbf{x}(s)$ 处计算\eqref{align:ch03-pde-dxi}，由\eqref{align:ch05-Riesz}、\eqref{align:ch03-p} 得恒等式
+\begin{align*}
+\sum_{j=1}^n F_{p_j}(\mathbf{p}(s),z(s),\mathbf{x}(s))u_{x_i x_j}(\mathbf{x}(s))
++F_z(\mathbf{p}(s),z(s),\mathbf{x}(s))p_i(s)+F_{x_i}(\mathbf{p}(s),z(s),\mathbf{x}(s))=0.
+\end{align*}
+把此式与\eqref{align:ch03-xdot} 代入\eqref{align:ch03-pdot}：
+\begin{align}\label{align:ch03-pdot-final}
+\dot{p}_i(s)=-F_{x_i}(\mathbf{p}(s),z(s),\mathbf{x}(s))-F_z(\mathbf{p}(s),z(s),\mathbf{x}(s))p_i(s) \qquad (i=1,\cdots,n).
+\end{align}
+最后对\eqref{align:ch05-Riesz} 求导：
+\begin{align}\label{align:ch03-zdot}
+\dot{z}(s)=\sum_{j=1}^n u_{x_j}(\mathbf{x}(s))\dot{x}_j(s)=\sum_{j=1}^n p_j(s)F_{p_j}(\mathbf{p}(s),z(s),\mathbf{x}(s)),
+\end{align}
+第二个等号由\eqref{align:ch03-pi} 与\eqref{align:ch03-xdot} 得到。
+
+\textbf{特征方程.} 我们把方程\eqref{align:ch03-xdot}--\eqref{align:ch03-zdot} 用向量记号总结如下：
+\begin{align}\label{align:ch03-char-eq}
+\begin{cases}
+(a)\ \dot{\mathbf{p}}(s)=-D_x F(\mathbf{p}(s),z(s),\mathbf{x}(s))-F_z(\mathbf{p}(s),z(s),\mathbf{x}(s))\mathbf{p}(s),\\
+(b)\ \dot{z}(s)=D_p F(\mathbf{p}(s),z(s),\mathbf{x}(s))\cdot\mathbf{p}(s),\\
+(c)\ \dot{\mathbf{x}}(s)=D_p F(\mathbf{p}(s),z(s),\mathbf{x}(s)).
+\end{cases}
+\end{align}
+此外，
+\begin{align}\label{align:ch03-F=0-along}
+F(\mathbf{p}(s),z(s),\mathbf{x}(s))\equiv 0.
+\end{align}
+这些恒等式对 $s\in I$ 成立。
+
+这一由 $2n+1$ 个一阶 ODE 组成的重要组\eqref{align:ch03-char-eq}，即非线性一阶 PDE \eqref{align:ch03-pde2} 的\textbf{特征方程}。函数 $\mathbf{p}(\cdot)=(p_1(\cdot),\cdots,p_n(\cdot))$、$z(\cdot)$、$\mathbf{x}(\cdot)=(x_1(\cdot),\cdots,x_n(\cdot))$ 称为\textbf{特征线}。我们有时把 $\mathbf{x}(\cdot)$ 称为\textbf{投影特征线}：它是完全特征线 $(\mathbf{p}(\cdot),z(\cdot),\mathbf{x}(\cdot))\subset\mathbb{R}^{2n+1}$ 到物理区域 $U\subset\mathbb{R}^n$ 的投影。
+
+我们已证明：
+
+\begin{theorem}[特征 ODE 的结构]\label{theorem:ch03-char-ode}设 $u\in C^2(U)$ 在 $U$ 中解非线性一阶 PDE \eqref{align:ch03-pde2}。设 $\mathbf{x}(\cdot)$ 解 ODE \eqref{align:ch03-char-eq}(c)，其中 $\mathbf{p}(\cdot)=Du(\mathbf{x}(\cdot))$，$z(\cdot)=u(\mathbf{x}(\cdot))$。则对那些使 $\mathbf{x}(s)\in U$ 的 $s$，$\mathbf{p}(\cdot)$ 解 ODE \eqref{align:ch03-char-eq}(a)，$z(\cdot)$ 解 ODE \eqref{align:ch03-char-eq}(b)。
+\end{theorem}
+
+为使此定理有用，我们还需为 ODE 组\eqref{align:ch03-char-eq} 找出恰当的初始条件。这将在下文 \S3.2.3 完成。
+
+\begin{remark}\label{remark:ch03-char-ode}
+特征 ODE 确实非凡：只要 $u$ 是一般非线性 PDE \eqref{align:ch03-pde2} 的光滑解，它们就构成关于 $\mathbf{x}(\cdot)$、$z(\cdot)=u(\mathbf{x}(\cdot))$、$\mathbf{p}(\cdot)=Du(\mathbf{x}(\cdot))$ 的一个精确方程组。推导中的关键一步是我们令 $\dot{\mathbf{x}}=D_p F$，于是——如上所述——涉及二阶导数的项消去。我们由此获得封闭性，特别地不必为 $u$ 的二阶及更高阶导数引入 ODE。
+\end{remark}
+
+\subsection{例子}\label{subsection:ch03-char-examples}
+
+在继续研究特征方程\eqref{align:ch03-char-eq} 之前，我们停下来考察一些特殊情形——对这些情形，方程结构特别简单。我们也说明有时如何真正解出特征 ODE，从而在恰当边界条件下显式算出某些一阶 PDE 的解。
+
+\subsubsection{$F$ 线性}
+
+先考虑 PDE \eqref{align:ch03-pde2} 线性齐次的情形，因而形如
+\begin{align}\label{align:ch03-linear}
+F(Du,u,x)=\mathbf{b}(x)\cdot Du(x)+c(x)u(x)=0 \qquad (x\in U).
+\end{align}
+于是 $F(p,z,x)=\mathbf{b}(x)\cdot p+c(x)z$，故 $D_p F=\mathbf{b}(x)$。此情形下方程\eqref{align:ch03-char-eq}(c) 成为
+\begin{align}\label{align:ch03-linear-xdot}
+\dot{\mathbf{x}}(s)=\mathbf{b}(\mathbf{x}(s)),
+\end{align}
+这是一个只含函数 $\mathbf{x}(\cdot)$ 的 ODE。又方程\eqref{align:ch03-char-eq}(b) 成为
+\begin{align}\label{align:ch03-linear-zdot}
+\dot{z}(s)=\mathbf{b}(\mathbf{x}(s))\cdot\mathbf{p}(s).
+\end{align}
+方程\eqref{align:ch03-F=0-along} 化简\eqref{align:ch03-linear-zdot}，得
+\begin{align}\label{align:ch03-linear-z}
+\dot{z}(s)=-c(\mathbf{x}(s))z(s).
+\end{align}
+一旦通过解\eqref{align:ch03-linear-xdot} 知道函数 $\mathbf{x}(\cdot)$，此 ODE 关于 $z(\cdot)$ 是线性的。总之，
+\begin{align}\label{align:ch03-linear-char}
+\begin{cases}
+(a)\ \dot{\mathbf{x}}(s)=\mathbf{b}(\mathbf{x}(s)),\\
+(b)\ \dot{z}(s)=-c(\mathbf{x}(s))z(s)
+\end{cases}
+\end{align}
+构成线性一阶 PDE \eqref{align:ch03-linear} 的特征方程。（我们后将看到，关于 $\mathbf{p}(\cdot)$ 的方程并不需要。）
+
+\begin{example}\label{example:ch03-linear}
+我们通过显式求解问题
+\begin{align}\label{align:ch03-linear-ex}
+\begin{cases}
+x_1 u_{x_2}-x_2 u_{x_1}=u & \text{在 }U\text{ 中},\\
+u=g & \text{在 }\Gamma\text{ 上},
+\end{cases}
+\end{align}
+来演示方程\eqref{align:ch03-linear-char} 的用处，其中 $U$ 为象限 $\{x_1>0,\ x_2>0\}$，$\Gamma=\{x_1>0,\ x_2=0\}\subseteq\partial U$。\eqref{align:ch03-linear-ex} 中 PDE 形如\eqref{align:ch03-linear}，对应 $\mathbf{b}=(-x_2,x_1)$，$c=-1$。故方程\eqref{align:ch03-linear-char} 读作
+\begin{align*}
+\dot{x}_1=-x_2,\ \dot{x}_2=x_1,\ \dot{z}=z.
+\end{align*}
+相应地有
+\begin{align*}
+x_1(s)=x_0\cos s,\ x_2(s)=x_0\sin s,\qquad z(s)=z_0 e^s=g(x_0)e^s,
+\end{align*}
+其中 $x_0\geqslant 0$，$0\leqslant s\leqslant\dfrac{\pi}{2}$。固定一点 $(x_1,x_2)\in U$。我们选 $s>0$、$x_0>0$，使 $(x_1,x_2)=(x_1(s),x_2(s))=(x_0\cos s,x_0\sin s)$。即 $x_0=(x_1^2+x_2^2)^{1/2}$，$s=\arctan\!\left(\dfrac{x_2}{x_1}\right)$。因此
+\begin{align*}
+u(x)=u(x_1(s),x_2(s))=z(s)=g(x_0)e^s=g((x_1^2+x_2^2)^{1/2})e^{\arctan(x_2/x_1)}.
+\end{align*}
+\end{example}
+
+\subsubsection{$F$ 拟线性}
+
+若 PDE \eqref{align:ch03-pde2} 形如
+\begin{align}\label{align:ch03-quasilinear}
+F(Du,u,x)=\mathbf{b}(x,u(x))\cdot Du(x)+c(x,u(x))=0,
+\end{align}
+则称其为\textbf{拟线性的}。此情形下 $F(p,z,x)=\mathbf{b}(x,z)\cdot p+c(x,z)$，从而 $D_p F=\mathbf{b}(x,z)$。于是方程\eqref{align:ch03-char-eq}(c) 读作 $\dot{\mathbf{x}}(s)=\mathbf{b}(\mathbf{x}(s),z(s))$，而\eqref{align:ch03-char-eq}(b) 由\eqref{align:ch03-F=0-along} 成为 $\dot{z}(s)=\mathbf{b}(\mathbf{x}(s),z(s))\cdot\mathbf{p}(s)=-c(\mathbf{x}(s),z(s))$。因而
+\begin{align}\label{align:ch03-quasilinear-char}
+\begin{cases}
+(a)\ \dot{\mathbf{x}}(s)=\mathbf{b}(\mathbf{x}(s),z(s)),\\
+(b)\ \dot{z}(s)=-c(\mathbf{x}(s),z(s))
+\end{cases}
+\end{align}
+是拟线性一阶 PDE \eqref{align:ch03-quasilinear} 的特征方程。（我们仍不需要关于 $\mathbf{p}(\cdot)$ 的方程。）
+
+\begin{example}\label{example:ch03-semi}
+特征 ODE \eqref{align:ch03-quasilinear-char} 一般难以求解，故本例中我们处理半线性 PDE 的一个较简单的边值问题：
+\begin{align}\label{align:ch03-semi-ex}
+\begin{cases}
+u_{x_1}+u_{x_2}=u^2 & \text{在 }U\text{ 中},\\
+u=g & \text{在 }\Gamma\text{ 上}.
+\end{cases}
+\end{align}
+现 $U$ 为半空间 $\{x_2>0\}$，$\Gamma=\{x_2=0\}=\partial U$。这里 $\mathbf{b}=(1,1)$，$c=-z^2$。于是\eqref{align:ch03-quasilinear-char} 成为 $\dot{x}_1=1,\ \dot{x}_2=1,\ \dot{z}=z^2$。相应地
+\begin{align*}
+x_1(s)=x_0+s,\ x_2(s)=s,\qquad z(s)=\frac{z_0}{1-sz_0}=\frac{g(x_0)}{1-sg(x_0)},
+\end{align*}
+其中 $x_0\in\mathbb{R}$，$s\geqslant 0$，只要分母不为零。固定一点 $(x_1,x_2)\in U$。我们选 $s>0$、$x_0\in\mathbb{R}$，使 $(x_1,x_2)=(x_1(s),x_2(s))=(x_0+s,s)$；即 $x_0=x_1-x_2$，$s=x_2$。则
+\begin{align*}
+u(x)=u(x_1(s),x_2(s))=z(s)=\frac{g(x_0)}{1-sg(x_0)}=\frac{g(x_1-x_2)}{1-x_2 g(x_1-x_2)}.
+\end{align*}
+此解当然只在 $1-x_2 g(x_1-x_2)\neq 0$ 时才有意义。
+\end{example}
+
+\subsubsection{$F$ 完全非线性}
+
+在一般情形，我们必须（若可能的话）积分完整的特征方程\eqref{align:ch03-char-eq}。
+
+\begin{example}\label{example:ch03-fully}
+考虑完全非线性问题
+\begin{align}\label{align:ch03-fully-ex}
+\begin{cases}
+u_{x_1}u_{x_2}=u & \text{在 }U\text{ 中},\\
+u=x_2^2 & \text{在 }\Gamma\text{ 上},
+\end{cases}
+\end{align}
+其中 $U=\{x_1>0\}$，$\Gamma=\{x_1=0\}=\partial U$。这里 $F(p,z,x)=p_1 p_2-z$，故特征 ODE \eqref{align:ch03-char-eq} 成为
+\begin{align*}
+\dot{p}_1=p_1,\ \dot{p}_2=p_2,\ \dot{z}=2p_1 p_2,\ \dot{x}_1=p_2,\ \dot{x}_2=p_1.
+\end{align*}
+我们积分这些方程，得到
+\begin{align*}
+x_1(s)=p_2^0(e^s-1),\ x_2(s)=x_0+p_1^0(e^s-1),\qquad
+z(s)=z_0+p_1^0 p_2^0(e^{2s}-1),\qquad
+p_1(s)=p_1^0 e^s,\ p_2(s)=p_2^0 e^s,
+\end{align*}
+其中 $x_0\in\mathbb{R}$，$s\in\mathbb{R}$，$z_0=(x_0)^2$。
+
+我们必须确定 $\mathbf{p}^0=(p_1^0,p_2^0)$。由于在 $\Gamma$ 上 $u=x_2^2$，$p_2^0=u_{x_2}(0,x_0)=2x_0$。此外 PDE $u_{x_1}u_{x_2}=u$ 本身蕴含 $p_1^0 p_2^0=z_0=(x_0)^2$，故 $p_1^0=\dfrac{x_0}{2}$。因而上面公式成为
+\begin{align*}
+x_1(s)=2x_0(e^s-1),\ x_2(s)=\frac{x_0}{2}(e^s+1),\qquad
+z(s)=(x_0)^2 e^{2s},\qquad
+p_1(s)=\frac{x_0}{2}e^s,\ p_2(s)=2x_0 e^s.
+\end{align*}
+固定一点 $(x_1,x_2)\in U$。选 $s$ 与 $x_0$，使 $(x_1,x_2)=(x_1(s),x_2(s))=\left(2x_0(e^s-1),\dfrac{x_0}{2}(e^s+1)\right)$。此等式蕴含 $x_0=\dfrac{4x_2-x_1}{4}$，$e^s=\dfrac{x_1+4x_2}{4x_2-x_1}$；故
+\begin{align*}
+u(x)=u(x_1(s),x_2(s))=z(s)=(x_0)^2 e^{2s}=\frac{(x_1+4x_2)^2}{16}.
+\end{align*}
+\end{example}
+
+\subsection{边界条件}\label{subsection:ch03-boundary}
+
+我们现在回到发展一般理论，并打算在下一节实际调用特征 ODE \eqref{align:ch03-char-eq} 来求解边值问题\eqref{align:ch03-pde2}、\eqref{align:ch03-bc}——至少在 $\partial U$ 某一恰当部分 $\Gamma$ 附近的小区域内。
+
+\subsubsection{拉直边界}
+
+为简化后续计算，先作变量代换以``拉平''$\partial U$ 的一部分，是方便的。为此先固定任一点 $x_0\in\partial U$。然后利用 \S C.1 的记号，找光滑映射 $\boldsymbol{\Phi},\boldsymbol{\Psi}:\mathbb{R}^n\to\mathbb{R}^n$，使 $\boldsymbol{\Psi}=\boldsymbol{\Phi}^{-1}$，且 $\boldsymbol{\Phi}$ 在 $x_0$ 附近拉直 $\partial U$。（见 \S C.1 的图示。）
+
+给定任一函数 $u:U\to\mathbb{R}$，写 $V\triangleq\boldsymbol{\Phi}(U)$，并令
+\begin{align}\label{align:ch03-v}
+v(y)\triangleq u(\boldsymbol{\Psi}(y)) \qquad (y\in V).
+\end{align}
+则
+\begin{align}\label{align:ch06-u+方程}
+u(x)=v(\boldsymbol{\Phi}(x)) \qquad (x\in U).
+\end{align}
+现设 $u$ 是边值问题\eqref{align:ch03-pde2}、\eqref{align:ch03-bc} 在 $U$ 中的 $C^1$ 解。那么 $v$ 在 $V$ 中满足什么 PDE？由\eqref{align:ch06-u+方程}，我们看到
+\begin{align*}
+u_{x_i}(x)=\sum_{k=1}^n v_{y_k}(\boldsymbol{\Phi}(x))\frac{\partial\Phi_k}{\partial x_i}(x) \qquad (i=1,\cdots,n);
+\end{align*}
+即 $Du(x)=Dv(y)D\boldsymbol{\Phi}(x)$。于是\eqref{align:ch03-pde2} 蕴含
+\begin{align}\label{align:ch03-transformed}
+F(Dv(y)D\boldsymbol{\Phi}(\boldsymbol{\Psi}(y)),v(y),\boldsymbol{\Psi}(y))=F(Du(x),u(x),x)=0.
+\end{align}
+这是形如 $G(Dv(y),v(y),y)=0$ 在 $V$ 中的表达式。此外在 $\Delta$ 上 $v=h$，其中 $\Delta\triangleq\boldsymbol{\Phi}(\Gamma)$，$h(y)\triangleq g(\boldsymbol{\Psi}(y))$。
+
+总之，我们的问题\eqref{align:ch03-pde2}、\eqref{align:ch03-bc} 变换为
+\begin{align}\label{align:ch03-transformed-exercise}
+\begin{cases}
+G(Dv,v,y)=0 & \text{在 }V\text{ 中},\\
+v=h & \text{在 }\Delta\text{ 上},
+\end{cases}
+\end{align}
+其中 $G,h$ 如上。关键在于：若我们作变量代换在 $x_0$ 附近拉直边界，边值问题\eqref{align:ch03-pde2}、\eqref{align:ch03-bc} 就化为一个形式相同的问题。
+
+\subsubsection{边界数据的相容条件}
+
+鉴于上述计算，若给定一点 $x_0\in\Gamma$，我们不如从一开始就假定 $\Gamma$ 在 $x_0$ 附近是平坦的，位于平面 $\{x_n=0\}$ 内。
+
+我们现在打算用特征 ODE 构造\eqref{align:ch03-pde2}、\eqref{align:ch03-bc} 的解——至少在 $x_0$ 附近；为此必须找出恰当的初始条件
+\begin{align}\label{align:ch03-initial}
+\mathbf{p}(0)=\mathbf{p}_0,\ z(0)=z_0,\ \mathbf{x}(0)=x_0.
+\end{align}
+显然，若曲线 $\mathbf{x}(\cdot)$ 通过 $x_0$，我们应坚持
+\begin{align}\label{align:ch03-z0}
+z_0=g(x_0).
+\end{align}
+关于 $\mathbf{p}(0)=\mathbf{p}_0$ 我们应要求什么？由于\eqref{align:ch03-bc} 蕴含在 $x_0$ 附近 $u(x_1,\cdots,x_{n-1},0)=g(x_1,\cdots,x_{n-1})$，我们可求导得
+\begin{align*}
+u_{x_i}(x_0)=g_{x_i}(x_0) \qquad (i=1,\cdots,n-1).
+\end{align*}
+由于我们还希望 PDE \eqref{align:ch03-pde2} 成立，故应坚持 $\mathbf{p}_0=(p_1^0,\cdots,p_n^0)$ 满足关系：
+\begin{align}\label{align:ch03-compat}
+\begin{cases}
+p_i^0=g_{x_i}(x_0) & (i=1,\cdots,n-1),\\
+F(\mathbf{p}_0,z_0,x_0)=0.
+\end{cases}
+\end{align}
+这些恒等式为 $n$ 个量 $\mathbf{p}_0=(p_1^0,\cdots,p_n^0)$ 提供了 $n$ 个方程。我们称\eqref{align:ch03-z0} 与\eqref{align:ch03-compat} 为\textbf{相容条件}。验证\eqref{align:ch03-z0}、\eqref{align:ch03-compat} 的三元组 $(\mathbf{p}_0,z_0,x_0)\in\mathbb{R}^{2n+1}$ 称为\textbf{容许的}。注意 $z_0$ 由边界条件及我们对点 $x_0$ 的选取唯一确定，但满足\eqref{align:ch03-compat} 的向量 $\mathbf{p}_0$ 可能不存在，也可能不唯一。
+
+\subsubsection{非特征边界数据}
+
+现如上假定 $x_0\in\Gamma$，$\Gamma$ 在 $x_0$ 附近位于平面 $\{x_n=0\}$ 内，且三元组 $(\mathbf{p}_0,z_0,x_0)$ 容许。我们计划通过积分特征 ODE \eqref{align:ch03-char-eq}，在 $x_0$ 附近的 $U$ 中构造\eqref{align:ch03-pde2}、\eqref{align:ch03-bc} 的解。至此我们已确认 $\mathbf{x}(0)=x_0$、$z(0)=z_0$、$\mathbf{p}(0)=\mathbf{p}_0$ 是特征 ODE 的恰当边界条件，其中 $\mathbf{x}(\cdot)$ 在 $x_0$ 处与 $\Gamma$ 相交。但事实上我们还需对附近的初始点解这些 ODE，因而现在必须问：能否在保持相容条件的同时，适当扰动 $(\mathbf{p}_0,z_0,x_0)$。
+
+换言之，给定一点 $\mathbf{y}=(y_1,\cdots,y_{n-1},0)\in\Gamma$，$\mathbf{y}$ 靠近 $x_0$，我们打算解特征 ODE
+\begin{align}\label{align:ch03-char-eq-repeat}
+\begin{cases}
+(a)\ \dot{\mathbf{p}}(s)=-D_x F(\mathbf{p}(s),z(s),\mathbf{x}(s))-F_z(\mathbf{p}(s),z(s),\mathbf{x}(s))\mathbf{p}(s),\\
+(b)\ \dot{z}(s)=D_p F(\mathbf{p}(s),z(s),\mathbf{x}(s))\cdot\mathbf{p}(s),\\
+(c)\ \dot{\mathbf{x}}(s)=D_p F(\mathbf{p}(s),z(s),\mathbf{x}(s)),
+\end{cases}
+\end{align}
+初始条件为
+\begin{align}\label{align:ch03-ic-y}
+\mathbf{p}(0)=\mathbf{q}(\mathbf{y}),\ z(0)=g(\mathbf{y}),\ \mathbf{x}(0)=\mathbf{y}.
+\end{align}
+我们的任务是找一个函数 $\mathbf{q}(\cdot)=(q_1(\cdot),\cdots,q_n(\cdot))$，使
+\begin{align}\label{align:ch03-q0}
+\mathbf{q}(x_0)=\mathbf{p}_0
+\end{align}
+且 $(\mathbf{q}(\mathbf{y}),g(\mathbf{y}),\mathbf{y})$ 容许；即相容条件
+\begin{align}\label{align:ch03-compat-y}
+\begin{cases}
+q_i(\mathbf{y})=g_{x_i}(\mathbf{y}) & (i=1,\cdots,n-1),\\
+F(\mathbf{q}(\mathbf{y}),g(\mathbf{y}),\mathbf{y})=0
+\end{cases}
+\end{align}
+对一切靠近 $x_0$ 的 $\mathbf{y}\in\Gamma$ 成立。
+
+\begin{lemma}[非特征边界条件]\label{lemma:ch03-nonchar}存在唯一解 $\mathbf{q}(\cdot)$ 对一切充分靠近 $x_0$ 的 $\mathbf{y}\in\Gamma$ 满足\eqref{align:ch03-q0}、\eqref{align:ch03-compat-y}，只要
+\begin{align}\label{align:ch03-nonchar-cond}
+F_{p_n}(\mathbf{p}_0,z_0,x_0)\neq 0.
+\end{align}
+\end{lemma}
+
+若\eqref{align:ch03-nonchar-cond} 成立，我们称容许三元组 $(\mathbf{p}_0,z_0,x_0)$ 为\textbf{非特征的}。此后我们假定此条件。
+
+\begin{proof}
+我们的问题是找 $q_n(\mathbf{y})$，使 $F(\mathbf{q}(\mathbf{y}),g(\mathbf{y}),\mathbf{y})=0$，其中对 $i=1,\cdots,n-1$ 有 $q_i(\mathbf{y})=g_{x_i}(\mathbf{y})$。由于 $F(\mathbf{p}_0,z_0,x_0)=0$，隐函数定理（\S C.7）蕴含：只要非特征条件\eqref{align:ch03-nonchar-cond} 成立，我们确实能局部地、唯一地解出 $q_n(\mathbf{y})$。
+\end{proof}
+
+\textbf{一般非特征条件.} 若 $\Gamma$ 在 $x_0$ 附近不平坦，$\Gamma$ 非特征的条件读作
+\begin{align}\label{align:ch03-nonchar-general}
+D_p F(\mathbf{p}_0,z_0,x_0)\cdot\boldsymbol{\nu}(x_0)\neq 0,
+\end{align}
+其中 $\boldsymbol{\nu}(x_0)$ 表示 $\partial U$ 在 $x_0$ 处的外单位法向量。见习题 7。
+
+\subsection{局部解}\label{subsection:ch03-local}
+
+记住我们的目标是用特征 ODE 构造\eqref{align:ch03-pde2}、\eqref{align:ch03-bc} 的解——至少在 $\Gamma$ 附近。如前选一点 $x_0\in\Gamma$，并如 \S3.2.3 所示，可假定在 $x_0$ 附近曲面 $\Gamma$ 平坦，位于平面 $\{x_n=0\}$ 内。又设 $(\mathbf{p}_0,z_0,x_0)$ 是一个容许的边界数据三元组，且为非特征的。由引理\cref{lemma:ch03-nonchar}，存在函数 $\mathbf{q}(\cdot)$，使 $\mathbf{p}_0=\mathbf{q}(x_0)$，且对一切充分靠近 $x_0$ 的 $\mathbf{y}$，三元组 $(\mathbf{q}(\mathbf{y}),g(\mathbf{y}),\mathbf{y})$ 容许。
+
+给定任一这种点 $\mathbf{y}=(y_1,\cdots,y_{n-1},0)$，我们在初始条件\eqref{align:ch03-ic-y} 下解特征 ODE \eqref{align:ch03-char-eq-repeat}。
+
+\textbf{记号.} 我们写
+\begin{align*}
+\begin{cases}
+\mathbf{p}(s)=\mathbf{p}(\mathbf{y},s)=\mathbf{p}(y_1,\cdots,y_{n-1},s),\\
+z(s)=z(\mathbf{y},s)=z(y_1,\cdots,y_{n-1},s),\\
+\mathbf{x}(s)=\mathbf{x}(\mathbf{y},s)=\mathbf{x}(y_1,\cdots,y_{n-1},s),
+\end{cases}
+\end{align*}
+以显示\eqref{align:ch03-char-eq-repeat}、\eqref{align:ch03-ic-y} 的解对 $s$ 与 $\mathbf{y}$ 的依赖。此外，此后方便时我们把 $x_0$ 看作位于 $\mathbb{R}^{n-1}$ 中。
+
+\begin{lemma}[局部可逆性]\label{lemma:ch03-local-inv}设我们有非特征条件 $F_{p_n}(\mathbf{p}_0,z_0,x_0)\neq 0$。则存在含 0 的开区间 $I\subseteq\mathbb{R}$、$\Gamma\subset\mathbb{R}^{n-1}$ 中 $x_0$ 的邻域 $W$、以及 $\mathbb{R}^n$ 中 $x_0$ 的邻域 $V$，使对每个 $x\in V$，存在唯一的 $s\in I$、$\mathbf{y}\in W$，使 $x=\mathbf{x}(\mathbf{y},s)$。映射 $x\mapsto s,\mathbf{y}$ 为 $C^2$。
+\end{lemma}
+
+\begin{proof}
+我们有 $\mathbf{x}(x_0,0)=x_0$。因而反函数定理（\S C.6）给出结果，只要 $\det D\mathbf{x}(x_0,0)\neq 0$。现 $\mathbf{x}(\mathbf{y},0)=(\mathbf{y},0)$（$\mathbf{y}\in\Gamma$）；故若 $i=1,\cdots,n-1$，
+\begin{align*}
+\frac{\partial x_j}{\partial y_i}(x_0,0)=
+\begin{cases}
+\delta_{ij} & (j=1,\cdots,n-1),\\
+0 & (j=n).
+\end{cases}
+\end{align*}
+此外方程\eqref{align:ch03-char-eq-repeat}(c) 蕴含 $\dfrac{\partial x_j}{\partial s}(x_0,0)=F_{p_j}(\mathbf{p}_0,z_0,x_0)$。故
+\begin{align*}
+D\mathbf{x}(x_0,0)=
+\begin{pmatrix}
+1 & & 0 & F_{p_1}(\mathbf{p}_0,z_0,x_0)\\
+& \ddots & & \vdots\\
+0 & & 1 & \vdots\\
+0 & \cdots & 0 & F_{p_n}(\mathbf{p}_0,z_0,x_0)
+\end{pmatrix}_{n\times n},
+\end{align*}
+从而 $\det D\mathbf{x}(x_0,0)\neq 0$ 由非特征条件\eqref{align:ch03-nonchar-cond} 得到。
+\end{proof}
+
+鉴于引理\cref{lemma:ch03-local-inv}，对每个 $x\in V$，我们可局部唯一地解方程
+\begin{align}\label{align:ch03-solve-y-s}
+x=\mathbf{x}(\mathbf{y},s)
+\end{align}
+求 $\mathbf{y}=\mathbf{y}(x)$、$s=s(x)$。最后定义
+\begin{align}\label{align:ch03-define-u-p}
+\begin{cases}
+u(x)\triangleq z(\mathbf{y}(x),s(x)),\\
+\mathbf{p}(x)\triangleq\mathbf{p}(\mathbf{y}(x),s(x))
+\end{cases}
+\end{align}
+对 $x\in V$，$s,\mathbf{y}$ 如\eqref{align:ch03-solve-y-s}。
+
+我们终于到了主要断言：我们可局部地把特征 ODE 的解编织成 PDE 的一个解。
+
+\begin{theorem}[局部存在定理]\label{theorem:ch03-local-existence}上面定义的函数 $u$ 为 $C^2$，且解 PDE
+\begin{align*}
+F(Du(x),u(x),x)=0 \qquad (x\in V),
+\end{align*}
+带有边界条件
+\begin{align*}
+u(x)=g(x) \qquad (x\in\Gamma\cap V).
+\end{align*}
+\end{theorem}
+
+\begin{proof}
+1. 首先固定 $\Gamma$ 中靠近 $x_0$ 的 $\mathbf{y}$，如前在初始条件\eqref{align:ch03-ic-y} 下解特征 ODE \eqref{align:ch03-char-eq-repeat}，求 $\mathbf{p}(s)=\mathbf{p}(\mathbf{y},s)$、$z(s)=z(\mathbf{y},s)$、$\mathbf{x}(s)=\mathbf{x}(\mathbf{y},s)$。
+
+2. 我们断言：若 $\mathbf{y}\in\Gamma$ 充分靠近 $x_0$，则
+\begin{align}\label{align:ch03-F-along-char}
+f(\mathbf{y},s)\triangleq F(\mathbf{p}(\mathbf{y},s),z(\mathbf{y},s),\mathbf{x}(\mathbf{y},s))=0 \qquad (s\in I).
+\end{align}
+为看出此点，注意
+\begin{align}\label{align:ch03-f0}
+f(\mathbf{y},0)=F(\mathbf{p}(\mathbf{y},0),z(\mathbf{y},0),\mathbf{x}(\mathbf{y},0))=F(\mathbf{q}(\mathbf{y}),g(\mathbf{y}),\mathbf{y})=0,
+\end{align}
+由相容条件\eqref{align:ch03-compat-y}。此外
+\begin{align*}
+f_s(\mathbf{y},s)&=\sum_{j=1}^n F_{p_j}\dot{p}_j+F_z\dot{z}+\sum_{j=1}^n F_{x_j}\dot{x}_j\\
+&=\sum_{j=1}^n F_{p_j}(-F_{x_j}-F_z p_j)+F_z\left(\sum_{j=1}^n F_{p_j}p_j\right)+\sum_{j=1}^n F_{x_j}F_{p_j}=0,
+\end{align*}
+倒数第二个等号由\eqref{align:ch03-char-eq-repeat}。此计算与\eqref{align:ch03-f0} 证明了\eqref{align:ch03-F-along-char}。
+
+3. 鉴于引理\cref{lemma:ch03-local-inv} 与\eqref{align:ch03-solve-y-s}--\eqref{align:ch03-F-along-char}，我们有
+\begin{align*}
+F(\mathbf{p}(x),u(x),x)=0 \qquad (x\in V).
+\end{align*}
+为完成证明，我们必须证明
+\begin{align}\label{align:ch03-p=Du}
+\mathbf{p}(x)=Du(x) \qquad (x\in V).
+\end{align}
+为证\eqref{align:ch03-p=Du}，先对 $s\in I$、$\mathbf{y}\in W$ 证明
+\begin{align}\label{align:ch03-zs}
+z_s(\mathbf{y},s)=\sum_{j=1}^n p_j(\mathbf{y},s)\frac{\partial x_j}{\partial s}(\mathbf{y},s)
+\end{align}
+与
+\begin{align}\label{align:ch03-zy}
+z_{y_i}(\mathbf{y},s)=\sum_{j=1}^n p_j(\mathbf{y},s)\frac{\partial x_j}{\partial y_i}(\mathbf{y},s) \qquad (i=1,\cdots,n-1).
+\end{align}
+这些公式显然与等式\eqref{align:ch03-p=Du} 一致，并将在后文帮助我们证明它。恒等式\eqref{align:ch03-zs} 立刻由特征 ODE \eqref{align:ch03-char-eq-repeat}(b)、(c) 得到。为建立\eqref{align:ch03-zy}，固定 $\mathbf{y}\in\Gamma$、$i\in\{1,\cdots,n-1\}$，令
+\begin{align}\label{align:ch03-ri}
+r_i(s)\triangleq z_{y_i}(\mathbf{y},s)-\sum_{j=1}^n p_j(\mathbf{y},s)\frac{\partial x_j}{\partial y_i}(\mathbf{y},s).
+\end{align}
+我们首先注意，由相容条件\eqref{align:ch03-compat-y}，$r_i(0)=g_{x_i}(\mathbf{y})-q_i(\mathbf{y})=0$。此外可算得
+\begin{align}\label{align:ch03-ridot}
+\dot{r}_i(s)=z_{y_i s}-\sum_{j=1}^n \dot{p}_j\frac{\partial x_j}{\partial y_i}+p_j\frac{\partial^2 x_j}{\partial y_i\partial s}.
+\end{align}
+为化简此式，先对恒等式\eqref{align:ch03-zs} 关于 $y_i$ 求导：
+\begin{align}\label{align:ch03-zsyi}
+z_{s y_i}=\sum_{j=1}^n \frac{\partial p_j}{\partial y_i}\frac{\partial x_j}{\partial s}+p_j\frac{\partial^2 x_j}{\partial s\partial y_i}.
+\end{align}
+把\eqref{align:ch03-zsyi} 代入\eqref{align:ch03-ridot}，发现
+\begin{align}\label{align:ch03-ridot2}
+\dot{r}_i(s)=\sum_{j=1}^n \frac{\partial p_j}{\partial y_i}\frac{\partial x_j}{\partial s}-\dot{p}_j\frac{\partial x_j}{\partial y_i}
+=\sum_{j=1}^n \frac{\partial p_j}{\partial y_i}F_{p_j}-(-F_{x_j}-F_z p_j)\frac{\partial x_j}{\partial y_i},
+\end{align}
+最后一个等号由\eqref{align:ch03-char-eq-repeat}(a)。现对\eqref{align:ch03-F-along-char} 关于 $y_i$ 求导：
+\begin{align*}
+\sum_{j=1}^n F_{p_j}\frac{\partial p_j}{\partial y_i}+F_z z_{y_i}+\sum_{j=1}^n F_{x_j}\frac{\partial x_j}{\partial y_i}=0.
+\end{align*}
+我们把此恒等式用于\eqref{align:ch03-ridot2}，从而得到
+\begin{align}\label{align:ch03-ridot3}
+\dot{r}_i(s)=F_z\left(\sum_{j=1}^n p_j\frac{\partial x_j}{\partial y_i}-z_{y_i}\right)=-F_z r_i(s).
+\end{align}
+故 $r_i(\cdot)$ 解线性 ODE \eqref{align:ch03-ridot3}，初始条件 $r_i(0)=0$。因而 $r_i(s)=0$（$s\in I$，$i=1,\cdots,n-1$），恒等式\eqref{align:ch03-zy} 得证。
+
+4. 最后用\eqref{align:ch03-zs}、\eqref{align:ch03-zy} 证明\eqref{align:ch03-p=Du}。事实上，若 $j=1,\cdots,n$，
+\begin{align*}
+u_{x_j}=z_s\frac{\partial s}{\partial x_j}+\sum_{i=1}^{n-1}z_{y_i}\frac{\partial y_i}{\partial x_j} \quad\text{(由\eqref{align:ch03-define-u-p})}
+=\sum_{k=1}^n p_k\frac{\partial x_k}{\partial s}\frac{\partial s}{\partial x_j}\\
++\sum_{i=1}^{n-1}\sum_{k=1}^n p_k\frac{\partial x_k}{\partial y_i}\frac{\partial y_i}{\partial x_j}\\
+&\quad \text{(由\eqref{align:ch03-zs}、\eqref{align:ch03-zy})}
+=\sum_{k=1}^n p_k\left(\frac{\partial x_k}{\partial s}\frac{\partial s}{\partial x_j}\right.\\
+&\quad\left.+\sum_{i=1}^{n-1}\frac{\partial x_k}{\partial y_i}\frac{\partial y_i}{\partial x_j}\right)
+=\sum_{k=1}^n p_k\frac{\partial x_k}{\partial x_j}=\sum_{k=1}^n p_k\delta_{jk}=p_j.
+\end{align*}
+此断言终于确立了\eqref{align:ch03-p=Du}，从而完成证明。
+\end{proof}
+
+\subsection{应用}\label{subsection:ch03-applications}
+
+我们现在转向各种特殊情形，看局部存在理论在这些情形下如何化简。
+
+\subsubsection{$F$ 线性}
+
+回忆线性齐次一阶 PDE 形如
+\begin{align}\label{align:ch03-linear-recall}
+F(Du,u,x)=\mathbf{b}(x)\cdot Du(x)+c(x)u(x)=0 \qquad (x\in U).
+\end{align}
+我们如上在一点 $x_0\in\Gamma$ 的非特征假设\eqref{align:ch03-nonchar-general} 成为
+\begin{align}\label{align:ch03-linear-nonchar}
+\mathbf{b}(x_0)\cdot\boldsymbol{\nu}(x_0)\neq 0,
+\end{align}
+因而完全不涉及 $z_0$ 或 $\mathbf{p}_0$。此外若指定边界条件
+\begin{align}\label{align:ch03-linear-bc}
+u=g \qquad \text{在 }\Gamma\text{ 上},
+\end{align}
+只要 $\mathbf{y}\in\Gamma$ 靠近 $x_0$，我们就能唯一地解出\eqref{align:ch03-compat-y} 中的 $\mathbf{q}(\mathbf{y})$。于是可应用局部存在定理\cref{theorem:ch03-local-existence}，在含 $x_0$ 的某邻域 $V$ 中构造\eqref{align:ch03-linear-recall}、\eqref{align:ch03-linear-bc} 的唯一解。请仔细注意：尽管我们在定理\cref{theorem:ch03-local-existence} 的证明中用了完整特征方程\eqref{align:ch03-char-eq-repeat}，但一旦知道解存在，就可用化简的方程\eqref{align:ch03-linear-char}（它不涉及 $\mathbf{p}(\cdot)$）来计算解。还请注意：从 $\Gamma$ 上不同点发出的投影特征线 $\mathbf{x}(\cdot)$ 不能相交，这是由于 ODE \eqref{align:ch03-linear-char}(a) 初值问题解的唯一性。
+
+\begin{example}\label{example:ch03-flow}
+设 ODE \eqref{align:ch03-linear-xdot} 的轨迹如图 Case 1 所示。我们假定向量场 $\mathbf{b}$ 在 $U$ 内只在一点为零，取该点为原点 $0$，且在 $\Gamma\triangleq\partial U$ 上 $\mathbf{b}\cdot\boldsymbol{\nu}<0$。
+
+\textbf{情形 1：流向一个吸引点.} 我们能否解线性边值问题
+\begin{align}\label{align:ch03-flow-bvp}
+\begin{cases}
+\mathbf{b}\cdot Du=0 & \text{在 }U\text{ 中},\\
+u=g & \text{在 }\Gamma\text{ 上}?
+\end{cases}
+\end{align}
+调用定理\cref{theorem:ch03-local-existence}，我们看到存在唯一解 $u$，定义在 $\Gamma$ 附近，且事实上对 ODE \eqref{align:ch03-linear-xdot} 的每个以 $\mathbf{x}(0)=x_0\in\Gamma$ 为初始条件的解，有 $u(\mathbf{x}(s))\equiv u(\mathbf{x}(0))=g(x_0)$。然而此解不能光滑地延拓到整个 $U$（除非 $g$ 为常数）：\eqref{align:ch03-flow-bvp} 的任一光滑解在\eqref{align:ch03-linear-xdot} 的轨迹上为常数，从而在 $x=0$ 附近取不同值。
+
+但现设 ODE \eqref{align:ch03-linear-xdot} 的轨迹如 Case 2 图所示。我们假定 ODE 的每条轨迹（除过特征点 $A,B$ 的那些外）恰一次进入 $U$（通过集合 $\Gamma\triangleq\{x\in\partial U\mid\mathbf{b}(x)\cdot\boldsymbol{\nu}(x)<0\}$ 的某处），并恰一次离开 $U$。在此情形下，我们可通过令 $u$ 沿每条流线为常数，找到\eqref{align:ch03-flow-bvp} 的一个光滑解。
+
+最后设流形如 Case 3。我们现在可令 $u$ 沿轨迹为常数，但那样 $u$ 将不连续（除非 $g(B)=g(D)$）。注意点 $D$ 是特征点，且局部存在理论在 $D$ 附近失效。
+\end{example}
+
+\subsubsection{$F$ 拟线性}
+
+若 $F$ 拟线性，PDE \eqref{align:ch03-pde2} 为
+\begin{align}\label{align:ch03-quasilinear-recall}
+F(Du,u,x)=\mathbf{b}(x,u)\cdot Du+c(x,u)=0.
+\end{align}
+我们在一点 $x_0\in\Gamma$ 的非特征假设\eqref{align:ch03-nonchar-general} 读作 $\mathbf{b}(x_0,z_0)\cdot\boldsymbol{\nu}(x_0)\neq 0$，其中 $z_0=g(x_0)$。如上例，若指定边界条件
+\begin{align}\label{align:ch03-quasilinear-bc}
+u=g \qquad \text{在 }\Gamma\text{ 上},
+\end{align}
+只要 $\mathbf{y}\in\Gamma$ 靠近 $x_0$，我们就能唯一解出\eqref{align:ch03-compat-y} 中的 $\mathbf{q}(\mathbf{y})$。于是定理\cref{theorem:ch03-local-existence} 在 $x_0$ 的某邻域 $V$ 中给出\eqref{align:ch03-quasilinear-recall}、\eqref{align:ch03-quasilinear-bc} 唯一解的存在性。我们可在 $V$ 中用不显式涉及 $\mathbf{p}(\cdot)$ 的化简特征方程\eqref{align:ch03-quasilinear-char} 计算此解。
+
+然而与线性情形不同，从 $\Gamma$ 上不同点发出的投影特征线有可能在 $V$ 之外相交；这种情况通常标志着我们的局部解不能在整个 $U$ 内存在。
+
+\begin{example}[守恒律的特征线]\label{example:ch03-conservation-char}作为拟线性一阶 PDE 的一例，我们现转向标量守恒律
+\begin{align}\label{align:ch03-conservation}
+G(Du,u_t,u,x,t)=u_t+\operatorname{div}\mathbf{F}(u)=u_t+\mathbf{F}'(u)\cdot Du=0
+\end{align}
+在 $U=\mathbb{R}^n\times(0,\infty)$ 中，配以初始条件
+\begin{align}\label{align:ch03-conservation-ic}
+u=g \qquad \text{在 }\Gamma=\mathbb{R}^n\times\{t=0\}\text{ 上}.
+\end{align}
+这里 $\mathbf{F}:\mathbb{R}\to\mathbb{R}^n$，$\mathbf{F}=(F_1,\cdots,F_n)$，如前令 $t=x_{n+1}$。此外``$\operatorname{div}$''表示关于空间变量 $(x_1,\cdots,x_n)$ 的散度，$Du=D_x u=(u_{x_1},\cdots,u_{x_n})$。
+
+由于方向 $t=x_{n+1}$ 起特殊作用，我们相应地修改记号。现写 $\mathbf{q}=(\mathbf{p},p_{n+1})$、$\mathbf{y}=(x,t)$，有 $G(\mathbf{q},z,\mathbf{y})=p_{n+1}+\mathbf{F}'(z)\cdot\mathbf{p}$，从而 $D_q G=(\mathbf{F}'(z),1)$，$D_y G=0$，$G_z=\mathbf{F}''(z)\cdot\mathbf{p}$。显然非特征条件\eqref{align:ch03-nonchar-cond} 在每点 $\mathbf{y}_0=(x_0,0)\in\Gamma$ 处满足。此外方程\eqref{align:ch03-quasilinear-char}(a) 成为
+\begin{align}\label{align:ch03-conservation-xdot}
+\dot{x}_i(s)=F_i'(z(s)) \ (i=1,\cdots,n),\qquad \dot{x}_{n+1}(s)=1.
+\end{align}
+故 $x_{n+1}(s)=s$，与我们上面写 $x_{n+1}=t$ 一致。换言之，我们可把参数 $s$ 等同于时间 $t$。方程\eqref{align:ch03-quasilinear-char}(b) 读作 $\dot{z}(s)=0$。因而
+\begin{align}\label{align:ch03-conservation-z}
+z(s)=z_0=g(x_0);
+\end{align}
+而\eqref{align:ch03-conservation-xdot} 蕴含
+\begin{align}\label{align:ch03-conservation-path}
+\mathbf{x}(s)=\mathbf{F}'(g(x_0))s+x_0.
+\end{align}
+于是投影特征线 $\mathbf{y}(s)=(\mathbf{x}(s),s)=(\mathbf{F}'(g(x_0))s+x_0,s)$（$s\geqslant 0$）是一条直线，沿之 $u$ 为常数。
+\end{example}
+
+\end{document}

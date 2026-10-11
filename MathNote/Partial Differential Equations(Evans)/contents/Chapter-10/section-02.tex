@@ -1,0 +1,181 @@
+\documentclass[../../main.tex]{subfiles}
+
+\begin{document}
+
+\section{唯一性}\label{section:ch10-唯一性}
+
+我们的目标是建立Hamilton--Jacobi偏微分方程初值问题粘性解的唯一性。为稍具一般性，固定时间 $T>0$，考虑问题
+\begin{align}
+\begin{cases}
+u_t+H(Du,x)=0 & \text{在 } \mathbb{R}^n\times(0,T] \text{ 中},\\
+u=g & \text{在 } \mathbb{R}^n\times\{t=0\} \text{ 上}.
+\end{cases}
+\label{align:ch10-有限时间初值问题}
+\end{align}
+我们称有界一致连续函数 $u$ 为\eqref{align:ch10-有限时间初值问题} 的粘性解，只要 $u=g$ 在 $\mathbb{R}^n\times\{t=0\}$ 上，且当 $u-v$ 在点 $(x_0,t_0)\in\mathbb{R}^n\times(0,T)$ 处有局部最大值（或最小值）时，\S10.1.1 中的不等式\eqref{align:ch10-粘性解上不等式}（或\eqref{align:ch10-粘性解下不等式}）成立。
+
+\begin{lemma}[终端时刻的极值。]\label{lemma:ch10-终端时刻极值}假设 $u$ 是\eqref{align:ch10-有限时间初值问题} 的粘性解，且 $u-v$ 在点 $(x_0,t_0)\in\mathbb{R}^n\times(0,T]$ 处有局部最大值（最小值）。则
+\begin{align}
+v_t(x_0,t_0)+H(Dv(x_0,t_0),x_0)\leqslant 0 \quad (\geqslant 0).
+\label{align:ch10-终端时刻不等式}
+\end{align}
+关键在于我们现在允许 $t_0=T$。
+\end{lemma}
+
+\begin{proof}
+假设 $u-v$ 在点 $(x_0,T)$ 处有局部最大值；如前我们不妨假设这是严格局部最大值。令
+\begin{align*}
+\widetilde{v}(x,t)\coloneqq v(x,t)+\frac{\varepsilon}{T-t}\quad (x\in\mathbb{R}^n,\;0<t<T).
+\end{align*}
+则对充分小的 $\varepsilon>0$，$u-\widetilde{v}$ 在某点 $(x_\varepsilon,t_\varepsilon)$ 处有局部最大值，其中 $0<t_\varepsilon<T$ 且 $(x_\varepsilon,t_\varepsilon)\to(x_0,T)$。因此
+\begin{align*}
+\widetilde{v}_t(x_\varepsilon,t_\varepsilon)+H(D\widetilde{v}(x_\varepsilon,t_\varepsilon),x_\varepsilon)\leqslant 0,
+\end{align*}
+故
+\begin{align*}
+v_t(x_\varepsilon,t_\varepsilon)+\frac{\varepsilon}{(T-t_\varepsilon)^2}+H(Dv(x_\varepsilon,t_\varepsilon),x_\varepsilon)\leqslant 0.
+\end{align*}
+令 $\varepsilon\to 0$，我们得到
+\begin{align*}
+v_t(x_0,T)+H(Dv(x_0,T),x_0)\leqslant 0.
+\end{align*}
+这就证明了 $u-v$ 在 $(x_0,T)$ 处有最大值时的\eqref{align:ch10-终端时刻不等式}。若 $u-v$ 在 $(x_0,T)$ 处有最小值，类似的证明给出反向不等式。
+\end{proof}
+
+进一步，我们从今往后假设Hamilton函数 $H$ 满足以下 Lipschitz 连续性条件：
+\begin{align}
+\begin{cases}
+|H(p,x)-H(q,x)|\leqslant C|p-q|,\\
+|H(p,x)-H(p,y)|\leqslant C|x-y|(1+|p|),
+\end{cases}
+\label{align:ch10-H的Lipschitz条件}
+\end{align}
+对所有 $x,y,p,q\in\mathbb{R}^n$ 和某个常数 $C\geqslant 0$ 成立。
+
+接下来讨论关于初值问题\eqref{align:ch10-有限时间初值问题} 粘性解的核心事实，即唯一性。这一重要断言证明了我们将 \S10.1.1 中的不等式\eqref{align:ch10-粘性解上不等式} 和\eqref{align:ch10-粘性解下不等式} 作为理论基础的合理性。
+
+\begin{theorem}[粘性解的唯一性。]\label{theorem:ch10-粘性解唯一性}在假设\eqref{align:ch10-H的Lipschitz条件} 下，\eqref{align:ch10-有限时间初值问题} 至多存在一个粘性解。
+
+以下证明基于一个``加倍变量数''的不寻常思想。相关技术参见 \S11.4.3 中\cref{theorem:ch11-标量熵解唯一性} 的证明。
+\end{theorem}
+
+\begin{proof}*
+1. 假设 $u$ 和 $\widetilde{u}$ 都是具有相同初始条件的粘性解，但
+\begin{align}
+\sup_{\mathbb{R}^n\times[0,T]}(u-\widetilde{u}) \coloneqq \sigma > 0.
+\label{align:ch10-差异正}
+\end{align}
+取 $0<\varepsilon,\lambda<1$，令
+\begin{align}
+\Phi(x,y,t,s) \coloneqq u(x,t)-\widetilde{u}(y,s)-\lambda(t+s)-\frac{1}{\varepsilon^2}\big(|x-y|^2+(t-s)^2\big)-\varepsilon(|x|^2+|y|^2),
+\label{align:ch10-加倍变量函数}
+\end{align}
+对 $x,y\in\mathbb{R}^n$，$t,s\geqslant 0$。则存在点 $(x_0,y_0,t_0,s_0)\in\mathbb{R}^{2n}\times[0,T]^2$ 使得
+\begin{align}
+\Phi(x_0,y_0,t_0,s_0)=\max_{\mathbb{R}^{2n}\times[0,T]^2}\Phi(x,y,t,s).
+\label{align:ch06-内最大}
+\end{align}
+
+2. 我们可以取 $0<\varepsilon,\lambda<1$ 充分小，使得\eqref{align:ch10-差异正} 蕴含
+\begin{align}
+\Phi(x_0,y_0,t_0,s_0)\geqslant \sup_{\mathbb{R}^n\times[0,T]}\Phi(x,x,t,t)\geqslant \frac{\sigma}{2}.
+\label{align:ch06-下解}
+\end{align}
+此外，$\Phi(x_0,y_0,t_0,s_0)\geqslant\Phi(0,0,0,0)$；因此
+\begin{align}
+\lambda(t_0+s_0)+\frac{1}{\varepsilon^2}\big(|x_0-y_0|^2+(t_0-s_0)^2\big)+\varepsilon(|x_0|^2+|y_0|^2)\leqslant u(x_0,t_0)-\widetilde{u}(y_0,s_0)-u(0,0)+\widetilde{u}(0,0).
+\label{align:ch06-边界H2估计}
+\end{align}
+由于 $u$ 和 $\widetilde{u}$ 有界，我们推出
+\begin{align}
+|x_0-y_0|,\;|t_0-s_0| = O(\varepsilon) \quad \text{当 } \varepsilon\to 0.
+\label{align:ch10-距离Oeps}
+\end{align}
+此外\eqref{align:ch06-边界H2估计} 蕴含 $\varepsilon(|x_0|^2+|y_0|^2)=O(1)$，从而
+\begin{align*}
+\varepsilon(|x_0|+|y_0|) = \varepsilon^{1/4}\varepsilon^{3/4}(|x_0|+|y_0|)\leqslant \varepsilon^{1/2}+C\varepsilon^{3/2}(|x_0|^2+|y_0|^2)\leqslant C\varepsilon^{1/2}.
+\end{align*}
+因此
+\begin{align}
+\varepsilon(|x_0|+|y_0|)=O(\varepsilon^{1/2}).
+\label{align:ch10-距离Oeps12}
+\end{align}
+
+3. 由于 $\Phi(x_0,y_0,t_0,s_0)\geqslant\Phi(x_0,x_0,t_0,t_0)$，我们还有
+\begin{align*}
+&u(x_0,t_0)-\widetilde{u}(y_0,s_0)-\lambda(t_0+s_0)-\frac{1}{\varepsilon^2}\big(|x_0-y_0|^2+(t_0-s_0)^2\big)-\varepsilon(|x_0|^2+|y_0|^2)\\
+&\qquad\geqslant u(x_0,t_0)-\widetilde{u}(x_0,t_0)-2\lambda t_0-2\varepsilon|x_0|^2.
+\end{align*}
+故
+\begin{align*}
+\frac{1}{\varepsilon^2}\big(|x_0-y_0|^2+(t_0-s_0)^2\big)\leqslant \widetilde{u}(x_0,t_0)-\widetilde{u}(y_0,s_0)+\lambda(t_0-s_0)+\varepsilon(x_0+y_0)\cdot(x_0-y_0).
+\end{align*}
+由\eqref{align:ch10-距离Oeps}、\eqref{align:ch10-距离Oeps12} 及 $\widetilde{u}$ 的一致连续性，我们推出
+\begin{align}
+|x_0-y_0|,\;|t_0-s_0| = o(\varepsilon).
+\label{align:ch10-距离oeps}
+\end{align}
+
+4. 现在记 $\omega(\cdot)$ 为 $u$ 的连续模；即
+\begin{align*}
+|u(x,t)-u(y,s)|\leqslant\omega(|x-y|+|t-s|)
+\end{align*}
+对所有 $x,y\in\mathbb{R}^n$，$0\leqslant t,s\leqslant T$，且 $\omega(r)\to 0$ 当 $r\to 0$。类似地，$\widetilde{\omega}(\cdot)$ 表示 $\widetilde{u}$ 的连续模。
+
+则\eqref{align:ch06-下解} 蕴含
+\begin{align*}
+\frac{\sigma}{2} &\leqslant u(x_0,t_0)-\widetilde{u}(y_0,s_0)\\
+&= u(x_0,t_0)-u(x_0,0)+u(x_0,0)-\widetilde{u}(x_0,0)+\widetilde{u}(x_0,0)-\widetilde{u}(x_0,t_0)+\widetilde{u}(x_0,t_0)-\widetilde{u}(y_0,s_0)\\
+&\leqslant \omega(t_0)+\widetilde{\omega}(t_0)+\widetilde{\omega}(o(\varepsilon)),
+\end{align*}
+由\eqref{align:ch10-距离Oeps}、\eqref{align:ch10-距离oeps} 及初始条件。我们现在可以取 $\varepsilon>0$ 充分小，使得上述蕴含 $\frac{\sigma}{4}\leqslant\omega(t_0)+\widetilde{\omega}(t_0)$；这反过来又蕴含 $t_0\geqslant\mu>0$，对某个常数 $\mu>0$。类似地我们有 $s_0\geqslant\mu>0$。
+
+5. 现在由\eqref{align:ch06-内最大} 注意到映射 $(x,t)\mapsto\Phi(x,y_0,t,s_0)$ 在点 $(x_0,t_0)$ 处取得最大值。由\eqref{align:ch10-加倍变量函数}，
+\begin{align*}
+u-v \text{ 在 } (x_0,t_0) \text{ 处有最大值}
+\end{align*}
+其中
+\begin{align*}
+v(x,t)\coloneqq \widetilde{u}(y_0,s_0)+\lambda(t+s_0)+\frac{1}{\varepsilon^2}\big(|x-y_0|^2+(t-s_0)^2\big)+\varepsilon(|x|^2+|y_0|^2).
+\end{align*}
+由于 $u$ 是\eqref{align:ch10-有限时间初值问题} 的粘性解，我们在必要时使用引理，得出
+\begin{align*}
+v_t(x_0,t_0)+H(D_xv(x_0,t_0),x_0)\leqslant 0.
+\end{align*}
+因此
+\begin{align}
+\lambda+\frac{2(t_0-s_0)}{\varepsilon^2}+H\left(\frac{2}{\varepsilon^2}(x_0-y_0)+2\varepsilon x_0,\;x_0\right)\leqslant 0.
+\label{align:ch10-不等式12}
+\end{align}
+我们进一步观察到，由于映射 $(y,s)\mapsto-\Phi(x_0,y,t_0,s)$ 在点 $(y_0,s_0)$ 处取得最小值，
+\begin{align*}
+\widetilde{u}-\widetilde{v} \text{ 在 } (y_0,s_0) \text{ 处有最小值}
+\end{align*}
+其中
+\begin{align*}
+\widetilde{v}(y,s)\coloneqq u(x_0,t_0)-\lambda(t_0+s)-\frac{1}{\varepsilon^2}\big(|x_0-y|^2+(t_0-s)^2\big)-\varepsilon(|x_0|^2+|y|^2).
+\end{align*}
+由于 $\widetilde{u}$ 是\eqref{align:ch10-有限时间初值问题} 的粘性解，我们知道
+\begin{align*}
+\widetilde{v}_s(y_0,s_0)+H(D_y\widetilde{v}(y_0,s_0),y_0)\geqslant 0.
+\end{align*}
+因此
+\begin{align}
+-\lambda+\frac{2(t_0-s_0)}{\varepsilon^2}+H\left(\frac{2}{\varepsilon^2}(x_0-y_0)-2\varepsilon y_0,\;y_0\right)\geqslant 0.
+\label{align:ch10-不等式13}
+\end{align}
+
+6. 接下来，将\eqref{align:ch10-不等式12} 减去\eqref{align:ch10-不等式13}：
+\begin{align}
+2\lambda \leqslant H\left(\frac{2}{\varepsilon^2}(x_0-y_0)-2\varepsilon y_0,\;y_0\right)-H\left(\frac{2}{\varepsilon^2}(x_0-y_0)+2\varepsilon x_0,\;x_0\right).
+\label{align:ch10-不等式14}
+\end{align}
+由假设\eqref{align:ch10-H的Lipschitz条件}，
+\begin{align}
+\lambda\leqslant C\varepsilon(|x_0|+|y_0|)+C|x_0-y_0|\left(1+\frac{|x_0-y_0|}{\varepsilon^2}+\varepsilon(|x_0|+|y_0|)\right).
+\label{align:ch10-不等式15}
+\end{align}
+将估计\eqref{align:ch10-距离Oeps12}、\eqref{align:ch10-距离oeps} 代入\eqref{align:ch10-不等式15}，然后令 $\varepsilon\to 0$，发现 $0<\lambda\leqslant 0$。这一矛盾完成证明。
+\end{proof}
+
+\end{document}

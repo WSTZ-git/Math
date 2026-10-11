@@ -1,0 +1,104 @@
+\documentclass[../../main.tex]{subfiles}
+\begin{document}
+\section{闭子群定理}\label{section:ch20-closed-subgroup}
+
+回忆在定理\cref{theorem:ch07-21} 中我们证明了一个 Lie 子群是嵌入的当且仅当它是闭的。本节中，我们用指数映射证明该定理的一个强得多的形式，证明若一个 Lie 群的子群在拓扑上是闭子集，则它实际上是一个嵌入 Lie 子群。
+
+我们从一个简单结果开始，它表明 $G$ 中的群乘法如何在"一阶意义下"反映到其 Lie 代数的向量空间结构中。
+
+\begin{proposition}\label{proposition:ch20-乘积一阶}
+设 $G$ 是一个 Lie 群，$\mathfrak g$ 是它的 Lie 代数。对任意 $X,Y\in\mathfrak g$，存在某个 $\varepsilon>0$ 及光滑函数 $Z\colon(-\varepsilon,\varepsilon)\to\mathfrak g$，使得对所有 $t\in(-\varepsilon,\varepsilon)$，下列恒等式成立：
+\begin{align}
+(\exp tX)(\exp tY)=\exp\bigl(t(X+Y)+t^2Z(t)\bigr).
+\end{align}
+\end{proposition}
+
+\begin{proof}
+由于指数映射在 $\mathfrak g$ 中原点的某个邻域上是微分同胚，存在某个 $\varepsilon>0$，使得由 $\psi(t)=\exp^{-1}\bigl((\exp tX)(\exp tY)\bigr)$ 定义的映射 $\psi\colon(-\varepsilon,\varepsilon)\to\mathfrak g$ 光滑。它显然满足 $\psi(0)=0$ 且 $(\exp tX)(\exp tY)=\exp\psi(t)$。注意 $\psi$ 可写成复合
+\begin{align*}
+\mathbb{R}\xrightarrow{(e_X,e_Y)}G\times G\xrightarrow{m}G\xrightarrow{\exp^{-1}}\mathfrak g,
+\end{align*}
+其中 $e_X(t)=\exp tX$，$e_Y(t)=\exp tY$。习题 7-2 的结果表明 $\mathrm{d}m_{(e,e)}(X,Y)=X+Y$（对 $X,Y\in T_eG$），这蕴含 $\psi'(0)=X+Y$。于是由 Taylor 定理，$\psi(t)=t(X+Y)+t^2Z(t)$，其中 $Z$ 是光滑函数。
+\end{proof}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.8\textwidth]{fig-20-2.png}
+\caption{指数映射光滑性的证明}\label{figure:ch20-exponential-smooth}
+\end{figure}
+
+\begin{corollary}\label{corollary:ch20-乘积极限}
+在上述命题的假设下，
+\begin{align}
+\lim_{n\to\infty}\left[\left(\exp\frac{t}{n}X\right)\left(\exp\frac{t}{n}Y\right)\right]^n=\exp t(X+Y).
+\end{align}
+\end{corollary}
+
+\begin{proof}
+公式\eqref{proposition:ch20-乘积一阶} 蕴含对任意 $t\in\mathbb{R}$ 与任意充分大的 $n\in\mathbb{Z}$，
+\begin{align*}
+\left(\exp\frac{t}{n}X\right)\left(\exp\frac{t}{n}Y\right)
+=\exp\left(\frac{t}{n}(X+Y)+\frac{t^2}{n^2}Z\!\left(\frac{t}{n}\right)\right),
+\end{align*}
+然后由命题\cref{proposition:ch20-指数性质}(d) 得
+\begin{align*}
+\left[\left(\exp\frac{t}{n}X\right)\left(\exp\frac{t}{n}Y\right)\right]^n
+=\left[\exp\left(\frac{t}{n}(X+Y)+\frac{t^2}{n^2}Z\!\left(\frac{t}{n}\right)\right)\right]^n
+=\exp\left(t(X+Y)+\frac{t^2}{n}Z\!\left(\frac{t}{n}\right)\right).
+\end{align*}
+令 $n\to\infty$，由于 $Z(t/n)\to Z(0)$，即得极限 $\exp t(X+Y)$。
+\end{proof}
+
+\begin{theorem}{[闭子群定理]}\label{theorem:ch20-闭子群定理}
+设 $G$ 是一个 Lie 群，$H\subseteq G$ 是任意子群。若 $H$ 在 $G$ 中是闭的，则 $H$ 是 $G$ 的一个嵌入 Lie 子群。
+\end{theorem}
+
+\begin{proof}
+设 $\mathfrak g=\operatorname{Lie}(G)$，定义 $\mathfrak h=\{X\in\mathfrak g\colon \exp tX\in H\text{ 对所有 }t\in\mathbb{R}\}$。先证 $\mathfrak h$ 是 $\mathfrak g$ 的线性子空间。显然若 $X\in\mathfrak h$，则 $sX\in\mathfrak h$。若 $X,Y\in\mathfrak h$，由命题\cref{proposition:ch20-乘积一阶} 与推论\cref{corollary:ch20-乘积极限}，$(\exp tX)(\exp tY)\in H$，故 $\exp t(X+Y)\in H$，从而 $X+Y\in\mathfrak h$。
+
+取 $\mathfrak h$ 在 $\mathfrak g$ 中的一个补子空间 $\mathfrak b$，使得 $\mathfrak g=\mathfrak h\oplus\mathfrak b$。我们断言存在 $0$ 的一个邻域 $U\subseteq\mathfrak g$，使得
+\begin{align}
+U\cap\exp^{-1}(H)=U\cap\mathfrak h.
+\end{align}
+若不然，则 $0$ 在 $\mathfrak g$ 中的每个邻域都包含一个形如 $h_i=\exp Z_i\in H$、$Z_i\to0$、$Z_i\notin\mathfrak h$ 的序列。考虑映射 $\Phi\colon\mathfrak h\oplus\mathfrak b\to G$，$\Phi(X,Y)=(\exp X)(\exp Y)$。它由 $\Phi(X,Y)=(\exp X)(\exp Y)$ 定义，在 $(0,0)$ 的某个邻域上是微分同胚。取 $\mathfrak g$ 中 $0$ 的邻域 $U_0$ 与 $\mathfrak h\oplus\mathfrak b$ 中 $(0,0)$ 的邻域 $\widetilde U_0$，使 $\exp|_{U_0}$ 与 $\Phi|_{\widetilde U_0}$ 都是到其像的微分同胚。令 $\{U_i\}$ 为 $\mathfrak g$ 在 $0$ 处的可数邻域基（例如半径趋于零的可数坐标球序列）。令 $V_i=\exp(U_i)$，$\widetilde U_i=\Phi^{-1}(V_i)$，则 $\{V_i\}$ 与 $\{\widetilde U_i\}$ 分别为 $G$ 在 $e$ 处与 $\mathfrak h\oplus\mathfrak b$ 在 $(0,0)$ 处的邻域基。
+
+我们的假设蕴含对每个 $i$，存在 $h_i\in(\exp U_i)\cap H$ 而 $h_i\notin\exp(U_i\cap\mathfrak h)$。这意味着 $h_i=\exp Z_i$，$Z_i\in U_i$。由于 $\exp(U_i)=\Phi(\widetilde U_i)$，也可写成 $h_i=(\exp X_i)(\exp Y_i)$，$(X_i,Y_i)\in\widetilde U_i$。若 $Y_i=0$，则 $\exp Z_i=\exp X_i\in\exp(\mathfrak h)$；但 $\exp$ 在 $U_0$ 上单射，这蕴含 $X_i=Z_i\in U_i\cap\mathfrak h$，与假设 $h_i\notin\exp(U_i\cap\mathfrak h)$ 矛盾。由于 $\{\widetilde U_i\}$ 是邻域基，$Y_i\to0$（$i\to\infty$）。注意由 $\mathfrak h$ 的定义 $\exp X_i\in H$，故 $\exp Y_i=(\exp X_i)^{-1}h_i\in H$。
+
+在 $\mathfrak b$ 上取内积，$|\cdot|$ 为其范数。令 $c_i=|Y_i|$，则 $c_i\to0$。序列 $\{c_i^{-1}Y_i\}$ 位于 $\mathfrak b$ 的单位球面上，故取子列可设 $c_i^{-1}Y_i\to Y\in\mathfrak b$，由连续性 $|Y|=1$，特别地 $Y\neq0$。我们将证 $\exp tY\in H$ 对所有 $t\in\mathbb{R}$，从而 $Y\in\mathfrak h$，但 $\mathfrak h\cap\mathfrak b=\{0\}$，矛盾。
+
+任取 $t\in\mathbb{R}$，对每个 $i$ 令 $n_i$ 为不超过 $t/c_i$ 的最大整数。则 $|n_i-t/c_i|\leqslant1$，故 $n_ic_i\to t$。于是
+\begin{align*}
+n_iY_i=(n_ic_i)(c_i^{-1}Y_i)\to tY,
+\end{align*}
+由连续性 $\exp n_iY_i\to\exp tY$。但 $\exp n_iY_i=(\exp Y_i)^{n_i}\in H$，而 $H$ 闭，故 $\exp tY\in H$。这就完成了满足(20.6) 的 $U$ 存在性的证明。
+
+取线性同构 $E\colon\mathfrak g\to\mathbb{R}^m$，它把 $\mathfrak h$ 映到 $\mathbb{R}^k$。复合映射 $\varphi=E\circ\exp^{-1}\colon\exp U\to\mathbb{R}^m$ 是 $G$ 的一个光滑坐标图，而 $\varphi\bigl((\exp U)\cap H\bigr)=E(U\cap\mathfrak h)$ 是把后 $m-k$ 个坐标置零得到的切片。此外，若 $h\in H$ 任意，左平移 $L_h$ 是从 $\exp U$ 到 $h$ 的一个邻域的微分同胚。由于 $H$ 是子群，$L_h(H)=H$，故
+\begin{align*}
+L_h\bigl((\exp U)\cap H\bigr)=L_h(\exp U)\cap H,
+\end{align*}
+而 $\varphi\circ L_h^{-1}$ 易见是 $H$ 在 $h$ 的邻域中的切片坐标图。因此 $H$ 是 $G$ 的嵌入子流形，因而是 Lie 子群。
+\end{proof}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.8\textwidth]{fig-20-3.png}
+\caption{用于构造 $H$ 的切片图的邻域}\label{figure:ch20-slice-chart-h}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.8\textwidth]{fig-20-4.png}
+\caption{闭子群定理的证明}\label{figure:ch20-closed-subgroup-proof}
+\end{figure}
+
+下列推论总结了闭子群定理、命题\cref{proposition:ch07-11} 与定理\cref{theorem:ch07-21} 的结果。
+
+\begin{corollary}\label{corollary:ch20-闭子群等价}
+若 $G$ 是一个 Lie 群，$H$ 是 $G$ 的任意子群，则下列各条等价：
+\begin{enumerate}[(a)]
+\item $H$ 在 $G$ 中闭。
+\item $H$ 是 $G$ 的嵌入子流形。
+\item $H$ 是 $G$ 的嵌入 Lie 子群。
+\end{enumerate}
+\end{corollary}
+\end{document}

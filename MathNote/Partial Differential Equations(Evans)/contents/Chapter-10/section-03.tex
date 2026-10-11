@@ -1,0 +1,564 @@
+\documentclass[../../main.tex]{subfiles}
+
+\begin{document}
+
+\section{控制论，动态规划}\label{section:ch10-控制论动态规划}
+
+我们还需要建立Hamilton--Jacobi偏微分方程初值问题粘性解的存在性。一种方法是证明 \S10.1 中正则化方程\eqref{align:ch10-正则化问题} 的光滑解 $u^\varepsilon$ 的存在性，然后做出足够好的一致估计。这一技术实际上可行，但需要超出本书范围的热方程某些界的知识。
+
+本节我们提供一种独立有意义的替代方法，适用于关于 $p$ 为凸的Hamilton函数。
+
+我们首先介绍关于常微分方程控制论的一些基本问题，以及通过动态规划方法建立的与Hamilton--Jacobi偏微分方程的联系。这一讨论将使前面 \S\S10.1--10.2 中发展的理论与更早 \S3.3.1 中阐述的理论之间的联系更加清晰。值得注意的事实是，\S10.1.1 中定义粘性解的不等式\eqref{align:ch10-粘性解上不等式}、\eqref{align:ch10-粘性解下不等式} 是控制论最优性条件的推论。
+
+\subsection{最优控制论导引}\label{subsection:ch10-最优控制导引}
+
+我们现在研究最优控制常微分方程解 $x(\cdot)$ 的可能性：
+\begin{align}
+\begin{cases}
+\dot{\mathbf{x}}(s)=\mathbf{f}(\mathbf{x}(s),\boldsymbol{\alpha}(s)) & (t<s<T),\\
+\mathbf{x}(t)=x.
+\end{cases}
+\label{align:ch10-受控ODE}
+\end{align}
+这里 $\dot{\;}=\dfrac{\mathrm{d}}{\mathrm{d}s}$，$T>0$ 是固定的终端时间，$x\in\mathbb{R}^n$ 是给定的初始点，我们的解 $\mathbf{x}(\cdot)$ 在起始时间 $t\geqslant 0$ 取此值。在稍后的时间 $t<s<T$，$\mathbf{x}(\cdot)$ 按照常微分方程演化，其中
+\begin{align*}
+\mathbf{f}:\mathbb{R}^n\times A\to\mathbb{R}^n
+\end{align*}
+是给定的有界 Lipschitz 连续函数，$A$ 是 $\mathbb{R}^m$ 的某个给定紧子集。出现在\eqref{align:ch10-受控ODE} 中的函数 $\boldsymbol{\alpha}(\cdot)$ 是一个\emph{控制}，即随着时间演化从集合 $A$ 中调整参数的某种适当方案，从而影响由\eqref{align:ch10-受控ODE} 建模的系统的动力学。
+
+我们写
+\begin{align}
+\mathcal{A}\coloneqq\{\boldsymbol{\alpha}:[0,T]\to A\mid \boldsymbol{\alpha}(\cdot)\text{ 可测}\}
+\label{align:ch10-容许控制集}
+\end{align}
+表示容许控制集。由于
+\begin{align}
+|\mathbf{f}(x,a)|\leqslant C,\quad |\mathbf{f}(x,a)-\mathbf{f}(y,a)|\leqslant C|x-y| \quad (x,y\in\mathbb{R}^n,\;a\in A)
+\label{align:ch10-f的性质}
+\end{align}
+对某个常数 $C$，我们看到对每个控制 $\boldsymbol{\alpha}(\cdot)\in\mathcal{A}$，常微分方程\eqref{align:ch10-受控ODE} 有唯一的、Lipschitz 连续的解 $\mathbf{x}(\cdot)=\mathbf{x}_{\boldsymbol{\alpha}(\cdot)}(\cdot)$，存在于时间区间 $[t,T]$ 上，并对几乎所有时间 $t<s<T$ 满足该常微分方程。我们称 $\mathbf{x}(\cdot)$ 为系统对控制 $\boldsymbol{\alpha}(\cdot)$ 的\emph{响应}，称 $\mathbf{x}(s)$ 为系统在时间 $s$ 的\emph{状态}。
+
+我们的目标是找到一个控制 $\boldsymbol{\alpha}^*(\cdot)$ 来最优地操控系统。然而为了定义``最优''的含义，我们必须首先引入一个代价准则。给定 $x\in\mathbb{R}^n$ 和 $0\leqslant t\leqslant T$，对每个容许控制 $\boldsymbol{\alpha}(\cdot)\in\mathcal{A}$，定义相应的代价泛函
+\begin{align}
+C_{x,t}[\boldsymbol{\alpha}(\cdot)]\coloneqq \int_t^T r(\mathbf{x}(s),\boldsymbol{\alpha}(s))\,\mathrm{d}s+g(\mathbf{x}(T)),
+\label{align:ch10-代价泛函}
+\end{align}
+其中 $\mathbf{x}(\cdot)=\mathbf{x}_{\boldsymbol{\alpha}(\cdot)}(\cdot)$ 求解常微分方程\eqref{align:ch10-受控ODE}，且
+\begin{align*}
+r:\mathbb{R}^n\times A\to\mathbb{R},\quad g:\mathbb{R}^n\to\mathbb{R}
+\end{align*}
+是给定函数。我们称 $r$ 为单位时间运行代价，称 $g$ 为终端代价，从今往后假设
+\begin{align}
+\begin{cases}
+|r(x,a)|,\;|g(x)|\leqslant C,\\
+|r(x,a)-r(y,a)|,\;|g(x)-g(y)|\leqslant C|x-y|
+\end{cases}
+\quad (x,y\in\mathbb{R}^n,\;a\in A)
+\label{align:ch10-代价假设}
+\end{align}
+对某个常数 $C$ 成立。
+
+现在给定 $x\in\mathbb{R}^n$ 和 $0\leqslant t\leqslant T$，我们希望尽可能找到一个控制 $\boldsymbol{\alpha}^*(\cdot)$，在所有其他容许控制中使代价泛函\eqref{align:ch10-代价泛函} 最小。这是一个\emph{有限时域最优控制问题}。（无限时域问题见\cref{exercise:ch10-无限时域控制} 和\cref{exercise:ch10-无限时域HJB}。）
+
+\subsection{动态规划}\label{subsection:ch10-动态规划}
+
+动态规划方法通过关注\emph{值函数}来研究上述问题：
+\begin{align}
+u(x,t)\coloneqq \inf_{\boldsymbol{\alpha}(\cdot)\in\mathcal{A}} C_{x,t}[\boldsymbol{\alpha}(\cdot)] \quad (x\in\mathbb{R}^n,\;0\leqslant t\leqslant T).
+\label{align:ch10-值函数}
+\end{align}
+计划如下：在将 $u(x,t)$ 定义为从位置 $x$ 在时间 $t$ 出发的最小代价后，我们想研究 $u$ 作为 $x$ 和 $t$ 的函数。因此我们将给定的控制问题\eqref{align:ch10-受控ODE}、\eqref{align:ch10-代价泛函} 嵌入到所有此类问题的更大类中，随 $x$ 和 $t$ 变化。其思想是证明 $u$ 求解某个Hamilton--Jacobi型偏微分方程，并反过来证明该偏微分方程的解帮助我们综合出最优反馈控制。
+
+此后，固定 $x\in\mathbb{R}^n$，$0\leqslant t<T$。
+
+\begin{theorem}[最优性条件。]\label{theorem:ch10-最优性条件}对每个 $h>0$ 充分小使得 $t+h\leqslant T$，我们有
+\begin{align}
+u(x,t)=\inf_{\boldsymbol{\alpha}(\cdot)\in\mathcal{A}}\left\{\int_t^{t+h}r(\mathbf{x}(s),\boldsymbol{\alpha}(s))\,\mathrm{d}s+u(\mathbf{x}(t+h),t+h)\right\},
+\label{align:ch10-动态规划方程}
+\end{align}
+其中 $\mathbf{x}(\cdot)=\mathbf{x}_{\boldsymbol{\alpha}(\cdot)}(\cdot)$ 对控制 $\boldsymbol{\alpha}(\cdot)$ 求解常微分方程\eqref{align:ch10-受控ODE}。
+\end{theorem}
+
+\begin{proof}
+1. 任选控制 $\boldsymbol{\alpha}_1(\cdot)\in\mathcal{A}$，求解常微分方程
+\begin{align}
+\begin{cases}
+\dot{\mathbf{x}}_1(s)=\mathbf{f}(\mathbf{x}_1(s),\boldsymbol{\alpha}_1(s)) & (t<s<t+h),\\
+\mathbf{x}_1(t)=x.
+\end{cases}
+\label{align:ch10-控制1}
+\end{align}
+固定 $\varepsilon>0$，然后选取 $\boldsymbol{\alpha}_2(\cdot)\in\mathcal{A}$ 使得
+\begin{align}
+u(\mathbf{x}_1(t+h),t+h)+\varepsilon\geqslant \int_{t+h}^T r(\mathbf{x}_2(s),\boldsymbol{\alpha}_2(s))\,\mathrm{d}s+g(\mathbf{x}_2(T)),
+\label{align:ch10-控制2不等式}
+\end{align}
+其中
+\begin{align}
+\begin{cases}
+\dot{\mathbf{x}}_2(s)=\mathbf{f}(\mathbf{x}_2(s),\boldsymbol{\alpha}_2(s)) & (t+h<s<T),\\
+\mathbf{x}_2(t+h)=\mathbf{x}_1(t+h).
+\end{cases}
+\label{align:ch10-控制2}
+\end{align}
+现在定义控制
+\begin{align}
+\boldsymbol{\alpha}_3(s)\coloneqq
+\begin{cases}
+\boldsymbol{\alpha}_1(s) & \text{若 } t\leqslant s<t+h,\\
+\boldsymbol{\alpha}_2(s) & \text{若 } t+h\leqslant s\leqslant T,
+\end{cases}
+\label{align:ch10-控制3}
+\end{align}
+并令
+\begin{align}
+\begin{cases}
+\dot{\mathbf{x}}_3(s)=\mathbf{f}(\mathbf{x}_3(s),\boldsymbol{\alpha}_3(s)) & (t<s<T),\\
+\mathbf{x}_3(t)=x.
+\end{cases}
+\label{align:ch10-控制3ODE}
+\end{align}
+由微分方程\eqref{align:ch10-受控ODE} 解的唯一性，我们有
+\begin{align}
+\mathbf{x}_3(s)=
+\begin{cases}
+\mathbf{x}_1(s) & \text{若 } t\leqslant s\leqslant t+h,\\
+\mathbf{x}_2(s) & \text{若 } t+h\leqslant s\leqslant T.
+\end{cases}
+\label{align:ch10-状态拼接}
+\end{align}
+因此定义\eqref{align:ch10-值函数} 蕴含
+\begin{align*}
+u(x,t) &\leqslant C_{x,t}[\boldsymbol{\alpha}_3(\cdot)]=\int_t^T r(\mathbf{x}_3(s),\boldsymbol{\alpha}_3(s))\,\mathrm{d}s+g(\mathbf{x}_3(T))\\
+&=\int_t^{t+h}r(\mathbf{x}_1(s),\boldsymbol{\alpha}_1(s))\,\mathrm{d}s+\int_{t+h}^T r(\mathbf{x}_2(s),\boldsymbol{\alpha}_2(s))\,\mathrm{d}s+g(\mathbf{x}_2(T))\\
+&\leqslant \int_t^{t+h}r(\mathbf{x}_1(s),\boldsymbol{\alpha}_1(s))\,\mathrm{d}s+u(\mathbf{x}_1(t+h),t+h)+\varepsilon,
+\end{align*}
+最后一个不等式由\eqref{align:ch10-控制2不等式} 得到。由于 $\boldsymbol{\alpha}_1(\cdot)\in\mathcal{A}$ 是任意的，我们得出
+\begin{align}
+u(x,t)\leqslant \inf_{\boldsymbol{\alpha}(\cdot)\in\mathcal{A}}\left\{\int_t^{t+h}r(\mathbf{x}(s),\boldsymbol{\alpha}(s))\,\mathrm{d}s+u(\mathbf{x}(t+h),t+h)\right\}+\varepsilon,
+\label{align:ch06-上解}
+\end{align}
+$\mathbf{x}(\cdot)=\mathbf{x}_{\boldsymbol{\alpha}(\cdot)}(\cdot)$ 求解\eqref{align:ch10-受控ODE}。
+
+2. 再次固定 $\varepsilon>0$，现在选取 $\boldsymbol{\alpha}_4(\cdot)\in\mathcal{A}$ 使得
+\begin{align}
+u(x,t)+\varepsilon\geqslant \int_t^T r(\mathbf{x}_4(s),\boldsymbol{\alpha}_4(s))\,\mathrm{d}s+g(\mathbf{x}_4(T)),
+\label{align:ch10-控制4}
+\end{align}
+其中
+\begin{align*}
+\begin{cases}
+\dot{\mathbf{x}}_4(s)=\mathbf{f}(\mathbf{x}_4(s),\boldsymbol{\alpha}_4(s)) & (t<s<T),\\
+\mathbf{x}_4(t)=x.
+\end{cases}
+\end{align*}
+由\eqref{align:ch10-值函数} 观察到
+\begin{align}
+u(\mathbf{x}_4(t+h),t+h)\leqslant \int_{t+h}^T r(\mathbf{x}_4(s),\boldsymbol{\alpha}_4(s))\,\mathrm{d}s+g(\mathbf{x}_4(T)).
+\label{align:ch10-下界辅助}
+\end{align}
+因此
+\begin{align*}
+u(x,t)+\varepsilon\geqslant \inf_{\boldsymbol{\alpha}(\cdot)\in\mathcal{A}}\left\{\int_t^{t+h}r(\mathbf{x}(s),\boldsymbol{\alpha}(s))\,\mathrm{d}s+u(\mathbf{x}(t+h),t+h)\right\},
+\end{align*}
+$\mathbf{x}(\cdot)=\mathbf{x}_{\boldsymbol{\alpha}(\cdot)}(\cdot)$ 求解\eqref{align:ch10-受控ODE}。此不等式与\eqref{align:ch06-上解} 完成\eqref{align:ch10-动态规划方程} 的证明。
+\end{proof}
+
+\subsection{Hamilton--Jacobi--Bellman 方程}\label{subsection:ch10-HJB方程}
+
+我们最终的目标是将最优性条件\eqref{align:ch10-动态规划方程} 的``无穷小版本''写为偏微分方程。但首先我们必须检验值函数 $u$ 有界且 Lipschitz 连续。
+
+\begin{lemma}[值函数的估计。]\label{lemma:ch10-值函数估计}存在常数 $C$ 使得
+\begin{align*}
+|u(x,t)|\leqslant C,\quad |u(x,t)-u(\widehat{x},\widehat{t})|\leqslant C(|x-\widehat{x}|+|t-\widehat{t}|)
+\end{align*}
+对所有 $x,\widehat{x}\in\mathbb{R}^n$，$0\leqslant t,\widehat{t}\leqslant T$ 成立。
+\end{lemma}
+
+\begin{proof}
+1. 显然假设\eqref{align:ch10-代价假设} 蕴含 $u$ 在 $\mathbb{R}^n\times[0,T]$ 上有界。
+
+2. 固定 $x,\widehat{x}\in\mathbb{R}^n$，$0\leqslant t<T$。令 $\varepsilon>0$，然后选取 $\widehat{\boldsymbol{\alpha}}(\cdot)\in\mathcal{A}$ 使得
+\begin{align}
+u(\widehat{x},t)+\varepsilon\geqslant \int_t^T r(\widehat{\mathbf{x}}(s),\widehat{\boldsymbol{\alpha}}(s))\,\mathrm{d}s+g(\widehat{\mathbf{x}}(T)),
+\label{align:ch10-对偶控制}
+\end{align}
+其中 $\widehat{\mathbf{x}}(\cdot)$ 求解常微分方程
+\begin{align}
+\begin{cases}
+\dot{\widehat{\mathbf{x}}}(s)=\mathbf{f}(\widehat{\mathbf{x}}(s),\widehat{\boldsymbol{\alpha}}(s)) & (t<s<T),\\
+\widehat{\mathbf{x}}(t)=\widehat{x}.
+\end{cases}
+\label{align:ch10-对偶ODE}
+\end{align}
+则
+\begin{align}
+u(x,t)-u(\widehat{x},t)\leqslant \int_t^T r(\mathbf{x}(s),\widehat{\boldsymbol{\alpha}}(s))\,\mathrm{d}s+g(\mathbf{x}(T))-\int_t^T r(\widehat{\mathbf{x}}(s),\widehat{\boldsymbol{\alpha}}(s))\,\mathrm{d}s-g(\widehat{\mathbf{x}}(T))+\varepsilon,
+\label{align:ch10-差值估计}
+\end{align}
+其中 $\mathbf{x}(\cdot)$ 求解
+\begin{align}
+\begin{cases}
+\dot{\mathbf{x}}(s)=\mathbf{f}(\mathbf{x}(s),\widehat{\boldsymbol{\alpha}}(s)) & (t<s<T),\\
+\mathbf{x}(t)=x.
+\end{cases}
+\label{align:ch10-状态ODE}
+\end{align}
+由于 $\mathbf{f}$ Lipschitz 连续，\eqref{align:ch10-对偶ODE}、\eqref{align:ch10-状态ODE} 及 Gronwall 不等式（\S B.2）蕴含 $|\mathbf{x}(s)-\widehat{\mathbf{x}}(s)|\leqslant C|x-\widehat{x}|$（$t\leqslant s\leqslant T$）。因此由\eqref{align:ch10-代价假设} 和\eqref{align:ch10-差值估计} 推出 $u(x,t)-u(\widehat{x},t)\leqslant C|x-\widehat{x}|+\varepsilon$。将 $x$ 和 $\widehat{x}$ 的角色互换，同样的论证蕴含
+\begin{align*}
+|u(x,t)-u(\widehat{x},t)|\leqslant C|x-\widehat{x}| \quad (x,\widehat{x}\in\mathbb{R}^n,\;0\leqslant t\leqslant T).
+\end{align*}
+
+3. 现在令 $x\in\mathbb{R}^n$，$0\leqslant t<\widehat{t}\leqslant T$。取 $\varepsilon>0$，选取 $\boldsymbol{\alpha}(\cdot)\in\mathcal{A}$ 使得
+\begin{align*}
+u(x,t)+\varepsilon\geqslant \int_t^T r(\mathbf{x}(s),\boldsymbol{\alpha}(s))\,\mathrm{d}s+g(\mathbf{x}(T)),
+\end{align*}
+$\mathbf{x}(\cdot)$ 求解常微分方程\eqref{align:ch10-受控ODE}。定义 $\widehat{\boldsymbol{\alpha}}(s)\coloneqq\boldsymbol{\alpha}(s+t-\widehat{t})$ 对 $\widehat{t}\leqslant s\leqslant T$，令 $\widehat{\mathbf{x}}(\cdot)$ 求解
+\begin{align*}
+\begin{cases}
+\dot{\widehat{\mathbf{x}}}(s)=\mathbf{f}(\widehat{\mathbf{x}}(s),\widehat{\boldsymbol{\alpha}}(s)) & (\widehat{t}<s<T),\\
+\widehat{\mathbf{x}}(\widehat{t})=x.
+\end{cases}
+\end{align*}
+则 $\widehat{\mathbf{x}}(s)=\mathbf{x}(s+t-\widehat{t})$。因此
+\begin{align}
+u(x,\widehat{t})-u(x,t) &\leqslant \int_{\widehat{t}}^T r(\widehat{\mathbf{x}}(s),\widehat{\boldsymbol{\alpha}}(s))\,\mathrm{d}s+g(\widehat{\mathbf{x}}(T))-\int_t^T r(\mathbf{x}(s),\boldsymbol{\alpha}(s))\,\mathrm{d}s-g(\mathbf{x}(T))+\varepsilon\nonumber\\
+&= -\int_{T+t-\widehat{t}}^T r(\mathbf{x}(s),\boldsymbol{\alpha}(s))\,\mathrm{d}s+g(\mathbf{x}(T+t-\widehat{t}))-g(\mathbf{x}(T))+\varepsilon\nonumber\\
+&\leqslant C|t-\widehat{t}|+\varepsilon.
+\label{align:ch10-时间差估计1}
+\end{align}
+接下来选取 $\widehat{\boldsymbol{\alpha}}(\cdot)$ 使得
+\begin{align*}
+u(x,\widehat{t})+\varepsilon\geqslant \int_{\widehat{t}}^T r(\widehat{\mathbf{x}}(s),\widehat{\boldsymbol{\alpha}}(s))\,\mathrm{d}s+g(\widehat{\mathbf{x}}(T)),
+\end{align*}
+其中
+\begin{align*}
+\begin{cases}
+\dot{\widehat{\mathbf{x}}}(s)=\mathbf{f}(\widehat{\mathbf{x}}(s),\widehat{\boldsymbol{\alpha}}(s)) & (\widehat{t}<s<T),\\
+\widehat{\mathbf{x}}(\widehat{t})=x.
+\end{cases}
+\end{align*}
+定义
+\begin{align*}
+\boldsymbol{\alpha}(s)\coloneqq
+\begin{cases}
+\widehat{\boldsymbol{\alpha}}(s+\widehat{t}-t) & \text{若 } t\leqslant s\leqslant T+t-\widehat{t},\\
+\widehat{\boldsymbol{\alpha}}(T) & \text{若 } T+t-\widehat{t}\leqslant s\leqslant T,
+\end{cases}
+\end{align*}
+令 $\mathbf{x}(\cdot)$ 求解\eqref{align:ch10-受控ODE}。则 $\boldsymbol{\alpha}(s)=\widehat{\boldsymbol{\alpha}}(s+\widehat{t}-t)$，$\mathbf{x}(s)=\widehat{\mathbf{x}}(s+\widehat{t}-t)$ 对 $t\leqslant s\leqslant T+t-\widehat{t}$。因此
+\begin{align*}
+u(x,t)-u(x,\widehat{t}) &\leqslant \int_t^T r(\mathbf{x}(s),\boldsymbol{\alpha}(s))\,\mathrm{d}s+g(\mathbf{x}(T))-\int_{\widehat{t}}^T r(\widehat{\mathbf{x}}(s),\widehat{\boldsymbol{\alpha}}(s))\,\mathrm{d}s-g(\widehat{\mathbf{x}}(T))+\varepsilon\\
+&= \int_{T+t-\widehat{t}}^T r(\mathbf{x}(s),\boldsymbol{\alpha}(s))\,\mathrm{d}s+g(\mathbf{x}(T))-g(\mathbf{x}(T+t-\widehat{t}))+\varepsilon\\
+&\leqslant C|t-\widehat{t}|+\varepsilon.
+\end{align*}
+此不等式与\eqref{align:ch10-时间差估计1} 证明
+\begin{align*}
+|u(x,t)-u(x,\widehat{t})|\leqslant C|t-\widehat{t}| \quad (0\leqslant t\leqslant\widehat{t}\leqslant T,\;x\in\mathbb{R}^n).
+\end{align*}
+\end{proof}
+
+接下来我们证明值函数求解一个Hamilton--Jacobi型偏微分方程。
+
+\begin{theorem}[值函数的偏微分方程。]\label{theorem:ch10-值函数PDE}值函数 $u$ 是以下Hamilton--Jacobi--Bellman 方程终端值问题的唯一粘性解：
+\begin{align}
+\begin{cases}
+u_t+\displaystyle\min_{a\in A}\{\mathbf{f}(x,a)\cdot Du+r(x,a)\}=0 & \text{在 } \mathbb{R}^n\times(0,T) \text{ 中},\\
+u=g & \text{在 } \mathbb{R}^n\times\{t=T\} \text{ 上}.
+\end{cases}
+\label{align:ch10-HJB方程}
+\end{align}
+\end{theorem}
+
+\begin{remark}
+\begin{enumerate}
+\item[(i)] Hamilton--Jacobi--Bellman 偏微分方程具有形式
+\begin{align*}
+u_t+H(Du,x)=0 \quad \text{在 } \mathbb{R}^n\times(0,T) \text{ 中},
+\end{align*}
+其中Hamilton函数为
+\begin{align}
+H(p,x)\coloneqq \min_{a\in A}\{\mathbf{f}(x,a)\cdot p+r(x,a)\} \quad (p,x\in\mathbb{R}^n).
+\label{align:ch10-HJBHamilton}
+\end{align}
+由不等式\eqref{align:ch10-代价假设}，我们推出 $H$ 满足 \S10.2 中的估计\eqref{align:ch10-H的Lipschitz条件}。
+
+\item[(ii)] 由于\eqref{align:ch10-HJB方程} 是终端值问题，我们必须明确解的含义。我们说有界一致连续函数 $u$ 是\eqref{align:ch10-HJB方程} 的粘性解，只要
+\begin{enumerate}[(a)]
+\item $u=g$ 在 $\mathbb{R}^n\times\{t=T\}$ 上，且
+\item 对每个 $v\in C^\infty(\mathbb{R}^n\times(0,T))$，
+\begin{align}
+\begin{cases}
+\text{若 } u-v \text{ 在某点 } (x_0,t_0)\in\mathbb{R}^n\times(0,T) \text{ 处有局部最大值},\\
+\text{则 } v_t(x_0,t_0)+H(Dv(x_0,t_0),x_0)\geqslant 0,
+\end{cases}
+\label{align:ch10-HJB上不等式}
+\end{align}
+且
+\begin{align}
+\begin{cases}
+\text{若 } u-v \text{ 在某点 } (x_0,t_0)\in\mathbb{R}^n\times(0,T) \text{ 处有局部最小值},\\
+\text{则 } v_t(x_0,t_0)+H(Dv(x_0,t_0),x_0)\leqslant 0.
+\end{cases}
+\label{align:ch10-HJB下不等式}
+\end{align}
+\end{enumerate}
+注意对于终端值问题\eqref{align:ch10-HJB方程}，我们将不等式方向与初值问题的反转。
+
+\item[(iii)] 读者应验证，如果 $u$ 是\eqref{align:ch10-HJB方程} 的粘性解，则 $w(x,t)\coloneqq u(x,T-t)$（$x\in\mathbb{R}^n$，$0\leqslant t\leqslant T$）是初值问题
+\begin{align*}
+\begin{cases}
+w_t-H(Dw,x)=0 & \text{在 } \mathbb{R}^n\times(0,T) \text{ 中},\\
+w=g & \text{在 } \mathbb{R}^n\times\{t=0\} \text{ 上}
+\end{cases}
+\end{align*}
+的粘性解。
+\end{enumerate}
+\end{remark}
+
+\begin{proof}
+1. 由引理，$u$ 有界且 Lipschitz 连续。此外，我们由\eqref{align:ch10-代价泛函} 和\eqref{align:ch10-值函数} 直接看到
+\begin{align*}
+u(x,T)=\inf_{\boldsymbol{\alpha}(\cdot)\in\mathcal{A}}C_{x,T}[\boldsymbol{\alpha}(\cdot)]=g(x) \quad (x\in\mathbb{R}^n).
+\end{align*}
+
+2. 现在令 $v\in C^\infty(\mathbb{R}^n\times(0,T))$，假设
+\begin{align*}
+u-v \text{ 在某点 } (x_0,t_0)\in\mathbb{R}^n\times(0,T) \text{ 处有局部最大值}.
+\end{align*}
+我们必须证明
+\begin{align}
+v_t(x_0,t_0)+\min_{a\in A}\{\mathbf{f}(x_0,a)\cdot Dv(x_0,t_0)+r(x_0,a)\}\geqslant 0.
+\label{align:ch10-HJB需证上}
+\end{align}
+假设不然。则存在 $a\in A$ 和 $\theta>0$ 使得
+\begin{align}
+v_t(x,t)+\mathbf{f}(x,a)\cdot Dv(x,t)+r(x,a)\leqslant -\theta<0
+\label{align:ch10-HJB矛盾上}
+\end{align}
+对所有充分接近 $(x_0,t_0)$ 的点 $(x,t)$，即
+\begin{align}
+|x-x_0|+|t-t_0|<\delta.
+\label{align:ch10-HJB邻域}
+\end{align}
+由于 $u-v$ 在 $(x_0,t_0)$ 处有局部最大值，我们不妨还假设
+\begin{align}
+(u-v)(x,t)\leqslant(u-v)(x_0,t_0) \quad \text{对所有满足\eqref{align:ch10-HJB邻域} 的 }(x,t).
+\label{align:ch06-Harnack最大条件}
+\end{align}
+现在考虑常数控制 $\boldsymbol{\alpha}(s)\equiv a$（$t_0\leqslant s\leqslant T$）及相应的动力学
+\begin{align}
+\begin{cases}
+\dot{\mathbf{x}}(s)=\mathbf{f}(\mathbf{x}(s),a) & (t_0<s<T),\\
+\mathbf{x}(t_0)=x_0.
+\end{cases}
+\label{align:ch10-常数控制ODE}
+\end{align}
+取 $0<h<\delta$ 充分小使得 $|\mathbf{x}(s)-x_0|<\delta$ 对 $t_0\leqslant s\leqslant t_0+h$。则
+\begin{align}
+v_t(\mathbf{x}(s),s)+\mathbf{f}(\mathbf{x}(s),a)\cdot Dv(\mathbf{x}(s),s)+r(\mathbf{x}(s),a)\leqslant-\theta \quad (t_0\leqslant s\leqslant t_0+h),
+\label{align:ch10-HJB沿轨估计}
+\end{align}
+由\eqref{align:ch10-HJB矛盾上}、\eqref{align:ch10-HJB邻域}。但利用\eqref{align:ch06-Harnack最大条件}，我们发现
+\begin{align}
+u(\mathbf{x}(t_0+h),t_0+h)-u(x_0,t_0) &\leqslant v(\mathbf{x}(t_0+h),t_0+h)-v(x_0,t_0)\nonumber\\
+&=\int_{t_0}^{t_0+h}\frac{\mathrm{d}}{\mathrm{d}s}v(\mathbf{x}(s),s)\,\mathrm{d}s\nonumber\\
+&=\int_{t_0}^{t_0+h}\big[v_t(\mathbf{x}(s),s)+Dv(\mathbf{x}(s),s)\cdot\dot{\mathbf{x}}(s)\big]\,\mathrm{d}s\nonumber\\
+&=\int_{t_0}^{t_0+h}\big[v_t(\mathbf{x}(s),s)+\mathbf{f}(\mathbf{x}(s),a)\cdot Dv(\mathbf{x}(s),s)\big]\,\mathrm{d}s.
+\label{align:ch10-HJB上推导}
+\end{align}
+此外，最优性条件\eqref{align:ch10-动态规划方程} 为我们提供不等式
+\begin{align}
+u(x_0,t_0)\leqslant \int_{t_0}^{t_0+h}r(\mathbf{x}(s),a)\,\mathrm{d}s+u(\mathbf{x}(t_0+h),t_0+h).
+\label{align:ch10-HJB最优条件用}
+\end{align}
+结合\eqref{align:ch10-HJB上推导} 和\eqref{align:ch10-HJB最优条件用}，我们发现
+\begin{align*}
+0\leqslant \int_{t_0}^{t_0+h}\big[v_t(\mathbf{x}(s),s)+\mathbf{f}(\mathbf{x}(s),a)\cdot Dv(\mathbf{x}(s),s)+r(\mathbf{x}(s),a)\big]\,\mathrm{d}s\leqslant-\theta h,
+\end{align*}
+由\eqref{align:ch10-HJB沿轨估计}。这一矛盾证明了\eqref{align:ch10-HJB需证上}。
+
+3. 现在假设
+\begin{align*}
+u-v \text{ 在某点 } (x_0,t_0)\in\mathbb{R}^n\times(0,T) \text{ 处有局部最小值};
+\end{align*}
+我们必须证明
+\begin{align}
+v_t(x_0,t_0)+\min_{a\in A}\{\mathbf{f}(x_0,a)\cdot Dv(x_0,t_0)+r(x_0,a)\}\leqslant 0.
+\label{align:ch10-HJB需证下}
+\end{align}
+假设不然。则存在 $\theta>0$ 使得
+\begin{align}
+v_t(x,t)+\mathbf{f}(x,a)\cdot Dv(x,t)+r(x,a)\geqslant\theta>0
+\label{align:ch10-HJB矛盾下}
+\end{align}
+对所有 $a\in A$ 和所有充分接近 $(x_0,t_0)$ 的 $(x,t)$，即
+\begin{align}
+|x-x_0|+|t-t_0|<\delta.
+\label{align:ch10-HJB邻域2}
+\end{align}
+由于 $u-v$ 在 $(x_0,t_0)$ 处有局部最小值，我们不妨还假设
+\begin{align}
+(u-v)(x,t)\geqslant(u-v)(x_0,t_0) \quad \text{对所有满足\eqref{align:ch10-HJB邻域2} 的 }(x,t).
+\label{align:ch10-HJB最小条件}
+\end{align}
+取 $0<h<\delta$ 充分小使得 $|\mathbf{x}(s)-x_0|<\delta$ 对 $t_0\leqslant s\leqslant t_0+h$，其中 $\mathbf{x}(\cdot)$ 求解
+\begin{align}
+\begin{cases}
+\dot{\mathbf{x}}(s)=\mathbf{f}(\mathbf{x}(s),\boldsymbol{\alpha}(s)) & (t_0<s<T),\\
+\mathbf{x}(t_0)=x_0
+\end{cases}
+\label{align:ch10-任意控制ODE}
+\end{align}
+对某个控制 $\boldsymbol{\alpha}(\cdot)\in\mathcal{A}$。这由假设\eqref{align:ch10-f的性质} 是可能的。然后利用\eqref{align:ch10-HJB最小条件}，我们对任意控制 $\boldsymbol{\alpha}(\cdot)$ 发现
+\begin{align}
+u(\mathbf{x}(t_0+h),t_0+h)-u(x_0,t_0) &\geqslant v(\mathbf{x}(t_0+h),t_0+h)-v(x_0,t_0)\nonumber\\
+&=\int_{t_0}^{t_0+h}\frac{\mathrm{d}}{\mathrm{d}s}v(\mathbf{x}(s),s)\,\mathrm{d}s\nonumber\\
+&=\int_{t_0}^{t_0+h}\big[v_t(\mathbf{x}(s),s)+\mathbf{f}(\mathbf{x}(s),\boldsymbol{\alpha}(s))\cdot Dv(\mathbf{x}(s),s)\big]\,\mathrm{d}s,
+\label{align:ch10-HJB下推导}
+\end{align}
+由\eqref{align:ch10-任意控制ODE}。另一方面，根据最优性条件\eqref{align:ch10-动态规划方程}，我们可以选取控制 $\boldsymbol{\alpha}(\cdot)\in\mathcal{A}$ 使得
+\begin{align}
+u(x_0,t_0)\geqslant \int_{t_0}^{t_0+h}r(\mathbf{x}(s),\boldsymbol{\alpha}(s))\,\mathrm{d}s+u(\mathbf{x}(t_0+h),t_0+h)-\frac{\theta h}{2}.
+\label{align:ch10-HJB下最优}
+\end{align}
+结合\eqref{align:ch10-HJB下推导} 和\eqref{align:ch10-HJB下最优}，我们发现
+\begin{align*}
+\frac{\theta h}{2}\geqslant \int_{t_0}^{t_0+h}\big[v_t(\mathbf{x}(s),s)+\mathbf{f}(\mathbf{x}(s),\boldsymbol{\alpha}(s))\cdot Dv(\mathbf{x}(s),s)+r(\mathbf{x}(s),\boldsymbol{\alpha}(s))\big]\,\mathrm{d}s\geqslant\theta h,
+\end{align*}
+由\eqref{align:ch10-HJB矛盾下}。这一矛盾证明了\eqref{align:ch10-HJB需证下}。
+\end{proof}
+
+\textbf{最优控制的设计。} 我们现在已经证明了由\eqref{align:ch10-值函数} 定义的值函数 $u$ 是Hamilton--Jacobi--Bellman 方程终端值问题\eqref{align:ch10-HJB方程} 的唯一粘性解。此偏微分方程如何帮助我们解决综合最优控制的问题？通俗地说，方法如下。给定初始时间 $0<t\leqslant T$ 和初始状态 $x\in\mathbb{R}^n$，我们考虑最优常微分方程
+\begin{align}
+\begin{cases}
+\dot{\mathbf{x}}^*(s)=\mathbf{f}(\mathbf{x}^*(s),\boldsymbol{\alpha}^*(s)) & (t<s<T),\\
+\mathbf{x}^*(t)=x,
+\end{cases}
+\label{align:ch10-最优轨线}
+\end{align}
+其中在每个时间 $s$，选取 $\boldsymbol{\alpha}^*(s)\in A$ 使得
+\begin{align}
+\mathbf{f}(\mathbf{x}^*(s),\boldsymbol{\alpha}^*(s))\cdot Du(\mathbf{x}^*(s),s)+r(\mathbf{x}^*(s),\boldsymbol{\alpha}^*(s))=H(Du(\mathbf{x}^*(s),s),\mathbf{x}^*(s)).
+\label{align:ch10-最优条件}
+\end{align}
+换言之，给定系统在时间 $s$ 处于点 $\mathbf{x}^*(s)$，我们调整最优控制值 $\boldsymbol{\alpha}^*(s)$ 以在Hamilton函数 $H$ 的定义\eqref{align:ch10-HJBHamilton} 中达到最小值。我们称如此定义的 $\boldsymbol{\alpha}^*(\cdot)$ 为\emph{反馈控制}。
+
+不难验证，这一规定确实生成最小代价轨线，至少在 $u$ 和 $\boldsymbol{\alpha}^*(\cdot)$ 光滑的区域内（使得\eqref{align:ch10-最优条件} 有意义）。然而，在梯度 $Du$ 不存在的点解释\eqref{align:ch10-最优条件} 时存在问题。
+
+\subsection{再论 Hopf--Lax 公式}\label{subsection:ch10-HopfLax再论}
+
+回忆更早在 \S3.3 中我们研究了Hamilton--Jacobi方程的初值问题
+\begin{align}
+\begin{cases}
+u_t+H(Du)=0 & \text{在 } \mathbb{R}^n\times(0,T] \text{ 中},\\
+u=g & \text{在 } \mathbb{R}^n\times\{t=0\} \text{ 上},
+\end{cases}
+\label{align:ch10-HL初值问题}
+\end{align}
+在假设
+\begin{align*}
+p\mapsto H(p)\text{ 凸},\quad \lim_{|p|\to\infty}\frac{H(p)}{|p|}=+\infty,
+\end{align*}
+且
+\begin{align*}
+g:\mathbb{R}^n\to\mathbb{R}\text{ Lipschitz 连续}
+\end{align*}
+下。注意我们现在取 $0\leqslant t\leqslant T$，以与 \S10.2 一致。我们还引入了解的 Hopf--Lax 公式：
+\begin{align}
+u(x,t)=\min_{y\in\mathbb{R}^n}\left\{tL\left(\frac{x-y}{t}\right)+g(y)\right\} \quad (x\in\mathbb{R}^n,\;t>0),
+\label{align:ch10-HL公式}
+\end{align}
+其中 $L$ 是 $H$ 的 Legendre 变换：
+\begin{align}
+L(v)=\sup_{p\in\mathbb{R}^n}\{p\cdot v-H(p)\} \quad (v\in\mathbb{R}^n).
+\label{align:ch10-Legendre变换}
+\end{align}
+
+为了将此处和 \S3.3 中建立的理论联系起来，我们现在检验 Hopf--Lax 公式是否给出 \S10.1.1 中定义的正确粘性解。（证明实际上只是\cref{theorem:ch10-值函数PDE} 证明的特殊情形。）
+
+\begin{theorem}[Hopf--Lax 公式作为粘性解。]\label{theorem:ch10-HL公式粘性解}此外假设 $g$ 有界。则初值问题\eqref{align:ch10-HL初值问题} 的唯一粘性解由公式\eqref{align:ch10-HL公式} 给出。
+\end{theorem}
+
+\begin{proof}
+1. 如 \S3.3 所示，由\eqref{align:ch10-HL公式} 定义的函数 $u$ Lipschitz 连续，并在时间 $t=0$ 取初值函数 $g$。也容易验证 $u$ 在 $\mathbb{R}^n\times(0,T]$ 上有界，因为 $g$ 有界。
+
+2. 现在令 $v\in C^\infty(\mathbb{R}^n\times(0,\infty))$，假设 $u-v$ 在 $(x_0,t_0)\in\mathbb{R}^n\times(0,\infty)$ 处有局部最大值。根据 \S3.3.2 中\cref{lemma:ch03-semigroup}，
+\begin{align}
+u(x_0,t_0)=\min_{x\in\mathbb{R}^n}\left\{(t_0-t)L\left(\frac{x_0-x}{t_0-t}\right)+u(x,t)\right\}
+\label{align:ch10-HL半群性质}
+\end{align}
+对每个 $0\leqslant t<t_0$。因此对每个 $0\leqslant t<t_0$，$x\in\mathbb{R}^n$，
+\begin{align}
+u(x_0,t_0)\leqslant(t_0-t)L\left(\frac{x_0-x}{t_0-t}\right)+u(x,t).
+\label{align:ch10-HL不等式}
+\end{align}
+但由于 $u-v$ 在 $(x_0,t_0)$ 处有局部最大值，
+\begin{align*}
+u(x_0,t_0)-v(x_0,t_0)\geqslant u(x,t)-v(x,t)
+\end{align*}
+对 $(x,t)$ 接近 $(x_0,t_0)$。结合此估计与\eqref{align:ch10-HL不等式}，我们发现
+\begin{align}
+v(x_0,t_0)-v(x,t)\leqslant(t_0-t)L\left(\frac{x_0-x}{t_0-t}\right)
+\label{align:ch06-HopfLv}
+\end{align}
+对 $t<t_0$，$(x,t)$ 接近 $(x_0,t_0)$。现在令 $h=t_0-t$，设 $x=x_0-hw$，其中 $w\in\mathbb{R}^n$ 给定。不等式\eqref{align:ch06-HopfLv} 变为
+\begin{align*}
+v(x_0,t_0)-v(x_0-hw,t_0-h)\leqslant hL(w).
+\end{align*}
+除以 $h>0$ 并令 $h\to 0$：
+\begin{align*}
+v_t(x_0,t_0)+Dv(x_0,t_0)\cdot w-L(w)\leqslant 0.
+\end{align*}
+这对所有 $w\in\mathbb{R}^n$ 成立，故
+\begin{align}
+v_t(x_0,t_0)+H(Dv(x_0,t_0))\leqslant 0,
+\label{align:ch10-HL上不等式}
+\end{align}
+因为
+\begin{align}
+H(p)=\sup_{w\in\mathbb{R}^n}\{p\cdot w-L(w)\},
+\label{align:ch10-凸对偶}
+\end{align}
+由 $H$ 和 $L$ 的凸对偶性。如所期望，我们建立了每当 $u-v$ 在 $(x_0,t_0)$ 处有局部最大值时的不等式\eqref{align:ch10-HL上不等式}。
+
+3. 现在改为假设 $u-v$ 在点 $(x_0,t_0)\in\mathbb{R}^n\times(0,T)$ 处有局部最小值。我们必须证明
+\begin{align}
+v_t(x_0,t_0)+H(Dv(x_0,t_0))\geqslant 0.
+\label{align:ch10-HL下不等式}
+\end{align}
+假设相反，估计\eqref{align:ch10-HL下不等式} 不成立，则
+\begin{align*}
+v_t(x,t)+H(Dv(x,t))\leqslant-\theta<0
+\end{align*}
+对某个 $\theta>0$ 和所有足够接近 $(x_0,t_0)$ 的点 $(x,t)$。由\eqref{align:ch10-凸对偶}，
+\begin{align}
+v_t(x,t)+Dv(x,t)\cdot v-L(v)\leqslant-\theta
+\label{align:ch10-HL矛盾}
+\end{align}
+对所有 $(x,t)$ 接近 $(x_0,t_0)$ 和所有 $v\in\mathbb{R}^n$。
+
+现在由\eqref{align:ch10-HL半群性质} 我们看到，如果 $h>0$ 充分小，
+\begin{align}
+u(x_0,t_0)=hL\left(\frac{x_0-x_1}{h}\right)+u(x_1,t_0-h)
+\label{align:ch10-HL最优点}
+\end{align}
+对某个点 $x_1=x_1(h)$ 接近 $x_0$。然后我们计算
+\begin{align*}
+v(x_0,t_0)-v(x_1,t_0-h) &= \int_0^1\frac{\mathrm{d}}{\mathrm{d}s}v\big(sx_0+(1-s)x_1,\;t_0+(s-1)h\big)\,\mathrm{d}s\\
+&= \int_0^1\bigg[Dv\big(sx_0+(1-s)x_1,\;t_0+(s-1)h\big)\cdot(x_0-x_1)\\
+&\qquad\qquad +v_t\big(sx_0+(1-s)x_1,\;t_0+(s-1)h\big)h\bigg]\,\mathrm{d}s\\
+&= h\int_0^1\left[Dv(\cdots)\cdot\left(\frac{x_0-x_1}{h}\right)+v_t(\cdots)\right]\,\mathrm{d}s.
+\end{align*}
+现在如果 $h>0$ 充分小，我们可以应用\eqref{align:ch10-HL矛盾}，发现
+\begin{align*}
+v(x_0,t_0)-v(x_1,t_0-h)\leqslant hL\left(\frac{x_0-x_1}{h}\right)-\theta h.
+\end{align*}
+但然后\eqref{align:ch10-HL最优点} 迫使
+\begin{align*}
+v(x_0,t_0)-v(x_1,t_0-h)\leqslant u(x_0,t_0)-u(x_1,t_0-h)-\theta h,
+\end{align*}
+这是一个矛盾，因为 $u-v$ 在 $(x_0,t_0)$ 处有局部最小值。因此所需的不等式\eqref{align:ch10-HL下不等式} 确实成立。
+\end{proof}
+
+\end{document}

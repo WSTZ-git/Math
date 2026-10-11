@@ -1,0 +1,683 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+% SOURCE p=146; printed=131; object=ch04-lch-title; region=upper-middle
+\section{局部紧 Hausdorff 空间}\label{section:ch04-lch-spaces}
+% SOURCE p=146; printed=131; object=ch04-locally-compact; region=upper-middle
+\begin{definition}[局部紧空间与 LCH 空间]\label{definition:ch04-locally-compact}
+若拓扑空间的每个点都有一个紧邻域，则称该空间\textbf{局部紧}。我们主要关心局部紧 Hausdorff 空间，简称 \textbf{LCH 空间}。
+\end{definition}
+% SUPPLEMENT: id=v14-ch04-lch-definition-remark; parent=ch04-locally-compact; kind=motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}局部紧性允许空间整体无界或不紧，却在每点附近使用紧性的有限化方法。紧邻域 $N$ 必须包含该点的一个开邻域，但本身不必开；例如 $\mathbb R$ 中 $[x-1,x+1]$ 就是紧邻域。若仅要求每点属于某个紧集，单点集已满足，会使条件失去内容。定义只要求每点有一个紧邻域；在 Hausdorff 假设下，下面将证明可以在任意指定开邻域内选到更小的紧邻域。Hausdorff 性还保证这些紧邻域闭，后续的闭包与连续函数拼接都要使用它。通常 $\mathbb R^n$ 是 LCH，因为点的闭球紧且包含开球；每个紧空间都局部紧，因为全空间就是紧邻域。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-lch-definition-remark
+% SOURCE p=146; printed=131; object=ch04-small-compact-neighborhood; number=4.30; region=middle
+\begin{proposition}\label{proposition:ch04-small-compact-neighborhood}
+若 $X$ 是 LCH 空间，$U\subseteq X$ 开且 $x\in U$，则存在 $x$ 的紧邻域 $N$，使 $N\subseteq U$。
+\end{proposition}
+% SOURCE p=146; printed=131; object=ch04-proof-small-compact-neighborhood; region=middle
+\begin{proof}
+可以假设 $\overline U$ 紧；否则取 $x$ 的紧邻域 $F$，将 $U$ 换成 $U\cap F^\circ$。由\cref{proposition:ch04-point-compact-separation}，$\overline U$ 中存在不交的相对开集 $V,W$，使 $x\in V$、$\partial U\subseteq W$。因为 $V\subseteq U$，$V$ 在 $X$ 中开；又 $\overline V$ 是 $\overline U\setminus W$ 的闭子集，因而紧。因此可取 $N=\overline V$。
+\end{proof}
+% SUPPLEMENT: id=v14-ch04-small-compact-details; parent=ch04-small-compact-neighborhood; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{相对开闭与缩小步骤的补写（重构新增）。}紧邻域 $F$ 在 Hausdorff 空间中闭，故 $x\in U\cap F^\circ$，且 $\overline{U\cap F^\circ}\subseteq F$；此闭包作为紧集 $F$ 的闭子集紧。对这个较小开集证明结论，也就对原 $U$ 成立。
+
+现在假设 $\overline U$ 紧。由于 $U$ 开，$\partial U=\overline U\setminus U$ 是紧子空间 $\overline U$ 的闭子集，故紧，且不含 $x$。在 Hausdorff 子空间 $\overline U$ 中应用点与紧集分离，得到原证明的 $V,W$。由 $V\cap W=\varnothing$、$\partial U\subseteq W$，有 $V\subseteq U$。写 $V=O\cap\overline U$，其中 $O$ 在 $X$ 中开；因 $V\subseteq U$，可改写为 $V=O\cap U$，所以 $V$ 在 $X$ 中开。
+
+$\overline U\setminus W$ 在 $\overline U$ 中闭，而 $\overline U$ 在 $X$ 中闭，所以它在 $X$ 中闭。它包含 $V$，故也包含 $\overline V$。于是
+\begin{align*}
+x\in V\subseteq\overline V\subseteq\overline U\setminus W\subseteq U.
+\end{align*}
+$\overline V$ 是紧集 $\overline U$ 的闭子集，因此紧，且包含开邻域 $V$，完成全部要求。
+\end{proof}
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}先利用局部紧性把问题放进一个紧闭包，再用 Hausdorff 分离性把点与开集边界分开，闭包便不会越出指定开集。$U$ 开使其边界不含内部点 $x$，同时把相对开集提升为环境开集。这里紧邻域仅需包含于 $U$，无需它本身开；结论也给出由紧邻域组成的邻域基。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-small-compact-details
+% SOURCE p=146; printed=131; object=ch04-precompact-neighborhood; number=4.31; region=middle
+\begin{proposition}\label{proposition:ch04-precompact-neighborhood}
+若 $X$ 为 LCH 空间，$K\subseteq U\subseteq X$，其中 $K$ 紧、$U$ 开，则存在预紧开集 $V$，使 $K\subseteq V\subseteq\overline V\subseteq U$。
+\end{proposition}
+% SOURCE p=146; printed=131; object=ch04-proof-precompact-neighborhood; region=middle
+\begin{proof}
+由\cref{proposition:ch04-small-compact-neighborhood}，对每个 $x\in K$ 可选紧邻域 $N_x\subseteq U$。族 $\{N_x^\circ\}$ 覆盖 $K$，故存在有限子覆盖 $\{N_{x_j}^\circ\}_{j=1}^n$。令 $V=\bigcup_{j=1}^nN_{x_j}^\circ$，则 $K\subseteq V$，而 $\overline V\subseteq\bigcup_{j=1}^nN_{x_j}$ 紧且包含于 $U$。
+\end{proof}
+% SUPPLEMENT: id=v14-ch04-precompact-neighborhood-details; parent=ch04-precompact-neighborhood; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{动机、逐条件说明与闭包核对（重构新增）。}每个 $N_{x_j}$ 在 Hausdorff 空间中闭，其有限并也是闭的，且包含 $V$，故包含 $\overline V$。有限并紧，$\overline V$ 作为其中闭子集紧，所以 $V$ 确实预紧。紧性把逐点选取压缩到有限族，既保持并的紧性，也避免无限并的闭性问题。若 $K=\varnothing$，可取 $V=\varnothing$。若不要求 $K$ 紧，则通常不能在一个预紧开集中容纳它，例如 $K=X=\mathbb R$。若 $U$ 不开，例如在 $\mathbb R$ 中取 $K=U=\{0\}$，则不存在所需的开邻域 $V$。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-precompact-neighborhood-details
+% SOURCE p=146; printed=131; object=ch04-local-urysohn; number=4.32; region=lower
+\begin{theorem}[Urysohn 引理的局部紧版本]\label{theorem:ch04-local-urysohn}
+若 $X$ 是 LCH 空间，$K\subseteq U\subseteq X$，其中 $K$ 紧、$U$ 开，则存在 $f\in C(X,[0,1])$，使 $f=1$ 于 $K$ 上，且 $f$ 在 $U$ 的某个紧子集之外等于 $0$。
+\end{theorem}
+% SOURCE p=146; printed=131; object=ch04-proof-local-urysohn; region=lower
+\begin{proof}
+取\cref{proposition:ch04-precompact-neighborhood}中的 $V$。由\cref{proposition:ch04-compact-hausdorff-normal}，$\overline V$ 正规，故由\hyperref[lemma:ch04-urysohn]{Urysohn 引理}，存在 $f\in C(\overline V,[0,1])$，使 $f=1$ 于 $K$ 上、$f=0$ 于 $\partial V$ 上。令 $f=0$ 于 $\overline V^c$，将其延拓到 $X$。设 $E\subseteq[0,1]$ 闭。若 $0\notin E$，有 $f^{-1}(E)=(f|_{\overline V})^{-1}(E)$；若 $0\in E$，则
+\begin{align*}
+f^{-1}(E)&=(f|_{\overline V})^{-1}(E)\cup\overline V^c\\
+&=(f|_{\overline V})^{-1}(E)\cup V^c,
+\end{align*}
+因为 $(f|_{\overline V})^{-1}(E)$ 包含 $\partial V$。两种情形中逆像都闭，故 $f$ 连续。
+\end{proof}
+% SUPPLEMENT: id=v14-ch04-local-urysohn-details; parent=ch04-local-urysohn; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}$K$ 在 Hausdorff 空间中闭，$\partial V=\overline V\setminus V$ 也闭，而 $K\subseteq V$ 保证两者不交，因此可在正规空间 $\overline V$ 上指定 $1$ 与 $0$。相对闭逆像在 $\overline V$ 中闭，而 $\overline V$ 在 $X$ 中闭，故该逆像也在 $X$ 中闭；这补足原证明两种情形的环境闭性。边界上的零值让外侧补零保持连续，不能只在 $K$ 上指定值后任意截断。延拓函数在 $\overline V$ 外为零，而 $\overline V$ 是包含于 $U$ 的紧集，正满足结论。若 $K$ 为空，取恒零函数即可。
+
+这个结果制造一个在目标紧集上等于 $1$、在较远处完全消失的连续截断函数。$[0,1]$ 的值域约束便于后续乘法与归一化；$K$ 紧和 $U$ 开用于先选预紧缓冲区，LCH 用于紧邻域及局部正规性。这里只需在紧闭包内用正规性，无需假定整个 $X$ 正规。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-local-urysohn-details
+% SOURCE p=146; printed=131; object=ch04-lch-completely-regular; number=4.33; region=bottom
+\begin{corollary}\label{corollary:ch04-lch-completely-regular}
+每个 LCH 空间都完全正则。
+\end{corollary}
+% SUPPLEMENT: id=v14-ch04-lch-completely-regular-proof; parent=ch04-lch-completely-regular; kind=proof+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{原书省略证明的补写（重构新增）。}LCH 空间 Hausdorff，所以是 $T_1$。给闭集 $F\subseteq X$ 和点 $x\notin F$，单点 $K=\{x\}$ 紧，$U=X\setminus F$ 开。由上一结果，存在 $f\in C(X,[0,1])$，使 $f(x)=1$，且 $f$ 在 $U$ 内某紧集之外为零，特别在 $F$ 上为零。因此满足\cref{definition:ch04-completely-regular}的函数分离要求，得到完全正则性。
+\end{proof}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}前一结果把开集与其中的点转换成连续函数的非零区域，因此给出完全正则所需的点与闭集函数分离。$T_1$ 部分来自 Hausdorff，不能因函数构造成功就省略定义中的该条件。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-lch-completely-regular-proof
+% SOURCE p=147; printed=132; object=ch04-local-tietze; number=4.34; region=top
+\begin{theorem}[Tietze 延拓定理的局部紧版本]\label{theorem:ch04-local-tietze}
+设 $X$ 是 LCH 空间，$K\subseteq X$ 紧。若 $f\in C(K)$，则存在 $F\in C(X)$，使 $F|_K=f$；而且可以使 $F$ 在某个紧集之外为零。
+\end{theorem}
+% SOURCE p=147; printed=132; object=ch04-local-tietze-proof-omitted; region=upper
+证明与\cref{theorem:ch04-local-urysohn}的证明相似，细节留给读者（\cref{exercise:ch04-prove-local-tietze}）。
+% SUPPLEMENT: id=v14-ch04-local-tietze-proof; parent=ch04-local-tietze; kind=proof+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{原书留给读者的证明（重构新增）。}若 $K=\varnothing$，取 $F=0$。否则由\cref{proposition:ch04-precompact-neighborhood}，取预紧开集 $V$，使 $K\subseteq V$。在紧 Hausdorff 空间 $\overline V$ 内，$K$ 与 $\partial V$ 是不交闭集。令 $D=K\cup\partial V$，并在 $D$ 上定义 $h|_K=f$、$h|_{\partial V}=0$。此函数连续：对任意闭集 $E\subseteq\mathbb C$，其逆像是 $f^{-1}(E)$，并在 $0\in E$ 时另加 $\partial V$；每一部分都在 $D$ 中闭，所以逆像闭。
+
+由\cref{proposition:ch04-compact-hausdorff-normal}，$\overline V$ 正规。应用\cref{corollary:ch04-tietze-unbounded}的复值延拓结论，得 $G\in C(\overline V)$ 且 $G|_D=h$。令 $F=G$ 于 $\overline V$，$F=0$ 于其补集。对闭集 $E\subseteq\mathbb C$，若 $0\notin E$，则 $F^{-1}(E)=G^{-1}(E)$；若 $0\in E$，则因 $G=0$ 于 $\partial V$，有
+\begin{align*}
+F^{-1}(E)=G^{-1}(E)\cup V^c.
+\end{align*}
+$G^{-1}(E)$ 相对闭于闭集 $\overline V$，故在 $X$ 中闭，两种情形均给闭逆像。因此 $F$ 连续，限制到 $K$ 为 $f$，并在紧集 $\overline V$ 外为零。
+\end{proof}
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}只在紧邻域闭包中使用 Tietze，再把边界值事先设为零，就能向全空间补零。$K$ 紧用于找到预紧开邻域，也保证 $K$ 闭；连续性保证指定数据可被连续延拓。整个 $X$ 不必正规。若在非紧 $X$ 上把 $K$ 换成任意闭集，结论中的紧支撑要求一般不成立：取 $X=K=\mathbb R$、$f\equiv1$，任何延拓都为 $1$，不能在紧集外消失。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-local-tietze-proof
+% SOURCE p=147; printed=132; object=ch04-support-introduction; region=upper-middle
+上述结果表明，LCH 空间上有大量在紧集之外消失的连续函数。现在引入一些术语。
+% SOURCE p=147; printed=132; object=ch04-function-support; region=upper-middle
+\begin{definition}[支集与紧支集函数]\label{definition:ch04-function-support}
+若 $X$ 为拓扑空间，$f\in C(X)$，则 $f$ 的\textbf{支集} $\operatorname{supp}(f)$ 是使 $f$ 在其外为零的最小闭集，即 $\{x:f(x)\ne0\}$ 的闭包。若 $\operatorname{supp}(f)$ 紧，称 $f$ \textbf{具有紧支集}，并定义
+\begin{align*}
+C_c(X)=\{f\in C(X):\operatorname{supp}(f)\text{ 紧}\}.
+\end{align*}
+\end{definition}
+% SUPPLEMENT: id=v14-ch04-support-details; parent=ch04-function-support; kind=proof+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{动机、良定义性与条件说明（重构新增）。}若 $Z=\{x:f(x)\ne0\}$，任何使 $f$ 在其外为零的闭集 $F$ 都必须包含 $Z$，因而包含 $\overline Z$；而 $\overline Z$ 本身闭且其外函数为零。因此最小闭集确实存在，且恰为所给闭包。必须取闭包，因为非零点集未必闭，例如 $f(t)=\max(1-|t|,0)$ 的非零集是 $(-1,1)$，支集却是 $[-1,1]$。零函数的支集为空，因而具有紧支集。支集描述的是函数可能产生作用的闭区域，并不声称它在支集的每个点都非零。
+
+定义支集这一步对任意函数也可进行，但本书 $C_c(X)$ 特别要求函数连续；类似地，$C_c(X,[0,1])$ 表示 $C_c(X)$ 中取值于 $[0,1]$ 的函数。若在 Hausdorff 空间中 $f$ 在某个紧集 $K$ 外为零，则 $K$ 闭，$\operatorname{supp}(f)\subseteq K$，支集为紧集的闭子集，因而紧。因此前面局部延拓的函数都属于 $C_c(X)$。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-support-details
+% SOURCE p=147; printed=132; object=ch04-vanishing-at-infinity; region=middle
+\begin{definition}[在无穷远处消失]\label{definition:ch04-vanishing-at-infinity}
+若 $f\in C(X)$，且对每个 $\varepsilon>0$，集合 $\{x:|f(x)|\ge\varepsilon\}$ 都紧，则称 $f$ \textbf{在无穷远处消失}。定义
+\begin{align*}
+C_0(X)=\{f\in C(X):f\text{ 在无穷远处消失}\}.
+\end{align*}
+\end{definition}
+% SOURCE p=147; printed=132; object=ch04-cc-czero-bc; region=middle
+\begin{proposition}\label{proposition:ch04-cc-czero-bc}
+显然 $C_c(X)\subseteq C_0(X)$。又 $C_0(X)\subseteq BC(X)$，因为对 $f\in C_0(X)$，集合 $\{x:|f(x)|\ge\varepsilon\}$ 的像紧，而其补集上有 $|f|<\varepsilon$。
+\end{proposition}
+% SUPPLEMENT: id=v14-ch04-czero-details; parent=ch04-cc-czero-bc; kind=proof+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{两个包含的补写（重构新增）。}若 $f\in C_c(X)$，则对 $\varepsilon>0$，$E_\varepsilon=\{x:|f(x)|\ge\varepsilon\}$ 是闭集，并包含于 $\operatorname{supp}(f)$。因此它是紧集的闭子集，故紧，从而 $f\in C_0(X)$。若 $f\in C_0(X)$，取 $\varepsilon=1$，则 $E_1$ 紧，$f(E_1)$ 为 $\mathbb C$ 中紧集，因而有界，设其模至多 $M$；在 $E_1^c$ 上模小于 $1$，所以全局模至多 $\max(M,1)$。若 $E_1$ 为空，直接得到全局模小于 $1$。故 $f\in BC(X)$。
+\end{proof}
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}“在无穷远处”不需要先给 $X$ 添加一个点；它表示只要离开某个足够大的紧集，函数值就任意小。每个正 $\varepsilon$ 都要检验，单一阈值不足以表达趋零。使用 $\ge\varepsilon$ 使连续函数的水平集闭，便于运用紧闭子集性质。这个条件等价于：对每个 $\varepsilon>0$，存在紧集 $K$，使 $x\notin K$ 时 $|f(x)|<\varepsilon$。正向取 $K=E_\varepsilon$；反向 $E_\varepsilon$ 是包含于 $K$ 的闭集，故紧。这里两种说法的等价以及两个包含都不需要局部紧性或 Hausdorff。
+
+在 $\mathbb R$ 上，$e^{-x^2}$ 在无穷远处消失，但支集为整个 $\mathbb R$ 而不紧，说明 $C_c$ 与 $C_0$ 可以不同；常值 $1$ 有界却不属于 $C_0(\mathbb R)$，说明有界也不足。若 $X$ 紧，则每个连续函数的闭水平集和闭支集均紧，故 $C_c(X)=C_0(X)=C(X)$。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-czero-details
+% SOURCE p=147; printed=132; object=ch04-cc-dense-czero; number=4.35; region=middle-lower
+\begin{proposition}\label{proposition:ch04-cc-dense-czero}
+若 $X$ 为 LCH 空间，则在一致度量下，$C_0(X)$ 是 $C_c(X)$ 的闭包。
+\end{proposition}
+% SOURCE p=147; printed=132; object=ch04-proof-cc-dense-czero; region=middle-lower
+\begin{proof}
+若 $\{f_n\}\subseteq C_c(X)$ 一致收敛于 $f\in C(X)$，则对每个 $\varepsilon>0$，存在 $n\in\mathbb N$ 使 $\|f_n-f\|_u<\varepsilon$。当 $x\notin\operatorname{supp}(f_n)$ 时，$|f(x)|<\varepsilon$，故 $f\in C_0(X)$。反之，若 $f\in C_0(X)$，令 $K_n=\{x:|f(x)|\ge n^{-1}\}$。由\cref{theorem:ch04-local-urysohn}，存在 $g_n\in C_c(X)$，使 $0\le g_n\le1$、$g_n=1$ 于 $K_n$ 上。令 $f_n=g_nf$，则 $f_n\in C_c(X)$，且 $\|f_n-f\|_u\le n^{-1}$，所以 $f_n\to f$ 一致成立。
+\end{proof}
+% SUPPLEMENT: id=v14-ch04-cc-dense-czero-details; parent=ch04-cc-dense-czero; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{闭包及乘积支集的补写（重构新增）。}由前一命题，$C_c(X)\subseteq BC(X)$，而 $BC(X)$ 在一致范数下完备，因此可在 $BC(X)$ 中取闭包。度量空间中的闭包点可取一列距离小于 $1/n$ 的 $C_c$ 函数逼近；其一致极限连续且有界。对给定 $\varepsilon>0$，原证明保证闭集 $\{|f|\ge\varepsilon\}$ 包含于紧集 $\operatorname{supp}(f_n)$，故它紧，得到 $f\in C_0(X)$。
+
+反向中，$K_n$ 紧，可以在\cref{theorem:ch04-local-urysohn}中取 $U=X$；若 $K_n$ 为空可取 $g_n=0$。乘积 $g_nf$ 连续，并有
+\begin{align*}
+\operatorname{supp}(g_nf)\subseteq\operatorname{supp}(g_n),
+\end{align*}
+因为非零点集包含关系在取闭包后保留。因此该支集紧，$f_n\in C_c(X)$。在 $K_n$ 上误差为零，在补集上
+\begin{align*}
+|f_n-f|=|1-g_n|\,|f|\le |f|<1/n.
+\end{align*}
+取上确界得不严格的界 $\|f_n-f\|_u\le1/n$。故每个 $C_0$ 函数都在 $C_c$ 的一致闭包内，两个包含均已完成。
+\end{proof}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}截断函数只保留 $f$ 可能较大的紧区域，外侧误差已由“在无穷远处消失”控制。局部紧和 Hausdorff 用于提供 $g_n$；一致收敛是控制同一阈值下全部空间的关键，逐点收敛不能替代。例如实直线上的连续函数 $q_n(x)=\max(0,\min(1,n+1-|x|))$ 支集为 $[-n-1,n+1]$，在 $[-n,n]$ 上等于 $1$，故逐点趋于常值 $1$，但 $1\notin C_0(\mathbb R)$。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-cc-dense-czero-details
+% SOURCE p=147; printed=132; object=ch04-one-point-introduction; region=lower
+若 $X$ 是非紧 LCH 空间，可以添加一个“无穷远点”将它变成紧空间，使 $C_0(X)$ 中的函数恰是当 $x$ 趋近无穷远点时趋于零的连续函数。更准确地，令 $\infty\notin X$，$X^*=X\cup\{\infty\}$，并令 $\mathcal T$ 为满足下列任一条件的 $X^*$ 的子集 $U$ 所成的族：
+\begin{enumerate}[label=(\roman*)]
+\item $U$ 是 $X$ 的开子集；
+\item $\infty\in U$，且 $U^c$ 是 $X$ 的紧子集。
+\end{enumerate}
+% SOURCE p=147; printed=132; object=ch04-one-point-compactification; number=4.36; region=lower
+\begin{proposition}\label{proposition:ch04-one-point-compactification}
+设 $X,X^*,\mathcal T$ 如上。则 $(X^*,\mathcal T)$ 是紧 Hausdorff 空间，且包含映射 $i:X\to X^*$ 是嵌入。又，$f\in C(X)$ 可连续延拓到 $X^*$，当且仅当 $f=g+c$，其中 $g\in C_0(X)$，$c$ 是常数；此时令 $f(\infty)=c$ 即得连续延拓。
+\end{proposition}
+% SOURCE p=147; printed=132; object=ch04-one-point-proof-omitted; region=bottom
+证明直接，留给读者（\cref{exercise:ch04-prove-one-point}）。
+% SOURCE p=147; printed=132; object=ch04-one-point-name; region=bottom
+\begin{definition}[单点紧化]\label{definition:ch04-one-point-compactification}
+上述空间 $X^*$ 称为 $X$ 的\textbf{单点紧化}或 \textbf{Alexandroff 紧化}。
+\end{definition}
+% SUPPLEMENT: id=v14-ch04-one-point-proof; parent=ch04-one-point-compactification; kind=proof+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{原书留给读者的证明（重构新增）。}先验证 $\mathcal T$ 为拓扑。每个紧集 $K\subseteq X$ 在 Hausdorff 空间 $X$ 中闭，因此第二类成员 $X^*\setminus K$ 与 $X$ 的交在 $X$ 中开。空集属于第一类，$X^*$ 属于第二类（其补集为空紧集）。有限交若不含 $\infty$，是各成员在 $X$ 中的开交；若含 $\infty$，其补集为有限个紧集的并，仍紧，故属于第二类。
+
+对任意并 $U=\bigcup_iU_i$，若没有成员含 $\infty$，则它是 $X$ 中开集。若某个 $U_{i_0}$ 含 $\infty$，记 $K_0=X^*\setminus U_{i_0}$。$U\cap X$ 在 $X$ 中开，所以 $X^*\setminus U$ 是 $X$ 中闭集，并包含于紧集 $K_0$，因而紧。这给出任意并封闭性。
+
+\textbf{紧性。}任取 $X^*$ 的开覆盖，选其中包含 $\infty$ 的成员 $U_0$。它的补集 $K$ 在 $X$ 中紧，其余覆盖成员与 $X$ 的交皆开，并覆盖 $K$，故有限多个覆盖 $K$。加上 $U_0$ 就得到 $X^*$ 的有限子覆盖。
+
+\textbf{Hausdorff 性与嵌入。}对 $X$ 内两不同点，可用 $X$ 原来的不交开邻域，它们在 $X^*$ 中仍开。对 $x\in X$ 与 $\infty$，取 $x$ 的紧邻域 $N$。则 $N^\circ$ 和 $X^*\setminus N$ 是不交开集，分别包含两点。又，$X^*$ 的每个开集与 $X$ 的交都在原拓扑中开，而每个原开集也属于 $\mathcal T$，所以诱导在 $X$ 上的相对拓扑恰为原拓扑，包含映射因此是嵌入。
+
+\textbf{延拓。}若连续 $F:X^*\to\mathbb C$ 延拓 $f$，令 $c=F(\infty)$、$g=f-c$。对任意 $\varepsilon>0$，在 $\infty$ 连续给一个开邻域 $U$，使 $|F-c|<\varepsilon$ 于 $U$；其补集 $K$ 是 $X$ 的紧集。因此闭集 $\{|g|\ge\varepsilon\}$ 包含于 $K$，因而紧，故 $g\in C_0(X)$。
+
+反之，若 $f=g+c$、$g\in C_0(X)$，定义 $F|_X=f$、$F(\infty)=c$。在 $X$ 内的点，$X$ 本身是 $X^*$ 的开子集，因此 $f$ 的连续性保证 $F$ 连续。对 $\varepsilon>0$，$K_\varepsilon=\{|g|\ge\varepsilon\}$ 紧，开邻域 $X^*\setminus K_\varepsilon$ 上有 $|F-c|<\varepsilon$，故 $F$ 在 $\infty$ 连续，完成延拓。
+\end{proof}
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}无穷远点的邻域是“除去一个紧集后的其余部分”，因此趋向它恰表示最终逃离每个紧集。Hausdorff 保证紧补集闭，使新拓扑在旧空间上的相对拓扑正确；局部紧性用于把旧点与新点分离；紧性则来自任一含无穷远点的覆盖成员已经覆盖了紧集之外的全部点。
+
+非紧性保证 $X$ 在 $X^*$ 中稠密：任何 $\infty$ 的开邻域，其补集 $K$ 紧，不能等于非紧的 $X$，所以该邻域必遇 $X$。因此延拓若存在就唯一（连续函数在稠密集上相等则处处相等），常数 $c$ 也唯一。若 $X$ 本来紧，同一构造仍给紧 Hausdorff 空间，但 $\{\infty\}$ 开，添加的是孤立点，$X$ 不再稠密；任意 $c$ 都可作新点值，因为这时 $C_0(X)=C(X)$。后续习题若涉及紧的开子空间，其带星空间也可按这个孤立点约定理解。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-one-point-proof
+% SOURCE p=147,148; printed=132,133; object=ch04-function-topologies-intro; region=bottom-top
+若 $X$ 为拓扑空间，则 $X$ 上全体复值函数组成的空间 $\mathbb C^X$ 可以赋予多种拓扑。一种当然是乘积拓扑，也就是逐点收敛拓扑。另一种如下。
+% SOURCE p=148; printed=133; object=ch04-uniform-convergence-topology; region=top
+\begin{definition}[一致收敛拓扑]\label{definition:ch04-uniform-convergence-topology}
+$\mathbb C^X$ 上的\textbf{一致收敛拓扑}由下列集合生成：
+\begin{align*}
+\left\{g\in\mathbb C^X:\sup_{x\in X}|g(x)-f(x)|<n^{-1}\right\},
+\qquad n\in\mathbb N,\ f\in\mathbb C^X.
+\end{align*}
+\end{definition}
+% SOURCE p=148; printed=133; object=ch04-continuous-uniform-closed; region=upper
+\begin{proposition}\label{proposition:ch04-continuous-uniform-closed}
+\cref{proposition:ch04-bc-closed-complete}的证明表明，$C(X)$ 在 $\mathbb C^X$ 的一致收敛拓扑下是闭子空间。
+\end{proposition}
+% SOURCE p=148; printed=133; object=ch04-compact-uniform-topology; region=upper
+\begin{definition}[紧集上一致收敛拓扑]\label{definition:ch04-compact-uniform-topology}
+介于逐点收敛拓扑和一致收敛拓扑之间的，是\textbf{紧集上一致收敛拓扑}，它由下列集合生成：
+\begin{align*}
+\left\{g\in\mathbb C^X:\sup_{x\in K}|g(x)-f(x)|<n^{-1}\right\},\\
+\qquad n\in\mathbb N,\ f\in\mathbb C^X,\ K\subseteq X\text{ 紧}.
+\end{align*}
+\end{definition}
+% SUPPLEMENT: id=v14-ch04-function-topologies-details; parent=ch04-compact-uniform-topology; kind=proof+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{拓扑比较与闭性断言的补写（重构新增）。}记
+\begin{align*}
+D_K(f,g)=\sup_{x\in K}|f(x)-g(x)|,\qquad
+B_K(f,r)=\{g:D_K(f,g)<r\}.
+\end{align*}
+非负量的空上确界在这里约定为 $0$；一般函数差可能无界，所以 $D_K$ 允许为 $+\infty$。它满足扩展非负数意义的三角不等式。若 $f\in B_K(h,r)$，则 $r-D_K(h,f)>0$，选 $n$ 使 $1/n<r-D_K(h,f)$，便有 $B_K(f,1/n)\subseteq B_K(h,r)$。对包含 $f$ 的有限多个生成集合，令 $K$ 为相应紧集的有限并，再取足够小的共同半径，就得到一个以 $f$ 为中心、包含于该有限交的 $B_K(f,1/n)$。因此这些居中集合确实组成 $f$ 的邻域基。
+
+每个有限集都紧，特别每个单点紧，故逐点拓扑的有限坐标限制可由紧集一致邻域实现；于是逐点拓扑不强于紧集上一致拓扑。对任意 $K\subseteq X$，有 $D_K\le D_X$，而上面的余量论证表明每个 $B_K(h,r)$ 在一致拓扑中开。因此紧集上一致拓扑不强于一致拓扑。这些是包含关系，并不声称总为严格包含；例如 $X$ 紧时后两者相同。
+
+最后，若 $f$ 属于 $C(X)$ 的一致拓扑闭包，则对每个 $n$ 可选 $f_n\in C(X)$，使 $D_X(f_n,f)<1/n$。对固定 $x\in X$ 与 $\varepsilon>0$，先选 $n$ 使 $1/n<\varepsilon/3$，再由 $f_n$ 在 $x$ 连续选邻域 $U$，使 $y\in U$ 时 $|f_n(y)-f_n(x)|<\varepsilon/3$。于是
+\begin{align*}
+|f(y)-f(x)|
+\le |f(y)-f_n(y)|+|f_n(y)-f_n(x)|+|f_n(x)-f(x)|<\varepsilon.
+\end{align*}
+故 $f$ 连续，证明 $C(X)$ 闭。这里没有要求函数本身有界，只要求逼近函数与目标函数之差有一致小界。
+\end{proof}
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}逐点拓扑一次只控制有限多个点，一致拓扑同时控制整个空间，紧集上一致拓扑则同时控制任意一个紧区域。用整数倒数作半径不会损失一般正半径，因为它们在零处共尾。定义对任意函数空间成立，不能因 $K$ 紧就断言任意函数在 $K$ 上有界，只有连续函数才享有这一结论。允许 $+\infty$ 的上确界仍可定义上述拓扑；将它变成普通有限值度量的方法见后面的\cref{exercise:ch04-bounded-function-metrics}。局部紧性在这些定义和一致闭性中尚未使用。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-function-topologies-details
+% SOURCE p=148; printed=133; object=ch04-compact-topology-lch-intro; region=upper-middle
+以下在 $X$ 为 LCH 空间的情形下研究紧集上一致收敛拓扑。
+% SOURCE p=148; printed=133; object=ch04-closed-compact-tests; number=4.37; region=middle
+\begin{lemma}\label{lemma:ch04-closed-compact-tests}
+若 $X$ 为 LCH 空间，$E\subseteq X$，则 $E$ 闭，当且仅当对每个紧集 $K\subseteq X$，$E\cap K$ 都闭。
+\end{lemma}
+% SOURCE p=148; printed=133; object=ch04-proof-closed-compact-tests; region=middle
+\begin{proof}
+若 $E$ 闭，由\cref{proposition:ch04-closed-subset-compact,proposition:ch04-compact-subset-closed}可知 $E\cap K$ 闭。若 $E$ 不闭，取 $x\in\overline E\setminus E$，并取 $x$ 的紧邻域 $K$。则 $x$ 是 $E\cap K$ 的聚点，但不属于 $E\cap K$，所以由\cref{proposition:ch04-closure-accumulation}，$E\cap K$ 不闭。
+\end{proof}
+% SUPPLEMENT: id=v14-ch04-closed-compact-tests-details; parent=ch04-closed-compact-tests; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{环境闭性与局部聚点的补写（重构新增）。}Hausdorff 性使紧集 $K$ 在 $X$ 中闭，所以 $E\cap K$ 在 $K$ 中相对闭，等价于它在 $X$ 中闭。正向中若 $E$ 闭，二闭集交当然闭，也可沿原证明先知 $E\cap K$ 相对闭于紧 $K$，再由紧子集闭得到环境闭性。
+
+逆向中，紧邻域 $K$ 包含某个开邻域 $V\ni x$。对任意邻域 $U\ni x$，$U\cap V$ 仍是 $x$ 的邻域，因 $x\in\overline E$，它与 $E$ 相交。又 $x\notin E$，所取交点不同于 $x$，并属于 $E\cap K$。故每个去心邻域都遇到 $E\cap K$，所以 $x$ 确为该集合外的聚点，证明不闭。
+\end{proof}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}紧邻域让每个局部闭性缺陷都能在一个紧测试区域内被发现。Hausdorff 用于把相对闭性提升为环境闭性；局部紧性用于让测试紧集含一个开邻域，而非仅包含点。本引理不是说只需测试有限集，有限集无法检出通常实直线中 $E=(0,1)$ 的闭性缺陷。稍后\cref{exercise:ch04-first-countable-compact-tests}给出以第一可数性替代局部紧性的版本。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-closed-compact-tests-details
+% SOURCE p=148; printed=133; object=ch04-continuous-compact-uniform-closed; number=4.38; region=middle
+\begin{proposition}\label{proposition:ch04-continuous-compact-uniform-closed}
+若 $X$ 是 LCH 空间，则 $C(X)$ 在 $\mathbb C^X$ 的紧集上一致收敛拓扑下是闭子空间。
+\end{proposition}
+% SOURCE p=148; printed=133; object=ch04-proof-continuous-compact-uniform-closed; region=middle
+\begin{proof}
+若 $f$ 属于 $C(X)$ 的闭包，则对每个紧集 $K\subseteq X$，$f$ 在 $K$ 上是连续函数的一致极限，所以 $f|_K$ 连续。若 $E\subseteq\mathbb C$ 闭，则对每个紧 $K$，
+\begin{align*}
+f^{-1}(E)\cap K=(f|_K)^{-1}(E)
+\end{align*}
+都闭。因此由\cref{lemma:ch04-closed-compact-tests}，$f^{-1}(E)$ 闭，从而 $f$ 连续。
+\end{proof}
+% SUPPLEMENT: id=v14-ch04-continuous-compact-closed-details; parent=ch04-continuous-compact-uniform-closed; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{动机、条件与逐紧集选列的澄清（重构新增）。}固定一个紧集 $K$，对每个 $n$，$f$ 的邻域 $B_K(f,1/n)$ 都与 $C(X)$ 相交，故可选连续 $g_n$ 满足 $D_K(g_n,f)<1/n$。其限制在 $K$ 上一致趋于 $f|_K$，由一致极限连续性得到 $f|_K$ 连续。这个序列允许依赖 $K$；证明没有声称存在同一序列同时在所有紧集上逼近 $f$，也没有预设函数空间第一可数。
+
+因此 $(f|_K)^{-1}(E)$ 在 $K$ 中相对闭；由 $K$ 在 Hausdorff 空间中闭，它也在 $X$ 中闭。局部紧性随后通过上一引理把所有紧测试结果合成为全空间闭性。只用逐点极限一般不能保连续，例如 $t^n$ 在 $[0,1]$ 上逐点趋于在 $1$ 取 $1$、其余处取 $0$ 的不连续函数。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-continuous-compact-closed-details
+% SOURCE p=148; printed=133; object=ch04-sigma-compact; region=middle-lower
+\begin{definition}[$\sigma$-紧空间]\label{definition:ch04-sigma-compact}
+若拓扑空间 $X$ 是可数个紧集的并，则称 $X$ \textbf{$\sigma$-紧}。
+\end{definition}
+% SOURCE p=148; printed=133; object=ch04-sigma-compact-motivation-source; region=middle-lower
+要体会接下来两个命题的意义，可参见\cref{exercise:ch04-rationals-locally-compact}。
+% SUPPLEMENT: id=v14-ch04-sigma-compact-remark; parent=ch04-sigma-compact; kind=motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}$\sigma$-紧性把整个空间分成可数多个紧区域，常用来将不可数范围的局部问题组织成序列。无需这些紧集递增、互不相交或具有内点；下一命题在 LCH 条件下会把覆盖改善成具有嵌套缓冲区的开集列。可数空间总是 $\sigma$-紧，因为单点紧，但这不意味着局部紧；$\mathbb Q$ 将给出反例。也不应把 $\sigma$-紧和可数紧混淆：实直线是 $\bigcup_n[-n,n]$，因而 $\sigma$-紧，却由开覆盖 $\{(-n,n)\}$ 可知并不可数紧。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-sigma-compact-remark
+% SOURCE p=148; printed=133; object=ch04-precompact-exhaustion; number=4.39; region=lower
+\begin{proposition}\label{proposition:ch04-precompact-exhaustion}
+若 $X$ 是 $\sigma$-紧 LCH 空间，则存在预紧开集列 $\{U_n\}$，使对所有 $n$ 都有 $\overline U_n\subseteq U_{n+1}$，且 $X=\bigcup_{n=1}^{\infty}U_n$。
+\end{proposition}
+% SOURCE p=148; printed=133; object=ch04-proof-precompact-exhaustion; region=lower
+\begin{proof}
+设 $X=\bigcup_{n=1}^{\infty}K_n$，其中每个 $K_n$ 紧。由\cref{proposition:ch04-precompact-neighborhood}，每个紧子集都有预紧开邻域。因此先取 $K_1$ 的预紧开邻域 $U_1$；归纳地，取 $\overline U_{n-1}\cup K_n$ 的预紧开邻域作为 $U_n$。
+\end{proof}
+% SUPPLEMENT: id=v14-ch04-precompact-exhaustion-details; parent=ch04-precompact-exhaustion; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{归纳核对、动机与条件说明（重构新增）。}每步 $\overline U_{n-1}$ 因预紧而紧，与紧 $K_n$ 的有限并仍紧，所以总可对该并应用预紧邻域命题（取环境开集为 $X$）。于是 $\overline U_{n-1}\subseteq U_n$ 且 $K_n\subseteq U_n$，后一个包含保证 $\bigcup_nU_n=X$。若 $X$ 为空，取所有 $U_n=\varnothing$；有限紧覆盖可补空集写成序列。$\sigma$-紧性提供可数起始覆盖，LCH 提供每步的开缓冲区，两条件在证明中分工不同。结论中的闭包嵌入下一开集，比仅仅递增更强，后面构造局部有限覆盖时需要这层空隙。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-precompact-exhaustion-details
+% SOURCE p=148,149; printed=133,134; object=ch04-compact-uniform-countable-base; number=4.40; region=bottom-top
+\begin{proposition}\label{proposition:ch04-compact-uniform-countable-base}
+若 $X$ 为 $\sigma$-紧 LCH 空间，$\{U_n\}$ 如\cref{proposition:ch04-precompact-exhaustion}，则对每个 $f\in\mathbb C^X$，集合族
+\begin{align*}
+\left\{g\in\mathbb C^X:\sup_{x\in\overline U_n}|g(x)-f(x)|<m^{-1}\right\},
+\qquad m,n\in\mathbb N,
+\end{align*}
+构成紧集上一致收敛拓扑下 $f$ 的邻域基。因此该拓扑第一可数，且 $f_j\to f$ 在紧集上一致成立，当且仅当它在每个 $\overline U_n$ 上一致成立。
+\end{proposition}
+% SOURCE p=149; printed=134; object=ch04-proof-compact-uniform-countable-base; region=top
+\begin{proof}
+只要注意：若 $K\subseteq X$ 紧，则 $\{U_n\}_{n=1}^{\infty}$ 是 $K$ 的开覆盖，故对某个 $n$ 有 $K\subseteq\overline U_n$，上述断言即易得。细节留给读者（\cref{exercise:ch04-prove-countable-compact-base}）。
+\end{proof}
+% SUPPLEMENT: id=v14-ch04-compact-uniform-base-proof; parent=ch04-compact-uniform-countable-base; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{原书略去的细节（重构新增）。}由于 $U_n\subseteq\overline U_n\subseteq U_{n+1}$，该开集列递增。紧集 $K$ 的有限子覆盖 $U_{n_1},\ldots,U_{n_r}$ 因而包含于其中最大指标 $N$ 的 $U_N$，所以 $K\subseteq U_N\subseteq\overline U_N$；$K$ 为空时任取 $N$。
+
+前面的拓扑生成论证已说明，$f$ 的任意邻域含某个 $B_K(f,\varepsilon)$，其中 $K$ 紧、$\varepsilon>0$。取上述 $N$，再取 $m$ 使 $1/m\le\varepsilon$，便有
+\begin{align*}
+B_{\overline U_N}(f,1/m)\subseteq B_K(f,\varepsilon).
+\end{align*}
+因为每个 $\overline U_N$ 紧，左侧本身是 $f$ 的开邻域；故这些集合确为邻域基。二元指标集 $\mathbb N\times\mathbb N$ 可数，所以第一可数性成立。
+
+若 $f_j$ 在每个紧集上一致趋于 $f$，当然在每个 $\overline U_n$ 上如此。反之，对任意紧 $K$ 取 $K\subseteq\overline U_N$，有 $D_K(f_j,f)\le D_{\overline U_N}(f_j,f)\to0$，故在 $K$ 上一致收敛。这亦与上述可数邻域基的收敛定义完全相符。
+\end{proof}
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}可数紧覆盖若仅由任意紧集组成，并不保证每个紧集包含于其中某个有限阶段；开且递增的覆盖才让有限子覆盖转成一个阶段。LCH 与 $\sigma$-紧用于上一命题构造这样的覆盖；本命题一旦有该覆盖，只需其预紧、开、递增和穷尽性质。这里得到的是函数空间的第一可数性，并未声称原空间 $X$ 第一可数。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-compact-uniform-base-proof
+% SOURCE p=149; printed=134; object=ch04-partition-unity-intro; region=upper
+本节最后介绍一种在许多场合都很有用的构造。
+% SOURCE p=149; printed=134; object=ch04-partition-unity; region=upper-middle
+\begin{definition}[单位分解及其从属关系]\label{definition:ch04-partition-unity}
+若 $X$ 是拓扑空间、$E\subseteq X$，则 $E$ 上的一个\textbf{单位分解}是函数族 $\{h_\alpha\}_{\alpha\in A}\subseteq C(X,[0,1])$，满足：
+\begin{itemize}
+\item 每个 $x\in X$ 都有一个邻域，在此邻域上只有有限多个 $h_\alpha$ 不恒为零；
+\item 对 $x\in E$，有 $\sum_{\alpha\in A}h_\alpha(x)=1$。
+\end{itemize}
+若对每个 $\alpha$ 都存在 $U\in\mathcal U$ 使 $\operatorname{supp}(h_\alpha)\subseteq U$，其中 $\mathcal U$ 为 $E$ 的开覆盖，则称该单位分解\textbf{从属于} $\mathcal U$。
+\end{definition}
+% SUPPLEMENT: id=v14-ch04-partition-unity-remark; parent=ch04-partition-unity; kind=motivation+hypotheses+proof-detail; origin=independent-derivation
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}单位分解把全局的权重 $1$ 分成局部连续权重，便于将各开集上的对象相加拼合。非负及不超过 $1$ 的值域表示权重而非相消系数；和为 $1$ 使拼合保持常值和一致数据。从属要求的是整个闭支集位于一个覆盖成员内，比仅要求函数在该开集外逐点为零更便于控制边界。
+
+第一条是局部有限条件：在同一个邻域上可统一排除除有限多个以外的函数。因此该点附近的总和就是有限个连续函数之和，故连续；即使指标集不可数也没有级数重排问题。仅说每一点有有限个非零值，不足以保证一个邻域中只有有限个相关函数。该条件在全部 $X$ 上要求，而和为 $1$ 只在指定的 $E$ 上要求；不要把这两个范围混同。有限函数族自动满足局部有限条件。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-partition-unity-remark
+% SOURCE p=149; printed=134; object=ch04-finite-partition-unity; number=4.41; region=middle
+\begin{proposition}\label{proposition:ch04-finite-partition-unity}
+设 $X$ 为 LCH 空间，$K$ 为 $X$ 的紧子集，$\{U_j\}_{j=1}^n$ 为 $K$ 的开覆盖。则存在由紧支集函数组成的 $K$ 上单位分解，从属于此覆盖。
+\end{proposition}
+% SOURCE p=149; printed=134; object=ch04-proof-finite-partition-unity; region=middle-lower
+\begin{proof}
+由\cref{proposition:ch04-small-compact-neighborhood}，每个 $x\in K$ 都有紧邻域 $N_x$，包含于某个 $U_j$。因为 $\{N_x^\circ\}$ 是 $K$ 的开覆盖，存在 $x_1,\ldots,x_m$，使 $K\subseteq\bigcup_{k=1}^mN_{x_k}^\circ$。令 $F_j$ 为那些包含于 $U_j$ 的 $N_{x_k}$ 的并。则 $F_j$ 是 $U_j$ 的紧子集，故由 Urysohn 引理，存在 $g_1,\ldots,g_n\in C(X,[0,1])$，使 $g_j=1$ 于 $F_j$ 上、$\operatorname{supp}(g_j)\subseteq U_j$。由于 $F_j$ 覆盖 $K$，有 $\sum_{k=1}^ng_k\ge1$ 于 $K$ 上，故再次由 Urysohn 引理，存在 $f\in C_c(X,[0,1])$，使 $f=1$ 于 $K$ 上，且
+\begin{align*}
+\operatorname{supp}(f)\subseteq\left\{x:\sum_{k=1}^ng_k(x)>0\right\}.
+\end{align*}
+令 $g_{n+1}=1-f$，则 $\sum_{k=1}^{n+1}g_k>0$ 处处成立。对 $j=1,\ldots,n$，令
+\begin{align*}
+h_j=\frac{g_j}{\sum_{k=1}^{n+1}g_k}.
+\end{align*}
+于是 $\operatorname{supp}(h_j)=\operatorname{supp}(g_j)\subseteq U_j$，且 $\sum_{j=1}^nh_j=1$ 于 $K$ 上。
+\end{proof}
+% SUPPLEMENT: id=v14-ch04-finite-partition-unity-details; parent=ch04-finite-partition-unity; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{紧支集与分母正性的补写（重构新增）。}原证明两次使用的都是\cref{theorem:ch04-local-urysohn}的局部紧版本。第一次可选 $g_j\in C_c(X,[0,1])$，而不只是连续函数；若 $F_j$ 为空，取 $g_j=0$。每个所选 $N_{x_k}$ 至少包含于一个 $U_j$，故各 $F_j$ 确覆盖 $K$，且每个 $F_j$ 为有限个紧集的并。
+
+记 $S=\sum_{j=1}^ng_j$，开集 $O=\{S>0\}$ 包含 $K$，所以第二次应用局部 Urysohn 得到 $f$，其支集包含于 $O$。对任意点 $x$，若 $S(x)>0$，则分母 $S(x)+1-f(x)\ge S(x)>0$；若 $S(x)=0$，则 $x\notin O$，从而 $f(x)=0$，分母等于 $1$。因此分母连续且处处正，$h_j$ 连续；又 $0\le g_j\le S+1-f$，故 $0\le h_j\le1$。
+
+正分母保证 $h_j(x)\ne0$ 当且仅当 $g_j(x)\ne0$，取闭包便得支集相等，因而每个 $h_j$ 有紧支集且从属于 $U_j$。在 $K$ 上 $f=1$、$S\ge1$，故 $\sum_{j=1}^nh_j=S/S=1$。函数族有限，自动局部有限，因此确为单位分解。若 $K=\varnothing$，可取全零函数族；若覆盖本身为空族，则 $K$ 必为空，空函数族也满足定义。
+\end{proof}
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}先造局部截断函数，再除以总和，是单位分解的基本思路；但总和可能在 $K$ 外为零，因此加入 $1-f$ 专门保证全空间的分母非零，而在 $K$ 上不改变所需归一化。紧性保证只用有限个邻域；LCH 提供带紧支集的截断；覆盖开性允许支集安放其中。不能把“支集包含于开集”误当作“支集自动紧”，紧性来自局部 Urysohn 的额外结论。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-finite-partition-unity-details
+% SOURCE p=149; printed=134; object=ch04-partition-unity-generalization; region=lower
+这一结果的推广见\cref{exercise:ch04-paracompact-partitions}。
+\Needspace{7\baselineskip}
+% SOURCE p=149; printed=134; object=ch04-lch-exercises-title; region=lower
+\subsection*{习题}
+% SOURCE p=149; printed=134; object=ch04-ex46-prove-local-tietze; number=46; region=lower
+\begin{exercise}\label{exercise:ch04-prove-local-tietze}
+证明\cref{theorem:ch04-local-tietze}。
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex46-solution; parent=ch04-ex46-prove-local-tietze; kind=solution; origin=independent-derivation
+\begin{solution}
+\textbf{补写解答（重构新增）。}定理之后已给出完整证明，这里按构造再列出所需步骤。若 $K$ 为空，取零函数。否则取 $K\subseteq V$ 且 $V$ 预紧开；在 $D=K\cup\partial V$ 上把 $f$ 与零函数拼成 $h$。$K,\partial V$ 是不交闭集，闭集逆像分别闭，故 $h$ 连续。紧 Hausdorff 空间 $\overline V$ 正规，所以由复值 Tietze 延拓得 $G\in C(\overline V)$，$G|_K=f$、$G|_{\partial V}=0$。令 $F|_{\overline V}=G$，其外为零。对任意闭 $E\subseteq\mathbb C$，若 $0\notin E$，$F^{-1}(E)=G^{-1}(E)$ 在 $X$ 中闭；若 $0\in E$，则 $F^{-1}(E)=G^{-1}(E)\cup V^c$，也闭。因此 $F$ 连续且延拓 $f$，并在紧集 $\overline V$ 外为零。这同时证明延拓存在性、连续性和所要求的紧支撑性质。
+\end{solution}
+% END SUPPLEMENT: id=v14-ch04-ex46-solution
+% SOURCE p=149; printed=134; object=ch04-ex47-prove-one-point; number=47; region=lower
+\begin{exercise}\label{exercise:ch04-prove-one-point}
+证明\cref{proposition:ch04-one-point-compactification}。再证明：若 $X$ Hausdorff 但不局部紧，则该命题除 $X^*$ 不再 Hausdorff 外，其余结论仍成立。
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex47-solution; parent=ch04-ex47-prove-one-point; kind=solution+hypotheses; origin=independent-derivation
+\begin{solution}
+\textbf{补写解答（重构新增）。}命题后补写的证明已经逐项验证拓扑公理、紧性、Hausdorff 性、嵌入及函数延拓等价。为验证第二部分，仔细区分这些步骤的假设。
+
+只要 $X$ Hausdorff，每个紧补集就在 $X$ 中闭，因此新开集与 $X$ 的交是原开集。有限交含无穷远点时，补集是有限紧并；任意并含无穷远点时，补集是在某个紧集内的环境闭集。因此拓扑公理及相对拓扑不变的证明完全保留。任意新开覆盖中选一个含 $\infty$ 的成员，它外面只剩一个紧集，故仍可选有限子覆盖。这证明 $X^*$ 紧且原包含映射为嵌入。
+
+函数延拓的两个方向也只用紧补邻域：若 $F$ 连续，令 $c=F(\infty)$，则对每个 $\varepsilon>0$，$\{x\in X:|F(x)-c|\ge\varepsilon\}$ 包含于某个紧补集并且闭，故紧；反之，$g\in C_0(X)$ 的这些水平集的补集恰给 $\infty$ 处连续性。因此延拓仍恰为 $g+c$。
+
+现在假设 $X^*$ 仍 Hausdorff。对任意 $x\in X$，可取不交的 $X^*$-开邻域 $V\ni x$、$W\ni\infty$。则 $K=X^*\setminus W$ 是 $X$ 的紧子集，并包含 $x$ 的原开邻域 $V\cap X$，所以 $K$ 是 $x$ 的紧邻域。由于 $x$ 任意，这迫使 $X$ 局部紧，矛盾。因此在题给非局部紧条件下，$X^*$ 确实不 Hausdorff。
+
+最后，Hausdorff 且不局部紧的 $X$ 不可能紧，因为紧空间以自身作为每点紧邻域。所以此情形仍满足原构造的非紧约定，$X$ 在 $X^*$ 中仍稠密，连续复值延拓仍唯一。
+\end{solution}
+% END SUPPLEMENT: id=v14-ch04-ex47-solution
+% SOURCE p=149; printed=134; object=ch04-ex48-prove-countable-compact-base; number=48; region=lower
+\begin{exercise}\label{exercise:ch04-prove-countable-compact-base}
+补全\cref{proposition:ch04-compact-uniform-countable-base}的证明。
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex48-solution; parent=ch04-ex48-prove-countable-compact-base; kind=solution; origin=independent-derivation
+\begin{solution}
+\textbf{补写解答（重构新增）。}给任意紧集 $K$，递增开覆盖 $\{U_n\}$ 有有限子覆盖，取这些指标的最大值 $N$，即得 $K\subseteq U_N\subseteq\overline U_N$。给 $f$ 的任意基本邻域，它可由有限个紧集上的正误差限制组成；取这些紧集的有限并 $K$，再取各误差的最小值 $\varepsilon>0$，得到包含于原邻域的 $B_K(f,\varepsilon)$。选上述 $N$ 和满足 $1/m\le\varepsilon$ 的 $m$，则 $B_{\overline U_N}(f,1/m)\subseteq B_K(f,\varepsilon)$。这些都是开邻域，且由可数集 $\mathbb N^2$ 编号，所以构成可数邻域基。
+
+若 $f_j\to f$ 在各 $\overline U_n$ 上一致，对任意紧 $K\subseteq\overline U_N$ 都有 $D_K(f_j,f)\le D_{\overline U_N}(f_j,f)\to0$，故在任意紧集上一致。反向直接取紧集 $\overline U_n$ 即得。各步的中心与任意生成邻域间的转换，已由\cref{definition:ch04-compact-uniform-topology}之后的三角余量论证验证，故不需额外假设函数有界。
+\end{solution}
+% END SUPPLEMENT: id=v14-ch04-ex48-solution
+% SOURCE p=149; printed=134; object=ch04-ex49-locally-compact-subsets; number=49; region=bottom
+\begin{exercise}\label{exercise:ch04-locally-compact-subsets}
+设 $X$ 为紧 Hausdorff 空间，$E\subseteq X$。
+\begin{enumerate}
+\item\label{item:ch04-open-locally-compact} 若 $E$ 开，则它在相对拓扑下局部紧。
+\item\label{item:ch04-dense-locally-compact-open} 若 $E$ 在 $X$ 中稠密，且在相对拓扑下局部紧，则 $E$ 开。（使用\cref{exercise:ch04-dense-open-closure}。）
+\item\label{item:ch04-locally-closed-characterization} $E$ 在相对拓扑下局部紧，当且仅当 $E$ 在 $\overline E$ 中相对开。
+\end{enumerate}
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex49-solution; parent=ch04-ex49-locally-compact-subsets; kind=solution+hypotheses; origin=independent-derivation
+\begin{solution}
+\textbf{补写解答（重构新增）。}
+\begin{enumerate}
+\item 紧 Hausdorff 空间本身是 LCH。对 $x\in E$，由\cref{proposition:ch04-small-compact-neighborhood}，存在 $X$ 中的紧邻域 $N$，使 $x\in N\subseteq E$。它在 $E$ 中仍紧，并包含 $x$ 的一个相对开邻域，所以也是 $E$ 中的紧邻域。因此 $E$ 局部紧。
+\item 对任意 $x\in E$，在 $E$ 中取紧邻域 $N$，并取 $X$ 中开集 $U\ni x$，使 $E\cap U\subseteq N$。包含映射 $E\to X$ 连续，故 $N$ 在 $X$ 中也紧，由 Hausdorff 性知 $N$ 在 $X$ 中闭。由稠密性和所提示的习题，
+\begin{align*}
+U\subseteq\overline U=\overline{E\cap U}\subseteq N\subseteq E.
+\end{align*}
+于是 $x$ 有一个包含于 $E$ 的环境开邻域 $U$。将这些邻域取并便得 $E$ 开。
+\item $\overline E$ 是紧 Hausdorff 空间，且 $E$ 在其中稠密。若 $E$ 局部紧，对环境 $\overline E$ 使用前项，就得 $E$ 在其中相对开。反之，若 $E$ 在 $\overline E$ 中相对开，对紧 Hausdorff 空间 $\overline E$ 应用第一项，就得 $E$ 局部紧。相对拓扑的传递性保证两次讨论的 $E$ 拓扑正是原题的拓扑。
+\end{enumerate}
+\end{solution}
+\begin{remark}
+\textbf{条件的作用（重构新增）。}第二项的稠密性把 $E$ 内的局部紧邻域扩展为环境中的开邻域，若去掉稠密性，闭单点集也局部紧却未必开。第三项把这种现象表述为“在自己的闭包里开”，即通常所称的局部闭子集条件；这里闭包的紧性来自原环境紧。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-ex49-solution
+% SOURCE p=150; printed=135; object=ch04-ex50-collapse-complement; number=50; region=top
+\begin{exercise}\label{exercise:ch04-collapse-complement}
+设 $U$ 为紧 Hausdorff 空间 $X$ 的开子集，$U^*$ 为它的单点紧化（见\subcref{exercise:ch04-locally-compact-subsets}{item:ch04-open-locally-compact}）。定义 $\phi:X\to U^*$ 为：$x\in U$ 时 $\phi(x)=x$，$x\in U^c$ 时 $\phi(x)=\infty$。则 $\phi$ 连续。
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex50-solution; parent=ch04-ex50-collapse-complement; kind=solution+convention; origin=independent-derivation
+\begin{solution}
+\textbf{补写解答（重构新增）。}若 $V\subseteq U^*$ 开且不含 $\infty$，则 $V$ 在 $U$ 中开，因为 $U$ 在 $X$ 中开，$V$ 在 $X$ 中也开；此时 $\phi^{-1}(V)=V$。若 $V$ 含 $\infty$，则 $K=U^*\setminus V$ 是 $U$ 中的紧集。它在 $X$ 中也紧，因 $X$ Hausdorff 而闭，故 $\phi^{-1}(V)=X\setminus K$ 开。这穷尽了目标的全部开集，所以 $\phi$ 连续。
+
+原题未排除 $U$ 本身紧或为空。此时按前面明确的同一带星构造，$\infty$ 是孤立点，证明仍成立；例如 $U$ 紧时也在 $X$ 中闭，所以 $\phi^{-1}(\{\infty\})=U^c$ 开。若 $U=X$，映射的像不含 $\infty$，但连续性无需满射。
+\end{solution}
+% END SUPPLEMENT: id=v14-ch04-ex50-solution
+% SOURCE p=150; printed=135; object=ch04-ex51-proper-maps; number=51; region=upper
+\begin{exercise}\label{exercise:ch04-proper-maps}
+\begin{definition*}[适当映射]\phantomsection\label{definition:ch04-proper-map}
+若 $X,Y$ 为拓扑空间，$\phi\in C(X,Y)$，且对每个紧集 $K\subseteq Y$，$\phi^{-1}(K)$ 都在 $X$ 中紧，则称 $\phi$ 为\textbf{适当映射}。
+\end{definition*}
+设 $X,Y$ 为 LCH 空间，$X^*,Y^*$ 为其单点紧化。若 $\phi\in C(X,Y)$，则 $\phi$ 适当，当且仅当令 $\phi(\infty_X)=\infty_Y$ 能把它连续延拓为从 $X^*$ 到 $Y^*$ 的映射。
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex51-solution; parent=ch04-ex51-proper-maps; kind=solution+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{定义的动机与逐条件说明（重构新增）。}适当性表示值域中的紧区域不能从定义域的无穷远处不断接收点。定义本身包括连续性；紧集的逆像条件是额外要求，不能从普通连续性推得，因为连续性一般控制的是紧集的像。对单点紧化，紧集的补集正是无穷远邻域，因此适当性自然对应无穷远点之间的连续性。
+\end{remark}
+\begin{solution}
+\textbf{补写解答（重构新增）。}令 $\Phi|_X=\phi$、$\Phi(\infty_X)=\infty_Y$。若 $\phi$ 适当，对不含 $\infty_Y$ 的目标开集 $V$，$V$ 在 $Y$ 中开，其逆像 $\phi^{-1}(V)$ 在 $X$ 中开，因而在 $X^*$ 中开。若目标开集为 $Y^*\setminus K$，其中 $K\subseteq Y$ 紧，则
+\begin{align*}
+\Phi^{-1}(Y^*\setminus K)=X^*\setminus\phi^{-1}(K).
+\end{align*}
+由适当性，右侧是含 $\infty_X$ 的开集。因此 $\Phi$ 连续。
+
+反之，若 $\Phi$ 连续，对任意紧 $K\subseteq Y$，集合 $Y^*\setminus K$ 是含 $\infty_Y$ 的开集。其逆像是含 $\infty_X$ 的开集，所以按 $X^*$ 的拓扑定义，其补集 $\phi^{-1}(K)$ 是 $X$ 中紧集。这恰为适当性。若某个空间本已紧，采用添加孤立点的带星构造，同样的开集计算仍成立。
+\end{solution}
+% END SUPPLEMENT: id=v14-ch04-ex51-solution
+% SOURCE p=150; printed=135; object=ch04-ex52-sphere-compactification; number=52; region=upper-middle
+\begin{exercise}\label{exercise:ch04-sphere-compactification}
+$\mathbb R^n$ 的单点紧化同胚于 $n$ 维球面 $\{x\in\mathbb R^{n+1}:|x|=1\}$。
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex52-solution; parent=ch04-ex52-sphere-compactification; kind=solution+hypotheses; origin=independent-derivation
+\begin{solution}
+\textbf{补写解答（重构新增）。}先取正整数 $n$，记球面为 $S^n$、北极为 $p=(0,\ldots,0,1)$。定义
+\begin{align*}
+F(x)=\left(\frac{2x}{1+|x|^2},\frac{|x|^2-1}{1+|x|^2}\right),
+\qquad x\in\mathbb R^n,\qquad F(\infty)=p.
+\end{align*}
+因为 $4|x|^2+(|x|^2-1)^2=(1+|x|^2)^2$，$F(x)$ 确在 $S^n$ 上，且最后坐标小于 $1$。对任意 $(y,t)\in S^n\setminus\{p\}$，有 $t<1$，令 $x=y/(1-t)$。利用 $|y|^2=1-t^2$，得到 $|x|^2=(1+t)/(1-t)$，代回上式即得 $F(x)=(y,t)$。该公式也给唯一逆像，所以 $F$ 是 $(\mathbb R^n)^*$ 到 $S^n$ 的双射。
+
+在有限点处，公式分母正，因此 $F$ 连续。又
+\begin{align*}
+|F(x)-p|^2=\frac{4}{1+|x|^2}.
+\end{align*}
+对 $\varepsilon>0$，选 $R$ 使 $2/\sqrt{1+R^2}<\varepsilon$。闭球 $\{|x|\le R\}$ 紧，其在单点紧化中的补集是 $\infty$ 的开邻域，而该邻域经 $F$ 映入球面上 $p$ 的 $\varepsilon$ 邻域。所以 $F$ 在 $\infty$ 也连续。
+
+定义域单点紧化紧，球面作为 Euclid 空间的子空间 Hausdorff，由\cref{proposition:ch04-compact-bijection-homeomorphism}，连续双射 $F$ 是同胚。若另允许 $n=0$，$\mathbb R^0$ 是单点，其带星构造为两点离散空间，恰同胚于 $S^0=\{-1,1\}$；此时用的是前面给出的紧空间添加孤立点约定。
+\end{solution}
+% END SUPPLEMENT: id=v14-ch04-ex52-solution
+% SOURCE p=150; printed=135; object=ch04-ex53-first-countable-compact-tests; number=53; region=middle
+\begin{exercise}\label{exercise:ch04-first-countable-compact-tests}
+将\cref{lemma:ch04-closed-compact-tests}中 $X$ 局部紧的假设替换为 $X$ 第一可数，结论仍成立。
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex53-solution; parent=ch04-ex53-first-countable-compact-tests; kind=solution+hypotheses; origin=independent-derivation
+\begin{solution}
+\textbf{补写解答（重构新增）。}替换的是局部紧假设，原来的 Hausdorff 假设仍保留。若 $E$ 闭，紧集 $K$ 因 Hausdorff 而闭，故 $E\cap K$ 闭。
+
+反之，若 $E$ 不闭，取 $x\in\overline E\setminus E$。由第一可数性，存在序列 $\{x_n\}\subseteq E$ 收敛于 $x$：取 $x$ 的可数邻域基并作前缀有限交，从每个交中选一个 $E$ 中点即可。令 $K=\{x\}\cup\{x_n:n\ge1\}$。此集紧，因为任意开覆盖中先取一个含 $x$ 的成员，收敛性保证它包含全部充分后面的项，剩下有限个点再各选一个覆盖成员即可。
+
+全部 $x_n$ 都在 $E\cap K$ 中且收敛于 $x$，故 $x\in\overline{E\cap K}$；但 $x\notin E\cap K$，所以 $E\cap K$ 不闭。这证明逆向的逆否命题。这里收敛列连同极限构成紧集的事实不需要 Hausdorff；Hausdorff 用于正向环境闭性以及环境闭与相对闭的等同。
+\end{solution}
+% END SUPPLEMENT: id=v14-ch04-ex53-solution
+% SOURCE p=150; printed=135; object=ch04-ex54-rationals-locally-compact; number=54; region=middle
+\begin{exercise}\label{exercise:ch04-rationals-locally-compact}
+给 $\mathbb Q$ 赋予从 $\mathbb R$ 诱导的相对拓扑。
+\begin{enumerate}
+\item\label{item:ch04-rationals-not-locally-compact} $\mathbb Q$ 不局部紧。
+\item\label{item:ch04-rationals-compact-convergence} $\mathbb Q$ 是 $\sigma$-紧的（它是可数个单点集之并），但在单点集上一致收敛（即逐点收敛），不蕴含在 $\mathbb Q$ 的紧子集上一致收敛。
+\end{enumerate}
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex54-solution; parent=ch04-ex54-rationals-locally-compact; kind=solution; origin=independent-derivation
+\begin{solution}
+\textbf{补写解答（重构新增）。}
+\begin{enumerate}
+\item 假设 $q\in\mathbb Q$ 有紧邻域 $K$。存在 $\delta>0$，使 $(q-\delta,q+\delta)\cap\mathbb Q\subseteq K$。包含映射 $\mathbb Q\to\mathbb R$ 连续，故 $K$ 也是 $\mathbb R$ 中紧集，从而闭。选无理数 $t\in(q-\delta,q+\delta)$；由有理数稠密性，$t$ 在该区间内有理点集的闭包中，故 $t\in\overline K=K$，与 $K\subseteq\mathbb Q$ 矛盾。因此没有任何有理点有紧邻域。
+\item $\mathbb Q$ 可数，而每个单点紧，所以它 $\sigma$-紧。构造连续尖峰函数：令 $r_n=1/(3n(n+1))$，并在 $\mathbb Q$ 上定义
+\begin{align*}
+f_n(q)=\max\left(0,1-\frac{|q-1/n|}{r_n}\right).
+\end{align*}
+它是实直线上连续函数的限制。对 $q=0$，因 $r_n<1/n$，总有 $f_n(0)=0$；对固定 $q\ne0$，因 $1/n+r_n\to0$，充分大的 $n$ 上 $q$ 不在支撑区间 $[1/n-r_n,1/n+r_n]$ 内，故 $f_n(q)=0$。所以 $f_n\to0$ 逐点成立。
+
+然而 $K=\{0\}\cup\{1/n:n\ge1\}$ 是 $\mathbb Q$ 的紧集，因为它由收敛列和极限组成，紧性可用上一题的有限子覆盖证明。对每个 $n$，$f_n(1/n)=1$ 且 $0\le f_n\le1$，故 $\sup_{q\in K}|f_n(q)|=1$。因此没有在该紧集上一致收敛。这个反例甚至可以要求各 $f_n$ 连续。
+\end{enumerate}
+\end{solution}
+% END SUPPLEMENT: id=v14-ch04-ex54-solution
+% SOURCE p=150; printed=135; object=ch04-ex55-second-countable-sigma-compact; number=55; region=middle
+\begin{exercise}\label{exercise:ch04-second-countable-sigma-compact}
+第二可数 LCH 空间中的每个开集都是 $\sigma$-紧的。
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex55-solution; parent=ch04-ex55-second-countable-sigma-compact; kind=solution+hypotheses; origin=independent-derivation
+\begin{solution}
+\textbf{补写解答（重构新增）。}设 $E\subseteq X$ 开。若 $E$ 为空结论显然。对每个 $x\in E$，由\cref{proposition:ch04-small-compact-neighborhood}取紧邻域 $N_x\subseteq E$。于是开集族 $\{N_x^\circ:x\in E\}$ 覆盖 $E$。
+
+取 $X$ 的可数开基 $\{B_j\}_{j\ge1}$。令 $J$ 为那些非空且包含于某个 $N_x^\circ$ 的 $B_j$ 的指标集；对每个 $j\in J$，选一个这样的 $x_j$。给任意 $y\in E$，开邻域 $N_y^\circ$ 内存在含 $y$ 的基成员 $B_j$，该 $j$ 属于 $J$，因此 $y\in B_j\subseteq N_{x_j}^\circ$。所以
+\begin{align*}
+E=\bigcup_{j\in J}N_{x_j}.
+\end{align*}
+右侧是至多可数个紧集之并，每个紧集包含于 $E$，并在相对拓扑下仍紧，故 $E$ 是 $\sigma$-紧的。第二可数性用于把局部紧邻域覆盖选成可数子覆盖；开性用于在 $E$ 内缩小邻域；LCH 用于得到这些紧邻域。
+\end{solution}
+% END SUPPLEMENT: id=v14-ch04-ex55-solution
+% SOURCE p=150; printed=135; object=ch04-ex56-bounded-function-metrics; number=56; region=middle-lower
+\begin{exercise}\label{exercise:ch04-bounded-function-metrics}
+定义 $\Phi:[0,\infty]\to[0,1]$：有限 $t$ 时令 $\Phi(t)=t/(t+1)$，并令 $\Phi(\infty)=1$。
+\begin{enumerate}
+\item\label{item:ch04-phi-subadditive} $\Phi$ 严格递增，且 $\Phi(t+s)\le\Phi(t)+\Phi(s)$。
+\item\label{item:ch04-bounded-metric} 若 $(Y,\rho)$ 为度量空间，则 $\Phi\circ\rho$ 是有界度量，并与 $\rho$ 定义相同拓扑。
+\item\label{item:ch04-uniform-function-metric} 若 $X$ 为拓扑空间，则
+\begin{align*}
+\rho(f,g)=\Phi\left(\sup_{x\in X}|f(x)-g(x)|\right)
+\end{align*}
+是 $\mathbb C^X$ 上的度量，其诱导拓扑为一致收敛拓扑。
+\item\label{item:ch04-compact-uniform-function-metric} 若 $X$ 为 $\sigma$-紧 LCH 空间，$\{U_n\}$ 如\cref{proposition:ch04-precompact-exhaustion}，则
+\begin{align*}
+\rho(f,g)=\sum_{n=1}^{\infty}2^{-n}\Phi\left(\sup_{x\in\overline U_n}|f(x)-g(x)|\right)
+\end{align*}
+是 $\mathbb C^X$ 上的度量，其诱导拓扑为紧集上一致收敛拓扑。
+\end{enumerate}
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex56-solution; parent=ch04-ex56-bounded-function-metrics; kind=solution+hypotheses; origin=independent-derivation
+\begin{solution}
+\textbf{补写解答（重构新增）。}
+\begin{enumerate}
+\item 对 $0\le s<t<\infty$，
+\begin{align*}
+\Phi(t)-\Phi(s)=\frac{t-s}{(1+t)(1+s)}>0;
+\end{align*}
+且每个有限 $t$ 上 $\Phi(t)<1=\Phi(\infty)$，所以在扩展区间上仍严格递增。对有限非负 $t,s$，
+\begin{align*}
+\Phi(t+s)=\frac{t}{1+t+s}+\frac{s}{1+t+s}
+\le\frac{t}{1+t}+\frac{s}{1+s}=\Phi(t)+\Phi(s).
+\end{align*}
+若其中一个为 $\infty$，左侧为 $1$，右侧至少为 $1$，不等式仍成立。
+\item 令 $d=\Phi\circ\rho$。它非负、对称，并且 $d(y,z)=0$ 当且仅当 $\rho(y,z)=0$，即 $y=z$。由递增性、原三角不等式及前项的次可加性，
+\begin{align*}
+d(y,z)\le\Phi(\rho(y,w)+\rho(w,z))
+\le d(y,w)+d(w,z).
+\end{align*}
+又 $d<1$，故有界。对任意 $r>0$，$\Phi$ 的严格递增性给出
+\begin{align*}
+\{z:d(y,z)<\Phi(r)\}=\{z:\rho(y,z)<r\}.
+\end{align*}
+半径 $\Phi(r)$ 随 $r\downarrow0$ 趋零，因此两套开球在每点给相同邻域基，拓扑相同。
+\item 记 $D(f,g)=\sup_X|f-g|\in[0,\infty]$，空 $X$ 时按前面约定取 $0$。$D$ 非负、对称、分离不同函数，并满足扩展三角不等式，因为逐点三角不等式对每点成立。前两项的推理仍可用于无限值，故 $\rho=\Phi\circ D$ 是有限值度量。对任意有限 $r>0$，$\rho(f,g)<\Phi(r)$ 当且仅当 $D(f,g)<r$，所以其小开球恰为一致拓扑的基本邻域。若 $X=\varnothing$，$\mathbb C^X$ 只有空函数一个点，恒零距离也正是该单点空间的度量。
+\item 令 $D_n(f,g)=\sup_{\overline U_n}|f-g|$、$d_n=\Phi\circ D_n$。每个 $d_n$ 非负、对称、满足三角不等式且至多 $1$；它可能不分离全部函数，因而先只是伪度量。级数绝对收敛且至多 $\sum_n2^{-n}=1$，对部分和使用三角不等式再取极限可得 $\rho$ 的三角不等式。若 $f\ne g$，取某个 $x$ 使 $f(x)\ne g(x)$，再取 $x\in U_N\subseteq\overline U_N$，则 $d_N(f,g)>0$，所以 $\rho(f,g)>0$。故 $\rho$ 是度量。
+
+为比较拓扑，先给定基本邻域 $B_{\overline U_N}(f,\varepsilon)$。若
+\begin{align*}
+\rho(f,g)<2^{-N}\Phi(\varepsilon),
+\end{align*}
+由级数非负项得 $d_N(f,g)<\Phi(\varepsilon)$，故 $D_N(f,g)<\varepsilon$。因此一个 $\rho$-球包含于该基本邻域。
+
+反向给定 $\delta>0$，取 $N$ 使 $\sum_{n>N}2^{-n}=2^{-N}<\delta/2$，再取 $\varepsilon>0$ 使 $\Phi(\varepsilon)<\delta/2$。因为 $\overline U_n\subseteq\overline U_N$（$n\le N$），若 $D_N(f,g)<\varepsilon$，则
+\begin{align*}
+\rho(f,g)&\le\sum_{n\le N}2^{-n}d_n(f,g)+\sum_{n>N}2^{-n}\\
+&<\Phi(\varepsilon)+\delta/2<\delta.
+\end{align*}
+故一个紧集一致基本邻域包含于该 $\rho$-球。结合\cref{proposition:ch04-compact-uniform-countable-base}，两拓扑完全相同。
+\end{enumerate}
+\end{solution}
+\begin{remark}
+\textbf{构造动机与条件说明（重构新增）。}$\Phi$ 把可能无穷大的差异压到 $[0,1]$，同时保留零附近的大小关系，故不改变收敛所需要的精细控制。正且可求和的权重使尾部可统一忽略，又使每个紧区域的误差仍被总距离检测到。覆盖条件确保不同函数至少在一个测试区域中被分离；若这些区域不覆盖 $X$，公式可能只是伪度量。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch04-ex56-solution
+% SOURCE p=150; printed=135; object=ch04-ex57-paracompact-partitions; number=57; region=lower
+\begin{exercise}\label{exercise:ch04-paracompact-partitions}
+\begin{definition*}[局部有限覆盖、加细与仿紧]\phantomsection\label{definition:ch04-paracompact}
+拓扑空间 $X$ 的开覆盖 $\mathcal U$ 称为\textbf{局部有限}，如果每个 $x\in X$ 都有一个邻域，只与 $\mathcal U$ 的有限多个成员相交。若 $\mathcal U,\mathcal V$ 都是 $X$ 的开覆盖，且对每个 $V\in\mathcal V$ 都存在 $U\in\mathcal U$ 使 $V\subseteq U$，则称 $\mathcal V$ 是 $\mathcal U$ 的\textbf{加细}。若 $X$ 的每个开覆盖都有局部有限加细，则称 $X$ \textbf{仿紧}。
+\end{definition*}
+\begin{enumerate}
+\item\label{item:ch04-paracompact-refinement} 若 $X$ 为 $\sigma$-紧 LCH 空间，则 $X$ 仿紧。事实上，每个开覆盖 $\mathcal U$ 都有局部有限加细 $\{V_\alpha\},\{W_\alpha\}$，使每个 $\overline V_\alpha$ 紧，且 $\overline W_\alpha\subseteq V_\alpha$。（取\cref{proposition:ch04-precompact-exhaustion}中的 $\{U_n\}$。对每个 $n$，
+\begin{align*}
+\{E\cap(U_{n+2}\setminus\overline U_{n-1}):E\in\mathcal U\}
+\end{align*}
+是 $\overline U_{n+1}\setminus U_n$ 的开覆盖。选一个有限子覆盖得到 $\{V_\alpha\}$，并模仿\cref{proposition:ch04-finite-partition-unity}证明的开头来得到 $\{W_\alpha\}$。）
+% SOURCE p=151; printed=136; object=ch04-ex57-partition-continuation; region=top
+\item\label{item:ch04-paracompact-unity} 若 $X$ 为 $\sigma$-紧 LCH 空间，则对其任意开覆盖 $\mathcal U$，存在从属于 $\mathcal U$ 的 $X$ 上单位分解，且由紧支集函数组成。
+\end{enumerate}
+\end{exercise}
+% SUPPLEMENT: id=v14-ch04-ex57-solution; parent=ch04-ex57-paracompact-partitions; kind=solution+motivation+hypotheses+convention; origin=independent-derivation
+\begin{remark}
+\textbf{定义与提示的细化（重构新增）。}加细仍须覆盖整个空间，不能仅逐成员变小却留下空隙。局部有限比逐点只属于有限多个成员更强，因为它要求同一个邻域避免其余全部成员；这保证后续局部求和为有限和。本书的仿紧定义不额外包含 Hausdorff，题中另由 LCH 提供该条件。
+
+原提示使用 $U_{n-1}$，但未写初始下标约定；以下设 $U_{-1}=U_0=\varnothing$，从 $n=0$ 开始覆盖环带，避免漏掉最内层。下面采用两层缩小：在原提示的开覆盖内先选预紧的小开邻域，再取有限子覆盖，同时让闭包也保持在所选原覆盖成员内。这是便于构造的较强控制；题目本身只要求 $\overline W_\alpha\subseteq V_\alpha$、$\overline V_\alpha$ 紧以及 $V_\alpha$ 从属于原覆盖。
+\end{remark}
+\begin{solution}
+\textbf{补写解答（重构新增）。}
+\begin{enumerate}
+\item 若 $X$ 为空，取空加细即可。否则取预紧开穷尽 $\{U_n\}_{n\ge1}$，并采用上述初始约定。对 $n\ge0$ 令
+\begin{align*}
+A_n=\overline U_{n+1}\setminus U_n,\qquad
+O_n=U_{n+2}\setminus\overline U_{n-1}.
+\end{align*}
+$A_n$ 是紧集 $\overline U_{n+1}$ 的闭子集，因而紧；$O_n$ 开，且 $A_n\subseteq O_n$。后一个包含来自 $\overline U_{n+1}\subseteq U_{n+2}$，以及 $\overline U_{n-1}\subseteq U_n$，对 $n=0,1$ 则由空集约定直接成立。
+
+对每个 $x\in A_n$，选 $E_x\in\mathcal U$ 含 $x$。先在开集 $E_x\cap O_n$ 中用预紧邻域命题选开集 $V_{n,x}$，再在其中选开集 $W_{n,x}$，使
+\begin{align*}
+x\in W_{n,x}\subseteq\overline W_{n,x}\subseteq V_{n,x}
+\subseteq\overline V_{n,x}\subseteq E_x\cap O_n,
+\end{align*}
+且两个闭包都紧。紧性允许从 $\{W_{n,x}:x\in A_n\}$ 中选有限子覆盖，保留对应的有限个 $V_{n,x}$；若 $A_n$ 为空则不选任何成员。把全部层次所得成对集合分别记为 $\{V_\alpha\},\{W_\alpha\}$。
+
+它们覆盖 $X$：对任意 $x$，选使 $x\in U_m$ 的最小正整数 $m$，则 $x\in\overline U_m\setminus U_{m-1}=A_{m-1}$，所以属于某个所选 $W_\alpha$，也属于对应 $V_\alpha$。每个集合都包含于某个原覆盖成员 $E_x$，故两族都是加细，并且已有紧闭包与 $\overline W_\alpha\subseteq V_\alpha$。
+
+最后验证局部有限。给 $x\in X$，取 $M$ 使 $x\in U_M$。当 $n\ge M+1$ 时，$U_M\subseteq\overline U_{n-1}$，故该层的所有 $V_\alpha,W_\alpha\subseteq O_n$ 都与 $U_M$ 不交。剩下只有 $n=0,\ldots,M$ 有限多层，每层仅有限多个集合。因此 $U_M$ 只遇到有限多个成员，两族均局部有限，特别 $X$ 仿紧。
+\item 使用第一项的成对加细。由局部 Urysohn，对每个 $\alpha$，选 $g_\alpha\in C_c(X,[0,1])$，使 $g_\alpha=1$ 于 $\overline W_\alpha$，且 $\operatorname{supp}(g_\alpha)\subseteq V_\alpha$。$V_\alpha$ 局部有限，因此函数族也局部有限，故
+\begin{align*}
+S(x)=\sum_\alpha g_\alpha(x)
+\end{align*}
+在每点的某个邻域上是有限个连续函数之和，从而连续。因为 $W_\alpha$ 覆盖 $X$，每点至少有一个 $g_\alpha=1$，故 $S\ge1$。令 $h_\alpha=g_\alpha/S$，则各 $h_\alpha$ 连续且在 $[0,1]$ 内，零点集与 $g_\alpha$ 相同，因此支集也相同，仍紧且包含于 $V_\alpha$，进而包含于某个原覆盖成员。
+
+同一局部有限性适用于 $h_\alpha$，且在每点附近有限求和给出 $\sum_\alpha h_\alpha=S/S=1$。所以这就是所需的紧支集单位分解。若 $X$ 为空，直接取空函数族，避免无意义的除法。
+\end{enumerate}
+\end{solution}
+% END SUPPLEMENT: id=v14-ch04-ex57-solution
+\end{document}

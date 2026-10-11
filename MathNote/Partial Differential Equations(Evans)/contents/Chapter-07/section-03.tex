@@ -1,0 +1,499 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}}
+
+\begin{document}
+
+\section{一阶双曲方程组}\label{section:ch07-一阶双曲方程组}
+
+下面把我们对双曲 PDE（可非正式地解释为支持"波状"解的方程）的研究推广到一阶方程组情形。沿用 \S\S7.1 与 7.2 的方式，先用能量估计构造对称双曲组的弱解。但对于非对称、常系数双曲组，将改用 Fourier 变换方法。
+
+\subsection{定义}\label{subsection:ch07-3-1-定义}
+
+本节研究形如
+\begin{align}
+\mathbf{u}_t+\sum_{j=1}^n B_j\mathbf{u}_{x_j}=\mathbf{f}\quad\text{在 }\mathbb{R}^n\times(0,\infty)\text{ 中}\label{align:ch07-3-eq01}
+\end{align}
+的线性一阶偏微分方程组，带初值条件
+\begin{align}
+\mathbf{u}=\mathbf{g}\quad\text{在 }\mathbb{R}^n\times\{t=0\}\text{ 上}.\label{align:ch07-3-eq02}
+\end{align}
+未知函数为 $\mathbf{u}:\mathbb{R}^n\times[0,\infty)\to\mathbb{R}^m$，$\mathbf{u}=(u_1,\cdots,u_m)$，函数 $B_j:\mathbb{R}^n\times[0,\infty)\to\mathbb{M}^{m\times m}$（$j=1,\cdots,n$）、$\mathbf{f}:\mathbb{R}^n\times[0,\infty)\to\mathbb{R}^m$、$\mathbf{g}:\mathbb{R}^n\to\mathbb{R}^m$ 给定。
+
+\paragraph{记号。}对每个 $y\in\mathbb{R}^n$，令
+\begin{align*}
+B(x,t;y)\triangleq\sum_{j=1}^n y_jB_j(x,t)\qquad (x\in\mathbb{R}^n,\ t\geqslant 0).
+\end{align*}
+
+\begin{definition}\label{definition:ch07-3-双曲组}
+称 PDE 组 \eqref{align:ch07-3-eq01} 是\textbf{双曲的}，若对每个 $x,y\in\mathbb{R}^n$、$t\geqslant 0$，矩阵 $B(x,t;y)$ 可对角化。
+\end{definition}
+
+换言之，\eqref{align:ch07-3-eq01} 双曲，只要对每个 $x,y,t$，矩阵 $B(x,t;y)$ 有 $m$ 个实特征值
+\begin{align*}
+\lambda_1(x,t;y)\leqslant\lambda_2(x,t;y)\leqslant\cdots\leqslant\lambda_m(x,t;y)
+\end{align*}
+及相应特征向量 $\{\mathbf{r}_k(x,t;y)\}_{k=1}^m$，后者构成 $\mathbb{R}^m$ 的一组基。
+
+有两个重要特殊情形：
+
+\begin{definition}\label{definition:ch07-3-对称严格双曲}
+(i) 称 \eqref{align:ch07-3-eq01} 是\textbf{对称双曲组}，若对每个 $x\in\mathbb{R}^n$、$t\geqslant 0$，$B_j(x,t)$ 是对称 $m\times m$ 矩阵（$j=1,\cdots,m$）。
+(ii) 称组 \eqref{align:ch07-3-eq01} 是\textbf{严格双曲的}，若对每个 $x,y\in\mathbb{R}^n$、$y\neq 0$ 及每个 $t\geqslant 0$，矩阵 $B(x,t;y)$ 有 $m$ 个互异实特征值：
+\begin{align*}
+\lambda_1(x,t;y)<\lambda_2(x,t;y)<\cdots<\lambda_m(x,t;y).
+\end{align*}
+\end{definition}
+
+\paragraph{双曲性定义的动机。}如下正当化双曲性条件。设 $\mathbf{f}\equiv 0$，且矩阵 $B_j$ 为常数（$j=1,\cdots,n$）。于是
+\begin{align}
+\sum_{j=1}^n y_jB_j=B(y)\label{align:ch07-3-eq03}
+\end{align}
+只依赖于 $y\in\mathbb{R}^n$。
+
+如 \S4.2，寻找 \eqref{align:ch07-3-eq01}、\eqref{align:ch07-3-eq02} 的平面波解。即求形如
+\begin{align}
+\mathbf{u}(x,t)=\mathbf{v}(y\cdot x-\sigma t)\qquad (x\in\mathbb{R}^n,\ t\geqslant 0)\label{align:ch07-3-eq04}
+\end{align}
+的解，其中方向 $y\in\mathbb{R}^n$，速度 $\frac\sigma{|y|}$（$\sigma\in\mathbb{R}$），剖面 $\mathbf{v}:\mathbb{R}\to\mathbb{R}^m$。
+
+把 \eqref{align:ch07-3-eq04} 代入 \eqref{align:ch07-3-eq01}，算得
+\begin{align*}
+\left(-\sigma I+\sum_{j=1}^n y_jB_j\right)\mathbf{v}'=0.
+\end{align*}
+此等式断言 $\mathbf{v}'$ 是矩阵 $B(y)$ 对应于特征值 $\sigma$ 的特征向量。
+
+双曲性条件要求：对每个方向 $y$，\eqref{align:ch07-3-eq01} 有 $m$ 个互异平面波解：
+\begin{align*}
+\mathbf{r}_k(y)\left(y\cdot x-\lambda_k(y)t\right)\qquad (k=1,\cdots,m),
+\end{align*}
+其中 $\lambda_1(y)\leqslant\lambda_2(y)\leqslant\cdots\leqslant\lambda_m(y)$ 是 $B(y)$ 的特征值，$\{\mathbf{r}_k(y)\}_{k=1}^m$ 是相应特征向量。$|y|=1$ 时的特征值即波速。
+
+\subsection{对称双曲组}\label{subsection:ch07-3-2-对称双曲组}
+
+本节应用能量方法与消失黏性技术构造双曲初值问题
+\begin{align}
+\begin{cases}
+\mathbf{u}_t+\sum_{j=1}^n B_j\mathbf{u}_{x_j}=\mathbf{f}&\text{在 }\mathbb{R}^n\times(0,T]\text{ 中},\\
+\mathbf{u}=\mathbf{g}&\text{在 }\mathbb{R}^n\times\{t=0\}\text{ 上},
+\end{cases}\label{align:ch07-3-eq05}
+\end{align}
+的解，其中 $T>0$，基本假设为
+\begin{align}
+\text{矩阵 }B_j(x,t)\text{ 对称}\qquad (j=1,\cdots,n),\label{align:ch07-3-eq06}
+\end{align}
+对 $x\in\mathbb{R}^n$、$0\leqslant t\leqslant T$。进一步设 $B_j\in C^2(\mathbb{R}^n\times[0,T];\mathbb{M}^{m\times m})$，且
+\begin{align}
+\sup_{\mathbb{R}^n\times[0,T]}(|B_j|,|D_{x,t}B_j|,|D^2_{x,t}B_j|)<\infty\qquad (j=1,\cdots,n),\label{align:ch07-3-eq07}
+\end{align}
+\begin{align}
+\mathbf{g}\in H^1(\mathbb{R}^n;\mathbb{R}^m),\quad \mathbf{f}\in H^1(\mathbb{R}^n\times(0,T);\mathbb{R}^m).\label{align:ch07-3-eq08}
+\end{align}
+
+\begin{remark}
+更一般形如
+\begin{align}
+B_0\mathbf{u}_t+\sum_{j=1}^n B_j\mathbf{u}_{x_j}=\mathbf{f}\label{align:ch07-3-eq09}
+\end{align}
+的方程组也称为对称的，只要 $B_j$（$j=0,\cdots,n$）对称。下面建立的理论容易推广到此类组，只要 $B_0$ 正定。
+
+形如 \eqref{align:ch07-3-eq09} 的对称双曲组推广了 \S7.2 研究的二阶双曲 PDE。设 $v$ 是标量方程
+\begin{align}
+v_{tt}-\sum_{i,j=1}^n a^{ij}v_{x_ix_j}=0\label{align:ch07-3-eq10}
+\end{align}
+的光滑解，其中不失一般性可取 $a^{ij}=a^{ji}$（$i,j=1,\cdots,n$）。写
+\begin{align*}
+\mathbf{u}=(u_1,\cdots,u_{n+1})\triangleq(v_{x_1},\cdots,v_{x_n},v_t),
+\end{align*}
+发现 $\mathbf{u}$ 求解形如 \eqref{align:ch07-3-eq09} 的组，$m=n+1$，$\mathbf{f}\equiv 0$，
+\begin{align*}
+B_j=\begin{pmatrix}
+0&\cdots&0&-a^{1j}\\
+\ddots&\vdots\\
+0&\cdots&0&-a^{nj}\\
+-a^{1j}&\cdots&-a^{nj}&0
+\end{pmatrix}_{(n+1)\times(n+1)}\qquad (j=1,\cdots,n),
+\end{align*}
+\begin{align*}
+B_0=\begin{pmatrix}
+a^{11}&\cdots&a^{1n}&0\\
+\ddots&\vdots\\
+a^{n1}&\cdots&a^{nn}&0\\
+0&\cdots&0&1
+\end{pmatrix}_{(n+1)\times(n+1)}.
+\end{align*}
+注意 \eqref{align:ch07-3-eq10} 的一致双曲性条件蕴涵矩阵 $B_0$ 正定。
+\end{remark}
+
+\subsubsection*{a. 弱解}\label{subsubsection:ch07-3-2-a-弱解}
+
+为简化记号，定义双线性型
+\begin{align*}
+B[\mathbf{u},\mathbf{v};t]\triangleq\int_{\mathbb{R}^n}\sum_{j=1}^n(B_j(\cdot,t)\mathbf{u}_{x_j})\cdot\mathbf{v}\,\mathrm{d}x
+\end{align*}
+对 $0\leqslant t\leqslant T$，$\mathbf{u},\mathbf{v}\in H^1(\mathbb{R}^n;\mathbb{R}^m)$。
+
+\begin{definition}\label{definition:ch07-3-弱解}
+称
+\begin{align*}
+\mathbf{u}\in L^2(0,T;H^1(\mathbb{R}^n;\mathbb{R}^m)),\quad \mathbf{u}'\in L^2(0,T;L^2(\mathbb{R}^n;\mathbb{R}^m))
+\end{align*}
+为对称双曲组初值问题 \eqref{align:ch07-3-eq05} 的\textbf{弱解}，只要
+(i) $(\mathbf{u}',\mathbf{v})+B[\mathbf{u},\mathbf{v};t]=(\mathbf{f},\mathbf{v})$ 对每个 $\mathbf{v}\in H^1(\mathbb{R}^n;\mathbb{R}^m)$ 及 a.e. $0\leqslant t\leqslant T$ 成立，且
+(ii) $\mathbf{u}(0)=\mathbf{g}$。
+\end{definition}
+
+此后 $(,)$ 表示 $L^2(\mathbb{R}^n;\mathbb{R}^m)$ 中的内积。
+
+\begin{remark}
+由 \S5.9.2 定理 2，$\mathbf{u}\in C([0,T];L^2(\mathbb{R}^n;\mathbb{R}^m))$，故初值条件 (ii) 有意义。
+\end{remark}
+
+\subsubsection*{b. 消失黏性方法}\label{subsubsection:ch07-3-2-b-消失黏性}
+
+用抛物初值问题逼近问题 \eqref{align:ch07-3-eq05}：
+\begin{align}
+\begin{cases}
+\mathbf{u}_\varepsilon{}_t-\varepsilon\Delta\mathbf{u}_\varepsilon+\sum_{j=1}^n B_j\mathbf{u}_\varepsilon{}_{x_j}=\mathbf{f}&\text{在 }\mathbb{R}^n\times(0,T]\text{ 中},\\
+\mathbf{u}_\varepsilon=\mathbf{g}_\varepsilon&\text{在 }\mathbb{R}^n\times\{t=0\}\text{ 上},
+\end{cases}\label{align:ch07-3-eq11}
+\end{align}
+$0<\varepsilon\leqslant 1$，$\mathbf{g}_\varepsilon\triangleq\eta_\varepsilon*\mathbf{g}$。想法是：对每个 $\varepsilon>0$，问题 \eqref{align:ch07-3-eq11} 有唯一光滑解 $\mathbf{u}_\varepsilon$，且当 $|x|\to\infty$ 时趋于零。计划是证明当 $\varepsilon\to 0$ 时，$\mathbf{u}_\varepsilon$ 收敛到一个极限函数 $\mathbf{u}$，后者是 \eqref{align:ch07-3-eq05} 的弱解。
+
+\begin{theorem}[逼近解的存在性]\label{theorem:ch07-3-1-逼近解存在}
+对每个 $\varepsilon>0$，存在 \eqref{align:ch07-3-eq11} 的唯一解 $\mathbf{u}_\varepsilon$，满足
+\begin{align}
+\mathbf{u}_\varepsilon\in L^2(0,T;H^3(\mathbb{R}^n;\mathbb{R}^m)),\quad \mathbf{u}_\varepsilon{}'\in L^2(0,T;H^1(\mathbb{R}^n;\mathbb{R}^m)).\label{align:ch07-3-eq12}
+\end{align}
+\begin{proof}
+1. 令 $X=L^\infty((0,T);H^1(\mathbb{R}^n;\mathbb{R}^m))$。对每个 $\mathbf{v}\in X$，考察线性组
+\begin{align*}
+\begin{cases}
+\mathbf{u}_t-\varepsilon\Delta\mathbf{u}=\mathbf{f}-\sum_{j=1}^n B_j\mathbf{v}_{x_j}&\text{在 }\mathbb{R}^n\times(0,T]\text{ 中},\\
+\mathbf{u}=\mathbf{g}_\varepsilon&\text{在 }\mathbb{R}^n\times\{t=0\}\text{ 上}.
+\end{cases}
+\end{align*}
+因右端在 $L^2$ 中有界，存在唯一解 $\mathbf{u}\in L^2(0,T;H^2(\mathbb{R}^n;\mathbb{R}^m))$，$\mathbf{u}'\in L^2(0,T;L^2(\mathbb{R}^n;\mathbb{R}^m))$。确实可利用热方程基本解 $\Phi$（\S2.3.1）以 $\mathbf{g}_\varepsilon$ 与 $\mathbf{f}-\sum_{j=1}^n B_j\mathbf{v}_{x_j}$ 表示 $\mathbf{u}_\varepsilon$。类似取 $\widetilde{\mathbf{v}}\in X$，令 $\widetilde{\mathbf{u}}$ 求解
+\begin{align*}
+\begin{cases}
+\widetilde{\mathbf{u}}_t-\varepsilon\Delta\widetilde{\mathbf{u}}=\mathbf{f}-\sum_{j=1}^n B_j\widetilde{\mathbf{v}}_{x_j}&\text{在 }\mathbb{R}^n\times(0,T]\text{ 中},\\
+\widetilde{\mathbf{u}}=\mathbf{g}_\varepsilon&\text{在 }\mathbb{R}^n\times\{t=0\}\text{ 上}.
+\end{cases}
+\end{align*}
+2. 相减，得 $\widehat{\mathbf{u}}\triangleq\mathbf{u}-\widetilde{\mathbf{u}}$ 满足
+\begin{align}
+\begin{cases}
+\widehat{\mathbf{u}}_t-\varepsilon\Delta\widehat{\mathbf{u}}=-\sum_{j=1}^n B_j\widehat{\mathbf{v}}_{x_j}&\text{在 }\mathbb{R}^n\times(0,T]\text{ 中},\\
+\widehat{\mathbf{u}}=0&\text{在 }\mathbb{R}^n\times\{t=0\}\text{ 上},
+\end{cases}\label{align:ch07-3-eq13}
+\end{align}
+其中 $\widehat{\mathbf{v}}\triangleq\mathbf{v}-\widetilde{\mathbf{v}}$。由 $\widehat{\mathbf{u}}$ 关于基本解 $\Phi$ 与 $\sum_{j=1}^n B_j\widehat{\mathbf{v}}_{x_j}$ 的表示公式，得估计
+\begin{align}
+\operatorname*{ess\,sup}_{0\leqslant t\leqslant T}\|\widehat{\mathbf{u}}(t)\|_{H^1(\mathbb{R}^n;\mathbb{R}^m)}&\leqslant C(\varepsilon)\left\|\sum_{j=1}^n B_j\widehat{\mathbf{v}}_{x_j}\right\|_{L^2(0,T;L^2(\mathbb{R}^n;\mathbb{R}^m))}\notag\\
+&\leqslant C(\varepsilon)\|\widehat{\mathbf{v}}\|_{L^2(0,T;H^1(\mathbb{R}^n;\mathbb{R}^m))}\notag\\
+&\leqslant C(\varepsilon)T^{1/2}\operatorname*{ess\,sup}_{0\leqslant t\leqslant T}\|\widehat{\mathbf{v}}(t)\|_{H^1(\mathbb{R}^n;\mathbb{R}^m)}.\label{align:ch07-3-eq14}
+\end{align}
+故
+\begin{align}
+\|\widehat{\mathbf{u}}\|\leqslant C(\varepsilon)T^{1/2}\|\widehat{\mathbf{v}}\|.\label{align:ch07-3-eq15}
+\end{align}
+3. 若 $T$ 充分小使
+\begin{align}
+C(\varepsilon)T^{1/2}\leqslant 1/2,\label{align:ch07-3-eq16}
+\end{align}
+则 \eqref{align:ch07-3-eq15} 读为 $\|\mathbf{u}-\widetilde{\mathbf{u}}\|\leqslant\frac12\|\mathbf{v}-\widetilde{\mathbf{v}}\|$。由 Banach 不动点定理（\S9.2.1），映射 $\mathbf{v}\mapsto\mathbf{u}$ 有唯一不动点。于是只要 \eqref{align:ch07-3-eq16} 成立，$\mathbf{u}=\mathbf{u}_\varepsilon$ 求解 \eqref{align:ch07-3-eq11}。
+
+若 \eqref{align:ch07-3-eq16} 不成立，取 $0<T_1<T$ 使 $CT_1^{1/2}=1/2$，并在时间区间 $[0,T_1]$、$[T_1,2T_1]$ 等上重复上述论证。断言 \eqref{align:ch07-3-eq12} 由抛物正则性理论得到（参见 \S7.1.3）。
+\end{proof}
+\end{theorem}
+
+\subsubsection*{c. 能量估计}\label{subsubsection:ch07-3-2-c-能量估计}
+
+要在 \eqref{align:ch07-3-eq11} 中令 $\varepsilon\to 0$，如往常需要某些一致估计。
+
+\begin{theorem}[能量估计]\label{theorem:ch07-3-2-能量估计}
+存在常数 $C$（只依赖于 $n$ 与系数）使
+\begin{align}
+\max_{0\leqslant t\leqslant T}\bigl(\|\mathbf{u}_\varepsilon(t)\|_{H^1(\mathbb{R}^n;\mathbb{R}^m)}+\|\mathbf{u}_\varepsilon{}'(t)\|_{L^2(\mathbb{R}^n;\mathbb{R}^m)}\bigr)\leqslant C\bigl(\|\mathbf{g}\|_{H^1(\mathbb{R}^n;\mathbb{R}^m)}+\|\mathbf{f}\|_{L^2(0,T;H^1(\mathbb{R}^n;\mathbb{R}^m))}+\|\mathbf{f}'\|_{L^2(0,T;L^2(\mathbb{R}^n;\mathbb{R}^m))}\bigr)\label{align:ch07-3-eq17}
+\end{align}
+对每个 $0<\varepsilon\leqslant 1$。
+\begin{proof}
+1. 计算
+\begin{align}
+\frac{\mathrm{d}}{\mathrm{d}t}\left(\frac12\|\mathbf{u}_\varepsilon\|_{L^2(\mathbb{R}^n;\mathbb{R}^m)}^2\right)=(\mathbf{u}_\varepsilon,\mathbf{u}_\varepsilon{}')=\left(\mathbf{u}_\varepsilon,\mathbf{f}-\sum_{j=1}^nB_j\mathbf{u}_\varepsilon{}_{x_j}+\varepsilon\Delta\mathbf{u}_\varepsilon\right).\label{align:ch07-3-eq18}
+\end{align}
+现
+\begin{align}
+|(\mathbf{u}_\varepsilon,\mathbf{f})|\leqslant\|\mathbf{u}_\varepsilon\|_{L^2(\mathbb{R}^n;\mathbb{R}^m)}^2+\|\mathbf{f}\|_{L^2(\mathbb{R}^n;\mathbb{R}^m)}^2,\label{align:ch07-3-eq19}
+\end{align}
+且
+\begin{align}
+(\mathbf{u}_\varepsilon,\varepsilon\Delta\mathbf{u}_\varepsilon)=-\varepsilon\|D\mathbf{u}_\varepsilon\|_{L^2(\mathbb{R}^n;\mathbb{M}^{m\times n})}^2\leqslant 0.\label{align:ch07-3-eq20}
+\end{align}
+2. 设 $\mathbf{v}\in C_c^\infty(\mathbb{R}^n;\mathbb{R}^m)$。则
+\begin{align*}
+\left(\mathbf{v},\sum_{j=1}^nB_j\mathbf{v}_{x_j}\right)&=\sum_{j=1}^n\int_{\mathbb{R}^n}(B_j\mathbf{v}_{x_j})\cdot\mathbf{v}\,\mathrm{d}x\\
+&=\frac12\sum_{j=1}^n\int_{\mathbb{R}^n}((B_j\mathbf{v})\cdot\mathbf{v})_{x_j}\,\mathrm{d}x-\frac12\sum_{j=1}^n\int_U(B_{j,x_j}\mathbf{v})\cdot\mathbf{v}\,\mathrm{d}x,
+\end{align*}
+最后一等式由对称性假设 \eqref{align:ch07-3-eq06} 成立。因 $\mathbf{v}$ 紧支集，用 \eqref{align:ch07-3-eq07} 推得
+\begin{align*}
+\left|\left(\mathbf{v},\sum_{j=1}^nB_j\mathbf{v}_{x_j}\right)\right|\leqslant\frac12\sum_{j=1}^n\left|\int_{\mathbb{R}^n}(B_{j,x_j}\mathbf{v})\cdot\mathbf{v}\,\mathrm{d}x\right|\leqslant C\|\mathbf{v}\|_{L^2(\mathbb{R}^n;\mathbb{R}^m)}^2.
+\end{align*}
+故由逼近
+\begin{align*}
+\left|\left(\mathbf{u}_\varepsilon,\sum_{j=1}^nB_j\mathbf{u}_\varepsilon{}_{x_j}\right)\right|\leqslant C\|\mathbf{u}_\varepsilon\|_{L^2(\mathbb{R}^n;\mathbb{R}^m)}^2.
+\end{align*}
+把此界、\eqref{align:ch07-3-eq19} 与 \eqref{align:ch07-3-eq20} 用于 \eqref{align:ch07-3-eq18}，得估计
+\begin{align*}
+\frac{\mathrm{d}}{\mathrm{d}t}\|\mathbf{u}_\varepsilon\|_{L^2(\mathbb{R}^n;\mathbb{R}^m)}^2\leqslant C\bigl(\|\mathbf{u}_\varepsilon\|_{L^2(\mathbb{R}^n;\mathbb{R}^m)}^2+\|\mathbf{f}\|_{L^2(\mathbb{R}^n;\mathbb{R}^m)}^2\bigr).
+\end{align*}
+接着应用 Gronwall 不等式，推得
+\begin{align}
+\max_{0\leqslant t\leqslant T}\|\mathbf{u}_\varepsilon(t)\|_{L^2(\mathbb{R}^n;\mathbb{R}^m)}^2\leqslant C\bigl(\|\mathbf{g}\|_{L^2(\mathbb{R}^n;\mathbb{R}^m)}^2+\|\mathbf{f}\|_{L^2(0,T;L^2(\mathbb{R}^n;\mathbb{R}^m))}^2\bigr),\label{align:ch07-3-eq21}
+\end{align}
+因 $\|\mathbf{g}_\varepsilon\|_{L^2(\mathbb{R}^n;\mathbb{R}^m)}\leqslant\|\mathbf{g}\|_{L^2(\mathbb{R}^n;\mathbb{R}^m)}$。
+3. 固定 $k\in\{1,\cdots,n\}$，写 $\mathbf{v}_k\triangleq\mathbf{u}_\varepsilon{}_{x_k}$。关于 $x_k$ 微分 \eqref{align:ch07-3-eq11}，得
+\begin{align*}
+\begin{cases}
+\mathbf{v}_{k,t}-\varepsilon\Delta\mathbf{v}_k+\sum_{j=1}^nB_j\mathbf{v}_{k,x_j}=\mathbf{f}_{x_k}-\sum_{j=1}^nB_{j,x_k}\mathbf{u}_\varepsilon{}_{x_j}&\text{在 }\mathbb{R}^n\times(0,T]\text{ 中},\\
+\mathbf{v}_k=\mathbf{g}_{\varepsilon,x_k}&\text{在 }\mathbb{R}^n\times\{t=0\}\text{ 上}.
+\end{cases}
+\end{align*}
+如上推理，得
+\begin{align}
+\frac{\mathrm{d}}{\mathrm{d}t}\|\mathbf{v}_k\|_{L^2(\mathbb{R}^n;\mathbb{R}^m)}^2\leqslant C\bigl(\|D\mathbf{u}_\varepsilon\|_{L^2(\mathbb{R}^n;\mathbb{M}^{m\times n})}^2+\|D\mathbf{f}\|_{L^2(\mathbb{R}^n;\mathbb{M}^{m\times n})}^2\bigr).\label{align:ch07-3-eq22}
+\end{align}
+对 $k=1,\cdots,n$ 求和上述不等式，推得
+\begin{align*}
+\frac{\mathrm{d}}{\mathrm{d}t}\|D\mathbf{u}_\varepsilon\|_{L^2(\mathbb{R}^n;\mathbb{M}^{m\times n})}^2\leqslant C\bigl(\|D\mathbf{u}_\varepsilon\|_{L^2(\mathbb{R}^n;\mathbb{M}^{m\times n})}^2+\|D\mathbf{f}\|_{L^2(\mathbb{R}^n;\mathbb{M}^{m\times n})}^2\bigr).
+\end{align*}
+Gronwall 不等式给出界
+\begin{align}
+\max_{0\leqslant t\leqslant T}\|D\mathbf{u}_\varepsilon(t)\|_{L^2(\mathbb{R}^n;\mathbb{M}^{m\times n})}^2\leqslant C\bigl(\|D\mathbf{g}\|_{L^2(\mathbb{R}^n;\mathbb{M}^{m\times n})}^2+\|\mathbf{f}\|_{L^2(0,T;H^1(\mathbb{R}^n;\mathbb{R}^m))}^2\bigr),\label{align:ch07-3-eq23}
+\end{align}
+因 $\|D\mathbf{g}_\varepsilon\|_{L^2(\mathbb{R}^n;\mathbb{M}^{m\times n})}\leqslant\|D\mathbf{g}\|_{L^2(\mathbb{R}^n;\mathbb{M}^{m\times n})}$。
+4. 现令 $\mathbf{v}\triangleq\mathbf{u}_\varepsilon{}'$，关于 $t$ 微分 \eqref{align:ch07-3-eq11}，发现
+\begin{align}
+\begin{cases}
+\mathbf{v}_t-\varepsilon\Delta\mathbf{v}+\sum_{j=1}^nB_j\mathbf{v}_{x_j}=\mathbf{f}'-\sum_{j=1}^nB_{j,t}\mathbf{u}_\varepsilon{}_{x_i}&\text{在 }\mathbb{R}^n\times(0,T]\text{ 中},\\
+\mathbf{v}=\mathbf{f}-\sum_{j=1}^nB_j\mathbf{g}_{\varepsilon,x_j}+\varepsilon\Delta\mathbf{g}_\varepsilon&\text{在 }\mathbb{R}^n\times\{t=0\}\text{ 上}.
+\end{cases}\label{align:ch07-3-eq24}
+\end{align}
+如前计算，得
+\begin{align}
+\max_{0\leqslant t\leqslant T}\|\mathbf{u}_\varepsilon{}'(t)\|_{L^2(\mathbb{R}^n;\mathbb{R}^m)}^2\leqslant C\bigl(&\|D\mathbf{g}\|_{L^2(\mathbb{R}^n;\mathbb{M}^{m\times n})}^2+\varepsilon^2\|\Delta\mathbf{g}_\varepsilon\|_{L^2(\mathbb{R}^n;\mathbb{R}^m)}^2\notag\\
++\|\mathbf{f}(0)\|_{L^2(\mathbb{R}^n;\mathbb{R}^m)}^2+\|\mathbf{f}\|_{L^2(0,T;H^1(\mathbb{R}^n;\mathbb{R}^m))}^2+\|\mathbf{f}'\|_{L^2(0,T;L^2(\mathbb{R}^n;\mathbb{R}^m))}^2\bigr).\label{align:ch07-3-eq25}
+\end{align}
+现
+\begin{align}
+\|\Delta\mathbf{g}_\varepsilon\|_{L^2(\mathbb{R}^n;\mathbb{R}^m)}^2\leqslant\frac{C}{\varepsilon^2}\|D\mathbf{g}\|_{L^2(\mathbb{R}^n;\mathbb{M}^{m\times n})}^2,\label{align:ch07-3-eq26}
+\end{align}
+因 $\mathbf{g}_\varepsilon=\eta_\varepsilon*\mathbf{g}$。此外
+\begin{align}
+\|\mathbf{f}(0)\|_{L^2(\mathbb{R}^n;\mathbb{R}^m)}^2\leqslant C\bigl(\|\mathbf{f}\|_{L^2(0,T;L^2(\mathbb{R}^n;\mathbb{R}^m))}^2+\|\mathbf{f}'\|_{L^2(0,T;L^2(\mathbb{R}^n;\mathbb{R}^m))}^2\bigr).\label{align:ch07-3-eq27}
+\end{align}
+此界连同 \eqref{align:ch07-3-eq21} 与 \eqref{align:ch07-3-eq23} 完成证明。
+\end{proof}
+\end{theorem}
+
+\subsubsection*{d. 存在性与唯一性}\label{subsubsection:ch07-3-2-d-存在唯一}
+
+\begin{theorem}[弱解的存在性]\label{theorem:ch07-3-3-弱解存在}
+初值问题 \eqref{align:ch07-3-eq05} 存在弱解。
+\begin{proof}
+1. 由能量估计 \eqref{align:ch07-3-eq17}，存在子列 $\varepsilon_k\to 0$ 及函数 $\mathbf{u}\in L^2(0,T;H^1(\mathbb{R}^n;\mathbb{R}^m))$，使 $\mathbf{u}'\in L^2(0,T;L^2(\mathbb{R}^n;\mathbb{R}^m))$，且
+\begin{align}
+\begin{cases}
+\mathbf{u}_{\varepsilon_k}\rightharpoonup\mathbf{u}&\text{弱于 }L^2(0,T;H^1(\mathbb{R}^n;\mathbb{R}^m)),\\
+\mathbf{u}_{\varepsilon_k}{}'\rightharpoonup\mathbf{u}'&\text{弱于 }L^2(0,T;L^2(\mathbb{R}^n;\mathbb{R}^m)).
+\end{cases}\label{align:ch07-3-eq28}
+\end{align}
+2. 取函数 $\mathbf{v}\in C^1([0,T];H^1(\mathbb{R}^n;\mathbb{R}^m))$。由 \eqref{align:ch07-3-eq11} 推得
+\begin{align}
+\int_0^T(\mathbf{u}_\varepsilon{}',\mathbf{v})+\varepsilon D\mathbf{u}_\varepsilon:D\mathbf{v}+B[\mathbf{u}_\varepsilon,\mathbf{v};t]\,\mathrm{d}t=\int_0^T(\mathbf{f},\mathbf{v})\,\mathrm{d}t.\label{align:ch07-3-eq29}
+\end{align}
+令 $\varepsilon=\varepsilon_k\to 0$：
+\begin{align}
+\int_0^T(\mathbf{u}',\mathbf{v})+B[\mathbf{u},\mathbf{v};t]\,\mathrm{d}t=\int_0^T(\mathbf{f},\mathbf{v})\,\mathrm{d}t.\label{align:ch07-3-eq30}
+\end{align}
+此恒等式对所有 $\mathbf{v}\in C([0,T];H^1(\mathbb{R}^n;\mathbb{R}^m))$ 成立，故
+\begin{align*}
+(\mathbf{u}',\mathbf{v})+B[\mathbf{u},\mathbf{v};t]=(\mathbf{f},\mathbf{v})
+\end{align*}
+对 a.e. $t$ 及每个 $\mathbf{v}\in H^1(\mathbb{R}^n;\mathbb{R}^m)$ 成立。
+3. 现设 $\mathbf{v}(T)=0$。则 \eqref{align:ch07-3-eq29} 蕴涵
+\begin{align*}
+\int_0^T-(\mathbf{u}_\varepsilon,\mathbf{v}')+\varepsilon D\mathbf{u}_\varepsilon:D\mathbf{v}+B[\mathbf{u}_\varepsilon,\mathbf{v};t]\,\mathrm{d}t=\int_0^T(\mathbf{f},\mathbf{v})\,\mathrm{d}t+(\mathbf{g}_\varepsilon,\mathbf{v}(0)).
+\end{align*}
+令 $\varepsilon=\varepsilon_k\to 0$，得
+\begin{align*}
+\int_0^T-(\mathbf{u},\mathbf{v}')+B[\mathbf{u},\mathbf{v};t]\,\mathrm{d}t=\int_0^T(\mathbf{f},\mathbf{v})\,\mathrm{d}t+(\mathbf{g},\mathbf{v}(0)).
+\end{align*}
+在 \eqref{align:ch07-3-eq30} 中分部积分，给出恒等式
+\begin{align*}
+\int_0^T-(\mathbf{u},\mathbf{v}')+B[\mathbf{u},\mathbf{v};t]\,\mathrm{d}t=\int_0^T(\mathbf{f},\mathbf{v})\,\mathrm{d}t+(\mathbf{u}(0),\mathbf{v}(0)).
+\end{align*}
+因此 $\mathbf{u}(0)=\mathbf{g}$，因 $\mathbf{v}(0)$ 任意。
+\end{proof}
+\end{theorem}
+
+\begin{theorem}[弱解的唯一性]\label{theorem:ch07-3-4-弱解唯一}
+\eqref{align:ch07-3-eq05} 的弱解唯一。
+\begin{proof}
+只需证明 $\mathbf{f}\equiv\mathbf{g}\equiv 0$ 时 \eqref{align:ch07-3-eq05} 的唯一弱解是 $\mathbf{u}\equiv 0$。为此注意
+\begin{align}
+(\mathbf{u}',\mathbf{u})+B[\mathbf{u},\mathbf{u};t]=0\label{align:ch07-3-eq31}
+\end{align}
+对 a.e. $0\leqslant t\leqslant T$。因 $|B[\mathbf{u},\mathbf{u};t]|\leqslant C\|\mathbf{u}\|_{L^2(\mathbb{R}^n;\mathbb{R}^m)}^2$，如常由 \eqref{align:ch07-3-eq31} 算得
+\begin{align*}
+\frac{\mathrm{d}}{\mathrm{d}t}\|\mathbf{u}(t)\|_{L^2(\mathbb{R}^n;\mathbb{R}^m)}^2\leqslant C\|\mathbf{u}(t)\|_{L^2(\mathbb{R}^n;\mathbb{R}^m)}^2,
+\end{align*}
+故 Gronwall 不等式迫使 $\|\mathbf{u}(t)\|_{L^2(\mathbb{R}^n;\mathbb{R}^m)}^2=0$（$0\leqslant t\leqslant T$），因 $\mathbf{u}(0)=0$。
+\end{proof}
+\end{theorem}
+
+\subsection{常系数组}\label{subsection:ch07-3-3-常系数组}
+
+本小节应用 Fourier 变换（\S4.3）求解常系数组
+\begin{align}
+\mathbf{u}_t+\sum_{j=1}^nB_j\mathbf{u}_{x_j}=0\quad\text{在 }\mathbb{R}^n\times(0,\infty)\text{ 中},\label{align:ch07-3-eq32}
+\end{align}
+带初值条件
+\begin{align}
+\mathbf{u}=\mathbf{g}\quad\text{在 }\mathbb{R}^n\times\{t=0\}\text{ 上}.\label{align:ch07-3-eq33}
+\end{align}
+
+假设 $\{B_j\}_{j=1}^n$ 是常数 $m\times m$ 矩阵，且 $m\times m$ 矩阵
+\begin{align}
+B(y)\triangleq\sum_{j=1}^n y_jB_j\label{align:ch07-3-eq34}
+\end{align}
+对每个 $y\in\mathbb{R}^n$ 有 $m$ 个实特征值
+\begin{align}
+\lambda_1(y)\leqslant\lambda_2(y)\leqslant\cdots\leqslant\lambda_m(y).\label{align:ch07-3-eq35}
+\end{align}
+关于特征向量不作假设，故这里只假设一种很弱的双曲性。我们也不对矩阵 $\{B_j\}_{j=1}^n$ 作任何对称性假设。因此前面的能量估计不适用。需要一个新工具，即在 Fourier 变换中找到的工具。
+
+\begin{theorem}[解的存在性]\label{theorem:ch07-3-5-常系数解存在}
+假设
+\begin{align*}
+\mathbf{g}\in H^s(\mathbb{R}^n;\mathbb{R}^m)\qquad\left(s>\frac n2+m\right).
+\end{align*}
+则初值问题 \eqref{align:ch07-3-eq32}、\eqref{align:ch07-3-eq33} 存在唯一解 $\mathbf{u}\in C^1([0,\infty);\mathbb{R}^m)$。
+分数阶 Sobolev 空间 $H^s$ 的定义见 \S5.8.5。
+\begin{proof}
+1. 应用 Fourier 变换（\S4.3.1）如下。先暂时设 $\mathbf{u}=(u_1,\cdots,u_m)$ 是光滑解。令 $\widehat{\mathbf{u}}=(\widehat{u}_1,\cdots,\widehat{u}_m)$，其中 $\widehat{\phantom{u}}$ 表示关于变量 $x$ 的 Fourier 变换；不对时间变量 $t$ 作变换。方程 \eqref{align:ch07-3-eq32} 变为
+\begin{align*}
+\widehat{\mathbf{u}}_t+\mathrm{i}\sum_{j=1}^n y_jB_j\widehat{\mathbf{u}}=0;
+\end{align*}
+即
+\begin{align}
+\widehat{\mathbf{u}}_t+\mathrm{i}B(y)\widehat{\mathbf{u}}=0\quad\text{在 }\mathbb{R}^n\times(0,\infty)\text{ 中}.\label{align:ch07-3-eq36}
+\end{align}
+此外
+\begin{align}
+\widehat{\mathbf{u}}=\widehat{\mathbf{g}}\quad\text{在 }\mathbb{R}^n\times\{t=0\}\text{ 上}.\label{align:ch07-3-eq37}
+\end{align}
+对每个固定 $y\in\mathbb{R}^n$，关于时间积分求解 \eqref{align:ch07-3-eq36}、\eqref{align:ch07-3-eq37}，得
+\begin{align}
+\widehat{\mathbf{u}}(y,t)=e^{-\mathrm{i}tB(y)}\widehat{\mathbf{g}}(y)\qquad (y\in\mathbb{R}^n,\ t\geqslant 0).\label{align:ch07-3-eq38}
+\end{align}
+因此 $\mathbf{u}=(e^{-\mathrm{i}tB(y)}\widehat{\mathbf{g}})^\vee$，从而
+\begin{align}
+\mathbf{u}(x,t)=\frac1{(2\pi)^{n/2}}\int_{\mathbb{R}^n}e^{\mathrm{i}x\cdot y}e^{-\mathrm{i}tB(y)}\widehat{\mathbf{g}}(y)\,\mathrm{d}y\qquad (x\in\mathbb{R}^n,\ t\geqslant 0).\label{align:ch07-3-eq39}
+\end{align}
+2. 我们在假设 $\mathbf{u}$ 是 \eqref{align:ch07-3-eq32}、\eqref{align:ch07-3-eq33} 光滑解的条件下导出公式 \eqref{align:ch07-3-eq39}。现验证由 \eqref{align:ch07-3-eq39} 定义的函数 $\mathbf{u}$ 确实是解，故须先检查 \eqref{align:ch07-3-eq39} 中的积分收敛。
+因 $\mathbf{g}\in H^s(\mathbb{R}^n;\mathbb{R}^m)$，由 \S5.8.5 知存在 $\mathbf{f}\in L^2(\mathbb{R}^n;\mathbb{R}^m)$ 使
+\begin{align}
+|\widehat{\mathbf{g}}(y)|\leqslant C(1+|y|^s)^{-1}|\mathbf{f}(y)|\qquad (y\in\mathbb{R}^n).\label{align:ch07-3-eq40}
+\end{align}
+故为研究积分 \eqref{align:ch07-3-eq39} 的收敛性，须估计 $\|e^{-\mathrm{i}tB(y)}\|$。
+3. 对固定 $y$，令 $\Gamma$ 表示复平面中路径 $\partial B(0,r)$，逆时针绕行，半径 $r$ 取得充分大使特征值 $\lambda_1(y),\cdots,\lambda_m(y)$ 位于 $\Gamma$ 内。有公式
+\begin{align}
+e^{-\mathrm{i}tB(y)}=\frac1{2\pi\mathrm{i}}\int_\Gamma e^{-\mathrm{i}tz}(zI-B(y))^{-1}\,\mathrm{d}z.\label{align:ch07-3-eq41}
+\end{align}
+为验证此式，令 $A(t,y)$ 表示 \eqref{align:ch07-3-eq41} 右端，固定 $x\in\mathbb{R}^m$。则
+\begin{align*}
+B(y)A(t,y)x&=\frac1{2\pi\mathrm{i}}\int_\Gamma e^{-\mathrm{i}tz}B(y)(zI-B(y))^{-1}x\,\mathrm{d}z\\
+&=\frac1{2\pi\mathrm{i}}\int_\Gamma e^{-\mathrm{i}tz}\left(z(zI-B(y))^{-1}x-x\right)\,\mathrm{d}z\\
+&=-\frac1{\mathrm{i}}\frac{\mathrm{d}}{\mathrm{d}t}A(t,y)x,
+\end{align*}
+因 $\int_\Gamma e^{-\mathrm{i}tz}\,\mathrm{d}z=0$。故
+\begin{align}
+\left(\frac{\mathrm{d}}{\mathrm{d}t}+\mathrm{i}B(y)\right)A(t,y)=0.\label{align:ch07-3-eq42}
+\end{align}
+此外
+\begin{align}
+A(0,y)x&=\frac1{2\pi\mathrm{i}}\int_\Gamma(zI-B(y))^{-1}x\,\mathrm{d}z\notag\\
+&=\frac1{2\pi\mathrm{i}}\int_\Gamma\frac{x+B(y)(zI-B(y))^{-1}x}{z}\,\mathrm{d}z\notag\\
+&=x+\frac1{2\pi\mathrm{i}}\int_\Gamma\frac{B(y)(zI-B(y))^{-1}x}{z}\,\mathrm{d}z.\label{align:ch07-3-eq43}
+\end{align}
+现令
+\begin{align}
+\mathbf{w}\triangleq(zI-B(y))^{-1}x,\label{align:ch07-3-eq44}
+\end{align}
+从而 $z\mathbf{w}-B(y)\mathbf{w}=x$。与 $\overline{\mathbf{w}}$ 作内积，推得 $|\mathbf{w}|\leqslant\frac C{|z|}$，某常数 $C$。用此估计并令 $r\to\infty$，由 \eqref{align:ch07-3-eq43} 得 $A(0,y)x=x$。此等式与 \eqref{align:ch07-3-eq42} 验证表示公式 \eqref{align:ch07-3-eq41}。
+4. 复平面中定义新路径 $\Delta$ 如下。对固定 $y$，画半径为 1、圆心在 $\lambda_k(y)$ 的圆 $B_k=B(\lambda_k(y),1)$（$k=1,\cdots,m$）。然后取 $\Delta$ 为 $\bigcup_{k=1}^m B_k$ 的边界，逆时针绕行。把路径 $\Gamma$ 形变到 $\Delta$，由 \eqref{align:ch07-3-eq41} 推得
+\begin{align}
+e^{-\mathrm{i}tB(y)}=\frac1{2\pi\mathrm{i}}\int_\Delta e^{-\mathrm{i}tz}(zI-B(y))^{-1}\,\mathrm{d}z.\label{align:ch07-3-eq45}
+\end{align}
+现
+\begin{align}
+|e^{-\mathrm{i}tz}|\leqslant e^t\qquad (z\in\Delta).\label{align:ch07-3-eq46}
+\end{align}
+此外
+\begin{align*}
+\det(zI-B(y))=\prod_{k=1}^m(z-\lambda_k(y)),
+\end{align*}
+从而
+\begin{align}
+|\det(zI-B(y))|\geqslant 1\quad\text{若 }z\in\Delta.\label{align:ch07-3-eq47}
+\end{align}
+现
+\begin{align*}
+(zI-B(y))^{-1}=\frac{\operatorname{cof}(zI-B(y))^T}{\det(zI-B(y))},
+\end{align*}
+其中"cof"表示余子矩阵（见 \S8.1.4）。推得
+\begin{align}
+\|(zI-B(y))^{-1}\|\leqslant\|\operatorname{cof}(zI-B(y))\|\leqslant C(1+|z|^{m-1}+\|B(y)\|^{m-1})\leqslant C(1+|y|^{m-1})\quad\text{若 }z\in\Delta.\label{align:ch07-3-eq48}
+\end{align}
+在此计算中用了初等不等式
+\begin{align*}
+|\lambda_k(y)|\leqslant C|y|\qquad (k=1,\cdots,m).
+\end{align*}
+合并 \eqref{align:ch07-3-eq45}--\eqref{align:ch07-3-eq48}，导出估计
+\begin{align}
+\|e^{-\mathrm{i}tB(y)}\|\leqslant Ce^t(1+|y|^{m-1})\qquad (y\in\mathbb{R}^n).\label{align:ch07-3-eq49}
+\end{align}
+5. 现回到 \eqref{align:ch07-3-eq37}。用 \eqref{align:ch07-3-eq40}、\eqref{align:ch07-3-eq49} 推得
+\begin{align*}
+\int_{\mathbb{R}^n}|e^{\mathrm{i}x\cdot y}e^{-\mathrm{i}tB(y)}\widehat{\mathbf{g}}(y)|\,\mathrm{d}y&\leqslant C\int_{\mathbb{R}^n}\|e^{-\mathrm{i}tB(y)}\|(1+|y|^s)^{-1}|\mathbf{f}(y)|\,\mathrm{d}y\\
+&\leqslant Ce^t\int_{\mathbb{R}^n}|\mathbf{f}(y)|(1+|y|^{m-1})(1+|y|^s)^{-1}\,\mathrm{d}y\\
+&\leqslant C\left(\int_{\mathbb{R}^n}|\mathbf{f}|^2\,\mathrm{d}y\right)^{1/2}\left(\int_{\mathbb{R}^n}\frac{\mathrm{d}y}{1+|y|^{2(s-m+1)}}\right)^{1/2}<\infty,
+\end{align*}
+因 $s>\frac n2+m-1$。故 \eqref{align:ch07-3-eq39} 中积分收敛，且容易推得函数
+\begin{align*}
+\mathbf{u}(x,t)=\frac1{(2\pi)^{n/2}}\int_{\mathbb{R}^n}e^{\mathrm{i}x\cdot y}e^{-\mathrm{i}tB(y)}\widehat{\mathbf{g}}(y)\,\mathrm{d}y
+\end{align*}
+在 $\mathbb{R}^n\times[0,\infty)$ 上连续。
+6. 为证 $\mathbf{u}$ 是 $C^1$ 的，注意对 $0<|h|\leqslant 1$，
+\begin{align*}
+\frac{\mathbf{u}(x,t+h)-\mathbf{u}(x,t)}h=\frac1{(2\pi)^{n/2}h}\int_{\mathbb{R}^n}e^{\mathrm{i}x\cdot y}\left(e^{-\mathrm{i}(t+h)B(y)}-e^{-\mathrm{i}tB(y)}\right)\widehat{\mathbf{g}}(y)\,\mathrm{d}y.
+\end{align*}
+因
+\begin{align*}
+e^{-\mathrm{i}(t+h)B(y)}-e^{-\mathrm{i}tB(y)}=-\mathrm{i}\int_t^{t+h}B(y)e^{-\mathrm{i}sB(y)}\,\mathrm{d}s,
+\end{align*}
+可如上估计
+\begin{align*}
+\left\|\frac1h\left(e^{-\mathrm{i}(t+h)B(y)}-e^{-\mathrm{i}tB(y)}\right)\right\|\leqslant Ce^{t+1}(1+|y|^m).
+\end{align*}
+因此
+\begin{align*}
+\left\|\frac{\mathbf{u}(x,t+h)-\mathbf{u}(x,t)}h\right\|\leqslant Ce^{t+1}\int_{\mathbb{R}^n}|\mathbf{f}(y)|(1+|y|^m)(1+|y|^s)^{-1}\,\mathrm{d}y,
+\end{align*}
+且被积函数可和，因 $s>\frac n2+m$。故 $\mathbf{u}_t$ 存在且在 $\mathbb{R}^n\times[0,\infty)$ 上连续。类似论证表明 $\mathbf{u}_{x_i}$ 存在且连续（$i=1,\cdots,n$）。由控制收敛定理，还可在 \eqref{align:ch07-3-eq39} 积分号下求导，确认 $\mathbf{u}$ 求解组 $\mathbf{u}_t+\sum_{j=1}^nB_j\mathbf{u}_{x_j}=0$。
+\end{proof}
+\end{theorem}
+
+在第 11 章将遇到非线性一阶双曲方程组。
+
+\end{document}

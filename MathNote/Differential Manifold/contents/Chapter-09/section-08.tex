@@ -1,0 +1,147 @@
+\documentclass[../../main.tex]{subfiles}
+\begin{document}
+\section{一阶偏微分方程}\label{section:ch09-一阶偏微分方程}
+
+流理论最有力的应用之一是偏微分方程。最一般形式下，偏微分方程（PDE）是将两个或更多变量的未知函数与其直到某阶的偏导数以及自变量联系起来的任意方程。PDE 的阶是出现的未知函数的最高阶导数的阶。
+
+为求解偏微分方程而发展的专门技术数量惊人。（关于一般理论的介绍，可参考该学科众多优秀入门书籍之一，如 [Eva98, Fol95, Joh91]。）然而，一个显著的事实是，实值一阶 PDE 可借助流理论约化为常微分方程，因而仅用 ODE 和一点微分几何洞见即可求解，无需专门的 PDE 理论。本节描述如何对两类特殊的一阶方程做到这一点：首先是线性方程；然后，稍一般地，是拟线性方程（我们下面定义）。不是拟线性的 PDE 称为完全非线性；我们将在第 22 章说明如何处理完全非线性一阶方程。
+
+在坐标下，单个未知函数的任意一阶 PDE 可写为
+\begin{align}
+F\left(x^1,\dots,x^n,u(x),\frac{\partial u}{\partial x^1}(x),\dots,\frac{\partial u}{\partial x^n}(x)\right)=0, \label{align:ch09-20}
+\end{align}
+其中 $u$ 是 $n$ 个变量的未知函数，$F$ 是 $2n+1$ 个变量的给定光滑函数。（光滑性并非严格必要，但为简单起见我们通篇假设。）我们将描述的理论仅适用于 $F$ 和 $u$ 为实值的情形，故也如此假设。（复值一阶 PDE 也有迷人的理论，但需要完全不同的方法。）
+
+若无进一步限制，大多数 PDE 有大量解——例如，平面中的 PDE $\partial u/\partial x=0$ 被任意仅依赖于 $y$ 的光滑函数 $u$ 求解——故为得到唯一解，通常需规定解应满足某些额外条件。对一阶方程，适当的条件是在超曲面上规定"初始值"：给定光滑超曲面 $S\subseteq\mathbb{R}^n$ 和光滑函数 $\varphi\colon S\to\mathbb{R}$，我们寻求求解 PDE 且满足初始条件
+\begin{align}
+u|_S=\varphi \label{align:ch09-21}
+\end{align}
+的光滑函数 $u$。在 $S$ 邻域中求\eqref{align:ch09-20}在初始条件\eqref{align:ch09-21}下的解的问题称为\textbf{Cauchy 问题}。
+
+并非每个 Cauchy 问题都有解：例如，在 $\mathbb{R}^2$ 中，方程 $\partial u/\partial x=1$ 没有在 $x$ 轴上 $u=0$ 的解，因为方程和初始条件相互矛盾。为避免此类困难，通常假设 Cauchy 问题\eqref{align:ch09-20}--\eqref{align:ch09-21}是非特征的，即方程与初始数据之间存在某种几何关系，足以保证在 $S$ 附近解的存在性。随着我们以越来越高的一般性研究 Cauchy 问题，我们将对所处理的每类方程分别描述非特征条件。条件的最一般形式在第 22 章末给出。
+
+\subsection*{线性方程}
+
+我们将处理的第一类方程是一阶线性 PDE，即线性或仿射依赖于未知函数及其导数的 PDE。在坐标形式下，最一般的此类方程可写为
+\begin{align}
+a^1(x)\frac{\partial u}{\partial x^1}(x)+\cdots+a^n(x)\frac{\partial u}{\partial x^n}(x)+b(x)u(x)=f(x), \label{align:ch09-22}
+\end{align}
+其中 $a^1,\dots,a^n,b,f$ 是定义在某开子集 $\Omega\subseteq\mathbb{R}^n$ 上的光滑实值函数，$u$ 是 $\Omega$ 上的未知光滑函数。
+
+向量场的流在\eqref{align:ch09-22}的求解中起作用，这不应令人惊讶，因为左端前 $n$ 项表示光滑向量场 $A\in\mathfrak{X}(\Omega)$ 对 $u$ 的作用：
+\begin{align}
+A_x=a^1(x)\frac{\partial}{\partial x^1}\bigg|_x+\cdots+a^n(x)\frac{\partial}{\partial x^n}\bigg|_x. \label{align:ch09-23}
+\end{align}
+用 $A$ 表示，可将\eqref{align:ch09-22}改写为简单形式 $Au+bu=f$。在这种形式下，它在任意光滑流形上都有意义，且在这种一般性下求解并不更困难，故我们在此背景下陈述第一个定理。带初始超曲面 $S$ 的 $Au+bu=f$ 的 Cauchy 问题称为非特征的，若 $A$ 处处不与 $S$ 相切。
+
+\begin{theorem}\label{theorem:ch09-51}[线性一阶 Cauchy 问题]
+设 $M$ 是光滑流形。假设给定嵌入超曲面 $S\subseteq M$、处处不与 $S$ 相切的光滑向量场 $A\in\mathfrak{X}(M)$，以及函数 $b,f\in C^\infty(M)$ 和 $\varphi\in C^\infty(S)$。则在 $M$ 中 $S$ 的某邻域 $U$ 上，存在唯一解 $u\in C^\infty(U)$ 满足非特征 Cauchy 问题
+\begin{align}
+Au+bu&=f, \label{align:ch09-24}\\
+u|_S&=\varphi. \label{align:ch09-25}
+\end{align}
+\end{theorem}
+
+\begin{proof}
+流出定理给出 $\mathbb{R}\times S$ 中 $\{0\}\times S$ 的邻域 $\mathcal{O}_\delta$、$M$ 中 $S$ 的邻域 $U$，以及微分同胚 $\Phi\colon\mathcal{O}_\delta\to U$，满足对 $p\in S$，$\Phi(0;p)=p$ 且 $\Phi_*(\partial/\partial t)=A$。记 $\widetilde{u}=u\circ\Phi$，$\widetilde{f}=f\circ\Phi$，$\widetilde{b}=b\circ\Phi$。\cref{proposition:ch08-16}表明 $\partial\widetilde{u}/\partial t=(Au)\circ\Phi$。因此，$u\in C^\infty(U)$ 满足\eqref{align:ch09-24}--\eqref{align:ch09-25}当且仅当 $\widetilde{u}$ 满足
+\begin{align}
+\frac{\partial\widetilde{u}}{\partial t}(t;p)&=\widetilde{f}(t;p)-\widetilde{b}(t;p)\widetilde{u}(t;p),\quad (t;p)\in\mathcal{O}_\delta,\nonumber\\
+\widetilde{u}(0;p)&=\varphi(p),\quad p\in S. \label{align:ch09-26}
+\end{align}
+对每个固定的 $p\in S$，这是区间 $-\delta(p)<t<\delta(p)$ 上关于 $\widetilde{u}$ 的线性一阶 ODE 初值问题。如 ODE 教科书中所示，此类问题在整个区间上总有唯一解，可显式写为
+\begin{align*}
+\widetilde{u}(t;p)=e^{-B(t;p)}\left(\varphi(p)+\int_0^t\widetilde{f}(\xi;p)e^{B(\xi;p)}\,\mathrm{d}\xi\right),
+\end{align*}
+其中
+\begin{align*}
+B(\xi;p)=\int_0^\xi\widetilde{b}(\eta;p)\,\mathrm{d}\eta.
+\end{align*}
+这是 $(t;p)$ 的光滑函数（可通过为 $S$ 选取局部坐标并在积分号下求导看出）。因此，$u=\widetilde{u}\circ\Phi^{-1}$ 是 $U$ 上\eqref{align:ch09-24}--\eqref{align:ch09-25}的唯一解。
+\end{proof}
+
+此证明说明如何写出 Cauchy 问题的显式解，前提是向量场 $A$ 的流可显式求出。若先选取（局部或全局）参数化 $X\colon\Omega\to S$，并在\eqref{align:ch09-26}中将 $p$ 替换为 $X(s)$，计算通常最容易。这相当于用\cref{theorem:ch09-22}的典范坐标将 Cauchy 问题变换为 ODE。
+
+\begin{example}\label{example:ch09-52}[线性 Cauchy 问题]
+假设我们希望求解平面中光滑函数 $u(x;y)$ 的如下 Cauchy 问题：
+\begin{align}
+x\frac{\partial u}{\partial y}-y\frac{\partial u}{\partial x}&=x, \label{align:ch09-27}\\
+u(x;0)&=x,\quad \text{当 }x>0. \label{align:ch09-28}
+\end{align}
+\eqref{align:ch09-27}左端作用于 $u$ 的向量场是\cref{example:ch09-23}中的向量场 $W$。初始超曲面 $S$ 是正 $x$ 轴，此问题是非特征的，因为 $W$ 处处不与 $S$ 相切。（注意若取 $S$ 为整个 $x$ 轴则情况并非如此。）利用\cref{example:ch09-23}的计算，发现变换 $(x;y)=\Psi(t;s)=(s\cos t,s\sin t)$ 将 $\partial/\partial t$ 前推到 $W$，从而将\eqref{align:ch09-27}--\eqref{align:ch09-28}变换为 ODE 初值问题
+\begin{align*}
+\frac{\partial\widetilde{u}}{\partial t}(t;s)=s\cos t,\qquad \widetilde{u}(0;s)=s.
+\end{align*}
+其解为 $\widetilde{u}(t;s)=s\sin t+s$。用\eqref{align:ch09-13}将 $(t;s)$ 换回 $(x;y)$，得到原问题的解 $u(x;y)=y+\sqrt{x^2+y^2}$。
+\end{example}
+
+\subsection*{拟线性方程}
+
+前面的结果容易推广到某些非线性偏微分方程。PDE 称为\textbf{拟线性的}，若它可写为未知函数最高阶导数的仿射方程，其系数可依赖于函数本身及其较低阶导数。因此，在坐标下，拟线性一阶 PDE 是如下形式的微分方程：
+\begin{align}
+a^1(x;u(x))\frac{\partial u}{\partial x^1}+\cdots+a^n(x;u(x))\frac{\partial u}{\partial x^n}=f(x;u(x)) \label{align:ch09-29}
+\end{align}
+对未知实值函数 $u(x^1,\dots,x^n)$，其中 $a^1,\dots,a^n,f$ 是定义在某开子集 $W\subseteq\mathbb{R}^{n+1}$ 上的光滑实值函数。（为简单起见，这次我们仅关注局部问题，且仅限于欧氏空间的开子集。）
+
+我们希望求解此方程的带初始条件
+\begin{align}
+u|_S=\varphi \label{align:ch09-30}
+\end{align}
+的 Cauchy 问题，其中 $S\subseteq\mathbb{R}^n$ 是光滑嵌入超曲面，$\varphi\colon S\to\mathbb{R}$ 是光滑函数，其图像包含于 $W$。拟线性 Cauchy 问题称为\textbf{非特征的}，若沿 $S$ 由
+\begin{align}
+A_\varphi\bigg|_x=a^1(x;\varphi(x))\frac{\partial}{\partial x^1}\bigg|_x+\cdots+a^n(x;\varphi(x))\frac{\partial}{\partial x^n}\bigg|_x \label{align:ch09-31}
+\end{align}
+定义的向量场 $A_\varphi$ 处处不与 $S$ 相切。（注意此情形下非特征条件依赖于初始值 $\varphi$，而不仅依赖于初始超曲面。）我们将证明非特征 Cauchy 问题总有局部解。（如下面将看到的，寻找全局解可能有问题，因为缺乏唯一性。）
+
+\begin{theorem}\label{theorem:ch09-53}[拟线性 Cauchy 问题]
+若 Cauchy 问题\eqref{align:ch09-29}--\eqref{align:ch09-30}是非特征的，则对每个 $p\in S$，存在 $M$ 中 $p$ 的邻域 $U$，在其上存在\eqref{align:ch09-29}--\eqref{align:ch09-30}的唯一解 $u$。
+\end{theorem}
+
+\begin{proof}
+关键是将因变量 $u$ 转换为额外自变量。（这是在许多不同场合都有用的技巧。）将\eqref{align:ch09-29}的\textbf{特征向量场}定义为 $W\subseteq\mathbb{R}^{n+1}$ 上由
+\begin{align}
+\chi(x;z)=a^1(x;z)\frac{\partial}{\partial x^1}\bigg|_{(x;z)}+\cdots+a^n(x;z)\frac{\partial}{\partial x^n}\bigg|_{(x;z)}+f(x;z)\frac{\partial}{\partial z}\bigg|_{(x;z)} \label{align:ch09-32}
+\end{align}
+给出的向量场，其中写 $(x;z)=(x^1,\dots,x^n;z)$。假设 $u$ 是定义在开子集 $V\subseteq\mathbb{R}^n$ 上的光滑函数，其图像 $\Gamma(u)=\{(x;u(x)):x\in V\}$ 包含于 $W$。则\eqref{align:ch09-29}成立当且仅当 $\chi(z-u(x))=0$ 在 $\Gamma(u)$ 的所有点处成立。由于 $z-u(x)$ 是 $\Gamma(u)$ 的定义函数，由\cref{corollary:ch05-39}，$u$ 求解\eqref{align:ch09-29}当且仅当 $\chi$ 与 $\Gamma(u)$ 相切。想法是将 $u$ 的图像构造为从合适初始子流形沿 $\chi$ 的流出。
+
+令 $\Gamma(\varphi)=\{(x;\varphi(x)):x\in S\}$ 表示 $\varphi$ 的图像；它是 $W$ 的 $(n-1)$ 维嵌入子流形。投影 $\pi\colon W\to\mathbb{R}^n$ 到前 $n$ 个变量将 $\Gamma(\varphi)$ 微分同胚地映到 $S$，故若 $\chi$ 在某点 $(x;\varphi(x))$ 处与 $\Gamma(\varphi)$ 相切，则 $\mathrm{d}\pi(\chi(x;\varphi(x)))$ 在 $x$ 处与 $S$ 相切。然而，用\eqref{align:ch09-32}和\eqref{align:ch09-31}直接计算表明
+\begin{align*}
+\mathrm{d}\pi(\chi(x;\varphi(x)))=A_\varphi\big|_x,
+\end{align*}
+故非特征假设保证 $\chi$ 处处不与 $\Gamma(\varphi)$ 相切。
+
+可对从 $\Gamma(\varphi)\subseteq W$ 出发的向量场 $\chi$ 应用流出定理，得到包含 $\Gamma(\varphi)$ 的浸入 $n$ 维子流形 $\Gamma\subseteq W$，使得 $\chi$ 处处与 $\Gamma$ 相切。若能证明 $\Gamma$ 至少在 $\Gamma(\varphi)$ 附近局部是光滑函数 $u$ 的图像，则 $u$ 将是我们问题的解。
+
+任取 $p\in S$。在 $(p;\varphi(p))\in\Gamma(\varphi)\subseteq\Gamma$ 处，$\Gamma$ 的切空间由向量 $\chi(p;\varphi(p))$ 连同 $T_{(p;\varphi(p))}\Gamma(\varphi)$ 张成。$\pi$ 在 $\Gamma(\varphi)$ 上的限制是到 $S$ 的微分同胚，故 $\mathrm{d}\pi$ 将 $T_{(p;\varphi(p))}\Gamma(\varphi)$ 同构地映到 $T_pS$。另一方面，如上面所注意到的，$\mathrm{d}\pi$ 将 $\chi(p;\varphi(p))$ 映为 $A_\varphi|_p$。由非特征假设，$A_\varphi|_p\notin T_pS$，故 $\mathrm{d}\pi$ 在 $T_{(p;\varphi(p))}\Gamma$ 上单射，因而由维数原因 $T_{(p;\varphi(p))}\mathbb{R}^{n+1}=T_{(p;\varphi(p))}\Gamma\oplus\ker\mathrm{d}\pi_{(p;\varphi(p))}$。由于 $\ker\mathrm{d}\pi_{(p;\varphi(p))}$ 是 $\{p\}\times\mathbb{R}$ 的切空间，$\Gamma$ 在 $(p;\varphi(p))$ 处横截相交于 $\{p\}\times\mathbb{R}$。由\cref{corollary:ch06-33}，存在 $(p;\varphi(p))$ 在 $\Gamma$ 中的邻域 $V$ 和 $p$ 在 $\mathbb{R}^n$ 中的邻域 $U$，使得 $V$ 是光滑函数 $u\colon U\to\mathbb{R}$ 的图像。此函数在 $U$ 中求解 Cauchy 问题。
+
+为证明唯一性，可能需要缩小 $U$。由于 $\Gamma$ 是流出，它是 $\mathbb{R}\times\Gamma(\varphi)$ 的某开子集 $\mathcal{O}_\delta$ 在 $\chi$ 的流下的像。选取 $V$ 足够小，使其是形如 $(-\varepsilon,\varepsilon)\times Y\subseteq\mathcal{O}_\delta$ 的集合在流下的像，其中 $\varepsilon>0$，$Y$ 是 $(p;\varphi(p))$ 在 $\Gamma(\varphi)$ 中的某邻域。在此假设下，$\Gamma(u)$ 恰为从 $Y$ 中点出发、流时间 $|t|<\varepsilon$ 的 $\chi$ 积分曲线的像的并集。假设 $\widetilde{u}$ 是同一开子集 $U$ 上同一 Cauchy 问题的任意其他解。如上面所注意到的，这意味着 $\chi$ 与 $\widetilde{u}$ 的图像相切，且初始条件保证 $Y=\Gamma(\varphi)\cap U\subseteq\Gamma(\widetilde{u})$。由于 $\widetilde{u}$ 的图像是 $U\times\mathbb{R}$ 的正常嵌入子流形，习题 9-2 表明从 $Y$ 中点出发的 $U\times\mathbb{R}$ 中每条 $\chi$ 积分曲线必完全位于 $\widetilde{u}$ 的图像中。故 $\Gamma(\widetilde{u})\supseteq\Gamma(u)$。但 $\Gamma(\widetilde{u})$ 不可能包含不在 $\Gamma(u)$ 中的点而仍是函数的图像，故在 $U$ 上 $\widetilde{u}=u$。
+\end{proof}
+
+为求拟线性 Cauchy 问题的显式解，我们先选取 $S$ 的光滑局部参数化，写为 $s\mapsto X(s)$，其中 $s=(s^2,\dots,s^n)\in\Omega\subseteq\mathbb{R}^{n-1}$。则由 $\widetilde{X}(s)=(X(s);\varphi(X(s)))$ 给出的映射 $\widetilde{X}\colon\Omega\to\mathbb{R}^{n+1}$ 是 $\Gamma(\varphi)$ 的局部参数化，$\Gamma$ 的局部参数化由 $\Psi(t;s)=\theta_t(\widetilde{X}(s))$ 给出，其中 $\theta$ 是 $\chi$ 的流。为将 $\Gamma$ 重写为图像，只需局部反演映射 $\pi\circ\Psi\colon\Omega\to\mathbb{R}^n$，即解出 $(x^1,\dots,x^n)$ 关于 $(t;s^2,\dots,s^n)$ 的表达式；然后 $\Psi$ 的 $z$ 分量（写为 $(x^1,\dots,x^n)$ 的函数）即为 Cauchy 问题的解。
+
+\begin{example}\label{example:ch09-54}[拟线性 Cauchy 问题]
+假设我们希望求解平面中如下拟线性 Cauchy 问题：
+\begin{align*}
+(u+1)\frac{\partial u}{\partial x}+\frac{\partial u}{\partial y}=0,\qquad u(x;0)=x.
+\end{align*}
+初始超曲面 $S$ 是 $x$ 轴，初始值为 $\varphi(x;0)=x$。向量场 $A_\varphi$ 是 $(x+1)\partial/\partial x+\partial/\partial y$，处处不与 $x$ 轴相切，故此问题是非特征的。
+
+特征向量场是 $\mathbb{R}^3$ 上如下向量场：
+\begin{align*}
+\chi=(z+1)\frac{\partial}{\partial x}+\frac{\partial}{\partial y}.
+\end{align*}
+我们希望求从 $\Gamma(\varphi)$ 出发的 $\chi$ 的流出。可用 $X(s)=(s;0)$（$s\in\mathbb{R}$）参数化 $S$，然后 $\Gamma(\varphi)$ 由 $\widetilde{X}(s)=(s;0;s)$ 参数化。求解与 $\chi$ 相关的 ODE 组、初始条件 $(x;y;z)=(s;0;s)$，发现从 $\widetilde{X}(s)$ 出发的 $\chi$ 的流出由
+\begin{align*}
+\Psi(t;s)=(s+t+st;t;s)
+\end{align*}
+参数化。此映射的像即为我们解的图像。为用 $x$ 和 $y$ 重参数化图像，反演映射 $\pi\circ\Psi$；即局部解 $(x;y)=(s+t+st;t)$ 中的 $t$ 和 $s$，得
+\begin{align*}
+(t;s)=\left(y;\frac{x-y}{1+y}\right),
+\end{align*}
+因此在流出流形上 $z=s=(x-y)/(1+y)$。我们的 Cauchy 问题的解为 $u(x;y)=(x-y)/(1+y)$。注意它仅定义在 $S$ 的邻域（$y>-1$ 的集合）中，而不在整个平面上。
+\end{example}
+
+$\chi$ 在 $\mathbb{R}^{n+1}$ 中的积分曲线称为 PDE\eqref{align:ch09-29}的\textbf{特征曲线}（或\textbf{特征}）。此求解技术归结为将 $u$ 的图像构造为特征曲线的并集，称为\textbf{特征线法}。（对线性方程，术语"特征曲线"有时也用于由\eqref{align:ch09-23}定义的向量场 $A$ 的积分曲线。当然，上面为拟线性方程描述的方法也可应用于线性方程，但在线性情形下\cref{example:ch09-52}的技术通常更容易。）
+
+\cref{theorem:ch09-51}和\cref{theorem:ch09-53}仅断言在初始子流形邻域中解的存在性和唯一性。Cauchy 问题不总有全局解；当全局解确实存在时，也可能不唯一（例子见习题 9-23）。基本问题是经过初始超曲面的特征曲线可能不能到达流形的所有点。此外，拟线性问题还有额外的复杂情况：$\mathbb{R}^{n+1}$ 中的特征曲线可能不再横截于投影 $\mathbb{R}^{n+1}\to\mathbb{R}^n$ 的纤维；或者即使横截，从 $\Gamma(\varphi)$ 不同点出发到 $\mathbb{R}^n$ 中的投影也可能彼此交叉，尽管特征曲线本身不交叉。在两条或更多特征曲线像的交点处，上述过程将为 $u$ 产生两个不同值。尽管如此，在具体情形下，通常可通过分析特征曲线的行为来识别 $S$ 的一个邻域，在其上存在唯一解。例如，考虑\cref{example:ch09-54}中在集合 $U=\{(x;y):y>-1\}$ 上构造的解 $u$。其图像包含从 $\Gamma(\varphi)$ 每点出发的整条极大积分曲线。正因如此，我们在\cref{theorem:ch09-53}中用于证明局部唯一性的论证实际上证明了在此情形下解全局唯一。
+
+\end{document}

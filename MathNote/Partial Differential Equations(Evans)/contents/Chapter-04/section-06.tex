@@ -1,0 +1,140 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}}
+
+\begin{document}
+
+\section{幂级数方法}\label{section:ch04-powerseries}
+
+本节讨论通过寻找表为幂级数的解来解偏微分方程的边值问题。
+
+\subsection{非特征曲面}\label{subsection:ch04-noncharacteristic}
+
+我们先就 $k$ 阶拟线性 PDE
+\begin{align}\label{align:ch04-quasilinear-k}
+\sum_{|\alpha|=k}a_\alpha(D^{k-1}u,\cdots,u,x)D^\alpha u+a_0(D^{k-1}u,\cdots,u,x)=0
+\end{align}
+在某开区域 $U\subset\mathbb{R}^n$ 中的可解性作些相当一般的评注。设 $\Gamma$ 是 $U$ 中光滑 $(n-1)$ 维超曲面，其在任一点 $x_0\in\Gamma$ 处的单位法向量为 $\nu(x_0)=\nu=(\nu_1,\cdots,\nu_n)$。
+
+\textbf{记号.} $u$ 在 $x_0\in\Gamma$ 处的 $j$ 阶法向导数为 $\dfrac{\partial^j u}{\partial\nu^j}\triangleq\sum_{|\alpha|=j}\binom{j}{\alpha}D^\alpha u\,\nu^\alpha$。
+
+现设 $g_0,\cdots,g_{k-1}:\Gamma\to\mathbb{R}$ 为给定的 $k$ 个函数。\textbf{Cauchy 问题}即求解 PDE \eqref{align:ch04-quasilinear-k}、满足边界条件
+\begin{align}\label{align:ch04-cauchy-data}
+u=g_0,\ \frac{\partial u}{\partial\nu}=g_1,\ \cdots,\ \frac{\partial^{k-1}u}{\partial\nu^{k-1}}=g_{k-1} \qquad\text{在 }\Gamma\text{ 上}.
+\end{align}
+我们称\eqref{align:ch04-cauchy-data} 在 $\Gamma$ 上指定了 Cauchy 数据 $g_0,\cdots,g_{k-1}$。
+
+\textbf{基本问题.} 假定 $u$ 是 PDE \eqref{align:ch04-quasilinear-k} 的光滑解，条件\eqref{align:ch04-cauchy-data} 是否允许我们算出 $u$ 沿 $\Gamma$ 的所有偏导数？若我们能计算 $u$ 的幂级数表示公式的各项，这当然必须成立。
+
+\subsubsection{平坦边界}
+
+先考察 $U=\mathbb{R}^n$、$\Gamma=\{x_n=0\}$ 的特殊情形。此时可取 $\nu=e_n$，Cauchy 条件读作
+\begin{align}\label{align:ch04-cauchy-flat}
+u=g_0,\ \frac{\partial u}{\partial x_n}=g_1,\ \cdots,\ \frac{\partial^{k-1}u}{\partial x_n^{k-1}}=g_{k-1} \qquad\text{在 }\{x_n=0\}\text{ 上}.
+\end{align}
+
+由于 $u=g_0$ 在整个 $\Gamma$ 上，可切向微分（对 $x_i$，$i=1,\cdots,n-1$）求出 $\partial u/\partial x_i=\partial g_0/\partial x_i$。又由\eqref{align:ch04-cauchy-flat} 知 $\partial u/\partial x_n=g_1$，故可定出 $\Gamma$ 上完整梯度 $Du$。类似地可算出 $D^2u,D^3u,\cdots$。直接验证：用 Cauchy 条件\eqref{align:ch04-cauchy-flat}，可在 $\Gamma$ 上算出 $u,Du,\cdots,D^{k-1}u$。
+
+然而当试图计算 $D^ku$ 时困难出现。可验证：除 $k$ 阶法向导数 $\partial^k u/\partial x_n^k$ 外，$\Gamma=\{x_n=0\}$ 上 $u$ 的每个 $k$ 阶偏导数都可由 Cauchy 数据\eqref{align:ch04-cauchy-flat} 确定。此时终于求助 PDE \eqref{align:ch04-quasilinear-k}：若系数 $a_{(0,\cdots,0,k)}\neq 0$，则可解出
+\begin{align}\label{align:ch04-normal-deriv}
+\frac{\partial^k u}{\partial x_n^k}=-\frac{1}{a_{(0,\cdots,0,k)}}\left[\sum_{\substack{|\alpha|=k\\\alpha\neq(0,\cdots,0,k)}}a_\alpha D^\alpha u+a_0\right],
+\end{align}
+其中系数 $a_\alpha$、$a_0$ 在 $\Gamma$ 上于 $(D^{k-1}u,\cdots,u,x)$ 处取值。上式右端一切都可用 $\Gamma$ 上 Cauchy 数据算出，于是得到缺失的 $k$ 阶偏导数公式。故只要
+\begin{align}\label{align:ch04-nonchar-flat}
+a_{(0,\cdots,0,k)}\neq 0,
+\end{align}
+即可算出 $\Gamma$ 上整个 $D^ku$。
+
+称平面 $\Gamma=\{x_n=0\}$ 对 PDE \eqref{align:ch04-quasilinear-k}\textbf{非特征}，若函数 $a_{(0,\cdots,0,k)}$ 对其自变量的一切值非零。在非特征条件\eqref{align:ch04-nonchar-flat} 下，可把\eqref{align:ch04-normal-deriv} 加进 Cauchy 数据，归纳地算出 $\Gamma$ 上 $u$ 的一切偏导数。
+
+\subsubsection{一般曲面}
+
+\begin{definition}\label{definition:ch04-noncharacteristic}
+称曲面 $\Gamma$ 对偏微分方程\eqref{align:ch04-quasilinear-k}\textbf{非特征}，若
+\begin{align}\label{align:ch04-nonchar-general}
+\sum_{|\alpha|=k}a_\alpha\nu^\alpha\neq 0 \qquad\text{在 }\Gamma\text{ 上},
+\end{align}
+对系数 $a_\alpha$（$|\alpha|=k$）自变量的一切值成立。
+\end{definition}
+
+\begin{theorem}[Cauchy 数据与非特征曲面]\label{theorem:ch04-cauchy-nonchar}设 $\Gamma$ 对 PDE \eqref{align:ch04-quasilinear-k} 非特征。则若 $u$ 是\eqref{align:ch04-quasilinear-k} 的光滑解且满足 Cauchy 条件\eqref{align:ch04-cauchy-data}，就能由 $\Gamma$、函数 $g_0,\cdots,g_{k-1}$ 及系数 $a_\alpha$（$|\alpha|=k$）、$a_0$ 唯一地算出 $u$ 沿 $\Gamma$ 的一切偏导数。
+\end{theorem}
+
+\begin{proof}
+化回平坦边界的特殊情形。选任一点 $x_0\in\Gamma$，找光滑微分同胚 $\Phi,\Psi=\Phi^{-1}$ 使 $\Phi(\Gamma\cap B(x_0,r))\subset\{y_n=0\}$。定义 $v(y)\triangleq u(\Psi(y))$。可验证 $v$ 满足形式\eqref{align:ch04-quasilinear-k} 的拟线性 PDE。由链式法则，$\partial^k v/\partial y_n^k$ 的系数 $b_{(0,\cdots,0,k)}=\sum_{|\alpha|=k}a_\alpha(D\Phi_n)^\alpha$，而 $D\Phi_n$ 在 $\Gamma$ 上平行于 $\nu$，故由\eqref{align:ch04-nonchar-general} 知 $b_{(0,\cdots,0,k)}\neq 0$。于是平坦情形的论证适用，可算出 $\{y_n=0\}$ 上 $v$ 的一切偏导数，换回 $u$ 即得 $\Gamma$ 上的结果。
+\end{proof}
+
+\begin{remark}\label{remark:ch04-nonchar}
+有时把非特征条件\eqref{align:ch04-nonchar-general} 改写为另一形式更方便：把 $\Gamma$ 表为某函数 $w:\mathbb{R}^n\to\mathbb{R}$ 的零集 $\Gamma=\{w=0\}$、$Dw\neq 0$ 在 $\Gamma$ 上。则 $\nu=\pm Dw/|Dw|$ 在 $\Gamma$ 上，非特征条件变为
+\begin{align}\label{align:ch04-nonchar-w}
+\sum_{|\alpha|=k}a_\alpha(Dw)^\alpha\neq 0 \qquad\text{在 }\Gamma\text{ 上}.
+\end{align}
+\end{remark}
+
+\subsection{实解析函数}\label{subsection:ch04-analytic}
+
+\begin{definition}\label{definition:ch04-analytic}
+函数 $f:\mathbb{R}^n\to\mathbb{R}$ 称为在 $x_0$ 附近（实）解析，若存在 $r>0$ 及常数 $\{f_\alpha\}$，使
+\begin{align}\label{align:ch04-analytic-def}
+f(x)=\sum_\alpha f_\alpha(x-x_0)^\alpha \qquad(|x-x_0|<r),
+\end{align}
+求和遍历所有多重指标 $\alpha$。
+\end{definition}
+
+若 $f$ 在 $x_0$ 附近解析，则 $f$ 在 $x_0$ 附近 $C^\infty$，且 $f_\alpha=\dfrac{D^\alpha f(x_0)}{\alpha!}$（$\alpha!=\alpha_1!\cdots\alpha_n!$）。故 $f$ 等于其关于 $x_0$ 的 Taylor 展开。
+
+\begin{definition}\label{definition:ch04-majorant}
+设 $f=\sum_\alpha f_\alpha x^\alpha$、$g=\sum_\alpha g_\alpha x^\alpha$ 为两个幂级数。称 $g$\textbf{控制} $f$，记 $g\gg f$，若对一切多重指标 $\alpha$ 有 $g_\alpha\geqslant|f_\alpha|$。
+\end{definition}
+
+\begin{lemma}[控制级数]\label{lemma:ch04-majorant}
+\begin{enumerate}[(i)]
+\item 若 $g\gg f$ 且 $g$ 在 $|x|<r$ 收敛，则 $f$ 也在 $|x|<r$ 收敛。
+\item 若 $f=\sum_\alpha f_\alpha x^\alpha$ 在 $|x|<r$ 收敛且 $0<s\sqrt{n}<r$，则 $f$ 在 $|x|<s/\sqrt{n}$ 有一个控制级数。
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(i) 由 $\sum_\alpha|f_\alpha x^\alpha|\leqslant\sum_\alpha g_\alpha|x_1|^{\alpha_1}\cdots|x_n|^{\alpha_n}<\infty$（$|x|<r$）得。
+
+(ii) 令 $y=s(1,\cdots,1)$，则 $|y|=s\sqrt{n}<r$，故 $\sum_\alpha f_\alpha y^\alpha$ 收敛，从而存在常数 $C$ 使 $|f_\alpha y^\alpha|\leqslant C$。于是 $|f_\alpha|\leqslant\dfrac{C}{s^{|\alpha|}}\leqslant\dfrac{C|\alpha|!}{s^{|\alpha|}\alpha!}$。故 $g(x)\triangleq\dfrac{Cs}{s-(x_1+\cdots+x_n)}=C\sum_\alpha\dfrac{|\alpha|!}{s^{|\alpha|}\alpha!}x^\alpha$ 控制 $f$。
+\end{proof}
+
+\subsection{Cauchy--Kovalevskaya 定理}\label{subsection:ch04-ck}
+
+现开始本小节的主要任务：在解析、非特征超曲面 $\Gamma$ 上给定解析 Cauchy 数据\eqref{align:ch04-cauchy-data}，为 $k$ 阶拟线性 PDE \eqref{align:ch04-quasilinear-k} 构造幂级数解。
+
+\subsubsection{化为一阶组}
+
+通过解析映射把边界平坦化（如 \S4.6.1），可化为 $\Gamma\subset\{x_n=0\}$ 的情形；再减去适当解析函数，可设 Cauchy 数据恒为零。最后化为一阶组。引入向量 $\mathbf{u}\triangleq(u,u_{x_1},\cdots,u_{x_n},u_{x_1x_1},\cdots,u_{x_n^{k-1}})$，其分量是 $u$ 的一切低于 $k$ 阶偏导数。用 PDE 解出 $\mathbf{u}$ 对 $x_n$ 的导数，得一阶组
+\begin{align}\label{align:ch04-first-order-system}
+\begin{cases}
+\mathbf{u}_{x_n}=\sum_{j=1}^{n-1}B_j(\mathbf{u},x')\mathbf{u}_{x_j}+\mathbf{c}(\mathbf{u},x') & \text{对 }|x|<r,\\
+\mathbf{u}=0 & \text{对 }|x'|<r,\ x_n=0,
+\end{cases}
+\end{align}
+其中解析函数 $B_j:\mathbb{R}^m\times\mathbb{R}^{n-1}\to\mathbb{M}_{m\times m}$、$\mathbf{c}:\mathbb{R}^m\times\mathbb{R}^{n-1}\to\mathbb{R}^m$。
+
+\subsubsection{解的幂级数}
+
+\begin{theorem}[Cauchy--Kovalevskaya 定理]\label{theorem:ch04-ck}设 $\{B_j\}_{j=1}^{n-1}$ 与 $\mathbf{c}$ 均为实解析函数。则存在 $r>0$ 及实解析函数
+\begin{align}\label{align:ch04-ck-sol}
+\mathbf{u}=\sum_\alpha\mathbf{u}_\alpha x^\alpha
+\end{align}
+解边值问题\eqref{align:ch04-first-order-system}。
+\end{theorem}
+
+\begin{proof}
+1. 须用 $\{B_j\}$、$\mathbf{c}$ 算出系数 $\mathbf{u}_\alpha=\dfrac{D^\alpha\mathbf{u}(0)}{\alpha!}$，再证所得幂级数在 $|x|<r$（$r$ 足够小）收敛。
+
+2. 因 $\{B_j\}$、$\mathbf{c}$ 解析，可展开为幂级数 $B_j(z,x')=\sum_{\gamma,\delta}B_{j,\gamma,\delta}z^\gamma x^\delta$、$\mathbf{c}(z,x')=\sum_{\gamma,\delta}c_{\gamma,\delta}z^\gamma x^\delta$。
+
+3. 因 $\mathbf{u}\equiv 0$ 在 $\{x_n=0\}$ 上，对一切 $\alpha_n=0$ 的多重指标 $\alpha$ 有 $\mathbf{u}_\alpha=0$。对\eqref{align:ch04-first-order-system} 逐次求 $x_n$ 方向导数，归纳推出：每个系数 $\mathbf{u}_\alpha$ 可表为系数 $B_{j,\gamma,\delta}$、$c_{\gamma,\delta}$ 及低阶系数 $\mathbf{u}_\beta$ 的一个具非负系数的多项式。
+
+4. 这只说明若光滑解存在则其在 $0$ 点的一切导数可由已知量算出（这从 \S4.6.1 已知）。现用\textbf{控制级数法}证幂级数收敛：选控制级数 $B_j^*\gg B_j$、$\mathbf{c}^*\gg\mathbf{c}$，考虑相应的控制边值问题。归纳可证 $0\leqslant|\mathbf{u}_\alpha|\leqslant\mathbf{u}_\alpha^*$，故 $\mathbf{u}^*\gg\mathbf{u}$，只需证控制级数在零附近收敛。按 \S4.6.2 引理 (ii)，取
+\begin{align*}
+B_j^*=\frac{Cr}{r-(x_1+\cdots+x_{n-1})-(z_1+\cdots+z_m)}\begin{pmatrix}1&\cdots&1\\ &\ddots&\\1&\cdots&1\end{pmatrix},\quad \mathbf{c}^*=\frac{Cr}{r-(x_1+\cdots+x_{n-1})-(z_1+\cdots+z_m)}(1,\cdots,1),
+\end{align*}
+则控制问题可显式解出为一个几何级数，在 $|x|$ 小时收敛。于是原幂级数\eqref{align:ch04-ck-sol} 收敛。
+\end{proof}
+
+\end{document}

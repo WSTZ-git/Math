@@ -1,0 +1,371 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+% SOURCE p=58; printed=43; object=ch02-sec01-title; region=middle
+\section{可测函数}\label{section:ch02-measurable-functions}
+
+% SOURCE p=58; printed=43; object=ch02-measurable-mappings-intro; region=middle-lower
+我们从讨论可测映射开始研究积分理论；可测映射是可测空间范畴中的态射。
+回忆，两个集合之间的任意映射 $f:X\to Y$ 都诱导映射 $f^{-1}:\mathscr{P}(Y)\to\mathscr{P}(X)$，定义为 $f^{-1}(E)=\{x\in X:f(x)\in E\}$；它保持并、交及补运算。因此，若 $\mathscr{N}$ 是 $Y$ 上的 $\sigma$-代数，则 $\{f^{-1}(E):E\in\mathscr{N}\}$ 是 $X$ 上的 $\sigma$-代数。
+
+% SOURCE p=58; printed=43; object=ch02-measurable-map-definition; region=lower
+\begin{definition}[可测映射]\label{definition:ch02-measurable-map}
+若 $(X,\mathscr{M})$ 和 $(Y,\mathscr{N})$ 为可测空间，当对所有 $E\in\mathscr{N}$ 都有 $f^{-1}(E)\in\mathscr{M}$ 时，称映射 $f:X\to Y$ 为 \textbf{$(\mathscr{M},\mathscr{N})$-可测}的；当 $\mathscr{M}$ 和 $\mathscr{N}$ 已明确时，简称\textbf{可测}。
+\end{definition}
+
+% SOURCE p=58; printed=43; object=ch02-measurable-composition; region=lower
+\begin{proposition}\label{proposition:ch02-measurable-composition}
+显然，可测映射的复合仍可测；即若 $f:X\to Y$ 为 $(\mathscr{M},\mathscr{N})$-可测的，$g:Y\to Z$ 为 $(\mathscr{N},\mathscr{O})$-可测的，则 $g\circ f$ 为 $(\mathscr{M},\mathscr{O})$-可测的。
+\end{proposition}
+
+% SOURCE p=58; printed=43; object=ch02-measurability-generators; number=2.1; region=bottom
+\begin{proposition}\label{proposition:ch02-measurability-generators}
+若 $\mathscr{N}$ 由 $\mathscr{E}$ 生成，则 $f:X\to Y$ 为 $(\mathscr{M},\mathscr{N})$-可测的，当且仅当对所有 $E\in\mathscr{E}$ 都有 $f^{-1}(E)\in\mathscr{M}$。
+\end{proposition}
+% SOURCE p=59; printed=44; object=ch02-proof-measurability-generators; region=top
+\begin{proof}
+必要性显然。反之，注意到 $\{E\subseteq Y:f^{-1}(E)\in\mathscr{M}\}$ 是包含 $\mathscr{E}$ 的 $\sigma$-代数，因而包含 $\mathscr{N}$。
+\end{proof}
+
+% SOURCE p=59; printed=44; object=ch02-continuous-borel-measurable; number=2.2; region=upper
+\begin{corollary}\label{corollary:ch02-continuous-borel-measurable}
+若 $X$ 和 $Y$ 为度量空间（或拓扑空间），则每个连续映射 $f:X\to Y$ 都是 $(\mathscr{B}_X,\mathscr{B}_Y)$-可测的。
+\end{corollary}
+% SOURCE p=59; printed=44; object=ch02-proof-continuous-borel-measurable; region=upper
+\begin{proof}
+$f$ 连续，当且仅当对每个开集 $U\subseteq Y$，$f^{-1}(U)$ 在 $X$ 中为开集。
+\end{proof}
+
+% SOURCE p=59; printed=44; object=ch02-scalar-measurable-definition; region=upper-middle
+\begin{definition}[实值与复值可测函数]\label{definition:ch02-scalar-measurable}
+若 $(X,\mathscr{M})$ 为可测空间，当 $X$ 上的实值或复值函数 $f$ 为 $(\mathscr{M},\mathscr{B}_{\mathbb{R}})$-可测或 $(\mathscr{M},\mathscr{B}_{\mathbb{C}})$-可测时，称它为 \textbf{$\mathscr{M}$-可测}的，或简称\textbf{可测}。除非另有说明，值域空间上的 $\sigma$-代数始终理解为 $\mathscr{B}_{\mathbb{R}}$ 或 $\mathscr{B}_{\mathbb{C}}$。特别地，若 $f:\mathbb{R}\to\mathbb{C}$ 为 $(\mathscr{L},\mathscr{B}_{\mathbb{C}})$-可测的（分别地，为 $(\mathscr{B}_{\mathbb{R}},\mathscr{B}_{\mathbb{C}})$-可测的），则称 $f$ 为 \textbf{Lebesgue 可测}的（分别地，为 \textbf{Borel 可测}的）；对 $f:\mathbb{R}\to\mathbb{R}$ 也如此。
+\end{definition}
+
+% SOURCE p=59; printed=44; object=ch02-composition-warning; region=middle
+\begin{remark}
+若 $f,g:\mathbb{R}\to\mathbb{R}$ 为 Lebesgue 可测函数，则不能推出 $f\circ g$ 为 Lebesgue 可测函数，即使还假设 $g$ 连续也不行。（若 $E\in\mathscr{B}_{\mathbb{R}}$，则 $f^{-1}(E)\in\mathscr{L}$；但除非 $f^{-1}(E)\in\mathscr{B}_{\mathbb{R}}$，否则无法保证 $g^{-1}(f^{-1}(E))$ 属于 $\mathscr{L}$。参见\cref{exercise:ch02-cantor-non-borel}。）不过，若 $f$ 为 Borel 可测函数，则只要 $g$ 为 Lebesgue 可测或 Borel 可测函数，$f\circ g$ 就相应地为 Lebesgue 可测或 Borel 可测函数。
+\end{remark}
+
+% SOURCE p=59; printed=44; object=ch02-real-measurability-rays; number=2.3; region=middle
+\begin{proposition}\label{proposition:ch02-real-measurability-rays}
+若 $(X,\mathscr{M})$ 为可测空间，$f:X\to\mathbb{R}$，则下列条件等价：
+\begin{enumerate}[label=\alph*.,ref=(\alph*)]
+\item\label{item:ch02-rays-measurable} $f$ 为 $\mathscr{M}$-可测的。
+\item\label{item:ch02-rays-open-upper} 对所有 $a\in\mathbb{R}$，$f^{-1}((a,\infty))\in\mathscr{M}$。
+\item\label{item:ch02-rays-closed-upper} 对所有 $a\in\mathbb{R}$，$f^{-1}([a,\infty))\in\mathscr{M}$。
+\item\label{item:ch02-rays-open-lower} 对所有 $a\in\mathbb{R}$，$f^{-1}((-\infty,a))\in\mathscr{M}$。
+\item\label{item:ch02-rays-closed-lower} 对所有 $a\in\mathbb{R}$，$f^{-1}((-\infty,a])\in\mathscr{M}$。
+\end{enumerate}
+\end{proposition}
+% SOURCE p=59; printed=44; object=ch02-proof-real-measurability-rays; region=middle-lower
+\begin{proof}
+这由\cref{proposition:ch01-real-borel-generators,proposition:ch02-measurability-generators}得到。
+\end{proof}
+
+% SOURCE p=59; printed=44; object=ch02-measurable-on-subset; region=lower-middle
+有时，我们希望考虑在 $X$ 的子集上的可测性。
+\begin{definition}[在子集上可测]\label{definition:ch02-measurable-on-subset}
+若 $(X,\mathscr{M})$ 为可测空间，$f$ 为 $X$ 上的函数，且 $E\in\mathscr{M}$，当对所有 Borel 集 $B$ 都有 $f^{-1}(B)\cap E\in\mathscr{M}$ 时，称 $f$ \textbf{在 $E$ 上可测}。（等价地，$f|E$ 为 $\mathscr{M}_E$-可测的，其中 $\mathscr{M}_E=\{F\cap E:F\in\mathscr{M}\}$。）
+\end{definition}
+
+% SOURCE p=59; printed=44; object=ch02-mapping-generated-sigma; region=lower
+\begin{definition}[映射族生成的 $\sigma$-代数]\label{definition:ch02-mapping-generated-sigma}
+给定集合 $X$。若 $\{(Y_\alpha,\mathscr{N}_\alpha)\}_{\alpha\in A}$ 是可测空间族，且对每个 $\alpha$ 都有映射 $f_\alpha:X\to Y_\alpha$，则 $X$ 上存在唯一最小的 $\sigma$-代数，使所有 $f_\alpha$ 关于它都可测；它就是由集合 $f_\alpha^{-1}(E_\alpha)$（$E_\alpha\in\mathscr{N}_\alpha$，$\alpha\in A$）生成的 $\sigma$-代数，称为由 $\{f_\alpha\}_{\alpha\in A}$ \textbf{生成}的 $\sigma$-代数。
+\end{definition}
+\begin{remark}
+特别地，若 $X=\prod_{\alpha\in A}Y_\alpha$，则\cref{section:ch01-sigma-algebras}中定义的 $X$ 上的乘积 $\sigma$-代数，就是由坐标映射 $\pi_\alpha:X\to Y_\alpha$ 生成的 $\sigma$-代数。
+\end{remark}
+
+% SOURCE p=59; printed=44; object=ch02-coordinate-measurability; number=2.4; region=lower
+\begin{proposition}\label{proposition:ch02-coordinate-measurability}
+设 $(X,\mathscr{M})$ 及 $(Y_\alpha,\mathscr{N}_\alpha)$（$\alpha\in A$）为可测空间，$Y=\prod_{\alpha\in A}Y_\alpha$，$\mathscr{N}=\bigotimes_{\alpha\in A}\mathscr{N}_\alpha$，$\pi_\alpha:Y\to Y_\alpha$ 为坐标映射。则 $f:X\to Y$ 为 $(\mathscr{M},\mathscr{N})$-可测的，当且仅当对所有 $\alpha$，$f_\alpha=\pi_\alpha\circ f$ 都为 $(\mathscr{M},\mathscr{N}_\alpha)$-可测的。
+\end{proposition}
+% SOURCE p=59; printed=44; object=ch02-proof-coordinate-measurability; region=bottom
+\begin{proof}
+若 $f$ 可测，则每个 $f_\alpha$ 也可测，因为可测映射的复合可测。反之，若每个 $f_\alpha$ 都可测，则对所有 $E_\alpha\in\mathscr{N}_\alpha$，有 $f^{-1}(\pi_\alpha^{-1}(E_\alpha))=f_\alpha^{-1}(E_\alpha)\in\mathscr{M}$，因而由\cref{proposition:ch02-measurability-generators}，$f$ 可测。
+\end{proof}
+
+% SOURCE p=60; printed=45; object=ch02-complex-measurability; number=2.5; region=top
+\begin{corollary}\label{corollary:ch02-complex-measurability}
+函数 $f:X\to\mathbb{C}$ 为 $\mathscr{M}$-可测的，当且仅当 $\operatorname{Re}f$ 和 $\operatorname{Im}f$ 都为 $\mathscr{M}$-可测的。
+\end{corollary}
+% SOURCE p=60; printed=45; object=ch02-proof-complex-measurability; region=upper
+\begin{proof}
+由\cref{proposition:ch01-product-borel}，$\mathscr{B}_{\mathbb{C}}=\mathscr{B}_{\mathbb{R}^2}=\mathscr{B}_{\mathbb{R}}\otimes\mathscr{B}_{\mathbb{R}}$，由此得到结论。
+\end{proof}
+
+% SOURCE p=60; printed=45; object=ch02-extended-real-borel; region=upper-middle
+有时，考虑取值于扩展实数系 $\overline{\mathbb{R}}=[-\infty,\infty]$ 的函数更为方便。
+\begin{definition}[扩展实数系上的 Borel 集]\label{definition:ch02-extended-real-borel}
+在 $\overline{\mathbb{R}}$ 中定义 Borel 集族为
+\begin{align*}
+\mathscr{B}_{\overline{\mathbb{R}}}=\{E\subseteq\overline{\mathbb{R}}:E\cap\mathbb{R}\in\mathscr{B}_{\mathbb{R}}\}.
+\end{align*}
+\end{definition}
+\begin{remark}
+若赋予 $\overline{\mathbb{R}}$ 度量 $\rho(x,y)=|A(x)-A(y)|$，其中 $A(x)=\arctan x$，使它成为度量空间，则这与 Borel $\sigma$-代数的通常定义一致。仿照\cref{proposition:ch02-real-measurability-rays}，容易验证，$\mathscr{B}_{\overline{\mathbb{R}}}$ 由射线 $(a,\infty]$ 或 $[-\infty,a)$（$a\in\mathbb{R}$）生成。
+\end{remark}
+\begin{definition}[扩展实值可测函数]\label{definition:ch02-extended-real-measurable}
+若 $f:X\to\overline{\mathbb{R}}$ 为 $(\mathscr{M},\mathscr{B}_{\overline{\mathbb{R}}})$-可测的，则称它为 $\mathscr{M}$-可测的。
+\end{definition}
+参见\cref{exercise:ch02-extended-measurability}。
+
+% SOURCE p=60; printed=45; object=ch02-measurable-operations-intro; region=middle
+下面证明，熟悉的代数运算与极限运算保持可测性。
+
+% SOURCE p=60; printed=45; object=ch02-measurable-sum-product; number=2.6; region=middle
+\begin{proposition}\label{proposition:ch02-measurable-sum-product}
+若 $f,g:X\to\mathbb{C}$ 为 $\mathscr{M}$-可测的，则 $f+g$ 和 $fg$ 也为 $\mathscr{M}$-可测的。
+\end{proposition}
+% SOURCE p=60; printed=45; object=ch02-proof-measurable-sum-product; region=middle
+\begin{proof}
+定义 $F:X\to\mathbb{C}\times\mathbb{C}$、$\phi:\mathbb{C}\times\mathbb{C}\to\mathbb{C}$ 及 $\psi:\mathbb{C}\times\mathbb{C}\to\mathbb{C}$ 为 $F(x)=(f(x),g(x))$、$\phi(z,w)=z+w$ 和 $\psi(z,w)=zw$。由\cref{proposition:ch01-product-borel}，$\mathscr{B}_{\mathbb{C}\times\mathbb{C}}=\mathscr{B}_{\mathbb{C}}\otimes\mathscr{B}_{\mathbb{C}}$，所以由\cref{proposition:ch02-coordinate-measurability}，$F$ 为 $(\mathscr{M},\mathscr{B}_{\mathbb{C}\times\mathbb{C}})$-可测的；而由\cref{corollary:ch02-continuous-borel-measurable}，$\phi$ 和 $\psi$ 都为 $(\mathscr{B}_{\mathbb{C}\times\mathbb{C}},\mathscr{B}_{\mathbb{C}})$-可测的。因此，$f+g=\phi\circ F$ 和 $fg=\psi\circ F$ 都为 $\mathscr{M}$-可测的。
+\end{proof}
+
+% SOURCE p=60; printed=45; object=ch02-extended-operations-caveat; region=middle-lower
+\begin{remark}
+只要对未定式 $\infty-\infty$ 和 $0\cdot\infty$ 稍加注意，\cref{proposition:ch02-measurable-sum-product}对 $\overline{\mathbb{R}}$-值函数仍成立。（不过，回忆我们的约定：始终把 $0\cdot\infty$ 定义为 $0$。）参见\cref{exercise:ch02-extended-sum-product}。
+\end{remark}
+
+% SOURCE p=60; printed=45; object=ch02-measurable-limits; number=2.7; region=lower
+\begin{proposition}\label{proposition:ch02-measurable-limits}
+若 $\{f_j\}$ 是 $(X,\mathscr{M})$ 上的 $\overline{\mathbb{R}}$-值可测函数序列，则函数
+\begin{align*}
+g_1(x)&=\sup_j f_j(x),&g_3(x)&=\limsup_{j\to\infty}f_j(x),\\
+g_2(x)&=\inf_j f_j(x),&g_4(x)&=\liminf_{j\to\infty}f_j(x)
+\end{align*}
+都可测。若对每个 $x\in X$，$f(x)=\lim_{j\to\infty}f_j(x)$ 都存在，则 $f$ 可测。
+\end{proposition}
+% SOURCE p=60; printed=45; object=ch02-proof-measurable-limits; region=bottom
+\begin{proof}
+有
+\begin{align*}
+g_1^{-1}((a,\infty])&=\bigcup_1^\infty f_j^{-1}((a,\infty]),\\
+g_2^{-1}([-\infty,a))&=\bigcup_1^\infty f_j^{-1}([-\infty,a)),
+\end{align*}
+所以由\cref{proposition:ch02-real-measurability-rays}，$g_1$ 和 $g_2$ 可测。更一般地，若 $h_k(x)=\sup_{j>k}f_j(x)$，则每个 $h_k$ 都可测，从而 $g_3=\inf_k h_k$ 可测；$g_4$ 同理。最后，若 $f$ 存在，则 $f=g_3=g_4$，故 $f$ 可测。
+\end{proof}
+% SOURCE p=61; printed=46; object=ch02-measurable-max-min; number=2.8; region=top
+\begin{corollary}\label{corollary:ch02-measurable-max-min}
+若 $f,g:X\to\overline{\mathbb{R}}$ 可测，则 $\max(f,g)$ 和 $\min(f,g)$ 也可测。
+\end{corollary}
+
+% SOURCE p=61; printed=46; object=ch02-complex-pointwise-limits; number=2.9; region=upper
+\begin{corollary}\label{corollary:ch02-complex-pointwise-limits}
+若 $\{f_j\}$ 是复值可测函数序列，且对所有 $x$，$f(x)=\lim_{j\to\infty}f_j(x)$ 都存在，则 $f$ 可测。
+\end{corollary}
+% SOURCE p=61; printed=46; object=ch02-proof-complex-pointwise-limits; region=upper
+\begin{proof}
+应用\cref{corollary:ch02-complex-measurability}。
+\end{proof}
+
+% SOURCE p=61; printed=46; object=ch02-decompositions-intro; region=upper
+为便于后面引用，下面给出函数的两种有用分解。
+% SOURCE p=61; printed=46; object=ch02-positive-negative-parts; region=upper
+\begin{definition}[正部与负部]\label{definition:ch02-positive-negative-parts}
+若 $f:X\to\overline{\mathbb{R}}$，定义 $f$ 的\textbf{正部}与\textbf{负部}为
+\begin{align*}
+f^+(x)=\max(f(x),0),\qquad f^-(x)=\max(-f(x),0).
+\end{align*}
+\end{definition}
+% SOURCE p=61; printed=46; object=ch02-positive-negative-properties; region=upper-middle
+\begin{remark}
+于是 $f=f^+-f^-$。若 $f$ 可测，则由\cref{corollary:ch02-measurable-max-min}，$f^+$ 和 $f^-$ 也可测。
+\end{remark}
+% SOURCE p=61; printed=46; object=ch02-polar-decomposition; region=middle
+\begin{definition}[极分解]\label{definition:ch02-polar-decomposition}
+若 $f:X\to\mathbb{C}$，它的\textbf{极分解}为
+\begin{align*}
+f=(\operatorname{sgn}f)|f|,\qquad
+\operatorname{sgn}z=\begin{cases}\dfrac{z}{|z|},&z\ne0,\\0,&z=0.\end{cases}
+\end{align*}
+\end{definition}
+% SOURCE p=61; printed=46; object=ch02-polar-measurability; region=middle
+\begin{proposition}\label{proposition:ch02-polar-measurability}
+若 $f$ 可测，则 $|f|$ 和 $\operatorname{sgn}f$ 也可测。
+\end{proposition}
+% SOURCE p=61; printed=46; object=ch02-proof-polar-measurability; region=middle
+\begin{proof}
+$z\mapsto|z|$ 在 $\mathbb{C}$ 上连续，而 $z\mapsto\operatorname{sgn}z$ 除原点外处处连续。若 $U\subseteq\mathbb{C}$ 为开集，则 $\operatorname{sgn}^{-1}(U)$ 或者是开集，或者形如 $V\cup\{0\}$，其中 $V$ 为开集，所以 $\operatorname{sgn}$ 是 Borel 可测的。因此，$|f|=|\cdot|\circ f$ 和 $\operatorname{sgn}f=\operatorname{sgn}\circ f$ 都可测。
+\end{proof}
+
+% SOURCE p=61; printed=46; object=ch02-simple-functions-intro; region=middle
+下面讨论积分理论的基本构件。设 $(X,\mathscr{M})$ 为可测空间。
+% SOURCE p=61; printed=46; object=ch02-characteristic-function; region=middle
+\begin{definition}[特征函数]\label{definition:ch02-characteristic-function}
+若 $E\subseteq X$，$E$ 的\textbf{特征函数} $\chi_E$（也称为 $E$ 的\textbf{示性函数}，记为 $1_E$）定义为
+\begin{align*}
+\chi_E(x)=\begin{cases}1,&x\in E,\\0,&x\notin E.\end{cases}
+\end{align*}
+\end{definition}
+% SOURCE p=61; printed=46; object=ch02-characteristic-measurability; region=middle-lower
+\begin{remark}
+容易验证，$\chi_E$ 可测当且仅当 $E\in\mathscr{M}$。
+\end{remark}
+% SOURCE p=61; printed=46; object=ch02-simple-function; region=lower
+\begin{definition}[简单函数]\label{definition:ch02-simple-function}
+$X$ 上的\textbf{简单函数}是 $\mathscr{M}$ 中集合的特征函数的有限复系数线性组合。（不允许简单函数取值 $\pm\infty$。）
+\end{definition}
+% SOURCE p=61; printed=46; object=ch02-simple-finite-range; region=lower
+\begin{proposition}\label{proposition:ch02-simple-finite-range}
+$f:X\to\mathbb{C}$ 为简单函数，当且仅当 $f$ 可测且其值域是 $\mathbb{C}$ 的有限子集。
+\end{proposition}
+% SOURCE p=61; printed=46; object=ch02-proof-simple-finite-range; region=lower
+\begin{proof}
+事实上，有
+\begin{align*}
+f=\sum_1^n z_j\chi_{E_j},\qquad
+E_j=f^{-1}(\{z_j\}),\qquad\operatorname{range}(f)=\{z_1,\ldots,z_n\}.
+\end{align*}
+\end{proof}
+% SOURCE p=61; printed=46; object=ch02-standard-representation; region=lower
+\begin{definition}[标准表示]\label{definition:ch02-standard-representation}
+称上述表示为 $f$ 的\textbf{标准表示}。它将 $f$ 写成特征函数的线性组合，其中系数互不相同，所对应的集合两两不交，且并为 $X$。
+\end{definition}
+% SOURCE p=61; printed=46; object=ch02-zero-standard-coefficient; region=bottom
+\begin{remark}
+某个系数 $z_j$ 完全可能为 $0$，但仍应将项 $z_j\chi_{E_j}$ 视为标准表示的一部分，因为当 $f$ 与其他函数相互作用时，集合 $E_j$ 可能发挥作用。
+\end{remark}
+% SOURCE p=61; printed=46; object=ch02-simple-algebra; region=bottom
+\begin{proposition}\label{proposition:ch02-simple-algebra}
+显然，若 $f$ 和 $g$ 是简单函数，则 $f+g$ 和 $fg$ 也是简单函数。
+\end{proposition}
+% SOURCE p=61; printed=46; object=ch02-approximation-intro; region=bottom
+下面证明，任意可测函数都能以良好的方式由简单函数逼近。
+
+% SOURCE p=62; printed=47; object=ch02-simple-approximation; number=2.10; region=top
+\begin{theorem}\label{theorem:ch02-simple-approximation}
+设 $(X,\mathscr{M})$ 为可测空间。
+\begin{enumerate}
+\item\label{item:ch02-simple-approximation-positive} 若 $f:X\to[0,\infty]$ 可测，则存在简单函数序列 $\{\phi_n\}$，使得 $0\le\phi_1\le\phi_2\le\cdots\le f$，$\phi_n\to f$ 逐点成立，且在 $f$ 有界的每个集合上均一致收敛。
+\item\label{item:ch02-simple-approximation-complex} 若 $f:X\to\mathbb{C}$ 可测，则存在简单函数序列 $\{\phi_n\}$，使得 $0\le|\phi_1|\le|\phi_2|\le\cdots\le|f|$，$\phi_n\to f$ 逐点成立，且在 $f$ 有界的每个集合上均一致收敛。
+\end{enumerate}
+\end{theorem}
+% SOURCE p=62; printed=47; object=ch02-proof-simple-approximation; region=upper-middle
+\begin{proof}
+\subcref{theorem:ch02-simple-approximation}{item:ch02-simple-approximation-positive}：对 $n=0,1,2,\ldots$ 及 $k=0,1,\ldots,2^{2n}-1$，令
+\begin{align*}
+E_n^k=f^{-1}\bigl((k2^{-n},(k+1)2^{-n}]\bigr),\qquad
+F_n=f^{-1}\bigl((2^n,\infty]\bigr),
+\end{align*}
+并定义
+\begin{align*}
+\phi_n=\sum_{k=0}^{2^{2n}-1}k2^{-n}\chi_{E_n^k}+2^n\chi_{F_n}.
+\end{align*}
+（这个公式印出来有些繁杂，但从图形上很容易理解；见\cref{figure:ch02-simple-approximation}。）容易验证，对所有 $n$ 都有 $\phi_n\le\phi_{n+1}$，且在 $\{x:f(x)\le2^n\}$ 上有 $0\le f-\phi_n\le2^{-n}$。这些事实蕴含所要的结论。
+
+\subcref{theorem:ch02-simple-approximation}{item:ch02-simple-approximation-complex}：写成 $f=g+\mathrm{i}h$，并将\subcref{theorem:ch02-simple-approximation}{item:ch02-simple-approximation-positive}应用于 $g$ 和 $h$ 的正部及负部，得到非负简单函数序列 $\{\psi_n^+\}$、$\{\psi_n^-\}$、$\{\zeta_n^+\}$、$\{\zeta_n^-\}$，分别递增趋于 $g^+$、$g^-$、$h^+$、$h^-$。令
+\begin{align*}
+\phi_n=\psi_n^+-\psi_n^-+\mathrm{i}(\zeta_n^+-\zeta_n^-).
+\end{align*}
+容易验证（留作练习），这些 $\phi_n$ 具有所要求的性质。
+\end{proof}
+% SOURCE p=62; printed=47; object=ch02-figure-simple-approximation; number=2.1; region=bottom
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\textwidth]{image/ch02-simple-approximation.png}
+\caption{\subcref{theorem:ch02-simple-approximation}{item:ch02-simple-approximation-positive}的证明中的函数 $\phi_0$（左）和 $\phi_1$（右）。}
+\label{figure:ch02-simple-approximation}
+\end{figure}
+
+% SOURCE p=62; printed=47; object=ch02-null-sets-intro; region=middle-lower
+若 $\mu$ 是 $(X,\mathscr{M})$ 上的测度，在研究可测函数时，我们可能希望将 $\mu$-零测集排除在考虑之外。在这方面，$\mu$ 完备时处理起来稍为简单。
+% SOURCE p=62; printed=47; object=ch02-complete-ae-measurability; number=2.11; region=lower
+\begin{proposition}\label{proposition:ch02-complete-ae-measurability}
+设 $(X,\mathscr{M},\mu)$ 为完备测度空间。
+\begin{enumerate}
+\item\label{item:ch02-complete-ae-equality} 若 $f$ 可测，且 $f=g$ $\mu$-几乎处处成立，则 $g$ 可测。
+\item\label{item:ch02-complete-ae-limit} 若 $f_n$ 可测，且 $f_n\to f$ $\mu$-几乎处处成立，则 $f$ 可测。
+\end{enumerate}
+\end{proposition}
+% SOURCE p=62; printed=47; object=ch02-proof-complete-ae-measurability; region=lower
+证明留给读者；参见\cref{exercise:ch02-complete-ae-proof}。
+% SOURCE p=62; printed=47; object=ch02-completion-version-intro; region=lower
+不过，下一个结果表明，即使忘记了完备性假设，也不大可能造成严重错误。
+
+% SOURCE p=63; printed=48; object=ch02-measurable-version-completion; number=2.12; region=top
+\begin{proposition}\label{proposition:ch02-measurable-version-completion}
+设 $(X,\mathscr{M},\mu)$ 为测度空间，$(X,\overline{\mathscr{M}},\overline{\mu})$ 为其完备化。若 $f$ 为 $\overline{\mathscr{M}}$-可测的，则存在 $\mathscr{M}$-可测函数 $g$，使 $f=g$ $\overline{\mu}$-几乎处处成立。
+\end{proposition}
+% SOURCE p=63; printed=48; object=ch02-proof-measurable-version-completion; region=upper
+\begin{proof}
+若 $f=\chi_E$，其中 $E\in\overline{\mathscr{M}}$，此断言显然成立，因而对简单函数也成立。一般情形下，由\cref{theorem:ch02-simple-approximation}，存在 $\overline{\mathscr{M}}$-可测简单函数 $\phi_n$，逐点趋于 $f$。对每个 $n$，存在 $\mathscr{M}$-可测简单函数 $\psi_n$，在某个集合 $E_n\in\overline{\mathscr{M}}$ 之外与 $\phi_n$ 相等，其中 $\overline{\mu}(E_n)=0$。选取 $N\in\mathscr{M}$，使 $\mu(N)=0$ 且 $N\supseteq\bigcup_1^\infty E_n$，并令
+\begin{align*}
+g=\lim_{n\to\infty}\chi_{X\setminus N}\psi_n.
+\end{align*}
+由\cref{corollary:ch02-complex-pointwise-limits}，$g$ 为 $\mathscr{M}$-可测的，且在 $N^c$ 上 $g=f$。
+\end{proof}
+
+\subsection*{习题}
+% SOURCE p=63; printed=48; object=ch02-exercises-measurability-intro; region=upper-middle
+在\crefrange{exercise:ch02-extended-measurability}{exercise:ch02-level-family}中，$(X,\mathscr{M})$ 为可测空间。
+% SOURCE p=63; printed=48; object=ch02-exercise-extended-measurability; number=1; region=middle
+\begin{exercise}\label{exercise:ch02-extended-measurability}
+设 $f:X\to\overline{\mathbb{R}}$，并令 $Y=f^{-1}(\mathbb{R})$。则 $f$ 可测，当且仅当 $f^{-1}(\{\infty\})$、$f^{-1}(\{-\infty\})$ 属于 $\mathscr{M}$，且 $f$ 在 $Y$ 上可测。
+\end{exercise}
+% SOURCE p=63; printed=48; object=ch02-exercise-extended-sum-product; number=2; region=middle
+\begin{exercise}\label{exercise:ch02-extended-sum-product}
+设 $f,g:X\to\overline{\mathbb{R}}$ 可测。
+\begin{enumerate}
+\item\label{item:ch02-extended-product} $fg$ 可测（其中 $0\cdot\infty=0$）。
+\item\label{item:ch02-extended-sum} 固定 $a\in\overline{\mathbb{R}}$，当 $f(x)=-g(x)=\pm\infty$ 时令 $h(x)=a$，否则令 $h(x)=f(x)+g(x)$。则 $h$ 可测。
+\end{enumerate}
+\end{exercise}
+% SOURCE p=63; printed=48; object=ch02-exercise-convergence-set; number=3; region=middle
+\begin{exercise}\label{exercise:ch02-convergence-set}
+若 $\{f_n\}$ 是 $X$ 上的可测函数序列，则 $\{x:\lim f_n(x)\text{ 存在}\}$ 为可测集。
+\end{exercise}
+% SOURCE p=63; printed=48; object=ch02-exercise-rational-rays; number=4; region=middle
+\begin{exercise}\label{exercise:ch02-rational-rays}
+若 $f:X\to\overline{\mathbb{R}}$，且对每个 $r\in\mathbb{Q}$，$f^{-1}((r,\infty])\in\mathscr{M}$，则 $f$ 可测。
+\end{exercise}
+% SOURCE p=63; printed=48; object=ch02-exercise-measurable-pasting; number=5; region=middle-lower
+\begin{exercise}\label{exercise:ch02-measurable-pasting}
+若 $X=A\cup B$，$A,B\in\mathscr{M}$，则 $X$ 上的函数 $f$ 可测，当且仅当 $f$ 在 $A$ 和 $B$ 上的限制都可测。
+\end{exercise}
+% SOURCE p=63; printed=48; object=ch02-exercise-uncountable-supremum; number=6; region=lower
+\begin{exercise}\label{exercise:ch02-uncountable-supremum}
+不可数个实值可测函数的族，其逐点上确界可能不可测（除非 $\mathscr{M}$ 很特殊）。
+\end{exercise}
+% SOURCE p=63; printed=48; object=ch02-exercise-level-family; number=7; region=lower
+\begin{exercise}\label{exercise:ch02-level-family}
+设 $\{E_\alpha\}_{\alpha\in\mathbb{R}}$ 是 $\mathscr{M}$ 中的集合族，满足 $E_\alpha\subseteq E_\beta$（当 $\alpha<\beta$），$\bigcup_\alpha E_\alpha=X$，且 $\bigcap_\alpha E_\alpha=\varnothing$。则存在可测函数 $f:X\to\mathbb{R}$，使得在 $E_\alpha$ 上 $f\le\alpha$，在 $E_\alpha^c$ 上 $f\ge\alpha$。（利用\cref{exercise:ch02-rational-rays}。）
+\end{exercise}
+% SOURCE p=63; printed=48; object=ch02-exercise-monotone-borel; number=8; region=lower
+\begin{exercise}\label{exercise:ch02-monotone-borel}
+若 $f:\mathbb{R}\to\mathbb{R}$ 单调，则 $f$ 为 Borel 可测的。
+\end{exercise}
+% SOURCE p=63,64; printed=48,49; object=ch02-exercise-cantor-non-borel; number=9; region=bottom/top
+\begin{exercise}\label{exercise:ch02-cantor-non-borel}
+设 $f:[0,1]\to[0,1]$ 为\cref{section:ch01-borel-measures-real-line}中的 Cantor 函数，并令 $g(x)=f(x)+x$。
+\begin{enumerate}
+\item\label{item:ch02-cantor-homeomorphism} $g$ 为 $[0,1]$ 到 $[0,2]$ 的双射，且 $h=g^{-1}$ 连续。
+\item\label{item:ch02-cantor-image-measure} 若 $C$ 为 Cantor 集，则 $m(g(C))=1$。
+\item\label{item:ch02-cantor-non-borel-set} 由\cref{exercise:ch01-nonmeasurable-subsets}，$g(C)$ 包含一个 Lebesgue 不可测集 $A$。令 $B=g^{-1}(A)$，则 $B$ 为 Lebesgue 可测集，但不是 Borel 集。
+\item\label{item:ch02-cantor-nonmeasurable-composition} 存在 $\mathbb{R}$ 上的 Lebesgue 可测函数 $F$ 和连续函数 $G$，使 $F\circ G$ 不是 Lebesgue 可测的。
+\end{enumerate}
+\end{exercise}
+% SOURCE p=64; printed=49; object=ch02-exercise-complete-ae-proof; number=10; region=top
+\begin{exercise}\label{exercise:ch02-complete-ae-proof}
+证明\cref{proposition:ch02-complete-ae-measurability}。
+\end{exercise}
+% SOURCE p=64; printed=49; object=ch02-exercise-separate-continuity; number=11; region=upper
+\begin{exercise}\label{exercise:ch02-separate-continuity}
+设 $f$ 为 $\mathbb{R}\times\mathbb{R}^k$ 上的函数，且对每个 $x\in\mathbb{R}$，$f(x,\cdot)$ 是 Borel 可测的，对每个 $y\in\mathbb{R}^k$，$f(\cdot,y)$ 连续。对 $n\in\mathbb{N}$ 及 $i\in\mathbb{Z}$，令 $a_i=\frac{i}{n}$，并在 $a_i\le x\le a_{i+1}$ 时定义
+\begin{align*}
+f_n(x,y)=\frac{f(a_{i+1},y)(x-a_i)-f(a_i,y)(x-a_{i+1})}{a_{i+1}-a_i}.
+\end{align*}
+则 $f_n$ 是 Borel 可测的，且 $f_n\to f$ 逐点成立，因而 $f$ 是 Borel 可测的。利用归纳法可得：$\mathbb{R}^n$ 上每个对各变量分别连续的函数都是 Borel 可测的。
+\end{exercise}
+\end{document}

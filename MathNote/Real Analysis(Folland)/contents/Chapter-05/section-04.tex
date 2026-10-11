@@ -1,0 +1,371 @@
+\documentclass[../../main.tex]{subfiles}
+\begin{document}
+% SOURCE p=180; printed=165; object=ch05-topological-vector-spaces-title; region=lower
+\section{拓扑向量空间}\label{section:ch05-topological-vector-spaces}
+% SOURCE p=180; printed=165; object=ch05-tvs-introduction; region=lower
+在向量空间上考虑范数拓扑以外的拓扑，常常很有用；关键要求是拓扑应与向量运算相容。具体地说：
+% SOURCE p=180; printed=165; object=ch05-tvs-definition; region=lower
+\begin{definition}[拓扑向量空间]\label{definition:ch05-topological-vector-space}
+域 $K=\mathbb R$ 或 $\mathbb C$ 上的向量空间 $\mathcal X$，若赋有一个拓扑，使映射 $(x,y)\mapsto x+y$ 和 $(\lambda,x)\mapsto\lambda x$ 分别从 $\mathcal X\times\mathcal X$ 和 $K\times\mathcal X$ 到 $\mathcal X$ 连续，就称为\textbf{拓扑向量空间}。
+\end{definition}
+% SOURCE p=180; printed=165; object=ch05-locally-convex-definition; region=lower
+\begin{definition}[凸集与局部凸空间]\label{definition:ch05-locally-convex}
+集合 $A$ 称为\textbf{凸的}，若 $x,y\in A$ 和 $0<t<1$ 蕴含 $tx+(1-t)y\in A$。若一个拓扑向量空间有由凸集组成的拓扑基，就称它为\textbf{局部凸的}。
+\end{definition}
+实际中遇到的大多数拓扑向量空间都局部凸且 Hausdorff。
+% SUPPLEMENT: id=v14-ch05-tvs-definitions-details; parent=ch05-tvs-definition; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}拓扑控制极限，向量运算控制线性组合；联合连续性保证两个输入同时变化时仍可传递极限。这里 $K$ 取通常拓扑，乘积取乘积拓扑，不能把联合连续换成仅分别连续而不证明其等价。本书定义暂不要求 Hausdorff，因而极限可能不唯一；例如非零向量空间的平凡拓扑也满足这一定义。
+
+凸性表示保留任意两点之间的线段。端点 $t=0,1$ 自动属于 $A$，故只列 $0<t<1$；在复空间中仍使用实数 $t$，它是底层实向量空间的凸性。空集也凸。局部凸性是局部形状要求，不要求每个开集都凸；它允许用半范数和线性泛函来研究邻域。
+\end{remark}
+\begin{proof}
+\textbf{零点邻域的作用（重构新增）。}固定 $a$ 的平移 $x\mapsto x+a$ 连续，其逆是平移 $-a$；固定非零标量的乘法也以乘倒数为连续逆。因此它们是同胚。若零点有凸开邻域基，平移该基即得到每一点的凸开邻域基；反方向只须取全空间拓扑基中包含零点的成员。这说明局部凸性可以仅在零点检验。
+\end{proof}
+% END SUPPLEMENT: id=v14-ch05-tvs-definitions-details
+% SOURCE p=180,181; printed=165,166; object=ch05-seminorm-topology-introduction; region=bottom-top
+定义局部凸拓扑最常见的方法是使用半范数。给定向量空间上的一族半范数，可以用其“球”生成拓扑，正如范数球生成赋范空间的拓扑一样。准确的结果如下。
+% SOURCE p=181; printed=166; object=ch05-seminorm-topology-theorem; number=5.14; region=upper
+\begin{theorem}\label{theorem:ch05-seminorm-topology}
+设 $\{p_\alpha\}_{\alpha\in A}$ 为向量空间 $\mathcal X$ 上的一族半范数。对 $x\in\mathcal X$、$\alpha\in A$、$\epsilon>0$，令
+\begin{align*}
+U_{x\alpha\epsilon}=\{y\in\mathcal X:p_\alpha(y-x)<\epsilon\},
+\end{align*}
+并令 $\mathcal T$ 为这些集合生成的拓扑。
+\begin{enumerate}
+\item\label{item:ch05-seminorm-neighborhood-base} 对每个 $x\in\mathcal X$，集合 $U_{x\alpha\epsilon}$（$\alpha\in A,\epsilon>0$）的有限交构成 $x$ 的邻域基。
+\item\label{item:ch05-seminorm-net-convergence} 若 $\{x_i\}_{i\in I}$ 为 $\mathcal X$ 中的网，则 $x_i\to x$ 当且仅当对每个 $\alpha\in A$ 都有 $p_\alpha(x_i-x)\to0$。
+\item\label{item:ch05-seminorm-locally-convex} $(\mathcal X,\mathcal T)$ 为局部凸拓扑向量空间。
+\end{enumerate}
+\end{theorem}
+% SOURCE p=181; printed=166; object=ch05-seminorm-topology-proof; region=middle
+\begin{proof}
+第一问：若 $x\in\bigcap_{j=1}^kU_{x_j\alpha_j\epsilon_j}$，令 $\delta_j=\epsilon_j-p_{\alpha_j}(x-x_j)$。三角不等式给
+\begin{align*}
+x\in\bigcap_{j=1}^kU_{x\alpha_j\delta_j}\subseteq\bigcap_{j=1}^kU_{x_j\alpha_j\epsilon_j}.
+\end{align*}
+故结论由\cref{proposition:ch04-subbase-construction} 得到。
+
+第二问：由第一问，只须注意到 $p_\alpha(x_i-x)\to0$ 当且仅当对每个 $\epsilon>0$，网 $\{x_i\}$ 最终落在 $U_{x\alpha\epsilon}$ 中。
+
+第三问：向量运算的连续性容易由\cref{proposition:ch04-net-continuity} 和第二问得出。事实上，若 $x_i\to x$、$y_i\to y$，则
+\begin{align*}
+p_\alpha((x_i+y_i)-(x+y))\le p_\alpha(x_i-x)+p_\alpha(y_i-y)\longrightarrow0,
+\end{align*}
+故 $x_i+y_i\to x+y$。若又有 $\lambda_i\to\lambda$，则最终 $|\lambda_i|\le C=|\lambda|+1$，所以
+\begin{align*}
+p_\alpha(\lambda_ix_i-\lambda x)
+&\le p_\alpha(\lambda_i(x_i-x))+p_\alpha((\lambda_i-\lambda)x)\\
+&\le Cp_\alpha(x_i-x)+|\lambda_i-\lambda|p_\alpha(x),
+\end{align*}
+从而 $\lambda_ix_i\to\lambda x$。此外，$U_{x\alpha\epsilon}$ 凸，因为若 $y,z\in U_{x\alpha\epsilon}$，则
+\begin{align*}
+p_\alpha(x-[ty+(1-t)z])
+&\le p_\alpha(tx-ty)+p_\alpha((1-t)x+(1-t)z)\\
+&<t\epsilon+(1-t)\epsilon=\epsilon.
+\end{align*}
+因此由第一问得到拓扑的局部凸性。
+\end{proof}
+% SUPPLEMENT: id=v14-ch05-seminorm-topology-details; parent=ch05-seminorm-topology-theorem; kind=proof-detail+source-correction+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{原式符号修正（重构新增）。}原页凸性估计中的第二项印作 $p_\alpha((1-t)x+(1-t)z)$；应为 $p_\alpha((1-t)x-(1-t)z)$。保留上面的原式以便对照，正确计算见下。
+\end{remark}
+\begin{proof}
+\textbf{有限交、乘积网和凸性补写（重构新增）。}第一问中各 $\delta_j>0$。若 $y$ 属左边的交，则
+\begin{align*}
+p_{\alpha_j}(y-x_j)\le p_{\alpha_j}(y-x)+p_{\alpha_j}(x-x_j)<\epsilon_j,
+\end{align*}
+所以确有包含关系。网最终进入每个有限多个邻域，就最终进入其交：取这些有限多个起始指标的一个共同上界。这补全了第二问的充分性。
+
+乘积中的网收敛当且仅当每个坐标网收敛：一方面投影连续；另一方面有限坐标基本邻域用上述共同上界处理。因此原证对所有具有相同指标集的输入网所作估计，正好证明联合连续性。每个半范数取有限非负实值，故数乘估计中固定的 $p_\alpha(x)$ 是有限常数。正确的凸性计算为
+\begin{align*}
+p_\alpha(ty+(1-t)z-x)
+\le t p_\alpha(y-x)+(1-t)p_\alpha(z-x)<\epsilon.
+\end{align*}
+有限个凸集的交仍凸，因为线段逐一留在每个成员内，故这些基本邻域凸。
+
+约定空的有限交为 $\mathcal X$。若 $A=\varnothing$，所生成的是平凡拓扑；邻域基为 $\{\mathcal X\}$，所有网趋于所有点，第二问的右边为空条件，第三问也成立。
+\end{proof}
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}每个半范数测量一种误差，基本邻域只同时要求有限多种误差小；因此无限族也能定义拓扑，且收敛恰等价于每一种误差分别趋零。三角不等式提供移中心和加法估计，绝对齐次性提供数乘与凸性估计，有限值条件保证标量变化时误差可控。此处不需分离性或完备性；共同核决定能否区分不同点，下一命题专门处理它。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch05-seminorm-topology-details
+% SOURCE p=181; printed=166; object=ch05-seminorm-continuity-introduction; region=lower
+在这个背景下有与\cref{proposition:ch05-linear-continuity} 类似的结果。
+% SOURCE p=181; printed=166; object=ch05-seminorm-continuity-proposition; number=5.15; region=lower
+\begin{proposition}\label{proposition:ch05-seminorm-continuity}
+设向量空间 $\mathcal X,\mathcal Y$ 的拓扑分别由半范数族 $\{p_\alpha\}_{\alpha\in A}$、$\{q_\beta\}_{\beta\in B}$ 定义，$T:\mathcal X\to\mathcal Y$ 为线性映射。则 $T$ 连续当且仅当对每个 $\beta\in B$，存在 $\alpha_1,\ldots,\alpha_k\in A$ 和 $C>0$，使
+\begin{align*}
+q_\beta(Tx)\le C\sum_{j=1}^kp_{\alpha_j}(x)\qquad(x\in\mathcal X).
+\end{align*}
+\end{proposition}
+% SOURCE p=181,182; printed=166,167; object=ch05-seminorm-continuity-proof; region=bottom-top
+\begin{proof}
+若后一条件成立，$\{x_i\}$ 是趋于 $x\in\mathcal X$ 的网，由\subcref{theorem:ch05-seminorm-topology}{item:ch05-seminorm-net-convergence}，对所有 $\alpha$ 有 $p_\alpha(x_i-x)\to0$，从而对所有 $\beta$ 有 $q_\beta(Tx_i-Tx)\to0$，所以 $Tx_i\to Tx$。由\cref{proposition:ch04-net-continuity}，$T$ 连续。
+
+反之，若 $T$ 连续，则对每个 $\beta\in B$，存在 $\mathcal X$ 中零点的邻域 $U$，使 $x\in U$ 时 $q_\beta(Tx)<1$。由\subcref{theorem:ch05-seminorm-topology}{item:ch05-seminorm-neighborhood-base}，可假设 $U=\bigcap_{j=1}^kU_{0\alpha_j\epsilon_j}$。令 $\epsilon=\min(\epsilon_1,\ldots,\epsilon_k)$；则只要所有 $p_{\alpha_j}(x)<\epsilon$，就有 $q_\beta(Tx)<1$。
+
+给定 $x\in\mathcal X$，分两种情况。若某个 $p_{\alpha_j}(x)>0$，令 $y=\epsilon x/\sum_{j=1}^kp_{\alpha_j}(x)$。则对所有 $j$ 有 $p_{\alpha_j}(y)<\epsilon$，故
+\begin{align*}
+q_\beta(Tx)=\sum_{j=1}^k\epsilon^{-1}p_{\alpha_j}(x)q_\beta(Ty)
+\le\epsilon^{-1}\sum_{j=1}^kp_{\alpha_j}(x).
+\end{align*}
+另一方面，若所有 $p_{\alpha_j}(x)=0$，则对所有 $j$ 和所有 $r>0$ 有 $p_{\alpha_j}(rx)=0$，于是 $rq_\beta(Tx)=q_\beta(T(rx))<1$ 对所有 $r>0$ 成立，故 $q_\beta(Tx)=0$。所以这一情形也有上述估计，证明完毕。
+\end{proof}
+% SUPPLEMENT: id=v14-ch05-seminorm-continuity-details; parent=ch05-seminorm-continuity-proposition; kind=proof-detail+source-correction+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{原证明的严格不等式缺口（重构新增）。}按原式选 $y$ 只能保证 $p_{\alpha_j}(y)\le\epsilon$；例如 $k=1$ 且 $p_{\alpha_1}(x)>0$ 时等号成立，不能据此使用开邻域中的估计。命题本身正确，以下补齐该步。
+\end{remark}
+\begin{proof}
+记 $s=\sum_{j=1}^kp_{\alpha_j}(x)>0$。对任意 $t>1$，改取 $y_t=\epsilon x/(ts)$，则每个 $p_{\alpha_j}(y_t)\le\epsilon/t<\epsilon$，故 $q_\beta(Ty_t)<1$。由齐次性，$q_\beta(Tx)<ts/\epsilon$。此式对所有 $t>1$ 成立，令 $t\downarrow1$ 得 $q_\beta(Tx)\le s/\epsilon$。$s=0$ 的情形用原证明的任意倍伸缩即可。
+
+允许 $k=0$，此时空和为0。若选择的基本邻域为整个空间，则 $q_\beta(Tx)<1$ 对所有 $x$ 成立；应用于 $rx$ 后令 $r\to\infty$，得 $q_\beta\circ T=0$，可取 $k=0,C=1$，不必取空集合的最小值。若目标半范数族为空，其拓扑平凡，任何映射连续，与空的判别条件一致。
+\end{proof}
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}连续性要求控制每一种输出误差；在零点取其单位误差邻域，输入拓扑就给出有限多种足够的误差。线性与齐次性再把局部控制扩大为全域不等式。$C$ 和有限指标组可依赖 $\beta$，不要求对所有输出半范数通用。有限性使输入误差之和随收敛趋零；非线性映射不能直接套用这一线性估计。两端无需 Hausdorff 或完备。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch05-seminorm-continuity-details
+% SOURCE p=182; printed=167; object=ch05-seminorm-metrization-introduction; region=upper
+下述命题的证明留给读者，见\cref{exercise:ch05-prove-seminorm-metrization}。
+% SOURCE p=182; printed=167; object=ch05-seminorm-metrization-proposition; number=5.16; region=upper
+\begin{proposition}\label{proposition:ch05-seminorm-metrization}
+设向量空间 $\mathcal X$ 赋有由半范数族 $\{p_\alpha\}_{\alpha\in A}$ 定义的拓扑。
+\begin{enumerate}
+\item\label{item:ch05-seminorm-hausdorff} $\mathcal X$ 为 Hausdorff 空间，当且仅当对每个 $x\ne0$，存在 $\alpha\in A$ 使 $p_\alpha(x)\ne0$。
+\item\label{item:ch05-seminorm-metrizable} 若 $\mathcal X$ 为 Hausdorff 空间且 $A$ 可数，则 $\mathcal X$ 可由平移不变度量度量化，即对所有 $x,y,z\in\mathcal X$ 有 $\rho(x,y)=\rho(x+z,y+z)$。
+\end{enumerate}
+\end{proposition}
+% SUPPLEMENT: id=v14-ch05-seminorm-metrization-motivation; parent=ch05-seminorm-metrization-proposition; kind=motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}共同核为零保证各误差测量合起来能分辨向量，这是距离正定性的来源；可数性则允许把截断后的误差用可和权重加起来。每个半范数不必单独为范数。若不分离，只得到伪度量；本命题给的是充分的可度量条件，并非宣称任意不可数半范数族都不能生成可度量拓扑。两问的全部证明写在\cref{exercise:ch05-prove-seminorm-metrization} 的解答中。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch05-seminorm-metrization-motivation
+% SOURCE p=182; printed=167; object=ch05-tvs-continuous-dual-discussion; region=middle
+若 $\mathcal X$ 的拓扑由半范数族 $\{p_\alpha\}_{\alpha\in A}$ 定义，由\cref{proposition:ch05-seminorm-continuity}，线性泛函 $f$ 连续当且仅当存在 $C>0$ 及 $\alpha_1,\ldots,\alpha_k\in A$，使 $|f(x)|\le C\sum_{j=1}^kp_{\alpha_j}(x)$。有限个半范数之和仍为半范数，故 Hahn--Banach 定理保证存在许多连续线性泛函；当 $\mathcal X$ 为 Hausdorff 空间时，它们足以分离点。
+% SOURCE p=182; printed=167; object=ch05-tvs-dual-definition; region=middle
+\begin{definition}[连续对偶]\label{definition:ch05-tvs-continuous-dual}
+如前，用 $\mathcal X^*$ 表示 $\mathcal X$ 上所有连续线性泛函的集合。
+\end{definition}
+可以用多种方式使 $\mathcal X^*$ 成为拓扑向量空间，我们不系统讨论这个问题。最简单的方法是赋予使所有评价映射 $f\mapsto f(x)$（$x\in\mathcal X$）连续的最弱拓扑；下文将进一步讨论这一想法。
+% SUPPLEMENT: id=v14-ch05-tvs-dual-details; parent=ch05-tvs-dual-definition; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{连续泛函分离点的完整补证（重构新增）。}有限非负和保留三角不等式及绝对齐次性，故仍为半范数。设 $x\ne0$ 且空间 Hausdorff，由前命题选 $p_\alpha(x)>0$。在一维子空间 $Kx$ 上定义 $g(ax)=a p_\alpha(x)$，由于 $x\ne0$ 表示唯一，且 $|g(ax)|=p_\alpha(ax)$。实数情形应用实 Hahn--Banach 定理，以半范数为次线性上界，再对 $-y$ 使用上界可得绝对值界；复数情形直接应用复 Hahn--Banach 定理。于是 $g$ 延拓为 $f$，满足 $|f(y)|\le p_\alpha(y)$。由连续性判别，$f\in\mathcal X^*$，并且 $f(x)=p_\alpha(x)>0$。对任意不同的两点，将此论证用于其差便能分离。
+\end{proof}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}连续对偶保存与给定拓扑相容的标量测量；“连续”排除了随意的代数泛函。局部凸的半范数描述使 Hahn--Banach 延拓的上界可用，Hausdorff 性使非零向量能被某个半范数看见。若向量落在共同核中，任何连续泛函按有限半范数控制都在它上面为零，因而无法分离它与零。此时未给 $\mathcal X$ 指定单一范数，也不能擅自给其对偶套用某个算子范数。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch05-tvs-dual-details
+% SOURCE p=182; printed=167; object=ch05-tvs-cauchy-definition; region=middle-lower
+拓扑向量空间中仍可谈 Cauchy 列或 Cauchy 网。
+\begin{definition}[Cauchy 网与完备性]\label{definition:ch05-tvs-cauchy}
+$\mathcal X$ 中的网 $\{x_i\}_{i\in I}$ 称为 \textbf{Cauchy 网}，若网 $\{x_i-x_j\}_{(i,j)\in I\times I}$ 趋于零。其中 $I\times I$ 按通常方式定向：$(i,j)\preceq(i',j')$ 当且仅当 $i\preceq i'$ 且 $j\preceq j'$。若每个 Cauchy 网都收敛，就称 $\mathcal X$ \textbf{完备}。
+\end{definition}
+当 $\mathcal X$ 第一可数时，完备性特别有用；这时它等价于每个 Cauchy 列都收敛，见\cref{exercise:ch05-sequential-completeness-nets}。更具体地，若 $\mathcal X$ 为 Hausdorff 空间且拓扑由可数半范数族定义，由\subcref{theorem:ch05-seminorm-topology}{item:ch05-seminorm-neighborhood-base}，它第一可数；事实上，由\subcref{proposition:ch05-seminorm-metrization}{item:ch05-seminorm-metrizable}，其拓扑由平移不变度量 $\rho$ 给出。一个序列按刚才的定义为 Cauchy 列，当且仅当它关于 $\rho$ 为 Cauchy 列。
+% SOURCE p=182; printed=167; object=ch05-frechet-definition; region=lower
+\begin{definition}[Fr\'echet 空间]\label{definition:ch05-frechet}
+完备、Hausdorff，且拓扑由可数族半范数定义的拓扑向量空间，称为 \textbf{Fr\'echet 空间}。
+\end{definition}
+% SUPPLEMENT: id=v14-ch05-tvs-completeness-details; parent=ch05-tvs-cauchy-definition; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{邻域与度量版本的等价（重构新增）。}Cauchy 网条件等价于：对每个零点邻域 $U$，存在 $i_0$，使 $i,j\succeq i_0$ 时 $x_i-x_j\in U$。双指标定义先给两个阈值，再取共同上界即可；反方向取阈值 $(i_0,i_0)$。在平移不变度量下，$\rho(x_i,x_j)=\rho(x_i-x_j,0)$，零点球又是邻域基，故两种 Cauchy 条件完全相同。
+
+若半范数族可数，以正有理数为半径的同心球的有限交只有可数多个，且构成零点邻域基；平移后每一点第一可数。因此 Fr\'echet 完备性也可用相容的平移不变度量中的 Cauchy 序列检验，关键的网到序列步骤见\cref{exercise:ch05-sequential-completeness-nets}。
+\end{proof}
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}向量差提供不依赖单一范数的“彼此接近”，而双指标使网的任意两个足够晚的项都受控制。Hausdorff 性确保极限唯一；完备性确保 Cauchy 过程的极限仍在空间内；可数半范数使多种控制可以合并为一个相容度量，并允许序列判别。Fr\'echet 空间不要求由单一范数生成拓扑。一般网不能随意抽出可数共尾子网，因此第一可数下的等价必须另证，不能只写“取子列”。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch05-tvs-completeness-details
+% SOURCE p=182; printed=167; object=ch05-frechet-examples-introduction; region=lower
+现在考察一些有趣的拓扑向量空间，其拓扑由半范数族而非单一范数定义。前面几章已经遇到其中的两类。
+% SOURCE p=182,183; printed=167,168; object=ch05-frechet-examples-group; region=bottom-top
+\begin{examples}\label{examples:ch05-frechet-examples}
+\begin{itemize}
+% SOURCE p=182,183; printed=167,168; object=ch05-compact-uniform-frechet-example; role=example-component; parent=ch05-frechet-examples-group; region=bottom-top
+\item
+设 $X$ 为 LCH 空间。$\mathbb C^X$ 上的紧集上一致收敛拓扑由半范数 $p_K(f)=\sup_{x\in K}|f(x)|$ 定义，其中 $K$ 遍历 $X$ 的紧子集。若 $X$ 为 $\sigma$-紧空间，$\{U_n\}$ 如\cref{proposition:ch04-precompact-exhaustion,proposition:ch04-compact-uniform-countable-base}，这个拓扑就由半范数 $p_n(f)=\sup_{x\in\overline U_n}|f(x)|$ 定义。这时容易看出 $\mathbb C^X$ 完备，故为 Fr\'echet 空间；由\cref{proposition:ch04-continuous-compact-uniform-closed}，$C(X)$ 也是如此。
+% SUPPLEMENT: id=v14-ch05-compact-uniform-frechet-details; parent=ch05-compact-uniform-frechet-example; kind=proof-detail+source-correction+well-definedness+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{原例定义域的修正（重构新增）。}原文的 $\mathbb C^X$ 表示所有函数，但任意函数在紧集上未必有界。取 $X=[0,1]$，令 $f(1/n)=n$，其余点取0，则 $p_X(f)=\infty$，不满足本章半范数的有限值要求。并且当非零标量 $\lambda\to0$ 时，$\lambda f$ 在 $X$ 上始终无界，不能在紧一致拓扑中趋零；故该拓扑在全体函数空间上甚至不保证数乘连续。上面的原句不能直接作为正确的 Fr\'echet 空间例子。以下给出可用的定义域及完整证明。
+\end{remark}
+\begin{definition*}[在紧集上有界的函数空间（重构新增）]\phantomsection\label{definition:ch05-compactly-bounded-functions}
+记 $B_{\mathrm{loc}}(X)$ 为在 $X$ 的每个紧子集上有界的复值函数所成向量空间。各 $p_K$ 在此空间上取有限值；空紧集的半范数约定为0。
+\end{definition*}
+\begin{proof}
+\textbf{修正空间与连续函数空间的完备性（重构新增）。}三角不等式和绝对齐次性逐点成立，取上确界后给 $p_K$ 的半范数性质。各单点紧，故这些半范数分离函数。对 $\sigma$-紧 LCH 空间，取上述 $U_n$，令 $K_n=\overline U_n$。任意紧集 $K$ 被递增开覆盖 $\{U_n\}$ 中有限多个覆盖，故包含于某个 $K_N$，从而 $p_K\le p_{K_N}$；反向各 $K_n$ 本身紧，所以可数族 $\{p_{K_n}\}$ 生成同一拓扑。
+
+设 $f_j$ 是关于所有这些半范数的 Cauchy 列。每点的标量值为 Cauchy 列，定义 $f(x)=\lim_j f_j(x)$。给定 $n$ 和 $\epsilon>0$，当 $j,l\ge J$ 时在 $K_n$ 上有 $|f_j-f_l|<\epsilon$；逐点令 $l\to\infty$，得 $p_{K_n}(f_j-f)\le\epsilon$。用更小的 $\epsilon$ 即得一致收敛；固定一个这样的 $j$，也得到 $p_{K_n}(f)\le p_{K_n}(f_j)+\epsilon<\infty$。所以 $f\in B_{\mathrm{loc}}(X)$，且 $f_j\to f$。由第一可数下序列完备与网完备的等价，空间完备，故为 Fr\'echet 空间。
+
+连续函数在紧集上有界，故 $C(X)\subseteq B_{\mathrm{loc}}(X)$。在紧集上一致的连续函数极限仍连续：对每点取紧邻域，在该紧邻域上一致极限连续，于其内部就有原空间的连续性。因此 $C(X)$ 闭。其 Cauchy 网的极限先由大空间完备性存在，再由闭性留在 $C(X)$，故 $C(X)$ 也是 Fr\'echet 空间。
+
+在 LCH 空间，紧集有界等价于局部有界：前者用紧邻域给局部界；后者在任意紧集上取有限个有界邻域覆盖，取有限个界的最大值。这也解释了 $B_{\mathrm{loc}}$ 的记号。
+\end{proof}
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}紧一致拓扑只控制有限范围，适合无界底空间上的函数。限制函数在紧集上有界保证半范数有限；$\sigma$-紧性与局部紧性共同提供可数紧穷竭，Hausdorff 性是这里 LCH 背景及既用紧性命题的一部分。上述一般函数完备性来自标量完备性，连续极限保持连续另用局部紧邻域。正确结论不要求函数在整个 $X$ 上有界，也不要求可微。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch05-compact-uniform-frechet-details
+% SOURCE p=183; printed=168; object=ch05-local-integrable-frechet-example; role=example-component; parent=ch05-frechet-examples-group; region=upper
+\item
+在\cref{section:ch03-euclidean-differentiation} 中定义的 $L^1_{\mathrm{loc}}(\mathbb R^n)$，赋予半范数 $p_k(f)=\int_{|x|\le k}|f(x)|\,\mathrm dx$ 所定义的拓扑后，是 Fr\'echet 空间。（其完备性容易由 $L^1$ 的完备性得到。）这一构造显然可推广，得到局部凸拓扑向量空间 $L^1_{\mathrm{loc}}(X,\mu)$，其中 $X$ 是任意 LCH 空间，$\mu$ 是在紧集上有限的 Borel 测度。
+% SUPPLEMENT: id=v14-ch05-local-integrable-frechet-details; parent=ch05-local-integrable-frechet-example; kind=proof-detail+well-definedness+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{局部 $L^1$ 极限的拼接（重构新增）。}函数按几乎处处相等识别。积分三角不等式与齐次性给半范数性质；局部可积保证其有限。若全部 $p_k(f)=0$，则 $f$ 在每个闭球 $B_k=\{|x|\le k\}$ 上几乎处处为零。可数个零测例外的并仍零测，而 $\bigcup_kB_k=\mathbb R^n$，故 $f=0$ 几乎处处，空间 Hausdorff。
+
+若 $f_j$ 为 Cauchy 列，则每个 $f_j|_{B_k}$ 在 $L^1(B_k)$ 中收敛于某个 $h_k$。当 $k<l$ 时，限制映射使 $h_l|_{B_k}$ 也是同一列的 $L^1(B_k)$ 极限；由唯一性它与 $h_k$ 几乎处处相等。在 $B_1$ 上取 $h_1$，在 $B_k\setminus B_{k-1}$ 上取 $h_k$，拼成可测函数 $f$。相容性及可数个零测集的并说明 $f|_{B_k}=h_k$ 几乎处处，所以 $f$ 局部可积，且 $p_k(f_j-f)\to0$。可数族生成的第一可数性再把序列完备提升为完备，得到 Fr\'echet 性。
+
+一般的 $L^1_{\mathrm{loc}}(X,\mu)$ 可取在每个紧集上绝对可积的可测函数，按全局几乎处处相等识别，再以 $p_K(f)=\int_K|f|\,\mathrm d\mu$ 生成拓扑。这些有限半范数确实给局部凸拓扑向量空间，但无额外条件时不必 Hausdorff；若要分离，可再商去共同核。
+\end{proof}
+\begin{remark}
+\textbf{动机与条件边界（重构新增）。}积分半范数控制局部平均误差，允许函数在远处不可积。欧氏空间的可数球覆盖同时负责分离性和极限拼接。一般 LCH 空间未必有可数紧覆盖，不能直接沿用这两步。例如不可数离散空间上，定义测度在可数集上为0、不可数集上为无穷；它是 Borel 测度，在所有紧集（有限集）上为0。常数1全局并非几乎处处为零，却被所有紧集积分半范数消去。因此原文的一般结论只说局部凸空间，不能擅自增强为 Hausdorff 或 Fr\'echet。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch05-local-integrable-frechet-details
+\end{itemize}
+\end{examples}
+% SOURCE p=183; printed=168; object=ch05-differentiation-obstruction; region=middle
+另一类拓扑向量空间自然出现于微分方程理论。人们常想研究微分算子 $\mathrm d/\mathrm dx$，或由它构成的更复杂的算子，在各种函数空间上的作用。遗憾的是，几乎不可能在大多数无限维函数空间上定义范数，使微分成为有界算子。下面是这一方向的一个准确结果。
+% SOURCE p=183; printed=168; object=ch05-differentiation-no-bounded-norm; region=middle
+\begin{proposition}\label{proposition:ch05-differentiation-no-bounded-norm}
+在 $[0,1]$ 上无限次可微函数组成的空间 $C^\infty([0,1])$ 上，不存在使 $\mathrm d/\mathrm dx$ 有界的范数。
+\end{proposition}
+% SOURCE p=183; printed=168; object=ch05-differentiation-no-bounded-norm-proof; region=middle
+\begin{proof}
+事实上，若 $f_\lambda(x)=e^{\lambda x}$，则 $(\mathrm d/\mathrm dx)f_\lambda=\lambda f_\lambda$，所以无论使用哪个范数，都有 $\|\mathrm d/\mathrm dx\|\ge|\lambda|$ 对所有 $\lambda$ 成立。
+\end{proof}
+% SUPPLEMENT: id=v14-ch05-differentiation-unbounded-motivation; parent=ch05-differentiation-no-bounded-norm; kind=motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}此命题说明，更换同一空间上的范数也不能消除微分的全部增长方向，因此需要下面介绍的三种处理方式。$C^\infty([0,1])$ 对微分封闭，且包含每个非零指数函数 $f_\lambda$；范数的正定性给 $\|f_\lambda\|>0$，绝对齐次性给 $\|Df_\lambda\|=|\lambda|\|f_\lambda\|$。如果存在统一有界常数 $C$，就会有 $|\lambda|\le C$ 对所有正实数 $\lambda$ 成立，矛盾。只使用正实参数已经足够，故实数和复数空间均适用。关键是定义域和值域使用同一个范数；若改成两个不同的赋范空间，不能从该范数比得到同一结论。这里不需要完备性，闭区间也不是这个指数函数反证本身必需的条件。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch05-differentiation-unbounded-motivation
+% SOURCE p=183; printed=168; object=ch05-differentiation-three-approaches; region=middle-lower
+面对这一困难，有三种处理方式。第一，把微分视为从 $\mathcal X$ 到 $\mathcal Y$ 的无界算子，其中 $\mathcal Y$ 是合适的 Banach 空间，$\mathcal X$ 是它的稠密子空间，如\cref{exercise:ch05-derivative-incomplete}。第二，把微分视为从一个 Banach 空间 $\mathcal X$ 到另一个不同的 Banach 空间 $\mathcal Y$ 的有界线性映射，例如\cref{exercise:ch05-ck-banach} 中的 $\mathcal X=C^k([0,1])$、$\mathcal Y=C^{k-1}([0,1])$。最后，把微分视为局部凸空间 $\mathcal X$ 上的连续算子，而此空间的拓扑不由范数给出。这三种观点各有用途，这里关注最后一种。
+% SOURCE p=183; printed=168; object=ch05-smooth-frechet-example; region=lower
+\begin{example}\label{example:ch05-smooth-frechet}
+在光滑函数空间上容易构造半范数族，使微分几乎按定义就连续。例如半范数
+\begin{align*}
+p_k(f)=\sup_{0\le x\le1}|f^{(k)}(x)|\qquad(k=0,1,2,\ldots)
+\end{align*}
+使 $C^\infty([0,1])$ 成为 Fr\'echet 空间（完备性如\cref{exercise:ch05-ck-banach} 中那样证明）。由\cref{proposition:ch05-seminorm-continuity}，$\mathrm d/\mathrm dx$ 在此空间上连续，因为 $p_k(f')=p_{k+1}(f)$。其他例子将在\cref{exercise:ch05-smooth-real-line-frechet} 和\cref{chapter:ch09-distributions} 中讨论。
+\end{example}
+% SUPPLEMENT: id=v14-ch05-smooth-frechet-details; parent=ch05-smooth-frechet-example; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{各阶导数极限与微分的连续性（重构新增）。}这些半范数有限，且 $p_0$ 分离函数。设 $f_j$ 关于所有 $p_k$ 为 Cauchy 列。对每个 $k$，完备空间 $C([0,1])$ 中有一致极限 $g_k=\lim_j f_j^{(k)}$。由
+\begin{align*}
+f_j^{(k)}(t)-f_j^{(k)}(0)=\int_0^t f_j^{(k+1)}(s)\,\mathrm ds
+\end{align*}
+及一致收敛，得到 $g_k(t)-g_k(0)=\int_0^t g_{k+1}(s)\,\mathrm ds$。连续的被积函数与微积分基本定理给 $g_k'=g_{k+1}$，端点按单侧导数理解。逐阶归纳得 $g_0\in C^\infty([0,1])$、$g_0^{(k)}=g_k$，因此 $p_k(f_j-g_0)\to0$，证得完备性。
+
+对每个 $k$，输出误差 $p_k(Df)$ 恰是输入误差 $p_{k+1}(f)$，所以连续性判别取一个半范数及 $C=1$ 即可。若某个范数使 $D$ 有界，非零向量 $f_\lambda$ 的范数严格为正，故 $\|Df_\lambda\|/\|f_\lambda\|=|\lambda|$ 迫使算子范数无限，矛盾。特别，上述 Fr\'echet 拓扑不可能来自单一范数：若来自范数，已经证明的线性连续性就会使 $D$ 有界。
+\end{proof}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}高一阶导数的控制足以给低一阶微分输出控制，允许输入输出使用不同的半范数；这正是单一范数统一控制所不能做到的。光滑性保证所有阶都存在且连续，紧区间保证每阶上确界有限，积分恒等式保证逐阶极限仍来自同一个函数。若只比较 $C^k$ 与 $C^{k-1}$ 的不同范数，就没有在同一赋范空间上约束所有指数特征值的矛盾。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch05-smooth-frechet-details
+% SOURCE p=183; printed=168; object=ch05-initial-linear-topology; region=lower
+构造向量空间拓扑的一种极有用的方法，是要求某些线性映射连续。设 $\mathcal X$ 为向量空间，$\mathcal Y$ 为赋范线性空间，$\{T_\alpha\}_{\alpha\in A}$ 为从 $\mathcal X$ 到 $\mathcal Y$ 的一族线性映射。由它们生成的弱拓扑 $\mathcal T$ 使 $\mathcal X$ 成为局部凸拓扑向量空间。事实上，$\mathcal T$ 正是\cref{theorem:ch05-seminorm-topology} 中由 $p_\alpha(x)=\|T_\alpha x\|$ 定义的拓扑 $\mathcal T'$。前者由形如 $\{x:\|T_\alpha x-y_0\|<\epsilon\}$（$y_0\in\mathcal Y$）的集合生成，后者由形如 $\{x:\|T_\alpha x-T_\alpha x_0\|<\epsilon\}$（$x_0\in\mathcal X$）的集合生成。若各 $T_\alpha$ 满射，这些集合显然相同；一般情形留作\cref{exercise:ch05-initial-seminorm-topology}。前一段 $C^\infty([0,1])$ 上的拓扑就是这一构造的例子，其中 $\mathcal Y=C([0,1])$、$T_kf=f^{(k)}$。下面再给几个例子。
+% SUPPLEMENT: id=v14-ch05-initial-linear-topology-details; parent=ch05-initial-linear-topology; kind=motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}这里“生成的弱拓扑”是使指定映射全部连续的最弱拓扑，即初始拓扑；它并非只指下文由连续对偶生成的特定弱拓扑。线性性使 $x\mapsto\|T_\alpha x\|$ 满足半范数公理，目标范数给出误差球。满射并非必要：球中心不在映像中时，仍可用命中点处的更小球描述其原像，完整证明见\cref{exercise:ch05-initial-seminorm-topology}。若各映射有共同非零核，所得拓扑不分离这些向量与零。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch05-initial-linear-topology-details
+% SOURCE p=183,184; printed=168,169; object=ch05-weak-topology-definition; region=bottom-top
+\begin{definition}[弱拓扑与弱收敛]\label{definition:ch05-weak-topology}
+设 $\mathcal X$ 为赋范向量空间。由 $\mathcal X^*$ 生成的弱拓扑，简称 $\mathcal X$ 上的\textbf{弱拓扑}；关于这个拓扑的收敛称为\textbf{弱收敛}。
+\end{definition}
+因此，网 $\{x_\alpha\}$ 弱收敛于 $x$，当且仅当对所有 $f\in\mathcal X^*$ 有 $f(x_\alpha)\to f(x)$。当 $\mathcal X$ 无限维时，弱拓扑总比范数拓扑更弱，见\cref{exercise:ch05-weak-topology-smallness}。
+% SOURCE p=184; printed=169; object=ch05-weak-star-topology-definition; region=upper
+接着，设 $\mathcal X$ 为赋范向量空间，$\mathcal X^*$ 为其对偶。按上面的定义，$\mathcal X^*$ 上的弱拓扑由 $\mathcal X^{**}$ 生成；更受关注的是由 $\mathcal X$（视为 $\mathcal X^{**}$ 的子空间）生成的拓扑。
+\begin{definition}[弱星拓扑]\label{definition:ch05-weak-star-topology}
+$\mathcal X^*$ 上由评价映射 $f\mapsto f(x)$（$x\in\mathcal X$）生成的拓扑，称为\textbf{弱星拓扑}，记作弱$^*$拓扑。$\mathcal X^*$ 是 $\mathcal X$ 上的函数空间，此拓扑就是逐点收敛拓扑：$f_\alpha\to f$ 当且仅当对所有 $x\in\mathcal X$ 有 $f_\alpha(x)\to f(x)$。
+\end{definition}
+弱星拓扑比 $\mathcal X^*$ 上的弱拓扑还弱；两者恰在 $\mathcal X$ 自反时相同。
+% SUPPLEMENT: id=v14-ch05-weak-topologies-details; parent=ch05-weak-star-topology-definition; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{拓扑比较与自反判别的完整补证（重构新增）。}弱拓扑的半范数是 $|f(x)|$。因 $|f(x)|\le\|f\|\|x\|$，每个测量都范数连续，故弱拓扑包含于范数拓扑。若 $\mathcal X$ 无限维，任意有限族 $f_1,\ldots,f_m$ 的共同核含非零向量：否则线性映射 $x\mapsto(f_1(x),\ldots,f_m(x))$ 单射到有限维空间，矛盾。因而每个零点弱基本邻域包含某条整直线，范数无界，不可能包含于范数单位球。这证明弱拓扑严格较弱；不需要空间完备。
+
+记自然嵌入 $Jx=\widehat x$。由 $J\mathcal X\subseteq\mathcal X^{**}$，弱星拓扑包含于弱拓扑。我们证明更精确的结论：$\mathcal X^*$ 上弱星连续的线性泛函恰为 $J\mathcal X$。一个这样的泛函 $F$ 按\cref{proposition:ch05-seminorm-continuity} 满足
+\begin{align*}
+|F(f)|\le C\sum_{j=1}^m|f(x_j)|.
+\end{align*}
+令 $E(f)=(f(x_1),\ldots,f(x_m))$。此界给 $\ker E\subseteq\ker F$，所以 $\ell(Ef)=F(f)$ 是 $E(\mathcal X^*)$ 上良定义的线性泛函。把该子空间的一组基扩为 $K^m$ 的基，在补充基向量上任取值0，便把 $\ell$ 线性延拓到 $K^m$。任何这样的泛函都形如 $\ell(z)=\sum_j a_jz_j$，故
+\begin{align*}
+F(f)=\sum_j a_j f(x_j)=f\Bigl(\sum_j a_jx_j\Bigr),
+\end{align*}
+即 $F=J(\sum_j a_jx_j)$。$m=0$ 时不等式直接给 $F=0=J0$。反方向，每个 $Jx$ 按弱星拓扑定义就连续。
+
+若 $J$ 满射，生成两种拓扑的泛函族相同，所以拓扑相同。若两种拓扑相同，每个 $F\in\mathcal X^{**}$ 都弱星连续，按刚证结论属于 $J\mathcal X$，故 $\mathcal X$ 自反。这一论证无需预设 $\mathcal X$ 完备。
+\end{proof}
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}弱拓扑只要求所有连续标量测量收敛，弱星拓扑则在对偶函数空间上只要求原空间各点的取值收敛。自然嵌入把这些点值测试放进双对偶，因此可直接比较两种测试族。Hahn--Banach 保证 $\mathcal X^*$ 分离 $\mathcal X$，故弱拓扑 Hausdorff；不同泛函本身必在某点取值不同，故弱星拓扑也 Hausdorff。无限维才导致弱拓扑严格弱于范数；“更弱”在一般拓扑比较中允许相等。自反性恰好排除了原空间点值以外的双对偶测量。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch05-weak-topologies-details
+% SOURCE p=184; printed=169; object=ch05-operator-topologies-definition; region=middle
+\begin{definition}[强算子拓扑与弱算子拓扑]\label{definition:ch05-operator-topologies}
+设 $\mathcal X,\mathcal Y$ 为 Banach 空间。$L(\mathcal X,\mathcal Y)$ 上由评价映射 $T\mapsto Tx$（$x\in\mathcal X$）生成的拓扑称为\textbf{强算子拓扑}；由线性泛函 $T\mapsto f(Tx)$（$x\in\mathcal X,f\in\mathcal Y^*$）生成的拓扑称为\textbf{弱算子拓扑}。
+\end{definition}
+同样，这些拓扑最容易用收敛来理解：$T_\alpha\to T$ 强收敛当且仅当对每个 $x$，$T_\alpha x\to Tx$ 于 $\mathcal Y$ 的范数拓扑；弱收敛当且仅当对每个 $x$，$T_\alpha x\to Tx$ 于 $\mathcal Y$ 的弱拓扑。因此强算子拓扑比弱算子拓扑强，但比 $L(\mathcal X,\mathcal Y)$ 的范数拓扑弱。
+% SUPPLEMENT: id=v14-ch05-operator-topologies-details; parent=ch05-operator-topologies-definition; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{收敛判别与拓扑比较补写（重构新增）。}相应半范数分别为 $p_x(T)=\|Tx\|$ 与 $q_{x,f}(T)=|f(Tx)|$，由半范数网收敛判别立即得到原文的两个充要条件。并且
+\begin{align*}
+q_{x,f}(T)\le\|f\|p_x(T),\qquad p_x(T)\le\|x\|\|T\|.
+\end{align*}
+连续性判别遂给弱算子拓扑 $\subseteq$ 强算子拓扑 $\subseteq$ 算子范数拓扑。若 $T\ne S$，选 $x$ 使 $(T-S)x\ne0$，再选 $f$ 分离该向量与零，即有 $q_{x,f}(T-S)>0$，故两种拓扑都 Hausdorff。
+\end{proof}
+\begin{remark}
+\textbf{动机与条件说明（重构新增）。}强算子收敛分别检验每个输入向量，弱算子收敛还把输出降为标量测试；算子范数收敛则同时控制整个单位球。这里“强”是算子拓扑的专名，不等于算子范数收敛。定义与以上比较只需两端赋范，Banach 假设为后续一致有界结论服务。包含关系未必严格，例如有限维两端会使这些拓扑相同。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch05-operator-topologies-details
+% SOURCE p=184; printed=169; object=ch05-strong-dense-convergence-introduction; region=middle
+下面关于强收敛的结果几乎显而易见，却极有用。
+% SOURCE p=184; printed=169; object=ch05-strong-dense-convergence-proposition; number=5.17; region=middle
+\begin{proposition}\label{proposition:ch05-strong-dense-convergence}
+设 $\{T_n\}_{n=1}^{\infty}\subseteq L(\mathcal X,\mathcal Y)$，$\sup_n\|T_n\|<\infty$，且 $T\in L(\mathcal X,\mathcal Y)$。若对 $\mathcal X$ 的某个稠密子集 $D$ 中每个 $x$ 都有 $\|T_nx-Tx\|\to0$，则 $T_n\to T$ 强收敛。
+\end{proposition}
+% SOURCE p=184; printed=169; object=ch05-strong-dense-convergence-proof; region=middle-lower
+\begin{proof}
+令 $C=\sup\{\|T\|,\|T_1\|,\|T_2\|,\ldots\}$。给定 $x\in\mathcal X$ 和 $\epsilon>0$，选 $x'\in D$，使 $\|x-x'\|<\epsilon/(3C)$。若 $n$ 足够大，使 $\|T_nx'-Tx'\|<\epsilon/3$，则
+\begin{align*}
+\|T_nx-Tx\|&\le\|T_nx-T_nx'\|+\|T_nx'-Tx'\|+\|Tx'-Tx\|\\
+&\le2C\|x-x'\|+\tfrac13\epsilon<\epsilon,
+\end{align*}
+所以 $T_nx\to Tx$。
+\end{proof}
+% SUPPLEMENT: id=v14-ch05-strong-dense-convergence-details; parent=ch05-strong-dense-convergence-proposition; kind=proof-detail+source-correction+motivation+hypotheses; origin=independent-derivation
+\begin{remark}
+\textbf{零常数及逐条件说明（重构新增）。}原证明中的除法须先处理 $C=0$：这时全部算子都为零，结论立即成立；否则原来的三项估计有效。也可从一开始把共同界换成 $C+1$。稠密性提供 $x'$，统一算子界使同一个逼近误差适用于所有 $n$，$T$ 有界控制最后一项。$D$ 不必是子空间，两端也不必完备。
+
+统一界不能一般删除。例如在 $\ell^1$ 上令 $T_nx=nx_n$、$T=0$。每个 $T_n$ 有界，且在有限支集的稠密子空间上最终为零。取 $x_{2^k}=2^{-k}$（$k\ge1$），其余坐标为零，则 $x\in\ell^1$，但 $T_{2^k}x=1$，故不强收敛于零。这说明仅在稠密集上逐点收敛不足以推广到全空间。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch05-strong-dense-convergence-details
+% SOURCE p=184; printed=169; object=ch05-alaoglu-introduction; region=lower
+本节最后一个结果是紧性定理，它是对偶空间上弱星拓扑如此有用的主要原因之一。证明思想类似于\cref{section:ch04-cube-embeddings} 中讨论的方法。
+% SOURCE p=184; printed=169; object=ch05-alaoglu-theorem; number=5.18; region=lower
+\begin{theorem}[Alaoglu 定理]\label{theorem:ch05-alaoglu}
+若 $\mathcal X$ 为赋范向量空间，则 $\mathcal X^*$ 中的闭单位球 $B^*=\{f\in\mathcal X^*:\|f\|\le1\}$ 在弱星拓扑中紧。
+\end{theorem}
+% SOURCE p=184,185; printed=169,170; object=ch05-alaoglu-proof; region=bottom-top
+\begin{proof}
+对每个 $x\in\mathcal X$，令 $D_x=\{z\in\mathbb C:|z|\le\|x\|\}$，并令 $D=\prod_{x\in\mathcal X}D_x$。由 Tychonoff 定理，$D$ 紧。$D$ 的元素恰为满足 $|\phi(x)|\le\|x\|$（所有 $x\in\mathcal X$）的复值函数，而 $B^*$ 恰由其中的线性函数组成。此外，$B^*$ 从 $D$ 的乘积拓扑与 $\mathcal X^*$ 的弱星拓扑继承的相对拓扑，都等于逐点收敛拓扑，所以只须证 $B^*$ 在 $D$ 中闭。
+
+这很容易：若 $B^*$ 中的网 $\{f_\alpha\}$ 收敛于 $f\in D$，则对任意 $x,y\in\mathcal X$ 和 $a,b\in\mathbb C$，
+\begin{align*}
+f(ax+by)&=\lim_\alpha f_\alpha(ax+by)\\
+&=\lim_\alpha[af_\alpha(x)+bf_\alpha(y)]=af(x)+bf(y),
+\end{align*}
+所以 $f\in B^*$。
+\end{proof}
+% SOURCE p=185; printed=170; object=ch05-alaoglu-local-compactness-warning; region=upper
+\begin{remark}
+Alaoglu 定理并不蕴含 $\mathcal X^*$ 在弱星拓扑下局部紧；见\subcref{exercise:ch05-weak-topology-smallness}{item:ch05-weak-bounded-nowhere-dense}。
+\end{remark}
+% SUPPLEMENT: id=v14-ch05-alaoglu-details; parent=ch05-alaoglu-theorem; kind=proof-detail+motivation+hypotheses; origin=independent-derivation
+\begin{proof}
+\textbf{乘积嵌入、闭性和有界性的补写（重构新增）。}每个 $D_x$ 为有限半径的闭圆盘，紧；$x=0$ 时它就是单点集。把泛函映成其全部取值给从 $B^*$ 到 $D$ 的单射。若 $f\in D$ 线性，则 $|f(x)|\le\|x\|$ 直接给其连续性及 $\|f\|\le1$，所以确实属于连续对偶单位球，而非仅属于代数对偶。
+
+对固定 $a,b,x,y$，乘积空间上的函数 $\phi\mapsto\phi(ax+by)-a\phi(x)-b\phi(y)$ 是有限个坐标连续函数的线性组合，故连续。线性函数所成集合是这些函数的零集之交，因而闭；这也独立补全了原文的网闭性论证。两种相对拓扑均由有限多个坐标值落入标量开集的要求生成，所以拓扑确实相同。紧空间的闭子集紧，得到结论。实空间时将圆盘改为区间 $[-\|x\|,\|x\|]$，标量取实数，证明完全相同。
+\end{proof}
+\begin{remark}
+\textbf{动机与逐条件说明（重构新增）。}单位范数界为每个输入点给出一个紧圆盘，弱星拓扑恰只查看这些坐标，于是可以借助任意乘积的紧性；线性关系在逐点极限下封闭，保证极限仍是所需的泛函。$\mathcal X$ 不必完备或可分；不可数坐标乘积通常需要网，不能把结论擅自换成序列紧性。这里的闭单位球是在范数意义下定义，却在较弱拓扑中紧；它未必是弱星零点邻域，故不能由此直接推出局部紧。
+\end{remark}
+% END SUPPLEMENT: id=v14-ch05-alaoglu-details
+\subfile{section-04-exercises.tex}
+\end{document}

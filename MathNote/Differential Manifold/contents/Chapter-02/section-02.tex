@@ -1,0 +1,230 @@
+\documentclass[../../main.tex]{subfiles}
+\begin{document}
+
+\section{单位分解}\label{section:ch02-单位分解}
+
+拓扑中一个常用的工具是粘合引理（引理~A.20），它说明如何通过把定义在开或闭子集上的映射"粘合在一起"来构造连续映射。我们有一个针对定义在开子集上光滑映射的粘合引理版本（推论~\cref{corollary:ch02-光滑映射粘合引理}），但我们不能指望把定义在闭子集上的光滑映射粘合起来而得到一个光滑的结果。例如，由
+\begin{align*}
+f_{+}(x)=x,\quad x\in[0,1);\qquad f_{-}(x)=-x,\quad x\in(-1,0]
+\end{align*}
+定义的两个函数 $f_{+}:[0,1)\to\mathbb{R}$ 和 $f_{-}:(-1,0]\to\mathbb{R}$ 都光滑，且在它们重叠的点 $0$ 处一致，但它们所定义的连续函数 $f:\mathbb{R}\to\mathbb{R}$（即 $f(x)=|x|$）在原点不光滑。
+
+推论~\cref{corollary:ch02-光滑映射粘合引理} 的一个缺点是：为使用它，我们必须构造在流形相对大的子集上恰好一致的映射，这对某些目的限制过严。在本节我们引入单位分解，它们是把局部光滑对象"混合在一起"成为整体对象的工具，而不必假定它们在重叠处一致。它们在光滑流形理论中是不可或缺的，并将在全书中反复出现。
+
+本节中我们所有的构造都基于这样一个事实：存在一些光滑函数，它们在流形的某个指定部分为正、在另一部分恒为零。我们从定义实直线上一个光滑函数开始，它在 $t\leqslant 0$ 时为零、在 $t>0$ 时为正。
+
+\begin{lemma}\label{lemma:ch02-指数光滑}
+由
+\begin{align*}
+f(t)=
+\begin{cases}
+e^{-1/t}, & t>0,\\
+0, & t\leqslant 0
+\end{cases}
+\end{align*}
+定义的函数 $f:\mathbb{R}\to\mathbb{R}$ 是光滑的。
+\end{lemma}
+
+\begin{proof}
+所论函数见图~\cref{figure:ch02-2.4}。它在 $\mathbb{R}\setminus\{0\}$ 上由复合可知光滑，所以我们只需证明 $f$ 在原点具有各阶连续导数。因为 $(k+1)$ 阶导数的存在蕴涵 $k$ 阶导数连续，只需证明每个这样的导数存在即可。我们首先注意 $f$ 在 $0$ 处连续，因为 $\lim_{t\downarrow 0}e^{-1/t}=0$。事实上，由 l'H\^{o}pital 法则的标准应用与归纳法可知，对任意整数 $k\geqslant 0$，
+\begin{align}\label{align:ch02-极限1}
+\lim_{t\downarrow 0}\frac{e^{-1/t}}{t^{k}}=\lim_{t\downarrow 0}\frac{t^{-k}}{e^{1/t}}=0.
+\end{align}
+我们用归纳法证明：对 $t>0$，$f$ 的 $k$ 阶导数形如
+\begin{align}\label{align:ch02-导数形式}
+f^{(k)}(t)=\frac{p_{k}(t)e^{-1/t}}{t^{2k}}
+\end{align}
+其中 $p_{k}$ 是某个次数至多为 $k$ 的多项式。对 $k=0$ 这显然成立（取 $p_{0}(t)=1$），故假设它对某个 $k\geqslant 0$ 成立。由乘积法则，
+\begin{align*}
+f^{(k+1)}(t)=\frac{p_{k}'(t)e^{-1/t}}{t^{2k}}+\frac{p_{k}(t)t^{-2}e^{-1/t}}{t^{2k}}-\frac{2kp_{k}(t)e^{-1/t}}{t^{2k+1}}
+=\frac{\bigl(t^{2}p_{k}'(t)+p_{k}(t)-2ktp_{k}(t)\bigr)e^{-1/t}}{t^{2(k+1)}},
+\end{align*}
+这正是所需形式。
+
+最后，我们用归纳法证明对每个整数 $k\geqslant 0$ 有 $f^{(k)}(0)=0$。对 $k=0$ 这由定义成立，故假设它对某个 $k\geqslant 0$ 成立。为证明 $f^{(k+1)}(0)$ 存在，只需证明 $f^{(k)}$ 在 $t=0$ 处从两侧都有单侧导数且它们相等。显然，从左侧的导数为零。再次利用~\eqref{align:ch02-导数形式} 和~\eqref{align:ch02-极限1}，我们求得 $f^{(k)}$ 在 $t=0$ 处从右侧的导数等于
+\begin{align*}
+\lim_{t\downarrow 0}\frac{\frac{p_{k}(t)e^{-1/t}}{t^{2k}}-0}{t}
+=\lim_{t\downarrow 0}\frac{p_{k}(t)e^{-1/t}}{t^{2k+1}}
+=p_{k}(0)\lim_{t\downarrow 0}\frac{e^{-1/t}}{t^{2k+1}}=0.
+\end{align*}
+因此 $f^{(k+1)}(0)=0$。
+\end{proof}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.7\textwidth]{fig-02-4.png}
+\caption{$f(t)=e^{-1/t}$}\label{figure:ch02-2.4}
+\end{figure}
+
+\begin{lemma}\label{lemma:ch02-截断函数}
+给定任意实数 $r_{1},r_{2}$ 满足 $r_{1}<r_{2}$，存在一个光滑函数 $h:\mathbb{R}\to\mathbb{R}$，使 $t\leqslant r_{1}$ 时 $h(t)\geqslant 1$，$r_{1}<t<r_{2}$ 时 $0<h(t)<1$，$t\geqslant r_{2}$ 时 $h(t)\leqslant 0$。
+\end{lemma}
+
+\begin{proof}
+令 $f$ 为前一引理中的函数，并令
+\begin{align*}
+h(t)=\frac{f(r_{2}-t)}{f(r_{2}-t)+f(t-r_{1})}.
+\end{align*}
+（见图~\cref{figure:ch02-2.5}。）注意分母对所有 $t$ 为正，因为表达式 $r_{2}-t$ 与 $t-r_{1}$ 中至少一个恒为正。$h$ 的所需性质由 $f$ 的性质容易推出。
+\end{proof}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.7\textwidth]{fig-02-5.png}
+\caption{截断函数}\label{figure:ch02-2.5}
+\end{figure}
+
+具有前一引理中 $h$ 这些性质的函数通常称为截断函数。
+
+\begin{lemma}\label{lemma:ch02-光滑鼓包}
+给定任意正实数 $r_{1}<r_{2}$，存在一个光滑函数 $H:\mathbb{R}^{n}\to\mathbb{R}$，使 $H\geqslant 1$ 在 $\overline{B_{r_{1}}(0)}$ 上，对所有 $x\in B_{r_{2}}(0)\setminus\overline{B_{r_{1}}(0)}$ 有 $0<H(x)<1$，且 $H\equiv 0$ 在 $\mathbb{R}^{n}\setminus B_{r_{2}}(0)$ 上。
+\end{lemma}
+
+\begin{proof}
+只需令 $H(x)=h(|x|)$，其中 $h$ 是前一引理中的函数。显然，$H$ 在 $\mathbb{R}^{n}\setminus\{0\}$ 上光滑，因为它是那里光滑函数的复合。由于它在 $B_{r_{1}}(0)$ 上恒等于 $1$，它在那里也光滑。
+\end{proof}
+
+本引理中构造的函数 $H$ 是光滑鼓包函数的一个例子，即一个光滑实值函数，它在某个指定集合上等于 $1$，而在该集合某个指定邻域之外为零。本章稍后，我们将把这一概念推广到流形上。
+若 $f$ 是拓扑空间 $M$ 上任意实值或向量值函数，$f$ 的支集，记作 $\operatorname{supp}f$，是 $f$ 非零点集的闭包：
+\begin{align*}
+\operatorname{supp}f=\overline{\{p\in M:f(p)\neq 0\}}.
+\end{align*}
+（例如，若 $H$ 是前一引理中构造的函数，则 $\operatorname{supp}H=\overline{B_{r_{2}}(0)}$。）若 $\operatorname{supp}f$ 包含于某个集合 $U\subset M$，我们称 $f$ 被支撑在 $U$ 中。称函数 $f$ 紧支撑，如果 $\operatorname{supp}f$ 是一个紧集。显然，紧空间上的每个函数都是紧支撑的。
+
+下一个构造是仿紧性最重要的应用。设 $M$ 是一个拓扑空间，$\mathcal{X}=(X_{\alpha})_{\alpha\in A}$ 是 $M$ 的任意开覆盖，指标集为 $A$。从属于 $\mathcal{X}$ 的一个单位分解，是一族连续函数 $\varphi_{\alpha}:M\to\mathbb{R}$（以同一集合 $A$ 为指标），满足以下性质：
+\begin{enumerate}[(i)]
+\item 对所有 $\alpha\in A$ 和所有 $x\in M$，$0\leqslant\varphi_{\alpha}(x)\leqslant 1$。
+\item 对每个 $\alpha\in A$，$\operatorname{supp}\varphi_{\alpha}\subset X_{\alpha}$。
+\item 支集族 $(\operatorname{supp}\varphi_{\alpha})_{\alpha\in A}$ 是局部有限的，意思是每一点都有一个邻域，它只对有限多个 $\alpha$ 与 $\operatorname{supp}\varphi_{\alpha}$ 相交。
+\item 对所有 $x\in M$，$\sum_{\alpha\in A}\varphi_{\alpha}(x)=1$。
+\end{enumerate}
+
+由于局部有限条件 (iii)，(iv) 中的和在每点的一个邻域内实际上只有有限多个非零项，所以不存在收敛问题。若 $M$ 是带边或无边的光滑流形，一个光滑单位分解是指其中每个函数 $\varphi_{\alpha}$ 都光滑的单位分解。
+
+\begin{theorem}[单位分解的存在性]\label{theorem:ch02-单位分解存在性}
+设 $M$ 是一个带边或无边的光滑流形，$\mathcal{X}=(X_{\alpha})_{\alpha\in A}$ 是 $M$ 的任意带指标开覆盖。则存在一个从属于 $\mathcal{X}$ 的光滑单位分解。
+\end{theorem}
+
+\begin{proof}
+为简单起见，在本证明中假设 $M$ 是一个无边光滑流形；一般情形留作练习。每个集合 $X_{\alpha}$ 本身就是一个光滑流形，因而由命题~\cref{proposition:ch01-正则坐标球可数基} 有一个由正则坐标球组成的基 $\mathcal{B}_{\alpha}$，并且容易验证 $\mathcal{B}=\bigcup_{\alpha}\mathcal{B}_{\alpha}$ 是 $M$ 拓扑的一个基。由定理~\cref{theorem:ch01-流形仿紧}，$\mathcal{X}$ 有一个可数的、局部有限的加细 $\{B_{i}\}$，它由 $\mathcal{B}$ 中元素组成。由引理~\cref{lemma:ch01-局部有限集族}(a)，覆盖 $\{\overline{B_{i}}\}$ 也是局部有限的。
+
+对每个 $i$，$B_{i}$ 是某个 $X_{\alpha}$ 中的正则坐标球这一事实保证：存在一个坐标球 $B_{i}'\subset X_{\alpha}$ 使 $B_{i}'\supset\overline{B_{i}}$，以及一个光滑坐标映射 $\varphi_{i}:B_{i}'\to\mathbb{R}^{n}$，使对某对 $r_{i}<r_{i}'$ 有 $\varphi_{i}(\overline{B_{i}})=\overline{B_{r_{i}}(0)}$ 且 $\varphi_{i}(B_{i}')=B_{r_{i}'}(0)$。对每个 $i$，由
+\begin{align*}
+f_{i}=
+\begin{cases}
+H_{i}\circ\varphi_{i}, & \text{在 }B_{i}'\text{ 上},\\
+0, & \text{在 }M\setminus\overline{B_{i}}\text{ 上}
+\end{cases}
+\end{align*}
+定义函数 $f_{i}:M\to\mathbb{R}$，其中 $H_{i}:\mathbb{R}^{n}\to\mathbb{R}$ 是一个光滑函数，它在 $B_{r_{i}}(0)$ 中为正、在别处为零，如引理~\cref{lemma:ch02-光滑鼓包}。在两个定义重叠的集合 $B_{i}'\setminus\overline{B_{i}}$ 上，两个定义都给出零函数，所以 $f_{i}$ 良定义且光滑，且 $\operatorname{supp}f_{i}=\overline{B_{i}}$。
+
+由 $f(x)=\sum_{i}f_{i}(x)$ 定义 $f:M\to\mathbb{R}$。由于覆盖 $\{\overline{B_{i}}\}$ 的局部有限性，这个和在每点的一个邻域内只有有限多个非零项，因而定义一个光滑函数。由于每个 $f_{i}$ 在处处非负且在 $B_{i}$ 上为正，而 $M$ 的每一点都在某个 $B_{i}$ 中，可得 $f(x)$ 在 $M$ 上处处为正。于是由 $g_{i}(x)=f_{i}(x)/f(x)$ 定义的函数 $g_{i}:M\to\mathbb{R}$ 也光滑。由定义直接得 $0\leqslant g_{i}\leqslant 1$ 且 $\sum_{i}g_{i}\equiv 1$。
+
+最后，我们需要把函数重新编号，使它们与我们的开覆盖用同一集合 $A$ 为指标。由于覆盖 $\{B_{i}'\}$ 是 $\mathcal{X}$ 的一个加细，对每个 $i$ 我们可以选取某个指标 $a(i)\in A$ 使 $B_{i}'\subset X_{a(i)}$。对每个 $\alpha\in A$，由
+\begin{align*}
+\varphi_{\alpha}=\sum_{i:a(i)=\alpha}g_{i}
+\end{align*}
+定义 $\varphi_{\alpha}:M\to\mathbb{R}$。如果不存在使 $a(i)=\alpha$ 的指标 $i$，则此和应理解为零函数。由引理~\cref{lemma:ch01-局部有限集族}(b) 得
+\begin{align*}
+\operatorname{supp}\varphi_{\alpha}=\bigcup_{i:a(i)=\alpha}\overline{B_{i}}\subset X_{\alpha}.
+\end{align*}
+每个 $\varphi_{\alpha}$ 都是满足 $0\leqslant\varphi_{\alpha}\leqslant 1$ 的光滑函数。此外，支集族 $(\operatorname{supp}\varphi_{\alpha})_{\alpha\in A}$ 仍然局部有限，且 $\sum_{\alpha}\varphi_{\alpha}\equiv\sum_{i}g_{i}\equiv 1$，所以这就是所期望的单位分解。
+\end{proof}
+
+\begin{exercise}\label{exercise:ch02-2.24}
+说明上面的证明在 $M$ 有非空边界时需要如何修改。
+\end{exercise}
+
+把局部定义的光滑映射修补成一个整体映射，基本上有两种不同策略。如果你能在每一点的一个邻域内定义一个映射，使这些局部定义的映射在重叠处都一致，则由推论~\cref{corollary:ch02-光滑映射粘合引理}，局部定义拼接起来给出一个整体光滑映射。（这通常需要某种唯一性结果。）但如果局部定义不能保证一致，那么你通常就不得不诉诸单位分解。这时技巧在于证明修补后的对象仍有所需性质。这两种策略我们在全书中反复使用。
+\subsection{单位分解的应用}\label{subsection:ch02-单位分解的应用}
+
+作为单位分解的第一个应用，我们把鼓包函数的概念推广到流形的任意闭子集。若 $M$ 是一个拓扑空间，$A\subset M$ 是一个闭子集，$U\subset M$ 是包含 $A$ 的一个开子集，则称一个连续函数 $\psi:M\to\mathbb{R}$ 为被支撑在 $U$ 中、关于 $A$ 的鼓包函数，如果在 $M$ 上 $0\leqslant\psi\leqslant 1$，在 $A$ 上 $\psi\equiv 1$，且 $\operatorname{supp}\psi\subset U$。
+
+\begin{proposition}[光滑鼓包函数的存在性]\label{proposition:ch02-光滑鼓包存在}
+设 $M$ 是一个带边或无边的光滑流形。对任意闭子集 $A\subset M$ 和任意包含 $A$ 的开子集 $U$，存在一个被支撑在 $U$ 中、关于 $A$ 的光滑鼓包函数。
+\end{proposition}
+
+\begin{proof}
+令 $U_{0}=U$，$U_{1}=M\setminus A$，并令 $\{\psi_{0},\psi_{1}\}$ 为从属于开覆盖 $\{U_{0},U_{1}\}$ 的一个光滑单位分解。由于在 $A$ 上 $\psi_{1}\equiv 0$，从而在那里 $0=\sum_{i}\psi_{i}=\psi_{0}$，故函数 $\psi_{0}$ 有所需性质。
+\end{proof}
+
+我们的第二个应用是一个关于从闭子集延拓光滑函数可能性的重要结果。设 $M,N$ 是带边或无边的光滑流形，$A\subset M$ 是任意子集。我们称映射 $F:A\to N$ 在 $A$ 上光滑，如果它在每一点附近都有一个光滑延拓：也就是说，对每个 $p\in A$，存在一个包含 $p$ 的开子集 $W\subset M$ 和一个光滑映射 $\widetilde{F}:W\to N$，使其在 $W\cap A$ 上的限制与 $F$ 一致。
+
+\begin{lemma}[光滑函数的延拓引理]\label{lemma:ch02-延拓引理}
+设 $M$ 是一个带边或无边的光滑流形，$A\subset M$ 是一个闭子集，$f:A\to\mathbb{R}^{k}$ 是一个光滑函数。对任意包含 $A$ 的开子集 $U$，存在一个光滑函数 $\widetilde{f}:M\to\mathbb{R}^{k}$，使 $\widetilde{f}|_{A}=f$ 且 $\operatorname{supp}\widetilde{f}\subset U$。
+\end{lemma}
+
+\begin{proof}
+对每个 $p\in A$，选取 $p$ 的一个邻域 $W_{p}$ 和一个在 $W_{p}\cap A$ 上与 $f$ 一致的光滑函数 $\widetilde{f}_{p}:W_{p}\to\mathbb{R}^{k}$。把 $W_{p}$ 换成 $W_{p}\cap U$，我们可以假设 $W_{p}\subset U$。集合族 $\{W_{p}:p\in A\}\cup\{M\setminus A\}$ 是 $M$ 的一个开覆盖。令 $\{\psi_{p}:p\in A\}\cup\{\psi_{0}\}$ 为从属于这个覆盖的一个光滑单位分解，满足 $\operatorname{supp}\psi_{p}\subset W_{p}$ 且 $\operatorname{supp}\psi_{0}\subset M\setminus A$。
+
+对每个 $p\in A$，乘积 $\psi_{p}\widetilde{f}_{p}$ 在 $W_{p}$ 上光滑，并且如果我们在 $M\setminus\operatorname{supp}\psi_{p}$ 上把它解释为零，它就光滑延拓到整个 $M$。（延拓后的函数光滑，因为两个定义在它们重叠的开子集 $W_{p}\setminus\operatorname{supp}\psi_{p}$ 上一致。）于是我们可以由
+\begin{align*}
+\widetilde{f}(x)=\sum_{p\in A}\psi_{p}(x)\widetilde{f}_{p}(x)
+\end{align*}
+定义 $\widetilde{f}:M\to\mathbb{R}^{k}$。由于支集族 $\{\operatorname{supp}\psi_{p}\}$ 局部有限，这个和在 $M$ 任意一点的一个邻域内实际上只有有限个非零项，因而定义一个光滑函数。若 $x\in A$，则 $\psi_{0}(x)=0$，且对每个使 $\psi_{p}(x)\neq 0$ 的 $p$ 有 $\widetilde{f}_{p}(x)=f(x)$，所以
+\begin{align*}
+\widetilde{f}(x)=\sum_{p\in A}\psi_{p}(x)f(x)=\left(\psi_{0}(x)+\sum_{p\in A}\psi_{p}(x)\right)f(x)=f(x),
+\end{align*}
+故 $\widetilde{f}$ 确实是 $f$ 的一个延拓。由引理~\cref{lemma:ch01-局部有限集族}(b) 得
+\begin{align*}
+\operatorname{supp}\widetilde{f}=\bigcup_{p\in A}\operatorname{supp}\psi_{p}\subset U.
+\end{align*}
+\end{proof}
+
+\begin{exercise}\label{exercise:ch02-2.27}
+给一个反例说明：如果 $A$ 不是闭的，延拓引理的结论可能不成立。
+\end{exercise}
+
+延拓引理中 $f$ 的余域是 $\mathbb{R}^{k}$ 而非某个其他光滑流形这一假设是必需的：对其他余域，由于拓扑原因延拓可能不存在。（例如，恒等映射 $S^{1}\to S^{1}$ 光滑，但它甚至没有一个从 $\mathbb{R}^{2}$ 到 $S^{1}$ 的连续延拓。）后面我们将证明：从一个光滑流形的闭子集到一个光滑流形的光滑映射，有光滑延拓当且仅当它有连续延拓（见推论~6.27）。
+
+顺便说一句，这个延拓引理说明了光滑流形与实解析流形之间一个本质区别。实解析流形上实解析函数的延拓引理的类似物是断然不成立的，因为一个定义在连通区域上且在某个开子集上为零的实解析函数必恒为零。
+
+接下来，我们用单位分解构造一种特殊的光滑函数。若 $M$ 是一个拓扑空间，$M$ 的一个穷竭函数是一个连续函数 $f:M\to\mathbb{R}$，使集合 $f^{-1}\bigl((-\infty,c]\bigr)$（称为 $f$ 的一个下水平集）对每个 $c\in\mathbb{R}$ 都是紧的。这个名称来自这样一个事实：当 $n$ 取遍正整数时，下水平集 $f^{-1}\bigl((-\infty,n]\bigr)$ 构成 $M$ 的一个由紧集组成的穷竭；因此一个穷竭函数提供了紧集穷竭的某种连续版本。例如，由
+\begin{align*}
+f(x)=|x|^{2},\qquad g(x)=\frac{1}{1-|x|^{2}}
+\end{align*}
+给出的函数 $f:\mathbb{R}^{n}\to\mathbb{R}$ 和 $g:B^{n}\to\mathbb{R}$ 是光滑穷竭函数。当然，若 $M$ 是紧的，则 $M$ 上任意连续实值函数都是穷竭函数，所以这类函数只对非紧流形才有意义。
+
+\begin{proposition}[光滑穷竭函数的存在性]\label{proposition:ch02-光滑穷竭函数}
+每个带边或无边的光滑流形都容许一个光滑的正穷竭函数。
+\end{proposition}
+
+\begin{proof}
+设 $M$ 是一个带边或无边的光滑流形，令 $\{V_{j}\}_{j=1}^{\infty}$ 是 $M$ 的任意一个由预紧开子集组成的可数开覆盖，令 $\{\psi_{j}\}$ 为从属于这个覆盖的一个光滑单位分解。由
+\begin{align*}
+f(p)=\sum_{j=1}^{\infty}j\,\psi_{j}(p)
+\end{align*}
+定义 $f\in C^{\infty}(M)$。则 $f$ 光滑，因为在任意一点的一个邻域内只有有限项非零；$f$ 为正，因为 $f(p)\geqslant\sum_{j}\psi_{j}(p)=1$。
+
+为看出 $f$ 是一个穷竭函数，任取 $c\in\mathbb{R}$，选一个正整数 $N>c$。若 $p\notin\bigcup_{j=1}^{N}\overline{V_{j}}$，则对 $1\leqslant j\leqslant N$ 有 $\psi_{j}(p)=0$，于是
+\begin{align*}
+f(p)=\sum_{j=N+1}^{\infty}j\,\psi_{j}(p)\geqslant\sum_{j=N+1}^{\infty}N\,\psi_{j}(p)=N\sum_{j=1}^{\infty}\psi_{j}(p)=N>c.
+\end{align*}
+等价地，若 $f(p)\leqslant c$，则 $p\in\bigcup_{j=1}^{N}\overline{V_{j}}$。因此 $f^{-1}\bigl((-\infty,c]\bigr)$ 是紧集 $\bigcup_{j=1}^{N}\overline{V_{j}}$ 的一个闭子集，从而紧。
+\end{proof}
+
+作为单位分解的最后一个应用，我们将证明一个值得注意的事实：一个流形的每个闭子集都可以表示为某个光滑实值函数的水平集。我们在本书中不使用这个结果（除了在少数习题中），但它与例~\cref{example:ch01-水平集} 的结果形成有趣的对比。
+
+\begin{theorem}[光滑函数的水平集]\label{theorem:ch02-光滑函数水平集}
+设 $M$ 是一个光滑流形。若 $K$ 是 $M$ 的任意闭子集，则存在一个光滑非负函数 $f:M\to\mathbb{R}$，使 $f^{-1}(0)=K$。
+\end{theorem}
+
+\begin{proof}
+我们从 $M=\mathbb{R}^{n}$ 且 $K\subset\mathbb{R}^{n}$ 是闭子集这一特殊情形开始。对每个 $x\in M\setminus K$，存在一个正数 $r\leqslant 1$ 使 $B_{r}(x)\subset M\setminus K$。由命题~A.16，$M\setminus K$ 是可数多个这样的球 $\{B_{r_{i}}(x_{i})\}_{i=1}^{\infty}$ 的并。
+
+令 $h:\mathbb{R}^{n}\to\mathbb{R}$ 为一个光滑鼓包函数，它在 $\overline{B_{1/2}(0)}$ 上等于 $1$ 且支撑在 $B_{1}(0)$ 中。对每个正整数 $i$，令 $C_{i}\geqslant 1$ 为一个常数，它界定 $h$ 及其直到 $i$ 阶的所有偏导数的绝对值。由
+\begin{align*}
+f(x)=\sum_{i=1}^{\infty}\frac{(r_{i})^{i}}{2^{i}C_{i}}h\left(\frac{x-x_{i}}{r_{i}}\right)
+\end{align*}
+定义 $f:\mathbb{R}^{n}\to\mathbb{R}$。该级数各项的绝对值被收敛级数 $\sum_{i}1/2^{i}$ 的各项所界定，故由 Weierstrass $M$ 判别法，整个级数一致收敛到一个连续函数。由于第 $i$ 项恰在 $x\in B_{r_{i}}(x_{i})$ 时为正，可得 $f$ 在 $K$ 中为零、在别处为正。
+
+剩下只需证明 $f$ 光滑。我们已证明它连续，故假设 $k\geqslant 1$ 并归纳假设 $f$ 的所有阶数小于 $k$ 的偏导数都存在且连续。由链式法则与归纳，级数中第 $i$ 项的每个 $k$ 阶偏导数都可以写成
+\begin{align*}
+\frac{(r_{i})^{i-k}}{2^{i}C_{i}}D^{k}h\left(\frac{x-x_{i}}{r_{i}}\right),
+\end{align*}
+其中 $D^{k}h$ 是 $h$ 的某个 $k$ 阶偏导数。由我们对 $r_{i}$ 和 $C_{i}$ 的选取，一旦 $i\geqslant k$，这些项中每一项的绝对值都被 $1/2^{i}$ 界定，所以逐项求导后的级数也一致收敛到一个连续函数。于是由定理~C.31，$f$ 的 $k$ 阶偏导数存在且连续。这就完成了归纳，证明 $f$ 光滑。
+
+现在设 $M$ 是任意光滑流形，$K\subset M$ 是任意闭子集。令 $\{B_{\alpha}\}$ 为 $M$ 的一个由光滑坐标球组成的开覆盖，令 $\{\psi_{\alpha}\}$ 为一个从属于它的单位分解。由于每个 $B_{\alpha}$ 微分同胚于 $\mathbb{R}^{n}$，前面的论证表明对每个 $\alpha$ 存在一个光滑非负函数 $f_{\alpha}:B_{\alpha}\to\mathbb{R}$，使 $f_{\alpha}^{-1}(0)=B_{\alpha}\cap K$。函数 $f=\sum_{\alpha}\psi_{\alpha}f_{\alpha}$ 即达到目的。
+\end{proof}
+
+\end{document}

@@ -1,0 +1,127 @@
+\documentclass[../../main.tex]{subfiles}
+\begin{document}
+\section{Darboux 定理}\label{section:ch22-darboux}
+
+我们的下一个定理是辛几何中最基本的结果之一。它是\cref{proposition:ch22-symplectic-canonical-form}中辛张量典范形式的一个非线性类似物。它刻画了辛结构与 Riemann 度量之间最显著的差别：与 Riemann 情形不同，一个辛结构局部等价于标准平坦模型这件事没有局部障碍。
+
+\begin{theorem}[Darboux]\label{theorem:ch22-darboux}
+设 $(M,\omega)$ 是 $2n$ 维辛流形。对任意 $p\in M$，存在以 $p$ 为中心的光滑坐标 $(x^1,\dots,x^n,y^1,\dots,y^n)$，使 $\omega$ 具有坐标表示
+\begin{align}
+\omega=\sum_{i=1}^n \mathrm{d}x^i\wedge\mathrm{d}y^i.
+\end{align}
+\end{theorem}
+
+我们将在下面证明该定理。任何满足上式的坐标称为\emph{Darboux 坐标}、\emph{辛坐标}或\emph{典范坐标}。显然，$\mathbb{R}^{2n}$ 上的标准坐标 $(x^1,\dots,x^n,y^1,\dots,y^n)$ 就是 Darboux 坐标。\cref{proposition:ch22-canonical-symplectic}的证明表明，自然坐标 $(x^i,\xi_i)$ 就是带典范辛结构的 $T^*M$ 的 Darboux 坐标。
+
+Darboux 定理由 Gaston Darboux 于 1882 年首次证明（形式略有不同），与他关于经典力学中出现的常微分方程的工作相关。我们给出的证明由 Alan Weinstein 于 1971 年发现 [Wei71]，基于 J\"urgen Moser 的一种技巧 [Mos65]。一个更初等——但较不优雅——的证明在习题 22-19 中给出纲要。
+
+Weinstein 对 Darboux 定理的证明基于含时流的理论（见定理 9.48）。在进行证明之前，我们需要关于这类流的一些预备结果。
+
+首先，回忆命题 12.36 展示了如何用 Lie 导数来计算张量场在流作用下的导数。我们需要该结果对含时流情形的如下推广。
+
+\begin{proposition}\label{proposition:ch22-flowout-pullback-deriv}
+设 $M$ 是光滑流形。设 $V:J\times M\to TM$ 是光滑含时向量场，$\theta:E\to M$ 是其含时流。对任意光滑协变张量场 $A\in T^k(M)$ 和任意 $(t_1,t_0,p)\in E$，
+\begin{align}
+\left.\frac{\mathrm{d}}{\mathrm{d}t}\right|_{t=t_1}(\theta_{t,t_0}^*A)_p
+=\big(\theta_{t_1,t_0}^*(\mathcal L_{V_{t_1}}A)\big)_p.
+\end{align}
+\end{proposition}
+
+\begin{proof}
+先设 $t_1=t_0$。在此情形中，$\theta_{t_0,t_0}$ 是 $M$ 的恒等映射；故我们需证
+\begin{align}
+\left.\frac{\mathrm{d}}{\mathrm{d}t}\right|_{t=t_0}(\theta_{t,t_0}^*A)_p
+=(\mathcal L_{V_{t_0}}A)_p.
+\end{align}
+我们从 $A=f$ 是光滑 $0$-张量场（即光滑函数）这一特殊情形开始：
+\begin{align*}
+\left.\frac{\mathrm{d}}{\mathrm{d}t}\right|_{t=t_0}(\theta_{t,t_0}^*f)(p)
+=\left.\frac{\partial}{\partial t}\right|_{t=t_0} f(\theta(t,t_0,p))
+=V_{t_0,\theta(t_0,t_0,p)}f=(\mathcal L_{V_{t_0}}f)(p).
+\end{align*}
+
+接下来考虑恰当 $1$-形式 $A=\mathrm{d}f$。在任意光滑局部坐标 $(x^i)$ 下，函数 $\theta_{t,t_0}^*f(x)=f(\theta(t,t_0,x))$ 光滑依赖于全部 $n+1$ 个变量 $(t,x^1,\dots,x^n)$。因此算子 $\mathrm{d}/\mathrm{d}t$（在此情形中更恰当地写作 $\partial/\partial t$）在作用于 $\theta_{t,t_0}^*f$ 时与每个偏导数 $\partial/\partial x^i$ 交换。特别地，这意味着外导数算子 $\mathrm{d}$ 与 $\partial/\partial t$ 交换，于是
+\begin{align*}
+\left.\frac{\mathrm{d}}{\mathrm{d}t}\right|_{t=t_0}(\theta_{t,t_0}^*\mathrm{d}f)_p
+=\left.\frac{\partial}{\partial t}\right|_{t=t_0}\mathrm{d}(\theta_{t,t_0}^*f)_p
+=\mathrm{d}\left(\left.\frac{\partial}{\partial t}\right|_{t=t_0}(\theta_{t,t_0}^*f)\right)_p
+=\mathrm{d}(\mathcal L_{V_{t_0}}f)_p
+=(\mathcal L_{V_{t_0}}\mathrm{d}f)_p.
+\end{align*}
+这样，结果对 $0$-张量和恰当 $1$-形式都得证。
+
+现在设 $A=B\otimes C$，其中 $B,C$ 是某些光滑协变张量场，并假设命题对 $B$ 和 $C$ 成立。（我们允许 $B$ 或 $C$ 的秩为 $0$，此时张量积就是普通乘法。）由 Lie 导数的乘积法则（命题 12.32(c)），上式右端满足
+\begin{align*}
+(\mathcal L_{V_{t_0}}(B\otimes C))_p
+=(\mathcal L_{V_{t_0}}B)_p\otimes C_p+B_p\otimes(\mathcal L_{V_{t_0}}C)_p.
+\end{align*}
+另一方面，由一个与命题 12.32 证明完全类似的论证，左端满足类似的乘积法则：
+\begin{align*}
+\left.\frac{\mathrm{d}}{\mathrm{d}t}\right|_{t=t_0}(\theta_{t,t_0}^*(B\otimes C))_p
+=\left(\left.\frac{\mathrm{d}}{\mathrm{d}t}\right|_{t=t_0}(\theta_{t,t_0}^*B)_p\right)\otimes C_p
++B_p\otimes\left(\left.\frac{\mathrm{d}}{\mathrm{d}t}\right|_{t=t_0}(\theta_{t,t_0}^*C)_p\right).
+\end{align*}
+这表明上式对 $A=B\otimes C$ 成立，只要它对 $B$ 和 $C$ 成立。任意张量场的情形现在由归纳法得到，用到如下事实：任意光滑协变张量场可局部写成形如 $A=f\,\mathrm{d}x^{i_1}\otimes\cdots\otimes\mathrm{d}x^{i_k}$ 的张量场之和。
+
+为处理任意 $t_1$，我们用定理 9.48(d)，它表明在右端有定义处 $\theta_{t,t_0}=\theta_{t,t_1}\circ\theta_{t_1,t_0}$。因此，由于线性映射 $\mathrm{d}(\theta_{t_1,t_0})^*_p:T^k(T^*_{\theta_{t_1,t_0}(p)}M)\to T^k(T^*_pM)$ 不依赖于 $t$，
+\begin{align*}
+\left.\frac{\mathrm{d}}{\mathrm{d}t}\right|_{t=t_1}(\theta_{t,t_0}^*A)_p
+=\mathrm{d}(\theta_{t_1,t_0})^*_p\left.\frac{\mathrm{d}}{\mathrm{d}t}\right|_{t=t_1}
+\mathrm{d}(\theta_{t,t_1})^*_{\theta_{t_1,t_0}(p)}\big(A_{\theta_{t,t_1}\circ\theta_{t_1,t_0}(p)}\big)
+=(\theta_{t_1,t_0}^*(\mathcal L_{V_{t_1}}A))_p.
+\end{align*}
+\end{proof}
+
+光滑流形 $M$ 上的\emph{光滑含时张量场}是指光滑映射 $A:J\times M\to T^kT^*M$（其中 $J\subset\mathbb R$ 是区间），满足对每个 $(t,p)\in J\times M$ 都有 $A(t,p)\in T^k(T^*_pM)$。
+
+\begin{proposition}\label{proposition:ch22-time-dependent-tensor}
+设 $M$ 是光滑流形，$J\subset\mathbb R$ 是开区间。设 $V:J\times M\to TM$ 是 $M$ 上的光滑含时向量场，$\theta:E\to M$ 是其含时流，$A:J\times M\to T^kT^*M$ 是 $M$ 上的光滑含时张量场。则对任意 $(t_1,t_0,p)\in E$，
+\begin{align}
+\left.\frac{\mathrm{d}}{\mathrm{d}t}\right|_{t=t_1}(\theta_{t,t_0}^*A_t)_p
+=\Big(\theta_{t_1,t_0}^*\big(\mathcal L_{V_{t_1}}A_{t_1}
++\left.\frac{\mathrm{d}}{\mathrm{d}t}\right|_{t=t_1}A_t\big)\Big)_p.
+\end{align}
+\end{proposition}
+
+\begin{proof}
+对充分小的 $\varepsilon>0$，考虑光滑映射 $F:(t_1-\varepsilon,t_1+\varepsilon)\times(t_1-\varepsilon,t_1+\varepsilon)\to T^k(T^*_pM)$，定义为
+\begin{align*}
+F(u,v)=(\theta_{u,t_0}^*A_v)_p
+=\mathrm{d}(\theta_{u,t_0})^*_p\big(A_v|_{\theta_{u,t_0}(p)}\big).
+\end{align*}
+由于 $F$ 取值于有限维向量空间 $T^k(T^*_pM)$，我们可以应用链式法则连同\cref{proposition:ch22-flowout-pullback-deriv}，得出
+\begin{align*}
+\left.\frac{\mathrm{d}}{\mathrm{d}t}\right|_{t=t_1}F(t,t)
+=\frac{\partial F}{\partial u}(t_1,t_1)+\frac{\partial F}{\partial v}(t_1,t_1)
+=(\theta_{t_1,t_0}^*(\mathcal L_{V_{t_1}}A_{t_1}))_p
++\left.\frac{\partial}{\partial v}\right|_{v=t_1}\mathrm{d}(\theta_{t_1,t_0})^*_p
+\big(A_v|_{\theta_{t_1,t_0}(p)}\big).
+\end{align*}
+正如在\cref{proposition:ch22-flowout-pullback-deriv}的证明中一样，线性映射 $\mathrm{d}(\theta_{t_1,t_0})^*_p$ 可越过 $\partial/\partial v$ 交换，从而得到所需等式。
+\end{proof}
+
+\textbf{Darboux 定理的证明。} 设 $\omega_0$ 表示 $M$ 上给定的辛形式，并设 $p_0\in M$ 任意。若能找到一个以 $p_0$ 为中心的光滑坐标卡 $(U_0,\varphi)$，使 $\varphi^*\omega_1=\omega_0$（其中 $\omega_1=\sum_{i=1}^n\mathrm{d}x^i\wedge\mathrm{d}y^i$ 是 $\mathbb{R}^{2n}$ 上的标准辛形式），定理即得证。由于这是一个局部问题，通过在 $p_0$ 附近选取光滑坐标 $(x^1,\dots,x^n,y^1,\dots,y^n)$，我们可以把 $M$ 换成一个开球 $U\subset\mathbb{R}^{2n}$。\cref{proposition:ch22-symplectic-canonical-form}表明，通过线性坐标变换可以安排使 $\omega_0|_{p_0}=\omega_1|_{p_0}$。
+
+令 $\alpha=\omega_1-\omega_0$。由于 $\alpha$ 是闭的，Poincar\'e 引理（定理 17.14）表明可在 $U$ 上找到光滑 $1$-形式 $\beta$ 使 $\mathrm{d}\beta=-\alpha$。从 $\beta$ 减去一个常系数（因而闭的）$1$-形式后，不妨设 $\beta_{p_0}=0$。
+
+对每个 $t\in\mathbb R$，在 $U$ 上定义闭 $2$-形式 $\omega_t$ 为
+\begin{align*}
+\omega_t=\omega_0+t\alpha=(1-t)\omega_0+t\omega_1.
+\end{align*}
+设 $J$ 是包含 $[0,1]$ 的有界开区间。由于对所有 $t$ 都有 $\omega_t|_{p_0}=\omega_0|_{p_0}$ 非退化，一个简单的紧性论证表明：存在 $p_0$ 的某个邻域 $U_1\subset U$，使对所有 $t\in\bar J$，$\omega_t$ 在 $U_1$ 上都非退化。由于这一非退化性，由 $\widetilde\omega_t(X)=X\lrcorner\,\omega_t$ 定义的光滑丛同态 $\widetilde\omega_t:TU_1\to T^*U_1$ 对每个 $t\in\bar J$ 都是同构。
+
+定义光滑含时向量场 $V:J\times U_1\to TU_1$ 为 $V_t=\widetilde\omega_t^{-1}\beta$，或等价地
+\begin{align*}
+V_t\lrcorner\,\omega_t=\beta.
+\end{align*}
+我们的假设 $\beta_{p_0}=0$ 蕴含对每个 $t$ 都有 $V_t|_{p_0}=0$。若 $\theta:E\to U_1$ 表示 $V$ 的含时流，则对所有 $t\in J$ 都有 $\theta(t,0,p_0)=p_0$，故 $J\times\{0\}\times\{p_0\}\subset E$。由于 $E$ 在 $J\times J\times M$ 中开而 $[0,1]$ 紧，存在 $p_0$ 的某个邻域 $U_0$ 使 $[0,1]\times\{0\}\times U_0\subset E$。
+
+对每个 $t_1\in[0,1]$，由\cref{proposition:ch22-time-dependent-tensor}得
+\begin{align*}
+\left.\frac{\mathrm{d}}{\mathrm{d}t}\right|_{t=t_1}(\theta_{t,0}^*\omega_t)
+=\theta_{t_1,0}^*\big(\mathcal L_{V_{t_1}}\omega_{t_1}+\left.\frac{\mathrm{d}}{\mathrm{d}t}\right|_{t=t_1}\omega_t\big)
+=\theta_{t_1,0}^*\big(V_{t_1}\lrcorner\,\mathrm{d}\omega_{t_1}+\mathrm{d}(V_{t_1}\lrcorner\,\omega_{t_1})+\alpha\big)
+=\theta_{t_1,0}^*(0+\mathrm{d}\beta+\alpha)=0.
+\end{align*}
+因此，对所有 $t$ 都有 $\theta_{t,0}^*\omega_t=\theta_{0,0}^*\omega_0=\omega_0$。特别地，$\theta_{1,0}^*\omega_1=\omega_0$。由定理 9.48(c) 可知 $\theta_{1,0}$ 是映到其像上的微分同胚，因而是坐标映射。由于 $\theta_{1,0}(p_0)=p_0=0$，这些坐标以 $p_0$ 为中心。\qed
+\end{document}

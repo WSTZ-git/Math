@@ -1,0 +1,279 @@
+\documentclass[../../main.tex]{subfiles}
+\begin{document}
+
+% 本章导言（原书第1章开篇，PDF p16-17）
+本书讨论的是光滑流形。用最简单的话来说，这些空间局部地看起来像某个欧几里得空间 $\mathbb{R}^{n}$，并且可以在其上做微积分运算。除欧几里得空间本身之外，最熟悉的例子是光滑平面曲线（如圆和抛物线）以及光滑曲面（如球面、环面、抛物面、椭球面和双曲面）。更高维的例子包括 $\mathbb{R}^{n+1}$ 中到原点距离为常数的点集（即 $n$ 球面）以及欧几里得空间之间光滑映射的图像。
+
+最简单的流形是拓扑流形，它们是具有某些性质的拓扑空间，这些性质刻画了我们所说的"局部看起来像"$\mathbb{R}^{n}$ 的含义。这样的空间为拓扑学家所深入研究。
+
+然而，流形的许多（也许是大多数）重要应用都涉及微积分。例如，流形理论在几何学中的应用涉及体积和曲率等性质。通常，体积通过积分计算，曲率通过微分计算，因此要把这些思想推广到流形上，就需要某种方法来使流形上的积分和微分有意义。在经典力学中的应用涉及在流形上求解常微分方程组，而在广义相对论（引力理论）中的应用则涉及求解一个偏微分方程组。
+
+把微积分思想移植到流形上的第一个要求是某种"光滑性"的概念。对于我们上面描述的那些简单流形例子（它们都是欧几里得空间的子集），在直观层面描述光滑性的含义相当容易。例如，我们可能想把一条曲线称为"光滑的"，如果它具有一条逐点连续变化的切线；类似地，"光滑曲面"应该是具有逐点连续变化的切平面的曲面。但对于更精细的应用来说，要求光滑流形必须是某个外围欧几里得空间的子集是一种过分的限制。外围坐标和 $\mathbb{R}^{n}$ 的向量空间结构是多余的数据，往往与手头的问题毫无关系。能够把流形当作抽象拓扑空间来处理、而不带这种外围空间的额外包袱，是一个巨大的优势。例如，在广义相对论中，时空被建模为一个 $4$ 维光滑流形，它带有某种称为 Lorentz 度量的几何结构，其曲率导致引力现象。在这样的模型中，无法给流形所存在的任何更高维外围空间赋予物理意义，把这样一个空间纳入模型只会不必要地使其复杂化。由于这些原因，我们需要把光滑流形看作抽象拓扑空间，而不必看作更大空间的子集。
+
+不难看出，无法定义一个纯粹拓扑性质作为"光滑性"的判据，因为它不可能在同胚下不变。例如，平面中的圆和正方形是同胚的拓扑空间（\cref{figure:ch01-1.1}），但我们大概都会同意圆是"光滑的"而正方形不是。因此，拓扑流形不能满足我们的目的。相反，我们将把光滑流形看作一个带有两层结构的集合：首先是拓扑，然后是光滑结构。
+
+在本章第一节中，我们描述这两层结构中的第一层。拓扑流形是具有三条特殊性质的拓扑空间，这些性质表达了局部像欧几里得空间的概念。这些性质为欧几里得空间以及所有局部看起来像欧几里得空间的熟悉几何对象（如曲线和曲面）所共有。然后我们证明流形的一些重要拓扑性质，这些性质在全书都会用到。
+
+在下一节中，我们引入一个额外的结构，称为光滑结构，它可以加到拓扑流形上，使我们能够赋予导数以意义。在基本定义之后，我们引入若干流形的例子，以便你在阅读一般理论时心中有具体的对象。在本章末尾，我们引入带边光滑流形的概念，这是光滑流形的一个重要推广，在全书中（尤其在第~16 章研究积分时）将有众多应用。
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.7\textwidth]{fig-01-1.png}
+\caption{从圆周到正方形的同胚}\label{figure:ch01-1.1}
+\end{figure}
+
+\section{拓扑流形}\label{section:ch01-拓扑流形}
+
+本节我们引入拓扑流形，它是最基本的流形类型。我们假定读者已经熟悉拓扑空间的定义和基本性质，如附录~A 所综述。
+
+设 $M$ 是一个拓扑空间。称 $M$ 是一个 $n$ 维拓扑流形，或拓扑 $n$ 流形，如果它具有以下性质：
+
+\begin{itemize}
+\item $M$ 是一个 Hausdorff 空间：对任意两个不同的点 $p,q\in M$，存在不相交的开子集 $U,V\subset M$，使得 $p\in U$ 且 $q\in V$。
+\item $M$ 是第二可数的：$M$ 的拓扑存在一个可数基。
+\item $M$ 是 $n$ 维局部欧几里得的：$M$ 的每一点都有一个同胚于 $\mathbb{R}^{n}$ 中某个开子集的邻域。
+\end{itemize}
+
+第三条性质更具体地意味着，对每个 $p\in M$，我们可以找到
+
+\begin{itemize}
+\item 一个包含 $p$ 的开子集 $U\subset M$，
+\item 一个开子集 $\widetilde{U}\subset\mathbb{R}^{n}$，以及
+\item 一个同胚 $\varphi:U\to\widetilde{U}$。
+\end{itemize}
+
+\begin{exercise}\label{exercise:ch01-1.1}
+证明：如果不允许 $U$ 同胚于 $\mathbb{R}^{n}$ 的任意开子集，而要求它同胚于 $\mathbb{R}^{n}$ 中的开球，或同胚于 $\mathbb{R}^{n}$ 本身，所得到的流形定义是等价的。
+\end{exercise}
+
+若 $M$ 是一个拓扑流形，我们常把 $M$ 的维数缩写为 $\dim M$。非正式地，人们有时写"设 $M^{n}$ 是一个流形"作为"设 $M$ 是一个 $n$ 维流形"的简写。上标 $n$ 并不是流形名称的一部分，在首次出现之后通常不再写入记号中。
+
+需要注意，每个拓扑流形按定义都具有一个特定的、良定义的维数。因此，我们不把混合维数的空间（例如一个平面与一条直线的不交并）看作流形。在第~17 章中，我们将用 de Rham 上同调理论证明下面的定理，它表明（非空）拓扑流形的维数实际上是一个拓扑不变量。
+
+\begin{theorem}[维数的拓扑不变性]\label{theorem:ch01-维数的拓扑不变性}
+一个非空 $n$ 维拓扑流形不可能同胚于一个 $m$ 维流形，除非 $m=n$。
+\end{theorem}
+
+证明见定理~17.26。在第~2 章中，我们还将证明一个相关但较弱的定理（维数的微分同胚不变性，定理~2.17）。用奇异同调理论对\cref{theorem:ch01-维数的拓扑不变性} 的另一种证明参见 [LeeTM, 第~13 章]。
+
+空集对每个 $n$ 都满足拓扑 $n$ 流形的定义。在大多数情况下，我们将忽略这个特殊情形（有时甚至不记得说明这一点）。但因为允许空流形在某些场合是有用的，我们选择不把它从定义中排除。
+
+拓扑 $n$ 流形的基本例子是 $\mathbb{R}^{n}$ 本身。它是 Hausdorff 的，因为它是一个度量空间；它是第二可数的，因为所有以有理点为中心、以有理数为半径的开球所成集合是其拓扑的一个可数基。
+
+要求流形具有这些性质，有助于保证流形表现出我们从欧几里得空间经验中所期望的方式。例如，容易验证在 Hausdorff 空间中有限子集是闭的，且收敛序列的极限唯一（见附录~A 中的练习~A.11）。第二可数性的动机稍不明显，但它在全书中将有重要的推论，主要基于单位分解的存在性（见第~2 章）。
+
+实际上，Hausdorff 性质和第二可数性通常都容易验证，尤其是对于由其他流形构造出来的空间，因为这两条性质都为子空间和有限积所继承（命题~A.17 和命题~A.23）。特别地，由此可得拓扑 $n$ 流形的每个开子集本身就是一个拓扑 $n$ 流形（当然带有的是子空间拓扑）。
+
+我们应当注意，有些作者选择从流形的定义中略去 Hausdorff 性质或第二可数性，或两者都略去。然而，关于流形的大多数有趣结果实际上确实要求这些性质，而且在"现实中"遇到一个空间本来会是流形、只因为不满足这两条假设之一而例外的情形极为罕见。几个简单例子见习题~1-1 和习题~1-2；一个更复杂的例子（一个连通、局部欧几里得、Hausdorff 但不是第二可数的空间）见 [LeeTM, 习题~4-6]。
+
+\subsection{坐标图}\label{subsection:ch01-坐标图}
+
+设 $M$ 是一个拓扑 $n$ 流形。$M$ 上的一个坐标图（或简称图）是一对 $(U,\varphi)$，其中 $U$ 是 $M$ 的一个开子集，$\varphi:U\to\widetilde{U}$ 是从 $U$ 到开子集 $\widetilde{U}=\varphi(U)\subset\mathbb{R}^{n}$ 的一个同胚（\cref{figure:ch01-1.2}）。由拓扑流形的定义，每个点 $p\in M$ 都包含在某个图 $(U,\varphi)$ 的定义域中。如果 $\varphi(p)=0$，我们称该图以 $p$ 为中心。如果 $(U,\varphi)$ 是任意一个定义域包含 $p$ 的图，只需减去常向量 $\varphi(p)$，就容易得到一个以 $p$ 为中心的新图。
+
+给定一个图 $(U,\varphi)$，我们称集合 $U$ 为坐标域，或称其为它每个点的坐标邻域。此外，如果 $\varphi(U)$ 是 $\mathbb{R}^{n}$ 中的一个开球，则 $U$ 称为坐标球；如果 $\varphi(U)$ 是一个开立方体，$U$ 称为坐标立方体。映射 $\varphi$ 称为（局部）坐标映射，而 $\varphi$ 的分量函数 $(x^{1},\dots,x^{n})$（由 $\varphi(p)=\bigl(x^{1}(p),\dots,x^{n}(p)\bigr)$ 定义）称为 $U$ 上的局部坐标。
+
+我们有时写"$(U,\varphi)$ 是一个包含 $p$ 的图"作为"$(U,\varphi)$ 是一个定义域 $U$ 包含 $p$ 的图"的简写。如果我们想强调坐标函数 $(x^{1},\dots,x^{n})$ 而不是坐标映射 $\varphi$，有时把图记作 $\bigl(U,(x^{1},\dots,x^{n})\bigr)$ 或 $(U,(x^{i}))$。
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.8\textwidth]{fig-01-2.png}
+\caption{坐标图}\label{figure:ch01-1.2}
+\end{figure}
+
+\subsection{拓扑流形的例子}\label{subsection:ch01-拓扑流形的例子}
+
+下面是一些简单的例子。
+
+\begin{example}[连续函数的图像]\label{example:ch01-连续函数的图像}
+设 $U\subset\mathbb{R}^{n}$ 是一个开子集，$f:U\to\mathbb{R}^{k}$ 是一个连续函数。$f$ 的图像是 $\mathbb{R}^{n}\times\mathbb{R}^{k}$ 中如下定义的子集
+\begin{align*}
+\Gamma(f)=\{(x,y)\in\mathbb{R}^{n}\times\mathbb{R}^{k}:x\in U\text{ 且 }y=f(x)\},
+\end{align*}
+带有的是子空间拓扑。设 $\pi_{1}:\mathbb{R}^{n}\times\mathbb{R}^{k}\to\mathbb{R}^{n}$ 表示到第一个因子的投影，令 $\varphi:\Gamma(f)\to U$ 为 $\pi_{1}$ 在 $\Gamma(f)$ 上的限制：
+\begin{align*}
+\varphi(x,y)=x,\qquad (x,y)\in\Gamma(f).
+\end{align*}
+因为 $\varphi$ 是连续映射的限制，它是连续的；它是一个同胚，因为它有连续逆 $\varphi^{-1}(x)=(x,f(x))$。因此 $\Gamma(f)$ 是一个 $n$ 维拓扑流形。事实上，$\Gamma(f)$ 同胚于 $U$ 本身，而 $(\Gamma(f),\varphi)$ 是一个整体坐标图，称为图像坐标。同样的观察适用于 $\mathbb{R}^{n+k}$ 中由把任意 $k$ 个坐标（不一定是最后 $k$ 个）等于其余 $n$ 个坐标的某个连续函数所定义的任意子集，其中其余 $n$ 个坐标限制在 $\mathbb{R}^{n}$ 的一个开子集中。
+\end{example}
+
+\begin{example}[球面]\label{example:ch01-球面}
+对每个整数 $n\geqslant 0$，单位 $n$ 球面 $S^{n}$ 是 Hausdorff 的且第二可数，因为它是 $\mathbb{R}^{n+1}$ 的一个拓扑子空间。为证明它是局部欧几里得的，对每个指标 $i=1,\dots,n+1$，令 $U_{i}^{+}$ 表示 $\mathbb{R}^{n+1}$ 中第 $i$ 个坐标为正的子集：
+\begin{align*}
+U_{i}^{+}=\{(x^{1},\dots,x^{n+1})\in\mathbb{R}^{n+1}:x^{i}>0\}.
+\end{align*}
+（见\cref{figure:ch01-1.3}。）类似地，$U_{i}^{-}$ 是使 $x^{i}<0$ 的集合。
+
+令 $f:B^{n}\to\mathbb{R}$ 为连续函数
+\begin{align*}
+f(u)=\sqrt{1-|u|^{2}}.
+\end{align*}
+于是对每个 $i=1,\dots,n+1$，容易验证 $U_{i}^{+}\cap S^{n}$ 是函数
+\begin{align*}
+x^{i}=f\bigl(x^{1},\dots,\widehat{x^{i}},\dots,x^{n+1}\bigr)
+\end{align*}
+的图像，其中帽号表示略去 $x^{i}$。类似地，$U_{i}^{-}\cap S^{n}$ 是
+\begin{align*}
+x^{i}=-f\bigl(x^{1},\dots,\widehat{x^{i}},\dots,x^{n+1}\bigr)
+\end{align*}
+的图像。因此，每个子集 $U_{i}^{\pm}\cap S^{n}$ 都是 $n$ 维局部欧几里得的，而由
+\begin{align*}
+\varphi_{i}^{\pm}(x^{1},\dots,x^{n+1})=(x^{1},\dots,\widehat{x^{i}},\dots,x^{n+1})
+\end{align*}
+给出的映射 $\varphi_{i}^{\pm}:U_{i}^{\pm}\cap S^{n}\to B^{n}$ 是 $S^{n}$ 的图像坐标。由于 $S^{n}$ 的每个点都至少在这 $2n+2$ 个图之一的定义域中，$S^{n}$ 是一个拓扑 $n$ 流形。
+\end{example}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.8\textwidth]{fig-01-3.png}
+\caption{$S^{n}$ 的图}\label{figure:ch01-1.3}
+\end{figure}
+
+\begin{example}[射影空间]\label{example:ch01-射影空间}
+$n$ 维实射影空间，记作 $\mathbb{RP}^{n}$（有时简记为 $P^{n}$），定义为 $\mathbb{R}^{n+1}$ 的 $1$ 维线性子空间所成的集合，带有由自然映射 $\pi:\mathbb{R}^{n+1}\setminus\{0\}\to\mathbb{RP}^{n}$ 所确定的商拓扑，该映射把每个点 $x\in\mathbb{R}^{n+1}\setminus\{0\}$ 映为由 $x$ 张成的子空间。$2$ 维射影空间 $\mathbb{RP}^{2}$ 称为射影平面。对任意点 $x\in\mathbb{R}^{n+1}\setminus\{0\}$，令 $[x]=\pi(x)\in\mathbb{RP}^{n}$ 表示由 $x$ 张成的直线。
+
+对每个 $i=1,\dots,n+1$，令 $\widetilde{U}_{i}\subset\mathbb{R}^{n+1}\setminus\{0\}$ 为使 $x^{i}\neq 0$ 的集合，并令 $U_{i}=\pi(\widetilde{U}_{i})\subset\mathbb{RP}^{n}$。由于 $\widetilde{U}_{i}$ 是一个饱和开子集，$U_{i}$ 是开的，且 $\pi|_{\widetilde{U}_{i}}:\widetilde{U}_{i}\to U_{i}$ 是一个商映射（见定理~A.27）。定义映射 $\varphi_{i}:U_{i}\to\mathbb{R}^{n}$ 为
+\begin{align*}
+\varphi_{i}\bigl([x^{1},\dots,x^{n+1}]\bigr)=\left(\frac{x^{1}}{x^{i}},\dots,\frac{x^{i-1}}{x^{i}},\frac{x^{i+1}}{x^{i}},\dots,\frac{x^{n+1}}{x^{i}}\right).
+\end{align*}
+这个映射是良定义的，因为其值在 $x$ 乘以一个非零常数时不变。因为 $\varphi_{i}\circ\pi$ 连续，由商映射的特征性质（定理~A.27）知 $\varphi_{i}$ 连续。事实上，$\varphi_{i}$ 是一个同胚，因为它有连续逆
+\begin{align*}
+\varphi_{i}^{-1}(u^{1},\dots,u^{n})=[u^{1},\dots,u^{i-1},1,u^{i},\dots,u^{n}],
+\end{align*}
+这一点你可以自行验证。从几何上看，$\varphi_{i}([x])=u$ 意味着 $(u,1)$ 是直线 $[x]$ 与超平面 $x^{i}=1$ 的交点（\cref{figure:ch01-1.4}）。由于集合 $U_{1},\dots,U_{n+1}$ 覆盖 $\mathbb{RP}^{n}$，这表明 $\mathbb{RP}^{n}$ 是 $n$ 维局部欧几里得的。Hausdorff 性质和第二可数性留作练习。
+\end{example}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.8\textwidth]{fig-01-4.png}
+\caption{$\mathbb{R}P^{n}$ 的一个图}\label{figure:ch01-1.4}
+\end{figure}
+
+\begin{exercise}\label{exercise:ch01-1.6}
+证明 $\mathbb{RP}^{n}$ 是 Hausdorff 的且第二可数，因此是一个拓扑 $n$ 流形。
+\end{exercise}
+
+\begin{exercise}\label{exercise:ch01-1.7}
+证明 $\mathbb{RP}^{n}$ 是紧的。[提示：证明 $\pi$ 在 $S^{n}$ 上的限制是满射。]
+\end{exercise}
+
+\begin{example}[乘积流形]\label{example:ch01-乘积流形}
+设 $M_{1},\dots,M_{k}$ 分别是维数为 $n_{1},\dots,n_{k}$ 的拓扑流形。乘积空间 $M_{1}\times\cdots\times M_{k}$ 按如下方式被证明是一个维数为 $n_{1}+\cdots+n_{k}$ 的拓扑流形。由命题~A.17 和命题~A.23，它是 Hausdorff 的且第二可数，因此只需验证局部欧几里得性质。给定任意点 $(p_{1},\dots,p_{k})\in M_{1}\times\cdots\times M_{k}$，我们可以为每个 $M_{i}$ 选取一个坐标图 $(U_{i},\varphi_{i})$ 使 $p_{i}\in U_{i}$。乘积映射
+\begin{align*}
+\varphi_{1}\times\cdots\times\varphi_{k}:U_{1}\times\cdots\times U_{k}\to\mathbb{R}^{n_{1}+\cdots+n_{k}}
+\end{align*}
+是到其像的同胚，而其像是 $\mathbb{R}^{n_{1}+\cdots+n_{k}}$ 的一个乘积开子集。因此，$M_{1}\times\cdots\times M_{k}$ 是一个维数为 $n_{1}+\cdots+n_{k}$ 的拓扑流形，其坐标图形如 $(U_{1}\times\cdots\times U_{k},\varphi_{1}\times\cdots\times\varphi_{k})$。
+\end{example}
+
+\begin{example}[环面]\label{example:ch01-环面}
+对正整数 $n$，$n$ 环面（复数形式 tori）是乘积空间 $T^{n}=S^{1}\times\cdots\times S^{1}$。由上面的讨论，它是一个拓扑 $n$ 流形。（$2$ 环面通常简称为环面。）
+\end{example}
+
+\subsection{流形的拓扑性质}\label{subsection:ch01-流形的拓扑性质}
+
+就拓扑空间而言，流形是相当特殊的，因为它们与欧几里得空间共享如此多的重要性质。下面我们讨论其中几条将在全书中用到的性质。
+
+本节讨论的大多数性质都依赖于这样一个事实：每个流形都拥有一个性质特别好的拓扑基。
+
+\begin{lemma}\label{lemma:ch01-预紧坐标球可数基}
+每个拓扑流形都有一个由预紧坐标球组成的可数基。
+\end{lemma}
+
+\begin{proof}
+设 $M$ 是一个拓扑 $n$ 流形。首先考虑 $M$ 可由单个坐标图覆盖的特殊情形。设 $\varphi:M\to\widetilde{U}\subset\mathbb{R}^{n}$ 是一个整体坐标映射，令 $\mathcal{B}$ 为所有开球 $B_{r}(x)\subset\mathbb{R}^{n}$ 所成的集合，其中 $r$ 是有理数，$x$ 具有有理坐标，并且对某个 $r'>r$ 有 $B_{r'}(x)\subset\widetilde{U}$。每个这样的球在 $\widetilde{U}$ 中都是预紧的，且容易验证 $\mathcal{B}$ 是 $\widetilde{U}$ 拓扑的一个可数基。因为 $\varphi$ 是同胚，由此可得形如 $\varphi^{-1}(B)$（$B\in\mathcal{B}$）的集合所成族是 $M$ 拓扑的一个可数基，由预紧坐标球组成，并以 $\varphi$ 的限制作为坐标映射。
+
+现在设 $M$ 是任意一个 $n$ 流形。按定义，$M$ 的每个点都在某个坐标图的定义域中。因为第二可数空间的每个开覆盖都有可数子覆盖（命题~A.16），$M$ 被可数多个坐标图 $\{(U_{i},\varphi_{i})\}$ 覆盖。由上一段的论证，每个坐标域 $U_{i}$ 都有一个由在 $U_{i}$ 中预紧的坐标球组成的可数基，而所有这些可数基的并是 $M$ 拓扑的一个可数基。若 $V\subset U_{i}$ 是其中一个球，则 $V$ 在 $U_{i}$ 中的闭包是紧的，又因为 $M$ 是 Hausdorff 的，它在 $M$ 中是闭的。由此可得 $V$ 在 $M$ 中的闭包与其在 $U_{i}$ 中的闭包相同，所以 $V$ 在 $M$ 中也是预紧的。
+\end{proof}
+
+\subsubsection{连通性}\label{subsubsection:ch01-连通性}
+
+坐标球基的存在对流形的连通性质有重要影响。回忆一个拓扑空间 $X$ 称为
+
+\begin{itemize}
+\item 连通的，如果不存在 $X$ 的两个不相交、非空、开子集其并为 $X$；
+\item 道路连通的，如果 $X$ 中每一对点都能用 $X$ 中的一条道路连接；
+\item 局部道路连通的，如果 $X$ 有一个由道路连通开子集组成的基。
+\end{itemize}
+
+（见附录~A。）下面的命题表明，对流形而言连通性与道路连通性是一致的。
+
+\begin{proposition}\label{proposition:ch01-连通与道路连通}
+设 $M$ 是一个拓扑流形。
+\begin{enumerate}[(a)]
+\item $M$ 是局部道路连通的。
+\item $M$ 连通当且仅当它是道路连通的。
+\item $M$ 的分支与其道路分支相同。
+\item $M$ 有可数多个分支，每个分支都是 $M$ 的一个开子集，且是一个连通的拓扑流形。
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+因为每个坐标球都是道路连通的，(a) 由 $M$ 有坐标球基这一事实得到。(b) 和 (c) 是 (a) 与命题~A.43 的直接推论。为证明 (d)，注意由命题~A.43 每个分支在 $M$ 中是开的，所以分支所成族是 $M$ 的一个开覆盖。因为 $M$ 是第二可数的，这个覆盖必有可数子覆盖。但由于所有分支都不相交，该覆盖本来就必须是可数的，也就是说 $M$ 只有可数多个分支。因为分支是开的，它们在子空间拓扑下是连通的拓扑流形。
+\end{proof}
+
+\subsubsection{局部紧性与仿紧性}\label{subsubsection:ch01-局部紧性与仿紧性}
+
+我们需要的流形的下一条拓扑性质是局部紧性（定义见附录~A）。
+
+\begin{proposition}[流形是局部紧的]\label{proposition:ch01-流形局部紧}
+每个拓扑流形都是局部紧的。
+\end{proposition}
+
+\begin{proof}
+引理~\cref{lemma:ch01-预紧坐标球可数基} 已表明每个流形都有一个由预紧开子集组成的基。
+\end{proof}
+
+流形具有的另一条关键拓扑性质称为仿紧性。它是局部紧性和第二可数性的推论，事实上也是把第二可数性纳入流形定义的主要原因之一。
+
+设 $M$ 是一个拓扑空间。$M$ 的子集族 $\mathcal{X}$ 称为局部有限的，如果 $M$ 的每个点都有一个邻域，它至多与 $\mathcal{X}$ 中有限多个集合相交。给定 $M$ 的一个覆盖 $\mathcal{U}$，另一个覆盖 $\mathcal{V}$ 称为 $\mathcal{U}$ 的加细，如果对每个 $V\in\mathcal{V}$ 都存在某个 $U\in\mathcal{U}$ 使 $V\subset U$。我们称 $M$ 是仿紧的，如果 $M$ 的每个开覆盖都容许一个开的、局部有限的加细。
+
+\begin{lemma}\label{lemma:ch01-局部有限集族}
+设 $\mathcal{X}$ 是拓扑空间 $M$ 的一个局部有限子集族。
+\begin{enumerate}[(a)]
+\item 集合族 $\{\overline{X}:X\in\mathcal{X}\}$ 也是局部有限的。
+\item $\bigcup_{X\in\mathcal{X}}X=\bigcup_{X\in\mathcal{X}}\overline{X}$。
+\end{enumerate}
+\end{lemma}
+
+\begin{exercise}\label{exercise:ch01-1.14}
+证明上面的引理。
+\end{exercise}
+
+\begin{theorem}[流形是仿紧的]\label{theorem:ch01-流形仿紧}
+每个拓扑流形都是仿紧的。事实上，给定一个拓扑流形 $M$、$M$ 的一个开覆盖 $\mathcal{X}$ 以及 $M$ 拓扑的任意一个基 $\mathcal{B}$，存在一个由 $\mathcal{B}$ 中元素组成的可数、局部有限开加细。
+\end{theorem}
+
+\begin{proof}
+给定定理假设中的 $M$、$\mathcal{X}$ 和 $\mathcal{B}$，令 $(K_{j})_{j=1}^{\infty}$ 是 $M$ 的一个由紧集构成的穷尽（命题~A.60）。对每个 $j$，令 $V_{j}=K_{j+1}\setminus\operatorname{Int}K_{j}$，$W_{j}=\operatorname{Int}K_{j+2}\setminus K_{j-1}$（其中若 $j<1$ 则把 $K_{j}$ 理解为 $\varnothing$）。于是 $V_{j}$ 是包含在开子集 $W_{j}$ 中的紧集。对每个 $x\in V_{j}$，存在某个 $X_{x}\in\mathcal{X}$ 包含 $x$，又因为 $\mathcal{B}$ 是基，存在 $B_{x}\in\mathcal{B}$ 使 $x\in B_{x}\subset X_{x}\cap W_{j}$。当 $x$ 遍历 $V_{j}$ 时所有这类集合 $B_{x}$ 所成族是 $V_{j}$ 的一个开覆盖，因而有有限子覆盖。当 $j$ 遍历正整数时所有这些有限子覆盖的并是 $M$ 的一个可数开覆盖，它加细 $\mathcal{X}$。因为 $V_{j}$ 的有限子覆盖由包含在 $W_{j}$ 中的集合组成，而除了当 $j-2\leqslant j'\leqslant j+2$ 时外 $W_{j}\cap W_{j'}=\varnothing$，所得覆盖是局部有限的。
+\end{proof}
+
+习题~1-5 表明，至少对连通空间而言，在流形的定义中仿紧性可以用来替代第二可数性。
+
+\subsubsection{流形的基本群}\label{subsubsection:ch01-流形的基本群}
+
+下面关于流形基本群的结果在第~4 章研究覆叠流形时将是重要的。基本群的简要回顾见附录~A。
+
+\begin{proposition}\label{proposition:ch01-基本群可数}
+拓扑流形的基本群是可数的。
+\end{proposition}
+
+\begin{proof}
+设 $M$ 是一个拓扑流形。由引理~\cref{lemma:ch01-预紧坐标球可数基}，存在一个覆盖 $M$ 的可数坐标球族 $\mathcal{B}$。对任意一对坐标球 $B,B'\in\mathcal{B}$，交集 $B\cap B'$ 至多有可数多个分支，每个分支都是道路连通的。令 $X$ 为一个可数集合，它对每对 $B,B'\in\mathcal{B}$（包括 $B=B'$）都从 $B\cap B'$ 的每个分支中取一个点。对每个 $B\in\mathcal{B}$ 以及满足 $x,x'\in B$ 的每个 $x,x'\in X$，令 $h_{x,x'}^{B}$ 为 $B$ 中从 $x$ 到 $x'$ 的某条道路。
+
+由于 $M$ 同一分支中任意两点处的基本群都同构，而 $X$ 在 $M$ 的每个分支中至少含一个点，我们不妨选一点 $p\in X$ 作为基点。定义特殊环路为以 $p$ 为基点、且等于形如 $h_{x,x'}^{B}$ 的道路的有限乘积的环路。显然，特殊环路的集合是可数的，每个特殊环路确定 $\pi_{1}(M,p)$ 的一个元素。因此为证明 $\pi_{1}(M,p)$ 可数，只需证明 $\pi_{1}(M,p)$ 的每个元素都由一个特殊环路表示。
+
+设 $f:[0,1]\to M$ 是以 $p$ 为基点的环路。当 $B$ 遍历 $\mathcal{B}$ 时，形如 $f^{-1}(B)$ 的集合的分支所成族是 $[0,1]$ 的一个开覆盖，故由紧性它有有限子覆盖。于是存在有限多个数 $0=a_{0}<a_{1}<\cdots<a_{k}=1$，使对某个 $B\in\mathcal{B}$ 有 $[a_{i-1},a_{i}]\subset f^{-1}(B)$。对每个 $i$，令 $f_{i}$ 为 $f$ 在区间 $[a_{i-1},a_{i}]$ 上的限制，重新参数化使其定义域为 $[0,1]$，并令 $B_{i}\in\mathcal{B}$ 为包含 $f_{i}$ 像的一个坐标球。对每个 $i$，有 $f(a_{i})\in B_{i}\cap B_{i+1}$，且存在某个 $x_{i}\in X$ 与 $f(a_{i})$ 位于 $B_{i}\cap B_{i+1}$ 的同一分支中。令 $g_{i}$ 为 $B_{i}\cap B_{i+1}$ 中从 $x_{i}$ 到 $f(a_{i})$ 的一条道路（\cref{figure:ch01-1.5}），其中约定 $x_{0}=x_{k}=p$，且 $g_{0}$ 和 $g_{k}$ 都等于以 $p$ 为基点的常值道路 $c_{p}$。于是，因为 $\overline{g_{i}}\cdot g_{i}$ 同伦于一条常值道路（其中 $\overline{g_{i}}(t)=g_{i}(1-t)$ 是 $g_{i}$ 的反向道路），
+\begin{align*}
+f &\sim f_{1}\cdots f_{k}\\
+  &\sim g_{0}\cdot f_{1}\cdot\overline{g_{1}}\cdot g_{1}\cdot f_{2}\cdot\overline{g_{2}}\cdots\overline{g_{k-1}}\cdot g_{k-1}\cdot f_{k}\cdot\overline{g_{k}}\\
+  &\sim \widetilde{f}_{1}\cdot\widetilde{f}_{2}\cdots\widetilde{f}_{k},
+\end{align*}
+其中 $\widetilde{f}_{i}=g_{i-1}\cdot f_{i}\cdot\overline{g_{i}}$。对每个 $i$，$\widetilde{f}_{i}$ 是 $B_{i}$ 中从 $x_{i-1}$ 到 $x_{i}$ 的一条道路。由于 $B_{i}$ 是单连通的，$\widetilde{f}_{i}$ 道路同伦于 $h_{x_{i-1},x_{i}}^{B_{i}}$。由此可得 $f$ 道路同伦于一个特殊环路，如所断言。
+\end{proof}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.8\textwidth]{fig-01-5.png}
+\caption{流形的基本群是可数的}\label{figure:ch01-1.5}
+\end{figure}
+
+\end{document}

@@ -1,0 +1,698 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}}
+
+\begin{document}
+
+\section{波动方程}\label{section:ch02-wave}
+
+本节研究波动方程
+\begin{align}\label{align:ch02-wave}
+u_{tt}-\Delta u=0
+\end{align}
+以及非齐次波动方程
+\begin{align}\label{align:ch02-wave-nonhom}
+u_{tt}-\Delta u=f,
+\end{align}
+并配以适当的初始条件与边界条件。这里 $t>0$，$x\in U$，其中 $U\subset\mathbb{R}^n$ 为开集。未知函数为 $u:\overline{U}\times[0,\infty)\to\mathbb{R}$，$u=u(x,t)$，Laplace 算子 $\Delta$ 关于空间变量 $x=(x_1,\cdots,x_n)$ 取。在\eqref{align:ch02-wave-nonhom} 中函数 $f:U\times[0,\infty)\to\mathbb{R}$ 给定。常用的缩写是写作
+\begin{align*}
+\Box u\triangleq u_{tt}-\Delta u.
+\end{align*}
+我们将发现，波动方程解的行为与Laplace方程或热方程解的行为大不相同。例如，这些解一般不是 $C^\infty$ 的，具有有限传播速度，等等。
+
+\textbf{物理解释.} 波动方程是振动弦（$n=1$）、膜（$n=2$）或弹性固体（$n=3$）的一个简化模型。在这些物理解释中，$u(x,t)$ 表示点 $x$ 在时刻 $t\geqslant 0$ 沿某方向的位移。
+
+设 $V$ 表示 $U$ 的任一光滑子区域。则 $V$ 内的加速度为
+\begin{align*}
+\frac{\mathrm{d}^2}{\mathrm{d}t^2}\int_V u\,\mathrm{d}x=\int_V u_{tt}\,\mathrm{d}x,
+\end{align*}
+净接触力为
+\begin{align*}
+-\int_{\partial V}\mathbf{F}\cdot\boldsymbol{\nu}\,\mathrm{d}S,
+\end{align*}
+其中 $\mathbf{F}$ 表示通过 $\partial V$ 作用于 $V$ 的力，质量密度取为 1。Newton 第二定律断言质量乘加速度等于净力：
+\begin{align*}
+\int_V u_{tt}\,\mathrm{d}x=-\int_{\partial V}\mathbf{F}\cdot\boldsymbol{\nu}\,\mathrm{d}S.
+\end{align*}
+此恒等式对每个子区域 $V$ 都成立，故
+\begin{align*}
+u_{tt}=-\operatorname{div}\mathbf{F}.
+\end{align*}
+对弹性体，$\mathbf{F}$ 是位移梯度 $Du$ 的函数，从而
+\begin{align*}
+u_{tt}+\operatorname{div}\mathbf{F}(Du)=0.
+\end{align*}
+对小的 $Du$，线性化 $\mathbf{F}(Du)\approx-aDu$ 常常是恰当的；于是
+\begin{align*}
+u_{tt}-a\Delta u=0.
+\end{align*}
+当 $a=1$ 时即为波动方程。这一物理解释有力地表明：在时刻 $t=0$ 对位移 $u$ 与速度 $u_t$ 指定两个初始条件，在数学上是恰当的。
+
+\subsection{用球面平均求解}\label{subsection:ch02-wave-spherical}
+
+我们在 \S2.2.1 与 \S2.3.1 开头，分别寻找Laplace方程与热方程的某些缩放不变解。然而对波动方程，我们将改为介绍一种（相当）优雅的方法：先对 $n=1$ 直接求解\eqref{align:ch02-wave}，再用球面平均法对 $n\geqslant 2$ 求解。
+
+\subsubsection{$n=1$ 的解：d'Alembert 公式}
+
+我们先把注意力集中于全 $\mathbb{R}$ 上一维波动方程的初值问题：
+\begin{align}\label{align:ch02-wave-1d-ivp}
+\begin{cases}
+u_{tt}-u_{xx}=0 & \text{在 }\mathbb{R}\times(0,\infty)\text{ 中},\\
+u=g,\ u_t=h & \text{在 }\mathbb{R}\times\{t=0\}\text{ 上},
+\end{cases}
+\end{align}
+其中 $g,h$ 给定。我们希望导出用 $g,h$ 表示 $u$ 的公式。
+
+首先注意到\eqref{align:ch02-wave-1d-ivp} 中的 PDE 可以``因式分解''为
+\begin{align}\label{align:ch02-wave-factor}
+\left(\frac{\partial}{\partial t}+\frac{\partial}{\partial x}\right)\left(\frac{\partial}{\partial t}-\frac{\partial}{\partial x}\right)u=u_{tt}-u_{xx}=0.
+\end{align}
+写
+\begin{align}\label{align:ch02-wave-v}
+v(x,t)\triangleq\left(\frac{\partial}{\partial t}-\frac{\partial}{\partial x}\right)u(x,t).
+\end{align}
+则\eqref{align:ch02-wave-factor} 表示
+\begin{align*}
+v_t(x,t)+v_x(x,t)=0 \qquad (x\in\mathbb{R},\ t>0).
+\end{align*}
+这是一个常系数输运方程。应用 \S2.1.1 公式\eqref{align:ch02-transport-solution}（取 $n=1$，$b=1$），得
+\begin{align}\label{align:ch02-wave-v-sol}
+v(x,t)=a(x-t)
+\end{align}
+其中 $a(x)\triangleq v(x,0)$。合并\eqref{align:ch02-wave-factor}--\eqref{align:ch02-wave-v-sol}，得到
+\begin{align*}
+u_t(x,t)-u_x(x,t)=a(x-t) \qquad \text{在 }\mathbb{R}\times(0,\infty)\text{ 中}.
+\end{align*}
+这是一个非齐次输运方程；故由 \S2.1.2 公式\eqref{align:ch02-transport-nonhom-sol}（取 $n=1$，$b=-1$，$f(x,t)=a(x-t)$），对 $b(x)\triangleq u(x,0)$，有
+\begin{align}\label{align:ch02-wave-u-int}
+u(x,t)=\int_0^t a(x+(t-s)-s)\,\mathrm{d}s+b(x+t)
+=\frac{1}{2}\int_{x-t}^{x+t}a(y)\,\mathrm{d}y+b(x+t).
+\end{align}
+最后调用\eqref{align:ch02-wave-1d-ivp} 中的初始条件来计算 $a$ 与 $b$。第一个初始条件给出 $b(x)=g(x)$（$x\in\mathbb{R}$），而第二个初始条件与\eqref{align:ch02-wave-v} 蕴含
+\begin{align*}
+a(x)=v(x,0)=u_t(x,0)-u_x(x,0)=h(x)-g'(x) \qquad (x\in\mathbb{R}).
+\end{align*}
+代入\eqref{align:ch02-wave-u-int}，得
+\begin{align*}
+u(x,t)=\frac{1}{2}\int_{x-t}^{x+t}h(y)-g'(y)\,\mathrm{d}y+g(x+t).
+\end{align*}
+因此
+\begin{align}\label{align:ch02-dalembert}
+u(x,t)=\frac{1}{2}[g(x+t)+g(x-t)]+\frac{1}{2}\int_{x-t}^{x+t}h(y)\,\mathrm{d}y \qquad (x\in\mathbb{R},\ t\geqslant 0).
+\end{align}
+这就是 d'Alembert 公式。
+
+我们是在假定 $u$ 是\eqref{align:ch02-wave-1d-ivp} 的一个（充分光滑）解的前提下推导出公式\eqref{align:ch02-dalembert} 的。我们需要验证它确实是解。
+
+\begin{theorem}[波动方程的解，$n=1$]\label{theorem:ch02-wave-1d}设 $g\in C^2(\mathbb{R})$，$h\in C^1(\mathbb{R})$，由 d'Alembert 公式\eqref{align:ch02-dalembert} 定义 $u$。则
+\begin{enumerate}[(i)]
+\item $u\in C^2(\mathbb{R}\times[0,\infty))$；
+\item $u_{tt}-u_{xx}=0$ 在 $\mathbb{R}\times(0,\infty)$ 中；
+\item 对每一点 $x_0\in\mathbb{R}$，$\displaystyle\lim_{\substack{(x,t)\to(x_0,0)\\t>0}}u(x,t)=g(x_0)$，$\displaystyle\lim_{\substack{(x,t)\to(x_0,0)\\t>0}}u_t(x,t)=h(x_0)$。
+\end{enumerate}
+\end{theorem}
+
+证明是直接的计算。
+
+\begin{remark}\label{remark:ch02-wave-1d}
+\begin{enumerate}[(i)]
+\item 由\eqref{align:ch02-dalembert}，我们的解 $u$ 具有形式
+\begin{align*}
+u(x,t)=F(x+t)+G(x-t)
+\end{align*}
+其中 $F,G$ 为适当函数。反之，任一这种形式的函数都解 $u_{tt}-u_{xx}=0$。因而一维波动方程的通解是 $u_t-u_x=0$ 的通解与 $u_t+u_x=0$ 的通解之和。这是因式分解\eqref{align:ch02-wave-factor} 的一个推论。见习题 19。
+\item 由\eqref{align:ch02-dalembert} 可见，若 $g\in C^k$、$h\in C^{k-1}$，则 $u\in C^k$，但一般不再更光滑。因而波动方程不像热方程那样对初始数据作瞬时磨光。
+\end{enumerate}
+\end{remark}
+
+\textbf{一个反射方法.} 为说明 d'Alembert 公式的进一步应用，现考虑半直线 $\mathbb{R}_+=\{x>0\}$ 上的初/边值问题：
+\begin{align}\label{align:ch02-wave-halfline}
+\begin{cases}
+u_{tt}-u_{xx}=0 & \text{在 }\mathbb{R}_+\times(0,\infty)\text{ 中},\\
+u=g,\ u_t=h & \text{在 }\mathbb{R}_+\times\{t=0\}\text{ 上},\\
+u=0 & \text{在 }\{x=0\}\times(0,\infty)\text{ 上},
+\end{cases}
+\end{align}
+其中 $g,h$ 给定，且 $g(0)=h(0)=0$。
+
+我们通过把 $u,g,h$ 奇延拓到整个 $\mathbb{R}$，把\eqref{align:ch02-wave-halfline} 化为\eqref{align:ch02-wave-1d-ivp} 的形式。即令
+\begin{align*}
+\widetilde{u}(x,t)=
+\begin{cases}
+u(x,t) & (x\geqslant 0,\ t\geqslant 0),\\
+-u(-x,t) & (x\leqslant 0,\ t\geqslant 0),
+\end{cases}\quad
+\widetilde{g}(x)=
+\begin{cases}
+g(x) & (x\geqslant 0),\\
+-g(-x) & (x\leqslant 0),
+\end{cases}\quad
+\widetilde{h}(x)=
+\begin{cases}
+h(x) & (x\geqslant 0),\\
+-h(-x) & (x\leqslant 0).
+\end{cases}
+\end{align*}
+于是\eqref{align:ch02-wave-halfline} 成为
+\begin{align*}
+\begin{cases}
+\widetilde{u}_{tt}=\widetilde{u}_{xx} & \text{在 }\mathbb{R}\times(0,\infty)\text{ 中},\\
+\widetilde{u}=\widetilde{g},\ \widetilde{u}_t=\widetilde{h} & \text{在 }\mathbb{R}\times\{t=0\}\text{ 上}.
+\end{cases}
+\end{align*}
+故 d'Alembert 公式\eqref{align:ch02-dalembert} 给出
+\begin{align*}
+\widetilde{u}(x,t)=\frac{1}{2}[\widetilde{g}(x+t)+\widetilde{g}(x-t)]+\frac{1}{2}\int_{x-t}^{x+t}\widetilde{h}(y)\,\mathrm{d}y.
+\end{align*}
+回忆上面 $\widetilde{u},\widetilde{g},\widetilde{h}$ 的定义，可把此表达式改写为（对 $x\geqslant 0$，$t\geqslant 0$）：
+\begin{align}\label{align:ch02-wave-halfline-sol}
+u(x,t)=
+\begin{cases}
+\dfrac{1}{2}[g(x+t)+g(x-t)]+\dfrac{1}{2}\displaystyle\int_{x-t}^{x+t}h(y)\,\mathrm{d}y & \text{若 }x\geqslant t\geqslant 0,\\
+\dfrac{1}{2}[g(x+t)-g(t-x)]+\dfrac{1}{2}\displaystyle\int_{-x+t}^{x+t}h(y)\,\mathrm{d}y & \text{若 }0\leqslant x\leqslant t.
+\end{cases}
+\end{align}
+若 $h\equiv 0$，可把公式\eqref{align:ch02-wave-halfline-sol} 理解为：初始位移 $g$ 分裂为两部分，一部分以速度 1 向右运动，另一部分以速度 1 向左运动；后者随后在固定点 $x=0$ 处反射。注意，除非 $g''(0)=0$，我们的解不属于 $C^2$。
+
+\subsubsection{球面平均}
+
+现设 $n\geqslant 2$，$m\geqslant 2$，$u\in C^m(\mathbb{R}^n\times[0,\infty))$ 解初值问题
+\begin{align}\label{align:ch02-wave-ivp}
+\begin{cases}
+u_{tt}-\Delta u=0 & \text{在 }\mathbb{R}^n\times(0,\infty)\text{ 中},\\
+u=g,\ u_t=h & \text{在 }\mathbb{R}^n\times\{t=0\}\text{ 上}.
+\end{cases}
+\end{align}
+我们要用 $g,h$ 导出 $u$ 的显式公式。计划是：先研究 $u$ 在某些球面上的平均。这些平均作为时间 $t$ 与半径 $r$ 的函数，恰好满足 Euler--Poisson--Darboux 方程；对奇数 $n$，我们可把这个 PDE 化为通常的一维波动方程。应用 d'Alembert 公式，或更确切地其变形\eqref{align:ch02-wave-halfline-sol}，最终导出解的公式。
+
+\begin{definition}\label{definition:ch02-spherical-avg}
+\begin{enumerate}[(i)]
+\item 设 $x\in\mathbb{R}^n$，$t>0$，$r>0$。定义
+\begin{align}\label{align:ch02-spherical-U}
+U(x;r,t)\triangleq\fint_{\partial B(x,r)}u(y,t)\,\mathrm{d}S(y),
+\end{align}
+即 $u(\cdot,t)$ 在球面 $\partial B(x,r)$ 上的平均。
+\item 类似地，
+\begin{align}\label{align:ch02-spherical-GH}
+G(x;r)\triangleq\fint_{\partial B(x,r)}g(y)\,\mathrm{d}S(y),\qquad
+H(x;r)\triangleq\fint_{\partial B(x,r)}h(y)\,\mathrm{d}S(y).
+\end{align}
+\end{enumerate}
+\end{definition}
+
+对固定的 $x$，此后把 $U$ 看作 $r,t$ 的函数，并找出 $U$ 所满足的偏微分方程。
+
+\begin{lemma}[Euler--Poisson--Darboux 方程]\label{lemma:ch02-epd}固定 $x\in\mathbb{R}^n$，设 $u$ 满足\eqref{align:ch02-wave-ivp}。则 $U\in C^m(\overline{\mathbb{R}_+}\times[0,\infty))$，且
+\begin{align}\label{align:ch02-epd}
+\begin{cases}
+U_{tt}-U_{rr}-\dfrac{n-1}{r}U_r=0 & \text{在 }\mathbb{R}_+\times(0,\infty)\text{ 中},\\
+U=G,\ U_t=H & \text{在 }\mathbb{R}_+\times\{t=0\}\text{ 上}.
+\end{cases}
+\end{align}
+\end{lemma}
+
+\noindent \eqref{align:ch02-epd} 中的偏微分方程即 Euler--Poisson--Darboux 方程。（注意项 $U_{rr}+\dfrac{n-1}{r}U_r$ 是 Laplace 算子 $\Delta$ 在极坐标下的径向部分。）
+
+\begin{proof}
+1. 如同 \S2.2.2 定理\cref{theorem:ch02-mean-value} 的证明，对 $r>0$ 计算
+\begin{align}\label{align:ch02-Ur}
+U_r(x;r,t)=\frac{r}{n}\fint_{B(x,r)}\Delta u(y,t)\,\mathrm{d}y.
+\end{align}
+由此等式推出 $\lim_{r\to 0^+}U_r(x;r,t)=0$。再对\eqref{align:ch02-Ur} 求导，经一些计算后发现
+\begin{align}\label{align:ch02-Urr}
+U_{rr}(x;r,t)=\fint_{\partial B(x,r)}\Delta u\,\mathrm{d}S+\left(\frac{1}{n}-1\right)\fint_{B(x,r)}\Delta u\,\mathrm{d}y.
+\end{align}
+因而 $\lim_{r\to 0^+}U_{rr}(x;r,t)=\dfrac{1}{n}\Delta u(x,t)$。利用公式\eqref{align:ch02-Urr}，可类似地计算 $U_{rrr}$ 等，从而验证 $U\in C^m(\overline{\mathbb{R}_+}\times[0,\infty))$。
+
+2. 继续上面的计算，由\eqref{align:ch02-Ur} 与\eqref{align:ch02-wave-ivp}，有
+\begin{align*}
+U_r=\frac{r}{n}\fint_{B(x,r)}u_{tt}\,\mathrm{d}y=\frac{1}{n\alpha(n)}\frac{1}{r^{n-1}}\int_{B(x,r)}u_{tt}\,\mathrm{d}y.
+\end{align*}
+故
+\begin{align*}
+r^{n-1}U_r=\frac{1}{n\alpha(n)}\int_{B(x,r)}u_{tt}\,\mathrm{d}y,
+\end{align*}
+从而
+\begin{align*}
+(r^{n-1}U_r)_r=\frac{1}{n\alpha(n)}\int_{\partial B(x,r)}u_{tt}\,\mathrm{d}S
+=r^{n-1}\fint_{\partial B(x,r)}u_{tt}\,\mathrm{d}S=r^{n-1}U_{tt}.
+\end{align*}
+\end{proof}
+
+\subsubsection{$n=3,2$ 的解：Kirchhoff 公式与 Poisson 公式}
+
+接下来各小节的计划，是把 Euler--Poisson--Darboux 方程\eqref{align:ch02-epd} 化为通常的一维波动方程。由于完整步骤相当复杂，我们先在此停一下，按 $n=3$、$n=2$ 的顺序处理较简单的情形。
+
+\textbf{$n=3$ 的解.} 现取 $n=3$，设 $u\in C^2(\mathbb{R}^3\times[0,\infty))$ 解初值问题\eqref{align:ch02-wave-ivp}。回忆 $U,G,H$ 的定义\eqref{align:ch02-spherical-U}、\eqref{align:ch02-spherical-GH}，再令
+\begin{align}\label{align:ch02-3d-tilde}
+\widetilde{U}\triangleq rU,\qquad \widetilde{G}\triangleq rG,\qquad \widetilde{H}\triangleq rH.
+\end{align}
+我们断言 $\widetilde{U}$ 解
+\begin{align}\label{align:ch02-3d-tilde-eq}
+\begin{cases}
+\widetilde{U}_{tt}-\widetilde{U}_{rr}=0 & \text{在 }\mathbb{R}_+\times(0,\infty)\text{ 中},\\
+\widetilde{U}=\widetilde{G},\ \widetilde{U}_t=\widetilde{H} & \text{在 }\mathbb{R}_+\times\{t=0\}\text{ 上},\\
+\widetilde{U}=0 & \text{在 }\{r=0\}\times(0,\infty)\text{ 上}.
+\end{cases}
+\end{align}
+事实上，取 $n=3$，由\eqref{align:ch02-epd}，
+\begin{align*}
+\widetilde{U}_{tt}=rU_{tt}=r\left[U_{rr}+\frac{2}{r}U_r\right]=rU_{rr}+2U_r=(U+rU_r)_r=\widetilde{U}_{rr}.
+\end{align*}
+还注意到 $\widetilde{G}_{rr}(0)=0$。对\eqref{align:ch02-3d-tilde-eq} 应用公式\eqref{align:ch02-wave-halfline-sol}，对 $0\leqslant r\leqslant t$ 得
+\begin{align}\label{align:ch02-3d-tilde-sol}
+\widetilde{U}(x;r,t)=\frac{1}{2}[\widetilde{G}(r+t)-\widetilde{G}(t-r)]+\frac{1}{2}\int_{-r+t}^{r+t}\widetilde{H}(y)\,\mathrm{d}y.
+\end{align}
+由于\eqref{align:ch02-spherical-U} 蕴含 $u(x,t)=\lim_{r\to 0^+}U(x;r,t)$，由\eqref{align:ch02-3d-tilde}、\eqref{align:ch02-3d-tilde-sol} 推出
+\begin{align*}
+u(x,t)&=\lim_{r\to 0^+}\frac{\widetilde{U}(x;r,t)}{r}
+=\lim_{r\to 0^+}\left[\frac{\widetilde{G}(t+r)-\widetilde{G}(t-r)}{2r}+\frac{1}{2r}\int_{t-r}^{t+r}\widetilde{H}(y)\,\mathrm{d}y\right]\\
+&=\widetilde{G}'(t)+\widetilde{H}(t).
+\end{align*}
+于是由\eqref{align:ch02-spherical-GH}，推出
+\begin{align}\label{align:ch02-kirchhoff-a}
+u(x,t)=\frac{\partial}{\partial t}\left(t\fint_{\partial B(x,t)}g\,\mathrm{d}S\right)+t\fint_{\partial B(x,t)}h\,\mathrm{d}S.
+\end{align}
+但
+\begin{align*}
+\fint_{\partial B(x,t)}g(y)\,\mathrm{d}S(y)=\fint_{\partial B(0,1)}g(x+tz)\,\mathrm{d}S(z);
+\end{align*}
+从而
+\begin{align*}
+\frac{\partial}{\partial t}\left(\fint_{\partial B(x,t)}g\,\mathrm{d}S\right)=\fint_{\partial B(0,1)}Dg(x+tz)\cdot z\,\mathrm{d}S(z)
+=\fint_{\partial B(x,t)}Dg(y)\cdot\frac{y-x}{t}\,\mathrm{d}S(y).
+\end{align*}
+回到\eqref{align:ch02-kirchhoff-a}，因此得出
+\begin{align}\label{align:ch02-kirchhoff}
+u(x,t)=\fint_{\partial B(x,t)}t\,h(y)+g(y)+Dg(y)\cdot(y-x)\,\mathrm{d}S(y) \qquad (x\in\mathbb{R}^3,\ t>0).
+\end{align}
+这就是三维初值问题\eqref{align:ch02-wave-ivp} 解的 Kirchhoff 公式。
+
+\textbf{$n=2$ 的解.} 当 $n=2$ 时，没有像\eqref{align:ch02-3d-tilde} 那样的变换能把 Euler--Poisson--Darboux 方程化为一维波动方程。我们改为取 $n=2$ 的初值问题\eqref{align:ch02-wave-ivp}，干脆把它看作一个 $n=3$ 的问题，其中第三个空间变量 $x_3$ 不出现。
+
+事实上，设 $u\in C^2(\mathbb{R}^2\times[0,\infty))$ 对 $n=2$ 解\eqref{align:ch02-wave-ivp}，写
+\begin{align}\label{align:ch02-descent-2to3}
+\overline{u}(x_1,x_2,x_3,t)\triangleq u(x_1,x_2,t).
+\end{align}
+则\eqref{align:ch02-wave-ivp} 蕴含
+\begin{align}\label{align:ch02-3d-bar}
+\begin{cases}
+\overline{u}_{tt}-\Delta\overline{u}=0 & \text{在 }\mathbb{R}^3\times(0,\infty)\text{ 中},\\
+\overline{u}=\overline{g},\ \overline{u}_t=\overline{h} & \text{在 }\mathbb{R}^3\times\{t=0\}\text{ 上},
+\end{cases}
+\end{align}
+其中 $\overline{g}(x_1,x_2,x_3)\triangleq g(x_1,x_2)$，$\overline{h}(x_1,x_2,x_3)\triangleq h(x_1,x_2)$。若写 $x=(x_1,x_2)\in\mathbb{R}^2$，$\overline{x}=(x_1,x_2,0)\in\mathbb{R}^3$，则\eqref{align:ch02-3d-bar} 与 Kirchhoff 公式（形如\eqref{align:ch02-kirchhoff-a}）蕴含
+\begin{align}\label{align:ch02-poisson-a}
+u(x,t)=\overline{u}(\overline{x},t)=\frac{\partial}{\partial t}\left(t\fint_{\partial\overline{B}(\overline{x},t)}\overline{g}\,\mathrm{d}\overline{S}\right)+t\fint_{\partial\overline{B}(\overline{x},t)}\overline{h}\,\mathrm{d}\overline{S},
+\end{align}
+其中 $\overline{B}(\overline{x},t)$ 表示 $\mathbb{R}^3$ 中中心为 $\overline{x}$、半径 $t>0$ 的球，$\mathrm{d}\overline{S}$ 表示 $\partial\overline{B}(\overline{x},t)$ 上的二维曲面测度。由观察
+\begin{align*}
+\fint_{\partial\overline{B}(\overline{x},t)}\overline{g}\,\mathrm{d}\overline{S}
+=\frac{1}{4\pi t^2}\int_{\partial\overline{B}(\overline{x},t)}\overline{g}\,\mathrm{d}\overline{S}
+=\frac{2}{4\pi t^2}\int_{B(x,t)}g(y)(1+|D\gamma(y)|^2)^{1/2}\,\mathrm{d}y,
+\end{align*}
+其中 $\gamma(y)=(t^2-|y-x|^2)^{1/2}$（$y\in B(x,t)$），可化简\eqref{align:ch02-poisson-a}。因子``2''出现，是因为 $\partial\overline{B}(\overline{x},t)$ 由两个半球组成。注意 $(1+|D\gamma|^2)^{1/2}=t(t^2-|y-x|^2)^{-1/2}$。因此
+\begin{align*}
+\fint_{\partial\overline{B}(\overline{x},t)}\overline{g}\,\mathrm{d}\overline{S}
+=\frac{1}{2\pi t}\int_{B(x,t)}\frac{g(y)}{(t^2-|y-x|^2)^{1/2}}\,\mathrm{d}y
+=\frac{t}{2}\fint_{B(x,t)}\frac{g(y)}{(t^2-|y-x|^2)^{1/2}}\,\mathrm{d}y.
+\end{align*}
+于是公式\eqref{align:ch02-poisson-a} 成为
+\begin{align}\label{align:ch02-poisson-pre}
+u(x,t)=\frac{1}{2}\frac{\partial}{\partial t}\left(t^2\fint_{B(x,t)}\frac{g(y)}{(t^2-|y-x|^2)^{1/2}}\,\mathrm{d}y\right)
++\frac{t^2}{2}\fint_{B(x,t)}\frac{h(y)}{(t^2-|y-x|^2)^{1/2}}\,\mathrm{d}y.
+\end{align}
+但
+\begin{align*}
+t^2\fint_{B(x,t)}\frac{g(y)}{(t^2-|y-x|^2)^{1/2}}\,\mathrm{d}y
+=t\fint_{B(0,1)}\frac{g(x+tz)}{(1-|z|^2)^{1/2}}\,\mathrm{d}z,
+\end{align*}
+于是
+\begin{align*}
+\frac{\partial}{\partial t}\left(t^2\fint_{B(x,t)}\frac{g(y)}{(t^2-|y-x|^2)^{1/2}}\,\mathrm{d}y\right)
+&=\fint_{B(0,1)}\frac{g(x+tz)}{(1-|z|^2)^{1/2}}\,\mathrm{d}z
++t\fint_{B(0,1)}\frac{Dg(x+tz)\cdot z}{(1-|z|^2)^{1/2}}\,\mathrm{d}z\\
+&=t\fint_{B(x,t)}\frac{g(y)}{(t^2-|y-x|^2)^{1/2}}\,\mathrm{d}y
++t\fint_{B(x,t)}\frac{Dg(y)\cdot(y-x)}{(t^2-|y-x|^2)^{1/2}}\,\mathrm{d}y.
+\end{align*}
+因而可把\eqref{align:ch02-poisson-pre} 改写为
+\begin{align}\label{align:ch02-poisson-wave}
+u(x,t)=\frac{1}{2}\fint_{B(x,t)}\frac{t\,g(y)+t^2h(y)+t\,Dg(y)\cdot(y-x)}{(t^2-|y-x|^2)^{1/2}}\,\mathrm{d}y
+\end{align}
+对 $x\in\mathbb{R}^2$，$t>0$。这就是二维初值问题\eqref{align:ch02-wave-ivp} 解的 Poisson 公式。
+
+先对 $n=3$ 求解问题、再下降到 $n=2$ 的技巧，即\textbf{降维法}。
+
+\subsubsection{奇数 $n$ 的解}
+
+本小节对奇数 $n\geqslant 3$ 求解 Euler--Poisson--Darboux PDE。先记录一些技术性事实。
+
+\begin{lemma}[一些有用的恒等式]\label{lemma:ch02-wave-identities}设 $\phi:\mathbb{R}\to\mathbb{R}$ 为 $C^{k+1}$。则对 $k=1,2,\cdots$，
+\begin{enumerate}[(i)]
+\item $\left(\dfrac{\mathrm{d}^2}{\mathrm{d}r^2}\right)\left(\dfrac{1}{r}\dfrac{\mathrm{d}}{\mathrm{d}r}\right)^{k-1}(r^{2k-1}\phi(r))=\left(\dfrac{1}{r}\dfrac{\mathrm{d}}{\mathrm{d}r}\right)^k\left(r^{2k}\dfrac{\mathrm{d}\phi}{\mathrm{d}r}(r)\right)$；
+\item $\left(\dfrac{1}{r}\dfrac{\mathrm{d}}{\mathrm{d}r}\right)^{k-1}(r^{2k-1}\phi(r))=\sum_{j=0}^{k-1}\beta_j^k r^{j+1}\dfrac{\mathrm{d}^j\phi}{\mathrm{d}r^j}(r)$，其中常数 $\beta_j^k$（$j=0,\cdots,k-1$）与 $\phi$ 无关；
+\item $\beta_0^k=1\cdot 3\cdot 5\cdots(2k-1)$。
+\end{enumerate}
+\end{lemma}
+
+\noindent 归纳证明留作练习。
+
+现设 $n\geqslant 3$ 为奇数，令 $n=2k+1$（$k\geqslant 1$）。此后设 $u\in C^{k+1}(\mathbb{R}^n\times[0,\infty))$ 解初值问题\eqref{align:ch02-wave-ivp}。则由\eqref{align:ch02-spherical-U} 定义的函数 $U$ 为 $C^{k+1}$。
+
+\begin{definition}\label{definition:ch02-wave-odd-transform}
+我们写
+\begin{align}\label{align:ch02-wave-odd-transform}
+\begin{cases}
+\widetilde{U}(r,t)\triangleq\left(\dfrac{1}{r}\dfrac{\partial}{\partial r}\right)^{k-1}(r^{2k-1}U(x;r,t)),\\
+\widetilde{G}(r)\triangleq\left(\dfrac{1}{r}\dfrac{\partial}{\partial r}\right)^{k-1}(r^{2k-1}G(x;r)),\\
+\widetilde{H}(r)\triangleq\left(\dfrac{1}{r}\dfrac{\partial}{\partial r}\right)^{k-1}(r^{2k-1}H(x;r))
+\end{cases}
+\qquad (r>0,\ t\geqslant 0).
+\end{align}
+\end{definition}
+
+于是
+\begin{align}\label{align:ch02-wave-odd-initial}
+\widetilde{U}(r,0)=\widetilde{G}(r),\qquad \widetilde{U}_t(r,0)=\widetilde{H}(r).
+\end{align}
+
+接下来结合引理\cref{lemma:ch02-epd} 与引理\cref{lemma:ch02-wave-identities} 给出的恒等式，证明把 $U$ 变换为 $\widetilde{U}$ 的\eqref{align:ch02-wave-odd-transform} 实际上把 Euler--Poisson--Darboux 方程化为波动方程。
+
+\begin{lemma}[$\widetilde{U}$ 解一维波动方程]\label{lemma:ch02-wave-odd}我们有
+\begin{align*}
+\begin{cases}
+\widetilde{U}_{tt}-\widetilde{U}_{rr}=0 & \text{在 }\mathbb{R}_+\times(0,\infty)\text{ 中},\\
+\widetilde{U}=\widetilde{G},\ \widetilde{U}_t=\widetilde{H} & \text{在 }\mathbb{R}_+\times\{t=0\}\text{ 上},\\
+\widetilde{U}=0 & \text{在 }\{r=0\}\times(0,\infty)\text{ 上}.
+\end{cases}
+\end{align*}
+\end{lemma}
+
+\begin{proof}
+若 $r>0$，由引理\cref{lemma:ch02-wave-identities}(i)，
+\begin{align*}
+\widetilde{U}_{rr}=\left(\frac{\partial^2}{\partial r^2}\right)\left(\frac{1}{r}\frac{\partial}{\partial r}\right)^{k-1}(r^{2k-1}U)
+=\left(\frac{1}{r}\frac{\partial}{\partial r}\right)^k(r^{2k}U_r)
+=\left(\frac{1}{r}\frac{\partial}{\partial r}\right)^{k-1}[r^{2k-1}U_{rr}+2k r^{2k-2}U_r]\\
+=\left(\frac{1}{r}\frac{\partial}{\partial r}\right)^{k-1}\left[r^{2k-1}\left(U_{rr}+\frac{n-1}{r}U_r\right)\right]\quad(n=2k+1)
+=\left(\frac{1}{r}\frac{\partial}{\partial r}\right)^{k-1}(r^{2k-1}U_{tt})=\widetilde{U}_{tt},
+\end{align*}
+其中倒数第二个等号由\eqref{align:ch02-epd} 得到。利用引理\cref{lemma:ch02-wave-identities}(ii)，我们还得出在 $\{r=0\}$ 上 $\widetilde{U}=0$。
+\end{proof}
+
+由引理\cref{lemma:ch02-wave-odd}、\eqref{align:ch02-wave-odd-initial} 与公式\eqref{align:ch02-wave-halfline-sol}，对 $0\leqslant r\leqslant t$ 得出
+\begin{align}\label{align:ch02-wave-odd-sol}
+\widetilde{U}(r,t)=\frac{1}{2}[\widetilde{G}(r+t)-\widetilde{G}(t-r)]+\frac{1}{2}\int_{t-r}^{t+r}\widetilde{H}(y)\,\mathrm{d}y.
+\end{align}
+但回忆 $u(x,t)=\lim_{r\to 0}U(x;r,t)$。此外引理\cref{lemma:ch02-wave-identities}(ii) 断言
+\begin{align*}
+\widetilde{U}(r,t)=\left(\frac{1}{r}\frac{\partial}{\partial r}\right)^{k-1}(r^{2k-1}U(x;r,t))
+=\sum_{j=0}^{k-1}\beta_j^k r^{j+1}\frac{\partial^j}{\partial r^j}U(x;r,t),
+\end{align*}
+因而
+\begin{align*}
+\lim_{r\to 0}\frac{\widetilde{U}(r,t)}{\beta_0^k r}=\lim_{r\to 0}U(x;r,t)=u(x,t).
+\end{align*}
+于是\eqref{align:ch02-wave-odd-sol} 蕴含
+\begin{align*}
+u(x,t)=\frac{1}{\beta_0^k}\lim_{r\to 0}\left[\frac{\widetilde{G}(t+r)-\widetilde{G}(t-r)}{2r}+\frac{1}{2r}\int_{t-r}^{t+r}\widetilde{H}(y)\,\mathrm{d}y\right]
+=\frac{1}{\beta_0^k}[\widetilde{G}'(t)+\widetilde{H}(t)].
+\end{align*}
+最后，由于 $n=2k+1$，\eqref{align:ch02-wave-odd-sol} 与引理\cref{lemma:ch02-wave-identities}(iii) 给出如下表示公式：
+\begin{align}\label{align:ch02-wave-odd-formula}
+u(x,t)=\frac{1}{\gamma_n}\left[\left(\frac{\partial}{\partial t}\right)\left(\frac{1}{t}\frac{\partial}{\partial t}\right)^{\frac{n-3}{2}}\left(t^{n-2}\fint_{\partial B(x,t)}g\,\mathrm{d}S\right)
++\left(\frac{1}{t}\frac{\partial}{\partial t}\right)^{\frac{n-3}{2}}\left(t^{n-2}\fint_{\partial B(x,t)}h\,\mathrm{d}S\right)\right],
+\end{align}
+其中 $n$ 为奇数，$\gamma_n=1\cdot 3\cdot 5\cdots(n-2)$，对 $x\in\mathbb{R}^n$，$t>0$。
+
+我们注意到 $\gamma_3=1$，故\eqref{align:ch02-wave-odd-formula} 在 $n=3$ 时与\eqref{align:ch02-kirchhoff-a} 一致，从而与 Kirchhoff 公式\eqref{align:ch02-kirchhoff} 一致。
+
+尚需验证公式\eqref{align:ch02-wave-odd-formula} 确实给出\eqref{align:ch02-wave-ivp} 的解。
+
+\begin{theorem}[奇数维波动方程的解]\label{theorem:ch02-wave-odd}设 $n$ 为奇数，$n\geqslant 3$，并设 $g\in C^{m+1}(\mathbb{R}^n)$，$h\in C^m(\mathbb{R}^n)$，其中 $m=\dfrac{n+1}{2}$。由\eqref{align:ch02-wave-odd-formula} 定义 $u$。则
+\begin{enumerate}[(i)]
+\item $u\in C^2(\mathbb{R}^n\times[0,\infty))$；
+\item $u_{tt}-\Delta u=0$ 在 $\mathbb{R}^n\times(0,\infty)$ 中；
+\item 对每一点 $x_0\in\mathbb{R}^n$，$\displaystyle\lim_{\substack{(x,t)\to(x_0,0)\\x\in\mathbb{R}^n,\ t>0}}u(x,t)=g(x_0)$，$\displaystyle\lim_{\substack{(x,t)\to(x_0,0)\\x\in\mathbb{R}^n,\ t>0}}u_t(x,t)=h(x_0)$。
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+1. 先设 $g\equiv 0$，于是
+\begin{align}\label{align:ch02-wave-odd-g0}
+u(x,t)=\frac{1}{\gamma_n}\left(\frac{1}{t}\frac{\partial}{\partial t}\right)^{\frac{n-3}{2}}(t^{n-2}H(x;t)).
+\end{align}
+则引理\cref{lemma:ch02-wave-identities}(i) 使我们可计算
+\begin{align*}
+u_{tt}=\frac{1}{\gamma_n}\left(\frac{1}{t}\frac{\partial}{\partial t}\right)^{\frac{n-1}{2}}(t^{n-1}H_t).
+\end{align*}
+由 \S2.2.2 定理\cref{theorem:ch02-mean-value} 证明中的计算，我们还看到
+\begin{align*}
+H_t=\frac{t}{n}\fint_{B(x,t)}\Delta h\,\mathrm{d}y.
+\end{align*}
+因而
+\begin{align*}
+u_{tt}=\frac{1}{n\alpha(n)\gamma_n}\left(\frac{1}{t}\frac{\partial}{\partial t}\right)^{\frac{n-1}{2}}\left(\int_{B(x,t)}\Delta h\,\mathrm{d}y\right)
+=\frac{1}{n\alpha(n)\gamma_n}\left(\frac{1}{t}\frac{\partial}{\partial t}\right)^{\frac{n-3}{2}}\left(\frac{1}{t}\int_{\partial B(x,t)}\Delta h\,\mathrm{d}S\right).
+\end{align*}
+另一方面，
+\begin{align*}
+\Delta H(x;t)=\Delta_x\fint_{\partial B(0,t)}h(x+y)\,\mathrm{d}S(y)=\fint_{\partial B(x,t)}\Delta h\,\mathrm{d}S.
+\end{align*}
+因而\eqref{align:ch02-wave-odd-g0} 与上述计算蕴含 $u_{tt}=\Delta u$ 在 $\mathbb{R}^n\times(0,\infty)$ 中。若 $h\equiv 0$，类似计算可行。
+
+2. 利用引理\cref{lemma:ch02-wave-identities}(ii)--(iii) 验证 $u$ 取到正确的初始条件，留作练习。
+\end{proof}
+
+\begin{remark}\label{remark:ch02-wave-odd}
+\begin{enumerate}[(i)]
+\item 注意，为计算 $u(x,t)$，我们只需 $g,h$ 及其导数在球面 $\partial B(x,t)$ 上的信息，而不需要在整个球 $B(x,t)$ 上的信息。
+\item 把公式\eqref{align:ch02-wave-odd-formula} 与 d'Alembert 公式\eqref{align:ch02-dalembert}（$n=1$）比较，我们观察到后者不涉及 $g$ 的导数。这提示：对 $n>1$，波动方程\eqref{align:ch02-wave-ivp} 的解在时刻 $t>0$ 不必像其初值 $g$ 那样光滑：$g$ 中的不规则性可能在时刻 $t>0$ 聚焦，从而使 $u$ 较不光滑。（后文 \S2.4.3 将看到，$u$ 的``能量范数''对 $t>0$ 并不恶化。）
+\item 再次（如同 $n=1$ 的情形）看到初始扰动有限传播速度的现象。
+\item 公式\eqref{align:ch02-wave-odd-formula} 的一种完全不同的推导（用到热方程！）见 \S4.3.3。
+\end{enumerate}
+\end{remark}
+
+\subsubsection{偶数 $n$ 的解}
+
+现设 $n$ 为偶数。设 $u$ 是\eqref{align:ch02-wave-ivp} 的一个 $C^m$ 解，$m=\dfrac{n+2}{2}$。我们要为 $u$ 构造形如\eqref{align:ch02-wave-odd-formula} 的表示公式。如同上面 $n=2$ 的技巧，注意到
+\begin{align}\label{align:ch02-descent-even}
+\overline{u}(x_1,\cdots,x_{n+1},t)\triangleq u(x_1,\cdots,x_n,t)
+\end{align}
+解 $\mathbb{R}^{n+1}\times(0,\infty)$ 中的波动方程，其初始条件为在 $\mathbb{R}^{n+1}\times\{t=0\}$ 上 $\overline{u}=\overline{g}$，$\overline{u}_t=\overline{h}$，其中
+\begin{align}\label{align:ch02-descent-even-gh}
+\overline{g}(x_1,\cdots,x_{n+1})\triangleq g(x_1,\cdots,x_n),\qquad
+\overline{h}(x_1,\cdots,x_{n+1})\triangleq h(x_1,\cdots,x_n).
+\end{align}
+由于 $n+1$ 为奇数，可对 $\overline{u}$ 应用\eqref{align:ch02-wave-odd-formula}（以 $n+1$ 代替 $n$），得到用 $\overline{g},\overline{h}$ 表示 $\overline{u}$ 的表示公式。然后\eqref{align:ch02-descent-even}、\eqref{align:ch02-descent-even-gh} 立刻给出用 $g,h$ 表示 $u$ 的公式。这又是降维法。
+
+为完成细节，固定 $x\in\mathbb{R}^n$，$t>0$，写 $\overline{x}=(x_1,\cdots,x_n,0)\in\mathbb{R}^{n+1}$。则以 $n+1$ 代替 $n$ 的\eqref{align:ch02-wave-odd-formula} 给出
+\begin{align}\label{align:ch02-wave-even-formula-pre}
+u(x,t)=\frac{1}{\gamma_{n+1}}\Bigg[&\frac{\partial}{\partial t}\left(\frac{1}{t}\frac{\partial}{\partial t}\right)^{\frac{n-2}{2}}\left(t^{n-1}\fint_{\partial\overline{B}(\overline{x},t)}\overline{g}\,\mathrm{d}\overline{S}\right)\\
++&\left(\frac{1}{t}\frac{\partial}{\partial t}\right)^{\frac{n-2}{2}}\left(t^{n-1}\fint_{\partial\overline{B}(\overline{x},t)}\overline{h}\,\mathrm{d}\overline{S}\right)\Bigg],\nonumber
+\end{align}
+其中 $\overline{B}(\overline{x},t)$ 表示 $\mathbb{R}^{n+1}$ 中中心为 $\overline{x}$、半径为 $t$ 的球，$\mathrm{d}\overline{S}$ 表示 $\partial\overline{B}(\overline{x},t)$ 上的 $n$ 维曲面测度。现
+\begin{align}\label{align:ch02-wave-even-avg}
+\fint_{\partial\overline{B}(\overline{x},t)}\overline{g}\,\mathrm{d}\overline{S}=\frac{1}{(n+1)\alpha(n+1)t^n}\int_{\partial\overline{B}(\overline{x},t)}\overline{g}\,\mathrm{d}\overline{S}.
+\end{align}
+注意 $\partial\overline{B}(\overline{x},t)\cap\{y_{n+1}\geqslant 0\}$ 是函数 $\gamma(y)\triangleq(t^2-|y-x|^2)^{1/2}$（$y\in B(x,t)\subset\mathbb{R}^n$）的图像。类似地，$\partial\overline{B}(\overline{x},t)\cap\{y_{n+1}\leqslant 0\}$ 是 $-\gamma$ 的图像。故\eqref{align:ch02-wave-even-avg} 蕴含
+\begin{align*}
+\fint_{\partial\overline{B}(\overline{x},t)}\overline{g}\,\mathrm{d}\overline{S}
+=\frac{2}{(n+1)\alpha(n+1)t^n}\int_{B(x,t)}g(y)(1+|D\gamma(y)|^2)^{1/2}\,\mathrm{d}y,
+\end{align*}
+因子``2''出现，是因为 $\partial\overline{B}(\overline{x},t)$ 由两个半球组成。注意 $(1+|D\gamma(y)|^2)^{1/2}=t(t^2-|y-x|^2)^{-1/2}$。把此代入，得
+\begin{align*}
+\fint_{\partial\overline{B}(\overline{x},t)}\overline{g}\,\mathrm{d}\overline{S}
+&=\frac{2}{(n+1)\alpha(n+1)t^{n-1}}\int_{B(x,t)}\frac{g(y)}{(t^2-|y-x|^2)^{1/2}}\,\mathrm{d}y\\
+&=\frac{2t\alpha(n)}{(n+1)\alpha(n+1)}\fint_{B(x,t)}\frac{g(y)}{(t^2-|y-x|^2)^{1/2}}\,\mathrm{d}y.
+\end{align*}
+把此公式以及以 $h$ 代 $g$ 的类似公式代入\eqref{align:ch02-wave-even-formula-pre}，得
+\begin{align*}
+u(x,t)=\frac{1}{\gamma_{n+1}}\frac{2\alpha(n)}{(n+1)\alpha(n+1)}
+\Bigg[&\frac{\partial}{\partial t}\left(\frac{1}{t}\frac{\partial}{\partial t}\right)^{\frac{n-2}{2}}\left(t^n\fint_{B(x,t)}\frac{g(y)}{(t^2-|y-x|^2)^{1/2}}\,\mathrm{d}y\right)\\
++&\left(\frac{1}{t}\frac{\partial}{\partial t}\right)^{\frac{n-2}{2}}\left(t^n\fint_{B(x,t)}\frac{h(y)}{(t^2-|y-x|^2)^{1/2}}\,\mathrm{d}y\right)\Bigg].
+\end{align*}
+由于 $\gamma_{n+1}=1\cdot 3\cdot 5\cdots(n-1)$，$\alpha(n)=\dfrac{\pi^{n/2}}{\Gamma(\frac{n+2}{2})}$，可算得 $\gamma_n=2\cdot 4\cdots(n-2)\cdot n$。于是偶数 $n$ 的表示公式为
+\begin{align}\label{align:ch02-wave-even-formula}
+u(x,t)=\frac{1}{\gamma_n}\Bigg[&\left(\frac{\partial}{\partial t}\right)\left(\frac{1}{t}\frac{\partial}{\partial t}\right)^{\frac{n-2}{2}}\left(t^n\fint_{B(x,t)}\frac{g(y)}{(t^2-|y-x|^2)^{1/2}}\,\mathrm{d}y\right)\\
++&\left(\frac{1}{t}\frac{\partial}{\partial t}\right)^{\frac{n-2}{2}}\left(t^n\fint_{B(x,t)}\frac{h(y)}{(t^2-|y-x|^2)^{1/2}}\,\mathrm{d}y\right)\Bigg],\nonumber
+\end{align}
+其中 $n$ 为偶数，$\gamma_n=2\cdot 4\cdots(n-2)\cdot n$，对 $x\in\mathbb{R}^n$，$t>0$。由于 $\gamma_2=2$，这在 $n=2$ 时与 Poisson 公式\eqref{align:ch02-poisson} 一致。
+
+\begin{theorem}[偶数维波动方程的解]\label{theorem:ch02-wave-even}设 $n$ 为偶数，$n\geqslant 2$，并设 $g\in C^{m+1}(\mathbb{R}^n)$，$h\in C^m(\mathbb{R}^n)$，其中 $m=\dfrac{n+2}{2}$。由\eqref{align:ch02-wave-even-formula} 定义 $u$。则
+\begin{enumerate}[(i)]
+\item $u\in C^2(\mathbb{R}^n\times[0,\infty))$；
+\item $u_{tt}-\Delta u=0$ 在 $\mathbb{R}^n\times(0,\infty)$ 中；
+\item 对每一点 $x_0\in\mathbb{R}^n$，$\displaystyle\lim_{\substack{(x,t)\to(x_0,0)\\x\in\mathbb{R}^n,\ t>0}}u(x,t)=g(x_0)$，$\displaystyle\lim_{\substack{(x,t)\to(x_0,0)\\x\in\mathbb{R}^n,\ t>0}}u_t(x,t)=h(x_0)$。
+\end{enumerate}
+\end{theorem}
+
+这由定理\cref{theorem:ch02-wave-odd} 得到。与公式\eqref{align:ch02-wave-odd-formula} 对照观察：对偶数 $n$，为计算 $u(x,t)$，我们需要 $u=g$、$u_t=h$ 在整个 $B(x,t)$ 上的信息，而不仅仅在 $\partial B(x,t)$ 上。
+
+\textbf{Huygens 原理.} 比较\eqref{align:ch02-wave-odd-formula} 与\eqref{align:ch02-wave-even-formula}，我们观察到：若 $n$ 为奇数且 $n\geqslant 3$，给定一点 $x\in\mathbb{R}^n$ 处的数据 $g,h$ 只在锥 $C=\{(y,t)\mid t>0,\ |x-y|<t\}$ 的边界 $\{(y,t)\mid t>0,\ |x-y|=t\}$ 上影响解 $u$。反之，若 $n$ 为偶数，数据 $g,h$ 影响整个 $C$ 内的 $u$。换言之，起源于 $x$ 的``扰动''在奇数维中沿一个清晰的波前传播，但在偶数维中，即使在波前的前缘过后仍持续产生影响。这就是 Huygens 原理。
+
+\subsection{非齐次问题}\label{subsection:ch02-wave-nonhom}
+
+现研究非齐次波动方程的初值问题
+\begin{align}\label{align:ch02-wave-nonhom-ivp}
+\begin{cases}
+u_{tt}-\Delta u=f & \text{在 }\mathbb{R}^n\times(0,\infty)\text{ 中},\\
+u=0,\ u_t=0 & \text{在 }\mathbb{R}^n\times\{t=0\}\text{ 上}.
+\end{cases}
+\end{align}
+受 Duhamel 原理（前面 \S2.3.1 引入）启发，定义 $u=u(x,t;s)$ 为
+\begin{align}\label{align:ch02-wave-nonhom-ivps}
+\begin{cases}
+u_{tt}(\cdot;s)-\Delta u(\cdot;s)=0 & \text{在 }\mathbb{R}^n\times(s,\infty)\text{ 中},\\
+u(\cdot;s)=0,\ u_t(\cdot;s)=f(\cdot,s) & \text{在 }\mathbb{R}^n\times\{t=s\}\text{ 上}
+\end{cases}
+\end{align}
+的解。现令
+\begin{align}\label{align:ch02-wave-duhamel}
+u(x,t)\triangleq\int_0^t u(x,t;s)\,\mathrm{d}s \qquad (x\in\mathbb{R}^n,\ t\geqslant 0).
+\end{align}
+Duhamel 原理断言这是
+\begin{align}\label{align:ch02-wave-nonhom-final}
+\begin{cases}
+u_{tt}-\Delta u=f & \text{在 }\mathbb{R}^n\times(0,\infty)\text{ 中},\\
+u=0,\ u_t=0 & \text{在 }\mathbb{R}^n\times\{t=0\}\text{ 上}
+\end{cases}
+\end{align}
+的解。
+
+\begin{theorem}[非齐次波动方程的解]\label{theorem:ch02-wave-nonhom}设 $n\geqslant 2$，$f\in C^{[n/2]+1}(\mathbb{R}^n\times[0,\infty))$。由\eqref{align:ch02-wave-duhamel} 定义 $u$。则
+\begin{enumerate}[(i)]
+\item $u\in C^2(\mathbb{R}^n\times[0,\infty))$；
+\item $u_{tt}-\Delta u=f$ 在 $\mathbb{R}^n\times(0,\infty)$ 中；
+\item 对每一点 $x_0\in\mathbb{R}^n$，$\displaystyle\lim_{\substack{(x,t)\to(x_0,0)\\x\in\mathbb{R}^n,\ t>0}}u(x,t)=0$，$\displaystyle\lim_{\substack{(x,t)\to(x_0,0)\\x\in\mathbb{R}^n,\ t>0}}u_t(x,t)=0$。
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+1. 若 $n$ 为奇数，$[n/2]+1=\dfrac{n+1}{2}$。由定理\cref{theorem:ch02-wave-odd}，对每个 $s\geqslant 0$ 有 $u(\cdot,\cdot;s)\in C^2(\mathbb{R}^n\times[s,\infty))$，故 $u\in C^2(\mathbb{R}^n\times[0,\infty))$。若 $n$ 为偶数，$[n/2]+1=\dfrac{n+2}{2}$。故由定理\cref{theorem:ch02-wave-even}，$u\in C^2(\mathbb{R}^n\times[0,\infty))$。
+
+2. 然后计算
+\begin{align*}
+u_t(x,t)&=u(x,t;t)+\int_0^t u_t(x,t;s)\,\mathrm{d}s=\int_0^t u_t(x,t;s)\,\mathrm{d}s,\\
+u_{tt}(x,t)&=u_t(x,t;t)+\int_0^t u_{tt}(x,t;s)\,\mathrm{d}s=f(x,t)+\int_0^t u_{tt}(x,t;s)\,\mathrm{d}s.
+\end{align*}
+此外，
+\begin{align*}
+\Delta u(x,t)=\int_0^t\Delta u(x,t;s)\,\mathrm{d}s=\int_0^t u_{tt}(x,t;s)\,\mathrm{d}s.
+\end{align*}
+因而
+\begin{align*}
+u_{tt}(x,t)-\Delta u(x,t)=f(x,t) \qquad (x\in\mathbb{R}^n,\ t>0),
+\end{align*}
+并且显然对 $x\in\mathbb{R}^n$ 有 $u(x,0)=u_t(x,0)=0$。
+\end{proof}
+
+一般非齐次问题的解，因而是\eqref{align:ch02-wave-ivp} 的解（由公式\eqref{align:ch02-dalembert}、\eqref{align:ch02-wave-odd-formula} 或\eqref{align:ch02-wave-even-formula} 给出）与\eqref{align:ch02-wave-nonhom-final} 的解（由\eqref{align:ch02-wave-duhamel} 给出）之和。
+
+\begin{example}\label{example:ch02-wave-nonhom}
+\begin{enumerate}[(i)]
+\item 我们显式解出 $n=1$ 时\eqref{align:ch02-wave-nonhom-final} 如何求解。此时 d'Alembert 公式\eqref{align:ch02-dalembert} 给出
+\begin{align*}
+u(x,t;s)=\frac{1}{2}\int_{x-t+s}^{x+t-s}f(y,s)\,\mathrm{d}y,\qquad
+u(x,t)=\frac{1}{2}\int_0^t\int_{x-t+s}^{x+t-s}f(y,s)\,\mathrm{d}y\,\mathrm{d}s.
+\end{align*}
+即
+\begin{align}\label{align:ch02-wave-nonhom-1d}
+u(x,t)=\frac{1}{2}\int_0^t\int_{x-s}^{x+s}f(y,t-s)\,\mathrm{d}y\,\mathrm{d}s \qquad (x\in\mathbb{R},\ t\geqslant 0).
+\end{align}
+\item 对 $n=3$，Kirchhoff 公式\eqref{align:ch02-kirchhoff} 给出
+\begin{align*}
+u(x,t;s)=(t-s)\fint_{\partial B(x,t-s)}f(y,s)\,\mathrm{d}S,
+\end{align*}
+从而
+\begin{align*}
+u(x,t)&=\int_0^t(t-s)\left(\fint_{\partial B(x,t-s)}f(y,s)\,\mathrm{d}S\right)\mathrm{d}s
+=\frac{1}{4\pi}\int_0^t\int_{\partial B(x,t-s)}\frac{f(y,s)}{t-s}\,\mathrm{d}S\,\mathrm{d}s\\
+&=\frac{1}{4\pi}\int_0^t\int_{\partial B(x,r)}\frac{f(y,t-r)}{r}\,\mathrm{d}S\,\mathrm{d}r.
+\end{align*}
+因此
+\begin{align}\label{align:ch02-retarded}
+u(x,t)=\frac{1}{4\pi}\int_{B(x,t)}\frac{f(y,t-|y-x|)}{|y-x|}\,\mathrm{d}y \qquad (x\in\mathbb{R}^3,\ t\geqslant 0)
+\end{align}
+解出 $n=3$ 时的\eqref{align:ch02-wave-nonhom-final}。右端被积式称为推迟势。
+\end{enumerate}
+\end{example}
+
+\subsection{能量方法}\label{subsection:ch02-wave-energy}
+
+显式公式\eqref{align:ch02-wave-odd-formula} 与\eqref{align:ch02-wave-even-formula} 表明：为对越来越大的 $n$ 保证波动方程存在 $C^2$ 解，必须对数据 $g,h$ 施加越来越多的光滑性假设。这提示：或许某种其他衡量函数大小与光滑性的方式更为恰当。事实上，我们将在本小节看到，波动方程关于某些积分``能量''范数（对一切 $n$）行为良好。
+
+\subsubsection{唯一性}
+
+设 $U\subset\mathbb{R}^n$ 为有界开集，边界 $\partial U$ 光滑；如常设 $U_T=U\times(0,T]$，$\Gamma_T=\overline{U_T}-U_T$，其中 $T>0$。我们感兴趣的初/边值问题是
+\begin{align}\label{align:ch02-wave-bvp}
+\begin{cases}
+u_{tt}-\Delta u=f & \text{在 }U_T\text{ 中},\\
+u=g & \text{在 }\Gamma_T\text{ 上},\\
+u_t=h & \text{在 }U\times\{t=0\}\text{ 上}.
+\end{cases}
+\end{align}
+
+\begin{theorem}[波动方程的唯一性]\label{theorem:ch02-wave-uniqueness}至多存在一个函数 $u\in C^2(\overline{U_T})$ 解\eqref{align:ch02-wave-bvp}。
+\end{theorem}
+
+\begin{proof}
+若 $\widetilde{u}$ 是另一这种解，则 $w\triangleq u-\widetilde{u}$ 解
+\begin{align*}
+\begin{cases}
+w_{tt}-\Delta w=0 & \text{在 }U_T\text{ 中},\\
+w=0 & \text{在 }\Gamma_T\text{ 上},\\
+w_t=0 & \text{在 }U\times\{t=0\}\text{ 上}.
+\end{cases}
+\end{align*}
+定义``能量''
+\begin{align*}
+E(t)\triangleq\frac{1}{2}\int_U w_t^2(x,t)+|Dw(x,t)|^2\,\mathrm{d}x \qquad (0\leqslant t\leqslant T).
+\end{align*}
+计算得
+\begin{align*}
+\dot{E}(t)=\int_U w_t w_{tt}+Dw\cdot Dw_t\,\mathrm{d}x \qquad \left(\dot{\ }=\frac{\mathrm{d}}{\mathrm{d}t}\right)
+=\int_U w_t(w_{tt}-\Delta w)\,\mathrm{d}x=0.
+\end{align*}
+没有边界项，因为在 $\partial U\times[0,T]$ 上 $w=0$，从而 $w_t=0$。于是对一切 $0\leqslant t\leqslant T$，$E(t)=E(0)=0$，故在 $U_T$ 内 $w_t,Dw\equiv 0$。由于在 $U\times\{t=0\}$ 上 $w\equiv 0$，推出在 $U_T$ 内 $w=u-\widetilde{u}\equiv 0$。
+\end{proof}
+
+\subsubsection{依赖区域}
+
+作为能量方法的又一例证，我们再次考察全空间中波动方程解的依赖区域。为此，设 $u\in C^2$ 解
+\begin{align*}
+u_{tt}-\Delta u=0 \qquad \text{在 }\mathbb{R}^n\times(0,\infty)\text{ 中}.
+\end{align*}
+固定 $x_0\in\mathbb{R}^n$，$t_0>0$，考虑顶点在 $(x_0,t_0)$ 的向后波动锥
+\begin{align*}
+K(x_0,t_0)\triangleq\{(x,t)\mid 0\leqslant t\leqslant t_0,\ |x-x_0|\leqslant t_0-t\}.
+\end{align*}
+
+\begin{theorem}[有限传播速度]\label{theorem:ch02-wave-finite-speed}若在 $B(x_0,t_0)\times\{t=0\}$ 上 $u\equiv u_t\equiv 0$，则在锥 $K(x_0,t_0)$ 内 $u\equiv 0$。
+\end{theorem}
+
+特别地，我们看到起源于 $B(x_0,t_0)$ 之外的任何``扰动''对 $K(x_0,t_0)$ 内的解没有影响，因而传播速度有限。至少在假定 $\mathbb{R}^n\times\{t=0\}$ 上 $g=u$、$h=u_t$ 充分光滑时，我们已从表示公式\eqref{align:ch02-wave-odd-formula}、\eqref{align:ch02-wave-even-formula} 得知此点。关键在于能量方法给出了一个简单得多的证明。
+
+\begin{proof}
+定义局部能量
+\begin{align*}
+e(t)\triangleq\frac{1}{2}\int_{B(x_0,t_0-t)}u_t^2(x,t)+|Du(x,t)|^2\,\mathrm{d}x \qquad (0\leqslant t\leqslant t_0).
+\end{align*}
+则
+\begin{align}\label{align:ch02-local-energy}
+\dot{e}(t)&=\int_{B(x_0,t_0-t)}u_t u_{tt}+Du\cdot Du_t\,\mathrm{d}x
+-\frac{1}{2}\int_{\partial B(x_0,t_0-t)}u_t^2+|Du|^2\,\mathrm{d}S\\
+&=\int_{B(x_0,t_0-t)}u_t(u_{tt}-\Delta u)\,\mathrm{d}x
++\int_{\partial B(x_0,t_0-t)}\frac{\partial u}{\partial\nu}u_t\,\mathrm{d}S
+-\frac{1}{2}\int_{\partial B(x_0,t_0-t)}u_t^2+|Du|^2\,\mathrm{d}S\nonumber\\
+&=\int_{\partial B(x_0,t_0-t)}\frac{\partial u}{\partial\nu}u_t-\frac{1}{2}u_t^2-\frac{1}{2}|Du|^2\,\mathrm{d}S.\nonumber
+\end{align}
+现由 Cauchy--Schwarz 不等式与 Cauchy 不等式（\S B.2），
+\begin{align}\label{align:ch02-local-energy-ineq}
+\left|\frac{\partial u}{\partial\nu}u_t\right|\leqslant|u_t||Du|\leqslant\frac{1}{2}u_t^2+\frac{1}{2}|Du|^2.
+\end{align}
+把\eqref{align:ch02-local-energy-ineq} 代入\eqref{align:ch02-local-energy}，得 $\dot{e}(t)\leqslant 0$；从而对一切 $0\leqslant t\leqslant t_0$，$e(t)\leqslant e(0)=0$。于是 $u_t,Du\equiv 0$，因而在锥 $K(x_0,t_0)$ 内 $u\equiv 0$。
+\end{proof}
+
+此证明向更复杂几何的推广见后 \S7.2.4。对非线性波动方程的类似计算，亦见 \S12.1。
+
+\end{document}

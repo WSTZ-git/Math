@@ -1,0 +1,514 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}}
+
+\begin{document}
+
+\section{弱解的存在性}\label{section:ch06-弱解存在性}
+
+我们继续\cref{subsection:ch06-弱解} 的讨论。
+
+\begin{definition}\label{definition:ch06-双线性型与弱解}
+\leavevmode
+\begin{enumerate}[(i)]
+\item 与散度型椭圆算子 $L$（由式~\eqref{align:ch06-散度型} 定义）相伴的双线性型 $B[,]$ 为
+\begin{align}
+B[u,v]\triangleq\int_{U}\sum_{i,j=1}^{n}a_{ij}u_{x_{i}}v_{x_{j}}+\sum_{i=1}^{n}b_{i}u_{x_{i}}v+cuv\,\mathrm{d}x
+\end{align}
+对 $u,v\in H^{1}_{0}(U)$。
+\item 我们称 $u\in H^{1}_{0}(U)$ 为边值问题~\eqref{align:ch06-Dirichlet问题} 的弱解，若对一切 $v\in H^{1}_{0}(U)$ 有
+\begin{align}
+B[u,v]=(f,v),
+\end{align}
+其中 $(,)$ 表示 $L^{2}(U)$ 中的内积。
+\end{enumerate}
+\end{definition}
+
+恒等式~\eqref{align:ch06-正交} 有时称为~\eqref{align:ch06-Dirichlet问题} 的变分形式。这一术语将在\cref{section:ch08-变分法} 的\cref{example:ch08-2-弹性} 中解释。
+
+更一般地，考虑边值问题
+\begin{align}
+\begin{cases}
+Lu=f_{0}-\sum_{i=1}^{n}f_{i,x_{i}} & \text{于}\ U,\\
+u=0 & \text{于}\ \partial U,
+\end{cases}
+\end{align}
+其中 $L$ 由式~\eqref{align:ch06-散度型} 定义，$f_{i}\in L^{2}(U)$（$i=0,\cdots,n$）。鉴于\cref{subsection:ch05-H-1} 阐述的理论，我们看到右端项 $f=f_{0}-\sum_{i=1}^{n}f_{i,x_{i}}$ 属于 $H^{-1}(U)$，即 $H^{1}_{0}(U)$ 的对偶空间。
+
+\begin{definition}\label{definition:ch06-H-1弱解}
+我们称 $u\in H^{1}_{0}(U)$ 为问题~\eqref{align:ch06-更高边界问题} 的弱解，只要对一切 $v\in H^{1}_{0}(U)$ 有
+\begin{align*}
+B[u,v]=\langle f,v\rangle,
+\end{align*}
+其中 $\langle f,v\rangle=\int_{U}f_{0}v+\sum_{i=1}^{n}f_{i}v_{x_{i}}\,\mathrm{d}x$，而 $\langle,\rangle$ 为 $H^{-1}(U)$ 与 $H^{1}_{0}(U)$ 的配对。
+\end{definition}
+
+\textbf{其他边界条件。} 此后我们如上一样只关注零边界条件的情形，但事实上具有给定非零边界值的问题可容易地转化到此设定。我们说明如下：现设 $\partial U$ 为 $C^{1}$，$u\in H^{1}(U)$ 为
+\begin{align*}
+\begin{cases}
+Lu=f & \text{于}\ U,\\
+u=g & \text{于}\ \partial U
+\end{cases}
+\end{align*}
+的弱解。这意味着 $u=g$ 在迹的意义下于 $\partial U$，且双线性型恒等式~\eqref{align:ch06-正交} 对一切 $v\in H^{1}_{0}(U)$ 成立。要使这成为可能，$g$ 必须是某个 $H^{1}$ 函数（设为 $w$）的迹。但此时 $\widetilde{u}\triangleq u-w$ 属于 $H^{1}_{0}(U)$，且是边值问题
+\begin{align*}
+\begin{cases}
+L\widetilde{u}=\widetilde{f} & \text{于}\ U,\\
+\widetilde{u}=0 & \text{于}\ \partial U
+\end{cases}
+\end{align*}
+的弱解，其中 $\widetilde{f}\triangleq f-Lw\in H^{-1}(U)$。
+
+见习题 3--6 以了解如何把另一些种类的 PDE 与边界条件转化为弱形式。
+
+\subsection{Lax--Milgram 定理}\label{subsection:ch06-LaxMilgram}
+
+我们现在引入线性泛函分析中一个相当简单的抽象原理，它将在\cref{subsection:ch06-能量估计} 中于某些情形下给出我们边值问题弱解的存在性与唯一性。
+
+本节假设 $H$ 为实Hilbert空间，范数 $\|\,\cdot\,\|$，内积 $(,)$。我们记 $\langle,\rangle$ 为 $H$ 与其对偶空间的配对。读者应按需复习\cref{section:appD-Hilbert空间}--\cref{section:appD-有界线性算子} 中描述的基本Hilbert空间理论。
+
+\begin{theorem}[Lax--Milgram 定理]\label{theorem:ch06-LaxMilgram}设
+\begin{align*}
+B:H\times H\to\mathbb{R}
+\end{align*}
+为双线性映射，存在常数 $\alpha,\beta>0$ 使
+\begin{enumerate}[(i)]
+\item
+\begin{align*}
+|B[u,v]|\leqslant\alpha\|u\|\,\|v\|\qquad (u,v\in H)
+\end{align*}
+且
+\item
+\begin{align*}
+\beta\|u\|^{2}\leqslant B[u,u]\qquad (u\in H).
+\end{align*}
+\end{enumerate}
+最后，设 $f:H\to\mathbb{R}$ 为 $H$ 上的有界线性泛函。则存在唯一元素 $u\in H$，使对一切 $v\in H$ 有
+\begin{align}
+B[u,v]=\langle f,v\rangle.
+\end{align}
+\end{theorem}
+
+\begin{proof}
+1. 对每个固定元素 $u\in H$，映射 $v\mapsto B[u,v]$ 是 $H$ 上的有界线性泛函，因而由 Riesz 表示定理（\cref{section:appD-有界线性算子}）断言存在唯一元素 $w\in H$ 满足
+\begin{align}
+B[u,v]=(w,v)\qquad (v\in H).
+\end{align}
+每当上式成立时写 $Au=w$，于是
+\begin{align}
+B[u,v]=(Au,v)\qquad (u,v\in H).
+\end{align}
+
+2. 我们先断言 $A:H\to H$ 是有界线性算子。事实上若 $\lambda_{1},\lambda_{2}\in\mathbb{R}$、$u_{1},u_{2}\in H$，则对每个 $v\in H$ 有
+\begin{align*}
+(A(\lambda_{1}u_{1}+\lambda_{2}u_{2}),v)
+&=B[\lambda_{1}u_{1}+\lambda_{2}u_{2},v] &&\text{由上式}\\
+&=\lambda_{1}B[u_{1},v]+\lambda_{2}B[u_{2},v]\\
+&=\lambda_{1}(Au_{1},v)+\lambda_{2}(Au_{2},v) &&\text{再由上式}\\
+&=(\lambda_{1}Au_{1}+\lambda_{2}Au_{2},v).
+\end{align*}
+此等式对每个 $v\in H$ 成立，故 $A$ 线性。此外
+\begin{align*}
+\|Au\|^{2}=(Au,Au)=B[u,Au]\leqslant\alpha\|u\|\,\|Au\|.
+\end{align*}
+因而对一切 $u\in H$ 有 $\|Au\|\leqslant\alpha\|u\|$，故 $A$ 有界。
+
+3. 其次我们断言
+\begin{align}
+A\ \text{一对一，且}\ R(A)\ \text{（}A\ \text{的值域）在}\ H\ \text{中闭}.
+\end{align}
+为证此，计算
+\begin{align*}
+\beta\|u\|^{2}\leqslant B[u,u]=(Au,u)\leqslant\|Au\|\,\|u\|.
+\end{align*}
+故 $\beta\|u\|\leqslant\|Au\|$。此不等式容易推出上述断言。
+
+4. 我们现证明
+\begin{align}
+R(A)=H.
+\end{align}
+否则，由于 $R(A)$ 闭，将存在非零元素 $w\in H$ 使 $w\in R(A)^{\perp}$。但此事实反过来蕴含矛盾 $\beta\|w\|^{2}\leqslant B[w,w]=(Aw,w)=0$。
+
+5. 其次，我们再由 Riesz 表示定理注意到，对某个元素 $w\in H$ 有
+\begin{align*}
+\langle f,v\rangle=(w,v)\qquad\text{对一切}\ v\in H.
+\end{align*}
+然后利用上述两断言找到 $u\in H$ 满足 $Au=w$。于是
+\begin{align}\label{align:ch06-LaxMilgram结论}
+B[u,v]=(Au,v)=(w,v)=\langle f,v\rangle\qquad (v\in H),
+\end{align}
+此即式~\eqref{align:ch06-LaxMilgram结论}。
+
+6. 最后，我们证明至多存在一个元素 $u\in H$ 满足式~\eqref{align:ch06-LaxMilgram结论}。因为若 $B[u,v]=\langle f,v\rangle$ 与 $B[\widetilde{u},v]=\langle f,v\rangle$ 同时成立，则 $B[u-\widetilde{u},v]=0$（$v\in H$）。令 $v=u-\widetilde{u}$，得 $\beta\|u-\widetilde{u}\|^{2}\leqslant B[u-\widetilde{u},u-\widetilde{u}]=0$。
+\end{proof}
+
+\begin{remark}\label{remark:ch06-LaxMilgram对称}
+若双线性型 $B[,]$ 对称，即 $B[u,v]=B[v,u]$（$u,v\in H$），则我们可以构造一个简单得多的证明：注意 $((u,v))\triangleq B[u,v]$ 是 $H$ 上的新内积，Riesz 表示定理可直接应用于它。因而 Lax--Milgram 定理的主要意义在于它不要求 $B[,]$ 对称。
+\end{remark}
+
+\subsection{能量估计}\label{subsection:ch06-能量估计}
+
+我们现回到\cref{subsection:ch06-弱解} 中由公式
+\begin{align*}
+B[u,v]=\int_{U}\sum_{i,j=1}^{n}a_{ij}u_{x_{i}}v_{x_{j}}+\sum_{i=1}^{n}b_{i}u_{x_{i}}v+cuv\,\mathrm{d}x
+\end{align*}
+定义的具体双线性型 $B[,]$（$u,v\in H^{1}_{0}(U)$），并尝试验证 Lax--Milgram 定理的假设。
+
+\begin{theorem}[能量估计]\label{theorem:ch06-能量估计}存在常数 $\alpha,\beta>0$ 及 $\gamma\geqslant 0$，使
+\begin{enumerate}[(i)]
+\item
+\begin{align*}
+|B[u,v]|\leqslant\alpha\|u\|_{H^{1}_{0}(U)}\|v\|_{H^{1}_{0}(U)}
+\end{align*}
+且
+\item
+\begin{align*}
+\beta\|u\|_{H^{1}_{0}(U)}^{2}\leqslant B[u,u]+\gamma\|u\|_{L^{2}(U)}^{2}
+\end{align*}
+对一切 $u,v\in H^{1}_{0}(U)$。
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+1. 我们容易检验
+\begin{align*}
+|B[u,v]|
+&\leqslant\sum_{i,j=1}^{n}\|a_{ij}\|_{L^{\infty}}\int_{U}|Du|\,|Dv|\,\mathrm{d}x
++\sum_{i=1}^{n}\|b_{i}\|_{L^{\infty}}\int_{U}|Du|\,|v|\,\mathrm{d}x
++\|c\|_{L^{\infty}}\int_{U}|u|\,|v|\,\mathrm{d}x\\
+&\leqslant\alpha\|u\|_{H^{1}_{0}(U)}\|v\|_{H^{1}_{0}(U)}
+\end{align*}
+其中 $\alpha$ 为适当常数。
+
+2. 此外，鉴于\cref{definition:ch06-椭圆性} 的椭圆性条件，我们有
+{\small\begin{align}
+\theta\int_{U}|Du|^{2}\,\mathrm{d}x
+\leqslant\int_{U}\sum_{i,j=1}^{n}a_{ij}u_{x_{i}}u_{x_{j}}\,\mathrm{d}x
+=B[u,u]-\int_{U}\sum_{i=1}^{n}b_{i}u_{x_{i}}u+cu^{2}\,\mathrm{d}x\nonumber\\
+\leqslant B[u,u]+\sum_{i=1}^{n}\|b_{i}\|_{L^{\infty}}\int_{U}|Du|\,|u|\,\mathrm{d}x\nonumber\\
+&\quad+\|c\|_{L^{\infty}}\int_{U}u^{2}\,\mathrm{d}x.
+\end{align}}
+由带 $\varepsilon$ 的 Cauchy 不等式（\cref{section:appB-有用不等式}），我们注意
+\begin{align*}
+\int_{U}|Du|\,|u|\,\mathrm{d}x\leqslant\varepsilon\int_{U}|Du|^{2}\,\mathrm{d}x+\frac{1}{4\varepsilon}\int_{U}u^{2}\,\mathrm{d}x\qquad (\varepsilon>0).
+\end{align*}
+我们把此估计代入上式，然后选 $\varepsilon>0$ 充分小，使 $\varepsilon\sum_{i=1}^{n}\|b_{i}\|_{L^{\infty}}<\dfrac{\theta}{2}$。于是
+\begin{align*}
+\frac{\theta}{2}\int_{U}|Du|^{2}\,\mathrm{d}x\leqslant B[u,u]+C\int_{U}u^{2}\,\mathrm{d}x
+\end{align*}
+其中 $C$ 为适当常数。此外我们回忆\cref{subsection:ch05-Morrey} 中的 Poincaré 不等式 $\|u\|_{L^{2}(U)}\leqslant C\|Du\|_{L^{2}(U)}$。由此容易推出
+\begin{align*}
+\beta\|u\|_{H^{1}_{0}(U)}^{2}\leqslant B[u,u]+\gamma\|u\|_{L^{2}(U)}^{2}
+\end{align*}
+其中 $\beta>0$、$\gamma\geqslant 0$ 为适当常数。
+\end{proof}
+
+现注意：若这些能量估计中 $\gamma>0$，则 $B[,]$ 并不精确满足 Lax--Milgram 定理的假设。下面关于弱解的存在性断言必须正视这一可能性。
+
+\begin{theorem}[弱解的第一存在定理]\label{theorem:ch06-第一存在定理}存在数 $\gamma\geqslant 0$，使对每个
+\begin{align}
+\mu\geqslant\gamma
+\end{align}
+及每个函数 $f\in L^{2}(U)$，边值问题
+\begin{align}
+\begin{cases}
+Lu+\mu u=f & \text{于}\ U,\\
+u=0 & \text{于}\ \partial U
+\end{cases}
+\end{align}
+存在唯一弱解 $u\in H^{1}_{0}(U)$。
+\end{theorem}
+
+\begin{proof}
+1. 取\cref{theorem:ch06-能量估计} 中的 $\gamma$，令 $\mu\geqslant\gamma$，然后定义双线性型
+\begin{align*}
+B_{\mu}[u,v]\triangleq B[u,v]+\mu(u,v)\qquad (u,v\in H^{1}_{0}(U)),
+\end{align*}
+它对应于算子 $L_{\mu}u\triangleq Lu+\mu u$。如前，$(,)$ 指 $L^{2}(U)$ 中的内积。于是 $B_{\mu}[,]$ 满足 Lax--Milgram 定理的假设。
+
+2. 现固定 $f\in L^{2}(U)$，令 $\langle f,v\rangle\triangleq(f,v)_{L^{2}(U)}$。这是 $L^{2}(U)$ 上、从而 $H^{1}_{0}(U)$ 上的有界线性泛函。
+
+我们应用 Lax--Milgram 定理找到唯一函数 $u\in H^{1}_{0}(U)$ 满足
+\begin{align*}
+B_{\mu}[u,v]=\langle f,v\rangle
+\end{align*}
+对一切 $v\in H^{1}_{0}(U)$；因而 $u$ 是式~\eqref{align:ch06-更高边界问题} 的唯一弱解。
+\end{proof}
+
+\textbf{$H^{1}_{0}$ 到 $H^{-1}$ 的映射。} 我们可类似地证明，对一切 $f_{i}\in L^{2}(U)$（$i=0,\cdots,n$），存在 PDE
+\begin{align}
+\begin{cases}
+Lu+\mu u=f_{0}-\sum_{i=1}^{n}f_{i,x_{i}} & \text{于}\ U,\\
+u=0 & \text{于}\ \partial U
+\end{cases}
+\end{align}
+的唯一弱解 $u$。事实上，只要注意 $\langle f,v\rangle=\int_{U}f_{0}v+\sum_{i=1}^{n}f_{i}v_{x_{i}}\,\mathrm{d}x$ 是 $H^{1}_{0}(U)$ 上的有界线性泛函，如\cref{subsection:ch05-H-1} 中先前所讨论的。
+
+特别地，我们推得映射
+\begin{align*}
+L_{\mu}=L+\mu I:H^{1}_{0}(U)\to H^{-1}(U)\qquad (\mu\geqslant\gamma)
+\end{align*}
+是同构。
+
+\textbf{例子。} 在 $Lu=-\Delta u$ 的情形，此时 $B[u,v]=\int_{U}Du\cdot Dv\,\mathrm{d}x$，我们用 Poincaré 不等式容易检验\cref{theorem:ch06-能量估计} 在 $\gamma=0$ 时成立。对一般算子 $Lu=-\sum_{i,j=1}^{n}(a_{ij}u_{x_{i}})_{x_{j}}+cu$，若 $c\geqslant 0$ 于 $U$，类似断言成立。
+
+\subsection{Fredholm 二择一}\label{subsection:ch06-Fredholm}
+
+我们接下来用紧算子的 Fredholm 理论（\cref{section:appD-紧算子} 讨论）来获取关于二阶椭圆 PDE 可解性的更详细信息。
+
+\begin{definition}\label{definition:ch06-伴随}
+\leavevmode
+\begin{enumerate}[(i)]
+\item 算子 $L^{*}$，即 $L$ 的形式伴随，为
+\begin{align*}
+L^{*}v\triangleq-\sum_{i,j=1}^{n}(a_{ij}v_{x_{j}})_{x_{i}}-\sum_{i=1}^{n}b_{i}v_{x_{i}}+\left(c-\sum_{i=1}^{n}b_{i,x_{i}}\right)v,
+\end{align*}
+只要 $b_{i}\in C^{1}(\overline{U})$（$i=1,\cdots,n$）。
+\item 伴随双线性型
+\begin{align*}
+B^{*}:H^{1}_{0}(U)\times H^{1}_{0}(U)\to\mathbb{R}
+\end{align*}
+定义为
+\begin{align*}
+B^{*}[v,u]\triangleq B[u,v]
+\end{align*}
+对一切 $u,v\in H^{1}_{0}(U)$。
+\item 我们称 $v\in H^{1}_{0}(U)$ 为伴随问题
+\begin{align*}
+\begin{cases}
+L^{*}v=f & \text{于}\ U,\\
+v=0 & \text{于}\ \partial U
+\end{cases}
+\end{align*}
+的弱解，只要对一切 $u\in H^{1}_{0}(U)$ 有
+\begin{align*}
+B^{*}[v,u]=(f,u).
+\end{align*}
+\end{enumerate}
+\end{definition}
+
+\begin{theorem}[弱解的第二存在定理]\label{theorem:ch06-第二存在定理}
+\begin{enumerate}[(i)]
+\item 以下两陈述恰有一个成立：或者
+\begin{enumerate}[$(\alpha)$]
+\item 对每个 $f\in L^{2}(U)$，边值问题
+\begin{align}
+\begin{cases}
+Lu=f & \text{于}\ U,\\
+u=0 & \text{于}\ \partial U
+\end{cases}
+\label{align:ch06-Dirichlet原}
+\end{align}
+存在唯一弱解 $u$；
+\end{enumerate}
+或者
+\begin{enumerate}[$(\beta)$]
+\item 齐次问题
+\begin{align}
+\begin{cases}
+Lu=0 & \text{于}\ U,\\
+u=0 & \text{于}\ \partial U
+\end{cases}
+\label{align:ch06-正交}
+\end{align}
+存在弱解 $u\not\equiv 0$。
+\end{enumerate}
+\item 此外，若断言 $(\beta)$ 成立，则式~\eqref{align:ch06-正交} 的弱解组成的子空间 $N\subset H^{1}_{0}(U)$ 维数有限，且等于问题
+\begin{align}
+\begin{cases}
+L^{*}v=0 & \text{于}\ U,\\
+v=0 & \text{于}\ \partial U
+\end{cases}
+\label{align:ch06-伴随齐次}
+\end{align}
+的弱解组成的子空间 $N^{*}\subset H^{1}_{0}(U)$ 的维数。
+\item 最后，边值问题~\eqref{align:ch06-Dirichlet原} 有弱解当且仅当
+\begin{align*}
+(f,v)=0
+\end{align*}
+对一切 $v\in N^{*}$。
+\end{enumerate}
+二择一 $(\alpha)$、$(\beta)$ 即 Fredholm 二择一。
+\end{theorem}
+
+\begin{proof}
+1. 如\cref{theorem:ch06-第一存在定理} 选 $\mu=\gamma$，定义双线性型
+\begin{align*}
+B_{\gamma}[u,v]\triangleq B[u,v]+\gamma(u,v),
+\end{align*}
+对应于算子 $L_{\gamma}u\triangleq Lu+\gamma u$。我们可设 $\gamma>0$。于是对每个 $g\in L^{2}(U)$，存在唯一函数 $u\in H^{1}_{0}(U)$ 求解
+\begin{align}
+B_{\gamma}[u,v]=(g,v)
+\end{align}
+对一切 $v\in H^{1}_{0}(U)$。每当上式成立时写
+\begin{align}
+u=L_{\gamma}^{-1}g.
+\end{align}
+
+2. 其次注意 $u\in H^{1}_{0}(U)$ 是式~\eqref{align:ch06-Dirichlet原} 的弱解当且仅当
+\begin{align}
+B_{\gamma}[u,v]=(\gamma u+f,v)
+\end{align}
+对一切 $v\in H^{1}_{0}(U)$，即当且仅当
+\begin{align}
+u=L_{\gamma}^{-1}(\gamma u+f).
+\end{align}
+我们把此等式改写为
+\begin{align}
+u-Ku=h,
+\end{align}
+其中
+\begin{align}
+Ku\triangleq\gamma L_{\gamma}^{-1}u,\qquad h\triangleq L_{\gamma}^{-1}f.
+\end{align}
+
+3. 我们现断言 $K:L^{2}(U)\to L^{2}(U)$ 是有界、线性、紧算子。事实上，由我们对 $\gamma$ 的选择及\cref{subsection:ch06-能量估计} 的能量估计，我们注意若式~\eqref{align:ch06-Bgamma} 成立，则
+\begin{align*}
+\beta\|u\|_{H^{1}_{0}(U)}^{2}\leqslant B_{\gamma}[u,u]=(g,u)\leqslant\|g\|_{L^{2}(U)}\|u\|_{L^{2}(U)}\leqslant\|g\|_{L^{2}(U)}\|u\|_{H^{1}_{0}(U)},
+\end{align*}
+故式~\eqref{align:ch06-w定义} 蕴含
+\begin{align*}
+\|Kg\|_{H^{1}_{0}(U)}\leqslant C\|g\|_{L^{2}(U)}\qquad (g\in L^{2}(U))
+\end{align*}
+其中 $C$ 为适当常数。但由 Rellich--Kondrachov 紧性定理（\cref{section:ch05-紧性}），$H^{1}_{0}(U)\Subset\subset \subset L^{2}(U)$，故我们推得 $K$ 是紧算子。
+
+4. 因而我们可应用\cref{section:appD-紧算子} 的 Fredholm 二择一：或者
+\begin{enumerate}[$(\alpha)$]
+\item 对每个 $h\in L^{2}(U)$，方程 $u-Ku=h$ 有唯一解 $u\in L^{2}(U)$；
+\end{enumerate}
+或者
+\begin{enumerate}[$(\beta)$]
+\item 方程 $u-Ku=0$ 在 $L^{2}(U)$ 中有非零解。
+\end{enumerate}
+若断言 $(\alpha)$ 成立，则由前面各式，问题~\eqref{align:ch06-Dirichlet原} 存在唯一弱解。另一方面，若断言 $(\beta)$ 成立，则必有 $\gamma\neq 0$，我们还回忆\cref{section:appD-紧算子}：方程 $u-Ku=0$ 的解空间 $N$ 维数有限，且等于方程
+\begin{align}
+v-K^{*}v=0
+\end{align}
+的解空间 $N^{*}$ 的维数。然而我们容易检验：$u-Ku=0$ 成立当且仅当 $u$ 是式~\eqref{align:ch06-正交} 的弱解，且 $v-K^{*}v=0$ 成立当且仅当 $v$ 是式~\eqref{align:ch06-伴随齐次} 的弱解。
+
+5. 最后，我们回忆方程 $u-Ku=h$ 有解当且仅当
+\begin{align*}
+(h,v)=0
+\end{align*}
+对一切求解 $v-K^{*}v=0$ 的 $v$。但由前面各式及 $v-K^{*}v=0$，计算
+\begin{align*}
+(h,v)=\frac{1}{\gamma}(Kf,v)=\frac{1}{\gamma}(f,K^{*}v)=\frac{1}{\gamma}(f,v).
+\end{align*}
+因而边值问题~\eqref{align:ch06-Dirichlet原} 有解当且仅当 $(f,v)=0$ 对式~\eqref{align:ch06-伴随齐次} 的一切弱解 $v$ 成立。
+\end{proof}
+
+\begin{theorem}[弱解的第三存在定理]\label{theorem:ch06-第三存在定理}
+\begin{enumerate}[(i)]
+\item 存在至多可数集 $\Sigma\subset\mathbb{R}$，使边值问题
+\begin{align}
+\begin{cases}
+Lu=\lambda u+f & \text{于}\ U,\\
+u=0 & \text{于}\ \partial U
+\end{cases}
+\label{align:ch06-更高边界问题}
+\end{align}
+对每个 $f\in L^{2}(U)$ 有唯一弱解，当且仅当 $\lambda\notin\Sigma$。
+\item 若 $\Sigma$ 无限，则 $\Sigma=\{\lambda_{k}\}_{k=1}^{\infty}$，为一非降序列之值，且 $\lambda_{k}\to+\infty$。
+\end{enumerate}
+\end{theorem}
+
+\begin{definition}\label{definition:ch06-谱}
+我们称 $\Sigma$ 为算子 $L$ 的（实）谱。
+\end{definition}
+
+特别注意，边值问题
+\begin{align*}
+\begin{cases}
+Lu=\lambda u & \text{于}\ U,\\
+u=0 & \text{于}\ \partial U
+\end{cases}
+\end{align*}
+有非平凡解 $w\not\equiv 0$ 当且仅当 $\lambda\in\Sigma$，此时 $\lambda$ 称为 $L$ 的特征值，$w$ 为相应特征函数。$L=-\Delta$ 时的偏微分方程 $Lu=\lambda u$ 有时称为 Helmholtz 方程。
+
+\begin{proof}
+1. 设 $\gamma$ 为\cref{theorem:ch06-能量估计} 中的常数，假设
+\begin{align}
+\lambda>-\gamma.
+\end{align}
+且不失一般性设 $\gamma>0$。
+
+2. 由 Fredholm 二择一，边值问题~\eqref{align:ch06-更高边界问题} 对每个 $f\in L^{2}(U)$ 有唯一弱解当且仅当 $u\equiv 0$ 是齐次问题
+\begin{align*}
+\begin{cases}
+Lu=\lambda u & \text{于}\ U,\\
+u=0 & \text{于}\ \partial U
+\end{cases}
+\end{align*}
+的唯一弱解。这反过来当且仅当 $u\equiv 0$ 是
+\begin{align}
+\begin{cases}
+Lu+\gamma u=(\gamma+\lambda)u & \text{于}\ U,\\
+u=0 & \text{于}\ \partial U
+\end{cases}
+\end{align}
+的唯一弱解。而上式恰在
+\begin{align}
+u=L_{\gamma}^{-1}(\gamma+\lambda)u=\frac{\gamma+\lambda}{\gamma}Ku
+\end{align}
+时成立，其中如\cref{theorem:ch06-第二存在定理} 的证明那样我们令 $Ku=\gamma L_{\gamma}^{-1}u$。还回忆该证明中 $K:L^{2}(U)\to L^{2}(U)$ 是有界、线性、紧算子。现若 $u\equiv 0$ 是上式的唯一解，我们看到
+\begin{align}
+\frac{\gamma}{\gamma+\lambda}\ \text{不是}\ K\ \text{的特征值}.
+\end{align}
+因而我们看到 PDE~\eqref{align:ch06-更高边界问题} 对每个 $f\in L^{2}(U)$ 有唯一弱解当且仅当上式成立。
+
+3. 由\cref{section:appD-紧算子} 的定理 6，$K$ 的所有特征值之集合或为有限集，否则为一收敛于零的序列之值。在第二种情形，由式~\eqref{align:ch06-lambdav} 与上式，我们看到 PDE~\eqref{align:ch06-更高边界问题} 对一切 $f\in L^{2}(U)$ 有唯一弱解，但序列 $\lambda_{k}\to+\infty$ 除外。
+\end{proof}
+
+\begin{theorem}[逆的有界性]\label{theorem:ch06-逆有界}若 $\lambda\notin\Sigma$，则存在常数 $C$，使每当 $f\in L^{2}(U)$、$u\in H^{1}_{0}(U)$ 为
+\begin{align*}
+\begin{cases}
+Lu=\lambda u+f & \text{于}\ U,\\
+u=0 & \text{于}\ \partial U
+\end{cases}
+\end{align*}
+的唯一弱解时，有
+\begin{align}
+\|u\|_{L^{2}(U)}\leqslant C\|f\|_{L^{2}(U)}.
+\end{align}
+常数 $C$ 只依赖于 $\lambda$、$U$ 及 $L$ 的系数。当 $\lambda$ 趋近特征值时 $C\to\infty$。
+\end{theorem}
+
+\begin{proof}
+否则，将存在序列 $\{f_{k}\}_{k=1}^{\infty}\subset L^{2}(U)$ 与 $\{u_{k}\}_{k=1}^{\infty}\subset H^{1}_{0}(U)$，使
+\begin{align*}
+\begin{cases}
+Lu_{k}=\lambda u_{k}+f_{k} & \text{于}\ U,\\
+u_{k}=0 & \text{于}\ \partial U
+\end{cases}
+\end{align*}
+在弱意义下，但
+\begin{align*}
+\|u_{k}\|_{L^{2}(U)}>k\|f_{k}\|_{L^{2}(U)}\qquad (k=1,\cdots).
+\end{align*}
+由于我们可不失一般性设 $\|u_{k}\|_{L^{2}(U)}=1$，我们看到 $f_{k}\to 0$ 于 $L^{2}(U)$。由通常的能量估计，序列 $\{u_{k}\}_{k=1}^{\infty}$ 在 $H^{1}_{0}(U)$ 中有界。因而存在子序列 $\{u_{k_{j}}\}_{j=1}^{\infty}\subset\{u_{k}\}_{k=1}^{\infty}$，使
+\begin{align}
+\begin{cases}
+u_{k_{j}}\rightharpoonup u & \text{弱于}\ H^{1}_{0}(U),\\
+u_{k_{j}}\to u & \text{于}\ L^{2}(U).
+\end{cases}
+\end{align}
+（弱收敛见\cref{section:appD-弱收敛}。）于是 $u$ 是
+\begin{align*}
+\begin{cases}
+Lu=\lambda u & \text{于}\ U,\\
+u=0 & \text{于}\ \partial U
+\end{cases}
+\end{align*}
+的弱解。由于 $\lambda\notin\Sigma$，$u\equiv 0$。然而上式还蕴含 $\|u\|_{L^{2}(U)}=1$，矛盾。
+\end{proof}
+
+\textbf{复值解。} 上述理论容易推广以包含复值解。给定复值 $u,v\in H^{1}(U)$，写
+\begin{align*}
+(u,v)_{L^{2}(U)}\triangleq\int_{U}\overline{u}v\,\mathrm{d}x,\qquad
+(u,v)_{H^{1}(U)}\triangleq\int_{U}Du\cdot D\overline{v}+\overline{u}v\,\mathrm{d}x,
+\end{align*}
+并令
+\begin{align*}
+B[u,v]\triangleq\int_{U}\sum_{i,j=1}^{n}a_{ij}u_{x_{i}}\overline{v}_{x_{j}}+\sum_{i=1}^{n}b_{i}u_{x_{i}}\overline{v}+cu\,\overline{v}\,\mathrm{d}x,
+\end{align*}
+
+\end{document}
