@@ -1,0 +1,365 @@
+\documentclass[../../main.tex]{subfiles}
+
+\begin{document}
+
+\section{乘积测度: Fubini 与 Tonelli 定理}\label{section:ch20-乘积测度}
+
+在本节, $(X,\mathcal{A},\mu)$ 和 $(Y,\mathcal{B},\nu)$ 为两个参考的测度空间. 考虑 $X$ 和 $Y$ 的笛卡儿积 $X\times Y$. 若 $A\subseteq X$ 且 $B\subseteq Y$, 我们称 $A\times B$ 为矩形. 若 $A\in\mathcal{A}$, $B\in\mathcal{B}$ 且 $\mu(A)<\infty$, $\nu(B)<\infty$, 我们称 $A\times B$ 为可测矩形.
+
+\begin{lemma}\label{lemma:ch20-矩形不交并}
+令 $\{A_{k}\times B_{k}\}_{k=1}^{\infty}$ 为可测矩形的可数不交族, 其并也是一个可测矩形 $A\times B$. 则
+\begin{align*}
+\mu(A)\times\nu(B)=\sum_{k=1}^{\infty}\mu(A_{k})\times\nu(B_{k}).
+\end{align*}
+\end{lemma}
+
+\begin{proof}
+固定点 $x\in A$. 对每个 $y\in B$, 点 $(x,y)$ 恰好属于一个 $A_{k}\times B_{k}$. 因此我们有下面的不交并:
+\begin{align*}
+B=\bigcup_{\{k\mid x\in A_{k}\}}B_{k}.
+\end{align*}
+根据测度 $\nu$ 的可数可加性,
+\begin{align*}
+\nu(B)=\sum_{\{k\mid x\in A_{k}\}}\nu(B_{k}).
+\end{align*}
+用特征函数重写该等式如下:
+\begin{align*}
+\text{对所有 }x\in A,\quad\nu(B)\cdot\chi_{A}(x)=\sum_{k=1}^{\infty}\nu(B_{k})\cdot\chi_{A_{k}}(x).
+\end{align*}
+由于每个 $A_{k}$ 包含于 $A$, 该不等式显然对 $x\in X\setminus A$ 也成立. 因此,
+\begin{align*}
+\text{在 }X\text{ 上, }\quad\nu(B)\cdot\chi_{A}=\sum_{k=1}^{\infty}\nu(B_{k})\cdot\chi_{A_{k}}.
+\end{align*}
+根据单调收敛定理,
+\begin{align*}
+\mu(A)\times\nu(B)=\int_{X}\nu(B)\cdot\chi_{A}d\mu=\sum_{k=1}^{\infty}\int_{X}\nu(B_{k})\cdot\chi_{A_{k}}d\mu=\sum_{k=1}^{\infty}\mu(A_{k})\times\nu(B_{k}).
+\end{align*}
+\end{proof}
+
+\begin{proposition}\label{proposition:ch20-预测度}
+令 $\mathcal{R}$ 为 $X\times Y$ 中的可测矩形族且对可测矩形 $A\times B$, 定义
+\begin{align*}
+\lambda(A\times B)=\mu(A)\cdot\nu(B).
+\end{align*}
+则 $\mathcal{R}$ 是半环而 $\lambda:\mathcal{R}\to[0,\infty]$ 是一个预测度.
+\end{proposition}
+
+\begin{proof}
+显然两个可测矩形的交是可测矩形. 两个可测矩形的相对补是两个可测矩形的不交并. 事实上, 令 $A$ 和 $B$ 为 $X$ 的可测子集, 而 $C$ 和 $D$ 为 $Y$ 的可测子集. 观察到
+\begin{align*}
+(A\times C)\setminus(B\times D)=[(A\setminus B)\times C]\cup[(A\cap B)\times(C\setminus D)].
+\end{align*}
+右边的并是两个可测矩形的不交并.
+
+剩下来要证明 $\lambda$ 是预测度. $\lambda$ 的有限可加性从前一个引理得到. 显然 $\lambda$ 是单调的. 为证明 $\lambda$ 的可数单调性, 令可测矩形 $E$ 被可测矩形族 $\{E_{k}\}_{k=1}^{\infty}$ 覆盖. 由于 $\mathcal{R}$ 是半环, 不失一般性, 可以假设 $\{E_{k}\}_{k=1}^{\infty}$ 是可测矩形的不交族. 因此,
+\begin{align*}
+E=\bigcup_{k=1}^{\infty}E\cap E_{k}.
+\end{align*}
+这个并是不交的且每个 $E\cap E_{k}$ 是可测矩形. 我们从前一个引理和 $\lambda$ 的单调性推出,
+\begin{align*}
+\lambda(E)=\sum_{k=1}^{\infty}\lambda(E\cap E_{k})\leqslant\sum_{k=1}^{\infty}\lambda(E_{k}).
+\end{align*}
+因此 $\lambda$ 是可数单调的. 证明完毕.
+\end{proof}
+
+该命题允许我们援引 Carath\'eodory-Hahn 定理以做出乘积测度的以下定义, 它赋予可测矩形 $A\times B$ 以自然测度 $\mu(A)\cdot\nu(B)$.
+
+\begin{definition}[乘积测度]\label{definition:ch20-乘积测度}
+令 $(X,\mathcal{A},\mu)$ 和 $(Y,\mathcal{B},\nu)$ 为测度空间, $\mathcal{R}$ 是包含于 $X\times Y$ 的可测矩形所组成的族, $\lambda$ 是 $\mathcal{R}$ 上的预测度, 其定义为
+\begin{align*}
+\text{对 }A\times B\in\mathcal{R},\quad\lambda(A\times B)=\mu(A)\cdot\nu(B).
+\end{align*}
+谈到乘积测度 $\lambda=\mu\times\nu$, 我们意味着 $\lambda:\mathcal{R}\to[0,\infty]$ 的 Carath\'eodory 延拓, 它定义在 $X\times Y$ 的 $(\mu\times\nu)^{*}$ 可测子集的 $\sigma$ 代数上.
+\end{definition}
+
+令 $E$ 为 $X\times Y$ 的子集而 $f$ 是 $E$ 上的函数. 对点 $x\in X$, 我们称集合
+\begin{align*}
+E_{x}=\{y\in Y\mid(x,y)\in E\}\subseteq Y
+\end{align*}
+为 $E$ 的 $x$ 截面, 而 $E_{x}$ 上定义为 $f(x,\cdot)=f(x,y)$ 的函数 $f(x,\cdot)$ 称为 $f$ 的 $x$ 截面. 现在我们的目标是确定以下断言: 对于 $x\in X$ 取 $f(x,\cdot)$ 在 $E_{x}$ 上关于 $\nu$ 的积分值的函数来说, $f$ 在 $X\times Y$ 上关于 $\mu\times\nu$ 的积分等于该函数在 $X$ 上关于 $\mu$ 的积分. 这称为累次积分. 以下是关于累次积分的两个基本结果中的第一个.
+
+\begin{theorem}[Fubini 定理]\label{theorem:ch20-fubini}
+令 $(X,\mathcal{A},\mu)$ 和 $(Y,\mathcal{B},\nu)$ 为两个测度空间而 $\nu$ 是完备的. 令 $f$ 在 $X\times Y$ 上关于乘积测度 $\mu\times\nu$ 可积. 则对几乎所有 $x\in X$, $f$ 的 $x$ 截面 $f(x,\cdot)$ 在 $Y$ 上关于 $\nu$ 可积且
+\begin{align}\label{align:ch20-fubini1}
+\int_{X\times Y}f\,d(\mu\times\nu)=\int_{X}\left[\int_{Y}f(x,y)\,d\nu(y)\right]d\mu(x).
+\end{align}
+\end{theorem}
+
+可积函数在 $\sigma$ 有限集外消失. 因此, 根据简单逼近定理和单调收敛定理, 一般非负可积函数的积分可被在有限测度集外消失的非负简单函数(即有限测度集的特征函数的线性组合)的积分任意近地逼近. 因此证明 Fubini 定理的自然初始步骤是对 $X\times Y$ 的具有有限测度的可测子集 $E$ 证明该定理. 观察到对这样的集合, 若我们令 $f$ 为 $E$ 的特征函数, 则
+\begin{align*}
+\int_{X\times Y}f\,d(\mu\times\nu)=(\mu\times\nu)(E).
+\end{align*}
+另一方面, 对每个 $x\in X$, $f(x,\cdot)=\chi_{E_{x}}$, 因此若 $E$ 的 $x$ 截面 $E_{x}$ 是 $\nu$ 可测的, 则
+\begin{align*}
+\int_{Y}f(x,y)\,d\nu(y)=\nu(E_{x}).
+\end{align*}
+因此对 $f=\chi_{E}$, \eqref{align:ch20-fubini1}归结为
+\begin{align*}
+(\mu\times\nu)(E)=\int_{X}\nu(E_{x})d\mu(x).
+\end{align*}
+
+第 17 章的命题 10 告诉我们, 可测集 $E\subseteq X\times Y$ 包含于 $\mathcal{R}_{\sigma\delta}$ 集 $A$ 使得 $(\mu\times\nu)(A\setminus E)=0$. 我们因此先对 $\mathcal{R}_{\sigma\delta}$ 集接着对乘积测度为零的集合证明以上等式.
+
+\begin{lemma}\label{lemma:ch20-Rsigma集截面}
+令 $E\subseteq X\times Y$ 为 $\mathcal{R}_{\sigma\delta}$ 集使得 $(\mu\times\nu)(E)<\infty$. 则对所有 $X$ 中的 $x$, $E$ 的 $x$ 截面 $E_{x}$ 是 $Y$ 的 $\nu$ 可测子集, 函数 $x\mapsto\nu(E_{x})(x\in X)$ 是 $\mu$ 可测函数且
+\begin{align}\label{align:ch20-截面等式}
+(\mu\times\nu)(E)=\int_{X}\nu(E_{x})d\mu(x).
+\end{align}
+\end{lemma}
+
+\begin{proof}
+首先考虑 $E=A\times B$ 为可测矩形的情形. 则对 $x\in X$,
+\begin{align*}
+E_{x}=\begin{cases}B&\text{若 }x\in A\\\varnothing&\text{若 }x\notin A.\end{cases}
+\end{align*}
+因此 $\nu(E_{x})=\nu(B)\cdot\chi_{A}(x)$. 从而
+\begin{align*}
+(\mu\times\nu)(E)=\mu(A)\cdot\nu(B)=\nu(B)\cdot\int_{X}\chi_{A}d\mu=\int_{X}\nu(E_{x})d\mu(x).
+\end{align*}
+我们接着证明: 若 $E$ 是 $\mathcal{R}_{\sigma}$ 集, \eqref{align:ch20-截面等式}成立. 由于 $\mathcal{R}$ 是半环, 存在可测矩形的不交族 $\{A_{k}\times B_{k}\}_{k=1}^{\infty}$, 其并为 $E$. 固定 $x\in X$. 观察到
+\begin{align*}
+E_{x}=\bigcup_{k=1}^{\infty}(A_{k}\times B_{k})_{x}.
+\end{align*}
+因此 $E_{x}$ 是 $\nu$ 可测的, 由于它是这些 $B_{k}$ 的可数并且该并是不交的, 根据 $\nu$ 的可数可加性,
+\begin{align*}
+\nu(E_{x})=\sum_{k=1}^{\infty}\nu((A_{k}\times B_{k})_{x}).
+\end{align*}
+因此, 根据单调收敛定理、\eqref{align:ch20-截面等式}对每个可测矩形 $A_{k}\times B_{k}$ 成立以及测度 $\mu\times\nu$ 的可数可加性,
+\begin{align*}
+\int_{X}\nu(E_{x})d\mu(x)=\sum_{k=1}^{\infty}\int_{X}\nu((A_{k}\times B_{k})_{x})d\mu=\sum_{k=1}^{\infty}\mu(A_{k})\times\nu(B_{k})=(\mu\times\nu)(E).
+\end{align*}
+因此, 若 $E$ 是 $\mathcal{R}_{\sigma}$ 集, \eqref{align:ch20-截面等式}成立. 最后, 我们考虑 $E$ 属于 $\mathcal{R}_{\sigma\delta}$ 的情形且用 $E$ 有有限测度的假设. 由于 $\mathcal{R}$ 是半环, 存在 $\mathcal{R}_{\sigma}$ 中的集合的递减序列 $\{E_{k}\}_{k=1}^{\infty}$, 其交是 $E$. 测度 $\mu\times\nu$ 通过 $\mathcal{R}$ 上的预测度 $\mu\times\nu$ 诱导的外测度定义, 且由于 $(\mu\times\nu)(E)<\infty$, 我们可以假定 $(\mu\times\nu)(E_{1})<\infty$. 由测度 $\mu\times\nu$ 的连续性,
+\begin{align}\label{align:ch20-测度连续}
+\lim_{k\to\infty}(\mu\times\nu)(E_{k})=(\mu\times\nu)(E).
+\end{align}
+由于 $E_{1}$ 是 $\mathcal{R}_{\sigma}$ 集,
+\begin{align*}
+(\mu\times\nu)(E_{1})=\int_{X}\nu((E_{1})_{x})d\mu(x).
+\end{align*}
+因此, 由于 $(\mu\times\nu)(E_{1})<\infty$,
+\begin{align}\label{align:ch20-几乎有限}
+\text{对几乎所有 }x\in X,\quad\nu((E_{1})_{x})<\infty.
+\end{align}
+现在对每个 $x\in X$, $E_{x}$ 是 $\nu$ 可测的, 由于它是递减 $\nu$ 可测集序列 $\{(E_{k})_{x}\}_{k=1}^{\infty}$ 的交, 此外根据测度 $\nu$ 的连续性与\eqref{align:ch20-几乎有限}, 对几乎所有 $x\in X$,
+\begin{align*}
+\lim_{k\to\infty}\nu((E_{k})_{x})=\nu(E_{x}).
+\end{align*}
+此外, 函数 $x\mapsto\nu((E_{1})_{x})$ 是非负可积的, 对每个 $k$, 几乎处处控制函数 $x\mapsto\nu((E_{k})_{x})$. 因此根据 Lebesgue 控制收敛定理, \eqref{align:ch20-截面等式}对每个 $\mathcal{R}_{\sigma}$ 集 $E_{k}$ 成立以及连续性质\eqref{align:ch20-测度连续},
+\begin{align*}
+\int_{X}\nu(E_{x})d\mu(x)=\lim_{k\to\infty}\int_{X}\nu((E_{k})_{x})d\mu=\lim_{k\to\infty}(\mu\times\nu)(E_{k})=(\mu\times\nu)(E).
+\end{align*}
+证明完毕.
+\end{proof}
+
+\begin{lemma}\label{lemma:ch20-零测集截面}
+假设测度 $\nu$ 是完备的. 令 $E\subseteq X\times Y$ 关于 $\mu\times\nu$ 可测. 若 $(\mu\times\nu)(E)=0$, 则对几乎所有 $x\in X$, $E$ 的 $x$ 截面 $E_{x}$ 是 $\nu$ 可测的且 $\nu(E_{x})=0$. 因此,
+\begin{align*}
+(\mu\times\nu)(E)=\int_{X}\nu(E_{x})d\mu(x).
+\end{align*}
+\end{lemma}
+
+\begin{proof}
+由于 $(\mu\times\nu)(E)<\infty$, 从第 17 章的命题 10 得出存在 $\mathcal{R}_{\sigma\delta}$ 中的集合 $A$ 满足 $E\subseteq A$ 且 $(\mu\times\nu)(A)=0$. 根据前一个引理, 对所有 $x\in X$, $A$ 的 $x$ 截面 $A_{x}$ 是 $\nu$ 可测的且
+\begin{align*}
+(\mu\times\nu)(A)=\int_{X}\nu(A_{x})d\mu(x).
+\end{align*}
+因此对几乎所有 $x\in X$, $\nu(A_{x})=0$. 然而, 对所有 $x\in X$, $E_{x}\subseteq A_{x}$. 因此我们从 $\nu$ 的完备性推出, 对几乎所有 $x\in X$, $E_{x}$ 是 $\nu$ 可测的且 $\nu(E_{x})=0$.
+\end{proof}
+
+\begin{proposition}\label{proposition:ch20-有限测度截面}
+假设测度 $\nu$ 是完备的. 令 $E\subseteq X\times Y$ 关于 $\mu\times\nu$ 可测且 $(\mu\times\nu)(E)<\infty$. 则对 $X$ 中的几乎所有 $x$, $E$ 的 $x$ 截面 $E_{x}$ 是 $Y$ 的 $\nu$ 可测子集, 函数 $x\mapsto\nu(E_{x})(x\in X)$ 是 $\mu$ 可测函数, 且
+\begin{align}\label{align:ch20-可测集截面}
+(\mu\times\nu)(E)=\int_{X}\nu(E_{x})d\mu(x).
+\end{align}
+\end{proposition}
+
+\begin{proof}
+由于 $(\mu\times\nu)(E)<\infty$, 从第 17 章的命题 10 得出存在 $\mathcal{R}_{\sigma\delta}$ 中的集合 $A$ 满足 $E\subseteq A$ 且 $(\mu\times\nu)(A\setminus E)=0$. 根据测度 $\mu\times\nu$ 的分割性质, $(\mu\times\nu)(E)=(\mu\times\nu)(A)$. 根据前一个引理,
+\begin{align*}
+\text{对几乎所有 }x\in X,\quad\nu(A_{x})=\nu(E_{x})+\nu((A\setminus E)_{x})=\nu(E_{x}).
+\end{align*}
+再次用前一个引理, 我们得出
+\begin{align*}
+(\mu\times\nu)(E)=(\mu\times\nu)(A)=\int_{X}\nu(A_{x})d\mu(x)=\int_{X}\nu(E_{x})d\mu(x).
+\end{align*}
+证明完毕.
+\end{proof}
+
+\begin{theorem}\label{theorem:ch20-简单函数截面}
+假设测度 $\nu$ 是完备的. 令 $\varphi:X\times Y\to\mathbf{R}$ 为在 $X\times Y$ 上关于 $\mu\times\nu$ 可积的简单函数. 则对几乎所有 $x\in X$, $\varphi$ 的 $x$ 截面 $\varphi(x,\cdot)$ 在 $Y$ 上关于 $\nu$ 可积且
+\begin{align}\label{align:ch20-简单函数积分}
+\int_{X\times Y}\varphi\,d(\mu\times\nu)=\int_{X}\left[\int_{Y}\varphi(x,y)\,d\nu(y)\right]d\mu(x).
+\end{align}
+\end{theorem}
+
+\begin{proof}
+前一个命题告诉我们, 若 $\varphi$ 是 $X\times Y$ 的具有有限测度的子集的特征函数, \eqref{align:ch20-简单函数积分}成立. 由于 $\varphi$ 是简单与可积的, 它是这样的集合的特征函数的线性组合. 因此\eqref{align:ch20-简单函数积分}从前一个命题以及积分的线性得出.
+\end{proof}
+
+\textbf{Fubini 定理的证明.} 由于积分是线性的, 我们假设 $f$ 是非负的. 简单逼近定理告诉我们存在在 $X\times Y$ 上逐点收敛于 $f$ 的递增的简单函数序列 $\{\varphi_{k}\}$, 且对每个 $k$, 在 $X\times Y$ 上, $0\leqslant\varphi_{k}\leqslant f$. 由于 $f$ 在 $X\times Y$ 上是可积的, 每个 $\varphi_{k}$ 在 $X\times Y$ 上是可积的. 根据前一个命题, 对每个 $k$,
+\begin{align*}
+\int_{X\times Y}\varphi_{k}\,d(\mu\times\nu)=\int_{X}\left[\int_{Y}\varphi_{k}(x,y)\,d\nu(y)\right]d\mu(x).
+\end{align*}
+此外, 根据单调收敛定理,
+\begin{align*}
+\int_{X\times Y}f\,d(\mu\times\nu)=\lim_{k\to\infty}\int_{X\times Y}\varphi_{k}\,d(\mu\times\nu).
+\end{align*}
+剩下来要证明
+\begin{align}\label{align:ch20-极限交换}
+\lim_{k\to\infty}\int_{X}\left[\int_{Y}\varphi_{k}(x,y)\,d\nu(y)\right]d\mu(x)=\int_{X}\left[\int_{Y}f(x,y)\,d\nu(y)\right]d\mu(x).
+\end{align}
+若我们从 $X\times Y$ 中删去 $\mu\times\nu$ 测度为零的集合, 则\eqref{align:ch20-极限交换}的右边仍然不变, 根据引理\cref{lemma:ch20-零测集截面}, 左边也如此. 因此, 通过可能地从 $X\times Y$ 中删去 $\mu\times\nu$ 测度为零的集合, 我们可以假定对所有 $x\in X$ 和所有 $k$, $\varphi_{k}(x,\cdot)$ 在 $Y$ 上关于 $\nu$ 可积.
+
+固定 $x\in X$, 则 $\{\varphi_{k}(x,\cdot)\}$ 是在 $Y$ 上逐点收敛于 $f(x,\cdot)$ 的递增的简单 $\nu$ 可测函数序列. 因此 $f(x,\cdot)$ 是 $\nu$ 可测的, 根据单调收敛定理,
+\begin{align}\label{align:ch20-截面单调收敛}
+\int_{Y}f(x,y)\,d\nu(y)=\lim_{k\to\infty}\int_{Y}\varphi_{k}(x,y)\,d\nu(y).
+\end{align}
+对每个 $x\in X$, 定义 $h(x)=\int_{Y}f(x,y)\,d\nu(y)$ 与 $h_{k}(x)=\int_{Y}\varphi_{k}(x,y)\,d\nu(y)$. 根据前一个定理, 每个 $h_{k}:X\to\mathbf{R}$ 在 $X$ 上关于 $\mu$ 是可积的. 由于 $\{h_{k}\}$ 是在 $X$ 上逐点收敛于 $h$ 的非负可测的递增序列, 根据单调收敛定理,
+\begin{align*}
+\lim_{k\to\infty}\int_{X}\left[\int_{Y}\varphi_{k}(x,y)\,d\nu(y)\right]d\mu(x)=\lim_{k\to\infty}\int_{X}h_{k}d\mu=\int_{X}\left[\int_{Y}f(x,y)\,d\nu(y)\right]d\mu(x).
+\end{align*}
+因此\eqref{align:ch20-极限交换}得证. 证明完毕.
+
+为了应用 Fubini 定理, 人们必须首先证明 $f$ 关于 $\mu\times\nu$ 可积, 即人们必须证明 $f$ 是 $X\times Y$ 上的可测函数且 $\int|f|d(\mu\times\nu)<\infty$. $f$ 在 $X\times Y$ 上的可测性有时难以证明, 但在许多情形下, 我们可通过拓扑的考虑来证明(见习题 9). 一般地, 从\eqref{align:ch20-fubini1}右边的累次积分的存在性与有限性, 我们不能推出 $f$ 在 $X\times Y$ 上是可积的(见习题 6). 然而, 我们可从以下定理推出若 $\nu$ 是完备的, 测度 $\mu$ 和 $\nu$ 是 $\sigma$ 有限的, 而 $f$ 是非负的且关于 $\mu\times\nu$ 可测, 则\eqref{align:ch20-fubini1}的右边的累次积分的有限性蕴涵 $f$ 在 $X\times Y$ 上可积且等式\eqref{align:ch20-fubini1}成立.
+
+\begin{theorem}[Tonelli 定理]\label{theorem:ch20-tonelli}
+令 $(X,\mathcal{A},\mu)$ 和 $(Y,\mathcal{B},\nu)$ 为两个 $\sigma$ 有限测度空间而 $\nu$ 是完备的. 令 $f$ 为 $X\times Y$ 上的非负 $(\mu\times\nu)$ 可测函数. 则对几乎所有 $x\in X$, $f$ 的 $x$ 截面 $f(x,\cdot)$ 是 $\nu$ 可测的, 且通过 $x\mapsto f(x,\cdot)$ 在 $Y$ 上关于 $\nu$ 的积分在 $X$ 上几乎处处被定义的函数是 $\mu$ 可测的. 此外,
+\begin{align}\label{align:ch20-tonelli1}
+\int_{X\times Y}f\,d(\mu\times\nu)=\int_{X}\left[\int_{Y}f(x,y)\,d\nu(y)\right]d\mu(x).
+\end{align}
+\end{theorem}
+
+\begin{proof}
+简单逼近定理告诉我们存在递增的简单函数序列 $\{\varphi_{k}\}$ 在 $X\times Y$ 上逐点收敛于 $f$, 且对每个 $k$, 在 $X\times Y$ 上, $0\leqslant\varphi_{k}\leqslant f$. 在 Fubini 定理的证明中的这个地方, 我们援引非负函数 $|f|$ 的可积性以得出 $0\leqslant\varphi_{k}\leqslant|f|$, 每个 $\varphi_{k}$ 可积且我们能运用定理\cref{theorem:ch20-简单函数截面}于每个 $\varphi_{k}$. 这里我们观察到由于 $\mu$ 和 $\nu$ 都是 $\sigma$ 有限的, 乘积测度 $\mu\times\nu$ 是 $\sigma$ 有限的. 因此我们可以援引简单逼近定理(i)部分的断言以选取序列 $\{\varphi_{k}\}$ 具有额外的性质: 每个 $\varphi_{k}$ 在有限测度集外消失, 因此是可积的. 从这点上该定理的证明与 Fubini 定理的证明完全相同.
+\end{proof}
+
+关于 Tonelli 定理的两个注记. 首先, \eqref{align:ch20-tonelli1}的每个积分可以是无穷的. 若它们中的一个是有限的, 另外一个也如此. 其次, 若 $\mu$ 是完备的, 则\eqref{align:ch20-tonelli1}右边的积分可被反序的累次积分代替. 事实上, 我们考虑累次积分为首先关于 $y$ 其次关于 $x$. 当然, 若人们以相反的次序积分, 所有这些结果成立, 假设在要求 $\nu$ 的完备性的地方现在我们要求 $\mu$ 的完备性.
+
+\begin{corollary}[Tonelli]\label{corollary:ch20-tonelli累次}
+令 $(X,\mathcal{A},\mu)$ 与 $(Y,\mathcal{B},\nu)$ 为两个 $\sigma$ 有限的完备测度空间, 而 $f$ 是 $X\times Y$ 上的非负 $\mu\times\nu$ 可测函数. 则有: (i) 对几乎所有 $x\in X$, $f$ 的 $x$ 截面 $f(x,\cdot)$ 是 $\nu$ 可测的且通过 $x\mapsto f(x,\cdot)$ 在 $Y$ 上关于 $\nu$ 的积分在 $X$ 上几乎处处被定义的函数是 $\mu$ 可测的. (ii) 对几乎所有 $y\in Y$, $f$ 的 $y$ 截面 $f(\cdot,y)$ 是 $\mu$ 可测的且通过 $y\mapsto f(\cdot,y)$ 在 $X$ 上关于 $\mu$ 的积分在 $Y$ 上几乎处处被定义的函数是 $\nu$ 可测的. 若
+\begin{align}\label{align:ch20-累次有限}
+\int_{X}\left[\int_{Y}f(x,y)\,d\nu(y)\right]d\mu(x)<\infty,
+\end{align}
+则 $f$ 在 $X\times Y$ 上关于 $\mu\times\nu$ 可积且
+\begin{align}\label{align:ch20-累次相等}
+\int_{Y}\left[\int_{X}f(x,y)\,d\mu(x)\right]d\nu(y)=\int_{X\times Y}f\,d(\mu\times\nu)=\int_{X}\left[\int_{Y}f(x,y)\,d\nu(y)\right]d\mu(x).
+\end{align}
+\end{corollary}
+
+\begin{proof}
+Tonelli 定理告诉我们 $f$ 在 $X\times Y$ 上关于 $\mu\times\nu$ 是可积的, 因此我们有\eqref{align:ch20-累次相等}右边的等式. 因此 $f$ 在 $X\times Y$ 上关于 $\mu\times\nu$ 可积. 现在我们用 Fubini 定理证明\eqref{align:ch20-累次相等}左边的等式.
+\end{proof}
+
+习题中的例子表明, 我们不能略去 Fubini 定理中的 $f$ 的可积性假设且在 Tonelli 定理中不能略去 $\sigma$ 有限或非负性的假设(见习题 5 和 6). 在习题 5 中我们展示了有限测度空间的乘积 $X\times Y$ 上的有界函数 $f$ 使得
+\begin{align*}
+\int_{X}\left[\int_{Y}f(x,y)\,d\nu(y)\right]d\mu(x)\neq\int_{Y}\left[\int_{X}f(x,y)\,d\mu(x)\right]d\nu(y)
+\end{align*}
+即便这些累次积分的每个是恰当定义的.
+
+我们以关于建立乘积测度的不同途径的一些评注结束本节. 给定两个测度空间 $(X,\mathcal{A},\mu)$ 与 $(Y,\mathcal{B},\nu)$, 包含可测矩形的 $X\times Y$ 的子集的最小 $\sigma$ 代数记为 $\mathcal{A}\times\mathcal{B}$. 因此乘积测度定义在包含 $\mathcal{A}\times\mathcal{B}$ 的 $\sigma$ 代数上. 这两个测度通过第 17 章的命题 10 联系起来, 它告诉我们具有有限 $\mu\times\nu$ 测度的 $\mu\times\nu$ 可测集是那些与 $\mathcal{A}\times\mathcal{B}$ 中的集合仅在 $\mu\times\nu$ 测度为零的集合上不同的集合. 许多作者倾向于定义乘积测度为 $\mu\times\nu$ 在 $\mathcal{A}\times\mathcal{B}$ 上的限制. 我们所定义的乘积测度的优点是, 正如我们将在下一节证明的, $m$ 维 Lebesgue 测度与 $k$ 维 Lebesgue 测度的乘积是 $m+k$ 维 Lebesgue 测度, 因此累次积分是合理的. 由于在 Fubini 定理与 Tonelli 定理的假设中仅要求函数关于乘积测度可测, 它们比要求关于 $\mathcal{A}\times\mathcal{B}$ 可测弱. 此外, 关于 $\mathcal{A}\times\mathcal{B}$ 可积的函数也关于我们所定义的乘积测度可积.
+
+乘积测度由外测度诱导, 因此是完备的. 但为证明若 $E\subseteq X\times Y$ 关于乘积测度是可测的, 则 $E$ 的几乎所有 $x$ 截面是 $\nu$ 可测的, 需要假设 $\nu$ 是完备的. 然而, 若 $E$ 关于 $\mathcal{A}\times\mathcal{B}$ 可测, 则 $E$ 的所有 $x$ 截面属于 $\mathcal{B}$, 即便 $\nu$ 不是完备的. 这从观察到 $X\times Y$ 的那些所有 $x$ 截面都属于 $\mathcal{B}$ 的子集构成的族是包含可测矩形的 $\sigma$ 代数得到.
+
+\subsection*{习题}
+
+\begin{exercise}\label{exercise:ch20-01}
+令 $A\subseteq X$ 且令 $B$ 为 $Y$ 的 $\nu$ 可测子集. 若 $A\times B$ 关于乘积测度 $\mu\times\nu$ 是可测的, 则 $A$ 必须关于 $\mu$ 是可测的吗?
+\end{exercise}
+
+\begin{exercise}\label{exercise:ch20-02}
+令 $\mathbf{N}$ 为自然数集, $M=2^{\mathbf{N}}$, $c$ 是计数测度, 定义为: 若 $E$ 是有限的 $c(E)$ 等于 $E$ 中点的个数, 若 $E$ 是无穷集则等于 $\infty$. 证明每个函数 $f:\mathbf{N}\to\mathbf{R}$ 关于 $c$ 可测且 $f$ 在 $\mathbf{N}$ 上关于 $c$ 可积当且仅当级数 $\sum_{k=1}^{\infty}f(k)$ 绝对收敛, 在这种情形下,
+\begin{align*}
+\int_{\mathbf{N}}f\,dc=\sum_{k=1}^{\infty}f(k).
+\end{align*}
+\end{exercise}
+
+\begin{exercise}\label{exercise:ch20-03}
+令 $(X,\mathcal{A},\mu)=(Y,\mathcal{B},\nu)=(\mathbf{N},\mathcal{M},c)$ 为前一个习题定义的测度空间. 对这种情形直接叙述 Fubini 定理与 Tonelli 定理.
+\end{exercise}
+
+\begin{exercise}\label{exercise:ch20-04}
+令 $(\mathbf{N},\mathcal{M},c)$ 为习题\cref{exercise:ch20-02}定义的测度空间而 $(X,\mathcal{A},\mu)$ 是一般的测度空间. 考虑具有乘积测度 $c\times\mu$ 的 $\mathbf{N}\times X$.
+\begin{enumerate}[(i)]
+\item 证明 $\mathbf{N}\times X$ 的子集 $E$ 关于 $c\times\mu$ 可测当且仅当对每个自然数 $k$, $E_{k}=\{x\in X\mid(k,x)\in E\}$ 关于 $\mu$ 是可测的.
+\item 证明函数 $f:\mathbf{N}\times X\to\mathbf{R}$ 关于 $c\times\mu$ 可测当且仅当对每个自然数 $k$, $f(k,\cdot):X\to\mathbf{R}$ 关于 $\mu$ 是可测的.
+\item 证明函数 $f:\mathbf{N}\times X\to\mathbf{R}$ 在 $\mathbf{N}\times X$ 上关于 $c\times\mu$ 可积当且仅当对每个自然数 $k$, $f(k,\cdot):X\to\mathbf{R}$ 在 $X$ 上关于 $\mu$ 是可积的且
+\begin{align*}
+\sum_{k=1}^{\infty}\int_{X}|f(k,x)|d\mu(x)<\infty.
+\end{align*}
+\item 证明: 若函数 $f:\mathbf{N}\times X\to\mathbf{R}$ 在 $\mathbf{N}\times X$ 上关于 $c\times\mu$ 是可积的, 则
+\begin{align*}
+\int_{\mathbf{N}\times X}f\,d(c\times\mu)=\sum_{k=1}^{\infty}\int_{X}f(k,x)d\mu(x)<\infty.
+\end{align*}
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}\label{exercise:ch20-05}
+令 $(X,\mathcal{M},\mu)=(Y,\mathcal{B},\nu)=(\mathbf{N},\mathcal{M},c)$ 为习题\cref{exercise:ch20-02}定义的测度空间. 定义 $f:\mathbf{N}\times\mathbf{N}\to\mathbf{R}$ 为
+\begin{align*}
+f(x,y)=\begin{cases}2-2^{-x}&\text{若 }x=y\\-2+2^{-x}&\text{若 }x=y+1\\0&\text{否则.}\end{cases}
+\end{align*}
+证明 $f$ 关于乘积测度 $c\times c$ 可测. 也证明
+\begin{align*}
+\int_{\mathbf{N}}\left[\int_{\mathbf{N}}f(m,n)dc(m)\right]dc(n)\neq\int_{\mathbf{N}}\left[\int_{\mathbf{N}}f(m,n)dc(n)\right]dc(m).
+\end{align*}
+这与 Fubini 定理或 Tonelli 定理矛盾吗?
+\end{exercise}
+
+\begin{exercise}\label{exercise:ch20-06}
+令 $X=Y$ 为区间 $[0,1]$, 其中 $\mathcal{A}=\mathcal{B}$ 是 Borel 集类. 令 $\mu$ 为 Lebesgue 测度而 $\nu=c$ 是计数测度. 证明对角线 $\Delta=\{(x,y)\mid x=y\}$ 关于乘积测度 $\mu\times c$ 是可测的. 证明: 若 $f=\chi_{\Delta}$, 则
+\begin{align*}
+\int_{[0,1]\times[0,1]}f\,d(\mu\times c)\neq\int_{[0,1]}\left[\int_{[0,1]}f(x,y)dc(y)\right]d\mu(x).
+\end{align*}
+这与 Fubini 定理或 Tonelli 定理矛盾吗?
+\end{exercise}
+
+\begin{exercise}\label{exercise:ch20-07}
+证明 Tonelli 定理的结论成立, 若一个空间是习题\cref{exercise:ch20-02}定义的空间 $(\mathbf{N},\mathcal{M},c)$, 而另一个空间是不需要 $\sigma$ 有限的一般测度空间.
+\end{exercise}
+
+\begin{exercise}\label{exercise:ch20-08}
+在 Fubini 定理的证明中, 证实从 $X\times Y$ 中删去 $\mu\times\nu$ 测度为零的集合的合理性.
+\end{exercise}
+
+\begin{exercise}\label{exercise:ch20-09}
+令 $X=Y=[0,1]$, 而令 $\mu=\nu$ 为 Lebesgue 测度. 证明 $X\times Y$ 中的每个开集是可测的, $X\times Y$ 中的每个 Borel 集是可测的. $[0,1]\times[0,1]$ 上的每个连续函数关于该乘积测度是可测的吗?
+\end{exercise}
+
+\begin{exercise}\label{exercise:ch20-10}
+令 $h$ 和 $g$ 为 $X$ 和 $Y$ 上的可测函数, 定义 $f(x,y)=h(x)g(y)$. 证明 $f$ 在 $X\times Y$ 上关于乘积测度可积, 则
+\begin{align*}
+\int_{X\times Y}f\,d(\mu\times\nu)=\int_{X}h\,d\mu\int_{Y}g\,d\nu.
+\end{align*}
+(注意我们不假设 $\mu$ 与 $\nu$ 是 $\sigma$ 有限的.)
+\end{exercise}
+
+\begin{exercise}\label{exercise:ch20-11}
+证明 Tonelli 定理仍然成立, 若不假设 $\mu$ 与 $\nu$ 是 $\sigma$ 有限的, 而仅假设 $\{(x,y)\mid f(x,y)\neq 0\}$ 是 $\sigma$ 有限测度集.
+\end{exercise}
+
+\begin{exercise}\label{exercise:ch20-12}
+对两个测度空间 $(X,\mathcal{A},\mu)$ 与 $(Y,\mathcal{B},\nu)$ 我们已定义 $\mathcal{A}\times\mathcal{B}$ 为包含可测矩形的最小 $\sigma$ 代数.
+\begin{enumerate}[(i)]
+\item 证明: 若两个测度都是 $\sigma$ 有限的, 则 $\mu\times\nu$ 是对每个可测矩形 $A\times B$ 赋予值 $\mu(A)\nu(B)$ 的唯一测度. 若没有 $\sigma$ 有限性, 这个唯一性可能不成立.
+\item 证明: 若 $E\in\mathcal{A}\times\mathcal{B}$, 则对每个 $x$, $E_{x}\in\mathcal{B}$.
+\item 证明: 若 $f$ 关于 $\mathcal{A}\times\mathcal{B}$ 可测, 则对每个 $f(x,\cdot)$ 关于 $\mathcal{B}$ 可测.
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}\label{exercise:ch20-13}
+若 $\{(X_{k},\mathcal{A}_{k},\mu_{k})\}_{k=1}^{n}$ 是测度空间的有限族, 通过从对形如 $R=A_{1}\times\cdots\times A_{n}$ 的矩形半环定义 $\mu(R)=\prod_{k=1}^{n}\mu_{k}(A_{k})$ 开始, 我们能够构造空间 $X_{1}\times\cdots\times X_{n}$ 上的乘积测度 $\mu_{1}\times\cdots\times\mu_{n}$. 证明 $\mu$ 是预测度且定义乘积测度为 $\mu$ 的 Carath\'eodory 延拓. 证明: 若我们将 $(X_{1}\times\cdots\times X_{p})\times(X_{p+1}\times\cdots\times X_{n})$ 等同于 $X_{1}\times\cdots\times X_{n}$, 则 $(\mu_{1}\times\cdots\times\mu_{p})\times(\mu_{p+1}\times\cdots\times\mu_{n})=\mu_{1}\times\cdots\times\mu_{n}$.
+\end{exercise}
+
+\begin{exercise}\label{exercise:ch20-14}
+满足 $\mu(X)=1$ 的测度空间 $(X,\mathcal{M},\mu)$ 称为概率测度空间. 令 $\{(X_{\lambda},\mathcal{A}_{\lambda},\mu_{\lambda})\}_{\lambda\in\Lambda}$ 为由集合 $\Lambda$ 参数化的概率测度空间族. 证明我们能够在笛卡儿积 $\prod_{\lambda\in\Lambda}X_{\lambda}$ 的适当 $\sigma$ 代数上定义概率测度
+\begin{align*}
+\mu=\prod_{\lambda\in\Lambda}\mu_{\lambda}
+\end{align*}
+使得当 $A=\prod_{\lambda\in\Lambda}A_{\lambda}$ 时,
+\begin{align*}
+\mu(A)=\prod_{\lambda\in\Lambda}\mu_{\lambda}(A_{\lambda}).
+\end{align*}
+(注意到仅当除可数个 $A_{\lambda}$ 外所有 $A_{\lambda}$ 满足 $\mu_{\lambda}(A_{\lambda})=1$, $\mu(A)$ 不为零.)
+\end{exercise}
+
+\end{document}
