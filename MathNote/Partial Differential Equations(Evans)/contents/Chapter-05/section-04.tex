@@ -8,24 +8,175 @@
 \subsection{差商与 $W^{1,p}$}\label{subsubsection:ch05-差商W1p}
 
 \begin{definition}\label{definition:ch05-差商}
-设$U\subset \mathbb{R}^n$是开集,$u:U\to\mathbb{R}$ 为局部可和函数，$V\subset \subset U$。
-步长为 $h$ 的第 $i$ 差商为
+设$U\subseteq \mathbb{R}^n$是开集,$u:U\to\mathbb{R}$ 为局部可和函数,即$u\in L_{\text{loc}}^1(U)$,且$V\subset \subset U$。
+步长为 $h$ 的第 $i$ 差商定义为
 \begin{align*}
-D_{i}^{h}u(x)=\frac{u(x+he_{i})-u(x)}{h}\qquad (i=1,\cdots,n),
+D_{i}^{h}u(x)\triangleq \frac{u(x+he_{i})-u(x)}{h}\qquad (i=1,\cdots,n),
 \end{align*}
 其中 $x\in V$，$h\in\mathbb{R}$，$0<|h|<\operatorname{dist}(V,\partial U)$。
 并且$D^{h}u\triangleq(D_{1}^{h}u,\cdots,D_{n}^{h}u)$。
 \end{definition}
+\begin{remark}
+差商来自导数定义中的有限增量比. 对于通常的偏导数, 我们考察
+\begin{align*}
+\frac{\partial u}{\partial x_i}(x)
+=
+\lim\limits_{h\to0}
+\frac{u(x+he_i)-u(x)}{h},
+\end{align*}
+前提是这个极限存在. 差商则保留极限之前的表达式, 即先固定一个非零步长 $h$, 定义
+\begin{align*}
+D_i^h u(x)
+=
+\frac{u(x+he_i)-u(x)}{h}.
+\end{align*}
+因此, 差商可以理解为沿第 $i$ 个坐标方向、在尺度 $|h|$ 上的平均变化率.
+定义差商时不需要预先知道 $u$ 可微, 这使它能够用于研究尚未确定具有弱导数的函数.
+
+分母中的 $h$ 起到按位移大小归一化的作用. 若 $u$ 在 $x$ 附近可微, 则
+\begin{align*}
+u(x+he_i)-u(x)
+=
+h\frac{\partial u}{\partial x_i}(x)+o(|h|),
+\end{align*}
+所以除以 $h$ 后, 主项恰好是偏导数. 如果只考虑函数值之差而不除以 $h$, 则对于连续函数, 这个差通常直接趋于零, 无法反映导数的大小.
+
+这里 $e_i$ 是第 $i$ 个标准单位向量, 因而 $x+he_i$ 只改变 $x$ 的第 $i$ 个坐标. 将所有坐标方向的差商放在一起, 得到
+\begin{align*}
+D^h u
+\triangleq
+(D_1^h u,\cdots,D_n^h u),
+\end{align*}
+它是梯度的离散近似. 上标 $h$ 表示步长参数, 并不表示求 $h$ 阶导数.
+允许 $h$ 取正值或负值, 是为了同时考察两个方向的增量. 当 $h<0$ 时, 分母也带有负号, 所以两种方向的差商在极限存在时都趋于同一个偏导数.
+
+条件 $U$ 为开集, 保证每个内点附近都有一小段可以移动而不离开定义域的空间.
+但是, 如果让 $x$ 遍历整个 $U$, 则靠近边界时, 一般无法找到一个对所有 $x$ 都适用的非零步长.
+因此, 我们先在一个远离边界的局部区域 $V$ 上讨论差商.
+
+由\subcref{Real Analysis-proposition:点集间的距离的性质}{Real Analysis-proposition:点集间的距离的性质-3}, 有
+\begin{align*}
+d
+\triangleq
+\operatorname{dist}(V,\partial U)
+=
+\operatorname{dist}(\overline{V},\mathbb{R}^n\setminus U)
+>0.
+\end{align*}
+因此, 当 $0<|h|<d$ 时, 对任意 $x\in\overline{V}$ 和 $t\in[0,1]$, 都有
+\begin{align*}
+|x+the_i-x|
+=
+t|h|
+<d,
+\end{align*}
+从而
+\begin{align*}
+x+the_i\in U.
+\end{align*}
+这不仅保证差商中的两个取值点 $x$ 和 $x+he_i$ 都属于 $U$, 还保证连接它们的整条线段都在 $U$ 内.
+严格不等式 $|h|<d$ 留出了正的边界距离, 使平移后的闭包仍然紧含于 $U$.
+条件 $h\neq0$ 则是因为差商的分母不能为零.
+如果 $U=\mathbb{R}^n$, 约定到空集的距离为 $+\infty$, 此时没有来自边界的步长限制.
+
+要求 $u\in L_{\mathrm{loc}}^1(U)$, 是为了使差商适用于弱导数的积分框架.
+差商的点值公式本身对一般函数也可以写出, 但后续需要将差商与测试函数相乘并积分, 因而需要局部可积性.
+对于每个固定的允许步长 $h$, 由于 $V$ 及其平移 $V+he_i$ 都相对紧于 $U$, 有
+\begin{align*}
+\int_V |D_i^h u(x)|\,\mathrm{d}x
+&\leqslant
+\frac{1}{|h|}
+\left(
+\int_V |u(x+he_i)|\,\mathrm{d}x
++
+\int_V |u(x)|\,\mathrm{d}x
+\right)\\
+&=
+\frac{1}{|h|}
+\left(
+\int_{V+he_i}|u(y)|\,\mathrm{d}y
++
+\int_V |u(x)|\,\mathrm{d}x
+\right)
+<\infty.
+\end{align*}
+因此 $D_i^h u\in L^1(V)$.
+这里不必要求 $u$ 在整个 $U$ 上可积, 因为计算只涉及 $U$ 内部的相对紧区域.
+
+差商与导数之间最直接的联系来自微积分基本定理.
+若 $u\in C^1(U)$, 则由上述线段包含关系, 对任意允许的 $x$ 和 $h$, 有
+\begin{align*}
+u(x+he_i)-u(x)
+=
+\int_0^1
+\frac{\mathrm{d}}{\mathrm{d}t}u(x+the_i)\,\mathrm{d}t=
+h\int_0^1
+\frac{\partial u}{\partial x_i}(x+the_i)\,\mathrm{d}t.
+\end{align*}
+所以
+\begin{align*}
+D_i^h u(x)
+=
+\int_0^1
+\frac{\partial u}{\partial x_i}(x+the_i)\,\mathrm{d}t.
+\end{align*}
+这说明, 对光滑函数而言, 差商正是偏导数沿一小段线段的平均值.
+当 $h\to0$ 时, 这段线段收缩到 $x$, 差商便趋于该点的偏导数.
+这也是差商能够近似导数、并能够由导数估计控制的原因.
+
+对于局部可积函数, 函数值及差商都应按几乎处处的意义理解.
+如果改变 $u$ 在某个零测集上的取值, 则对于每个固定的 $h$, 差商只可能在该零测集及其平移上发生变化.
+由于平移保持零测性, 差商所确定的可积函数等价类不受代表元选择的影响.现在严格证明差商不受代表元选择的影响.
+\begin{proof}
+设 $u$ 和 $\widetilde{u}$ 是两个代表元, 并且存在零测集 $N\subseteq U$, 使得
+\begin{align*}
+u(y)=\widetilde{u}(y),
+\quad y\in U\setminus N.
+\end{align*}
+固定一个允许的非零步长 $h$满足:$h\in\mathbb{R}$，$0<|h|<\operatorname{dist}(V,\partial U)$.
+比较两个差商时, 要同时比较两组函数值:
+\begin{align*}
+D_i^h u(x)
+=
+\frac{u(x+he_i)-u(x)}{h},\quad 
+D_i^h\widetilde{u}(x)
+=
+\frac{\widetilde{u}(x+he_i)-\widetilde{u}(x)}{h}.
+\end{align*}
+只有当 $x$ 或 $x+he_i$ 落入 $N$ 时, 这两个差商才可能不同.
+其中, 条件 $x+he_i\in N$ 等价于
+\begin{align*}
+x\in N-he_i.
+\end{align*}
+因此, 两个差商可能不同的点只会出现在集合
+\begin{align*}
+E_h\triangleq V\cap\bigl(N\cup(N-he_i)\bigr)
+\end{align*}
+中.
+由\hyperref[Real Analysis-theorem:外测度的平移不变性]{测度的平移不变性}以及有限个零测集之并仍为零测集, 有
+\begin{align*}
+|E_h|
+\leqslant
+|N|+|N-he_i|
+=0.
+\end{align*}
+对于每个 $x\in V\setminus E_h$, 两个取值点都不属于 $N$, 所以
+\begin{align*}
+u(x)=\widetilde{u}(x),\quad
+u(x+he_i)=\widetilde{u}(x+he_i),
+\end{align*}
+从而
+\begin{align*}
+D_i^h u(x)=D_i^h\widetilde{u}(x).
+\end{align*}
+这就证明了两个差商在 $V$ 上几乎处处相等, 因而代表同一个可积函数等价类.
+\end{proof}
+\end{remark}
 
 \begin{theorem}[差商的分部积分公式]\label{theorem:ch05-差商的分部积分公式}
 设 $U\subseteq\mathbb{R}^n$ 为开集, $i\in\{1,\cdots,n\}$, $h\neq 0$. 设 $u\in L^1_{\mathrm{loc}}(U)$, $v\in C_c^\infty(U)$, 且
 \begin{align*}
-0<|h|<\frac{1}{2}\operatorname{dist}(\operatorname{spt}v,\partial U).
-\end{align*}
-定义差商
-\begin{align*}
-D_i^h v(x)\triangleq\frac{v(x+h e_i)-v(x)}{h},\qquad
-D_i^{-h}u(x)\triangleq\frac{u(x)-u(x-h e_i)}{h}.
+0<|h|<\frac{1}{2}\operatorname{dist}(\operatorname{spt}v,\partial U),
 \end{align*}
 则
 \begin{align*}
@@ -75,18 +226,190 @@ u\in W^{1,p}(V),
 \end{enumerate}
 \end{theorem}
 \begin{remark}
-断言 (ii) 对 $p=1$ 不成立（见习题 12）。$p=\infty$ 见下文\cref{theorem:ch05-W1infty刻画}。
-\end{remark}
-\begin{remark}
-\textbf{邻近边界的差商:}\cref{theorem:ch05-差商弱导数}的变形甚至在$V\subset \subset U$ 不成立时仍然成立。例如若 $U$ 为开半球 $B^{0}(0,1)\cap\{x_{n}>0\}$，$V=B^{0}(0,\frac{1}{2})\cap\{x_{n}>0\}$，则对 $i=1,\cdots,n-1$ 有
+$p=\infty$的情形见下文\cref{theorem:ch05-W1infty刻画}.断言(ii)对 $p=1$ 不成立。
+下面的一维反例说明, 差商在 $L^1(V)$ 中一致有界, 并不足以推出 $u\in W^{1,1}(V)$.
+
+取
 \begin{align*}
-\int_{V}|D_{i}^{h}u|^{p}\,\mathrm{d}x\leqslant\int_{U}|u_{x_{i}}|^{p}\,\mathrm{d}x.
+U=(-2,2),\quad V=(-1,1),
 \end{align*}
-证明与这个定理证明类似。我们将在第 6 章\cref{subsection:ch05-差商} 中用到此注。
+并定义
+\begin{align*}
+u(x)\triangleq
+\begin{cases}
+0,&-2<x\leqslant0,\\
+1,&0<x<2.
+\end{cases}
+\end{align*}
+显然 $V\subset \subset U$, 且 $u\in L^1(U)$. 又因为
+\begin{align*}
+\partial U=\{-2,2\},\quad
+\operatorname{dist}(V,\partial U)=1,
+\end{align*}
+所以题设中的步长条件就是
+$0<|h|<\frac{1}{2}.$
+
+先计算正步长的差商. 当 $0<h<\frac{1}{2}$ 时, 只有取值点 $x$ 和 $x+h$ 分别位于跳跃点 $0$ 的两侧, 差商才可能非零. 具体而言, 对几乎处处的 $x\in V$, 有
+\begin{align*}
+D^h u(x)
+=
+\frac{u(x+h)-u(x)}{h}
+=
+\begin{cases}
+\dfrac{1}{h},&-h<x<0,\\
+0,&x\in V\setminus(-h,0).
+\end{cases}
+\end{align*}
+因此
+\begin{align*}
+\|D^h u\|_{L^1(V)}
+=
+\int_{-h}^{0}\frac{1}{h}\,\mathrm{d}x
+=1.
+\end{align*}
+
+再计算负步长的差商. 当 $-\frac{1}{2}<h<0$ 时,对几乎处处的 $x\in V$, 有
+\begin{align*}
+D^h u(x)
+=
+\frac{u(x+h)-u(x)}{h}
+=
+\frac{u(x)-u(x-(-h))}{-h}=
+\begin{cases}
+-\frac{1}{h},&0<x<-h,\\
+0,&x\in V\setminus(0,-h).
+\end{cases}
+\end{align*}
+从而
+\begin{align*}
+\|D^h u\|_{L^1(V)}
+=
+\int_0^{-h}-\frac{1}{h}\,\mathrm{d}x
+=1.
+\end{align*}
+综合正、负步长的计算, 对一切
+$0<|h|<\frac{1}{2}\operatorname{dist}(V,\partial U)$, 都有
+\begin{align*}
+\|D^h u\|_{L^1(V)}=1.
+\end{align*}
+因此, 题设中的一致有界条件成立, 可以取 $C=1$.
+
+下面证明 $u\notin W^{1,1}(V)$.
+反设 $u\in W^{1,1}(V)$, 则存在弱导数 $g\in L^1(V)$, 使得对任意 $\varphi\in C_c^\infty(V)$, 都有
+\begin{align*}
+\int_V u(x)\varphi'(x)\,\mathrm{d}x
+=
+-\int_V g(x)\varphi(x)\,\mathrm{d}x.
+\end{align*}
+另一方面, 由$\text{spt}\,\varphi\subseteq V=(-1,1)$知$\varphi$ 在端点 $1$ 附近恒为零,再根据 $u$ 的定义,有
+\begin{align*}
+\int_V u(x)\varphi'(x)\,\mathrm{d}x
+=
+\int_0^1\varphi'(x)\,\mathrm{d}x
+=
+-\varphi(0).
+\end{align*}
+因此, 假定存在的弱导数 $g$ 必须满足
+\begin{align}\label{NMZNINWhiuhfjknxlzzvz}
+\int_V g(x)\varphi(x)\,\mathrm{d}x
+=
+\varphi(0),
+\quad
+\forall\varphi\in C_c^\infty(V).
+\end{align}
+
+取标准磨光子 $\eta\in C_c^\infty(\mathbb{R}^n)$, 满足
+\begin{align*}
+\eta\geqslant0,\qquad
+\operatorname{spt}\eta\subseteq\overline{B^{0}(0,1)},\qquad
+\int_{\mathbb{R}^n}\eta(x)\,\mathrm{d}x=1.
+\end{align*}
+对$\varepsilon>0$, 定义
+\begin{align*}
+\eta_\varepsilon(x)
+\triangleq\frac{1}{\varepsilon^n}
+\eta\left(\frac{x}{\varepsilon}\right).
+\end{align*}
+于是
+\begin{align*}
+\eta(0)>0,\quad
+0\leqslant\eta(x)\leqslant\eta(0),
+\quad x\in\mathbb{R}.
+\end{align*}
+对 $0<r<1$, 直接取测试函数
+\begin{align*}
+\varphi_r(x)
+\triangleq
+\frac{\eta_{\frac{r}{2}}(x)}{\eta_{\frac{r}{2}}(0)}
+=
+\frac{\eta\left(\frac{2x}{r}\right)}{\eta(0)}.
+\end{align*}
+由于 $\eta\in C_c^\infty(\mathbb{R})$, 且
+$\operatorname{spt}\eta=[-1,1]$, 有
+\begin{align*}
+\varphi_r\in C^\infty(\mathbb{R}),\quad
+\operatorname{spt}\varphi_r
+=
+\left[-\frac{r}{2},\frac{r}{2}\right]
+\subset \subset (-r,r)\subset \subset V.
+\end{align*}
+因此
+\begin{align*}
+\varphi_r\in C_c^\infty(V),\quad
+0\leqslant\varphi_r\leqslant1,\quad
+\varphi_r(0)=1.
+\end{align*}
+将 $\varphi_r$ 代入\eqref{NMZNINWhiuhfjknxlzzvz}式, 得到
+\begin{align}\label{eqNVMZnnjczvnms}
+1
+=
+\left|
+\int_V g(x)\varphi_r(x)\,\mathrm{d}x
+\right|
+\leqslant
+\int_{-\frac{r}{2}}^{\frac{r}{2}}|g(x)|\,\mathrm{d}x
+\leqslant
+\int_{-r}^{r}|g(x)|\,\mathrm{d}x.
+\end{align}
+但是, 由于 $g\in L^1(V)$, 由\hyperref[Real Analysis-theorem:积分的绝对连续性]{Lebesgue积分的绝对连续性}, 有
+\begin{align*}
+\lim\limits_{r\to0^+}
+\int_{-r}^{r}|g(x)|\,\mathrm{d}x
+=0,
+\end{align*}
+这与上面的不等式\eqref{eqNVMZnnjczvnms}矛盾! 因此不存在这样的 $g\in L^1(V)$, 即
+\begin{align*}
+u\notin W^{1,1}(V).
+\end{align*}
+
+这个反例中, 差商的非零部分位于长度为 $|h|$ 的小区间上, 高度为 $\frac{1}{|h|}$, 因而其 $L^1$ 范数始终等于 $1$.
+但是当 $h\to0$ 时, 这些差商的积分质量越来越集中于跳跃点 $0$.
+这正是本例中差商虽然在 $L^1(V)$ 中一致有界, 却不能产生 $L^1$ 弱导数的原因.
+
+直观地看, 每个差商 $D^h u$ 都是一个紧贴跳跃点 $0$ 的矩形脉冲: 它的宽度为 $|h|$, 高度为 $\frac{1}{|h|}$, 所以矩形的面积始终为 $1$, 即
+\begin{align*}
+\int_V|D^h u(x)|\,\mathrm{d}x
+=|h|\cdot\frac{1}{|h|}
+=1.
+\end{align*}
+当 $h\to0$ 时, 这个矩形越来越窄, 同时越来越高, 但面积并没有减少. 因此, 对每个固定的 $x\neq0$, 当 $|h|$ 足够小时都有 $D^h u(x)=0$, 可是差商的总积分仍然等于 $1$. 这说明积分质量并没有消失, 而是被压缩到越来越靠近 $0$ 的小区间中.
+
+所谓积分质量集中于 $0$, 具体是指: 无论取多小的邻域 $(-r,r)$, 只要 $0<|h|<\min\{r,\frac{1}{2}\}$, 差商的全部积分质量就已经落在这个邻域内, 即
+\begin{align*}
+\int_{-r}^{r}|D^h u(x)|\,\mathrm{d}x=1.
+\end{align*}
+如果$u$存在弱导数$g$,那么$g$的积分性质也应该与$D^hu(x)$类似.
+而任何固定的 $L^1$ 函数 $g$ 都不可能具有这种性质. 因为 Lebesgue 积分的绝对连续性保证
+\begin{align*}
+\lim\limits_{r\to 0^+}\int_{-r}^{r}|g(x)|\,\mathrm{d}x=0.
+\end{align*}
+也就是说, 对于一个固定的可积函数, 区间缩得足够小时, 其中的积分质量必然趋于零; 本例中的差商却通过不断增大高度, 在不断缩小的区间内始终保留总量为 $1$ 的积分质量.
+
+函数 $u$ 在 $0$ 两侧都是常数, 它的变化全部来自 $0$ 处大小为 $1$ 的跳跃. 前面的测试函数计算说明, 若要用一个 $L^1$ 弱导数表示这个跳跃, 就必须让它在任意小的零点邻域内保留至少为 $1$ 的绝对积分, 这与积分的绝对连续性矛盾！ 因此, 差商的 $L^1$ 范数一致有界只能控制积分质量的总量, 不能阻止这些质量集中到一个点上, 也就不足以保证存在 $L^1$ 弱导数.
 \end{remark}
 \begin{proof}
 
-1. 设 $1\leqslant p<\infty$，暂时设 $u$ 光滑。则对每个 $x\in V$,$i=1,\cdots,n$,$0<|h|<\frac{1}{2}\operatorname{dist}(V,\partial U)$，由微分学基本定理有
+1. 设 $1\leqslant p<\infty$，暂时设 $u$ 光滑。则对每个 $x\in V$,$i=1,\cdots,n$,$0<|h|<\frac{1}{2}\operatorname{dist}(V,\partial U)$，由微积分基本定理有
 \begin{align*}
 u\left( x+he_i \right) -u\left( x \right) =\int_0^1{\frac{\mathrm{d}}{\mathrm{d}t}u\left( x+the_i \right) \,\mathrm{d}t}=h\int_0^1{u_{x_i}\left( x+the_i \right) \,\mathrm{d}t}\Longrightarrow D^h_i u(x)=\int_0^1{u_{x_i}\left( x+the_i \right) \,\mathrm{d}t}.
 \end{align*}
@@ -107,7 +430,7 @@ u\left( x+he_i \right) -u\left( x \right) =\int_0^1{\frac{\mathrm{d}}{\mathrm{d}
 \begin{align*}
 \int_{V}|D^{h}u|^{p}\,\mathrm{d}x\leqslant C\int_{U}|Du|^{p}\,\mathrm{d}x.
 \end{align*}
-此估计在 $u$ 光滑时成立.取开集 $W$ 使得 $V\subset\subset W\subset\subset U$。由\hyperref[theorem:ch05-局部光滑逼近]{光滑函数的局部逼近}，存在一列光滑函数 $u_m\in C^\infty(W)$，使得
+此估计在 $u$ 光滑时成立.取开集 $W$ 使得 $V\subset\subset W\subset\subset U$。由\hyperref[theorem:ch05-光滑函数的局部逼近定理]{光滑函数的局部逼近}，存在一列光滑函数 $u_m\in C^\infty(W)$，使得
 \begin{align*}
 u_m\to u\quad\text{于}\ W^{1,p}(W).
 \end{align*}
@@ -152,6 +475,174 @@ D_{i}^{-h_{k}}u\rightharpoonup v_{i}\quad\text{弱收敛于}\ L^{p}(V).
 =-\int_{U}v_{i}\phi\,\mathrm{d}x.
 \end{align*}
 故在弱意义下 $v_{i}=u_{x_{i}}$（$i=1,\cdots,n$），从而 $Du\in L^{p}(V)$。由于 $u\in L^{p}(V)$，我们推得 $u\in W^{1,p}(V)$。
+\end{proof}
+
+\begin{proposition}[平直边界附近的切向差商估计]\label{proposition:ch05-平直边界附近的切向差商估计}
+设 $n\geqslant2$, $0<r<R<\infty$, 并记
+\begin{align*}
+U\triangleq B^{0}(0,R)\cap\{x_n>0\},\quad
+V\triangleq B^{0}(0,r)\cap\{x_n>0\}.
+\end{align*}
+设 $1\leqslant p<\infty$, $u\in W^{1,p}(U)$. 对每个切向方向 $i=1,\cdots,n-1$ 以及每个满足 $0<|h|<R-r$ 的步长 $h$, 差商
+\begin{align*}
+D_i^h u(x)\triangleq\frac{u(x+he_i)-u(x)}{h}
+\end{align*}
+在 $V$ 上几乎处处有定义, 且满足
+\begin{align}\label{eq:ch05-TanDQ-r7K2m9P4}
+\int_V|D_i^h u(x)|^p\,\mathrm{d}x
+\leqslant
+\int_U|u_{x_i}(x)|^p\,\mathrm{d}x.
+\end{align}
+这里 $e_i$ 是第 $i$ 个标准基向量.
+
+特别地, 当 $R=1$, $r=\frac{1}{2}$ 时, 尽管 $V\subset\subset U$ 不成立, 估计 \eqref{eq:ch05-TanDQ-r7K2m9P4} 对所有 $i=1,\cdots,n-1$ 和 $0<|h|<\frac{1}{2}$ 仍然成立.
+\end{proposition}
+
+\begin{proof}
+固定 $i\in\{1,\cdots,n-1\}$ 以及满足 $0<|h|<R-r$ 的步长 $h$.
+
+\noindent$\mathbf{Step}\bm{1}$.{\heiti 确认切向平移后的线段始终位于 $U$ 内.}
+
+对任意 $x\in V$ 和 $t\in[0,1]$, 由于 $i\leqslant n-1$, 切向平移不改变第 $n$ 个坐标, 因而
+\begin{align*}
+(x+the_i)_n=x_n>0.
+\end{align*}
+另一方面,
+\begin{align*}
+|x+the_i|
+\leqslant |x|+t|h|
+<r+|h|
+<R.
+\end{align*}
+所以
+\begin{align*}
+x+the_i\in U,\quad
+x\in V,\quad t\in[0,1].
+\end{align*}
+特别地, 对所有 $t\in[0,1]$, 都有
+\begin{align*}
+V+the_i\subseteq U.
+\end{align*}
+因此, 无论 $h$ 为正还是为负, 差商中涉及的取值点都位于 $U$ 内.
+
+\noindent$\mathbf{Step}\bm{2}$.{\heiti 估计光滑函数的差商.}
+
+先设 $u\in C^\infty(U)\cap W^{1,p}(U)$. 对任意 $x\in V$, 由微分学基本定理得
+\begin{align*}
+u(x+he_i)-u(x)
+=\int_0^1\frac{\mathrm{d}}{\mathrm{d}t}u(x+the_i)\,\mathrm{d}t
+=h\int_0^1u_{x_i}(x+the_i)\,\mathrm{d}t.
+\end{align*}
+除以 $h$, 得
+\begin{align*}
+D_i^h u(x)
+=\int_0^1u_{x_i}(x+the_i)\,\mathrm{d}t.
+\end{align*}
+当 $p>1$ 时, 对长度为 $1$ 的区间 $[0,1]$ 使用\hyperref[Real Analysis-theorem:实变函数--Hölder不等式]{Hölder不等式}; 当 $p=1$ 时, 直接使用积分的绝对值不等式. 两种情形均给出
+\begin{align*}
+|D_i^h u(x)|^p
+\leqslant
+\left(\int_0^1|u_{x_i}(x+the_i)|\,\mathrm{d}t\right)^p
+\leqslant
+\int_0^1|u_{x_i}(x+the_i)|^p\,\mathrm{d}t.
+\end{align*}
+两边在 $V$ 上积分, 利用\hyperref[Real Analysis-theorem:实变函数-Fubini定理]{Fubini定理}和平移换元, 得
+\begin{align}
+\int_V|D_i^h u(x)|^p\,\mathrm{d}x
+&\leqslant
+\int_0^1\int_V|u_{x_i}(x+the_i)|^p\,\mathrm{d}x\,\mathrm{d}t=
+\int_0^1\int_{V+the_i}|u_{x_i}(y)|^p\,\mathrm{d}y\,\mathrm{d}t\nonumber\\
+&\leqslant
+\int_0^1\int_U|u_{x_i}(y)|^p\,\mathrm{d}y\,\mathrm{d}t
+=
+\int_U|u_{x_i}(y)|^p\,\mathrm{d}y.\label{eq::NKZNJIOIJaaaaa}
+\end{align}
+这就证明了光滑情形下的结论.
+
+\noindent$\mathbf{Step}\bm{3}$.{\heiti 截去边界薄层,利用局部光滑逼近.}
+
+现在设 $u\in W^{1,p}(U)$. 为使用局部光滑逼近, 对每个 $0<\varepsilon<r$, 定义
+\begin{align*}
+V_\varepsilon
+\triangleq V\cap\{x_n>\varepsilon\}.
+\end{align*}
+考虑从 $\overline{V_\varepsilon}$ 出发的所有平移线段组成的集合
+\begin{align*}
+K_\varepsilon
+\triangleq
+\left\{
+x+the_i:
+x\in\overline{V_\varepsilon},\, t\in[0,1]
+\right\}.
+\end{align*}
+集合 $\overline{V_\varepsilon}\times[0,1]$ 是紧集, 而映射 $(x,t)\mapsto x+the_i$ 连续,因为\hyperref[Topology-theorem:topology-紧集的连续像是紧集]{连续映射将紧集映成紧集},所以 $K_\varepsilon$ 是紧集. 对任意 $y=x+the_i\in K_\varepsilon$, 有
+\begin{align*}
+y_n=x_n\geqslant\varepsilon>0,\quad
+|y|\leqslant r+|h|<R.
+\end{align*}
+因此 $K_\varepsilon$ 是 $U$ 的紧子集. 由\subcref{Real Analysis-proposition:点集间的距离的性质}{Real Analysis-proposition:点集间的距离的性质-3},可以选取开集 $W_\varepsilon$, 使得
+\begin{align*}
+K_\varepsilon\subseteq W_\varepsilon\subset\subset U.
+\end{align*}
+于是
+\begin{align*}
+V_\varepsilon+the_i\subseteq W_\varepsilon,\quad t\in[0,1].
+\end{align*}
+
+由\hyperref[theorem:ch05-光滑函数的局部逼近定理]{光滑函数的局部逼近定理}, 存在
+$u_m\in C^\infty(W_\varepsilon)\cap W^{1,p}(W_\varepsilon)$, 使得
+\begin{align*}
+\|u_m-u\|_{W^{1,p}(W_\varepsilon)}
+\longrightarrow0,\quad m\to\infty.
+\end{align*}
+由于从 $V_\varepsilon$ 出发的上述平移线段全部包含于 $W_\varepsilon$, 将\eqref{eq::NKZNJIOIJaaaaa}式的计算应用于 $u_m$, 得
+\begin{align}\label{NJKHiwiiwwww}
+\int_{V_\varepsilon}|D_i^h u_m(x)|^p\,\mathrm{d}x
+\leqslant
+\int_0^1\int_{V_\varepsilon+the_i}
+|(u_m)_{x_i}(y)|^p\,\mathrm{d}y\,\mathrm{d}t
+\leqslant
+\int_{W_\varepsilon}|(u_m)_{x_i}(y)|^p\,\mathrm{d}y.
+\end{align}
+
+下面说明可以在此估计中令 $m\to\infty$. 因为 $h$ 已经固定, 且
+$V_\varepsilon,V_\varepsilon+he_i\subseteq W_\varepsilon$, 所以
+\begin{align*}
+\|D_i^h u_m-D_i^h u\|_{L^p(V_\varepsilon)}
+&\leqslant
+\frac{1}{|h|}
+\left(
+\|u_m-u\|_{L^p(V_\varepsilon+he_i)}
++
+\|u_m-u\|_{L^p(V_\varepsilon)}
+\right)\\
+&\leqslant
+\frac{2}{|h|}
+\|u_m-u\|_{L^p(W_\varepsilon)}
+\longrightarrow0,\quad m\to\infty.
+\end{align*}
+同时,还有
+\begin{align*}
+\|(u_m)_{x_i}-u_{x_i}\|_{L^p(W_\varepsilon)}\leqslant \|u_m-u\|_{L^p(W_\varepsilon)}
+\longrightarrow0,\quad m\to\infty.
+\end{align*}
+因此, 由 $L^p$ 范数的连续性, 在\eqref{NJKHiwiiwwww}式中令 $m\to\infty$, 得
+\begin{align*}
+\int_{V_\varepsilon}|D_i^h u(x)|^p\,\mathrm{d}x
+\leqslant
+\int_{W_\varepsilon}|u_{x_i}(x)|^p\,\mathrm{d}x\leqslant
+\int_U|u_{x_i}(x)|^p\,\mathrm{d}x.
+\end{align*}
+
+\noindent$\mathbf{Step}\bm{4}$.{\heiti 令边界薄层的厚度趋于零.}
+
+当 $\varepsilon\to0^+$ 时, 集合 $V_\varepsilon$ 单调增大趋于$V$. 由\hyperref[Real Analysis-theorem:Beppo Levi非负渐升列积分定理]{Levi定理},得
+\begin{align*}
+\int_V{|D_{i}^{h}u(x)|^p\,\mathrm{d}x}&=\int_{\mathbb{R} ^n}{|D_{i}^{h}u(x)|^p\chi _V\left( x \right) \,\mathrm{d}x}=\lim_{\varepsilon \rightarrow 0^+} \int_{\mathbb{R} ^n}{|D_{i}^{h}u(x)|^p\chi _{V_{\varepsilon}}\left( x \right) \,\mathrm{d}x}
+\\
+&=\lim_{\varepsilon \rightarrow 0^+} \int_{V_{\varepsilon}}{|D_{i}^{h}u(x)|^p\,\mathrm{d}x}\leqslant \int_U{|u_{x_i}(x)|^p\,\mathrm{d}x}.
+\end{align*}
+由于方向 $i\in\{1,\cdots,n-1\}$ 和步长 $0<|h|<R-r$ 是任意选取的, \eqref{eq:ch05-TanDQ-r7K2m9P4}式对所有这些方向和步长均成立.
 \end{proof}
 
 
@@ -869,7 +1360,7 @@ D(\zeta_i \overline{u}_i) = \overline{u}_i D\zeta_i + \zeta_i D\overline{u}_i.
 \|E_0 u\|_{W^{1,p}(\mathbb{R}^n)}\leqslant C''\|u\|_{W^{1,p}(U)}.
 \end{align}
 
-现设 \(1\leqslant p<\infty\)，\(u\in W^{1,p}(U)\)。由\cref{theorem:ch05-边界光滑逼近}，可选 \(u_m\in C^{\infty}(\overline{U})\) 在 \(W^{1,p}(U)\) 中收敛于 \(u\)。由\eqref{eqJIOFJIOWJIO323u89rfu3}式与 \(E_0\) 的线性性可得
+现设 \(1\leqslant p<\infty\)，\(u\in W^{1,p}(U)\)。由\cref{theorem:ch05-直到边界光滑的函数整体逼近定理}，可选 \(u_m\in C^{\infty}(\overline{U})\) 在 \(W^{1,p}(U)\) 中收敛于 \(u\)。由\eqref{eqJIOFJIOWJIO323u89rfu3}式与 \(E_0\) 的线性性可得
 \begin{align*}
 \|E_0 u_m-E_0 u_l\|_{W^{1,p}(\mathbb{R}^n)}
 &\leqslant C''\|u_m-u_l\|_{W^{1,p}(U)}.
