@@ -175,6 +175,17 @@
 \crefname{tcb@cnt@figure}{图}{图}
 \crefname{tcb@cnt@table}{表}{表}
 
+\crefname{exercise}{习题}{习题}
+\Crefname{exercise}{习题}{习题}
+
+\crefname{examples}{例}{例}
+
+\crefname{exer}{练习}{练习}
+\Crefname{exer}{练习}{练习}
+
+\crefname{appendix}{附录}{附录}
+\Crefname{appendix}{附录}{附录}
+
 \newcommand{\subcref}[2]{%
 \hyperref[#1]{\namecref{#1}\ref{#1}\ref{#2}}%
 }
@@ -234,6 +245,12 @@
 \newunicodechar{（}{(}
 \newunicodechar{）}{)}
 
+\providecommand{\coloneqq}{\triangleq}
+
+% 三竖线范数（避免 \left/\right 跨 align 行问题）
+\providecommand{\lll}{\|\!\|}
+\providecommand{\rrr}{\|\!\|}
+
 % 自定义颜色
 \definecolor{togglecolor}{RGB}{0,102,204}% bright blue
 
@@ -254,56 +271,98 @@
 \renewenvironment{proof}{%
   \stepcounter{ocgcount}%
   \par\noindent
-  \textbf{\color{second}\proofname\;}\color{black!90}\cfs\quad
-  % 按钮放在 ocg 外部，始终显示
-  \switchocg{pr\theocgcount}{\textcolor{togglecolor}{Show/Hide Proof}}%
-  \par\nobreak
-  \begin{ocg}{pr\theocgcount}{pr\theocgcount}{on}%
-    \begin{ocg}{}{global}{on}%
+  \ifHideEnvContent
+    % 隐藏模式：不显示按钮，内容放入 off 图层中，占位完全保留
+    \begin{ocg}{pr\theocgcount}{pr\theocgcount}{off}%
+      \textbf{\color{second}\proofname\;}\color{black!90}\cfs\quad
+      \par\nobreak
       \noindent\ignorespaces
+  \else
+    % 显示模式：带按钮的正常交互
+    \textbf{\color{second}\proofname\;}\color{black!90}\cfs\quad
+    \switchocg{pr\theocgcount}{\textcolor{togglecolor}{Show/Hide Proof}}%
+    \par\nobreak
+    \begin{ocg}{pr\theocgcount}{pr\theocgcount}{on}%
+      \begin{ocg}{}{global}{on}%
+        \noindent\ignorespaces
+  \fi
 }{%
+  \ifHideEnvContent
       \par\nobreak
       \noindent\hfill$\Box$\quad
     \end{ocg}%
-  \end{ocg}%
-  \par
+    \par
+  \else
+      \par\nobreak
+      \noindent\hfill$\Box$\quad
+      \end{ocg}%
+    \end{ocg}%
+    \par
+  \fi
 }
 
-% 证明和解中的内容如果开头不是带序号的环境则在开头空一行，否则不空行
 % 解答环境 solution
 \renewenvironment{solution}{%
   \stepcounter{ocgcount}%
   \par\noindent
-  \textbf{\color{main}\solutionname} \citshape\quad
-  \switchocg{sol\theocgcount}{\textcolor{togglecolor}{Show/Hide Solution}}%
-  \par\nobreak
-  \begin{ocg}{sol\theocgcount}{sol\theocgcount}{on}%
-    \begin{ocg}{}{global}{on}%
+  \ifHideEnvContent
+    \begin{ocg}{sol\theocgcount}{sol\theocgcount}{off}%
+      \textbf{\color{main}\solutionname} \citshape\quad
+      \par\nobreak
       \noindent\ignorespaces
+  \else
+    \textbf{\color{main}\solutionname} \citshape\quad
+    \switchocg{sol\theocgcount}{\textcolor{togglecolor}{Show/Hide Solution}}%
+    \par\nobreak
+    \begin{ocg}{sol\theocgcount}{sol\theocgcount}{on}%
+      \begin{ocg}{}{global}{on}%
+        \noindent\ignorespaces
+  \fi
 }{%
+  \ifHideEnvContent
       \par\nobreak
       \noindent\hfill$\Box$\quad
     \end{ocg}%
-  \end{ocg}%
-  \par
+    \par
+  \else
+      \par\nobreak
+      \noindent\hfill$\Box$\quad
+      \end{ocg}%
+    \end{ocg}%
+    \par
+  \fi
 }
 
 % 笔记环境 note
 \renewenvironment{note}{%
   \stepcounter{ocgcount}%
   \par\noindent
-  \makebox[-3pt][r]{\scriptsize\color{red!90}\textdbend\quad}
-  \textbf{\color{second}\notename} \citshape\quad
-  \switchocg{nt\theocgcount}{\textcolor{togglecolor}{Show/Hide Note}}%
-  \par\nobreak
-  \begin{ocg}{nt\theocgcount}{nt\theocgcount}{on}%
-    \begin{ocg}{}{global}{on}%
+  \ifHideEnvContent
+    \begin{ocg}{nt\theocgcount}{nt\theocgcount}{off}%
+      \makebox[-3pt][r]{\scriptsize\color{red!90}\textdbend\quad}
+      \textbf{\color{second}\notename} \citshape\quad
+      \par\nobreak
       \noindent\ignorespaces
+  \else
+    \makebox[-3pt][r]{\scriptsize\color{red!90}\textdbend\quad}
+    \textbf{\color{second}\notename} \citshape\quad
+    \switchocg{nt\theocgcount}{\textcolor{togglecolor}{Show/Hide Note}}%
+    \par\nobreak
+    \begin{ocg}{nt\theocgcount}{nt\theocgcount}{on}%
+      \begin{ocg}{}{global}{on}%
+        \noindent\ignorespaces
+  \fi
 }{%
-    \leavevmode
+  \ifHideEnvContent
+      \leavevmode
     \end{ocg}%
-  \end{ocg}%
-  \par
+    \par
+  \else
+      \leavevmode
+      \end{ocg}%
+    \end{ocg}%
+    \par
+  \fi
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%其他命令%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

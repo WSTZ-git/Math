@@ -1,0 +1,2338 @@
+\documentclass[../main.tex]{subfiles}
+\graphicspath{{\subfix{../image/}}{\subfix{../figure/}}}
+
+\begin{document}
+
+\chapter{测度论}\label{chapter:ch01}
+
+\section{预备知识}\label{section:ch01-预备知识}
+
+我们将使用集合论的通常记号。如通常，$\mathbb{N}$、$\mathbb{Z}$、$\mathbb{Q}$、$\mathbb{R}$ 和 $\mathbb{R}^N$（$N\in\mathbb{N}$；$\mathbb{R}^1\equiv\mathbb{R}$）分别表示自然数集、整数集、有理数集、实数集以及 $N$ 元实数组的集合。区间的熟知记号 $(a,b)$、$[a,b]$、$(a,b]$、$[a,b)$ 也将用于扩充实直线 $\overline{\mathbb{R}}:=\mathbb{R}\cup\{\pm\infty\}$ 的子区间。偶尔我们使用符号 $[-\infty,+\infty]$ 表示 $\overline{\mathbb{R}}$；我们也用 $\infty$ 代替 $+\infty$。
+
+设 $X$ 为一集合，$\mathcal{P}(X):=\{E\mid E\subseteq X\}$。对任意 $E\subseteq X$，我们记 $E^c:=\{x\in X\mid x\notin E\}$ 为 $E$ 在 $X$ 中的补集，$\emptyset=X^c$ 为空集，$\chi_E:X\to[0,\infty)$ 为 $E$ 的特征函数，
+\[
+\chi_E(x):=
+\begin{cases}
+1 & \text{若 }x\in E,\\
+0 & \text{否则}.
+\end{cases}
+\]
+对任意 $E,F\subseteq X$，我们记 $E\setminus F:=E\cap F^c$ 为差集，$E\triangle F:=(E\setminus F)\cup(F\setminus E)$ 为 $E$ 与 $F$ 的对称差。若 $\mathcal{F}_1\subseteq\mathcal{F}_2\subseteq\mathcal{P}(X)$ 且 $f:\mathcal{F}_2\to[-\infty,\infty]$ 为任意集合函数，则 $f$ 在 $\mathcal{F}_1$ 上的限制记为 $f|_{\mathcal{F}_1}$。对任意 $x\in X$，集合 $\{x\}\in\mathcal{P}(X)$ 称为单点集。$E\subseteq X$ 的一个覆盖是指任意非空族 $\{F_i\}_{i\in I}\subseteq\mathcal{P}(X)$，使得 $E\subseteq\bigcup_{i\in I}F_i$。族 $\{F_i\}_{i\in I}\subseteq\mathcal{P}(X)$ 称为不交的，若对所有 $i,j\in I$、$i\neq j$ 有 $F_i\cap F_j=\emptyset$。一个有限不交族 $\{F_1,\dots,F_n\}\subseteq\mathcal{P}(X)$ 若满足 $X=\bigcup_{i=1}^n F_i$，则称为 $X$ 的一个划分。序列 $\{E_n\}\subseteq\mathcal{P}(X)$ 称为非减的（相应地，非增的），若对所有 $n\in\mathbb{N}$ 有 $E_n\subseteq E_{n+1}$（相应地，$E_n\supseteq E_{n+1}$）。非减或非增序列统称为单调的。
+
+\section{集族}\label{section:ch01-集族}
+
+\subsection{可测空间}\label{subsection:ch01-可测空间}
+
+我们回顾以下定义。
+
+\begin{definition}\label{definition:ch01-半代数代数}
+非空族 $\mathcal{S}\subseteq\mathcal{P}(X)$ 称为一个半代数，若：
+\begin{enumerate}[(i)]
+\item $E,F\in\mathcal{S}\Rightarrow E\cap F\in\mathcal{S}$；
+\item 对任意 $E\in\mathcal{S}$，存在 $E^c$ 的一个划分。
+\end{enumerate}
+族 $\mathcal{A}\subseteq\mathcal{P}(X)$ 称为一个代数，若：
+\begin{enumerate}[(i)]
+\item $\emptyset\in\mathcal{A}$；
+\item $E\in\mathcal{A}\Rightarrow E^c\in\mathcal{A}$；
+\item $E,F\in\mathcal{A}\Rightarrow E\cup F\in\mathcal{A}$。
+\end{enumerate}
+\end{definition}
+
+对任意族 $\mathcal{F}\subseteq\mathcal{P}(X)$，交集
+\[
+\mathcal{A}_0(\mathcal{F}):=\bigcap\{\mathcal{A}\mid\mathcal{A}\text{ 为代数，}\mathcal{A}\supseteq\mathcal{F}\}
+\]
+是一个代数，它包含 $\mathcal{F}$ 且被包含在所有包含 $\mathcal{F}$ 的代数 $\mathcal{A}$ 中。它称为由 $\mathcal{F}$ 生成的代数，或包含 $\mathcal{F}$ 的最小代数。
+
+\begin{example}\label{example:ch01-N胞腔}
+设 $a\equiv(a_1,\dots,a_n)$、$b\equiv(b_1,\dots,b_n)$，其中 $a_i,b_i\in[-\infty,\infty]$ 且对每个 $i=1,\dots,n$（$n\in\mathbb{N}$）有 $a_i<b_i$。考虑 $N$--胞腔
+\[
+(a,b]:=\{x\equiv(x_1,\dots,x_n)\mid x_i\in[-\infty,\infty],\ a_i<x_i\leqslant b_i\ \forall i=1,\dots,n\}
+\]
+其体积为
+\[
+\operatorname{vol}((a,b]):=\prod_{i=1}^n(b_i-a_i)\leqslant\infty.
+\]
+容易看出，$N$--胞腔族 $\mathcal{I}_n$ 是一个半代数，且由 $\mathcal{I}_n$ 生成的代数 $\mathcal{A}_0(\mathcal{I}_n)$ 由 $N$--胞腔的有限不交并组成，即对每个 $E\in\mathcal{A}_0(\mathcal{I}_n)$，存在不交的 $(a_1,b_1],\dots,(a_p,b_p]$ 使得
+\[
+E=\bigcup_{k=1}^p(a_k,b_k].
+\]
+\end{example}
+
+\begin{definition}\label{definition:ch01-sigma代数}
+族 $\mathcal{A}\subseteq\mathcal{P}(X)$ 称为一个 $\sigma$--代数，若：
+\begin{enumerate}[(i)]
+\item $\emptyset\in\mathcal{A}$；
+\item $E\in\mathcal{A}\Rightarrow E^c\in\mathcal{A}$；
+\item 对任意序列 $\{E_k\}\subseteq\mathcal{A}$，有 $\bigcup_{k=1}^\infty E_k\in\mathcal{A}$。
+\end{enumerate}
+\end{definition}
+
+\begin{definition}\label{definition:ch01-可测空间}
+设 $\mathcal{A}\subseteq\mathcal{P}(X)$ 为一 $\sigma$--代数。偶 $(X,\mathcal{A})$ 称为一个可测空间，$\mathcal{A}$ 的元素称为可测集。
+\end{definition}
+
+\begin{remark}\label{remark:ch01-迹}
+设 $F\subseteq X$。容易看出，若 $\mathcal{A}$ 为一 $\sigma$--代数，则族
+\[
+\mathcal{A}\cap F:=\{E\cap F\mid E\in\mathcal{A}\}\subseteq\mathcal{P}(F)
+\]
+也是一个 $\sigma$--代数，称为 $\mathcal{A}$ 在 $F$ 上的迹。可测空间 $(F,\mathcal{A}\cap F)$ 称为 $(X,\mathcal{A})$ 的一个可测子空间。
+\end{remark}
+
+\begin{definition}\label{definition:ch01-单调类}
+非空族 $\mathcal{M}\subseteq\mathcal{P}(X)$ 称为一个单调类，若对任意非减（相应地，非增）序列 $\{E_k\}\subseteq\mathcal{M}$，有 $\bigcup_{k=1}^\infty E_k\in\mathcal{M}$（相应地，$\bigcap_{k=1}^\infty E_k\in\mathcal{M}$）。
+\end{definition}
+
+显然，每个 $\sigma$--代数都是一个单调类。与代数的情形一样，对任意族 $\mathcal{F}\subseteq\mathcal{P}(X)$，我们可以考虑由 $\mathcal{F}$ 生成的最小 $\sigma$--代数
+\[
+\sigma_0(\mathcal{F}):=\bigcap\{\mathcal{A}\mid\mathcal{A}\text{ 为 }\sigma\text{--代数，}\mathcal{A}\supseteq\mathcal{F}\}
+\]
+和最小单调类
+\[
+\mathcal{M}_0(\mathcal{F}):=\bigcap\{\mathcal{M}\mid\mathcal{M}\text{ 为单调类，}\mathcal{M}\supseteq\mathcal{F}\}.
+\]
+
+\begin{definition}\label{definition:ch01-可分可测空间}\label{definition:ch01-可分空间}
+可测空间 $(X,\mathcal{A})$ 称为可分的，若存在可数族 $\mathcal{S}\subseteq\mathcal{P}(X)$ 使得 $\mathcal{A}=\sigma_0(\mathcal{S})$。
+\end{definition}
+
+\begin{theorem}\label{theorem:ch01-单调类定理}
+设 $\mathcal{A}\subseteq\mathcal{P}(X)$ 为一代数。则最小单调类 $\mathcal{M}_0(\mathcal{A})$ 与最小 $\sigma$--代数 $\sigma_0(\mathcal{A})$ 重合。
+\end{theorem}
+
+\begin{proof}
+显然 $\emptyset\in\mathcal{M}_0(\mathcal{A})$。我们首先证明单调类 $\mathcal{M}_0(\mathcal{A})$ 是一个代数。令 $\widetilde{\mathcal{A}}:=\{E\in\mathcal{M}_0(\mathcal{A})\mid E^c\in\mathcal{M}_0(\mathcal{A})\}$。由于 $\mathcal{A}$ 是代数且 $\mathcal{A}\subseteq\mathcal{M}_0(\mathcal{A})$，故 $\mathcal{A}\subseteq\widetilde{\mathcal{A}}$。另一方面，容易看出 $\widetilde{\mathcal{A}}$ 是一个单调类，因而 $\mathcal{M}_0(\mathcal{A})\subseteq\mathcal{M}_0(\widetilde{\mathcal{A}})\subseteq\widetilde{\mathcal{A}}$。由定义 $\widetilde{\mathcal{A}}\subseteq\mathcal{M}_0(\mathcal{A})$，故 $\widetilde{\mathcal{A}}=\mathcal{M}_0(\mathcal{A})$。因此对任意 $E\in\mathcal{M}_0(\mathcal{A})$，有 $E^c\in\mathcal{M}_0(\mathcal{A})$。类似地可证，对任意 $E,F\in\mathcal{M}_0(\mathcal{A})$，有 $E\cup F\in\mathcal{M}_0(\mathcal{A})$。故结论成立。
+
+设 $\{E_k\}\subseteq\mathcal{M}_0(\mathcal{A})$，令 $F_j:=\bigcup_{k=1}^j E_k$（$j,k\in\mathbb{N}$）。则序列 $\{F_j\}$ 非减，且 $\{F_j\}\subseteq\mathcal{M}_0(\mathcal{A})$，因为 $\mathcal{M}_0(\mathcal{A})$ 是一个代数。由于 $\mathcal{M}_0(\mathcal{A})$ 是单调类，我们得到
+\[
+\bigcup_{k=1}^\infty E_k=\bigcup_{j=1}^\infty F_j\in\mathcal{M}_0(\mathcal{A}).
+\]
+因此 $\mathcal{M}_0(\mathcal{A})$ 是一个 $\sigma$--代数。由于 $\mathcal{M}_0(\mathcal{A})$ 是包含 $\mathcal{A}$ 的 $\sigma$--代数，故 $\mathcal{M}_0(\mathcal{A})\supseteq\sigma_0(\mathcal{A})$。另一方面，$\sigma$--代数 $\sigma_0(\mathcal{A})$ 是包含 $\mathcal{A}$ 的单调类，故 $\sigma_0(\mathcal{A})\supseteq\mathcal{M}_0(\mathcal{A})$。于是结论成立。
+\end{proof}
+
+我们定义两个可测空间 $(X_1,\mathcal{A}_1)$ 与 $(X_2,\mathcal{A}_2)$ 的乘积。考虑可测矩形族 $\mathcal{R}\subseteq\mathcal{P}(X_1\times X_2)$，
+\[
+\mathcal{R}:=\{E_1\times E_2\mid E_1\in\mathcal{A}_1,\ E_2\in\mathcal{A}_2\}.
+\]
+
+\begin{definition}\label{definition:ch01-乘积sigma代数}
+\label{subsection:ch01-乘积}
+设 $(X_1,\mathcal{A}_1)$ 与 $(X_2,\mathcal{A}_2)$ 为可测空间。最小 $\sigma$--代数 $\sigma_0(\mathcal{R})$，记为 $\mathcal{A}_1\times\mathcal{A}_2$，称为乘积 $\sigma$--代数。可测空间 $(X_1\times X_2,\mathcal{A}_1\times\mathcal{A}_2)$ 称为乘积可测空间。
+\end{definition}
+
+设 $E\subseteq X_1\times X_2$。集合
+\begin{align}
+E_{x_1}:=\{x_2\in X_2\mid(x_1,x_2)\in E\}\qquad(x_1\in X_1) \label{align:ch01-截面}
+\end{align}
+称为 $E$ 的 $x_1$--截面。$x_2\in X_2$ 的 $x_2$--截面类似地定义。注意到
+\[
+(E^c)_{x_i}=(E_{x_i})^c,\qquad
+\left(\bigcup_{n=1}^\infty E_n\right)_{x_i}=\bigcup_{n=1}^\infty(E_n)_{x_i}\qquad(i=1,2).
+\]
+
+\begin{proposition}\label{proposition:ch01-截面可测}\label{proposition:ch01-截口}\label{proposition:ch01-截面}
+设 $(X_1,\mathcal{A}_1)$ 与 $(X_2,\mathcal{A}_2)$ 为可测空间，$E\in\mathcal{A}_1\times\mathcal{A}_2$。则对任意 $x_1\in X_1$ 有 $E_{x_1}\in\mathcal{A}_2$，且对任意 $x_2\in X_2$ 有 $E_{x_2}\in\mathcal{A}_1$。
+\end{proposition}
+
+\begin{proof}
+令
+\[
+\Omega:=\{E\in\mathcal{A}_1\times\mathcal{A}_2\mid E_{x_1}\in\mathcal{A}_2\ \forall x_1\in X_1\}.
+\]
+容易验证 $\Omega$ 是一个包含可测矩形族 $\mathcal{R}$ 的 $\sigma$--代数，故 $\Omega=\mathcal{A}_1\times\mathcal{A}_2$。类似地可证对任意 $x_2\in X_2$ 有 $E_{x_2}\in\mathcal{A}_1$，于是结论成立。
+\end{proof}
+
+\subsection{Borel $\sigma$ 代数}\label{subsection:ch01-Borel代数}
+
+\begin{definition}\label{definition:ch01-Borel代数}
+设 $(X,\mathcal{T})$ 为一拓扑空间。由拓扑 $\mathcal{T}$ 生成的 $\sigma$--代数 $\sigma_0(\mathcal{T})$（记为 $\mathcal{B}\equiv\mathcal{B}(X)\equiv\mathcal{B}(X,\mathcal{T})$）称为 Borel $\sigma$--代数。每个集合 $E\in\mathcal{B}$ 称为一个 Borel 集。
+\end{definition}
+
+\begin{example}\label{example:ch01-GdeltaFsigma}
+开集的可数交集族 $\mathcal{G}_\delta$ 与闭集的可数并集族 $\mathcal{F}_\sigma$ 都包含于 $\mathcal{B}$。
+\end{example}
+
+\begin{definition}\label{definition:ch01-Baire代数}
+设 $(X,\mathcal{T})$ 为一紧拓扑空间，$\mathcal{G}_\delta\supseteq G_\delta$ 为属于 $\mathcal{G}_\delta$ 的紧集族。由族 $G_\delta$ 生成的 $\sigma$--代数（记为 $\mathcal{B}_a(X)$）称为 Baire $\sigma$--代数。每个集合 $E\in\mathcal{B}_a$ 称为一个 Baire 集。
+\end{definition}
+
+\begin{remark}\label{remark:ch01-实直线Borel}
+设 $X=\mathbb{R}$，$\mathcal{T}=\mathcal{T}(\mathbb{R})$ 为实拓扑。容易看出，Borel $\sigma$--代数 $\mathcal{B}(\mathbb{R})$ 与由有界开区间族生成的 $\sigma$--代数重合。它也可由其他区间族生成，例如由半直线族 $\{(a,\infty)\mid a\in\mathbb{R}\}$ 生成。类似的注记对 Borel $\sigma$--代数 $\mathcal{B}(\mathbb{R}^N)$（$N\geqslant 2$）也成立。
+\end{remark}
+
+我们提及以下关于 Borel $\sigma$--代数乘积的结果。
+
+\begin{theorem}\label{theorem:ch01-Borel乘积}\label{theorem:ch01-Borel积}
+设 $(X_1,\mathcal{T}_1)$ 与 $(X_2,\mathcal{T}_2)$ 为具有可数基的拓扑空间，$(X_1\times X_2,\mathcal{T}_1\times\mathcal{T}_2)$ 为乘积拓扑空间。则
+\[
+\mathcal{B}(X_1,\mathcal{T}_1)\times\mathcal{B}(X_2,\mathcal{T}_2)=\mathcal{B}(X_1\times X_2,\mathcal{T}_1\times\mathcal{T}_2).
+\]
+特别地，$\mathcal{B}(\mathbb{R}^M)\times\mathcal{B}(\mathbb{R}^N)=\mathcal{B}(\mathbb{R}^{M+N})$（$M,N\in\mathbb{N}$）。
+\end{theorem}
+
+\section{测度}\label{section:ch01-测度}
+
+\subsection{一般性质}\label{subsection:ch01-测度一般性质}
+
+\begin{definition}\label{definition:ch01-集合函数性质}
+设 $\emptyset\in\mathcal{F}\subseteq\mathcal{P}(X)$。集合函数 $\varphi:\mathcal{F}\to[0,\infty]$ 称为：
+\begin{enumerate}[(i)]
+\item 单调的，若对任意 $E,F\in\mathcal{F}$、$E\subseteq F$ 有 $\varphi(E)\leqslant\varphi(F)$；
+\item 可加的，若对任意有限不交族 $\{E_1,\dots,E_n\}\subseteq\mathcal{F}$ 且 $\bigcup_{k=1}^n E_k\in\mathcal{F}$ 有
+\[
+\varphi\left(\bigcup_{k=1}^n E_k\right)=\sum_{k=1}^n\varphi(E_k);
+\]
+\item $\sigma$--次可加的，若对任意序列 $\{E_k\}\subseteq\mathcal{F}$ 且 $\bigcup_{k=1}^\infty E_k\in\mathcal{F}$ 有
+\[
+\varphi\left(\bigcup_{k=1}^\infty E_k\right)\leqslant\sum_{k=1}^\infty\varphi(E_k);
+\]
+\item $\sigma$--可加的，若对任意不交序列 $\{E_k\}\subseteq\mathcal{F}$ 且 $\bigcup_{k=1}^\infty E_k\in\mathcal{F}$ 有
+\[
+\varphi\left(\bigcup_{k=1}^\infty E_k\right)=\sum_{k=1}^\infty\varphi(E_k).
+\]
+\end{enumerate}
+\end{definition}
+
+\begin{definition}\label{definition:ch01-测度}
+设 $(X,\mathcal{A})$ 为一可测空间。集合函数 $\mu:\mathcal{A}\to[0,\infty]$ 称为 $\mathcal{A}$ 上（或 $X$ 上）的一个（正）测度，若 $\mu(\emptyset)=0$ 且 $\mu$ 为 $\sigma$--可加的。三元组 $(X,\mathcal{A},\mu)$ 称为一个测度空间。
+
+测度 $\mu$ 称为有限的，若 $\mu(X)<\infty$；它称为 $\sigma$--有限的，若存在序列 $\{E_k\}\subseteq\mathcal{A}$ 使得 $X=\bigcup_{k=1}^\infty E_k$ 且对所有 $k\in\mathbb{N}$ 有 $\mu(E_k)<\infty$。测度空间 $(X,\mathcal{A},\mu)$ 称为有限的（相应地，$\sigma$--有限的），若 $\mu$ 为有限的（相应地，$\sigma$--有限的）。
+
+若 $\mu(X)=1$，则测度 $\mu$ 称为概率测度，空间 $(X,\mathcal{A},\mu)$ 称为概率空间。$X$ 上概率测度的集合记为 $\mathcal{P}(X)$。
+
+若 $\mathcal{F}\subseteq\mathcal{P}(X)$ 为任意子集族，则上述定义可推广如下。映射 $\mu:\mathcal{F}\to[0,\infty]$ 是 $\mathcal{F}$ 上的一个测度，若当 $\emptyset\in\mathcal{F}$ 时 $\mu(\emptyset)=0$，且对任意不交序列 $\{E_k\}\subseteq\mathcal{F}$ 满足 $\bigcup_{k=1}^\infty E_k\in\mathcal{F}$，有
+\[
+\mu\left(\bigcup_{k=1}^\infty E_k\right)=\sum_{k=1}^\infty\mu(E_k).
+\]
+$\mathcal{F}$ 上的测度 $\mu$ 称为 $\sigma$--有限的，若存在序列 $\{E_k\}\subseteq\mathcal{F}$ 使得 $X=\bigcup_{k=1}^\infty E_k$ 且对每个 $k\in\mathbb{N}$ 有 $\mu(E_k)<\infty$。
+\end{definition}
+
+\begin{remark}\label{remark:ch01-测度子空间}
+设 $(X,\mathcal{A},\mu)$ 为一测度空间，$F\in\mathcal{A}$。$\mu$ 在迹 $\sigma$--代数 $\mathcal{A}\cap F$ 上的限制 $\mu|_{\mathcal{A}\cap F}$ 是由 $\mu$ 在 $\mathcal{A}\cap F$ 上诱导的测度。测度空间 $(F,\mathcal{A}\cap F,\mu|_{\mathcal{A}\cap F})$ 称为 $(X,\mathcal{A},\mu)$ 的一个测度子空间。
+\end{remark}
+
+以下测度的性质容易证明。
+
+\begin{proposition}\label{proposition:ch01-测度性质}
+设 $(X,\mathcal{A},\mu)$ 为一测度空间。则：
+\begin{enumerate}[(i)]
+\item 对任意有限不交族 $\{E_1,\dots,E_n\}\subseteq\mathcal{A}$，有
+\[
+\mu\left(\bigcup_{k=1}^n E_k\right)=\sum_{k=1}^n\mu(E_k);
+\]
+\item 对任意 $E,F\in\mathcal{A}$，$E\subseteq F\Rightarrow\mu(E)\leqslant\mu(F)$；
+\item 对任意序列 $\{E_k\}\subseteq\mathcal{A}$，有
+\[
+\mu\left(\bigcup_{k=1}^\infty E_k\right)\leqslant\sum_{k=1}^\infty\mu(E_k);
+\]
+\item 对任意非减序列 $\{E_k\}\subseteq\mathcal{A}$，有
+\[
+\mu\left(\bigcup_{k=1}^\infty E_k\right)=\lim_{k\to\infty}\mu(E_k);
+\]
+\item 对任意非增序列 $\{E_k\}\subseteq\mathcal{A}$ 且 $\mu(E_1)<\infty$，有
+\[
+\mu\left(\bigcap_{k=1}^\infty E_k\right)=\lim_{k\to\infty}\mu(E_k).
+\]
+\end{enumerate}
+\end{proposition}
+
+\begin{example}\label{example:ch01-计数与Dirac}
+(i) 设 $X$ 为一集合。映射 $\mu^\#:\mathcal{P}(X)\to[0,\infty]$ 定义为
+\[
+\mu^\#(E):=
+\begin{cases}
+E\text{ 的元素个数} & \text{若 }E\text{ 为有限集},\\
+\infty & \text{否则}
+\end{cases}
+\]
+是一个测度，称为计数测度。显然，若 $X$ 可数，则 $\mu^\#$ 是 $\sigma$--有限的。
+
+(ii) 设 $X\neq\emptyset$，$x\in X$。映射 $\delta_x:\mathcal{P}(X)\to[0,\infty)$ 定义为
+\[
+\delta_x(E):=
+\begin{cases}
+1 & \text{若 }x\in E,\\
+0 & \text{否则}
+\end{cases}
+\]
+是一个测度，称为集中于 $\{x\}$ 的 Dirac 测度。
+\end{example}
+
+\subsection{Borel 测度与 Radon 测度}\label{subsection:ch01-Borel测度}
+
+设 $(X,\mathcal{T})$ 为一 Hausdorff 空间，$\mathcal{B}=\mathcal{B}(X)$ 为由拓扑 $\mathcal{T}$ 生成的 Borel $\sigma$--代数。设 $\mathcal{K}\subseteq\mathcal{P}(X)$ 表示紧子集族。
+
+\begin{definition}\label{definition:ch01-Borel测度}
+\label{remark:ch01-局部有限}
+设 $\mathcal{A}\supseteq\mathcal{B}$ 为一 $\sigma$--代数，$\mu:\mathcal{A}\to[0,\infty]$ 为一测度。
+\begin{enumerate}[(a)]
+\item $\mu$ 称为局部有限的，若对任意 $x\in X$，存在 $x$ 的一个邻域 $U$ 使得 $\mu(U)<\infty$。局部有限的测度 $\mu:\mathcal{A}\to[0,\infty]$ 称为 $X$ 上的一个 Borel 测度。
+\item 集合 $E\in\mathcal{A}$ 称为 $\mu$--外正则的（或外正则的），若
+\[
+\mu(E)=\inf\{\mu(A)\mid A\supseteq E,\ A\in\mathcal{T}\}.
+\]
+测度 $\mu$ 称为外正则的，若每个 $E\in\mathcal{A}$ 都是 $\mu$--外正则的。
+\item 集合 $E\in\mathcal{A}$ 称为 $\mu$--内正则的（或内正则的），若
+\[
+\mu(E)=\sup\{\mu(K)\mid K\subseteq E,\ K\in\mathcal{K}\}.
+\]
+测度 $\mu$ 称为内正则的，若每个 $E\in\mathcal{A}$ 都是 $\mu$--内正则的。
+\item 集合 $E\in\mathcal{A}$ 称为 $\mu$--正则的（或正则的），若它既是 $\mu$--外正则的又是 $\mu$--内正则的。测度 $\mu$ 称为正则的，若每个 $E\in\mathcal{A}$ 都是 $\mu$--正则的。
+\item 内正则的 Borel 测度称为 Radon 测度。
+\item Borel 测度称为适度的，若存在 $\{A_n\}\subseteq\mathcal{T}$ 使得 $X=\bigcup_{n=1}^\infty A_n$ 且对所有 $n\in\mathbb{N}$ 有 $\mu(A_n)<\infty$。
+\item Borel 测度 $\mu$ 的支集（记为 $\operatorname{supp}\mu$）是闭集 $\{x\in X\mid\text{对 }x\text{ 的任意邻域 }U\text{ 有 }\mu(U)>0\}$。
+\end{enumerate}
+$X$ 上 Borel 测度与 Radon 测度的集合分别记为 $\mathcal{B}^+(X)$ 与 $\mathcal{R}^+(X)$。
+\end{definition}
+
+\begin{remark}\label{remark:ch01-Borel测度性质}
+设 $X$、$\mathcal{A}$、$\mathcal{B}$、$\mu$ 如\cref{definition:ch01-Borel测度}所述。
+\begin{enumerate}[(i)]
+\item 集合 $E\in\mathcal{A}$ 是 $\mu$--外正则的，当且仅当对任意 $\epsilon>0$，存在 $A\in\mathcal{T}$ 使得 $A\supseteq E$ 且 $\mu(A\setminus E)<\epsilon$。集合 $E\in\mathcal{A}$ 是 $\mu$--内正则的，当且仅当对任意 $\epsilon>0$，存在 $K\in\mathcal{K}$ 使得 $K\subseteq E$ 且 $\mu(E\setminus K)<\epsilon$。若 $E\in\mathcal{A}$ 是 $\mu$--外正则的，则存在 $G\in\mathcal{B}$ 使得 $G\supseteq E$ 且 $\mu(G\setminus E)=0$。
+\item $\sigma$--紧集 $E\subseteq X$ 是 $\mu$--内正则的。事实上，由定义存在非减序列 $\{K_n\}\subseteq\mathcal{K}$ 使得 $E=\bigcup_{n=1}^\infty K_n$，因而 $E\in\mathcal{B}$。于是由\cref{proposition:ch01-测度性质}(iv) 有
+\[
+\mu(E)=\lim_{n\to\infty}\mu(K_n)=\sup\{\mu(K)\mid K\subseteq E,\ K\in\mathcal{K}\}.
+\]
+\item 若 $\mu$ 局部有限（特别地，若 $\mu$ 为 Radon 测度），则对任意 $K\in\mathcal{K}$ 有 $\mu(K)<\infty$。事实上，对任意 $K\in\mathcal{K}$，存在 $A\in\mathcal{T}$ 使得 $A\supseteq K$ 且 $\mu(A)<\infty$，因而 $\mu(K)\leqslant\mu(A)<\infty$。
+\item 若 Hausdorff 空间 $X$ 局部紧，则 $\mu$ 局部有限当且仅当对任意 $K\in\mathcal{K}$ 有 $\mu(K)<\infty$。事实上，"若"部分由局部紧空间的定义即得，而"仅当"部分由 (iii) 得到。特别地，若 $X$ 为局部紧 Hausdorff 空间，则 $\mu\in\mathcal{B}^+(X)$ 当且仅当对任意 $K\in\mathcal{K}$ 有 $\mu(K)<\infty$。
+\item 每个适度 Borel 测度是 $\sigma$--有限的。反之，每个 $\sigma$--有限的外正则 Borel 测度是适度的。
+\item 若 Hausdorff 空间 $X$ 为 $\sigma$--紧的，则 $X$ 上每个 Borel 测度 $\mu$ 都是适度的。事实上，设 $X=\bigcup_{n=1}^\infty K_n$，$\{K_n\}\subseteq\mathcal{K}$。由于 $\mu$ 局部有限，由 (iii) 对每个 $n\in\mathbb{N}$ 存在 $A_n\in\mathcal{T}$ 使得 $A_n\supseteq K_n$ 且 $\mu(A_n)<\infty$，故结论成立。
+\end{enumerate}
+\end{remark}
+
+\begin{lemma}\label{lemma:ch01-有限Radon正则}\label{proposition:ch01-正则}
+\label{lemma:ch01-紧外正则}
+\label{lemma:ch01-正则性}
+设 $(X,\mathcal{T})$ 为一 Hausdorff 空间，$\mu\in\mathcal{R}^+(X)$。则：
+\begin{enumerate}[(i)]
+\item 若 $\mu(X)<\infty$，则 $\mu$ 是正则的；
+\item 每个 $K\in\mathcal{K}$ 是 $\mu$--外正则的。
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(i) 设 $E\in\mathcal{A}\supseteq\mathcal{B}$。由于 $\mu$ 内正则，集合 $E^c\in\mathcal{A}$ 是 $\mu$--内正则的，
+\[
+\mu(E^c)=\sup\{\mu(K)\mid K\subseteq E^c,\ K\in\mathcal{K}\}.
+\]
+因此
+\[
+\mu(E)=\mu(X)-\sup\{\mu(K)\mid K\subseteq E^c,\ K\in\mathcal{K}\}
+=\inf\{\mu(X)-\mu(K)\mid K\subseteq E^c,\ K\in\mathcal{K}\}
+=\inf\{\mu(K^c)\mid K^c\supseteq E,\ K\in\mathcal{K}\}.
+\]
+由于
+\[
+\mu(E)\leqslant\inf\{\mu(A)\mid A\supseteq E,\ A\in\mathcal{T}\}\leqslant\inf\{\mu(K^c)\mid K^c\supseteq E,\ K\in\mathcal{K}\},
+\]
+结论成立。
+
+(ii) 固定 $K\in\mathcal{K}$。由于 $\mu$ 局部有限，如\cref{remark:ch01-Borel测度性质}(iii) 中所述，存在 $A\in\mathcal{T}$ 使得 $A\supseteq K$ 且 $\mu(A)<\infty$。由于 $\mu$ 内正则，集合 $A\setminus K\in\mathcal{B}$ 是 $\mu$--内正则的。于是对任意 $\epsilon>0$，存在 $L\in\mathcal{K}$、$L\subseteq A\setminus K$，使得
+\[
+\mu(L)>\mu(A\setminus K)-\epsilon.
+\]
+故 $M:=A\setminus L\in\mathcal{T}$，$M\supseteq K$，且
+\[
+\mu(K)\leqslant\mu(M)=\mu(A)-\mu(L)<\mu(A)-\mu(A\setminus K)+\epsilon=\mu(K)+\epsilon.
+\]
+由 $\epsilon$ 的任意性，结论成立。
+\end{proof}
+
+\begin{proposition}\label{proposition:ch01-可数基Borel正则}
+\label{remark:ch01-附录A1}
+设 $(X,\mathcal{T})$ 为具有可数基的局部紧 Hausdorff 空间，$\mu\in\mathcal{B}^+(X)$。则 $\mu$ 是适度的且正则的。
+\end{proposition}
+
+\begin{proof}
+由\cref{remark:ch01-附录A1}，$X$ 是 $\sigma$--紧的，故由\cref{remark:ch01-Borel测度性质}(vi)，$\mu$ 是适度的。
+
+为证 $\mu$ 外正则，设 $\{A_n\}\subseteq\mathcal{T}$，对所有 $n\in\mathbb{N}$ 有 $\mu(A_n)<\infty$，且 $X=\bigcup_{n=1}^\infty A_n$。对每个 $E\in\mathcal{A}\supseteq\mathcal{B}$，令 $E_n:=E\cap A_n$，于是 $E=\bigcup_{n=1}^\infty E_n$ 且对所有 $n\in\mathbb{N}$ 有 $\mu(E_n)\leqslant\mu(A_n)<\infty$。则 $\mu_n:=\mu|_{\mathcal{B}(A_n)}$ 是有限的；此外，由\cref{remark:ch01-附录A1}，$A_n$ 的每个开子集是 $\sigma$--紧的，因而是 $\mu_n$--内正则的（见\cref{remark:ch01-Borel测度性质}(ii)）。如\cref{lemma:ch01-有限Radon正则}(i) 的证明那样论证，可知 $\mu_n$ 是正则的，特别地是外正则的（细节见文献~[45, Satz VIII.1.5]）。因此，对任意 $\epsilon>0$ 和 $n\in\mathbb{N}$，存在 $A_n'\in\mathcal{T}$ 使得
+\[
+E_n\subseteq A_n'\subseteq A_n,\qquad\mu_n(A_n'\setminus E_n)=\mu(A_n'\setminus E_n)<\frac{\epsilon}{2^n}.
+\]
+于是 $A':=\bigcup_{n=1}^\infty A_n'\in\mathcal{T}$，$A'\supseteq E$，且
+\[
+\mu(A'\setminus E)\leqslant\sum_{n=1}^\infty\mu(A_n'\setminus E_n)<\epsilon.
+\]
+故 $\mu$ 是外正则的（见\cref{remark:ch01-Borel测度性质}(i)）。
+
+现证 $\mu$ 内正则。设 $E\in\mathcal{A}$，$E_n:=E\cap A_n$，$\mu_n$ 同上。对任意 $\alpha<\mu(E)$，取 $p\in\mathbb{N}$ 充分大使得 $\mu(\bigcup_{n=1}^p E_n)>\alpha$；令 $\epsilon:=\mu(\bigcup_{n=1}^p E_n)-\alpha$。对每个 $n=1,\dots,p$，测度 $\mu_n$ 是正则的，因而是内正则的；故存在紧集 $K_n\subseteq E_n$ 使得
+\[
+\mu_n(E_n\setminus K_n)=\mu(E_n\setminus K_n)<\frac{\epsilon}{p}\qquad(n=1,\dots,p).
+\]
+则 $K:=\bigcup_{n=1}^p K_n\in\mathcal{K}$，$K\subseteq\bigcup_{n=1}^p E_n$，且
+\[
+\mu\left(\bigcup_{n=1}^p E_n\setminus K\right)\leqslant\sum_{n=1}^p\mu(E_n\setminus K_n)<\epsilon=\mu\left(\bigcup_{n=1}^p E_n\right)-\alpha.
+\]
+由上述不等式得 $\mu(K)>\alpha$，故结论成立。
+\end{proof}
+
+\begin{remark}\label{remark:ch01-BorelRadon一致}
+由\cref{proposition:ch01-可数基Borel正则}，在具有可数基的局部紧 Hausdorff 空间中（例如在 $\mathbb{R}^N$ 中），Borel 测度与 Radon 测度重合且都是正则的。
+\end{remark}
+
+\subsection{零测集}\label{subsection:ch01-零测集}
+
+\begin{definition}\label{definition:ch01-零测集}
+设 $(X,\mathcal{A},\mu)$ 为一测度空间。
+\begin{enumerate}[(i)]
+\item 集合 $N\subseteq X$ 称为 $\mu$--零测的（或零测的），若 $N\in\mathcal{A}$ 且 $\mu(N)=0$。集合 $E\subseteq X$ 称为 $\mu$--可忽略的（或可忽略的），若存在 $\mu$--零测集 $N$ 使得 $E\subseteq N$。
+\item 空间 $(X,\mathcal{A},\mu)$ 称为完备的，若所有可忽略集都是可测的，因而是零测的。此时 $\mu$ 是完备测度，$\sigma$--代数 $\mathcal{A}$ 关于 $\mu$ 是完备的。
+\end{enumerate}
+\end{definition}
+
+我们记零测集族为 $\mathcal{N}_\mu$，可忽略集族为 $\mathcal{U}_\mu$。两个族 $\mathcal{N}_\mu$ 与 $\mathcal{U}_\mu$ 关于可数并都是稳定的。此外，$\mathcal{U}_\mu$ 是遗传的，即 $F\subseteq E$、$E\in\mathcal{U}_\mu\Rightarrow F\in\mathcal{U}_\mu$。显然，$\mathcal{N}_\mu=\mathcal{U}_\mu$ 当且仅当 $(X,\mathcal{A},\mu)$ 是完备的。
+
+\begin{theorem}\label{theorem:ch01-Lebesgue完备化}\label{definition:ch01-完备化}
+设 $(X,\mathcal{A},\mu)$ 为一测度空间。则：
+\begin{enumerate}[(i)]
+\item 族
+\begin{align}
+\overline{\mathcal{A}}:=\{E\subseteq X\mid\exists F,G\in\mathcal{A}\text{ 使得 }F\subseteq E\subseteq G,\ \mu(G\setminus F)=0\} \label{align:ch01-完备sigma代数}
+\end{align}
+是包含 $\mathcal{A}$ 的 $\sigma$--代数；
+\item 存在完备测度 $\overline{\mu}:\overline{\mathcal{A}}\to[0,\infty]$ 使得 $\overline{\mu}|_{\mathcal{A}}=\mu$。此外，$(X,\overline{\mathcal{A}},\overline{\mu})$ 是包含 $(X,\mathcal{A},\mu)$ 的最小完备测度空间。
+\end{enumerate}
+\end{theorem}
+
+\begin{definition}\label{definition:ch01-Lebesgue完备化}
+空间 $(X,\overline{\mathcal{A}},\overline{\mu})$ 称为 $(X,\mathcal{A},\mu)$ 的 Lebesgue 完备化。
+\end{definition}
+
+\begin{proof}[\cref{theorem:ch01-Lebesgue完备化}的证明]
+(i) 显然 $\overline{\mathcal{A}}\supseteq\mathcal{A}$；特别地，$\emptyset\in\overline{\mathcal{A}}$。由\eqref{align:ch01-完备sigma代数} 立即得 $E\in\overline{\mathcal{A}}\Rightarrow E^c\in\overline{\mathcal{A}}$。此外设 $\{E_n\}\subseteq\overline{\mathcal{A}}$。则存在 $\{F_n\}\subseteq\mathcal{A}$ 和 $\{G_n\}\subseteq\mathcal{A}$ 使得对任意 $n\in\mathbb{N}$ 有 $F_n\subseteq E_n\subseteq G_n$，$\mu(G_n\setminus F_n)=0$。故
+\[
+F:=\bigcup_{n=1}^\infty F_n\subseteq\bigcup_{n=1}^\infty E_n\subseteq\bigcup_{n=1}^\infty G_n=:G,
+\]
+由 $\mu$ 的 $\sigma$--次可加性有
+\[
+\mu(G\setminus F)\leqslant\sum_{n=1}^\infty\mu(G_n\setminus F_n)=0.
+\]
+故 $\bigcup_{n=1}^\infty E_n\in\overline{\mathcal{A}}$，结论成立。
+
+(ii) 对任意 $E\in\overline{\mathcal{A}}$，令 $\overline{\mu}(E):=\mu(F)=\mu(G)$，其中 $F,G$ 如\eqref{align:ch01-完备sigma代数} 所示。注意此定义是适定的，因为它不依赖于 $F,G$ 的选取。事实上，设 $F_1,G_1\in\mathcal{A}$ 使得 $F_1\subseteq E\subseteq G_1$ 且 $\mu(G_1\setminus F_1)=0$。则 $F_1\subseteq E\subseteq G$ 且 $F\subseteq E\subseteq G_1$，故
+\[
+G\setminus F_1=(G\setminus E)\cup(E\setminus F_1)\subseteq(G\setminus F)\cup(G_1\setminus F_1).
+\]
+由此得 $\mu(G\setminus F_1)=0$；类似地有 $\mu(G_1\setminus F)=0$。等式
+\[
+\mu(G\setminus F)=\mu(G_1\setminus F_1)=\mu(G\setminus F_1)=\mu(G_1\setminus F)=0
+\]
+蕴含 $\mu(F)=\mu(F_1)=\mu(G_1)=\mu(G)$。
+
+现证 $\overline{\mu}$ 是 $\overline{\mathcal{A}}$ 上的测度。显然 $\overline{\mu}(\emptyset)=0$。为证 $\overline{\mu}$ 的 $\sigma$--可加性，设 $\{E_n\}\subseteq\overline{\mathcal{A}}$ 为不交序列。于是每个满足 $F_n\subseteq E_n$（对所有 $n\in\mathbb{N}$）的序列 $\{F_n\}\subseteq\mathcal{A}$ 也是不交的。故由 $\mu$ 的 $\sigma$--可加性，
+\[
+\overline{\mu}\left(\bigcup_{n=1}^\infty E_n\right)=\mu\left(\bigcup_{n=1}^\infty F_n\right)=\sum_{n=1}^\infty\mu(F_n)=\sum_{n=1}^\infty\overline{\mu}(E_n),
+\]
+结论成立。为证 $\overline{\mu}$ 完备，固定任意 $N\in\overline{\mathcal{A}}$ 使得 $\overline{\mu}(N)=0$，并设 $F,G\in\mathcal{A}$ 满足 $F\subseteq N\subseteq G$，$\mu(G\setminus F)=0$。由 $\overline{\mu}$ 的定义有 $\mu(G)=\overline{\mu}(N)=0$。于是对任意 $E\subseteq N$，有 $\emptyset\subseteq E\subseteq G$，$\mu(G\setminus\emptyset)=\mu(G)=0$。这表明 $E\in\overline{\mathcal{A}}$，故 $\overline{\mu}$ 完备。
+
+由其定义有 $\overline{\mu}|_{\mathcal{A}}=\mu$。还需证：若 $(X,\mathcal{A}_1,\mu_1)$ 为完备测度空间且 $\mathcal{A}\subseteq\mathcal{A}_1$、$\mu_1|_{\mathcal{A}}=\mu$，则 $\overline{\mathcal{A}}\subseteq\mathcal{A}_1$ 且 $\mu_1|_{\overline{\mathcal{A}}}=\overline{\mu}$。为此，设 $E\in\overline{\mathcal{A}}$，$F,G\in\mathcal{A}$ 满足 $F\subseteq E\subseteq G$ 且 $\mu(G\setminus F)=0$。由于 $\mu_1$ 完备，$\mu_1(G\setminus F)=\mu(G\setminus F)=0$，且 $G\setminus E\subseteq G\setminus F$，故 $G\setminus E\in\mathcal{A}_1$。于是 $E=G\setminus(G\setminus E)\in\mathcal{A}_1$，因而 $\overline{\mathcal{A}}\subseteq\mathcal{A}_1$。其余结论显然，证毕。
+\end{proof}
+
+\begin{remark}\label{remark:ch01-完备化刻画}
+值得注意\eqref{align:ch01-完备sigma代数} 中定义的 $\sigma$--代数 $\overline{\mathcal{A}}$ 的如下刻画：
+\[
+\overline{\mathcal{A}}=\{F\cup E_0\mid F\in\mathcal{A},\ E_0\in\mathcal{U}_\mu\}.
+\]
+事实上，设 $E\in\overline{\mathcal{A}}$。则由\eqref{align:ch01-完备sigma代数} 有 $E_0:=E\setminus F\subseteq G\setminus F$，其中 $G\setminus F\in\mathcal{N}_\mu$；故 $E_0\in\mathcal{U}_\mu$ 且 $E=F\cup E_0$。反之，设 $E=F\cup E_0$，$F\in\mathcal{A}$，$E_0\in\mathcal{U}_\mu$。则由 $\mathcal{U}_\mu$ 的定义存在 $N_0\in\mathcal{N}_\mu$ 使得 $E_0\subseteq N_0$。令 $G:=F\cup(N_0\setminus F)$。则有 $F\subseteq E\subseteq G$，$\mu(G\setminus F)=\mu(N_0\setminus F)=0$，故 $E\in\overline{\mathcal{A}}$。
+\end{remark}
+
+\begin{definition}\label{definition:ch01-a.e.}
+设 $(X,\mathcal{A},\mu)$ 为一测度空间。性质 $P$ 称为 $\mu$--几乎处处成立（记为 $\mu$--a.e. 或 a.e.），若集合 $\{x\in X\mid P(x)\text{ 不成立}\}\in\mathcal{N}_\mu$。
+\end{definition}
+
+作为上述定义的特殊情形，(a) 两个函数 $f,g:X\to\mathbb{R}$ 在 $X$ 上 $\mu$--a.e. 相等，若 $\{x\in X\mid f(x)\neq g(x)\}\in\mathcal{N}_\mu$；(b) 序列 $\{f_n\}$（$f_n:X\to\mathbb{R}$）在 $X$ 中 $\mu$--a.e. 收敛，若 $\{x\in X\mid\{f_n(x)\}\text{ 不收敛}\}\in\mathcal{N}_\mu$。
+
+显然，$\mu$--a.e. 相等是一个等价关系：
+\begin{align}
+g\sim f \overset{\mathrm{def}}{\Longleftrightarrow} g=f\ \mu\text{--a.e. 在 }X\text{ 中}. \label{align:ch01-a.e.等价}
+\end{align}
+关于\eqref{align:ch01-a.e.等价} 的每个等价类由其任意一个元素唯一确定，该元素称为该类的一个代表元。因此自然地将整个类视为一个在 $X$ 中 $\mu$--a.e. 定义的唯一映射 $f$。
+
+\begin{definition}\label{definition:ch01-a.e.定义}
+设 $(X,\mathcal{A},\mu)$ 为一测度空间，$Y$ 为一集合。函数 $f:E\to Y$（$E\in\mathcal{A}$）称为在 $X$ 中 $\mu$--a.e. 定义的，若 $E^c\in\mathcal{N}_\mu$。
+\end{definition}
+
+在适当场合，为强调\cref{definition:ch01-a.e.定义} 与经典逐点定义之间的区别，我们说：
+\begin{enumerate}[(i)]
+\item 函数 $f:X\to\mathbb{R}$ 是经典的，若它在每个点 $x\in X$ 处都有定义；
+\item 经典函数 $g$ 等于一个 $\mu$--a.e. 定义的函数 $f$，若 $g$ 是 $f$ 的一个经典代表元。
+\end{enumerate}
+
+在此联系下，值得注意序列的 $\mu$--a.e. 极限在\cref{definition:ch01-a.e.定义} 的意义下是唯一的（但在逐点意义下不唯一）：事实上，$f_n\to f$ $\mu$--a.e. 且 $f_n\to g$ $\mu$--a.e. 蕴含 $f=g$ $\mu$--a.e.。
+
+为后续参考，我们证明以下技术引理。
+
+\begin{lemma}[穷尽引理]\label{lemma:ch01-穷尽引理}
+\label{lemma:ch01-穷竭}
+设 $(X,\mathcal{A},\mu)$ 为一有限测度空间。设 $P=P(x)$（$x\in X$）为一性质，满足：
+\begin{enumerate}[(i)]
+\item $P$ 在 $X$ 的每个 $\mu$--零测子集上成立；
+\item 对任意 $E\in\mathcal{A}$ 且 $\mu(E)>0$，存在 $F\in\mathcal{A}$、$F\subseteq E$、$\mu(F)>0$，使得 $P$ 在 $F$ 上成立。
+\end{enumerate}
+则存在不交序列 $\{E_k\}\subseteq\mathcal{A}$ 使得 $\bigcup_{k=1}^\infty E_k=X$ 且 $P$ 在每个 $E_k$ 上成立。
+\end{lemma}
+
+\begin{proof}
+令 $\Sigma:=\{E\in\mathcal{A}\mid P\text{ 在 }E\text{ 上成立}\}$，$c:=\sup_{E\in\Sigma}\mu(E)$。设 $\{F_n\}\subseteq\Sigma$ 使得 $\lim_{n\to\infty}\mu(F_n)=c$。令 $H_k:=\bigcup_{n=1}^k F_n$。则对任意 $k\in\mathbb{N}$，性质 $P$ 在 $H_k$ 上成立，且 $H_k\subseteq H_{k+1}$；此外有 $\lim_{k\to\infty}\mu(H_k)=c$。
+
+现证集合 $E_1:=X\setminus(\bigcup_{k=1}^\infty H_k)=\bigcap_{k=1}^\infty H_k^c$ 是 $\mu$--零测的。反设 $\mu(E_1)>0$。则由假设 (ii) 存在 $F\in\mathcal{A}$、$F\subseteq E_1$、$\mu(F)>0$，使得性质 $P$ 在 $F$ 上成立，故 $F\in\Sigma$；此外对所有 $k\in\mathbb{N}$ 有 $F\subseteq H_k^c$。令 $G_k:=H_k\cup F$（$k\in\mathbb{N}$）。则 $\{G_k\}\subseteq\Sigma$ 且
+\[
+\lim_{k\to\infty}\mu(G_k)=\lim_{k\to\infty}(\mu(H_k)+\mu(F))=c+\mu(F)>c,
+\]
+矛盾。
+
+现令 $E_2:=H_1$，$E_k:=H_{k-1}\setminus H_{k-2}$ 对任意 $k\geqslant 3$。序列 $\{E_k\}$ 具有所述性质，证毕。
+\end{proof}
+
+最后我们证明以下关于 Radon 测度支集的刻画。
+
+\begin{lemma}\label{lemma:ch01-支集刻画}
+设 $(X,\mathcal{T})$ 为一 Hausdorff 空间，$\mu\in\mathcal{R}^+(X)$。设 $A\in\mathcal{T}$ 为最大的开 $\mu$--零测集。则 $\operatorname{supp}\mu=A^c$。
+\end{lemma}
+
+\begin{proof}
+我们首先证明最大的开 $\mu$--零测集确实存在。令 $\mathcal{N}_\mu\cap\mathcal{T}\equiv\{A_j\}_{j\in J}$，$A:=\bigcup_{j\in J}A_j$。显然 $A\in\mathcal{T}$ 且对所有 $j\in J$ 有 $A\supseteq A_j$。若 $\mathcal{N}_\mu\cap\mathcal{T}=\{\emptyset\}$，则结论显然。否则，设 $K\subseteq A$ 为紧集。于是存在 $A_1,\dots,A_n\in\mathcal{N}_\mu\cap\mathcal{T}$ 使得 $K\subseteq\bigcup_{j=1}^n A_j$。由此得 $\mu(K)=0$，由 $K$ 的任意性和 $\mu$ 的内正则性得 $\mu(A)=0$。
+
+设 $x\in[\operatorname{supp}\mu]^c$。则由\cref{definition:ch01-Borel测度}(g) 存在开邻域 $\widetilde{A}\ni x$ 使得 $\mu(\widetilde{A})=0$；特别地，$\widetilde{A}\in\mathcal{N}_\mu\cap\mathcal{T}$。故 $x\in\widetilde{A}\subseteq A$。反之，设 $x\in A$。则 $A$ 是 $x$ 的一个开 $\mu$--零测邻域，故 $x\in[\operatorname{supp}\mu]^c$。于是 $[\operatorname{supp}\mu]^c=A$，证毕。
+\end{proof}
+
+\section{测度与外测度}\label{section:ch01-测度与外测度}
+
+\begin{definition}\label{definition:ch01-外测度}
+映射 $\mu^*:\mathcal{P}(X)\to[0,\infty]$ 称为一个外测度，若：
+\begin{enumerate}[(i)]
+\item $\mu^*(\emptyset)=0$；
+\item 对任意 $E_1\subseteq E_2$，$\mu^*(E_1)\leqslant\mu^*(E_2)$；
+\item 对任意序列 $\{E_n\}\subseteq\mathcal{P}(X)$，
+\[
+\mu^*\left(\bigcup_{n=1}^\infty E_n\right)\leqslant\sum_{n=1}^\infty\mu^*(E_n).
+\]
+\end{enumerate}
+\end{definition}
+
+如下文所示，外测度容易构造，且通过一个一般的限制程序可由外测度得到完备测度。
+
+\subsection{Carathéodory 构造}\label{subsection:ch01-Caratheodory构造}
+
+\begin{definition}\label{definition:ch01-外测度可测}
+设 $\mu^*:\mathcal{P}(X)\to[0,\infty]$ 为一外测度。集合 $E\subseteq X$ 称为 $\mu^*$--可测的，若
+\begin{align}
+\mu^*(Z)=\mu^*(Z\cap E)+\mu^*(Z\cap E^c)\qquad\text{对任意 }Z\subseteq X. \label{align:ch01-Caratheodory条件}
+\end{align}
+\end{definition}
+
+\begin{remark}\label{remark:ch01-外测度可测}
+(i) 由 $\mu^*$ 的次可加性，集合 $E\subseteq X$ 是 $\mu^*$--可测的，当且仅当
+\begin{align}
+\mu^*(Z)\geqslant\mu^*(Z\cap E)+\mu^*(Z\cap E^c)\qquad\text{对任意 }Z\subseteq X. \label{align:ch01-Caratheodory等价}
+\end{align}
+(ii) 每个满足 $\mu^*(E)=0$ 的集合 $E$（特别地，空集）都是 $\mu^*$--可测的。事实上，由 $\mu^*$ 的单调性，对任意 $Z\subseteq X$，
+\[
+\mu^*(Z\cap E)+\mu^*(Z\cap E^c)\leqslant\mu^*(E)+\mu^*(Z)=\mu^*(Z).
+\]
+\end{remark}
+
+给定一个外测度 $\mu^*$，存在一个 $\sigma$--代数 $\mathcal{L}\subseteq\mathcal{P}(X)$ 使得限制 $\mu^*|_{\mathcal{L}}$ 是一个测度。这就是以下定理的内容。
+
+\begin{theorem}[Carathéodory]\label{theorem:ch01-Caratheodory}\label{remark:ch01-Caratheodory}
+设 $\mu^*$ 为一外测度。则：
+\begin{enumerate}[(i)]
+\item 族
+\begin{align}
+\mathcal{L}:=\{E\subseteq X\mid E\text{ 为 }\mu^*\text{--可测}\} \label{align:ch01-L族}
+\end{align}
+是一个 $\sigma$--代数；
+\item 限制 $\mu^*|_{\mathcal{L}}$ 是 $\mathcal{L}$ 上的一个完备测度。
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+(i) 我们首先证明 $\mathcal{L}$ 是一个代数。已经观察到空集是 $\mu^*$--可测的。此外，由\eqref{align:ch01-Caratheodory条件} 和\eqref{align:ch01-L族} 显然，对任意 $E\in\mathcal{L}$ 有 $E^c\in\mathcal{L}$。设 $E$ 和 $F$ 都是 $\mu^*$--可测的；则对任意 $Z\subseteq X$，有
+\[
+\mu^*(Z)=\mu^*(Z\cap E)+\mu^*(Z\cap E^c),\quad
+\mu^*(Z\cap E^c)=\mu^*(Z\cap E^c\cap F)+\mu^*(Z\cap E^c\cap F^c).
+\]
+因此
+\begin{align}
+\mu^*(Z)=\mu^*(Z\cap E)+\mu^*(Z\cap E^c\cap F)+\mu^*(Z\cap E^c\cap F^c). \label{align:ch01-Caratheodory证明1}
+\end{align}
+注意到
+\[
+(Z\cap E)\cup(Z\cap E^c\cap F)=Z\cap[E\cup(E^c\cap F)]=Z\cap[E\cup(F\setminus E)]=Z\cap(E\cup F),
+\]
+故由次可加性
+\begin{align}
+\mu^*(Z\cap(E\cup F))\leqslant\mu^*(Z\cap E)+\mu^*(Z\cap E^c\cap F). \label{align:ch01-Caratheodory证明2}
+\end{align}
+此外，由于 $Z\cap E^c\cap F^c=Z\cap(E\cup F)^c$，由\eqref{align:ch01-Caratheodory证明1}--\eqref{align:ch01-Caratheodory证明2}，对任意 $Z\subseteq X$，
+\[
+\mu^*(Z)\geqslant\mu^*(Z\cap(E\cup F))+\mu^*(Z\cap(E\cup F)^c).
+\]
+由此 $E\cup F$ 是 $\mu^*$--可测的，故 $\mathcal{L}$ 是一个代数。
+
+现证：若 $\{E_k\}$ 为一列 $\mu^*$--可测的不交集合且 $S:=\bigcup_{k=1}^\infty E_k$，则
+\begin{align}
+\mu^*(Z\cap S)=\sum_{k=1}^\infty\mu^*(Z\cap E_k)\qquad\text{对任意 }Z\subseteq X. \label{align:ch01-Caratheodory证明3}
+\end{align}
+令 $S_n:=\bigcup_{k=1}^n E_k$（$n\in\mathbb{N}$）。我们首先证对任意 $n\in\mathbb{N}$，
+\begin{align}
+\mu^*(Z\cap S_n)=\sum_{k=1}^n\mu^*(Z\cap E_k)\qquad\text{对任意 }Z\subseteq X. \label{align:ch01-Caratheodory证明4}
+\end{align}
+由于 $\mathcal{L}$ 是代数，集合 $S_n$ 对任意 $n\in\mathbb{N}$ 是 $\mu^*$--可测的，且
+\[
+\mu^*(Z\cap S_{n+1})=\mu^*(Z\cap S_{n+1}\cap S_n)+\mu^*(Z\cap S_{n+1}\cap S_n^c)=\mu^*(Z\cap S_n)+\mu^*(Z\cap E_{n+1}).
+\]
+若\eqref{align:ch01-Caratheodory证明4} 对某个 $n$ 成立，则由上述等式有
+\[
+\mu^*(Z\cap S_{n+1})=\sum_{k=1}^n\mu^*(Z\cap E_k)+\mu^*(Z\cap E_{n+1}),
+\]
+故\eqref{align:ch01-Caratheodory证明4} 对 $n+1$ 成立。显然\eqref{align:ch01-Caratheodory证明4} 对 $n=1$ 成立，故由归纳法结论成立。
+
+现证等式\eqref{align:ch01-Caratheodory证明3}。由于 $S_n\subseteq S$，由 $\mu^*$ 的单调性和\eqref{align:ch01-Caratheodory证明4} 有
+\[
+\mu^*(Z\cap S)\geqslant\mu^*(Z\cap S_n)=\sum_{k=1}^n\mu^*(Z\cap E_k)\qquad(n\in\mathbb{N}),
+\]
+令 $n\to\infty$，得 $\mu^*(Z\cap S)\geqslant\sum_{k=1}^\infty\mu^*(Z\cap E_k)$。反向不等式由 $\mu^*$ 的 $\sigma$--次可加性得到，因为 $Z\cap S=\bigcup_{k=1}^\infty(Z\cap E_k)$。于是\eqref{align:ch01-Caratheodory证明3} 成立。
+
+现可证 $\mathcal{L}$ 是一个 $\sigma$--代数。由于对任意 $n\in\mathbb{N}$，集合 $S_n$ 是 $\mu^*$--可测的且 $S_n^c\supseteq S^c$，由\eqref{align:ch01-Caratheodory证明4} 和 $\mu^*$ 的单调性，对任意 $Z\subseteq X$ 有
+\[
+\mu^*(Z)=\mu^*(Z\cap S_n)+\mu^*(Z\cap S_n^c)\geqslant\sum_{k=1}^n\mu^*(Z\cap E_k)+\mu^*(Z\cap S^c)\qquad(n\in\mathbb{N}).
+\]
+在上述不等式中令 $n\to\infty$ 并利用\eqref{align:ch01-Caratheodory证明3}，得
+\[
+\mu^*(Z)\geqslant\sum_{k=1}^\infty\mu^*(Z\cap E_k)+\mu^*(Z\cap S^c)=\mu^*(Z\cap S)+\mu^*(Z\cap S^c).
+\]
+故集合 $S$ 是 $\mu^*$--可测的。任意可数并的 $\mu^*$--可测集合同理，结论成立。
+
+(ii) 显然 $\mu^*|_{\mathcal{L}}(\emptyset)=\mu^*(\emptyset)=0$。设 $\{E_k\}$ 为一列 $\mu^*$--可测的不交集合。在等式\eqref{align:ch01-Caratheodory证明3} 中取 $Z=S:=\bigcup_{k=1}^\infty E_k$，得
+\[
+\mu^*\left(\bigcup_{k=1}^\infty E_k\right)=\sum_{k=1}^\infty\mu^*(E_k).
+\]
+由于 $E_k,S\in\mathcal{L}$，故 $\mu^*|_{\mathcal{L}}$ 是 $\sigma$--可加的，因而是一个测度。
+
+为证其完备性，设 $N\in\mathcal{L}$ 满足 $\mu^*|_{\mathcal{L}}(N)=\mu^*(N)=0$，$E\subseteq N$。由 $\mu^*$ 的单调性有 $\mu^*(E)\leqslant\mu^*(N)=0$；故由\cref{remark:ch01-外测度可测}(ii) 得 $E\in\mathcal{L}$。证毕。
+\end{proof}
+
+构造外测度的一般程序如下。设 $\mathcal{C}\subseteq\mathcal{P}(X)$ 且 $\emptyset\in\mathcal{C}$，$\zeta:\mathcal{C}\to[0,\infty]$ 满足 $\zeta(\emptyset)=0$。定义映射 $\mu^*:\mathcal{P}(X)\to[0,\infty]$ 如下：
+\begin{align}
+\mu^*(E):=\inf\left\{\sum_{n=1}^\infty\zeta(E_n)\ \middle|\ E\subseteq\bigcup_{n=1}^\infty E_n,\ \{E_n\}\subseteq\mathcal{C}\right\} \label{align:ch01-外测度生成a}
+\end{align}
+若 $E$ 可由 $\mathcal{C}$ 中集合的可数并覆盖，或
+\begin{align}
+\mu^*(E):=\infty\qquad\text{否则}. \label{align:ch01-外测度生成b}
+\end{align}
+则以下结论成立。
+
+\begin{theorem}\label{theorem:ch01-外测度生成}
+\label{theorem:ch01-外测度}
+设 $\mathcal{C}\subseteq\mathcal{P}(X)$ 且 $\emptyset\in\mathcal{C}$，$\zeta:\mathcal{C}\to[0,\infty]$ 满足 $\zeta(\emptyset)=0$。则由\eqref{align:ch01-外测度生成a}--\eqref{align:ch01-外测度生成b} 定义的映射 $\mu^*$ 是 $X$ 上的一个外测度。
+\end{theorem}
+
+\begin{proof}
+由\eqref{align:ch01-外测度生成a} 有 $\mu^*(\emptyset)\leqslant\zeta(\emptyset)=0$。若 $E_1\subseteq E_2$，则当 $E_2$ 不能由 $\mathcal{C}$ 中集合的可数并覆盖时，由\eqref{align:ch01-外测度生成b} 得 $\mu^*(E_1)\leqslant\mu^*(E_2)$；否则，由于 $E_2$ 的每个可数覆盖也是 $E_1$ 的可数覆盖，由\eqref{align:ch01-外测度生成a} 得同样结论。
+
+现证对任意序列 $\{E_n\}\subseteq\mathcal{P}(X)$，有
+\[
+\mu^*\left(\bigcup_{n=1}^\infty E_n\right)\leqslant\sum_{n=1}^\infty\mu^*(E_n).
+\]
+若右端为无穷则显然。否则，对任意 $n\in\mathbb{N}$ 有 $\mu^*(E_n)<\infty$，故对任意 $\epsilon>0$ 和 $n\in\mathbb{N}$，存在序列 $\{E_{n,k}\}\subseteq\mathcal{C}$ 使得
+\[
+E_n\subseteq\bigcup_{k=1}^\infty E_{n,k},\qquad
+\mu^*(E_n)+\frac{\epsilon}{2^n}>\sum_{k=1}^\infty\zeta(E_{n,k}).
+\]
+由于 $\bigcup_{n=1}^\infty E_n\subseteq\bigcup_{n,k=1}^\infty E_{n,k}$ 且 $\{E_{n,k}\}\subseteq\mathcal{C}$（$n,k\in\mathbb{N}$），得
+\[
+\mu^*\left(\bigcup_{n=1}^\infty E_n\right)\leqslant\sum_{n,k=1}^\infty\zeta(E_{n,k})
+<\sum_{n=1}^\infty\left[\mu^*(E_n)+\frac{\epsilon}{2^n}\right]
+=\sum_{n=1}^\infty\mu^*(E_n)+\epsilon.
+\]
+由 $\epsilon$ 的任意性，结论成立。
+\end{proof}
+
+\begin{definition}\label{definition:ch01-外测度生成定义}
+由\cref{theorem:ch01-外测度生成} 给出的外测度 $\mu^*$ 称为由偶 $(\mathcal{C},\zeta)$ 生成的。
+\end{definition}
+
+\subsection{测度的延拓}\label{subsection:ch01-测度延拓}
+若偶 $(\mathcal{C},\zeta)$ 具有额外性质，则关于由其生成的外测度 $\mu^*$ 可以说得更多。我们首先证明以下结果。
+
+\begin{proposition}[重合准则]\label{proposition:ch01-重合准则}
+设 $\mathcal{A}\subseteq\mathcal{P}(X)$ 为一代数，$\nu$ 为 $\mathcal{A}$ 上的 $\sigma$--有限测度。设 $\mu_1$ 和 $\mu_2$ 为最小 $\sigma$--代数 $\sigma_0(\mathcal{A})$ 上的两个测度，使得 $\mu_1|_{\mathcal{A}}=\mu_2|_{\mathcal{A}}=\nu$。则 $\mu_1=\mu_2$。
+\end{proposition}
+
+\begin{proof}
+由于 $\nu$ 是 $\mathcal{A}$ 上的 $\sigma$--有限测度，存在非减序列 $\{E_n\}\subseteq\mathcal{A}$ 使得 $X=\bigcup_{n=1}^\infty E_n$，对每个 $n\in\mathbb{N}$ 有 $\nu(E_n)<\infty$。令 $\mathcal{E}_n:=\{E_n\cap F\mid F\in\sigma_0(\mathcal{A})\}$（$n\in\mathbb{N}$）。容易看出等式
+\begin{align}
+\mu_1|_{\mathcal{E}_n}=\mu_2|_{\mathcal{E}_n}\qquad\text{对任意 }n\in\mathbb{N} \label{align:ch01-重合准则1}
+\end{align}
+蕴含 $\mu_1=\mu_2$。事实上，若\eqref{align:ch01-重合准则1} 成立，则对任意 $F\in\sigma_0(\mathcal{A})$，
+\[
+\mu_1(F)=\lim_{n\to\infty}\mu_1(E_n\cap F)=\lim_{n\to\infty}\mu_2(E_n\cap F)=\mu_2(F),
+\]
+因为 $F=\bigcup_{n=1}^\infty(E_n\cap F)$ 且序列 $\{E_n\cap F\}$ 非减（见\cref{proposition:ch01-测度性质}(iv)）。
+
+因此只需证等式\eqref{align:ch01-重合准则1}。注意对任意 $n\in\mathbb{N}$，有
+\[
+\mu_1(E_n\cap F)\leqslant\mu_1(E_n)=\nu(E_n)<\infty;
+\]
+类似地，$\mu_2(E_n\cap F)<\infty$，故 $\mu_1|_{\mathcal{E}_n}$ 和 $\mu_2|_{\mathcal{E}_n}$ 都是有限的。现证
+\[
+\mathcal{Z}_n:=\{F\in\sigma_0(\mathcal{A})\mid\mu_1(E_n\cap F)=\mu_2(E_n\cap F)\}\qquad(n\in\mathbb{N})
+\]
+是一个单调类。事实上，对任意非减序列 $\{F_k\}\subseteq\mathcal{Z}_n$，有
+\[
+\mu_1\left(E_n\cap\left(\bigcup_{k=1}^\infty F_k\right)\right)=\lim_{k\to\infty}\mu_1(E_n\cap F_k)
+=\lim_{k\to\infty}\mu_2(E_n\cap F_k)=\mu_2\left(E_n\cap\left(\bigcup_{k=1}^\infty F_k\right)\right);
+\]
+而对任意非增序列 $\{F_k'\}\subseteq\mathcal{Z}_n$，由于 $\mu_1|_{\mathcal{E}_n}$ 和 $\mu_2|_{\mathcal{E}_n}$ 都是有限测度，
+\[
+\mu_1\left(E_n\cap\left(\bigcap_{k=1}^\infty F_k'\right)\right)=\lim_{n\to\infty}\mu_1(E_n\cap F_k')
+=\lim_{n\to\infty}\mu_2(E_n\cap F_k')=\mu_2\left(E_n\cap\left(\bigcap_{k=1}^\infty F_k'\right)\right)
+\]
+（见\cref{proposition:ch01-测度性质}(v)）。故结论成立。
+
+我们还有 $\mathcal{A}\subseteq\mathcal{Z}_n$。事实上，若 $F\in\mathcal{A}$，则由假设 $\mu_1|_{\mathcal{A}}=\mu_2|_{\mathcal{A}}$，有 $\mu_1(E_n\cap F)=\mu_2(E_n\cap F)$。于是由\cref{theorem:ch01-单调类定理} 得 $\sigma_0(\mathcal{A})\subseteq\mathcal{Z}_n$。由于由定义 $\mathcal{Z}_n\subseteq\sigma_0(\mathcal{A})$，故 $\mathcal{Z}_n=\sigma_0(\mathcal{A})$，即对任意 $F\in\sigma_0(\mathcal{A})$ 和 $n\in\mathbb{N}$，有 $\mu_1(E_n\cap F)=\mu_2(E_n\cap F)$。这就证明了\eqref{align:ch01-重合准则1}，证毕。
+\end{proof}
+
+借助\cref{proposition:ch01-重合准则} 给出的重合准则，我们可以证明\cref{theorem:ch01-Caratheodory} 的以下精细化结果。
+
+\begin{theorem}\label{theorem:ch01-测度延拓}
+设 $\mathcal{A}\subseteq\mathcal{P}(X)$ 为一代数，$\mu$ 为 $\mathcal{A}$ 上的测度。设 $\mu^*:\mathcal{P}(X)\to[0,\infty]$ 为由偶 $(\mathcal{A},\mu)$ 生成的外测度。则：
+\begin{enumerate}[(i)]
+\item $\mu^*|_{\mathcal{A}}=\mu$；
+\item $\sigma_0(\mathcal{A})\subseteq\mathcal{L}$，其中 $\mathcal{L}$ 由\eqref{align:ch01-L族} 定义；
+\item $\widehat{\mu}:=\mu^*|_{\sigma_0(\mathcal{A})}$ 是一个将 $\mu$ 延拓到最小 $\sigma$--代数 $\sigma_0(\mathcal{A})$ 的测度。
+\end{enumerate}
+此外，设 $\mu$ 为 $\sigma$--有限的。则：
+\begin{enumerate}[(iv)]
+\item $\widehat{\mu}$ 是 $\mu$ 在 $\sigma_0(\mathcal{A})$ 上的测度的唯一延拓；
+\item 测度空间 $(X,\mathcal{L},\mu^*|_{\mathcal{L}})$ 是 $(X,\sigma_0(\mathcal{A}),\widehat{\mu})$ 的完备化。
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+(i) 由\eqref{align:ch01-外测度生成a} 有对任意 $E\in\mathcal{A}$ 有 $\mu^*(E)\leqslant\mu(E)$。为证反向不等式，设 $E\in\mathcal{A}$，$\{E_n\}\subseteq\mathcal{A}$ 为 $E$ 的一个覆盖。令
+\[
+F_1:=E\cap E_1,\qquad F_n:=E_n\cap\left[E\setminus\left(\bigcup_{k=1}^{n-1}E_k\right)\right]\qquad(n\in\mathbb{N},\ n\geqslant 2).
+\]
+则 $\{F_n\}\subseteq\mathcal{A}$，因为 $\mathcal{A}$ 是代数。此外，集合 $F_n$ 不交，对任意 $n\in\mathbb{N}$ 有 $F_n\subseteq E_n$，且 $E=\bigcup_{n=1}^\infty F_n$。于是由 $\mathcal{A}$ 上 $\mu$ 的单调性和 $\sigma$--可加性得
+\[
+\mu(E)=\sum_{n=1}^\infty\mu(F_n)\leqslant\sum_{n=1}^\infty\mu(E_n),
+\]
+故 $\mu(E)\leqslant\mu^*(E)$。结论 (i) 成立。
+
+(ii) 由于 $\mathcal{L}$ 是一个 $\sigma$--代数（见\cref{theorem:ch01-Caratheodory}(i)），只需证 $\mathcal{A}\subseteq\mathcal{L}$，即对任意 $E\in\mathcal{A}$ 和 $Z\subseteq X$，不等式\eqref{align:ch01-Caratheodory等价} 成立。设 $\mu^*(Z)<\infty$（否则结论显然）；则对任意 $\epsilon>0$，存在序列 $\{E_n\}\subseteq\mathcal{A}$ 使得
+\[
+Z\subseteq\bigcup_{n=1}^\infty E_n,\qquad\sum_{n=1}^\infty\mu(E_n)<\mu^*(Z)+\epsilon.
+\]
+设 $E\in\mathcal{A}$。由 $\mu^*$ 的单调性和 $\sigma$--次可加性，结合 (i)，得
+\[
+\mu^*(Z\cap E)\leqslant\sum_{n=1}^\infty\mu(E_n\cap E),\quad
+\mu^*(Z\cap E^c)\leqslant\sum_{n=1}^\infty\mu(E_n\cap E^c).
+\]
+因此由 $\mu$ 的可加性有
+\[
+\mu^*(Z\cap E)+\mu^*(Z\cap E^c)
+\leqslant\sum_{n=1}^\infty\mu(E_n\cap E)+\sum_{n=1}^\infty\mu(E_n\cap E^c)
+=\sum_{n=1}^\infty\mu(E_n)<\mu^*(Z)+\epsilon.
+\]
+由 $\epsilon$ 的任意性，得 $E$ 是 $\mu^*$--可测的，结论成立。
+
+(iii)--(iv) 由\cref{theorem:ch01-Caratheodory}(ii)，$\mu^*|_{\mathcal{L}}$ 是 $\mathcal{L}$ 上的测度。于是，由于 $\sigma_0(\mathcal{A})\subseteq\mathcal{L}$，$\widehat{\mu}$ 是一个测度。此外，由 (i) 有 $\widehat{\mu}|_{\mathcal{A}}=\mu^*|_{\mathcal{A}}=\mu$，故结论 (iii) 成立。结论 (iv) 是\cref{proposition:ch01-重合准则} 的推论。
+
+(v) 设 $\overline{\sigma_0(\mathcal{A})}$ 为 $\sigma_0(\mathcal{A})$ 的 Lebesgue 完备化。由于 $\sigma_0(\mathcal{A})\subseteq\mathcal{L}$，$\mu^*|_{\sigma_0(\mathcal{A})}=\widehat{\mu}$，且由\cref{theorem:ch01-Caratheodory}，$(X,\mathcal{L},\mu^*|_{\mathcal{L}})$ 是完备测度空间，故 $\overline{\sigma_0(\mathcal{A})}\subseteq\mathcal{L}$（见\cref{theorem:ch01-Lebesgue完备化}）。反之，现证 $\mathcal{L}\subseteq\overline{\sigma_0(\mathcal{A})}$。为此，考虑序列 $\{E_n\}\subseteq\mathcal{A}$ 使得 $X=\bigcup_{n=1}^\infty E_n$ 且对所有 $n\in\mathbb{N}$ 有 $\mu(E_n)<\infty$。设 $F\in\mathcal{L}$；只需证对任意 $n\in\mathbb{N}$ 有 $E_n\cap F\in\overline{\sigma_0(\mathcal{A})}$，因为这蕴含
+\[
+F=\bigcup_{n=1}^\infty(E_n\cap F)\in\overline{\sigma_0(\mathcal{A})}.
+\]
+
+我们将证明如下断言。
+
+\textbf{断言。} 对每个 $n\in\mathbb{N}$，存在 $F_n'\in\sigma_0(\mathcal{A})$ 使得
+\begin{align}
+E_n\cap F\subseteq F_n'\subseteq E_n,\qquad\mu^*(E_n\cap F)=\widehat{\mu}(F_n'). \label{align:ch01-延拓断言}
+\end{align}
+
+利用该断言即可完成证明。事实上，由于 $F^c\in\mathcal{L}$，也存在 $F_n''\in\sigma_0(\mathcal{A})$ 使得
+\begin{align}
+E_n\setminus F\subseteq F_n''\subseteq E_n,\qquad\mu^*(E_n\setminus F)=\widehat{\mu}(F_n''). \label{align:ch01-延拓断言2}
+\end{align}
+由\eqref{align:ch01-延拓断言}--\eqref{align:ch01-延拓断言2} 得
+\begin{align}
+E_n=F_n'\cup F_n'',\qquad F_n'\setminus(E_n\cap F)\subseteq F_n'\cap F_n''. \label{align:ch01-延拓断言3}
+\end{align}
+由于 $E_n\in\mathcal{A}$，有 $\mu(E_n)=\mu^*(E_n)$（见 (i)）。由于 $E_n\cap F\in\mathcal{L}$、$E_n\setminus F\in\mathcal{L}$，且 $\mu^*|_{\mathcal{L}}$ 是测度，利用\eqref{align:ch01-延拓断言}--\eqref{align:ch01-延拓断言3} 中的等式，得
+\[
+\begin{aligned}
+\mu(E_n)&=\mu^*(E_n)=\mu^*(E_n\cap F)+\mu^*(E_n\setminus F)
+=\widehat{\mu}(F_n')+\widehat{\mu}(F_n'')\\
+&=\widehat{\mu}(F_n'\setminus F_n'')+\widehat{\mu}(F_n'\cap F_n'')
++\widehat{\mu}(F_n''\setminus F_n')+\widehat{\mu}(F_n''\cap F_n')\\
+&=\widehat{\mu}(F_n'\triangle F_n'')+2\widehat{\mu}(F_n'\cap F_n'')
+=\widehat{\mu}(F_n'\cup F_n'')+\widehat{\mu}(F_n'\cap F_n'')\\
+&=\mu(E_n)+\widehat{\mu}(F_n'\cap F_n'')
+\end{aligned}
+\]
+（回忆 $F_n'\triangle F_n'':=(F_n'\setminus F_n'')\cup(F_n''\setminus F_n')=F_n'\cup F_n''\setminus(F_n'\cap F_n'')$）。由于 $\mu(E_n)<\infty$，故 $\widehat{\mu}(F_n'\cap F_n'')=0$。
+
+由于 $F_n'\setminus(E_n\cap F)\subseteq F_n'\cap F_n''$（见\eqref{align:ch01-延拓断言3}），得 $\widehat{\mu}(F_n'\setminus(E_n\cap F))=0$。另一方面，由\eqref{align:ch01-延拓断言} 有
+\[
+F_n'\setminus F_n''\subseteq F_n'\setminus(E_n\cap F)\subseteq F_n',\quad
+\widehat{\mu}(F_n'\setminus(F_n'\setminus F_n''))=\widehat{\mu}(F_n'\cap F_n'')=0.
+\]
+由于 $F_n',F_n''\in\sigma_0(\mathcal{A})$，得 $F_n'\setminus(E_n\cap F)\in\overline{\sigma_0(\mathcal{A})}$（见\eqref{align:ch01-完备sigma代数}）。于是对任意 $n\in\mathbb{N}$，有
+\[
+E_n\cap F=F_n'\setminus(F_n'\setminus(E_n\cap F))\in\overline{\sigma_0(\mathcal{A})},
+\]
+结论成立。
+
+还需证明该断言。为简便起见，省略对 $n$ 的依赖，于是有 $F\in\mathcal{L}$，$E\equiv E_n\in\mathcal{A}$，$G:=F\cap E\in\mathcal{L}$（因为由 (ii) 有 $\mathcal{A}\subseteq\mathcal{L}$），且 $\mu(E)<\infty$。我们必须证明存在 $F'\in\sigma_0(\mathcal{A})$ 使得
+\[
+G\subseteq F'\subseteq E,\qquad\mu^*(G)=\widehat{\mu}(F').
+\]
+由于 $G\subseteq E$，有 $\mu^*(G)\leqslant\mu(E)<\infty$，故对任意固定的 $k\in\mathbb{N}$，存在序列 $\{G_n^k\}\subseteq\mathcal{A}$ 使得
+\[
+G\subseteq\bigcup_{n=1}^\infty G_n^k,\qquad
+\sum_{n=1}^\infty\mu(G_n^k)<\mu^*(G)+\frac{1}{k}.
+\]
+不失一般性，可设对所有 $k,n\in\mathbb{N}$ 有 $G_n^k\subseteq E$。
+
+令 $F':=\bigcap_{k=1}^\infty\left[\bigcup_{n=1}^\infty G_n^k\right]$。则 $F'\in\sigma_0(\mathcal{A})$，且对任意固定的 $\widetilde{k}\in\mathbb{N}$，有 $G\subseteq F'\subseteq\bigcup_{n=1}^\infty G_n^{\widetilde{k}}$。由此
+\[
+\widehat{\mu}(F')\leqslant\widehat{\mu}\left(\bigcup_{n=1}^\infty G_n^{\widetilde{k}}\right)
+\leqslant\sum_{n=1}^\infty\widehat{\mu}(G_n^{\widetilde{k}})
+<\mu^*(G)+\frac{1}{\widetilde{k}}
+\leqslant\widehat{\mu}(F')+\frac{1}{\widetilde{k}}.
+\]
+由于 $\widetilde{k}$ 任意，得 $\widehat{\mu}(F')=\mu^*(G)$，断言成立。证毕。
+\end{proof}
+
+\begin{definition}\label{definition:ch01-Caratheodory延拓}
+由\cref{theorem:ch01-测度延拓} 给出的测度 $\widehat{\mu}$ 称为 $\mathcal{A}$ 上测度 $\mu$ 的 Carathéodory 延拓。
+\end{definition}
+
+以下结果表明，通过延拓定义在半代数 $\mathcal{S}\subseteq\mathcal{P}(X)$ 上的测度 $\mu$，可以精细化\cref{theorem:ch01-测度延拓} 的结论。
+
+\begin{proposition}\label{proposition:ch01-半代数延拓}
+设 $\mathcal{S}\subseteq\mathcal{P}(X)$ 为一包含 $\emptyset$ 的半代数，$\nu$ 为 $\mathcal{S}$ 上的测度。则存在 $\mathcal{S}$ 生成的最小代数 $\mathcal{A}_0(\mathcal{S})$ 上唯一的测度 $\mu$，使得 $\mu|_{\mathcal{S}}=\nu$。
+\end{proposition}
+
+\begin{proof}
+对任意 $E\in\mathcal{A}_0(\mathcal{S})$，存在不交集合 $E_1,\dots,E_n\in\mathcal{S}$ 使得 $E=\bigcup_{k=1}^n E_k$。定义 $\mu:\mathcal{A}_0(\mathcal{S})\to[0,\infty]$ 为
+\[
+\mu(E):=\sum_{k=1}^n\nu(E_k).
+\]
+容易看出此定义不依赖于集合 $E_k$ 的选取，因而是适定的，且 $\mu$ 是 $\mathcal{A}_0(\mathcal{S})$ 上的测度。
+
+设 $\widetilde{\mu}$ 为 $\mathcal{A}_0(\mathcal{S})$ 上的测度且 $\widetilde{\mu}|_{\mathcal{S}}=\nu$。对任意 $n$ 元不交集合 $E_1,\dots,E_n\in\mathcal{S}$，有
+\[
+\widetilde{\mu}\left(\bigcup_{k=1}^n E_k\right)=\sum_{k=1}^n\widetilde{\mu}(E_k)=\sum_{k=1}^n\nu(E_k)=\mu\left(\bigcup_{k=1}^n E_k\right).
+\]
+每个 $E\in\mathcal{A}_0(\mathcal{S})$ 都是这样一个 $n$ 元组的并，故 $\widetilde{\mu}=\mu$ 在 $\mathcal{A}_0(\mathcal{S})$ 上。这就证明了唯一性，证毕。
+\end{proof}
+
+\section{Lebesgue 测度与 Lebesgue--Stieltjes 测度}\label{section:ch01-Lebesgue}
+
+\subsection{$\mathbb{R}^N$ 中的 Lebesgue 测度}\label{subsection:ch01-Lebesgue测度}
+
+设 $a\equiv(a_1,\dots,a_N)$、$b\equiv(b_1,\dots,b_N)$，其中 $a_i,b_i\in[-\infty,\infty]$ 且对每个 $i=1,\dots,N$（$N\in\mathbb{N}$）有 $a_i\leqslant b_i$。考虑 $N$--胞腔
+\[
+(a,b]:=\{x\equiv(x_1,\dots,x_N)\mid x_i\in[-\infty,\infty],\ a_i<x_i\leqslant b_i\ \forall i=1,\dots,N\}
+\]
+其体积为
+\[
+\operatorname{vol}((a,b]):=\prod_{i=1}^N(b_i-a_i)\leqslant\infty
+\]
+（$\mathbb{R}^N$ 的子集 $(a,b)$、$[a,b]$、$[a,b)$ 类似地定义）。回忆 $N$--胞腔族 $\mathcal{I}_N$ 是一个半代数，且对每个 $E\in\mathcal{A}_0(\mathcal{I}_N)$，存在不交的 $(a_1,b_1],\dots,(a_p,b_p]$ 使得
+\[
+E=\bigcup_{k=1}^p(a_k,b_k]
+\]
+（见\cref{example:ch01-N胞腔}）。令
+\begin{align}
+\lambda_N(E):=\sum_{k=1}^p\operatorname{vol}((a_k,b_k]). \label{align:ch01-lambdaN定义}
+\end{align}
+容易验证 $\lambda_N$ 是 $\mathcal{A}_0(\mathcal{I}_N)$ 上的 $\sigma$--有限测度。由\cref{section:ch01-测度与外测度} 中的结果（特别地，\cref{theorem:ch01-Caratheodory}），我们可以给出以下定义。
+
+\begin{definition}\label{definition:ch01-Lebesgue测度}
+由偶 $(\mathcal{A}_0(\mathcal{I}_N),\lambda_N)$ 生成的外测度 $\lambda_N^*$（其中 $\lambda_N$ 由\eqref{align:ch01-lambdaN定义} 给出）称为 Lebesgue 外测度。$\sigma$--代数
+\[
+\mathcal{L}_N\equiv\mathcal{L}(\mathbb{R}^N):=\{E\subseteq\mathbb{R}^N\mid E\text{ 为 }\lambda_N^*\text{--可测}\}
+\]
+的元素称为 Lebesgue 集。测度 $\lambda_N:=\lambda_N^*|_{\mathcal{L}_N}$ 称为 $\mathbb{R}^N$ 上的 Lebesgue 测度。若 $N=1$，则令 $\lambda_1\equiv\lambda$，$\mathcal{L}_1\equiv\mathcal{L}\equiv\mathcal{L}(\mathbb{R})$。
+\end{definition}
+
+\begin{remark}\label{remark:ch01-Lebesgue性质}
+(i) 由于 $\mathbb{R}^N$ 中 Borel 集的 $\sigma$--代数 $\mathcal{B}_N=\mathcal{B}(\mathbb{R}^N)$ 由半代数 $\mathcal{I}_N$ 生成，由\cref{theorem:ch01-测度延拓} 有 $\mathcal{B}_N\subseteq\mathcal{L}_N$，故 $\lambda_N$ 是 $\mathbb{R}^N$ 上的 Borel 测度，且测度空间 $(\mathbb{R}^N,\mathcal{L}_N,\lambda_N)$ 是空间 $(\mathbb{R}^N,\mathcal{B}_N,\lambda_N|_{\mathcal{B}_N})$ 的完备化。
+
+(ii) 由于 $\mathbb{R}^N$ 是具有可数基的局部紧 Hausdorff 空间，$\lambda_N$ 是 Radon 测度且是正则的（见\cref{remark:ch01-BorelRadon一致}）。由 $\lambda_N$ 的正则性容易看出，对任意 $E\subseteq\mathbb{R}^N$，存在 $F,G\in\mathcal{B}_N$ 使得 $F\subseteq E\subseteq G$ 且
+\[
+\lambda_N(F)=\lambda_N(G)=\lambda_N^*(E).
+\]
+\end{remark}
+
+$\lambda_N$ 的一些有趣性质与以下结果有关，其初等证明从略。
+
+\begin{proposition}\label{proposition:ch01-仿射变换}
+设 $T:\mathbb{R}^N\to\mathbb{R}^N$ 为仿射映射，
+\[
+Tx:=Ax+b,\qquad A\equiv(a_{ij}),\ b\in\mathbb{R}^N\quad(x\in\mathbb{R}^N;\ i,j=1,\dots,N).
+\]
+设行列式 $\det(A)$ 非零。则：
+\begin{enumerate}[(i)]
+\item 对任意 $E\subseteq\mathbb{R}^N$，有
+\[
+\lambda_N^*(T(E))=|\det(A)|\,\lambda_N^*(E);
+\]
+\item $T(E):=\{Tx\mid x\in E\}\in\mathcal{L}_N$ 当且仅当 $E\in\mathcal{L}_N$。
+\end{enumerate}
+\end{proposition}
+
+\begin{remark}\label{remark:ch01-位似}
+若 $E\in\mathcal{L}_N$ 且 $T$ 是位似的（即 $Tx=Ax$，$A=a(\delta_{ij})$，$a>0$），则由\cref{proposition:ch01-仿射变换}(i) 得 $\lambda_N(T(E))=a^N\lambda_N(E)$。特别地，若 $E=B(x_0,r)$，则 $\lambda_N(B(x_0,r))=\kappa_N r^N$，其中
+\begin{align}
+\kappa_N:=\frac{\pi^{N/2}}{\Gamma\left(\frac{N}{2}+1\right)},\qquad
+\Gamma(t):=\int_0^\infty x^{t-1}\exp(-x)\,\mathrm{d}x\quad(t>0), \label{align:ch01-kappaN}
+\end{align}
+是单位球 $B(0,1)\subseteq\mathbb{R}^N$ 的体积。在此联系下注意到，$\lambda_N$ 是维数 $s=N$ 的测度，且加倍常数为 $c_D=2^N$（见\cref{definition:ch01-加倍测度}）。
+\end{remark}
+
+一个有趣的几何不等式由以下结果给出，其证明将在\cref{subsection:ch02-等周} 中给出。
+
+\begin{proposition}[等直径不等式]\label{proposition:ch01-等直径}\label{proposition:ch01-等直径不等式}
+\label{remark:ch01-等直径注}
+对任意 $E\subseteq\mathbb{R}^N$，有
+\begin{align}
+\lambda_N^*(E)\leqslant\frac{\kappa_N}{2^N}[\operatorname{diam}(E)]^N, \label{align:ch01-等直径}
+\end{align}
+其中 $\kappa_N$ 由\eqref{align:ch01-kappaN} 给出。
+\end{proposition}
+
+\cref{proposition:ch01-仿射变换} 蕴含 Lebesgue 测度在旋转和平移下的不变性。若配以适当的归一化条件，平移不变性是 $\lambda_N$ 的特征性质。这就是以下命题的内容。
+
+\begin{proposition}\label{proposition:ch01-平移不变刻画}
+设 $\mu:\mathcal{B}_N\to[0,\infty]$ 平移不变且 $\mu((0,1]^N)=1$。则 $\mu=\lambda_N|_{\mathcal{B}_N}$。
+\end{proposition}
+
+\begin{proof}
+设 $(K_1,\dots,K_N)\in\mathbb{N}^N$，考虑点 $\left(\frac{k_1}{K_1},\dots,\frac{k_N}{K_N}\right)$，其中 $(k_1,\dots,k_N)\in\mathbb{N}^N$，$0\leqslant k_i\leqslant K_i$，$i=1,\dots,N$。这些点是 $P:=K_1K_2\cdots K_N$ 个不交 $N$--胞腔 $I_k$ 的顶点，使得 $(0,1]^N=\bigcup_{k=1}^P I_k$。由于 $\mu$ 平移不变，对每个 $k,l=1,\dots,P$ 有 $\mu(I_k)=\mu(I_l)$。因此，由于 $\mu((0,1]^N)=1$，有
+\[
+\mu\left(\prod_{i=1}^N\left(0,\frac{1}{K_i}\right]\right)=\frac{1}{P}=\lambda_N\left(\prod_{i=1}^N\left(0,\frac{1}{K_i}\right]\right).
+\]
+由 $\mu$ 和 $\lambda_N$ 的平移不变性，同样的等式在顶点属于 $\mathbb{Q}^N$ 的 $N$--胞腔族 $\mathcal{I}_{N,\mathbb{Q}}$ 上成立，因而在族 $\mathcal{I}_N$ 上也成立。于是由\cref{theorem:ch01-测度延拓} 和\cref{proposition:ch01-半代数延拓}，结论成立。
+\end{proof}
+
+以下覆盖结果的证明与上述注记有关。
+
+\begin{definition}\label{definition:ch01-精细覆盖}
+设 $E\subseteq\mathbb{R}^N$。$\mathbb{R}^N$ 的闭球族 $\mathcal{F}$ 称为 $E$ 的一个精细覆盖，若对任意 $x\in E$ 和任意 $\epsilon>0$，存在球 $B\in\mathcal{F}$ 使得 $x\in B$ 且 $\operatorname{diam}(B)<\epsilon$。
+\end{definition}
+
+\begin{theorem}[Vitali 覆盖引理]\label{theorem:ch01-Vitali}
+设 $E\subseteq\mathbb{R}^N$ 满足 $\lambda_N^*(E)<\infty$，$\mathcal{F}$ 为 $E$ 的一个精细覆盖。则存在不交序列 $\{B_k\}\subseteq\mathcal{F}$ 使得
+\[
+\lambda_N^*\left(E\setminus\left(\bigcup_{k=1}^\infty B_k\right)\right)=0.
+\]
+\end{theorem}
+
+\begin{proof}
+只需证对任意 $\epsilon>0$，存在 $B_1,\dots,B_K\in\mathcal{F}$ 使得 $B_j\cap B_k=\emptyset$（$j,k=1,\dots,K$，$j\neq k$），且
+\[
+\lambda_N^*\left(E\setminus\left(\bigcup_{k=1}^K B_k\right)\right)<\epsilon.
+\]
+
+由于 $\lambda_N^*(E)<\infty$，存在开集 $U\supseteq E$ 使得 $\lambda_N(U)<\infty$，且由\cref{definition:ch01-精细覆盖} 可设对所有 $B\in\mathcal{F}$ 有 $B\subseteq U$。我们归纳地构造不交序列 $\{B_k\}\subseteq\mathcal{F}$ 如下。假设已选出 $p$ 个不交闭球 $B_1,\dots,B_p\in\mathcal{F}$ 且
+\[
+E\setminus\left(\bigcup_{k=1}^p B_k\right)\neq\emptyset.
+\]
+令
+\[
+k_p:=\sup\left\{\operatorname{diam}(B)\mid B\in\mathcal{F},\ B\subseteq E\setminus\left(\bigcup_{k=1}^p B_k\right)\right\}
+\leqslant\sup\{\operatorname{diam}(B)\mid B\in\mathcal{F}\}<\infty.
+\]
+则可选 $B_{p+1}$ 使得
+\begin{align}
+\operatorname{diam}(B_{p+1})\geqslant\frac{k_p}{2},\qquad B_{p+1}\cap B_k=\emptyset\ (k=1,\dots,p). \label{align:ch01-Vitali选择}
+\end{align}
+由于序列 $\{B_k\}$ 不交且 $\bigcup_{k=1}^\infty B_k\subseteq U$，有
+\begin{align}
+\frac{\kappa_N}{2^N}\sum_{k=1}^\infty[\operatorname{diam}(B_k)]^N
+=\sum_{k=1}^\infty\lambda_N(B_k)=\lambda_N\left(\bigcup_{k=1}^\infty B_k\right)
+\leqslant\lambda_N(U)<\infty \label{align:ch01-Vitali和}
+\end{align}
+其中 $\kappa_N$ 由\eqref{align:ch01-kappaN} 给出，故
+\begin{align}
+\lim_{k\to\infty}\operatorname{diam}(B_k)=0. \label{align:ch01-Vitali直径趋于零}
+\end{align}
+
+固定 $\epsilon>0$。由\eqref{align:ch01-Vitali和} 存在 $K\in\mathbb{N}$ 使得
+\begin{align}
+\sum_{k=K+1}^\infty[\operatorname{diam}(B_k)]^N<\frac{2^N\epsilon}{5^N\kappa_N}. \label{align:ch01-Vitali尾项}
+\end{align}
+令 $R:=E\setminus\left(\bigcup_{k=1}^K B_k\right)$。若证得 $\lambda_N^*(R)<\epsilon$，结论即成立。
+
+设 $x\in R$。由于 $\bigcup_{k=1}^K B_k$ 是闭集且 $x\notin\bigcup_{k=1}^K B_k$，由\cref{definition:ch01-精细覆盖} 存在 $B\in\mathcal{F}$ 使得 $x\in B$ 且对 $k=1,\dots,K$ 有 $B\cap B_k=\emptyset$。一般地，若对 $k=1,\dots,M$ 有 $B\cap B_k=\emptyset$，则对某个 $M\in\mathbb{N}$，有 $B\subseteq E\setminus\left(\bigcup_{k=1}^M B_k\right)$，故由\eqref{align:ch01-Vitali选择}，
+\[
+\operatorname{diam}(B)\leqslant k_M\leqslant 2\operatorname{diam}(B_{M+1}).
+\]
+若对所有 $k\in\mathbb{N}$ 都有 $B\cap B_k=\emptyset$，则与\eqref{align:ch01-Vitali直径趋于零} 矛盾。因此存在最小整数 $m\in\mathbb{N}$ 使得 $B\cap B_m\neq\emptyset$，且 $m>K$。由于 $B\subseteq E\setminus\left(\bigcup_{k=1}^{m-1}B_k\right)$，由上述注记有
+\begin{align}
+\operatorname{diam}(B)\leqslant k_{m-1}\leqslant 2\operatorname{diam}(B_m). \label{align:ch01-Vitali直径估计}
+\end{align}
+设 $B_m\equiv B(x_m,r_m)$。由于 $x\in B$ 且 $B\cap B_m\neq\emptyset$，有
+\[
+|x-x_m|\leqslant\operatorname{diam}(B)+\frac{1}{2}\operatorname{diam}(B_m)\leqslant\frac{5}{2}\operatorname{diam}(B_m),
+\]
+故 $x\in B(x_m,5r_m)$。因此
+\[
+R\subseteq\bigcup_{m=K+1}^\infty B(x_m,5r_m),
+\]
+从而
+\[
+\lambda_N^*(R)\leqslant\sum_{m=K+1}^\infty\lambda_N(B(x_m,5r_m))
+=\frac{5^N\kappa_N}{2^N}\sum_{m=K+1}^\infty[\operatorname{diam}(B_m)]^N<\epsilon.
+\]
+证毕。
+\end{proof}
+
+\begin{remark}\label{remark:ch01-Vitali精细化}
+显然，\cref{theorem:ch01-Vitali} 的证明还提供了以下结论：
+
+设 $E\in\mathcal{B}_N$ 且 $\lambda_N(E)<\infty$，$\mathcal{F}$ 为 $E$ 的一个精细覆盖。设 $\delta>0$。则存在不交序列 $\{B_k\}\subseteq\mathcal{F}$，对所有 $k\in\mathbb{N}$ 有 $\operatorname{diam}B_k<\delta$，使得
+\[
+\lambda_N\left(E\setminus\left(\bigcup_{k=1}^\infty B_k\right)\right)=0.
+\]
+\end{remark}
+
+\cref{theorem:ch01-Vitali} 证明中的关键角色由\cref{remark:ch01-位似} 扮演。对于 $\mathbb{R}^N$ 上的一般 Radon 测度，必须使用更复杂的论证，由此导出以下结果（证明见文献~[5]）。
+
+\begin{theorem}[Vitali--Besicovitch]\label{theorem:ch01-VitaliBesicovitch}
+设 $U\in\mathcal{B}_N$ 有界，$\mathcal{F}\equiv\{F_i\}_{i\in I}$ 为 $U$ 的一个精细覆盖。设 $\mu\in\mathcal{R}^+(\mathbb{R}^N)$。则存在不交序列 $\{B_k\}\subseteq\mathcal{F}$ 使得
+\[
+\mu\left(U\setminus\left(\bigcup_{k=1}^\infty B_k\right)\right)=0.
+\]
+\end{theorem}
+
+\subsection{Lebesgue--Stieltjes 测度}\label{subsection:ch01-Stieltjes}
+
+上述构造可推广如下（我们仅考虑 $N=1$ 的情形，一般情形参见文献~[45]）。设 $\phi:\mathbb{R}\to\mathbb{R}$ 非减且右连续。考虑区间 $(a,b]$ 的半代数 $\mathcal{I}_1$（其中 $a,b\in[-\infty,\infty]$）和由 $\mathcal{I}_1$ 中元素的有限不交并组成的代数 $\mathcal{A}_0(\mathcal{I}_1)$，即对每个 $E\in\mathcal{A}_0(\mathcal{I}_1)$，存在不交的 $(a_1,b_1],\dots,(a_p,b_p]$ 且 $b_k\leqslant a_{k+1}$（$k=1,\dots,p-1$），使得
+\[
+E=\bigcup_{k=1}^p(a_k,b_k].
+\]
+令
+\begin{align}
+\lambda_\phi(E):=\sum_{k=1}^p[\phi(b_k)-\phi(a_k)], \label{align:ch01-Stieltjes定义}
+\end{align}
+其中当 $b_p=\infty$ 时 $\phi(b_p):=\lim_{x\to\infty}\phi(x)$，当 $a_1=-\infty$ 时 $\phi(a_1):=\lim_{x\to-\infty}\phi(x)$。由于 $\phi$ 非减且右连续，容易看出 $\lambda_\phi$ 是代数 $\mathcal{A}_0(\mathcal{I}_1)$ 上的 $\sigma$--有限测度。于是由\cref{section:ch01-测度与外测度} 的结果，以下定义是适定的。
+
+\begin{definition}\label{definition:ch01-Stieltjes测度}
+测度 $\lambda_\phi:=(\lambda_\phi)^*|_{\mathcal{L}_\phi}$，其中 $(\lambda_\phi)^*$ 为由偶 $(\mathcal{A}_0(\mathcal{I}_1),\lambda_\phi)$ 生成的外测度（$\lambda_\phi$ 由\eqref{align:ch01-Stieltjes定义} 给出），$\mathcal{L}_\phi$ 为 $(\lambda_\phi)^*$--可测集的 $\sigma$--代数，称为 $\mathbb{R}$ 上的 Lebesgue--Stieltjes 测度。
+\end{definition}
+
+在 $\mathbb{R}^N$（$N\geqslant 2$）中类似的结果成立（见文献~[45, Korollar II.3.10, Beispiel II.4.7]）。
+
+对应于非减右连续函数 $\phi:\mathbb{R}\to\mathbb{R}$ 的 $\mathbb{R}$ 上 Lebesgue--Stieltjes 测度的集合记为 $\mathcal{L}_\phi(\mathbb{R})$。这些测度与 Borel 测度重合，因而与 $\mathbb{R}$ 上的 Radon 测度重合（见\cref{remark:ch01-BorelRadon一致}），如下列命题所示。
+
+\begin{proposition}\label{proposition:ch01-Stieltjes等于Radon}
+设 $\mathcal{L}_\phi(\mathbb{R})$ 为具有非减且右连续的 $\phi:\mathbb{R}\to\mathbb{R}$ 的 $\mathbb{R}$ 上 Lebesgue--Stieltjes 测度族。则
+\[
+\mathcal{L}_\phi(\mathbb{R})=\mathcal{B}^+(\mathbb{R})=\mathcal{R}^+(\mathbb{R}).
+\]
+\end{proposition}
+
+\begin{proof}
+固定 $\phi$。由于 $\sigma$--代数 $\mathcal{B}(\mathbb{R})$ 由区间半代数 $\mathcal{I}_1$ 生成，由\cref{theorem:ch01-测度延拓} 有 $\mathcal{B}\subseteq\mathcal{L}_\phi$，故 $\lambda_\phi$ 是 $\mathbb{R}$ 上的 Borel 测度。
+
+反之，现证 $\mathcal{B}^+(\mathbb{R})\subseteq\mathcal{L}_\phi(\mathbb{R})$。设 $\mu$ 为 $\mathbb{R}$ 上的 Radon 测度。固定 $c\in\mathbb{R}$，定义 $\phi_\mu:\mathbb{R}\to\mathbb{R}$ 如下：
+\begin{align}
+\phi_\mu(x):=
+\begin{cases}
+\mu((c,x]) & \text{若 }x>c,\\
+0 & \text{若 }x=c,\\
+-\mu((x,c]) & \text{若 }x<c.
+\end{cases} \label{align:ch01-分布函数}
+\end{align}
+则 $\phi_\mu$ 非减且右连续，且
+\[
+\phi_\mu(b)-\phi_\mu(a)=\mu((a,b])\qquad(-\infty<a<b\leqslant\infty).
+\]
+由\cref{proposition:ch01-半代数延拓}，$\mu$ 与 $\phi_\mu$ 对应的 Lebesgue--Stieltjes 测度重合。故结论成立。
+\end{proof}
+
+\begin{remark}\label{remark:ch01-分布函数}
+由\cref{proposition:ch01-Stieltjes等于Radon}，$\mathbb{R}$ 上的 Radon 测度与非减右连续函数 $\phi:\mathbb{R}\to\mathbb{R}$ 的等价类之间存在一一对应，等价关系为
+\[
+\psi\sim\phi\overset{\mathrm{def}}{\Longleftrightarrow}\psi=\phi+c\quad\text{对某个 }c\in\mathbb{R}.
+\]
+若 $\mu\in\mathcal{R}^+(\mathbb{R})$，则其等价类的一个代表元称为 $\mu$ 的分布函数。
+
+若 $\phi:\mathbb{R}\to\mathbb{R}$ 非减且连续，则对每个区间 $I=(a,b]$，有
+\[
+\phi(I):=\{\phi(x)\mid x\in I\}=(\phi(a),\phi(b)],
+\]
+因而
+\begin{align}
+\lambda_\phi(I)=\phi(b)-\phi(a)=\lambda(\phi(I)). \label{align:ch01-Stieltjes像测度}
+\end{align}
+对每个非减右连续函数 $\phi:\mathbb{R}\to\mathbb{R}$，定义
+\begin{align}
+\widetilde{\phi}:\mathcal{P}(\mathbb{R})\to\mathcal{P}(\mathbb{R}),\qquad
+\begin{cases}
+\widetilde{\phi}(\emptyset):=\emptyset,\\
+\widetilde{\phi}(E):=\bigcup_{x\in E}[\phi(x-),\phi(x)]\quad\forall E\subseteq\mathbb{R},\ E\neq\emptyset.
+\end{cases} \label{align:ch01-像映射}
+\end{align}
+则等式\eqref{align:ch01-Stieltjes像测度} 可推广如下。
+\end{remark}
+
+\begin{proposition}\label{proposition:ch01-Stieltjes像}\label{proposition:ch01-Radon投影}
+设 $\phi:\mathbb{R}\to\mathbb{R}$ 非减且右连续，$\widetilde{\phi}$ 由\eqref{align:ch01-像映射} 定义。则：
+\begin{enumerate}[(i)]
+\item 对任意 $E\in\mathcal{B}(\mathbb{R})$，$\widetilde{\phi}(E)\in\mathcal{L}(\mathbb{R})$；
+\item 有
+\begin{align}
+\lambda_\phi(E)=\lambda(\widetilde{\phi}(E))\qquad\text{对任意 }E\in\mathcal{B}(\mathbb{R}). \label{align:ch01-Stieltjes像公式}
+\end{align}
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+容易看出族
+\[
+\Sigma:=\{E\in\mathcal{B}(\mathbb{R})\mid\widetilde{\phi}(E)\in\mathcal{L}(\mathbb{R})\}
+\]
+是一个包含区间半代数 $\mathcal{I}_1$ 的 $\sigma$--代数。由于 Borel $\sigma$--代数 $\mathcal{B}(\mathbb{R})$ 由 $\mathcal{I}_1$ 生成，结论 (i) 由\cref{theorem:ch01-测度延拓} 和\cref{proposition:ch01-半代数延拓} 得到。
+
+至于 (ii)，只需证映射
+\[
+m:\mathcal{B}(\mathbb{R})\to[0,\infty],\qquad m(E):=\lambda(\widetilde{\phi}(E))
+\]
+是 $\mathcal{B}(\mathbb{R})$ 上的一个测度，且满足
+\begin{align}
+\begin{cases}
+m((a,b])=\phi(b)-\phi(a) & \text{若 }-\infty\leqslant a<b<\infty,\\
+m((a,\infty))=\phi(\infty)-\phi(a) & \text{若 }a\in\mathbb{R}.
+\end{cases} \label{align:ch01-Stieltjes像条件}
+\end{align}
+于是由\cref{proposition:ch01-半代数延拓} 结论成立。
+
+由定义有 $m(\emptyset)=0$。为证 $m$ 是 $\sigma$--可加的，考虑不交序列 $\{E_k\}\subseteq\mathcal{B}(\mathbb{R})$，并记 $F\subseteq\phi(\mathbb{R})$ 为使得 $\phi^{-1}(\{y\})$ 不是单点集的点 $y$ 的可数集。则集合 $\widetilde{\phi}(E_k)\setminus F$ 不交，且
+\[
+\bigcup_{k=1}^\infty(\widetilde{\phi}(E_k)\setminus F)=\left[\widetilde{\phi}\left(\bigcup_{k=1}^\infty E_k\right)\right]\setminus F.
+\]
+由此
+\[
+\lambda\left(\widetilde{\phi}\left(\bigcup_{k=1}^\infty E_k\right)\right)
+=\lambda\left(\left[\widetilde{\phi}\left(\bigcup_{k=1}^\infty E_k\right)\right]\setminus F\right)
+=\sum_{k=1}^\infty\lambda(\widetilde{\phi}(E_k)\setminus F)
+=\sum_{k=1}^\infty\lambda(\widetilde{\phi}(E_k)).
+\]
+
+最后证等式\eqref{align:ch01-Stieltjes像条件}。由等式 $\widetilde{\phi}((a,b])=(\phi(a),\phi(b)]$ 得第一式，第二式由 $\phi$ 的单调性和\cref{proposition:ch01-测度性质}(iv) 得到。证毕。
+\end{proof}
+
+\begin{corollary}\label{corollary:ch01-Stieltjes连续}
+设 $\phi:\mathbb{R}\to\mathbb{R}$ 非减且右连续。则 $\phi$ 在 $x_0\in\mathbb{R}$ 处连续当且仅当 $\lambda_\phi(\{x_0\})=0$。
+\end{corollary}
+
+关于\cref{proposition:ch01-Stieltjes像}，我们陈述以下定义。
+
+\begin{definition}\label{definition:ch01-Lusin条件}
+函数 $\phi:\mathbb{R}\to\mathbb{R}$ 满足 Lusin 条件，若对任意 $\lambda$--零测集 $E\subseteq\mathbb{R}$，映射\eqref{align:ch01-像映射} 的值 $\widetilde{\phi}(E)$ 是 $\lambda$--零测的。
+\end{definition}
+
+我们讨论 Lusin 条件不满足的两个重要情形。
+
+\textbf{($\alpha$)} 若 $\phi$ 为 Heaviside 映射 $H:=\chi_{[0,\infty)}$，则映射\eqref{align:ch01-像映射} 为
+\[
+\widetilde{\phi}(\{x\})=
+\begin{cases}
+\{0\} & \text{若 }x<0,\\
+[0,1] & \text{若 }x=0,\\
+\{1\} & \text{若 }x>0.
+\end{cases}
+\]
+于是由等式\eqref{align:ch01-Stieltjes像公式}，对任意 Borel 集 $E\neq\emptyset$，有
+\[
+\lambda_H(E)=
+\begin{cases}
+1 & \text{若 }0\in E,\\
+0 & \text{若 }0\notin E,
+\end{cases}
+\]
+即 $\lambda_H$ 是 Dirac 质量 $\delta_0$。更一般地，对非减阶梯函数
+\[
+\phi:=c_0\chi_{(-\infty,x_1)}+\sum_{p=1}^{n-1}c_p\chi_{[x_p,x_{p+1})}+c_n\chi_{[x_n,\infty)}\quad(x_1<x_2<\cdots<x_n)
+\]
+其中 $c_p\neq c_{p+1}$（$p=0,\dots,n-1$），有
+\[
+\lambda_\phi=\sum_{p=1}^n[c_p-c_{p-1}]\delta_{x_p},
+\]
+故 Lusin 条件不满足。
+
+\textbf{($\beta$)} 设 $\{m_n\}\subseteq\mathbb{N}\cup\{0\}$ 为一递减序列，满足 $m_0=1$ 且对所有 $n=0,1,\dots$ 有 $0<2m_{n+1}<m_n$。令 $K_0\equiv[0,1]$，设 $K_1\subseteq K_0$ 是由从 $K_0$ 中间去掉一个长度为 $m_0-2m_1$ 的开区间（即以 $\frac{1}{2}$ 为中心）得到的。于是 $K_1$ 是两个长度为 $m_1$ 的闭区间 $J_{1,1}$ 和 $J_{1,2}$ 的不交并。然后从 $J_{1,1}$ 和 $J_{1,2}$ 的中间各去掉一个长度为 $m_1-2m_2$ 的开区间。迭代此过程，经过 $n$ 步后，我们得到 $2^n$ 个闭区间 $J_{n,j}$（$j=1,\dots,2^n$）的不交并 $K_n$，满足
+\begin{align}
+\lambda(J_{n,j})=m_n,\qquad
+\lambda(K_n^c)=\sum_{k=0}^n 2^k(m_k-2m_{k+1}) \quad(n\in\mathbb{N}). \label{align:ch01-Cantor补}
+\end{align}
+交集 $K:=\bigcap_{n=1}^\infty K_n$ 是对应于序列 $\{m_n\}$ 的 Cantor 集。一个可能的选择是 $m_n=a^n$，其中 $a\in(0,\frac{1}{2})$（当 $a=\frac{1}{3}$ 时得到标准的 Cantor 三分集）。在此情形下，由\eqref{align:ch01-Cantor补} 显然有 $\lambda(K^c)=1$，因而 $\lambda(K)=0$。
+
+设 $m_n=a^n$，$a\in(0,\frac{1}{2})$，设 $V\in C([0,1])$ 为分段线性函数序列 $V_n\in C([0,1])$ 在 $[0,1]$ 上的一致极限，其中 $V_n(0):=0$，$V_n$ 在 $J_{n,j}$ 中斜率为 $(2a)^{-n}$（对每个 $j=1,\dots,2^n$），在其余处斜率为 $0$（$n\in\mathbb{N}$）。
+
+若 $n\in\mathbb{N}$ 固定，则对每个 $p>n$，在集合 $K_n^c$ 上有 $V_p=V_n$。由此
+\[
+\sup_{x\in[0,1]}|V_{n+1}(x)-V_n(x)|
+=\sup_{x\in[0,a^n]}\left|\frac{x}{(2a)^{n+1}}-\frac{x}{(2a)^n}\right|
+=\frac{1-2a}{a}\frac{1}{2^{n+1}},
+\]
+因而对任意 $p>n$，
+\[
+\sup_{x\in[0,1]}|V_p(x)-V_n(x)|\leqslant\frac{1-2a}{a}\sum_{k=n}^{p-1}\frac{1}{2^{k+1}}
+\leqslant\frac{1-2a}{a}\frac{1}{2^n}.
+\]
+由此不等式，序列 $\{V_n\}$ 在 $[0,1]$ 上一致收敛，故函数 $V$ 是适定的。此外，$V$ 非减，$V(0)=0$，$V(1)=1$，且 $V'=0$ a.e. 于 $(0,1)$。我们通过令 $V=0$ 在 $(-\infty,0)$ 上、$V=1$ 在 $(1,\infty)$ 上，将 $V$ 延拓到整个 $\mathbb{R}$。函数 $V$ 称为 Cantor--Vitali 函数。
+
+由\eqref{align:ch01-Stieltjes像测度} 有 $\lambda_V(K)=1$，故 Lusin 条件不满足。关于 $\lambda_V$ 的进一步注记将在\cref{section:ch02-进一步讨论} 中给出。
+
+\begin{remark}\label{remark:ch01-Cantor-Vitali}
+(i) 对任意 $n\in\mathbb{N}$ 和 $j=1,\dots,2^n$，由上述构造有 $\lambda_V(J_{n,j})=2^{-n}$。由于 $2^n$ 个区间 $J_{n,j}$ 不交，由可加性得对每个 $n$ 有 $\lambda_V(K_n)=1$，因而由\cref{proposition:ch01-测度性质}(v) 当 $n\to\infty$ 时再次得 $\lambda_V(K)=1$。
+
+(ii) 记 $K_n^N$ 为集合 $K_n$ 的 $N$ 个拷贝的乘积（$n,N\in\mathbb{N}$）。集合 $K^N:=\bigcap_{n=1}^\infty K_n^N$ 称为对应于序列 $\{m_n\}$ 的 $N$ 维 Cantor 集（令 $K^1\equiv K$）。
+\end{remark}
+
+\section{度量外测度与容量}\label{section:ch01-度量外测度容量}
+
+\subsection{容量}\label{subsection:ch01-容量}
+
+\begin{definition}\label{definition:ch01-容量}
+设 $(X,d)$ 为一度量空间，$\mathcal{F}\subseteq\mathcal{P}(X)$ 满足以下性质：(a) 紧子集族 $\mathcal{K}$ 包含于 $\mathcal{F}$；(b) 对每个序列 $\{E_n\}\subseteq\mathcal{F}$，有 $\bigcup_{n=1}^\infty E_n\in\mathcal{F}$。映射 $C:\mathcal{F}\to[0,\infty]$ 称为 $\mathcal{F}$ 上的一个容量，若：
+\begin{enumerate}[(i)]
+\item $C(\emptyset)=0$；
+\item 对任意 $E_1,E_2\in\mathcal{F}$、$E_1\subseteq E_2$，有 $C(E_1)\leqslant C(E_2)$；
+\item 对任意序列 $\{E_n\}\subseteq\mathcal{F}$，有
+\[
+C\left(\bigcup_{n=1}^\infty E_n\right)\leqslant\sum_{n=1}^\infty C(E_n).
+\]
+\end{enumerate}
+$\mathcal{P}(X)$ 上的容量称为 $X$ 上的容量。
+\end{definition}
+
+\begin{remark}\label{remark:ch01-容量与外测度}
+若 $\mathcal{F}$ 满足上述性质 (a)--(b)，则由附录 A 知开子集族 $\mathcal{T}$ 包含于 $\mathcal{F}$。此外，由\cref{definition:ch01-外测度} 和\cref{definition:ch01-容量}，$X$ 上的容量是一个外测度，而度量空间 $X$ 上的外测度是一个容量。
+\end{remark}
+
+\begin{definition}\label{definition:ch01-内外容量}
+一个容量称为外容量，若对任意 $E\in\mathcal{F}$，
+\[
+C(E)=\inf\{C(A)\mid A\supseteq E,\ A\in\mathcal{T}\};
+\]
+称为内容量，若对任意 $E\in\mathcal{F}$，
+\[
+C(E)=\sup\{C(K)\mid K\subseteq E,\ K\in\mathcal{K}\}.
+\]
+集合 $E\in\mathcal{F}$ 称为 $C$--可容的，若
+\begin{align}
+C(E)=\inf\{C(A)\mid A\supseteq E,\ A\in\mathcal{T}\}=\sup\{C(K)\mid K\subseteq E,\ K\in\mathcal{K}\}. \label{align:ch01-可容}
+\end{align}
+\end{definition}
+
+\begin{remark}\label{remark:ch01-容量生成}
+设 $X$ 和 $\mathcal{F}\subseteq\mathcal{P}(X)$ 如\cref{definition:ch01-容量} 所述，$C$ 为 $\mathcal{F}$ 上的一个容量。对任意族 $\mathcal{F}_1\subseteq\mathcal{F}$，定义 $C_{\mathcal{F}_1}:\mathcal{P}(X)\to[0,\infty]$ 为
+\[
+C_{\mathcal{F}_1}(E):=\inf\{C(F)\mid F\supseteq E,\ F\in\mathcal{F}_1\}\qquad(E\subseteq X)
+\]
+若存在 $F\in\mathcal{F}_1$ 使得 $F\supseteq E$，否则令 $C_{\mathcal{F}_1}(E):=\infty$。由\cref{theorem:ch01-外测度生成}，$C_{\mathcal{F}_1}$ 是一个外测度，因而是 $X$ 上的一个容量（见\cref{remark:ch01-容量与外测度}）。特别地，若 $\mathcal{F}_1=\mathcal{T}$ 为 $X$ 上的拓扑，则 $C_{\mathcal{T}}$ 由定义是一个外容量，且 $C$ 是外容量当且仅当 $C=C_{\mathcal{T}}$。
+
+\cref{definition:ch01-内外容量} 中的概念与\cref{definition:ch01-Borel测度}(b)--(d) 中的概念类似。
+\end{remark}
+
+在第 3 章中，我们将使用以下结果（见文献~[2, Theorem 2.3.11]、[32]、[109] 及其中相关引文）。
+
+\begin{theorem}[Choquet]\label{theorem:ch01-Choquet}
+设 $C$ 为 $\mathbb{R}^N$ 上的一个容量，满足：
+\begin{enumerate}[(i)]
+\item 对任意非增紧子集序列 $\{K_k\}\subseteq\mathbb{R}^N$，
+\begin{align}
+C\left(\bigcap_{k=1}^\infty K_k\right)=\lim_{k\to\infty}C(K_k); \label{align:ch01-Choquet上连续}
+\end{align}
+\item 对任意非减序列 $\{E_k\}\subseteq\mathcal{P}(\mathbb{R}^N)$，
+\begin{align}
+C\left(\bigcup_{k=1}^\infty E_k\right)=\lim_{k\to\infty}C(E_k). \label{align:ch01-Choquet下连续}
+\end{align}
+\end{enumerate}
+则每个 $E\in\mathcal{B}(\mathbb{R}^N)$ 都是 $C$--可容的。
+\end{theorem}
+
+\begin{remark}\label{remark:ch01-Suslin集}
+\cref{theorem:ch01-Choquet} 的结论实际上对更大的 Suslin 集类成立。
+\end{remark}
+
+关于\cref{theorem:ch01-Choquet}，我们注意以下结果。
+
+\begin{proposition}\label{proposition:ch01-外容量上连续}\label{proposition:ch01-测度上连续}
+设 $X$ 和 $\mathcal{F}\subseteq\mathcal{P}(X)$ 如\cref{definition:ch01-容量} 所述，$C:\mathcal{F}\to[0,\infty]$ 为一外容量。则对任意非增紧集序列 $\{K_n\}\subseteq\mathcal{K}$，等式\eqref{align:ch01-Choquet上连续} 成立。
+\end{proposition}
+
+\begin{proof}
+令 $K:=\bigcap_{n=1}^\infty K_n$，考虑任意 $A\supseteq K$、$A\in\mathcal{T}$。由于 $\{K_n\}$ 非增，存在 $\bar{n}\in\mathbb{N}$ 使得对所有 $n>\bar{n}$ 有 $K_n\subseteq A$，故由 $C$ 的单调性显然有
+\[
+C(K)\leqslant\lim_{n\to\infty}C(K_n)\leqslant\inf_{A\supseteq K,\ A\in\mathcal{T}}C(A).
+\]
+另一方面，由假设有 $\inf_{A\supseteq K,\ A\in\mathcal{T}}C(A)=C(K)$。于是结论成立。
+\end{proof}
+
+设 $X$ 和 $\mathcal{F}\subseteq\mathcal{P}(X)$ 如\cref{definition:ch01-容量} 所述，$C:\mathcal{F}\to[0,\infty]$ 为一容量。以下概念与\cref{subsection:ch01-零测集} 中的概念类似：
+\begin{enumerate}[(a)]
+\item 满足 $C(E)=0$ 的集合 $E\in\mathcal{F}$ 称为 $C$--零测的；
+\item 性质 $P$ 称为 $C$--拟处处成立（记为 $C$--q.e. 或 q.e.），若集合 $\{x\in U\mid P(x)\text{ 不成立}\}$ 是 $C$--零测的。
+\end{enumerate}
+
+由\cref{definition:ch01-容量}，$C$--零测集族 $\mathcal{N}_C$ 关于可数并和遗传性是稳定的，即 $F\subseteq E$、$E\in\mathcal{N}_C\Rightarrow F\in\mathcal{N}_C$。(b) 的特殊情形如下：
+\begin{itemize}
+\item 设 $f,f_n:X\to\mathbb{R}$（$n\in\mathbb{N}$）。我们说 $f_n$ 在 $X$ 中 $C$--拟处处收敛于 $f$，若存在 $N\in\mathcal{N}_C$ 使得对任意 $x\in N^c$ 有 $f_n(x)$ 收敛于 $f(x)$；
+\item 两个函数 $f,g:X\to\mathbb{R}$ 在 $X$ 中 $C$--q.e. 相等，若 $\{x\in X\mid f(x)\neq g(x)\}\in\mathcal{N}_C$。
+\end{itemize}
+
+显然，$C$--q.e. 相等是一个等价关系：
+\begin{align}
+g\sim f\overset{\mathrm{def}}{\Longleftrightarrow}g=f\ C\text{--q.e. 在 }X\text{ 中}, \label{align:ch01-q.e.等价}
+\end{align}
+关于\eqref{align:ch01-q.e.等价} 的每个等价类由其任意一个元素唯一确定，即该类的一个代表元。与 $\mu$--a.e. 相等的函数一样，我们将 $C$--q.e. 相等的函数等同起来，从而将整个类视为在 $X$ 中 $C$--q.e. 定义的唯一映射 $f$。
+
+\subsection{度量外测度}\label{subsection:ch01-度量外测度}
+
+\begin{definition}\label{definition:ch01-度量外测度}
+设 $(X,d)$ 为一度量空间。外测度 $\mu^*$ 称为度量外测度，若对任意非空集合 $E,F\subseteq X$ 且 $d(E,F)>0$，
+\begin{align}
+\mu^*(E\cup F)=\mu^*(E)+\mu^*(F). \label{align:ch01-度量外测度条件}
+\end{align}
+\end{definition}
+
+度量外测度的存在性可如\cref{subsection:ch01-Caratheodory构造} 中那样，通过对定义\eqref{align:ch01-外测度生成a} 作微小修改来证明。设 $(X,d)$ 为一度量空间，$\mathcal{C}\subseteq\mathcal{P}(X)$ 且 $\emptyset\in\mathcal{C}$，$\eta:\mathcal{C}\to[0,\infty]$ 且 $\eta(\emptyset)=0$。对任意 $\delta\in(0,\infty]$，令
+\begin{align}
+\eta_\delta^*(E):=\inf\left\{\sum_{n=1}^\infty\eta(E_n)\ \middle|\ E\subseteq\bigcup_{n=1}^\infty E_n,\ \{E_n\}\subseteq\mathcal{C},\ \operatorname{diam}(E_n)\leqslant\delta\ \forall n\in\mathbb{N}\right\} \label{align:ch01-eta-delta}
+\end{align}
+若存在如\eqref{align:ch01-eta-delta} 中 $E$ 的可数覆盖 $\{E_n\}$，否则令 $\eta_\delta^*(E):=\infty$。如\cref{theorem:ch01-外测度生成} 的证明那样论证，可知映射 $\eta_\delta^*:\mathcal{P}(X)\to[0,\infty]$ 是一个外测度（特别地，$\eta_\infty^*$ 即\eqref{align:ch01-外测度生成a} 中定义的外测度 $\mu^*$）。容易看出映射
+\begin{align}
+\eta^*:\mathcal{P}(X)\to[0,\infty],\qquad
+\eta^*(E):=\lim_{\delta\to0^+}\eta_\delta^*(E)=\sup_{\delta>0}\eta_\delta^*(E)\quad(E\subseteq X) \label{align:ch01-eta星}
+\end{align}
+也是一个外测度。事实上，对任意 $E\subseteq X$，映射 $\delta\mapsto\eta_\delta^*(E)$ 非增；故定义是适定的，且
+\begin{align}
+\eta_\infty^*(E)\leqslant\eta_\delta^*(E)\leqslant\eta^*(E)\qquad\text{对任意 }\delta\in(0,\infty). \label{align:ch01-eta不等式}
+\end{align}
+于是对任意 $\{E_n\}\subseteq\mathcal{P}(X)$ 和 $\delta>0$，
+\[
+\eta_\delta^*\left(\bigcup_{n=1}^\infty E_n\right)\leqslant\sum_{n=1}^\infty\eta_\delta^*(E_n)\leqslant\sum_{n=1}^\infty\eta^*(E_n)
+\quad\Rightarrow\quad
+\eta^*\left(\bigcup_{n=1}^\infty E_n\right)\leqslant\sum_{n=1}^\infty\eta^*(E_n).
+\]
+这就证明了 $\eta^*$ 是 $\sigma$--次可加的。显然它是单调的，$\eta^*(\emptyset)=0$，故 $\eta^*$ 是一个外测度。以下引理完成该断言。
+
+\begin{lemma}\label{lemma:ch01-eta星是度量外测度}
+设 $(X,d)$ 为一度量空间。则由\eqref{align:ch01-eta星} 定义的外测度 $\eta^*$ 是一个度量外测度。
+\end{lemma}
+
+\begin{proof}
+设 $E,F\subseteq X$ 非空，$d(E,F)>0$。若证得 $\eta^*(E\cup F)\geqslant\eta^*(E)+\eta^*(F)$，结论即成立。设 $\eta^*(E\cup F)<\infty$，否则结论显然。取 $\delta\in(0,d(E,F))$，设 $\{G_n\}\subseteq\mathcal{C}$ 且对所有 $n\in\mathbb{N}$ 有 $\operatorname{diam}(G_n)\leqslant\delta$，使得 $E\cup F\subseteq\bigcup_{n=1}^\infty G_n$。显然，由 $\delta$ 的选取，不存在 $\bar{n}\in\mathbb{N}$ 使得 $G_{\bar{n}}$ 同时与 $E$ 和 $F$ 相交。于是对所有 $n\in\mathbb{N}$，存在 $G_n',G_n''\subseteq X$ 使得 $G_n'\cup G_n''=G_n$；因而
+\[
+\max\{\operatorname{diam}(G_n'),\operatorname{diam}(G_n'')\}\leqslant\delta,
+\]
+且 $E\subseteq\bigcup_{n=1}^\infty G_n'$，$F\subseteq\bigcup_{n=1}^\infty G_n''$。显然这蕴含
+\[
+\eta_\delta^*(E)+\eta_\delta^*(F)\leqslant\eta_\delta^*(E\cup F),
+\]
+令 $\delta\to0^+$，结论成立。
+\end{proof}
+
+\begin{remark}\label{remark:ch01-eta是容量}
+由\cref{remark:ch01-容量与外测度}，\eqref{align:ch01-eta-delta}--\eqref{align:ch01-eta星} 中定义的外测度 $\eta_\delta^*$（$\delta\in(0,\infty]$）和 $\eta^*$ 都是 $X$ 上的容量。
+\end{remark}
+
+度量外测度可刻画如下。
+
+\begin{proposition}\label{proposition:ch01-度量外测度等价}
+设 $(X,d)$ 为一度量空间，$\mu^*:\mathcal{P}(X)\to[0,\infty]$ 为一外测度。则以下陈述等价：
+\begin{enumerate}[(i)]
+\item 每个 Borel 集都是 $\mu^*$--可测的；
+\item $\mu^*$ 是一个度量外测度。
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(i)$\Rightarrow$(ii)。由假设，对任意开集 $A\subseteq X$，有
+\begin{align}
+\mu^*(Z)=\mu^*(Z\cap A)+\mu^*(Z\cap A^c)\qquad\text{对任意 }Z\subseteq X \label{align:ch01-等价证明1}
+\end{align}
+（见\eqref{align:ch01-Caratheodory条件}）。设 $E,F\subseteq X$ 非空，$0<\delta<d(E,F)$。则 $G:=\{x\in X\mid d(x,E)<\delta\}$ 是开集，且 $E\subseteq G$，$F\subseteq G^c$。于是在\eqref{align:ch01-等价证明1} 中取 $Z=E\cup F$、$A=G$，即化为\eqref{align:ch01-度量外测度条件}。结论成立。
+
+(ii)$\Rightarrow$(i)。只需证每个闭集 $C\subseteq X$ 都是 $\mu^*$--可测的。对任意集合 $D\subseteq C^c$，令
+\[
+D_n:=\{x\in D\mid d(x,C)\geqslant 1/n\}\subseteq D\qquad(n\in\mathbb{N}).
+\]
+现证
+\begin{align}
+\lim_{n\to\infty}\mu^*(D_n)=\mu^*(D). \label{align:ch01-等价证明2}
+\end{align}
+事实上，对所有 $n\in\mathbb{N}$，有 $\mu^*(D_n)\leqslant\mu^*(D)$，因为 $D_n\subseteq D_{n+1}\subseteq D$。还需证
+\begin{align}
+\lim_{n\to\infty}\mu^*(D_n)\geqslant\mu^*(D). \label{align:ch01-等价证明3}
+\end{align}
+设 $\lim_{n\to\infty}\mu^*(D_n)<\infty$（否则结论显然），令 $P_n:=D_{n+1}\setminus D_n$（$n\in\mathbb{N}$）。若 $P_{2k}\neq\emptyset$（$k=1,\dots,n$），容易看出
+\[
+d\left(\bigcup_{k=1}^n P_{2k},P_{2n+2}\right)>0,
+\]
+故
+\[
+\mu^*\left(\bigcup_{k=1}^{n+1}P_{2k}\right)=\mu^*\left(\bigcup_{k=1}^n P_{2k}\right)+\mu^*(P_{2n+2}),
+\]
+因为 $\mu^*$ 是度量外测度。归纳论证得
+\[
+\mu^*\left(\bigcup_{k=1}^n P_{2k}\right)=\sum_{k=1}^n\mu^*(P_{2k})\qquad\text{对所有 }n\in\mathbb{N}
+\]
+（注意若某些 $P_{2k}=\emptyset$，上述等式也成立）。类似地可证
+\[
+\mu^*\left(\bigcup_{k=0}^n P_{2k+1}\right)=\sum_{k=0}^n\mu^*(P_{2k+1}).
+\]
+由于对所有 $n\in\mathbb{N}$ 有 $\bigcup_{k=1}^n P_k\subseteq D_n$，得
+\begin{align}
+\sum_{k=1}^\infty\mu^*(P_k)
+&=\lim_{n\to\infty}\left(\sum_{k=0}^n\mu^*(P_{2k+1})+\sum_{k=1}^n\mu^*(P_{2k})\right) \label{align:ch01-等价证明4}\\
+&=\lim_{n\to\infty}\left(\mu^*\left(\bigcup_{k=1}^n P_{2k}\right)+\mu^*\left(\bigcup_{k=0}^n P_{2k+1}\right)\right)
+\leqslant 2\lim_{n\to\infty}\mu^*(D_n)<\infty. \nonumber
+\end{align}
+最后，由于 $C$ 是闭集，对所有 $n\in\mathbb{N}$ 有 $D=D_n\cup\left(\bigcup_{k=n}^\infty P_k\right)$，故
+\begin{align}
+\mu^*(D)\leqslant\mu^*(D_n)+\sum_{k=n}^\infty\mu^*(P_k)\qquad(n\in\mathbb{N}). \label{align:ch01-等价证明5}
+\end{align}
+由\eqref{align:ch01-等价证明4} 有 $\lim_{n\to\infty}\sum_{k=n}^\infty\mu^*(P_k)=0$，故在\eqref{align:ch01-等价证明5} 中令 $n\to\infty$，得\eqref{align:ch01-等价证明3}。于是\eqref{align:ch01-等价证明2} 成立。
+
+现固定 $Z\subseteq X$，取 $D=Z\cap C^c$。对任意 $n\in\mathbb{N}$，有
+\[
+Z\supseteq(Z\cap C)\cup D_n,
+\]
+故由 $\mu^*$ 的单调性，
+\[
+\mu^*(Z)\geqslant\mu^*((Z\cap C)\cup D_n)=\mu^*(Z\cap C)+\mu^*(D_n)\qquad(n\in\mathbb{N}),
+\]
+因为 $d(Z\cap C,D_n)\geqslant 1/n>0$ 且 $\mu^*$ 是度量外测度。另一方面，由\eqref{align:ch01-等价证明2} 有
+\[
+\lim_{n\to\infty}\mu^*(D_n)=\mu^*(D)=\mu^*(Z\cap C^c),
+\]
+于是在上述不等式中令 $n\to\infty$，结论成立。
+\end{proof}
+
+最后我们补充两个关于度量空间上 Borel 测度的概念。
+
+\begin{definition}\label{definition:ch01-加倍测度}
+设 $(X,d)$ 为一度量空间。$X$ 上的正则 Borel 测度 $\mu$ 称为：
+\begin{enumerate}[(i)]
+\item 维数 $s>0$ 的，若存在 $c\geqslant 1$ 使得对所有 $x\in X$ 和 $r>0$ 有
+\[
+\frac{1}{c}r^s\leqslant\mu(B(x,r))\leqslant cr^s;
+\]
+\item 加倍的，若存在 $c_D\geqslant 1$ 使得对所有 $x\in X$ 和 $r>0$ 有
+\[
+\mu(B(x,2r))\leqslant c_D\mu(B(x,r)).
+\]
+\end{enumerate}
+\end{definition}
+
+\begin{remark}\label{remark:ch01-加倍性质}
+(i) 若 $\mu$ 是维数 $s$ 的，则它是加倍的，常数为 $c_D=c^2 2^s$。
+
+(ii) 若 $\mu$ 是加倍的，则容易看出对所有 $x\in X$ 和 $r>0$ 有 $\mu(B(x,r))<\infty$，且若 $\mu\not\equiv 0$，则 $\mu(B(x,r))>0$。
+
+(iii) 若 $\mu$ 是加倍的且 $0<r<R$，则
+\begin{align}
+\mu(B(x,R))\leqslant c_D\left(\frac{R}{r}\right)^s\mu(B(x,r)) \label{align:ch01-加倍估计}
+\end{align}
+其中 $s=\log_2 c_D=\frac{\log c_D}{\log 2}$。为证\eqref{align:ch01-加倍估计}（若 $\mu\not\equiv 0$；否则\eqref{align:ch01-加倍估计} 显然），令 $k:=\left[\log_2\left(\frac{R}{r}\right)\right]$ 为 $\log_2(R/r)$ 的整数部分。由于 $2^k\leqslant R/r\leqslant 2^{k+1}$，利用 $\mu$ 的单调性和迭代加倍条件，得
+\[
+\mu(B(x,R))\leqslant\mu(B(x,2\cdot 2^k r))\leqslant c_D\mu(B(x,2^k r))
+\leqslant c_D^2\mu(B(x,2^{k-1}r))\leqslant\cdots\leqslant c_D^{k+1}\mu(B(x,r)).
+\]
+若 $c_D=1$，则上述不等式给出\eqref{align:ch01-加倍估计}，因为此时 $s=0$。若 $c_D>1$，则由
+\[
+\frac{\mu(B(x,R))}{\mu(B(x,r))}\leqslant c_D^{k+1},
+\]
+得
+\[
+\log_{c_D}\left(\frac{\mu(B(x,R))}{c_D\mu(B(x,r))}\right)\leqslant k\leqslant\log_2\left(\frac{R}{r}\right)
+=\log_{c_D}\left(\frac{R}{r}\right)\log_2 c_D
+=\log_{c_D}\left(\frac{R}{r}\right)^s,
+\]
+故在此情形下\eqref{align:ch01-加倍估计} 也成立。证毕。
+\end{remark}
+
+
+\section{Hausdorff 测度与容量}\label{section:ch01-Hausdorff}
+
+设 $(X,d)$ 为一度量空间。设 $h:(0,\infty)\to(0,\infty]$ 非减且 $\lim_{r\to0^+}h(r)=0$。如\cref{subsection:ch01-度量外测度} 中那样论证，对任意 $\delta\in(0,\infty]$ 和 $E\subseteq X$，令
+\begin{align}
+\mathcal{H}_{h,\delta}^*(E):=\inf\left\{\sum_{k=1}^\infty h(\operatorname{diam}(E_k))\ \middle|\ E\subseteq\bigcup_{k=1}^\infty E_k,\ \operatorname{diam}(E_k)\leqslant\delta\ \forall k\in\mathbb{N}\right\} \label{align:ch01-Hausdorff-delta}
+\end{align}
+若存在如\eqref{align:ch01-Hausdorff-delta} 中 $E$ 的覆盖 $\{E_k\}$，否则令 $\mathcal{H}_{h,\delta}^*(E):=\infty$（这对应于在\eqref{align:ch01-eta-delta} 中取 $\eta=h\circ\operatorname{diam}$）。于是对任意 $\delta\in(0,\infty]$，映射 $\mathcal{H}_{h,\delta}^*:\mathcal{P}(X)\to[0,\infty]$ 是一个外测度，因而是 $X$ 上的一个容量（见\cref{remark:ch01-eta是容量}）。映射
+\begin{align}
+\mathcal{H}_h^*:\mathcal{P}(X)\to[0,\infty],\qquad
+\mathcal{H}_h^*(E):=\lim_{\delta\to0^+}\mathcal{H}_{h,\delta}^*(E)=\sup_{\delta>0}\mathcal{H}_{h,\delta}^*(E)\quad(E\subseteq X) \label{align:ch01-Hausdorff星}
+\end{align}
+同理也是一个外测度，此外还是一个度量外测度（见\cref{lemma:ch01-eta星是度量外测度}）。
+
+\begin{definition}\label{definition:ch01-Hausdorff测度}
+设 $(X,d)$ 为一度量空间。
+\begin{enumerate}[(i)]
+\item $X$ 上的每个容量 $\mathcal{H}_{h,\delta}^*$（$\delta\in(0,\infty]$）以及 $\mathcal{H}_h^*$，都称为一个 Hausdorff 容量。将 $\mathcal{H}_h^*$ 限制在 $\mathcal{H}_h^*$--可测集的 $\sigma$--代数上所得的测度称为一个 Hausdorff 测度，记为 $\mathcal{H}_h$。函数 $h$ 称为 $\mathcal{H}_h^*$ 的一个尺度函数。
+\item 若 $h(r)=r^s$（$s\in(0,\infty)$），则 Hausdorff 容量和 Hausdorff 测度分别记为 $\mathcal{H}_{s,\delta}^*$、$\mathcal{H}_s^*$ 和 $\mathcal{H}_s$，$\mathcal{H}_s$ 称为 $s$ 维 Hausdorff 测度。0 维 Hausdorff 测度由定义即计数测度 $\mu^\#$。
+\end{enumerate}
+\end{definition}
+
+\begin{remark}\label{remark:ch01-Hausdorff性质}
+(i) 由于 $\mathcal{H}_h^*$ 是度量外测度，由\cref{theorem:ch01-Caratheodory}，$\mathcal{H}_h$ 的定义是适定的，且 $\mathcal{H}_h$ 是完备测度。注意由\cref{proposition:ch01-度量外测度等价}，所有 Borel 集都是 $\mathcal{H}_h^*$--可测的。
+
+(ii) 由其定义，Hausdorff 测度在每个满足 $d(\phi(x),\phi(y))=d(x,y)$（$x,y\in X$）的映射 $\phi:X\to X$ 下不变，特别地在旋转和平移下不变。
+\end{remark}
+
+Hausdorff 容量之间的以下联系将被使用（见\cref{theorem:ch03-Hausdorff}）。
+
+\begin{proposition}\label{proposition:ch01-Hausdorff零等价}
+设 $(X,d)$ 为一度量空间，$E\subseteq X$。则对任意 $\delta\in(0,\infty]$，$\mathcal{H}_{h,\delta}^*(E)=0$ 当且仅当 $\mathcal{H}_h^*(E)=0$。
+\end{proposition}
+
+\begin{proof}
+由不等式\eqref{align:ch01-eta不等式}，对任意 $E\subseteq X$ 有
+\begin{align}
+\mathcal{H}_{h,\infty}^*(E)\leqslant\mathcal{H}_{h,\delta}^*(E)\leqslant\mathcal{H}_h^*(E)\qquad(\delta\in(0,\infty)), \label{align:ch01-Hausdorff零等价1}
+\end{align}
+故"若"部分立即成立。为证"仅当"部分，设 $\mathcal{H}_h^*(E)>0$，固定 $c\in(0,\mathcal{H}_h^*(E))$，取 $\delta>0$ 充分小使得 $\mathcal{H}_{h,\delta}^*(E)>c$。则由定义\eqref{align:ch01-Hausdorff-delta}，对 $E$ 的任意由满足 $\operatorname{diam}(E_k)\leqslant\delta$ 的集合 $E_k$ 构成的可数覆盖，有
+\[
+\sum_{k=1}^\infty h(\operatorname{diam}(E_k))>c.
+\]
+对同类型的另一个覆盖，对某个 $\bar{k}\in\mathbb{N}$ 有 $\operatorname{diam}(E_{\bar{k}})>\delta$，故
+\[
+\sum_{k=1}^\infty h(\operatorname{diam}(E_k))\geqslant h(\delta)>0.
+\]
+这蕴含 $\mathcal{H}_{h,\infty}^*(E)\geqslant\min\{c,h(\delta)\}>0$，证毕。
+\end{proof}
+
+与\cref{proposition:ch01-Hausdorff零等价} 的精神相同，当 $X=\mathbb{R}^N$ 时，我们有以下 Hausdorff 容量之间的局部等价结果（证明见文献~[102, Lemma 3.4.1 and Proposition 3.4.15]）。
+
+\begin{proposition}\label{proposition:ch01-Hausdorff局部等价}
+设 $\alpha\in[0,N)$，$E\subseteq B(x_0,\rho)\subseteq\mathbb{R}^N$（$x_0\in\mathbb{R}^N$，$\rho>0$）。则存在 $C_1=C_1(\alpha,N)>0$ 使得对任意 $\delta\in(0,\infty)$，
+\begin{align}
+\mathcal{H}_{N-\alpha,\infty}^*(E)\leqslant\mathcal{H}_{N-\alpha,\delta}^*(E)\leqslant C\,\mathcal{H}_{N-\alpha,\infty}^*(E), \label{align:ch01-Hausdorff局部等价}
+\end{align}
+其中
+\[
+C:=C_1\frac{\mathcal{H}_{N-\alpha,\delta}^*(B(x_0,\rho))}{\mathcal{H}_{N-\alpha,\infty}^*(B(x_0,\rho))}
+\max\left\{1,\left(\frac{\rho}{\delta}\right)^\alpha\right\}.
+\]
+\end{proposition}
+
+\begin{lemma}\label{lemma:ch01-Hausdorff维数二分}
+设 $(X,d)$ 为一度量空间。则对任意 $E\subseteq X$ 和 $s,t\in(0,\infty)$：
+\begin{enumerate}[(i)]
+\item 若 $s<t$，则 $\mathcal{H}_s^*(E)<\infty\Rightarrow\mathcal{H}_t^*(E)=0$；
+\item 若 $t<s$，则 $\mathcal{H}_s^*(E)>0\Rightarrow\mathcal{H}_t^*(E)=\infty$。
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+设 $s<t$。由\eqref{align:ch01-Hausdorff-delta}，对任意 $\delta\in(0,\infty)$ 有
+\[
+\mathcal{H}_{t,\delta}^*(E)\leqslant\delta^{t-s}\mathcal{H}_{s,\delta}^*(E).
+\]
+令 $\delta\to0^+$，得：若 $\mathcal{H}_s^*(E)<\infty$，则 $\mathcal{H}_t^*(E)=0$。这就证明了 (i)，交换 $s$ 与 $t$ 即得 (ii)。
+\end{proof}
+
+该引理引出以下定义。
+
+\begin{definition}\label{definition:ch01-Hausdorff维数}
+设 $(X,d)$ 为一度量空间。集合 $E\subseteq X$ 的 Hausdorff 维数为数
+\[
+\dim_H(E):=\inf\{s>0\mid\mathcal{H}_s^*(E)=0\}=\sup\{s>0\mid\mathcal{H}_s^*(E)=\infty\}.
+\]
+\end{definition}
+
+\begin{remark}\label{remark:ch01-Hausdorff维数与测度}
+若 $X$ 上存在维数为 $s$ 的测度 $\mu$，则 $X$ 的 Hausdorff 维数 $\dim_H(X)=s$，且存在 $c>0$ 使得对所有 $E\in\mathcal{B}(X)$ 有
+\[
+\frac{1}{c}\mathcal{H}_s(E)\leqslant\mu(E)\leqslant c\mathcal{H}_s(E)
+\]
+（例如见文献~[49, 2.10]、[62, 4.11]）。特别地，$\dim_H(\mathbb{R}^N)=N$。
+\end{remark}
+
+关于 Cantor 集的 Hausdorff 维数，我们有以下结果。
+
+\begin{proposition}\label{proposition:ch01-Cantor维数}
+设 $K^N$ 为对应于序列 $\{a^n\}$（$a\in(0,\frac{1}{2})$）的 $N$ 维 Cantor 集。则
+\[
+\dim_H(K^N)=\frac{N\log 2}{\log(1/a)}\qquad(N\in\mathbb{N}).
+\]
+特别地，一维 Cantor 三分集的 Hausdorff 维数为 $\frac{\log 2}{\log 3}$。\cref{proposition:ch01-Cantor维数} 直接由以下结果得到（证明见文献~[2, Theorem 5.3.1]）。
+\end{proposition}
+
+\begin{theorem}\label{theorem:ch01-Cantor测度估计}
+设 $h:[0,\infty)\to[0,\infty)$ 非减且 $\lim_{r\to0^+}h(r)=h(0)=0$。设 $K^N$ 为对应于序列 $\{m_n\}$ 的 $N$ 维 Cantor 集。则存在 $C>0$ 使得
+\begin{align}
+\frac{1}{C}\liminf_{n\to\infty}(2^{nN}h(m_n))\leqslant\mathcal{H}_h(K^N)\leqslant C\liminf_{n\to\infty}(2^{nN}h(m_n)). \label{align:ch01-Cantor估计}
+\end{align}
+\end{theorem}
+
+\begin{proof}[\cref{proposition:ch01-Cantor维数} 的证明]
+在\eqref{align:ch01-Cantor估计} 中取 $h(r)=r^s$ 和 $m_n=a^n$（$a\in(0,\frac{1}{2})$），得
+\[
+\liminf_{n\to\infty}(2^{Ns})^n=\mathcal{H}_s(K^N)=0
+\quad\text{对所有 }s>\frac{N\log 2}{\log(1/a)}.
+\]
+于是由\cref{definition:ch01-Hausdorff维数}，结论成立。
+\end{proof}
+
+我们通过证明 Lebesgue 测度 $\lambda_N$ 与 $N$ 维 Hausdorff 测度 $\mathcal{H}_N$ 之间的以下联系来结束本节。
+
+\begin{theorem}\label{theorem:ch01-Lebesgue-Hausdorff}
+有 $\lambda_N=\frac{\kappa_N}{2^N}\mathcal{H}_N$，其中 $\kappa_N$ 由\eqref{align:ch01-kappaN} 给出（$N\in\mathbb{N}$）。
+\end{theorem}
+
+\begin{remark}\label{remark:ch01-Lebesgue-Hausdorff}
+\cref{theorem:ch01-Lebesgue-Hausdorff} 建立的关系实际上在 Lebesgue 外测度与 Hausdorff 外测度之间成立，即
+\[
+\lambda_N^*=k_N\mathcal{H}_N^*
+\]
+（见文献~[45, Satz III.2.9]）。因此 $E\in\mathcal{L}_N$ 当且仅当 $E$ 是 $\mathcal{H}_N^*$--可测的。此外注意到
+\[
+\frac{\kappa_1}{2}=\frac{\sqrt{\pi}}{2\Gamma(3/2)}=1,
+\]
+故当 $N=1$ 时，Lebesgue 外测度与 Hausdorff 外测度重合。
+\end{remark}
+
+\begin{proof}[\cref{theorem:ch01-Lebesgue-Hausdorff} 的证明]
+令 $W:=(0,1]^N$，$k_N:=[\mathcal{H}_N^*(W)]^{-1}$（注意 $0<\mathcal{H}_N^*(W)<\infty$）。由于 $k_N\mathcal{H}_N^*$ 是度量外测度，由\cref{proposition:ch01-度量外测度等价}，所有 Borel 集都是 $\mathcal{H}_N^*$--可测的。此外，由\cref{remark:ch01-Hausdorff维数与测度}（取 $\mu=\lambda_N$），限制 $k_N\mathcal{H}_N^*|_{\mathcal{B}_N}$ 是局部有限测度，因而是 Borel 测度，它显然满足\cref{proposition:ch01-平移不变刻画} 的假设。由此
+\[
+k_N\mathcal{H}_N^*|_{\mathcal{B}_N}=\lambda_N|_{\mathcal{B}_N},
+\]
+故由\cref{theorem:ch01-测度延拓} 得 $\lambda_N=k_N\mathcal{H}_N$。
+
+还需证 $k_N=\frac{\kappa_N}{2^N}$。由 Vitali 覆盖引理（见\cref{remark:ch01-Vitali精细化}），对任意 $\delta>0$，存在不交闭球序列 $\{B_k\}$，$B_k\subseteq W$，对所有 $k\in\mathbb{N}$ 有 $\operatorname{diam}B_k<\delta$，使得
+\[
+\lambda_N\left(W\setminus\left(\bigcup_{k=1}^\infty B_k\right)\right)=0.
+\]
+于是也有 $\mathcal{H}_N\left(W\setminus\left(\bigcup_{k=1}^\infty B_k\right)\right)=0$。此外，由\eqref{align:ch01-Hausdorff-delta}，对任意 $\delta>0$，有
+\[
+\mathcal{H}_{N,\delta}^*\left(\bigcup_{k=1}^\infty B_k\right)
+\leqslant\sum_{k=1}^\infty[\operatorname{diam}(B_k)]^N
+=\frac{2^N}{\kappa_N}\sum_{k=1}^\infty\lambda_N(B_k)
+=\frac{2^N}{\kappa_N}\lambda_N\left(\bigcup_{k=1}^\infty B_k\right)
+\leqslant\frac{2^N}{\kappa_N}\lambda_N(W)=\frac{2^N}{\kappa_N}.
+\]
+在该不等式中令 $\delta\to0^+$，得
+\begin{align}
+\mathcal{H}_N(W)=\mathcal{H}_N\left(\bigcup_{k=1}^\infty B_k\right)
+=\mathcal{H}_N^*\left(\bigcup_{k=1}^\infty B_k\right)\leqslant\frac{2^N}{\kappa_N}. \label{align:ch01-Lebesgue-Hausdorff上界}
+\end{align}
+
+设 $W\subseteq\bigcup_{k=1}^\infty E_k$，对所有 $k\in\mathbb{N}$ 有 $\operatorname{diam}(E_k)\leqslant\delta$。则由不等式\eqref{align:ch01-等直径}，
+\[
+1=\lambda_N(W)\leqslant\sum_{k=1}^\infty\lambda_N^*(E_k)
+\leqslant\frac{\kappa_N}{2^N}\sum_{k=1}^\infty[\operatorname{diam}(E_k)]^N,
+\]
+故 $\mathcal{H}_N(W)\geqslant\frac{2^N}{\kappa_N}$。该不等式与\eqref{align:ch01-Lebesgue-Hausdorff上界} 证明了
+\[
+k_N=[\mathcal{H}_N^*(W)]^{-1}=\frac{\kappa_N}{2^N},
+\]
+证毕。
+\end{proof}
+
+
+\section{带号测度}\label{section:ch01-带号测度}
+
+\begin{definition}\label{definition:ch01-带号测度}
+设 $(X,\mathcal{A})$ 为一可测空间。映射 $\mu:\mathcal{A}\to[-\infty,\infty]$ 称为 $\mathcal{A}$ 上的一个带号测度，若：
+\begin{enumerate}[(i)]
+\item $\mu(\emptyset)=0$；
+\item $\mu(\mathcal{A})$ 包含于 $[-\infty,\infty)$ 或 $(-\infty,\infty]$ 之一；
+\item 对任意不交序列 $\{E_n\}\subseteq\mathcal{A}$，有
+\[
+\mu\left(\bigcup_{n=1}^\infty E_n\right)=\sum_{n=1}^\infty\mu(E_n).
+\]
+\end{enumerate}
+带号测度 $\mu$ 称为有限的，若 $\mu(\mathcal{A})\subseteq\mathbb{R}$；称为 $\sigma$--有限的，若存在序列 $\{E_k\}\subseteq\mathcal{A}$ 使得 $X=\bigcup_{k=1}^\infty E_k$ 且对任意 $k\in\mathbb{N}$ 有 $|\mu(E_k)|<\infty$。
+\end{definition}
+
+由上述要求 (ii)，\cref{definition:ch01-带号测度} 中的级数 $\sum_{n=1}^\infty\mu(E_n)$ 是适定的。此外，由 (iii) 其收敛是绝对的：事实上，其和不能依赖于项的次序，因为 $\bigcup_{n=1}^\infty E_n$ 不依赖于次序。
+
+\begin{remark}\label{remark:ch01-带号测度性质}
+设 $(X,\mathcal{A})$ 为一可测空间，$\mu$ 为 $\mathcal{A}$ 上的带号测度。
+\begin{enumerate}[(i)]
+\item 对任意 $E,F\in\mathcal{A}$、$E\subseteq F$，有 $|\mu(F)|<\infty\Rightarrow|\mu(E)|<\infty$。
+\item 容易看出：
+\begin{itemize}
+\item 对任意非减序列 $\{E_n\}\subseteq\mathcal{A}$，有 $\mu\left(\bigcup_{n=1}^\infty E_n\right)=\lim_{n\to\infty}\mu(E_n)$；
+\item 对任意非增序列 $\{E_n\}\subseteq\mathcal{A}$ 且 $|\mu(E_1)|<\infty$，有 $\mu\left(\bigcap_{n=1}^\infty E_n\right)=\lim_{n\to\infty}\mu(E_n)$。
+\end{itemize}
+\end{enumerate}
+\end{remark}
+
+$X$ 上带号测度的集合是一个实向量空间，记为 $\mathcal{M}=\mathcal{M}(X)$。若序关系"$\leqslant$"定义为
+\[
+\nu\leqslant\mu\overset{\mathrm{def}}{\Longleftrightarrow}\nu(E)\leqslant\mu(E)\quad\text{对任意 }E\in\mathcal{A}\quad(\mu,\nu\in\mathcal{M}),
+\]
+则它是一个有序向量空间。有限带号测度的子空间记为 $\mathcal{M}_f(X)\subset\mathcal{M}(X)$，而 $\mathcal{M}_f^+(X)$ 表示有限（正）测度的锥。
+
+\subsection{Hahn 分解与 Jordan 分解}\label{subsection:ch01-HahnJordan}
+
+\begin{definition}\label{definition:ch01-正负集}
+设 $(X,\mathcal{A})$ 为一可测空间，$\mu$ 为 $\mathcal{A}$ 上的带号测度。
+\begin{enumerate}[(i)]
+\item 集合 $P\in\mathcal{A}$ 称为 $\mu$--正的，若对任意 $E\in\mathcal{A}$、$E\subseteq P$ 有 $\mu(E)\geqslant 0$；
+\item 集合 $N\in\mathcal{A}$ 称为 $\mu$--负的，若对任意 $E\in\mathcal{A}$、$E\subseteq N$ 有 $\mu(E)\leqslant 0$；
+\item 集合 $F\in\mathcal{A}$ 称为 $\mu$--零测的，若对任意 $E\in\mathcal{A}$、$E\subseteq F$ 有 $\mu(E)=0$。
+\end{enumerate}
+\end{definition}
+
+\begin{lemma}\label{lemma:ch01-正集子集}
+设 $(X,\mathcal{A})$ 为一可测空间，$\mu$ 为 $\mathcal{A}$ 上的带号测度且 $\mu(\mathcal{A})\subseteq[-\infty,\infty)$。则对任意集合 $E\in\mathcal{A}$ 满足 $\mu(E)>-\infty$，存在 $\mu$--正集 $P\subseteq E$ 使得 $\mu(P)\geqslant\mu(E)$。
+\end{lemma}
+
+\begin{proof}
+若集合 $E$ 是 $\mu$--正的，则结论显然成立。否则，结论由以下断言推出。
+
+\textbf{断言。} 对任意 $\epsilon>0$，存在 $E_\epsilon\in\mathcal{A}$、$E_\epsilon\subseteq E$，满足 $\mu(E_\epsilon)\geqslant\mu(E)$，使得对任意 $F\in\mathcal{A}$、$F\subseteq E_\epsilon$ 有 $\mu(F)\geqslant-\epsilon$。
+
+事实上，若断言成立，则集合 $P:=\bigcap_{n=1}^\infty E_{1/n}$ 具有所述性质。
+
+反设断言对某个 $\bar{\epsilon}>0$ 不成立。由于由假设 $E$ 不是 $\mu$--正的，存在 $G\in\mathcal{A}$ 使得 $G\subseteq E$ 且 $\mu(G)<0$。这蕴含 $E\setminus G\in\mathcal{A}$ 是 $E$ 的一个子集且
+\[
+\mu(E\setminus G)=\mu(E)-\mu(G)>\mu(E),
+\]
+故存在 $F_1\in\mathcal{A}$ 使得 $F_1\subseteq E\setminus G$ 且 $\mu(F_1)<-\bar{\epsilon}$。接下来注意集合 $E\setminus F_1\in\mathcal{A}$ 满足以下性质：$E\setminus F_1\subseteq E$ 且
+\[
+\mu(E\setminus F_1)=\mu(E)-\mu(F_1)>\mu(E)+\bar{\epsilon}>\mu(E).
+\]
+于是存在 $F_2\in\mathcal{A}$ 使得 $F_2\subseteq E\setminus F_1$ 且 $\mu(F_2)<-\bar{\epsilon}$。如此归纳下去，存在不交序列 $\{F_n\}$，$F_1\subseteq E$，$F_n\subseteq E\setminus\left(\bigcup_{k=1}^{n-1}F_k\right)$（$n\geqslant 2$），使得对所有 $n$ 有 $\mu(F_n)<-\bar{\epsilon}$。由此
+\[
+\mu\left(\bigcup_{n=1}^\infty F_n\right)=-\infty.
+\]
+然而这是矛盾的，因为 $\bigcup_{n=1}^\infty F_n\subseteq E$ 且 $\mu(E)>-\infty$（见\cref{remark:ch01-带号测度性质}(i)）。
+\end{proof}
+
+\begin{theorem}[Hahn]\label{theorem:ch01-Hahn分解}
+设 $(X,\mathcal{A})$ 为一可测空间，$\mu$ 为 $\mathcal{A}$ 上的带号测度。则存在 $\mu$--正集 $P$ 和 $\mu$--负集 $N$ 使得 $P\cup N=X$，$P\cap N=\emptyset$。此外，偶 $(P,N)$ 唯一确定至 $\mu$--零测集。
+\end{theorem}
+
+\begin{proof}
+不失一般性，设 $\mu(\mathcal{A})\subseteq[-\infty,\infty)$。令
+\[
+\alpha:=\sup_{E\in\mathcal{A}}\mu(E).
+\]
+则由\cref{lemma:ch01-正集子集}，存在 $\mu$--正集序列 $\{P_n\}$ 使得当 $n\to\infty$ 时 $\mu(P_n)\to\alpha$。则 $P:=\bigcup_{n=1}^\infty P_n$ 是 $\mu$--正的，且对所有 $n$ 有 $\mu(P)\geqslant\mu(P_n)$，故 $\mu(P)=\alpha$（特别地，$\alpha\in\mathbb{R}$）。容易推出 $N:=P^c$ 是 $\mu$--负的：事实上，若存在 $G\in\mathcal{A}$、$G\subseteq N$ 且 $\mu(G)>0$，则将有
+\[
+\mu(P\cup G)=\alpha+\mu(G)>\alpha,
+\]
+矛盾。
+
+为证最后一个陈述，设偶 $(P',N')$ 满足 $P'$ 为 $\mu$--正、$N'$ 为 $\mu$--负，且 $P'\cup N'=X$，$P'\cap N'=\emptyset$。对任意 $E\in\mathcal{A}$、$E\subseteq P\setminus P'=P\cap N'$，既有 $\mu(E)\geqslant 0$ 又有 $\mu(E)\leqslant 0$，故 $E$ 是 $\mu$--零测的。$P'\setminus P$ 的每个可测子集同理。故
+\[
+\mu(P\triangle P')=\mu(N\triangle N')=0
+\]
+（此处 $P\triangle P':=(P\setminus P')\cup(P'\setminus P)$，$N,N'$ 类似）。证毕。
+\end{proof}
+
+\begin{definition}\label{definition:ch01-变差}
+设 $(X,\mathcal{A})$ 为一可测空间，$\mu$ 为 $\mathcal{A}$ 上的带号测度，$P,N\in\mathcal{A}$ 由\cref{theorem:ch01-Hahn分解} 给出。
+\begin{enumerate}[(i)]
+\item 偶 $(P,N)$ 称为 $X$ 的 Hahn 分解。
+\item 测度 $\mu^+$，$\mu^+(E):=\mu(E\cap P)$（对任意 $E\in\mathcal{A}$），称为 $\mu$ 的正部（或正变差）。
+\item 测度 $\mu^-$，$\mu^-(E):=-\mu(E\cap N)$（对任意 $E\in\mathcal{A}$），称为 $\mu$ 的负部（或负变差）。
+\item 测度 $|\mu|$，$|\mu|(E):=\mu^+(E)+\mu^-(E)$（$E\in\mathcal{A}$），称为 $\mu$ 的变差。量 $|\mu|(X)$ 称为 $\mu$ 的全变差。
+\end{enumerate}
+\end{definition}
+
+由\cref{theorem:ch01-Hahn分解}，上述定义不依赖于偶 $(P,N)$ 的选取，因而是适定的。特别地，我们有
+\begin{align}
+\mu=\mu^+-\mu^-,\qquad |\mu|=\mu^++\mu^-, \label{align:ch01-Jordan分解}
+\end{align}
+因而特别地
+\begin{align}
+|\mu(E)|\leqslant|\mu|(E)\qquad\text{对所有 }E\in\mathcal{A}. \label{align:ch01-变差不等式}
+\end{align}
+
+\begin{definition}\label{definition:ch01-Jordan分解}
+\eqref{align:ch01-Jordan分解} 中的第一个等式称为带号测度 $\mu$ 的 Jordan 分解。
+\end{definition}
+
+\begin{remark}\label{remark:ch01-Jordan性质}\label{remark:ch01-Jordan变差}
+(i) $\mu$ 的 Jordan 分解在下述意义下是极小的：若存在（正）测度 $\rho$ 和 $\sigma$ 使得 $\mu=\rho-\sigma$，则对所有 $E\in\mathcal{A}$ 有 $\mu^+(E)\leqslant\rho(E)$ 且 $\mu^-(E)\leqslant\sigma(E)$。事实上，
+\[
+\mu^+(E):=\mu(E\cap P)=\rho(E\cap P)-\sigma(E\cap P)\leqslant\rho(E\cap P)\leqslant\rho(E),
+\]
+反向不等式同理。
+
+(ii) 容易看出，对任意 $E\in\mathcal{A}$，
+\[
+\mu^+(E)=\infty\Rightarrow\mu(E)=\infty,\qquad
+\mu^-(E)=\infty\Rightarrow\mu(E)=-\infty.
+\]
+由定义，带号测度 $\mu$ 不能同时取 $\pm\infty$，故 $\mu^\pm$ 中至少一个是有限的。
+
+(iii) 带号测度 $\mu$ 是有限的当且仅当其全变差是有限的。事实上，若 $|\mu|(X)<\infty$，则对所有 $E\in\mathcal{A}$ 有
+\[
+|\mu(E)|\leqslant|\mu|(E)\leqslant|\mu|(X)<\infty,
+\]
+故 $\mu$ 是有限的。反之，若对 $E\in\mathcal{A}$ 有 $|\mu(E)|<\infty$。则由 (ii) 对所有 $E\in\mathcal{A}$ 有 $|\mu|(E)<\infty$，特别地 $|\mu|(X)<\infty$。
+\end{remark}
+
+\label{subsection:ch01-全变差}
+
+\begin{proposition}\label{proposition:ch01-变差公式}\label{proposition:ch01-正变差}\label{proposition:ch01-全变差}
+设 $(X,\mathcal{A})$ 为一可测空间，$\mu$ 为 $\mathcal{A}$ 上的带号测度。则对任意 $E\in\mathcal{A}$，
+\[
+\mu^+(E)=\sup\{\mu(F)\mid F\in\mathcal{A},\ F\subseteq E\},\quad
+\mu^-(E)=-\inf\{\mu(F)\mid F\in\mathcal{A},\ F\subseteq E\},
+\]
+因而 $\mu^-=(-\mu)^+$。此外，
+\begin{align}
+|\mu|(E)&=\sup\left\{\sum_{i=1}^n|\mu(E_i)|\ \middle|\ E_1,\dots,E_n\in\mathcal{A}\text{ 不交},\ E=\bigcup_{i=1}^n E_i,\ n\in\mathbb{N}\right\} \nonumber\\
+&=\sup\left\{\sum_{i=1}^\infty|\mu(E_i)|\ \middle|\ E_i\in\mathcal{A}\text{ 不交},\ E=\bigcup_{i=1}^\infty E_i\right\}. \label{align:ch01-全变差公式}
+\end{align}
+\end{proposition}
+
+\begin{proof}
+我们仅证\eqref{align:ch01-全变差公式}。记右端第一个和第二个上确界分别为 $S_f$ 和 $S_i$。则
+\[
+|\mu|(E)=|\mu(E\cap P)|+|\mu(E\cap N)|\leqslant S_f\leqslant S_i.
+\]
+另一方面，对任意有限不交族 $\{E_1,\dots,E_n\}\subseteq\mathcal{A}$ 且 $\bigcup_{i=1}^n E_i\subseteq E$，
+\[
+\sum_{i=1}^n|\mu(E_i)|\leqslant\sum_{i=1}^n[\mu^+(E_i)+\mu^-(E_i)]
+\leqslant\mu^+(E)+\mu^-(E)=|\mu|(E),
+\]
+故 $S_f\leqslant S_i\leqslant|\mu|(E)$。于是\eqref{align:ch01-全变差公式} 成立。
+\end{proof}
+
+以下定义推广了\cref{definition:ch01-Borel测度}。
+
+\begin{definition}\label{definition:ch01-有限带号Borel}\label{definition:ch01-带号Radon测度}
+设 $(X,\mathcal{T})$ 为一 Hausdorff 空间，$\mathcal{B}=\mathcal{B}(X)=\sigma_0(\mathcal{T})$ 为 Borel $\sigma$--代数。有限带号测度 $\mu$ 称为有限带号 Borel 测度（相应地，有限带号 Radon 测度或有限带号正则测度），若它是两个有限 Borel 测度（相应地，两个有限 Radon 测度或两个有限正则测度）之差。
+\end{definition}
+
+$X$ 上有限带号 Radon 测度的向量空间记为 $\mathscr{R}_f(X)$，而 $\mathscr{R}^+_f(X)$ 表示有限（正）Radon 测度的锥。
+
+\begin{remark}\label{remark:ch01-有限带号正则}
+(i) 容易看出以下陈述等价：
+\begin{enumerate}[(a)]
+\item $\mu$ 是有限带号正则测度；
+\item $\mu^\pm$ 有限且正则；
+\item $|\mu|$ 有限且正则。
+\end{enumerate}
+事实上，设 $\mu=\mu_1-\mu_2$，其中 $\mu_1,\mu_2$ 有限、正、正则。设 $E\in\mathcal{B}$。则对任意 $\epsilon>0$，存在开集 $A$ 和紧集 $K$ 使得 $A\supseteq E\supseteq K$ 且 $\mu_i(A\setminus K)<\epsilon$，故 $\mu^\pm(A\setminus K)<\epsilon$（$i=1,2$；见\cref{remark:ch01-Borel测度性质}(i) 和\cref{remark:ch01-Jordan性质}）。故 (a)$\Rightarrow$(b)；其余蕴含显然。
+
+(ii) 有限带号测度是正则的当且仅当它是有限带号 Radon 测度。事实上，若 $\mu=\mu_1-\mu_2$ 且 $\mu_1,\mu_2$ 有限正则，则由定义 $\mu_1,\mu_2$ 是有限 Radon 测度，故 $\mu$ 是有限带号 Radon 测度。另一方面，若 $\mu=\mu_1-\mu_2$ 且 $\mu_1,\mu_2$ 是 $X$ 上的有限 Radon 测度，则由\cref{lemma:ch01-有限Radon正则}(i) 它们是正则的，故 $\mu$ 是正则的。
+
+(iii) 在具有可数基的局部紧 Hausdorff 空间中，带号 Borel 测度与带号 Radon 测度重合且是正则的（见\cref{remark:ch01-BorelRadon一致}）。
+\end{remark}
+
+\subsection{有限带号测度的 Banach 空间}\label{subsection:ch01-Banach空间}
+
+设 $(X,\mathcal{A})$ 为一可测空间。容易看出映射 $\|\cdot\|:\mathcal{M}_f(X)\to\mathbb{R}^+$，
+\[
+\|\mu\|:=|\mu|(X)\quad\text{对任意 }\mu\in\mathcal{M}(X),
+\]
+是有限带号测度向量空间 $\mathcal{M}_f(X)$ 上的一个范数。子集 $\mathcal{M}\subseteq\mathcal{M}_f(X)$ 称为有界的，若 $\sup_{\mu\in\mathcal{M}}\|\mu\|<\infty$。此外，我们有以下结果。
+
+\begin{proposition}\label{proposition:ch01-Banach完备}
+设 $(X,\mathcal{A})$ 为一可测空间。则赋以范数 $\|\cdot\|$ 的向量空间 $\mathcal{M}_f(X)$ 是一个 Banach 空间。
+\end{proposition}
+
+\begin{proof}
+为证完备性，设 $\{\mu_k\}\subseteq\mathcal{M}_f(X)$ 为一 Cauchy 序列。则对任意 $\epsilon>0$，存在 $\bar{k}\in\mathbb{N}$ 使得对所有 $k,l>\bar{k}$ 和所有 $E\in\mathcal{A}$，
+\[
+|\mu_k(E)-\mu_l(E)|=|(\mu_k-\mu_l)(E)|\leqslant|\mu_k-\mu_l|(E)\leqslant\|\mu_k-\mu_l\|<\epsilon.
+\]
+故存在 $\mu:\mathcal{A}\to\mathbb{R}$ 使得当 $k\to\infty$ 时 $\|\mu_k-\mu\|\to 0$。显然 $\mu(\emptyset)=0$，标准的 $\epsilon/3$ 论证表明 $\mu$ 是 $\sigma$--可加的，故 $\mu\in\mathcal{M}_f(X)$。证毕。
+\end{proof}
+
+\subsection{绝对连续测度与奇异测度}\label{subsection:ch01-绝对连续奇异}
+
+\begin{definition}\label{definition:ch01-集中测度}
+设 $(X,\mathcal{A})$ 为一可测空间，$\mu$ 为 $\mathcal{A}$ 上的带号测度。$\mu$ 在集合 $E\in\mathcal{A}$ 上的限制 $\mu\lfloor E$ 定义如下：
+\[
+(\mu\lfloor E)(F):=\mu(E\cap F)\quad\text{对每个 }F\in\mathcal{A}.
+\]
+我们说 $\mu$ 集中于集合 $E\in\mathcal{A}$ 上，若对所有 $F\in\mathcal{A}$ 有 $(\mu\lfloor E)(F)=\mu(F)$。
+\end{definition}
+
+\begin{remark}\label{remark:ch01-集中注记}
+(i) 容易看出，不存在唯一的集合使 $\mu$ 集中于其上。例如，若 $E,F\in\mathcal{A}$ 且 $\mu(E\triangle F)=0$，则 $\mu\lfloor E=\mu\lfloor F$。
+
+(ii) 设 $(X,\mathcal{T})$ 为一 Hausdorff 空间，$\mu\in\mathcal{R}^+(X)$。由\cref{lemma:ch01-支集刻画}，$\mu$ 集中于 $\operatorname{supp}\mu$ 上，且 $\operatorname{supp}\mu$ 是使 $\mu$ 集中于其上的最小闭集。
+\end{remark}
+
+\begin{definition}\label{definition:ch01-相互奇异绝对连续}\label{definition:ch01-测度绝对连续}
+设 $(X,\mathcal{A})$ 为一可测空间，$\mu,\nu$ 为 $\mathcal{A}$ 上的两个带号测度。我们说：
+\begin{enumerate}[(i)]
+\item $\mu$ 与 $\nu$ 相互奇异（记为 $\mu\perp\nu$），若存在 $E\in\mathcal{A}$ 使得 $\mu=\mu\lfloor E$ 且 $\nu=\nu\lfloor E^c$；
+\item $\nu$ 关于 $\mu$ 绝对连续（记为 $\nu\ll\mu$），若对任意 $|\mu|$--零测集 $E\in\mathcal{A}$，有 $\nu(E)=0$。
+\end{enumerate}
+\end{definition}
+
+\begin{remark}\label{remark:ch01-奇异绝对连续注记}
+(i) 容易看出，$\mu,\nu$ 相互奇异当且仅当存在 $E\in\mathcal{A}$ 使得 $|\mu|(E^c)=|\nu|(E)=0$。
+
+(ii) 任意带号测度 $\mu$ 的正部 $\mu^+$ 与负部 $\mu^-$ 相互奇异。事实上，设 $(P,N)$ 为 $X$ 的任意 Hahn 分解。则由\cref{theorem:ch01-Hahn分解} 有 $P=N^c$，且由定义有 $\mu^+=\mu\lfloor P$，$\mu^-=\mu\lfloor N$。
+\end{remark}
+
+\begin{lemma}\label{lemma:ch01-绝对连续等价}
+设 $(X,\mathcal{A},\mu)$ 为一测度空间，$\nu$ 为 $\mathcal{A}$ 上的带号测度。则 $\nu\ll\mu$ 当且仅当 $|\nu|\ll\mu$。
+\end{lemma}
+
+\begin{proof}
+设 $\nu\ll\mu$，$(P,N)$ 为与测度 $\nu$ 相关的 $X$ 的 Hahn 分解（见\cref{theorem:ch01-Hahn分解}）。设 $E\in\mathcal{A}$ 满足 $\mu(E)=0$，故 $\mu(E\cap P)=\mu(E\cap N)=0$。于是由\cref{definition:ch01-相互奇异绝对连续}(ii) 有 $\nu(E\cap P)=\nu(E\cap N)=0$，即 $\nu^+(E)=\nu^-(E)=0$。由此 $|\nu|(E)=0$，故 $|\nu|\ll\mu$。反向由不等式\eqref{align:ch01-变差不等式} 显然。
+\end{proof}
+
+\begin{lemma}\label{lemma:ch01-绝对连续epsilon-delta}
+设 $(X,\mathcal{A})$ 为一可测空间，$\mu,\nu$ 为 $\mathcal{A}$ 上的两个带号测度，$\nu$ 有限。则 $\nu\ll\mu$ 当且仅当
+\[
+\lim_{|\mu|(G)\to0}|\nu|(G)=0\qquad(G\in\mathcal{A}).
+\]
+\end{lemma}
+
+\begin{proof}
+我们仅证必要性，因为反向是显然的。设 $\nu\ll\mu$，反设 $\limsup_{|\mu|(G)\to0}|\nu|(G)>0$。则存在 $\epsilon>0$ 和序列 $\{E_k\}\subset\mathcal{A}$ 使得对所有 $k\in\mathbb{N}$ 有 $|\nu|(E_k)\geqslant\epsilon$ 且 $|\mu|(E_k)\leqslant 2^{-k}$。令 $F_n:=\bigcup_{k=n}^\infty E_k$（$n\in\mathbb{N}$），故对所有 $n\in\mathbb{N}$ 有 $|\nu|(F_n)\geqslant|\nu|(E_n)\geqslant\epsilon$。另一方面，由于序列 $\{F_n\}$ 非增且
+\[
+|\mu|(F_1)\leqslant\sum_{k=1}^\infty|\mu|(E_k)\leqslant\sum_{k=1}^\infty 2^{-k}<\infty,
+\]
+有
+\[
+|\mu|\left(\bigcap_{n=1}^\infty F_n\right)=\lim_{n\to\infty}|\mu|(F_n)=0.
+\]
+由于由假设 $\nu\ll\mu$，得
+\[
+|\nu|\left(\bigcap_{n=1}^\infty F_n\right)=0.
+\]
+现令 $G_1:=F_1^c$，$G_n:=F_{n-1}\setminus F_n$ 对每个 $n\geqslant 2$。序列 $\{G_n\}$ 不交，且对任意 $m\geqslant 2$ 有
+\[
+\bigcup_{n=m}^\infty G_n=F_{m-1}\setminus\left(\bigcap_{n=1}^\infty F_n\right).
+\]
+此外，由于 $\nu$ 有限且 $\bigcup_{n=1}^\infty G_n=X$，有
+\[
+|\nu|\left(\bigcup_{n=1}^\infty G_n\right)=\sum_{n=1}^\infty|\nu|(G_n)=|\nu|(X)<\infty.
+\]
+由于 $|\nu|\left(\bigcap_{n=1}^\infty F_n\right)=0$，得
+\[
+\lim_{m\to\infty}|\nu|(F_{m-1})
+=\lim_{m\to\infty}|\nu|\left(\bigcup_{n=m}^\infty G_n\right)
+=\lim_{m\to\infty}\sum_{n=m}^\infty|\nu|(G_n)=0.
+\]
+然而这与对所有 $n\in\mathbb{N}$ 有 $|\nu|(F_n)\geqslant\epsilon$ 矛盾。证毕。
+\end{proof}
+
+\begin{lemma}\label{lemma:ch01-既绝对连续又奇异}
+设 $(X,\mathcal{A},\mu)$ 为一测度空间，$\nu$ 为 $\mathcal{A}$ 上的带号测度。若 $\nu\ll\mu$ 且 $\nu\perp\mu$，则 $\nu=0$。
+\end{lemma}
+
+\begin{proof}
+由于 $\nu\perp\mu$，由\cref{remark:ch01-奇异绝对连续注记} 存在 $G\in\mathcal{A}$ 使得 $\mu(G)=|\nu|(G^c)=0$，故特别地对任意 $E\in\mathcal{A}$ 有 $|\nu|(E\cap G^c)=0$。另一方面，由于 $\nu\ll\mu$，由\cref{lemma:ch01-绝对连续等价} 有 $|\nu|(G)=0$，故对所有 $E\in\mathcal{A}$ 有 $|\nu|(E\cap G)=0$。于是对所有 $E\in\mathcal{A}$ 有 $|\nu|(E)=0$，证毕。
+\end{proof}
+
+\begin{remark}\label{remark:ch01-集中于零容量}
+设 $(X,\mathcal{A})$ 为一可测空间，$\Phi:\mathcal{A}\to[0,\infty]$ 单调。设 $\nu$ 为 $\mathcal{A}$ 上的带号测度，满足 (i) 对任意满足 $\Phi(E)=0$ 的 $E\in\mathcal{A}$ 有 $\nu(E)=0$，且 (ii) $\nu$ 集中于集合 $G\in\mathcal{A}$ 上且 $\Phi(G)=0$。则用于证明\cref{lemma:ch01-既绝对连续又奇异} 的同样论证表明 $\nu=0$。
+\end{remark}
+
+我们将使用以下分解结果（文献~[51]；见第 3 章）。
+
+\begin{proposition}[Fukushima--Sato--Taniguchi]\label{proposition:ch01-FST分解}
+设 $(X,\mathcal{A})$ 为一可测空间，$\nu$ 为 $\mathcal{A}$ 上的 $\sigma$--有限带号测度。设 $\Phi:\mathcal{A}\to[0,\infty]$ 为 $\sigma$--次可加且单调。则存在唯一的 $\sigma$--有限带号测度偶 $(\nu_1,\nu_2)$ 使得：
+\begin{enumerate}[(a)]
+\item $\nu=\nu_1+\nu_2$；
+\item 对任意满足 $\Phi(E)=0$ 的 $E\in\mathcal{A}$，有 $\nu_1(E)=0$；
+\item $\nu_2$ 集中于集合 $N\in\mathcal{A}$ 上且 $\Phi(N)=0$。
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+我们仅证 $\nu$ 有限且正的情形，因为推广到一般情形是标准的。首先证唯一性。设 $(\nu_1,\nu_2)$ 和 $(\nu_1',\nu_2')$ 具有所述性质。则由等式 (a) 对任意 $E\in\mathcal{A}$ 得
+\[
+\nu_1(E)-\nu_1'(E)=\nu_2'(E)-\nu_2(E).
+\]
+这蕴含 $\nu_1-\nu_1'$ 满足\cref{remark:ch01-集中于零容量} 的假设，故 $\nu_1=\nu_1'$，因而 $\nu_2=\nu_2'$。证毕。
+
+为证存在性，令
+\[
+\alpha:=\sup\{\nu(E)\mid E\in\mathcal{A},\ \Phi(E)=0\}
+\]
+（注意 $\alpha<\infty$，因为由\cref{remark:ch01-Jordan性质}(iii) 有 $|\nu|(X)<\infty$）。设 $\{E_n\}\subseteq\mathcal{A}$ 为非减序列，满足对每个 $n\in\mathbb{N}$ 有 $\Phi(E_n)=0$ 且 $\lim_{n\to\infty}\nu(E_n)=\alpha$。令 $E_\infty:=\bigcup_{n=1}^\infty E_n$。则 $E_\infty\in\mathcal{A}$，$\nu(E_\infty)=\lim_{n\to\infty}\nu(E_n)=\alpha$，且由 $\Phi$ 的 $\sigma$--次可加性有
+\[
+\Phi(E_\infty)\leqslant\sum_{n=1}^\infty\Phi(E_n)=0.
+\]
+因此，对任意满足 $\Phi(E)=0$ 的 $E\in\mathcal{A}$，有
+\[
+0\leqslant\nu(E\setminus E_\infty)=\nu(E)-\alpha\leqslant 0,
+\]
+故 $\nu(E\setminus E_\infty)=(\nu\lfloor E_\infty^c)(E)=0$。另一方面，测度 $\nu\lfloor E_\infty$ 集中于集合 $E_\infty$ 上，且 $\Phi(E_\infty)=0$。于是取 $N:=E_\infty$、$\nu_1:=\nu\lfloor E_\infty^c$、$\nu_2:=\nu\lfloor E_\infty$，结论成立。
+\end{proof}
+
+\cref{proposition:ch01-FST分解} 立即给出以下结果。
+
+\begin{theorem}[Lebesgue]\label{theorem:ch01-Lebesgue分解}
+设 $(X,\mathcal{A},\mu)$ 为一测度空间，$\nu$ 为 $\mathcal{A}$ 上的 $\sigma$--有限带号测度。则存在唯一的 $\sigma$--有限带号测度偶 $(\nu_{ac},\nu_s)$ 使得 $\nu_{ac}\ll\mu$、$\nu_s\perp\mu$，且
+\begin{align}
+\nu=\nu_{ac}+\nu_s. \label{align:ch01-Lebesgue分解式}
+\end{align}
+\end{theorem}
+
+\begin{definition}\label{definition:ch01-Lebesgue分解定义}\label{definition:ch01-Lebesgue分解}
+等式\eqref{align:ch01-Lebesgue分解式} 称为 $\nu$ 关于 $\mu$ 的 Lebesgue 分解。
+\end{definition}
+
+为后续参考，我们提及以下结果。
+
+\begin{lemma}\label{lemma:ch01-Lebesgue分解正负部}
+设\cref{theorem:ch01-Lebesgue分解} 的假设满足。则
+\begin{align}
+[\nu_{ac}]^\pm=[\nu^\pm]_{ac},\qquad [\nu_s]^\pm=[\nu^\pm]_s. \label{align:ch01-Lebesgue分解正负部}
+\end{align}
+\end{lemma}
+
+\begin{proof}
+由\cref{definition:ch01-变差} 和\cref{definition:ch01-集中测度}，有 $\nu^+=\nu\lfloor P$，$\nu^-=\nu\lfloor N$，其中 $P,N$ 由\cref{theorem:ch01-Hahn分解} 给出。则由\eqref{align:ch01-Lebesgue分解式} 得
+\begin{align}
+\nu^+=\nu_{ac}\lfloor P+\nu_s\lfloor P,\qquad
+\nu^-=\nu_{ac}\lfloor N+\nu_s\lfloor N, \label{align:ch01-Lebesgue分解正负部1}
+\end{align}
+因而
+\begin{align}
+[\nu^+]_{ac}=\nu_{ac}\lfloor P,\qquad [\nu^-]_{ac}=\nu_{ac}\lfloor N \label{align:ch01-Lebesgue分解正负部2}
+\end{align}
+以及
+\begin{align}
+[\nu^+]_s=\nu_s\lfloor P,\qquad [\nu^-]_s=\nu_s\lfloor N. \label{align:ch01-Lebesgue分解正负部3}
+\end{align}
+另一方面，由\eqref{align:ch01-Lebesgue分解正负部1} 有
+\[
+\nu=\nu^+-\nu^-=(\nu_{ac}\lfloor P-\nu_{ac}\lfloor N)+(\nu_s\lfloor P-\nu_s\lfloor N),
+\]
+故
+\begin{align}
+\nu_{ac}=\nu_{ac}\lfloor P-\nu_{ac}\lfloor N,\qquad
+\nu_s=\nu_s\lfloor P-\nu_s\lfloor N. \label{align:ch01-Lebesgue分解正负部4}
+\end{align}
+由\eqref{align:ch01-Lebesgue分解正负部2} 和\eqref{align:ch01-Lebesgue分解正负部4} 中的第一个等式，集合 $P$ 是 $\nu_{ac}$--正的，而 $N$ 是 $\nu_{ac}$--负的。故由\cref{definition:ch01-变差}，
+\begin{align}
+[\nu_{ac}]^+=\nu_{ac}\lfloor P,\qquad [\nu_{ac}]^-=\nu_{ac}\lfloor N. \label{align:ch01-Lebesgue分解正负部5}
+\end{align}
+由\eqref{align:ch01-Lebesgue分解正负部2} 和\eqref{align:ch01-Lebesgue分解正负部5} 得\eqref{align:ch01-Lebesgue分解正负部} 中的第一个等式。第二个等式的证明类似，利用\eqref{align:ch01-Lebesgue分解正负部3} 和\eqref{align:ch01-Lebesgue分解正负部4} 中的第二个等式。
+\end{proof}
+
+\begin{definition}\label{definition:ch01-原子}
+设 $(X,\mathcal{A})$ 为一可测空间，$\mu$ 为 $\mathcal{A}$ 上的带号测度。
+\begin{enumerate}[(i)]
+\item 集合 $E\in\mathcal{A}$ 称为 $\mu$--原子，若 $|\mu|(E)>0$，且对所有 $F\in\mathcal{A}$、$F\subseteq E$，要么 $|\mu|(F)=0$，要么 $|\mu|(E\setminus F)=0$。
+\item 测度 $\mu$ 称为无原子的（或连续的），若不存在 $\mu$--原子。
+\item 测度 $\mu$ 称为纯原子的，若存在 $\mu$--原子序列 $\{E_n\}\subseteq\mathcal{A}$ 使得 $\mu=\mu\lfloor\left(\bigcup_{n=1}^\infty E_n\right)$。
+\end{enumerate}
+\end{definition}
+
+\begin{remark}\label{remark:ch01-原子注记}
+(i) 带号测度 $\mu$ 是无原子的当且仅当对任意 $E\in\mathcal{A}$ 且 $|\mu|(E)>0$，存在 $F\in\mathcal{A}$、$F\subseteq E$ 使得 $0<|\mu|(F)<|\mu|(E)$。若 $\mu$ 有限，则 $\mu$--原子的集合至多有限；若 $\mu$ 是 $\sigma$--有限的，则至多可数。
+
+(ii) 若 $\mu$ 既是纯原子的又是无原子的，则 $\mu=0$。
+\end{remark}
+
+\begin{proposition}\label{proposition:ch01-原子分解}
+设 $(X,\mathcal{A})$ 为一可测空间，$\mu$ 为 $\mathcal{A}$ 上的 $\sigma$--有限带号测度。则存在序列（可能为空或有限）$\{E_n\}\subseteq\mathcal{A}$ 由 $\mu$--原子组成，使得：
+\begin{enumerate}[(i)]
+\item $\mu_{pa}:=\mu\lfloor\left(\bigcup_{n=1}^\infty E_n\right)$ 是纯原子的，$\mu_{na}:=\mu\lfloor\left(\left(\bigcup_{n=1}^\infty E_n\right)^c\right)$ 是无原子的；
+\item $\mu$ 唯一地表示为和
+\begin{align}
+\mu=\mu_{pa}+\mu_{na}. \label{align:ch01-原子分解式}
+\end{align}
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(i) 和等式\eqref{align:ch01-原子分解式} 由 $\mu_{pa}$ 和 $\mu_{na}$ 的定义显然成立。为证唯一性，设 $\mu=\mu_{pa}'+\mu_{na}'$，其中 $\mu_{pa}'$ 纯原子，$\mu_{na}'$ 无原子。由此
+\[
+\mu_{na}-\mu_{na}'=\mu_{pa}'-\mu_{pa},
+\]
+故 $\mu_{na}-\mu_{na}'$ 和 $\mu_{pa}'-\mu_{pa}$ 既是离散的又是无原子的。于是由\cref{remark:ch01-原子注记}(ii)，结论成立。
+\end{proof}
+
+\subsection{集中测度与弥散测度}\label{subsection:ch01-集中弥散}
+
+以下定义是\cref{definition:ch01-相互奇异绝对连续} 在容量上的对应。
+
+\begin{definition}\label{definition:ch01-集中弥散}
+设 $(X,d)$ 为一度量空间。设 $\nu$ 为 $\mathcal{B}(X)$ 上的带号测度，$C:\mathcal{B}(X)\to[0,\infty]$ 为一容量。我们说：
+\begin{enumerate}[(i)]
+\item $\nu$ 关于 $C$ 是集中的，若存在 $C$--零测集 $E\in\mathcal{B}(X)$ 使得 $\nu=\nu\lfloor E$；
+\item $\nu$ 关于 $C$ 是弥散的，若对任意 $C$--零测集 $E\in\mathcal{B}(X)$，有 $|\nu|(E)=0$。
+\end{enumerate}
+\end{definition}
+
+我们记 $\mathscr{R}_{C,c}(X)$（相应地，$\mathscr{R}_{C,d}(X)$）为 $U$ 上关于 $C$ 集中（相应地，弥散）的有限带号 Radon 测度的集合。显然，
+\[
+\mathscr{R}_{C,c}(X)\cap\mathscr{R}_{C,d}(X)=\{0\}.
+\]
+由\cref{proposition:ch01-FST分解}，我们有以下结果。
+
+\begin{proposition}\label{proposition:ch01-集中弥散分解}
+设 $(X,d)$ 为一度量空间。设 $\nu$ 为 $\mathcal{B}(X)$ 上的带号测度，$C:\mathcal{B}(X)\to[0,\infty]$ 为一容量。则存在唯一的偶 $(\nu_{C,c},\nu_{C,d})$ 使得 $\nu_{C,c}\in\mathscr{R}_{C,c}(X)$，$\nu_{C,d}\in\mathscr{R}_{C,d}(X)$，且
+\begin{align}
+\nu=\nu_{C,d}+\nu_{C,c}. \label{align:ch01-集中弥散分解式}
+\end{align}
+\end{proposition}
+
+\begin{definition}\label{definition:ch01-集中弥散部分}
+由\cref{proposition:ch01-集中弥散分解} 给出的测度 $\nu_{C,c}$ 和 $\nu_{C,d}$ 分别称为 $\nu$ 关于 $C$ 的集中部分和弥散部分。
+\end{definition}
+
+\section{向量测度}\label{section:ch01-向量测度}
+
+至此所考虑的测度都是标量测度，与下面将引入的向量测度相对。贯穿本节，$(X,\mathcal{A})$ 为一可测空间，$Y$ 为赋范 $\|\cdot\|_Y$ 的 Banach 空间。
+
+\subsection{定义与一般结果}\label{subsection:ch01-向量测度定义}
+
+\begin{definition}\label{definition:ch01-向量sigma可加}
+映射 $\mu:\mathcal{A}\to Y$ 称为 $\sigma$--可加的，若对任意不交序列 $\{E_k\}\subseteq\mathcal{A}$，
+\[
+\lim_{n\to\infty}\left\|\sum_{k=1}^n\mu(E_k)-\mu\left(\bigcup_{k=1}^\infty E_k\right)\right\|_Y=0.
+\]
+\end{definition}
+
+\begin{remark}\label{remark:ch01-向量可加}
+$\sigma$--可加映射 $\mu:\mathcal{A}\to Y$ 是可加的，即对任意有限不交族 $\{E_1,\dots,E_n\}\subseteq\mathcal{A}$，有
+\[
+\mu\left(\bigcup_{k=1}^n E_k\right)=\sum_{k=1}^n\mu(E_k).
+\]
+\end{remark}
+
+\begin{definition}\label{definition:ch01-向量测度}
+(i) $\sigma$--可加映射 $\mu:\mathcal{A}\to Y$ 且 $\mu(\emptyset)=0$ 称为 $\mathcal{A}$ 上的向量测度。
+
+(ii) 函数 $|\mu|:\mathcal{A}\to[0,\infty]$ 定义为
+\begin{align}
+|\mu|(E):=\sup\left\{\sum_{i=1}^n\|\mu(E_i)\|_Y\ \middle|\ E_1,\dots,E_n\in\mathcal{A}\text{ 不交},\ E=\bigcup_{i=1}^n E_i,\ n\in\mathbb{N}\right\}\quad(E\in\mathcal{A}) \label{align:ch01-向量变差}
+\end{align}
+称为 $\mu$ 的变差。量 $|\mu|(X)$ 称为 $\mu$ 的全变差。
+
+(iii) 向量测度 $\mu:\mathcal{A}\to Y$ 称为有界变差的，若 $|\mu|(X)<\infty$。
+\end{definition}
+
+\begin{example}\label{example:ch01-向量测度例}
+设 $Y$ 为 Banach 空间，$T:L^1(0,1)\to Y$ 为有界线性算子。对任意 Borel 集 $E\in\mathcal{B}\cap(0,1)$，令 $\mu(E):=T(\chi_E)$。显然，
+\[
+\|\mu(E)\|_Y\leqslant\|T\|\lambda(E),
+\]
+特别地 $|\mu|(0,1)\leqslant\|T\|$（此处 $\|T\|$ 表示 $T$ 的算子范数）。则对任意不交序列 $\{E_k\}\subseteq\mathcal{A}$，
+\[
+\lim_{n\to\infty}\left\|\sum_{k=1}^n\mu(E_k)-\mu\left(\bigcup_{k=1}^\infty E_k\right)\right\|_Y
+=\lim_{n\to\infty}\left\|\mu\left(\bigcup_{k=n+1}^\infty E_k\right)\right\|_Y
+\leqslant\|T\|\lim_{n\to\infty}\lambda\left(\bigcup_{k=n+1}^\infty E_k\right)=0.
+\]
+故 $\mu$ 是有界变差的向量测度。
+\end{example}
+
+\begin{remark}\label{remark:ch01-向量测度Y=R}
+若 $Y=\mathbb{R}$，则向量测度的概念与有限带号测度的概念重合。
+\end{remark}
+
+\begin{proposition}\label{proposition:ch01-向量变差是测度}
+设 $\mu:\mathcal{A}\to Y$ 为一向量测度。则其变差 $|\mu|$ 是一个测度。
+\end{proposition}
+
+\begin{proof}
+由定义 $|\mu|(\emptyset)=0$。对任意不交序列 $\{E_k\}\subseteq\mathcal{A}$，令 $E:=\bigcup_{k=1}^\infty E_k$，设 $F_1,\dots,F_n\in\mathcal{A}$ 不交且 $E=\bigcup_{i=1}^n F_i$。则由\cref{remark:ch01-向量可加} 得
+\[
+\begin{aligned}
+\|\mu(E)\|_Y
+&=\left\|\sum_{i=1}^n\mu(F_i)\right\|_Y
+\leqslant\sum_{i=1}^n\|\mu(F_i)\|_Y
+=\sum_{i=1}^n\|\mu(F_i\cap E)\|_Y\\
+&\leqslant\sum_{i=1}^n\sum_{k=1}^\infty\|\mu(F_i\cap E_k)\|_Y
+\leqslant\sum_{k=1}^\infty|\mu|(E_k),
+\end{aligned}
+\]
+因为由\eqref{align:ch01-向量变差}，
+\[
+E_k=E_k\cap E=\bigcup_{i=1}^n(F_i\cap E_k)
+\quad\Rightarrow\quad
+\sum_{i=1}^n\|\mu(F_i\cap E_k)\|_Y\leqslant|\mu|(E_k)\quad(k\in\mathbb{N}).
+\]
+由此
+\begin{align}
+|\mu|\left(\bigcup_{k=1}^\infty E_k\right)=|\mu|(E)\leqslant\sum_{k=1}^\infty|\mu|(E_k). \label{align:ch01-向量变差证明1}
+\end{align}
+另一方面，容易看出映射 $|\mu|:\mathcal{A}\to[0,\infty]$ 是可加且单调的。于是对任意 $n\in\mathbb{N}$，
+\[
+\sum_{k=1}^n|\mu|(E_k)=|\mu|\left(\bigcup_{k=1}^n E_k\right)\leqslant|\mu|\left(\bigcup_{k=1}^\infty E_k\right),
+\]
+故
+\begin{align}
+\sum_{k=1}^\infty|\mu|(E_k)\leqslant|\mu|\left(\bigcup_{k=1}^\infty E_k\right). \label{align:ch01-向量变差证明2}
+\end{align}
+由\eqref{align:ch01-向量变差证明1}--\eqref{align:ch01-向量变差证明2}，$|\mu|$ 是 $\sigma$--可加的，证毕。
+\end{proof}
+
+\begin{lemma}\label{lemma:ch01-向量单调序列收敛}
+\label{lemma:ch01-向量测度连续}
+设 $\mu:\mathcal{A}\to Y$ 为一向量测度。则对任意单调序列 $\{E_k\}\subset\mathcal{A}$，序列 $\{\mu(E_k)\}\subseteq Y$ 在 $Y$ 中收敛。
+\end{lemma}
+
+\begin{proof}
+若 $\{E_k\}\subseteq\mathcal{A}$ 非减，则对每个 $k\in\mathbb{N}$，有 $E_k=\bigcup_{i=1}^k F_i$，其中 $F_i:=E_i\setminus E_{i-1}$（$i\in\mathbb{N}$，$E_0:=\emptyset$）。由于 $\mu$ 是 $\sigma$--可加的且 $\{F_i\}$ 是不交序列，有
+\[
+\lim_{k\to\infty}\mu(E_k)=\lim_{k\to\infty}\sum_{i=1}^k\mu(F_i)
+=\mu\left(\bigcup_{i=1}^\infty F_i\right)=\mu\left(\bigcup_{k=1}^\infty E_k\right)\quad\text{在 }Y\text{ 中},
+\]
+故在此情形下结论成立。若 $\{E_k\}\subseteq\mathcal{A}$ 非增，则序列 $\{E_k^c\}\subseteq\mathcal{A}$ 非减，且对所有 $k\in\mathbb{N}$ 有 $\mu(E_k)=\mu(X)-\mu(E_k^c)$。于是由证明的第一部分，序列 $\{\mu(E_k)\}$ 在 $Y$ 中收敛，证毕。
+\end{proof}
+
+记 $\langle\cdot,\cdot\rangle_{Y^*,Y}:Y^*\times Y\to\mathbb{R}$ 为 Banach 空间 $Y$ 与其对偶空间 $Y^*$ 之间的对偶映射。
+
+\begin{proposition}\label{proposition:ch01-向量标量化}
+设 $\mu:\mathcal{A}\to Y$ 为一向量测度，$y^*\in Y^*$。则映射
+\begin{align}
+\langle y^*,\mu\rangle:\mathcal{A}\to\mathbb{R},\qquad
+\langle y^*,\mu\rangle(E):=\langle y^*,\mu(E)\rangle_{Y^*,Y}\quad(E\in\mathcal{A}) \label{align:ch01-标量化}
+\end{align}
+是一个有限带号测度。
+\end{proposition}
+
+\begin{proof}
+由定义有 $\langle y^*,\mu\rangle(\emptyset)=0$ 且 $\langle y^*,\mu\rangle(\mathcal{A})\subseteq\mathbb{R}$。由\cref{remark:ch01-向量可加}，映射 $\langle y^*,\mu\rangle$ 是可加的，即
+\[
+\langle y^*,\mu\rangle\left(\bigcup_{k=1}^n E_k\right)=\sum_{k=1}^n\langle y^*,\mu\rangle(E_k).
+\]
+则对任意不交序列 $\{E_k\}\subseteq\mathcal{A}$，
+\[
+\begin{aligned}
+&\lim_{n\to\infty}\left|\langle y^*,\mu\rangle\left(\bigcup_{k=1}^\infty E_k\right)-\sum_{k=1}^n\langle y^*,\mu\rangle(E_k)\right|\\
+&=\lim_{n\to\infty}\left|\langle y^*,\mu\rangle\left(\bigcup_{k=n+1}^\infty E_k\right)\right|
+=\lim_{n\to\infty}\left|\left\langle y^*,\mu\left(\bigcup_{k=n+1}^\infty E_k\right)\right\rangle_{Y^*,Y}\right|\\
+&\leqslant\|y^*\|_{Y^*}\lim_{n\to\infty}\left\|\mu\left(\bigcup_{k=n+1}^\infty E_k\right)\right\|_Y=0,
+\end{aligned}
+\]
+证毕。
+\end{proof}
+
+记 $|\langle y^*,\mu\rangle|$ 为带号测度 $\langle y^*,\mu\rangle$ 的变差。
+
+\begin{definition}\label{definition:ch01-半变差}
+函数 $|\mu|_w:\mathcal{A}\to[0,\infty)$，
+\begin{align}
+|\mu|_w(E):=\sup\left\{|\langle y^*,\mu\rangle|(E)\ \middle|\ y^*\in Y^*,\ \|y^*\|_{Y^*}\leqslant 1\right\}\quad(E\in\mathcal{A}), \label{align:ch01-半变差}
+\end{align}
+称为向量测度 $\mu:\mathcal{A}\to Y$ 的半变差。
+\end{definition}
+
+\begin{remark}\label{remark:ch01-半变差性质}
+由\eqref{align:ch01-向量变差} 和\eqref{align:ch01-半变差}，对所有 $E\in\mathcal{A}$ 有 $|\mu|_w(E)\leqslant|\mu|(E)$。若 $Y=\mathbb{R}$，则 $|\mu|_w=|\mu|$ 是有限带号测度 $\mu$ 的变差（见\cref{remark:ch01-向量测度Y=R}）。
+\end{remark}
+
+\begin{lemma}\label{lemma:ch01-半变差估计}
+设 $\mu:\mathcal{A}\to Y$ 为一向量测度。则对所有 $E\in\mathcal{A}$，
+\begin{align}
+\sup_{F\in\mathcal{A},\ F\subseteq E}\|\mu(F)\|_Y
+\leqslant|\mu|_w(E)
+\leqslant 2\sup_{F\in\mathcal{A},\ F\subseteq E}\|\mu(F)\|_Y. \label{align:ch01-半变差估计}
+\end{align}
+\end{lemma}
+
+\begin{proof}
+对任意 $E\in\mathcal{A}$ 和 $F\in\mathcal{A}$、$F\subseteq E$，有
+\[
+\|\mu(F)\|_Y=\sup_{y^*\in Y^*,\ \|y^*\|_{Y^*}\leqslant 1}|\langle y^*,\mu(F)\rangle_{Y^*,Y}|
+=\sup_{y^*\in Y^*,\ \|y^*\|_{Y^*}\leqslant 1}|\langle y^*,\mu\rangle(F)|
+\leqslant\sup_{y^*\in Y^*,\ \|y^*\|_{Y^*}\leqslant 1}|\langle y^*,\mu\rangle|(F)=|\mu|_w(E),
+\]
+故\eqref{align:ch01-半变差估计} 中的第一个不等式成立。
+
+设 $E=\bigcup_{i=1}^n F_i$，$F_1,\dots,F_n\in\mathcal{A}$ 不交，$y^*\in Y^*$，$\|y^*\|_{Y^*}\leqslant 1$。设 $\pi_\pm$ 为 $\{1,\dots,n\}$ 的子集，使得
+\[
+\operatorname{sgn}(\langle y^*,\mu\rangle(F_i))=\pm 1\Leftrightarrow i\in\pi_\pm.
+\]
+则
+\[
+\begin{aligned}
+\sum_{i=1}^n|\langle y^*,\mu\rangle(F_i)|
+&=\sum_{i\in\pi_+}\langle y^*,\mu\rangle(F_i)-\sum_{i\in\pi_-}\langle y^*,\mu\rangle(F_i)\\
+&=\left\langle y^*,\sum_{i\in\pi_+}\mu(F_i)-\sum_{i\in\pi_-}\mu(F_i)\right\rangle_{Y^*,Y}\\
+&=\left\langle y^*,\mu\left(\bigcup_{i\in\pi_+}F_i\right)\right\rangle_{Y^*,Y}
+-\left\langle y^*,\mu\left(\bigcup_{i\in\pi_-}F_i\right)\right\rangle_{Y^*,Y}\\
+&\leqslant 2\sup_{F\in\mathcal{A},\ F\subseteq E}\|\mu(F)\|_Y.
+\end{aligned}
+\]
+于是由\eqref{align:ch01-全变差公式} 和\eqref{align:ch01-半变差}，\eqref{align:ch01-半变差估计} 中的第二个不等式成立。
+\end{proof}
+
+\begin{proposition}\label{proposition:ch01-半变差有限}
+设 $\mu:\mathcal{A}\to Y$ 为一向量测度。则 $|\mu|_w(X)<\infty$。
+\end{proposition}
+
+\begin{proof}
+反设 $|\mu|_w(X)=\infty$。则由\eqref{align:ch01-半变差估计} 中的第二个不等式，
+\[
+\sup_{F\in\mathcal{A}}\|\mu(F)\|_Y=\infty.
+\]
+故存在 $F_1\in\mathcal{A}$ 使得
+\[
+\|\mu(F_1)\|_Y\geqslant 1+\|\mu(X)\|_Y,
+\]
+由此
+\[
+\|\mu(F_1^c)\|_Y\geqslant\|\mu(F_1)\|_Y-\|\mu(X)\|_Y\geqslant 1.
+\]
+于是
+\begin{align}
+\min\{\|\mu(F_1)\|_Y,\|\mu(F_1^c)\|_Y\}\geqslant 1. \label{align:ch01-半变差有限1}
+\end{align}
+另一方面，由于
+\[
+\infty=|\mu|_w(X)\leqslant|\mu|_w(F_1)+|\mu|_w(F_1^c),
+\]
+我们也有
+\begin{align}
+\max\{|\mu|_w(F_1),|\mu|_w(F_1^c)\}=\infty. \label{align:ch01-半变差有限2}
+\end{align}
+取 $E_1:=F_1$ 或 $E_1:=F_1^c$。则 $E_1\in\mathcal{A}$，且由\eqref{align:ch01-半变差有限2}--\eqref{align:ch01-半变差有限1}，
+\[
+E_1\subseteq X,\quad |\mu|_w(E_1)=\infty,\quad\|\mu(E_1)\|_Y\geqslant 1.
+\]
+迭代此论证，得到序列 $\{E_k\}\subset\mathcal{A}$，使得对所有 $k\geqslant 2$，
+\[
+E_k\subseteq E_{k-1},\quad |\mu|_w(E_k)=\infty,\quad\|\mu(E_k)\|_Y\geqslant k.
+\]
+序列 $\{E_k\}$ 非增，且 $\lim_{k\to\infty}\|\mu(E_k)\|_Y=\infty$，这与\cref{lemma:ch01-向量单调序列收敛} 矛盾。证毕。
+\end{proof}
+
+以下定义推广了\cref{definition:ch01-相互奇异绝对连续}(ii)。
+
+\begin{definition}\label{definition:ch01-向量绝对连续}
+设 $\nu:\mathcal{A}\to Y$ 为一向量测度，$\mu:\mathcal{A}\to[-\infty,\infty]$ 为一带号测度。我们说 $\nu$ 关于 $\mu$ 绝对连续（记为 $\nu\ll\mu$），若对任意 $E\in\mathcal{A}$，
+\[
+|\mu|(E)=0\Rightarrow\nu(E)=0.
+\]
+\end{definition}
+
+\begin{remark}\label{remark:ch01-向量绝对连续}
+设 $\mu,\nu$ 如\cref{definition:ch01-向量绝对连续} 所述，且 $\lim_{|\mu|(E)\to0}\nu(E)=0$，即对任意 $\epsilon>0$，存在 $\delta>0$ 使得对任意满足 $|\mu|(E)<\delta$ 的 $E\in\mathcal{A}$，有 $\|\nu(E)\|_Y<\epsilon$。则显然 $\nu\ll\mu$。若 $\mu$ 有限，则逆命题成立（见文献~[41, Theorem 1.2.1]）。
+\end{remark}
+
+以下结果将 Lebesgue 分解定理推广到向量测度（证明见文献~[41, Theorem 1.5.9]）。
+
+\begin{theorem}[Lebesgue 分解]\label{theorem:ch01-向量Lebesgue分解}
+设 $\nu:\mathcal{A}\to Y$ 为一向量测度，$\mu:\mathcal{A}\to\mathbb{R}$ 为一有限带号测度。则存在唯一的向量测度偶 $\nu_{ac},\nu_s:\mathcal{A}\to Y$ 使得：
+\begin{enumerate}[(i)]
+\item $\nu_{ac}\ll\mu$；
+\item 对所有 $y^*\in Y^*$，有 $\langle y^*,\nu_s\rangle\perp\mu$；
+\item $\nu=\nu_{ac}+\nu_s$。
+\end{enumerate}
+若 $\nu$ 有界变差，则 $\nu_{ac}$ 和 $\nu_s$ 有界变差，且
+\[
+|\nu|=|\nu_{ac}|+|\nu_s|,\qquad |\nu_s|\perp\mu.
+\]
+\end{theorem}
+
+\end{document}

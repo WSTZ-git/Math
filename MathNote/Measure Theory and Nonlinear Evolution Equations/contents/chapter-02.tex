@@ -1,0 +1,2090 @@
+\documentclass[../main.tex]{subfiles}
+\graphicspath{{\subfix{../image/}}{\subfix{../figure/}}}
+
+\begin{document}
+
+\chapter{标量积分与微分}\label{chapter:ch02}
+
+\section{可测函数}\label{section:ch02-可测函数}
+
+\subsection{定义与一般性质}\label{subsection:ch02-定义与一般性质}
+
+\begin{definition}\label{definition:ch02-可测函数}\label{definition:ch02-可测性}
+设 $(X,\mathscr A)$ 与 $(X',\mathscr A')$ 为可测空间。称映射 $f:X\to X'$ 为 $(\mathscr A,\mathscr A')$-可测（或简称可测），若对任意 $E'\in\mathscr A'$ 有 $f^{-1}(E')\in\mathscr A$。
+\end{definition}
+
+\begin{remark}\label{remark:ch02-Borel可测}
+若 $X'$ 为拓扑空间，则 $\mathscr A'$ 为其 Borel $\sigma$-代数 $\mathscr B(X')$。特别地，称 $f:X\to\mathbb R^N$ 为 $\mathscr A$-可测（或简称可测），若它是 $(\mathscr A,\mathscr B(\mathbb R^N))$-可测的。
+\end{remark}
+
+\begin{proposition}\label{proposition:ch02-复合可测}
+设 $(X,\mathscr A)$、$(X',\mathscr A')$、$(X'',\mathscr A'')$ 为可测空间。设 $f:X\to X'$ 为 $(\mathscr A,\mathscr A')$-可测，$g:X'\to X''$ 为 $(\mathscr A',\mathscr A'')$-可测。则 $g\circ f:X\to X''$ 为 $(\mathscr A,\mathscr A'')$-可测。
+\end{proposition}
+
+\begin{proof}
+由假设，对任意 $E'\in\mathscr A'$ 有 $f^{-1}(E')\in\mathscr A$，对任意 $E''\in\mathscr A''$ 有 $g^{-1}(E'')\in\mathscr A'$。从而对任意 $E''\in\mathscr A''$ 有 $(g\circ f)^{-1}(E'')=f^{-1}(g^{-1}(E''))\in\mathscr A$。
+\end{proof}
+
+\begin{lemma}\label{lemma:ch02-生成集可测}
+\label{lemma:ch02-基判定}
+设 $(X,\mathscr A)$ 与 $(X',\mathscr A')$ 为可测空间。设 $\mathscr C'\subseteq\mathscr P(X')$ 满足极小 $\sigma$-代数 $\sigma_0(\mathscr C')=\mathscr A'$。则 $f:X\to X'$ 为 $(\mathscr A,\mathscr A')$-可测当且仅当
+\begin{align}
+f^{-1}(E')\in\mathscr A\quad\text{对任意 }E'\in\mathscr C'. \label{align:ch02-2.1}
+\end{align}
+\end{lemma}
+
+\begin{proof}
+设 $f$ 为 $(\mathscr A,\mathscr A')$-可测，则对任意 $E'\in\mathscr A'$ 有 $f^{-1}(E')\in\mathscr A$。由 $\mathscr C'\subseteq\sigma_0(\mathscr C')=\mathscr A'$，"仅当"部分成立。为证"当"部分，令
+\begin{align*}
+\Sigma:=\{E'\subseteq X'\mid f^{-1}(E')\in\mathscr A\}.
+\end{align*}
+利用等式
+\begin{align}
+f^{-1}(X')=X,\quad f^{-1}(X'\setminus E')=X\setminus f^{-1}(E'),\quad
+f^{-1}\!\left(\bigcup_{k=1}^\infty E'_k\right)=\bigcup_{k=1}^\infty f^{-1}(E'_k), \label{align:ch02-2.2}
+\end{align}
+易见 $\Sigma$ 为 $\sigma$-代数。另一方面，若\eqref{align:ch02-2.1}成立，则 $\mathscr C'\subseteq\Sigma$，从而 $\mathscr A'=\sigma_0(\mathscr C')\subseteq\Sigma$。
+\end{proof}
+
+\begin{proposition}\label{proposition:ch02-限制可测}\label{proposition:ch02-可测拼接}
+设 $(X,\mathscr A)$ 与 $(X',\mathscr A')$ 为可测空间，$X=\bigcup_{k=1}^\infty E_k$，$\{E_k\}\subseteq\mathscr A$。则 $f:X\to X'$ 为 $(\mathscr A,\mathscr A')$-可测当且仅当每个限制 $f|_{E_k}:E_k\to X'$ 为 $(\mathscr A\cap E_k,\mathscr A')$-可测。
+\end{proposition}
+
+\begin{proof}
+设对每个 $k\in\mathbb N$，$f|_{E_k}$ 为 $(\mathscr A\cap E_k,\mathscr A')$-可测。对任意 $F'\in\mathscr A'$，因 $E_k\in\mathscr A$，$(f|_{E_k})^{-1}(F')\in\mathscr A\cap E_k\subseteq\mathscr A$。故
+\begin{align*}
+f^{-1}(F')=\left(\bigcup_{k=1}^\infty E_k\right)\cap f^{-1}(F')
+=\bigcup_{k=1}^\infty\bigl(E_k\cap f^{-1}(F')\bigr)
+=\bigcup_{k=1}^\infty (f|_{E_k})^{-1}(F')\in\mathscr A,
+\end{align*}
+从而 $f$ 为 $(\mathscr A,\mathscr A')$-可测。反之，注意 $f|_{E_k}=f\circ j_{E_k}$，其中 $j_{E_k}$ 为 $E_k$ 到 $X$ 的嵌入。对任意 $E\in\mathscr A$，$j_{E_k}^{-1}(E):=\{x\in E_k\mid j_{E_k}(x)\in E\}=E\cap E_k$，故 $j_{E_k}$ 为 $(\mathscr A\cap E_k,\mathscr A)$-可测。由\cref{proposition:ch02-复合可测}即得 $f|_{E_k}$ 为 $(\mathscr A\cap E_k,\mathscr A')$-可测。
+\end{proof}
+
+对任意 $f:X\to\mathbb R$ 与 $\alpha\in\mathbb R$，记 $\{f>\alpha\}:=\{x\in X\mid f(x)>\alpha\}=f^{-1}((\alpha,\infty))$；集合 $\{f\geqslant\alpha\}$、$\{f<\alpha\}$、$\{f\leqslant\alpha\}$、$\{f=\alpha\}$ 类似定义。对实值函数有如下可测性判据，它易由\cref{lemma:ch02-生成集可测}与\cref{remark:ch02-Borel可测}得到。
+
+\begin{proposition}\label{proposition:ch02-可测判据}\label{proposition:ch02-Borel判定}
+设 $(X,\mathscr A)$ 为可测空间，$f:X\to\mathbb R$。则下列命题等价：(i) $f$ 为 $\mathscr A$-可测；(ii) $\{f>\alpha\}\in\mathscr A$ 对任意 $\alpha\in\mathbb R$；(iii) $\{f\geqslant\alpha\}\in\mathscr A$ 对任意 $\alpha\in\mathbb R$；(iv) $\{f<\alpha\}\in\mathscr A$ 对任意 $\alpha\in\mathbb R$；(v) $\{f\leqslant\alpha\}\in\mathscr A$ 对任意 $\alpha\in\mathbb R$。
+\end{proposition}
+
+利用等式 $\{\sup_n f_n>\alpha\}=\bigcup_{n=1}^\infty\{f_n>\alpha\}$，由\cref{proposition:ch02-可测判据}立得：
+
+\begin{corollary}\label{corollary:ch02-可测运算}\label{corollary:ch02-逐点极限}
+设 $(X,\mathscr A)$ 为可测空间。
+\begin{enumerate}[(i)]
+\item 若 $f,g:X\to\mathbb R$ 为 $\mathscr A$-可测，则函数 $f+g$、$fg$、$|f|$、$\min\{f,g\}$、$\max\{f,g\}$ 以及 $f/g$（后者要求 $g\neq0$）均为 $\mathscr A$-可测。
+\item 若对每个 $n\in\mathbb N$，函数 $f_n:X\to[-\infty,\infty]$ 为 $\mathscr A$-可测，则函数 $\sup_{n\in\mathbb N}f_n$、$\inf_{n\in\mathbb N}f_n$、$\limsup_{n\to\infty}f_n$、$\liminf_{n\to\infty}f_n$ 均为 $\mathscr A$-可测。特别地，若逐点极限 $\lim_{n\to\infty}f_n$ 存在，则它为 $\mathscr A$-可测。
+\end{enumerate}
+\end{corollary}
+
+\begin{proposition}\label{proposition:ch02-a.e.相等可测}
+设 $(X,\mathscr A,\mu)$ 为完备测度空间，$(X',\mathscr A')$ 为可测空间。设 $f,g:X\to X'$ 在 $X$ 上 $\mu$-a.e. 相等。则 $f$ 为 $(\mathscr A,\mathscr A')$-可测当且仅当 $g$ 为 $(\mathscr A,\mathscr A')$-可测。
+\end{proposition}
+
+\begin{proof}
+由假设存在零测集 $N\in\mathscr A$ 使对任意 $x\in N^c$ 有 $g(x)=f(x)$。易见对所有 $E'\in\mathscr A'$，
+\begin{align*}
+g^{-1}(E')=\bigl(g^{-1}(E')\cap N\bigr)\cup\bigl(f^{-1}(E')\cap N^c\bigr).
+\end{align*}
+若 $f$ 为 $(\mathscr A,\mathscr A')$-可测，则 $f^{-1}(E')\cap N^c\in\mathscr A$。又因 $\mu$ 完备且 $g^{-1}(E')\cap N\subseteq N$，故 $g^{-1}(E')\cap N\in\mathscr A$，从而 $g$ 为 $(\mathscr A,\mathscr A')$-可测。交换 $f$ 与 $g$ 即得结论。
+\end{proof}
+
+若 $\mu$ 不完备，则上述结论不必成立。为避免这一困难，将可测性定义推广到几乎处处定义的函数是方便的。
+
+\begin{definition}\label{definition:ch02-a.e.可测函数}\label{definition:ch02-几乎处处可测}
+设 $(X,\mathscr A,\mu)$ 为测度空间，$(X',\mathscr A')$ 为可测空间。设 $N\subseteq X$ 为零测集，$f:N^c\to X'$。称 $f$ 为 $(\mathscr A,\mathscr A')$-可测，若它为 $(\mathscr A\cap N^c,\mathscr A')$-可测。
+\end{definition}
+
+若 $N=\emptyset$，则上述定义化归为\cref{definition:ch02-可测函数}。若 $N^c\subsetneq X$ 且\cref{definition:ch02-a.e.可测函数}成立，则易将 $f$ 延拓为 $X$ 上 $(\mathscr A,\mathscr A')$-可测函数（在\cref{definition:ch02-可测函数}意义下）。显然，\cref{proposition:ch02-a.e.相等可测}的结论在\cref{definition:ch02-a.e.可测函数}意义下成立。
+
+下一条注记此后将默认使用。
+
+\begin{remark}\label{remark:ch02-a.e.极限可测}
+\label{remark:ch02-几乎处处}
+设 $(X,\mathscr A,\mu)$ 为完备测度空间。若 $\{f_n\}$ 为 $\mathscr A$-可测函数列且 $f_n\to g$ 在 $X$ 上 $\mu$-a.e.，则由\cref{corollary:ch02-可测运算}与\cref{proposition:ch02-a.e.相等可测}知 $g$ 为 $\mathscr A$-可测。若 $\mu$ 不完备，则在\cref{definition:ch02-a.e.可测函数}意义下同样成立，因为 $g:=\lim_{n\to\infty}f_n$ 定义在某 $E\in\mathscr A$（$\mu(E^c)=0$）上，并由\cref{corollary:ch02-可测运算}知其为 $(\mathscr A\cap E,\mathscr A')$-可测。
+\end{remark}
+
+给出如下定义。
+
+\begin{definition}\label{definition:ch02-Borel函数}
+设 $(X,\mathscr T)$ 与 $(X',\mathscr T')$ 为拓扑空间，$\mathscr B:=\sigma_0(\mathscr T)$、$\mathscr B':=\sigma_0(\mathscr T')$ 为相应 Borel $\sigma$-代数。称 $f:X\to X'$ 为 Borel 可测（或 Borel 函数），若它为 $(\mathscr B,\mathscr B')$-可测。
+\end{definition}
+
+\begin{remark}\label{remark:ch02-连续半连续Borel}\label{remark:ch02-连续Borel}
+\label{remark:ch02-连续逼近注}
+\begin{enumerate}[(i)]
+\item 若 $(X,\mathscr T)$、$(X',\mathscr T')$ 为拓扑空间，则由\cref{lemma:ch02-生成集可测}知每个连续函数 $f:X\to X'$ 均为 Borel 可测。
+\item 设 $(X,\mathscr T)$ 为拓扑空间。函数 $f:X\to(-\infty,\infty]$ 为下半连续当且仅当对任意 $\alpha\in\mathbb R$，集合 $\{f>\alpha\}$ 为开集。类似地，函数 $f:X\to[-\infty,\infty)$ 为上半连续当且仅当对任意 $\alpha\in\mathbb R$，集合 $\{f<\alpha\}$ 为开集。于是由\cref{proposition:ch02-可测判据}，上、下半连续函数均为 Borel 可测。
+\end{enumerate}
+\end{remark}
+
+\begin{definition}\label{definition:ch02-简单函数}
+设 $(X,\mathscr A)$ 为可测空间。称函数 $s:X\to\mathbb R$ 为简单函数，若存在 $c_1,\dots,c_n\in\mathbb R$ 与 $X$ 的划分 $\{E_1,\dots,E_n\}\subseteq\mathscr A$，使 $s=\sum_{i=1}^n c_i\chi_{E_i}$。
+\end{definition}
+
+显然简单函数可测。对任意可测空间 $(X,\mathscr A)$，记 $\mathscr S(X)$ 为实值简单函数集合，$\mathscr S^+(X)$ 为非负简单函数 $s:X\to[0,\infty)$ 的集合。
+
+下列结果的证明是熟知的。
+
+\begin{theorem}\label{theorem:ch02-简单逼近}\label{theorem:ch02-简单函数逼近}
+设 $(X,\mathscr A)$ 为可测空间，$f:X\to\mathbb R$ 为 $\mathscr A$-可测。则存在简单函数列 $\{s_n\}$ 使 $s_n\to f$ 在 $X$ 上逐点收敛。此外：
+\begin{enumerate}[(i)]
+\item 若 $f\geqslant0$，则 $\{s_n\}$ 非降，且对任意 $n\in\mathbb N$ 有 $0\leqslant s_n\leqslant f$；
+\item 若 $f$ 有界，则 $s_n\to f$ 在 $X$ 上一致收敛。
+\end{enumerate}
+\end{theorem}
+
+为后续需要，考虑定义在可测空间乘积上或取值于可测空间乘积的函数的可测性（见\cref{subsection:ch01-乘积}）。
+
+\begin{definition}\label{definition:ch02-投影分量迹}
+给定集合 $X$、$X_1$、$X_2$。
+\begin{enumerate}[(i)]
+\item 映射 $p_k:X_1\times X_2\to X_k$，$p_k(x_1,x_2):=x_k$，称为 $X_1\times X_2$ 到 $X_k$ 的投影（$k=1,2$）。
+\item 设 $f:X\to X_1\times X_2$。映射 $f_k:X\to X_k$，$f_k:=p_k\circ f$，称为 $f$ 的第 $k$ 分量（$k=1,2$）。
+\item 设 $f:X_1\times X_2\to X$。对任意 $x_1\in X_1$，映射 $f_{x_1}:X_2\to X$，$f_{x_1}(x_2):=f(x_1,x_2)$，称为 $f$ 的 $x_1$-迹。类似地，对任意 $x_2\in X_2$，$x_2$-迹为映射 $f_{x_2}:X_1\to X$，$f_{x_2}(x_1):=f(x_1,x_2)$。
+\end{enumerate}
+\end{definition}
+
+\begin{remark}\label{remark:ch02-特征函数截面}
+\label{remark:ch02-截口}
+设 $\chi_E$ 为 $E\subseteq X_1\times X_2$ 的特征函数。显然，对任意 $x_1\in X_1$，$\chi_E$ 的 $x_1$-迹 $(\chi_E)_{x_1}$ 与 $E$ 的 $x_1$-截面 $E_{x_1}:=\{x_2\in X_2\mid(x_1,x_2)\in E\}$ 的特征函数 $\chi_{E_{x_1}}$ 一致。类似地，对任意 $x_2\in X_2$，$(\chi_E)_{x_2}=\chi_{E_{x_2}}$，其中 $E_{x_2}:=\{x_1\in X_1\mid(x_1,x_2)\in E\}$。
+\end{remark}
+
+\begin{lemma}\label{lemma:ch02-投影可测}
+设 $(X_1\times X_2,\mathscr A_1\times\mathscr A_2)$ 为可测空间 $(X_1,\mathscr A_1)$ 与 $(X_2,\mathscr A_2)$ 的乘积。则对每个 $k=1,2$，投影 $p_k$ 为 $(\mathscr A_1\times\mathscr A_2,\mathscr A_k)$-可测。
+\end{lemma}
+
+\begin{proof}
+对任意 $E_1\in\mathscr A_1$，$p_1^{-1}(E_1):=\{(x_1,x_2)\in X_1\times X_2\mid x_1\in E_1\}=E_1\times X_2$，即可测矩形，故 $p_1^{-1}(E_1)\in\mathscr A_1\times\mathscr A_2$。对 $p_2$ 同理。
+\end{proof}
+
+\begin{proposition}\label{proposition:ch02-乘积可测分量}
+设 $(X,\mathscr A)$、$(X_1,\mathscr A_1)$、$(X_2,\mathscr A_2)$ 为可测空间，$(X_1\times X_2,\mathscr A_1\times\mathscr A_2)$ 为 $(X_1,\mathscr A_1)$ 与 $(X_2,\mathscr A_2)$ 的乘积。设 $f:X\to X_1\times X_2$。则 $f$ 为 $(\mathscr A,\mathscr A_1\times\mathscr A_2)$-可测当且仅当每个分量 $f_k$ 为 $(\mathscr A,\mathscr A_k)$-可测（$k=1,2$）。
+\end{proposition}
+
+\begin{proof}
+若 $f$ 为 $(\mathscr A,\mathscr A_1\times\mathscr A_2)$-可测，则由\cref{proposition:ch02-复合可测}与\cref{lemma:ch02-投影可测}知每个 $f_k$ 为 $(\mathscr A,\mathscr A_k)$-可测。反之，设 $f_k$ 为 $(\mathscr A,\mathscr A_k)$-可测，从而对任意 $E_k\in\mathscr A_k$ 有 $f_k^{-1}(E_k)\in\mathscr A$。令 $\mathscr R$ 为可测矩形集合。只需证对任意 $E\in\mathscr R$ 有 $f^{-1}(E)\in\mathscr A$；因 $\mathscr A_1\times\mathscr A_2:=\sigma_0(\mathscr R)$，由\cref{lemma:ch02-生成集可测}即得结论。事实上，设 $E=E_1\times E_2$，$E_k\in\mathscr A_k$，则
+\begin{align*}
+f^{-1}(E)=\{x\in X\mid(f_1(x),f_2(x))\in E\}
+=\{x\in X\mid f_1(x)\in E_1\}\cap\{x\in X\mid f_2(x)\in E_2\}
+=f_1^{-1}(E_1)\cap f_2^{-1}(E_2)\in\mathscr A.
+\end{align*}
+\end{proof}
+
+\begin{proposition}\label{proposition:ch02-迹可测}
+设 $(X_1,\mathscr A_1)$、$(X_2,\mathscr A_2)$、$(X,\mathscr A)$ 为可测空间，$f:X_1\times X_2\to X$ 为 $(\mathscr A_1\times\mathscr A_2,\mathscr A)$-可测。则：
+\begin{enumerate}[(i)]
+\item 对任意 $x_1\in X_1$，$f$ 的 $x_1$-迹为 $(\mathscr A_2,\mathscr A)$-可测；
+\item 对任意 $x_2\in X_2$，$f$ 的 $x_2$-迹为 $(\mathscr A_1,\mathscr A)$-可测。
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+对任意 $x_1\in X_1$，$f_{x_1}=f\circ g$，其中 $g:X_2\to X_1\times X_2$，$g(x_2)\equiv(g_1(x_2),g_2(x_2)):=(x_1,x_2)$。显然每个分量 $g_k$ 为 $(\mathscr A_2,\mathscr A_k)$-可测（$k=1,2$），故由\cref{proposition:ch02-乘积可测分量}知 $g$ 为 $(\mathscr A_2,\mathscr A_1\times\mathscr A_2)$-可测。再由\cref{proposition:ch02-复合可测}知 $f_{x_1}$ 为 $(\mathscr A_2,\mathscr A)$-可测。(ii) 同理可证。
+\end{proof}
+
+\begin{remark}\label{remark:ch02-截面可测}
+\label{remark:ch02-截口可测}
+设 $\chi_E$ 为 $E\subseteq X_1\times X_2$ 的特征函数。若 $E\in\mathscr A_1\times\mathscr A_2$，则 $\chi_E$ 为 $\mathscr A_1\times\mathscr A_2$-可测，由\cref{proposition:ch02-迹可测}知 $(\chi_E)_{x_1}=\chi_{E_{x_1}}$ 为 $\mathscr A_2$-可测（注意由\cref{proposition:ch01-截面}知 $E_{x_1}\in\mathscr A_2$）。类似地，对任意 $x_2\in X_2$，$(\chi_E)_{x_2}=\chi_{E_{x_2}}$ 为 $\mathscr A_1$-可测。
+\end{remark}
+
+\subsection{收敛结果}\label{subsection:ch02-收敛结果}
+
+设 $(X,\mathscr A,\mu)$ 为测度空间，$f,f_n:X\to\mathbb R$ 为 $\mathscr A$-可测函数（$n\in\mathbb N$）。下列收敛概念（记 $f_n\to f$）是熟知的：
+\begin{itemize}
+\item $f_n$ 依测度收敛于 $f$，若对所有 $\epsilon>0$ 有 $\lim_{n\to\infty}\mu(\{x\in X\mid|f_n(x)-f(x)|>\epsilon\})=0$；
+\item $f_n$ 几乎一致收敛于 $f$，若对任意 $\delta>0$，存在 $E\in\mathscr A$ 使 $\mu(E^c)<\delta$ 且
+\begin{align}
+\lim_{n\to\infty}\sup_{x\in E}|f_n(x)-f(x)|=0. \label{align:ch02-2.3}
+\end{align}
+\end{itemize}
+
+回顾上述概念之间的关系。
+
+\begin{proposition}\label{proposition:ch02-收敛关系}
+设 $(X,\mathscr A,\mu)$ 为测度空间，$f,f_n:X\to\mathbb R$ 为 $\mathscr A$-可测。
+\begin{enumerate}[(i)]
+\item 设 $\mu(X)<\infty$。若 $f_n\to f$ $\mu$-a.e.，则 $f_n\to f$ 依测度。
+\item 若 $f_n\to f$ 依测度，则存在 $\{f_{n_k}\}\subseteq\{f_n\}$ 使 $f_{n_k}\to f$ $\mu$-a.e.
+\item 若 $f_n\to f$ 几乎一致，则 $f_n\to f$ $\mu$-a.e. 且依测度。
+\end{enumerate}
+\end{proposition}
+
+下列结果部分逆转\cref{proposition:ch02-收敛关系}(iii)。
+
+\begin{theorem}[Egorov]\label{theorem:ch02-Egorov}
+设 $(X,\mathscr A,\mu)$ 为有限测度空间，$f,f_n:X\to\mathbb R$ 为 $\mathscr A$-可测。若 $f_n\to f$ $\mu$-a.e.，则 $f_n\to f$ 几乎一致。
+\end{theorem}
+
+\begin{proof}
+由假设存在 $\mu$-零测集 $N\subseteq X$，使对每个 $x\in N^c$ 有 $\lim_{n\to\infty}|f_n(x)-f(x)|=0$。对所有 $k,n,p\in\mathbb N$，令
+\begin{align*}
+E_{n,k}:=\{x\in X\mid|f_n(x)-f(x)|\geqslant 1/k\}\in\mathscr A,\qquad
+F_{p,k}:=\bigcup_{n=p}^\infty E_{n,k}
+\end{align*}
+（见\cref{remark:ch02-a.e.极限可测}）。易见对每个 $k\in\mathbb N$，$G_k:=\bigcap_{p=1}^\infty F_{p,k}\subseteq N$。事实上，固定 $k\in\mathbb N$ 与 $x\in G_k$。由 $F_{p,k}$ 与 $E_{n,k}$ 的定义，对每个 $p\in\mathbb N$，存在 $n_p\geqslant p$ 使 $|f_{n_p}(x)-f(x)|\geqslant 1/k$。显然这蕴含 $|f_{n_p}(x)-f(x)|\not\to0$，故 $x\notin N^c$，结论成立。
+
+因对任意 $k\in\mathbb N$，集合 $G_k$ 可测且 $G_k\subseteq N$，故 $\mu(G_k)=0$。此外，对每个固定 $k\in\mathbb N$，序列 $\{F_{p,k}\}$ 非增且 $\mu(F_{1,k})\leqslant\mu(X)<\infty$，故 $\lim_{p\to\infty}\mu(F_{p,k})=\mu(G_k)=0$。于是对任意 $\delta>0$ 与 $k\in\mathbb N$，存在 $p_k\in\mathbb N$ 使 $\mu(F_{p_k,k})<\delta/2^{k+1}$。令 $F_\delta:=\bigcup_{k=1}^\infty F_{p_k,k}$。则 $\mu(F_\delta)<\delta$ 且
+\begin{align*}
+F_\delta^c=\bigcap_{k=1}^\infty F_{p_k,k}^c=\bigcap_{k=1}^\infty\left(\bigcap_{n=p_k}^\infty E_{n,k}^c\right).
+\end{align*}
+固定 $x\in F_\delta^c$。则对每个 $k\in\mathbb N$，存在 $p_k\in\mathbb N$ 使 $x\in F_{p_k,k}^c$，从而对所有 $n\geqslant p_k$ 有 $x\notin E_{n,k}$，即 $|f_n(x)-f(x)|<1/k$。取 $E=F_\delta^c$，由 $\mu(F_\delta)<\delta$ 即得结论。
+\end{proof}
+
+若以容量代替测度，类似概念与结果成立。
+
+\begin{definition}\label{definition:ch02-容量收敛}
+设 $(X,d)$ 为度量空间，$\mathscr F\subseteq\mathscr P(X)$ 如\cref{definition:ch01-容量}所定义，$C:\mathscr F\to[0,\infty]$ 为容量。设 $f,f_n:X\to\mathbb R$（$n\in\mathbb N$）。称：
+\begin{enumerate}[(i)]
+\item $f_n$ 在 $X$ 上 $C$-拟处处收敛于 $f$，若对 $C$-q.e. $x\in X$，$f_n(x)$ 收敛于 $f(x)$；
+\item $f_n$ 依容量收敛于 $f$，若对所有 $\epsilon>0$ 有 $\lim_{n\to\infty}C(\{|f_n-f|>\epsilon\})=0$；
+\item $f_n$ $C$-拟一致收敛于 $f$，若对任意 $\delta>0$，存在 $E\in\mathscr F$ 使 $C(E^c)<\delta$ 且\eqref{align:ch02-2.3}成立。
+\end{enumerate}
+\end{definition}
+
+\begin{remark}\label{remark:ch02-依容量判据}
+显然，$f_n\to f$ 依容量当且仅当对任意 $\delta>0$、$\epsilon>0$，存在 $\bar n\in\mathbb N$，使对所有 $n\geqslant\bar n$ 有 $C(\{|f_n-f|\geqslant\epsilon\})<\delta$。
+\end{remark}
+
+下列命题与\cref{proposition:ch02-收敛关系}类似；为完整起见给出证明。
+
+\begin{proposition}\label{proposition:ch02-容量收敛关系}
+设 $X$ 及 $f,f_n:X\to\mathbb R$（$n\in\mathbb N$）如\cref{definition:ch02-容量收敛}。
+\begin{enumerate}[(i)]
+\item 若 $f_n\to f$ $C$-拟一致，则 $f_n\to f$ 依容量且 $C$-q.e.
+\item 若 $f_n\to f$ 依容量，则存在 $\{f_{n_k}\}\subseteq\{f_n\}$ 使 $f_{n_k}\to f$ $C$-拟一致。
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(i) 先证 $f_n\to f$ 依容量。由假设，对任意 $\delta>0$，存在 $E\in\mathscr F$ 使 $C(E^c)<\delta$ 且 $\lim_{n\to\infty}\sup_{x\in E}|f_n(x)-f(x)|=0$——即对任意 $\epsilon>0$，存在 $\bar n\in\mathbb N$，使对所有 $n\geqslant\bar n$ 有 $E\subseteq\{|f_n-f|<\epsilon\}$。故 $E^c\supseteq\{|f_n-f|\geqslant\epsilon\}$，从而 $C(\{|f_n-f|\geqslant\epsilon\})\leqslant C(E^c)<\delta$。综上，对任意 $\epsilon>0$、$\delta>0$，存在 $\bar n\in\mathbb N$，使对所有 $n\geqslant\bar n$ 有 $C(\{|f_n-f|\geqslant\epsilon\})<\delta$，结论成立。
+
+再证 $f_n\to f$ $C$-q.e.。由假设，对任意 $k\in\mathbb N$，存在 $E_k\in\mathscr A$ 使 $C(E_k^c)<1/k$ 且 $\lim_{n\to\infty}\sup_{x\in E_k}|f_n(x)-f(x)|=0$。令 $E:=\bigcup_{k=1}^\infty E_k$。则对任意 $x\in E$，$f_n(x)\to f(x)$。又因对任意 $k\in\mathbb N$ 有 $E^c\subseteq E_k^c$，故 $C(E^c)\leqslant\lim_{k\to\infty}C(E_k^c)=0$。结论 (i) 成立。
+
+(ii) 由\cref{remark:ch02-依容量判据}，对任意 $k\in\mathbb N$，存在 $n_k\in\mathbb N$，使对所有 $n\geqslant n_k$ 有 $C(\{|f_n-f|\geqslant 1/2^k\})<1/2^k$。特别取 $n=n_k$，得对所有 $k\in\mathbb N$ 有 $C(B_k)<1/2^k$，其中 $B_k:=\{|f_{n_k}-f|\geqslant 1/2^k\}$。不妨设 $n_{k+1}>n_k$，从而 $\{f_{n_k}\}$ 为 $\{f_n\}$ 的子列。令 $A_m:=\bigcup_{k=m}^\infty B_k$（$m\in\mathbb N$）。则对每个 $m\in\mathbb N$，$A_m\subseteq A_{m-1}$ 且 $C(A_m)\leqslant\sum_{k=m}^\infty C(B_k)<\sum_{k=m}^\infty 1/2^k$，故 $\lim_{m\to\infty}C(A_m)=0$。因此对任意 $\delta>0$，存在 $\bar m\in\mathbb N$，使对所有 $m\geqslant\bar m$ 有 $C(A_m)<\delta$。令 $F_m:=(A_m)^c$（$m\geqslant\bar m$）。则对所有 $k\geqslant m\geqslant\bar m$ 有 $F_m\subseteq B_k^c$，从而
+\begin{align*}
+\sup_{x\in F_{\bar m}}|f_{n_k}(x)-f(x)|\leqslant\sup_{x\in B_k^c}|f_{n_k}(x)-f(x)|\leqslant\frac1{2^k}\leqslant\frac1{2^{\bar m}}.
+\end{align*}
+故 $f_{n_k}\to f$ 在 $F_{\bar m}$ 上一致。证毕。
+\end{proof}
+
+\subsection{拟连续函数}\label{subsection:ch02-拟连续}
+
+\begin{theorem}[Lusin]\label{theorem:ch02-Lusin}
+设 $X$ 为 Hausdorff 空间，$\mu$ 为 $\mathscr B(X)$ 上的正则测度。设 $f:X\to\mathbb R$ 为 $\mathscr B(X)$-可测。则对任意 $E\in\mathscr B(X)$（$\mu(E)<\infty$）与任意 $\delta>0$，存在紧集 $K\subseteq E$ 使 $\mu(E\setminus K)<\delta$，且限制 $f|_K$ 连续。
+\end{theorem}
+
+\begin{proof}
+只需考虑 $E=X$、$\mu(X)<\infty$ 的情形。设 $\{B_n\}$ 为 $\mathbb R$ 中开区间的可数基。于是 $f^{-1}(B_n)\in\mathscr B(X)$（$n\in\mathbb N$）。固定 $\delta>0$。因 $\mu$ 正则，对每个 $n\in\mathbb N$，存在紧集 $K_n$ 与开集 $A_n$ 使 $K_n\subseteq f^{-1}(B_n)\subseteq A_n$ 且 $\mu(A_n\setminus K_n)<\delta/2^{n+1}$。令 $A:=\bigcup_{n=1}^\infty(A_n\setminus K_n)$，$C:=A^c$；显然 $A$ 为开集，$C$ 为闭集，且 $\mu(A)=\mu(C^c)\leqslant\delta/2$。此外对任意 $n\in\mathbb N$，
+\begin{align*}
+A_n\cap C=K_n\cap C\subseteq f^{-1}(B_n)\cap C\subseteq A_n\cap C,
+\end{align*}
+故
+\begin{align*}
+f^{-1}(B_n)\cap C=(f|_C)^{-1}(B_n)=A_n\cap C.
+\end{align*}
+因对任意 $n$，$A_n\cap C$ 在 $C$ 的相对拓扑中为开集，限制 $f|_C$ 连续。
+
+再利用 $\mu$ 的正则性，可选紧集 $K\subseteq C$ 使 $\mu(C\setminus K)<\delta/2$。于是 $\mu(K^c)=\mu(C^c)+\mu(C\setminus K)<\delta$；因 $f|_C$ 连续且 $K\subseteq C$，$f|_K$ 连续。结论成立。
+\end{proof}
+
+\begin{definition}\label{definition:ch02-拟连续}
+设 $X$ 为 Hausdorff 空间，$\mu$ 为 $\mathscr B(X)$ 上的测度。称函数 $f:X\to\mathbb R$ 在 $E\in\mathscr B(X)$ 中为 $\mu$-拟连续（或简称拟连续），若对任意 $\delta>0$，存在闭集 $C\subseteq E$ 使 $\mu(E\setminus C)<\delta$ 且限制 $f|_C$ 连续。
+\end{definition}
+
+利用此定义，Lusin 定理可重述为：若 $\mu$ 有限且正则，则每个 $\mathscr B(X)$-可测函数均为 $\mu$-拟连续。下列结果表明逆命题（至多差零测集）成立。
+
+\begin{proposition}\label{proposition:ch02-拟连续a.e.可测}
+设 $X$ 为 Hausdorff 空间，$\mu$ 为 $\mathscr B(X)$ 上的有限正则测度。设 $f:X\to\mathbb R$ 为 $\mu$-拟连续。则存在 $\mathscr B(X)$-可测函数 $g:X\to\mathbb R$，使 $g=f$ 在 $X$ 上 $\mu$-a.e.
+\end{proposition}
+
+\begin{proof}
+由\cref{definition:ch02-拟连续}，对每个 $n\in\mathbb N$，存在闭集 $C_n\subseteq X$ 使 $\mu(C_n^c)<1/n$ 且 $f|_{C_n}$ 连续。令 $C:=\bigcup_{n=1}^\infty C_n$，$g:=f\chi_C$。不妨设 $\{C_n\}$ 非增，故 $\mu(C^c)=\lim_{n\to\infty}\mu(C_n^c)=0$。此外，对每个 $n$，函数 $f|_{C_n}=f\chi_{C_n}$ 连续，从而 $(\mathscr B(X)\cap C_n)$-可测，且 $f\chi_{C_n}\to f\chi_C=g$ 在 $X$ 上逐点。由\cref{proposition:ch02-限制可测}，$g$ 为 $(\mathscr B(X)\cap C)$-可测，从而 $\mathscr B(X)$-可测。因 $f=g$ 在 $C$ 上且 $\mu(C^c)=0$，结论成立。
+\end{proof}
+
+\begin{proposition}\label{proposition:ch02-Tietze逼近}\label{proposition:ch02-连续逼近}
+设 $X$ 为局部紧 Hausdorff 空间，$\mu$ 为 $\mathscr B(X)$ 上的正则测度。设 $f:X\to\mathbb R$ 为 $\mu$-拟连续。则对任意开集 $A\subseteq X$（$\mu(A)<\infty$）与任意 $\delta>0$，存在紧集 $K\subseteq A$ 与函数 $\zeta\in C_c(X)$（$\operatorname{supp}\zeta\subseteq A$），使 $\mu(\{f\neq\zeta\})<\delta$ 且 $\|\zeta\|_\infty=\|f\|_K:=\sup_{x\in K}|f(x)|$。
+\end{proposition}
+
+\begin{proof}
+设 $A\subseteq X$ 为开集且 $\mu(A)<\infty$，固定 $\delta>0$。由 Lusin 定理存在紧集 $K\subseteq A$ 使 $f|_K$ 连续。由标准紧化论证与 Tietze 延拓定理，存在 $h\in C(X)$ 使 $h|_K=f|_K$（细节见文献\cite{ref45} Korollar VIII.1.19）。另一方面，由\cref{lemma:appA-Urysohn}存在 $g\in C_c(X)$ 使 $g(X)\subseteq[0,1]$、$g|_K=1$、$\operatorname{supp}g\subseteq A$。于是 $\eta:=gh|_K\in C_c(X)$，$\operatorname{supp}\eta\subseteq A$，且 $\eta|_K=h|_K=f|_K$。易见函数
+\begin{align*}
+\zeta(x):=
+\begin{cases}
+\eta(x), & |\eta(x)|\leqslant\|f\|_K,\\
+\|f\|_K\operatorname{sgn}\eta(x), & \text{否则}
+\end{cases}
+\end{align*}
+具有所述性质。证毕。
+\end{proof}
+
+\begin{remark}\label{remark:ch02-Lusin对可测函数}
+由 Lusin 定理，\cref{proposition:ch02-Tietze逼近}对 $\mathscr B(X)$-可测函数也成立。
+\end{remark}
+
+对容量有类似概念与结果。
+
+\begin{definition}\label{definition:ch02-C拟连续}
+设 $(X,d)$ 为度量空间，$\mathscr F\subseteq\mathscr P(X)$ 如\cref{definition:ch01-容量}，$C:\mathscr F\to[0,\infty]$ 为容量。称函数 $f:X\to\mathbb R$ 在 $X$ 上为 $C$-拟连续，若对任意 $\delta>0$，存在子集 $E\subseteq X$ 使 $C(E^c)<\delta$ 且限制 $f|_E$ 连续。
+\end{definition}
+
+\begin{remark}\label{remark:ch02-外容量开集}
+若 $C$ 为外容量，则在\cref{definition:ch02-C拟连续}中不妨设 $E^c$ 为开集。
+\end{remark}
+
+\begin{proposition}\label{proposition:ch02-容量拟连续闭}
+设 $X$ 及 $f,f_n:X\to\mathbb R$（$n\in\mathbb N$）如\cref{definition:ch02-C拟连续}。设每个 $f_n$ 为 $C$-拟连续，且 $f_n\to f$ 依容量。则 $f$ 为 $C$-拟连续。
+\end{proposition}
+
+\begin{proof}
+由假设，对每个 $\delta>0$ 与每个 $n\in\mathbb N$，存在子集 $E_n\subseteq X$ 使 $C(E_n^c)<\delta/2^{n+1}$ 且限制 $f_n|_{E_n}$ 连续。令 $E:=\bigcap_{n=1}^\infty E_n$。则 $C(E^c)\leqslant\sum_{n=1}^\infty C(E_n^c)\leqslant\delta/2$，且对每个 $n$，$f_n|_E$ 连续。此外由\cref{proposition:ch02-容量收敛关系}(ii)，存在 $\{f_{n_k}\}\subseteq\{f_n\}$ 与 $F\subseteq X$ 使 $C(F^c)<\delta/2$ 且 $f_{n_k}\to f$ 在 $F$ 上一致。令 $G:=E\cap F$；则 $C(G^c)\leqslant C(E^c)+C(F^c)<\delta$。此外，对每个 $n_k$，$f_{n_k}|_G$ 连续，且 $f_{n_k}\to f$ 在 $G$ 上一致，故 $f|_G$ 连续。证毕。
+\end{proof}
+
+\section{积分}\label{section:ch02-积分}
+
+\subsection{积分的定义}\label{subsection:ch02-积分定义}
+
+设 $(X,\mathscr A,\mu)$ 为测度空间，$s\in\mathscr S^+(X)$，即 $s=\sum_{i=1}^n c_i\chi_{E_i}$，其中 $c_1,\dots,c_n\geqslant0$，$E_1,\dots,E_n$ 可测，$E_i\cap E_j=\emptyset$（$i\neq j$），$\bigcup_{i=1}^n E_i=X$。
+
+\begin{definition}\label{definition:ch02-简单函数积分}
+设 $s\in\mathscr S^+(X)$。量
+\begin{align*}
+\int_X s\,\mathrm{d}\mu:=\sum_{i=1}^N c_i\,\mu(E_i)
+\end{align*}
+称为 $s$ 在 $X$ 上的积分。
+\end{definition}
+
+此定义是适定的，因为积分 $\int_X s\,\mathrm{d}\mu$ 不依赖于划分 $\{E_1,\dots,E_N\}$ 的选取。此外，$\int_X s\,\mathrm{d}\mu$ 具有通常性质：线性、可加、单调等。
+
+\begin{definition}\label{definition:ch02-非负可测积分}\label{definition:ch02-Lebesgue}\label{definition:ch02-Lebesgue积分}
+设 $f:X\to[0,\infty]$ 为 $\mathscr A$-可测。量
+\begin{align}
+\int_X f\,\mathrm{d}\mu:=\sup_{\substack{s\in\mathscr S^+(X)\\ s\leqslant f}}\int_X s\,\mathrm{d}\mu \label{align:ch02-2.4}
+\end{align}
+称为 $f$ 在 $X$ 上的积分。对每个可测集 $E\subseteq X$，令 $\int_E f\,\mathrm{d}\mu:=\int_X f\chi_E\,\mathrm{d}\mu$。
+\end{definition}
+
+\begin{remark}\label{remark:ch02-简单逼近积分}
+\label{remark:ch02-简单积分}
+熟知，对任意 $\mathscr A$-可测 $f:X\to[0,\infty]$，集合 $\{s\in\mathscr S^+(X)\mid s\leqslant f\}$ 非空；事实上存在序列 $\{s_n\}\subseteq\mathscr S^+(X)$，使
+\begin{align}
+0\leqslant s_n\leqslant s_{n+1}\leqslant f\ \text{在 }X\text{ 中对所有 }n\in\mathbb N,\qquad s_n\to f\text{ 在 }X\text{ 上逐点}. \label{align:ch02-2.5}
+\end{align}
+显然这蕴含
+\begin{align}
+\int_X f\,\mathrm{d}\mu=\lim_{n\to\infty}\int_X s_n\,\mathrm{d}\mu. \label{align:ch02-2.6}
+\end{align}
+\end{remark}
+
+对每个 $f:X\to[-\infty,\infty]$，令 $f^\pm:=\max\{\pm f,0\}$。
+
+\begin{definition}\label{definition:ch02-可积拟可积}
+称 $\mathscr A$-可测函数 $f:X\to[-\infty,\infty]$ 为可积的，若 $\int_X f^\pm\,\mathrm{d}\mu<\infty$。称 $f$ 为拟可积的，若两积分 $\int_X f^\pm\,\mathrm{d}\mu$ 中至少一个有限。
+\end{definition}
+
+对每个拟可积函数 $f:X\to[-\infty,\infty]$，（可能为无穷的）量
+\begin{align*}
+\int_X f\,\mathrm{d}\mu:=\int_X f^+\,\mathrm{d}\mu-\int_X f^-\,\mathrm{d}\mu
+\end{align*}
+称为 $f$ 在 $X$ 上的积分。对每个可测集 $E\subseteq X$，令 $\int_E f\,\mathrm{d}\mu:=\int_X f\chi_E\,\mathrm{d}\mu$。
+
+记可积函数 $f:X\to[-\infty,\infty]$ 的集合为 $L^1(X)\equiv L^1(X,\mathscr A,\mu)$。易见 $f\in L^1(X)$ 当且仅当
+\begin{align*}
+\|f\|_1:=\int_X|f|\,\mathrm{d}\mu<\infty.
+\end{align*}
+
+积分 $\int_X f\,\mathrm{d}\mu$ 的线性、可加、单调等通常性质易证。由积分线性性、不等式
+\begin{align*}
+\left|\int_X f\,\mathrm{d}\mu\right|\leqslant\int_X|f|\,\mathrm{d}\mu
+\end{align*}
+及三角不等式，$L^1(X)$ 为向量空间。
+
+\begin{remark}\label{remark:ch02-Riemann可积}
+任意 Riemann 可积函数 $f:D\subseteq\mathbb R^N\to\mathbb R$ 在\cref{definition:ch02-可积拟可积}意义下可积。按记号滥用，常使用通常符号 $\int_D f\,\mathrm{d}x$ 代替 $\int_D f\,\mathrm{d}\lambda_N$。
+\end{remark}
+
+\begin{remark}\label{remark:ch02-测度密度}
+设 $(X,\mathscr A,\mu)$ 为测度空间，$f\geqslant0$ 为 $\mathscr A$-可测。立即可见映射
+\begin{align}
+\nu:\mathscr A\to[0,\infty],\qquad \nu(E):=\int_E f\,\mathrm{d}\mu\ (E\in\mathscr A) \label{align:ch02-2.7}
+\end{align}
+为测度。类似地，映射
+\begin{align}
+\nu:\mathscr A\to[-\infty,\infty],\qquad \nu(E):=\int_E f\,\mathrm{d}\mu=\int_E f^+\,\mathrm{d}\mu-\int_E f^-\,\mathrm{d}\mu\ (E\in\mathscr A) \label{align:ch02-2.8}
+\end{align}
+当 $f$ 拟可积时为带号测度，当 $f\in L^1(X,\mathscr A,\mu)$ 时为有限带号测度。此外，
+\begin{align}
+\nu^\pm(E)=\int_E f^\pm\,\mathrm{d}\mu, \label{align:ch02-2.9}
+\end{align}
+从而当 $f\in L^1(X,\mathscr A,\mu)$ 时 $|\nu|(E)=\int_E|f|\,\mathrm{d}\mu<\infty$。事实上，令 $\varphi^\pm(E):=\int_E f^\pm\,\mathrm{d}\mu$。则对任意 $F\subseteq E$、$F\in\mathscr A$，
+\begin{align*}
+\nu(F)=\varphi^+(F)-\varphi^-(F)\leqslant\varphi^+(F)\leqslant\varphi^+(E),
+\end{align*}
+故由\cref{proposition:ch01-正变差}知 $\nu^+(E)\leqslant\varphi^+(E)$。为证反向不等式，令 $H:=\{f\geqslant0\}$。显然对任意 $E\in\mathscr A$，$\varphi^+(E\cap H^c)=0=\varphi^-(E\cap H)$，故
+\begin{align*}
+\varphi^+(E)=\varphi^+(E\cap H)=\nu(E\cap H)\leqslant\nu^+(E\cap H)\leqslant\nu^+(E).
+\end{align*}
+由此 $\nu^+=\varphi^+$，从而 $\nu^-=(-\nu)^+=\varphi^-$。结论成立。
+\end{remark}
+
+\begin{remark}\label{remark:ch02-简单函数稠密}
+由\cref{remark:ch02-简单逼近积分}（见\eqref{align:ch02-2.6}）知简单函数集合 $\mathscr S(X)$ 在 $L^1(X)$ 中稠密。
+\end{remark}
+
+关于带号测度的积分定义如下（此概念的推广见\cref{subsection:ch04-带号测度积分}）。
+
+\begin{definition}\label{definition:ch02-带号测度积分}\label{definition:ch02-带号积分}
+设 $(X,\mathscr A)$ 为可测空间，$\mu$ 为 $\mathscr A$ 上的带号测度。称 $f\in L^1(X,\mathscr A,\mu)$，若 $f\in L^1(X,\mathscr A,\mu^\pm)$，并令
+\begin{align}
+\int_X f\,\mathrm{d}\mu:=\int_X f\,\mathrm{d}\mu^+-\int_X f\,\mathrm{d}\mu^-. \label{align:ch02-2.10}
+\end{align}
+\end{definition}
+
+由\eqref{align:ch02-2.10}易得
+\begin{align}
+\left|\int_X f\,\mathrm{d}\mu\right|\leqslant\int_X|f|\,\mathrm{d}|\mu|. \label{align:ch02-2.11}
+\end{align}
+
+回顾下列经典结果。
+
+\begin{theorem}[Beppo Levi]\label{theorem:ch02-BeppoLevi}\label{corollary:ch02-平均收敛}
+设 $(X,\mathscr A,\mu)$ 为测度空间。设 $f,f_n:X\to[0,\infty]$ 为 $\mathscr A$-可测。假设对任意 $n\in\mathbb N$，$f_n\leqslant f_{n+1}$ 在 $X$ 上 $\mu$-a.e.，且 $f$ 为序列 $\{f_n\}$ 在 $X$ 上的 $\mu$-逐点极限。则
+\begin{align*}
+\lim_{n\to\infty}\int_X f_n\,\mathrm{d}\mu=\int_X f\,\mathrm{d}\mu.
+\end{align*}
+\end{theorem}
+
+\begin{theorem}[Fatou]\label{theorem:ch02-Fatou}
+设 $(X,\mathscr A,\mu)$ 为测度空间。设 $f_n:X\to[0,\infty]$ 为 $\mathscr A$-可测。则
+\begin{align*}
+\int_X\left(\liminf_{n\to\infty}f_n\right)\mathrm{d}\mu\leqslant\liminf_{n\to\infty}\int_X f_n\,\mathrm{d}\mu.
+\end{align*}
+\end{theorem}
+
+\begin{theorem}[Lebesgue 控制收敛]\label{theorem:ch02-Lebesgue控制收敛}\label{corollary:ch02-控制收敛}
+设 $(X,\mathscr A,\mu)$ 为测度空间。设 $f,f_n$ 为 $\mathscr A$-可测，$f_n\to f$ 在 $X$ 上 $\mu$-a.e.。假设存在 $g\in L^1(X)$、$g\geqslant0$，使对所有 $n\in\mathbb N$，$|f_n|\leqslant g$ 在 $X$ 上 $\mu$-a.e.。
+\begin{align}
+\text{存在 }g\in L^1(X),\ g\geqslant0\text{ 使 }\sup_{n\in\mathbb N}|f_n|\leqslant g\ \mu\text{-a.e.} \label{align:ch02-2.12}
+\end{align}
+则 $f,f_n\in L^1(X)$，且
+\begin{align*}
+\lim_{n\to\infty}\int_X|f_n-f|\,\mathrm{d}\mu=0.
+\end{align*}
+\end{theorem}
+
+\cref{theorem:ch02-BeppoLevi}与\cref{theorem:ch02-Lebesgue控制收敛}通常分别称为单调收敛定理与控制收敛定理。利用\cref{theorem:ch02-BeppoLevi}可证下列结果。
+
+\begin{proposition}\label{proposition:ch02-变量替换积分}
+设 $(X,\mathscr A,\mu)$ 为测度空间。
+\begin{enumerate}[(i)]
+\item 设 $f:X\to[0,\infty)$ 为 $\mathscr A$-可测，$\nu$ 为由\eqref{align:ch02-2.7}定义的测度。则对任意 $\mathscr A$-可测 $g:X\to[0,\infty)$，有
+\begin{align}
+\int_X g\,\mathrm{d}\nu=\int_X fg\,\mathrm{d}\mu. \label{align:ch02-2.13}
+\end{align}
+\item 设 $f\in L^1(X,\mathscr A,\mu)$，$\nu$ 为由\eqref{align:ch02-2.8}定义的有限带号测度。则对任意 $g\in L^1(X,\mathscr A,\nu)$，有 $fg\in L^1(X,\mathscr A,\mu)$，且\eqref{align:ch02-2.13}成立。
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(i) 当 $g=\chi_E$ 时由定义\eqref{align:ch02-2.13}成立，从而当 $g=s\in\mathscr S^+(X)$ 时也成立。对任意 $\mathscr A$-可测 $g:X\to[0,\infty)$，存在\eqref{align:ch02-2.5}中的序列 $\{s_n\}\subseteq\mathscr S^+(X)$，由\cref{theorem:ch02-BeppoLevi}即得结论。
+
+(ii) 由\eqref{align:ch02-2.9}--\eqref{align:ch02-2.10}有
+\begin{align}
+\int_X g\,\mathrm{d}\nu
+&=\int_X(g^+-g^-)\,\mathrm{d}\nu^+-\int_X(g^+-g^-)\,\mathrm{d}\nu^- \nonumber\\
+&=\int_X g^+\,\mathrm{d}\nu^+-\int_X g^-\,\mathrm{d}\nu^+-\int_X g^+\,\mathrm{d}\nu^-+\int_X g^-\,\mathrm{d}\nu^-. \label{align:ch02-2.14}
+\end{align}
+由\eqref{align:ch02-2.13}有 $\int_X g^\pm\,\mathrm{d}\nu^\pm=\int_X g^\pm f^\pm\,\mathrm{d}\mu$；又因假设 $g\in L^1(X,\mathscr A,\nu^\pm)$（见\cref{definition:ch02-带号测度积分}），故 $\int_X g^\pm\,\mathrm{d}\nu^\pm<\infty$。由\eqref{align:ch02-2.14}得
+\begin{align*}
+\int_X g\,\mathrm{d}\nu=\int_X(f^+-f^-)(g^+-g^-)\,\mathrm{d}\mu=\int_X fg\,\mathrm{d}\mu,
+\end{align*}
+证毕。
+\end{proof}
+
+\section{乘积测度}\label{section:ch02-乘积测度}
+
+\subsection{Tonelli 与 Fubini 定理}\label{subsection:ch02-TonelliFubini}
+
+设 $(X_1,\mathscr A_1,\mu_1)$ 与 $(X_2,\mathscr A_2,\mu_2)$ 为测度空间。设 $E\in\mathscr A_1\times\mathscr A_2$。于是对任意 $x_1\in X_1$ 有 $E_{x_1}\in\mathscr A_2$，对任意 $x_2\in X_2$ 有 $E_{x_2}\in\mathscr A_1$（见\cref{proposition:ch01-截面}）。则从 $X_1$ 到 $[0,\infty]$ 的映射 $x_1\mapsto\mu_2(E_{x_1})$（$x_1\in X_1$），以及从 $X_2$ 到 $[0,\infty]$ 的映射 $x_2\mapsto\mu_1(E_{x_2})$（$x_2\in X_2$）均良定义。有下列结果。
+
+\begin{proposition}\label{proposition:ch02-乘积截面积分}
+设 $(X_1,\mathscr A_1,\mu_1)$ 与 $(X_2,\mathscr A_2,\mu_2)$ 为 $\sigma$-有限测度空间。设 $E\in\mathscr A_1\times\mathscr A_2$。则：
+\begin{enumerate}[(i)]
+\item 映射 $X_1\to[0,\infty]$，$x_1\mapsto\mu_2(E_{x_1})$，为 $\mathscr A_1$-可测；映射 $X_2\to[0,\infty]$，$x_2\mapsto\mu_1(E_{x_2})$，为 $\mathscr A_2$-可测；
+\item 有
+\begin{align}
+\int_{X_1}\mu_2(E_{x_1})\,\mathrm{d}\mu_1=\int_{X_2}\mu_1(E_{x_2})\,\mathrm{d}\mu_2; \label{align:ch02-2.15a}
+\end{align}
+\item 由
+\begin{align}
+(\mu_1\times\mu_2)(E):=\int_{X_1}\mu_2(E_{x_1})\,\mathrm{d}\mu_1=\int_{X_2}\mu_1(E_{x_2})\,\mathrm{d}\mu_2\quad(E\in\mathscr A_1\times\mathscr A_2) \label{align:ch02-2.15b}
+\end{align}
+定义的映射 $\mu_1\times\mu_2:\mathscr A_1\times\mathscr A_2\to[0,\infty]$ 为 $\sigma$-有限测度。
+\end{enumerate}
+\end{proposition}
+
+\begin{remark}\label{remark:ch02-sigma有限必要}
+若 $\mu_1$ 与/或 $\mu_2$ 非 $\sigma$-有限，易构造使\eqref{align:ch02-2.15a}不成立的例子。
+\end{remark}
+
+由\cref{proposition:ch02-乘积截面积分}，下列定义是适定的。
+
+\begin{definition}\label{definition:ch02-乘积测度}
+设 $(X_1,\mathscr A_1,\mu_1)$ 与 $(X_2,\mathscr A_2,\mu_2)$ 为 $\sigma$-有限测度空间。由\eqref{align:ch02-2.15b}定义的测度 $\mu_1\times\mu_2$ 称为乘积测度，$(X_1\times X_2,\mathscr A_1\times\mathscr A_2,\mu_1\times\mu_2)$ 称为乘积测度空间。
+\end{definition}
+
+\begin{remark}\label{remark:ch02-乘积a.e.等价}
+设 $(X_1\times X_2,\mathscr A_1\times\mathscr A_2,\mu_1\times\mu_2)$ 为乘积测度空间，$P=P(x_1,x_2)$ 为某性质。利用\eqref{align:ch02-2.15b}易见下列命题等价：(i) $P$ 在 $X_1\times X_2$ 中 $\mu_1\times\mu_2$-a.e. 成立；(ii) 对 $\mu_1$-a.e. $x_1\in X_1$，$P(x_1,\cdot)$ 在 $X_2$ 中 $\mu_2$-a.e. 成立；(iii) 对 $\mu_2$-a.e. $x_2\in X_2$，$P(\cdot,x_2)$ 在 $X_1$ 中 $\mu_1$-a.e. 成立。
+\end{remark}
+
+\begin{remark}\label{remark:ch02-乘积完备化}\label{proposition:ch02-完备化}
+简单例子表明完备测度空间的乘积不必完备。然而可证 Lebesgue 空间 $(\mathbb R^{M+N},\mathscr L_{M+N},\lambda_{M+N})$ 是乘积 $(\mathbb R^{M+N},\mathscr L_M\times\mathscr L_N,\lambda_M\times\lambda_N)$ 的完备化（$M,N\in\mathbb N$；见\cref{definition:ch01-完备化}）。
+\end{remark}
+
+设 $(X_1,\mathscr A_1,\mu_1)$ 与 $(X_2,\mathscr A_2,\mu_2)$ 为测度空间，$f:X_1\times X_2\to[0,\infty)$ 为 $\mathscr A_1\times\mathscr A_2$-可测。由\cref{proposition:ch02-迹可测}，$x_1$-迹 $f_{x_1}$ 为 $\mathscr A_2$-可测，故函数
+\begin{align}
+X_1\to[0,\infty],\qquad x_1\mapsto\int_{X_2}f_{x_1}\,\mathrm{d}\mu_2 \label{align:ch02-2.16a}
+\end{align}
+良定义；类似地，映射
+\begin{align}
+X_2\to[0,\infty],\qquad x_2\mapsto\int_{X_1}f_{x_2}\,\mathrm{d}\mu_1 \label{align:ch02-2.16b}
+\end{align}
+良定义。
+
+\begin{theorem}[Tonelli]\label{theorem:ch02-Tonelli}
+设 $(X_1,\mathscr A_1,\mu_1)$ 与 $(X_2,\mathscr A_2,\mu_2)$ 为 $\sigma$-有限测度空间。设 $f:X_1\times X_2\to[0,\infty)$ 为 $\mathscr A_1\times\mathscr A_2$-可测。则：
+\begin{enumerate}[(i)]
+\item \eqref{align:ch02-2.16a}中定义的函数分别为 $\mathscr A_1$-、$\mathscr A_2$-可测；
+\item 有
+\begin{align}
+\int_{X_1\times X_2}f\,\mathrm{d}(\mu_1\times\mu_2)
+=\int_{X_1}\mathrm{d}\mu_1\int_{X_2}f_{x_1}\,\mathrm{d}\mu_2
+=\int_{X_2}\mathrm{d}\mu_2\int_{X_1}f_{x_2}\,\mathrm{d}\mu_1. \label{align:ch02-2.17}
+\end{align}
+\end{enumerate}
+\end{theorem}
+
+\begin{remark}\label{remark:ch02-Tonelli条件}
+\label{remark:ch02-截口注}
+注意\eqref{align:ch02-2.15b}是\eqref{align:ch02-2.17}在 $f=\chi_E$（$E\in\mathscr A_1\times\mathscr A_2$）时的特例。因此\cref{theorem:ch02-Tonelli}中 $\mu_1$ 与 $\mu_2$ 为 $\sigma$-有限的假设不能放松（见\cref{remark:ch02-sigma有限必要}）。
+\end{remark}
+
+对可积实值函数有下列结果。
+
+\begin{theorem}[Fubini]\label{theorem:ch02-Fubini}
+设 $(X_1,\mathscr A_1,\mu_1)$ 与 $(X_2,\mathscr A_2,\mu_2)$ 为 $\sigma$-有限测度空间。设 $f\in L^1(X_1\times X_2,\mathscr A_1\times\mathscr A_2,\mu_1\times\mu_2)$。则：
+\begin{enumerate}[(i)]
+\item 对 $\mu_1$-a.e. $x_1\in X_1$，$f_{x_1}\in L^1(X_2,\mathscr A_2,\mu_2)$；对 $\mu_2$-a.e. $x_2\in X_2$，$f_{x_2}\in L^1(X_1,\mathscr A_1,\mu_1)$；
+\item 从 $X_1$ 到 $\mathbb R$ 的映射 $x_1\mapsto\int_{X_2}f_{x_1}\,\mathrm{d}\mu_2$ 与从 $X_2$ 到 $\mathbb R$ 的映射 $x_2\mapsto\int_{X_1}f_{x_2}\,\mathrm{d}\mu_1$ 分别属于 $L^1(X_1,\mathscr A_1,\mu_1)$ 与 $L^1(X_2,\mathscr A_2,\mu_2)$；
+\item 有
+\begin{align}
+\int_{X_1\times X_2}f\,\mathrm{d}(\mu_1\times\mu_2)
+=\int_{X_1}\mathrm{d}\mu_1\int_{X_2}f_{x_1}\,\mathrm{d}\mu_2
+=\int_{X_2}\mathrm{d}\mu_2\int_{X_1}f_{x_2}\,\mathrm{d}\mu_1. \label{align:ch02-2.18}
+\end{align}
+\end{enumerate}
+\end{theorem}
+
+\cref{theorem:ch02-Fubini}中 $f$ 可积的假设不能放松，简单例子即表明。因此为应用 Fubini 定理，Tonelli 定理的如下推论是方便的。
+
+\begin{theorem}\label{theorem:ch02-Fubini判别}
+设 $(X_1,\mathscr A_1,\mu_1)$ 与 $(X_2,\mathscr A_2,\mu_2)$ 为 $\sigma$-有限测度空间。设 $f:X_1\times X_2\to\mathbb R$ 为 $\mathscr A_1\times\mathscr A_2$-可测。则下列命题等价：
+\begin{enumerate}[(i)]
+\item $f\in L^1(X_1\times X_2,\mathscr A_1\times\mathscr A_2,\mu_1\times\mu_2)$；
+\item $\int_{X_1}\mathrm{d}\mu_1\int_{X_2}|f_{x_1}|\,\mathrm{d}\mu_2<\infty$；
+\item $\int_{X_2}\mathrm{d}\mu_2\int_{X_1}|f_{x_2}|\,\mathrm{d}\mu_1<\infty$。
+\end{enumerate}
+\end{theorem}
+
+\section{应用}\label{section:ch02-应用}
+\label{section:ch02-进一步讨论}
+
+\subsection{一个有用的等式}\label{subsection:ch02-有用等式}
+
+设 $(X,\mathscr A,\mu)$ 为测度空间，$f:X\to[0,\infty]$ 为 $\mathscr A$-可测。则从 $[0,\infty)$ 到 $[0,\infty]$ 的函数 $t\mapsto\mu(\{f>t\})$ 非增；由 Chebyshev 不等式，若 $f\in L^1(X,\mathscr A,\mu)$，则 $\lim_{t\to\infty}\mu(\{f>t\})=0$。
+
+\begin{proposition}\label{proposition:ch02-尾部积分}
+设 $(X,\mathscr A,\mu)$ 为 $\sigma$-有限测度空间，$f:X\to[0,\infty]$ 为 $\mathscr A$-可测。则对任意 $\alpha>0$，有
+\begin{align}
+\int_X f^\alpha\,\mathrm{d}\mu=\alpha\int_{[0,\infty)}\mu(\{f>t\})\,t^{\alpha-1}\,\mathrm{d}t. \label{align:ch02-2.19}
+\end{align}
+\end{proposition}
+
+\begin{proof}
+在 Tonelli 定理中取 $(X_1,\mathscr A_1,\mu_1)=(X,\mathscr A,\mu)$，$(X_2,\mathscr A_2,\mu_2)=([0,\infty),\mathscr B\cap[0,\infty),\lambda_\varphi)$，其中 $\lambda_\varphi$ 为 $\mathscr B\cap[0,\infty)$ 上与 $\varphi(t)=t^\alpha$（$t\geqslant0$）相伴的 Lebesgue--Stieltjes 测度。易见集合 $E:=\{(x,t)\in X\times[0,\infty)\mid f(x)>t\}$ 为 $\mathscr A_1\times\mathscr A_2$-可测。在\eqref{align:ch02-2.17}中取 $f=\chi_E$，得
+\begin{align*}
+\alpha\int_{[0,\infty)}\mu(\{f>t\})\,t^{\alpha-1}\,\mathrm{d}t
+&=\int_{[0,\infty)}\mu(\{f>t\})\,\mathrm{d}\lambda_\varphi(t)
+=\int_{[0,\infty)}\mathrm{d}\lambda_\varphi(t)\int_X\chi_{\{f(x)>t\}}\,\mathrm{d}\mu(x)\\
+&=\int_X\mathrm{d}\mu(x)\int_{[0,\infty)}\chi_{\{f(x)>t\}}\,\mathrm{d}\lambda_\varphi(t)
+=\int_X\mathrm{d}\mu(x)\,\lambda_\varphi(\{f(x)>0\})
+=\int_X f^\alpha(x)\,\mathrm{d}\mu(x).
+\end{align*}
+\end{proof}
+
+\subsection{Steiner 对称化}\label{subsection:ch02-Steiner对称化}
+\label{subsection:ch02-等周}
+
+对任意 $x\in\mathbb R^N$，记 $x\equiv(x_1,\hat x)$，其中 $x_1\in\mathbb R$，$\hat x\in\mathbb R^{N-1}$。设 $E$ 为 $\mathbb R^N$ 的 Borel 子集。对任意 $\hat x\in\mathbb R^{N-1}$，令 $E_{\hat x}:=\{x_1\in\mathbb R\mid(x_1,\hat x)\in E\}$ 为其 $\hat x$-截面。由\cref{proposition:ch01-截面}，函数
+\begin{align}
+f:\mathbb R^{N-1}\to[0,\infty],\qquad f(\hat x):=\lambda(E_{\hat x}) \label{align:ch02-2.20}
+\end{align}
+良定义。考虑对称区间
+\begin{align*}
+I_{\hat x}:=\left(-\frac{f(\hat x)}2,\frac{f(\hat x)}2\right)\quad\text{若 }f(\hat x)\neq0,\qquad I_{\hat x}:=\emptyset\text{ 否则},
+\end{align*}
+并定义
+\begin{align}
+S_1(E):=\bigcup_{\hat x\in\mathbb R^{N-1}}(I_{\hat x}\times\{\hat x\})
+=\{(x_1,\hat x)\in\mathbb R^N\mid|x_1|\leqslant f(\hat x)/2\}. \label{align:ch02-2.21}
+\end{align}
+
+\begin{definition}\label{definition:ch02-Steiner对称化}
+由\eqref{align:ch02-2.21}定义的集合 $S_1(E)$ 称为 $E$ 关于平面 $x_1=0$ 的 Steiner 对称化。$E$ 关于平面 $x_j=0$（$j=2,\dots,N$）的 Steiner 对称化类似定义。$E$ 关于原点的 Steiner 对称化为
+\begin{align}
+S(E):=S_N(S_{N-1}(\cdots S_1(E)\cdots)). \label{align:ch02-2.22}
+\end{align}
+\end{definition}
+
+集合 $S_1(E)$ 的若干相关性质在下列引理中证明。
+
+\begin{lemma}\label{lemma:ch02-Steiner性质}
+设 $E\in\mathscr B_N$，$S_1(E)$ 由\eqref{align:ch02-2.21}定义。则：
+\begin{enumerate}[(i)]
+\item $(x_1,\hat x)\in S_1(E)\Rightarrow(-x_1,\hat x)\in S_1(E)$；
+\item $S_1(E)\in\mathscr B_N$；
+\item $\lambda_N(S_1(E))=\lambda_N(E)$；
+\item $\operatorname{diam}(S_1(E))\leqslant\operatorname{diam}(E)$。
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(i) 由\eqref{align:ch02-2.21}显然。为证 (ii)，设 $\{s_k\}\subseteq\mathscr S^+(\mathbb R^{N-1})$ 为非降简单函数列，使当 $k\to\infty$ 时 $s_k\to f$ 在 $\mathbb R^{N-1}$ 上逐点，其中 $f$ 由\eqref{align:ch02-2.20}定义。对任意 $k\in\mathbb N$，定义
+\begin{align*}
+g_k:\mathbb R^N\to\mathbb R,\qquad g_k(x_1,\hat x):=\frac{s_k(\hat x)}2-|x_1|.
+\end{align*}
+显然 $g_k$ 为 $\mathscr B_N$-可测，故 $F_k:=\{g_k>0\}\in\mathscr B_N$（$k\in\mathbb N$）。因对所有 $k$ 有 $s_k\leqslant s_{k+1}$，易验证序列 $\{F_k\}$ 非增且 $S_1(E)=\bigcup_{k=1}^\infty F_k$。故 (ii) 成立。关于 (iii)，只需注意由\eqref{align:ch02-2.15b}（另见\cref{remark:ch02-乘积完备化}）有
+\begin{align*}
+\lambda_N(E)=\int_{\mathbb R^{N-1}}\lambda(E_{\hat x})\,\mathrm{d}\lambda_{N-1}(\hat x)
+=\int_{\mathbb R^{N-1}}f(\hat x)\,\mathrm{d}\lambda_{N-1}(\hat x)=\lambda_N(S_1(E)).
+\end{align*}
+
+最后证 (iv)。设 $\operatorname{diam}(E)<\infty$；否则结论显然。设 $E_{\hat x}\neq\emptyset$，定义 $K_{\hat x}:=[\inf E_{\hat x},\sup E_{\hat x}]$。显然
+\begin{align}
+\lambda(K_{\hat x})=\sup E_{\hat x}-\inf E_{\hat x}\geqslant\lambda(E_{\hat x})=f(\hat x). \label{align:ch02-2.23}
+\end{align}
+设 $(x_1,\hat x),(y_1,\hat y)\in S_1(E)$，使
+\begin{align}
+\operatorname{diam}(S_1(E))\leqslant\sqrt{|x_1-y_1|^2+|\hat x-\hat y|^2}+\epsilon. \label{align:ch02-2.24}
+\end{align}
+不妨设
+\begin{align}
+\sup E_{\hat y}-\inf E_{\hat x}\geqslant\sup E_{\hat x}-\inf E_{\hat y}. \label{align:ch02-2.25}
+\end{align}
+因 $|x_1|\leqslant f(\hat x)/2$、$|y_1|\leqslant f(\hat y)/2$，由\eqref{align:ch02-2.23}与\eqref{align:ch02-2.25}立得
+\begin{align}
+|x_1-y_1|\leqslant\frac{f(\hat x)+f(\hat y)}2
+\leqslant\frac{\sup E_{\hat x}-\inf E_{\hat x}}2+\frac{\sup E_{\hat y}-\inf E_{\hat y}}2
+=\frac{\sup E_{\hat y}-\inf E_{\hat x}}2+\frac{\sup E_{\hat x}-\inf E_{\hat y}}2
+\leqslant\sup E_{\hat y}-\inf E_{\hat x}. \label{align:ch02-2.26}
+\end{align}
+由\eqref{align:ch02-2.24}与\eqref{align:ch02-2.26}得
+\begin{align*}
+[\operatorname{diam}(S_1(E))-\epsilon]^2\leqslant|x_1-y_1|^2+|\hat x_1-\hat y_1|^2
+\leqslant|\hat x_1-\hat y_1|^2+[\sup E_{\hat y}-\inf E_{\hat x}]^2\leqslant[\operatorname{diam}(E)]^2,
+\end{align*}
+由 $\epsilon$ 的任意性即得 (iv)。证毕。
+\end{proof}
+
+由\cref{lemma:ch02-Steiner性质}得下列结果。
+
+\begin{theorem}[Steiner 对称化]\label{theorem:ch02-Steiner}
+设 $E\in\mathscr B_N$，$S(E)$ 为其关于原点的 Steiner 对称化。则：
+\begin{enumerate}[(i)]
+\item $x\in S(E)\Rightarrow-x\in S(E)$；
+\item $S(E)\in\mathscr B_N$；
+\item $\lambda_N(S(E))=\lambda_N(E)$；
+\item $\operatorname{diam}(S(E))\leqslant\operatorname{diam}(E)$。
+\end{enumerate}
+\end{theorem}
+
+作为\cref{theorem:ch02-Steiner}的应用，现可证明等直径不等式（见\cref{proposition:ch01-等直径不等式}）。
+
+\begin{proof}[等直径不等式的证明]
+若 $\operatorname{diam}(E)=\infty$，结论显然；故设 $E\subseteq\mathbb R^N$ 有界。又由\cref{remark:ch01-等直径注}(ii)，不妨设 $E\in\mathscr B_N$。设 $S(E)$ 由\eqref{align:ch02-2.22}定义。由\cref{theorem:ch02-Steiner}(i,iv)，$S(E)$ 关于原点对称，且 $\operatorname{diam}(S(E))\leqslant\operatorname{diam}(E)$，故 $S(E)\subseteq B(0,\operatorname{diam}(E)/2)$。由\cref{theorem:ch02-Steiner}(iii)得
+\begin{align*}
+\lambda_N(E)=\lambda_N(S(E))\leqslant\kappa_N\left(\frac{\operatorname{diam}(E)}2\right)^N,
+\end{align*}
+其中 $\kappa_N$ 由\eqref{align:ch01-kappaN}给出。结论成立。
+\end{proof}
+
+\section{Young 测度}\label{section:ch02-Young测度}
+
+设 $(X,\mathscr A,\mu)$ 为测度空间，$(X',\mathscr A')$ 为可测空间。设 $f:X\to X'$ 为 $(\mathscr A,\mathscr A')$-可测。利用\eqref{align:ch02-2.2}，立即可见映射
+\begin{align}
+\mu_f:\mathscr A'\to[0,\infty],\qquad \mu_f(E'):=\mu(f^{-1}(E'))\quad(E'\in\mathscr A') \label{align:ch02-2.27}
+\end{align}
+为测度。
+
+\begin{definition}\label{definition:ch02-像测度}
+由\eqref{align:ch02-2.27}定义的测度 $\mu_f$ 称为 $\mu$ 在 $f$ 下的像。
+\end{definition}
+
+设 $(X_1\times X_2,\mathscr A_1\times\mathscr A_2)$ 为两个可测空间 $(X_1,\mathscr A_1)$ 与 $(X_2,\mathscr A_2)$ 的乘积，$\mu:\mathscr A_1\times\mathscr A_2\to[0,\infty]$ 为测度。由\cref{lemma:ch02-投影可测}，像测度
+\begin{align}
+\mu_{p_1}:\mathscr A_1\to[0,\infty],\qquad \mu_{p_1}(E_1):=\mu(p_1^{-1}(E_1))=\mu(E_1\times X_2)\quad(E_1\in\mathscr A_1), \label{align:ch02-2.28a}\\
+\mu_{p_2}:\mathscr A_2\to[0,\infty],\qquad \mu_{p_2}(E_2):=\mu(p_2^{-1}(E_2))=\mu(X_1\times E_2)\quad(E_2\in\mathscr A_2) \label{align:ch02-2.28b}
+\end{align}
+良定义。
+
+\begin{definition}\label{definition:ch02-投影测度}
+由\eqref{align:ch02-2.28a}定义的测度 $\mu_{p_i}$ 称为 $\mu$ 在 $X_i$ 上的投影（$i=1,2$）。
+\end{definition}
+
+\begin{definition}\label{definition:ch02-Young测度}
+设 $X$ 与 $Y$ 为局部紧 Hausdorff 空间，$\mu\in\mathscr R^+_f(X)$。
+\begin{enumerate}[(i)]
+\item 任意满足 $\nu(E\times Y)=\mu(E)$（对所有 $E\in\mathscr B(X)$）的测度 $\nu\in\mathscr R^+_f(X\times Y)$ 称为 Young 测度。
+\item 设 $f:X\to Y$ 为 $(\mathscr B(X),\mathscr B(Y))$-可测。满足
+\begin{align}
+\nu(E\times F)=\mu(E\cap f^{-1}(F))\quad\text{对所有 }E\in\mathscr B(X),\ F\in\mathscr B(Y) \label{align:ch02-2.29}
+\end{align}
+的 Young 测度 $\nu$ 称为与 $f$ 相伴的 Young 测度。
+\end{enumerate}
+\end{definition}
+
+由定义有 $\nu_{p_X}=\mu$，其中 $p_X$ 为 $X\times Y$ 到 $X$ 的投影。记 Young 测度的集合为 $\mathcal Y^+(X,\mathscr B(X),\mu;Y)\equiv\mathcal Y^+(X;Y)$。
+
+\begin{remark}\label{remark:ch02-Young有界}
+易见 $\mathcal Y^+(X;Y)$ 为 $\mathscr R^+_f(X\times Y)$ 的有界子集。事实上，对任意 $\nu\in\mathcal Y^+(X;Y)$，有
+\begin{align*}
+\|\nu\|_{\mathscr R_f(X\times Y)}=\nu(X\times Y)=\mu(X).
+\end{align*}
+故 $\mathcal Y^+(X;Y)$ 含于球面 $\partial B(0,\|\mu\|_{\mathscr R_f(X)})\subseteq\mathscr R^+_f(X\times Y)$。
+\end{remark}
+
+\begin{remark}\label{remark:ch02-Young图支撑}\label{remark:ch02-Young投影}
+由\eqref{align:ch02-2.29}，与 $f$ 相伴的 Young 测度集中于 $f$ 的图像上，即集合 $\{(x,f(x))\mid x\in X\}$ 上（见\cref{definition:ch01-集中测度}）。又易见若 $f_1,f_2:X\to Y$ 为 $(\mathscr B(X),\mathscr B(Y))$-可测，$\nu_1,\nu_2$ 为相伴 Young 测度，则 $\nu_1=\nu_2$ 当且仅当 $f_1=f_2$ 在 $X$ 上 $\mu$-a.e.。事实上，若 $\nu_1=\nu_2$，则
+\begin{align*}
+\mu(X)=\nu_2(\{(x,f_2(x))\mid x\in X\})
+=\nu_1(\{(x,f_2(x))\mid x\in X\})
+=\mu(\{x\in X\mid f_1(x)=f_2(x)\}),
+\end{align*}
+故 $f_1=f_2$ $\mu$-a.e.。反向蕴含由\eqref{align:ch02-2.29}立即得到。
+\end{remark}
+
+最后提及下列结果。
+
+\begin{lemma}\label{lemma:ch02-像测度积分}
+\label{lemma:ch02-像测度}
+设 $(X,\mathscr A,\mu)$ 为测度空间，$(X',\mathscr A')$ 为可测空间。设 $f:X\to X'$ 为 $(\mathscr A,\mathscr A')$-可测，$\mu_f$ 为 $\mu$ 在 $f$ 下的像。则对任意 $g\in L^1(X',\mathscr A',\mu_f)$，有 $g\circ f\in L^1(X,\mathscr A,\mu)$，且
+\begin{align}
+\int_F g\,\mathrm{d}\mu_f=\int_{f^{-1}(F)}g\circ f\,\mathrm{d}\mu\quad\text{对任意 }F\in\mathscr A'. \label{align:ch02-2.30}
+\end{align}
+\end{lemma}
+
+\begin{proof}
+设 $s\in\mathscr S(X')$，即 $s=\sum_{i=1}^n c_i\chi_{E'_i}$，其中 $c_1,\dots,c_n\in\mathbb R$，$\{E'_1,\dots,E'_n\}\subseteq\mathscr A'$ 为 $X'$ 的划分。因 $s\circ f=\sum_{i=1}^n c_i\chi_{f^{-1}(E'_i)}$，当 $g=s$ 时由\eqref{align:ch02-2.27}立即得\eqref{align:ch02-2.30}。再由 $\mathscr S(X')$ 在 $L^1(X',\mathscr A',\mu_f)$ 中的稠密性（见\cref{remark:ch02-简单函数稠密}）即得结论。
+\end{proof}
+
+\section{Riesz 表示定理：正泛函}\label{section:ch02-Riesz正泛函}
+
+设 $X,Y$ 为赋范向量空间。以 $X^*$ 记 $X$ 的对偶空间，其范数为
+\begin{align*}
+X^*\ni x^*\mapsto\|x^*\|_{X^*}:=\sup_{\|x\|_X\leqslant1}\left|\langle x^*,x\rangle_{X^*,X}\right|,
+\end{align*}
+其中 $\langle\cdot,\cdot\rangle_{X^*,X}$ 表示 $X$ 与 $X^*$ 之间的对偶映射，
+\begin{align*}
+\langle\cdot,\cdot\rangle_{X^*,X}:X^*\times X\to\mathbb R,\qquad(x^*,x)\mapsto\langle x^*,x\rangle_{X^*,X}.
+\end{align*}
+
+设 $(X,\mathscr T)$ 为 Hausdorff 空间，$\mu$ 为 $X$ 上的 Borel 测度。对任意 $f\in C_c(X)$，有 $|f|\leqslant\|f\|_\infty\chi_{\operatorname{supp}f}$，故 $C_c(X)\subseteq L^1_{\mathrm{loc}}(X,\mathscr B,\mu)$。于是映射
+\begin{align*}
+F:C_c(X)\to\mathbb R,\qquad \langle F,f\rangle:=\int_X f\,\mathrm{d}\mu
+\end{align*}
+为 $C_c(X)$ 上的线性泛函，且在下列意义下为正的。
+
+\begin{definition}\label{definition:ch02-正泛函}
+称线性泛函 $F:C_c(X)\to\mathbb R$ 为正的，若对任意 $f\in C_c(X)$、$f\geqslant0$ 有 $\langle F,f\rangle\geqslant0$。
+\end{definition}
+
+反之，下列定理证明：当 $X$ 局部紧时，每个正线性泛函 $F:C_c(X)\to\mathbb R$ 均可表示为 $\langle F,f\rangle=\int_X f\,\mathrm{d}\mu$，其中 $\mu$ 为合适的 Radon 测度。
+
+\begin{theorem}[Riesz]\label{theorem:ch02-Riesz正泛函}
+设 $X$ 为局部紧 Hausdorff 空间，$F:C_c(X)\to\mathbb R$ 为正线性泛函。则存在 $X$ 上唯一 Radon 测度 $\mu$，使
+\begin{align}
+\langle F,f\rangle=\int_X f\,\mathrm{d}\mu\quad\text{对任意 }f\in C_c(X). \label{align:ch02-2.31}
+\end{align}
+此外，$\mu$ 有下列性质：
+\begin{enumerate}[(i)]
+\item 有
+\begin{align}
+\mu(A)=\sup\{\langle F,f\rangle\mid f\in C_c(X),\ f(X)\subseteq[0,1],\ \operatorname{supp}f\subseteq A\}\quad\text{对任意开集 }A\subseteq X,\ A\neq\emptyset, \label{align:ch02-2.32}\\
+\mu(K)=\inf\{\langle F,f\rangle\mid f\in C_c(X),\ f\geqslant\chi_K\}\quad\text{对任意紧集 }K\subseteq X; \label{align:ch02-2.33}
+\end{align}
+\item $\mu$ 有限当且仅当 $F$ 有界。此时 $\mu(X)=\|F\|$，其中
+\begin{align*}
+\|F\|:=\sup\{|\langle F,f\rangle|\mid f\in C_c(X),\ \|f\|_\infty=1\}.
+\end{align*}
+\end{enumerate}
+\end{theorem}
+
+为简单起见，将在附加假设 $X$ 具有可数基下证明\cref{theorem:ch02-Riesz正泛函}（一般情形见文献\cite{ref45}）。存在性证明依赖下列引理。
+
+\begin{lemma}\label{lemma:ch02-Riesz构造}
+设 $X$ 为具有可数基的局部紧 Hausdorff 空间，$F:C_c(X)\to\mathbb R$ 为正线性泛函。则存在 $X$ 上 Radon 测度 $\mu$，使\eqref{align:ch02-2.32}--\eqref{align:ch02-2.33}成立。
+\end{lemma}
+
+\begin{proof}
+令 $\mu_0(\emptyset):=0$，并对任意非空 $A\in\mathscr T$ 令
+\begin{align}
+\mu_0(A):=\sup\{\langle F,f\rangle\mid f\in C_c(X),\ f(X)\subseteq[0,1],\ \operatorname{supp}f\subseteq A\}. \label{align:ch02-2.34}
+\end{align}
+对任意 $E\subseteq X$，定义
+\begin{align}
+\mu^*(E):=\inf\left\{\sum_{n=1}^\infty\mu_0(A_n)\ \middle|\ E\subseteq\bigcup_{n=1}^\infty A_n,\ \{A_n\}\subseteq\mathscr T\right\} \label{align:ch02-2.35}
+\end{align}
+（注意因 $X$ 有可数基，任意 $E\subseteq X$ 可用开集可数覆盖）。由\cref{theorem:ch01-外测度}，映射 $\mu^*$ 为 $X$ 上外测度。由\cref{theorem:ch01-Caratheodory}，$\mu^*$-可测集族为 $\sigma$-代数，$\mu^*$ 在其上的限制 $\mu$ 为 $X$ 上完备测度。
+
+现证每个 $A\in\mathscr T$ 均为 $\mu^*$-可测，即
+\begin{align}
+\mu^*(Z)\geqslant\mu^*(Z\cap A)+\mu^*(Z\setminus A)\quad\text{对任意 }Z\subseteq X \label{align:ch02-2.36}
+\end{align}
+（见\cref{remark:ch01-Caratheodory}）。因 $\mathscr B=\sigma_0(\mathscr T)$，由此可知每个 Borel 集均可测，从而 $\mu$ 定义在 $\mathscr B$ 上。又因对每个 $A\in\mathscr T$ 有 $\mu^*(A)=\mu_0(A)$（见\eqref{align:ch02-2.35}），\eqref{align:ch02-2.32}随之成立。
+
+设 $\mu^*(Z)<\infty$（否则\eqref{align:ch02-2.36}显然），先设 $Z\in\mathscr T$。则 $Z\cap A\in\mathscr T$，故 $\mu^*(Z\cap A)=\mu_0(Z\cap A)$。由 $\mu_0$ 的定义，对任意 $\epsilon>0$，存在 $f\in C_c(X)$，$f(X)\subseteq[0,1]$，$\operatorname{supp}f\subseteq Z\cap A$，使
+\begin{align}
+\langle F,f\rangle>\mu_0(Z\cap A)-\epsilon. \label{align:ch02-2.37}
+\end{align}
+类似地，因 $Z\setminus\operatorname{supp}f\in\mathscr T$，$\mu^*(Z\setminus\operatorname{supp}f)=\mu_0(Z\setminus\operatorname{supp}f)$，故对任意 $\epsilon>0$，存在 $g\in C_c(X)$，$g(X)\subseteq[0,1]$，$\operatorname{supp}g\subseteq Z\setminus\operatorname{supp}f$，使
+\begin{align}
+\langle F,g\rangle>\mu_0(Z\setminus\operatorname{supp}f)-\epsilon. \label{align:ch02-2.38}
+\end{align}
+特别地，$f+g\in C_c(X)$，$(f+g)(X)\subseteq[0,1]$，$\operatorname{supp}(f+g)\subseteq Z$。由\eqref{align:ch02-2.37}--\eqref{align:ch02-2.38}得
+\begin{align*}
+\mu^*(Z)=\mu_0(Z)\geqslant\langle F,f+g\rangle=\langle F,f\rangle+\langle F,g\rangle
+\geqslant\mu_0(Z\cap A)+\mu_0(Z\setminus\operatorname{supp}f)-2\epsilon
+=\mu^*(Z\cap A)+\mu^*(Z\setminus\operatorname{supp}f)-2\epsilon
+\geqslant\mu^*(Z\cap A)+\mu^*(Z\setminus A)-2\epsilon.
+\end{align*}
+由 $\epsilon$ 的任意性，当 $Z$ 为开集时得\eqref{align:ch02-2.36}。一般情形下，由\eqref{align:ch02-2.35}，对任意 $\epsilon>0$，存在 $W\in\mathscr T$ 使 $Z\subseteq W$ 且 $\mu_0(W)<\mu^*(Z)+\epsilon$。由上述考虑与 $\mu^*$ 的单调性得
+\begin{align*}
+\mu^*(Z)>\mu_0(W)-\epsilon=\mu^*(W)-\epsilon
+\geqslant\mu^*(W\cap A)+\mu^*(W\setminus A)-\epsilon
+\geqslant\mu^*(Z\cap A)+\mu^*(Z\setminus A)-\epsilon,
+\end{align*}
+结论成立。
+
+现证\eqref{align:ch02-2.33}。固定任意 $K\in\mathscr K$，设 $f\in C_c(X)$，$f\geqslant\chi_K$。对任意 $\epsilon\in(0,1)$，令 $A_\epsilon:=\{f>1-\epsilon\}$。则 $A_\epsilon$ 为开集，$K\subseteq A_\epsilon$。设 $g\in C_c(X)$，$g(X)\subseteq[0,1]$，$\operatorname{supp}g\subseteq A_\epsilon$。故对任意 $x\in X$ 有 $(1-\epsilon)g(x)\leqslant f(x)$，从而 $\langle F,g\rangle\leqslant\frac1{1-\epsilon}\langle F,f\rangle$。又因每个 $K\in\mathscr K$ 为 $\mu^*$-可测，$\mu^*(K)=\mu(K)$。由 $\mu^*$ 的单调性与\eqref{align:ch02-2.34}得
+\begin{align}
+\mu(K)=\mu^*(K)\leqslant\mu^*(A_\epsilon)=\mu_0(A_\epsilon)
+=\sup\{\langle F,f\rangle\mid g\in C_c(X),\ g(X)\subseteq[0,1],\ \operatorname{supp}g\subseteq A_\epsilon\}
+\leqslant\frac1{1-\epsilon}\langle F,f\rangle, \label{align:ch02-2.39}
+\end{align}
+由 $f$ 与 $\epsilon\in(0,1)$ 的任意性得
+\begin{align}
+\mu(K)\leqslant\inf\{\langle F,f\rangle\mid f\in C_c(X),\ f\geqslant\chi_K\}. \label{align:ch02-2.40}
+\end{align}
+
+现注意由\eqref{align:ch02-2.39}取 $\epsilon=1/2$ 得：对任意 $K\in\mathscr K$，$\mu(K)\leqslant\langle F,2f\rangle<\infty$，故 $\mu$ 局部有限（见\cref{remark:ch01-局部有限}；由假设 $X$ 局部紧）。因 $\mu$ 定义在含 $\mathscr B$ 的 $\sigma$-代数上，$\mu\in\mathscr B^+(X)$，由\cref{proposition:ch01-正则}知其正则。特别地，$\mu$ 内正则，故为 Radon 测度。
+
+现可证\eqref{align:ch02-2.40}的反向不等式。因 $\mu$ 外正则，对任意 $K\in\mathscr K$ 与 $\epsilon>0$，存在 $A\in\mathscr T$ 使 $K\subseteq A$ 且 $\mu(A)<\mu(K)+\epsilon$。由\cref{lemma:appA-Urysohn}存在 $\hat f\in C_c(X)$，$\hat f(X)\subseteq[0,1]$，$\hat f|_K=1$，故 $\hat f\geqslant\chi_K$，且 $\operatorname{supp}\hat f\subseteq A$。由\eqref{align:ch02-2.32}得
+\begin{align*}
+\inf\{\langle F,f\rangle\mid f\in C_c(X),\ f\geqslant\chi_K\}\leqslant\langle F,\hat f\rangle\leqslant\mu(A)<\mu(K)+\epsilon,
+\end{align*}
+由 $\epsilon$ 的任意性得
+\begin{align}
+\inf\{\langle F,f\rangle\mid f\in C_c(X),\ f\geqslant\chi_K\}\leqslant\mu(K). \label{align:ch02-2.41}
+\end{align}
+由\eqref{align:ch02-2.40}--\eqref{align:ch02-2.41}得\eqref{align:ch02-2.33}。证毕。
+\end{proof}
+
+\begin{proof}[\cref{theorem:ch02-Riesz正泛函}的证明]
+(i) 设 $f\in C_c(X)$；不妨设 $f(X)\subseteq[0,1]$。令 $K_0:=\operatorname{supp}f$，$K_{j,n}:=\{f\geqslant j/n\}$（任意 $n\in\mathbb N$，$j=1,\dots,n$）。显然每个 $K_{j,n}$ 为紧集，且
+\begin{align*}
+K_{n,n}=\{f=1\}\subseteq\cdots\subseteq K_{j,n}\subseteq K_{j-1,n}\subseteq\cdots\subseteq K_0.
+\end{align*}
+对任意 $x\in X$，令
+\begin{align*}
+f_{j,n}(x):=
+\begin{cases}
+1/n, & x\in K_{j,n},\\
+f(x)-\dfrac{j-1}n, & x\in K_{j-1,n}\setminus K_{j,n},\\
+0, & x\in X\setminus K_{j-1,n}.
+\end{cases}
+\end{align*}
+则对所有 $j,n$，同上有 $f_{j,n}\in C_c(X)$，$f_{j,n}(X)\subseteq[0,1]$，$\sum_{j=1}^n f_{j,n}=f$，且
+\begin{align}
+\frac{\chi_{K_{j,n}}}{n}\leqslant f_{j,n}\leqslant\frac{\chi_{K_{j-1,n}}}{n}
+\Rightarrow\frac1n\sum_{j=1}^n\chi_{K_{j,n}}\leqslant f\leqslant\frac1n\sum_{j=1}^n\chi_{K_{j-1,n}}. \label{align:ch02-2.42}
+\end{align}
+
+设 $\mu$ 为由\cref{lemma:ch02-Riesz构造}给出的 Radon 测度。由\eqref{align:ch02-2.42}，对每个 $n\in\mathbb N$ 得
+\begin{align}
+\frac1n\sum_{j=1}^n\mu(K_{j,n})\leqslant\int_X f\,\mathrm{d}\mu
+\leqslant\frac1n\sum_{j=1}^n\mu(K_{j-1,n}). \label{align:ch02-2.43}
+\end{align}
+
+现证也有
+\begin{align}
+\frac1n\sum_{j=1}^n\mu(K_{j,n})\leqslant\langle F,f\rangle
+\leqslant\frac1n\sum_{j=1}^n\mu(K_{j-1,n})\quad(n\in\mathbb N). \label{align:ch02-2.44}
+\end{align}
+事实上，由\eqref{align:ch02-2.42}第一不等式得 $nf_{j,n}\geqslant\chi_{K_{j,n}}$，由\eqref{align:ch02-2.33}得
+\begin{align*}
+\mu(K_{j,n})\leqslant\langle F,nf_{j,n}\rangle=n\langle F,f_{j,n}\rangle
+\Rightarrow\frac{\mu(K_{j,n})}n\leqslant\langle F,f_{j,n}\rangle.
+\end{align*}
+此外，由定义 $\operatorname{supp}f_{j,n}\subseteq K_{j-1,n}$，且由\eqref{align:ch02-2.42}有 $nf_{j,n}\leqslant\chi_{K_{j-1,n}}$。另一方面，由\cref{lemma:ch01-紧外正则}(ii)，紧集 $K_{j-1,n}$ 为 $\mu$-外正则，故存在非增序列 $\{A_m\}\subseteq\mathscr T$，使对任意 $m\in\mathbb N$ 有 $K_{j-1,n}\subseteq A_m$ 且 $\mu(K_{j-1,n})=\lim_{m\to\infty}\mu(A_m)$。由\eqref{align:ch02-2.32}得
+\begin{align*}
+\langle F,nf_{j,n}\rangle=n\langle F,f_{j,n}\rangle\leqslant\mu(A_m)\quad\forall m\in\mathbb N
+\Rightarrow\langle F,f_{j,n}\rangle\leqslant\frac{\mu(K_{j-1,n})}n.
+\end{align*}
+因此对任意 $n\in\mathbb N$ 与 $j=1,\dots,n$，
+\begin{align*}
+\frac{\mu(K_{j,n})}n\leqslant\langle F,f_{j,n}\rangle\leqslant\frac1n\mu(K_{j-1,n}),
+\end{align*}
+从而\eqref{align:ch02-2.44}成立。
+
+由\eqref{align:ch02-2.43}--\eqref{align:ch02-2.44}得
+\begin{align*}
+\left|\langle F,f\rangle-\int_X f\,\mathrm{d}\mu\right|
+\leqslant\frac1n\sum_{j=1}^n[\mu(K_{j-1,n})-\mu(K_{j,n})]
+=\frac{\mu(K_0)-\mu(K_{n,n})}n\leqslant\frac{\mu(K_0)}n.
+\end{align*}
+令 $n\to\infty$ 即得\eqref{align:ch02-2.31}。
+
+现证唯一性。为此只需证明：每个使\eqref{align:ch02-2.31}成立的 Radon 测度 $\mu$ 也满足\eqref{align:ch02-2.33}（事实上，由内正则性，两个在 $\mathscr K$ 上一致的 Radon 测度在 $X$ 上一致）。设\eqref{align:ch02-2.31}成立。则对任意 $K\in\mathscr K$ 与任意 $f\in C_c(X)$、$f\geqslant\chi_K$，有
+\begin{align*}
+\langle F,f\rangle=\int_X f\,\mathrm{d}\mu\geqslant\mu(K)
+\Rightarrow\mu(K)\leqslant\inf\{\langle F,f\rangle\mid f\in C_c(X),\ f\geqslant\chi_K\}.
+\end{align*}
+
+反之，由\cref{lemma:ch01-紧外正则}(ii)，每个 $K\in\mathscr K$ 为 $\mu$-外正则，故对任意 $\epsilon>0$，存在 $A\in\mathscr T$ 使 $K\subseteq A$ 且 $\mu(A)<\mu(K)+\epsilon$。由\cref{lemma:appA-Urysohn}存在 $\bar f\in C_c(X)$ 使 $\chi_K\leqslant\bar f\leqslant\chi_A$。因此对任意 $\epsilon>0$，
+\begin{align*}
+\langle F,\bar f\rangle=\int_X\bar f\,\mathrm{d}\mu\leqslant\mu(A)<\mu(K)+\epsilon,
+\end{align*}
+由 $\epsilon$ 的任意性得
+\begin{align*}
+\mu(K)\geqslant\inf\{\langle F,f\rangle\mid f\in C_c(X),\ f\geqslant\chi_K\}.
+\end{align*}
+结论成立。
+
+(ii) 若 $\mu$ 有限，则由\eqref{align:ch02-2.31}得对任意 $f\in C_c(X)$，
+\begin{align*}
+|\langle F,f\rangle|=\left|\int_X f\,\mathrm{d}\mu\right|\leqslant\|f\|_\infty\mu(X),
+\end{align*}
+故 $F$ 有界且 $\|F\|\leqslant\mu(X)$。反之，若 $F$ 有界，则由\eqref{align:ch02-2.31}对任意 $f\in C_c(X)$ 有
+\begin{align*}
+\left|\int_X f\,\mathrm{d}\mu\right|=|\langle F,f\rangle|\leqslant\|F\|\,\|f\|_\infty.
+\end{align*}
+于是对任意 $K\in\mathscr K$ 与 $f\in C_c(X)$（$f(X)\subseteq[0,1]$，$f\geqslant\chi_K$），有 $\mu(K)\leqslant\|F\|$。由 $\mu$ 的内正则性，
+\begin{align*}
+\mu(X)=\sup\{\mu(K)\mid K\in\mathscr K\}\leqslant\|F\|.
+\end{align*}
+证毕。
+\end{proof}
+
+现证\cref{theorem:ch02-Riesz正泛函}对空间 $C_0(X)$ 的相伴结果。
+
+\begin{theorem}\label{theorem:ch02-RieszC0}\label{theorem:ch02-Riesz范数}\label{theorem:ch02-Riesz表示}
+\label{theorem:ch02-Rf对偶}
+设 $X$ 为局部紧 Hausdorff 空间，$F:C_0(X)\to\mathbb R$ 为正线性泛函。则存在 $X$ 上唯一 Radon 测度 $\mu$，使 $C_0(X)\subseteq L^1(X,\mathscr B,\mu)$ 且
+\begin{align}
+\langle F,f\rangle:=\int_X f\,\mathrm{d}\mu\quad\text{对所有 }f\in C_0(X). \label{align:ch02-2.45}
+\end{align}
+此外，$\mu$ 有限且满足\eqref{align:ch02-2.32}--\eqref{align:ch02-2.33}。
+\end{theorem}
+
+证明需要下列独立引理。
+
+\begin{lemma}\label{lemma:ch02-C0正泛函有界}
+设 $X$ 为局部紧 Hausdorff 空间。则每个正线性泛函 $F:C_0(X)\to\mathbb R$ 有界。
+\end{lemma}
+
+\begin{proof}
+反证，设 $F$ 无界。则存在序列 $\{f_n\}\subseteq C_0(X)$ 使 $\|f_n\|_\infty=1$ 且对所有 $n\in\mathbb N$ 有 $|\langle F,f_n\rangle|\geqslant n^3$。不妨设 $f_n\geqslant0$，因 $|\langle F,f_n\rangle|\leqslant\langle F,|f_n|\rangle$（$n\in\mathbb N$）。因 $\sum_{n=1}^\infty\|f_n\|_\infty/n^2<\infty$，级数 $\sum_{n=1}^\infty f_n/n^2$ 在 $C_0(X)$ 中收敛。令 $f:=\sum_{n=1}^\infty f_n/n^2$。则对所有 $n\in\mathbb N$ 有 $f_n/n^2\leqslant f$，从而 $n\leqslant\langle F,f_n\rangle/n^2\leqslant\langle F,f\rangle<\infty$，矛盾。
+\end{proof}
+
+\begin{proof}[\cref{theorem:ch02-RieszC0}的证明]
+由\cref{theorem:ch02-Riesz正泛函}(i)，存在唯一 Radon 测度 $\mu$，使限制 $\hat F:=F|_{C_c(X)}$ 可如\eqref{align:ch02-2.31}表示，且\eqref{align:ch02-2.32}--\eqref{align:ch02-2.33}成立。由\cref{lemma:ch02-C0正泛函有界}，$F$ 有界，故 $\hat F$ 也有界。由\cref{theorem:ch02-Riesz正泛函}(ii)，$\mu$ 有限，从而线性泛函
+\begin{align*}
+G:C_c(X)\to\mathbb R,\qquad\langle G,f\rangle:=\int_X f\,\mathrm{d}\mu
+\end{align*}
+良定义且有界。因 $C_c(X)$ 在 $C_0(X)$ 中稠密且 $F=G$ 在 $C_c(X)$ 上，结论成立。
+\end{proof}
+
+将上述考虑推广到空间 $C_b(X)$ 是有用的。下列\cref{lemma:ch02-Riesz构造}的类似结果可证（见文献\cite{ref45} Lemma VIII.2.11）。
+
+\begin{lemma}\label{lemma:ch02-Cb正泛函}
+设 $X$ 为局部紧 Hausdorff 空间。则对任意正线性泛函 $F:C_b(X)\to\mathbb R$，存在 $\mu\in\mathscr R^+_f(X)$，使
+\begin{align}
+\int_X f\,\mathrm{d}\mu\leqslant\langle F,f\rangle\quad\text{对所有 }f\in C_b(X),\ f\geqslant0. \label{align:ch02-2.46}
+\end{align}
+特别地，$C_b(X)\subseteq L^1(X,\mathscr B(X),\mu)$。
+\end{lemma}
+
+\cref{lemma:ch02-Cb正泛函}的证明需要对\cref{lemma:ch02-Riesz构造}的证明作适当修改。仅指出
+\begin{align}
+\mu(A)=\sup\{\mu_0(K)\mid K\text{ 紧},\ K\subseteq A\}\quad\text{对任意开集 }A\subseteq X,\ A\neq\emptyset, \label{align:ch02-2.47}
+\end{align}
+其中
+\begin{align}
+\mu_0(K):=\inf\{\langle F,f\rangle\mid f\in C_c(X),\ f\geqslant\chi_K\}\quad\text{对任意紧集 }K\subseteq X. \label{align:ch02-2.48}
+\end{align}
+
+现可证下列结果。
+
+\begin{proposition}\label{proposition:ch02-Cb表示}
+设 $X$ 为局部紧 Hausdorff 空间。设 $F:C_b(X)\to\mathbb R$ 为线性正泛函，$\mu\in\mathscr R^+_f(X)$ 由\cref{lemma:ch02-Cb正泛函}给出。则下列命题等价：
+\begin{enumerate}[(i)]
+\item 有
+\begin{align}
+\langle F,f\rangle=\int_X f\,\mathrm{d}\mu\quad\text{对任意 }f\in C_b(X); \label{align:ch02-2.49}
+\end{align}
+\item 对任意 $\epsilon>0$，存在紧集 $K\subseteq X$，使对所有 $f\in C_b(X)$（$f(X)\subseteq[0,1]$，$f|_K=0$）有 $\langle F,f\rangle<\epsilon$。
+\end{enumerate}
+若任一命题成立，则 $\mu$ 为 $\mathscr R^+_f(X)$ 中使\eqref{align:ch02-2.49}成立的唯一元素。
+\end{proposition}
+
+\begin{proof}
+唯一性由\eqref{align:ch02-2.49}与\cref{theorem:ch02-RieszC0}得到。
+
+(i)$\Rightarrow$(ii)。在\eqref{align:ch02-2.49}中取 $f=1$ 得 $\langle F,1\rangle=\mu(X)$。固定 $\epsilon>0$。由\cref{proposition:appA-σ紧}，$X$ 为 $\sigma$-紧，故存在紧集 $K\subseteq X$ 使 $\mu(K)>\mu(X)-\epsilon$。由不等式\eqref{align:ch02-2.46}，对所有 $f\in C_b(X)$（$f(X)\subseteq[0,1]$，$f|_K=0$），得
+\begin{align*}
+\mu(X)-\langle F,f\rangle=\langle F,1\rangle-\langle F,f\rangle=\langle F,1-f\rangle\geqslant\mu(K)>\mu(X)-\epsilon,
+\end{align*}
+结论成立。
+
+(ii)$\Rightarrow$(i)。由\eqref{align:ch02-2.46}有 $\mu(X)\leqslant\langle F,1\rangle$。现证反向不等式。固定 $\epsilon>0$。由假设存在紧集 $K\subseteq X$，使对所有 $f\in C_b(X)$（$f(X)\subseteq[0,1]$，$f|_K=0$）有 $\langle F,f\rangle<\epsilon$。由\eqref{align:ch02-2.47}--\eqref{align:ch02-2.48}与\cref{lemma:ch01-紧外正则}(ii)，存在 $g\in C_b(X)$，$g(X)\subseteq[0,1]$，$g|_K=1$，且 $\langle F,g\rangle<\mu(K)+\epsilon$。于是 $\langle F,1-g\rangle<\epsilon$，从而
+\begin{align*}
+\langle F,1\rangle=\langle F,g\rangle+\langle F,1-g\rangle<\mu(K)+2\epsilon\leqslant\mu(X)+2\epsilon.
+\end{align*}
+由 $\epsilon$ 的任意性得 $\langle F,1\rangle\leqslant\mu(X)$。故 $\langle F,1\rangle=\mu(X)$。
+
+现可对任意 $f\in C_b(X)$（$f(X)\subseteq[0,1]$）证明等式\eqref{align:ch02-2.49}（一般情形显然由此推出）。对函数 $1-f$ 应用不等式\eqref{align:ch02-2.46}，得
+\begin{align*}
+\mu(X)-\int_X f\,\mathrm{d}\mu=\int_X(1-f)\,\mathrm{d}\mu\leqslant\langle F,1-f\rangle
+=\langle F,1\rangle-\langle F,f\rangle=\mu(X)-\langle F,f\rangle,
+\end{align*}
+从而 $\int_X f\,\mathrm{d}\mu\geqslant\langle F,f\rangle$。结合上述不等式与\eqref{align:ch02-2.46}即得结论。
+\end{proof}
+
+\section{Riesz 表示定理：有界泛函}\label{section:ch02-Riesz有界泛函}
+
+设 $X$ 为局部紧 Hausdorff 空间。考虑赋以上确界范数的 Banach 空间 $C_0(X)$，以及 $X$ 上有限带号 Radon 测度所成、赋以范数 $\mu\mapsto\|\mu\|_{\mathscr R_f(X)}:=|\mu|(X)$ 的 Banach 空间 $\mathscr R_f(X)$。
+
+欲证对偶空间 $(C_0(X))^*$ 可与 $\mathscr R_f(X)$ 等同。更确切地，考虑映射
+\begin{align}
+T:\mathscr R_f(X)\to(C_0(X))^*,\qquad\langle T(\mu),f\rangle:=\int_X f\,\mathrm{d}\mu, \label{align:ch02-2.50}
+\end{align}
+其中 $\mu\in\mathscr R_f(X)$，$f\in C_0(X)$。有下列结果。
+
+\begin{theorem}\label{theorem:ch02-Riesz对偶}
+设 $X$ 为局部紧 Hausdorff 空间。则由\eqref{align:ch02-2.50}定义的映射 $T$ 为 $\mathscr R_f(X)$ 到 $(C_0(X))^*$ 的等距同构。
+\end{theorem}
+
+\cref{theorem:ch02-Riesz对偶}的证明依赖下列引理，其证明在本小节末给出。
+
+\begin{lemma}\label{lemma:ch02-Jordan分解}
+设 $X$ 为局部紧 Hausdorff 空间，$F:C_0(X)\to\mathbb R$ 为有界线性泛函。则存在正线性泛函 $F^\pm:C_0(X)\to\mathbb R$，使
+\begin{align}
+F=F^+-F^-. \label{align:ch02-2.51}
+\end{align}
+此外：
+\begin{enumerate}[(i)]
+\item 有
+\begin{align}
+\langle F^+,f\rangle=\sup\{\langle F,g\rangle\mid g\in C_0(X),\ 0\leqslant g\leqslant f\}; \label{align:ch02-2.52}
+\end{align}
+\item 分解\eqref{align:ch02-2.51}在下列意义下极小：若 $F=F_1-F_2$，其中 $F_1,F_2$ 为 $C_0(X)$ 上正线性泛函，则线性泛函 $F_1-F^+=F_2-F^-$ 为正。
+\end{enumerate}
+\end{lemma}
+
+\begin{remark}\label{remark:ch02-Jordan分解名}
+分解\eqref{align:ch02-2.51}称为 $F$ 的 Jordan 分解。注意极小性结论 (ii) 是\cref{remark:ch01-Jordan变差}(i) 中相应结论的对偶。
+\end{remark}
+
+\begin{proof}[\cref{theorem:ch02-Riesz对偶}的证明]
+先证 $T$ 满射。固定 $F\in(C_0(X))^*$，设 $F^\pm:C_0(X)\to[0,\infty)$ 为由\cref{lemma:ch02-Jordan分解}给出的正线性泛函（由\cref{lemma:ch02-C0正泛函有界}知 $F^\pm$ 有界）。由\cref{theorem:ch02-RieszC0}，存在 $X$ 上两个有限 Radon 测度 $\mu^\pm$，使对任意 $f\in C_0(X)$ 有 $\langle F^\pm,f\rangle:=\int_X f\,\mathrm{d}\mu^\pm$。则 $\mu:=\mu^+-\mu^-\in\mathscr R_f(X)$（见\cref{definition:ch01-带号Radon测度}(ii)），由等式\eqref{align:ch02-2.10}、\eqref{align:ch02-2.50}与\eqref{align:ch02-2.51}得对所有 $f\in C_0(X)$ 有
+\begin{align*}
+\langle F,f\rangle=\int_X f\,\mathrm{d}\mu=\langle T(\mu),f\rangle.
+\end{align*}
+故 $F=T(\mu)\in(C_0(X))^*$，结论成立。
+
+现证 $T$ 等距，从而单射。显然由定义有对所有 $\mu\in\mathscr R_f(X)$，
+\begin{align*}
+\|T(\mu)\|_{(C_0(X))^*}\leqslant|\mu|(X)=\|\mu\|_{\mathscr R_f(X)}.
+\end{align*}
+为证反向不等式，固定 $\epsilon>0$。由\eqref{align:ch01-全变差公式}中等式，存在互不相交的 $E_1,\dots,E_n\in\mathscr B$，使 $X=\bigcup_{i=1}^n E_i$ 且 $\sum_{i=1}^n|\mu(E_i)|>|\mu|(X)-\epsilon$。由 $\mu$ 的正则性，存在 $K_1,\dots,K_n\in\mathscr K$ 与互不相交的 $A_1,\dots,A_n\in\mathscr T$，使：
+(a) $\sum_{i=1}^n|\mu(K_i)|>|\mu|(X)-2\epsilon$；
+(b) $K_i\subseteq E_i\subseteq A_i$，对每个 $i=1,\dots,n$ 有 $|\mu|(A_i\setminus K_i)<\epsilon/n$。
+
+此外，由\cref{lemma:appA-Urysohn}，对每个 $i=1,\dots,n$，存在 $f_i\in C_c(X)$，$f_i(X)\subseteq[0,1]$，$f_i|_{K_i}=1$，$\operatorname{supp}f_i\subseteq A_i$。令
+\begin{align*}
+g:=\sum_{i=1}^n[\operatorname{sgn}\mu(K_i)]f_i.
+\end{align*}
+则 $\|g\|_\infty\leqslant1$，且
+\begin{align*}
+\left|\int_X g\,\mathrm{d}\mu\right|\geqslant\int_X g\,\mathrm{d}\mu
+&=\sum_{i=1}^n\int_{A_i}g\,\mathrm{d}\mu
+=\sum_{i=1}^n\left(\int_{A_i\setminus K_i}g\,\mathrm{d}\mu+[\operatorname{sgn}\mu(K_i)]\int_{K_i}f_i\,\mathrm{d}\mu\right)\\
+&\geqslant\sum_{i=1}^n\left(-|\mu|(A_i\setminus K_i)+|\mu(K_i)|\right)>|\mu|(X)-3\epsilon.
+\end{align*}
+由 $\epsilon$ 的任意性，由上述不等式得
+\begin{align*}
+\|T(\mu)\|_{(C_0(X))^*}\geqslant|\langle T(\mu),g\rangle|
+=\left|\int_X g\,\mathrm{d}\mu\right|\geqslant|\mu|(X)=\|\mu\|_{\mathscr R_f(X)}.
+\end{align*}
+结论成立。
+\end{proof}
+
+\begin{proof}[\cref{lemma:ch02-Jordan分解}的证明]
+令
+\begin{align*}
+\langle F^+,f\rangle:=\sup_{g\in S_f}\langle F,g\rangle,\qquad
+S_f:=\{g\in C_0(X)\mid 0\leqslant g\leqslant f\}\quad\text{对所有 }f\in C_0(X),\ f\geqslant0,
+\end{align*}
+\begin{align*}
+\langle F^+,f\rangle:=\langle F^+,f^+\rangle-\langle F^+,f^-\rangle\quad\text{对所有 }f\in C_0(X).
+\end{align*}
+显然当 $f\geqslant0$ 时 $\langle F^+,f\rangle\geqslant0$，且对所有 $f\in C_0(X)$，
+\begin{align*}
+|\langle F^+,f\rangle|\leqslant|\langle F^+,f^+\rangle|+|\langle F^+,f^-\rangle|
+\leqslant\|F\|_{(C_0(X))^*}\|f\|_\infty,
+\end{align*}
+故 $F^+$ 为正有界泛函，$\|F^+\|_{(C_0(X))^*}\leqslant\|F\|_{(C_0(X))^*}$。此外由定义，对所有 $f\in C_0(X)$、$f\geqslant0$，有 $\langle F^+,f\rangle\geqslant\langle F,f\rangle$。
+
+现证 $F^+$ 线性。立即可见对所有 $c\geqslant0$、$f\geqslant0$，有 $\langle F^+,cf\rangle=c\langle F^+,f\rangle$。于是对所有 $f\in C_0(X)$：
+(a) 若 $c\geqslant0$，则
+\begin{align*}
+\langle F^+,cf\rangle=\langle F^+,(cf)^+\rangle-\langle F^+,(cf)^-\rangle
+=\langle F^+,cf^+\rangle-F^+(cf^-)
+=c\langle F^+,f^+\rangle-c\langle F^+,f^-\rangle=c\langle F^+,f\rangle;
+\end{align*}
+(b) 若 $c<0$，则
+\begin{align*}
+\langle F^+,cf\rangle=\langle F^+,(cf)^+\rangle-\langle F^+,(cf)^-\rangle
+=\langle F^+,|c|f^-\rangle-\langle F^+,|c|f^+\rangle
+=|c|[\langle F^+,f^-\rangle-\langle F^+,f^+\rangle]
+=c[\langle F^+,f^+\rangle-\langle F^+,f^-\rangle]=c\langle F^+,f\rangle.
+\end{align*}
+故对所有 $c\in\mathbb R$、$f\in C_0(X)$，$\langle F^+,cf\rangle=c\langle F^+,f\rangle$。若证得
+\begin{align}
+\langle F^+,f_1+f_2\rangle=\langle F^+,f_1\rangle+\langle F^+,f_2\rangle
+\quad\text{对所有 }f_1,f_2\in C_0(X),\ f_1,f_2\geqslant0, \label{align:ch02-2.53}
+\end{align}
+结论随之；事实上由 $F^+$ 的定义，等式对所有 $f_1,f_2\in C_0(X)$ 成立。
+
+固定 $f_1,f_2\in C_0(X)$，$f_1,f_2\geqslant0$。对任意 $g_1\in S_{f_1}$、$g_2\in S_{f_2}$，有
+\begin{align*}
+\langle F,g_1\rangle+\langle F,g_2\rangle=\langle F,g_1+g_2\rangle
+\leqslant\sup_{g\in S_{f_1+f_2}}\langle F,g\rangle=\langle F^+,f_1+f_2\rangle,
+\end{align*}
+故 $\langle F^+,f_1+f_2\rangle\geqslant\langle F^+,f_1\rangle+\langle F^+,f_2\rangle$。为证反向不等式，设 $0\leqslant g\leqslant f_1+f_2$。令 $g_1:=\min\{g,f_1\}$。则 $g_1\in S_{f_1}$，令 $g_2:=g-g_1$，显然 $g_2=[g-f_1]^+$。因
+\begin{align*}
+g_2-f_2=[g-f_1]^+-f_2=
+\begin{cases}
+-f_2, & g\leqslant f_1,\\
+g-(f_1+f_2), & g>f_1,
+\end{cases}
+\end{align*}
+得 $0\leqslant g_2\leqslant f_2$，即 $g_2\in S_{f_2}$。故对所有 $g\in S_f$，
+\begin{align*}
+\langle F,g\rangle=\langle F,g_1+g_2\rangle=\langle F,g_1\rangle+\langle F,g_2\rangle
+\leqslant\langle F^+,f_1\rangle+\langle F^+,f_2\rangle,
+\end{align*}
+从而 $\langle F^+,f_1+f_2\rangle\leqslant\langle F^+,f_1\rangle+\langle F^+,f_2\rangle$。
+
+因此 $F^+$ 为 $C_0(X)$ 上正线性泛函。令 $F^-:=F^+-F$；则 $F^-:C_0(X)\to\mathbb R$ 线性正，因对所有 $f\geqslant0$ 有 $\langle F^-,f\rangle=\langle F^+,f\rangle-\langle F,f\rangle\geqslant0$。故等式\eqref{align:ch02-2.51}与结论 (i) 成立。为证 (ii)，设 $f\in C_0(X)$，$f\geqslant0$。因 $F_1$、$F_2$ 为正，对任意 $g\in S_f$，有 $\langle F_1,f\rangle\geqslant\langle F_1,g\rangle\geqslant\langle F_1,g\rangle-\langle F_2,g\rangle=\langle F,g\rangle$，故 $\langle F_1,f\rangle\geqslant\langle F^+,f\rangle$。证毕。
+\end{proof}
+
+简要讨论当 $C_0(X)$ 替换为 $C_c(X)$ 时上述情形如何变化。设 $\mu_1,\mu_2$ 为（正）Radon 测度。对任意 $f\in C_c(X)$，令
+\begin{align}
+\langle F,f\rangle:=\int_X f\,\mathrm{d}\mu_1-\int_X f\,\mathrm{d}\mu_2; \label{align:ch02-2.54}
+\end{align}
+因右端两积分均有限，定义适定。于是对任意紧集 $K\subseteq X$ 与任意 $f\in C_c(X)$（$\operatorname{supp}f\subseteq K$），有
+\begin{align*}
+|\langle F,f\rangle|\leqslant[\mu_1(K)+\mu_2(K)]\|f\|_\infty.
+\end{align*}
+由该不等式，$F$ 在下列意义下局部有界。
+
+\begin{definition}\label{definition:ch02-局部有界泛函}
+称线性泛函 $F:C_c(X)\to\mathbb R$ 为局部有界的，若对任意 $K\in\mathscr K$，存在 $c_K>0$，使对所有 $f\in C_c(X)$（$\operatorname{supp}f\subseteq K$）有
+\begin{align*}
+|\langle F,f\rangle|\leqslant c_K\|f\|_\infty.
+\end{align*}
+\end{definition}
+
+\begin{lemma}\label{lemma:ch02-局部有界}
+设 $X$ 为局部紧 Hausdorff 空间。
+\begin{enumerate}[(i)]
+\item $C_c(X)$ 上每个正线性泛函均局部有界。
+\item 设 $F:C_c(X)\to\mathbb R$ 为局部有界线性泛函。则存在正线性泛函 $F^\pm:C_c(X)\to\mathbb R$，使等式\eqref{align:ch02-2.51}成立，且\cref{lemma:ch02-Jordan分解}(i)--(ii)成立。
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+仅证 (i)，因 (ii) 的证明与\cref{lemma:ch02-Jordan分解}相同，只需将 $C_0(X)$ 替换为 $C_c(X)$。设 $K\in\mathscr K$，取 $\varphi_K\in C_c(X)$，$\varphi_K(X)\subseteq[0,1]$，$\varphi_K=1$ 在 $K$ 上（见\cref{lemma:appA-Urysohn}）。对任意 $f\in C_c(X)$（$\operatorname{supp}f\subseteq K$），有
+\begin{align*}
+\|f\|_\infty\varphi_K\pm f=(\|f\|_\infty\pm f)\varphi_K\geqslant0\quad\text{在 }X\text{ 中}.
+\end{align*}
+因 $\|f\|_\infty\varphi_K\pm f\in C_c(X)$，$F$ 正线性，故
+\begin{align*}
+\langle F,\|f\|_\infty\varphi_K\pm f\rangle=\langle F,\varphi_K\rangle\|f\|_\infty\pm\langle F,f\rangle\geqslant0,
+\end{align*}
+从而 $|\langle F,f\rangle|\leqslant c_K\|f\|_\infty$，其中 $c_K:=\langle F,\varphi_K\rangle$。
+\end{proof}
+
+由\cref{lemma:ch02-局部有界}与\cref{theorem:ch02-Riesz正泛函}得下列结果。
+
+\begin{theorem}\label{theorem:ch02-RieszCc}
+设 $X$ 为局部紧 Hausdorff 空间，$F:C_c(X)\to\mathbb R$ 为局部有界线性泛函。则存在 $X$ 上唯一一对相互奇异的 Radon 测度 $\mu_1,\mu_2$，使等式\eqref{align:ch02-2.54}成立。
+\end{theorem}
+
+\begin{proof}
+因等式\eqref{align:ch02-2.54}中测度 $\mu_1,\mu_2$ 相互奇异，唯一性易验证。
+
+证存在性。设 $F^\pm:C_c(X)\to\mathbb R$ 为由\cref{lemma:ch02-局部有界}相伴于 $F$ 的正线性泛函。于是等式\eqref{align:ch02-2.51}成立，且\cref{lemma:ch02-局部有界}(i)--(ii)成立。此外由\cref{theorem:ch02-Riesz正泛函}，存在唯一一对 Radon 测度 $\mu_1,\mu_2$，使对所有 $f\in C_c(X)$，
+\begin{align}
+\langle F^+,f\rangle=\int_X f\,\mathrm{d}\mu_1,\qquad
+\langle F^-,f\rangle=\int_X f\,\mathrm{d}\mu_2. \label{align:ch02-2.55}
+\end{align}
+由等式\eqref{align:ch02-2.51}与\eqref{align:ch02-2.55}，测度 $\mu_1,\mu_2$ 满足\eqref{align:ch02-2.54}。由内正则性，两个在 $\mathscr K$ 上一致的 Radon 测度为同一测度，故若证得下列断言，结论成立：
+
+\textbf{断言.} 对每个 $K\in\mathscr K$，测度 $\mu_1\llcorner K$ 与 $\mu_2\llcorner K$ 相互奇异。
+
+为证断言，固定 $K\in\mathscr K$，令 $\mu:=\mu_1\llcorner K-\mu_2\llcorner K$。显然 $|\mu|(X)\leqslant\mu_1(K)+\mu_2(K)<\infty$，故 $\mu\in\mathscr R_f(X)$。若证得 $\mu_1\llcorner K=\mu^+$、$\mu_2\llcorner K=\mu^-$，其中 $\mu=\mu^+-\mu^-$ 为 $\mu$ 的 Jordan 分解，断言成立。事实上只需证
+\begin{align}
+\mu_1\llcorner K\leqslant\mu^+,\qquad\mu_2\llcorner K\leqslant\mu^-, \label{align:ch02-2.56}
+\end{align}
+因反向不等式由 $\mu^\pm$ 的定义即得（见\cref{remark:ch01-Jordan变差}）。
+
+为证\eqref{align:ch02-2.56}，令 $F_i:C_c(X)\to\mathbb R$（$i=1,2$）为正线性泛函
+\begin{align*}
+\langle F_1,f\rangle:=\int_X f\,\mathrm{d}\mu^+,\qquad
+\langle F_2,f\rangle:=\int_X f\,\mathrm{d}\mu^-\quad(f\in C_c(X)).
+\end{align*}
+令 $G^\pm:=F^\pm|_{C_c(K)}$，$G:=F|_{C_c(K)}=G^+-G^-$。则在 $C_c(K)$ 上有 $G^+-G^-=G=F_1-F_2$，由\cref{lemma:ch02-局部有界}(ii)，线性泛函 $F_1-G^+$ 与 $F_2-G^-$ 在 $C_c(K)$ 上为正。这蕴含对所有 $f\in C_c(K)$、$f\geqslant0$，
+\begin{align*}
+\int_K f\,\mathrm{d}\mu_1\leqslant\int_K f\,\mathrm{d}\mu^+,\qquad
+\int_K f\,\mathrm{d}\mu_2\leqslant\int_K f\,\mathrm{d}\mu^-,
+\end{align*}
+从而\eqref{align:ch02-2.56}成立。证毕。
+\end{proof}
+
+沿袭文献\cite{ref24}，给出下列定义。
+
+\begin{definition}\label{definition:ch02-带号Radon测度泛函}
+设 $(X,\mathscr T)$ 为 Hausdorff 空间。所谓 $X$ 上的带号 Radon 测度，指 $C_c(X)$ 上的局部有界线性泛函。
+\end{definition}
+
+\begin{remark}\label{remark:ch02-带号Radon注}
+\label{remark:ch02-带号约化}
+\label{remark:ch02-RN注}
+由\cref{theorem:ch02-RieszCc}，带号 Radon 测度与（正）相互奇异 Radon 测度的有序对 $(\mu_1,\mu_2)$ 之间存在一一对应。注意\cref{theorem:ch02-RieszCc}给出的测度 $\mu_1,\mu_2$ 不必有限，故一般其差无定义（又注意带号 Radon 测度不必为\cref{definition:ch01-带号测度}(ii)意义下的带号测度；见\cref{definition:ch01-带号测度}(ii)）。然而：
+a) \cref{definition:ch02-带号Radon测度泛函}化归为\cref{definition:ch01-带号Radon测度}，即当 $\mu_1,\mu_2$ 均有限时，带号 Radon 测度为有限带号 Radon 测度；
+b) 当 $\mu_1,\mu_2$ 中至少一个有限时，带号 Radon 测度为带号测度。
+\end{remark}
+
+$X$ 上带号 Radon 测度的向量空间记为 $\mathscr R(X)$。它为局部凸空间，其拓扑由半范
+\begin{align*}
+p_K(\mu):=(\mu_1+\mu_2)(K)\quad\text{对所有 }K\in\mathscr K,\ \mu\equiv(\mu_1,\mu_2)\in\mathscr R(X)
+\end{align*}
+生成。
+
+\section{Lebesgue 空间中的收敛}\label{section:ch02-Lebesgue收敛}
+
+\subsection{预备知识}\label{subsection:ch02-Lp预备}
+
+设 $(X,\mathscr A,\mu)$ 为测度空间。以通常符号 $L^p(X)\equiv L^p(X,\mathscr A,\mu)$ 记阶 $p\in[1,\infty]$ 的 Lebesgue 空间：
+\begin{align*}
+L^p(X):=\{f:X\to\mathbb R\ \mathscr A\text{-可测}\mid\|f\|_p<\infty\},
+\end{align*}
+其中
+\begin{align*}
+\|f\|_p:=\left(\int_X|f|^p\,\mathrm{d}\mu\right)^{1/p}\quad\text{若 }p\in[1,\infty),
+\end{align*}
+\begin{align*}
+\|f\|_\infty:=\operatorname*{ess\,sup}|f|
+=\inf\{C>0\mid|f(x)|\leqslant C\text{ 对 }\mu\text{-a.e. }x\in X\}.
+\end{align*}
+映射 $\|\cdot\|_p:L^p(X)\to[0,\infty)$，$f\mapsto\|f\|_p$，为半范。如常，将在 $X$ 上 $\mu$-a.e. 相等的函数等同。更确切地：
+(i) 以关于等价关系 $f\sim g\Leftrightarrow f=g$ $\mu$-a.e. 的商空间 $L^p(X)/\sim$ 替代 $L^p(X)$；
+(ii) 按记号滥用，仍以 $L^p(X)$ 记 $L^p(X)/\sim$。
+
+于是 $L^p(X)$ 为赋范向量空间（实为 Banach 空间），其范数为 $f\mapsto\|f\|_{L^p(X)}:=\|f\|_p$（$p\in[1,\infty]$）。
+
+\begin{remark}\label{remark:ch02-Lploc}
+\label{remark:ch02-Lp局部}
+对任意开集 $U\subseteq\mathbb R^N$，令 $L^p(U)\equiv L^p(U,\mathscr B_N\cap U,\lambda_N|_{\mathscr B_N\cap U})$，其中 $\mathscr B_N\cap U$ 为 Borel $\sigma$-代数 $\mathscr B_N$ 在 $U$ 上的迹，$\lambda_N|_{\mathscr B_N\cap U}$ 为 Lebesgue 测度 $\lambda_N$ 的限制。称 $f\in L^p_{\mathrm{loc}}(U)$，若对每个开子集 $V\subset\subset X$（即闭包 $\bar V$ 紧且 $V\subset U$），有 $f\in L^p(V,\mathscr B_N\cap V,\lambda_N|_{\mathscr B_N\cap V})$。
+\end{remark}
+
+控制收敛定理的一个简单应用给出下列结果。
+
+\begin{lemma}\label{lemma:ch02-有理简单函数稠密}
+\label{lemma:ch02-简单函数}
+设 $(X,\mathscr A,\mu)$ 为测度空间。则对任意 $p\in[1,\infty)$，有理系数简单函数集合 $\mathscr S_{\mathbb Q}(X)$ 在 $L^p(X)$ 中稠密。
+\end{lemma}
+
+\begin{theorem}\label{theorem:ch02-Lp可分}
+设 $(X,\mathscr A)$ 为可分可测空间，$\mu:\mathscr A\to[0,\infty]$ 为 $\sigma$-有限。则对任意 $p\in[1,\infty)$，空间 $L^p(X)\equiv L^p(X,\mathscr A,\mu)$ 可分。
+\end{theorem}
+
+\begin{proof}
+固定 $f\in L^p(X)$ 与 $\epsilon>0$。则存在 $t\in\mathscr S_{\mathbb Q}$ 使 $\mu(\{t\neq0\})<\infty$ 且 $\|f-t\|_p<\epsilon$。事实上，设 $\{E_n\}\subseteq\mathscr A$ 为非增序列，使 $X=\bigcup_{n=1}^\infty E_n$，对所有 $n\in\mathbb N$ 有 $\mu(E_n)<\infty$。由\cref{lemma:ch02-有理简单函数稠密}，存在 $s\in\mathscr S_{\mathbb Q}$ 使 $\|f-s\|_p<\epsilon/2$。令 $t_n:=s\chi_{E_n}$（$n\in\mathbb N$）。则 $\{t_n\}\subseteq\mathscr S_{\mathbb Q}$，且
+\begin{align*}
+\|t_n-s\|_p^p=\int_{E_n^c}|s|^p\,\mathrm{d}\mu\to0\quad(n\to\infty).
+\end{align*}
+结论成立。
+
+故不妨设 $\mu(X)<\infty$。因 $(X,\mathscr A)$ 可分，存在可数族 $\mathscr C\subseteq\mathscr P(X)$ 使 $\sigma_0(\mathscr C)=\mathscr A$。显然，由 $\mathscr C$ 生成的代数 $\mathscr A_0\equiv\mathscr A_0(\mathscr C)$ 与集合
+\begin{align*}
+\mathscr S_{\mathbb Q,\mathscr A_0}:=\left\{\sum_{k=1}^n c_k\chi_{G_k}\ \middle|\ G_k\in\mathscr A_0,\ c_k\in\mathbb Q,\ n\in\mathbb N\right\}
+\end{align*}
+均可数。易证 $\mathscr S_{\mathbb Q,\mathscr A_0}$ 在 $\mathscr S_{\mathbb Q}$ 中稠密，从而结论成立。
+\end{proof}
+
+再证下列结果。
+
+\begin{lemma}\label{lemma:ch02-Cc稠密}
+\label{lemma:ch02-稠密逼近}
+设 $X$ 为局部紧 Hausdorff 空间，$\mu\in\mathscr R^+(X)$ 为 $\sigma$-有限。则对任意 $p\in[1,\infty)$，空间 $C_c(X)$ 在 $L^p(X)$ 中稠密。
+\end{lemma}
+
+\begin{proof}
+不妨设 $\mu(X)<\infty$，由\cref{lemma:ch01-紧外正则}(i)，$\mu$ 正则。固定 $E\in\mathscr B(X)$。由\cref{lemma:ch02-有理简单函数稠密}，只需证存在 $\{g_n\}\subseteq C_c(X)$ 使 $g_n\to g:=\chi_E$ 在 $L^p(X)$ 中。为此，由 $\mu$ 的正则性，对任意 $\delta>0$，存在紧集 $K$ 与开集 $A$，使 $K\subseteq E\subseteq A$ 且 $\mu(A\setminus K)<\delta$。如\cref{proposition:ch02-Tietze逼近}证明中论证，可得函数 $\zeta\in C_c(X)$，$\operatorname{supp}\zeta\subseteq A$，使 $\mu(\{g\neq\zeta\})<\delta$ 且 $\|\zeta\|_\infty=1$。取 $\delta=1/n$（$n\in\mathbb N$）。则存在序列 $\{g_n\}\subseteq C_c(X)$ 使 $g_n\to g$ 依测度，从而对任意 $p\in[1,\infty)$ 在 $L^p(X)$ 中（见\cref{proposition:ch02-强收敛性质}(i)）。结论成立。
+\end{proof}
+
+\subsection{一致可积性}\label{subsection:ch02-一致可积}
+
+先给出下列定义。
+
+\begin{definition}\label{definition:ch02-p一致可积}\label{definition:ch02-一致可积}
+设 $p\in[1,\infty)$。称子集 $\mathscr F\subseteq L^p(X)$ 为 $p$-一致可积的，若对任意 $\epsilon>0$：
+\begin{enumerate}[(i)]
+\item 存在 $E\in\mathscr A$（$\mu(E)<\infty$），使 $\sup_{f\in\mathscr F}\int_{E^c}|f|^p\,\mathrm{d}\mu<\epsilon$；
+\item 存在 $\delta>0$，使对所有 $F\in\mathscr A$（$\mu(F)<\delta$）有 $\sup_{f\in\mathscr F}\int_F|f|^p\,\mathrm{d}\mu<\epsilon$。
+\end{enumerate}
+称 $\mathscr F\subseteq L^1(X)$ 一致可积，若它为 $1$-一致可积。
+\end{definition}
+
+\begin{remark}\label{remark:ch02-单点一致可积}
+(i) 设 $f\in L^p(X)$。映射 $\sigma:\mathscr A\to[0,\infty)$，$\sigma(E):=\int_E|f|^p\,\mathrm{d}\mu$（$E\in\mathscr A$），为 $(X,\mathscr A)$ 上有限测度；且 $\sigma\ll\mu$。故每个单点集 $\mathscr F=\{f\}$（$f\in L^p(X)$；更一般地，每个有限集 $\mathscr F=\{f_1,\dots,f_n\}\subseteq L^p(X)$）为 $p$-一致可积。
+(ii) 若 $\mu$ 有限，\cref{definition:ch02-p一致可积}(i) 取 $E=X$ 即平凡满足。
+\end{remark}
+
+当 $p=1$ 时，一致可积子集的刻画如下。
+
+\begin{proposition}\label{proposition:ch02-一致可积刻画}\label{proposition:ch02-一致可积判据}
+设 $(X,\mathscr A,\mu)$ 为测度空间。则下列命题等价：
+\begin{enumerate}[(i)]
+\item $\mathscr F\subseteq L^1(X)$ 一致可积；
+\item 对任意非增序列 $\{E_n\}\subseteq\mathscr A$（$\bigcap_{n=1}^\infty E_n=\emptyset$），有
+\begin{align*}
+\lim_{n\to\infty}\sup_{f\in\mathscr F}\int_{E_n}|f|\,\mathrm{d}\mu=0.
+\end{align*}
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(i)$\Rightarrow$(ii)。固定 $\epsilon>0$，设 $\delta>0$ 如\cref{definition:ch02-p一致可积}(ii)。因 $\lim_{n\to\infty}\mu(E_n)=0$，存在 $\bar n\in\mathbb N$，使对所有 $n\geqslant\bar n$ 有 $\mu(E_n)<\delta$，从而 $\sup_{f\in\mathscr F}\int_{E_n}|f|\,\mathrm{d}\mu<\epsilon$。结论成立。
+
+(ii)$\Rightarrow$(i)。现证\cref{definition:ch02-p一致可积}两条件均满足。
+
+反证，设\cref{definition:ch02-p一致可积}(i)不成立。则存在 $k>0$，使对任意 $F\in\mathscr A$（$\mu(F)<\infty$），存在某 $f\in\mathscr F$ 使 $\int_{F^c}|f|\,\mathrm{d}\mu\geqslant k$。设 $F_1\in\mathscr A$（$\mu(F_1)<\infty$），取 $f_1\in\mathscr F$ 使 $\int_{F_1^c}|f_1|\,\mathrm{d}\mu\geqslant k$；取 $F_2\in\mathscr A$，$F_2\supseteq F_1$，$\mu(F_2)<\infty$，使 $\int_{F_2^c}|f_1|\,\mathrm{d}\mu<k/2$。则
+\begin{align*}
+\int_{F_2\setminus F_1}|f_1|\,\mathrm{d}\mu=\int_{F_1^c}|f_1|\,\mathrm{d}\mu-\int_{F_2^c}|f_1|\,\mathrm{d}\mu\geqslant\frac k2.
+\end{align*}
+递归论证，得非增序列 $\{F_n\}\subseteq\mathscr A$ 与序列 $\{f_n\}\subseteq\mathscr F$，使对任意 $n$ 有 $\int_{F_{n+1}\setminus F_n}|f_n|\,\mathrm{d}\mu\geqslant k/2$。令 $F:=\bigcup_{n=1}^\infty F_n$，$E_n:=F\setminus F_n$（$n\in\mathbb N$）。则序列 $\{E_n\}$ 非增，$\bigcap_{n=1}^\infty E_n=\emptyset$，且对所有 $n$，
+\begin{align*}
+\sup_{f\in\mathscr F}\int_{E_n}|f|\,\mathrm{d}\mu\geqslant\int_{E_n}|f_n|\,\mathrm{d}\mu
+\geqslant\int_{F_{n+1}\setminus F_n}|f_n|\,\mathrm{d}\mu\geqslant\frac k2,
+\end{align*}
+矛盾。
+
+再反证\cref{definition:ch02-p一致可积}(ii)不成立。则存在 $k>0$，使对任意 $n\in\mathbb N$，存在 $F_n\in\mathscr A$（$\mu(F_n)<1/2^n$）与 $f_n\in\mathscr F$，使 $\int_{F_n}|f_n|\,\mathrm{d}\mu\geqslant k$。令 $F_\infty:=\bigcap_{m=1}^\infty\bigcup_{n=m}^\infty F_n$，$E_n:=\bigcup_{m=n}^\infty(F_m\setminus F_\infty)$（$n\in\mathbb N$）。易见
+\begin{align*}
+\mu(F_\infty)\leqslant\lim_{m\to\infty}\sum_{n=m}^\infty\frac1{2^n}=0.
+\end{align*}
+序列 $\{E_n\}$ 非增，$\bigcap_{n=1}^\infty E_n=\emptyset$，且对所有 $n$，
+\begin{align*}
+\sup_{f\in\mathscr F}\int_{E_n}|f|\,\mathrm{d}\mu
+\geqslant\sup_{f\in\mathscr F}\int_{F_n}|f|\,\mathrm{d}\mu
+\geqslant\int_{F_n}|f_n|\,\mathrm{d}\mu\geqslant k,
+\end{align*}
+又一矛盾。结论成立。
+\end{proof}
+
+\begin{remark}\label{remark:ch02-正负一致可积}
+若 $\mathscr F\subseteq L^1(X)$，令 $\mathscr F^\pm:=\{f^\pm\mid f\in\mathscr F\}$，$\mathscr F_h:=\{f-h\mid f\in\mathscr F\}$（$h\in L^1(X)$）。易见 $\mathscr F$ 一致可积当且仅当 $\mathscr F^\pm$ 与 $\mathscr F_h$ 一致可积。
+\end{remark}
+
+将使用下列引理。
+
+\begin{lemma}\label{lemma:ch02-非一致可积}
+设 $(X,\mathscr A,\mu)$ 为测度空间，$\mathscr F\subseteq L^1(X)$ 非一致可积。则存在序列 $\{E_n\}\subseteq\mathscr A$（$\bigcap_{n=1}^\infty E_n=\emptyset$，$\lim_{p\to\infty}\mu(\bigcup_{n=p}^\infty E_n)=0$）与序列 $\{f_n\}\subseteq\mathscr F$，使对任意 $h\in L^1(X)$，存在 $k=k_h>0$，使对所有 $n\in\mathbb N$ 有
+\begin{align}
+\left|\int_{E_n}(f_n-h)\,\mathrm{d}\mu\right|\geqslant k. \label{align:ch02-2.58}
+\end{align}
+\end{lemma}
+
+\begin{proof}
+先证：若 $\mathscr F$ 非一致可积，则存在序列 $\{E_n\}\subseteq\mathscr A$（$\bigcap_{n=1}^\infty E_n=\emptyset$，$\lim_{p\to\infty}\mu(\bigcup_{n=p}^\infty E_n)=0$）、$\{f_n\}\subseteq\mathscr F$ 与数 $m>0$，使对所有 $n\in\mathbb N$ 有
+\begin{align}
+\left|\int_{E_n}f_n\,\mathrm{d}\mu\right|\geqslant 2m. \label{align:ch02-2.59}
+\end{align}
+事实上，由\cref{remark:ch02-正负一致可积}，集合 $\mathscr F^\pm$ 中至少一个非一致可积。设 $\mathscr F^+$ 非一致可积（$\mathscr F^-$ 论证类似）。由\cref{proposition:ch02-一致可积刻画}，可取 $m>0$、$\{f_n\}\subseteq\mathscr F$ 与非增序列 $\{E'_n\}\subseteq\mathscr A$（$\bigcap_{n=1}^\infty E'_n=\emptyset$），使对所有 $n\in\mathbb N$ 有
+\begin{align*}
+\int_{E'_n}f_n^+\,\mathrm{d}\mu\geqslant 2m.
+\end{align*}
+令 $E_n:=E'_n\cap\{f_n\geqslant0\}$。则 $\bigcap_{n=1}^\infty E_n=\emptyset$，且
+\begin{align*}
+\lim_{p\to\infty}\mu\left(\bigcup_{n=p}^\infty E_n\right)
+=\lim_{p\to\infty}\mu(E'_p)=0,
+\end{align*}
+因 $\bigcup_{n=p}^\infty E_n\subseteq\bigcup_{n=p}^\infty E'_n=E'_p$。此外
+\begin{align*}
+\left|\int_{E_n}f_n\,\mathrm{d}\mu\right|=\int_{E'_n}f_n^+\,\mathrm{d}\mu\geqslant 2m\quad\text{对所有 }n\in\mathbb N,
+\end{align*}
+故\eqref{align:ch02-2.59}成立。
+
+现注意对每个 $h\in L^1(X)$，有
+\begin{align*}
+\left|\int_{E_n}f_n\,\mathrm{d}\mu\right|
+\leqslant\left|\int_{E_n}(f_n-h)\,\mathrm{d}\mu\right|+\int_{E_n}|h|\,\mathrm{d}\mu.
+\end{align*}
+因 $\lim_{n\to\infty}\mu(E_n)=\lim_{n\to\infty}\mu(\bigcup_{j=n}^\infty E_j)=0$，存在 $\bar n\in\mathbb N$，使对所有 $n>\bar n$ 有 $\int_{E_n}|h|\,\mathrm{d}\mu<m$。由上述不等式与\eqref{align:ch02-2.59}，对所有 $n>\bar n$ 有
+\begin{align*}
+\left|\int_{E_n}(f_n-h)\,\mathrm{d}\mu\right|\geqslant m.
+\end{align*}
+令
+\begin{align*}
+k:=\min\left\{m,\ \min_{j=1,\dots,\bar n}\left\{\left|\int_{E_j}(f_j-h)\,\mathrm{d}\mu\right|\right\}\right\},
+\end{align*}
+即得\eqref{align:ch02-2.58}。证毕。
+\end{proof}
+
+\begin{proposition}\label{proposition:ch02-有界一致可积等价}
+设 $(X,\mathscr A,\mu)$ 为有限测度空间，$\mathscr F\subseteq L^1(X)$。则下列命题等价：
+\begin{enumerate}[(i)]
+\item $\mathscr F$ 有界且一致可积；
+\item $\lim_{t\to\infty}\sup_{f\in\mathscr F}\int_{\{|f|\geqslant t\}}|f|\,\mathrm{d}\mu=0$；
+\item （de la Vall\'ee-Poussin 判别法）存在连续增函数 $\psi:[0,\infty)\to[0,\infty]$，使 $\psi(t)/t\to\infty$（$t\to\infty$）且 $\sup_{f\in\mathscr F}\int_X\psi(|f|)\,\mathrm{d}\mu<\infty$。
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(i)$\Rightarrow$(ii)。令 $C:=\sup_{f\in\mathscr F}\|f\|_1<\infty$。由 Chebyshev 不等式，
+\begin{align}
+\sup_{f\in\mathscr F}\mu(\{|f|\geqslant t\})\leqslant\frac1t\sup_{f\in\mathscr F}\int_{\{|f|\geqslant t\}}|f|\,\mathrm{d}\mu\leqslant\frac Ct\quad(t>0). \label{align:ch02-2.60}
+\end{align}
+固定 $\epsilon>0$，令 $t_0:=C/\delta$，其中 $\delta$ 由\cref{definition:ch02-p一致可积}(ii)给出。则对任意 $t>t_0$，由\eqref{align:ch02-2.60}得 $\sup_{f\in\mathscr F}\mu(\{|f|\geqslant t\})<\delta$，由 $\mathscr F$ 的一致可积性得 $\sup_{f\in\mathscr F}\int_{\{|f|\geqslant t\}}|f|\,\mathrm{d}\mu\leqslant\epsilon$。结论成立。
+
+(ii)$\Rightarrow$(i)。对任意 $\epsilon>0$，存在 $t_0>0$，使对所有 $t\geqslant t_0$ 有 $\sup_{f\in\mathscr F}\int_{\{|f|\geqslant t\}}|f|\,\mathrm{d}\mu<\epsilon/(2t)$。则对所有 $F\in\mathscr A$，
+\begin{align}
+\sup_{f\in\mathscr F}\int_F|f|\,\mathrm{d}\mu
+\leqslant\sup_{f\in\mathscr F}\int_{F\cap\{|f|\leqslant t_0\}}|f|\,\mathrm{d}\mu
++\sup_{f\in\mathscr F}\int_{F\cap\{|f|>t_0\}}|f|\,\mathrm{d}\mu
+\leqslant t_0\mu(F)+\frac\epsilon2. \label{align:ch02-2.61}
+\end{align}
+若 $F=X$，由\eqref{align:ch02-2.61}得
+\begin{align*}
+\sup_{f\in\mathscr F}\|f\|_1\leqslant t_0\mu(X)+\frac\epsilon2<\infty,
+\end{align*}
+故 $\mathscr F$ 有界。此外令 $\delta:=\epsilon/(2t_0)$。则对任意 $F\in\mathscr A$（$\mu(F)<\delta$），不等式\eqref{align:ch02-2.61}给出
+\begin{align*}
+\sup_{f\in\mathscr F}\int_F|f|\,\mathrm{d}\mu\leqslant t_0\mu(F)+\frac\epsilon2=\epsilon.
+\end{align*}
+结论成立。
+
+(iii)$\Rightarrow$(ii)。令 $D:=\sup_{f\in\mathscr F}\int_X\psi(|f|)\,\mathrm{d}\mu$。因 $\psi(t)/t\to\infty$（$t\to\infty$），对任意 $\epsilon>0$，存在 $t_0>0$，使对所有 $t>t_0$ 有 $t/\epsilon\leqslant\psi(t)$，从而
+\begin{align*}
+\sup_{f\in\mathscr F}\int_{\{|f|\geqslant t\}}|f|\,\mathrm{d}\mu
+\leqslant\epsilon\sup_{f\in\mathscr F}\int_{\{|f|\geqslant t\}}\psi(|f|)\,\mathrm{d}\mu\leqslant D\epsilon.
+\end{align*}
+结论成立。
+
+(ii)$\Rightarrow$(iii)。由假设存在发散序列 $\{t_k\}\subseteq\mathbb N$，使
+\begin{align*}
+\sup_{f\in\mathscr F}\int_{\{|f|\geqslant t_k\}}|f|\,\mathrm{d}\mu\leqslant\frac1{2^{k+1}}.
+\end{align*}
+对任意 $t>0$，令 $E_t:=\{n\in\{t_k\}\mid n<t\}$，并令
+\begin{align*}
+\psi(t):=t\,\operatorname{card}E_t=t\int_{\mathbb N}\chi_{E_t}(n)\,\mathrm{d}\mu_\#(n)\quad(t>0),
+\end{align*}
+其中 $\mu_\#:\mathscr P(\mathbb N)\to[0,\infty]$ 为计数测度。显然 $\psi:[0,\infty)\to[0,\infty]$ 为增函数，且 $\psi(t)/t\to\infty$（$t\to\infty$）。此外对任意 $f\in\mathscr F$，由 Tonelli 定理，
+\begin{align*}
+\int_X\psi(|f|)\,\mathrm{d}\mu
+&=\int_X\mathrm{d}\mu(t)\,|f(t)|\int_{\mathbb N}\chi_{E_{|f(t)|}}(n)\,\mathrm{d}\mu_\#(n)\\
+&=\int_{\mathbb N}\mathrm{d}\mu_\#(k)\int_{\{|f|\geqslant t_k\}}|f|\,\mathrm{d}\mu
+=\sum_{k=1}^\infty\int_{\{|f|\geqslant t_k\}}|f|\,\mathrm{d}\mu
+\leqslant\sum_{k=1}^\infty\frac1{2^{k+1}}\leqslant1.
+\end{align*}
+故 $\sup_{f\in\mathscr F}\int_X\psi(|f|)\,\mathrm{d}\mu<\infty$，由对 $\psi$ 的标准正则化即得结论。
+\end{proof}
+
+\begin{definition}\label{definition:ch02-一致可积模}
+设 $\mathscr F\subseteq L^1(X)$ 有界。量
+\begin{align}
+\eta(\mathscr F):=\lim_{t\to\infty}\sup_{f\in\mathscr F}\int_{\{|f|\geqslant t\}}|f|\,\mathrm{d}\mu \label{align:ch02-2.62}
+\end{align}
+称为 $\mathscr F$ 的一致可积模。
+\end{definition}
+
+\begin{remark}\label{remark:ch02-模零一致可积}
+由\cref{proposition:ch02-有界一致可积等价}，有界子集 $\mathscr F\subseteq L^1(X)$ 一致可积当且仅当 $\eta(\mathscr F)=0$。
+\end{remark}
+
+为后续参考，证明下列结果。
+
+\begin{lemma}\label{lemma:ch02-一致可积模等价}
+设 $\mathscr F\subseteq L^1(X)$ 有界。则
+\begin{align}
+\eta(\mathscr F)=\lim_{\delta\to0^+}\sup\left\{\int_E|f|\,\mathrm{d}\mu\ \middle|\ f\in\mathscr F,\ E\in\mathscr B\text{ 使 }\mu(E)<\delta\right\}. \label{align:ch02-2.63}
+\end{align}
+\end{lemma}
+
+\begin{proof}
+令 $\eta\equiv\eta(\mathscr F)$，以 $\eta_1\equiv\eta_1(\mathscr F)$ 记\eqref{align:ch02-2.63}右端。若证得两不等式 $\eta_1\geqslant\eta$ 与 $\eta_1\leqslant\eta$，结论成立。
+
+令 $C:=\sup_{f\in\mathscr F}\|f\|_1<\infty$，
+\begin{align*}
+H_\delta:=\sup\left\{\int_E|f|\,\mathrm{d}\mu\ \middle|\ f\in\mathscr F,\ E\in\mathscr B\text{ 使 }\mu(E)<\delta\right\},
+\end{align*}
+固定任意 $\delta>0$。由\eqref{align:ch02-2.62}，存在 $t_0>0$，使对所有 $t>t_0$，存在 $\bar f\in\mathscr F$ 满足
+\begin{align}
+\int_{\{|\bar f|\geqslant t\}}|\bar f|\,\mathrm{d}\mu\geqslant\eta-\delta. \label{align:ch02-2.64}
+\end{align}
+令 $t_1:=C/\delta$。则对所有 $t>t_1$，由 Chebyshev 不等式，
+\begin{align}
+\mu\{|\bar f|\geqslant t\}\leqslant\frac1t\int_X|\bar f|\,\mathrm{d}\mu\leqslant\frac Ct<\delta. \label{align:ch02-2.65}
+\end{align}
+由\eqref{align:ch02-2.64}--\eqref{align:ch02-2.65}与 $H_\delta$ 的定义，对任意 $t>\max\{t_0,t_1\}$，有
+\begin{align*}
+H_\delta\geqslant\int_{\{|\bar f|\geqslant t\}}|\bar f|\,\mathrm{d}\mu\geqslant\eta-\delta\quad\text{对所有 }\delta>0,
+\end{align*}
+令 $\delta\to0^+$ 得 $\eta_1\geqslant\eta$。
+
+为证反向不等式，固定任意 $\epsilon>0$ 与 $t>0$。由 $\eta_1$ 的定义，存在 $\delta_0\in(0,\epsilon/t)$，使对所有 $\delta\in(0,\delta_0)$，存在 $\bar f\in\mathscr F$ 与 $E\in\mathscr B$（$\mu(E)<\delta$），使
+\begin{align}
+\int_E|\bar f|\,\mathrm{d}\mu\geqslant\eta_1-\epsilon. \label{align:ch02-2.66}
+\end{align}
+因 $t\mu(E)<t\delta<t\delta_0<\epsilon$，由\eqref{align:ch02-2.66}得
+\begin{align*}
+\int_{\{|\bar f|\geqslant t\}}|\bar f|\,\mathrm{d}\mu
+&\geqslant\int_{E\cap\{|\bar f|\geqslant t\}}|\bar f|\,\mathrm{d}\mu
+=\int_E|\bar f|\,\mathrm{d}\mu-\int_{E\cap\{|\bar f|<t\}}|\bar f|\,\mathrm{d}\mu\\
+&\geqslant\eta_1-\epsilon-t\mu(E)>\eta_1-2\epsilon.
+\end{align*}
+由定义\eqref{align:ch02-2.62}，上述不等式给出 $\eta\geqslant\eta_1-2\epsilon$，由 $\epsilon$ 的任意性得 $\eta\geqslant\eta_1$。证毕。
+\end{proof}
+
+\subsection{强收敛}\label{subsection:ch02-强收敛}
+
+若 $f,f_n\in L^p(X)$（$n\in\mathbb N$，$p\in[1,\infty]$），称 $f_n$ 在 $L^p(X)$ 中强收敛于 $f$（记 $f_n\to f$），若 $\lim_{n\to\infty}\|f_n-f\|_p=0$。
+
+\begin{proposition}\label{proposition:ch02-强收敛性质}
+设 $(X,\mathscr A,\mu)$ 为测度空间，$p\in[1,\infty)$。
+\begin{enumerate}[(i)]
+\item 若 $f_n\to f$ 依测度且条件\eqref{align:ch02-2.12}满足，则 $f_n\to f$ 在 $L^p(X)$ 中强收敛。
+\item 若 $f_n\to f$ 在 $L^p(X)$ 中强收敛，则存在 $\{f_{n_k}\}\subseteq\{f_n\}$ 使 $f_{n_k}\to f$ $\mu$-a.e.
+\item 若 $f_n\to f$ 在 $L^p(X)$ 中强收敛，则 $f_n\to f$ 依测度。
+\item 若 $f,f_n\in L^p(X)$，$f_n\to f$ $\mu$-a.e.，且 $\|f_n\|_p\to\|f\|_p$，则 $f_n\to f$ 在 $L^p(X)$ 中强收敛。
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+仅证 (iv)。由 Fatou 引理，
+\begin{align*}
+2^p\|f\|_p^p\leqslant\liminf_{n\to\infty}\int_X[2^{p-1}(|f|^p+|f_n|^p)-|f-f_n|^p]\,\mathrm{d}\mu
+=2^p\|f\|_p^p-\limsup_{n\to\infty}\|f-f_n\|_p^p,
+\end{align*}
+结论成立。
+\end{proof}
+
+关于 $L^\infty(X)$ 中的强收敛，有下列结果。
+
+\begin{proposition}\label{proposition:ch02-Linfty强收敛}
+设 $f_n\to f$ 在 $L^\infty(X)$ 中强收敛。则：
+\begin{enumerate}[(i)]
+\item $f_n\to f$ $\mu$-a.e.、依测度且几乎一致；
+\item 若 $\mu(X)<\infty$，则存在 $\{f_{n_k}\}\subseteq\{f_n\}$，使对所有 $p\in[1,\infty)$ 有 $f_{n_k}\to f$ 在 $L^p(X)$ 中强收敛；
+\item 若条件\eqref{align:ch02-2.12}满足，则存在 $\{f_{n_k}\}\subseteq\{f_n\}$，使 $f_{n_k}\to f$ 在 $L^1(X)$ 中强收敛。
+\end{enumerate}
+\end{proposition}
+
+下列结果依赖 $p$-一致可积概念。
+
+\begin{theorem}[Vitali]\label{theorem:ch02-Vitali}
+设 $p\in[1,\infty)$。设 $\{f_n\}\subseteq L^p(X)$，$f_n\to f$ 在 $X$ 上 $\mu$-a.e.。则下列命题等价：
+\begin{enumerate}[(i)]
+\item $f\in L^p(X)$，且 $f_n\to f$ 在 $L^p(X)$ 中；
+\item 序列 $\{f_n\}$ 为 $p$-一致可积。
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+(i)$\Rightarrow$(ii)。固定 $\epsilon>0$。因 $f_n\to f$ 在 $L^p(X)$ 中，存在 $\bar n\in\mathbb N$，使对所有 $n>\bar n$ 有 $\|f_n-f\|_p^p<\epsilon/2^p$。则对每个 $F\in\mathscr A$，
+\begin{align}
+\sup_{n>\bar n}\left(\int_F|f_n|^p\,\mathrm{d}\mu\right)^{1/p}
+\leqslant\sup_{n>\bar n}\|f_n-f\|_p+\left(\int_F|f|^p\,\mathrm{d}\mu\right)^{1/p}
+\leqslant\frac{\epsilon^{1/p}}2+\left(\int_F|f|^p\,\mathrm{d}\mu\right)^{1/p}. \label{align:ch02-2.67}
+\end{align}
+此外（见\cref{remark:ch02-单点一致可积}(i)）：
+(a) 存在 $E\in\mathscr A$（$\mu(E)<\infty$），使 $\int_{E^c}|f|^p\,\mathrm{d}\mu<\epsilon/2^p$；
+(b) 存在 $\delta>0$，使对所有 $F\in\mathscr A$（$\mu(F)<\delta$）有 $\int_F|f|^p\,\mathrm{d}\mu<\epsilon/2^p$。
+由\eqref{align:ch02-2.67}即得结论。
+
+(ii)$\Rightarrow$(i)。由\cref{remark:ch02-a.e.极限可测}，函数 $f$ 为 $\mathscr A$-可测。固定任意 $\epsilon>0$，设 $E\in\mathscr A$、$\delta>0$ 如\cref{definition:ch02-p一致可积}。先证 $f\in L^p(X)$。因 $\mu(E)<\infty$，由 Egorov 定理，存在可测集 $F_\delta\subseteq E$，使 $\mu(F_\delta)<\delta$ 且
+\begin{align}
+\lim_{n\to\infty}\sup_{x\in E\setminus F_\delta}|f_n(x)-f(x)|=0. \label{align:ch02-2.68}
+\end{align}
+另一方面：
+(a) 对 $G=E^c$ 与 $G=F_\delta$，由 Fatou 引理，
+\begin{align*}
+\int_G|f|^p\,\mathrm{d}\mu\leqslant\liminf_{n\to\infty}\int_G|f_n|^p\,\mathrm{d}\mu\leqslant\epsilon;
+\end{align*}
+(b) 序列 $\{\int_{E\setminus F_\delta}|f_n(x)-f(x)|^p\,\mathrm{d}\mu\}$ 有界，因由\eqref{align:ch02-2.68}，
+\begin{align*}
+\lim_{n\to\infty}\int_{E\setminus F_\delta}|f_n(x)-f(x)|^p\,\mathrm{d}\mu
+\leqslant\mu(E)\lim_{n\to\infty}\sup_{x\in E\setminus F_\delta}|f_n(x)-f(x)|=0,
+\end{align*}
+从而 $\int_{E\setminus F_\delta}|f|^p\,\mathrm{d}\mu<\infty$。
+
+由 (a)--(b) 得
+\begin{align*}
+\int_X|f|^p\,\mathrm{d}\mu=\int_{E^c}|f|^p\,\mathrm{d}\mu+\int_{E\setminus F_\delta}|f|^p\,\mathrm{d}\mu+\int_{F_\delta}|f|^p\,\mathrm{d}\mu<\infty,
+\end{align*}
+故 $f\in L^p(X)$。现写
+\begin{align}
+\|f_n-f\|_p^p=\int_{E^c}|f_n-f|^p\,\mathrm{d}\mu+\int_{E\setminus F_\delta}|f_n-f|^p\,\mathrm{d}\mu+\int_{F_\delta}|f_n-f|^p\,\mathrm{d}\mu
+=:I_{n,1}+I_{n,2}+I_{n,3}. \label{align:ch02-2.69}
+\end{align}
+如 (a) 论证，由 Fatou 引理得 $I_{n,k}\leqslant 2^p\epsilon$（$k=1,3$）。由\eqref{align:ch02-2.68}，$\lim_{n\to\infty}I_{n,2}=0$，故 $\limsup_{n\to\infty}\|f_n-f\|_p^p\leqslant 2^{p+1}\epsilon$。由 $\epsilon$ 的任意性即得结论。证毕。
+\end{proof}
+
+由 Vitali 定理得 Lebesgue 定理（见\cref{theorem:ch02-Lebesgue控制收敛}）的下列推广。
+
+\begin{theorem}\label{theorem:ch02-Vitali推广}
+设 $p\in[1,\infty)$。设 $f,f_n\in L^p(X)$（$n\in\mathbb N$），$f_n\to f$ 在 $X$ 上 $\mu$-a.e.。假设
+\begin{align}
+\text{存在 }g\in L^p(X),\ g\geqslant0\text{ 使 }\sup_{n\in\mathbb N}|f_n|\leqslant g\ \mu\text{-a.e. 于 }X. \label{align:ch02-2.70}
+\end{align}
+则 $f\in L^p(X)$ 且 $f_n\to f$ 在 $L^p(X)$ 中。
+\end{theorem}
+
+\begin{proof}
+由\cref{remark:ch02-单点一致可积}(i) 与条件\eqref{align:ch02-2.70}，序列 $\{f_n\}$ 为 $p$-一致可积。由\cref{theorem:ch02-Vitali}得结论。
+\end{proof}
+
+提及下列结果。
+
+\begin{lemma}\label{lemma:ch02-有界一致可积}
+设 $\mu(X)<\infty$，$1\leqslant p<q\leqslant\infty$。则每个有界子集 $\mathscr F\subseteq L^q(X)$ 为 $p$-一致可积。
+\end{lemma}
+
+\begin{proof}
+\cref{definition:ch02-p一致可积}(i) 显然满足，因 $\mu(X)<\infty$。关于 (ii)，令 $C_q:=\sup_{f\in\mathscr F}\|f\|_q<\infty$。对任意 $F\in\mathscr A$（$\mu(F)<\delta$），由 H\"older 不等式，若 $q<\infty$，
+\begin{align*}
+\sup_{f\in\mathscr F}\int_F|f|^p\,\mathrm{d}\mu
+\leqslant\mu(F)^{\frac{q-p}{q}}\sup_{f\in\mathscr F}\|f\|_q^p
+\leqslant C_q^p\,\delta^{\frac{q-p}{q}},
+\end{align*}
+若 $q=\infty$，
+\begin{align*}
+\sup_{f\in\mathscr F}\int_F|f|^p\,\mathrm{d}\mu
+\leqslant\mu(F)\sup_{f\in\mathscr F}\|f\|_\infty^p
+\leqslant C_\infty^p\,\delta.
+\end{align*}
+由这些不等式，当 $q<\infty$ 时取 $\delta:=\left(\epsilon/C_q^p\right)^{\frac{q}{q-p}}$，当 $q=\infty$ 时取 $\delta:=\epsilon/C_\infty^p$，\cref{definition:ch02-p一致可积}(ii) 成立。证毕。
+\end{proof}
+
+下列结果是 Vitali 定理与\cref{lemma:ch02-有界一致可积}的直接推论。
+
+\begin{proposition}\label{proposition:ch02-高Lp强收敛}
+设 $\mu(X)<\infty$，$1\leqslant p<q\leqslant\infty$。设 $\{f_n\}\subseteq L^q(X)$ 为有界序列，在 $X$ 上 $\mu$-a.e. 收敛于某函数 $f:X\to\mathbb R$。则 $f_n\to f$ 在 $L^p(X)$ 中强收敛。
+\end{proposition}
+
+\subsection{弱收敛与弱$^*$收敛}\label{subsection:ch02-弱收敛}
+
+设 $q$ 为 $p\in[1,\infty]$ 的 H\"older 共轭指数：
+\begin{align}
+q:=
+\begin{cases}
+1, & p=\infty,\\
+\dfrac{p}{p-1}, & p\in(1,\infty),\\
+\infty, & p=1.
+\end{cases} \label{align:ch02-2.71}
+\end{align}
+
+关于 Lebesgue 空间的对偶，下列结果是熟知的。
+
+\begin{theorem}[Riesz 表示]\label{theorem:ch02-Lp对偶}
+设 $p\in[1,\infty)$，$q$ 如\eqref{align:ch02-2.71}；若 $p=1$，设 $\mu$ 为 $\sigma$-有限。则映射
+\begin{align*}
+\Theta:L^q(X)\to(L^p(X))^*,\qquad\Theta g:=T_g\quad(g\in L^q(X)),
+\end{align*}
+其中
+\begin{align*}
+\langle T_g,f\rangle:=\int_X fg\,\mathrm{d}\mu\quad(f\in L^p(X)),
+\end{align*}
+为等距同构。
+\end{theorem}
+
+相应地，$L^p(X)$ 中的弱收敛与弱$^*$收敛如下。
+
+\begin{definition}\label{definition:ch02-弱弱星收敛}
+\begin{enumerate}[(i)]
+\item 对任意 $p\in[1,\infty)$，称 $f_n$ 在 $L^p(X)$ 中弱收敛于 $f$（记 $f_n\rightharpoonup f$），若
+\begin{align*}
+\lim_{n\to\infty}\int_X f_ng\,\mathrm{d}\mu=\int_X fg\,\mathrm{d}\mu\quad\text{对所有 }g\in L^q(X).
+\end{align*}
+\item 对任意 $p\in(1,\infty]$，称 $f_n$ 在 $L^p(X)$ 中弱$^*$收敛于 $f$（记 $f_n\stackrel{*}{\rightharpoonup}f$），若
+\begin{align*}
+\lim_{n\to\infty}\int_X f_ng\,\mathrm{d}\mu=\int_X fg\,\mathrm{d}\mu\quad\text{对所有 }g\in L^q(X).
+\end{align*}
+\end{enumerate}
+\end{definition}
+当 $p\in(1,\infty)$ 时弱收敛与弱$^*$收敛一致，因为在此 $p$ 范围内 $L^p(X)$ 一致凸，从而自反（见文献\cite{ref25,ref58}）。
+
+\begin{example}\label{example:ch02-非线性弱星}
+\label{example:ch02-弱收敛振荡}
+设 $(X,\mathscr A,\mu)=(I,\mathscr B\cap I,\lambda|_{\mathscr B\cap I})$，其中 $I\equiv(0,1)$。
+
+(i) 考虑序列 $f_n(x):=\sin(2n\pi x)$（$n\in\mathbb N$，$x\in I$）。由 Riemann--Lebesgue 引理，对所有 $p\in[1,\infty)$，有 $f_n\rightharpoonup0$ 在 $L^p(I)$ 中；然而 $f_n\not\to0$ 在 $L^p(I)$ 中强收敛，因 $\|f_n\|_{L^p(I)}=c_p>0$（$n\in\mathbb N$，$p\in[1,\infty)$）。在此类情形人们常说发生质量集中（此宽松用语也用于其他现象；见\cref{example:ch05-振荡集中}(ii)）。注意在此情形，由范数下半连续性给出的不等式
+\begin{align*}
+\|f\|_{L^p(I)}\leqslant\liminf_{n\to\infty}\|f_n\|_{L^p(I)}
+\end{align*}
+是严格的。这被表述为：在弱极限中发生质量损失。上述序列的成员为振荡函数，振荡频率随 $n\to\infty$ 增至无穷。振荡函数列常弱收敛但不强收敛，这一特征常称为振荡现象。
+
+或者注意：$f_n$ 弱收敛于 $0$，但序列 $\{h\circ f_n\}$（其中非线性 $h(s)=|s|^p$）不弱收敛于 $h(0)=0$。在此意义下常说：非线性破坏弱收敛。
+
+(ii) 考虑序列 $f_n:=n^{1/q}\chi_{(0,1/n)}$（$n\in\mathbb N$，$q\in[1,\infty)$）。有 $f_n\to0$ 在 $I$ 上 $\lambda$-a.e.；然而 $\|f_n\|_{L^q(I)}=1$，故 $f_n\not\to0$ 在 $L^q(I)$ 中强收敛。注意序列 $\{f_n\}$ 非 $q$-一致可积（否则与 Vitali 定理矛盾）。事实上，若 $q=1$，直接计算给出
+\begin{align*}
+\sup\left\{n\int_E\chi_{(0,1/n)}\,\mathrm{d}\lambda\ \middle|\ n\in\mathbb N,\ E\in\mathscr B\cap I\text{ 使 }\lambda(E)<\delta\right\}
+=\sup_n n\lambda(E\cap(0,1/n))\leqslant\sup_{n\in\mathbb N}\min\{n\delta,1\}=1.
+\end{align*}
+另一方面，取 $E=E_n=(0,1/n)$（$n>1/\delta$），则 $\lambda(E)<\delta$ 且
+\begin{align*}
+n\int_E\chi_{(0,1/n)}\,\mathrm{d}\lambda=1,
+\end{align*}
+从而
+\begin{align*}
+\sup\left\{n\int_E\chi_{(0,1/n)}\,\mathrm{d}\lambda\ \middle|\ n\in\mathbb N,\ E\in\mathscr B\cap I\text{ 使 }\lambda(E)<\delta\right\}=1.
+\end{align*}
+由\eqref{align:ch02-2.63}，$\eta=1$。注意一致可积模为正与集中现象相关（在此见\cref{remark:ch05-收敛注}(iii)）。又注意当 $q=1$ 时，$f_n\not\rightharpoonup0$ 在 $L^1(I)$ 中，因对所有 $g\in C(I)$，当 $n\to\infty$ 时，
+\begin{align*}
+\int_I f_n(x)g(x)\,\mathrm{d}x=n\int_{(0,1/n)}g(x)\,\mathrm{d}x=\int_I g\left(\frac{\xi}{n}\right)\mathrm{d}\xi\to g(0)
+\end{align*}
+（类似情形将在\cref{example:ch05-振荡集中}中讨论）。
+
+最后注意：若 $1\leqslant p<q$，则对所有 $n\in\mathbb N$ 有 $\|f_n\|_{L^p(I)}=n^{p/q-1}$（即在 $p<q$ 的 $L^p(I)$ 中无质量集中）。故 $f_n\to0$ 在 $L^p(I)$ 中强收敛，与\cref{proposition:ch02-高Lp强收敛}一致。
+\end{example}
+
+下列结果涉及弱收敛与其他类型收敛的关系。
+
+\begin{proposition}\label{proposition:ch02-有界a.e.弱收敛}
+设 $p\in(1,\infty)$。设 $\{f_n\}\subseteq L^p(X)$ 使 $\{\|f_n\|_p\}$ 有界，且 $f_n\to f$ 在 $X$ 上 $\mu$-a.e.。则 $f\in L^p(X)$ 且 $f_n\rightharpoonup f$ 在 $L^p(X)$ 中。
+\end{proposition}
+
+\begin{proof}
+$f\in L^p(X)$ 由 Fatou 引理得到，因序列 $\{\|f_n\|_p\}$ 有界。此外，对任意固定 $\epsilon>0$ 与 $g\in L^q(X)$，存在 $\delta>0$ 使 $\mu(E)<\delta$ 时 $\int_E|g|^q\,\mathrm{d}\mu<\epsilon^q$；又存在 $F\in\mathscr A$（$\mu(F)<\infty$）使 $\int_{F^c}|g|^q\,\mathrm{d}\mu<\epsilon^q$。由 Egorov 定理，存在 $F_\delta\subseteq F$ 使 $\mu(F\setminus F_\delta)<\delta$ 且 $\lim_{n\to\infty}\sup_{x\in F_\delta}|f_n(x)-f(x)|=0$。写 $X=F^c\cup(F\setminus F_\delta)\cup F_\delta$，由积分可加性与 H\"older 不等式得
+\begin{align*}
+\limsup_{n\to\infty}\left|\int_X(f_n-f)g\,\mathrm{d}\mu\right|
+\leqslant 2C\left\{\left(\int_{F^c}|g|^q\,\mathrm{d}\mu\right)^{1/q}
++\left(\int_{F\setminus F_\delta}|g|^q\,\mathrm{d}\mu\right)^{1/q}\right\}<4C\epsilon,
+\end{align*}
+其中 $C:=\sup_n\|f_n\|_p<\infty$。由 $\epsilon$ 的任意性即得结论。
+\end{proof}
+
+\begin{remark}\label{remark:ch02-依测度弱收敛}
+易见若 $\mu$-a.e. 收敛替换为依测度收敛，同一结论仍成立。
+\end{remark}
+
+\begin{proposition}[Radon--Riesz]\label{proposition:ch02-RadonRiesz}
+设 $p\in(1,\infty)$。设 $f_n\rightharpoonup f$ 在 $L^p(X)$ 中，且 $\|f_n\|_p\to\|f\|_p$。则 $f_n\to f$ 在 $L^p(X)$ 中。
+\end{proposition}
+
+\begin{proof}
+若 $p=2$，结论立即由恒等式
+\begin{align*}
+\|f_n-f\|_2^2=\|f_n\|_2^2+\|f\|_2^2-2\int_X f_nf\,\mathrm{d}\mu
+\end{align*}
+得到。一般情形见文献\cite{ref40} Proposition V.11.1。
+\end{proof}
+
+关于 $L^p(X)$ 的弱紧性，对任意 $p\in(1,\infty)$ 有下列结果。
+
+\begin{theorem}\label{theorem:ch02-Lp弱紧}
+设 $(X,\mathscr A,\mu)$ 为可分测度空间，$\mu$ 为 $\sigma$-有限。设 $p\in(1,\infty)$。则下列命题等价：
+\begin{enumerate}[(i)]
+\item $\mathscr F\subseteq L^p(X)$ 有界；
+\item $\mathscr F$ 在弱拓扑中相对序列紧。
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+(i)$\Rightarrow$(ii)。因 $L^p(X)$ 可分且自反，由 Banach--Alaoglu 定理即得。
+
+(ii)$\Rightarrow$(i)。若 $\mathscr F$ 无界，则存在 $\{f_n\}\subseteq L^p(X)$ 使 $\|f_n\|_p\to\infty$，从而对每个 $\{f_{n_k}\}\subseteq\{f_n\}$ 有 $\|f_{n_k}\|_p\to\infty$。另一方面，由假设对任意 $\{f_n\}\subseteq\mathscr F$，存在 $\{f_{n_k}\}\subseteq\{f_n\}$ 弱收敛，从而有界。矛盾。证毕。
+\end{proof}
+
+当 $p=1$ 时情形如下。
+
+\begin{theorem}[Dunford--Pettis]\label{theorem:ch02-dunfordpettis}
+设 $X$ 为 $\sigma$-紧 Hausdorff 空间，$\mu\in\mathscr R^+_f(X)$。则下列命题等价：
+\begin{enumerate}[(i)]
+\item $\mathscr F$ 在 $L^1(X)$ 中有界且一致可积；
+\item $\mathscr F\subseteq L^1(X)$ 在弱拓扑中相对序列紧。
+\end{enumerate}
+\end{theorem}
+
+为证\cref{theorem:ch02-dunfordpettis}，需要下列引理。
+
+\begin{lemma}\label{lemma:ch02-弱收敛判据}
+设 $(X,\mathscr A,\mu)$ 为测度空间。则下列命题等价：
+\begin{enumerate}[(i)]
+\item $\{f_n\}\subseteq L^1(X)$ 弱收敛；
+\item $\{f_n\}$ 在 $L^1(X)$ 中有界，且对任意 $E\in\mathscr A$，序列 $\{\int_E f_n\,\mathrm{d}\mu\}\subseteq\mathbb R$ 收敛。
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+若 $Y$ 为度量空间，$\{y_n\}\subseteq Y$，则 $y_n$ 弱收敛当且仅当它有界，且对任意 $y^*\in Y^*$ 的子集 $Y'\subseteq Y^*$（$Y'$ 的线性张在 $Y^*$ 中稠密），序列 $\langle y^*,y_n\rangle_{Y^*,Y}$ 收敛（见文献\cite{ref66} Theorem IV.15.1）。因 $\int_E f_n\,\mathrm{d}\mu=\int_X f_n\chi_E\,\mathrm{d}\mu$ 且 $\mathscr S(X)$ 在 $L^\infty(X)$ 中稠密，结论成立。
+\end{proof}
+
+\begin{proof}[\cref{theorem:ch02-dunfordpettis}的证明]
+(i)$\Rightarrow$(ii)。因 $L^1(X)$ 典范嵌入 Banach 空间 $\mathscr R_f(X)$，由假设 $\mathscr F$ 为 $\mathscr R_f(X)$ 中有界子集（见\cref{remark:ch02-测度密度}与\cref{section:ch05-收敛}）。又注意 $C_0(X)$ 可分。由 Banach--Alaoglu 定理与\cref{theorem:ch02-Riesz对偶}，对任意 $\{f_n\}\subseteq\mathscr F$，存在 $\{f_{n_k}\}\subseteq\{f_n\}$ 与 $\nu\in\mathscr R_f(X)$，使 $f_{n_k}\stackrel{*}{\rightharpoonup}\nu$ 在 $\mathscr R_f(X)$ 中。由\cref{lemma:ch02-弱收敛判据}，若证得对任意 $E\in\mathscr A$，序列 $\{\int_E f_{n_k}\,\mathrm{d}\mu\}\subseteq\mathbb R$ 为 Cauchy 列，则 $\nu$ 可等同于函数 $f\in L^1(X)$（即存在 $f\in L^1(X)$ 使 $\nu(X)=\int_X f\,\mathrm{d}\mu$）。
+
+为此，固定 $E\in\mathscr A$。由\cref{proposition:ch02-Tietze逼近}与\cref{remark:ch02-Lusin对可测函数}，存在序列 $\{\zeta_m\}\subseteq C_c(X)$，使 $\zeta_m\to\chi_E$ 在 $X$ 上 $\mu$-a.e.，且对所有 $m\in\mathbb N$ 有 $\|\zeta_m\|_\infty=1$。固定 $\epsilon>0$，设 $\delta=\delta(\epsilon)>0$ 由\cref{definition:ch02-p一致可积}(ii)给出。因 $\mu$ 有限，由 Egorov 定理，存在 $E_\delta\in\mathscr A$，使 $\mu(E_\delta^c)<\epsilon$ 且 $\lim_{m\to\infty}\sup_{x\in E_\delta}|\zeta_m(x)-\chi_E(x)|=0$。故存在 $m_0\in\mathbb N$，使对所有 $m\geqslant m_0$ 有 $\sup_{x\in E_\delta}|\zeta_m(x)-\chi_E(x)|<\epsilon$。
+
+现注意对任意 $k,l\in\mathbb N$，
+\begin{align*}
+\left|\int_E(f_{n_k}-f_{n_l})\,\mathrm{d}\mu\right|
+&=\left|\int_X(f_{n_k}-f_{n_l})\chi_E\,\mathrm{d}\mu\right|\\
+&\leqslant\left|\int_{E_\delta^c}(f_{n_k}-f_{n_l})(\chi_E-\zeta_{m_0})\,\mathrm{d}\mu\right|
++\left|\int_{E_\delta}(f_{n_k}-f_{n_l})(\chi_E-\zeta_{m_0})\,\mathrm{d}\mu\right|
++\left|\int_X(f_{n_k}-f_{n_l})\zeta_{m_0}\,\mathrm{d}\mu\right|\\
+&=:I_1+I_2+I_3.
+\end{align*}
+由上述考虑，
+\begin{align*}
+I_1\leqslant 2\int_{E_\delta^c}(|f_{n_k}|+|f_{n_l}|)\,\mathrm{d}\mu<4\epsilon,
+\end{align*}
+因 $\mu(E_\delta^c)<\epsilon$ 且 $\mathscr F$ 一致可积；
+\begin{align*}
+I_2\leqslant\sup_{x\in E_\delta}|\zeta_{m_0}(x)-\chi_E(x)|\int_{E_\delta}(|f_{n_k}|+|f_{n_l}|)\,\mathrm{d}\mu<2\epsilon M,
+\end{align*}
+其中 $M:=\sup_{f\in\mathscr F}\|f\|_1$。此外，因 $\{f_{n_k}\}$ 在 $\mathscr R_f(X)$ 中弱$^*$收敛，且 $\zeta_{m_0}\in C_0(X)$，序列 $\{\int_X f_{n_k}\zeta_{m_0}\,\mathrm{d}\mu\}\subseteq\mathbb R$ 收敛，故对任意充分大的 $k,l\in\mathbb N$ 有 $I_3<\epsilon$。
+
+综上，已证：对任意 $E\in\mathscr A$ 与 $\epsilon>0$，存在 $k_0\in\mathbb N$，使对所有 $k,l\geqslant k_0$ 有
+\begin{align*}
+\left|\int_E(f_{n_k}-f_{n_l})\,\mathrm{d}\mu\right|<(2M+5)\epsilon,
+\end{align*}
+即对任意 $E\in\mathscr A$，$\{\int_E f_{n_k}\,\mathrm{d}\mu\}\subseteq\mathbb R$ 为 Cauchy 列。结论成立。
+
+(ii)$\Rightarrow$(i)。$\mathscr F$ 的有界性如\cref{theorem:ch02-Lp弱紧}证明。现证 $\mathscr F$ 一致可积。反证，设相反成立。则存在序列 $\{E_n\}\subseteq\mathscr A$ 与序列 $\{f_n\}\subseteq\mathscr F$，具有\cref{lemma:ch02-非一致可积}所述性质。另一方面，由假设 $\mathscr F$ 相对弱序列紧，故存在 $\{f_n\}$ 的子列（不重新标号）与 $f\in L^1(X)$，使 $f_n\rightharpoonup f$ 在 $L^1(X)$ 中。在\cref{lemma:ch02-非一致可积}中取 $h=f$，存在 $k=k_f>0$，使对所有 $n\in\mathbb N$ 有
+\begin{align}
+\left|\int_{E_n}(f_n-h)\,\mathrm{d}\mu\right|\geqslant k. \label{align:ch02-2.72}
+\end{align}
+利用\eqref{align:ch02-2.72}，可取 $g\in L^\infty(X)$ 使
+\begin{align}
+\lim_{n\to\infty}\int_X f_ng\,\mathrm{d}\mu\neq\int_X fg\,\mathrm{d}\mu, \label{align:ch02-2.73}
+\end{align}
+矛盾，结论成立。
+
+事实上，令 $F_1:=E_1$，$n_1:=1$，取 $\epsilon_1>0$ 使对所有 $E\in\mathscr A$（$\mu(E)<\epsilon_1$）有
+\begin{align*}
+\int_E|f_{n_1}-f|\,\mathrm{d}\mu<\frac k3.
+\end{align*}
+令 $n_2\in\mathbb N$ 为大于 $n_1$ 的最小整数，使
+\begin{align*}
+\mu\left(\bigcup_{n=n_2}^\infty E_n\right)<\epsilon_1,\qquad
+\left|\int_{F_1}(f_{n_2}-f)\,\mathrm{d}\mu\right|<\frac k3.
+\end{align*}
+注意这样的 $n_2$ 存在，因 $\lim_{p\to\infty}\mu(\bigcup_{n=p}^\infty E_n)=0$，且
+\begin{align*}
+\lim_{n\to\infty}\int_{F_1}(f_n-f)\,\mathrm{d}\mu=\lim_{n\to\infty}\int_X(f_n-f)\chi_{F_1}\,\mathrm{d}\mu=0,
+\end{align*}
+因 $\chi_{F_1}\in L^\infty(X)$ 且 $f_n\rightharpoonup f$ 在 $L^1(X)$ 中。
+
+令 $F_2:=E_{n_2}$，注意
+\begin{align*}
+\int_{\bigcup_{n=n_2}^\infty E_n}|f_{n_1}-f|\,\mathrm{d}\mu<k/3,
+\end{align*}
+因 $\mu(\bigcup_{n=n_2}^\infty E_n)<\epsilon_1$。再取 $\epsilon_2>0$ 使对所有 $E\in\mathscr A$（$\mu(E)<\epsilon_2$）有
+\begin{align*}
+\int_E|f_{n_2}-f|\,\mathrm{d}\mu<\frac k3,
+\end{align*}
+令 $n_3\in\mathbb N$ 为大于 $n_2$ 的最小整数，使
+\begin{align*}
+\mu\left(\bigcup_{n=n_3}^\infty E_n\right)<\epsilon_2,\qquad
+\left|\int_{F_1\cup F_2}(f_{n_3}-f)\,\mathrm{d}\mu\right|<\frac k3
+\end{align*}
+（同上易见这样的 $n_3$ 存在）。令 $F_3:=E_{n_3}$，注意
+\begin{align*}
+\int_{\bigcup_{n=n_3}^\infty E_n}|f_{n_2}-f|\,\mathrm{d}\mu<k/3,
+\end{align*}
+因 $\mu(\bigcup_{n=n_3}^\infty E_n)<\epsilon_2$。迭代该论证，可构造两个子列 $\{F_p\}\equiv\{E_{n_p}\}\subseteq\{E_n\}$ 与 $\{f_p\}\equiv\{f_{n_p}\}\subseteq\{f_n\}$，以及序列 $\{\epsilon_p\}\subseteq(0,\infty)$，使
+\begin{align}
+\mu\left(\bigcup_{q\geqslant p+1}F_q\right)\leqslant\mu\left(\bigcup_{n=n_{p+1}}^\infty E_n\right)<\epsilon_p
+\Rightarrow\left|\int_{\bigcup_{q>p}F_q}(f_p-f)\,\mathrm{d}\mu\right|<\frac k3 \label{align:ch02-2.74a}
+\end{align}
+（由构造，因 $\bigcup_{q\geqslant p+1}F_q\subseteq\bigcup_{n=n_{p+1}}^\infty E_n$），
+\begin{align}
+\left|\int_{\bigcup_{q<p}F_q}(f_p-f)\,\mathrm{d}\mu\right|<\frac k3, \label{align:ch02-2.74b}\\
+\left|\int_{F_p}(f_p-f)\,\mathrm{d}\mu\right|\geqslant k\quad\text{对所有 }p\in\mathbb N. \label{align:ch02-2.74c}
+\end{align}
+现令 $g:=\chi_{\bigcup_{q=1}^\infty F_q}$。由\eqref{align:ch02-2.74a}--\eqref{align:ch02-2.74c} 得
+\begin{align*}
+\left|\int_X(f_p-f)g\,\mathrm{d}\mu\right|
+=\left|\int_{\bigcup_{q<p}F_q}(f_p-f)\,\mathrm{d}\mu+\int_{F_p}(f_p-f)\,\mathrm{d}\mu+\int_{\bigcup_{q>p}F_q}(f_p-f)\,\mathrm{d}\mu\right|
+\geqslant\frac k3>0.
+\end{align*}
+这就证明了\eqref{align:ch02-2.73}，结论成立。
+\end{proof}
+
+\section{微分}\label{section:ch02-微分}
+
+\subsection{Radon--Nikod\'ym 定理}\label{subsection:ch02-RadonNikodym}
+
+设 $(X,\mathscr A)$ 为可测空间，$\mu,\nu:\mathscr A\to[0,\infty)$ 为测度。回顾 $\nu$ 关于 $\mu$ 绝对连续的定义：$\nu\ll\mu$ 当且仅当对所有 $E\in\mathscr A$（$\mu(E)=0$）有 $\nu(E)=0$。下列经典结果成立。
+
+\begin{theorem}[Radon--Nikod\'ym]\label{theorem:ch02-RadonNikodym}
+设 $(X,\mathscr A,\mu)$ 为 $\sigma$-有限测度空间，$\nu:\mathscr A\to[0,\infty)$ 为测度，$\nu\ll\mu$。则存在 $h\in L^1_{\mathrm{loc}}(X,\mathscr A,\mu)$，使
+\begin{align}
+\nu(E)=\int_E h\,\mathrm{d}\mu\quad\text{对所有 }E\in\mathscr A. \label{align:ch02-2.75}
+\end{align}
+此外，$h$ 在 $\mu$-a.e. 意义下唯一。
+\end{theorem}
+
+\cref{theorem:ch02-RadonNikodym}可推广到 $\sigma$-有限带号测度 $\nu$。对两个 $\sigma$-有限测度 $\mu,\nu:\mathscr A\to[0,\infty)$，下列 Jordan 类型分解成立。
+
+\begin{theorem}[Lebesgue 分解]\label{theorem:ch02-Lebesgue分解}
+设 $(X,\mathscr A)$ 为可测空间，$\mu,\nu:\mathscr A\to[0,\infty)$ 为 $\sigma$-有限测度。则存在唯一对 $\{\nu_a,\nu_s\}\subseteq\mathscr A$，使 $\nu=\nu_a+\nu_s$，$\nu_a\ll\mu$，$\nu_s\perp\mu$。
+\end{theorem}
+
+有下列 Riesz 表示定理（见\cref{theorem:ch02-RieszC0}）的相伴结果。
+
+\begin{proposition}\label{proposition:ch02-绝对连续泛函}
+\label{remark:ch02-绝对连续}
+设 $X$ 为局部紧 Hausdorff 空间，$\mu\in\mathscr R^+_f(X)$。设 $\nu\in\mathscr R^+(X)$，$\nu\ll\mu$。则存在 $h\in L^1_{\mathrm{loc}}(X,\mathscr B,\mu)$，使
+\begin{align}
+\int_X f\,\mathrm{d}\nu=\int_X fh\,\mathrm{d}\mu\quad\text{对所有 }f\in C_c(X). \label{align:ch02-2.76}
+\end{align}
+\end{proposition}
+
+\begin{proof}
+因 $\nu\ll\mu$，$\nu$ 在 $\mu$ 零测集上取值为零。由 Radon--Nikod\'ym 定理（见\cref{theorem:ch02-RadonNikodym}），存在 $h\in L^1_{\mathrm{loc}}(X,\mathscr B,\mu)$，使\eqref{align:ch02-2.75}成立，结论由标准逼近（见\cref{remark:ch02-简单函数稠密}）得到。
+\end{proof}
+
+\subsection{$\mathbb R^N$ 上的微分}\label{subsection:ch02-RN微分}
+
+现考虑 $X=\mathbb R^N$、$\mu=\lambda_N$ 的情形。先证明函数
+\begin{align*}
+\mathbb R^N\ni x\mapsto\int_{B(x,r)}f\,\mathrm{d}\lambda_N
+\end{align*}
+在 $f\in L^1_{\mathrm{loc}}(\mathbb R^N)$ 下的连续性。
+
+\begin{lemma}\label{lemma:ch02-球积分连续}
+设 $f\in L^1_{\mathrm{loc}}(\mathbb R^N)$。则函数 $g:\mathbb R^N\to\mathbb R$，$g(x):=\int_{B(x,r)}f\,\mathrm{d}\lambda_N$，对任意 $r>0$ 连续。
+\end{lemma}
+
+\begin{proof}
+设 $x_n\to x$。则 $f\chi_{B(x_n,r)}\to f\chi_{B(x,r)}$ $\lambda_N$-a.e.，因对任意 $y\in\partial B(x,r)$，$|\{y-x_n\}|-|\{y-x\}|\to0$。此外，若 $|x_n-x|<r$，则 $B(x_n,r)\subseteq B(x,2r)$，故由控制收敛定理得
+\begin{align*}
+g(x_n)=\int_{\mathbb R^N}f\chi_{B(x_n,r)}\,\mathrm{d}\lambda_N\to\int_{\mathbb R^N}f\chi_{B(x,r)}\,\mathrm{d}\lambda_N=g(x).
+\end{align*}
+\end{proof}
+
+下列 Vitali 覆盖引理是微分理论的基础。
+
+\begin{lemma}[Vitali 覆盖]\label{lemma:ch02-Vitali覆盖}
+设 $E\subseteq\mathbb R^N$，$\{B_\alpha\}_{\alpha\in I}$ 为 $E$ 的开球覆盖族。则存在两两不交的可数子族 $\{B_{\alpha_n}\}\subseteq\{B_\alpha\}$，使
+\begin{align*}
+\lambda_N(E\setminus\bigcup_{n=1}^\infty B_{\alpha_n})=0.
+\end{align*}
+此外，若 $\lambda_N(E)<\infty$，则对任意 $\epsilon>0$，子族可选为使
+\begin{align*}
+\lambda_N\left(E\setminus\bigcup_{n=1}^\infty B_{\alpha_n}\right)<\epsilon.
+\end{align*}
+\end{lemma}
+
+\begin{proof}
+设 $\lambda_N(E)<\infty$（一般情形由 $\sigma$-有限性归结）。令 $s:=\sup\{\operatorname{diam}B_\alpha\mid\alpha\in I\}$。不妨设 $s<\infty$，否则直接取有限个球即可。
+
+递归选取：令 $B_{\alpha_1}$ 使 $\operatorname{diam}B_{\alpha_1}>s/2$。已选 $B_{\alpha_1},\dots,B_{\alpha_n}$，令
+\begin{align*}
+s_n:=\sup\{\operatorname{diam}B_\alpha\mid B_\alpha\cap B_{\alpha_k}=\emptyset,\ k=1,\dots,n\},
+\end{align*}
+取 $B_{\alpha_{n+1}}$ 使 $\operatorname{diam}B_{\alpha_{n+1}}>s_n/2$。若集合为空则停止。
+
+现证 $E\subseteq\bigcup_n 5B_{\alpha_n}$，其中 $5B$ 为同心五倍半径球。固定 $x\in E$。存在某球 $B_\alpha$ 使 $x\in B_\alpha$。若 $B_\alpha$ 被选取，则结论成立；否则存在最小 $n$ 使 $B_\alpha\cap B_{\alpha_n}\neq\emptyset$。由选取，$\operatorname{diam}B_{\alpha_n}\geqslant\operatorname{diam}B_\alpha/2$，故 $B_\alpha\subseteq 5B_{\alpha_n}$。
+
+于是 $E\setminus\bigcup_n B_{\alpha_n}\subseteq\bigcup_n(5B_{\alpha_n}\setminus B_{\alpha_n})$。因球两两不交，
+\begin{align*}
+\sum_n\lambda_N(B_{\alpha_n})\leqslant\lambda_N\left(\bigcup_n B_{\alpha_n}\right)\leqslant\lambda_N(E)<\infty,
+\end{align*}
+故 $\sum_n\lambda_N(5B_{\alpha_n}\setminus B_{\alpha_n})=(5^N-1)\sum_n\lambda_N(B_{\alpha_n})<\infty$，余项随 $n\to\infty$ 趋于零。
+\end{proof}
+
+下列结果是 Lebesgue 微分定理。
+
+\begin{theorem}[Lebesgue 微分]\label{theorem:ch02-Lebesgue微分}\label{corollary:ch02-Lebesgue点}\label{corollary:ch02-Lebesgue微分}
+设 $f\in L^1_{\mathrm{loc}}(\mathbb R^N)$。则对 $\lambda_N$-a.e. $x\in\mathbb R^N$，
+\begin{align}
+\lim_{r\to0}\frac1{\lambda_N(B(x,r))}\int_{B(x,r)}|f(y)-f(x)|\,\mathrm{d}y=0. \label{align:ch02-2.77}
+\end{align}
+特别地，
+\begin{align}
+\lim_{r\to0}\frac1{\lambda_N(B(x,r))}\int_{B(x,r)}f(y)\,\mathrm{d}y=f(x)\quad\text{对 }\lambda_N\text{-a.e. }x. \label{align:ch02-2.78}
+\end{align}
+\end{theorem}
+
+\begin{proof}
+固定 $g\in C_c(\mathbb R^N)$，则\eqref{align:ch02-2.77}对 $f-g$ 与 $g$ 分别考虑。对 $g$，由连续性显然成立；故只需证对每个 $f\in L^1_{\mathrm{loc}}(\mathbb R^N)$，
+\begin{align*}
+E_\alpha:=\left\{x\in\mathbb R^N\ \middle|\ \limsup_{r\to0}\frac1{\lambda_N(B(x,r))}\int_{B(x,r)}|f(y)-f(x)|\,\mathrm{d}y>\alpha\right\}
+\end{align*}
+的测度为零。
+
+对任意 $\epsilon>0$，由 $C_c$ 稠密性（见\cref{lemma:ch02-Cc稠密}），存在 $g\in C_c(\mathbb R^N)$ 使 $\|f-g\|_1<\epsilon$。令 $h=f-g$。则
+\begin{align*}
+\frac1{\lambda_N(B(x,r))}\int_{B(x,r)}|h(y)-h(x)|\,\mathrm{d}y
+\leqslant\frac1{\lambda_N(B(x,r))}\int_{B(x,r)}|h(y)|\,\mathrm{d}y+|h(x)|.
+\end{align*}
+定义极大函数
+\begin{align*}
+\mathcal M h(x):=\sup_{r>0}\frac1{\lambda_N(B(x,r))}\int_{B(x,r)}|h(y)|\,\mathrm{d}y.
+\end{align*}
+由 Hardy--Littlewood--Wiener 极大不等式（见文献\cite{ref40} Theorem VIII.3.1），$\lambda_N(\{x\mid\mathcal M h(x)>\alpha/2\})\leqslant C\|h\|_1/\alpha$。又由 Chebyshev，$\lambda_N(\{x\mid|h(x)|>\alpha/2\})\leqslant2\|h\|_1/\alpha$。故
+\begin{align*}
+\lambda_N(E_\alpha)\leqslant\frac{C\|h\|_1}{\alpha}+\frac{2\|h\|_1}{\alpha}\leqslant\frac{(C+2)\epsilon}{\alpha}.
+\end{align*}
+由 $\epsilon$ 的任意性得 $\lambda_N(E_\alpha)=0$。结论成立。
+\end{proof}
+
+\begin{corollary}\label{corollary:ch02-带号Radon微分}
+设 $\mu$ 为 $\mathbb R^N$ 上局部有限带号 Radon 测度。则对 $\lambda_N$-a.e. $x$，极限
+\begin{align*}
+\frac{\mathrm{d}\mu}{\mathrm{d}\lambda_N}(x):=\lim_{r\to0}\frac{\mu(B(x,r))}{\lambda_N(B(x,r))}
+\end{align*}
+存在有限值。函数 $\mathrm{d}\mu/\mathrm{d}\lambda_N$ 为 $\mu$ 关于 $\lambda_N$ 的 Radon--Nikod\'ym 导数在绝对连续部分上的限制。
+\end{corollary}
+
+\cref{theorem:ch02-Lebesgue微分}的一个重要应用是绝对连续函数的刻画。回顾区间 $[a,b]$ 上函数 $f$ 为绝对连续的定义：对任意 $\epsilon>0$，存在 $\delta>0$，使对任意互不相交区间族 $(a_i,b_i)$（$i=1,\dots,n$），当 $\sum_i(b_i-a_i)<\delta$ 时有 $\sum_i|f(b_i)-f(a_i)|<\epsilon$。
+
+\begin{theorem}\label{theorem:ch02-绝对连续刻画}
+设 $f:[a,b]\to\mathbb R$。则下列命题等价：
+\begin{enumerate}[(i)]
+\item $f$ 绝对连续；
+\item $f$ 几乎处处可微，$f'\in L^1([a,b])$，且
+\begin{align*}
+f(x)-f(a)=\int_a^x f'(t)\,\mathrm{d}t\quad\text{对所有 }x\in[a,b].
+\end{align*}
+\end{enumerate}
+\end{theorem}
+
+本微分理论的进一步发展、包括 Sobolev 函数的刻画，将在后续章节中展开。
+
+\end{document}

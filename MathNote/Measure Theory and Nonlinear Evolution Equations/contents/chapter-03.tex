@@ -1,0 +1,1252 @@
+\documentclass[../main.tex]{subfiles}
+\graphicspath{{\subfix{../image/}}{\subfix{../figure/}}}
+
+\begin{document}
+
+\chapter{函数空间与容量}\label{chapter:ch03}
+
+\section{函数空间}\label{section:ch03-函数空间}
+
+本节回顾标量分布论与 Sobolev 空间的若干基本概念，以固定记号并使叙述足够自足。相关主题的详尽阐述请读者参见文献~\cite{ref01,ref64}。
+
+\subsection{分布导数}\label{subsection:ch03-分布导数}
+
+设 $U\subseteq\mathbb{R}^N$ 为开集。置
+\begin{align*}
+C^m(U) := \{f:U\to\mathbb{R}\mid \exists D^\alpha f,\ D^\alpha f\in C(U)\ \forall|\alpha|\leqslant m\}
+\quad (m\in\mathbb{N}),
+\end{align*}
+其中 $\mathbb{N}^*:=\mathbb{N}\cup\{0\}$，$\alpha\equiv(\alpha_1,\dots,\alpha_N)$，$\alpha_k\in\mathbb{N}^*$（$k=1,\dots,N$），$|\alpha|:=\sum_{k=1}^N\alpha_k$，且
+\begin{align*}
+D^\alpha\equiv\frac{\partial^{|\alpha|}}{\partial^{\alpha_1}x_1\cdots\partial^{\alpha_N}x_N}
+\end{align*}
+（若 $|\alpha|=0$，则置 $D^\alpha f\equiv f$）。我们也记 $x^\alpha\equiv x_1^{\alpha_1}\cdots x_N^{\alpha_N}$。此外置 $C^0(U)\equiv C(U)$，$C^\infty(U):=\bigcap_{m=0}^\infty C^m(U)$，$C^\infty_c(U):=C^\infty(U)\cap C_c(U)$。
+
+\begin{definition}\label{definition:ch03-分布与检验函数}
+设 $U\subseteq\mathbb{R}^N$ 为开集。
+\begin{enumerate}[(i)]
+\item\label{item:ch03-分布-i} 检验函数空间 $\mathcal{D}(U)$ 即赋以如下收敛概念的 $C^\infty_c(U)$ 空间：序列 $\{\zeta_k\}\subseteq C^\infty_c(U)$ 在 $\mathcal{D}(U)$ 中收敛于 $\zeta$，若存在紧集 $K\subset U$ 包含 $\operatorname{supp}\zeta$ 与 $\operatorname{supp}\zeta_k$（$k\in\mathbb{N}$），且对所有 $\alpha\in(\mathbb{N}^*)^N$，$D^\alpha\zeta_k$ 在 $K$ 上一致收敛于 $D^\alpha\zeta$。
+\item\label{item:ch03-分布-ii} 函数 $f\in C^\infty(U)$ 属于 Schwartz 类 $\mathcal{S}(U)$，若对所有 $\alpha,\beta\in(\mathbb{N}^*)^N$ 有 $\sup_{x\in U}|x^\alpha D^\beta f(x)|<\infty$。
+\item\label{item:ch03-分布-iii} 分布空间（记为 $\mathcal{D}'(U)$）是 $\mathcal{D}(U)$ 上连续线性泛函的对偶空间。即 $T\in\mathcal{D}'(U)$ 当且仅当 $T:\mathcal{D}(U)\to\mathbb{R}$ 为线性，且对任意 $\zeta_k\to\zeta$ 在 $\mathcal{D}(U)$ 中，有 $|\langle T,\zeta_k\rangle-\langle T,\zeta\rangle|\to0$。
+\end{enumerate}
+
+在\eqref{item:ch03-分布-iii}及下文，$\mathcal{D}(U)$ 与 $\mathcal{D}'(U)$ 之间的对偶映射记为 $(T,\zeta)\mapsto\langle T,\zeta\rangle\in\mathbb{R}$（$T\in\mathcal{D}'(U)$，$\zeta\in\mathcal{D}(U)$）。
+\end{definition}
+
+\begin{definition}\label{definition:ch03-分布收敛}
+分布序列 $\{T_k\}\subseteq\mathcal{D}'(U)$ 在 $\mathcal{D}'(U)$ 中收敛于 $T\in\mathcal{D}'(U)$（记作 $T_k\to T$ 在 $\mathcal{D}'(U)$ 中），若对所有 $\zeta\in C^\infty_c(U)$ 有 $|\langle T_k,\zeta\rangle-\langle T,\zeta\rangle|\to0$。
+\end{definition}
+
+\begin{definition}\label{definition:ch03-分布导数定义}
+设 $T\in\mathcal{D}'(U)$。对任意 $\alpha\in(\mathbb{N}^*)^N$，$T$ 的 $\alpha$ 阶分布导数（记为 $D^\alpha T$）指如下分布：
+\begin{align*}
+\langle D^\alpha T,\zeta\rangle := (-1)^{|\alpha|}\langle T,D^\alpha\zeta\rangle
+\quad \text{对所有 }\zeta\in C^\infty_c(U).
+\end{align*}
+若 $|\alpha|=0$，则 $D^\alpha T=T$。若 $|\alpha|=1$，$\alpha_k=1$，且对所有 $l\neq k$ 有 $\alpha_l=0$（$k,l=1,\dots,N$），则写 $\dfrac{\partial T}{\partial x_k}$（若 $N=1$ 则写 $\dfrac{\mathrm{d}T}{\mathrm{d}x}$）以代替 $D^\alpha T$。我们记
+\begin{align*}
+\nabla T\equiv\left(\frac{\partial T}{\partial x_1},\dots,\frac{\partial T}{\partial x_N}\right)
+\end{align*}
+为 $T$ 的分布梯度，记
+\begin{align*}
+\operatorname{div}T := \sum_{i=1}^N\frac{\partial T_i}{\partial x_i}
+\end{align*}
+为 $T\equiv(T_1,\dots,T_N)\in(\mathcal{D}'(U))^N$ 的分布散度。
+\end{definition}
+
+\begin{definition}\label{definition:ch03-乘积与卷积}
+\label{definition:ch03-磨光}
+\begin{enumerate}[(i)]
+\item $T\in\mathcal{D}'(U)$ 与函数 $f\in C^\infty(U)$ 的乘积定义为 $\langle fT,\zeta\rangle:=\langle T,f\zeta\rangle$，$\zeta\in C^\infty_c(U)$。
+\item $T\in\mathcal{D}'(\mathbb{R}^N)$ 与 $\rho\in C^\infty_c(\mathbb{R}^N)$ 的卷积定义为 $\langle T*\rho,\zeta\rangle:=\langle T,\zeta*\widetilde\rho\rangle$，$\zeta\in C^\infty_c(\mathbb{R}^N)$，其中 $\widetilde\rho(x):=\rho(-x)$（$x\in\mathbb{R}^N$）。
+\end{enumerate}
+\end{definition}
+
+若 $T=f\in L^1_{\mathrm{loc}}(\mathbb{R}^N)$，则易见 $(T*\rho)=\int_{\mathbb{R}^N}\rho(\cdot-y)f(y)\,\mathrm{d}y$（即定义\ref{definition:ch03-乘积与卷积}(ii)化归为局部可积函数的定义，由 Fubini 定理保证适定）。
+
+设 $\rho_\epsilon$ 为标准磨光子，即 $\rho_\epsilon(x):=\epsilon^{-N}\rho(x/\epsilon)$（$\epsilon>0$），其中 $\rho\in C^\infty_c(\mathbb{R}^N)$，$\rho\geqslant0$，且 $\int_{\mathbb{R}^N}\rho\,\mathrm{d}x=1$。
+
+\begin{proposition}\label{proposition:ch03-磨光逼近}\label{proposition:ch03-磨光性质}
+\begin{enumerate}[(i)]
+\item 设 $T\in\mathcal{D}'(\mathbb{R}^N)$。则 $T*\rho_\epsilon\in C^\infty(\mathbb{R}^N)$，且对所有 $\alpha\in(\mathbb{N}^*)^N$，$(D^\alpha T)*\rho_\epsilon\to D^\alpha T$ 在 $\mathcal{D}'(\mathbb{R}^N)$ 中当 $\epsilon\to0^+$。
+\item 设 $f\in L^p(\mathbb{R}^N)$（$p\in[1,\infty)$）。则 $\{\rho_\epsilon*f\}\subset L^p(\mathbb{R}^N)\cap C^\infty(\mathbb{R}^N)$，$\|\rho_\epsilon*f\|_p\leqslant\|f\|_p$ 对所有 $\epsilon>0$，且 $\rho_\epsilon*f\to f$ 在 $L^p(\mathbb{R}^N)$ 中当 $\epsilon\to0^+$。
+\item 设 $f\in C(\mathbb{R}^N)$。则 $\rho_\epsilon*f\to f$ 当 $\epsilon\to0^+$ 在 $\mathbb{R}^N$ 的紧子集上一致成立。
+\end{enumerate}
+\end{proposition}
+
+\begin{remark}\label{remark:ch03-Radon即分布}
+\begin{enumerate}[(i)]
+\item $U$ 上的每个 Radon 测度定义一个正分布：即对每个 $\mu\in\mathscr{R}^+(U)$，存在 $T_\mu\in\mathcal{D}'(U)$ 使对任意非负 $\zeta\in\mathcal{D}(U)$ 有 $\langle T_\mu,\zeta\rangle\geqslant0$，其中
+\begin{align}
+\langle T_\mu,\zeta\rangle\equiv\langle\mu,\zeta\rangle=\int_U\zeta\,\mathrm{d}\mu
+\quad (\zeta\in C^\infty_c(U)).\label{align:ch03-3.1}
+\end{align}
+类似地，$U$ 上每个带号 Radon 测度通过\eqref{align:ch03-3.1}定义一个分布，即 $\mathscr{R}(U)\subseteq\mathcal{D}'(U)$。
+\item 反之，对每个正的 $T\in\mathcal{D}'(U)$，存在 $\mu_T\in\mathscr{R}^+(U)$ 使
+\begin{align*}
+\langle T,\zeta\rangle=\langle\mu_T,\zeta\rangle=\int_U\zeta\,\mathrm{d}\mu_T
+\quad (\zeta\in\mathcal{D}(U)).
+\end{align*}
+\end{enumerate}
+\end{remark}
+
+\begin{proposition}\label{proposition:ch03-分布函数导数}
+设 $\mu$ 为 $\mathbb{R}$ 上的 Radon 测度，$\phi_\mu:\mathbb{R}\to\mathbb{R}$ 为 $\mu$ 的分布函数。则 $\phi_\mu$ 的分布导数等于 $\mu$。
+\end{proposition}
+
+\begin{proof}
+设 $\zeta\in C^\infty_c(\mathbb{R})$，$\operatorname{supp}\zeta\equiv[a,b]$（$-\infty<a<b<\infty$）。由 Fubini 定理，
+\begin{align*}
+\left\langle\frac{\mathrm{d}\phi_\mu}{\mathrm{d}x},\zeta\right\rangle
+&=-\int_a^b\phi_\mu(x)\zeta'(x)\,\mathrm{d}x
+=-\int_a^b\mu((a,x])\zeta'(x)\,\mathrm{d}x\\
+&=-\int_a^b\mathrm{d}x\,\zeta'(x)\int_a^x\mathrm{d}\mu(y)
+=-\int_a^b\mathrm{d}\mu(y)\int_y^b\zeta'(x)\,\mathrm{d}x\\
+&=\int_a^b\zeta(y)\,\mathrm{d}\mu(y)=\langle\mu,\zeta\rangle.
+\end{align*}
+故结论成立。
+\end{proof}
+
+\begin{remark}\label{remark:ch03-阶梯函数导数}
+由\cref{proposition:ch03-分布函数导数}，阶梯函数的分布导数为有限带号 Radon 测度 $\sum_{p=1}^n[c_p-c_{p-1}]\delta_{x_p}$。类似地，Cantor--Vitali 函数 $V$ 的分布导数为 Radon 测度 $\lambda_V$。
+\end{remark}
+
+\subsection{Sobolev 空间}\label{subsection:ch03-Sobolev空间}
+
+\begin{definition}\label{definition:ch03-Sobolev空间定义}\label{subsection:ch03-Sobolev定义}
+设 $U\subseteq\mathbb{R}^N$ 为开集，$m\in\mathbb{N}^*$，$p\in[1,\infty]$。函数 $f\in L^p(U)$ 属于 Sobolev 空间 $W^{m,p}(U)$，若对所有满足 $|\alpha|\leqslant m$ 的 $\alpha\in(\mathbb{N}^*)^N$ 有 $D^\alpha f\in L^p(U)$。空间 $W^{m,p}_{\mathrm{loc}}(U)$ 由将 $L^p(U)$ 换为 $L^p_{\mathrm{loc}}(U)$ 定义。$W^{m,p}_{\mathrm{loc}}(U)$ 的元素称为 Sobolev 函数。
+\end{definition}
+
+显然 $W^{0,p}(U)\equiv L^p(U)$。$W^{m,p}(U)$ 是向量空间，映射 $f\mapsto\|f\|_{m,p}$，其中
+\begin{align}
+\|f\|_{m,p}:=\left(\sum_{|\alpha|\leqslant m}\|D^\alpha f\|_p^p\right)^{1/p}
+\quad (p\in[1,\infty)),\label{align:ch03-3.2a}\\
+\|f\|_{m,p}:=\max_{|\alpha|\leqslant m}\|D^\alpha f\|_\infty
+\quad (p=\infty)\label{align:ch03-3.2b}
+\end{align}
+为范数。赋以此范数的空间 $W^{m,p}(U)$ 是 Banach 空间。
+
+\begin{definition}\label{definition:ch03-W0}
+设 $U\subseteq\mathbb{R}^N$ 为开集，$m\in\mathbb{N}^*$，$p\in[1,\infty]$。$W^{m,p}_0(U)$ 指 $C^\infty_c(U)$ 关于范数 $\|\cdot\|_{m,p}$ 的闭包。
+\end{definition}
+
+当 $p=2$ 时，$H^m(U)\equiv W^{m,2}(U)$ 是 Hilbert 空间。我们也记 $H^m_{\mathrm{loc}}(U)\equiv W^{m,2}_{\mathrm{loc}}(U)$，$H^m_0(U)\equiv W^{m,2}_0(U)$。
+
+\begin{theorem}\label{theorem:ch03-Sobolev可分}
+$W^{m,p}(U)$ 当 $p\in[1,\infty)$ 时可分，当 $p\in(1,\infty)$ 时自反且一致凸。
+\end{theorem}
+
+对所有 $m\in\mathbb{N}^*$，$p\in[1,\infty)$，我们记 $W^{-m,q}(U)$（$q$ 为 $p$ 的 H\"older 共轭指数）为 $W^{m,p}_0(U)$ 的对偶空间。
+
+\begin{proposition}\label{proposition:ch03-W-1q刻画}\label{theorem:ch03-扩散部分H负1}
+\label{remark:ch03-H负1测度}
+设 $q\in(1,\infty]$。下列陈述等价：
+\begin{enumerate}[(i)]
+\item $\omega\in W^{-1,q}(U)$；
+\item 存在 $f\equiv(f_0,f_1,\dots,f_N)\in[L^q(U)]^{N+1}$ 使在 $\mathcal{D}'(U)$ 中
+\begin{align*}
+\omega=f_0+\sum_{k=1}^N\frac{\partial f_k}{\partial x_k}.
+\end{align*}
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+我们仅证 (i)$\Rightarrow$(ii)，逆命题是直接的。令 $X:=[L^p(U)]^{N+1}$ 赋范 $f\mapsto\|f\|_X:=(\sum_{k=0}^N\|f_k\|_p^p)^{1/p}$。映射 $T:W^{1,p}_0(U)\to[L^p(U)]^{N+1}$，$T(f):=(f,\partial f/\partial x_1,\dots,\partial f/\partial x_N)$ 为等距。
+
+设 $\omega\in W^{-1,q}(U)$。由 Hahn--Banach 定理存在 $U\in X^*$ 延拓 $\omega$。由 Riesz 定理存在 $(f_0,-f_1,\dots,-f_N)\in[L^q(U)]^{N+1}$ 使
+\begin{align*}
+\langle U,\zeta\rangle_{X^*,X}=\int_U\left(f_0\zeta-\sum_{k=1}^N f_k\frac{\partial\zeta}{\partial x_k}\right)\mathrm{d}x
+\quad \text{对所有 }\zeta\in W^{1,p}_0(U).
+\end{align*}
+故结论成立。
+\end{proof}
+
+\begin{definition}\label{definition:ch03-Lipschitz}
+称 $f:U\subseteq\mathbb{R}^N\to\mathbb{R}$ 为 Lipschitz 连续，记作 $f\in\operatorname{Lip}(U)$，若
+\begin{align*}
+L_U(f):=\sup_{\substack{x,y\in U\\x\neq y}}\frac{|f(x)-f(y)|}{|x-y|}<\infty.
+\end{align*}
+称 $f$ 为局部 Lipschitz 连续，记作 $f\in\operatorname{Lip}_{\mathrm{loc}}(U)$，若对任意紧集 $K\subset U$，$L_K(f)<\infty$。
+\end{definition}
+
+\subsection{Bessel 位势空间}\label{subsection:ch03-Bessel位势}
+
+对任意 $r>0$，考虑 Bessel 核
+\begin{align}
+g_r(x):=\frac{1}{2^{\frac{N+r-2}{2}}\pi^{\frac{N}{2}}\Gamma(r/2)}|x|^{\frac{r-N}{2}}K_{\frac{N-r}{2}}(|x|)
+\quad (x\in\mathbb{R}^N),\label{align:ch03-3.3}
+\end{align}
+其中 $\Gamma$ 为 gamma 函数，$K_\nu$ 为 $\nu$ 阶第三类修正 Bessel 函数。$g_r$ 的下列性质：
+\begin{enumerate}[(i)]
+\item $g_r>0$，$g_r(x)=g_r(|x|)$ 为 $|x|$ 的减函数；
+\item $g_r\in L^1(\mathbb{R}^N)$，$\|g_r\|_1=1$，其 Fourier 变换
+\begin{align}
+\widehat g_r(\xi):=\frac{1}{(2\pi)^{N/2}}\int_{\mathbb{R}^N}g_r(x)e^{-\mathrm{i}\xi\cdot x}\,\mathrm{d}x
+=\frac{1}{(2\pi)^{N/2}}(1+|\xi|^2)^{r/2};\label{align:ch03-3.4}
+\end{align}
+\item 由\eqref{align:ch03-3.4}得 $g_r*g_s=g_{r+s}$；
+\item 卷积 $g_r$ 将 Schwartz 类 $\mathcal{S}(\mathbb{R}^N)$ 一一地映到自身；
+\item 当 $|x|\to0^+$ 时，不计常数因子，
+\begin{align}
+g_r(x)\sim\begin{cases}
+|x|^{r-N} & \text{若 }r\in(0,N),\\
+-\log|x| & \text{若 }r=N,\\
+\text{在 }x=0\text{ 处连续} & \text{若 }r>N;
+\end{cases}\label{align:ch03-3.5}
+\end{align}
+\item 当 $|x|\to\infty$ 时，不计常数因子，
+\begin{align}
+g_r(x)\sim|x|^{\frac{r-N-1}{2}}e^{-|x|}.\label{align:ch03-3.6}
+\end{align}
+\end{enumerate}
+
+设 $f:\mathbb{R}^N\to[0,\infty)$ 为 Borel 可测。（密度为 $f$ 的）Bessel 位势为
+\begin{align}
+(G_rf)(x):=(g_r*f)(x)=\int_{\mathbb{R}^N}g_r(x-y)f(y)\,\mathrm{d}y
+\quad (x\in\mathbb{R}^N).\label{align:ch03-3.7}
+\end{align}
+
+设 $r>0$，$p\in[1,\infty]$。Bessel 位势空间为
+\begin{align*}
+L^{r,p}(\mathbb{R}^N):=\{g_r*f\mid f\in L^p(\mathbb{R}^N)\}
+\end{align*}
+赋范 $\|g_r*f\|_{L^{r,p}(\mathbb{R}^N)}:=\|f\|_p$。
+
+\begin{theorem}[Calder\'on]\label{theorem:ch03-Calderon}
+设 $m\in\mathbb{N}^*$，$p\in(1,\infty)$。则 $L^{m,p}(\mathbb{R}^N)=W^{m,p}(\mathbb{R}^N)$，且存在 $M>0$（依赖于 $m,p,N$）使
+\begin{align}
+M^{-1}\|h\|_{L^{m,p}(\mathbb{R}^N)}\leqslant\|h\|_{m,p}\leqslant M\|h\|_{L^{m,p}(\mathbb{R}^N)}
+\quad \text{对所有 }h\in W^{m,p}(\mathbb{R}^N).\label{align:ch03-3.8}
+\end{align}
+\end{theorem}
+
+\begin{remark}\label{remark:ch03-Riesz核}
+与 Bessel 核 $g_r$ 密切相关的是 Riesz 核
+\begin{align}
+\gamma_r(x):=\frac{\Gamma((N-r)/2)}{2^r\pi^{N/2}\Gamma(r/2)}|x|^{r-N}
+\equiv\Gamma_r|x|^{r-N}
+\quad (r\in(0,N),\ x\in\mathbb{R}^N).\label{align:ch03-3.9}
+\end{align}
+对任意 $r\in(0,N)$，
+\begin{align}
+0<g_r(x)<\gamma_r(x)\quad (x\in\mathbb{R}^N).\label{align:ch03-3.10}
+\end{align}
+非齐次 Riesz 核 $\gamma_{r,\rho}$（$\rho\in(0,\infty)$）：
+\begin{align}
+\gamma_{r,\rho}(x):=\begin{cases}
+\Gamma_r|x|^{r-N} & \text{若 }0<|x|<\rho,\\
+0 & \text{否则}
+\end{cases}\quad (r\in(0,N),\ x\in\mathbb{R}^N).\label{align:ch03-3.11}
+\end{align}
+由\eqref{align:ch03-3.5}，对任意 $r\in(0,N)$，$\rho\in(0,\infty)$，存在 $M>0$ 使
+\begin{align}
+0<M\gamma_{r,\rho}(x)<g_r(x)\quad (x\in\mathbb{R}^N).\label{align:ch03-3.12}
+\end{align}
+\end{remark}
+
+\subsection{有界变差函数}\label{subsection:ch03-BV}
+
+\begin{definition}\label{definition:ch03-BV}
+设 $U\subseteq\mathbb{R}^N$ 为开集，$f\in L^1(U)$。称 $f$ 在 $U$ 中为有界变差函数，记作 $f\in BV(U)$，若对每个 $k=1,\dots,N$，分布导数 $\partial f/\partial x_k$ 是 $U$ 上的有限带号 Radon 测度。量
+\begin{align}
+V(f;U):=\sum_{k=1}^N\left|\frac{\partial f}{\partial x_k}\right|(U)<\infty\label{align:ch03-3.13}
+\end{align}
+称为 $f$ 在 $U$ 中的总变差。
+
+称 $f\in L^1_{\mathrm{loc}}(U)$ 在 $U$ 中为局部有界变差，记作 $f\in BV_{\mathrm{loc}}(U)$，若对任意开集 $W\Subset U$，$f$ 在 $W$ 中有界变差。
+
+$BV(U)$ 赋范
+\begin{align*}
+\|f\|_{BV(U)}:=\|f\|_{L^1(U)}+V(f;U)
+=\|f\|_{L^1(U)}+\sum_{k=1}^N\left|\frac{\partial f}{\partial x_k}\right|(U).
+\end{align*}
+\end{definition}
+
+\begin{remark}\label{remark:ch03-BV等价}
+\label{remark:ch03-3.1.4}
+\begin{enumerate}[(i)]
+\item 设 $f\in L^1(U)$。$f\in BV(U)$ 当且仅当
+\begin{align*}
+\Gamma(f;U):=\sup\left\{\int_U f\operatorname{div}\varphi\,\mathrm{d}x\ \middle|\ \varphi\in C^\infty_c(U;\mathbb{R}^N),\ |\varphi|\leqslant1\right\}<\infty;
+\end{align*}
+此外 $V(f;U)=\Gamma(f;U)$。
+\item 映射 $BV(U)\ni f\mapsto\Gamma(f;U)$ 关于 $L^1(U)$ 拓扑下半连续。
+\end{enumerate}
+\end{remark}
+
+若 $N=1$，则有经典函数的另一种变差概念。
+
+\begin{definition}\label{definition:ch03-Jordan变差}
+\begin{enumerate}[(i)]
+\item 设 $I\equiv[a,b]$，$-\infty<a<b<\infty$，$f:I\to\mathbb{R}$。量
+\begin{align}
+V^J(f;I):=\sup\left\{\sum_{k=1}^m|f(x_k)-f(x_{k-1})|\ \middle|\ m\geqslant2,\ a\equiv x_0<x_1<\cdots<x_m\equiv b\right\}\label{align:ch03-3.14}
+\end{align}
+称为 $f$ 在 $I$ 中的 Jordan 变差。若 $V^J(f;I)<\infty$，称 $f\in BV^J(I)$。
+\item 设 $U\subseteq\mathbb{R}$ 为开集，$f:U\to\mathbb{R}$。称 $f\in BV^J_{\mathrm{loc}}(U)$，若对任意 $I\equiv[a,b]\subset U$ 有 $f\in BV^J(I)$。
+\end{enumerate}
+\end{definition}
+
+\begin{remark}\label{remark:ch03-Stieltjes}
+\begin{enumerate}[(i)]
+\item $\mathbb{R}$ 上每个带号 Radon 测度 $\nu\equiv(\nu_1,\nu_2)$ 是两个 Stieltjes 测度 $\lambda_{\phi_{\nu_i}}$（$i=1,2$）的有序偶，其中 $\phi_{\nu_i}$ 为 $\nu_i$ 的分布函数。函数 $\phi_\nu:=\phi_{\nu_1}-\phi_{\nu_2}$ 在 $\mathbb{R}$ 中有局部有界 Jordan 变差。
+\item 若 $f\in BV^J(I)$，则 $\sup_{x\in I}|f(x)|\leqslant|f(a)|+V^J(f;I)<\infty$。故 $BV^J_{\mathrm{loc}}(U)\subseteq L^\infty_{\mathrm{loc}}(U)$。
+\end{enumerate}
+\end{remark}
+
+\begin{proposition}\label{proposition:ch03-Jordan性质}
+设 $I\equiv[a,b]$，$-\infty<a<b<\infty$。
+\begin{enumerate}[(i)]
+\item 设 $f\in BV^J(I)$。则映射 $x\mapsto V^J(f;[a,x])$（$x\in[a,b]$）非减。
+\item $f\in BV^J(I)$ 当且仅当 $f=f_1-f_2$，其中 $f_1,f_2:I\to\mathbb{R}$ 非减。
+\item 设 $f\in BV^J(I)$。则 $f$ 在 $I$ 中 $\lambda$-a.e. 可微。
+\end{enumerate}
+\end{proposition}
+
+\begin{remark}\label{remark:ch03-RN导数}
+对每个函数 $f=f_1-f_2\in BV^J_{\mathrm{loc}}(\mathbb{R})$，相伴一个带号 Radon 测度 $\nu_f:=(\lambda_{f_1},\lambda_{f_2})$。对 $\lambda$-a.e. $x_0\in\mathbb{R}$，
+\begin{align}
+D_\lambda\nu_f(x_0)=f'(x_0).\label{align:ch03-3.15}
+\end{align}
+反之，对任意带号 Radon 测度 $\nu\equiv(\nu_1,\nu_2)$，\eqref{align:ch03-3.15} 中将 $\nu_f$ 换为 $\nu$、$f$ 换为 $\phi_\nu:=\phi_{\nu_1}-\phi_{\nu_2}$ 后成立。
+\end{remark}
+
+由 Radon--Nikod\'ym 定理，有如下结果。
+
+\begin{theorem}\label{theorem:ch03-Lebesgue分解1D}
+设 $\nu$ 为 $\mathbb{R}$ 上的带号 Radon 测度，$\phi_\nu$ 为 $\nu$ 的任意分布函数。则
+\begin{align}
+\phi_\nu'=D_\lambda\nu=D_\lambda\nu_{\mathrm{ac}}\quad \lambda\text{-a.e. 在 }\mathbb{R}\text{ 中},\label{align:ch03-3.16}
+\end{align}
+且对每个有界 Borel 集 $E\subseteq\mathbb{R}$，
+\begin{align}
+\nu(E)=\int_E\phi_\nu'\,\mathrm{d}\lambda+\nu_s(E),\qquad
+\nu_{\mathrm{ac}}(E)=\int_E\phi_\nu'\,\mathrm{d}\lambda,\label{align:ch03-3.17}
+\end{align}
+其中 $\nu_{\mathrm{ac}}\ll\lambda$ 与 $\nu_s\perp\lambda$ 分别为 $\nu$ 关于 Lebesgue 测度 $\lambda$ 的绝对连续部分与奇异部分。
+\end{theorem}
+
+\begin{remark}\label{remark:ch03-分布导数分解}
+设 $\nu$ 为 $\mathbb{R}$ 上的带号 Radon 测度。由于 $\nu$ 与函数 $\phi_\nu$ 的分布导数 $\mathrm{d}\phi_\nu/\mathrm{d}x$ 相等，由\eqref{align:ch03-3.16}，$D_\lambda\nu=\phi_\nu'$ 是 $\mathrm{d}\phi_\nu/\mathrm{d}x$ 关于 $\lambda$ 的 Radon--Nikod\'ym 导数。由\eqref{align:ch03-3.17}，得
+\begin{align*}
+\left\langle\frac{\mathrm{d}\phi_\nu}{\mathrm{d}x},\zeta\right\rangle
+=\int_{\mathbb{R}}\phi_\nu'(x)\zeta(x)\,\mathrm{d}x
++\left\langle\left(\frac{\mathrm{d}\phi_\nu}{\mathrm{d}x}\right)_s,\zeta\right\rangle.
+\end{align*}
+\end{remark}
+
+下面给出\cref{theorem:ch03-Lebesgue分解1D} 的一个精细版本。
+
+\begin{theorem}\label{theorem:ch03-三分分解}
+设 $\nu$ 为 $\mathbb{R}$ 上的（正）Radon 测度。则存在唯一的三元组 $(\nu_{\mathrm{ac}},\nu_{sc},\nu_N)$ 使：
+\begin{enumerate}[(i)]
+\item $\nu_{\mathrm{ac}}\ll\lambda$，$\nu_{sc}\perp\lambda$，$\nu_N\perp\lambda$，$\nu_{sc}\perp\nu_N$；
+\item $\nu_N$ 离散，$\nu_{sc}$ 奇异连续；
+\item $\nu=\nu_{\mathrm{ac}}+\nu_{sc}+\nu_N$。
+\end{enumerate}
+对带号 Radon 测度 $\nu\equiv(\nu_1,\nu_2)$，类似结论通过对 $\nu_1$ 与 $\nu_2$ 分别应用得到。
+\end{theorem}
+
+\begin{proposition}\label{proposition:ch03-变差比较}
+设 $U\subseteq\mathbb{R}$ 为开集。则对任意 $f\in L^1_{\mathrm{loc}}(U)$ 及任意 $I\equiv[a,b]\subset U$，
+\begin{align}
+\Gamma(f;I)=\inf\{V^J(g;I)\mid g:I\to\mathbb{R}\text{ 为 }f\text{ 的经典代表}\}.\label{align:ch03-3.18}
+\end{align}
+\end{proposition}
+
+\begin{proof}
+设 $g$ 在 $I$ 的每一点有定义，$g=f$ 在 $I$ 中 $\lambda$-a.e.，故 $\Gamma(f;I)=\Gamma(g;I)$。先证 $\Gamma(f;I)\leqslant V^J(g;I)$。设 $V^J(g;I)<\infty$。置 $\Delta\equiv\{a\equiv x_0<x_1<\cdots<x_m\equiv b\}$，$|\Delta|:=\max_{i=1,\dots,m}|x_i-x_{i-1}|$。置
+\begin{align*}
+g_\Delta(x):=\sum_{i=0}^{m-1}g(x_i)\chi_{[x_i,x_{i+1})}(x)
+\end{align*}
+其分布导数 $\mathrm{d}g_\Delta/\mathrm{d}x=\sum_{i=1}^m[g(x_i)-g(x_{i-1})]\delta_{x_i}$。由\eqref{align:ch03-3.13}，
+\begin{align}
+V(g_\Delta;I)=\sum_{i=1}^m|g(x_i)-g(x_{i-1})|\leqslant V^J(g;I)\label{align:ch03-3.19}
+\end{align}
+对 $I$ 的每个分割 $\Delta$ 成立。注意当 $|\Delta|\to0$ 时 $g_\Delta\to g$ 在 $L^1(I)$ 中。由下半连续性与不等式\eqref{align:ch03-3.19}，
+\begin{align*}
+V(f;I)=V(g;I)\leqslant\liminf_{|\Delta|\to0}V(g_\Delta;I)\leqslant V^J(g;I).
+\end{align*}
+由 $g$ 任意，$\Gamma(f;I)\leqslant\inf\{V^J(g;I)\}$。
+
+反之，展示 $f$ 的一个经典代表 $g$ 使 $\Gamma(f;I)\geqslant V^J(g;I)$。设 $\Gamma(f;I)<\infty$，$f\in BV(I)$。考虑相伴于 $\mathrm{d}f/\mathrm{d}x$ 的分布函数 $F:I\to\mathbb{R}$，$F(x):=\mathrm{d}f/\mathrm{d}x([a,x))$。存在 $c\in\mathbb{R}$ 使 $f=F+c$ 在 $I$ 中 $\lambda$-a.e.，故 $g:=F+c$ 为 $f$ 的经典代表。对 $I$ 的每个分割 $\{a\equiv x_0<x_1<\cdots<x_m\equiv b\}$，
+\begin{align*}
+\sum_{k=1}^m|g(x_k)-g(x_{k-1})|
+=\sum_{k=1}^m\left|\frac{\mathrm{d}f}{\mathrm{d}x}([x_{k-1},x_k))\right|
+\leqslant V(f;I).
+\end{align*}
+对左端取上确界，得 $V(f;I)\geqslant V^J(g;I)$。故结论成立。
+\end{proof}
+
+\begin{remark}\label{remark:ch03-好代表}
+等式\eqref{align:ch03-3.18}的证明表明，对每个 $f\in BV_{\mathrm{loc}}(U)$ 及 $I=[a,b]\subset U$，右端的下确界可达到，即存在 $f$ 的经典代表 $\widetilde f$ 使 $V(f;I)=V^J(\widetilde f;I)$。具有此性质的代表称为好代表。测度 $\mathrm{d}f/\mathrm{d}x$ 关于 Lebesgue 测度的 Radon--Nikod\'ym 导数等于 $\widetilde f'$。
+\end{remark}
+
+\begin{definition}\label{definition:ch03-绝对连续}
+\begin{enumerate}[(i)]
+\item 设 $I\equiv[a,b]$，$-\infty<a<b<\infty$。称 $f:I\to\mathbb{R}$ 为绝对连续，记作 $f\in AC(I)$，若对任意 $\epsilon>0$，存在 $\delta>0$，使对任意有限个互不相交的子区间族 $(a_k,b_k)\subseteq I$（$k=1,\dots,m$），
+\begin{align*}
+\sum_{k=1}^m(b_k-a_k)<\delta\Rightarrow\sum_{k=1}^m|f(b_k)-f(a_k)|<\epsilon.
+\end{align*}
+\item 设 $U\subseteq\mathbb{R}$ 为开集，$f:U\to\mathbb{R}$。称 $f\in AC_{\mathrm{loc}}(U)$，若对任意 $I\equiv[a,b]\subset U$ 有 $f\in AC(I)$。
+\end{enumerate}
+\end{definition}
+
+熟知\eqref{align:ch03-3.17}在 $\nu_s=0$（即 $\nu=\nu_{\mathrm{ac}}$）时成立当且仅当 $\phi_\nu\in AC_{\mathrm{loc}}(\mathbb{R})$。
+
+\begin{theorem}[Vitali--Banach--Zaretskii]\label{theorem:ch03-VBZ}
+设 $I\equiv[a,b]$，$-\infty<a<b<\infty$。下列陈述等价：
+\begin{enumerate}[(i)]
+\item $f\in AC(I)$；
+\item $f\in C(I)\cap BV^J(I)$ 且满足 Lusin 条件。
+\end{enumerate}
+\end{theorem}
+
+\begin{remark}\label{remark:ch03-AC蕴含}
+显然 $AC(I)\subset BV^J(I)$。故每个 $f\in AC(I)$ 在 $I$ 中 $\lambda$-a.e. 可微，且对所有 $a\leqslant c\leqslant d\leqslant b$ 有
+\begin{align*}
+f(d)-f(c)=\int_c^d f'\,\mathrm{d}\lambda.
+\end{align*}
+\end{remark}
+
+\subsection{Sobolev 函数}\label{subsection:ch03-Sobolev函数}
+
+\begin{definition}\label{definition:ch03-强可微}
+设 $f:U\subseteq\mathbb{R}^N\to\mathbb{R}$ 在 $U$ 中 a.e. 有定义。称 $f$ 在 $x_0\in U$ 处可微，若存在 $Df(x_0)\in\mathbb{R}^N$，使
+\begin{align*}
+\operatorname*{ess\,lim}_{x\to x_0}\frac{|f(x)-f(x_0)-Df(x_0)\cdot(x-x_0)|}{|x-x_0|}=0.
+\end{align*}
+\end{definition}
+
+\begin{proposition}\label{proposition:ch03-a.e.可微}
+设 $f\in W^{1,p}_{\mathrm{loc}}(U)$，$N<p\leqslant\infty$。则 $f$ 在 $U$ 中 a.e. 可微，且 $Df=\nabla f$ a.e.
+\end{proposition}
+
+\begin{proof}
+由于 $W^{1,\infty}_{\mathrm{loc}}(U)\subseteq W^{1,p}_{\mathrm{loc}}(U)$，不妨设 $N<p<\infty$。由 Morrey 不等式，存在 $C=C(m,p)>0$ 使对 a.e. $x_0,x\in U$，
+\begin{align*}
+\frac{|f(x)-f(x_0)-\nabla f(x_0)\cdot(x-x_0)|}{|x-x_0|}
+\leqslant\left(\frac{C}{\lambda_N(B_{|x-x_0|}(x_0))}\int_{B_{|x-x_0|}(x_0)}|\nabla f(y)-\nabla f(x_0)|^p\,\mathrm{d}y\right)^{1/p}.
+\end{align*}
+由于 $\nabla f\in L^p_{\mathrm{loc}}(U)$，令 $|x-x_0|\to0$，结论成立。
+\end{proof}
+
+\begin{theorem}\label{theorem:ch03-W1infty=Lip}
+设 $U\subseteq\mathbb{R}^N$ 为开集。则 $f\in W^{1,\infty}_{\mathrm{loc}}(U)$ 当且仅当 $f$ 有经典代表 $g\in\operatorname{Lip}_{\mathrm{loc}}(U)$。
+\end{theorem}
+
+\begin{proof}
+(i) 设 $g\in\operatorname{Lip}_{\mathrm{loc}}(U)$，$V,W$ 为开有界集使 $V\Subset W\Subset U$。显然 $g\in L^\infty(V)$。设 $e_k$ 为第 $k$ 个单位向量，对任意 $h>0$，定义 $g_h^{(k)}(x):=\frac{g(x+he_k)-g(x)}{h}$（$x\in V$）。对任意 $\zeta\in C^1_c(V)$，
+\begin{align}
+\int_V g_h^{(k)}(x)\zeta(x+he_k)\,\mathrm{d}x
+=-\int_V g(x)\frac{\zeta(x+he_k)-\zeta(x)}{h}\,\mathrm{d}x.\label{align:ch03-3.20}
+\end{align}
+另一方面，$\|g_h^{(k)}\|_{L^p(V)}\leqslant[\lambda_N(V)]^{1/p}L_W(g)<\infty$。由自反性，存在序列 $\{h_m\}$ 与 $g^{(k)}\in L^\infty(V)$ 使 $g_{h_m}^{(k)}\rightharpoonup g^{(k)}$ 在 $L^p(V)$ 中。在\eqref{align:ch03-3.20}中取 $h=h_m$ 并令 $m\to\infty$，得 $g^{(k)}=\partial g/\partial x_k$，故结论成立。
+
+(ii) 设 $f\in W^{1,\infty}_{\mathrm{loc}}(U)$，$B\Subset U$ 为任意球。置 $f_\epsilon(x):=\int_U f(y)\rho_\epsilon(x-y)\,\mathrm{d}y$。对任意 $x,x+h\in B$ 及充分小 $\epsilon$，
+\begin{align*}
+|f_\epsilon(x+h)-f_\epsilon(x)|
+=\left|\int_0^1\nabla f_\epsilon(x+th)\cdot h\,\mathrm{d}t\right|
+\leqslant\|\nabla f\|_{L^\infty(B)}|h|
+\end{align*}
+对 $\lambda$-a.e. $x\in B$。令 $\epsilon\to0$，得 $|f(x+h)-f(x)|\leqslant\|\nabla f\|_{L^\infty(B)}|h|$。结论易得。
+\end{proof}
+
+\begin{remark}\label{remark:ch03-Lip含W1infty}
+易见每个 $f\in\operatorname{Lip}(U)\cap L^\infty(U)$ 属于 $W^{1,\infty}(U)$。然而逆命题一般不成立。
+\end{remark}
+
+由\cref{theorem:ch03-W1infty=Lip}与\cref{proposition:ch03-a.e.可微}，立即得：
+
+\begin{corollary}[Rademacher]\label{corollary:ch03-Rademacher}
+设 $f\in\operatorname{Lip}_{\mathrm{loc}}(U)$。则 $f$ 在 $U$ 中 a.e. 可微。
+\end{corollary}
+
+\begin{proposition}\label{proposition:ch03-W11=AC}\label{proposition:ch03-Sobolev刻画}
+设 $U\subseteq\mathbb{R}$ 为开集。则 $f\in W^{1,1}_{\mathrm{loc}}(U)$ 当且仅当 $f$ 有经典代表 $g\in AC_{\mathrm{loc}}(U)$。
+\end{proposition}
+
+\begin{proof}
+固定 $I=[a,b]\subset U$。若 $g\in AC(I)$，则 $\mathrm{d}g/\mathrm{d}x\in L^1(I)$，$g\in L^\infty(I)\subseteq L^1(I)$，故 $g\in W^{1,1}(I)$。
+
+反之，设 $f\in W^{1,1}(I)$。考虑相伴于 $\mathrm{d}f/\mathrm{d}x$ 的分布函数 $F(x):=\mathrm{d}f/\mathrm{d}x([a,x))=\int_a^x\mathrm{d}f/\mathrm{d}x\,\mathrm{d}\lambda$。存在 $c\in\mathbb{R}$ 使 $f=F+c$ 在 $I$ 中 $\lambda$-a.e.，故 $g:=F+c$ 为 $f$ 的经典代表。令 $E:=\bigcup_{k=1}^N[x_{k-1},x_k]$，则
+\begin{align*}
+\sum_{k=1}^N|g(x_k)-g(x_{k-1})|
+\leqslant\int_E\left|\frac{\mathrm{d}f}{\mathrm{d}x}\right|\mathrm{d}\lambda.
+\end{align*}
+由初等结果，结论成立。
+\end{proof}
+
+\cref{theorem:ch03-W1infty=Lip}与\cref{proposition:ch03-W11=AC}通常分别陈述为：$f\in\operatorname{Lip}_{\mathrm{loc}}(U)$ 当且仅当 $f\in W^{1,\infty}_{\mathrm{loc}}(U)$，以及 $f\in W^{1,1}_{\mathrm{loc}}(U)$ 当且仅当 $f\in AC_{\mathrm{loc}}(U)$。
+
+\section{与核相联的容量}\label{section:ch03-核容量}
+
+\subsection{预备知识}\label{subsection:ch03-核预备}
+
+设 $g:\mathbb{R}^N\times\mathbb{R}^N\to[0,\infty]$ 为连续对称函数。
+
+\begin{enumerate}[(i)]
+\item 对任意 $\mu\in\mathscr{R}^+(\mathbb{R}^N)$ 与 $x\in\mathbb{R}^N$，置
+\begin{align}
+g(x,\mu):=\int_{\mathbb{R}^N}g(x,y)\,\mathrm{d}\mu(y).\label{align:ch03-3.21a}
+\end{align}
+\item 对任意 $\nu\in\mathscr{R}^+(\mathbb{R}^N)$ 与 $y\in\mathbb{R}^N$，置
+\begin{align}
+g(\nu,y):=\int_{\mathbb{R}^N}g(x,y)\,\mathrm{d}\nu(x).\label{align:ch03-3.21b}
+\end{align}
+\item 对任意 $\mu,\nu\in\mathscr{R}^+(\mathbb{R}^N)$，置
+\begin{align}
+g(\nu,\mu):=\int_{\mathbb{R}^N}g(x,\mu)\,\mathrm{d}\nu(x)
+=\int_{\mathbb{R}^N}\int_{\mathbb{R}^N}g(x,y)\,\mathrm{d}\mu(y)\,\mathrm{d}\nu(x).\label{align:ch03-3.21c}
+\end{align}
+\end{enumerate}
+
+由 Tonelli 定理，$g(\nu,\mu)=g(\mu,\nu)$。
+
+设 $g(x,y)\equiv g(x-y)$（$x,y\in\mathbb{R}^N$），其中 $g:\mathbb{R}^N\to[0,\infty)$ 为径向递减连续函数。则由平移不变性，$g(x,\mu)=(g*\mu)(x)$，$g(\nu,y)=(g*\nu)(y)$，且
+\begin{align}
+g(\nu,\mu)=\int_{\mathbb{R}^N}(g*\mu)\,\mathrm{d}\nu.\label{align:ch03-3.22}
+\end{align}
+
+\begin{lemma}\label{lemma:ch03-下界估计}
+设 $g(x,y)\equiv g(x-y)$，$g$ 径向递减。设 $\mu\in\mathscr{R}^+(\mathbb{R}^N)$，$E\subseteq\mathbb{R}^N$ 为 $\mu$-可测集。则
+\begin{align}
+\int_E g(x,\mu)\,\mathrm{d}\mu(x)\geqslant\mu(E)^2g(0).\label{align:ch03-3.23}
+\end{align}
+\end{lemma}
+
+\begin{proof}
+不妨设 $E$ 为紧集。因 $g$ 径向递减，对任意 $x,y\in E$ 有 $g(x-y)\geqslant g(\operatorname{diam}E)$。故
+\begin{align*}
+\int_E g(x,\mu)\,\mathrm{d}\mu(x)
+=\int_E\int_E g(x-y)\,\mathrm{d}\mu(y)\,\mathrm{d}\mu(x)
+\geqslant g(\operatorname{diam}E)\mu(E)^2.
+\end{align*}
+若 $\operatorname{diam}E=0$，即 $E$ 为单点，则 $g(0)$ 替换 $g(\operatorname{diam}E)$，结论成立。
+\end{proof}
+
+\subsection{容量 $C_{g,p}$}\label{subsection:ch03-容量}
+
+设 $g(x,y)\equiv g(x-y)$，$g:\mathbb{R}^N\to[0,\infty)$ 为径向递减连续函数。
+
+\begin{definition}\label{definition:ch03-Cgp}
+设 $p\in(1,\infty)$。对任意 $E\subseteq\mathbb{R}^N$，$E$ 的 $(g,p)$-容量定义为
+\begin{align}
+C_{g,p}(E):=\inf_{f\in V_{E,p}}\|f\|_p^p,\qquad
+V_{E,p}:=\{f\in L^p(\mathbb{R}^N)\mid (g*f)(x)\geqslant1\ \forall x\in E\}.\label{align:ch03-3.24a}
+\end{align}
+若 $V_{E,p}=\emptyset$，则 $C_{g,p}(E):=\infty$。
+
+$E$ 的 $(g,1)$-容量定义为
+\begin{align}
+C_{g,1}(E):=\inf_{\sigma\in V_{E,1}}\|\sigma\|,\label{align:ch03-3.24b}
+\end{align}
+其中
+\begin{align}
+V_{E,1}:=\left\{\sigma\in\mathscr{R}_f(\mathbb{R}^N)\ \middle|\ \int_{\mathbb{R}^N}g(x-y)\,\mathrm{d}\sigma(y)\geqslant1\ \forall x\in E\right\}.\label{align:ch03-3.24c}
+\end{align}
+若 $V_{E,1}=\emptyset$，则 $C_{g,1}(E):=\infty$。
+\end{definition}
+
+\begin{remark}\label{remark:ch03-非负可去}
+在\eqref{align:ch03-3.24a}中显然可限制 $f\geqslant0$；类似地在\eqref{align:ch03-3.24b}中可限制 $\sigma\geqslant0$。
+\end{remark}
+
+\begin{theorem}\label{theorem:ch03-Cgp外容量}
+设 $p\in[1,\infty)$。则 $C_{g,p}$ 是 $\mathbb{R}^N$ 上的外容量。
+\end{theorem}
+
+\begin{proof}
+显然 $C_{g,p}(\emptyset)=0$，且若 $E_1\subseteq E_2$ 则 $C_{g,p}(E_1)\leqslant C_{g,p}(E_2)$。次可列可加性可由标准对角论证得到。右连续性类似得到。
+\end{proof}
+
+\begin{proposition}\label{proposition:ch03-Borel可容}
+设 $p\in(1,\infty)$。$\mathbb{R}^N$ 的每个 Borel 子集为 $C_{g,p}$-可容集。
+\end{proposition}
+
+\begin{proposition}\label{proposition:ch03-对偶}
+设 $p\in(1,\infty)$，$q=p/(p-1)$。对任意紧集 $K\subseteq\mathbb{R}^N$，
+\begin{align}
+C_{g,p}(K)=\sup\left\{\mu(K)^q\ \middle|\ \mu\in\mathscr{R}^+(K),\ \int_{\mathbb{R}^N}g(x-y)\,\mathrm{d}\mu(y)\,\mathrm{d}\mu(x)\leqslant1\right\}^{1/(q-1)}.\label{align:ch03-3.25}
+\end{align}
+\end{proposition}
+
+\begin{proof}
+这是经典对偶定理：在约束 $g*f\geqslant1$（在 $K$ 上）下极小化 $\|f\|_p^p$，等价于在能量约束 $\int g*\mathrm{d}\mu\,\mathrm{d}\mu\leqslant1$ 下极大化 $\mu(K)$。
+\end{proof}
+
+\begin{proposition}\label{proposition:ch03-比较}
+设 $g_1,g_2:\mathbb{R}^N\to[0,\infty)$ 为径向递减连续函数，$g_1\leqslant g_2$。则对任意 $E\subseteq\mathbb{R}^N$ 与 $p\in[1,\infty)$，
+\begin{align*}
+C_{g_1,p}(E)\leqslant C_{g_2,p}(E).
+\end{align*}
+\end{proposition}
+
+\begin{proposition}\label{proposition:ch03-简单函数逼近}
+设 $p\in(1,\infty)$，$g\in L^{q/(q-1)}(\mathbb{R}^N)$。则对任意紧集 $K\subseteq\mathbb{R}^N$，映射 $p\mapsto C_{g,p}(K)$ 在 $[1,\infty)$ 上右连续。
+\end{proposition}
+
+\begin{lemma}\label{lemma:ch03-位势下半连续}
+设 $f\in L^p(\mathbb{R}^N)$（$p\in[1,\infty)$）。则 $g*f$ 下半连续。
+\end{lemma}
+
+\begin{proof}
+若 $f\geqslant0$，则 $g*f(x)=\int g(x-y)f(y)\,\mathrm{d}y$ 为连续函数的上包络，故下半连续。一般情形由 $f=f^+-f^-$ 分解得到。
+\end{proof}
+
+\subsection{$C_{g,p}$ 对 $p$ 的依赖}\label{subsection:ch03-p依赖}
+
+设 $g(x,y)\equiv g(x-y)$。假设
+\begin{align}
+g(0)<\infty.\label{align:ch03-3.35}
+\end{align}
+此外假设存在 $\alpha>1$ 使
+\begin{align}
+\int_{\mathbb{R}^N}g(x)^\alpha\,\mathrm{d}x<\infty.\label{align:ch03-3.40}
+\end{align}
+
+\begin{lemma}\label{lemma:ch03-p趋近1}
+设 $p\in(1,\infty)$，\eqref{align:ch03-3.35}成立。则对任意紧集 $K\subseteq\mathbb{R}^N$，
+\begin{align*}
+\lim_{p\to1^+}C_{g,p}(K)=C_{g,1}(K).
+\end{align*}
+\end{lemma}
+
+\begin{proposition}\label{proposition:ch03-p趋近1}
+设 $p\in(1,\infty)$，\eqref{align:ch03-3.35}与\eqref{align:ch03-3.40}成立。则对任意紧集 $K\subseteq\mathbb{R}^N$，映射 $p\mapsto C_{g,p}(K)$ 在 $[1,\alpha')$ 上右连续，其中 $\alpha'>1$ 由 $\frac1\alpha+\frac1{\alpha'}=1$ 定义。
+\end{proposition}
+
+\begin{proof}
+由\eqref{align:ch03-3.40}，$g\in L^\alpha(\mathbb{R}^N)$。若 $p<\alpha'$，则 $q=p/(p-1)>\alpha$，故 $g\in L^q(\mathbb{R}^N)$。由\cref{proposition:ch03-简单函数逼近}，结论成立。
+\end{proof}
+
+\begin{remark}\label{remark:ch03-条件替换}
+若将\eqref{align:ch03-3.40}替换为较弱的条件
+\begin{align}
+\int_{\mathbb{R}^N}g(x)^{\alpha}\,\mathrm{d}x<\infty\label{align:ch03-3.40b}
+\end{align}
+对某个 $\alpha>N/(N-r)$（$r>0$），则结论在 $[1,\alpha')$ 上成立。
+\end{remark}
+
+\section{Bessel、Riesz 与 Sobolev 容量}\label{section:ch03-特殊容量}
+
+本节结果依赖\cref{section:ch03-核容量}中概述的容量一般理论。
+
+\subsection{Bessel 与 Riesz 容量}\label{subsection:ch03-BesselRiesz}
+
+设 $g_r=g_r(x)$ 与 $\gamma_r=\gamma_r(x)$（$r>0$，$x\in\mathbb{R}^N$）分别为 Bessel 与 Riesz 核（见\cref{subsection:ch03-Bessel位势}）。
+
+\begin{definition}\label{definition:ch03-Bessel容量}
+设 $r>0$，$E\subseteq\mathbb{R}^N$。
+\begin{enumerate}[(i)]
+\item 设 $p\in(1,\infty)$。$E$ 的 $r$ 阶 $p$ 次 Bessel 容量为
+\begin{align}
+B_{r,p}(E):=\inf_{f\in V_{E,p}}\|f\|_p^p,\qquad
+V_{E,p}:=\{f\in L^p(\mathbb{R}^N)\mid (g_r*f)(x)\geqslant1\ \forall x\in E\}.\label{align:ch03-3.48}
+\end{align}
+若 $V_{E,p}=\emptyset$，则 $B_{r,p}(E):=\infty$。
+\item $E$ 的 $r$ 阶 1 次 Bessel 容量为
+\begin{align}
+B_{r,1}(E):=\inf_{\sigma\in V_{E,1}}\|\sigma\|,\label{align:ch03-3.49a}
+\end{align}
+\begin{align}
+V_{E,1}:=\left\{\sigma\in\mathscr{R}_f(\mathbb{R}^N)\ \middle|\ \int_{\mathbb{R}^N}g_r(x-y)\,\mathrm{d}\sigma(y)\geqslant1\ \forall x\in E\right\}.\label{align:ch03-3.49b}
+\end{align}
+若 $V_{E,1}=\emptyset$，则 $B_{r,1}(E):=\infty$。
+\end{enumerate}
+
+设 $r\in(0,N)$，$p\in[1,\infty)$。Riesz 容量 $R_{r,p}(E)$ 由将 $g_r$ 换为 $\gamma_r$ 定义。
+\end{definition}
+
+\begin{proposition}\label{proposition:ch03-Bessel基本}
+\begin{enumerate}[(i)]
+\item 设 $p\in(1,\infty)$，$E\subseteq\mathbb{R}^N$。则 $B_{r,p}(E)$ 与 $R_{r,p}(E)$ 在集 $E$ 的正交变换与平移下不变。
+\item 对任意 $p\in[1,\infty)$，$B_{r,p}$ 与 $R_{r,p}$ 为 $\mathbb{R}^N$ 上的外容量。此外，对任意 $p\in(1,\infty)$，$\mathbb{R}^N$ 的每个 Borel 子集均为 $B_{r,p}$-可容集，$R_{r,p}$ 同理。
+\item 对任意紧集 $K\subseteq\mathbb{R}^N$，映射 $p\mapsto B_{r,p}(K)$ 在 $[1,\infty)$ 上右连续。
+\item 对任意紧集 $K\subseteq\mathbb{R}^N$，映射 $p\mapsto R_{r,p}(K)$（$r\in(0,N)$）在 $[1,N/r)$ 上右连续。
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(i) 易验证。(ii) 由\cref{theorem:ch03-Cgp外容量}与\cref{proposition:ch03-Borel可容}得到。(iii) 由\cref{proposition:ch03-简单函数逼近}与\cref{proposition:ch03-p趋近1}得到。关于 (iv)，易验证 Riesz 核 $\gamma_r$（$r\in(0,N)$）对任意 $\alpha>N/(N-r)$ 满足条件\eqref{align:ch03-3.40}。由\cref{remark:ch03-条件替换}，结论成立。
+\end{proof}
+
+\subsection{Bessel 容量的度量性质}\label{subsection:ch03-度量性质}
+
+本小节中为记号简单置 $V_E\equiv V_{E,p}$（见定义\ref{definition:ch03-Bessel容量}）。指出 Bessel 容量与 Lebesgue 测度之间的关系是有益的。
+
+\begin{proposition}\label{proposition:ch03-点容量}
+设 $r>0$，$p\in(1,\infty)$。则存在常数 $M>0$（依赖于 $r,p,N$）使对任意 $E\subseteq\mathbb{R}^N$：
+\begin{enumerate}[(i)]
+\item 若 $rp<N$，则 $B_{r,p}(E)\geqslant M[\lambda_N^*(E)]^{\frac{N-rp}{N}}$；
+\item 若 $rp=N$，则 $B_{r,p}(E)\geqslant M[\lambda_N^*(E)]^\epsilon$ 对所有 $\epsilon\in(0,1]$；
+\item 若 $rp>N$，则当 $E\neq\emptyset$ 时 $B_{r,p}(E)\geqslant M$。
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+由于 $B_{r,p}$ 为外容量，只需在 $E=A$ 为开、有界、非空时证明。
+
+(i) 对任意 $f\in V_A$，
+\begin{align}
+\lambda_N(A)\leqslant\int_A(g_r*f)(x)\,\mathrm{d}x
+\leqslant\|g_r*f\|_{p^*}[\lambda_N(A)]^{1-1/p^*},\label{align:ch03-3.50}
+\end{align}
+其中 $p^*:=Np/(N-rp)$。由 Sobolev 嵌入结果，存在 $M_0>0$ 使 $\|g_r*f\|_{p^*}\leqslant M_0\|f\|_p$。由\eqref{align:ch03-3.50}，
+\begin{align}
+[\lambda_N(A)]^{p/p^*}\leqslant M_0^p\|f\|_p^p,\label{align:ch03-3.51}
+\end{align}
+由 $f\in V_A$ 任意，结论成立。
+
+(ii) 如 (i) 那样论证，代替\eqref{align:ch03-3.51}，现得
+\begin{align*}
+[\lambda_N(A)]^{p/q}\leqslant M_0^p\|f\|_p^p
+\quad \text{对所有 }q\geqslant p.
+\end{align*}
+取 $\epsilon:=p/q$，结论成立。
+
+(iii) 由\eqref{align:ch03-3.5}易验证此情形 $g_r\in L^{p/(p-1)}(\mathbb{R}^N)$。设 $A\ni0$。则对任意 $f\in V_A$，
+\begin{align*}
+1\leqslant(g_r*f)(0)\leqslant\|g_r\|_{p/(p-1)}\|f\|_p,
+\end{align*}
+故 $B_{r,p}(A)\geqslant B_{r,p}(\{0\})\geqslant[\|g_r\|_{p/(p-1)}]^{-p}$。由\cref{proposition:ch03-Bessel基本}(i)，结论成立。
+\end{proof}
+
+\begin{remark}\label{remark:ch03-零集可测}
+设 $r>0$，$p\in(1,\infty)$。由\cref{proposition:ch03-点容量}，$\mathbb{R}^N$ 中 $B_{r,p}$-零集仅当 $rp\leqslant N$ 时才能存在，此时它们为 $\lambda_N$-零集。因此，一个 $B_{r,p}$-拟处处成立的性质也 $\lambda_N$-a.e. 成立。
+\end{remark}
+
+为方便，置 $\beta_\rho\equiv B(x_0,\rho)$（$x_0\in\mathbb{R}^N$，$\rho>0$）。
+
+\begin{proposition}\label{proposition:ch03-球容量估计}
+设 $r>0$，$p\in(1,\infty)$，$rp<N$。则存在常数 $C>0$（依赖于 $r,p,N$）使
+\begin{align}
+C^{-1}\rho^{N-rp}\leqslant B_{r,p}(\beta_\rho)\leqslant C\rho^{N-rp}
+\quad \text{对所有 }\rho\in(0,1].\label{align:ch03-3.52a}
+\end{align}
+\end{proposition}
+
+\begin{proposition}\label{proposition:ch03-球容量log}
+设 $r>0$，$p\in(1,\infty)$，$rp=N$。设 $\rho_0\in(0,1)$。则存在常数 $\widetilde C>0$ 使
+\begin{align}
+\widetilde C^{-1}\left(-\log\frac{\rho}{\rho_0}\right)^{1-p}
+\leqslant B_{r,p}(\beta_\rho)
+\leqslant\widetilde C\left(-\log\frac{\rho}{\rho_0}\right)^{1-p}
+\quad \text{对所有 }\rho\in(0,1].\label{align:ch03-3.52b}
+\end{align}
+\end{proposition}
+
+我们仅证\cref{proposition:ch03-球容量估计}。
+
+\begin{proof}[证明\cref{proposition:ch03-球容量估计}]
+\eqref{align:ch03-3.52a}中第一个不等式由\cref{proposition:ch03-点容量}(i)得到。关于第二个，设 $f\in V_{\beta_4}$，因而 $g_r*f\geqslant1$ 在 $\beta_4$ 上。由变量替换，这蕴含
+\begin{align}
+\rho^{-N}\int_{\mathbb{R}^N}g_r\left(\frac{x-z}{\rho}\right)f\left(\frac{z}{\rho}\right)\mathrm{d}z\geqslant1
+\quad \text{在 }\beta_{4\rho}\text{ 上}.\label{align:ch03-3.53}
+\end{align}
+另一方面，存在 $C_0>0$ 使
+\begin{align}
+g_r\left(\frac{x}{\rho}\right)\leqslant C_0\rho^{N-r}|x|^{r-N}e^{-|x|/(2\rho)}
+\leqslant C_0^2\rho^{N-r}g_r(x)\label{align:ch03-3.54}
+\end{align}
+对所有 $\rho\in(0,1/4]$。
+
+由\eqref{align:ch03-3.53}--\eqref{align:ch03-3.54}，
+\begin{align}
+C_0^2\rho^{-r}\int_{\mathbb{R}^N}g_r(x-z)f\left(\frac{z}{\rho}\right)\mathrm{d}z\geqslant1
+\quad \text{在 }\beta_{4\rho}\text{ 上}\label{align:ch03-3.55}
+\end{align}
+对所有 $\rho\in(0,1/4]$。不等式\eqref{align:ch03-3.55}表明 $C_0^2\rho^{-r}f(z/\rho)\in V_{\beta_{4\rho}}$。由于
+\begin{align*}
+\left\|C_0^2\rho^{-r}f(\cdot/\rho)\right\|_p^p
+=C_0^{2p}\rho^{N-rp}\|f\|_p^p,
+\end{align*}
+显然
+\begin{align*}
+B_{r,p}(\beta_{4\rho})\leqslant C_0^{2p}\rho^{N-rp}B_{r,p}(\beta_4)
+\end{align*}
+对所有 $\rho\in(0,1/4]$。此不等式给出
+\begin{align}
+B_{r,p}(\beta_\rho)\leqslant 4^{rp-N}C_0^{2p}B_{r,p}(\beta_4)\rho^{N-rp}\label{align:ch03-3.56}
+\end{align}
+对所有 $\rho\in(0,1]$，结论成立。
+\end{proof}
+
+\begin{proposition}\label{proposition:ch03-单点容量}
+设 $r>0$，$p\in(1,\infty)$，$rp\leqslant N$。则对每个可数集 $E\subseteq\mathbb{R}^N$，$B_{r,p}(E)=0$。
+\end{proposition}
+
+\begin{proof}
+在\eqref{align:ch03-3.52a}中令 $\rho\to0^+$，得对所有 $x_0\in\mathbb{R}^N$，$B_{r,p}(\{x_0\})=0$。由于 $B_{r,p}$ 次可列可加，结论成立。
+\end{proof}
+
+\begin{remark}\label{remark:ch03-无零容量集}
+\begin{enumerate}[(i)]
+\item 设 $r>0$，$p\in(1,\infty)$，$rp<N$。由单调性与\eqref{align:ch03-3.56}，
+\begin{align}
+B_{r,p}(\beta_\rho)\leqslant 4^{rp-N}C_0^{2p}B_{r,p}(\beta_4)\rho^{N-rp}\label{align:ch03-3.57}
+\end{align}
+对所有 $\rho\in(0,1)$，令 $p\to1^+$，得
+\begin{align*}
+B_{r,1}(\beta_\rho)\leqslant 4^{r-N}C_0^2B_{r,1}(\beta_4)\rho^{N-r}
+\end{align*}
+对所有 $\rho\in(0,1)$。由此得对每个 $x_0\in\mathbb{R}^N$，$B_{r,1}(\{x_0\})=0$。若 $r=N$，则由\eqref{align:ch03-3.52b}类似得对所有 $x_0\in\mathbb{R}^N$，$B_{r,1}(\{x_0\})>0$。
+\item 由 (i) 与\cref{proposition:ch03-点容量}(iii)，若 $p=1$ 且 $r=N$，或 $p\in(1,\infty)$ 且 $rp>N$，则 $\mathbb{R}^N$ 中不存在 $B_{r,p}$-零集。在其余情形，\cref{remark:ch03-零集可测}中的讨论成立。
+\end{enumerate}
+\end{remark}
+
+\subsection{Sobolev 容量}\label{subsection:ch03-Sobolev容量}
+
+\begin{definition}\label{definition:ch03-Sobolev容量}
+设 $m\in\mathbb{N}^*$，$p\in[1,\infty)$。
+\begin{enumerate}[(i)]
+\item 任意紧集 $K\subseteq\mathbb{R}^N$ 的 $m$ 阶 $p$ 次 Sobolev 容量为
+\begin{align}
+C_{m,p}(K):=\inf_{f\in W_K}\|f\|_{m,p}^p,\qquad
+W_K:=\{f\in C^\infty_c(\mathbb{R}^N)\mid f(x)\geqslant1\ \forall x\in K\}.\label{align:ch03-3.58a}
+\end{align}
+\item 对任意开集 $A\subseteq\mathbb{R}^N$，置
+\begin{align}
+C_{m,p}(A):=\sup\{C_{m,p}(K)\mid K\subseteq A,\ K\text{ 紧}\}.\label{align:ch03-3.58b}
+\end{align}
+\item 对任意 $E\subseteq\mathbb{R}^N$，置
+\begin{align}
+C_{m,p}(E):=\inf\{C_{m,p}(A)\mid A\supseteq E,\ A\text{ 开}\}.\label{align:ch03-3.58c}
+\end{align}
+\end{enumerate}
+\end{definition}
+
+由定义，$C_{m,p}$ 是 $\mathbb{R}^N$ 上的外容量。称一个性质 $(m,p)$-拟处处成立，若它 $C_{m,p}$-拟处处成立。当 $m=1$ 时，置 $C_p\equiv C_{1,p}$。
+
+\begin{remark}\label{remark:ch03-容量定义适定}
+定义\ref{definition:ch03-Sobolev容量}的适定性要求对任意紧集 $K\subseteq\mathbb{R}^N$，
+\begin{align}
+C_{m,p}(K):=\inf_{f\in W_K}\|f\|_{m,p}^p=\inf\{C_{m,p}(A)\mid A\supseteq K,\ A\text{ 开}\}.\label{align:ch03-3.59}
+\end{align}
+设 $\epsilon>0$。存在 $f\in W_K$ 使对任意 $x\in K$ 有 $f(x)>1$，且 $\|f\|_{m,p}^p<C_{m,p}(K)+\epsilon$。置 $K_1:=\{f\geqslant1\}$，则 $K\subseteq\mathring K_1\subseteq K_1$。$f\in W_{K_1}$，故 $C_{m,p}(K_1)\leqslant\|f\|_{m,p}^p<C_{m,p}(K)+\epsilon$。由 $\epsilon$ 任意，\eqref{align:ch03-3.59}成立。
+\end{remark}
+
+使用定义\ref{definition:ch03-Sobolev容量}的一个变体常是有用的，其中 $W_K$ 替换为
+\begin{align}
+W'_K:=\{f\in\mathcal{S}(\mathbb{R}^N)\mid f(x)\geqslant1\ \forall x\in K\}.\label{align:ch03-3.60}
+\end{align}
+则 $C_{m,p}$ 与 $C'_{m,p}$ 为等价容量。
+
+\begin{remark}\label{remark:ch03-其他容量定义}
+文献中存在 Sobolev 容量的其他定义；特别地：
+\begin{enumerate}[(a)]
+\item $W_K$ 替换为
+\begin{align}
+W''_K:=\{f\in C^\infty_c(\mathbb{R}^N)\mid 0\leqslant f\leqslant1\text{ 在 }\mathbb{R}^N,\ f=1\text{ 在 }K\text{ 上}\};\label{align:ch03-3.61}
+\end{align}
+\item 对任意 $E\subseteq\mathbb{R}^N$，置
+\begin{align}
+C''_{m,p}(E):=\inf_{f\in Z_E}\|f\|_{m,p}^p,\label{align:ch03-3.62a}
+\end{align}
+其中
+\begin{align}
+Z_E:=\{f\in W^{m,p}(\mathbb{R}^N)\mid f\geqslant1\text{ a.e. 在 }E\text{ 的邻域中}\}.\label{align:ch03-3.62b}
+\end{align}
+\end{enumerate}
+若 $p\in(1,\infty)$，则 $C_{m,p}$ 与 $C''_{m,p}$ 等价。
+\end{remark}
+
+\begin{definition}\label{definition:ch03-Laplacian容量}
+对任意紧集 $K\subseteq\mathbb{R}^N$，$K$ 的 Laplace 容量为
+\begin{align}
+C_{\Delta,1}(K):=\inf_{f\in\Omega_K}\|\Delta f\|_1,\label{align:ch03-3.63a}
+\end{align}
+其中
+\begin{align}
+\Omega_K:=\{f\in C^\infty_c(\mathbb{R}^N)\mid f(x)\geqslant1\text{ 在 }K\text{ 的某邻域中}\}.\label{align:ch03-3.63b}
+\end{align}
+\end{definition}
+
+\begin{proposition}\label{proposition:ch03-mp零集}\label{proposition:ch03-零容量逼近}
+设 $m\in\mathbb{N}^*$，$p\in(1,\infty)$。
+\begin{enumerate}[(i)]
+\item 设 $K\subseteq\mathbb{R}^N$ 紧。下列陈述等价：(i1) $C_{m,p}(K)=0$；(i2) 存在序列 $\{f_k\}\subseteq C^\infty_c(\mathbb{R}^N)$ 使 $f_k\geqslant1$ a.e. 在 $K$ 的某邻域中，且 $\lim_{k\to\infty}\|f_k\|_{m,p}=0$。
+\item 设 $E\subseteq\mathbb{R}^N$。下列陈述等价：(ii1) $C_{m,p}(E)=0$；(ii2) 存在序列 $\{f_k\}\subseteq W^{m,p}(\mathbb{R}^N)$ 使 $f_k\geqslant1$ a.e. 在 $E$ 的某邻域中，且 $\lim_{k\to\infty}\|f_k\|_{m,p}=0$。
+\end{enumerate}
+\end{proposition}
+
+\begin{remark}\label{remark:ch03-零集磨光}
+\label{remark:ch03-磨光注}
+设 $m\in\mathbb{N}^*$，$p\in(1,\infty)$，$K\subseteq\mathbb{R}^N$ 紧且 $(m,p)$-零。易见对任意开集 $A\supseteq K$，存在序列 $\{f_k\}\subseteq C^\infty_c(A)$ 使 $0\leqslant f_k\leqslant1$ 在 $\mathbb{R}^N$ 上，$f_k=1$ 在 $K$ 的某邻域中，且 $\lim_{k\to\infty}\|f_k\|_{m,p}=0$。
+\end{remark}
+
+\begin{theorem}\label{theorem:ch03-拟连续代表}
+设 $m\in\mathbb{N}^*$，$p\in(1,\infty)$。则每个 $h\in W^{m,p}(\mathbb{R}^N)$ 有一个 $(m,p)$-拟连续代表 $\widehat h$。此外，$\widehat h$ $(m,p)$-本质唯一。
+\end{theorem}
+
+\begin{proof}
+由稠密性，对任意 $h\in W^{m,p}(\mathbb{R}^N)$，存在 $\{h_n\}\subseteq W^{m,p}(\mathbb{R}^N)\cap C(\mathbb{R}^N)$ 使 $\|h_n-h\|_{m,p}\to0$。由\cref{theorem:ch03-Calderon}，存在 $f\in L^p(\mathbb{R}^N)$ 与 $\{f_n\}\subseteq L^p(\mathbb{R}^N)$ 使 $h=g_m*f$，$h_n=g_m*f_n$，且 $\|f_n-f\|_p\to0$。存在子列 $\{h_{n_k}\}$ 在 $C_{m,p}$-容量意义下及 $(m,p)$-拟一致收敛于某个 $\widehat h\in W^{m,p}(\mathbb{R}^N)$。则 $\widehat h$ 为 $h$ 的 $(m,p)$-代表。
+
+为证唯一性，设 $u\in W^{m,p}(\mathbb{R}^N)$，$\widehat u$ 为 $(m,p)$-拟连续代表。则对任意 $\lambda>0$，
+\begin{align*}
+\lambda^p C_{m,p}(\{|\widehat h-\widehat u|\geqslant\lambda\})\leqslant\int_{\mathbb{R}^N}|h-u|^p\,\mathrm{d}\mu,
+\end{align*}
+故若 $h=u$，$C_{m,p}(\{|\widehat h-\widehat u|\geqslant\lambda\})=0$。由次可列可加性，
+\begin{align*}
+C_{m,p}(\{|f-g|>0\})\leqslant\sum_{k=1}^\infty C_{m,p}(\{|f-g|>1/k\})=0.
+\end{align*}
+结论成立。
+\end{proof}
+
+\begin{remark}\label{remark:ch03-等同拟连续}
+习惯上将每个函数 $h\in W^{m,p}(\mathbb{R}^N)$ 等同于其 $(m,p)$-拟连续代表 $\widehat h$。
+\end{remark}
+
+\section{不同容量概念之间的关系}\label{section:ch03-容量关系}
+
+现在讨论迄今引入的各容量概念之间的关系。
+
+\subsection{Bessel 与 Hausdorff}\label{subsection:ch03-BesselHausdorff}
+
+设 $r>0$，$p\in(1,\infty)$。考虑函数 $h_{r,p}:(0,\infty)\to(0,\infty]$，定义为
+\begin{align}
+h_{r,p}(\rho):=\begin{cases}
+\rho^{N-rp} & \text{若 }rp<N,\\
+[-\log\rho]_+^{1-p} & \text{若 }rp=N.
+\end{cases}\label{align:ch03-3.64}
+\end{align}
+
+\begin{proposition}\label{proposition:ch03-BesselHausdorff上界}
+设 $r>0$，$p\in(1,\infty)$，$rp\leqslant N$。则存在 $c_1>0$ 使对任意 $E\subseteq\mathbb{R}^N$，
+\begin{align}
+B_{r,p}(E)\leqslant c_1\mathcal{H}^*_{h_{r,p},1}(E)\leqslant c_1\mathcal{H}^*_{h_{r,p}}(E).\label{align:ch03-3.65}
+\end{align}
+此外，
+\begin{align}
+\mathcal{H}^*_{h_{r,p}}(E)<\infty\Rightarrow B_{r,p}(E)=0.\label{align:ch03-3.66}
+\end{align}
+\end{proposition}
+
+\begin{proof}
+若 $\mathcal{H}^*_{h_{r,p},1}(E)=\infty$，结论显然。否则设 $E\subseteq\bigcup_{n=1}^\infty B(x_n,\rho_n)$，$\rho_n\leqslant\delta/2$。由次可列可加性，
+\begin{align*}
+B_{r,p}(E)\leqslant\sum_{n=1}^\infty B_{r,p}(B(x_n,\rho_n)).
+\end{align*}
+若 $rp=N$，由此与\eqref{align:ch03-3.52b}得
+\begin{align*}
+B_{r,p}(E)\leqslant\widetilde C_0\sum_{n=1}^\infty[-\log(2\rho_n)]^{1-p}
+=\widetilde C_0\sum_{n=1}^\infty h_{r,p}(2\rho_n).
+\end{align*}
+若 $rp<N$，由\eqref{align:ch03-3.57}类似得
+\begin{align*}
+B_{r,p}(E)\leqslant 8^{rp-N}C_0^{2p}B_{r,p}(\beta_4)\sum_{n=1}^\infty h_{r,p}(2\rho_n).
+\end{align*}
+对 $E$ 的所有上述球覆盖取下确界，得\eqref{align:ch03-3.65}。
+\end{proof}
+
+\begin{proposition}\label{proposition:ch03-BesselHausdorff下界}
+设 $r,s>0$，$p,q\in(1,\infty)$，$0<sq\leqslant rp\leqslant N$。则存在 $c_2>0$ 使对任意紧集 $K\subseteq\mathbb{R}^N$，
+\begin{align}
+[\mathcal{H}^*_{N-sq,\infty}(K)]^{N-rp}\leqslant c_2[B_{r,p}(K)]^{N-sq}
+\quad \text{若 }sq<rp<N,\label{align:ch03-3.67a}\\
+(1+[-\log\mathcal{H}^*_{N-sq,\infty}(K)]_+)^{1-p}\leqslant c_2 B_{r,p}(K)
+\quad \text{若 }sq<rp=N,\label{align:ch03-3.67b}\\
+[\mathcal{H}^*_{h_{s,q},\infty}(K)]^{p-1}\leqslant c_2[B_{r,p}(K)]^{q-1}
+\quad \text{若 }sq=rp=N\text{ 且 }p<q.\label{align:ch03-3.67c}
+\end{align}
+\end{proposition}
+
+\begin{corollary}\label{corollary:ch03-Hausdorff维数}\label{theorem:ch03-Hausdorff}
+设 $r>0$，$p\in(1,\infty)$，$0<rp<N$。设 $E\subseteq\mathbb{R}^N$ 的 Hausdorff 维数为 $N-n$（$n\in(0,N)$），且 $\mathcal{H}^*_{N-n}(E)<\infty$。则 $B_{r,p}(E)=0$ 当且仅当 $rp\leqslant n$。
+\end{corollary}
+
+\begin{proof}
+若 $rp\leqslant n$，则 $\mathcal{H}^*_{N-rp}(E)<\infty$，故由\eqref{align:ch03-3.66}，$B_{r,p}(E)=0$。反之，若 $B_{r,p}(E)=0$，则由\eqref{align:ch03-3.67a}，对每个 $s>0$ 及 $q\in(1,\infty)$ 使 $sq<rp$，有 $\mathcal{H}^*_{N-sq}(E)=0$。由 Hausdorff 维数定义，得 $N-rp\geqslant\dim_H(E)=N-n$。结论成立。
+\end{proof}
+
+\begin{theorem}\label{theorem:ch03-容量比较}
+\label{theorem:ch03-容量单调}
+设 $r,s>0$，$p,q\in(1,\infty)$，$0<sq\leqslant rp\leqslant N$。设 $E\subseteq\mathbb{R}^N$ 为任意 Borel 集，$\operatorname{diam}E\leqslant d$（$d>0$）。则存在 $c_3>0$ 使
+\begin{align}
+[B_{s,q}(E)]^{N-rp}\leqslant c_3[B_{r,p}(E)]^{N-sq}
+\quad \text{若 }sq<rp<N,\label{align:ch03-3.68a}\\
+(1+[\log(c_3/B_{s,q}(E))]_+)^{1-p}\leqslant c_3 B_{r,p}(E)
+\quad \text{若 }sq<rp=N,\label{align:ch03-3.68b}\\
+[B_{s,q}(E)]^{p-1}\leqslant c_3[B_{r,p}(E)]^{q-1}
+\quad \text{若 }sq=rp=N\text{ 且 }p<q,\label{align:ch03-3.68c}\\
+B_{s,q}(E)\leqslant c_3 B_{r,p}(E)
+\quad \text{若 }sq=rp<N\text{ 且 }p<q.\label{align:ch03-3.68d}
+\end{align}
+此外，在\eqref{align:ch03-3.68a}的所有情形中，存在 Borel 集 $E\subseteq\mathbb{R}^N$ 使 $B_{s,q}(E)=0$ 而 $B_{r,p}(E)>0$。
+\end{theorem}
+
+\begin{definition}\label{definition:ch03-容量强弱}
+设 $r,s>0$，$p,q\in[1,\infty)$。Bessel 容量 $B_{r,p}$：
+\begin{enumerate}[(i)]
+\item 强于 $B_{s,q}$，若对所有 $E\subseteq\mathbb{R}^N$，$B_{r,p}(E)=0\Rightarrow B_{s,q}(E)=0$；
+\item 严格强于 $B_{s,q}$，若此外存在 $E\subseteq\mathbb{R}^N$ 使 $B_{s,q}(E)=0$ 而 $B_{r,p}(E)>0$。
+\end{enumerate}
+称 $B_{r,p}$ 与 $B_{s,q}$ 等价，若对所有 $E\subseteq\mathbb{R}^N$，$B_{r,p}(E)=0\Leftrightarrow B_{s,q}(E)=0$。Riesz 与 Sobolev 容量同理。
+\end{definition}
+
+\begin{theorem}[du Plessis, Fuglede]\label{theorem:ch03-严格强弱}
+设 $r,s>0$，$p,q\in(1,\infty)$。设 $rp\leqslant N$，且要么 $sq<rp$，要么 $sq=rp$ 且 $p<q$。则 $B_{r,p}$ 严格强于 $B_{s,q}$。
+\end{theorem}
+
+\begin{corollary}\label{corollary:ch03-同阶强弱}
+设 $r>0$，$1<q<p<\infty$，$0<rp\leqslant N$。则 $B_{r,p}$ 强于 $B_{r,q}$。
+\end{corollary}
+
+\begin{remark}\label{remark:ch03-紧零集}
+设 $r>0$，$p\in(1,\infty)$，$0<rp\leqslant N$。由\cref{corollary:ch03-同阶强弱}与\cref{proposition:ch03-Bessel基本}(iii)，若 $K\subseteq\mathbb{R}^N$ 紧且 $B_{r,p}(K)=0$，则 $B_{r,1}(K)=0$。
+\end{remark}
+
+\subsection{Bessel 与 Riesz}\label{subsection:ch03-BesselRiesz关系}
+
+由\eqref{align:ch03-3.10}，显然
+\begin{align}
+R_{r,p}(E)\leqslant B_{r,p}(E)\quad \text{对所有 }E\subseteq\mathbb{R}^N\ (r\in(0,N);\ p\in[1,\infty)).\label{align:ch03-3.70}
+\end{align}
+
+\begin{proposition}\label{proposition:ch03-BesselRiesz等价}
+设 $r\in(0,N)$，$p\in(1,\infty)$，$rp<N$。
+\begin{enumerate}[(i)]
+\item 设 $E\subseteq\mathbb{R}^N$，$\operatorname{diam}E\leqslant2P$（$P>0$）。则存在 $M>0$ 使
+\begin{align}
+B_{r,p}(E)\leqslant MR_{r,p}(E).\label{align:ch03-3.71}
+\end{align}
+\item 设 $E\subseteq\mathbb{R}^N$ 有界。则 $B_{r,p}(E)=0$ 当且仅当 $R_{r,p}(E)=0$。
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(ii) 由\eqref{align:ch03-3.70}--\eqref{align:ch03-3.71}得到。为证 (i)，不妨设 $E\subseteq B(0,P)$。设 $h\in L^p(\mathbb{R}^N)$，$h\geqslant0$，$\gamma_r*h\geqslant1$ 在 $E$ 上，且 $\|h\|_p^p\leqslant2R_{r,p}(E)$。则由\eqref{align:ch03-3.52a}，
+\begin{align*}
+\|h\|_p^p\leqslant2B_{r,p}(\beta_{2P})\leqslant 2^{N-rp+1}CP^{N-rp}.
+\end{align*}
+则存在 $M_1>0$ 使对所有 $x\in E$，
+\begin{align}
+0\leqslant(\gamma_r*h)(x)-(\gamma_{r,\rho}*h)(x)
+\leqslant M_1\left(\frac P\rho\right)^{\frac{N-rp}{p}},\label{align:ch03-3.72}
+\end{align}
+由于 $\gamma_r*h\geqslant1$ 在 $E$ 上，由\eqref{align:ch03-3.72}，对所有 $\rho\geqslant(2M_1)^{\frac p{N-rp}}P$，$\gamma_{r,\rho}*h\geqslant1/2$ 在 $E$ 上。此外，存在 $M_2>0$ 使 $\gamma_{r,\rho}\leqslant M_2g_r$，因而 $g_r*(2M_2h)\geqslant1$ 在 $E$ 上。故 $B_{r,p}(E)\leqslant(2M_2)^pR_{r,p}(E)$。结论成立。
+\end{proof}
+
+\begin{remark}\label{remark:ch03-BesselRiesz一般}
+设 $r\in(0,N)$，$1<p<N/r$。则存在 $M>0$ 使对任意 $E\subseteq\mathbb{R}^N$，
+\begin{align}
+B_{r,p}(E)\leqslant M\left[R_{r,p}(E)+R_{r,p}(E)^{\frac N{N-rp}}\right].\label{align:ch03-3.73}
+\end{align}
+由\eqref{align:ch03-3.70}与\eqref{align:ch03-3.73}，$B_{r,p}$ 与 $R_{r,p}$ 等价。
+\end{remark}
+
+\subsection{Bessel 与 Sobolev}\label{subsection:ch03-BesselSobolev}
+
+\begin{theorem}\label{theorem:ch03-BesselSobolev等价}\label{theorem:ch03-Sobolev基本}
+设 $m\in\mathbb{N}^*$，$p\in(1,\infty)$。则对任意 Borel 集 $E\subseteq\mathbb{R}^N$，
+\begin{align}
+M^{-p}C_{m,p}(E)\leqslant B_{m,p}(E)\leqslant M^pC_{m,p}(E)\label{align:ch03-3.74}
+\end{align}
+其中 $M>0$ 如\eqref{align:ch03-3.8}。
+\end{theorem}
+
+\begin{proof}
+由\cref{proposition:ch03-Bessel基本}(ii)与定义\ref{definition:ch03-Sobolev容量}，只需在 $E=K$ 紧时证\eqref{align:ch03-3.74}。先证 $B_{m,p}(K)\leqslant M^pC_{m,p}(K)$。设 $h\in W_K$。则 $h\in W^{m,p}(\mathbb{R}^N)=L^{m,p}(\mathbb{R}^N)$。故存在 $f\in L^p(\mathbb{R}^N)$ 使 $g_m*f=h$，且 $M\|h\|_{m,p}\geqslant\|f\|_p\geqslant\|f^+\|_p$。此外 $g_m*f^+\geqslant g_m*f=h\geqslant1$ 在 $K$ 上，故 $f^+\in V_{K,m,p}$。于是
+\begin{align*}
+B_{m,p}(K)\leqslant\|f^+\|_p^p\leqslant M^p\|h\|_{m,p}^p
+\end{align*}
+对所有 $h\in W_K$。取下确界即得。
+
+反之，证 $M^{-p}C_{m,p}(K)\leqslant B_{m,p}(K)$。设 $f\in V_K$ 满足 $g_m*f>1$ 在 $K$ 上，且 $\|f\|_p^p<B_{m,p}(K)+\epsilon$。置
+\begin{align*}
+f_n(x):=\begin{cases}
+\min\{f(x),n\} & \text{若 }|x|\leqslant n,\\
+0 & \text{否则}.
+\end{cases}
+\end{align*}
+由单调收敛定理，$\lim_{n\to\infty}\|f_n\|_p^p=\|f\|_p^p$，且 $\lim_{n\to\infty}g_m*f_n=g_m*f$ 逐点。因此，存在 $\overline n\in\mathbb{N}$ 与 $\eta>0$ 使 $g_m*f_{\overline n}\geqslant1+\eta$ 在 $K$ 上，且 $\|f_{\overline n}\|_p^p<B_{m,p}(K)+\epsilon$。
+
+注意对任意 $q\in[1,\infty)$，存在 $h\in C^\infty_c(\mathbb{R}^N)$ 使 $\|f_{\overline n}-h\|_q<\epsilon$。则 $g_m*h\in\mathcal{S}(\mathbb{R}^N)$，且 $g_m*h\geqslant1$ 在 $K$ 上。由 Hölder 不等式，
+\begin{align}
+\|f_{\overline n}-h\|_p\leqslant\|f_{\overline n}-h\|_q[\lambda_N(B(0,\overline n))]^{\frac{q-p}{pq}}<\epsilon[\lambda_N(B(0,\overline n))]^{\frac{q-p}{pq}}.\label{align:ch03-3.75}
+\end{align}
+由\eqref{align:ch03-3.75}，
+\begin{align*}
+C_{m,p}(K)\leqslant\|g_m*h\|_{m,p}^p\leqslant M^p\|h\|_p^p
+\leqslant M^p\left\{[B_{m,p}(K)+\epsilon]^{1/p}+\epsilon[\lambda_N(B(0,\overline n))]^{\frac{q-p}{pq}}\right\}^p.
+\end{align*}
+由 $\epsilon$ 任意，得 $C_{m,p}(K)\leqslant M^pB_{m,p}(K)$。证明完毕。
+\end{proof}
+
+\subsection{Sobolev 与 Hausdorff}\label{subsection:ch03-SobolevHausdorff}
+
+由\cref{theorem:ch03-BesselSobolev等价}，Bessel 容量 $B_{m,p}$ 的度量性质及其推论对 Sobolev 容量 $C_{m,p}$ 成立。
+
+当 $p=1$ 时，有如下结果。
+
+\begin{theorem}\label{theorem:ch03-Cm1Hausdorff}
+设 $m\in\mathbb{N}^*$，$m\in[1,N)$。则存在 $M_1,M_2>0$ 使对任意紧集 $K\subseteq\mathbb{R}^N$，
+\begin{align}
+M_1\mathcal{H}^*_{N-m,1}(K)\leqslant C_{m,1}(K)\leqslant M_2\mathcal{H}^*_{N-m,1}(K).\label{align:ch03-3.76}
+\end{align}
+\end{theorem}
+
+\subsection{Laplacian 容量与 Sobolev 容量}\label{subsection:ch03-Laplacian}
+
+\begin{proposition}\label{proposition:ch03-Laplacian=Sobolev}
+对任意紧集 $K\subseteq\mathbb{R}^N$，
+\begin{align}
+C_{\Delta,1}(K)=2C_{1,2}(K).\label{align:ch03-3.77}
+\end{align}
+\end{proposition}
+
+\begin{proof}
+我们仅证 $C_{\Delta,1}(K)\geqslant2C_{1,2}(K)$。设 $f\in\Omega_K$。置 $h:=\min\{f^+,1\}$。则 $0\leqslant h\leqslant1$ 在 $\mathbb{R}^N$ 上，且 $h=1$ 在某开集 $A\supseteq K$ 中。由磨光论证，存在 $\widehat h\in C^\infty_c(\mathbb{R}^N)$ 使 $0\leqslant\widehat h\leqslant1$ 在 $\mathbb{R}^N$ 上，且 $\widehat h=1$ 在 $A$ 中。则 $\widehat h\in W'_K$，故
+\begin{align*}
+C_{1,2}(K)\leqslant\int_{\mathbb{R}^N}|\nabla\widehat h|^2\,\mathrm{d}x
+\leqslant\int_{\mathbb{R}^N}|\nabla h|^2\,\mathrm{d}x
+=\int_{\mathbb{R}^N}\nabla h\cdot\nabla f\,\mathrm{d}x
+=-\int_{\mathbb{R}^N}h\Delta f\,\mathrm{d}x.
+\end{align*}
+由于 $\int_{\mathbb{R}^N}\Delta f\,\mathrm{d}x=0$，
+\begin{align*}
+C_{1,2}(K)\leqslant-\int_{\mathbb{R}^N}\left(h-\frac12\right)\Delta f\,\mathrm{d}x
+\leqslant\frac12\|\Delta f\|_1.
+\end{align*}
+由 $f\in\Omega_K$ 任意，结论成立。
+\end{proof}
+
+\subsection{$(m,p)$-集中与 $(m,p)$-弥散测度}\label{subsection:ch03-集中弥散}\label{subsection:ch03-集中分解}
+
+设 $U$ 为 $\mathbb{R}^N$ 的开有界子集。称 $\mathcal{B}(U)$ 上的带号测度为 $(m,p)$-集中的，若它为 $C_{m,p}$-集中的；称 $(m,p)$-弥散的，若它为 $C_{m,p}$-弥散的。
+
+\begin{proposition}\label{proposition:ch03-无非平凡集中}
+设 $m\in\mathbb{N}^*$。
+\begin{enumerate}[(i)]
+\item 设要么 $p=1$ 且 $m=N$，要么 $p\in(1,\infty)$ 且 $mp>N$。则每个 $\mu\in\mathscr{R}_f(U)$ 为 $B_{m,p}$-弥散。
+\item 设 $p\in(1,\infty)$ 且 $mp>N$。则每个 $\mu\in\mathscr{R}_f(U)$ 为 $(m,p)$-弥散。
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+由\cref{remark:ch03-无零容量集}(ii)，若要么 $p=1$ 且 $m=N$，要么 $p\in(1,\infty)$ 且 $mp>N$，则 $\mathbb{R}^N$ 中不存在 $B_{m,p}$-零集。因此由\cref{theorem:ch03-BesselSobolev等价}，若 $p\in(1,\infty)$ 且 $mp>N$，则不存在 $(m,p)$-零集。结论成立。
+\end{proof}
+
+记 $\mathscr{R}_{c,m,p}(U)$ 与 $\mathscr{R}_{d,m,p}(U)$ 分别为 $U$ 上 $(m,p)$-集中与 $(m,p)$-弥散的有限带号 Radon 测度之集。我们总置 $\mathscr{R}_{c,p}(U)\equiv\mathscr{R}_{c,1,p}(U)$，$\mathscr{R}_{d,p}(U)\equiv\mathscr{R}_{d,1,p}(U)$。
+
+\begin{remark}\label{remark:ch03-弥散测度性质}
+\begin{enumerate}[(i)]
+\item 若 $\mu\in\mathscr{R}_{d,m,p}(U)$，则每个 $(m,p)$-拟连续函数为 $\mu$-可测。事实上，若 $v$ $(m,p)$-拟连续，则存在 $(m,p)$-零集 $E\subseteq U$ 与序列 $\{v_n\}\subseteq C(U)$ 使 $v_n\to v$ 在 $U\setminus E$ 上逐点。由于 $\mu\in\mathscr{R}_{d,m,p}(U)$，集 $E$ 为 $\mu$-零集，故结论成立。
+\item 若 $\mu\in\mathscr{R}_{d,m,p}(U)$，则每个函数 $v\in W^{m,p}_0(U)\cap L^\infty(U)$ 也属于 $L^\infty(U,\mu)$。
+\end{enumerate}
+\end{remark}
+
+\begin{proposition}\label{proposition:ch03-集中弥散分解}
+设 $m\in\mathbb{N}^*$，$p\in[1,\infty)$。则存在唯一偶 $(\mu_{c,m,p},\mu_{d,m,p})$ 使 $\mu_{c,m,p}\in\mathscr{R}_{c,m,p}(U)$，$\mu_{d,m,p}\in\mathscr{R}_{d,m,p}(U)$，且
+\begin{align}
+\mu=\mu_{d,m,p}+\mu_{c,m,p}.\label{align:ch03-3.78}
+\end{align}
+\end{proposition}
+
+\begin{definition}\label{definition:ch03-集中弥散部分}
+\cref{proposition:ch03-集中弥散分解}给出的测度 $\mu_{c,m,p}$ 与 $\mu_{d,m,p}$ 分别称为 $\mu$ 的 $(m,p)$-集中部分与 $(m,p)$-弥散部分。
+\end{definition}
+
+下文置 $\mu_{c,p}\equiv\mu_{c,1,p}$，$\mu_{d,p}\equiv\mu_{d,1,p}$。置
+\begin{align*}
+\mathscr{R}_s(U):=\{\mu\in\mathscr{R}_f(U)\mid\mu\perp\lambda_N\},\qquad
+\mathscr{R}_{ac}(U):=\{\mu\in\mathscr{R}_f(U)\mid\mu\ll\lambda_N\}.
+\end{align*}
+
+由\cref{proposition:ch03-点容量}与\cref{theorem:ch03-BesselSobolev等价}，每个 $(m,p)$-零集 Lebesgue 可测且 $\lambda_N$-零。这显然蕴含对每个 $m\in\mathbb{N}^*$，$p\in(1,\infty)$，
+\begin{align}
+\mathscr{R}_{c,m,p}(U)\subseteq\mathscr{R}_s(U),\qquad
+\mathscr{R}_{ac}(U)\subseteq\mathscr{R}_{d,m,p}(U).\label{align:ch03-3.79}
+\end{align}
+
+由 Lebesgue 分解与\eqref{align:ch03-3.78}结合\eqref{align:ch03-3.79}，得
+\begin{align}
+\mu_{c,m,p}=[\mu_s]_{c,m,p},\label{align:ch03-3.80}\\
+\mu_{d,m,p}=\mu_{ac}+[\mu_s]_{d,m,p}\label{align:ch03-3.81}
+\end{align}
+对每个 $\mu\in\mathscr{R}_f(U)$。由\eqref{align:ch03-3.78}--\eqref{align:ch03-3.81}，得分解
+\begin{align}
+\mu=\mu_{ac}+[\mu_s]_{d,m,p}+\mu_{c,m,p}.\label{align:ch03-3.82}
+\end{align}
+
+\begin{remark}\label{remark:ch03-分解正负}
+类似于等式，有
+\begin{align}
+[\mu_{d,m,p}]^\pm=[\mu^\pm]_{d,m,p},\qquad
+[\mu_{c,m,p}]^\pm=[\mu^\pm]_{c,m,p}.\label{align:ch03-3.83}
+\end{align}
+特别地，由\eqref{align:ch03-3.80}与\eqref{align:ch03-3.83}，
+\begin{align}
+[\mu_s^\pm]_{c,m,p}=[\mu^\pm]_{c,m,p}=[\mu_{c,m,p}]^\pm.\label{align:ch03-3.84}
+\end{align}
+\end{remark}
+
+\begin{proposition}\label{proposition:ch03-集中弥散包含}\label{proposition:ch03-容量包含}
+设 $m,n\in\mathbb{N}^*$，$p,q\in(1,\infty)$。设 $mp\leqslant N$，且要么 $nq<mp$，要么 $nq=mp$ 且 $p<q$。则
+\begin{enumerate}[(i)]
+\item $\mathscr{R}_{d,n,q}(U)\subseteq\mathscr{R}_{d,m,p}(U)$；
+\item $\mathscr{R}_{c,m,p}(U)\subseteq\mathscr{R}_{c,n,q}(U)$。
+\end{enumerate}
+\end{proposition}
+
+由\cref{theorem:ch03-严格强弱}，得上述包含关系。
+
+若 $\mu\in W^{-m,q}(U)$ 为非负 Radon 测度，则 $\mu(K)\leqslant M\|g_m*\mu\|_q[C_{m,p}(K)]^{1/p}$，故 $\mu$ 关于 $(m,p)$-容量弥散。
+
+如下命题推广上述注记。
+
+\begin{proposition}[Gr\"un--Rehomme]\label{proposition:ch03-GrunRehomme}
+设 $m\in\mathbb{N}^*$，$p\in[1,\infty)$。则
+\begin{align*}
+\mathscr{R}_f(U)\cap W^{-m,q}(U)\subseteq\mathscr{R}_{d,m,p}(U).
+\end{align*}
+\end{proposition}
+
+\begin{proof}
+设 $\mu\in\mathscr{R}_f(U)\cap W^{-m,q}(U)$，$E\in\mathcal{B}(U)$ 使 $C_{m,p}(E)=0$。由 Hahn 分解，存在 $E^+\in\mathcal{B}(U)$，$E^+\subseteq E$，使 $\mu^+(E^+)=\mu(E^+)$，$\mu^-(E^+)=0$。由于 $\mu^\pm\in\mathscr{R}^+_f(U)$，对任意 $0<k<\mu^+(E)$ 及任意 $\epsilon>0$，存在紧集 $K\subseteq E^+$ 与开集 $A\supseteq E^+$，$A\subseteq U$，使 $\mu^+(K)>k$，$\mu^-(A)<\epsilon$。由 $C_{m,p}$ 的单调性，$C_{m,p}(K)=0$。则存在序列 $\{f_j\}\subseteq C^\infty_c(U)$ 使 $0\leqslant f_j\leqslant1$ 在 $U$ 中，$f_j=1$ 在 $K$ 上，且 $f_j\to0$ 在 $W^{m,p}_0(U)$ 中强收敛。显然，序列 $\{g_j\}$，$g_j:=f_j\psi$（$\psi\in C^\infty_c(A)$，$0\leqslant\psi\leqslant1$，$\psi=1$ 在 $K$ 上）有相同性质。由此
+\begin{align*}
+k<\mu^+(K)\leqslant\int_U g_j\,\mathrm{d}\mu^+
+=\int_U g_j\,\mathrm{d}\mu+\int_U g_j\,\mathrm{d}\mu^-
+\leqslant\int_U g_j\,\mathrm{d}\mu+\mu^-(A)
+<\int_U g_j\,\mathrm{d}\mu+\epsilon.
+\end{align*}
+由于 $g_j\to0$ 在 $W^{m,p}_0(U)$ 中强收敛且 $\mu\in W^{-m,q}(U)$，令 $j\to\infty$，得对任意 $k<\mu^+(E)$，$k\leqslant\epsilon$，故 $\mu^+(E)=0$。类似可证 $\mu^-(E)=0$，结论成立。
+\end{proof}
+
+上述结果是如下 $\mathscr{R}_{d,m,p}(U)$ 刻画的一部分，其中记 $L^1(U)+W^{-m,q}(U)\equiv(W^{m,p}_0(U)\cap L^\infty(U))^*$。
+
+\begin{theorem}\label{theorem:ch03-Lp可解性}\label{theorem:ch03-奇性}
+设 $m\in\mathbb{N}^*$，$p\in(1,\infty)$。设 $\mu\in\mathscr{R}_f(U)$。下列陈述等价：
+\begin{enumerate}[(i)]
+\item $\mu\in L^1(U)+W^{-m,q}(U)$；
+\item $\mu\in\mathscr{R}_{d,m,p}(U)$。
+\end{enumerate}
+\end{theorem}
+
+显然 $L^1(U)\subseteq\mathscr{R}_{ac}(U)\subseteq\mathscr{R}_{d,m,p}(U)$，故 (i)$\Rightarrow$(ii) 由\cref{proposition:ch03-GrunRehomme}得到。为证反向蕴含，需要如下引理。
+
+\begin{lemma}\label{lemma:ch03-逼近弥散}
+设 $m\in\mathbb{N}^*$，$p\in(1,\infty)$，$\mu\in\mathscr{R}_{d,m,p}(U)$ 非负。则存在序列 $\{\mu_k\}\subseteq W^{-m,q}(U)\cap\mathscr{R}_f(U)$ 使对所有 $k\in\mathbb{N}$，$0\leqslant\mu_k\leqslant\mu_{k+1}\leqslant\mu$，且 $\lim_{k\to\infty}\|\mu_k-\mu\|_{\mathscr{R}_f(U)}=0$。
+\end{lemma}
+
+\begin{proof}[证明\cref{theorem:ch03-Lp可解性}]
+仅需证 (ii)$\Rightarrow$(i)。不妨设 $\mu$ 非负。对任意 $k\in\mathbb{N}$，置 $\nu_k:=\mu_k-\mu_{k-1}$，其中 $\{\mu_k\}\subseteq W^{-m,q}(U)$ 由\cref{lemma:ch03-逼近弥散}给出，$\mu_0:=0$。则
+\begin{align}
+\sum_{k=1}^\infty\|\nu_k\|=\sum_{k=1}^\infty\nu_k(U)=\lim_{k\to\infty}\mu_k(U)=\mu(U)<\infty.\label{align:ch03-3.85}
+\end{align}
+设 $\{\rho_j\}\subseteq C^\infty_c(U)$ 为标准磨光子。对任意固定 $k\in\mathbb{N}$，$\lim_{j\to\infty}\|\nu_k-\nu_k*\rho_j\|_{W^{-m,q}(U)}=0$，故存在 $j_k\in\mathbb{N}$ 使
+\begin{align}
+\|\nu_k-\nu_k*\rho_{j_k}\|_{W^{-m,q}(U)}\leqslant\frac{1}{2^k}.\label{align:ch03-3.86}
+\end{align}
+置
+\begin{align}
+\nu_k=(\nu_k-\nu_k*\rho_{j_k})+\nu_{j_k}*\rho_{j_k}=:\omega_k+f_k\quad (k\in\mathbb{N}).\label{align:ch03-3.87}
+\end{align}
+注意由\cref{lemma:ch03-逼近弥散}，$\nu_k\in\mathscr{R}^+_f(U)$，故 $f_k\geqslant0$。由\eqref{align:ch03-3.86}，$\sum_{k=1}^\infty\|\omega_k\|_{W^{-m,q}(U)}\leqslant1$，故存在 $\omega:=\sum_{k=1}^\infty\omega_k\in W^{-m,q}(U)$。另一方面，由\eqref{align:ch03-3.85}，$\sum_{k=1}^\infty\|f_k\|_{L^1(U)}\leqslant\|\mu\|+1$，故存在 $f:=\sum_{k=1}^\infty f_k\in L^1(U)$。由于 $\lim_{n\to\infty}\|\sum_{k=1}^n\nu_k-\mu\|_{\mathscr{R}_f(U)}=0$，由\eqref{align:ch03-3.87}得 $\mu=f+\omega$。结论成立。
+\end{proof}
+
+\begin{remark}\label{remark:ch03-对偶意义}
+由\cref{theorem:ch03-Lp可解性}，对偶符号 $\langle\mu,\zeta\rangle$ 对任意 $\mu\in\mathscr{R}_{d,m,p}(U)$ 及 $\zeta\in W^{m,p}_0(U)\cap L^\infty(U)$ 有意义。
+\end{remark}
+
+\end{document}
