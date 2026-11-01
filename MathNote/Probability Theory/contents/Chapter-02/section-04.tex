@@ -1,0 +1,461 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}}
+
+\begin{document}
+
+\section{二项分布与 Poisson 分布}\label{section:ch02-二项分布与Poisson分布}
+
+\subsection{二项分布的性质及计算}
+
+\subsubsection{二项分布的计算}
+
+在上一节中我们导出了在 $n$ 次 Bernoulli 试验中正好出现 $k$ 次成功的概率 $b(k;n,p)$：
+\begin{align}\label{align:ch02-二项分布定义}
+b(k;n,p)=\binom{n}{k}p^k q^{n-k},\quad k=0,1,2,\cdots,n
+\end{align}
+其中 $q=1-p$.
+
+$b(k;n,p)$, $k=0,1,2,\cdots,n$ 称为二项分布, 在概率论中占有很重要的地位. 由于在许多实际问题中出现二项分布, 并且要计算其数值, 因此讨论二项分布的计算显得非常重要.
+
+二项分布有现成的表可查, 这种表对不同的 $n$ 及 $p$ 给出了 $b(k;n,p)$ 的数值.
+
+为了增加对二项分布的感性认识及计算的需要, 我们选取了下列二项分布数值表.
+
+表 2.4.1 中给出了对于 $n=20$ 及 $p_1=0.1$, $p_2=0.3$, $p_3=0.5$ 的二项分布数值表.
+
+二项分布表只对 $p\leqslant 0.5$ 给出, 因为对于 $p>0.5$ 的概率不难经下式计算得到：
+\begin{align}\label{align:ch02-二项分布对称性}
+b(k;n,p)=b(n-k;n,1-p)
+\end{align}
+当 $p>0.5$ 时, $1-p<0.5$, 仍能利用分布数值表.
+
+为了对二项分布的变化情况有个直观了解, 我们把表 2.4.1 中的几个分布用图\ref{figure:ch02-二项分布图}表示出来.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\textwidth]{ch02-fig2-4-1.png}
+\caption{二项分布图}
+\label{figure:ch02-二项分布图}
+\end{figure}
+
+从图中可以看出, 对于固定的 $n$ 及 $p$, 当 $k$ 增加时, $b(k;n,p)$ 先随之增加并达到某极大值, 以后又下降. 此外, 当概率 $p$ 越与 $\dfrac{1}{2}$ 接近时, 分布越接近对称.
+
+\begin{example}[电子管线路可靠性]\label{example:ch02-电子管线路可靠性}
+一大批电子管中有 $10\%$ 已损坏, 若我们从这批电子管中随机地选取 $20$ 个来组成一个线路, 问这线路能正常工作（即所选的 $20$ 个电子管全部是好的）的概率是多少？
+
+\begin{proof}[解]
+因为这批电子管数量很大, 因此可近似地把选取 $20$ 个管作为进行独立试验. 若把选到一个好电子管作为成功, 其概率为 $0.9$, 则这是一个 Bernoulli 概型问题, 所求的概率为
+\begin{align*}
+b(20;20,0.9)=\binom{20}{20}0.9^{20}=0.9^{20}
+\end{align*}
+这个数值可以利用对数表计算, 但更方便的是利用表 2.4.1 计算, 由\eqref{align:ch02-二项分布对称性},
+\begin{align*}
+b(20;20,0.9)=b(0;20,0.1)
+\end{align*}
+利用表 2.4.1 知所求的概率为 $0.121\,6$.
+\end{proof}
+\end{example}
+
+\begin{example}[血清的试验]\label{example:ch02-血清试验}
+设在家畜中感染某种疾病的概率是 $30\%$, 新发现了一种血清可能对预防此病有效, 为此对 $20$ 只健康的动物注射这种血清. 若注射后只有一只动物受感染, 我们应对此种血清的作用作何评价？
+
+假如血清毫无价值, 那么注射后的动物受感染的概率还是 $30\%$, 则这 $20$ 只动物中有 $k$ 只受感染的概率为 $b(k;20,0.3)$.
+
+发生只有一只动物受感染或更好的情况（无动物受感染）的概率为
+\begin{align*}
+b(0;20,0.3)+b(1;20,0.3)=0.000\,8+0.006\,8=0.007\,6
+\end{align*}
+这个概率如此之小, 因此我们不能认为血清毫无价值.
+
+如果注射后的 $20$ 只动物中有 $4$ 只受感染, 我们是否相信此种血清有效？这个问题留给读者思考.
+
+这里的做法是：先依照我们关心的问题提出一个假设, 然后用实验得出的数据, 利用概率论方法, 计算某个事件在假设成立下的概率, 最后根据这概率的大小来决定是接受还是拒绝原来的假设, 这是数理统计中有名的统计假设检验法.
+\end{example}
+
+\subsubsection{二项分布的性质}
+
+我们来考察 $b(k;n,p)$ 随 $k$ 及 $n$ 变化的情况. 从图\ref{figure:ch02-二项分布图}可以看出, 当 $n$ 固定时, $b(k;n,p)$ 先随 $k$ 增加而增大, 达到某一极大值后又逐渐下降. 现在对它进行严格讨论.
+
+由于对 $0<p<1$,
+\begin{align*}
+\frac{b(k;n,p)}{b(k-1;n,p)}=\frac{(n-k+1)p}{kq}=1+\frac{(n+1)p-k}{kq}
+\end{align*}
+因此
+
+当 $k<(n+1)p$ 时, $b(k;n,p)>b(k-1;n,p)$
+
+当 $k=(n+1)p$ 时, $b(k;n,p)=b(k-1;n,p)$
+
+当 $k>(n+1)p$ 时, $b(k;n,p)<b(k-1;n,p)$
+
+因为 $(n+1)p$ 不一定是整数, 而二项分布中的 $k$ 只取整数值, 所以存在整数 $m$, 使得 $(n+1)p-1<m\leqslant (n+1)p$, 而且当 $k$ 从 $0$ 变到 $n$ 时, $b(k;n,p)$ 起先单调上升, 当 $k=m$ 时达到极大值, 后来又单调下降. 但若 $(n+1)p=m$, 则这时 $b(m;n,p)=b(m-1;n,p)$ 同时达到极大值.
+
+使 $b(k;n,p)$ 取最大值的项 $b(m;n,p)$ 称为 $b(k;n,p)$ 的中心项, 而 $m$ 称为最可能成功次数. 由上面讨论知 $m=[(n+1)p]$（即 $m$ 是 $(n+1)p$ 的整数部分）. 若 $(n+1)p$ 是整数, 则 $m-1$ 亦为最可能成功次数.
+
+\begin{example}[疾病普查中最可能的发病人数]\label{example:ch02-疾病普查最可能发病人数}
+设某种疾病的发病率为 $0.01$, 问在 $500$ 人的社区中进行普查最可能的发病人数是多少？并求其相应的概率.
+
+\begin{proof}[解]
+这是 Bernoulli 概型, 发病人数服从二项分布. $n=500$, $p=0.01$, $(n+1)p=5.01$, $[(n+1)p]=5$. 所以最可能发病人数为 $5$. 相应概率为
+\begin{align}\label{align:ch02-最可能发病人数概率}
+b(5;500,0.01)=\binom{500}{5}(0.01)^5\cdot(0.99)^{495}=0.176\,35
+\end{align}
+\end{proof}
+
+应该注意, 若 $0<p<1$, 则当 $n$ 值相当大时, 即便是最可能成功次数 $m$ 发生的概率也相当小, 对于其他的 $k$, 则 $b(k;n,p)$ 自然更小了, 以后将会看到最可能成功次数 $m$ 发生的概率接近于
+\begin{align*}
+(2\pi npq)^{-\frac{1}{2}}
+\end{align*}
+（当 $n$ 相当大时）, 因此当 $n\to\infty$ 时, 这概率趋于 $0$.
+\end{example}
+
+\subsubsection{产品抽样验收与 $(n,c)$ 方案}
+
+由于生产过程总有种种无法完全控制的因素, 因此工艺规范也允许加工的尺寸有一定的公差, 或允许产品中含有少量废品, 这事实上是承认生产过程的随机性.
+
+在产品质量管理中, 全面检验一般是不可能的, 因此采用抽样检查的办法.
+
+抽样检验若用于生产过程中, 则成为在线生产过程质量管理的一部分, 此外就是用于产品的验收.
+
+如果每个产品要么是好品要么是废品, 那么这时关心的是废品数或废品率, 这是计数抽样验收中最简单的情况.
+
+对质量的要求大体上可以归结为：存在 $p_0$ 及 $p_1$ 满足 $0<p_0\leqslant p_1<1$, 当废品率 $p\leqslant p_0$ 时, 接收这批产品; 而当 $p\geqslant p_1$ 时, 拒绝这批产品.
+
+最简单也是最基本的验收方案是：抽 $n$ 件产品进行检验, 当废品数 $\leqslant c$ 时, 接收该批产品; 否则拒绝.
+
+这个方案称为 $(n,c)$ 方案.
+
+由于抽样的随机性, 任何验收方案都可能犯两类错误：其一, 拒收一批合格品; 其二, 接收一批不合格品. 前者为生产者风险; 后者为消费者风险. 当然希望减小这两类风险, 即降低犯两类错误的概率. 这也为比较两种不同验收方案的优劣提供了客观的标准.
+
+为刻画验收方案的性能, 一般引进 $L(p)$, 它表示当废品率为 $p$ 时, 接收该批产品的概率. 若以 $p$ 为横坐标, $L(p)$ 为纵坐标作图, 则所得的曲线称为抽检特性曲线（operating characteristic curve）, 简称 OC 曲线（见图\ref{figure:ch02-OC曲线}）.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\textwidth]{ch02-fig2-4-2.png}
+\caption{OC 曲线}
+\label{figure:ch02-OC曲线}
+\end{figure}
+
+对 $(n,c)$ 方案而言, 若抽样是放回的, 则利用二项分布容易得到
+\begin{align}\label{align:ch02-OC函数}
+L(p)=\sum_{k=0}^{c}\binom{n}{k}p^k(1-p)^{n-k}
+\end{align}
+因此, 问题归结为找 $n$ 及 $c$, 使得
+\begin{align}\label{align:ch02-验收方案要求}
+\begin{cases}
+L(p)\geqslant 1-\alpha,\ \text{当 }p\leqslant p_0\text{ 时}\\
+L(p)\leqslant \beta,\ \text{当 }p>p_1\text{ 时}
+\end{cases}
+\end{align}
+这里 $\alpha$, $\beta$ 是两个不大的正数, 按需要给定.
+
+理想的验收方案要求 $\alpha=\beta=0$, 这是无法实现的, 但可作为比较的基准.
+
+\subsubsection{应用实例}
+
+我们举一些应用的例子, 说明二项分布的重要性, 同时也提出一些问题.
+
+\begin{example}[人寿保险]\label{example:ch02-人寿保险}
+保险业是最早使用概率论的部门之一. 保险公司为了决定保险金数额, 估算公司的利润和破产的风险, 需要计算各种各样的概率. 下面是典型问题之一. 根据生命表知道, 某年龄段保险者里, 一年中每个人死亡的概率为 $0.005$, 现有 $10\,000$ 个这类人参加人寿保险, 试求在未来一年中在这些保险者里面, （1）有 $40$ 个人死亡的概率; （2）死亡人数不超过 $70$ 个的概率.
+
+\begin{proof}[解]
+作为初步近似, 可以利用 Bernoulli 概型, $n=10\,000$, $p=0.005$, 设 $\mu$ 为未来一年中这些人里面死亡的人数, 则所求的概率分别为
+\begin{align}\label{align:ch02-人寿保险1}
+\text{(1)}\ b(40;10\,000,0.005)=\binom{10\,000}{40}(0.005)^{40}(0.995)^{9\,960}
+\end{align}
+\begin{align}\label{align:ch02-人寿保险2}
+\text{(2)}\ P\{\mu\leqslant 70\}&=\sum_{k=0}^{70} b(k;10\,000,0.005)\\
+&=\sum_{k=0}^{70}\binom{10\,000}{k}(0.005)^k(0.995)^{10\,000-k}\nonumber
+\end{align}
+直接计算这些数值相当困难, 要有更好的计算方法.
+\end{proof}
+\end{example}
+
+\begin{example}[机票超售]\label{example:ch02-机票超售}
+某航线历史资料表明：订座旅客有 $5\%$ 不来登机, 问一架 $200$ 座飞机应出售多少座位？
+
+\begin{proof}[解]
+前已讲明可以利用 Bernoulli 概型. 鉴于该问题实际牵涉面甚广, 要考虑各方利弊, 因此模型应有一定适应性. 假定超售 $m$ 个座位, 则共售出 $200+m$ 个座位, 这时要求登机的旅客数 $\mu$ 服从二项分布 $b(k;200+m,0.95)$, 我们所关心的是发生拒登机的概率
+\begin{align*}
+P=P\{\mu>200\}=\sum_{k>200} b(k;200+m,0.95)
+\end{align*}
+较妥当的处理办法是：对各种适当的 $m$, 算出 $P$, 供主管部门最后决策时作参考.
+\end{proof}
+\end{example}
+
+\begin{example}[车间用电]\label{example:ch02-车间用电}
+某车间有 $200$ 台车床, 由于经常需要检修、测量、调换刀具、变换位置等种种原因, 每台只有 $60\%$ 的时间在开动用电, 若每台开动时耗电 $1$ 千瓦, 问应供给这个车间多少电力才能保证正常生产？
+
+\begin{proof}[解]
+若假定各台车床的工作是独立的, 则能利用 Bernoulli 概型, 此时 $n=200$, $p=60\%$, 问题转化为找到某个 $r$, 使"开动着的车床数 $\mu\leqslant r$"这一事件有足够大的概率发生, 例如
+\begin{align}\label{align:ch02-车间用电}
+P\{\mu\leqslant r\}=\sum_{k=0}^{r} b(k;200,0.6)\geqslant 0.999
+\end{align}
+这里的概率 $0.999$ 是举例性的, 它相当于 $8$ 小时工作中有半分钟会超负荷, 大小可选, 方法不变.
+\end{proof}
+\end{example}
+
+\begin{example}[分子运动]\label{example:ch02-分子运动}
+甲、乙两容器, 容量各为 $1$ 升, 每个各含 $2.7\times 10^{22}$ 个气体分子, 现将两容器接触, 经过相当长的时间后（即这时每个分子落在两容器中的概率各为 $\dfrac{1}{2}$）, 求两容器中分子数之差超过分子总数的 $100$ 亿分之一的概率.
+
+\begin{proof}[解]
+两容器中分子总数为 $5.4\times 10^{22}$, 其一百亿分之一（即 $10^{-10}$）为 $5.4\times 10^{12}$, 设混和后甲容器的分子数为 $\mu$, 则乙容器的分子数为 $5.4\times 10^{22}-\mu$, 现要求事件
+\begin{align*}
+|\mu-(5.4\times 10^{22}-\mu)|>5.4\times 10^{12}
+\end{align*}
+即事件
+\begin{align*}
+|\mu-2.7\times 10^{22}|>2.7\times 10^{12}
+\end{align*}
+的概率, 由二项分布
+\begin{align}\label{align:ch02-分子运动}
+P\{|\mu-2.7\times 10^{22}|>2.7\times 10^{12}\}=\sum_k b\left(k;5.4\times 10^{22},\frac{1}{2}\right)
+\end{align}
+上式和号对一切满足 $|k-2.7\times 10^{22}|>2.7\times 10^{12}$ 的 $k$ 求和, 这概率是无法直接计算的.
+\end{proof}
+
+从上面几个例子中可以看到, 计算二项分布的数值时, 由于试验次数 $n$ 经常很大, 因此实际计算 $b(k;n,p)$ 及 $\sum_k b(k;n,p)$ 都很困难, 有时甚至不可能. 例如\eqref{align:ch02-分子运动}中须算的项数有 $5.4\times 10^{12}$ 之多, 逐项计算是不可能的.
+
+在这种情况下, 寻找更有效的计算法是必要的, 即便是近似公式也好. 这可以利用概率论中的极限定理来实现, 关于极限定理的讨论将在第五章进行.
+\end{example}
+
+\subsection{二项分布的 Poisson 逼近}
+
+在很多应用问题中, 我们常常遇到这样的 Bernoulli 试验, 其中, 相对地说, $n$ 大, $p$ 小, 而乘积 $\lambda=np$ 大小适中. 对这种情况, Poisson（1781—1840）找到了一个便于使用的近似公式, 下面我们来推导它.
+
+\begin{theorem}[Poisson 逼近定理]\label{theorem:ch02-Poisson逼近定理}
+在独立试验中, 以 $p_n$ 代表事件 $A$ 在试验中出现的概率, 它与试验总数 $n$ 有关, 如果 $np_n\to\lambda$, 则当 $n\to\infty$ 时,
+\begin{align*}
+b(k;n,p_n)\to\frac{\lambda^k}{k!}e^{-\lambda}
+\end{align*}
+
+\begin{proof}
+记 $\lambda_n=np_n$, 则
+\begin{align*}
+b(k;n,p_n)&=\binom{n}{k}p_n^k(1-p_n)^{n-k}\\
+&=\frac{n(n-1)\cdots(n-k+1)}{k!}\left(\frac{\lambda_n}{n}\right)^k\left(1-\frac{\lambda_n}{n}\right)^{n-k}\\
+&=\frac{\lambda_n^k}{k!}\left(1-\frac{1}{n}\right)\left(1-\frac{2}{n}\right)\cdots\left(1-\frac{k-1}{n}\right)\left(1-\frac{\lambda_n}{n}\right)^{n-k}
+\end{align*}
+由于对固定的 $k$ 有
+\begin{align*}
+\lim_{n\to\infty}\lambda_n^k=\lambda^k,\quad \lim_{n\to\infty}\left(1-\frac{\lambda_n}{n}\right)^{n-k}=e^{-\lambda}
+\end{align*}
+及
+\begin{align*}
+\lim_{n\to\infty}\left(1-\frac{1}{n}\right)\left(1-\frac{2}{n}\right)\cdots\left(1-\frac{k-1}{n}\right)=1
+\end{align*}
+因此
+\begin{align*}
+\lim_{n\to\infty} b(k;n,p_n)=\frac{\lambda^k}{k!}e^{-\lambda}
+\end{align*}
+定理证毕.
+\end{proof}
+\end{theorem}
+
+\begin{align}\label{align:ch02-Poisson分布}
+p(k;\lambda)=\frac{\lambda^k}{k!}e^{-\lambda},\quad k=0,1,2,\cdots
+\end{align}
+称为 Poisson 分布（Poisson distribution）, $\lambda$ 称为它的参数.
+
+特别地
+\begin{align}\label{align:ch02-Poisson分布归一化}
+\sum_{k=0}^{\infty} p(k;\lambda)=\sum_{k=0}^{\infty}\frac{\lambda^k}{k!}e^{-\lambda}=e^{-\lambda}\cdot e^\lambda=1
+\end{align}
+
+Poisson 分布是概率论中很重要的一种分布.
+
+在应用中, 当 $p$ 相当小（一般当 $p\leqslant 0.1$）时, 我们用下面近似公式
+\begin{align}\label{align:ch02-Poisson近似公式}
+b(k;n,p)\approx\frac{(np)^k}{k!}e^{-np}
+\end{align}
+
+例如在例\ref{example:ch02-疾病普查最可能发病人数}中, 我们要计算 $b(5;500,0.01)$, 这时 $n=500$, 相当大, 而 $p=0.01$ 相当小, 但 $np=5$, 正好适中, 所以很适合用 Poisson 逼近, 查表得到 $p(5;5)=0.175\,467$, 与精确值 $0.176\,35$ 十分接近.
+
+\begin{example}[生三胞胎的概率]\label{example:ch02-生三胞胎概率}
+假如生三胞胎的概率为 $10^{-4}$, 求在 $100\,000$ 次生育中, 有 $0,1,2$ 次生三胞胎的概率.
+
+\begin{proof}[解]
+这可以看作 Bernoulli 试验; $n=100\,000$, $p=0.000\,1$, 所求的概率直接计算为
+\begin{align*}
+b(0;100\,000,0.000\,1)=0.000\,045\,378
+\end{align*}
+\begin{align*}
+b(1;100\,000,0.000\,1)=0.000\,453\,82
+\end{align*}
+\begin{align*}
+b(2;100\,000,0.000\,1)=0.002\,269\,3
+\end{align*}
+这时也可用 Poisson 逼近, $\lambda=np=10$, 而
+\begin{align*}
+p(0;10)=0.000\,045
+\end{align*}
+\begin{align*}
+p(1;10)=0.000\,454
+\end{align*}
+\begin{align*}
+p(2;10)=0.002\,270
+\end{align*}
+可见近似程度很令人满意.
+\end{proof}
+\end{example}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\textwidth]{ch02-fig2-4-3.png}
+\caption{二项分布与 Poisson 分布}
+\label{figure:ch02-二项分布与Poisson分布}
+\end{figure}
+
+图\ref{figure:ch02-二项分布与Poisson分布}给出了 Poisson 分布逼近二项分布的一个图示, 吻合程度甚好.
+
+\subsection{Poisson 分布}
+
+在历史上 Poisson 分布是作为二项分布的近似, 于 1837 年由法国数学家 Poisson 引入的. 近数十年来, Poisson 分布日益显示其重要性, 成了概率论中最重要的几个分布之一. 其原因主要是下面两点.
+
+首先是已经发现许多随机现象服从 Poisson 分布. 这种情况特别集中在两个领域中. 一是社会生活, 对服务的各种要求, 诸如电话交换台中来到的呼叫数, 网站访问数, 公共汽车站来到的乘客数等等都近似地服从 Poisson 分布, 因此在运筹学及管理科学中 Poisson 分布占有很突出的地位; 另一领域是物理科学, 放射性分裂落到某区域的质点数, 热电子的发射, 显微镜下落在某区域中的血球或微生物的数目等等都服从 Poisson 分布.
+
+其次, 对 Poisson 分布的深入研究（特别是通过对 Poisson 过程的研究）已发现它具有许多特殊的性质和作用, 打个不很恰当的譬喻, 似乎 Poisson 分布是构造随机现象的"基本粒子"之一.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\textwidth]{ch02-fig2-4-4.png}
+\caption{Poisson 分布图}
+\label{figure:ch02-Poisson分布图}
+\end{figure}
+
+图\ref{figure:ch02-Poisson分布图}是对于不同 $\lambda$ 值的 Poisson 分布图. 为了计算 Poisson 分布的数值, 有许多专门的表格可供查用. 本书附录一中也附有这样的表. 例\ref{example:ch02-生三胞胎概率}的数值可从该表查到.
+
+下面提供两个有关的统计资料作为例子.
+
+\begin{example}[公共汽车站客流]\label{example:ch02-公共汽车站客流}
+对上海市某公共汽车站的客流进行调查, 统计了某天上午 10:30 至 11:47 左右每隔 20 秒钟来到的乘客批数（每批可能有数人同时来到）, 共得 230 个记录, 分别计算了来到 0 批, 1 批, 2 批, 3 批, 4 批及 4 批以上乘客的时间区间的频数, 结果列于表 2.4.2 中, 其相应的频率与 $\lambda=0.87$ 的 Poisson 分布符合得很好.
+\end{example}
+\begin{example}[Rutherford 实验]\label{example:ch02-Rutherford实验}
+放射性物质放射出的 $\alpha$ 质点数是服从 Poisson 分布的有名例子. 1910 年 Rutherford 等人的著名实验揭露了这个事实.
+
+在这个实验中, 观察了长为 $7.5$ 秒的时间间隔里到达某指定区域的质点数, 共观察了 $N=2\,608$ 次, 表 2.4.3 给出观察值与理论值的对照, $N_k$ 表示在 $N$ 次观察中发生"在 $7.5$ 秒内落到指定区域的质点数为 $k$"的观察次数, 理论值是 $Np(k;3.870)$, 理论值与实验值很近似.
+\end{example}
+
+在说明了 Poisson 分布的常见性之后, 我们转入介绍产生 Poisson 分布的机制. 经过研究, 已经弄清了服从 Poisson 分布的条件. 为了便于理解, 我们将结合电话呼叫流来叙述这个重要结果.
+
+我们先证明一个以后屡次要用到的数学分析结论.
+
+\begin{lemma}[Cauchy 函数方程]\label{lemma:ch02-Cauchy函数方程}
+若 $f(x)$ 是连续函数（或单调函数）, 且对一切 $x,y$（或一切 $x\geqslant 0$, $y\geqslant 0$）成立
+\begin{align}
+f(x)f(y)=f(x+y)\label{align:ch02-Cauchy方程}
+\end{align}
+则
+\begin{align}
+f(x)=a^x\label{align:ch02-Cauchy方程解}
+\end{align}
+其中 $a\geqslant 0$, 是某一常数.
+\end{lemma}
+
+\begin{proof}
+由\cref{align:ch02-Cauchy方程}知对任意 $x$,
+\begin{align*}
+f(x)=\left[f\left(\frac{x}{2}\right)\right]^2\geqslant 0
+\end{align*}
+因此 $f(x)$ 非负. 反复使用\cref{align:ch02-Cauchy方程}, 对任意正整数 $n$ 及实数 $x$ 有
+\begin{align*}
+f(nx)=[f(x)]^n
+\end{align*}
+在上式中取 $x=\dfrac{1}{n}$, 得
+\begin{align*}
+f(1)=\left[f\left(\frac{1}{n}\right)\right]^n
+\end{align*}
+记 $a=f(1)\geqslant 0$, 则
+\begin{align*}
+f\left(\frac{1}{n}\right)=a^{\frac{1}{n}}
+\end{align*}
+因此, 对任意正整数 $m$ 及 $n$, 成立
+\begin{align*}
+f\left(\frac{m}{n}\right)=\left[f\left(\frac{1}{n}\right)\right]^m=a^{\frac{m}{n}}
+\end{align*}
+
+这样, 我们已证得\cref{align:ch02-Cauchy方程解}对一切有理数成立, 再利用连续性或单调性可以证明对无理数也成立, 从而证明了引理.
+\end{proof}
+
+\subsubsection*{Poisson 过程}
+
+考虑来到某交换装置的电话呼叫数, 假定它具有下面三个性质：
+
+（i）\textbf{平稳性} 在 $[t_0,t_0+t)$ 中来到的呼叫数只与时间间隔长度 $t$ 有关而与时间起点 $t_0$ 无关. 若以 $P_k(t)$ 记在长度为 $t$ 的时间区间中来到 $k$ 个呼叫的概率, 当然
+\begin{align}
+\sum_{k=0}^{\infty}P_k(t)=1\label{align:ch02-Pk归一化}
+\end{align}
+对任何 $t>0$ 成立.
+
+过程的平稳性表示了它的概率规律不随时间的推移而改变.
+
+（ii）\textbf{独立增量性}（无后效性） 在 $[t_0,t_0+t)$ 内来到 $k$ 个呼叫这一事件与时刻 $t_0$ 以前发生的事件独立. 换言之, 在对时刻 $t_0$ 以前的事件发生情况所作的任何假定之下, 计算出来的在 $[t_0,t_0+t)$ 内发生 $k$ 个呼叫的条件概率都等于同一事件的无条件概率. 独立增量性表明在互不相交的时间区间内过程进行的相互独立性.
+
+（iii）\textbf{普通性} 在充分小的时间间隔中, 最多来到一个呼叫. 即, 若记
+\begin{align}
+\psi(t)=\sum_{k=2}^{\infty}P_k(t)=1-P_0(t)-P_1(t)\label{align:ch02-Psi定义}
+\end{align}
+应有 $\psi(t)=o(t)$, 即
+\begin{align}
+\lim_{t\to 0}\frac{\psi(t)}{t}=0\label{align:ch02-普通性}
+\end{align}
+
+普通性表明, 在同一时间瞬间来两个或两个以上呼叫实际上是不可能的.
+
+下面我们求 $P_k(t)$.
+
+对 $\Delta t>0$, 考虑 $[0,t+\Delta t)$ 中来到 $k$ 个呼叫的概率 $P_k(t+\Delta t)$, 由独立增量性及全概率公式
+\begin{align}
+P_k(t+\Delta t)=P_k(t)P_0(\Delta t)+P_{k-1}(t)P_1(\Delta t)+\cdots+P_0(t)P_k(\Delta t),\quad k\geqslant 0\label{align:ch02-Pk递推}
+\end{align}
+（对 $n\geqslant 1$, 假定 $P_{-n}(t)=0$.）
+
+特别地
+\begin{align}
+P_0(t+\Delta t)=P_0(t)P_0(\Delta t)\label{align:ch02-P0递推}
+\end{align}
+
+$P_0(t)$ 表示在长度为 $t$ 的时间间隔中没有来呼叫的概率, 因此它关于 $t$ 单调下降, 由\cref{lemma:ch02-Cauchy函数方程}知
+\begin{align*}
+P_0(t)=a^t
+\end{align*}
+其中 $a\geqslant 0$, 若 $a=0$, 则 $P_0(t)\equiv 0$, 这说明在不管怎么短的时间间隔内都要来呼叫, 因此在有限时间间隔中要来无穷多个呼叫, 这种情形不在我们的考虑之列. 此外, 因 $P_0(t)$ 是概率, 故应有 $a\leqslant 1$, 而当 $a=1$ 时, $P_0(t)\equiv 1$, 这表明永不来呼叫, 也不是我们感兴趣的情形, 所以应有 $0<a<1$, 从而存在 $\lambda>0$, 使
+\begin{align}
+P_0(t)=e^{-\lambda t}\label{align:ch02-P0指数}
+\end{align}
+
+因此当 $\Delta t\to 0$ 时, 我们有
+\begin{align*}
+P_0(\Delta t)=e^{-\lambda\Delta t}=1-\lambda\Delta t+o(\Delta t)
+\end{align*}
+\begin{align*}
+P_1(\Delta t)=1-P_0(\Delta t)-\psi(\Delta t)=\lambda\Delta t+o(\Delta t)
+\end{align*}
+\begin{align*}
+\sum_{i=2}^{\infty}P_{k-i}(t)P_i(\Delta t)\leqslant \sum_{i=2}^{\infty}P_i(\Delta t)=\psi(\Delta t)=o(\Delta t)
+\end{align*}
+
+故由\cref{align:ch02-Pk递推}得
+\begin{align*}
+P_k(t+\Delta t)=P_k(t)(1-\lambda\Delta t)+P_{k-1}(t)\cdot\lambda\Delta t+o(\Delta t),\quad k\geqslant 1
+\end{align*}
+因此
+\begin{align*}
+\frac{P_k(t+\Delta t)-P_k(t)}{\Delta t}=\lambda\left[P_{k-1}(t)-P_k(t)\right]+o(1),\quad k\geqslant 1
+\end{align*}
+
+令 $\Delta t\to 0$, 得
+\begin{align*}
+P_k'(t)=\lambda\left[P_{k-1}(t)-P_k(t)\right],\quad k\geqslant 1
+\end{align*}
+
+由于已知 $P_0(t)=e^{-\lambda t}$, 故有 $P_1'(t)=\lambda\left[e^{-\lambda t}-P_1(t)\right]$, 可解得 $P_1(t)=\lambda t e^{-\lambda t}$, 这样下去, 可解得一切 $P_k(t)$.
+\begin{align}
+P_k(t)=\frac{(\lambda t)^k}{k!}e^{-\lambda t},\quad k=0,1,2,\cdots
+\end{align}
+
+这正是 Poisson 分布, 参数为 $\lambda t$.
+
+在随机过程理论中, 这里所得的结果及所用的方法将被大大推广.
+
+\end{document}

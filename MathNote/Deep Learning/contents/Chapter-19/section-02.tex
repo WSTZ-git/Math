@@ -1,0 +1,36 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{../../image/}{../../figure/}}
+\begin{document}
+
+\subsection{深度自编码器}\label{subsection:ch19-深度自编码器}
+
+然而，如果在网络中加入额外的非线性层，情况就有所不同了。以图~\ref{fig:ch19-deep-ae} 所示的四层自联想网络为例，输出单元仍然是线性的，并且第二层中的 $M$ 个单元也可以是线性的。然而，第一层和第三层具有非线性激活函数。网络再次通过最小化损失函数 [式~\eqref{align:ch19-linear-error}] 来训练。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.75\textwidth]{ch19-fig511-deep-ae.png}
+\caption{添加额外的非线性单元隐藏层会产生一个自联想网络，它可以执行非线性降维。}
+\label{fig:ch19-deep-ae}
+\end{figure}
+
+我们可以将这个网络视为两个连续的函数映射，如图~\ref{fig:ch19-deep-ae} 中的 $F_1$ 和 $F_2$。第一个映射 $F_1$ 将原始的 $D$ 维数据投影到了由第二层单元的激活定义的 $M$ 维子空间。因为第一层非线性单元的存在，这个映射非常通用，不受限于线性映射。类似地，该网络的后半部分定义了从 $M$ 维隐藏空间回到原始 $D$ 维输入空间的任意映射。这在几何上有一个简单的解释，参见图~\ref{fig:ch19-manifold}，其中 $D=3$ 且 $M=2$。映射 $F_1$ 定义了流形 $S$ 在更高维数据空间中的嵌入方式。由于映射 $F_1$ 可以是非线性的，因此流形 $S$ 的嵌入可以是非平面的。映射 $F_2$ 则定义了从原始 $D$ 维数据空间到 $M$ 维潜空间的投影。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{ch19-fig512-manifold.png}
+\caption{图~\ref{fig:ch19-deep-ae} 所示网络执行的映射的几何解释（具有 $D=3$ 个输入且第二层中有 $M=2$ 个单元的模型）。从潜空间到数据空间的映射 $F_1$ 定义了流形 $S$ 在更高维数据空间中的嵌入方式。}
+\label{fig:ch19-manifold}
+\end{figure}
+
+这样的网络实际上有效地执行了一种非线性形式的 PCA。它具有不受限于线性变换的优势，尽管标准 PCA 是它的一个特例。然而，现在训练网络需要进行非线性优化，因为误差函数 [式~\eqref{align:ch19-linear-error}] 不再是网络参数的二次函数。因此必须使用计算密集型的非线性优化技术，并且存在找到误差函数的次优局部极小值的风险。此外，在训练网络之前必须指定子空间的维数。
+
+\subsection{稀疏自编码器}\label{subsection:ch19-稀疏自编码器}
+
+与其限制网络中某个隐藏层的节点数量，不如考虑另一种约束内部表示的方法：使用正则化器鼓励稀疏表示，从而降低有效维度。一个简单的选择是 $L_1$ 正则化器，它能促进数据的稀疏性，相应的正则化误差函数如下（参见 9.2.2 小节）：
+\begin{align}
+E_{\mathrm{reg}}(w)=E(w)+\frac{\lambda}{2}\sum_{j}|z_j|
+\label{align:ch19-sparse}
+\end{align}
+其中 $E(w)$ 是未正则化的误差函数，求和操作是在隐藏层中所有单元的激活值上进行的。注意，正则化通常应用于网络的参数，而在这里它被用于单元激活值。用于梯度下降训练的导数可以像往常一样使用自动微分来计算。
+
+\end{document}

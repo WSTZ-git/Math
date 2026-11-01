@@ -1,0 +1,271 @@
+\documentclass[../main.tex]{subfiles}
+\graphicspath{{../image/}{../figure/}}
+\begin{document}
+
+\chapter{线性代数}\label{appendix:a-线性代数}
+
+附录~A 列出了一些有用的性质以及涉及矩阵和行列式的恒等式。我们假设读者已经熟悉了基本的线性代数知识，所以附录~A 并不是介绍这些概念的教程。对于某些结论，我们会说明如何进行证明，而在更复杂的情况下，建议感兴趣的读者参考与该主题有关的教科书。在所有情况下，我们假设矩阵的逆存在，并且假设矩阵的维度可以使公式得到正确定义。关于线性代数的更详细且全面的讨论可以参见 Golub and Van Loan (1996)，并且 L\"utkepohl (1996) 给出了大量的矩阵性质，Magnus and Neudecker (1999) 讨论了矩阵导数。
+
+矩阵 $A$ 由元素 $A_{ij}$ 组成，其中 $i$ 索引行，$j$ 索引列。我们用 $I$ 来表示 $N\times N$ 单位矩阵（也称恒等矩阵）。当维度上没有歧义的时候，我们可以直接用 $I$ 代表单位矩阵。转置矩阵 $A^{\mathsf{T}}$ 包含元素 $(A^{\mathsf{T}})_{ij}=A_{ji}$。从转置的定义来看，我们有
+\begin{align}
+(AB)^{\mathsf{T}}=B^{\mathsf{T}}A^{\mathsf{T}}
+\label{align:appA-transpose}
+\end{align}
+对此我们可以通过写出索引来验证。$A$ 的逆矩阵记为 $A^{-1}$，满足
+\begin{align}
+AA^{-1}=A^{-1}A=I
+\label{align:appA-inv-def}
+\end{align}
+因为 $ABB^{-1}A^{-1}=I$，所以有
+\begin{align}
+(AB)^{-1}=B^{-1}A^{-1}
+\label{align:appA-inv-prod}
+\end{align}
+并且有
+\begin{align}
+(A^{\mathsf{T}})^{-1}=(A^{-1})^{\mathsf{T}}
+\label{align:appA-inv-transpose}
+\end{align}
+这通过取式~\eqref{align:appA-inv-prod} 的转置并应用式~\eqref{align:appA-transpose} 可以很容易得证。
+
+\subsection{矩阵恒等式}\label{subsection:appA-矩阵恒等式}
+
+一个涉及矩阵的逆的有用恒等式如下：
+\begin{align}
+(P^{-1}+B^{\mathsf{T}}R^{-1}B)^{-1}B^{\mathsf{T}}R^{-1}=PB(B^{\mathsf{T}}PB+R)^{-1}
+\label{align:appA-woodbury1}
+\end{align}
+这很容易通过对式~\eqref{align:appA-woodbury1} 的两边右乘 $(B^{\mathsf{T}}PB+R)$ 得证。假设 $P$ 的维度为 $N\times N$、$R$ 的维度为 $M\times M$，则 $B$ 的维度就是 $M\times N$。如果 $M<N$，那么计算式~\eqref{align:appA-woodbury1} 右边的值要比计算其左边的值开销小得多。有时也会出现如下特殊情况：
+\begin{align}
+(I+AB)^{-1}A=A(I+BA)^{-1}
+\label{align:appA-special}
+\end{align}
+另一个有用的关于矩阵的逆的恒等式如下：
+\begin{align}
+(A+BD^{-1}C)^{-1}=A^{-1}-A^{-1}B(D+CA^{-1}B)^{-1}CA^{-1}
+\label{align:appA-woodbury}
+\end{align}
+这就是\textbf{伍德伯里恒等式}（Woodbury identity），对式~\eqref{align:appA-woodbury} 的两边同时乘以 $(A+BD^{-1}C)$ 即可得证。在某些情况下很有用，例如，当 $A$ 很大且为对角矩阵时，$A$ 的逆很容易求得，或者当 $B$ 有很多行但列较少时（$C$ 则相反），式~\eqref{align:appA-woodbury} 右边的计算开销就比左边的计算开销小得多。
+
+如果当且仅当所有 $\alpha_i=0$ 时，$\sum_i \alpha_i a_i=0$ 才成立，则称向量 $\{a_1,\cdots,a_M\}$ 是\textbf{线性无关}（linearly independent）的。这意味着没有任何一个向量可以表示为其余向量的线性组合。矩阵的秩等于线性无关行的最大数量（也可等价地说，矩阵的秩等于线性无关列的最大数量）。
+
+\subsection{迹和行列式}\label{subsection:appA-迹行列式}
+
+方阵有迹和行列式。矩阵 $A$ 的迹 $\mathrm{tr}(A)$ 定义为其主对角线上元素的和。通过写出索引，我们可以得到
+\begin{align}
+\mathrm{tr}(AB)=\mathrm{tr}(BA)
+\label{align:appA-tr-cyclic1}
+\end{align}
+通过将式~\eqref{align:appA-tr-cyclic1} 应用于三个矩阵的乘积，可以得到
+\begin{align}
+\mathrm{tr}(ABC)=\mathrm{tr}(CAB)=\mathrm{tr}(BCA)
+\label{align:appA-tr-cyclic}
+\end{align}
+这就是迹运算的循环（cyclic）性质。显然，这一性质可以扩展到任意数量的矩阵的乘积。$N\times N$ 矩阵 $A$ 的行列式 $|A|$ 由下式定义：
+\begin{align}
+|A|=\sum (-1)^{p}A_{1i_1}A_{2i_2}\cdots A_{Ni_N}
+\label{align:appA-det}
+\end{align}
+其中，行列式对每行和每列中元素的乘积求和，并根据排列 $i_1\cdots i_N$ 为偶数还是奇数来确定系数是 $+1$ 还是 $-1$。注意 $|I|=1$，且对角矩阵的行列式是由其主对角线上元素的乘积给出的。因此，对于 $2\times 2$ 的矩阵，其行列式的形式如下：
+\begin{align}
+|A|=a_{11}a_{22}-a_{12}a_{21}
+\end{align}
+两个矩阵乘积的行列式由下式给出：
+\begin{align}
+|AB|=|A|\,|B|
+\label{align:appA-det-prod}
+\end{align}
+式~\eqref{align:appA-det-prod} 可以从式~\eqref{align:appA-det} 推导得出。同样，逆矩阵的行列式由下式给出：
+\begin{align}
+|A^{-1}|=\frac{1}{|A|}
+\label{align:appA-det-inv}
+\end{align}
+式~\eqref{align:appA-det-inv} 可以通过取式~\eqref{align:appA-inv-def} 的行列式并应用式~\eqref{align:appA-det-prod} 推导得出。如果 $A$ 和 $B$ 都是大小为 $N\times M$ 的矩阵，则有
+\begin{align}
+|I_N+AB^{\mathsf{T}}|=|I_M+A^{\mathsf{T}}B|
+\label{align:appA-det-sylvester}
+\end{align}
+一种有用的特殊情况如下：
+\begin{align}
+|I+ab^{\mathsf{T}}|=1+a^{\mathsf{T}}b
+\label{align:appA-det-rank1}
+\end{align}
+其中 $a$ 和 $b$ 都是 $N$ 维的列向量。
+
+\subsection{矩阵导数}\label{subsection:appA-矩阵导数}
+
+有时我们需要考虑向量和矩阵关于标量的导数。向量 $a$ 关于标量 $x$ 的导数也是一个向量，其分量为
+\begin{align}
+\frac{\partial a}{\partial x}=\Big(\frac{\partial a_i}{\partial x}\Big)
+\label{align:appA-vec-deriv}
+\end{align}
+类似地：
+\begin{align}
+\frac{\partial x^{\mathsf{T}}a}{\partial x}=a
+\label{align:appA-linear-deriv}
+\end{align}
+标量 $x$ 关于向量 $a$ 的导数可以定义为
+\begin{align}
+\frac{\partial x}{\partial a}=\Big(\frac{\partial x}{\partial a_i}\Big)
+\label{align:appA-scalar-deriv}
+\end{align}
+类似地：
+\begin{align}
+\frac{\partial (a^{\mathsf{T}}x)}{\partial x}=a
+\end{align}
+矩阵关于标量的导数也有类似的定义。使用乘积法则可得
+\begin{align}
+\frac{\partial}{\partial x}(AB)=\frac{\partial A}{\partial x}B+A\frac{\partial B}{\partial x}
+\label{align:appA-mat-deriv}
+\end{align}
+类似地，矩阵的逆关于标量 $x$ 的导数可以定义为
+\begin{align}
+\frac{\partial}{\partial x}(A^{-1})=-A^{-1}\frac{\partial A}{\partial x}A^{-1}
+\label{align:appA-inv-deriv}
+\end{align}
+这可以通过对式~\eqref{align:appA-inv-def} 微分 $A^{-1}A=I$，然后右乘 $A^{-1}$ 得证。
+
+如果我们选择 $x$ 作为 $A$ 的元素之一，则有
+\begin{align}
+\frac{\partial}{\partial A_{ij}}\mathrm{tr}(A)=I_{ij}
+\label{align:appA-tr-deriv}
+\end{align}
+类似地：
+\begin{align}
+\frac{\partial}{\partial A}\mathrm{tr}(AB)=B^{\mathsf{T}}
+\label{align:appA-trAB-deriv}
+\end{align}
+其可以通过使用索引表示法写出矩阵得到。这个结论也可以写成如下更紧凑的形式：
+\begin{align}
+\nabla_A\mathrm{tr}(AB)=B^{\mathsf{T}}
+\end{align}
+通过使用这种表示法，我们可以得到以下性质：
+\begin{align}
+\nabla_A\mathrm{tr}(AB)=B^{\mathsf{T}},\qquad \nabla_A\mathrm{tr}(ABA^{\mathsf{T}})=A(B+B^{\mathsf{T}}),\qquad \nabla_A|A|=|A|(A^{-1})^{\mathsf{T}}
+\label{align:appA-grad-props}
+\end{align}
+这些性质同样可以通过写出矩阵的索引得证。另外，我们还可得到
+\begin{align}
+\nabla_A\ln|A|=(A^{-1})^{\mathsf{T}}
+\label{align:appA-logdet-deriv}
+\end{align}
+式~\eqref{align:appA-logdet-deriv} 可以由式~\eqref{align:appA-tr-deriv} 和式~\eqref{align:appA-trAB-deriv} 推导得出。
+
+\subsection{特征向量}\label{subsection:appA-特征向量}
+
+对于大小为 $M\times M$ 的方阵 $A$，其特征向量方程定义为
+\begin{align}
+Au_i=\lambda_i u_i
+\label{align:appA-eig}
+\end{align}
+其中 $i=1,\cdots,M$，$u_i$ 是特征向量，$\lambda_i$ 是对应的特征值。这可以视为一组 $M$ 个同时满足的齐次线性方程，有解的条件是
+\begin{align}
+|A-\lambda I|=0
+\label{align:appA-eig-eq}
+\end{align}
+这就是特征方程。因为这是一个关于 $\lambda$ 的 $M$ 阶多项式，所以它必须有 $M$ 个解（尽管这些解不必都是不同的）。$A$ 的秩等于非零特征值的数量。
+
+需要特别讨论的是对称矩阵，对称矩阵可能是协方差矩阵、核矩阵或黑塞矩阵。对称矩阵具有性质 $A_{ij}=A_{ji}$，或等价地有 $A^{\mathsf{T}}=A$。对称矩阵的逆矩阵也是对称矩阵，这可以通过取 $A^{-1}A=I$ 的转置并利用 $AA^{-1}=I$ 以及 $I$ 的对称性得证。
+
+通常，矩阵的特征值是复数，但对于对称矩阵，其特征值 $\lambda_i$ 是实数。为了证明这一点，可以首先对式~\eqref{align:appA-eig} 左乘 $u_i^{*}$（其中 $*$ 表示复共轭），从而得到
+\begin{align}
+(u_i^{*})^{\mathsf{T}}Au_i=\lambda_i(u_i^{*})^{\mathsf{T}}u_i
+\label{align:appA-eig-conj}
+\end{align}
+接下来取式~\eqref{align:appA-eig} 的复共轭并左乘 $u_i^{\mathsf{T}}$，从而得到
+\begin{align}
+u_i^{\mathsf{T}}Au_i=\lambda_i^{*}u_i^{\mathsf{T}}u_i
+\end{align}
+其中使用了 $A^{\mathsf{T}}=A$，因为我们仅考虑实矩阵 $A$。对这两个等式取转置并相减，利用对称性质 $A^{\mathsf{T}}=A$，可得
+\begin{align}
+(\lambda_i-\lambda_i^{*})u_i^{\mathsf{T}}u_i=0
+\end{align}
+因此，对于 $\lambda_i\neq\lambda_i^{*}$，我们有 $u_i^{\mathsf{T}}u_i=0$，即 $u_i$ 和 $u_i^{*}$ 是正交的。如果这两个特征值相等，那么任何线性组合 $\alpha u_i+\beta u_j$ 都将是具有相同特征值的特征向量，因此我们可以任意选择一个线性组合，然后选择另一个线性组合并使其与第一个线性组合正交（可以证明退化的特征向量永远不是线性相关的）。因此，特征向量可以选择为正交向量，并通过归一化变为单位长度。由于有 $M$ 个特征值，而对应的 $M$ 个正交特征向量构成了一个完备集，因此任何 $M$ 维向量都可以表示为特征向量的线性组合。
+
+实对称矩阵的特征向量 $u_i$ 可以选择为正交归一化的向量（即正交的且为单位长度的向量），从而有
+\begin{align}
+u_i^{\mathsf{T}}u_j=I_{ij}
+\label{align:appA-orthonormal}
+\end{align}
+其中 $I_{ij}$ 是单位矩阵 $I$ 的元素。为了说明这一点，首先将式~\eqref{align:appA-eig} 左乘 $u_j^{\mathsf{T}}$，从而得到第一个方程
+\begin{align}
+u_j^{\mathsf{T}}Au_i=\lambda_i u_j^{\mathsf{T}}u_i
+\end{align}
+然后交换索引，从而得到第二个方程：
+\begin{align}
+u_i^{\mathsf{T}}Au_j=\lambda_j u_i^{\mathsf{T}}u_j
+\end{align}
+取第二个方程的转置并利用对称性质 $A^{\mathsf{T}}=A$，最后将这两个方程相减，从而得到
+\begin{align}
+(\lambda_i-\lambda_j)u_i^{\mathsf{T}}u_j=0
+\end{align}
+因此，对于 $\lambda_i\neq\lambda_j$，我们有 $u_i^{\mathsf{T}}u_j=0$，即 $u_i$ 和 $u_j$ 是正交的。
+
+我们可以将特征向量 $u_i$ 作为 $M\times M$ 矩阵 $U$ 的列，该矩阵由于正交归一性而满足
+\begin{align}
+U^{\mathsf{T}}U=I
+\label{align:appA-ortho}
+\end{align}
+这样的矩阵称为\textbf{正交矩阵}。有趣的是，这个矩阵的行也是正交的，所以有 $UU^{\mathsf{T}}=I$。为了证明这一点，请注意式~\eqref{align:appA-ortho} 意味着 $UU^{\mathsf{T}}U^{-1}=U^{-1}=U^{\mathsf{T}}$，从而有 $U^{\mathsf{T}}U^{-1}=U^{-1}U^{\mathsf{T}}=I$。使用式~\eqref{align:appA-det-prod}，我们还可以推导出 $|U|=1$。
+
+特征向量方程 [式~\eqref{align:appA-eig}] 可以用以下关于 $U$ 的形式来表示：
+\begin{align}
+AU=U\Lambda
+\label{align:appA-AU}
+\end{align}
+其中 $\Lambda$ 是 $M\times M$ 的对角矩阵，其对角元素由特征值 $\lambda_i$ 给出。
+
+假设我们通过使用正交矩阵 $U$ 转换列向量 $x$ 得到了一个新的向量：
+\begin{align}
+x'=Ux
+\end{align}
+则向量的长度保持不变，因为
+\begin{align}
+x'^{\mathsf{T}}x'=x^{\mathsf{T}}U^{\mathsf{T}}Ux=x^{\mathsf{T}}x
+\label{align:appA-norm-preserve}
+\end{align}
+同样，任何两个此类向量之间的夹角也保持不变，因为
+\begin{align}
+x'^{\mathsf{T}}y'=x^{\mathsf{T}}U^{\mathsf{T}}Uy=x^{\mathsf{T}}y
+\end{align}
+因此，向量乘以 $U$ 可以解释为坐标系发生刚性旋转。
+
+从式~\eqref{align:appA-AU} 可以看出
+\begin{align}
+U^{\mathsf{T}}AU=\Lambda
+\label{align:appA-diag}
+\end{align}
+又因为 $\Lambda$ 是对角矩阵，我们可以说矩阵 $A$ 被矩阵 $U$ 对角化了。左乘 $U$ 并右乘 $U^{\mathsf{T}}$，我们可以得到
+\begin{align}
+A=U\Lambda U^{\mathsf{T}}
+\label{align:appA-eig-decomp}
+\end{align}
+取这个方程的逆并利用式~\eqref{align:appA-inv-prod} 以及 $U^{-1}=U^{\mathsf{T}}$，可以得到
+\begin{align}
+A^{-1}=U\Lambda^{-1}U^{\mathsf{T}}
+\label{align:appA-inv-decomp}
+\end{align}
+以上两个方程也可以写成以下形式：
+\begin{align}
+A=\sum_i \lambda_i u_i u_i^{\mathsf{T}},\qquad A^{-1}=\sum_i \frac{1}{\lambda_i}u_i u_i^{\mathsf{T}}
+\end{align}
+
+如果我们取式~\eqref{align:appA-eig-decomp} 的行列式并使用式~\eqref{align:appA-det-prod}，则可以得到
+\begin{align}
+|A|=\prod_i \lambda_i
+\end{align}
+类似地，取式~\eqref{align:appA-eig-decomp} 的迹，并利用迹运算的循环性质 [式~\eqref{align:appA-tr-cyclic}] 以及 $U^{\mathsf{T}}U=I$，我们可以得到
+\begin{align}
+\mathrm{tr}(A)=\sum_i \lambda_i
+\end{align}
+作为一个练习，请读者利用式~\eqref{align:appA-orthonormal}、式~\eqref{align:appA-eig-decomp}、式~\eqref{align:appA-inv-decomp} 和式~\eqref{align:appA-tr-deriv} 验证式~\eqref{align:appA-tr-deriv}。
+
+如果对于所有非零向量 $w$，有 $w^{\mathsf{T}}Aw>0$，则称矩阵 $A$ 为\textbf{正定矩阵}，记为 $A>0$。等价地，正定矩阵对于其所有特征值，有 $\lambda_i>0$（这可以通过将 $w$ 分别设置为每个特征向量来验证，并注意到任意向量都可以表示为特征向量的线性组合而看出）。一个矩阵的所有元素均为正并不一定意味着该矩阵就是正定矩阵。例如，矩阵 $\begin{pmatrix}1&2\\2&1\end{pmatrix}$ 具有特征值 $\lambda\approx 3$ 和 $\lambda\approx -1$。如果对于所有的 $w$，有 $w^{\mathsf{T}}Aw\ge 0$，则称这个矩阵为半正定矩阵，记为 $A\ge 0$，等价于 $\lambda_i\ge 0$。
+
+矩阵的条件数由下式给出：
+\begin{align}
+\mathrm{cond}(A)=\frac{\lambda_{\max}}{\lambda_{\min}}
+\end{align}
+其中 $\lambda_{\max}$ 是最大的特征值，$\lambda_{\min}$ 是最小的特征值。
+
+\end{document}

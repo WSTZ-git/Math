@@ -1,0 +1,47 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{../../image/}{../../figure/}}
+\begin{document}
+
+\section{自回归流}\label{section:ch18-自回归流}
+
+我们注意到一组变量的联合分布总是可以写成条件分布的乘积，每个变量对应一个条件分布，由此可以推导出相关的标准化流公式（参见 11.1 节）。首先选择向量 $x$ 中变量的顺序，我们可以在不失一般性的情况下写出：
+\begin{align}
+p(x)=\prod_{i=1}^{D}p(x_i\mid x_{1:i-1})
+\label{align:ch18-autoregressive}
+\end{align}
+其中 $x_{1:i-1}$ 表示 $x_1,\cdots,x_{i-1}$。这种因式分解可以用来构建一类称为\textbf{掩码自回归流}（Masked Autoregressive Flow, MAF）（Papamakarios, Pavlakou, and Murray, 2017）的标准化流，如下所示：
+\begin{align}
+x_i=h_i\big(z_i,g_i(x_{1:i-1},w_i)\big)
+\label{align:ch18-maf}
+\end{align}
+图~\ref{fig:ch18-ar-flows}(a) 说明了这一点。这里的 $h_i(z_i,g)$ 是耦合函数，因为可以很容易地对 $z_i$ 求逆。另外，$g_i$ 是条件函数，通常用一个深度神经网络来表示。术语``掩码''指的是使用单个神经网络来实现一组形式为式~\eqref{align:ch18-maf} 的方程，连同一个二进制掩码（Germain et al., 2015）来强制网络权重的一个子集为零，以实现自回归约束 [式~\eqref{align:ch18-autoregressive}]。
+
+在这种情况下，计算似然函数所需的逆运算如下：
+\begin{align}
+z_i=h_i^{-1}\big(x_i,g_i(x_{1:i-1},w_i)\big)
+\label{align:ch18-maf-inv}
+\end{align}
+由于式~\eqref{align:ch18-maf-inv} 中 $z_1,\cdots,z_D$ 这些分项函数可以并行计算，因此评估以上似然函数的操作在现代硬件上就能高效执行。对应于一组变换 [式~\eqref{align:ch18-maf-inv}] 的雅可比矩阵的元素为 $\partial z_i/\partial x_i$，这些元素形成一个下三角矩阵，其行列式由对角线元素的乘积给出，因此也可以高效计算（见习题 18.4）。
+
+然而，从该模型中抽样的任务必须通过计算式~\eqref{align:ch18-maf} 来完成，这本质上是一个顺序执行的过程，因为在计算 $x_i$ 之前必须先计算 $x_1,\cdots,x_{i-1}$ 的值，所以速度较慢。为了避免这种效率低下的抽样，我们可以定义\textbf{逆自回归流}（Inverse Autoregressive Flow, IAF）（Kingma et al., 2016），如下所示：
+\begin{align}
+x_i=h_i\big(z_i,g_i(z_{1:i-1},w_i)\big)
+\label{align:ch18-iaf}
+\end{align}
+如图~\ref{fig:ch18-ar-flows}(b) 所示，对于给定的 $z$，可以使用式~\eqref{align:ch18-iaf} 并行计算元素 $x_1,\cdots,x_D$，因此采样效率提高了。然而，计算似然所需的逆函数需要一系列如下形式的计算：
+\begin{align}
+z_i=h_i^{-1}\big(x_i,g_i(z_{1:i-1},w_i)\big)
+\label{align:ch18-iaf-inv}
+\end{align}
+这些计算本质上是顺序进行的，因此速度很慢。具体应该使用掩码自回归流还是逆自回归流取决于特定的应用。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.7\textwidth]{ch18-fig501-ar-flows.png}
+\caption{两种自回归标准化流的结构示意图。(a) 中显示的掩码自回归流允许对似然函数进行有效评估；而 (b) 中显示的逆自回归流允许进行高效抽样。}
+\label{fig:ch18-ar-flows}
+\end{figure}
+
+耦合流和自回归流是密切相关的。尽管自回归流引入了相当大的灵活性，但由于需要顺序地依次采样，这带来了随数据空间维数 $D$ 线性增长的计算成本。耦合流可以视为自回归流的一个特例，它将变量分成两组而不是 $D$ 组，提升了效率，但牺牲了一些通用性。
+
+\end{document}

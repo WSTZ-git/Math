@@ -1,0 +1,97 @@
+﻿\documentclass[../../main.tex]{subfiles}
+
+\graphicspath{{../../image/}{../../figure/}}
+
+\begin{document}
+
+\section{生成分类器}\label{section:ch05-生成分类器}
+
+在为类-条件概率密度$p(\boldsymbol{x}\mid C_k)$指定了一个参数函数形式后，就可以使用最大似然法确定参数值和类的先验概率$p(C_k)$。我们首先讨论连续输入变量$\boldsymbol{x}$的情形，然后简要讨论离散输入。
+
+\subsection{连续输入}\label{subsection:ch05-连续输入}
+
+假设类-条件概率密度是高斯密度。进一步假设所有类共享相同的协方差矩阵$\boldsymbol{\Sigma}$，则$C_k$类的密度为
+
+\begin{align}
+  p(\boldsymbol{x}\mid C_k)=\frac{1}{(2\pi)^{D/2}\lvert\boldsymbol{\Sigma}\rvert^{1/2}}\exp\!\left\{-\frac{1}{2}(\boldsymbol{x}-\boldsymbol{\mu}_k)^{\mathsf{T}}\boldsymbol{\Sigma}^{-1}(\boldsymbol{x}-\boldsymbol{\mu}_k)\right\}
+  \label{align:ch05-高斯类条件}
+\end{align}
+
+考虑二分类情形。根据贝叶斯定理，后验概率$p(C_1\mid\boldsymbol{x})$可写成逻辑斯谛sigmoid函数作用于$\boldsymbol{x}$的线性函数：
+
+\begin{align}
+  p(C_1\mid\boldsymbol{x})=\sigma(a(\boldsymbol{x}))=\frac{1}{1+\exp(-a(\boldsymbol{x}))}
+  \label{align:ch05-后验sigmoid}
+\end{align}
+
+其中
+
+\begin{align}
+  a(\boldsymbol{x})=(\boldsymbol{\mu}_1-\boldsymbol{\mu}_2)^{\mathsf{T}}\boldsymbol{\Sigma}^{-1}\boldsymbol{x}-\frac{1}{2}\boldsymbol{\mu}_1^{\mathsf{T}}\boldsymbol{\Sigma}^{-1}\boldsymbol{\mu}_1+\frac{1}{2}\boldsymbol{\mu}_2^{\mathsf{T}}\boldsymbol{\Sigma}^{-1}\boldsymbol{\mu}_2+\ln\frac{p(C_1)}{p(C_2)}
+  \label{align:ch05-logit}
+\end{align}
+
+此为logit函数，它表示两个类的概率之比的对数$\ln[p(C_1\mid\boldsymbol{x})/p(C_2\mid\boldsymbol{x})]$，也称对数几率。可以看到，来自高斯密度指数中$\boldsymbol{x}$的二次项已被消去（缘于共享协方差矩阵的假设），从而$a(\boldsymbol{x})$是$\boldsymbol{x}$的线性函数。先验概率$p(C_k)$仅通过偏置参数进入，因此先验的变化会使决策边界发生平行位移。决策边界对应于后验概率$p(C_k\mid\boldsymbol{x})$恒定的曲面，故为线性。
+
+对于$K$个类的一般情况，后验概率由归一化指数给出，也叫softmax函数：
+
+\begin{align}
+  p(C_k\mid\boldsymbol{x})=\frac{\exp(a_k)}{\sum_j\exp(a_j)}
+  \label{align:ch05-softmax}
+\end{align}
+
+其中
+
+\begin{align}
+  a_k=\ln\{p(\boldsymbol{x}\mid C_k)p(C_k)\}=\boldsymbol{w}_k^{\mathsf{T}}\boldsymbol{x}+w_{k0}
+  \label{align:ch05-多类logit}
+\end{align}
+
+如果我们放宽共享协方差矩阵的假设，允许每个类有自己的协方差矩阵$\boldsymbol{\Sigma}_k$，那么先前的二次项消去将不再发生，我们将得到$\boldsymbol{x}$的二次函数，从而产生二次判别式（quadratic discriminant）。
+
+\subsection{最大似然解}\label{subsection:ch05-最大似然解}
+
+假设我们有两个类，每个类都有一个共享协方差矩阵的高斯类-条件概率密度。将类的先验概率记为$p(C_1)=\pi$，因此$p(C_2)=1-\pi$。对于属于$C_1$类的数据点$\boldsymbol{x}_n$（$t_n=1$），有$p(\boldsymbol{x}_n,C_1)=\pi\,\mathcal{N}(\boldsymbol{x}_n\mid\boldsymbol{\mu}_1,\boldsymbol{\Sigma})$；对于$C_2$类（$t_n=0$），有$p(\boldsymbol{x}_n,C_2)=(1-\pi)\,\mathcal{N}(\boldsymbol{x}_n\mid\boldsymbol{\mu}_2,\boldsymbol{\Sigma})$。似然函数为
+
+\begin{align}
+  p(\boldsymbol{t},X\mid\pi,\boldsymbol{\mu}_1,\boldsymbol{\mu}_2,\boldsymbol{\Sigma})=\prod_{n=1}^{N}\bigl[\pi\,\mathcal{N}(\boldsymbol{x}_n\mid\boldsymbol{\mu}_1,\boldsymbol{\Sigma})\bigr]^{t_n}\bigl[(1-\pi)\mathcal{N}(\boldsymbol{x}_n\mid\boldsymbol{\mu}_2,\boldsymbol{\Sigma})\bigr]^{1-t_n}
+  \label{align:ch05-生成似然}
+\end{align}
+
+关于$\pi$最大化对数似然，可得
+
+\begin{align}
+  \pi=\frac{1}{N}\sum_{n=1}^{N}t_n=\frac{N_1}{N_1+N_2}
+  \label{align:ch05-先验ML}
+\end{align}
+
+其中$N_1$、$N_2$分别为$C_1$、$C_2$类数据点的总数。因此$\pi$的最大似然估计值就是$C_1$类数据点在训练集中所占的比例。类似地，关于$\boldsymbol{\mu}_k$最大化，可得
+
+\begin{align}
+  \boldsymbol{\mu}_1=\frac{1}{N_1}\sum_{n=1}^{N}t_n\boldsymbol{x}_n,\qquad
+  \boldsymbol{\mu}_2=\frac{1}{N_2}\sum_{n=1}^{N}(1-t_n)\boldsymbol{x}_n
+  \label{align:ch05-类均值ML}
+\end{align}
+
+此为归入各类的所有输入向量$\boldsymbol{x}_n$的平均值。最后，共享协方差矩阵的最大似然解为
+
+\begin{align}
+  \boldsymbol{\Sigma}=\frac{N_1}{N}\boldsymbol{\Sigma}_1+\frac{N_2}{N}\boldsymbol{\Sigma}_2
+  \label{align:ch05-共享协方差ML}
+\end{align}
+
+其中
+
+\begin{align}
+  \boldsymbol{\Sigma}_1=\frac{1}{N_1}\sum_{n\in C_1}(\boldsymbol{x}_n-\boldsymbol{\mu}_1)(\boldsymbol{x}_n-\boldsymbol{\mu}_1)^{\mathsf{T}},\quad
+  \boldsymbol{\Sigma}_2=\frac{1}{N_2}\sum_{n\in C_2}(\boldsymbol{x}_n-\boldsymbol{\mu}_2)(\boldsymbol{x}_n-\boldsymbol{\mu}_2)^{\mathsf{T}}
+  \label{align:ch05-类协方差ML}
+\end{align}
+
+\subsection{离散特征与指数族}\label{subsection:ch05-离散特征}
+
+对于离散输入特征，类似的推导同样适用。如果特征向量$\boldsymbol{x}$的分量在给定类的条件下相互独立（朴素贝叶斯假设），则类-条件密度分解为各分量之积。
+
+更一般地，当类-条件概率密度属于指数族分布时，二分类的后验概率同样由作用于$\boldsymbol{x}$线性函数的逻辑斯谛sigmoid函数给出，多分类情形则由softmax变换给出。因此，尽管生成式方法对类-条件密度的特定选择不同，其后验概率的形式却具有共同的广义线性模型结构。
+
+\end{document}

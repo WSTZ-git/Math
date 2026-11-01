@@ -1,0 +1,124 @@
+\documentclass[../../main.tex]{subfiles}
+
+\graphicspath{{../../image/}{../../figure/}}
+
+\begin{document}
+
+\section{高斯分布}\label{section:ch02-高斯分布}
+
+高斯分布（Gaussian distribution），也称为正态分布（normal distribution），是概率论中最重要的分布之一。对于单变量实值变量$x$，高斯分布定义为
+
+\begin{align}
+  \mathcal{N}(x \mid \mu, \sigma^2) = \frac{1}{\sqrt{2\pi \sigma^2}} \exp\left\{ -\frac{(x-\mu)^2}{2\sigma^2} \right\}
+  \label{align:ch02-单变量高斯}
+\end{align}
+
+其中$\mu$称为均值（mean），$\sigma^2$称为方差（variance）。方差的平方根$\sigma$称为标准差（standard deviation）。
+
+\subsection{均值和方差}\label{subsection:ch02-均值和方差}
+
+高斯分布的均值为
+
+\begin{align}
+  \mathbb{E}[x] = \int_{-\infty}^{\infty} x \, \mathcal{N}(x \mid \mu, \sigma^2) \,\mathrm{d}x = \mu
+  \label{align:ch02-高斯均值}
+\end{align}
+
+方差为
+
+\begin{align}
+  \mathrm{var}[x] = \mathbb{E}\left[(x-\mu)^2\right] = \sigma^2
+  \label{align:ch02-高斯方差}
+\end{align}
+
+高斯分布的最大值出现在$x=\mu$处，其宽度由参数$\sigma$控制。当$\sigma$较大时，分布较宽；当$\sigma$较小时，分布较窄。
+
+\subsection{似然函数}\label{subsection:ch02-似然函数}
+
+假设我们有一组观测数据$\mathbf{x} = (x_1, \cdots, x_N)^{\mathsf{T}}$，我们假设这些数据是从高斯分布中独立同分布抽取的。给定参数$\mu$和$\sigma^2$，观测到这组数据的概率（即似然函数）为
+
+\begin{align}
+  p(\mathbf{x} \mid \mu, \sigma^2) = \prod_{n=1}^{N} \mathcal{N}(x_n \mid \mu, \sigma^2)
+  \label{align:ch02-高斯似然}
+\end{align}
+
+在实际应用中，我们通常使用对数似然函数，因为对数函数是单调递增的，最大化对数似然等价于最大化似然：
+
+\begin{align}
+  \ln p(\mathbf{x} \mid \mu, \sigma^2) = -\frac{N}{2} \ln(2\pi) - \frac{N}{2} \ln(\sigma^2) - \frac{1}{2\sigma^2} \sum_{n=1}^{N} (x_n - \mu)^2
+  \label{align:ch02-对数似然}
+\end{align}
+
+最大似然估计通过最大化对数似然来确定参数$\mu$和$\sigma^2$。
+
+对$\mu$求导并令其为零，可以得到均值的最大似然估计：
+
+\begin{align}
+  \mu_{\mathrm{ML}} = \frac{1}{N} \sum_{n=1}^{N} x_n
+  \label{align:ch02-均值最大似然}
+\end{align}
+
+这就是样本均值。
+
+类似地，对$\sigma^2$求导并令其为零，可以得到方差的最大似然估计：
+
+\begin{align}
+  \sigma_{\mathrm{ML}}^2 = \frac{1}{N} \sum_{n=1}^{N} (x_n - \mu_{\mathrm{ML}})^2
+  \label{align:ch02-方差最大似然}
+\end{align}
+
+这就是样本方差。
+
+\subsection{最大似然的偏差}\label{subsection:ch02-最大似然的偏差}
+
+需要注意的是，最大似然估计得到的方差是有偏的（biased）。具体来说，
+
+\begin{align}
+  \mathbb{E}[\sigma_{\mathrm{ML}}^2] = \frac{N-1}{N} \sigma^2
+  \label{align:ch02-最大似然偏差}
+\end{align}
+
+因此，最大似然估计低估了真实的方差。为了得到无偏估计，我们通常使用
+
+\begin{align}
+  \tilde{\sigma}^2 = \frac{1}{N-1} \sum_{n=1}^{N} (x_n - \mu_{\mathrm{ML}})^2
+  \label{align:ch02-无偏方差}
+\end{align}
+
+这个偏差问题在小样本时尤为明显，但当$N$很大时，偏差可以忽略不计。
+
+\subsection{线性回归}\label{subsection:ch02-线性回归}
+
+在\cref{section:ch01-一个教学示例}中，我们使用平方和误差函数来拟合多项式曲线。现在我们可以从概率的角度来理解这个误差函数。
+
+假设目标变量$t$是由输入变量$x$通过某个函数生成的，但带有高斯噪声：
+
+\begin{align}
+  t = y(x, \mathbf{w}) + \epsilon
+  \label{align:ch02-噪声模型}
+\end{align}
+
+其中$\epsilon$是均值为0、方差为$\sigma^2$的高斯噪声。因此，给定$x$和参数$\mathbf{w}$，$t$服从高斯分布：
+
+\begin{align}
+  p(t \mid x, \mathbf{w}, \sigma^2) = \mathcal{N}(t \mid y(x, \mathbf{w}), \sigma^2)
+  \label{align:ch02-条件高斯}
+\end{align}
+
+现在，给定训练数据集$\{\mathbf{x}, \mathbf{t}\}$，我们可以写出似然函数：
+
+\begin{align}
+  p(\mathbf{t} \mid \mathbf{x}, \mathbf{w}, \sigma^2) = \prod_{n=1}^{N} \mathcal{N}(t_n \mid y(x_n, \mathbf{w}), \sigma^2)
+  \label{align:ch02-回归似然}
+\end{align}
+
+取对数似然，我们得到
+
+\begin{align}
+  \ln p(\mathbf{t} \mid \mathbf{x}, \mathbf{w}, \sigma^2) = -\frac{N}{2} \ln(2\pi) - \frac{N}{2} \ln(\sigma^2) - \frac{1}{2\sigma^2} \sum_{n=1}^{N} \{ y(x_n, \mathbf{w}) - t_n \}^2
+  \label{align:ch02-回归对数似然}
+\end{align}
+
+如果我们假设噪声方差$\sigma^2$是固定的，那么最大化对数似然等价于最小化平方和误差函数。这就是为什么我们在\cref{section:ch01-一个教学示例}中使用平方和误差函数的概率解释。
+
+\end{document}

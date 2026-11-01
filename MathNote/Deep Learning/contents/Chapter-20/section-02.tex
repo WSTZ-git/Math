@@ -1,0 +1,130 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{../../image/}{../../figure/}}
+\begin{document}
+
+\section{反向解码器}\label{section:ch20-反向解码器}
+
+我们已经知道，前向编码器是由一系列高斯条件分布 $q(z_t\mid z_{t-1})$ 定义的，但直接逆转这一过程会导致一个难以处理的分布 $q(z_{t-1}\mid z_t)$，因为需要对所有可能的起始向量 $x$ 的值进行积分，而 $x$ 的分布就是我们希望建模的未知数据分布 $p(x)$。为了解决这个问题，我们将通过使用一个由深度神经网络控制的分布 $p(z_{t-1}\mid z_t,w)$ 来学习对逆向分布进行近似，其中 $w$ 表示网络的权重和偏置。这个逆向步骤类似于变分自编码器中的解码器（参见第 19 章），可以通过图~\ref{fig:ch20-graphical} 来理解。一旦网络训练完成，我们就可以从简单的高斯分布 $z_T$ 中进行采样，并通过一系列逆向采样步骤将其变换成数据分布 $p(x)$ 的样本，这些步骤是通过反复应用训练好的网络来完成的。
+
+我们可以更形象地看到，通过围绕点 $z_t$ 将 $\ln q(z_{t-1}\mid z_t)$ 对 $z_{t-1}$ 进行泰勒级数展开，$q(z_{t-1}\mid z_t)$ 接近于高斯分布，并且具有与 $q(z_t\mid z_{t-1})$ 类似的方差。这也表明对于小方差，逆向分布 $q(z_{t-1}\mid z_t)$ 的协方差将接近前向加噪过程 $q(z_t\mid z_{t-1})$ 的协方差 $\beta_t I$。因此，我们可以使用以下形式的高斯分布来模拟逆向过程（见习题 20.7）：
+\begin{align}
+p(z_{t-1}\mid z_t,w)=\mathcal{N}\big(z_{t-1}\mid \mu(z_t,w,t),\,\beta_t I\big)
+\label{align:ch20-reverse}
+\end{align}
+其中 $\mu(z_t,w,t)$ 是由参数 $w$ 控制的一个深度神经网络。注意，该深度神经网络显式地将步骤索引 $t$ 作为输入，以便考虑到链中不同步骤之间方差 $\beta_t$ 的变化。这也使得我们能够使用单个网络来逆转马尔可夫链中的所有步骤，而不必为每个步骤学习一个单独的网络。此外，还可以通过在网络中引入更多的输出来学习去噪过程的协方差（Nichol and Dhariwal, 2021），从而更好地描述 $z_t$ 邻域内分布 $q(z_{t-1}\mid z_t)$ 的曲率。用于建模 $\mu(z_t,w,t)$ 的神经网络在架构选择上有相当大的灵活性，只要输出的维度与输入的维度相同即可（参见 10.5.4 小节）。鉴于这一限制，U-Net 架构是图像处理应用的常见选择。
+
+整个逆向去噪过程采用了一种由下式给出的马尔可夫链形式：
+\begin{align}
+p(x,z_1,\cdots,z_T\mid w)=p(z_T)\prod_{t=1}^{T}p(z_{t-1}\mid z_t,w)
+\label{align:ch20-reverse-chain}
+\end{align}
+
+\subsection{训练解码器}\label{subsection:ch20-训练解码器}
+
+接下来，我们需要决定用来训练神经网络的目标函数。显而易见的选择是似然函数，对于数据点 $x$，似然函数由下式给出：
+\begin{align}
+p(x\mid w)=\int\cdots\int p(x,z_1,\cdots,z_T\mid w)\,\mathrm{d}z_1\cdots\mathrm{d}z_T
+\label{align:ch20-likelihood}
+\end{align}
+其中 $p(x,z_1,\cdots,z_T\mid w)$ 由式~\eqref{align:ch20-reverse-chain} 定义。这是一般潜变量模型 [式~\eqref{align:ch19-marginal}] 的一个实例，其中潜变量是 $z=(z_1,\cdots,z_T)$，观测变量是 $x$。注意，所有的潜变量与数据空间具有相同的维度，这与标准化流一样，但不适用于变分自编码器或生成对抗网络。
+
+从式~\eqref{align:ch20-likelihood} 中可以看到，似然函数需要对所有可能生成观测数据点的噪声轨迹进行积分。式~\eqref{align:ch20-likelihood} 中的积分是难以计算的，因为涉及对高度复杂的神经网络函数进行积分。
+
+这里假设分布 $p(z_T)$ 与 $q(z_T)$ 相同，因此也由 $\mathcal{N}(z_T\mid 0,I)$ 给出。一旦模型训练好了，采样就变得简单直接了，因为我们可以首先从简单的高斯分布 $p(z_T)$ 中采样，然后依次从每个条件分布 $p(z_{t-1}\mid z_t,w)$ 中采样，最后从 $p(x\mid z_1,w)$ 中采样，从而获得数据空间中的样本 $x$。
+
+\subsection{证据下界}\label{subsection:ch20-ELBO}
+
+鉴于精确的似然函数是难以计算的，我们可以采取与变分自编码器相似的方法来最大化对数似然的下界，这个下界称为\textbf{证据下界}（Evidence Lower BOund, ELBO）。对于任何选择的分布 $q(z)$，以下关系恒成立：
+\begin{align}
+\ln p(x\mid w)=\mathcal{L}(w)+\mathrm{KL}\big(q(z)\,\|\,p(z\mid x,w)\big)
+\label{align:ch20-elbo-decomp}
+\end{align}
+其中 $\mathcal{L}$ 是证据下界，也称变分下界（variational lower bound），由下式给出：
+\begin{align}
+\mathcal{L}(w)=\int q(z)\ln\Big\{\frac{p(x\mid z,w)\,p(z)}{q(z)}\Big\}\,\mathrm{d}z
+\label{align:ch20-elbo}
+\end{align}
+由于 KL 散度满足 $\mathrm{KL}(q\|p)\ge 0$，可以推导出
+\begin{align}
+\ln p(x\mid w)\ge \mathcal{L}(w)
+\label{align:ch20-elbo-lower}
+\end{align}
+
+在定义下界时，我们可以自由选择任何形式的 $q(z)$，只要它是一个有效的概率分布即可，即它是非负的并且积分值为 $1$。在 ELBO 的许多应用（如变分自编码器）中，我们可以选择具有可调参数的 $q(z)$，这些参数通常以深度神经网络的形式存在，然后相对于这些参数以及分布 $p(x,z\mid w)$ 的参数最大化 ELBO。优化分布 $q(z)$ 使下界更接近真实值，从而让 $p(x,z\mid w)$ 中参数的优化更接近最大似然估计。然而在扩散模型中，$q(z)$ 由固定分布 $q(z_1,\cdots,z_T\mid x)$ 给出，该分布由马尔可夫链 [式~\eqref{align:ch20-joint}] 定义，因此可调参数仅存在于用于逆马尔可夫链的模型 $p(z_{t-1}\mid z_t,w)$ 中。
+
+为了做到这一点，我们首先为扩散模型的下界推导出一种明确的形式。在式~\eqref{align:ch20-joint} 中，我们可以使用前向过程的马尔可夫性质，从而让 $p(x,z\mid w)$ 中参数的优化更接近最大似然估计。由于对数似然函数是难以计算的，所以我们通过最大化下界 $\mathcal{L}(w)$ 来训练神经网络。
+
+\subsection{重写 ELBO}\label{subsection:ch20-重写ELBO}
+
+在讨论了变分自编码器的 ELBO 之后，我们的目标是用 KL 散度来表达 ELBO，随后可以将其表示为闭式表达式。神经网络建模的是逆向过程中的分布 $p(z_{t-1}\mid z_t,w)$，而 $q$ 分布是定义在前向过程 $q(z_t\mid z_{t-1},x)$ 上，因此我们使用贝叶斯定理来反转条件分布：
+\begin{align}
+q(z_{t-1}\mid z_t,x)=\frac{q(z_t\mid z_{t-1},x)\,q(z_{t-1}\mid x)}{q(z_t\mid x)}
+\label{align:ch20-reverse-cond}
+\end{align}
+这样我们就可以把 ELBO 中的第二项写为
+\begin{align}
+q(z_{t-1}\mid z_t,x)\,q(z_t\mid x)=q(z_t\mid z_{t-1},x)\,q(z_{t-1}\mid x)
+\label{align:ch20-symmetry}
+\end{align}
+式~\eqref{align:ch20-symmetry} 右边的第二项与 $w$ 无关，因此可以省略。将式~\eqref{align:ch20-symmetry} 代入 ELBO，最后我们可以把它写成下面的形式（见习题 20.9）：
+\begin{align}
+\mathcal{L}(w)=\mathbb{E}_{q(z_T\mid x)}\Big[\ln p(z_T)\Big]+\sum_{t=2}^{T}\mathbb{E}_{q(z_t\mid x)}\Big[\mathrm{KL}\big(q(z_{t-1}\mid z_t,x)\,\|\,p(z_{t-1}\mid z_t,w)\big)\Big]+\mathbb{E}_{q(z_1\mid x)}\big[\ln p(x\mid z_1,w)\big]
+\label{align:ch20-final-elbo}
+\end{align}
+
+式~\eqref{align:ch20-final-elbo} 右边的第一项 $\ln p(z_T)$ 是固定分布 $\mathcal{N}(z_T\mid 0,I)$，它没有可训练的参数，可以从 ELBO 中省略，因为它代表一个固定的加性常数。同样，式~\eqref{align:ch20-final-elbo} 右边的第三项 $-\ln q(z_T\mid x)$ 与 $w$ 无关，所以也可以省略。式~\eqref{align:ch20-final-elbo} 右边的第 $4$ 项对应于变分自编码器中的重构项，它可以从由式~\eqref{align:ch20-diffusion-kernel} 定义的 $z_t$ 的分布中抽取样本来获得蒙特卡洛估计，从而通过近似期望 $\mathbb{E}[\cdot]$ 来评估。
+
+现在的下界 [式~\eqref{align:ch20-final-elbo}] 与式~\eqref{align:ch19-point-elbo} 给出的变分自编码器的 ELBO 非常类似，区别在于这里存在多个编码和解码阶段。重构项通过提高观测数据样本的概率来优化模型，并且可以采用与 VAE 中的相应项相同的方式，通过采样近似来完成。与变分自编码器不同，我们不需要通过抽样值反向传播误差信号，因为 $q$ 分布是固定的，所以这里不需要使用重参数化技巧（参见 19.2.2 小节）。
+
+式~\eqref{align:ch20-final-elbo} 中的一致项是在高斯分布对之间定义的，因此可以用解析形式来表达。分布 $q(z_{t-1}\mid z_t,x)$ 由式~\eqref{align:ch20-reverse-cond} 给出，而分布 $p(z_{t-1}\mid z_t,w)$ 由式~\eqref{align:ch20-reverse} 给出，因此 KL 散度变成式~\eqref{align:ch20-kl-form} 的形式（见习题 20.11）：
+\begin{align}
+\mathrm{KL}\big(q(z_{t-1}\mid z_t,x)\,\|\,p(z_{t-1}\mid z_t,w)\big)=\frac{\beta_t}{2\sigma_t^2}\big\|m_t(x,z_t)-\mu(z_t,w,t)\big\|^2+\mathrm{const}
+\label{align:ch20-kl-form}
+\end{align}
+其中 $m_t(x,z_t)$ 由逆条件分布的均值给出，并且任何与网络参数 $w$ 无关的加性项都已经被吸收到常数项 const 中，在训练中不起作用。式~\eqref{align:ch20-final-elbo} 中的每个一致项对 $z_t$ 的剩余积分（由 $q(z_t\mid x)$ 加权），可以通过从 $q(z_t\mid x)$ 中采样来近似，这可以通过扩散核 [式~\eqref{align:ch20-diffusion-kernel}] 高效地完成。
+
+观察式~\eqref{align:ch20-kl-form} 可知，KL 散度表现为简单的平方损失函数的形式。既然我们通过调整网络参数 $w$ 来最大化式~\eqref{align:ch20-final-elbo} 中的下界，而 ELBO 中 KL 散度项的前面带有负号，因此这等价于最小化这个平方误差。
+
+\subsection{预测噪声}\label{subsection:ch20-预测噪声}
+
+为了获得更高质量的结果，我们可以改变神经网络的作用，使其不是在马尔可夫链的每一步都预测去噪后的图像，而是预测添加到原始图像上以创建该步骤中有噪声图像的总噪声成分（Ho, Jain and Abbeel, 2020）。对式~\eqref{align:ch20-direct-sample} 重新整理后，可以得到
+\begin{align}
+x=\frac{1}{\sqrt{\bar{\alpha}_t}}\Big(z_t-\sqrt{1-\bar{\alpha}_t}\,\epsilon_t\Big)
+\label{align:ch20-x-from-z}
+\end{align}
+将式~\eqref{align:ch20-x-from-z} 代入逆条件分布的均值 $m_t(x,z_t)$，即可用原始数据向量 $x$ 和噪声 $\epsilon$ 重写逆条件分布（见习题 20.12）。
+
+类似地，我们不再使用神经网络 $\mu(z_t,w,t)$ 来预测去噪后的图像，而是引入旨在预测添加到 $x$ 上以生成 $z_t$ 的总噪声的神经网络 $g(z_t,w,t)$。按照推导式~\eqref{align:ch20-kl-form} 的相同步骤，我们看到，这两个神经网络之间的关系如下：
+\begin{align}
+\mu(z_t,w,t)=\frac{1}{\sqrt{\bar{\alpha}_t}}\Big(z_t-\sqrt{1-\bar{\alpha}_t}\,g(z_t,w,t)\Big)
+\label{align:ch20-mu-from-g}
+\end{align}
+
+将简化后的式~\eqref{align:ch20-mu-from-g} 代入式~\eqref{align:ch20-kl-form}，可以得到（见习题 20.13）
+\begin{align}
+\mathcal{L}(w)=\frac{\beta_t^2}{2\bar{\alpha}_t(1-\bar{\alpha}_t)(1-\beta_t)}\big\|g\big(\sqrt{\bar{\alpha}_t}\,x+\sqrt{1-\bar{\alpha}_t}\,\epsilon_t,w,t\big)-\epsilon_t\big\|^2+\mathrm{const}
+\label{align:ch20-noise-loss}
+\end{align}
+
+有研究（Ho, Jain, and Abbeel, 2020）发现，简单地省略掉式~\eqref{align:ch20-noise-loss} 前面的因子 $\beta_t^2/[2\bar{\alpha}_t(1-\bar{\alpha}_t)(1-\beta_t)]$，马尔可夫链中的所有步骤就有了相等的权重，这可以进一步提高性能。将简化后的式~\eqref{align:ch20-mu-from-g} 代入式~\eqref{align:ch20-kl-form}，可以得到最终的损失函数：
+\begin{align}
+\mathcal{L}(w)=\mathbb{E}_{t,x,\epsilon_t}\Big[\big\|g\big(\sqrt{\bar{\alpha}_t}\,x+\sqrt{1-\bar{\alpha}_t}\,\epsilon_t,w,t\big)-\epsilon_t\big\|^2\Big]
+\label{align:ch20-final-loss}
+\end{align}
+
+式~\eqref{align:ch20-final-loss} 右侧的平方误差有一个非常简明的解释：对于马尔可夫链中给定的步骤 $t$ 和给定的训练数据点 $x$，抽取一个噪声向量 $\epsilon_t$，并使用这个噪声向量来创建对应步骤 $t$ 的噪声潜变量 $z_t$。然后损失函数就是预测的噪声和实际噪声的平方差。注意神经网络 $g(\cdot)$ 预测的是添加到原始数据向量 $x$ 上的总噪声，而不仅仅是步骤 $t$ 中增加的增量噪声。
+
+当使用随机梯度下降时，针对从训练集中随机选取的数据点 $x$，计算损失函数对网络参数的梯度向量。另外，对于每个这样的数据点，随机选择沿着马尔可夫链的一个步骤 $t$，而不是计算式~\eqref{align:ch20-final-loss} 中对 $t$ 求和的每一项的误差。这些梯度在小批量数据样本上累积后，用来更新网络权重。另外，这个损失函数自动地内置了一种数据增强机制，因为每当特定的训练样本 $x$ 被使用时，它都会与一个新的噪声样本 $\epsilon_t$ 相结合。
+
+\subsection{生成新的样本}\label{subsection:ch20-生成样本}
+
+一旦网络训练好了，我们就可以通过以下步骤生成数据空间中的新样本：首先从高斯分布 $p(z_T)$ 中采样，然后逐步通过马尔可夫链的每一步去噪。给定步骤 $t$ 的去噪样本 $z_t$，我们可以通过三个步骤生成样本 $z_{t-1}$。首先计算由 $g(z_t,w,t)$ 给出的神经网络输出。根据这个输出，使用式~\eqref{align:ch20-mu-from-g} 计算均值 $\mu(z_t,w,t)$。接下来，通过在 $p(z_{t-1}\mid z_t,w)=\mathcal{N}(z_{t-1}\mid \mu(z_t,w,t),\beta_t I)$ 中添加经过方差缩放的噪声来生成样本 $z_{t-1}$：
+\begin{align}
+z_{t-1}=\mu(z_t,w,t)+\sqrt{\beta_t}\,\epsilon_t,\qquad \epsilon_t\sim\mathcal{N}(\epsilon_t\mid 0,I)
+\label{align:ch20-sample-step}
+\end{align}
+其中 $g(\cdot)$ 预测的是生成 $z_t$ 时添加到原始数据向量 $x$ 上的总噪声。但在采样步骤中，我们只从 $z_t$ 中减去一部分具有方差 $\beta_t/(1-\bar{\alpha}_t)$ 的噪声，然后添加具有方差 $\beta_t$ 的额外噪声来生成 $z_{t-1}$。在最终计算合成数据样本 $x$ 的步骤中，由于我们的目标是产生一个无噪声输出，因此我们不会添加额外的噪声。
+
+使用扩散模型生成数据的主要缺点是，需要在训练好的网络中多次顺序执行推理过程，计算成本非常高。加快采样过程的一种方法是，首先将去噪过程转换为连续时间上的微分方程，然后使用其他有效的离散化方法来高效求解该方程（参见 20.3.4 小节）。研究人员（Song, Meng, and Ermon, 2020）提出了一种称为\textbf{去噪扩散隐式模型}（denoising diffusion implicit models）的技术，它放宽了加噪过程的马尔可夫假设条件，同时保留保持训练目标函数不变。这样就可以在不降低所生成样本质量的情况下，使采样速度提升一个或两个数量级。
+
+\end{document}

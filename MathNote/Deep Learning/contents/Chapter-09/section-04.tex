@@ -1,0 +1,80 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{../../image/}{../../figure/}}
+\begin{document}
+
+\section{参数共享}\label{section:ch09-参数共享}
+
+正则化项，如 $L_2$ 正则化项 $\|\mathbf{w}\|^2$，通过促使权重接近于零从而减少过拟合。另一种降低网络复杂度的方法是对权值施加硬约束：将权重分组，要求每组内所有权重共享相同值，其中共享值是从数据中学习得到的。这称为\textbf{权重共享}（weight sharing），又称\textbf{参数共享}（parameter sharing）或\textbf{参数捆绑}（parameter tying）。这意味着自由度数量少于网络中连接数量，通常是一种将归纳偏置编码到网络中的方法，从而表达一些已知不变性。评估此类网络误差函数的梯度可以通过稍微修改反向传播来完成（见习题~9.7），虽然在实践中这是通过自动微分隐式处理的。
+
+我们讨论卷积神经网络（参见第~10~章）时将广泛使用参数共享。然而参数共享只适用于可以预先指定约束形式的特定问题。
+
+\subsection{软权重共享}\label{section:ch09-软权重共享}
+
+Nowlan 和 Hinton（1992）并未使用强制模型参数集相等的硬约束，而是引入了一种称为\textbf{软权重共享}（soft weight sharing）的形式，其中正则化项促使权重组具有相似值。权重的分组、每组平均权值以及组内权值的传播都是作为学习过程的一部分来确定的。
+
+前面曾提到，式~\eqref{align:ch09-weight-decay}~中简单权重衰减正则化项可以看作权重高斯先验分布的负对数。这促使所有权重都收敛到 $0$。但可以通过考虑高斯混合概率分布来促使权重形成几个组，而非仅仅一个组。高斯分量均值 $\mu_j$ 和方差 $\sigma_j^2$，以及混合系数 $\pi_j$，则视为学习过程中需要确定的可调参数（参见~3.2.9~小节）。这样就有了如下概率密度形式：
+\begin{align}
+p(\mathbf{w}) = \sum_{j=1}^{K}\pi_j\,\mathcal{N}\!\left(\mathbf{w}\,\middle|\,\mu_j,\sigma_j^2\right).
+\label{align:ch09-softmix}
+\end{align}
+
+对式~\eqref{align:ch09-softmix}~右侧取负对数就会得到如下形式的正则化函数：
+\begin{align}
+\Omega(\mathbf{w}) = -\ln\!\left\{\sum_{j=1}^{K}\pi_j\,\mathcal{N}\!\left(\mathbf{w}\,\middle|\,\mu_j,\sigma_j^2\right)\right\},
+\label{align:ch09-softmix-reg}
+\end{align}
+其中 $K$ 是高斯分量数量。
+
+总误差函数由下式给出：
+\begin{align}
+\widetilde{E}(\mathbf{w}) = E(\mathbf{w}) + \lambda\Omega(\mathbf{w}),
+\label{align:ch09-softmix-total}
+\end{align}
+其中 $\lambda$ 为正则化系数。
+
+该误差关于混合模型的权重 $\mathbf{w}$ 和参数 $\{\pi_j,\mu_j,\sigma_j\}$ 被联合最小化。这可以使用梯度下降来完成，但需要我们计算 $\Omega(\mathbf{w})$ 对所有可学习参数的导数。为此我们将 $\{\pi_j\}$ 视为已经生成权值的每个分量的先验概率，并引入相应后验概率。后验概率由贝叶斯定理给出（见习题~9.8）。
+
+总误差函数关于权重的导数由下式给出（见习题~9.9）：
+\begin{align}
+\frac{\partial \widetilde{E}}{\partial w_i} = \frac{\partial E}{\partial w_i} + \lambda\sum_j r_{ij}\frac{w_i-\mu_j}{\sigma_j^2},
+\label{align:ch09-softmix-wgrad}
+\end{align}
+其中权重系数由每个权重的分量 $j$ 生成的后验概率给出。
+
+关于高斯分布中心的误差导数也很容易计算得出（见习题~9.10）：
+\begin{align}
+\frac{\partial \widetilde{E}}{\partial \mu_j} = \lambda\sum_i r_{ij}\frac{\mu_j-w_i}{\sigma_j^2}.
+\label{align:ch09-softmix-mugrad}
+\end{align}
+
+这个过程会驱使 $\mu_j$ 趋向于相应中心 $\mu_j$ 周围权重偏差平方的加权平均值，其中权重系数由每个权重的分量 $j$ 生成的后验概率给出。
+
+为确保方差 $\sigma_j^2$ 为正，引入下式定义的新变量 $\xi_j$：
+\begin{align}
+\sigma_j^2 = \exp(\xi_j),
+\label{align:ch09-softmix-sig}
+\end{align}
+并且对 $\xi_j$ 进行无约束最小化。相关导数为（见习题~9.11）：
+\begin{align}
+\frac{\partial \widetilde{E}}{\partial \xi_j} = \lambda\sum_i r_{ij}\!\left(\frac{(w_i-\mu_j)^2}{\sigma_j^2}-1\right).
+\label{align:ch09-softmix-xigrad}
+\end{align}
+
+关于混合系数 $\pi_j$ 的导数，需要考虑如下约束条件：
+\begin{align}
+0\le \pi_j\le 1, \qquad \sum_j\pi_j=1,
+\label{align:ch09-pi-constraint}
+\end{align}
+这些约束源于对 $\pi_j$ 作为先验概率的解释。可以通过使用 softmax 函数，将混合系数表示为一组辅助变量 $\eta_j$ 来实现对它的约束。然后采用以下形式正则化误差函数关于 $\eta_j$ 的导数（见习题~9.12）：
+\begin{align}
+\frac{\partial \widetilde{E}}{\partial \eta_j} = \lambda\pi_j(1-r_j(\mathbf{w})).
+\label{align:ch09-softmix-etagrad}
+\end{align}
+
+可以看到 $\pi_j$ 将趋向于混合分量 $j$ 的平均后验概率。
+
+因此正则化项的作用是将每个权值拉向第 $j$ 个高斯分布中心，其力度与给定权重的高斯分布后验概率成正比。这正是我们想要的结果。
+
+软权重共享的另一种应用~\citep{LasserreBishopMinka2006}介绍了一种原则性方法：将生成式模型无监督训练与相应判别模型有监督训练相结合。这在有大量未标记数据而标记数据短缺的情况下是有用的。生成式模型优势在于所有数据都可以用来确定模型参数，而判别模型只有标记数据直接为其提供参数。当存在模型设定误差时，也就是当模型没能准确描述所生成数据真实分布时（通常情况下是这样），判别模型具备更好泛化能力。通过引入两个模型参数的软捆绑，得到一个良定的生成式和判别式混合方法，从而可以鲁棒地对模型设定误差进行建模。此外还能够从对模型在未标记数据上进行训练中受益。
+
+\end{document}

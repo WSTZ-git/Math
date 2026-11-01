@@ -1,0 +1,164 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{../../image/}{../../figure/}}
+\begin{document}
+
+\section{自动微分法}\label{section:ch08-自动微分法}
+
+我们已经了解利用梯度信息高效训练神经网络的重要性（参见~7.2.1~小节）。评估神经网络误差函数梯度的方法主要有~4~种。
+
+\textbf{第~1~种方法}是手工推导反向传播方程，然后在软件中显式实现。这种方法多年来一直是神经网络的中流砥柱；如果认真实施，就能产生高效代码并给出达到数值精度要求的结果。然而推导方程和编码过程都十分耗费时间且容易出错。前向传播方程与反向传播方程是分开编码的，这会导致代码冗余；又由于其中往往涉及重复计算，如果模型发生变化就需要同步改变前向实现和反向实现，这容易限制对不同架构进行经验探索的速度和效率。
+
+\textbf{第~2~种方法}是利用有限差分法对梯度进行数值计算（参见~8.1.4~小节）。这种方法只需要用软件实现前向传播方程。数值微分法的一个问题是计算精度有限，不过这对于网络训练来说可能不是问题，因为我们可能会使用随机梯度下降法；在随机梯度下降法中，每次计算都只是对局部梯度非常粗略的估计。这种方法的主要缺点是在网络规模缩放上表现很差。不过这种技术对于调试其他方法也很有用，因为梯度计算只使用了前向传播代码，因此可以用来确认反向传播的正确性，以及确认其他用于计算梯度的代码的正确性。
+
+\textbf{第~3~种方法}是符号微分法，这种方法能利用专业软件将我们在第~1~种方法中手工完成的分析操作自动化。作为计算机代数或符号计算的一个例子，这一过程涉及在一个完全机械化的过程中自动应用微积分规则（如链式法则）。符号微分法的一个明显优势是避免了人工推导反向传播方程时引入的人为误差；此外梯度计算再次达到了机器精度，避免了数值微分时缩放性差的问题。
+
+然而符号微分法的主要缺点是导数表达式可能比原始函数表达式长很多，其长度呈指数级增长，相应计算时间也很长。考虑由 $u(x)$ 和 $v(x)$ 乘积给出的函数 $f(x)$，该函数及其导数计算公式为
+\begin{align}
+f(x) = u(x)v(x),
+\label{align:ch08-product}
+\end{align}
+\begin{align}
+f'(x) = u'(x)v(x)+u(x)v'(x).
+\label{align:ch08-product-deriv}
+\end{align}
+
+可以看到在计算 $f(x)$ 和 $f'(x)$ 时必须同时求出 $u(x)$ 和 $v(x)$，因此存在冗余计算。如果因子 $u(x)$ 和 $v(x)$ 本身涉及因子，就会出现表达式嵌套重复，复杂性会迅速增加。这个问题叫作\textbf{表达式膨胀}（expression swell）：除了比原始函数复杂得多之外，还存在冗余计算，比如像 $w_1x+b_1$ 这样的表达式就出现在了多个地方。
+
+符号微分法的另一个主要缺点是它需要以封闭形式表示被微分的表达式。因此这种方法排除了重要控制流操作，如循环、递归、条件执行和过程调用，而这些都是我们在定义网络函数时可能希望使用的有价值结构。
+
+\textbf{第~4~种方法}是\textbf{自动微分法}（automatic differentiation），也称"算法微分法"~\citep{Baydin2018}。与符号微分法不同，自动微分法旨在让计算机在仅给定前向传播方程代码的条件下自动生成实现梯度计算的代码，而非得到导数的数学表达式。与符号微分法一样，自动微分法也达到了机器精度，但效率更高，因为它能够利用我们在定义前向传播方程时使用的中间变量，从而避免冗余计算。值得注意的是，自动微分法不仅能处理传统封闭形式数学表达式，还能处理流程控制元素，如分支、循环、递归和过程调用。因此自动微分法的功能比符号微分法强大得多；与此同时自动微分法具有广泛适用性，是在机器学习领域之外发展起来的。现代深度学习在很大程度上是一个经验过程，涉及对不同架构的计算和比较，因此自动微分法在准确高效地完成实验方面发挥着关键作用。
+
+自动微分法的主要思想是采用计算函数的代码（例如计算神经网络误差函数的前向传播方程代码），并用附加变量来扩充代码，这些附加变量的值会在代码执行过程中累加，从而获得所需导数。自动微分法主要有两种形式：\textbf{前向模式}和\textbf{逆模式}。
+
+为进一步说明，考虑一个结构类似于两层神经网络的函数~\citep{Grosse2018}，该函数有单个输入 $x$、带激活 $z$ 的一个隐藏单元和输出 $y$，其中
+\begin{align}
+z = h(w_1 x + b_1),
+\label{align:ch08-demo-z}
+\end{align}
+\begin{align}
+y = h(w_2 z + b_2),
+\label{align:ch08-demo-y}
+\end{align}
+其中 $h(a)$ 是 softplus：
+\begin{align}
+h(a) = \ln\{1+\exp(a)\}.
+\label{align:ch08-demo-softplus}
+\end{align}
+
+于是有
+\begin{align}
+y(x) = h\!\left(w_2 h(w_1 x+b_1)+b_2\right).
+\label{align:ch08-demo-full}
+\end{align}
+
+网络输出 $y$ 相对于 $w_i$ 的导数为（见习题~8.13）
+\begin{align}
+\frac{\partial y}{\partial w_i} = \cdots.
+\label{align:ch08-demo-deriv}
+\end{align}
+
+\subsection{前向模式自动微分}\label{section:ch08-前向模式}
+
+在前向模式自动微分中，我们在函数（如神经网络误差函数）计算过程中涉及的每个中间变量 $z$（称为"原始"变量）上添加一个附加变量，该附加变量代表中间变量的某个导数值。我们将其记作 $\dot{z}$，即"正切"变量。正切变量及其相关代码由软件环境自动生成。现在代码不再简单地通过前向传播来计算 $z$，而是传播元组 $\{z,\dot{z}\}$，从而同时计算变量和导数。原函数一般用初等算子（包括算术运算和否定运算）以及指数函数、对数函数和三角函数等超越函数来定义，所有这些函数的导数都有简单计算公式。将这些导数与微积分中链式法则结合使用，可以自动生成用于计算梯度的代码。
+
+举例来说，如下函数有两个输入变量：
+\begin{align}
+f(x_1,x_2) = x_1 x_2 + \exp(x_1 x_2) - \sin(x_1).
+\label{align:ch08-demo-two}
+\end{align}
+
+在软件中实现时，代码由一系列操作组成，这些操作可以用底层基本操作的\textbf{求值轨迹}（evaluation trace）来表示。此处对以下原始变量进行了定义：
+\begin{align}
+v_1 = x_1, \qquad v_2 = x_2,
+\label{align:ch08-trace1}
+\end{align}
+\begin{align}
+v_3 = v_1 v_2, \qquad v_4 = \exp(v_3), \qquad v_5 = \sin(v_1),
+\label{align:ch08-trace2}
+\end{align}
+\begin{align}
+v_6 = v_4 - v_5, \qquad v_7 = v_3 + v_6.
+\label{align:ch08-trace3}
+\end{align}
+
+假设要求导数 $\partial f/\partial x_i$。我们用 $\dot{v}_j = \partial v_j/\partial x_i$ 来定义正切变量。利用微积分中链式法则，可以自动构造出用于计算这些值的表达式：
+\begin{align}
+\dot{v}_j = \sum_{i\in \mathrm{pa}(j)} \frac{\partial v_j}{\partial v_i}\dot{v}_i,
+\label{align:ch08-forward}
+\end{align}
+其中 $\mathrm{pa}(j)$ 表示求值轨迹中节点 $j$ 的父节点集合，即指向节点 $j$ 的变量的集合。
+
+例如在式~\eqref{align:ch08-trace1}~至式~\eqref{align:ch08-trace3}~中，节点 $v_3$ 的父节点是节点 $v_1$ 和 $v_2$。将式~\eqref{align:ch08-forward}~应用于求值轨迹方程，可以得到以下正切变量的求值轨迹方程：
+\begin{align}
+\dot{v}_1 = 1, \qquad \dot{v}_2 = 0,
+\label{align:ch08-tangent1}
+\end{align}
+\begin{align}
+\dot{v}_3 = \dot{v}_1 v_2 + v_1\dot{v}_2, \qquad
+\dot{v}_4 = \dot{v}_3\exp(v_3), \qquad
+\dot{v}_5 = \dot{v}_1\cos(v_1),
+\label{align:ch08-tangent2}
+\end{align}
+\begin{align}
+\dot{v}_6 = \dot{v}_4 - \dot{v}_5, \qquad
+\dot{v}_7 = \dot{v}_3 + \dot{v}_6.
+\label{align:ch08-tangent3}
+\end{align}
+
+然后代码会执行原始方程和正切方程，依次对元组 $(v,\dot{v})$ 进行数值计算，直至得到所需导数 $\dot{v}_7$（见习题~8.17）。
+
+一般来说，如果一个函数有 $D$ 个输入和 $K$ 个输出，那么一次前向模式自动微分就会产生 $K\times D$ 大小雅可比矩阵中的一列。若要计算雅可比矩阵第 $j$ 列，则需要对正切变量求值方程的前向传播进行初始化，也就是在 $i\neq j$ 时设置 $\dot{x}_i=1$ 和 $\dot{x}_i=0$。我们可以将其写成向量形式，即 $\dot{\mathbf{x}}=\mathbf{e}_j$，其中 $\mathbf{e}_j$ 是第 $j$ 个单位向量。若要计算全雅可比矩阵，则需要进行 $D$ 次前向传播。
+
+然而若要计算雅可比矩阵与向量 $\mathbf{r}=(r_1,\cdots,r_D)^{\mathsf T}$ 的乘积：
+\begin{align}
+\mathbf{J}^{\mathsf T}\mathbf{r} = \sum_i r_i \nabla_{\mathbf{x}}f_i,
+\end{align}
+那么只需设置 $\dot{\mathbf{x}}=\mathbf{r}$，就可以通过一次前向传播来完成（见习题~8.18）。
+
+从图中可以看出，这只涉及对原始变量和正切变量求值方程的一个小扩展，因此 $\partial f_1/\partial x_i$ 和 $\partial f_2/\partial x_i$ 都可以在一次前向传播中一并求出。不过这样做的缺点是：如果想计算相对于不同输入变量 $x_2$ 的导数，就必须进行一次单独前向传播。
+
+我们可以看到，前向模式自动微分可以通过 $D$ 次前向传播求出导数的 $K\times D$ 大小全雅可比矩阵。对于具有少量输入和较多输出（$K\gg D$）的网络，这种方法非常有效。然而我们经常在这样的环境中操作：通常只有一个函数，即用于训练的误差函数，以及大量想要对其进行微分的变量（包括网络中的权重和偏置），这些变量可能有数百万个或数十亿个。在这种情况下，前向模式自动微分具有极低效率。因此我们转而采用另一种自动微分法——逆模式自动微分。
+
+\subsection{逆模式自动微分}\label{section:ch08-逆模式}
+
+逆模式自动微分可以看作误差反向传播程序的拓展。和前向模式自动微分一样，我们也在每个中间变量 $v_j$ 中添加附加变量；附加变量在此处称为\textbf{伴随}（adjoint）变量，用 $\bar{v}_j$ 表示。考虑具有单一输出函数 $f$ 的情况，其伴随变量定义如下：
+\begin{align}
+\bar{v}_j \equiv \frac{\partial f}{\partial v_j}.
+\label{align:ch08-adjoint-def}
+\end{align}
+
+可以利用微积分中链式法则，从输出开始依次反向对它们进行求值：
+\begin{align}
+\bar{v}_i = \sum_{j\in \mathrm{ch}(i)} \bar{v}_j\frac{\partial v_j}{\partial v_i},
+\label{align:ch08-adjoint}
+\end{align}
+其中 $\mathrm{ch}(i)$ 表示求值轨迹中节点 $i$ 的子节点集合，即从节点 $i$ 指向这些子节点的变量的集合。如前所述，对伴随变量的连续求值代表了通过求值轨迹进行的反向信息流动（参见图~8.1）。
+
+再次考虑式~\eqref{align:ch08-trace1}~至式~\eqref{align:ch08-trace3}~给出的具体函数示例，可以得出以下用于计算伴随变量的方程（见习题~8.16）：
+\begin{align}
+\bar{v}_7 = 1,
+\label{align:ch08-adjoint-start}
+\end{align}
+\begin{align}
+\bar{v}_3 = \bar{v}_7, \qquad
+\bar{v}_4 = \bar{v}_7, \qquad
+\bar{v}_6 = \bar{v}_7,
+\label{align:ch08-adjoint1}
+\end{align}
+\begin{align}
+\bar{v}_1 = \bar{v}_3 v_2 + \bar{v}_6\cos(v_1), \qquad
+\bar{v}_2 = \bar{v}_3 v_1,
+\label{align:ch08-adjoint2}
+\end{align}
+\begin{align}
+\bar{v}_5 = -\bar{v}_6.
+\label{align:ch08-adjoint3}
+\end{align}
+
+请注意它们从输出端开始，然后通过求值轨迹反向流至输入端。即使有多个输入，也只需要一次反向传播就能求出导数。对于神经网络误差函数，$E$ 关于权重和偏置的导数可作为相应伴随变量；但是如果出现一个以上输出变量，则需要为每个输出变量进行一次单独反向传播。
+
+逆模式通常比前向模式占用更多内存，因为必须存储所有中间变量，以便在反向传播过程中根据需要使用中间变量计算伴随变量。与此相反，在前向模式下，原始变量和正切变量在前向传播过程中被一起计算，所以变量一旦用完就可以丢弃。与逆模式相比，前向模式一般更容易实现。
+
+无论是前向模式自动微分还是逆模式自动微分，通过网络的单次传播成本都不会超过单次函数计算成本的~6~倍。实际上开销通常接近单次函数计算成本的~2~倍或~3~倍~\citep{GriewankWalther2008}。前向模式和逆模式的融合也很有趣：前向模式和逆模式的融合在计算黑塞矩阵与向量乘积的情况下很有用~\citep{Pearlmutter1994}。在此我们从一个向量 $\mathbf{v}$ 和一个点 $\mathbf{x}$ 开始计算黑塞矩阵与向量的乘积。通过设置 $\dot{\mathbf{x}}=\mathbf{v}$ 并使用前向模式，可以得出方向导数 $\mathbf{v}^{\mathsf T}\nabla f$；然后使用逆模式进行微分，得到 $\nabla^2 f\,\mathbf{v}=\mathbf{H}\mathbf{v}$。
+
+\end{document}

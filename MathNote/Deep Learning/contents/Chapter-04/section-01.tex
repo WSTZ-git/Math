@@ -1,0 +1,204 @@
+﻿\documentclass[../../main.tex]{subfiles}
+
+\graphicspath{{../../image/}{../../figure/}}
+
+\begin{document}
+
+\section{线性回归}\label{section:ch04-线性回归}
+
+给定$D$维输入变量$\boldsymbol{x}$，回归的目标是预测一个或多个连续的目标变量$t$。通常我们会有一个包含$N$个观测值的训练数据集$\{\boldsymbol{x}_n\}$，其中$n=1,\cdots,N$，以及相应的目标值$\{t_n\}$。目标是为新的$\boldsymbol{x}$值预测对应的$t$值。为此，我们定义了函数$y(\boldsymbol{x},\boldsymbol{w})$来预测新的输入变量$\boldsymbol{x}$所对应的$t$值，其中$\boldsymbol{w}$表示可以从训练数据中学习的参数向量。
+
+最简单的回归模型是输入变量的线性组合：
+
+\begin{align}
+  y(\boldsymbol{x},\boldsymbol{w})=w_0+w_1 x_1+\cdots+w_D x_D
+  \label{align:ch04-线性模型}
+\end{align}
+
+其中$\boldsymbol{x}=(x_1,\cdots,x_D)^{\mathsf{T}}$。线性回归（linear regression）有时特指这种形式的模型。这种模型的关键性质在于它不仅是参数$w_0,\cdots,w_D$的线性函数，而且也是输入变量$\boldsymbol{x}$的线性函数。然而，正是其作为输入变量$\boldsymbol{x}$的线性函数这一特性，给模型带来了显著的限制。
+
+\subsection{基函数}\label{subsection:ch04-基函数}
+
+我们可以通过输入变量的固定非线性函数的线性组合来扩展\cref{align:ch04-线性模型}定义的模型：
+
+\begin{align}
+  y(\boldsymbol{x},\boldsymbol{w})=w_0+\sum_{j=1}^{M-1}w_j\phi_j(\boldsymbol{x})
+  \label{align:ch04-基函数模型}
+\end{align}
+
+其中$\phi_j(\boldsymbol{x})$称为基函数。参数$w_0$代表数据中一个任意的固定偏移量，有时称为偏置参数（bias）。通过定义一个额外的虚拟基函数$\phi_0(\boldsymbol{x})=1$，\cref{align:ch04-基函数模型}可以统一为
+
+\begin{align}
+  y(\boldsymbol{x},\boldsymbol{w})=\sum_{j=0}^{M-1}w_j\phi_j(\boldsymbol{x})=\boldsymbol{w}^{\mathsf{T}}\boldsymbol{\phi}(\boldsymbol{x})
+  \label{align:ch04-基函数向量}
+\end{align}
+
+其中$\boldsymbol{w}=(w_0,\cdots,w_{M-1})^{\mathsf{T}}$，$\boldsymbol{\phi}=(\phi_0,\cdots,\phi_{M-1})^{\mathsf{T}}$。通过使用非线性基函数，函数$y(\boldsymbol{x},\boldsymbol{w})$变为关于输入变量$\boldsymbol{x}$的非线性函数。尽管如此，形如\cref{align:ch04-基函数向量}的函数仍然称为线性模型，因为它们关于$\boldsymbol{w}$是线性的。
+
+基函数有多种选择。在第~1~章的多项式曲线拟合中，我们使用$\phi_j(x)=x^{j}$。其他常见选择包括高斯基函数
+
+\begin{align}
+  \phi_j(x)=\exp\!\left\{-\frac{(x-\mu_j)^{2}}{2s^{2}}\right\}
+  \label{align:ch04-高斯基函数}
+\end{align}
+
+其中$\mu_j$控制基函数在输入空间中的位置，参数$s$控制它们的空间尺度。这种形式的基函数通常叫作高斯基函数，虽然它们在形式上可能类似于高斯分布，但我们在使用时并不需要概率化的解释。另一种形式是sigmoid型基函数：
+
+\begin{align}
+  \phi_j(x)=\sigma\!\left(\frac{x-\mu_j}{s}\right)
+  \label{align:ch04-sigmoid基函数}
+\end{align}
+
+其中$\sigma(a)$是按如下方式定义的sigmoid函数：
+
+\begin{align}
+  \sigma(a)=\frac{1}{1+\exp(-a)}
+  \label{align:ch04-sigmoid}
+\end{align}
+
+我们可以等价地使用$\tanh$函数，因为其可以通过$\tanh(a)=2\sigma(2a)-1$与sigmoid函数相关联。此外还有傅里叶基函数（对应正弦函数展开）和小波基函数等。
+
+\subsection{似然函数}\label{subsection:ch04-似然函数}
+
+假设目标变量$t$由具有加性高斯噪声的确定性函数$y(\boldsymbol{x},\boldsymbol{w})$给出，即
+
+\begin{align}
+  t=y(\boldsymbol{x},\boldsymbol{w})+\epsilon
+  \label{align:ch04-加性噪声}
+\end{align}
+
+其中$\epsilon$是方差为$\sigma^{2}$的零均值高斯随机变量。因此可以写出条件分布
+
+\begin{align}
+  p(t\mid\boldsymbol{x},\boldsymbol{w},\sigma^{2})=\mathcal{N}\bigl(t\mid y(\boldsymbol{x},\boldsymbol{w}),\sigma^{2}\bigr)
+  \label{align:ch04-条件高斯}
+\end{align}
+
+假设数据点独立地从该分布中产生，我们得到以$\boldsymbol{w}$和$\sigma^{2}$为参数的似然函数：
+
+\begin{align}
+  p(\boldsymbol{t}\mid X,\boldsymbol{w},\sigma^{2})=\prod_{n=1}^{N}\mathcal{N}\bigl(t_n\mid\boldsymbol{w}^{\mathsf{T}}\boldsymbol{\phi}(\boldsymbol{x}_n),\sigma^{2}\bigr)
+  \label{align:ch04-回归似然}
+\end{align}
+
+取似然函数的对数，得到
+
+\begin{align}
+  \ln p(\boldsymbol{t}\mid X,\boldsymbol{w},\sigma^{2})=-\frac{N}{2}\ln(2\pi)-\frac{N}{2}\ln\sigma^{2}-\frac{1}{2\sigma^{2}}E_D(\boldsymbol{w})
+  \label{align:ch04-回归对数似然}
+\end{align}
+
+其中平方和误差函数定义为
+
+\begin{align}
+  E_D(\boldsymbol{w})=\frac{1}{2}\sum_{n=1}^{N}\bigl\{t_n-\boldsymbol{w}^{\mathsf{T}}\boldsymbol{\phi}(\boldsymbol{x}_n)\bigr\}^{2}
+  \label{align:ch04-平方和误差}
+\end{align}
+
+在确定$\boldsymbol{w}$时，\cref{align:ch04-回归对数似然}中的前两项独立于$\boldsymbol{w}$，因此可以视为常数。正如前面所看到的，在高斯噪声分布下，最大化似然函数等价于最小化平方和误差函数。
+
+\subsection{最大似然}\label{subsection:ch04-最大似然}
+
+首先对于$\boldsymbol{w}$最大化对数似然函数。其关于$\boldsymbol{w}$的梯度为
+
+\begin{align}
+  \nabla_{\boldsymbol{w}}\ln p=-\frac{1}{\sigma^{2}}\sum_{n=1}^{N}\boldsymbol{\phi}(\boldsymbol{x}_n)\bigl\{t_n-\boldsymbol{w}^{\mathsf{T}}\boldsymbol{\phi}(\boldsymbol{x}_n)\bigr\}
+  \label{align:ch04-似然梯度}
+\end{align}
+
+将梯度设置为$0$，可得
+
+\begin{align}
+  \sum_{n=1}^{N}\boldsymbol{\phi}(\boldsymbol{x}_n)t_n=\sum_{n=1}^{N}\boldsymbol{\phi}(\boldsymbol{x}_n)\boldsymbol{\phi}(\boldsymbol{x}_n)^{\mathsf{T}}\boldsymbol{w}
+  \label{align:ch04-正规方程梯度}
+\end{align}
+
+这称为最小二乘问题的正规方程（normal equation）。引入$N\times M$的设计矩阵（design matrix）$\boldsymbol{\Phi}$，其元素$\Phi_{nj}=\phi_j(\boldsymbol{x}_n)$，则$\boldsymbol{\phi}(\boldsymbol{x}_n)^{\mathsf{T}}$是$\boldsymbol{\Phi}$的第$n$行。求解$\boldsymbol{w}$可得
+
+\begin{align}
+  \boldsymbol{w}_{\mathrm{ML}}=(\boldsymbol{\Phi}^{\mathsf{T}}\boldsymbol{\Phi})^{-1}\boldsymbol{\Phi}^{\mathsf{T}}\boldsymbol{t}
+  \label{align:ch04-最小二乘解}
+\end{align}
+
+其中$\boldsymbol{\Phi}^{\dagger}\equiv(\boldsymbol{\Phi}^{\mathsf{T}}\boldsymbol{\Phi})^{-1}\boldsymbol{\Phi}^{\mathsf{T}}$称为矩阵$\boldsymbol{\Phi}$的摩尔-彭若斯伪逆（Moore-Penrose pseudo-inverse）。我们还可以使对数似然关于方差$\sigma^{2}$最大化，得到
+
+\begin{align}
+  \sigma_{\mathrm{ML}}^{2}=\frac{1}{N}\sum_{n=1}^{N}\bigl\{t_n-\boldsymbol{w}_{\mathrm{ML}}^{\mathsf{T}}\boldsymbol{\phi}(\boldsymbol{x}_n)\bigr\}^{2}
+  \label{align:ch04-方差ML}
+\end{align}
+
+可以看到，方差参数的最大似然值是由回归函数周围目标值的残差方差给出的。
+
+\subsection{最小二乘的几何表示}\label{subsection:ch04-最小二乘几何}
+
+考虑一个$N$维空间，其轴由$t_n$给出，因此$\boldsymbol{t}=(t_1,\cdots,t_N)^{\mathsf{T}}$是这个空间中的一个向量。每个在$N$个数据点上求值的基函数$\phi_j(\boldsymbol{x})$可以表示为相同空间中的一个向量，用$\boldsymbol{\phi}_j$表示，它是$\boldsymbol{\Phi}$的第$j$列。如果基函数的个数$M$小于数据点的个数$N$，则$M$个$\boldsymbol{\phi}_j$将张成一个维度为$M$的线性子空间$\mathcal{S}$。预测向量$\boldsymbol{y}=\boldsymbol{\Phi}\boldsymbol{w}$是$\{\boldsymbol{\phi}_j\}$的线性组合，因此它可以存在于$\mathcal{S}$中的任意位置。平方和误差等于$\boldsymbol{y}$和$\boldsymbol{t}$之间的欧氏距离的平方。最小二乘解对应于$\mathcal{S}$中最接近$\boldsymbol{t}$的$\boldsymbol{y}$，即$\boldsymbol{t}$在子空间$\mathcal{S}$上的正交投影。
+
+\subsection{序贯学习}\label{subsection:ch04-序贯学习}
+
+最大似然解\cref{align:ch04-最小二乘解}涉及一次性处理整个训练集，称为批量学习。对于大型数据集，批处理的计算成本很高。序贯（sequential）学习算法一个个地考虑数据点，在考虑每个数据点时模型参数得到更新。通过随机梯度下降（stochastic gradient descent）技术可以得到序贯学习算法：
+
+\begin{align}
+  \boldsymbol{w}^{(\tau+1)}=\boldsymbol{w}^{(\tau)}-\eta\nabla E_n
+  \label{align:ch04-随机梯度下降}
+\end{align}
+
+其中$\tau$表示迭代次数，$\eta$是合适的学习率。通过平方和误差函数可得
+
+\begin{align}
+  \boldsymbol{w}^{(\tau+1)}=\boldsymbol{w}^{(\tau)}+\eta\bigl\{t_n-\boldsymbol{w}^{\mathsf{T}}\boldsymbol{\phi}(\boldsymbol{x}_n)\bigr\}\boldsymbol{\phi}(\boldsymbol{x}_n)
+  \label{align:ch04-LMS更新}
+\end{align}
+
+其中$\phi_n=\phi(\boldsymbol{x}_n)$。这称为最小二乘（least-mean-square）法或LMS算法。
+
+\subsection{正则化最小二乘法}\label{subsection:ch04-正则化最小二乘}
+
+我们之前介绍过在误差函数中添加正则化项来控制过拟合的思想（参见\cref{section:ch01-多项式拟合}）。因此可以采用如下形式来最小化总误差函数：
+
+\begin{align}
+  E(\boldsymbol{w})=E_D(\boldsymbol{w})+\lambda E_W(\boldsymbol{w})
+  \label{align:ch04-正则化误差}
+\end{align}
+
+其中$\lambda$是控制数据相关的误差$E_D(\boldsymbol{w})$和正则化项$E_W(\boldsymbol{w})$相对重要性的正则化系数。正则化项最为简单的形式之一是权重向量的平方和：
+
+\begin{align}
+  E_W(\boldsymbol{w})=\frac{1}{2}\boldsymbol{w}^{\mathsf{T}}\boldsymbol{w}
+  \label{align:ch04-权重衰减}
+\end{align}
+
+总误差函数变为
+
+\begin{align}
+  E(\boldsymbol{w})=\frac{1}{2}\sum_{n=1}^{N}\bigl\{t_n-\boldsymbol{w}^{\mathsf{T}}\boldsymbol{\phi}(\boldsymbol{x}_n)\bigr\}^{2}+\frac{\lambda}{2}\boldsymbol{w}^{\mathsf{T}}\boldsymbol{w}
+  \label{align:ch04-正则化总误差}
+\end{align}
+
+将其关于$\boldsymbol{w}$的梯度设为$0$并求解，可得
+
+\begin{align}
+  \boldsymbol{w}=\bigl(\lambda\boldsymbol{I}+\boldsymbol{\Phi}^{\mathsf{T}}\boldsymbol{\Phi}\bigr)^{-1}\boldsymbol{\Phi}^{\mathsf{T}}\boldsymbol{t}
+  \label{align:ch04-正则化解}
+\end{align}
+
+在统计学中，正则化方法会将参数值向$0$减小，这为参数收缩（parameter shrinkage）提供了一个示例。
+
+\subsection{多重输出}\label{subsection:ch04-多重输出}
+
+在一些应用中，我们可能希望预测$K>1$个目标变量，它们可以用目标向量$\boldsymbol{t}=(t_1,\cdots,t_K)^{\mathsf{T}}$来表示。更常见的方法是使用相同的一组基函数来对目标向量的所有分量建模：
+
+\begin{align}
+  \boldsymbol{y}(\boldsymbol{x},\boldsymbol{w})=\boldsymbol{W}^{\mathsf{T}}\boldsymbol{\phi}(\boldsymbol{x})
+  \label{align:ch04-多重输出}
+\end{align}
+
+其中$\boldsymbol{y}$是一个$K$维列向量，$\boldsymbol{W}$是一个$M\times K$的参数矩阵。类似地，对数似然函数可以表示为矩阵形式，最大化后得到
+
+\begin{align}
+  \boldsymbol{W}_{\mathrm{ML}}=(\boldsymbol{\Phi}^{\mathsf{T}}\boldsymbol{\Phi})^{-1}\boldsymbol{\Phi}^{\mathsf{T}}\boldsymbol{T}
+  \label{align:ch04-多重输出ML}
+\end{align}
+
+其中$\boldsymbol{T}$是$N\times K$的目标矩阵。不同的目标变量之间是解耦的，我们只需要计算被所有向量$\boldsymbol{w}_k$共享的单个伪逆矩阵即可。
+
+\end{document}

@@ -1,0 +1,123 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{../../image/}{../../figure/}}
+\begin{document}
+
+\section{对初值的连续依赖性}\label{section:ch14-连续依赖性}
+
+本章余下部分处理初值问题\eqref{align:ch13-ivp}解的唯一性与稳定性问题。\cref{theorem:ch13-小总变差存在性}与\cref{theorem:ch14-前沿追踪存在性}中的存在性证明依赖紧性论证，对此问题未提供任何线索。我们将通过前沿追踪算法生成的近似解来处理此问题。通过监控某一泛函的时间演化，我们将证明 $\delta$-近似解连续依赖于其初值（模 $O(\delta)$ 阶修正）。这将通过取 $\delta\downarrow0$ 极限诱导出解的稳定性。
+
+
+
+我们先前在标量守恒律中的经验强烈提示 $L^1$ 拓扑应提供连续依赖性的适当框架。但 $L^1$ 距离不应通过标准 $L^1$ 度量测量，而应通过为本任务特别设计的泛函 $\rho$ 测量。
+
+设 $U$ 与 $\bar U$ 是\eqref{align:ch14-system}的两个 $\delta$-近似解。固定 $U$ 与 $\bar U$ 的任一公共连续点 $(x,t)$，我们在特殊曲线坐标系中测量向量 $U(x,t)$ 与 $\bar U(x,t)$ 间的距离，其坐标曲线为激波曲线（同时保留可容许与不可容许两支）。为此，向量 $\bar U(x,t)-U(x,t)$ 由如下过程得到的曲线坐标``$p_1(x,t),\cdots,p_n(x,t)$''表示：设想一个``虚拟''跳跃间断，左端状态 $U(x,t)$、右端状态 $\bar U(x,t)$，并把它分解为仅由（可容许或不可容许）虚拟激波连接的 $n+1$ 个常状态组成的波扇。当 $|U(x,t)-\bar U(x,t)|$ 充分小时，此分解唯一且可通过隐函数定理实现：按\cref{section:ch09-用波曲线求解riemann问题}中 Riemann 问题可容许解的步骤，把波扇曲线 $\Phi_i$ 替换为激波曲线 $W_i$。我们把所得虚拟 $i$-激波的振幅记为 $p_i(x,t)$，其速度记为 $s_i(x,t)$。$U(x,t)$ 与 $\bar U(x,t)$ 间的距离现由 $n$ 个虚拟激波强度的适当加权和 $\sum g_i(x,t)|p_i(x,t)|$ 度量，因而两近似解在时刻 $t$ 的距离通过泛函
+\begin{align}
+\rho(U(\cdot,t),\bar U(\cdot,t))=\sum_{i=1}^n\int_{-\infty}^\infty g_i(x,t)|p_i(x,t)|\,\mathrm{d}x
+\label{align:ch14-rho}
+\end{align}
+测量。
+
+
+
+现引入合适的权 $g_i$。令 $I$ 与 $\bar I$ 分别表示 $U$ 与 $\bar U$ 的碰撞时刻集合，并考虑相应的波相互作用势 $Q(t)$ 与 $\bar Q(t)$，它们通过\eqref{align:ch14-Q}定义，分别对 $t\in(0,\infty)\setminus I$ 与 $t\in(0,\infty)\setminus\bar I$。对 $t\in(0,\infty)\setminus(I\cup\bar I)$ 以及 $U(\cdot,t)$ 与 $\bar U(\cdot,t)$ 的任一公共连续点 $x$，定义
+\begin{align}
+g_i(x,t)=1+\kappa[Q(t)+\bar Q(t)]+\nu A_i(x,t),
+\label{align:ch14-gi}
+\end{align}
+其中 $\kappa$ 与 $\nu$ 是待后固定的充分大正常数，
+\begin{align}
+A_i(x,t)=\sum_-|\gamma|+\bar\sum_-|\gamma|+\sum_+|\gamma|+\bar\sum_+|\gamma|+\sum_0|\gamma|+\bar\sum_0|\gamma|.
+\label{align:ch14-Ai}
+\end{align}
+在\eqref{align:ch14-Ai}中，$\sum_-$（或 $\bar\sum_-$）对 $j=i+1,\cdots,n$ 的 $U$（或 $\bar U$）的 $j$-前沿求和，它们穿过 $t$-时间线位于点 $x$ 之左；$\sum_+$（或 $\bar\sum_+$）对 $j=1,\cdots,i-1$ 的 $U$（或 $\bar U$）的 $j$-前沿求和，它们穿过 $t$-时间线位于点 $x$ 之右；$\sum_0$（或 $\bar\sum_0$）对 $U$（或 $\bar U$）的所有 $i$-前沿求和，当 $p_i(x,t)<0$ 时它们穿过 $t$-时间线位于点 $x$ 之左（相应地右），当 $p_i(x,t)>0$ 时位于点 $x$ 之右（相应地左）。因而可合理地说，$A_i(x,t)$ 表示穿过 $t$-时间线并接近 $(x,t)$ 处虚拟 $i$-激波的 $U$ 与 $\bar U$ 前沿的总强度。
+
+一旦 $\kappa$ 与 $\nu$ 固定，初值总变差须限制充分小，使 $\frac12\leqslant g_i(x,t)\leqslant2$。于是 $\rho(U(\cdot,t),\bar U(\cdot,t))$ 等价于 $U(\cdot,t)$ 与 $\bar U(\cdot,t)$ 的 $L^1$ 距离：
+\begin{align}
+\frac1C\|U(\cdot,t)-\bar U(\cdot,t)\|_{L^1(-\infty,\infty)}&\leqslant\rho(U(\cdot,t),\bar U(\cdot,t))\nonumber\\
+&\leqslant C\|U(\cdot,t)-\bar U(\cdot,t)\|_{L^1(-\infty,\infty)}.
+\label{align:ch14-rho-equiv}
+\end{align}
+
+容易看出，在标量情形 $n=1$，由\eqref{align:ch14-rho}引入的泛函 $\rho$ 与\eqref{align:ch11-11-8-10}中定义的泛函 $\rho$（后者限制于阶梯函数）密切相关。
+
+
+
+目的是证明 $\rho(U(\cdot,t),\bar U(\cdot,t))$ 非增（模 $O(\delta)$ 阶修正）：
+\begin{align}
+\rho(U(\cdot,t),\bar U(\cdot,t))-\rho(U(\cdot,\tau),\bar U(\cdot,\tau))\leqslant\omega\delta(t-\tau),\qquad 0<\tau<t<\infty.
+\label{align:ch14-rho-decay}
+\end{align}
+注意跨 $I$ 或 $\bar I$ 的点，$Q(t)$ 或 $\bar Q(t)$ 以约等于两碰撞波强度之积的量下降，而 $A_i(x,t)$ 至多以同阶量级增加。因而固定 $\kappa/\nu$ 充分大时，$\rho(U(\cdot,t),\bar U(\cdot,t))$ 跨 $I$ 或 $\bar I$ 的点下降。在 $I\cup\bar I$ 的相邻点之间，$\rho(U(\cdot,t),\bar U(\cdot,t))$ 连续可微；因而为建立\eqref{align:ch14-rho-decay}，只需证明
+\begin{align}
+\frac{\mathrm{d}}{\mathrm{d}t}\rho(U(\cdot,t),\bar U(\cdot,t))\leqslant\omega\delta.
+\label{align:ch14-rho-deriv}
+\end{align}
+
+由\eqref{align:ch14-rho}，
+\begin{align}
+\frac{\mathrm{d}}{\mathrm{d}t}\rho(U(\cdot,t),\bar U(\cdot,t))=\sum_y\sum_{i=1}^n\{g_i^-|p_i^-|-g_i^+|p_i^+|\}\dot y,
+\label{align:ch14-rho-deriv2}
+\end{align}
+其中 $\sum_y$ 遍历 $U$ 与 $\bar U$ 中穿过 $t$-时间线的所有波 $x=y(\cdot)$，$\dot y,g_i^\pm$ 与 $p_i^\pm$ 表示 $\dot y(t)$、$g_i(y(t)\pm,t)$ 与 $p_i(y(t)\pm,t)$。通过适当加减虚拟 $i$-激波的速度 $s_i^\pm=s_i(y(t)\pm,t)$，可把\eqref{align:ch14-rho-deriv2}改写为
+\begin{align}
+\frac{\mathrm{d}}{\mathrm{d}t}\rho(U(\cdot,t),\bar U(\cdot,t))=\sum_y\sum_{i=1}^n E_i(y(\cdot),t),
+\label{align:ch14-rho-E}
+\end{align}
+其中
+\begin{align}
+E_i(y(\cdot),t)&=g_i^+(s_i^+-\dot y)|p_i^+|-g_i^-(s_i^--\dot y)|p_i^-|\nonumber\\
+&=(g_i^+-g_i^-)(s_i^+-\dot y)|p_i^-|+g_i^-(s_i^+-s_i^-)|p_i^-|+g_i^+(s_i^+-\dot y)(|p_i^+|-|p_i^-|).
+\label{align:ch14-Ei}
+\end{align}
+
+首先设 $x=y(\cdot)$ 是 $U$ 的伪激波。于是 $g_i^+=g_i^-$，由\eqref{align:ch14-Ei}得
+\begin{align}
+\sum_{i=1}^n E_i(y(\cdot),t)\leqslant c_{10}|U(y(t)+,t)-U(y(t)-,t)|.
+\label{align:ch14-pseudo-rho}
+\end{align}
+因而由\eqref{align:ch14-pseudoshock-strength}，\eqref{align:ch14-rho-E}右端遍历 $U$ 所有伪激波的那部分和以 $c_{10}\delta$ 为界。当然，这同样适用于遍历 $\bar U$ 所有伪激波的那部分和。
+
+现转向 $x=y(\cdot)$ 是 $U$ 或 $\bar U$ 的振幅为 $\gamma$ 的 $j$-前沿情形。为完成\eqref{align:ch14-rho-deriv}的证明，须证明
+\begin{align}
+\sum_{i=1}^n E_i(y(\cdot),t)\leqslant c_{11}\delta|\gamma|.
+\label{align:ch14-front-rho}
+\end{align}
+
+下面是\eqref{align:ch14-front-rho}证明的路线图，它将揭示主要思想，并特别解释权函数 $g_i(x,t)$ 为何按\eqref{align:ch14-gi}设计。相当费力的详细证明在\cref{section:ch14-注}所引文献中。
+
+首先考察\eqref{align:ch14-Ei}右端对 $i\neq j$ 的三项。由\eqref{align:ch14-gi}，$g_i^+-g_i^-$ 当 $j>i$ 时等于 $\nu|\gamma|$，当 $j<i$ 时等于 $-\nu|\gamma|$。两种情形下，第一项
+\begin{align}
+(g_i^+-g_i^-)(s_i^+-\dot y)|p_i^-|\cong-\nu|\lambda_i-\lambda_j||p_i^-||\gamma|
+\label{align:ch14-first-term}
+\end{align}
+强负，其思想是它主导另两项，从而产生所需不等式\eqref{align:ch14-rho-deriv}。确实，第二项以 $c_{12}|p_i^-||\gamma|$ 为上界，当 $\nu$ 充分大时显然被\eqref{align:ch14-first-term}主导。剩余项由如下论证估计。虚拟激波的振幅 $(p_1^-,\cdots,p_n^-)$ 或 $(p_1^+,\cdots,p_n^+)$ 分别来自 $U^-$ 与 $\bar U^-$ 之间或 $U^+$ 与 $\bar U^+$ 之间跳跃间断的求解，其中 $U^\pm=U(y(t)\pm,t)$，$\bar U^\pm=\bar U(y(t)\pm,t)$。
+
+为确定起见，设 $x=y(\cdot)$ 是 $U$ 的前沿，则 $\bar U^-=\bar U^+$，而状态 $U^-$ 与 $U^+$ 在状态空间中由 $j$-波曲线连接。因而主阶上 $p_j^+\cong p_j^--\gamma$，而对任一 $k\neq j$，$p_k^+\cong p_k^-$。确实，对波曲线的研究容易给出估计
+\begin{align}
+|p_j^+-p_j^-+\gamma|+\sum_{k\neq j}|p_k^+-p_k^-|=O(1)[\delta+|p_j^-|(|p_j^-|+|\gamma|)+\sum_{k\neq j}|p_k^-||\gamma|],
+\label{align:ch14-pjump}
+\end{align}
+后者转而蕴含
+\begin{align}
+E_i(y(\cdot),t)\leqslant-a\nu|p_i^-||\gamma|+c_{12}[\delta+|p_j^-|(|p_j^-|+|\gamma|)+\sum_{k\neq j}|p_k^-||\gamma|],
+\label{align:ch14-Ei-est}
+\end{align}
+其中 $a>0$。
+
+当 $i=j$ 时，$E_i(y(\cdot),t)$ 的估计更为精细，因为 $j$-前沿可能与虚拟 $i$-激波共振。同样的困难自然出现，即使对标量守恒律也须处理。确实，标量情形已在\cref{section:ch11-比较定理与L1稳定性}中处理，尽管形式不同。对系统，须分别考察若干情形，取决于 $x=y(\cdot)$ 是激波还是稀疏前沿，并结合 $p_j^-$ 与 $p_j^+$ 的符号。所得估计情形略有不同但本质等价，在文献中导出。例如，当 $x=y(\cdot)$ 是 $j$-稀疏前沿且 $0<p_j^-<p_j^+$，或 $x=y(\cdot)$ 是 $j$-激波且 $p_j^+<p_j^-<0$ 时，
+\begin{align}
+E_j(y(\cdot),t)\leqslant-b\nu|p_j^-||\gamma|(|p_j^-|+|\gamma|)+c_{13}[\delta+|p_j^-|(|p_j^-|+|\gamma|)+\sum_{k\neq j}|p_k^-||\gamma|],
+\label{align:ch14-Ej-est}
+\end{align}
+其中 $b>0$。
+
+
+
+现对 $i\neq j$ 把不等式\eqref{align:ch14-Ei-est}与不等式\eqref{align:ch14-Ej-est}求和。选取 $\nu$ 充分大以抵消可能为正的项，我们得到\eqref{align:ch14-front-rho}。如前所述，这蕴含\eqref{align:ch14-rho-deriv}，后者转而给出\eqref{align:ch14-rho-decay}。回忆\eqref{align:ch14-rho-equiv}，我们得到
+\begin{align}
+\|U(\cdot,t)-\bar U(\cdot,t)\|_{L^1(-\infty,\infty)}\leqslant C^2\|U(\cdot,0)-\bar U(\cdot,0)\|_{L^1(-\infty,\infty)}+C\omega\delta t,
+\label{align:ch14-lip}
+\end{align}
+它建立了 $\delta$-近似解连续依赖于其初值（模 $\delta$）。对当 $\delta\downarrow0$ 所得实际解的推论将在下一节讨论。
+
+\end{document}

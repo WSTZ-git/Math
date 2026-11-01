@@ -1,0 +1,155 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{../../image/}{../../figure/}}
+\begin{document}
+
+\section{收敛}\label{section:ch07-收敛}
+
+在实际应用梯度下降算法时，需要谨慎选择学习率 $\eta$ 的值。考虑图~7.3~所示情形：这是一个假想二维权重空间中的简化误差曲面，该曲面的曲率在不同方向上存在显著差异，形成一个狭长的"山谷"结构。对误差曲面上大多数点而言，批量梯度下降算法计算出的局部负梯度 $-\nabla E$（与该点等高线垂直）并不直接指向最小值点。直观上我们可能认为增大学习率 $\eta$ 应能让算法在权重空间中迈出更大步伐，从而更快收敛到最小值；然而如果一味加大步长，权重更新会在山谷两侧来回震荡，当 $\eta$ 超过某个阈值时这种震荡甚至会变得越来越剧烈，导致算法无法收敛。为避免这种发散振荡，学习率 $\eta$ 必须设定得足够小，那么沿着山谷方向向最小值靠近的速度又可能变得非常缓慢。在这种情况下，梯度下降需要经过多次小步迭代才能逐渐逼近最小值，导致整体优化效率非常低下。
+
+\subsection{收敛性分析}\label{section:ch07-收敛性分析}
+
+通过考虑误差函数在最小值附近的二次近似，可以深入了解该问题的本质。根据~\eqref{align:ch07-quadratic-at-min}、\eqref{align:ch07-eigen}~和~\eqref{align:ch07-expansion}，在这种近似中误差函数梯度可以写为
+\begin{align}
+\nabla E = \sum_i \lambda_i \alpha_i \mathbf{u}_i.
+\label{align:ch07-grad-diag}
+\end{align}
+
+再次使用~\eqref{align:ch07-expansion}，可以将权重向量的变化表示为对应系数 $\alpha_i$ 的变化：
+\begin{align}
+\Delta\mathbf{w} = \sum_i \Delta\alpha_i \mathbf{u}_i.
+\label{align:ch07-deltaw-diag}
+\end{align}
+
+结合~\eqref{align:ch07-grad-diag}、~\eqref{align:ch07-deltaw-diag}~与梯度下降公式~\eqref{align:ch07-batchgd}，并利用黑塞矩阵特征向量的正交性关系~\eqref{align:ch07-eigenorth}，可以推导出每次迭代步中 $\alpha_i$ 的变化量：
+\begin{align}
+\alpha_i^{(\tau)} = (1-\eta\lambda_i)\,\alpha_i^{(\tau-1)}.
+\label{align:ch07-alpha-update}
+\end{align}
+
+定义 $\alpha_i$ 和 $\alpha_i^{(\tau)}$ 分别代表权重更新前后的值。利用特征向量正交性关系~\eqref{align:ch07-eigenorth}~和式~\eqref{align:ch07-expansion}，有
+\begin{align}
+\mathbf{u}_i^{\mathsf T}(\mathbf{w}-\mathbf{w}^{(\tau)}) = \alpha_i^{(\tau)}.
+\label{align:ch07-alpha-dist}
+\end{align}
+
+因此 $\alpha_i$ 可以解释为沿着方向 $\mathbf{u}_i$ 到最小值的距离。从~\eqref{align:ch07-alpha-update}~可见，这些距离独立地演化，每一步中沿着 $\mathbf{u}_i$ 方向的距离乘以因子 $(1-\eta\lambda_i)$。经过总共 $T$ 步之后有
+\begin{align}
+\alpha_i^{(T)} = (1-\eta\lambda_i)^{T}\,\alpha_i^{(0)}.
+\label{align:ch07-alpha-t}
+\end{align}
+
+由此可见，只要满足 $|1-\eta\lambda_i|<1$，当 $T\to\infty$ 时 $\alpha_i^{(T)}\to 0$，~\eqref{align:ch07-alpha-dist}~表明 $\mathbf{w}\to\mathbf{w}^{\ast}$，因此权重向量已经收敛到误差函数最小值。
+
+注意~\eqref{align:ch07-alpha-t}~证明了梯度下降在最小值附近区域能够带来\textbf{线性收敛}。同样要收敛到驻点，则要求所有 $\lambda_i$ 都是正的，这反过来意味着驻点确实是最小值。通过提高学习率 $\eta$，可以使因子 $(1-\eta\lambda_i)$ 更小，进而提高收敛速度；然而 $\eta$ 的设定有一个限制：虽然允许 $(1-\eta\lambda_i)$ 为负（这会产生 $\alpha_i$ 的振荡值），但必须确保 $|1-\eta\lambda_i|<1$，否则 $\alpha_i$ 值会发散。于是 $\eta$ 的值需要限制为 $\eta<2/\lambda_{\max}$，其中 $\lambda_{\max}$ 是最大特征值。然而收敛速度主要由最小特征值控制，因此当 $\eta$ 设定为最大允许值时，沿着对应于最小特征值方向的收敛（图~7.3~中椭圆长轴）将由下式控制：
+\begin{align}
+\alpha_{\min}^{(T)} = (1-\eta\lambda_{\min})^{T}\,\alpha_{\min}^{(0)},
+\end{align}
+其中 $\lambda_{\min}$ 是最小特征值。如果 $\lambda_{\max}/\lambda_{\min}$ 的比值（其倒数为黑塞矩阵的条件数）非常小，即图~7.3~中椭圆形误差等高线的高度将被拉长，那么向最小值收敛的速度将极其缓慢。
+
+\subsection{动量}\label{section:ch07-动量}
+
+解决特征值差异悬殊问题的一种简单技巧是在梯度下降公式中引入\textbf{动量}（momentum）项。这实际上相当于给权重向量在权重空间中的运动增加了惯性，从而缓解了图~7.3~中所示的振荡现象。引入动量项后的梯度下降更新公式为：
+\begin{align}
+\Delta\mathbf{w}^{(\tau-1)} = -\eta\,\nabla E(\mathbf{w}^{(\tau-1)}) + \mu\,\Delta\mathbf{w}^{(\tau-2)},
+\label{align:ch07-momentum}
+\end{align}
+其中 $\mu$ 称为动量参数，然后使用~\eqref{align:ch07-iter}~更新权重向量。
+
+为理解动量项作用，首先考虑权重向量在误差曲面上曲率相对较小区域中的运动情况。如果近似认为梯度在该区域内保持不变，那么可以对~\eqref{align:ch07-momentum}~进行多次迭代，并将由此产生的一系列权重更新值累加起来：
+\begin{align}
+\Delta\mathbf{w} = -\eta\,\nabla E\,(1+\mu+\mu^2+\cdots) = -\frac{\eta}{1-\mu}\,\nabla E.
+\label{align:ch07-momentum-effect}
+\end{align}
+
+可以看到，添加动量项能有效将学习率从 $\eta$ 提高到 $\eta/(1-\mu)$。在曲率较低表面上，使用固定学习率的梯度下降会导致逐渐变小的步长，对应于线性收敛；这种情况下添加动量项的效果类似于提高学习率，向误差函数谷底的收敛更快。
+
+相反，在误差曲面有较高曲率区域，如果不加动量项，梯度下降会出现振荡现象。在这种情况下，动量项的连续贡献将趋于相互抵消，使得有效学习率接近于 $\eta$。因此动量项能够加速模型向最小值点收敛，同时又避免了发散的振荡。
+
+尽管引入动量项可以改善梯度下降性能，但它也引入了一个新参数 $\mu$，其值需要与学习率参数 $\eta$ 一起合理选择。从~\eqref{align:ch07-momentum-effect}~可以看出，$\mu$ 的取值范围应为 $0\le\mu\le 1$。实践中常用值是 $\mu=0.9$。
+
+研究者提出了称作\textbf{Nesterov 动量}的动量改进方法，可以进一步加速模型收敛~\citep{Nesterov2004,Sutskever2013}。在传统带动量项的随机梯度下降中，我们首先计算当前位置的梯度，然后利用该梯度与前一步动量项的加权组合来确定当前更新步长。而在 Nesterov 方法中这两步顺序被交换：具体来说，我们首先基于前一步动量项进行一次预更新，然后在这个预更新后的位置计算梯度，并利用该梯度来确定最终更新步长，其更新公式如下：
+\begin{align}
+\Delta\mathbf{w}^{(\tau-1)} = -\eta\,\nabla E\!\left(\mathbf{w}^{(\tau-1)}+\mu\,\Delta\mathbf{w}^{(\tau-2)}\right) + \mu\,\Delta\mathbf{w}^{(\tau-2)}.
+\label{align:ch07-nesterov}
+\end{align}
+
+对于批量梯度下降算法，Nesterov 动量通常能够提高收敛速度；然而在随机梯度下降场景下，其加速效果可能并不明显。
+
+\subsection{学习率调度}\label{section:ch07-学习率调度}
+
+在随机梯度下降学习算法~\eqref{align:ch07-sgd}~中，需要确定学习率 $\eta$ 的值。如果 $\eta$ 值过小，学习过程将异常缓慢（参见~7.3.1~小节）；如果 $\eta$ 值过大，则可能导致算法不稳定。尽管一定程度的振荡是可以接受的，但这种振荡不应导致发散现象。
+
+在实际应用中，通常在训练初期使用较大的 $\eta$ 值，然后随着迭代进行逐渐减小学习率，即让学习率成为迭代步数 $\tau$ 的函数：
+\begin{align}
+\mathbf{w}^{(\tau)} = \mathbf{w}^{(\tau-1)} - \eta^{(\tau-1)}\,\nabla E_n(\mathbf{w}^{(\tau-1)}).
+\label{align:ch07-schedule}
+\end{align}
+
+学习率衰减的例子包括线性衰减、幂律衰减和指数衰减，公式依次如下：
+\begin{align}
+\eta^{(\tau)} = \left(1-\frac{\tau}{K}\right)\eta_0 + \frac{\tau}{K}\eta_K, \qquad \tau\le K,
+\label{align:ch07-linear-schedule}
+\end{align}
+\begin{align}
+\eta^{(\tau)} = \eta_0\,(1+\tau/s)^{-c},
+\label{align:ch07-poly-schedule}
+\end{align}
+\begin{align}
+\eta^{(\tau)} = \eta_0\,c^{\tau}.
+\label{align:ch07-exp-schedule}
+\end{align}
+
+在~\eqref{align:ch07-linear-schedule}~中，$\eta$ 的值在 $K$ 步内线性减小，之后保持为 $\eta_K$。超参数 $\eta_0$、$\eta_K$、$K$、$s$ 和 $c$ 的最优值通常需要借助经验才能找到。在实践中，监督学习曲线（learning curve）——即误差函数随梯度下降迭代过程的变化情况——对调整学习率衰减策略很有好处。
+
+\subsection{AdaGrad、RMSProp 与 Adam 算法}\label{section:ch07-adam}
+
+前文阐述了最优学习率取决于误差曲面在局部的曲率，并且这种曲率会随参数空间中方向不同而变化。这就启发了一系列针对网络中各个参数采用不同学习率的优化算法。这些学习率的值在训练过程中会自动进行调整。
+
+\textbf{AdaGrad} 是"自适应梯度"（adaptive gradient）的缩写~\citep{DuchiHazanSinger2011}，其算法核心思想是随着时间推移不断减小每个参数的学习率，而减小幅度则取决于该参数对应的所有历史梯度值的平方和。因此与较大曲率相关联的参数，其对应学习率会下降得更快。具体来说其更新规则如下：
+\begin{align}
+r_i^{(\tau)} = r_i^{(\tau-1)} + g_i^2, \qquad g_i = -\frac{\partial E}{\partial w_i},
+\label{align:ch07-adagrad}
+\end{align}
+\begin{align}
+w_i^{(\tau)} = w_i^{(\tau-1)} - \frac{\eta}{\sqrt{r_i^{(\tau)}+\delta}}\,g_i,
+\label{align:ch07-adagrad-update}
+\end{align}
+其中 $\eta$ 是学习率，$\delta$ 是一个小常数（比如 $10^{-6}$），旨在确保 $r_i$ 接近零时的数值稳定性。$E(\mathbf{w})$ 是特定小批量的误差函数，~\eqref{align:ch07-adagrad-update}~是标准随机梯度下降公式，但学习率针对每个参数进行了调整。该算法初始值是 $r_i^{(0)}=0$。
+
+AdaGrad 算法的缺点是它从训练一开始就累积平方梯度，因此相关的权重更新可能变得非常小，这可能在训练后期大大减缓训练进度。
+
+\textbf{RMSProp} 算法背后的思想是均方根传播（root mean square propagation），使用梯度平方的指数加权平均来替代 AdaGrad 中的简单累加~\citep{Hinton2012}，更新规则如下：
+\begin{align}
+r_i^{(\tau)} = \beta\,r_i^{(\tau-1)} + (1-\beta)\,g_i^2,
+\label{align:ch07-rmsprop}
+\end{align}
+\begin{align}
+w_i^{(\tau)} = w_i^{(\tau-1)} - \frac{\eta}{\sqrt{r_i^{(\tau)}+\delta}}\,g_i,
+\label{align:ch07-rmsprop-update}
+\end{align}
+其中 $0<\beta<1$，典型值为 $\beta=0.9$。
+
+\textbf{Adam} 优化算法~\citep{KingmaBa2014}的名字来源于"自适应矩估计"（adaptive moments）。它是 RMSProp 算法与动量法的结合，为每个参数分别维护一个动量项。其更新规则基于梯度及其平方的指数加权移动平均，具体形式为：
+\begin{align}
+s_i^{(\tau)} = \beta_1\,s_i^{(\tau-1)} + (1-\beta_1)\,g_i,
+\label{align:ch07-adam-m}
+\end{align}
+\begin{align}
+r_i^{(\tau)} = \beta_2\,r_i^{(\tau-1)} + (1-\beta_2)\,g_i^2,
+\label{align:ch07-adam-v}
+\end{align}
+\begin{align}
+\hat{s}_i = \frac{s_i^{(\tau)}}{1-\beta_1^{\tau}}, \qquad
+\hat{r}_i = \frac{r_i^{(\tau)}}{1-\beta_2^{\tau}},
+\label{align:ch07-adam-hat}
+\end{align}
+\begin{align}
+w_i^{(\tau)} = w_i^{(\tau-1)} - \frac{\eta}{\sqrt{\hat{r}_i}+\delta}\,\hat{s}_i.
+\label{align:ch07-adam-update}
+\end{align}
+
+这里的系数 $1/(1-\beta_1^{\tau})$ 和 $1/(1-\beta_2^{\tau})$ 纠正了初始设置 $s_i^{(0)}$ 和 $r_i^{(0)}$ 为零引入的偏差（见习题~7.12）。由于 $\beta\le 1$ 且随 $\tau$ 变大偏差趋于零，因此实践中有时会省略这种偏差修正。权重参数典型值为 $\beta_1=0.9$ 和 $\beta_2=0.99$。Adam 算法是深度学习应用中最常用的学习算法。
+
+需要注意的是，这种直观理解实际上仅在主曲率方向与参数空间坐标轴对齐的情况下才真正适用，这对应于黑塞矩阵局部为对角矩阵的情形，尽管在实际应用中这种情况不太可能发生。但这几个算法仍然被广泛使用并发挥作用。
+
+\end{document}

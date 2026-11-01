@@ -1,0 +1,50 @@
+\documentclass[../../main.tex]{subfiles}
+
+\graphicspath{{../../image/}{../../figure/}}
+
+\begin{document}
+
+\section{多模态Transformer}\label{section:ch12-多模态Transformer}
+
+虽然最初Transformer架构是在自然语言语境下开发的，但自注意力机制在其他领域也有广泛应用。Transformer模型已经成功地应用于图像分类、语音识别、文本到语音生成、基因组学和蛋白质建模等问题，通常在基准测试中表现优于传统模型。只要将原始输入转换成一系列token，我们就可以在各种应用中使用Transformer。如果输入本身是一组向量，我们就能直接使用这些向量；而如果输入是图像或音频等其他形式的数据，我们就必须先将其转换成token序列。
+
+\subsection{视觉Transformer}\label{subsection:ch12-视觉Transformer}
+
+我们将用视觉Transformer（Vision Transformer, ViT）（Dosovitskiy et al., 2020）说明如何将Transformer应用于图像分类任务。首先，我们可以将一幅大小为$224\times 224$像素、有3个颜色通道的图像划分成多个小块，每个小块的大小为$16\times 16$像素。因此，总共有$14\times 14=196$个小块，每个小块有$16\times 16\times 3=768$个像素值。我们将每个小块展平成一个长度为768的向量，这就是我们的输入token。最后，我们使用一个可学习的线性投影层（维度为$768\times D$），将这些输入向量映射到一个维度为$D$的嵌入空间。这样我们就得到了一个由196个长度为$D$的向量组成的序列。由于Transformer是对token顺序等变化进行等变，所以我们还为每个图像小块添加了一个可学习的位置嵌入向量（参见12.1.9小节）。
+
+除了图像块的token，我们还为输入序列增加了一个可学习的分类token（用$\mathbf{c}$表示），如图12.22所示。我们将整个序列输入一个仅编码器Transformer（参见12.3.3小节）。这个序列有196个图像token和1个分类token，其中分类token最终编码了图像的整体表示，可用于下游分类。在经过$L$个Transformer层处理后，我们可以从最终输出序列中提取出分类token，并使用全连接层进行处理以执行分类任务。图12.22所示的视觉Transformer架构使用了$L=12$层、维度为$D=768$和12个注意力头，总共有大约8600万个可学习参数。
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\textwidth]{ch12-fig367-vit.png}
+  \caption{用于分类任务的视觉Transformer架构。此处将一个可学习的token $\langle\mathrm{class}\rangle$作为额外的输入，相关的输出由一个具有softmax激活函数的线性层进行转换，从而得到最终的类-向量输出$\mathbf{c}$。}
+  \label{figure:ch12-视觉Transformer架构}
+\end{figure}
+
+值得注意的是，虽然视觉Transformer是在ImageNet数据集上进行预训练的，但它们在小型数据集上的表现通常不如卷积网络（例如ResNet），因为它们没有内建的图像结构归纳偏置。当在大型数据集上进行预训练时，视觉Transformer的性能优于卷积网络。因此，卷积网络通常可以作为特征提取器，为Transformer提供输入。
+
+\subsection{图像生成Transformer}\label{subsection:ch12-图像生成Transformer}
+
+正如可以将句子中的每个词都表示为token一样，我们也可以将图像表示为一系列token。这样一来，我们就能用一个仅解码器Transformer对图像进行建模，从而像语言模型一样自回归生成图像（Chen et al., 2020）。为此，我们需要将图像转换成一串离散值，然后将这些值表示为独热向量。我们可以使用离散变分自编码器（DVAE）或离散归一化流（NF）等技术对图像进行编码（参见第16章和第18章）。
+
+当我们使用仅解码器Transformer来生成图像时，该模型可以根据给定的提示词（prompt）生成高质量的图像。这里的提示词是描述所需图像的文本。这与语言模型中根据提示词生成文本的过程类似。扩散模型（参见第20章）已成为图像生成的主要方法，但Transformer也可以用于图像生成任务。
+
+\subsection{音频数据}\label{subsection:ch12-音频数据}
+
+音频数据也可以表示为token序列。例如，我们可以将一段录音的声波表示为一个时间序列。然后，我们可以使用仅编码器Transformer对音频进行建模，从而完成语音识别任务，即转录口语（语音到文本）。我们还可以将音频信号分割成小块，然后将这些小块表示为token。这样一来，一个仅解码器Transformer就可以用于语音合成（文本到语音）任务。
+
+\subsection{文本语音转换}\label{subsection:ch12-文本语音转换}
+
+我们已经看到，Transformer在序列到序列应用（如语言翻译）中表现良好，因此用它们来解决文本语音转换（Text-To-Speech, TTS）问题也就不足为奇了，该问题旨在从文本输入中生成人类语音的音频信号。首先，我们需要将音频信号表示为一串token，例如梅尔频谱图（mel spectrogram）。梅尔频谱图是一种频谱图，其中频率轴是根据梅尔尺度进行缩放的（参见4.5节）。然后，我们使用一个仅解码器Transformer从文本输入中生成梅尔频谱图。最后，我们使用声码器（vocoder）将梅尔频谱图转换为音频信号。这种方法已被证明能生成高质量的语音（Kim et al., 2021）。
+
+\subsection{视觉和语言Transformer}\label{subsection:ch12-视觉和语言Transformer}
+
+我们也可以将文本和图像作为输入，将它们组合成一个序列。例如，视觉语言模型（Vision-Language Model, VLM）可以根据文本描述生成图像（Radford et al., 2021），或者根据图像生成描述（caption）。这些模型通常使用仅编码器Transformer，将文本token和图像token作为输入。
+
+例如，CLIP（Contrastive Language-Image Pre-training）模型（Radford et al., 2021）使用两个独立的编码器，分别处理图像和文本。图像编码器是一个视觉Transformer（参见12.4.1小节），文本编码器是一个仅解码器Transformer。这两个编码器被联合训练，使配对的图像和文本在嵌入空间中彼此接近，而不配对的图像和文本则远离。这种方法使得该模型可以根据图像查询最匹配的文本，或根据文本查询最匹配的图像，从而实现强大的零样本（zero-shot）图像分类能力。
+
+\subsection{图像描述}\label{subsection:ch12-图像描述}
+
+图像描述（image captioning）任务旨在根据输入图像生成一段描述性文本。这可以通过一个序列到序列Transformer来实现，其中图像token（由视觉编码器产生）作为输入，文本描述作为输出（Liu et al., 2021）。该模型在大量图像-文本对上进行训练，从而可以为新的图像生成合理的描述。图12.27给出了图像描述的示例。
+
+\end{document}

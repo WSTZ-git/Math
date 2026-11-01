@@ -1,0 +1,195 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{../../image/}{../../figure/}}
+\begin{document}
+
+\section{主成分分析}\label{section:ch16-主成分分析}
+
+在第~15~章中，我们讨论了拥有离散潜变量的概率模型，例如高斯混合模型。本章探讨部分或全部潜变量为连续变量的模型。研究这类模型的一个重要原因是很多数据集都有这样的特点：数据点都挤在一个比起原始数据空间维度低得多的流形（manifold）上。在实践中，数据点不会精确地局限于一个光滑的低维流形上，我们可以将数据点偏离流形的现象解释为"噪声"。我们可以自然地从生成性视角（generative view）来理解此类模型：首先根据某种潜变量分布在流形内选择一个点，然后添加从给定潜变量的条件分布中抽取的噪声，生成一个观测数据点。
+
+对于最简单的连续潜变量模型（continuous latent-variable model），可以假设潜变量和观测变量都遵循高斯分布，并利用线性--高斯依赖性（linear-Gaussian dependence）来描述观测变量对潜变量状态的依赖。这引出了著名的主成分分析（Principal Component Analysis, PCA）概率公式，还有称为因子分析（factor analysis）的相关模型。本章首先介绍如何使用标准非概率方法来实现~PCA，随后揭示~PCA~如何自然而然地对应于线性--高斯潜变量模型的最大似然解（maximum likelihood solution）。这种概率化表述带来了许多优势，比如使用~EM~算法进行参数估计、规范化地扩展成~PCA~混合模型，以及通过贝叶斯公式自动从数据中确定主成分的数量。
+
+主成分分析已广泛应用于降维、有损数据压缩、特征提取和数据可视化等领域，它也称为~Kosambi--Karhunen--Lo\`eve~变换。考虑将一个数据集正交投影到一个低维的线性空间[即主子空间（principal subspace）]，如\cref{fig:ch16-principal-subspace}所示。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\textwidth]{ch16-fig16.2-principal-subspace.png}
+\caption{利用~PCA~寻求一个低维空间，称为主子空间（principal subspace），用洋红色线条表示，以使数据点（红色点）在主子空间中的正交投影能够最大化投影点（绿色点）的方差。PCA~的另一种定义是基于最小化投影误差平方和给出的，这些误差用蓝色线条表示。}
+\label{fig:ch16-principal-subspace}
+\end{figure}
+
+PCA~可以定义为最大化投影数据方差的线性投影（Hotelling, 1933）。同样，PCA~也可以定义为最小化平均投影代价的线性投影，平均投影代价则定义为数据点与其投影之间的均方距离（Pearson, 1901）。我们将依次学习这些定义。
+
+考虑一个观测数据集 $\{\bm{x}_n\}$，其中 $n=1,\cdots,N$，并且 $\bm{x}_n$ 是一个维度为 $D$ 的欧几里得变量。我们想要把数据投影到维度为 $M<D$ 的空间，同时最大化投影数据的方差。在开始之前，我们假设 $M$ 的值是给定的。
+
+\subsection{最大方差表述}\label{subsection:ch16-最大方差表述}
+
+首先考虑投影到一维空间（$M=1$）。我们可以使用一个 $D$ 维向量 $\bm{u}$ 来定义这个空间的方向。为了方便（且不失一般性），我们会选择单位向量，因此 $\bm{u}^{\mathsf T}\bm{u}=1$。然后将每个数据点 $\bm{x}_n$ 投影到一个标量值 $\bm{u}^{\mathsf T}\bm{x}_n$ 上。
+
+数据的平均值是 $\bar{\bm{x}}$，其中 $\bar{\bm{x}}$ 是样本集的平均值，由下式给出：
+\begin{align}
+\bar{\bm{x}}=\frac{1}{N}\sum_{n=1}^{N}\bm{x}_n.
+\label{align:ch16-mean}
+\end{align}
+
+投影数据的方差由下式给出：
+\begin{align}
+\frac{1}{N}\sum_{n=1}^{N}\left\{\bm{u}^{\mathsf T}(\bm{x}_n-\bar{\bm{x}})\right\}^2=\bm{u}^{\mathsf T}\bm{S}\bm{u}
+\label{align:ch16-proj-var}
+\end{align}
+其中 $\bm{S}$ 是数据协方差矩阵，定义为
+\begin{align}
+\bm{S}=\frac{1}{N}\sum_{n=1}^{N}(\bm{x}_n-\bar{\bm{x}})(\bm{x}_n-\bar{\bm{x}})^{\mathsf T}.
+\label{align:ch16-cov}
+\end{align}
+
+下面我们将投影数据的方差 $\bm{u}^{\mathsf T}\bm{S}\bm{u}$ 相对于 $\bm{u}$ 最大化。显然，这必须是一个受约束的最大化操作，以防止 $\|\bm{u}\|\rightarrow\infty$。适当的约束来源于归一化条件 $\bm{u}^{\mathsf T}\bm{u}=1$。为了强制执行这个约束，我们引入一个拉格朗日乘子 $\lambda$，并对下式进行无约束的最大化：
+\begin{align}
+\bm{u}^{\mathsf T}\bm{S}\bm{u}+\lambda(1-\bm{u}^{\mathsf T}\bm{u}).
+\label{align:ch16-lagrangian}
+\end{align}
+
+通过将式\eqref{align:ch16-lagrangian}对 $\bm{u}$ 的导数设为零，我们发现当以下条件满足时，目标函数将取驻点：
+\begin{align}
+\bm{S}\bm{u}=\lambda\bm{u}.
+\label{align:ch16-eigen}
+\end{align}
+
+这意味着 $\bm{u}$ 必须是 $\bm{S}$ 的一个特征向量。如果将式\eqref{align:ch16-eigen}左乘 $\bm{u}^{\mathsf T}$ 并利用归一化条件 $\bm{u}^{\mathsf T}\bm{u}=1$，可得方差为
+\begin{align}
+\bm{u}^{\mathsf T}\bm{S}\bm{u}=\lambda.
+\label{align:ch16-eigen-var}
+\end{align}
+
+因此，当我们将 $\bm{u}$ 设置为具有最大特征值 $\lambda$ 的特征向量时，方差将达到最大。这个特征向量称为第一主成分。
+
+我们可以通过逐步的方式定义更多的主成分，方法就是选取一个新方向，使其在所有与已考虑方向正交的方向中最大化投影后的方差。考虑 $M$ 维投影空间的一般情况，投影数据方差最大化的最优线性投影由数据协方差矩阵 $\bm{S}$ 对应于最大特征值 $\lambda_1,\cdots,\lambda_M$ 的 $M$ 个特征向量 $\bm{u}_1,\cdots,\bm{u}_M$ 定义（见习题~16.1）。
+
+综上，~PCA~涉及计算数据集的均值 $\bar{\bm{x}}$ 和数据协方差矩阵 $\bm{S}$，然后找到 $\bm{S}$ 对应于最大特征值的 $M$ 个特征向量。计算一个 $D\times D$ 矩阵的完整特征向量分解的计算成本是 $O(D^3)$。如果打算将数据投影到前 $M$ 个主成分上，则只需要找到前 $M$ 个特征值和特征向量。这可以通过使用更有效的方法来完成，比如幂方法（Golub and Van Loan, 1996），复杂度为 $O(MD^2)$，当然也可以使用~EM~算法。
+
+\subsection{最小误差表述}\label{subsection:ch16-最小误差表述}
+
+本小节讨论基于投影误差最小化的~PCA~的另一种表述。为此，引入一组 $D$ 维的完备正交规范的基向量 $\{\bm{u}_i\}$，其中 $i=1,\cdots,D$，它们满足
+\begin{align}
+\bm{u}_i^{\mathsf T}\bm{u}_j=\delta_{ij}.
+\label{align:ch16-orthonormal}
+\end{align}
+
+由于这组基向量是完备的，每个数据点都可以通过基向量的线性组合精确表示为
+\begin{align}
+\bm{x}_n=\sum_{i=1}^{D}a_{ni}\bm{u}_i
+\label{align:ch16-expansion}
+\end{align}
+其中系数 $a_{ni}$ 对于不同的数据点是不同的。这只是相当于将坐标系旋转到 $\{\bm{u}_i\}$ 定义的新系统，原始的 $D$ 个分量 $\{\bm{x}_{n1},\cdots,\bm{x}_{nD}\}$ 被等价的一组分量 $\{a_{n1},\cdots,a_{nD}\}$ 替代。与 $\bm{u}_i$ 内积并利用正交性质，可以得到 $a_{ni}=\bm{x}_n^{\mathsf T}\bm{u}_i$。
+
+不过，我们的目标是用一个较小的变量数 $M$（小于原始维度 $D$）来近似这个数据点，相当于将它投影到一个低维的子空间。这个 $M$ 维的线性子空间可以用前 $M$ 个基向量表示，这样我们就可以用这些基向量来近似每一个数据点 $\bm{x}_n$：
+\begin{align}
+\hat{\bm{x}}_n=\bar{\bm{x}}+\sum_{m=1}^{M}z_{nm}\bm{u}_m+\sum_{j=M+1}^{D}b_j\bm{u}_j
+\label{align:ch16-approx}
+\end{align}
+其中 $\{z_{nm}\}$ 依赖于特定的数据点，而 $\{b_j\}$ 是对所有数据点都相同的常数。我们可以自由选择 $\{\bm{u}_j\}$、$\{z_{nm}\}$ 和 $\{b_j\}$ 以最小化由维度降低引入的误差。
+
+作为误差度量，我们将使用原始数据点 $\bm{x}_n$ 与其近似值 $\hat{\bm{x}}_n$ 之间的平方距离，并在数据集上取平均，因此我们的目标是最小化
+\begin{align}
+J=\frac{1}{N}\sum_{n=1}^{N}\|\bm{x}_n-\hat{\bm{x}}_n\|^2.
+\label{align:ch16-recon-error}
+\end{align}
+
+首先考虑关于量 $\{z_{nm}\}$ 的最小化。将 $\hat{\bm{x}}_n$ 代入 $J$，将 $J$ 关于 $z_{nm}$ 的导数设为零，利用正交关系，我们得到
+\begin{align}
+z_{nm}=(\bm{x}_n-\bar{\bm{x}})^{\mathsf T}\bm{u}_m.
+\label{align:ch16-z}
+\end{align}
+类似地，将 $J$ 关于 $b_j$ 的导数设为零，并再次利用正交关系，得到
+\begin{align}
+b_j=\bar{\bm{x}}^{\mathsf T}\bm{u}_j.
+\label{align:ch16-b}
+\end{align}
+
+代入 $z_{nm}$ 和 $b_j$，并利用一般展开式，得到
+\begin{align}
+\bm{x}_n-\hat{\bm{x}}_n=\sum_{j=M+1}^{D}\{(\bm{x}_n-\bar{\bm{x}})^{\mathsf T}\bm{u}_j\}\bm{u}_j.
+\label{align:ch16-residual}
+\end{align}
+
+我们看到，从 $\bm{x}_n$ 到 $\hat{\bm{x}}_n$ 的位移向量位于主子空间的正交空间中，因为它是 $i=M+1,\cdots,D$ 的 $\bm{u}_i$ 的线性组合。这在预期之内，因为投影点 $\hat{\bm{x}}_n$ 必须位于主子空间内，但我们可以在这个子空间内自由移动它们，因此最小误差由正交投影给出。
+
+剩下的任务是调整 $\{\bm{u}_j\}$ 从而最小化 $J$，这也必须是一个受约束的最小化操作。误差度量 $J$ 作为纯粹依赖于 $\{\bm{u}_j\}$ 的函数的表达式如下：
+\begin{align}
+J=\frac{1}{N}\sum_{n=1}^{N}\|\sum_{j=M+1}^{D}\{(\bm{x}_n-\bar{\bm{x}})^{\mathsf T}\bm{u}_j\}\bm{u}_j\|^2=\sum_{j=M+1}^{D}\bm{u}_j^{\mathsf T}\bm{S}\bm{u}_j.
+\label{align:ch16-j-final}
+\end{align}
+
+针对任意 $D$ 和任意 $M<D$ 最小化 $J$ 的一般解，均可以选择 $\{\bm{u}_j\}$ 为协方差矩阵的特征向量，由下式给出：
+\begin{align}
+\bm{S}\bm{u}_i=\lambda_i\bm{u}_i
+\label{align:ch16-eigen-full}
+\end{align}
+其中 $i=1,\cdots,D$，并且像往常一样，特征向量选择为正交向量。然后，误差度量的相应值由下式给出：
+\begin{align}
+J=\sum_{i=M+1}^{D}\lambda_i.
+\label{align:ch16-j-min}
+\end{align}
+
+这仅仅是正交于主子空间的那些特征向量的特征值之和。因此，我们通过选择这些特征向量为具有 $D-M$ 个最小特征值的那些特征向量，得到了 $J$ 的最小值，定义主子空间的特征向量是对应于 $M$ 个最大特征值的那些特征向量。这个结果符合我们的直觉：为了最小化平均平方投影距离，应该选择主成分子空间，使其通过数据点的平均值并与最大方差的方向对齐。
+
+\subsection{数据压缩}\label{subsection:ch16-数据压缩}
+
+如果我们将式\eqref{align:ch16-z}和式\eqref{align:ch16-b}代入式\eqref{align:ch16-approx}，就可以将~PCA~近似数据向量 $\bm{x}_n$ 的形式写为
+\begin{align}
+\hat{\bm{x}}_n=\bar{\bm{x}}+\sum_{m=1}^{M}\{(\bm{x}_n-\bar{\bm{x}})^{\mathsf T}\bm{u}_m\}\bm{u}_m.
+\label{align:ch16-recon}
+\end{align}
+
+这代表了数据集的压缩，因为对于每个数据点，我们都会将 $D$ 维向量 $\bm{x}_n$ 替换为具有分量 $(\bm{x}_n-\bar{\bm{x}})^{\mathsf T}\bm{u}_m$ 的 $M$ 维向量。$M$ 值越小，压缩程度越大。
+
+PCA~的另一个应用是数据压缩，我们用手写数字图像数据集来举例。因为协方差矩阵的每个特征向量都是原始 $D$ 维空间中的向量，所以我们可以将特征向量表示成与数据点大小相同的图像。
+
+\subsection{数据白化}\label{subsection:ch16-数据白化}
+
+PCA~的另一个应用是数据预处理，其目标不是降低维度，而是转换数据集以标准化某些属性。变化后的数据集能更好地为机器学习算法服务。通常，当原始变量以不同的单位测量或具有显著不同的可变性时，就需要进行此类处理。
+
+将 $K$ 均值算法应用于这个数据集时，我们首先对各个变量进行了单独的线性重缩放，使得每个变量都具有零均值和单位方差。这称为标准化数据。
+
+利用~PCA，可以对数据进行更实质性的标准化，使其具有零均值和单位协方差，从而使不同的变量变得不相关。为此，首先将特征向量方程写成以下形式：
+\begin{align}
+\bm{S}\bm{U}=\bm{U}\bm{\Lambda}
+\label{align:ch16-eigen-decomp}
+\end{align}
+其中 $\bm{\Lambda}$ 是一个 $D\times D$ 的对角矩阵，矩阵元素为 $\lambda_i$；$\bm{U}$ 是一个 $D\times D$ 的正交矩阵，其列由 $\bm{u}_i$ 给出。然后我们定义，对于每个数据点 $\bm{x}_n$，转换后的值由下式给出：
+\begin{align}
+\bm{y}_n=\bm{\Lambda}^{-1/2}\bm{U}^{\mathsf T}(\bm{x}_n-\bar{\bm{x}}).
+\label{align:ch16-whiten}
+\end{align}
+
+显然，集合 $\{\bm{y}_n\}$ 具有零均值，并且其协方差由单位矩阵给出：
+\begin{align}
+\frac{1}{N}\sum_{n=1}^{N}\bm{y}_n\bm{y}_n^{\mathsf T}=\bm{\Lambda}^{-1/2}\bm{U}^{\mathsf T}\left[\frac{1}{N}\sum_{n}(\bm{x}_n-\bar{\bm{x}})(\bm{x}_n-\bar{\bm{x}})^{\mathsf T}\right]\bm{U}\bm{\Lambda}^{-1/2}=\bm{I}.
+\label{align:ch16-whiten-cov}
+\end{align}
+
+这个操作称为白化（whitening）或球化（sphering）数据。
+
+\subsection{高维数据}\label{subsection:ch16-高维数据}
+
+在~PCA~的某些应用中，数据点的数量小于数据空间的维度。例如，我们可能想对一个有几百张图像的数据集应用~PCA，其中的每个图像对应于潜在的几百万维空间中的一个向量（对应于图像中每个像素的三个颜色值）。注意，在 $D$ 维空间中，$N$ 个点的集合（$N<D$）定义了一个线性子空间，其维度最多为 $N-1$，因此当 $M$ 的值大于 $N-1$ 时，应用~PCA~没有多大意义。实际上，如果我们执行~PCA，就会发现至少有 $D-N+1$ 个特征值是零，在这些特征值对应的特征向量方向上，数据的方差为零。
+
+可以按照以下方式来解决这个问题。首先将 $\bm{X}$ 定义为 $N\times D$ 维的中心化数据矩阵，其第 $n$ 行由 $(\bm{x}_n-\bar{\bm{x}})^{\mathsf T}$ 给出。然后可以将协方差矩阵写作 $\bm{S}=N^{-1}\bm{X}^{\mathsf T}\bm{X}$，相应的特征向量方程变为
+\begin{align}
+\frac{1}{N}\bm{X}^{\mathsf T}\bm{X}\bm{u}=\lambda\bm{u}.
+\label{align:ch16-highdim-eigen}
+\end{align}
+
+如果定义 $\bm{v}=\bm{X}\bm{u}$，则可以得到
+\begin{align}
+\frac{1}{N}\bm{X}\bm{X}^{\mathsf T}\bm{v}=\lambda\bm{v}.
+\label{align:ch16-highdim-eigen2}
+\end{align}
+
+这是 $N\times N$ 矩阵 $N^{-1}\bm{X}\bm{X}^{\mathsf T}$ 的特征向量方程，它与原始协方差矩阵具有相同的 $N-1$ 个特征值（它本身还有额外的 $D-N+1$ 个特征值为零）。因此，我们可以在维度较低的空间中解决特征向量问题，计算成本为 $O(N^3)$ 而不是 $O(D^3)$。要确定特征向量，我们可以对式\eqref{align:ch16-highdim-eigen2}的两边乘以 $\bm{X}^{\mathsf T}$，得到
+\begin{align}
+\left(\frac{1}{N}\bm{X}^{\mathsf T}\bm{X}\right)(\bm{X}^{\mathsf T}\bm{v})=\lambda(\bm{X}^{\mathsf T}\bm{v})
+\label{align:ch16-highdim-back}
+\end{align}
+从中可以看出 $(\bm{X}^{\mathsf T}\bm{v})$ 是具有特征值 $\lambda$ 的 $\bm{S}$ 的特征向量。总之，要应用这种方法，我们需要首先计算 $\bm{X}\bm{X}^{\mathsf T}$，然后找到它的特征向量和特征值，最后使用式\eqref{align:ch16-highdim-back}在原始数据空间中计算特征向量。
+
+\end{document}

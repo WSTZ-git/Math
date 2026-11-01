@@ -1,0 +1,44 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{../../image/}{../../figure/}}
+\begin{document}
+
+\subsection{神经 ODE 流}\label{subsection:ch18-neural-ode-flow}
+
+我们可以利用神经 ODE 来定义一个旨在构建易处理的标准化流模型的替代方法。神经 ODE 定义了一个从输入向量 $z(0)$ 到输出向量 $z(T)$ 的高度灵活的转换，其形式为如下微分方程：
+\begin{align}
+\frac{\mathrm{d}z(t)}{\mathrm{d}t}=f\big(z(t),w\big)
+\label{align:ch18-flow-ode}
+\end{align}
+如果我们定义一个基于输入向量的基础分布 $p(z(0))$，神经 ODE 就会随时间向前传播，从而得到每个 $t$ 值的分布 $p(z(t))$，进而得到输出向量的分布 $p(z(T))$。有研究（Chen et al., 2018）指出，对于神经 ODE 来说，密度转换可以通过积分如下微分方程来计算（见习题 18.8）：
+\begin{align}
+\frac{\partial \log p\big(z(t)\big)}{\partial t}=-\operatorname{Tr}\left(\frac{\partial f\big(z(t),w\big)}{\partial z(t)}\right)
+\label{align:ch18-continuous-flow}
+\end{align}
+其中 $\partial f/\partial z(t)$ 表示雅可比矩阵，其元素为 $\partial f_i/\partial z_j$。这个积分操作可以使用标准 ODE 求解器来完成。同样，可以通过从基础分布 $p(z(0))$ 中采样来获得这个密度的样本，这个基础分布可以是一个简单的分布，如高斯分布，并支持使用 ODE 求解器再次积分 [式~\eqref{align:ch18-flow-ode}]，以便将值传播到输出。得到的框架称为\textbf{连续标准化流}（continuous normalizing flow），如图~\ref{fig:ch18-cnf} 所示。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\textwidth]{ch18-fig505-cnf.png}
+\caption{连续标准化流的示意图。这里展示了 $t=0$ 时刻的一个简单高斯分布是如何通过连续转换变成 $t=T$ 时刻的一个多峰分布的。当流线分开时，密度降低；当流线靠拢时，密度增加。}
+\label{fig:ch18-cnf}
+\end{figure}
+
+连续标准化流可以使用适用于神经 ODE 的伴随灵敏度方法进行训练，该方法可以看作反向传播的连续时间等价物（参见 18.3.1 小节）。
+
+由于式~\eqref{align:ch18-continuous-flow} 涉及雅可比矩阵的\textbf{迹}而不是行列式（行列式出现在离散标准化流中），它可能看起来更具计算效率。一般来说，计算一个 $D\times D$ 矩阵的行列式需要 $\mathcal{O}(D^3)$ 次运算，计算该矩阵的迹则需要 $\mathcal{O}(D^2)$ 次运算。然而，如果行列式是下三角的，正如许多标准化流所呈现的那样，则行列式是对角项的乘积，因此也需要 $\mathcal{O}(D)$ 次运算。由于计算雅可比矩阵的各个元素需要进行单独的前向传播，这本身需要 $\mathcal{O}(D)$ 次运算，因此计算矩阵的迹或行列式（对于一个下三角矩阵来说）总共需要 $\mathcal{O}(D^2)$ 的成本。
+
+然而，通过使用 Hutchinson 的迹估计器（Grathwohl et al., 2018），我们可以将计算迹的成本降低到 $\mathcal{O}(D)$。对于矩阵 $A$，迹的形式为
+\begin{align}
+\operatorname{Tr}(A)=\mathbb{E}\big[\epsilon^{\mathsf T}A\epsilon\big]
+\label{align:ch18-hutchinson}
+\end{align}
+其中 $\epsilon$ 是一个零均值、单位协方差的随机向量，例如高斯分布 $\mathcal{N}(0,I)$。对于一个特定的 $\epsilon$，矩阵--向量乘积 $A\epsilon$ 可以使用反向的自动微分在单次传递中高效计算。然后我们可以使用有限数量的样本来近似矩阵的迹，形式如下：
+\begin{align}
+\operatorname{Tr}(A)\approx\frac{1}{M}\sum_{m=1}^{M}\epsilon_m^{\mathsf T}A\epsilon_m
+\label{align:ch18-trace-approx}
+\end{align}
+实践中，我们可以设置 $M=1$ 并只使用一个样本对每个新的数据点进行求值。虽然这是一个有噪声的估计，但由于它是噪声随机梯度下降过程的一部分，这可能显得不太重要。重要的是，它是无偏的，这意味着估计器的期望等于真实值（参见习题 18.11）。
+
+通过使用一种名为\textbf{流匹配}（flow matching）的技术（参见第 20 章），可以显著提高连续标准化流的训练效率（Lipman et al., 2022）。这使得标准化流更接近于扩散模型，避免了在积分器中进行反向传播，同时大幅减少内存需求，实现了更快的推理和更稳定的训练。
+
+\end{document}

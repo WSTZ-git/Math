@@ -1,0 +1,682 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}}
+
+\begin{document}
+
+\section{收敛性}\label{section:ch05-收敛性}
+
+从下节开始，我们将把在 Bernoulli 试验场合建立的极限定理推广到更为一般的场合，本节为此准备必要的概念与工具。
+
+从上节的讨论中我们已经看到，概率论的极限定理研究的是随机变量序列与分布函数序列的某种收敛性，下面我们将给这些收敛性以明确定义并讨论它们的有关性质。这些结果对于深入研究概率论也有着独自的重要性。
+
+特征函数是研究极限定理的有力工具，从上章的讨论中我们已经知道，它与分布函数互相唯一确定，本节中我们将证明这种对应还具有某种连续性，这些性质决定了特征函数在极限定理研究中的特殊地位。顺便还得到特征函数的充要条件，这个结果在平稳随机过程的研究中有基本的重要性。本节定理的证明都较长，初学时可以略去，后面用到的是结论。
+
+\subsection*{一、分布函数弱收敛}
+
+中心极限定理讨论的是分布函数列收敛于正态分布。事实上，在 De Moivre--Laplace 积分极限定理中，若记
+\begin{align*}
+F_n(x)=P\!\left\{\frac{\mu_n-np}{\sqrt{npq}}<x\right\},
+\end{align*}
+则定理的结论可以表述为
+\begin{align*}
+F_n(x)\to\Phi(x).
+\end{align*}
+这正是一个分布函数列 $\{F_n(x)\}$ 收敛于某一个分布函数 $\Phi(x)$，这种收敛对每一点 $x$ 都成立。
+
+这个考察对于我们引进一般分布函数列的收敛性定义很有帮助，在给出定义前，我们再来看一个例子。
+
+\begin{example}\label{example:ch05-退化分布逼近1}
+令
+\begin{align}
+F_n(x)=
+\begin{cases}
+0,&x\leqslant-\dfrac1n,\\
+1,&x>-\dfrac1n,
+\end{cases}
+\end{align}
+这是一个退化分布，它可以解释为一个单位质量全部集中在 $x=-\dfrac1n$ 这一点的分布。当 $n\to\infty$ 时，我们自然认为 $\{F_n(x)\}$ 应该收敛于一个单位质量全部集中在 $x=0$ 这一点的分布，即
+\begin{align*}
+F(x)=
+\begin{cases}
+0,&x\leqslant0,\\
+1,&x>0.
+\end{cases}
+\end{align*}
+但是，$F_n(0)\equiv1$，而 $F(0)=0$，显然，$F_n(0)\not\to F(0)$。因此看来要求分布函数列在所有的点都收敛到极限分布函数是太严了。上例中不收敛的点是极限分布函数 $F(x)$ 的不连续点。
+\end{example}
+
+\begin{definition}[分布函数弱收敛]\label{definition:ch05-分布函数弱收敛}
+对于分布函数列 $\{F_n(x)\}$，如果存在一个非降函数 $F(x)$ 使
+\begin{align}
+\lim_{n\to\infty}F_n(x)=F(x)
+\end{align}
+在 $F(x)$ 的每一连续点上都成立，则称 $F_n(x)$ \textbf{弱收敛}于 $F(x)$，并记为 $F_n(x)\xrightarrow{W}F(x)$。
+\end{definition}
+
+这样得到的极限函数是一个有界的非降的函数，我们也可以选得它是左连续的，但是下例说明，它不一定是一个分布函数。
+
+\begin{example}\label{example:ch05-退化分布逼近2}
+取
+\begin{align}
+F_n(x)=
+\begin{cases}
+0,&x\leqslant n,\\
+1,&x>n.
+\end{cases}
+\end{align}
+显然 $\lim_{n\to\infty}F_n(x)=0$ 对一切 $x$ 成立，但 $F(x)\equiv0$ 不是分布函数。
+\end{example}
+
+当然，若已知分布函数列 $\{F_n(x)\}$ 弱收敛于分布函数 $F(x)$ 及 $G(x)$，则 $F(x)=G(x)$ 对一切 $x$ 成立。
+
+我们希望能得到一个分布函数列弱收敛于一个分布函数的充要条件，为此先建立一些重要的分析结果，这些结果对一般的有界非降函数列都成立，它们的弱收敛概念类似地定义。
+
+\begin{lemma}\label{lemma:ch05-稠密集收敛}
+设 $\{F_n(x)\}$ 是实变量 $x$ 的非降函数列，$D$ 是 $\mathbf{R}^{1}$ 上的稠密集。若对于 $D$ 中的所有点，序列 $\{F_n(x)\}$ 收敛于 $F(x)$，则对 $F(x)$ 的一切连续点 $x$ 有
+\begin{align}
+\lim_{n\to\infty}F_n(x)=F(x).
+\end{align}
+\end{lemma}
+
+\begin{proof}
+设 $x$ 是任意点，选 $x'\in D$，$x''\in D$，使 $x'\leqslant x\leqslant x''$，由非降性知
+\begin{align*}
+F_n(x')\leqslant F_n(x)\leqslant F_n(x'').
+\end{align*}
+因此
+\begin{align*}
+F(x')\leqslant\varliminf_{n\to\infty}F_n(x)\leqslant\varlimsup_{n\to\infty}F_n(x)\leqslant F(x'').
+\end{align*}
+因为 $D$ 在 $\mathbf{R}^{1}$ 上稠密，故
+\begin{align*}
+F(x-0)\leqslant\varliminf_{n\to\infty}F_n(x)\leqslant\varlimsup_{n\to\infty}F_n(x)\leqslant F(x+0).
+\end{align*}
+所以对于 $F(x)$ 的连续点 $x$，成立\cref{lemma:ch05-稠密集收敛}。
+\end{proof}
+
+下面证明 Helly（1884—1943）的两个重要定理。
+
+\begin{theorem}[Helly 第一定理]\label{theorem:ch05-Helly第一定理}
+任一致有界的非降函数列 $\{F_n(x)\}$ 中必有一子序列 $\{F_{n_k}(x)\}$ 弱收敛于某一有界的非降函数 $F(x)$。
+\end{theorem}
+
+\begin{proof}
+任取 $\mathbf{R}^{1}$ 上的一个到处稠密的可数点集 $D$，下面我们就取有理数全体，并排列为 $r_1,r_2,\cdots,r_m,\cdots$。对于序列 $\{F_n(r_1)\}$，这是一个有界的实数序列，故必包含一收敛于某极限 $G(r_1)$ 的子序列 $\{F_{1,n}(r_1)\}$，即
+\begin{align*}
+\lim_{n\to\infty}F_{1,n}(r_1)=G(r_1).
+\end{align*}
+现在考虑序列 $\{F_{1,n}(r_2)\}$，同样由于有界性，在其中存在子序列 $\{F_{2,n}(r_2)\}$ 收敛于某一值 $G(r_2)$。这时，同时成立着
+\begin{align*}
+\lim_{n\to\infty}F_{2,n}(r_1)=G(r_1),\qquad \lim_{n\to\infty}F_{2,n}(r_2)=G(r_2).
+\end{align*}
+继续这样做，可得序列 $\{F_{m,n}(x)\}$，使
+\begin{align}
+\lim_{n\to\infty}F_{m,n}(r_k)=G(r_k),\qquad k=1,2,\cdots,m
+\end{align}
+同时成立。
+
+这样，我们得到了 $\{F_n(x)\}$ 的如下子序列
+\begin{align*}
+&F_{1,1}(x),\ F_{1,2}(x),\ F_{1,3}(x),\ \cdots,\ F_{1,n}(x),\ \cdots\\
+&F_{2,1}(x),\ F_{2,2}(x),\ F_{2,3}(x),\ \cdots,\ F_{2,n}(x),\ \cdots\\
+&\qquad\cdots\cdots\cdots\cdots\\
+&F_{m,1}(x),\ F_{m,2}(x),\ F_{m,3}(x),\ \cdots,\ F_{m,n}(x),\ \cdots\\
+&\qquad\cdots\cdots\cdots\cdots
+\end{align*}
+这里每行都是前一行的子序列，而且它们具有\cref{theorem:ch05-Helly第一定理}的性质。选取这个阵列的对角线元素 $F_{n,n}(x)$ 构成新序列 $\{F_{n,n}(x)\}$，由于它是从 $\{F_{1,n}(x)\}$ 分出来的，故 $\lim_{n\to\infty}F_{n,n}(r_1)=G(r_1)$。其次，除第一项外，它是由 $\{F_{2,n}(x)\}$ 分出来的，故 $\lim_{n\to\infty}F_{n,n}(r_2)=G(r_2)$。一般地，对任何固定的 $k$，皆有 $\lim_{n\to\infty}F_{n,n}(r_k)=G(r_k)$，因此对一切有理数 $r$，
+\begin{align}
+\lim_{n\to\infty}F_{n,n}(r)=G(r)
+\end{align}
+这里的 $G(r)$ 是定义在有理数上的函数，它也是有界与非降的。
+
+对一切 $x\in\mathbf{R}^{1}$，定义
+\begin{align*}
+F(x)=\sup_{r_k\leqslant x}G(r_k).
+\end{align*}
+这函数在一切有理数上与 $G(x)$ 相等，它显然也是有界与非降的。
+
+由\cref{lemma:ch05-稠密集收敛}知
+\begin{align}
+\lim_{n\to\infty}F_{n,n}(x)=F(x)
+\end{align}
+对 $F(x)$ 的一切连续点成立，这就证明了\cref{theorem:ch05-Helly第一定理}。通常形象地称这个定理的证明方法为对角线法。
+
+极限函数 $F(x)$ 不一定左连续，但总可以改变它不连续点上的值使之左连续，这样的改变显然不影响上述极限等式的成立。
+\end{proof}
+
+\begin{theorem}[Helly 第二定理]\label{theorem:ch05-Helly第二定理}
+设 $f(x)$ 是 $[a,b]$ 上的连续函数，又 $\{F_n(x)\}$ 是在 $[a,b]$ 上弱收敛于函数 $F(x)$ 的一致有界非降函数序列，且 $a$ 和 $b$ 是 $F(x)$ 的连续点，则
+\begin{align}
+\lim_{n\to\infty}\int_{a}^{b}f(x)\,\mathrm{d}F_n(x)=\int_{a}^{b}f(x)\,\mathrm{d}F(x).
+\end{align}
+\end{theorem}
+
+\begin{proof}
+由函数 $f(x)$ 的连续性推知，对任意正数 $\varepsilon$，总可以找到一种分割，把区间 $[a,b]$ 分为 $[x_0,x_1],[x_1,x_2],\cdots,[x_{N-1},x_N]$（其中 $x_0=a$，$x_N=b$）等 $N$ 个小区间，使得当 $x\in[x_k,x_{k+1}]$ 时，$|f(x)-f(x_k)|<\varepsilon$。利用这种情况，我们能导入一个辅助函数 $f_\varepsilon(x)$，它只取有限个值，并且当 $x_k<x<x_{k+1}$ 时，$f_\varepsilon(x)=f(x_k)$。
+
+这样显然对 $a\leqslant x\leqslant b$ 的一切 $x$ 皆有不等式
+\begin{align}
+|f(x)-f_\varepsilon(x)|<\varepsilon.
+\end{align}
+在此我们可预先选取分点 $x_1,x_2,\cdots,x_{N-1}$，使它们是 $F(x)$ 的连续点。因为 $\{F_n(x)\}$ 弱收敛于 $F(x)$，故当 $n$ 充分大时，在此 $N-1$ 个分点及 $x_0,x_N$ 上成立不等式
+\begin{align}
+|F(x_k)-F_n(x_k)|<\frac{\varepsilon}{MN},
+\end{align}
+这里 $M$ 是 $|f(x)|$ 在区间 $a\leqslant x\leqslant b$ 中的最大值。显然，
+\begin{align}
+\left|\int_{a}^{b}f(x)\,\mathrm{d}F(x)-\int_{a}^{b}f(x)\,\mathrm{d}F_n(x)\right|
+&\leqslant\left|\int_{a}^{b}f(x)\,\mathrm{d}F(x)-\int_{a}^{b}f_\varepsilon(x)\,\mathrm{d}F(x)\right|\notag\\
+&\quad+\left|\int_{a}^{b}f_\varepsilon(x)\,\mathrm{d}F(x)-\int_{a}^{b}f_\varepsilon(x)\,\mathrm{d}F_n(x)\right|\notag\\
+&\quad+\left|\int_{a}^{b}f_\varepsilon(x)\,\mathrm{d}F_n(x)-\int_{a}^{b}f(x)\,\mathrm{d}F_n(x)\right|.
+\end{align}
+由于辅助函数逼近式，
+\begin{align}
+\left|\int_{a}^{b}f(x)\,\mathrm{d}F(x)-\int_{a}^{b}f_\varepsilon(x)\,\mathrm{d}F(x)\right|\leqslant\varepsilon[F(b)-F(a)],
+\end{align}
+\begin{align}
+\left|\int_{a}^{b}f_\varepsilon(x)\,\mathrm{d}F_n(x)-\int_{a}^{b}f(x)\,\mathrm{d}F_n(x)\right|\leqslant\varepsilon[F_n(b)-F_n(a)].
+\end{align}
+而由辅助函数逼近式及分点逼近式可知
+\begin{align}
+&\left|\int_{a}^{b}f_\varepsilon(x)\,\mathrm{d}F(x)-\int_{a}^{b}f_\varepsilon(x)\,\mathrm{d}F_n(x)\right|\notag\\
+&\quad=\left|\sum_{k=0}^{N-1}f(x_k)[F(x_{k+1})-F(x_k)]-\sum_{k=0}^{N-1}f(x_k)[F_n(x_{k+1})-F_n(x_k)]\right|\notag\\
+&\quad=\left|\sum_{k=0}^{N-1}f(x_k)[F(x_{k+1})-F_n(x_{k+1})]-\sum_{k=0}^{N-1}f(x_k)[F(x_k)-F_n(x_k)]\right|\notag\\
+&\quad\leqslant N\left(M\frac{\varepsilon}{MN}+M\frac{\varepsilon}{MN}\right)=2\varepsilon.
+\end{align}
+因此
+\begin{align*}
+\left|\int_{a}^{b}f(x)\,\mathrm{d}F(x)-\int_{a}^{b}f(x)\,\mathrm{d}F_n(x)\right|
+\leqslant\varepsilon[F(b)-F(a)]+\varepsilon[F_n(b)-F_n(a)]+2\varepsilon.
+\end{align*}
+由于 $\{F_n(x)\}$ 的一致有界性，上式右边可以任意小，故定理得证。
+\end{proof}
+
+\begin{theorem}[拓广的 Helly 第二定理]\label{theorem:ch05-拓广Helly第二定理}
+设 $f(x)$ 在 $(-\infty,\infty)$ 上有界连续，又 $\{F_n(x)\}$ 是 $(-\infty,\infty)$ 上弱收敛于函数 $F(x)$ 的一致有界非降函数序列，且
+\begin{align*}
+\lim_{n\to\infty}F_n(-\infty)=F(-\infty),\qquad \lim_{n\to\infty}F_n(\infty)=F(\infty),
+\end{align*}
+则
+\begin{align*}
+\lim_{n\to\infty}\int_{-\infty}^{\infty}f(x)\,\mathrm{d}F_n(x)=\int_{-\infty}^{\infty}f(x)\,\mathrm{d}F(x).
+\end{align*}
+\end{theorem}
+
+\begin{proof}
+设 $A<0$，$B>0$，令
+\begin{align*}
+J_1&=\left|\int_{-\infty}^{A}f(x)\,\mathrm{d}F_n(x)-\int_{-\infty}^{A}f(x)\,\mathrm{d}F(x)\right|,\\
+J_2&=\left|\int_{A}^{B}f(x)\,\mathrm{d}F_n(x)-\int_{A}^{B}f(x)\,\mathrm{d}F(x)\right|,\\
+J_3&=\left|\int_{B}^{\infty}f(x)\,\mathrm{d}F_n(x)-\int_{B}^{\infty}f(x)\,\mathrm{d}F(x)\right|.
+\end{align*}
+显然
+\begin{align*}
+\left|\int_{-\infty}^{\infty}f(x)\,\mathrm{d}F_n(x)-\int_{-\infty}^{\infty}f(x)\,\mathrm{d}F(x)\right|\leqslant J_1+J_2+J_3.
+\end{align*}
+
+由于 $f(x)$ 是有界的，存在常数 $M>0$，使 $|f(x)|<M$。又由于序列 $\{F_n(x)\}$ 的一致有界性，只要 $A$ 与 $B$ 的绝对值充分大，并使 $A$ 和 $B$ 是 $F(x)$ 的连续点，而 $n$ 也取得充分大，则可使 $J_1,J_3$ 小到预先给定的程度。事实上
+\begin{align*}
+J_1&\leqslant\left|\int_{-\infty}^{A}f(x)\,\mathrm{d}F(x)\right|+\left|\int_{-\infty}^{A}f(x)\,\mathrm{d}F_n(x)\right|\\
+&\leqslant M[F(A)-F(-\infty)]+M|F_n(A)-F_n(-\infty)|\\
+&\leqslant M[F(A)-F(-\infty)]+M\bigl[|F_n(A)-F(A)|+|F(A)-F(-\infty)|+|F(-\infty)-F_n(-\infty)|\bigr].
+\end{align*}
+而按假定有
+\begin{align*}
+\lim_{n\to\infty}F_n(A)=F(A),\qquad \lim_{n\to\infty}F_n(-\infty)=F(-\infty),
+\end{align*}
+故当 $A$ 绝对值充分大时，$J_1$ 可以任意小。
+
+对 $J_3$ 作对应的处理，则当 $B$ 充分大，并注意到
+\begin{align*}
+\lim_{n\to\infty}F_n(B)=F(B),\qquad \lim_{n\to\infty}F_n(+\infty)=F(+\infty),
+\end{align*}
+$J_3$ 也可以任意小。再根据\cref{theorem:ch05-Helly第二定理}，只要 $n$ 充分大，也可使 $J_2$ 任意小，从而证得了定理。
+\end{proof}
+
+\subsection*{二、连续性定理}
+
+下面我们将导出一个分布函数列弱收敛到一个极限分布的充要条件，这个结果同时说明了存在于分布函数与特征函数之间的一一对应是连续的，这个性质对于特征函数成为研究一些概率论极限定理的主要工具有基本的重要性。
+
+\begin{theorem}[正极限定理]\label{theorem:ch05-正极限定理}
+设分布函数列 $\{F_n(x)\}$ 弱收敛于某一分布函数 $F(x)$，则相应的特征函数列 $\{f_n(t)\}$ 收敛于特征函数 $f(t)$，且在 $t$ 的任一有限区间内收敛是一致的。
+\end{theorem}
+
+\begin{proof}
+函数 $\mathrm{e}^{\mathrm{i}tx}$ 在 $-\infty<x<\infty$ 上有界连续，而
+\begin{align*}
+f_n(t)=\int_{-\infty}^{\infty}\mathrm{e}^{\mathrm{i}tx}\,\mathrm{d}F_n(x),\qquad
+f(t)=\int_{-\infty}^{\infty}\mathrm{e}^{\mathrm{i}tx}\,\mathrm{d}F(x).
+\end{align*}
+因此由拓广的 Helly 第二定理即知当 $n\to\infty$ 时，有
+\begin{align*}
+f_n(t)\to f(t).
+\end{align*}
+至于在 $t$ 的每一有限区间内收敛的一致性（均匀性），由拓广的 Helly 第二定理的证明就可看出。
+\end{proof}
+
+\begin{theorem}[逆极限定理]\label{theorem:ch05-逆极限定理}
+设特征函数列 $\{f_n(t)\}$ 收敛于某一函数 $f(t)$，且 $f(t)$ 在 $t=0$ 连续，则相应的分布函数列 $\{F_n(x)\}$ 弱收敛于某一分布函数 $F(x)$，而且 $f(t)$ 是 $F(x)$ 的特征函数。
+\end{theorem}
+
+\begin{proof}
+由\cref{theorem:ch05-Helly第一定理}，知必存在子序列 $\{F_{n_k}(x)\}$ 弱收敛于某一非降函数 $F(x)$，且 $F(x)$ 可视为左连续的。极限函数 $F(x)$ 显然满足 $F(-\infty)\geqslant0$，$F(\infty)\leqslant1$，我们来证明 $F(x)$ 是分布函数。否则，应有
+\begin{align}
+\delta=F(\infty)-F(-\infty)<1.
+\end{align}
+
+任取一正数 $\varepsilon<1-\delta$。因 $f(t)$ 是特征函数列的极限，故 $f(0)=1$。由于 $f(t)$ 在 $t=0$ 是连续的，故可选取充分小的正数 $\tau$，使
+\begin{align}
+\frac{1}{2\tau}\left|\int_{-\tau}^{\tau}f(t)\,\mathrm{d}t\right|>1-\frac{\varepsilon}{2}>\delta+\frac{\varepsilon}{2}.
+\end{align}
+同时选取 $X\geqslant\dfrac{4}{\tau\varepsilon}$ 及 $K$，使 $k\geqslant K$ 时，
+\begin{align*}
+\delta_k=F_{n_k}(X)-F_{n_k}(-X)\leqslant\delta+\frac{\varepsilon}{4}.
+\end{align*}
+又因 $f_{n_k}(t)$ 是特征函数，那么
+\begin{align}
+\int_{-\tau}^{\tau}f_{n_k}(t)\,\mathrm{d}t=\int_{-\infty}^{\infty}\left[\int_{-\tau}^{\tau}\mathrm{e}^{\mathrm{i}tx}\,\mathrm{d}t\right]\mathrm{d}F_{n_k}(x).
+\end{align}
+显然
+\begin{align*}
+\left|\int_{-\tau}^{\tau}\mathrm{e}^{\mathrm{i}tx}\,\mathrm{d}t\right|\leqslant 2\tau,
+\end{align*}
+还有，在 $|x|>X$ 时，
+\begin{align}
+\left|\int_{-\tau}^{\tau}\mathrm{e}^{\mathrm{i}tx}\,\mathrm{d}t\right|=\left|\frac{2}{x}\sin\tau x\right|<\frac{2}{X}.
+\end{align}
+因此
+\begin{align*}
+\left|\int_{-\tau}^{\tau}f_{n_k}(t)\,\mathrm{d}t\right|
+&\leqslant\left|\int_{|x|\leqslant X}\left(\int_{-\tau}^{\tau}\mathrm{e}^{\mathrm{i}tx}\,\mathrm{d}t\right)\mathrm{d}F_{n_k}(x)\right|
++\left|\int_{|x|>X}\left(\int_{-\tau}^{\tau}\mathrm{e}^{\mathrm{i}tx}\,\mathrm{d}t\right)\mathrm{d}F_{n_k}(x)\right|\\
+&<2\tau\delta_k+\frac{2}{X}.
+\end{align*}
+所以
+\begin{align*}
+\frac{1}{2\tau}\left|\int_{-\tau}^{\tau}f_{n_k}(t)\,\mathrm{d}t\right|\leqslant\delta_k+\frac{1}{X\tau}\leqslant\delta+\frac{\varepsilon}{2}.
+\end{align*}
+令 $k\to\infty$，由控制收敛定理知
+\begin{align*}
+\frac{1}{2\tau}\left|\int_{-\tau}^{\tau}f(t)\,\mathrm{d}t\right|\leqslant\delta+\frac{\varepsilon}{2}.
+\end{align*}
+这与前述不等式矛盾，因此 $\delta<1$ 不成立，也即应有
+\begin{align*}
+F(-\infty)=0,\qquad F(\infty)=1.
+\end{align*}
+因而 $F(x)$ 是分布函数。再由\cref{theorem:ch05-正极限定理}推知 $f(t)$ 是 $F(x)$ 的特征函数。
+
+进而证明 $\{F_n(x)\}$ 也弱收敛于同一分布函数 $F(x)$。如其不然，一定存在 $F(x)$ 的一个连续点 $x_0$ 使 $\{F_n(x_0)\}$ 不收敛于 $F(x_0)$。这时可从 $\{F_n(x_0)\}$ 中选取一个收敛的子序列 $\{F_{m_k}(x_0)\}$，其极限 $F^*(x_0)\neq F(x_0)$。根据\cref{theorem:ch05-Helly第一定理}，一定可以选取 $\{F_{m_k}(x)\}$ 的一个子序列 $\{F_{m_{k_j}}(x)\}$ 弱收敛于某一有界的非降函数 $F^*(x)$，这个极限函数至少在 $x_0$ 点与 $F(x)$ 不相等。但重复前面的论证可知 $F^*(x)$ 亦应是分布函数，其对应的特征函数也是 $f(t)$，由唯一性定理，我们又有 $F^*(x)=F(x)$，引出了矛盾。故 $\{F_n(x)\}$ 弱收敛于 $F(x)$，于是证得定理。
+\end{proof}
+
+在逆极限定理中，若保留``特征函数列 $\{f_n(t)\}$ 收敛于某一函数 $f(t)$''的要求，而把``$f(t)$ 在 $t=0$ 连续''的要求改成``特征函数列 $\{f_n(t)\}$ 在包含原点的某一区间中一致收敛于函数 $f(t)$''，则定理的结论仍然成立。这是因为由一致收敛性及 $f_n(t)$ 在原点的连续性可以推知 $f(t)$ 在原点的连续性。通常把``特征函数列 $\{f_n(t)\}$ 在 $(-\infty,\infty)$ 上的任一有限闭区间中都一致收敛于一个函数 $f(t)$''简称为``$\{f_n(t)\}$ 内闭匀敛于 $f(t)$''，这样我们就可以把分布函数列 $\{F_n(x)\}$ 弱收敛于某一分布函数的充要条件简述为：它相应的特征函数列 $\{f_n(t)\}$ 内闭匀敛于某一函数 $f(t)$。
+
+通常把正逆极限定理合称\textbf{连续性定理}，因为它们表述了分布函数与特征函数一一对应关系的``连续性''。这定理最先由法国数学家 Lévy（1886—1972）及瑞典数学家 Cramér（1893—1985）证得，因此又称\textbf{Lévy--Cramér 定理}。
+
+\subsection*{三、随机变量的收敛性}
+
+概率论中的极限定理研究的是随机变量序列的某种收敛性，对随机变量收敛性的不同定义将导出不同的极限定理，而随机变量的收敛性的确可以有各种不同的定义，现在就来讨论这个问题。
+
+首先，分布函数弱收敛的讨论启发我们引进如下定义。
+
+\begin{definition}[依分布收敛]\label{definition:ch05-依分布收敛}
+设随机变量 $\xi_n(\omega)$、$\xi(\omega)$ 的分布函数分别为 $F_n(x)$ 及 $F(x)$，如果 $F_n(x)\xrightarrow{W}F(x)$，则称 $\{\xi_n(\omega)\}$ \textbf{依分布收敛}（convergence in distribution）于 $\xi(\omega)$，并记为 $\xi_n(\omega)\xrightarrow{L}\xi(\omega)$。
+\end{definition}
+
+其次，由 Bernoulli 大数定律，我们很自然地引进下面的定义。
+
+\begin{definition}[依概率收敛]\label{definition:ch05-依概率收敛}
+如果
+\begin{align}
+\lim_{n\to\infty}P\{|\xi_n(\omega)-\xi(\omega)|\geqslant\varepsilon\}=0
+\end{align}
+对任意的 $\varepsilon>0$ 成立，则称 $\{\xi_n(\omega)\}$ \textbf{依概率收敛}（convergence in probability）于 $\xi(\omega)$，并记为 $\xi_n(\omega)\xrightarrow{P}\xi(\omega)$。
+\end{definition}
+
+这样一来，Bernoulli 大数定律可以重新叙述如下：
+
+设 $\mu_n$ 是 $n$ 次独立试验中事件 $A$ 出现的次数，而 $p$ 是事件 $A$ 在每次试验中出现的概率，则频率 $\dfrac{\mu_n}{n}$ 依概率收敛于概率 $p$。
+
+上述两种收敛性之间的关系可以从下面定理中看到，这也说明了随机变量序列依概率收敛性的重要性。
+
+\begin{theorem}[依概率收敛与依分布收敛的关系]\label{theorem:ch05-依概率收敛与依分布收敛关系}
+$\xi_n\xrightarrow{P}\xi\Rightarrow\xi_n\xrightarrow{L}\xi$。
+\end{theorem}
+
+\begin{proof}
+因为，对 $x'<x$ 有
+\begin{align*}
+\{\xi<x'\}=\{\xi_n<x,\xi<x'\}+\{\xi_n\geqslant x,\xi<x'\}
+\subset\{\xi_n<x\}+\{\xi_n\geqslant x,\xi<x'\},
+\end{align*}
+所以我们有
+\begin{align*}
+F(x')\leqslant F_n(x)+P\{\xi_n\geqslant x,\xi<x'\}.
+\end{align*}
+如果 $\{\xi_n\}$ 依概率收敛于 $\xi$，则
+\begin{align*}
+P\{\xi_n\geqslant x,\xi<x'\}\leqslant P\{|\xi_n-\xi|\geqslant x-x'\}\to0,
+\end{align*}
+因而有
+\begin{align*}
+F(x')\leqslant\varliminf_{n\to\infty}F_n(x).
+\end{align*}
+同理可证，对 $x''>x$，成立
+\begin{align*}
+\varlimsup_{n\to\infty}F_n(x)\leqslant F(x'').
+\end{align*}
+所以对 $x'<x<x''$，有
+\begin{align*}
+F(x')\leqslant\varliminf_{n\to\infty}F_n(x)\leqslant\varlimsup_{n\to\infty}F_n(x)\leqslant F(x'').
+\end{align*}
+如果 $x$ 是 $F(x)$ 的连续点，则令 $x',x''$ 趋于 $x$ 可得
+\begin{align*}
+F(x)=\lim_{n\to\infty}F_n(x).
+\end{align*}
+定理证毕。
+\end{proof}
+
+由于不同的随机变量可以对应于同一分布函数，因此一般地讲，由分布函数列的收敛性当然推不出随机变量序列的其他收敛性。试看下例。
+
+\begin{example}\label{example:ch05-依分布不依概率反例}
+若样本空间 $\Omega=\{\omega_1,\omega_2\}$，$P(\omega_1)=P(\omega_2)=\dfrac12$，定义随机变量 $\xi(\omega)$ 如下：$\xi(\omega_1)=-1$，$\xi(\omega_2)=1$，则 $\xi(\omega)$ 的分布列为
+\begin{align*}
+\begin{array}{c|cc}
+\xi&-1&1\\ \hline
+P&\dfrac12&\dfrac12
+\end{array}
+\end{align*}
+若对一切 $n$，令 $\xi_n(\omega)=-\xi(\omega)$，显然 $\xi_n(\omega)$ 的分布列也是上式，因此 $\xi_n(\omega)\xrightarrow{L}\xi(\omega)$。但是对任意的 $0<\varepsilon<2$，
+\begin{align*}
+P\{|\xi_n(\omega)-\xi(\omega)|>\varepsilon\}=P\{\Omega\}=1.
+\end{align*}
+因此 $\{\xi_n(\omega)\}$ 不依概率收敛于 $\xi(\omega)$，这为\cref{theorem:ch05-依概率收敛与依分布收敛关系}之逆提供了反例。
+
+进一步，若令 $\xi_{2n}(\omega)=\xi(\omega)$，$\xi_{2n+1}(\omega)=-\xi(\omega)$，则 $\xi_n(\omega)\xrightarrow{L}\xi(\omega)$ 依然成立，但此时对随机变量序列 $\{\xi_n(\omega)\}$ 实在很难有其他的收敛性可言。
+\end{example}
+
+但是，在特殊场合却有下面结果。
+
+\begin{theorem}\label{theorem:ch05-收敛于常数等价}
+设 $C$ 是常数，则 $\xi_n\xrightarrow{P}C\Leftrightarrow\xi_n\xrightarrow{L}C$。
+\end{theorem}
+
+\begin{proof}
+由\cref{theorem:ch05-依概率收敛与依分布收敛关系}可知只须证明由依分布收敛于常数可推出依概率收敛于常数。事实上，对任意的 $\varepsilon>0$，
+\begin{align*}
+P\{|\xi_n-C|\geqslant\varepsilon\}=P\{\xi_n\geqslant C+\varepsilon\}+P\{\xi_n\leqslant C-\varepsilon\}
+=1-F_n(C+\varepsilon)+F_n(C-\varepsilon+0)\to 1-1+0=0\qquad(n\to\infty).
+\end{align*}
+因为有的大数定律是讨论随机变量序列收敛于常数的，这时将用到上述结果。
+\end{proof}
+
+仔细考察上节关于大数定律的证明，有助于理解下面关于随机变量收敛性的第三种定义。
+
+\begin{definition}[$r$ 阶收敛]\label{definition:ch05-r阶收敛}
+设对随机变量 $\xi_n$ 及 $\xi$ 有 $\boldsymbol{E}|\xi_n|^{r}<\infty$，$\boldsymbol{E}|\xi|^{r}<\infty$，其中 $r>0$ 为常数，如果
+\begin{align}
+\lim_{n\to\infty}\boldsymbol{E}|\xi_n-\xi|^{r}=0
+\end{align}
+则称 $\{\xi_n\}$ $r$ 阶收敛（convergence in $r$-order mean）于 $\xi$，并记为 $\xi_n\xrightarrow{r}\xi$。
+\end{definition}
+
+下面定理揭示了 $r$ 阶收敛与依概率收敛的关系。
+
+\begin{theorem}\label{theorem:ch05-r阶收敛推依概率}
+$\xi_n\xrightarrow{r}\xi\Rightarrow\xi_n\xrightarrow{P}\xi$。
+\end{theorem}
+
+\begin{proof}
+先证对于任意 $\varepsilon>0$，成立
+\begin{align}
+P\{|\xi_n-\xi|\geqslant\varepsilon\}\leqslant\frac{\boldsymbol{E}|\xi_n-\xi|^{r}}{\varepsilon^{r}}.
+\end{align}
+事实上，若以 $F(x)$ 记 $\xi_n-\xi$ 的分布函数，则仿 Chebyshev 不等式的证明可得
+\begin{align*}
+P\{|\xi_n-\xi|\geqslant\varepsilon\}
+=\int_{|x|\geqslant\varepsilon}\mathrm{d}F(x)
+\leqslant\int_{|x|\geqslant\varepsilon}\frac{|x|^{r}}{\varepsilon^{r}}\,\mathrm{d}F(x)
+\leqslant\frac{1}{\varepsilon^{r}}\int_{-\infty}^{\infty}|x|^{r}\,\mathrm{d}F(x)
+=\frac{\boldsymbol{E}|\xi_n-\xi|^{r}}{\varepsilon^{r}}.
+\end{align*}
+上述不等式是 Chebyshev 不等式的推广，通常称作 Markov 不等式，当 $r=2$ 时就是 Chebyshev 不等式。\cref{theorem:ch05-r阶收敛推依概率}是 Markov 不等式的直接推论。
+\end{proof}
+
+下例说明\cref{theorem:ch05-r阶收敛推依概率}之逆不真。
+
+\begin{example}\label{example:ch05-依概率不r阶反例}
+取 $\Omega=(0,1]$，$\mathscr{F}$ 为 $(0,1]$ 中 Borel 点集全体所构成的 $\sigma$ 域，$P$ 为 Lebesgue 测度。定义 $\xi(\omega)\equiv0$ 及
+\begin{align}
+\xi_n(\omega)=
+\begin{cases}
+n^{1/r},&0<\omega\leqslant\dfrac1n,\\
+0,&\dfrac1n<\omega\leqslant1.
+\end{cases}
+\end{align}
+显然对一切 $\omega\in\Omega$，$\xi_n(\omega)\to\xi(\omega)$，又对于任意的 $\varepsilon>0$，
+\begin{align*}
+P\{|\xi_n(\omega)-\xi(\omega)|\geqslant\varepsilon\}\leqslant\frac1n.
+\end{align*}
+因此 $\xi_n\xrightarrow{P}\xi$，但是
+\begin{align*}
+\boldsymbol{E}|\xi_n-\xi|^{r}=(n^{1/r})^{r}\cdot\frac1n=1.
+\end{align*}
+\end{example}
+
+在 $r$ 阶收敛中，最重要的是 $r=2$ 的情况，这时称为\textbf{均方收敛}。
+
+下面是关于随机变量收敛性的第四种定义。
+
+\begin{definition}[以概率 $1$ 收敛]\label{definition:ch05-以概率1收敛}
+如果
+\begin{align}
+P\!\left\{\lim_{n\to\infty}\xi_n(\omega)=\xi(\omega)\right\}=1
+\end{align}
+则称 $\{\xi_n(\omega)\}$ \textbf{以概率 $1$ 收敛}（convergence in probability $1$）于 $\xi(\omega)$，又称 $\{\xi_n(\omega)\}$ \textbf{几乎处处收敛}于 $\xi(\omega)$，记为 $\xi_n(\omega)\xrightarrow{\mathrm{a.s.}}\xi(\omega)$。
+\end{definition}
+
+以概率 $1$ 收敛是概率论中较强的一种收敛性，但是正如\cref{example:ch05-依概率不r阶反例}所表明的，一般并不能由它推出 $r$ 阶收敛。关于以概率 $1$ 收敛的讨论将在 \S4 中继续进行，在那里将证明可由以概率 $1$ 收敛推出依概率收敛。
+
+\begin{theorem}[依概率收敛的性质]\label{theorem:ch05-依概率收敛的性质}
+设 $\{X_n\}$ 是概率空间上的随机变量序列。若 $X_n\xrightarrow{P}c$ 且 $c\neq0$，$X_n\neq0$，则 $\dfrac{1}{X_n}\xrightarrow{P}\dfrac{1}{c}$。
+\end{theorem}
+
+\begin{proof}
+对任意 $\varepsilon>0$，注意到
+\begin{align}
+\left|\frac{1}{X_n}-\frac{1}{c}\right|=\frac{|X_n-c|}{|X_n|\,|c|}.\label{align:ch05-依概率收敛性质}
+\end{align}
+将事件 $\left\{\left|\dfrac{1}{X_n}-\dfrac{1}{c}\right|\geqslant\varepsilon\right\}$ 按 $|X_n-c|<\dfrac{|c|}{2}$ 与 $|X_n-c|\geqslant\dfrac{|c|}{2}$ 作全概率分解。在 $|X_n-c|<\dfrac{|c|}{2}$ 上，有
+\begin{align*}
+|X_n|=|c-(c-X_n)|\geqslant|c|-|X_n-c|>\frac{|c|}{2},
+\end{align*}
+因而
+\begin{align*}
+\left|\frac{1}{X_n}-\frac{1}{c}\right|=\frac{|X_n-c|}{|X_n|\,|c|}<\frac{2|X_n-c|}{c^{2}}.
+\end{align*}
+于是
+\begin{align*}
+\left\{\left|\frac{1}{X_n}-\frac{1}{c}\right|\geqslant\varepsilon\right\}
+&\subset\left\{|X_n-c|\geqslant\frac{|c|}{2}\right\}
+\cup\left\{\frac{2|X_n-c|}{c^{2}}\geqslant\varepsilon\right\}\\
+&=\left\{|X_n-c|\geqslant\frac{|c|}{2}\right\}\cup\left\{|X_n-c|\geqslant\frac{\varepsilon c^{2}}{2}\right\}.
+\end{align*}
+由概率的次可加性及 $X_n\xrightarrow{P}c$ 得
+\begin{align*}
+P\!\left\{\left|\frac{1}{X_n}-\frac{1}{c}\right|\geqslant\varepsilon\right\}
+\leqslant P\!\left\{|X_n-c|\geqslant\frac{|c|}{2}\right\}
++P\!\left\{|X_n-c|\geqslant\frac{\varepsilon c^{2}}{2}\right\}\to 0.
+\end{align*}
+此即 $\dfrac{1}{X_n}\xrightarrow{P}\dfrac{1}{c}$。
+\end{proof}
+
+\subsection*{四、Bochner--Khinchin 定理}
+
+利用这个机会，我们来叙述并证明一个关于特征函数的重要定理。
+
+\begin{theorem}[Bochner--Khinchin]\label{theorem:ch05-BochnerKhinchin}
+函数 $f(t)$ 是特征函数的充要条件是：$f(t)$ 非负定，连续，且 $f(0)=1$。
+\end{theorem}
+
+在证明的过程中，顺带证明了一个在随机过程中将用到的与上述定理类似的 Herglotz 定理。为此，有
+
+\begin{definition}[非负定复数列]\label{definition:ch05-非负定数列}
+如果对任意的正整数 $n$ 及复数 $\lambda_1,\lambda_2,\cdots,\lambda_n$ 均有
+\begin{align}
+\sum_{k=1}^{n}\sum_{j=1}^{n}C_{k-j}\lambda_k\bar{\lambda}_j\geqslant0,
+\end{align}
+则称复数列 $C_n$（$n=0,\pm1,\pm2,\cdots$）是非负定的。
+\end{definition}
+
+\begin{theorem}[Herglotz]\label{theorem:ch05-Herglotz}
+数列 $C_n$（$n=0,\pm1,\pm2,\cdots$）可以表为
+\begin{align}
+C_n=\int_{-\pi}^{\pi}\mathrm{e}^{\mathrm{i}nx}\,\mathrm{d}G(x)
+\end{align}
+的充要条件是它是非负定的，其中 $G(x)$ 是 $[-\pi,\pi]$ 上有界、非降、左连续函数。
+\end{theorem}
+
+\cref{theorem:ch05-BochnerKhinchin}的必要性已在第四章 \S5 中证过，\cref{theorem:ch05-Herglotz}的必要性也可类似证明，下面只需证明充分性。
+
+\begin{proof}
+由于 $f(t)$ 是非负定的，故对任何 $N$，实数 $\dfrac{k}{n}$ 及复数 $\mathrm{e}^{-\mathrm{i}kx}$（$k=0,1,\cdots,N-1$），皆有
+\begin{align*}
+\mathscr{P}_{N}^{(n)}(x)=\frac{1}{N}\sum_{k=0}^{N-1}\sum_{j=0}^{N-1}f\!\left(\frac{k-j}{n}\right)\mathrm{e}^{-\mathrm{i}(k-j)x}\geqslant0.
+\end{align*}
+易知，其中使 $k-j$ 等于 $r$ 的项有 $N-|r|$ 个，$r$ 可由 $-N+1$ 变到 $N-1$。因此
+\begin{align*}
+\mathscr{P}_{N}^{(n)}(x)=\sum_{r=-N}^{N}\left(1-\frac{|r|}{N}\right)f\!\left(\frac{r}{n}\right)\mathrm{e}^{-\mathrm{i}rx}.
+\end{align*}
+从而
+\begin{align*}
+\int_{-\pi}^{\pi}\mathrm{e}^{\mathrm{i}sx}\mathscr{P}_{N}^{(n)}(x)\,\mathrm{d}x
+=\sum_{r=-N}^{N}\left(1-\frac{|r|}{N}\right)f\!\left(\frac{r}{n}\right)\int_{-\pi}^{\pi}\mathrm{e}^{-\mathrm{i}rx}\mathrm{e}^{\mathrm{i}sx}\,\mathrm{d}x.
+\end{align*}
+由于
+\begin{align*}
+\int_{-\pi}^{\pi}\mathrm{e}^{-\mathrm{i}(r-s)x}\,\mathrm{d}x=
+\begin{cases}
+0,&r\neq s,\\
+2\pi,&r=s,
+\end{cases}
+\end{align*}
+所以
+\begin{align*}
+\left(1-\frac{|s|}{N}\right)f\!\left(\frac{s}{n}\right)=\frac{1}{2\pi}\int_{-\pi}^{\pi}\mathrm{e}^{\mathrm{i}sx}\mathscr{P}_{N}^{(n)}(x)\,\mathrm{d}x
+=\int_{-\pi}^{\pi}\mathrm{e}^{\mathrm{i}sx}\,\mathrm{d}F_{N}^{(n)}(x),
+\end{align*}
+其中
+\begin{align*}
+F_{N}^{(n)}(x)=\frac{1}{2\pi}\int_{-\pi}^{x}\mathscr{P}_{N}^{(n)}(t)\,\mathrm{d}t
+\end{align*}
+是一个在 $[-\pi,\pi]$ 上有界的非降函数，其全变差为
+\begin{align*}
+F_{N}^{(n)}(\pi)=\frac{1}{2\pi}\int_{-\pi}^{\pi}\mathscr{P}_{N}^{(n)}(t)\,\mathrm{d}t=f(0)=1.
+\end{align*}
+补充定义 $x<-\pi$ 时 $F_{N}^{(n)}(x)=0$；$x>\pi$ 时，$F_{N}^{(n)}(x)=1$，则 $F_{N}^{(n)}(x)$ 是一分布函数。
+
+按\cref{theorem:ch05-Helly第一定理}，存在序列 $N_k$，使当 $k\to\infty$ 时 $N_k\to\infty$，并使函数序列 $F_{N_k}^{(n)}(x)$ 弱收敛于某一非降函数 $F^{(n)}(x)$。又因对任何 $N$ 及 $\varepsilon>0$，
+\begin{align*}
+F_N^{(n)}(-\pi-\varepsilon)=0,\qquad F_N^{(n)}(\pi+\varepsilon)=1,
+\end{align*}
+因而也有
+\begin{align*}
+F^{(n)}(-\pi-\varepsilon)=0,\qquad F^{(n)}(\pi+\varepsilon)=1,
+\end{align*}
+所以 $F^{(n)}(x)$ 也是分布函数。
+
+按\cref{theorem:ch05-Helly第二定理}，
+\begin{align*}
+\lim_{k\to\infty}\int_{-\pi}^{\pi}\mathrm{e}^{\mathrm{i}sx}\,\mathrm{d}F_{N_k}^{(n)}(x)=\int_{-\pi}^{\pi}\mathrm{e}^{\mathrm{i}sx}\,\mathrm{d}F^{(n)}(x).
+\end{align*}
+所以，对一切整数 $s$（$s=0,\pm1,\pm2,\cdots$）有
+\begin{align*}
+f\!\left(\frac{s}{n}\right)=\int_{-\pi}^{\pi}\mathrm{e}^{\mathrm{i}sx}\,\mathrm{d}F^{(n)}(x).
+\end{align*}
+至此我们已顺便证明了\cref{theorem:ch05-Herglotz}。特别地
+\begin{align}
+f\!\left(\frac1n\right)=\int_{-\pi}^{\pi}\mathrm{e}^{\mathrm{i}x}\,\mathrm{d}F^{(n)}(x).
+\end{align}
+考虑特征函数序列
+\begin{align*}
+f_n(t)=\int_{-n\pi}^{n\pi}\mathrm{e}^{\mathrm{i}tx}\,\mathrm{d}F_n(x),
+\end{align*}
+其中 $F_n(x)=F^{(n)}\!\left(\dfrac{x}{n}\right)$。易知对一切整数 $k$ 有
+\begin{align}
+f_n\!\left(\frac{k}{n}\right)=f\!\left(\frac{k}{n}\right).
+\end{align}
+对任何 $t$，我们总能选取序列 $k=k(n,t)$，使 $0\leqslant t-\dfrac{k}{n}<\dfrac1n$。由于 $f(t)$ 连续，从而
+\begin{align}
+f(t)=\lim_{n\to\infty}f\!\left(\frac{k}{n}\right)=\lim_{n\to\infty}f_n\!\left(\frac{k}{n}\right).
+\end{align}
+如能证明对一切实数 $t$，有
+\begin{align}
+f(t)=\lim_{n\to\infty}f_n(t),
+\end{align}
+那么由\cref{theorem:ch05-逆极限定理}即知 $f(t)$ 是特征函数了。
+
+为此，由前述两式有
+\begin{align}
+\lim_{n\to\infty}f_n(t)=\lim_{n\to\infty}\left\{\left[f_n(t)-f_n\!\left(\frac{k}{n}\right)\right]+f_n\!\left(\frac{k}{n}\right)\right\}
+=f(t)+\lim_{n\to\infty}\left[f_n(t)-f_n\!\left(\frac{k}{n}\right)\right].
+\end{align}
+令 $\theta=t-\dfrac{k}{n}$，那么 $0\leqslant\theta<\dfrac1n$。按 $f_n(t)$ 的定义，有
+\begin{align}
+\left|f_n(t)-f_n\!\left(\frac{k}{n}\right)\right|
+=\left|\int_{-n\pi}^{n\pi}\mathrm{e}^{\mathrm{i}(k/n)x}\bigl(\mathrm{e}^{\mathrm{i}\theta x}-1\bigr)\,\mathrm{d}F_n(x)\right|
+\leqslant\int_{-n\pi}^{n\pi}|\mathrm{e}^{\mathrm{i}\theta x}-1|\,\mathrm{d}F_n(x).
+\end{align}
+利用 Cauchy--Schwarz 不等式，可得
+\begin{align}
+\int_{-n\pi}^{n\pi}|\mathrm{e}^{\mathrm{i}\theta x}-1|\,\mathrm{d}F_n(x)
+&\leqslant\sqrt{\int_{-n\pi}^{n\pi}|\mathrm{e}^{\mathrm{i}\theta x}-1|^{2}\,\mathrm{d}F_n(x)}\notag\\
+&=\left[\int_{-n\pi}^{n\pi}2(1-\cos\theta x)\,\mathrm{d}F_n(x)\right]^{\frac12}\notag\\
+&=\bigl[2(1-\operatorname{Re}f_n(\theta))\bigr]^{\frac12},
+\end{align}
+其中 $\operatorname{Re}f_n(\theta)$ 为 $f_n(\theta)$ 的实数部分。既然在 $0\leqslant\alpha<1$ 及 $-\pi\leqslant y<\pi$ 时有 $\cos y\leqslant\cos\alpha y$，则
+\begin{align*}
+1-\operatorname{Re}f_n(\theta)=\int_{-n\pi}^{n\pi}(1-\cos\theta x)\,\mathrm{d}F_n(x)
+&=\int_{-\pi}^{\pi}(1-\cos\theta ny)\,\mathrm{d}F_n(ny)\\
+&\leqslant\int_{-\pi}^{\pi}(1-\cos y)\,\mathrm{d}F_n(ny)\\
+&=\int_{-\pi}^{\pi}(1-\cos y)\,\mathrm{d}F^{(n)}(y)\\
+&=1-\operatorname{Re}\int_{-\pi}^{\pi}\mathrm{e}^{\mathrm{i}y}\,\mathrm{d}F^{(n)}(y).
+\end{align*}
+再由\cref{theorem:ch05-BochnerKhinchin}的辅助等式我们得到
+\begin{align}
+1-\operatorname{Re}f_n(\theta)\leqslant 1-\operatorname{Re}f\!\left(\frac1n\right).
+\end{align}
+合并前述三式，即得
+\begin{align*}
+\left|f_n(t)-f_n\!\left(\frac{k}{n}\right)\right|\leqslant\sqrt{2\left(1-\operatorname{Re}f\!\left(\frac1n\right)\right)}.
+\end{align*}
+注意到 $f(0)=1$，则由 $f(t)$ 的连续性推得
+\begin{align*}
+\lim_{n\to\infty}\left[f_n(t)-f_n\!\left(\frac{k}{n}\right)\right]=0.
+\end{align*}
+于是由极限等式知 $f(t)=\lim_{n\to\infty}f_n(t)$ 成立，定理证毕。
+\end{proof}
+
+若不证 Herglotz 定理而直接证 Bochner--Khinchin 定理，有比较简练的证法，可参看 [26]141--142 页。
+
+\subsection*{五、关于等待时间分布的注记}
+
+第三章中对 Bernoulli 试验中出现的几何分布及 Pascal 分布与 Poisson 过程中出现的指数分布及 Erlang 分布的对应关系已有阐述，这里将用特征函数作为工具深入处理。
+
+若 $\xi_n$ 服从参数为 $r$ 及 $p_n$ 的 Pascal 分布，其中 $r$ 为正整数，概率 $p_n$ 满足 $np_n=\lambda_n\to\lambda$，由 (4.4.13) 及 (4.5.3) 知其特征函数为
+\begin{align}
+f_{\xi_n}(u)=\left(\frac{p_n\mathrm{e}^{\mathrm{i}u}}{1-q_n\mathrm{e}^{\mathrm{i}u}}\right)^{r}.
+\end{align}
+记 $\eta_n=\dfrac1n\xi_n$，则 $\eta_n$ 的特征函数
+\begin{align*}
+f_{\eta_n}(u)=\boldsymbol{E}\mathrm{e}^{\mathrm{i}\eta_n u}=\boldsymbol{E}\mathrm{e}^{\mathrm{i}\frac{\xi_n}{n}u}=f_{\xi_n}\!\left(\frac{u}{n}\right).
+\end{align*}
+注意到上式即知
+\begin{align*}
+f_{\eta_n}(u)=\left(\frac{p_n\mathrm{e}^{\mathrm{i}\frac{u}{n}}}{1-q_n\mathrm{e}^{\mathrm{i}\frac{u}{n}}}\right)^{r}
+=\left(\frac{\frac{\lambda_n}{n}\mathrm{e}^{\mathrm{i}\frac{u}{n}}}{1-\left(1-\frac{\lambda_n}{n}\right)\mathrm{e}^{\mathrm{i}\frac{u}{n}}}\right)^{r}
+=\left(\frac{\lambda_n\mathrm{e}^{\mathrm{i}\frac{u}{n}}}{\lambda_n\mathrm{e}^{\mathrm{i}\frac{u}{n}}-n\left(\mathrm{e}^{\mathrm{i}\frac{u}{n}}-1\right)}\right)^{r}\to\left(\frac{\lambda}{\lambda-\mathrm{i}u}\right)^{r}.
+\end{align*}
+从 (4.5.8) 知 $\left(\dfrac{\lambda}{\lambda-\mathrm{i}u}\right)^{r}=\left(1-\dfrac{\mathrm{i}u}{\lambda}\right)^{-r}$ 是 Erlang 分布 $\Gamma(r,\lambda)$ 的特征函数，故由连续性定理得知第 $r$ 个跳跃时刻服从 Erlang 分布。
+
+当 $r=1$ 即得几何分布与指数分布的相应结果。
+
+\end{document}

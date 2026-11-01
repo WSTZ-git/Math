@@ -1,0 +1,106 @@
+\documentclass[../main.tex]{subfiles}
+\graphicspath{{\subfix{../image/}}}
+
+\begin{document}
+
+\chapter{线性回归专题}\label{chapter:appE-线性回归专题}
+
+本附录收录关于线性回归模型的两个结果：二次型期望公式与 OLS 误差方差的无偏估计。它们在本书正书中未涉及，但在计量经济学与统计推断中常用，故附于此。
+
+\begin{lemma}[二次型期望公式]\label{lemma:appE-二次型期望公式}
+设 $\varepsilon$ 为 $n$ 维随机向量，$E(\varepsilon)=\mu$，$\operatorname{Cov}(\varepsilon)=\Sigma$，$A$ 为 $n\times n$ 实矩阵，则
+\begin{align*}
+E(\varepsilon^T A \varepsilon) = \operatorname{tr}(A\Sigma) + \mu' A \mu.
+\end{align*}
+特别地，若 $\mu=0$，$\Sigma=\sigma^2 I_n$，则 $E(\varepsilon^TA\varepsilon)=\sigma^2\operatorname{tr}(A)$。
+\end{lemma}
+
+\begin{proof}
+设 $\varepsilon =(\varepsilon_1,\cdots,\varepsilon_n)^T$，$\mu =(\mu_1,\cdots,\mu_n)^T$，$\Sigma =(\Sigma_{ij})_{n\times n}$，$A=(a_{ij})_{n\times n}$，则
+\begin{align*}
+\varepsilon^T A \varepsilon = \sum_{i=1}^n\sum_{j=1}^n a_{ij}\varepsilon_i\varepsilon_j.
+\end{align*}
+从而
+\begin{align}\label{align:appE-二次型期望}
+E(\varepsilon^T A\varepsilon )=\sum_{i,j=1}^n{a_{ij}E(\varepsilon _i\varepsilon _j)}.
+\end{align}
+由协方差定义知
+\begin{align*}
+\mathrm{Cov(}\varepsilon _i,\varepsilon _j)&=E\left[ \left( \varepsilon _i-E\left( \varepsilon _i \right) \right) \left( \varepsilon _j-E\left( \varepsilon _j \right) \right) \right]
+=E\left[ \left( \varepsilon _i-\mu _i \right) \left( \varepsilon _j-\mu _j \right) \right] \\
+&=E\left( \varepsilon _i\varepsilon _j \right) -\mu _jE\left( \varepsilon _i \right) -\mu _iE\left( \varepsilon _j \right) +\mu _i\mu _j=E\left( \varepsilon _i\varepsilon _j \right) -\mu _j\mu _i-\mu _i\mu _j+\mu _i\mu _j \\
+&=E\left( \varepsilon _i\varepsilon _j \right) -\mu _i\mu _j.
+\end{align*}
+进而
+\begin{align*}
+E\left( \varepsilon _i\varepsilon _j \right) =\mathrm{Cov}\left( \varepsilon _i,\varepsilon _j \right) +\mu _i\mu _j.
+\end{align*}
+将上式代入\eqref{align:appE-二次型期望}式得
+\begin{align*}
+E(\varepsilon^T A\varepsilon )&=\sum_{i,j=1}^n{a_{ij}\Sigma _{ij}}+\sum_{i,j=1}^n{a_{ij}\mu _i\mu _j}=\sum_{i,j=1}^n{a_{ij}\Sigma _{ji}}+\mu ' A\mu \\
+&=\sum_{i=1}^n{(A\Sigma )_{ii}}+\mu' A\mu =\mathrm{tr(}A\Sigma )+\mu' A\mu .
+\end{align*}
+特别地，若 $\mu=0$，$\Sigma=\sigma^2 I_n$，代入上式得 $E(\varepsilon^TA\varepsilon)=\sigma^2\operatorname{tr}(A)$。
+\end{proof}
+
+\begin{theorem}[OLS 误差方差的无偏估计]\label{theorem:appE-OLS误差方差无偏估计}
+考虑线性回归模型
+\begin{align*}
+Y = X\beta + \varepsilon,
+\end{align*}
+其中：
+\begin{itemize}
+\item $Y$ 是 $n$ 维观测向量，
+\item $X$ 是 $n \times (K+1)$ 列满秩设计矩阵$(K+1<n)$，
+\item $\beta$ 是 $(K+1)$ 维未知参数向量，
+\item $\varepsilon$ 是 $n$ 维随机误差向量。
+\end{itemize}
+
+假设：
+\begin{enumerate}[(1)]
+\item $E(\varepsilon)=0$，
+\item $\operatorname{Cov}(\varepsilon)=E(\varepsilon\varepsilon^T)=\sigma^2 I_n$，其中 $\sigma^2=\operatorname{Var}(\varepsilon_i)>0\ (i=1,2,\cdots,n)$ 是未知常数。
+\end{enumerate}
+
+定义：
+\begin{itemize}
+\item OLS 估计量：$\hat{\beta}=(X^TX)^{-1}X^TY$，
+\item 残差向量：$e=Y-X\hat{\beta}$，
+\item 残差平方和：$e^Te$，
+\item 误差方差估计量：$s_e^2=\dfrac{e^Te}{n-K-1}$。
+\end{itemize}
+
+则 $s_e^2$ 是 $\sigma^2$ 的无偏估计，即
+\begin{align*}
+E(s_e^2)=\sigma^2.
+\end{align*}
+\end{theorem}
+
+\begin{proof}
+由题设可知
+\begin{align*}
+e &= Y - X\hat{\beta} = (X\beta+\varepsilon) - X[(X^TX)^{-1}X^T(X\beta+\varepsilon)] \\
+&= X\beta+\varepsilon - X\beta - X(X^TX)^{-1}X^T\varepsilon \\
+&= \bigl[I_n - X(X^TX)^{-1}X^T\bigr]\varepsilon.
+\end{align*}
+记 $M = I_n - X(X^TX)^{-1}X^T$，则 $e=M\varepsilon$。显然 $M$ 是对称幂等阵，从而
+\begin{align*}
+e^Te = (M\varepsilon)^T(M\varepsilon)=\varepsilon^T M' M \varepsilon = \varepsilon^T M \varepsilon,
+\end{align*}
+由假设知 $\varepsilon$ 满足 $E(\varepsilon)=0$，$\operatorname{Cov}(\varepsilon)=\sigma^2 I_n$，则由\cref{lemma:appE-二次型期望公式}得
+\begin{align*}
+E\left( e^Te \right) &=\sigma ^2\mathrm{tr}\left( M \right) =\sigma ^2\mathrm{tr}\bigl( I_n-X\left( X^TX \right) ^{-1}X^T \bigr) \\
+&=\sigma ^2\mathrm{tr}\left( I_n \right) -\sigma ^2\mathrm{tr}\bigl( X\left( X^TX \right) ^{-1}X^T \bigr) =\sigma ^2n-\sigma ^2\mathrm{tr}\bigl( \left( X^TX \right) ^{-1}X^TX \bigr) \\
+&=\sigma ^2n-\sigma ^2\mathrm{tr}\left( I_{K+1} \right) =\sigma ^2\left( n-K-1 \right) .
+\end{align*}
+因此
+\begin{align*}
+E(e^Te)=\sigma^2\bigl(n-(K+1)\bigr)=\sigma^2(n-K-1).
+\end{align*}
+故
+\begin{align*}
+E(s_e^2)=E\left(\frac{e^Te}{n-K-1}\right)=\frac{1}{n-K-1}E(e^Te)=\frac{1}{n-K-1}\sigma^2(n-K-1)=\sigma^2.
+\end{align*}
+\end{proof}
+
+\end{document}

@@ -1,0 +1,177 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{../../image/}{../../figure/}}
+\begin{document}
+
+\section{马尔可夫链蒙特卡洛采样}\label{section:ch14-mcmc}
+
+在上一节中，我们讨论了用于计算函数期望的拒绝采样和重要性采样策略，并且我们看到它们在高维空间中有严重局限性。本节将讨论一种非常通用和强大的采样策略，称为马尔可夫链蒙特卡洛采样，它允许从多种分布中进行采样并且可以很好地扩展到高维样本空间。马尔可夫链蒙特卡洛采样起源于物理学（Metropolis and Ulam, 1949），直至~20~世纪~80~年代末期才开始在统计学领域产生显著影响。
+
+与拒绝采样和重要性采样一样，我们依然从提议分布中采样。然而这一次，我们保持当前状态 $\bm{z}^{(\tau)}$ 的记录，提议分布 $q(\bm{z}|\bm{z}^{(\tau)})$ 以当前状态为条件，因此样本序列 $\bm{z}^{(1)},\bm{z}^{(2)},\cdots$ 形成一个马尔可夫链（参见\cref{subsection:ch14-马尔可夫链}）。同样，尽管 $Z_p$ 的值可能是未知的，如果我们将 $p(\bm{z})$ 写成 $p(\bm{z})=\widetilde{p}(\bm{z})/Z_p$，我们假设对于任意给定的 $\bm{z}$ 值，$\widetilde{p}(\bm{z})$ 可以很容易计算出来。我们的提议分布足够简单，可以直接从中抽取样本。在算法的每一个迭代中，我们从提议分布中生成一个候选样本 $\bm{z}^\star$，然后根据一个适当的准则来接受该样本。
+
+\subsection{Metropolis算法}\label{subsection:ch14-metropolis}
+
+在基础的~Metropolis~算法（Metropolis et al., 1953）中，我们假设提议分布是对称的，即对于所有的 $\bm{z}_A$ 和 $\bm{z}_B$ 值，有 $q(\bm{z}_A|\bm{z}_B)=q(\bm{z}_B|\bm{z}_A)$。然后候选样本以如下概率被接受：
+\begin{align}
+A\!\left(\bm{z}^\star,\bm{z}^{(\tau)}\right)=\min\!\left(1,\frac{\widetilde{p}(\bm{z}^\star)}{\widetilde{p}(\bm{z}^{(\tau)})}\right)
+\label{align:ch14-metropolis-accept}
+\end{align}
+这可以通过选择一个在单位区间 $(0,1)$ 上均匀分布的随机数 $u$ 来实现。如果 $A(\bm{z}^\star,\bm{z}^{(\tau)})>u$，则接受该样本。请注意，如果从 $\bm{z}^{(\tau)}$ 到 $\bm{z}^\star$ 的步骤导致 $p(\bm{z})$ 的值增加，那么候选样本一定会被保留。
+
+如果候选样本被接受，则 $\bm{z}^{(\tau+1)}=\bm{z}^\star$，否则候选样本 $\bm{z}^\star$ 将被丢弃。将 $\bm{z}^{(\tau+1)}$ 设置为 $\bm{z}^{(\tau)}$，并从分布 $q(\bm{z}|\bm{z}^{(\tau+1)})$ 中抽取另一个候选样本。这与拒绝采样形成了鲜明对比，在拒绝采样中，被拒绝的样本将直接被丢弃。在~Metropolis~算法中，当一个候选样本被拒绝时，它的前一个样本将包含在最终的样本列表中，导致样本有多个副本。当然，在实际应用中，每个保留的样本只会有一个副本，并附带一个整数权重因子，用于记录该状态出现的次数。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.45\textwidth]{ch14-fig14.9-metropolis-traj.png}
+\caption{使用~Metropolis~算法从高斯分布中采样的简单示意图，该高斯分布的一个标准差等高线是用椭圆显示的。提议分布是一个各向同性的高斯分布，其标准差为 $0.2$。接受的候选样本以绿线显示，拒绝的候选样本以红线显示。共生成~150~个候选样本，其中~43~个被拒绝。}
+\label{fig:ch14-metropolis-traj}
+\end{figure}
+
+正如我们将看到的，如果对于任何的 $\bm{z}_A$ 和 $\bm{z}_B$ 值，$q(\bm{z}_A|\bm{z}_B)$ 都是正值（这是一个充分但非必要条件），则 $\bm{z}^{(\tau)}$ 的分布趋向于 $p(\bm{z})$（当 $\tau\rightarrow\infty$ 时）。然而，应该强调的是，序列 $\bm{z}^{(1)},\bm{z}^{(2)},\cdots$ 不是来自 $p(\bm{z})$ 的独立样本集，因为连续的样本高度相关。如果希望获得独立的样本，那么我们可以丢弃大部分序列，每次只保留第 $M$ 个样本。对于足够大的 $M$，保留的样本将在实际意义上是独立的。\cref{fig:ch14-metropolis-traj}显示了一个简单的示例，它使用~Metropolis~算法从二维高斯分布中进行采样，其中提议分布是各向同性的高斯分布。
+
+\subsection{马尔可夫链}\label{subsection:ch14-马尔可夫链}
+
+在更详细地讨论马尔可夫链蒙特卡洛采样之前，我们先研究一下马尔可夫链的一般性质。特别地，我们想知道马尔可夫链在何种情况下会收敛到期望的分布。一阶马尔可夫链定义为随机变量序列 $\bm{z}^{(1)},\cdots,\bm{z}^{(M)}$，使得对于 $m\in\{1,\cdots,M-1\}$，下面的条件独立性成立：
+\begin{align}
+p\!\left(\bm{z}^{(m+1)}\,|\,\bm{z}^{(1)},\cdots,\bm{z}^{(m)}\right)=p\!\left(\bm{z}^{(m+1)}\,|\,\bm{z}^{(m)}\right)
+\label{align:ch14-markov-property}
+\end{align}
+这可以用一个链式的有向图模型来表示（见图~11.29）。然后，我们可以通过给出初始变量的概率分布 $p(\bm{z}^{(0)})$ 和以转移概率（transition probabilities）形式表达的后续变量条件分布 $T_m(\bm{z}^{(m)},\bm{z}^{(m+1)})\equiv p(\bm{z}^{(m+1)}|\bm{z}^{(m)})$，即可完整定义马尔可夫链。如果转移概率对所有 $m$ 都相同，则称马尔可夫链是齐次的或同质（homogeneous）的。
+
+链中的某个特定变量的边缘概率可以用马尔可夫链中前一个变量的边缘概率表示为
+\begin{align}
+p\!\left(\bm{z}^{(m+1)}\right)=\int p\!\left(\bm{z}^{(m+1)}\,|\,\bm{z}^{(m)}\right)p\!\left(\bm{z}^{(m)}\right)\,\mathrm{d}\bm{z}^{(m)}
+\label{align:ch14-chain-marginal}
+\end{align}
+其中的积分对于离散变量来说可以替换为求和。如果一个分布在马尔可夫链的每个步骤都保持该分布不变，那么该分布对于这个马尔可夫链来说就是不变的或者说稳定的。因此，对于具有转移概率 $T(\bm{z}',\bm{z})$ 的齐次马尔可夫链来说，如果满足以下条件，则分布 $p^\star(\bm{z})$ 是不变的：
+\begin{align}
+p^\star(\bm{z})=\int T(\bm{z}',\bm{z})\,p^\star(\bm{z}')\,\mathrm{d}\bm{z}'
+\label{align:ch14-invariant}
+\end{align}
+请注意，给定的马尔可夫链可能有多个不变分布。例如，如果转移概率由恒等变换给出，那么任何分布都将是不变的。
+
+确保目标分布 $p(\bm{z})$ 是不变的一个充分（但非必要）条件是选择满足详细平衡（detailed balance）性质的转移概率，该性质由下式定义
+\begin{align}
+p^\star(\bm{z})\,T(\bm{z},\bm{z}')=p^\star(\bm{z}')\,T(\bm{z}',\bm{z})
+\label{align:ch14-detailed-balance}
+\end{align}
+对于特定的分布 $p^\star(\bm{z})$，容易看出，如果转移概率满足对于特定分布的详细平衡性质，则保持该分布不变，因为
+\begin{align}
+\int p^\star(\bm{z}')T(\bm{z}',\bm{z})\,\mathrm{d}\bm{z}'&=\int p^\star(\bm{z})T(\bm{z},\bm{z}')\,\mathrm{d}\bm{z}'
+\label{align:ch14-db-1}\\
+&=p^\star(\bm{z})\int p(\bm{z}'|\bm{z})\,\mathrm{d}\bm{z}'
+\label{align:ch14-db-2}\\
+&=p^\star(\bm{z}).
+\label{align:ch14-db-3}
+\end{align}
+满足详细平衡性质的马尔可夫链被称为可逆的（reversible）。
+
+我们的目标是使用马尔可夫链从给定分布中采样。如果能建立一个马尔可夫链使得目标分布是不变的，就可以达到目的。然而，我们还必须要求不管初始分布 $p(\bm{z}^{(0)})$ 的选择如何，当 $m\rightarrow\infty$ 时，分布 $p(\bm{z}^{(m)})$ 都收敛到所需的不变分布 $p^\star(\bm{z})$。这个性质称为遍历性（ergodicity），此时不变分布称为平衡（equilibrium）分布。显然，一个遍历（ergodic）的马尔可夫链只能有一个平衡分布。可以证明，一个齐次马尔可夫链是遍历的，只需要对不变分布和转移概率施加较弱的约束条件（Neal, 1993）。
+
+在实践中，我们经常利用一组“基础”转移 $B_1,\cdots,B_K$ 来构造转移概率。这可以通过混合分布的形式来实现：
+\begin{align}
+T(\bm{z}',\bm{z})=\sum_{k=1}^{K}\alpha_k B_k(\bm{z}',\bm{z})
+\label{align:ch14-mixture-transition}
+\end{align}
+混合系数 $\alpha_1,\cdots,\alpha_K$ 必须满足 $\alpha_k\geq 0$ 且 $\sum_k\alpha_k=1$。“基础”转移可以通过连续应用结合起来，于是有
+\begin{align}
+T(\bm{z}',\bm{z})=\sum_{z_1}\cdots\sum_{z_{K-1}}B_1(\bm{z}',\bm{z}_1)\cdots B_{K-1}(\bm{z}_{K-2},\bm{z}_{K-1})B_K(\bm{z}_{K-1},\bm{z}).
+\label{align:ch14-composite-transition}
+\end{align}
+
+如果一个分布对每个基础转移都是不变的，那么很明显它也会对式\eqref{align:ch14-mixture-transition}或式\eqref{align:ch14-composite-transition}给出的 $T(\bm{z}',\bm{z})$ 保持不变。对于混合分布[式\eqref{align:ch14-mixture-transition}]，如果每个基础转移都满足详细平衡条件，那么复合转移概率 $T$ 也将满足详细平衡条件。这对于使用式\eqref{align:ch14-composite-transition}构造的转移概率并不成立，尽管通过对基础转移的应用顺序进行对称化（即 $B_1,B_2,\cdots,B_K,B_K,\cdots,B_2,B_1$），可以恢复详细平衡。使用复合转移概率的一个常见例子是让每个基础转移仅改变变量的一个子集。
+
+为了深入了解马尔可夫链蒙特卡洛采样算法的本质，考虑一个由整数构成的状态空间 $\mathbb{Z}$，已知概率
+\begin{align}
+p\!\left(z^{(\tau+1)}=z^{(\tau)}+1\right)&=0.25
+\label{align:ch14-rw-1}\\
+p\!\left(z^{(\tau+1)}=z^{(\tau)}-1\right)&=0.25
+\label{align:ch14-rw-2}\\
+p\!\left(z^{(\tau+1)}=z^{(\tau)}\right)&=0.5.
+\label{align:ch14-rw-3}
+\end{align}
+其中 $z^{(\tau)}$ 表示在时间步 $\tau$ 的状态。如果初始状态是 $z^{(0)}=0$，那么根据对称性，在时间步 $\tau$ 有 $\mathbb{E}[z^{(\tau)}]=0$，同样也容易看出 $\mathbb{E}[(z^{(\tau)})^2]=\tau/2$（见习题~14.11）。因此，在时间步 $\tau$ 之后，随机游走平均而言仅行进了与 $\sqrt{\tau}$ 成比例的距离。这种平方根依赖性是随机游走行为的典型特征，表明随机游走在探索状态空间时效率非常低。正如我们将看到的，设计马尔可夫链蒙特卡洛采样算法的一个核心目标就是避免随机游走行为。
+
+\subsection{Metropolis--Hastings算法}\label{subsection:ch14-metropolis-hastings}
+
+前面我们介绍了基础的~Metropolis~算法，但没有实践证明它能从所需分布中进行采样。在给出证明之前，我们首先讨论一种更泛化的形式，称为~Metropolis--Hastings~算法（Hastings, 1970），该算法适用于提议分布不再是其参数的对称函数的情况。特别是在算法的第 $\tau$ 步，当前状态为 $\bm{z}^{(\tau)}$，首先从分布 $q_k(\bm{z}|\bm{z}^{(\tau)})$ 中抽取一个样本 $\bm{z}^\star$，然后以概率 $A_k(\bm{z}^\star,\bm{z}^{(\tau)})$ 接受它，其中
+\begin{align}
+A_k\!\left(\bm{z}^\star,\bm{z}^{(\tau)}\right)=\min\!\left(1,\frac{\widetilde{p}(\bm{z}^\star)\,q_k(\bm{z}^{(\tau)}|\bm{z}^\star)}{\widetilde{p}(\bm{z}^{(\tau)})\,q_k(\bm{z}^\star|\bm{z}^{(\tau)})}\right)
+\label{align:ch14-mh-accept}
+\end{align}
+这里的 $k$ 标记了正在考虑的可能转换集合的成员。同样，计算接受准则不需要知道概率分布 $p(\bm{z})=\widetilde{p}(\bm{z})/Z_p$ 中的归一化常数 $Z_p$。对于对称的提议分布，Metropolis--Hastings~准则[式\eqref{align:ch14-mh-accept}]可简化为标准的~Metropolis~准则[式\eqref{align:ch14-metropolis-accept}]。
+
+我们可以通过证明式\eqref{align:ch14-detailed-balance}定义的详细平衡条件得以满足，从而进一步证明 $p(\bm{z})$ 是由~Metropolis--Hastings~算法所定义的马尔可夫链的不变分布。利用\eqref{align:ch14-mh-accept}，我们有
+\begin{align}
+p(\bm{z})\,q_k(\bm{z}^\star|\bm{z})\,A_k(\bm{z},\bm{z}^\star)=\min\!\left(\widetilde{p}(\bm{z})q_k(\bm{z}^\star|\bm{z}),\,\widetilde{p}(\bm{z}^\star)q_k(\bm{z}|\bm{z}^\star)\right)
+\label{align:ch14-mh-db}
+\end{align}
+这个表达式在交换 $\bm{z}$ 和 $\bm{z}^\star$ 时是对称的，因此详细平衡成立。
+
+提议分布的具体选择对算法的性能有显著影响。对于连续状态空间，一个常见的选择是以当前状态为中心的高斯分布，在确定此分布的方差时有一个重要的权衡——如果方差较小，则接受转换的比例将会很高，但通过状态空间的过程表现为缓慢的随机游走，导致相关时间较长。然而，如果方差较大，则拒绝率将会很高，因为在我们考虑的复杂问题中，许多被提出的步骤将处于概率 $p(\bm{z})$ 较低的状态。考虑一个有强相关性变量的多变量分布 $p(\bm{z})$。提议分布的尺度 $\sigma$ 应该与最小标准差 $\sigma_{\min}$ 的数量级相匹配，这导致了随机游走行为，其中大致独立的状态之间分隔的步数是 $(\sigma_{\max}/\sigma_{\min})^2$ 数量级的。实际上，在二维问题中，随着 $\sigma$ 增加而导致的拒绝率增加已被接受转换的更大步长抵消。更一般地说，对于多元高斯分布，获得独立样本所需的步数和 $(\sigma_{\min}/\sigma_2)^2$ 成正比，其中 $\sigma_2$ 是第二小的标准差（Neal, 1993）。撇开这些细节不谈，如果分布变化的长度尺度在不同方向上差异很大，那么~Metropolis--Hastings~算法可能会收敛得非常慢。
+
+\subsection{吉布斯采样}\label{subsection:ch14-吉布斯采样}
+
+吉布斯采样（Geman and Geman, 1984）是一种简单且使用广泛的采样策略，可以看作~Metropolis--Hastings~算法的一个特例。考虑分布 $p(\bm{z})=p(z_1,\cdots,z_M)$，我们希望从中采样，假设我们已经为马尔可夫链选择了一些初始状态。吉布斯采样过程中的每一步都包含用我们从一个变量的条件分布中抽取的值替换该变量的值，该条件分布是以其余变量的值为条件的。因此，可通过从分布 $p(z_i|\bm{z}_{\setminus i})$ 中采样来替换 $z_i$，其中 $\bm{z}_{\setminus i}$ 表示 $\{z_1,\cdots,z_M\}$ 但其中不包括 $z_i$，这个过程要么按某种特定顺序循环遍历变量，要么在每一步随机选择要更新的变量。
+
+例如，假设我们有一个关于 $3$ 个变量的分布 $p(z_1,z_2,z_3)$，在时间步 $\tau$，我们选定了值 $z_1^{(\tau)}$、$z_2^{(\tau)}$ 和 $z_3^{(\tau)}$。首先将 $z_1$ 替换为通过从如下条件分布中采样获得的新值 $z_1^{(\tau+1)}$：
+\begin{align}
+p\!\left(z_1\,|\,z_2^{(\tau)},z_3^{(\tau)}\right).
+\label{align:ch14-gibbs-1}
+\end{align}
+然后将 $z_2^{(\tau)}$ 替换为通过从如下条件分布中采样获得的新值 $z_2^{(\tau+1)}$：
+\begin{align}
+p\!\left(z_2\,|\,z_1^{(\tau+1)},z_3^{(\tau)}\right).
+\label{align:ch14-gibbs-2}
+\end{align}
+这样新的 $z_1$ 值便可立即在后续的采样步骤中使用。用我们从如下条件分布中抽取的样本 $z_3^{(\tau+1)}$ 更新 $z_3^{(\tau)}$：
+\begin{align}
+p\!\left(z_3\,|\,z_1^{(\tau+1)},z_2^{(\tau+1)}\right)
+\label{align:ch14-gibbs-3}
+\end{align}
+以此类推，依次循环遍历这 $3$ 个变量。
+
+我们可以将吉布斯采样过程看作是~Metropolis--Hastings~算法的一个特定实例。考虑一个涉及变量 $z_i$ 的~Metropolis--Hastings~采样步骤，其余变量 $\bm{z}_{\setminus i}$ 保持不变，从 $\bm{z}$ 到 $\bm{z}'$ 的转移概率由 $q(\bm{z}'|\bm{z})=p(z_i|\bm{z}_{\setminus i})$ 给出。注意 $\bm{z}_{\setminus i}=\bm{z}'_{\setminus i}$，因为这些分量在采样步骤中未发生改变。同样，$p(\bm{z})=p(z_i|\bm{z}_{\setminus i})p(\bm{z}_{\setminus i})$，因此，~Metropolis--Hastings~算法[式\eqref{align:ch14-mh-accept}]中确定接受概率的因子由下式给出：
+\begin{align}
+\frac{p(\bm{z}')q(\bm{z}|\bm{z}')}{p(\bm{z})q(\bm{z}'|\bm{z})}=\frac{p(z_i'|\bm{z}_{\setminus i})p(\bm{z}_{\setminus i})\,p(z_i|\bm{z}_{\setminus i})}{p(z_i|\bm{z}_{\setminus i})p(\bm{z}_{\setminus i})\,p(z_i'|\bm{z}_{\setminus i})}=1
+\label{align:ch14-gibbs-accept}
+\end{align}
+其中 $\bm{z}_{\setminus i}=\bm{z}'_{\setminus i}$。因此，Metropolis--Hastings~采样步骤总是可以接受。
+
+为了证明该过程从目标分布中采样，我们首先注意到分布 $p(\bm{z})$ 是吉布斯采样步骤中的一个单独的不变量，因此它也是整个马尔可夫链的不变量。这是因为当我们从 $p(z_i|\bm{z}_{\setminus i})$ 中采样时，边缘分布 $p(\bm{z}_{\setminus i})$ 显然是不变的，因为 $\bm{z}_{\setminus i}$ 的值没有发生改变。同样，定义的每一步采样都从正确的条件分布 $p(z_i|\bm{z}_{\setminus i})$ 中采样。因为这些条件分布和边缘分布共同指定了联合分布，所以我们可以看到联合分布本身是不变的。
+
+为了完整地描述该算法，还需要指定初始状态的分布，尽管在多次迭代后抽取的样本实际上独立于此分布。确保能从正确分布中进行吉布斯采样的第二个条件是要具有遍历性（ergodic）。具有遍历性的一个充分条件是条件分布不存在零概率区域。如果是这种情况，那么 $\bm{z}$ 空间中的任意一点都可以通过有限步骤到达其他任意一点，每一步都包括更新每个分量变量中的一个。如果不满足这个要求，即某些条件分布存在零概率区域，那么遍历性（如果适用）必须被显式地证明。
+
+与~Metropolis~算法类似，我们可以通过研究吉布斯采样在特定分布（例如高斯分布）上的应用来深入了解其行为。考虑两个变量中相关高斯分布，其条件分布的宽度为 $1$，边缘分布的宽度为 $L$。典型的步长由条件分布决定，并且将是 $L$ 阶的。由于状态根据随机游走演化，因此为了获得来自分布的独立样本，所需的步数将是 $L^2$ 阶的。当然，如果高斯分布是不相关的，那么吉布斯采样过程将是最优的。对于这个简单问题，我们可以旋转坐标系，使得新变量不相关。但是，在实际应用中，我们通常不可能找到这样的转换。
+
+由于基本的吉布斯采样技术一次只考虑一个变量，因此连续样本之间存在强依赖关系。在另一种极端情况下，如果我们能够直接从联合分布中采样（实际上这种操作很难实现），则连续样本将是独立的。我们可以采用一种折中策略来改进简单的吉布斯采样，即连续地从变量组而不是单个变量中采样。这可以通过分块吉布斯（blocking Gibbs）采样算法实现，该算法选择变量块（不一定是互斥的），然后依次对每个块中的变量进行联合采样，条件是其他所有变量保持其当前值（Jensen, Kong, and Kjaerulff, 1995）。
+
+减少吉布斯采样中随机游走行为的一种方法称为超松弛（over-relaxation）（Adler, 1981）。在它的原始形式中，它适用于条件分布是高斯分布的问题，就是说，“条件分布为高斯分布”所涵盖的分布类型比“多元高斯分布”更广泛。例如，非高斯分布 $p(\bm{z},\bm{y})\propto\exp(-z^2 y^2)$ 具有条件高斯分布。在吉布斯采样的每步，特定分量 $z_i$ 具有均值为 $\mu_i$、方差为 $\sigma_i^2$ 的条件分布。在超松弛框架中，$z_i$ 的值被替换为
+\begin{align}
+z_i'=\mu_i+\alpha_i(z_i-\mu_i)+\sigma_i\sqrt{1-\alpha_i^2}\,v
+\label{align:ch14-overrelax}
+\end{align}
+其中 $v$ 是一个有零均值和单位方差的高斯随机变量，$\alpha$ 是一个参数，满足 $-1<\alpha<1$。当 $\alpha=0$ 时，该方法等同于标准的吉布斯采样；当 $\alpha<0$ 时，该步骤偏向于均值的相反侧。这一步骤保持了目标分布的不变性，因为如果 $z_i$ 有均值 $\mu$ 和方差 $\sigma^2$，那么 $z_i'$ 也将如此（见习题~14.14）。超松弛的作用是在变量高度相关时，鼓励状态空间中的定向运动。有序超松弛框架（ordered over-relaxation）（Neal, 1999）将这种方法推广到了非高斯分布。
+
+吉布斯采样的实用性取决于从条件分布 $p(z_i|\bm{z}_{\setminus i})$ 中采样的难度。对于使用有向图模型表示的概率分布，单个节点的条件分布仅依赖于相应马尔可夫毯中的变量。对于有向图，这个条件分布只是马尔可夫毯中节点状态的函数。
+
+\subsection{祖先采样}\label{subsection:ch14-祖先采样}
+
+对于许多模型来说，联合分布 $p(\bm{z})$ 可以方便地用图模型的术语来表示。对于一个没有观测变量的有向图，可以直接使用祖先采样（ancestral sampling）方法从联合分布中采样。联合分布由下式指定：
+\begin{align}
+p(\bm{z})=\prod_{i=1}^{M}p(\bm{z}_i\,|\,\operatorname{pa}(i))
+\label{align:ch14-ancestral}
+\end{align}
+其中 $\bm{z}_i$ 是与节点 $i$ 关联的一组变量，$\operatorname{pa}(i)$ 表示与节点 $i$ 的父节点关联的一组变量。
+
+为了获得联合分布的一个样本，我们按照 $z_1,\cdots,z_M$ 的顺序遍历这组变量，并从条件分布 $p(\bm{z}_i|\operatorname{pa}(i))$ 中采样。这总是可能的，因为在每个步骤，所有父变量都会被实例化。遍历图一次后，我们将获得联合分布的一个样本。这里假设我们可以从每个节点的各条件分布中采样。
+
+考虑这样一个有向图，其部分节点组成了证据集 $\varepsilon$，并被观测值实例化过。原则上可以扩展上述过程，至少对于代表离散变量的节点，我们可以给出以下逻辑采样方法（Henrion, 1988），它可以看作重要性采样的一种特殊情况（见\cref{subsection:ch14-重要性采样}）。在每一步，当为一个观测值已知的变量 $z_i$ 获得一个采样值时，对采样值与观测值进行比较，如果它们一致，则保留采样值，并继续依次处理下一个变量。然而，如果它们不一致，则丢弃到目前为止的整个样本，重新从图的第一个节点开始。这种算法可以正确地从后验分布中采样，因为它仅仅相当于从隐变量和数据变量的联合分布中抽取样本，然后丢弃那些与观测数据不一致的样本（在发现一个不一致的值后就不再从联合分布中继续采样，从而稍微提高了效率）。然而，随着观测变量数量的增加和这些变量可以取的状态数量的增加，从后验分布中接受一个样本的整体概率迅速降低，因此这种方法在实践中很少使用。
+
+这种方法的改进版称为似然加权采样（likelihood weighted sampling）（Fung and Chang, 1990; Shachter and Peot, 1990），它基于祖先采样并结合了重要性采样。对于每一个变量，如果该变量在证据集中，那么把它设置为其实例化的值。如果它不在证据集中，则从条件分布 $p(z_i|\operatorname{pa}(i))$ 中采样，其中条件变量设置为其当前采样的值。随后产生的样本 $\bm{z}$ 的权重由下式给出（见习题~14.15）：
+\begin{align}
+w=\prod_{i\in\varepsilon}p\!\left(z_i=\hat{z}_i\,|\,\operatorname{pa}(i)\right).
+\label{align:ch14-likelihood-weight}
+\end{align}
+这种方法可以进一步使用自重要性采样（self-importance sampling）（Shachter and Peot, 1990）扩展，其中重要性采样分布不断更新，以反映当前估计的后验分布。
+
+\end{document}

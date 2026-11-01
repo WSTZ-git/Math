@@ -1,0 +1,454 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}}
+
+\begin{document}
+
+\section{*熵与信息}\label{section:ch04-熵与信息}
+
+\subsection*{一、不肯定性与熵}
+
+随机试验的主要特征是在试验之前无法肯定地知道哪一个结果将会出现，即随机试验具有一种不肯定性。但是对于不同的随机试验，这种不肯定性的程度却可以有很大的差别。譬如，以射击为例，若有两个射手，他们的射击情况分别以下列两个随机试验来描述：
+\[
+\text{甲}:\begin{pmatrix}A,&\bar{A}\\0.5,&0.5\end{pmatrix}
+\qquad
+\text{乙}:\begin{pmatrix}A,&\bar{A}\\0.99,&0.01\end{pmatrix}
+\]
+这里 $A$ 表示射中目标，$\bar{A}$ 表示未射中目标，下一行是相应的概率。显然这两个试验的不肯定性程度很不相同，甲的不肯定性要大得多。假如还有第三个射手，用来描述其射击水平的随机试验为
+\[
+\text{丙}:\begin{pmatrix}A,&\bar{A}\\0.7,&0.3\end{pmatrix}
+\]
+显然应认为此试验的不肯定性程度介于上述两者之间。
+
+因此有必要从数值上估计各种各样随机试验的不肯定性程度，即我们希望找到一个量，用它可以合理地作为不肯定性程度的度量。这样的一个量已经被美国数学家 Shannon（香农）找到。
+
+假定我们研究的随机试验 $\alpha$ 只有有限个不相容的结果 $A_1,A_2,\cdots,A_n$，它们相应的概率为 $p(A_1),p(A_2),\cdots,p(A_n)$，满足 $\sum_{i=1}^n p(A_i)=1$，简写如下：
+\[
+\alpha:\begin{pmatrix}A_1,&A_2,&\cdots,&A_n\\p(A_1),&p(A_2),&\cdots,&p(A_n)\end{pmatrix}.
+\]
+
+我们希望找到一个量 $H(\alpha)$ 来度量 $\alpha$ 的不肯定性程度。这个量当然依赖于 $p(A_1),p(A_2),\cdots,p(A_n)$，因此亦记为 $H\bigl(p(A_1),p(A_2),\cdots,p(A_n)\bigr)$。
+
+为了具体定出 $H(\alpha)$ 的表达式，我们先考察一下，究竟 $H(\alpha)$ 应满足什么要求。
+
+首先，我们要求
+
+(i) $H$ 是 $p(A_i)$ 的连续函数。
+
+这个要求相当自然，一方面 $p(A_i)$ 的微小变化当然不应引起 $H$ 的巨大变化，同时也只有连续函数才便于数学上处理。
+
+其次，我们考虑一种特殊的随机试验，这种试验有 $n$ 个结果，且各个结果出现的概率均为 $\dfrac{1}{n}$，以后简称为有 $n$ 个等概结果的试验。在这种特殊试验中，$H$ 当然应该只是 $n$ 的函数，并且当 $n$ 增大时，也即试验有更多可能的结果时，其相应的不肯定性程度也随之增加。
+
+因此，我们对 $H$ 提出要求：
+
+(ii) 对有 $n$ 个等概结果的试验，$H$ 是 $n$ 的单调上升函数。
+
+对 $H(\alpha)$ 的第三个要求比较复杂，它牵涉到把一个试验分为相继的两个试验。我们通过简单的例子来阐述其含义。
+
+考虑有三个结果的试验
+\[
+\alpha:\begin{pmatrix}A_1,&A_2,&A_3\\p_1,&p_2,&p_3\end{pmatrix}.
+\]
+这个试验的不肯定性程度 $H(\alpha)=H(p_1,p_2,p_3)$。为了确定到底是哪一个结果出现，我们也可以进行这样相继的两个试验：在第一个试验中，先确定到底是 $A_1$ 出现，还是 $A_2$ 或 $A_3$ 出现，即进行下列试验：
+\[
+\alpha_1:\begin{pmatrix}A_1,&B\\p_1,&p_2+p_3\end{pmatrix}.
+\]
+显然 $H(\alpha_1)=H(p_1,p_2+p_3)$。如果 $A_1$ 出现（其概率为 $p_1$），则试验结果已完全确定，无须再作进一步的试验；但是如果是 $B$ 出现（其概率为 $p_2+p_3$），则尚须进行如下试验，才能最后确定试验结果：
+\[
+\alpha_2:\begin{pmatrix}A_2,&A_3\\\dfrac{p_2}{p_2+p_3},&\dfrac{p_3}{p_2+p_3}\end{pmatrix}.
+\]
+这个试验的不肯定性程度为 $H(\alpha_2)=H\left(\dfrac{p_2}{p_2+p_3},\dfrac{p_3}{p_2+p_3}\right)$。
+
+可以直接进行试验 $\alpha$，以确定 $A_1,A_2,A_3$ 中哪一个结果出现；但是若先进行试验 $\alpha_1$，然后有必要时（概率 $p_2+p_3$）再进行 $\alpha_2$，也可达到同样的目的。因此，我们自然认为这两组试验所含的不肯定性程度是一样的，即
+\[
+H(p_1,p_2,p_3)=H(p_1,p_2+p_3)+(p_2+p_3)H\left(\frac{p_2}{p_2+p_3},\frac{p_3}{p_2+p_3}\right).
+\]
+
+这些考虑启发我们对 $H$ 提出下列要求：
+
+(iii) 一个试验分成相继的两个试验时，未分之前的 $H$ 是既分之后的 $H$ 的加权和。
+
+条件 (i)、(ii)、(iii) 已完全确定 $H$ 的形式。为书写方便起见，下面简记 $p(A_i)$ 为 $p_i$。
+
+\begin{theorem}[Shannon]\label{theorem:ch04-Shannon}
+唯一满足 (i)、(ii)、(iii) 三个条件的 $H$ 具有下列形式：
+\begin{align}
+H=-C\sum_{i=1}^n p_i\log p_i,\label{align:ch04-熵定义}
+\end{align}
+其中 $C$ 是正常数。
+\end{theorem}
+
+为证明这个定理，要用到下述分析引理。
+
+\begin{lemma}[可加单调函数]\label{lemma:ch04-可加单调函数}
+若 $f(n)$ 是 $n$ 的单调上升函数，且对一切正整数 $m,n$ 成立
+\begin{align}
+f(mn)=f(m)+f(n),\label{align:ch04-可加函数}
+\end{align}
+则
+\[
+f(n)=C\log n,
+\]
+其中 $C$ 是一个正常数。
+\end{lemma}
+
+\begin{proof}
+由~\eqref{align:ch04-可加函数} 可得 $f(1)=0$，所以对其他正整数 $m$，有 $f(m)>0$。另一方面，
+\[
+f(n^2)=f(n)+f(n)=2f(n),
+\]
+\[
+f(n^3)=f(n^2)+f(n)=3f(n),
+\]
+一般地
+\begin{align}
+f(n^k)=kf(n).\label{align:ch04-fnk}
+\end{align}
+
+若 $n,m$ 是两个任意的正整数，$m\neq 1$，选任意大的正整数 $k$，再取正整数 $l$，使
+\begin{align}
+m^l\leqslant n^k<m^{l+1}.\label{align:ch04-夹逼}
+\end{align}
+由函数的单调性
+\[
+f(m^l)\leqslant f(n^k)<f(m^{l+1}).
+\]
+由~\eqref{align:ch04-fnk} 得
+\[
+lf(m)\leqslant kf(n)<(l+1)f(m).
+\]
+因此
+\[
+\frac{l}{k}\leqslant\frac{f(n)}{f(m)}<\frac{l+1}{k}.
+\]
+对~\eqref{align:ch04-夹逼} 取对数得
+\[
+l\log m\leqslant k\log n<(l+1)\log m.
+\]
+因此也有
+\[
+\frac{l}{k}\leqslant\frac{\log n}{\log m}<\frac{l+1}{k}.
+\]
+这样一来
+\[
+\left|\frac{f(n)}{f(m)}-\frac{\log n}{\log m}\right|<\frac{1}{k}.
+\]
+上式对任意大的 $k$ 都成立，因此
+\[
+\frac{f(n)}{f(m)}=\frac{\log n}{\log m}.
+\]
+由于 $m,n$ 的任意性即知
+\[
+f(n)=C\log n,
+\]
+其中 $C$ 是常数，再由 $f(n)$ 是 $n$ 的上升函数，可知 $C$ 是正的。
+\end{proof}
+
+现在可以来证明\cref{theorem:ch04-Shannon}了。
+
+\begin{proof}
+首先，记 $H\left(\dfrac{1}{n},\dfrac{1}{n},\cdots,\dfrac{1}{n}\right)=f(n)$，按条件 (ii) 知 $f(n)$ 是 $n$ 的单调上升函数。对有 $mn$ 个等概结果的试验，可以把它分解为 $m$ 个有 $n$ 个等概结果的试验，因此由条件 (iii) 知
+\[
+f(mn)=f(m)+m\cdot\frac{1}{m}f(n)=f(m)+f(n).
+\]
+利用\cref{lemma:ch04-可加单调函数} 立刻得到
+\[
+H\left(\frac{1}{n},\frac{1}{n},\cdots,\frac{1}{n}\right)=C\log n.
+\]
+
+其次，当 $p_1,p_2,\cdots,p_n$ 是有理数时，不妨记 $p_i=\dfrac{n_i}{\sum_{i=1}^n n_i}$，考虑一个有 $\sum_{i=1}^n n_i$ 个等概结果的试验，而这个试验又可以看作两个相继的试验，其中第一个试验以概率 $p_i$ 出现结果 $A_i$；而第二个试验，则是在出现结果 $A_i$ 的基础上，考察它是出现 $n_i$ 个等概结果中的哪一个，因此按条件 (iii) 应有
+\[
+C\log\sum_{i=1}^n n_i=H(p_1,p_2,\cdots,p_n)+C\sum_{i=1}^n p_i\log n_i.
+\]
+于是
+\begin{align*}
+H(p_1,p_2,\cdots,p_n)&=C\left[\log\sum_{i=1}^n n_i-\sum_{i=1}^n p_i\log n_i\right]\\
+&=C\left[\sum_{i=1}^n p_i\left(\log\sum_{j=1}^n n_j-\log n_i\right)\right]\\
+&=-C\sum_{i=1}^n p_i\log p_i.
+\end{align*}
+
+最后，对任意的实数 $p_1,p_2,\cdots,p_n$，可用有理数来逼近它，但按条件 (i) 知 $H$ 是各自变量的连续函数，因此上述表达式仍然成立，从而完成了定理证明。
+\end{proof}
+
+定理中的系数 $C$，可以根据方便选择，它取决于度量单位。常用的度量单位有二进制单位及十进制单位，前者对数的底取为 $2$，后者用常用对数。
+
+在~\eqref{align:ch04-熵定义} 中，若 $p_i=0$，则相应的项 $p_i\log p_i$ 定义为零，因此在试验中增减零概率结果不影响不肯定性，这是很自然的。以后将称
+\begin{align}
+H(\alpha)=-\sum_{i=1}^n p(A_i)\log p(A_i)\label{align:ch04-熵定义2}
+\end{align}
+为试验 $\alpha$ 的\textbf{熵}（entropy）。
+
+从下面例子可以看出，熵确实可以度量试验的不肯定性程度。
+
+\begin{example}[射手射击的熵]\label{example:ch04-射手熵}
+计算本节开始时射击例子中射手甲，乙，丙射击试验相应的熵。
+\[
+H_{\text{甲}}=-\frac12\lg\frac12-\frac12\lg\frac12=\lg 2=0.301\,0,
+\]
+\[
+H_{\text{乙}}=-0.99\cdot\lg 0.99-0.01\cdot\lg 0.01=0.024\,3,
+\]
+\[
+H_{\text{丙}}=-0.7\cdot\lg 0.7-0.3\cdot\lg 0.3=0.265\,3.
+\]
+这里均用十进制单位。甲的熵最大，乙最小，丙介于其中，与直观完全符合。
+\end{example}
+
+\begin{example}[英文字母出现的熵]\label{example:ch04-英文字母熵}
+熵的概念的引入与通信理论的发展密切相关，后者需要解决最有效而无错误地传递消息这一任务。用文字给出的消息通常经过编码变成某种信号，经信道传输，到达接收地点，再经译码还原。当然编码的优劣将直接影响通信的效率。最简单的办法是把每一个字母都转换成相同长度的码子，但正如本书一开头就看到的那样，在英文中不同字母出现的频率很不相同。因此更有效的办法当然是把最常出现的字母编成较短的码子，而把不常出现的字母编成较长的码子。这个问题与英文字母出现的熵有直接关系。
+
+假如把 $26$ 个字母连同分隔用的空格共 $27$ 个符号，看作是等可能出现的，则相应的试验（接收到一个符号，要判断它是哪个字母或空格）的熵为
+\[
+H_0=\lg 27=1.431\,4.
+\]
+但是接收到一个符号，它是空格的可能性比是 $z$ 的可能性要大 $200$ 倍，也即不肯定性程度似乎不应该有这么大。事实上，如果我们考虑到不同字母及空格的出现概率（数值见第一章 $\S 1$），则
+\[
+H_1=-\sum_{i=1}^{27}p_i\lg p_i=1.213,
+\]
+也就是说不肯定性要小不少。当然如果再注意到英文中前后字母间的联系，例如 $q$ 总是接着 $u$，则这种不肯定性还要小得多。
+\end{example}
+
+\subsection*{二、熵的基本性质}
+
+下面讨论用~\eqref{align:ch04-熵定义2} 定义的熵的若干基本性质，通过这些研究将进一步看到熵作为不肯定性程度度量的合理性。
+
+首先考察一下函数 $\varphi(x)=-x\log x$ 的性质，显然对于 $x>0$，均有 $\varphi''(x)<0$，因此 $\varphi(x)$ 是 $(0,\infty)$ 上的上凸函数，即对于任意的 $p>0,q>0$，且 $p+q=1$，不等式
+\begin{align}
+p\varphi(x_1)+q\varphi(x_2)<\varphi(px_1+qx_2)\label{align:ch04-上凸}
+\end{align}
+对一切 $0<x_1<x_2<\infty$ 成立。
+
+一般地，不难用归纳法证明如下分析引理。
+
+\begin{lemma}[Jensen 不等式]\label{lemma:ch04-Jensen}
+设 $\varphi(x)$ 是 $[a,b]$ 上的上凸函数，而 $x_1,x_2,\cdots,x_n$ 是 $[a,b]$ 中的任意点，$\lambda_1,\lambda_2,\cdots,\lambda_n$ 是和为 $1$ 的正数，则
+\begin{align}
+\sum_{i=1}^n\lambda_i\varphi(x_i)\leqslant\varphi\left(\sum_{i=1}^n\lambda_i x_i\right),\label{align:ch04-Jensen}
+\end{align}
+等号成立当且仅当诸 $x_i$ 相等。
+\end{lemma}
+
+下面证明熵的若干性质。
+
+\noindent\textbf{性质 1}\quad 当且仅当 $p(A_i)$，$i=1,2,\cdots,n$ 之中的一个等于 $1$ 时，熵 $H=0$，其他情况下，熵恒为正。
+
+\noindent\textbf{性质 2}\quad 在有 $n$ 个可能结果的试验中，等概试验具有最大熵，其值为 $\log n$。
+
+\begin{proof}
+在\cref{lemma:ch04-Jensen} 中取 $\varphi(x)=-x\log x$，$x_i=p(A_i)$，$\lambda_i=\dfrac{1}{n}$，代入~\eqref{align:ch04-Jensen} 式，得到
+\[
+\frac{-1}{n}\sum_{i=1}^n p(A_i)\log p(A_i)\leqslant\frac{-1}{n}\log\frac{1}{n},
+\]
+即
+\[
+H\bigl(p(A_1),\cdots,p(A_n)\bigr)\leqslant\log n=H\left(\frac{1}{n},\cdots,\frac{1}{n}\right).
+\]
+\end{proof}
+
+下面考虑两个试验 $\alpha$ 及 $\beta$，设它们的结果及概率如下
+\[
+\alpha:\begin{pmatrix}A_1,&\cdots,&A_m\\p(A_1),&\cdots,&p(A_m)\end{pmatrix}
+\qquad
+\beta:\begin{pmatrix}B_1,&\cdots,&B_n\\p(B_1),&\cdots,&p(B_n)\end{pmatrix}.
+\]
+又以 $\alpha\beta$ 记这两个试验联合起来所构成的新试验，于是试验 $\alpha\beta$ 的可能结果为 $A_k B_l$，$k=1,2,\cdots,m$，$l=1,2,\cdots,n$，相应的概率为 $p(A_k B_l)$。按定义
+\begin{align}
+H(\alpha\beta)=-\sum_{k,l}p(A_k B_l)\log p(A_k B_l).\label{align:ch04-联合熵}
+\end{align}
+
+\noindent\textbf{性质 3}\quad 若试验 $\alpha$ 与试验 $\beta$ 独立，则
+\begin{align}
+H(\alpha\beta)=H(\alpha)+H(\beta).\label{align:ch04-独立可加}
+\end{align}
+
+\begin{proof}
+在这种场合 $p(A_k B_l)=p(A_k)p(B_l)$，因此
+\begin{align*}
+H(\alpha\beta)&=-\sum_{k,l}p(A_k)p(B_l)\log p(A_k)p(B_l)\\
+&=-\sum_{k,l}p(A_k)p(B_l)\bigl[\log p(A_k)+\log p(B_l)\bigr]\\
+&=H(\alpha)+H(\beta).
+\end{align*}
+\end{proof}
+
+\subsection*{三、条件熵与信息量}
+
+为了进一步研究熵的性质，需要引进条件熵的概念。设 $\alpha,\beta$ 是前述两个试验，以 $p(B_l\mid A_k)$ 记试验 $\alpha$ 出现结果 $A_k$ 的条件下，试验 $\beta$ 出现结果 $B_l$ 的概率，则
+\begin{align}
+H_{A_k}(\beta)=-\sum_{l=1}^n p(B_l\mid A_k)\log p(B_l\mid A_k)\label{align:ch04-条件熵单}
+\end{align}
+是在试验 $\alpha$ 出现 $A_k$ 的条件下，试验 $\beta$ 的熵。
+
+我们称平均值
+\begin{align}
+H_\alpha(\beta)=\sum_{k=1}^m p(A_k)H_{A_k}(\beta)\label{align:ch04-条件熵平均}
+\end{align}
+为在试验 $\alpha$ 实现的条件下试验 $\beta$ 的\textbf{条件熵}。
+
+下面指出 $H_\alpha(\beta)$ 的某些重要性质。
+
+\noindent\textbf{性质 1}\quad
+\begin{align}
+H(\alpha\beta)=H(\alpha)+H_\alpha(\beta).\label{align:ch04-熵加法}
+\end{align}
+
+\begin{proof}
+\begin{align*}
+H(\alpha\beta)&=-\sum_{k,l}p(A_k B_l)\log p(A_k B_l)\\
+&=-\sum_{k,l}p(A_k)p(B_l\mid A_k)\bigl[\log p(A_k)+\log p(B_l\mid A_k)\bigr]\\
+&=-\sum_k p(A_k)\log p(A_k)\sum_l p(B_l\mid A_k)
+-\sum_k p(A_k)\sum_l p(B_l\mid A_k)\log p(B_l\mid A_k)\\
+&=H(\alpha)+H_\alpha(\beta).
+\end{align*}
+特别当 $\alpha$ 与 $\beta$ 独立时，$H_\alpha(\beta)=H(\beta)$，此时~\eqref{align:ch04-熵加法} 化为~\eqref{align:ch04-独立可加} 式。
+
+同理，
+\[
+H(\alpha\beta)=H(\beta)+H_\beta(\alpha).
+\]
+这个性质称为\textbf{熵的加法法则}。推导熵的表达式时的条件 (iii)，事实上是加法法则的另一种表述。
+\end{proof}
+
+\noindent\textbf{性质 2}\quad $H_\alpha(\beta)$ 是非负的。又若所有的 $p(A_i)>0$，则当且仅当 $H_{A_i}(\beta)=0$（$i=1,\cdots,m$）时，$H_\alpha(\beta)=0$ 才成立，此时还有 $H(\alpha\beta)=H(\alpha)$。
+
+这些性质用条件熵的定义立即得到。后一结论说明，只有当试验 $\alpha$ 的任何结果都使试验 $\beta$ 的不肯定性完全消除时，才有 $H_\alpha(\beta)=0$，此时 $\alpha$ 的结果完全决定了 $\beta$ 的结果。
+
+\noindent\textbf{性质 3}\quad
+\begin{align}
+H_\alpha(\beta)\leqslant H(\beta).\label{align:ch04-条件熵不增}
+\end{align}
+
+\begin{proof}
+在\cref{lemma:ch04-Jensen} 中，取 $\varphi(x)=-x\log x$，$\lambda_i=p(A_i)$，$x_i=p(B_k\mid A_i)$，则
+\begin{align*}
+-\sum_{i=1}^m p(A_i)p(B_k\mid A_i)\log p(B_k\mid A_i)
+&\leqslant-\left[\sum_{i=1}^m p(A_i)p(B_k\mid A_i)\right]\log\left[\sum_{i=1}^m p(A_i)p(B_k\mid A_i)\right]\\
+&=-p(B_k)\log p(B_k).
+\end{align*}
+两边对 $k$ 求和即得
+\[
+-\sum_{i=1}^m p(A_i)\sum_{k=1}^n p(B_k\mid A_i)\log p(B_k\mid A_i)\leqslant-\sum_{k=1}^n p(B_k)\log p(B_k).
+\]
+此即
+\[
+H_\alpha(\beta)\leqslant H(\beta).
+\]
+
+此外，显然有
+\[
+H(\alpha\beta)=H(\alpha)+H_\alpha(\beta)\leqslant H(\alpha)+H(\beta).
+\]
+\end{proof}
+
+关系式~\eqref{align:ch04-条件熵不增} 的涵义不难理解，因为进行试验 $\alpha$ 之后，一般对试验 $\beta$ 的结果会增加了解，从而消除了部分不肯定性，只有当 $\alpha$ 与 $\beta$ 独立时，$H_\alpha(\beta)=H(\beta)$，此时 $\alpha$ 的结果无助于减少 $\beta$ 的不肯定性。因此量 $H(\beta)-H_\alpha(\beta)$ 是作了辅助试验 $\alpha$ 之后试验 $\beta$ 不肯定性的减少量，即是由于试验 $\alpha$ 的进行而得到的有关试验 $\beta$ 的信息。
+
+记
+\begin{align}
+I(\alpha,\beta)=H(\beta)-H_\alpha(\beta)\label{align:ch04-互信息}
+\end{align}
+并称之为含在试验 $\alpha$ 中的有关试验 $\beta$ 的\textbf{信息量}。
+
+因为
+\[
+H(\alpha\beta)=H(\alpha)+H_\alpha(\beta)=H(\beta)+H_\beta(\alpha),
+\]
+所以
+\[
+H(\alpha)-H_\beta(\alpha)=H(\beta)-H_\alpha(\beta),
+\]
+即
+\[
+I(\beta,\alpha)=I(\alpha,\beta).
+\]
+因此 $\beta$ 中含有 $\alpha$ 的信息量与 $\alpha$ 中含有 $\beta$ 的信息量相等。
+
+显然
+\begin{align}
+0\leqslant I(\alpha,\beta)\leqslant H(\alpha),\qquad 0\leqslant I(\alpha,\beta)\leqslant H(\beta).\label{align:ch04-信息量界}
+\end{align}
+当且仅当 $\alpha$ 与 $\beta$ 独立时，才有 $I(\alpha,\beta)=0$，此时一个试验不含有另一个试验的任何信息量。另一个极端情形是当 $\alpha$ 的结果完全决定 $\beta$ 的结果，此时 $H_\alpha(\beta)=0$，从而 $I(\alpha,\beta)=H(\beta)$。特别地，$I(\beta,\beta)=H(\beta)$，这就是说，包含在试验 $\beta$ 中有关试验 $\beta$ 的信息量等于 $\beta$ 的熵，因而熵也是信息量。
+
+\subsection*{四、连续型分布的熵}
+
+对于具有密度函数的连续型分布，可以类似地定义它的熵。设随机变量 $\alpha$ 及 $\beta$ 的密度函数分别为 $p(x)$ 及 $q(y)$，它们的联合密度函数为 $f(x,y)$。一种比较显然的定义熵的办法是仿照离散型场合，定义
+\begin{align}
+H(\alpha)=-\int_{-\infty}^{\infty}p(x)\log p(x)\,\mathrm{d}x,\label{align:ch04-连续熵}
+\end{align}
+\begin{align}
+H(\alpha\beta)=-\iint f(x,y)\log f(x,y)\,\mathrm{d}x\,\mathrm{d}y,\label{align:ch04-连续联合熵}
+\end{align}
+和
+\begin{align}
+H_\alpha(\beta)=-\iint f(x,y)\log\frac{f(x,y)}{p(x)}\,\mathrm{d}x\,\mathrm{d}y,\label{align:ch04-连续条件熵}
+\end{align}
+\begin{align}
+H_\beta(\alpha)=-\iint f(x,y)\log\frac{f(x,y)}{q(y)}\,\mathrm{d}x\,\mathrm{d}y.\label{align:ch04-连续条件熵2}
+\end{align}
+
+这样定义的熵及条件熵具有许多离散型分布的熵的性质。简单罗列如下：
+
+\noindent\textbf{性质 1}\quad 若 $\alpha$ 限制在 $V$ 中变化，则 $V$ 中的均匀分布有最大熵，其值等于 $\log|V|$，此处 $|V|$ 是 $V$ 的测度。
+
+\noindent\textbf{性质 2}\quad $H(\alpha\beta)=H(\alpha)+H_\alpha(\beta)=H(\beta)+H_\beta(\alpha)$，而且
+\[
+H_\alpha(\beta)\leqslant H(\beta),
+\]
+因而
+\[
+H(\alpha\beta)\leqslant H(\alpha)+H(\beta).
+\]
+这两个等号成立的充要条件是 $\alpha$ 与 $\beta$ 独立。
+
+第一个性质说明，从熵的观点看，均匀分布具有特殊地位。令人惊奇的是，常见的另外两个分布——正态分布与指数分布，从熵的观点看，也具有特殊地位。
+
+\noindent\textbf{性质 3}\quad 设 $p(x)$ 是一元密度函数，其标准差为 $\sigma$，则当 $p(x)$ 为正态分布时其熵最大，其值等于 $\log\sqrt{2\pi\mathrm{e}}\sigma$（对数以 $\mathrm{e}$ 为底）。
+
+\begin{proof}
+不失一般性，设其数学期望为零，这时要求 $p(x)$ 满足约束条件
+\[
+\int p(x)\,\mathrm{d}x=1
+\]
+及
+\[
+\sigma^2=\int x^2 p(x)\,\mathrm{d}x,
+\]
+又使
+\[
+H(x)=-\int p(x)\log p(x)\,\mathrm{d}x
+\]
+达到最大。根据变分法，这相当于要求
+\[
+\int\left[-p(x)\log p(x)+\lambda p(x)+\mu x^2 p(x)\right]\mathrm{d}x
+\]
+达到极大，即
+\[
+-1-\log p(x)+\lambda+\mu x^2=0.
+\]
+选取常数使其满足约束条件，即得
+\[
+p(x)=\frac{1}{\sqrt{2\pi}\sigma}\mathrm{e}^{-x^2/(2\sigma^2)}.
+\]
+此时
+\[
+H(x)=\int\frac{1}{\sqrt{2\pi}\sigma}\mathrm{e}^{-x^2/(2\sigma^2)}\left[\log\sqrt{2\pi}\sigma+\frac{x^2}{2\sigma^2}\right]\mathrm{d}x
+=\log\sqrt{2\pi}\sigma+\frac12=\log\sqrt{2\pi\mathrm{e}}\,\sigma.
+\]
+\end{proof}
+
+在 $n$ 元场合，假定分布的协方差矩阵为 $\Sigma=(\sigma_{ij})$，则
+\[
+p(\boldsymbol{x})=\frac{1}{(2\pi)^{n/2}(\det\Sigma)^{1/2}}\exp\left\{-\frac12\boldsymbol{x}\Sigma^{-1}\boldsymbol{x}^{\mathrm{T}}\right\},\qquad \boldsymbol{x}\in\mathbb{R}^n,
+\]
+达到最大熵 $\log(2\pi\mathrm{e})^{n/2}(\det\Sigma)^{1/2}$。
+
+\noindent\textbf{性质 4}\quad 若密度函数 $p(x)$ 当 $x\leqslant 0$ 时等于 $0$，并且其均值为 $a$，则指数分布 $\mathrm{Exp}\left(\dfrac{1}{a}\right)$，即
+\[
+p(x)=\frac1a\mathrm{e}^{-x/a},\qquad x>0,
+\]
+达到最大熵，其值为 $\log\mathrm{e}a$。
+
+证明方法与推导正态分布时完全一样，不再写出。
+
+连续熵的性质也有与离散熵不同的，特别是它的数值会因坐标系的改变而改变。因此还存在着别种关于连续熵的定义，不过这里不准备再深入讨论了。
+
+熵是一门新兴学科——信息论中的基本概念。它的引入使得人们能对随机现象的不肯定性进行度量，是具有重大意义的。
+
+\end{document}

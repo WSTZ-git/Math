@@ -1,0 +1,82 @@
+﻿\documentclass[../../main.tex]{subfiles}
+
+\graphicspath{{../../image/}{../../figure/}}
+
+\begin{document}
+
+\section{决策理论}\label{section:ch05-决策理论}
+
+假设有一个输入向量$\boldsymbol{x}$和一个相应的目标变量$\boldsymbol{t}$，我们想要在给定$\boldsymbol{x}$的新值时预测$\boldsymbol{t}$。在讨论线性回归时（参见\cref{section:ch04-决策理论}），机器学习中的预测过程可分为推理和决策两个阶段。下面我们结合分类器对这一观点进行更深入的探讨。
+
+\subsection{误分类率}\label{subsection:ch05-误分类率}
+
+假设我们的目标只是尽可能减少误分类，则需要一条规则，以便将$\boldsymbol{x}$的每个值归入一个可用的类。该规则会将输入空间划分为若干决策区域$\mathcal{R}_k$，每个类拥有一个决策区域，从而$\mathcal{R}_k$中的所有点都会被归入$C_k$类。决策区域之间的边界称为决策边界或决策面。
+
+为了得到最优决策规则，首先考虑二分类。当属于$C_1$类的输入向量被归入$C_2$类或反之之时，就会出现错误。发生这种情况的概率为
+
+\begin{align}
+  p(\text{错误})=p(\boldsymbol{x}\in\mathcal{R}_2,C_1)+p(\boldsymbol{x}\in\mathcal{R}_1,C_2)
+  \label{align:ch05-误分类率}
+\end{align}
+
+为了将$p(\text{错误})$最小化，我们应该将每个点$\boldsymbol{x}$归入使被积函数值较小的类。因此，对于给定的$\boldsymbol{x}$值，如果$p(\boldsymbol{x},C_1)>p(\boldsymbol{x},C_2)$，则归入$C_1$类。根据概率的乘积法则$p(\boldsymbol{x},C_k)=p(C_k\mid\boldsymbol{x})p(\boldsymbol{x})$，由于$p(\boldsymbol{x})$是公因子，因此我们可以将这一结果重新表述为：如果将$\boldsymbol{x}$的每个值归入后验概率$p(C_k\mid\boldsymbol{x})$最大的类，则犯错的概率最小。
+
+在更一般的多分类情况下，将正确概率最大化稍显容易：
+
+\begin{align}
+  p(\text{正确})=\sum_{k}P(\boldsymbol{x}\in\mathcal{R}_k,C_k)=\sum_{k}\int_{\mathcal{R}_k}p(\boldsymbol{x},C_k)\,\mathrm{d}\boldsymbol{x}
+  \label{align:ch05-正确概率}
+\end{align}
+
+\subsection{预期损失}\label{subsection:ch05-预期损失}
+
+在许多应用中，我们的目标相比仅减少误分类数量更为复杂。让我们再次回到医疗诊断问题：如果一名未患癌症的病人被误诊为患有癌症，后果可能是他会经历一些痛苦并接受进一步检查；相反，如果癌症患者被误诊为身体健康，后果可能是他由于没有接受相应治疗而过早死亡。这两种错误可能导致截然不同的后果。
+
+我们可以通过采用损失函数来将这些问题形式化，损失函数是对采取任何可供选择之决策或行动所造成损失的单一、总体衡量。假设一个新的$\boldsymbol{x}$值实际上属于$C_k$类，而我们却将$\boldsymbol{x}$归入$C_j$类，我们会遭受损失$L_{kj}$，可以将其视为损失矩阵的$(k,j)$元素。我们的目标是最大限度地减少总损失。每个$\boldsymbol{x}$可被独立归入决策区域$\mathcal{R}_j$中的一个类。预期损失为
+
+\begin{align}
+  \mathbb{E}[L]=\sum_{k}\sum_{j}\int_{\mathcal{R}_j}L_{kj}\,p(\boldsymbol{x},C_k)\,\mathrm{d}\boldsymbol{x}
+  \label{align:ch05-预期损失}
+\end{align}
+
+能够最小化预期损失的决策规则会将每个新的$\boldsymbol{x}$分配给使$\sum_k L_{kj}p(C_k\mid\boldsymbol{x})$最小的类别$j$。
+
+\subsection{拒绝选项}\label{subsection:ch05-拒绝选项}
+
+我们已经看到，分类误差产生于输入空间的区域，其中最大后验概率$p(C_k\mid\boldsymbol{x})$明显小于$1$，或等价地，联合分布$p(\boldsymbol{x},C_k)$存在相近的概率值。在这些区域，我们对归属关系相对不确定。在某些应用中，应避免对疑难案例做出决策，以期在做出分类决策更有把握的案例中获得较低的误差率。这就是所谓的拒绝选项（rejection option）。为此，我们可以引入阈值$\theta$，并拒绝那些后验概率$p(C_k\mid\boldsymbol{x})$的最大值小于或等于$\theta$的输入变量$\boldsymbol{x}$。通过设置$\theta=1$可以确保不拒绝任何示例；而如果有$K$个类，那么设置$\theta<1/K$可以拒绝所有示例。
+
+\subsection{推理和决策}\label{subsection:ch05-推理和决策}
+
+事实上，我们可以找出三种不同的方法来解决决策问题，按复杂程度递减的顺序排列如下：
+
+\begin{description}
+  \item[(a)] 首先解决确定每个$C_k$类的类-条件概率密度$p(\boldsymbol{x}\mid C_k)$的推理问题，分别推断类的先验概率$p(C_k)$。然后使用贝叶斯定理
+
+  \begin{align}
+    p(C_k\mid\boldsymbol{x})=\frac{p(\boldsymbol{x}\mid C_k)p(C_k)}{p(\boldsymbol{x})}
+    \label{align:ch05-贝叶斯归一}
+  \end{align}
+
+  求出类的后验概率$p(C_k\mid\boldsymbol{x})$，分母可根据归一化条件$\sum_k p(\boldsymbol{x})=\sum_k p(\boldsymbol{x}\mid C_k)p(C_k)$求出。
+
+  \item[(b)] 首先解决确定类的后验概率$p(C_k\mid\boldsymbol{x})$的推理问题，然后使用决策理论将每个新输入的$\boldsymbol{x}$归入其中一个类。直接对后验概率进行建模的方法称为判别模型。
+
+  \item[(c)] 计算出一个称为判别函数的函数$f(\boldsymbol{x})$，它能将每个新输入的$\boldsymbol{x}$直接映射到类标签上。例如，对于二分类问题，$f(\cdot)$可能是二进制值，从而$f=0$代表$C_1$类，而$f=1$代表$C_2$类。
+\end{description}
+
+对输入和输出的分布进行显式或隐式建模的方法叫作生成式模型，因为通过从它们中采样，我们可以在输入空间中生成合成数据点。方法(a)要求最高，因为它需要求出$\boldsymbol{x}$和$C_k$的联合分布；但它的一个优点是，可以根据边缘密度$p(\boldsymbol{x})$求出新数据点，这有助于离群值检测（outlier detection）。
+
+\subsection{分类器精度}\label{subsection:ch05-分类器精度}
+
+衡量分类器性能的最简单方法是计算测试集中被正确分类的数据点所占的比例。然而，不同类型的误差会导致不同的后果。让我们再次回到癌症检查示例：如果分类器预测一个人患有癌症而这是真实标签，称这种预测为真阳性（True Positive, TP）；如果这个人未患癌症，则称这种预测为假阳性（False Positive, FP），假阳性也称第一类误差（type 1 error）。类似地，真阴性（True Negative, TN）对应正确预测未患癌，假阴性（False Negative, FN）则称第二类误差（type 2 error）。
+
+这可以用混淆矩阵（confusion matrix）来表示，其中行代表真实类，列代表根据决策准则所做的分类。准确率为
+
+\begin{align}
+  \text{准确率}=\frac{N_{\mathrm{TP}}+N_{\mathrm{TN}}}{N_{\mathrm{TP}}+N_{\mathrm{FP}}+N_{\mathrm{TN}}+N_{\mathrm{FN}}}
+  \label{align:ch05-准确率}
+\end{align}
+
+其中$N$是参加测试的总人数。正如我们所看到的，如果存在严重失衡的类，则准确率可能会误导人。
+
+\end{document}

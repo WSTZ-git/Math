@@ -1,0 +1,147 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{../../image/}{../../figure/}}
+\begin{document}
+
+\section{高斯混合分布}\label{section:ch15-高斯混合分布}
+
+我们之前已经将高斯混合分布描述为高斯分量的简单线性叠加，目的是提供比单个高斯分布更丰富的密度模型类别（参见~3.2.9~小节）。在本节中，将转向用离散潜变量的形式来描述高斯混合分布。这将帮助我们更深入地理解这个重要分布，并有助于激励我们去探究~EM（Expectation--Maximization，最大期望）算法。
+
+回想一下式(3.111)，高斯混合分布可以写成高斯分量的线性叠加形式：
+\begin{align}
+p(\bm{x})=\sum_{k=1}^{K}\pi_k\,\mathcal{N}(\bm{x}|\bm{\mu}_k,\bm{\Sigma}_k)
+\label{align:ch15-gmm-marginal}
+\end{align}
+
+让我们引入一个 $K$ 维的二进制随机向量 $\bm{z}$，它采用~1-of-$K$~表示形式，其中一个元素等于 $1$，其他所有元素等于 $0$。因此 $z_k$ 的值满足 $z_k\in\{0,1\}$ 以及 $\sum_k z_k=1$，并且根据哪个元素非零，向量 $\bm{z}$ 有 $K$ 种可能的状态。将联合分布 $p(\bm{x},\bm{z})$ 定义为边缘分布 $p(\bm{z})$ 和条件分布 $p(\bm{x}|\bm{z})$ 的形式。关于 $\bm{z}$ 的边缘分布是由混合系数 $\pi_k$ 指定的，即
+\begin{align}
+p(z_k=1)=\pi_k
+\label{align:ch15-prior-k}
+\end{align}
+其中参数 $\{\pi_k\}$ 必须满足
+\begin{align}
+0\leq\pi_k\leq 1
+\label{align:ch15-pi-bounds}
+\end{align}
+和
+\begin{align}
+\sum_{k=1}^{K}\pi_k=1.
+\label{align:ch15-pi-sum}
+\end{align}
+
+因为 $\bm{z}$ 使用~1-of-$K$~表示形式，我们也可以将该分布写成
+\begin{align}
+p(\bm{z})=\prod_{k=1}^{K}\pi_k^{z_k}
+\label{align:ch15-prior-factorized}
+\end{align}
+
+同样，给定 $\bm{z}$ 的特定值时 $\bm{x}$ 的条件分布也是一个高斯分布：
+\begin{align}
+p(\bm{x}|z_k=1)=\mathcal{N}(\bm{x}|\bm{\mu}_k,\bm{\Sigma}_k)
+\end{align}
+它可以写成
+\begin{align}
+p(\bm{x}|\bm{z})=\prod_{k=1}^{K}\mathcal{N}(\bm{x}|\bm{\mu}_k,\bm{\Sigma}_k)^{z_k}
+\label{align:ch15-conditional-x}
+\end{align}
+
+联合分布由 $p(\bm{z})p(\bm{x}|\bm{z})$ 给出，它可以用图模型来描述（见习题~15.3）。可以通过对所有可能的 $\bm{z}$ 的状态求和联合分布来获得 $\bm{x}$ 的边缘分布：
+\begin{align}
+p(\bm{x})=\sum_{\bm{z}}p(\bm{z})p(\bm{x}|\bm{z})=\sum_{k=1}^{K}\pi_k\mathcal{N}(\bm{x}|\bm{\mu}_k,\bm{\Sigma}_k)
+\label{align:ch15-gmm-marginal-2}
+\end{align}
+其中我们利用了式\eqref{align:ch15-prior-factorized}和式\eqref{align:ch15-conditional-x}。因此，$\bm{x}$ 的边缘分布是形式为式\eqref{align:ch15-gmm-marginal}的高斯混合分布。如果我们有多个观测值 $\bm{x}_1,\cdots,\bm{x}_N$，那么因为边缘分布的形式是 $p(\bm{x})=\sum_{\bm{z}}p(\bm{x},\bm{z})$，所以每个观测到的数据点 $\bm{x}_n$ 都对应一个潜变量 $\bm{z}_n$。
+
+另一个起到重要作用的量是给定 $\bm{x}$ 时 $\bm{z}$ 的条件概率。我们使用 $\gamma(z_k)$ 来表示 $p(z_k=1|\bm{x})$，其值可以使用贝叶斯定理找到：
+\begin{align}
+\gamma(z_k)=\frac{\pi_k\mathcal{N}(\bm{x}|\bm{\mu}_k,\bm{\Sigma}_k)}{\sum_{j=1}^{K}\pi_j\mathcal{N}(\bm{x}|\bm{\mu}_j,\bm{\Sigma}_j)}.
+\label{align:ch15-responsibility}
+\end{align}
+$\pi_k$ 可以视为 $z_k=1$ 的先验概率，$\gamma(z_k)$ 可以视为观测到 $\bm{x}$ 之后的相应后验概率。正如我们稍后将看到的，$\gamma(z_k)$ 也可以视为分量 $k$ 对“解释”观测值 $\bm{x}$ 所要承担的责任（responsibility）。
+
+我们找到了一个涉及显式潜变量的高斯混合分布的等效表示，其中联合分布以图模型的形式给出。这么做的收益看起来并不大。然而，现在我们已经能够用联合分布 $p(\bm{x},\bm{z})=p(\bm{z})p(\bm{x}|\bm{z})$ 代替边缘分布 $p(\bm{x})$ 工作，这将带来显著的简化（特别是在引入~EM~算法时）。
+
+\subsection{似然函数}\label{subsection:ch15-似然函数}
+
+假设我们有一组观测数据 $\{\bm{x}_1,\cdots,\bm{x}_N\}$，我们希望使用高斯混合模型来对这些数据进行建模。我们可以将这个数据集表示为一个 $N\times D$ 的矩阵 $\bm{X}$，其中第 $n$ 行由 $\bm{x}_n^{\mathsf T}$ 给出。
+
+由式\eqref{align:ch15-gmm-marginal}可知，似然函数的对数由下式给出：
+\begin{align}
+\ln p(\bm{X}|\bm{\pi},\bm{\mu},\bm{\Sigma})=\sum_{n=1}^{N}\ln\!\left\{\sum_{k=1}^{K}\pi_k\mathcal{N}(\bm{x}_n|\bm{\mu}_k,\bm{\Sigma}_k)\right\}.
+\label{align:ch15-gmm-nll}
+\end{align}
+
+最大化这个对数似然函数比针对单个高斯分布更复杂。难点在于式\eqref{align:ch15-gmm-nll}中的对数内部的求和项会导致对数不再直接作用于高斯分布。如果将对数似然函数关于模型参数的导数设为零，我们将不再获得闭合解，这一点我们很快就会看到。
+
+在讨论如何最大化这个函数之前，值得强调的是，在应用到高斯混合模型时，最大似然框架存在一个显著的问题，就是有奇异性。为了简单起见，考虑一个高斯混合模型，其组成部分的协方差矩阵由 $\bm{\Sigma}_k=\sigma_k^2\bm{I}$ 给出，其中 $\bm{I}$ 是单位矩阵，但所得结论对于一般的协方差矩阵也是成立的。假设该高斯混合模型的一个分量，比如第 $j$ 个分量，其均值 $\bm{\mu}_j$ 恰好等于某个数据点，即 $\bm{\mu}_j=\bm{x}_n$，则这个数据点将在似然函数中贡献一个如下形式的项：
+\begin{align}
+\mathcal{N}(\bm{x}_n|\bm{x}_n,\sigma_j^2\bm{I})=\frac{1}{(2\pi\sigma_j^2)^{D/2}}
+\label{align:ch15-singularity}
+\end{align}
+考虑极限 $\sigma_j\rightarrow 0$，我们会看到该项趋向于无穷大，所以对数似然函数也将趋向于无穷大。由此可见，最大化对数似然函数并不是一个良定义的问题，因为这种奇异性总是存在的，并且每当一个高斯分量“坍缩”到一个特定的数据点时就会发生。这种奇异性提供了一个最大似然方法中可能出现过拟合的例子。当把最大似然方法应用到高斯混合模型时，我们必须采取措施以避免找到这样的病态（pathological）解，比如转而寻求似然函数的局部最大值，这些局部最大值通常表现良好。我们可以试图通过使用适当的启发式方法来避免奇异性，例如检测到高斯分量在坍缩时将其均值重置为随机选择的值，同时将其协方差重置为某个较大值，然后继续优化。通过添加一个对应于参数先验分布的正则化项到对数似然函数中，也可以避免奇异性（参见\cref{subsection:ch15-参数先验}）。
+
+在寻找最大似然解时还有一个问题，因为对于任何给定的最大似然解，一个包含 $K$ 个组分的高斯混合模型将有总共 $K!$ 个等效解，对应于将 $K$ 组参数分配给 $K$ 个组分的 $K!$ 种方式。换句话说，对于参数值空间中的任何给定（非退化）点，都会存在额外的 $K!-1$ 个点。所有这些点都将产生完全相同的分布。这个问题称为可识别性（identifiability）问题（Casella and Berger, 2002），当我们希望解释模型发现的参数值时，这是一个重要问题。当我们讨论具有连续潜变量的模型（参见第~16~章）时，可识别性问题也会出现。然而，当我们寻找一个好的密度模型时，这个问题无关紧要，因为任何等效解都和其他解一样好。
+
+\subsection{最大似然}\label{subsection:ch15-最大似然}
+
+在为含有隐变量的模型寻找最大似然解的探索中，EM~算法是一种优雅而强大的方法（Dempster, Laird and Rubin, 1977; McLachlan and Krishnan, 1997）。在本章中，我们将先后给出三种不同的~EM~算法推导，每一种都比前一种更加通用。下面让我们在高斯混合模型的背景下以相对非正式的方式开始。首先需要强调的是，EM~算法具有广泛的适用性，它的底层概念我们将在本书涉及的多个模型中遇到。
+
+我们选择从写下似然函数最大值处必须满足的条件开始。将式\eqref{align:ch15-gmm-nll}中的 $\ln p(\bm{X}|\bm{\pi},\bm{\mu},\bm{\Sigma})$ 关于高斯分量均值 $\bm{\mu}_k$ 的导数设为零，便可得到
+\begin{align}
+0=\sum_{n=1}^{N}\underbrace{\frac{\pi_k\mathcal{N}(\bm{x}_n|\bm{\mu}_k,\bm{\Sigma}_k)}{\sum_j\pi_j\mathcal{N}(\bm{x}_n|\bm{\mu}_j,\bm{\Sigma}_j)}}_{\gamma(z_{nk})}\bm{\Sigma}_k^{-1}(\bm{x}_n-\bm{\mu}_k)
+\label{align:ch15-mu-deriv}
+\end{align}
+其中我们利用了高斯分布的形式。注意，后验概率或责任 $\gamma(z_{nk})$ 由式\eqref{align:ch15-responsibility}给出，因而自然地出现在公式的右侧。乘以 $\bm{\Sigma}_k^{-1}$（我们假设它是非奇异的）并重新排列后，便可得到
+\begin{align}
+\bm{\mu}_k=\frac{1}{N_k}\sum_{n=1}^{N}\gamma(z_{nk})\,\bm{x}_n
+\label{align:ch15-mu-update}
+\end{align}
+其中我们定义了
+\begin{align}
+N_k=\sum_{n=1}^{N}\gamma(z_{nk}).
+\label{align:ch15-effective-n}
+\end{align}
+
+可以将 $N_k$ 解释为分配给聚类 $k$ 的有效点数。仔细观察这个解的形式，可以看到，第 $k$ 个高斯分量的均值 $\bm{\mu}_k$ 是通过对数据集中的所有点进行加权平均得到的。在这个加权因子中，数据点 $\bm{x}_n$ 的权重是由后验概率 $\gamma(z_{nk})$ 给出的，即第 $k$ 个高斯分量负责生成 $\bm{x}_n$ 的概率。
+
+如果将 $\ln p(\bm{X}|\bm{\pi},\bm{\mu},\bm{\Sigma})$ 关于 $\bm{\Sigma}_k$ 的导数设为零并遵循类似的推理线索，利用单个高斯分布的最大似然解的结果（参见~3.2.7~小节），便可得到
+\begin{align}
+\bm{\Sigma}_k=\frac{1}{N_k}\sum_{n=1}^{N}\gamma(z_{nk})(\bm{x}_n-\bm{\mu}_k)(\bm{x}_n-\bm{\mu}_k)^{\mathsf T}.
+\label{align:ch15-sigma-update}
+\end{align}
+这与用单个高斯分布拟合数据集的对应结果形式相同，但每个数据点都由相应的后验概率加权，并且分母由与相应分量相关联的有效点数给出。
+
+最后，我们调整混合系数 $\pi_k$ 的值，目的是最大化对数似然函数 $\ln p(\bm{X}|\bm{\pi},\bm{\mu},\bm{\Sigma})$。此处我们必须考虑一个约束[式\eqref{align:ch15-pi-sum}]，该约束要求混合系数的和为 $1$。这可以通过使用拉格朗日乘子 $\lambda$ 并最大化以下量来实现：
+\begin{align}
+\ln p(\bm{X}|\bm{\pi},\bm{\mu},\bm{\Sigma})+\lambda\!\left(\sum_{k=1}^{K}\pi_k-1\right)
+\label{align:ch15-lagrangian}
+\end{align}
+这样便可得到
+\begin{align}
+0=\sum_{n=1}^{N}\frac{\mathcal{N}(\bm{x}_n|\bm{\mu}_k,\bm{\Sigma}_k)}{\sum_j\pi_j\mathcal{N}(\bm{x}_n|\bm{\mu}_j,\bm{\Sigma}_j)}+\lambda.
+\label{align:ch15-pi-deriv}
+\end{align}
+
+可以看到“责任”再次出现了。如果对式\eqref{align:ch15-pi-deriv}的两边乘以 $\pi_k$ 并利用式\eqref{align:ch15-pi-sum}对 $k$ 进行求和，就会发现 $\lambda=-N$。消除 $\lambda$ 并重新排列后，便可得到
+\begin{align}
+\pi_k=\frac{N_k}{N}.
+\label{align:ch15-pi-update}
+\end{align}
+
+因此，第 $k$ 个高斯分量的混合系数由该分量对解释数据点所要承担的平均责任给出。
+
+请注意，式\eqref{align:ch15-mu-update}、式\eqref{align:ch15-sigma-update}和式\eqref{align:ch15-pi-update}并不构成高斯混合模型参数的闭合解，因为责任 $\gamma(z_{nk})$ 通过式\eqref{align:ch15-responsibility}以复杂的方式依赖于这些参数。然而，这些结果确实提出了一种简单的迭代方案来寻找最大似然问题的解。正如我们将看到的，对于高斯混合模型的特定情况，这实际上是~EM~算法的一个实例。我们首先选择均值、协方差和混合系数的一些初始值，然后交替进行以下两个步骤——期望步骤（E~步骤）和最大化步骤（M~步骤）。在~E~步骤中，我们使用参数的当前值来估计后验概率或责任，其由式\eqref{align:ch15-responsibility}给出。然后在~M~步骤中使用这些概率重新估计均值、协方差和混合系数，它们分别由式\eqref{align:ch15-mu-update}、式\eqref{align:ch15-sigma-update}和式\eqref{align:ch15-pi-update}给出。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\textwidth]{ch15-fig15.7-em-iter.png}
+\caption{将~EM~算法应用于老忠实喷泉数据集，该数据集在\cref{fig:ch15-kmeans}中用于说明~K~均值算法。这里使用了两个高斯分量，其聚类中心使用与图~15.1~中~K~均值算法相同的值进行初始化，协方差矩阵则初始化为与单位矩阵成比例。(a)~初始配置；(b)~E~步骤；(c)--(f)~分别展示了进行~2~次、~5~次和~20~次完整的~EM~循环后的结果。在图~(f)~中，算法接近收敛。}
+\label{fig:ch15-em-iter}
+\end{figure}
+
+在实践中，当对数似然函数的值的变化，或者说参数的值的变化低于某个阈值时，算法就被认为已经收敛。我们将证明每次进行~E~步骤之后，紧跟着进行的~M~步骤导致的参数更新都会增大对数似然函数的值。
+
+请注意，与~K~均值算法相比，EM~算法需要进行更多的迭代才能达到（近似）收敛，而且每个循环都需要进行更多的计算。因此，人们通常会运行~K~均值算法来找到高斯混合模型的初始状态，随后使用~EM~算法进行调整。一种便捷的做法就是把协方差矩阵初始化为~K~均值算法以找到各个聚类的样本协方差，而混合系数可以设置为数据点被分配给相应聚类的比例。为了规避似然函数的奇异性——高斯分量坍缩至特定数据点的情况——我们必须采取诸如参数正则化的技术。需要强调的是，对数似然函数通常会有多个局部最大值，并且~EM~算法不能保证找到全局最大值。
+
+高斯混合模型非常灵活，如果模型参数选择得当，只需要给定足够数量的分量，就可以高精度地逼近复杂的数据分布。然而在实践中，尤其在高维空间中，分量的数量通常会有多个局部最大值，并且精确建模分布所需的分量的数量可能会大到不可接受。尽管如此，高斯混合模型仍十分有用。此外，理解高斯混合模型能为我们理解具有连续潜变量的模型和基于深度神经网络的生成式模型奠定基础，后者对高维空间的扩展性要好得多（参见第~16~章）。
+
+\end{document}

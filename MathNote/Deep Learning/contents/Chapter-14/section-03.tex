@@ -1,0 +1,119 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{../../image/}{../../figure/}}
+\begin{document}
+
+\section{朗之万采样}\label{section:ch14-朗之万采样}
+
+Metropolis--Hastings~算法通过使用提议分布创建候选样本的马尔可夫链，并使用式\eqref{align:ch14-mh-accept}所示的准则接受或拒绝它们，从而从概率分布中抽取样本。这可能相对低效，因为提议分布通常是一个简单且固定的分布，它可以在数据空间的任何方向上生成更新，从而导致随机游走的行为。
+
+我们已经看到，在训练神经网络时，利用关于模型可学习参数的对数似然梯度来最大化似然函数是极其有利的。类似地，我们可以引入利用关于数据向量的概率密度梯度的马尔可夫链采样算法，以便优先向概率较大的区域移动。这种技术称为哈密顿蒙特卡洛（Hamiltonian Monte Carlo）采样，也称混合蒙特卡洛（hybrid Monte Carlo）采样。该采样方法使用了~Metropolis~接受准则（Duane et al., 1987; Bishop, 2006）。在这里，我们研究一种在深度学习中使用广泛的新的采样方法——朗之万采样。尽管它避免了使用~Metropolis~接受准则，但我们必须仔细设计算法，以确保产生的结果样本是无偏的。在基于能量函数的机器学习模型中，朗之万采样发挥了至关重要的作用。
+
+\subsection{基于能量的模型}\label{subsection:ch14-基于能量的模型}
+
+许多生成式模型可以表示为条件概率分布 $p(\bm{x}|\bm{w})$，其中 $\bm{x}$ 是数据向量，$\bm{w}$ 代表可学习参数的向量。这样的模型可以通过最大化相对于训练集定义的对应似然函数来进行训练。然而，为了表示一个有效的概率分布，模型必须满足如下要求：
+\begin{align}
+\int p(\bm{x}|\bm{w})\,\mathrm{d}\bm{x}=1
+\label{align:ch14-normalization}
+\end{align}
+进行训练。然而，为了表示一个有效的概率分布，模型必须满足如下要求；这样的归一化要求大大限制了适用模型的形式。在不考虑归一化约束的情况下，我们可以考虑一个更广泛的模型类别，称为基于能量的模型（LeCun et al., 2006）。假设我们有一个称为能量函数的函数 $E(\bm{x},\bm{w})$，它是其参数的实值函数，但没有其他约束。指数 $\exp\{-E(\bm{x},\bm{w})\}$ 是一个非负数，因此可以看作未归一化的 $\bm{x}$ 上的概率分布。这里在指数中引入负号只是一个惯例，它意味着能量的较高值对应于概率的较低值。然后我们可以使用下式定义一个归一化的分布（见习题~14.16）：
+\begin{align}
+p(\bm{x}|\bm{w})=\frac{1}{Z(\bm{w})}\exp\{-E(\bm{x},\bm{w})\}
+\label{align:ch14-ebm}
+\end{align}
+其中归一化常数 $Z(\bm{w})$ 称为配分函数（partition function），它由下式定义：
+\begin{align}
+Z(\bm{w})=\int\exp\{-E(\bm{x},\bm{w})\}\,\mathrm{d}\bm{x}.
+\label{align:ch14-partition}
+\end{align}
+
+能量函数通常使用深度神经网络进行建模，输入向量为 $\bm{x}$，标量输出为 $E(\bm{x},\bm{w})$，其中 $\bm{w}$ 代表网络中权重和偏置的集合。
+
+注意配分函数依赖于 $\bm{w}$，这给训练带来了一些问题。例如，一组独立同分布数据 $\mathcal{D}=\{\bm{x}_1,\cdots,\bm{x}_N\}$ 的对数似然函数具有以下形式：
+\begin{align}
+\ln p(\mathcal{D}|\bm{w})=\sum_{n=1}^{N}\ln p(\bm{x}_n|\bm{w})=-N\ln Z(\bm{w})-\sum_{n=1}^{N}E(\bm{x}_n,\bm{w}).
+\label{align:ch14-ebm-nll}
+\end{align}
+
+对于具有许多选择的能量函数 $E(\bm{x},\bm{w})$，计算配分函数[式\eqref{align:ch14-partition}]是不切实际的，因为这需要对整个 $\bm{x}$ 空间进行积分（或对离散变量求和）。“基于能量的模型”指的就是这种积分难以处理的模型。然而请注意，概率模型可以视为基于能量的模型的特例，因此本书讨论的许多模型可以视为基于能量的模型。基于能量的模型的最大优势是，它们在不需要归一化的情况下具有灵活性。相应的缺点是，由于归一化常数未知，它们可能更难以训练。
+
+\subsection{最大化似然}\label{subsection:ch14-最大化似然}
+
+我们已经开发了各种近似方法来训练基于能量的模型，而无须计算配分函数（Song and Kingma, 2021）。本小节探讨基于马尔可夫链蒙特卡洛采样的技术。另一种方法称为分数匹配，我们将在扩散模型的背景下进行讨论（见第~20~章）。
+
+使用式\eqref{align:ch14-ebm}，对于一个基于能量的模型，对数似然函数关于模型参数的梯度可以写成以下形式：
+\begin{align}
+\nabla_{\bm{w}}\ln p(\bm{x}|\bm{w})=-\nabla_{\bm{w}}E(\bm{x},\bm{w})-\nabla_{\bm{w}}\ln Z(\bm{w}).
+\label{align:ch14-grad-nll}
+\end{align}
+
+这是针对单个数据点 $\bm{x}$ 的似然函数，但实际上我们希望最大化训练数据集上的似然函数，该数据集是从某个未知分布 $p_D(\bm{x})$ 中抽样得到的。如果我们假设数据点是独立同分布的，那么我们可以考虑与 $p_D(\bm{x})$ 相关的似然对数期望的梯度，其由下式给出：
+\begin{align}
+\mathbb{E}_{p_D}\!\left[\nabla_{\bm{w}}\ln p(\bm{x}|\bm{w})\right]=-\mathbb{E}_{p_D}\!\left[\nabla_{\bm{w}}E(\bm{x},\bm{w})\right]-\nabla_{\bm{w}}\ln Z(\bm{w}).
+\label{align:ch14-grad-expected}
+\end{align}
+这里我们利用了 $-\nabla_{\bm{w}}\ln Z(\bm{w})$ 不依赖于 $\bm{x}$ 的性质，因而可以把它移到期望之外。假设配分函数 $Z(\bm{w})$ 是未知的，但我们可以利用式\eqref{align:ch14-partition}并重组得到
+\begin{align}
+-\nabla_{\bm{w}}\ln Z(\bm{w})=\int\nabla_{\bm{w}}E(\bm{x},\bm{w})\,p(\bm{x}|\bm{w})\,\mathrm{d}\bm{x}.
+\label{align:ch14-partition-grad}
+\end{align}
+
+式\eqref{align:ch14-partition-grad}右侧的部分对应于模型分布 $p(\bm{x}|\bm{w})$ 的期望，它由下式给出（见习题~14.18）：
+\begin{align}
+\mathbb{E}_{p(\bm{x}|\bm{w})}\!\left[\nabla_{\bm{w}}E(\bm{x},\bm{w})\right].
+\label{align:ch14-model-expectation}
+\end{align}
+
+结合式\eqref{align:ch14-grad-expected}～式\eqref{align:ch14-model-expectation}，我们得到
+\begin{align}
+\nabla_{\bm{w}}\mathbb{E}_{p_D}\!\left[\ln p(\bm{x}|\bm{w})\right]=-\mathbb{E}_{p_D}\!\left[\nabla_{\bm{w}}E(\bm{x},\bm{w})\right]+\mathbb{E}_{p(\bm{x}|\bm{w})}\!\left[\nabla_{\bm{w}}E(\bm{x},\bm{w})\right].
+\label{align:ch14-contrastive-divergence}
+\end{align}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.7\textwidth]{ch14-fig14.13-energy.png}
+\caption{通过最大化似然对基于能量的模型进行训练的示意图，其中显示了能量函数 $E(\bm{x},\bm{w})$（绿色）及相关的模型分布 $p_M(\bm{x})$ 和真实数据分布 $p_D(\bm{x})$。利用式\eqref{align:ch14-contrastive-divergence}增加期望的对数似然，会在与模型样本（用蓝点表示）对应的点处推高能量函数，并在与数据集样本（用红点表示）对应的点处拉低能量函数。}
+\label{fig:ch14-energy}
+\end{figure}
+
+我们的目标是找到参数 $\bm{w}$ 的值，让似然函数的值最大化。为此，我们朝梯度 $\nabla_{\bm{w}}\ln p(\bm{x}|\bm{w})$ 的方向对 $\bm{w}$ 进行了微小调整。从式\eqref{align:ch14-contrastive-divergence}中可以看出，这个梯度的期望值可以分解为两部分，且这两部分符号相反。式\eqref{align:ch14-contrastive-divergence}右侧第一项的作用是减小 $E(\bm{x},\bm{w})$，因而会增大模型定义的数据点 $\bm{x}$ 的概率密度，这里的 $\bm{x}$ 是从 $p_D(\bm{x})$ 中抽取的。式\eqref{align:ch14-contrastive-divergence}右侧第二项的作用则是增大 $E(\bm{x},\bm{w})$，从而降低由模型定义的来自模型本身的数据点的概率密度。在模型密度超过训练数据密度的区域，净效果将是增加能量，因此降低了概率密度。相反，在训练数据密度超过模型密度的区域，净效果将是降低能量，因此增大了概率密度。正如我们所希望的那样，这两项一起将概率密度从训练数据密度低的区域移向了训练数据密度高的区域。当模型分布与数据分布相匹配时，这两项将在幅度上相等，此时式\eqref{align:ch14-contrastive-divergence}左侧的梯度就等于零。
+
+我们已经看到，对于基于能量的模型，由于存在未知的配分函数 $Z(\bm{w})$，似然函数不能显式求值。然而，我们可以利用蒙特卡洛采样方法，来计算对数似然函数关于模型参数的梯度。一旦以任何方式训练了基于能量的模型，就可以使用采样方法从模型中抽取样本了，比如使用蒙特卡洛采样方法。
+
+\subsection{朗之万动力学}\label{subsection:ch14-朗之万动力学}
+
+当把式\eqref{align:ch14-contrastive-divergence}作为一种实际的训练方法应用时，我们需要近似计算式\eqref{align:ch14-contrastive-divergence}右侧的两项。对于任何给定的 $\bm{x}$ 值，我们可以使用自动微分来评估 $\nabla_{\bm{w}}E(\bm{x},\bm{w})$。对于式\eqref{align:ch14-contrastive-divergence}中的第一项，我们可以使用训练集来估计关于 $\bm{x}$ 的期望：
+\begin{align}
+\mathbb{E}_{x\sim p_D}\!\left[\nabla_{\bm{w}}E(\bm{x},\bm{w})\right]\approx\frac{1}{N}\sum_{n=1}^{N}\nabla_{\bm{w}}E(\bm{x}_n,\bm{w}).
+\label{align:ch14-data-expectation}
+\end{align}
+
+式\eqref{align:ch14-contrastive-divergence}中的第二项更具挑战性，因为我们需要从能量函数定义的模型分布中抽取样本，而相应的配分函数难以处理。这可以使用马尔可夫链蒙特卡洛采样来完成。另一种受欢迎的采样方法称为随机梯度朗之万动力学，简称朗之万采样（Parisi, 1981; Welling and Teh, 2011）。这一项仅通过得分函数（score function）依赖于分布 $p(\bm{x}|\bm{w})$，得分函数定义为对数似然函数关于数据向量 $\bm{x}$ 的梯度，并由下式给出：
+\begin{align}
+\bm{s}(\bm{x},\bm{w})=\nabla_{\bm{x}}\ln p(\bm{x}|\bm{w})
+\label{align:ch14-score}
+\end{align}
+
+值得强调的是，这是针对数据点 $\bm{x}$ 的梯度，而非通常意义上针对可学习参数 $\bm{w}$ 的梯度。将式\eqref{align:ch14-ebm}代入式\eqref{align:ch14-score}，我们可以得到
+\begin{align}
+\bm{s}(\bm{x},\bm{w})=-\nabla_{\bm{x}}E(\bm{x},\bm{w}).
+\label{align:ch14-score-energy}
+\end{align}
+可以看到，配分函数不再出现，因为它与 $\bm{x}$ 无关。
+
+让我们从一个先验分布中开始抽取一个初始值 $\bm{x}^{(0)}$，然后执行以下马尔可夫链步骤：
+\begin{align}
+\bm{x}^{(\tau+1)}=\bm{x}^{(\tau)}+\eta\nabla_{\bm{x}}\ln p\!\left(\bm{x}^{(\tau)},\bm{w}\right)+\sqrt{2\eta}\,\bm{\varepsilon}^{(\tau)},\qquad \tau=1,\cdots,\mathcal{T}
+\label{align:ch14-langevin-update}
+\end{align}
+其中 $\bm{\varepsilon}^{(\tau)}\sim\mathcal{N}(\bm{0},\bm{I})$ 是从零均值、单位协方差的高斯分布中独立抽取的样本，参数 $\eta$ 控制步长的大小。朗之万方程的每次迭代都会沿着对数似然的梯度方向迈出一步，然后添加高斯噪声。可以证明，当 $\eta\rightarrow 0$ 和 $\mathcal{T}\rightarrow\infty$ 时，$\bm{x}^{(\mathcal{T})}$ 的值是从分布 $p(\bm{x})$ 中独立抽取的样本。
+
+我们可以通过重复这个过程来生成一组样本 $\{\bm{x}_1,\cdots,\bm{x}_M\}$，然后使用下式来近似计算式\eqref{align:ch14-contrastive-divergence}中的第二项：
+\begin{align}
+\mathbb{E}_{x\sim p_M(x)}\!\left[\nabla_{\bm{w}}E(\bm{x},\bm{w})\right]\approx\frac{1}{M}\sum_{m=1}^{M}\nabla_{\bm{w}}E(\bm{x}_m,\bm{w}).
+\label{align:ch14-model-sample}
+\end{align}
+
+运行长的马尔可夫链来生成独立样本的计算成本可能很高，所以我们需要考虑实际的近似方法。有一种方法称为对比散度（contrastive divergence）（Hinton, 2002）。在这里，用来评估式\eqref{align:ch14-model-sample}的样本是通过从训练数据点 $\bm{x}_n$ 开始的蒙特卡洛链获得的。如果蒙特卡洛链运行了大量步骤，那么得出的值基本上就是来自模型分布的无偏样本。相反，对比散度方法建议只运行几步的蒙特卡洛链，甚至只有一步，这在计算上成本要低得多。相应的结果样本将远非无偏样本，并且会靠近数据流形。因此，使用梯度下降的效果将是仅在数据流形的邻域内塑造能量曲面，从而塑造概率密度。这对于诸如分类的任务可能是有效的，但预计在学习生成式模型方面效果会较差。
+
+\end{document}

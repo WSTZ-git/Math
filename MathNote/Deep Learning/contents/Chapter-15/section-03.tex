@@ -1,0 +1,187 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{../../image/}{../../figure/}}
+\begin{document}
+
+\section{EM算法}\label{section:ch15-em算法}
+
+本节将讨论更一般的~EM~算法，并特别关注隐变量的作用。如前所述，我们用 $\bm{X}$ 表示所有观测数据点的集合，其中的第 $n$ 行代表 $\bm{x}_n$。同样，相应的隐变量则用一个 $N\times K$ 的矩阵 $\bm{Z}$ 来表示，每一行记为 $\bm{z}_n$。如果我们假设这些数据点是从分布中独立抽取的，则可以使用图形来表示这个独立同分布数据集的高斯混合模型。所有模型参数的集合记为 $\theta$，因此对数似然函数由下式给出：
+\begin{align}
+\ln p(\bm{X}|\theta)=\sum_{n=1}^{N}\ln\!\left\{\sum_{\bm{z}_n}p(\bm{x}_n,\bm{z}_n|\theta)\right\}.
+\label{align:ch15-general-nll}
+\end{align}
+
+注意，我们的讨论同样适用于连续隐变量，只需要将对 $\bm{Z}$ 的求和替换为积分即可。
+
+现在假设对于 $\bm{X}$ 中的每个观测值，我们都被告知对应的隐变量 $\bm{Z}$ 的值。此时将 $\{\bm{X},\bm{Z}\}$ 称为完整数据集，并将实际观测到的数据 $\bm{X}$ 视为不完整的（incomplete）。完整数据集的似然函数可以简单地采取 $\ln p(\bm{X},\bm{Z}|\theta)$ 的形式，我们假设这个完整数据集的对数似然函数的最大化是比较简单的。
+
+然而在实践中，我们没有得到完整的数据集 $\{\bm{X},\bm{Z}\}$，而只有不完整的数据 $\bm{X}$。隐变量 $\bm{Z}$ 的状态信息仅由后验分布 $p(\bm{Z}|\bm{X},\theta)$ 给出。由于无法使用完整数据集的对数似然函数，我们转而考虑其在隐变量的后验分布下的期望值，这对应于（正如我们将看到的）EM~算法的~E~步骤。在随后的~M~步骤中，我们最大化这个期望值。如果当前对参数的估计记为 $\theta^{\text{old}}$，那么一对连续的~E~步骤和~M~步骤将产生修正后的估计 $\theta^{\text{new}}$。
+
+EM~算法通过选择参数的某个起始值 $\theta^{\text{old}}$ 来进行初始化。尽管这种期望的使用看起来有些武断，但是当我们在\cref{section:ch15-证据下界}对~EM~算法进行更深入的讨论时，我们将看到做出这个选择的动机。在~E~步骤中，我们使用当前的参数值 $\theta^{\text{old}}$ 来找出 $p(\bm{Z}|\bm{X},\theta^{\text{old}})$ 给出的隐变量的后验分布。然后使用这个后验分布找出用于对一些通用参数值 $\theta$ 进行估计的完整数据对数似然函数的期望。将这个期望记为 $\mathcal{Q}(\theta,\theta^{\text{old}})$，其由下式给出：
+\begin{align}
+\mathcal{Q}(\theta,\theta^{\text{old}})=\sum_{\bm{Z}}p(\bm{Z}|\bm{X},\theta^{\text{old}})\ln p(\bm{X},\bm{Z}|\theta).
+\label{align:ch15-q-function}
+\end{align}
+
+在~M~步骤中，我们通过最大化式\eqref{align:ch15-q-function}所示的函数来确定修正后的参数估计：
+\begin{align}
+\theta^{\text{new}}=\arg\max_\theta\mathcal{Q}(\theta,\theta^{\text{old}}).
+\label{align:ch15-m-step}
+\end{align}
+
+请注意，在函数 $\mathcal{Q}(\theta,\theta^{\text{old}})$ 的定义中，对数直接作用于联合分布 $p(\bm{X},\bm{Z}|\theta)$，因此相应的~M~步骤根据我们的假设是可行的。正如我们稍后将展示的，每个~EM~循环都会增大不完整数据对数似然函数的值（除非它已经处于局部最大值）（参见\cref{subsection:ch15-em回顾}）。
+
+EM~算法也可以用来寻找~MAP（最大后验概率）解，这适用于定义参数时引入先验分布 $p(\theta)$ 的模型（见习题~15.5）。在这种情况下，E~步骤与最大似然示例中的情形相同，而在~M~步骤中，要最大化的量由 $\mathcal{Q}(\theta,\theta^{\text{old}})+\ln p(\theta)$ 给出。适当的先验选择能消除\cref{fig:ch15-singularity}所示类型的奇异性。
+
+当未观测变量对应于数据集中缺失的值时，也可以应用~EM~算法。观测值的分布是通过取所有变量的联合分布，然后在缺失的变量上进行边缘化得到的。接下来便可以使用~EM~算法来最大化相应的似然函数。如果数据值是随机缺失的，则意味着导致缺失值的机制不依赖于未观测到的值。但在许多情况下，事实并非如此。例如，当传感器测量的量超过某个阈值时，传感器就无法返回值。
+
+\subsection{高斯混合模型}\label{subsection:ch15-高斯混合em}
+
+现在我们考虑将这种隐变量视角的~EM~算法应用于高斯混合模型的特定案例。回顾一下，我们的目标是最大化对数似然函数\eqref{align:ch15-gmm-nll}，该函数可以使用观测数据集 $\bm{X}$ 来计算，并且我们发现由于在对数内部进行了关于 $k$ 的求和，这比单个高斯分布的情况要困难得多。假设除了观测数据集 $\bm{X}$，我们还得到了相应的离散变量 $\bm{Z}$ 的值。回想一下，图~15.5(a)~显示了一个完整数据集（即包含标签来显示每个数据点是由哪个分量生成的），图~15.5(b)~则显示了相应的不完整数据集。
+
+现在考虑对完整数据集 $\{\bm{X},\bm{Z}\}$ 的似然函数进行最大化的问题。根据式\eqref{align:ch15-prior-factorized}和式\eqref{align:ch15-conditional-x}，这个似然函数的形式如下：
+\begin{align}
+p(\bm{X},\bm{Z}|\bm{\mu},\bm{\Sigma},\bm{\pi})=\prod_{n=1}^{N}\prod_{k=1}^{K}\pi_k^{z_{nk}}\mathcal{N}(\bm{x}_n|\bm{\mu}_k,\bm{\Sigma}_k)^{z_{nk}}
+\label{align:ch15-complete-likelihood}
+\end{align}
+其中 $z_{nk}$ 表示 $\bm{z}_n$ 的第 $k$ 个分量。取对数后，可以得到
+\begin{align}
+\ln p(\bm{X},\bm{Z}|\bm{\mu},\bm{\Sigma},\bm{\pi})=\sum_{n=1}^{N}\sum_{k=1}^{K}z_{nk}\!\left\{\ln\pi_k+\ln\mathcal{N}(\bm{x}_n|\bm{\mu}_k,\bm{\Sigma}_k)\right\}.
+\label{align:ch15-complete-nll}
+\end{align}
+
+与不完整数据的对数似然函数[式\eqref{align:ch15-gmm-nll}]相比，可以看出 $k$ 的求和项与对数项已经交换了位置。对数现在直接作用于高斯分布，而高斯分布本身就是指数族分布的成员。显然，这使得最大似然问题的解决方案简单多了。首先考虑均值和协方差的最大化问题。因为 $\bm{z}_n$ 是一个 $K$ 维向量，除了其中一个元素的值为 $1$，其他所有元素的值都为 $0$，所以完整数据的对数似然函数仅仅是 $K$ 个独立贡献的和，每个分量对应一个贡献。因此，均值或协方差的最大化处理实际上就像对单个高斯分布的处理一样，只不过前者仅涉及“分配”给该分量的数据点子集。对于混合系数的最大化，注意，由于式\eqref{align:ch15-pi-sum}中的求和约束，不同 $k$ 值的这些系数是耦合的。另外，和之前一样，这也可以使用拉格朗日乘子来保证，从而导致：
+\begin{align}
+\pi_k=\frac{1}{N}\sum_{n=1}^{N}z_{nk}.
+\label{align:ch15-pi-complete}
+\end{align}
+因此，混合系数等于分配给相应分量的数据点的比例。
+
+然而，实际上我们没有隐变量的值。如前所述，我们考虑了关于隐变量后验分布的完整数据对数似然函数的期望。使用式\eqref{align:ch15-prior-factorized}和式\eqref{align:ch15-conditional-x}并结合贝叶斯定理，这个后验分布的形式如下：
+\begin{align}
+p(\bm{Z}|\bm{X},\bm{\mu},\bm{\Sigma},\bm{\pi})\propto\prod_{n=1}^{N}\prod_{k=1}^{K}\left[\pi_k\mathcal{N}(\bm{x}_n|\bm{\mu}_k,\bm{\Sigma}_k)\right]^{z_{nk}}.
+\label{align:ch15-posterior}
+\end{align}
+可以看到这个分布在 $n$ 上是可分解的，所以在这个后验分布下，$\bm{z}_n$ 是独立的（见习题~15.6），这可以很容易地通过检查图~15.9~中的有向图并使用~d~分离准则来验证（参见~11.2~节）。在这个后验分布下，指示变量 $z_{nk}$ 的期望由下式给出：
+\begin{align}
+\mathbb{E}[z_{nk}]=\gamma(z_{nk})=\frac{\pi_k\mathcal{N}(\bm{x}_n|\bm{\mu}_k,\bm{\Sigma}_k)}{\sum_j\pi_j\mathcal{N}(\bm{x}_n|\bm{\mu}_j,\bm{\Sigma}_j)}.
+\label{align:ch15-responsibility-em}
+\end{align}
+这正是第 $k$ 个高斯分量对数据点 $\bm{x}_n$ 所要承担的责任。因此，完整数据对数似然函数的期望由下式给出：
+\begin{align}
+\mathbb{E}_{\bm{Z}}\!\left[\ln p(\bm{X},\bm{Z}|\bm{\mu},\bm{\Sigma},\bm{\pi})\right]=\sum_{n=1}^{N}\sum_{k=1}^{K}\gamma(z_{nk})\!\left\{\ln\pi_k+\ln\mathcal{N}(\bm{x}_n|\bm{\mu}_k,\bm{\Sigma}_k)\right\}.
+\label{align:ch15-q-gmm}
+\end{align}
+
+我们现在可以按照以下步骤进行操作。首先为参数 $\bm{\mu}_k,\bm{\Sigma}_k$ 和 $\pi_k$ 选择一些初始值，并使用这些值来估计责任（E~步骤）。然后保持责任固定，并通过最大化 $\mathbb{E}_{\bm{Z}}[\ln p(\bm{X},\bm{Z}|\cdot)]$ 来最大化期望，见式\eqref{align:ch15-q-gmm}（M~步骤）。因此前面提到的闭合解 $\bm{\mu}_k^{\text{new}}$、$\bm{\Sigma}_k^{\text{new}}$ 和 $\pi_k^{\text{new}}$ 分别由式\eqref{align:ch15-mu-update}、式\eqref{align:ch15-sigma-update}和式\eqref{align:ch15-pi-update}给出。这正是我们早些时候推导出的应用于高斯混合模型的~EM~算法。
+
+\subsection{EM算法与K均值算法的关系}\label{subsection:ch15-em与kmeans}
+
+对~K~均值算法与~EM~算法进行比较后，可以发现它们之间有很大的相似性。K~均值算法把数据点硬（hard）分配到聚类中，每个数据点唯一地与一个聚类相关联，而~EM~算法基于后验概率进行软（soft）分配。事实上，我们可以从~EM~算法推导出~K~均值算法。
+
+考虑一个高斯混合模型，其中混合分量的协方差矩阵由 $\epsilon\bm{I}$ 给出，其中 $\epsilon$ 是所有分量共享的方差参数，$\bm{I}$ 是单位矩阵，因此
+\begin{align}
+p(\bm{x}|\bm{\mu}_k,\bm{\Sigma}_k)=\frac{1}{(2\pi\epsilon)^{D/2}}\exp\!\left\{-\frac{1}{2\epsilon}\|\bm{x}-\bm{\mu}_k\|^2\right\}.
+\label{align:ch15-isotropic}
+\end{align}
+
+考虑将要应用于这种形式的包含 $K$ 个分量的高斯混合模型的~EM~算法，其中我们将 $\epsilon$ 当作固定常数而不是重新估计的参数处理。根据式\eqref{align:ch15-responsibility-em}，特定数据点 $\bm{x}_n$ 的后验概率或责任由下式给出：
+\begin{align}
+\gamma(z_{nk})=\frac{\pi_k\exp\!\left\{-\frac{1}{2\epsilon}\|\bm{x}_n-\bm{\mu}_k\|^2\right\}}{\sum_j\pi_j\exp\!\left\{-\frac{1}{2\epsilon}\|\bm{x}_n-\bm{\mu}_j\|^2\right\}}.
+\label{align:ch15-soft-responsibility}
+\end{align}
+
+考虑极限 $\epsilon\rightarrow 0$，式\eqref{align:ch15-soft-responsibility}右侧的分母中包含了以 $j$ 索引的多个趋于零的项。假设使得 $\|\bm{x}_n-\bm{\mu}_j\|^2$ 最小的特定项（例如 $j=1$ 的项）将会最慢地趋于零并支配该平方和。因此，数据点 $\bm{x}_n$ 的责任 $\gamma(z_{nk})$ 除了第 $1$ 项外都会趋于零，第 $1$ 项的责任 $\gamma(z_{n1})$ 将趋于 $1$。注意，这独立于 $\pi_k$ 的值，只要没有任何 $\pi_k$ 为零即可。因此，在这个极限下，我们获得了数据点到聚类的硬分配，就像在~K~均值算法中一样，所以 $\gamma(z_{nk})\rightarrow r_{nk}$，其中 $r_{nk}$ 由式\eqref{align:ch15-kmeans-assign}定义。每个数据点因此被分配到与其最近的均值所代表的聚类。然后~EM~算法中 $\bm{\mu}_k$ 的重估方程由式\eqref{align:ch15-mu-update}给出，并简化为~K~均值算法的结果[式\eqref{align:ch15-kmeans-mu}]。注意，混合系数的重估方程[式\eqref{align:ch15-pi-update}]仅是将 $\pi_k$ 的值重置为分配给聚类 $k$ 的数据点的比例，尽管这些参数在算法中已不再起积极作用。
+
+最后，在极限 $\epsilon\rightarrow 0$ 下，用来给出完整数据对数似然函数期望的式\eqref{align:ch15-q-gmm}（见习题~15.12），就可以变为
+\begin{align}
+\mathbb{E}_{\bm{Z}}\!\left[\ln p(\bm{X},\bm{Z}|\bm{\mu},\bm{\Sigma},\bm{\pi})\right]\rightarrow-\frac{1}{2}\sum_{n=1}^{N}\sum_{k=1}^{K}r_{nk}\|\bm{x}_n-\bm{\mu}_k\|^2+\text{常数}.
+\label{align:ch15-kmeans-limit}
+\end{align}
+因此，我们看到在这个极限下，完整数据对数似然函数的最大化期望等价于最小化~K~均值算法的误差度量 $J$，$J$ 由式\eqref{align:ch15-kmeans-loss}给出。注意，~K~均值算法不估计聚类的协方差，只估计聚类的均值。
+
+\subsection{混合伯努利分布}\label{subsection:ch15-混合伯努利}
+
+在本章中，目前主要关注的是由高斯混合分布描述的连续变量模型。为了在不同的情境中阐述~EM~算法，现在讨论混合建模的另一个例子——由伯努利分布描述的离散二元变量混合模型。这个模型也称潜在类别分析模型（Lazarsfeld and Henry, 1968; McLachlan and Peel, 2000）。
+
+考虑一组 $D$ 个二元变量 $x_i\in\{0,1\}$，$i=1,\cdots,D$，其中的每一个二元变量都服从参数为 $\mu_i$ 的伯努利分布，因此
+\begin{align}
+p(\bm{x}|\bm{\mu})=\prod_{i=1}^{D}\mu_i^{x_i}(1-\mu_i)^{1-x_i}
+\label{align:ch15-bernoulli}
+\end{align}
+其中 $\bm{x}=(x_1,\cdots,x_D)$，$\bm{\mu}=(\mu_1,\cdots,\mu_D)$。可以看出，在给定 $\bm{\mu}$ 的情况下，各个变量 $x_i$ 是独立的，这个分布的均值和协方差可以很容易地得到（见习题~15.13）
+\begin{align}
+\mathbb{E}[\bm{x}]&=\bm{\mu}
+\label{align:ch15-bernoulli-mean}\\
+\operatorname{cov}[\bm{x}]&=\operatorname{diag}\{\mu_i(1-\mu_i)\}.
+\label{align:ch15-bernoulli-cov}
+\end{align}
+
+考虑这些分布的有限混合分布，表示为
+\begin{align}
+p(\bm{x}|\bm{\mu},\bm{\pi})=\sum_{k=1}^{K}\pi_k\,p(\bm{x}|\bm{\mu}_k)
+\label{align:ch15-bernoulli-mixture}
+\end{align}
+其中 $\bm{\mu}=\{\bm{\mu}_1,\cdots,\bm{\mu}_K\}$，$\bm{\pi}=\{\pi_1,\cdots,\pi_K\}$，并且
+\begin{align}
+p(\bm{x}|\bm{\mu}_k)=\prod_{i=1}^{D}\mu_{ki}^{x_i}(1-\mu_{ki})^{1-x_i}.
+\label{align:ch15-bernoulli-component}
+\end{align}
+混合系数满足式\eqref{align:ch15-pi-bounds}和式\eqref{align:ch15-pi-sum}所示的条件。这个混合分布的均值和协方差分别如下（见习题~15.14）：
+\begin{align}
+\mathbb{E}[\bm{x}]&=\sum_{k=1}^{K}\pi_k\bm{\mu}_k
+\label{align:ch15-bmm-mean}\\
+\operatorname{cov}[\bm{x}]&=\sum_{k=1}^{K}\pi_k\!\left\{\bm{\Sigma}_k+\bm{\mu}_k\bm{\mu}_k^{\mathsf T}\right\}-\mathbb{E}[\bm{x}]\mathbb{E}[\bm{x}]^{\mathsf T}
+\label{align:ch15-bmm-cov}
+\end{align}
+其中 $\bm{\Sigma}_k=\operatorname{diag}\{\mu_{ki}(1-\mu_{ki})\}$。由于协方差矩阵 $\operatorname{cov}[\bm{x}]$ 不再是对角矩阵，这个混合分布能够捕捉变量之间的相关性，这与单个伯努利分布不同。
+
+如果我们得到一个数据集 $\bm{X}=\{\bm{x}_1,\cdots,\bm{x}_N\}$，那么该模型的对数似然函数可以表示为
+\begin{align}
+\ln p(\bm{X}|\bm{\mu},\bm{\pi})=\sum_{n=1}^{N}\ln\!\left\{\sum_{k=1}^{K}\pi_k p(\bm{x}_n|\bm{\mu}_k)\right\}.
+\label{align:ch15-bmm-nll}
+\end{align}
+我们再次看到对数内部出现了求和，因此最大似然解不再有闭合形式。
+
+下面让我们为混合伯努利分布的似然函数最大化推导~EM~算法。为此，首先引入一个与每个实例 $\bm{x}_n$ 关联的显式离散隐变量 $\bm{z}_n$。与高斯混合模型一样，$\bm{z}_n$ 采用~1-of-$K$~编码方案，所以 $\bm{z}_n=(z_{n1},\cdots,z_{nK})$ 是一个二元的 $K$ 维向量，有一个分量等于 $1$，所有其他分量等于 $0$。我们可以将给定隐变量的 $\bm{x}$ 的条件分布写为
+\begin{align}
+p(\bm{x}|\bm{z},\bm{\mu})=\prod_{i=1}^{D}\prod_{k=1}^{K}p(x_i|\mu_{ki})^{z_{nk}}
+\label{align:ch15-bmm-conditional}
+\end{align}
+而隐变量的先验分布与高斯混合模型中的相同，因此
+\begin{align}
+p(\bm{z}|\bm{\pi})=\prod_{k=1}^{K}\pi_k^{z_{nk}}.
+\label{align:ch15-bmm-prior}
+\end{align}
+将 $p(\bm{x}|\bm{z},\bm{\mu})$ 和 $p(\bm{z}|\bm{\pi})$ 相乘，然后对 $\bm{z}$ 进行边缘化，即可回到式\eqref{align:ch15-bernoulli-mixture}（见习题~15.16）。
+
+为了推导~EM~算法，我们首先写下完整数据对数似然函数：
+\begin{align}
+\ln p(\bm{X},\bm{Z}|\bm{\mu},\bm{\pi})=\sum_{n=1}^{N}\sum_{k=1}^{K}z_{nk}\!\left\{\ln\pi_k+\sum_{i=1}^{D}\left[x_i\ln\mu_{ki}+(1-x_i)\ln(1-\mu_{ki})\right]\right\}.
+\label{align:ch15-bmm-complete-nll}
+\end{align}
+其中 $\bm{X}=\{\bm{x}_n\}$，$\bm{Z}=\{\bm{z}_n\}$。接下来取完整数据对数似然函数关于隐变量后验分布的期望，得到
+\begin{align}
+\mathbb{E}_{\bm{Z}}\!\left[\ln p(\bm{X},\bm{Z}|\bm{\mu},\bm{\pi})\right]=\sum_{n=1}^{N}\sum_{k=1}^{K}\gamma(z_{nk})\!\left\{\ln\pi_k+\sum_{i=1}^{D}\left[x_{ni}\ln\mu_{ki}+(1-x_{ni})\ln(1-\mu_{ki})\right]\right\},
+\label{align:ch15-bmm-q}
+\end{align}
+其中 $\gamma(z_{nk})=\mathbb{E}[z_{nk}]$ 是给定数据点 $\bm{x}_n$ 时分量 $k$ 的后验概率或责任。在~E~步骤中，使用贝叶斯定理计算这些责任，形式如下：
+\begin{align}
+\gamma(z_{nk})=\frac{\pi_k p(\bm{x}_n|\bm{\mu}_k)}{\sum_j\pi_j p(\bm{x}_n|\bm{\mu}_j)}.
+\label{align:ch15-bmm-responsibility}
+\end{align}
+
+在~M~步骤中，针对参数 $\bm{\mu}_k$ 和 $\pi_k$ 最大化完整数据对数似然函数的期望。如果我们把式\eqref{align:ch15-bmm-q}关于 $\mu_{ki}$ 求导并将导数设为零（见习题~15.17），然后重新排列各项，便可得到
+\begin{align}
+\mu_{ki}=\frac{\sum_n\gamma(z_{nk})x_{ni}}{N_k}
+\label{align:ch15-bmm-mu}
+\end{align}
+其中 $N_k=\sum_n\gamma(z_{nk})$ 是与分量 $k$ 相关联的数据点的有效数量。分量 $k$ 的均值设置为数据的加权均值，权重系数由分量 $k$ 对每个数据点所要承担的责任给出。在关于 $\pi_k$ 进行最大化的过程中，我们需要引入一个拉格朗日乘子来确保约束条件 $\sum_k\pi_k=1$ 得到满足。遵循与高斯混合类似的步骤（见习题~15.18），我们得到
+\begin{align}
+\pi_k=\frac{N_k}{N}.
+\label{align:ch15-bmm-pi}
+\end{align}
+这代表了一个直观合理的结果，即分量 $k$ 的混合系数由数据集中被该分量解释的数据点的有效比例给出。
+
+注意，与高斯混合模型相比，这里不存在使似然函数趋于无穷大的奇异点。这可通过似然函数上界有限（见习题~15.19）看出来，因为 $0\leq p(\bm{x}|\bm{\mu})\leq 1$。虽然存在使似然函数为零的解，但只要~EM~算法不是初始化到一个病态起点，这些解就不会被~EM~算法找到，因为~EM~算法总是增大似然函数的值，直至找到一个局部最大值（参见\cref{section:ch15-证据下界}）。
+
+\end{document}

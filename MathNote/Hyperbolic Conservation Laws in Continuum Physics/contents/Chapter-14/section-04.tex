@@ -1,0 +1,81 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{../../image/}{../../figure/}}
+\begin{document}
+
+\section{近似解}\label{section:ch14-近似解}
+
+下述定义收集了对一个分段常值函数的全部要求，使其可作为前沿追踪算法所产生的那类函数，从而被视为我们 Cauchy 问题解的合理近似：
+
+\begin{definition}[$\delta$-近似解]\label{definition:ch14-近似解}
+对 $\delta>0$，守恒律系统\eqref{align:ch14-system}的一个 $\delta$-近似解是定义在 $(-\infty,\infty)\times[0,\infty)$ 上的分段常值函数 $U$，满足如下条件：常状态的定义域由跳跃间断（称为波）分隔，每个波以常速度沿直线段 $x=y(t)$ 传播。任一波既可起源于 $x$ 轴上一点 $t=0$，也可起源于其他波的碰撞点，并一般在与另一波碰撞时终止；但若未发生此种碰撞，则波一直传播到无穷远。至多两个入射波可同时碰撞，但任一出射波（有限个）都可起源于同一碰撞点。碰撞点、波与常状态的个数有限。波分三类：
+\begin{enumerate}[(a)]
+\item \textbf{激波。}（近似）$i$-激波 $x=y(t)$ 分隔左端常状态 $U_-$ 与右端常状态 $U_+$，它们可由可容许 $i$-激波连接，即 $U_+=W_i(\tau;U_-)$；当 $i$-特征族真非线性时 $\tau<0$，当 $i$-特征族线性退化时 $\tau\lessgtr0$，并近似以激波速度 $s=s_i(\tau;U_-)$ 传播：
+\begin{align}
+|\dot y(\cdot)-s|\leqslant\delta.
+\label{align:ch14-shock-speed}
+\end{align}
+\item \textbf{稀疏前沿。}（近似）$i$-稀疏前沿 $x=y(t)$ 分隔左端常状态 $U_-$ 与右端常状态 $U_+$，它们可由强度 $\leqslant\delta$ 的 $i$-稀疏波连接，即 $U_+=V_i(\tau;U_-)$，$0<\tau\leqslant\delta$，并近似以特征速度传播：
+\begin{align}
+|\dot y(\cdot)-\lambda_i(U_+)|\leqslant\delta.
+\label{align:ch14-rarefaction-speed}
+\end{align}
+\item \textbf{伪激波。}伪激波 $x=y(t)$ 可分隔任意状态 $U_-$ 与 $U_+$，并以指定超声速速度传播：
+\begin{align}
+\dot y(\cdot)=\lambda_{n+1}.
+\label{align:ch14-pseudoshock-speed}
+\end{align}
+\end{enumerate}
+伪激波的总强度不超过 $\delta$：
+\begin{align}
+\sum|U(y(t)+,t)-U(y(t)-,t)|\leqslant\delta,\qquad 0<t<\infty,
+\label{align:ch14-pseudoshock-strength}
+\end{align}
+其中对每个 $t$，求和遍历所有穿过 $t$-时间线的伪激波 $x=y(\cdot)$。
+
+若此外阶梯函数 $U(\cdot,0)$ 在 $L^1$ 中以距离 $\delta$ 逼近初值 $U_0$，即
+\begin{align}
+\int_{-\infty}^{\infty}|U(x,0)-U_0(x)|\,\mathrm{d}x\leqslant\delta,
+\label{align:ch14-initial-approx}
+\end{align}
+则称 $U$ 为 Cauchy 问题\eqref{align:ch13-ivp}的一个 $\delta$-近似解。
+\end{definition}
+
+
+
+上述定义所提供的额外自由度——允许（近似）激波与稀疏前沿的速度略微偏离前沿追踪算法所给定的更精确值——提供了一些灵活性，可用来确保至多两个前沿同时碰撞。
+
+前沿追踪的有效性将通过下述定理展示：
+
+\begin{theorem}\label{theorem:ch14-前沿追踪存在性}
+设 $U_0\in BV(-\infty,\infty)$，$TV_{(-\infty,\infty)}U_0(\cdot)\leqslant a\ll1$。任取小正数 $\delta$，并用某阶梯函数 $U_{0\delta}$ 逼近 $U_0$，使得 $TV_{(-\infty,\infty)}U_{0\delta}(\cdot)\leqslant TV_{(-\infty,\infty)}U_0(\cdot)$ 且 $\|U_{0\delta}(\cdot)-U_0(\cdot)\|_{L^1(-\infty,\infty)}\leqslant\delta$。则以前值 $U_{0\delta}$ 为初值、伪激波固定超声速速度 $\lambda_{n+1}$、稀疏前沿强度限值 $\delta$、以及充分小的参数 $\sigma$（依赖于 $\delta$ 与 $U_{0\delta}$ 的跳跃点数）的前沿追踪算法产生初值问题\eqref{align:ch13-ivp}的一个 $\delta$-近似解 $U_\delta$。任何收敛到零的 $\delta$ 序列都含子列 $\{\delta_k\}$，使 $\{U_{\delta_k}\}$ 在 $(-\infty,\infty)\times[0,\infty)$ 上 a.e. 收敛到\eqref{align:ch13-ivp}的一个 $BV$ 解 $U$，它对系统\eqref{align:ch14-system}的任一凸熵--熵流对 $(\eta,q)$ 满足熵可容性条件，并满足估计\eqref{align:ch13-ivp}与\eqref{align:ch13-ivp}。此外，$U$ 在 upper half-plane 上任一关于所有 $U_\delta$ 非共振的 Lipschitz 曲线上的迹有有界变差。
+\end{theorem}
+
+
+
+上述命题重建了\cref{theorem:ch13-小总变差存在性}的断言。$U$ 沿非共振曲线的迹有有界变差这一性质，建立了与\cref{theorem:ch13-小总变差存在性}所讨论解类的联系。
+
+
+
+\cref{theorem:ch14-前沿追踪存在性}的证明相当冗长，将在接下来三节中分批给出。但下述路线图在此时可能有用。
+
+如\cref{section:ch14-全局波型}已指出，一旦阶梯函数 $U_{0\delta}$ 被指定，前沿追踪算法将至少在时间区间 $[0,T)$ 上产生 $U_\delta$，后面将看到该区间即 $[0,\infty)$。我们全程假设 $U_\delta$ 的值域含于状态空间中一个小半径球内，此条件须事后验证。证明过程中将出现的常数 $c_1,c_2,\cdots,\kappa,\cdots$ 都仅依赖于该球内 $F$ 及其导数的界。
+
+第一步将是建立总变差估计
+\begin{align}
+TV_{(-\infty,\infty)}U_\delta(\cdot,t)\leqslant c_1TV_{(-\infty,\infty)}U_0(\cdot),\qquad 0\leqslant t<T,
+\label{align:ch14-delta-tv}
+\end{align}
+连同波相互作用总量的界。由 $U_\delta$ 的构造，\eqref{align:ch14-delta-tv}立即蕴含
+\begin{align}
+\int_{-\infty}^{\infty}|U_\delta(x,t)-U_\delta(x,\tau)|\,\mathrm{d}x\leqslant c_2|t-\tau|\,TV_{(-\infty,\infty)}U_0(\cdot),\qquad 0\leqslant\tau<t<T,
+\label{align:ch14-delta-lip}
+\end{align}
+其中 $c_2=cc_1$，$c$ 是波速的任一上界；例如 $c$ 取 $\lambda_{n+1}$ 与 $-\inf\lambda_1(U)$ 的最大值。这些估计的作用是双重的：首先，它们将帮助验证 $U_\delta$ 满足\cref{definition:ch14-近似解}所设要求；其次，它们将诱导紧性，使 $\delta\downarrow0$ 极限得以取。
+
+在验证 $U_\delta$ 是 $\delta$-近似解时，\eqref{align:ch14-shock-speed}、\eqref{align:ch14-rarefaction-speed}与\eqref{align:ch14-pseudoshock-speed}关于激波、稀疏前沿与伪激波速度的要求由构造规格而显然满足。此外，限值的选取蕴含稀疏前沿强度以 $\delta$ 为界。其余要求——伪激波总强度也以 $\delta$ 为界（如\eqref{align:ch14-pseudoshock-strength}）以及碰撞数有限——将通过对波型的透彻分析建立。特别地，这将保证 $U_\delta$ 在整个上半平面上经有限步生成，即 $T=\infty$。
+
+证明的最后一步将通过借助\eqref{align:ch14-delta-tv}与\eqref{align:ch14-delta-lip}的紧性论证，在 $U_\delta$ 中取 $\delta\downarrow0$ 极限，完成\eqref{align:ch13-ivp}解的构造。
+
+
+
+\end{document}

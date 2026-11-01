@@ -1,0 +1,705 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}}
+
+\begin{document}
+
+\section{随机变量及其分布}\label{section:ch03-随机变量及其分布}
+
+\subsection*{一、随机变量的定义}
+
+在随机现象中，有很大一部分问题与数值发生关系，例如在产品检验问题中，我们关心的是抽样中出现的废品数；在机票超售问题中我们关心的是某航班实到旅客数；在电话问题中关心的是某段时间中的话务量，它与呼叫的次数及各次呼叫占用交换设备的时间长短有关。此外如测量时的误差，气体分子运动的速度，信号接收机所收到的信号（用电压表示或数字表示）的大小，也都与数值有关。
+
+有些初看起来与数值无关的随机现象，也常常能联系数值来描述。例如在掷硬币问题中，每次出现的结果为正面或反面，与数值没有关系，但是我们能用下面方法使它与数值联系起来，当出现正面时对应数“$1$”，而出现反面时对应数“$0$”，为了计算 $n$ 次投掷中出现的正面数就只须计算其中“$1$”出现的次数了。
+
+一般地，如果 $A$ 为某个随机事件，则一定可以通过如下示性函数使它与数值发生联系：
+\begin{align}
+\mathbf{1}_A=
+\begin{cases}
+1, & \text{如果 } A \text{ 发生},\\
+0, & \text{如果 } A \text{ 不发生}.
+\end{cases}\label{align:ch03-示性函数}
+\end{align}
+
+总之，这些例子中，试验的结果能用一个数 $\xi$ 来表示，这个数 $\xi$ 是随着试验的结果的不同而变化的，也即它是样本点的一个函数，这种量以后称为\textbf{随机变量}（random variable）。本书中将主要用希腊字母 $\xi,\eta,\zeta,\cdots$ 来表示随机变量。下面我们就来考虑应当如何给这种量以严格的数学定义。
+
+正如对随机事件一样，我们所关心的不仅是试验会出现什么结果，更重要的是要知道这些结果将以怎样的概率出现，也即对随机变量，我们不但要知道它取什么数值，而且要知道它取这些数值的概率。
+
+从随机现象可能出现的结果来看，随机变量至少有两种不同的类型。一种是试验结果 $\xi$ 所可能取的值为有限个或至多可列个，我们能把其可能结果一一列举出来，这种类型的随机变量称为\textbf{离散型随机变量}。在日常生活中经常碰到离散型随机变量，例如废品数、电话呼叫数等等。前面讨论过的随机现象大部分都能用离散型随机变量来描述。例如古典概型中只有有限个可能结果，若对应于每一个结果用一个数值来表征，则得到一个离散型随机变量。又如在 $n$ 次 Bernoulli 试验中，若以 $\mu$ 记事件 $A$ 出现的次数，则 $\mu$ 可取值 $0,1,2,\cdots,n$。在上章的应用实例中我们就是这样做的。在呼叫流的研究中，若以 $\xi(t)$ 记 $[0,t)$ 中来到的呼叫数，则 $\xi(t)$ 可取值 $0,1,2,\cdots$。这些都是离散型随机变量。
+
+从上章的讨论可以看到，要描述这类随机变量并不难，以 $n$ 次 Bernoulli 试验中事件 $A$ 出现的次数 $\mu$ 为例，我们知道它是样本点 $\omega$ 的函数，也就是说，严格来讲，应写作 $\mu(\omega)$，其中 $\omega\in\Omega$，它取的值是 $0,1,2,\cdots,n$，并且知道 $\mu(\omega)$ 取这些值的概率为\footnote{下面出现记号 $\{\mu(\omega)=k\}$，对于不熟悉这类记号的读者，我们特作如下说明。$\{\mu(\omega)=k\}$ 是 $\{\omega:\mu(\omega)=k\}$ 的简写，它表示具有如下性质的样本点 $\omega$ 的集合：在其上 $\mu$ 取固定值 $k$。一般地，对于从样本空间 $\Omega$ 到数直线 $\mathbf{R}^{1}$ 上的单值映射 $\xi(\omega)$，若 $A$ 是 $\mathbf{R}^{1}$ 的某一子集，常以 $\{\xi(\omega)\in A\}$ 作为 $\{\omega:\xi(\omega)\in A\}$ 的简写，用来表示使 $\xi(\omega)$ 之值属于 $A$ 的那些样本点 $\omega$ 的集合，有时还进一步简记作 $\xi^{-1}(A)$；特别地，$\{\xi(\omega)<x\}$ 即为 $\{\omega:\xi(\omega)\in(-\infty,x)\}$，这里 $x$ 是某一实数。}
+\begin{align}
+P\{\mu(\omega)=k\}=\binom{n}{k}p^{k}q^{n-k},\qquad k=0,1,2,\cdots,n.\label{align:ch03-二项分布概率}
+\end{align}
+这里我们已经知道了 $\mu(\omega)$ 取什么值，以及以什么概率取这些值。
+
+一般地，对于定义在样本空间 $\Omega$ 上的离散型随机变量 $\xi(\omega)$，只要能指出它取的值 $x_1,x_2,\cdots,x_n,\cdots$ 以及它取这些值的概率 $P\{\xi(\omega)=x_i\}$，$i=1,2,\cdots,n,\cdots$ 就满足了我们的要求。显然要做到这一点，必须要求 $\{\xi(\omega)=x_i\}$ 有概率。因为我们只对事件域 $\mathscr{F}$ 中的集合定义概率，所以必须有 $\{\omega:\xi(\omega)=x_i\}\in\mathscr{F}$。
+
+与离散型随机变量不同，一些随机现象所出现的试验结果 $\xi$ 不止取可列个值，例如测量误差、分子运动速度、候车时的等待时间、降水量、风速、洪峰值等等皆是。这时用来描述试验结果的随机变量还是样本点 $\omega$ 的函数：严格写应是 $\xi(\omega)$，其中 $\omega\in\Omega$，但是这随机变量能取某个区间 $[c,d]$ 或 $(-\infty,\infty)$ 的一切值。
+
+假如想用描述离散型随机变量的方法（简单地罗列所取的值及相应的概率）来描述这后一类随机变量，则会碰到很大的困难。一来是这类随机变量所取的值不能一一列出；二来，我们下面将会看到，取连续值的随机变量，它取某个特定值的概率是 $0$，因此用这种描述方法根本不行。
+
+对于取连续值的随机变量我们所关心的也并不是它取某个特定值的概率。例如在测量误差的讨论中，我们感兴趣的是测量误差小于某个数的概率；在降雨问题中，我们重视的是雨量在某一个量级，例如在 $100\ \mathrm{mm}$ 到 $120\ \mathrm{mm}$ 之间的概率。总之，对于取连续值的随机变量 $\xi(\omega)$，我们感兴趣的是 $\xi(\omega)$ 取值于某个区间 $(a,b)$ 的概率，或取值于若干个这种区间的概率。因此应当要求 $\{a\leqslant\xi(\omega)<b\}$ 或 $\{\xi(\omega)<b\}$ 或一般地 $\{\xi(\omega)\in A\}$（其中 $A$ 是由区间经并、交等运算而得到的直线上的某一个点集）有概率可言，既然只对概率空间 $(\Omega,\mathscr{F},P)$ 的事件域 $\mathscr{F}$ 中的集合才定义概率，因此我们自然要求上述集合属于 $\mathscr{F}$，即都是事件。
+
+通过上面讨论可以看出，为了使我们感兴趣的概率计算得进行，我们应对 $\xi(\omega)$ 加上一定的限制，主要是要求 $\{\omega:\xi(\omega)\in B\}$ 应是事件。在离散型随机变量的场合，$B$ 是直线上的某一个点；在取连续值场合，$B$ 是直线上由区间经并、交等运算而得到的某一点集。在概率计算中有时要考虑可列运算，因此较方便的是取 $B$ 为直线上 Borel 点集。
+
+为此引进如下定义：
+
+\begin{definition}[随机变量]\label{definition:ch03-随机变量}
+设 $\xi(\omega)$ 是定义于概率空间 $(\Omega,\mathscr{F},P)$ 上的单值实函数，如果对于直线上任一 Borel 点集 $B$，有
+\begin{align}
+\{\omega:\xi(\omega)\in B\}\in\mathscr{F},\label{align:ch03-随机变量可测}
+\end{align}
+则称 $\xi(\omega)$ 为\textbf{随机变量}（图\ref{figure:ch03-随机变量示意图}），而 $P\{\xi(\omega)\in B\}$ 称为随机变量 $\xi(\omega)$ 的\textbf{概率分布}。
+\end{definition}
+
+特别地，若取 $B=(-\infty,x)$，则有
+\begin{align}
+\{\omega:\xi(\omega)<x\}\in\mathscr{F}.\label{align:ch03-分布函数可测}
+\end{align}
+因此 $P\{\xi(\omega)<x\}$ 有定义。注意到
+\begin{align}
+P\{a\leqslant\xi(\omega)<b\}=P\{\xi(\omega)<b\}-P\{\xi(\omega)<a\},\label{align:ch03-区间概率}
+\end{align}
+所以只要对一切实数 $x$ 给出概率 $P\{\xi(\omega)<x\}$，就能算出 $\xi(\omega)$ 落入某个区间 $[a,b)$ 的概率，再利用概率的性质还可以算出 $\xi(\omega)$ 属于某些相当复杂的直线点集（譬如可列个不相交的左闭右开区间之和）的概率。
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{ch03-fig-rv.png}
+\caption{随机变量}
+\label{figure:ch03-随机变量示意图}
+\end{figure}
+
+\begin{definition}[分布函数]\label{definition:ch03-分布函数}
+称
+\begin{align}
+F(x)=P\{\xi(\omega)<x\},\qquad -\infty<x<\infty\label{align:ch03-分布函数定义}
+\end{align}
+为随机变量 $\xi(\omega)$ 的\textbf{分布函数}（distribution function）。
+\end{definition}
+
+为书写方便起见，通常把“随机变量 $\xi(\omega)$ 服从分布函数 $F(x)$”简记作 $\xi(\omega)\sim F(x)$。
+
+由\eqref{align:ch03-区间概率}立刻得到
+\begin{align}
+P\{a\leqslant\xi(\omega)<b\}=F(b)-F(a).\label{align:ch03-区间概率差}
+\end{align}
+
+在上面讨论中，我们根据描述随机变量的需要给出了随机变量与分布函数的定义。按定义，随机变量是样本点的函数，因此在试验前我们只能知道它可能取哪些值，而不能确知它将取何值，这就是随机性；但是当试验完成之后，它的取值也就明确了。为了计算概率，必须要求随机变量具有可测性\eqref{align:ch03-随机变量可测}，而分布函数的引进则把对于随机变量的概率计算化为对分布函数的数值运算。这样一来，我们已经在 Kolmogorov 的公理化结构中给随机变量予严格的定义，同时又为对它的研究准备了方便的分析工具。
+
+应该指出，最后之所以采用这种定义，还有数学理论上的需要，有些进一步的事实，例如若\eqref{align:ch03-分布函数可测}成立则\eqref{align:ch03-随机变量可测}也成立（见习题 $50$），由分布函数可以唯一决定概率分布等等是可以通过测度论\footnote{本书共 $4$ 处引用只有用测度论方法才能证明的结论。}的方法证明的，这些已超出本课程范围，我们将不予讨论。
+
+概率论是研究大量随机现象中的数量规律的数学分支，研究随机变量和分布函数是它的重要任务，而且概率论中所研究的也大都局限于能用随机变量来描述的随机现象。前面已指出，随机事件的研究可通过示性函数转化为对随机变量的研究，随机变量是取数值的，因此可以对它进行各种数学运算，研究起来就很方便。
+
+\subsection*{二、分布函数的性质}
+
+我们先把分布函数的最基本的性质汇集于下列定理中。
+
+\begin{theorem}[分布函数的性质]\label{theorem:ch03-分布函数性质}
+分布函数 $F(x)$ 具有下列性质：
+\begin{enumerate}
+\item 单调性：若 $a<b$，则 $F(a)\leqslant F(b)$；
+\item \begin{align}
+\lim_{x\to-\infty}F(x)=0,\qquad \lim_{x\to+\infty}F(x)=1;\label{align:ch03-分布函数极限}
+\end{align}
+\item 左连续性：$F(x-0)=F(x)$。
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+(i) $F(b)-F(a)=P\{a\leqslant\xi<b\}\geqslant 0$。
+
+(ii) 
+\begin{align*}
+P\{-\infty<\xi<+\infty\}
+&=\sum_{n=-\infty}^{\infty}P\{n\leqslant\xi<n+1\}\\
+&=\sum_{n=-\infty}^{\infty}[F(n+1)-F(n)]\\
+&=\lim_{n\to+\infty}F(n)-\lim_{m\to-\infty}F(m)=1.
+\end{align*}
+由于 $F(x)$ 的单调性，$\lim_{x\to-\infty}F(x)=\lim_{m\to-\infty}F(m)$，$\lim_{x\to+\infty}F(x)=\lim_{n\to+\infty}F(n)$ 存在。
+
+因为 $0\leqslant F(x)\leqslant 1$，故
+\begin{align*}\lim_{x\to-\infty}F(x)=0,\qquad \lim_{x\to+\infty}F(x)=1.\end{align*}
+
+今后为书写方便起见，将记
+\begin{align}
+F(-\infty)=\lim_{x\to-\infty}F(x),\qquad F(+\infty)=\lim_{x\to+\infty}F(x).\label{align:ch03-分布函数正负无穷}
+\end{align}
+
+(iii) 由于 $F(x)$ 是单调函数，只须证明对于一列单调上升的数列 $x_0<x_1<x_2<\cdots<x_n<\cdots$，$x_n\to x$ 成立 $\lim_{n\to\infty}F(x_n)=F(x)$ 即可。
+
+因为
+\begin{align*}
+F(x)-F(x_0)=P\{x_0\leqslant\xi<x\}&=\sum_{n=1}^{\infty}[F(x_n)-F(x_{n-1})]\\
+&=\lim_{n\to\infty}F(x_n)-F(x_0),
+\end{align*}
+所以
+\begin{align*}F(x-0)=\lim_{n\to\infty}F(x_n)=F(x).\end{align*}
+\end{proof}
+
+可以看出分布函数的这三个基本性质，正好对应于概率的三个基本性质。
+
+有了分布函数，关于随机变量 $\xi(\omega)$ 的许多概率都能方便算出，例如
+\begin{align*}
+P\{\xi(\omega)=a\}&=F(a+0)-F(a),\\
+P\{\xi(\omega)\leqslant a\}&=F(a+0),\\
+P\{\xi(\omega)\geqslant a\}&=1-F(a),\\
+P\{\xi(\omega)>a\}&=1-F(a+0).
+\end{align*}
+
+综上所述，分布函数是一种分析性质良好的函数，便于处理；而给定了分布函数就能算出各种事件的概率。因此引进分布函数之后，许多概率论问题便简化或归结为函数的运算，这样就能利用数学分析的许多结果。这也是引进随机变量的好处之一。
+
+可以证明满足上述定理中三个性质的函数必是某随机变量的分布函数，关于这点的讨论将在第 $3$ 节进行。
+
+对于随机变量及其概率分布的研究，若按随机变量的不同类型分别讨论是有好处的，下面我们将照此线索进行。
+
+\subsection*{三、离散型随机变量}
+
+设 $\{x_i\}$ 为离散型随机变量 $\xi$ 的所有可能值；而 $p(x_i)$ 是 $\xi$ 取 $x_i$ 的概率，即
+\begin{align}
+P\{\xi=x_i\}=p(x_i),\qquad i=1,2,3,\cdots.\label{align:ch03-离散概率}
+\end{align}
+$\{p(x_i),i=1,2,3,\cdots\}$ 称为随机变量 $\xi$ 的\textbf{概率分布}，它应满足下面关系：
+\begin{align}
+p(x_i)\geqslant 0,\qquad i=1,2,3,\cdots\label{align:ch03-非负性}
+\end{align}
+\begin{align}
+\sum_{i=1}^{\infty}p(x_i)=1.\label{align:ch03-归一性}
+\end{align}
+当给定了 $\{x_i,i=1,2,\cdots\}$ 及 $\{p(x_i),i=1,2,\cdots\}$，我们就能很好地描述随机变量 $\xi$，因为我们已经知道了它取什么值，以及以什么概率取这些值，而这正是我们对随机变量所关心的问题。
+
+常用下列方式来表出离散型随机变量 $\xi$ 的概率分布，
+\begin{align}
+\begin{array}{c|cccccc}
+\xi & x_1 & x_2 & \cdots & x_n & \cdots\\
+\hline
+P & p(x_1) & p(x_2) & \cdots & p(x_n) & \cdots
+\end{array}\label{align:ch03-分布列}
+\end{align}
+\eqref{align:ch03-分布列}称为随机变量 $\xi$ 的\textbf{分布列}，由分布列能一目了然地看出随机变量 $\xi$ 的取值范围及取这些值的概率。
+
+有了分布列，可以通过下式求得分布函数
+\begin{align}
+F(x)=P\{\xi<x\}=\sum_{x_k<x}p(x_k).\label{align:ch03-离散分布函数}
+\end{align}
+显然这时 $F(x)$ 是一个跳跃函数，它在每个 $x_k$ 处有跳跃度 $p(x_k)$。当然，由分布函数 $F(x)$ 也可唯一决定 $x_k$ 及 $p(x_k)$，因此用分布列或分布函数都能描述离散型随机变量。
+
+图\ref{figure:ch03-B312分布}中显示一个离散型随机变量的概率分布 $\{p(x_i)\}$ 以及与它对应的分布函数 $F(x)$。
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\textwidth]{ch03-fig-b312.png}
+\caption{$B\left(3,\frac12\right)$ 的概率分布与分布函数}
+\label{figure:ch03-B312分布}
+\end{figure}
+
+下面看一些离散型随机变量及其概率分布的例子。这些分布大都在上两章引入过。
+
+\paragraph{[退化分布]}若随机变量 $\alpha$ 只取常数值 $c$，即
+\begin{align*}P\{\alpha=c\}=1,\end{align*}
+这时分布函数为
+\begin{align}
+I_c(x)=
+\begin{cases}
+0, & x\leqslant c,\\
+1, & x>c.
+\end{cases}\label{align:ch03-退化分布}
+\end{align}
+可以说，这样的 $\alpha$ 并不随机，但有时我们宁愿把它看作随机变量的退化情况更为方便，因此称之为\textbf{退化分布}，又称\textbf{单点分布}。
+
+\paragraph{[Bernoulli 分布]}在一次试验中，事件 $A$ 出现的概率为 $p$，不出现的概率为 $q=1-p$，若以 $\beta$ 记事件 $A$ 出现的次数，则 $\beta$ 仅取 $0,1$ 两值，相应的概率分布为
+\begin{align}
+b_k=P\{\beta=k\}=p^{k}q^{1-k},\qquad k=0,1.\label{align:ch03-伯努利分布}
+\end{align}
+这个分布称为\textbf{Bernoulli 分布}，亦称\textbf{两点分布}。
+
+\paragraph{[二项分布]}在 $n$ 重 Bernoulli 试验中，若以 $\mu$ 记成功的次数，则它是一个随机变量，$\mu$ 可能取的值为 $0,1,2,\cdots,n$，其对应的概率由二项分布给出：
+\begin{align}
+b(k;n,p)=P\{\mu=k\}=\binom{n}{k}p^{k}q^{n-k},\qquad k=0,1,2,\cdots,n.\label{align:ch03-二项分布}
+\end{align}
+简记作 $\mu\sim B(n,p)$。
+
+关于二项分布及其计算已在上章作过详细讨论，这里不再重复。至于为什么称为分布，到了此处自然十分明白。
+
+顺便指出，Bernoulli 分布可以看作 $n=1$ 时的二项分布，这时相应于一次试验的场合。
+
+\paragraph{[超几何分布]}对某批 $N$ 件产品进行不放回抽样检查，若这批产品中有 $M$ 件次品，现从整批产品中随机抽出 $n$ 件产品，则在这 $n$ 件产品中出现的次品数 $\nu$ 是随机变量，它取值 $0,1,2,\cdots,n$，其概率分布为超几何分布。
+\begin{align}
+h_k=P\{\nu=k\}=\frac{\binom{M}{k}\binom{N-M}{n-k}}{\binom{N}{n}},\qquad
+\begin{array}{l}
+0\leqslant k\leqslant n\leqslant N,\\
+k\leqslant M.
+\end{array}\label{align:ch03-超几何分布}
+\end{align}
+这个分布在第一章中已经出现，我们还证明过当 $N$ 很大而 $n$ 较小时，它可用二项分布来近似。
+
+\paragraph{[Poisson 分布]}若随机变量 $\xi$ 可取一切非负整数值，且
+\begin{align}
+P\{\xi=k\}=\frac{\lambda^{k}}{k!}\mathrm{e}^{-\lambda},\qquad k=0,1,2,\cdots,\label{align:ch03-poisson分布}
+\end{align}
+其中 $\lambda>0$，则称 $\xi$ 服从\textbf{Poisson 分布}。简记作 $\xi\sim P(\lambda)$。
+
+Poisson 分布是概率论中非常重要的一个分布，在第二章 \S\,4 中已对它进行过初步讨论，以后我们还会经常提到它。
+
+\paragraph{[几何分布]}在成功的概率为 $p$ 的 Bernoulli 试验中，若以 $\eta$ 记成功首次出现时的试验次数，则 $\eta$ 为随机变量，它可能取的值为 $1,2,3,\cdots$，其概率分布为几何分布：
+\begin{align}
+g(k,p)=P\{\eta=k\}=q^{k-1}p,\qquad k=1,2,\cdots.\label{align:ch03-几何分布}
+\end{align}
+
+作为一种等待（时间）分布，我们在前两章中已多次碰到过几何分布，这也说明了几何分布是一种常见的概率分布。几何分布在概率论中的重要性，还在于它具有下面特殊的性质。
+
+\textbf{几何分布的无记忆性}。如上所述，在 Bernoulli 试验中，等待首次成功的时间 $\eta$ 服从几何分布\eqref{align:ch03-几何分布}。现在假定已知在前 $m$ 次试验中没有出现成功，那么为了达到首次成功所再需要的等待时间 $\eta'$，其概率分布为
+\begin{align*}
+P\{\eta'=k\}&=P\{\eta=m+k\mid\eta>m\}\\
+&=\frac{P\{\eta=m+k\}}{P\{\eta>m\}}=\frac{q^{m+k-1}p}{q^{m}}\\
+&=q^{k-1}p,\qquad k=1,2,\cdots,
+\end{align*}
+还是服从几何分布\eqref{align:ch03-几何分布}，与前面的失败次数 $m$ 无关，形象化地说，就是把过去的经历完全忘记了。因此无记忆性是几何分布所具有的一个有趣的性质。
+
+更加有趣的是，在离散型分布中，只有几何分布才具有这样一种特殊的性质。下面我们来严格叙述并证明这个事实。
+
+若 $\eta$ 是取正整数值的随机变量，并且，在已知 $\eta>k$ 的条件下，$\eta=k+1$ 的概率与 $k$ 无关，那么 $\eta$ 服从几何分布。
+
+这个论断的证明如下：以 $p$ 记上述条件概率，并记 $q_k=P\{\eta>k\}$ 及 $p_k=P\{\eta=k\}$，那么 $p_{k+1}=q_k-q_{k+1}$，而且在已知 $\eta>k$ 的条件下，$\eta=k+1$ 的条件概率为 $\dfrac{p_{k+1}}{q_k}$，因此
+\begin{align*}\frac{p_{k+1}}{q_k}=p,\end{align*}
+即
+\begin{align*}\frac{q_{k+1}}{q_k}=1-p.\end{align*}
+注意到 $q_0=1$，那么 $q_k=(1-p)^{k}$，因此
+\begin{align*}p_k=(1-p)^{k-1}p,\qquad k=1,2,\cdots.\end{align*}
+这正是几何分布\eqref{align:ch03-几何分布}。
+
+\paragraph{[Pascal 分布]}在成功的概率为 $p$ 的 Bernoulli 试验中，若以 $\zeta$ 记第 $r$ 次成功出现时的试验次数，则 $\zeta$ 是随机变量，取值 $r,r+1,\cdots$，其概率分布为 Pascal 分布：
+\begin{align}
+P\{\zeta=k\}=\binom{k-1}{r-1}p^{r}q^{k-r},\qquad k=r,r+1,\cdots.\label{align:ch03-pascal分布}
+\end{align}
+这分布在上章 \S\,3 出现过。显然当 $r=1$ 时，即为几何分布。
+
+另一方面若以 $\eta_i$ 记从第 $i-1$ 次成功之后的第一次试验算起至第 $i$ 次成功为止共进行的试验次数，则 $\eta_i$ 服从几何分布\eqref{align:ch03-几何分布}，而且
+\begin{align}
+\zeta=\eta_1+\cdots+\eta_r.\label{align:ch03-pascal分解}
+\end{align}
+
+若记 $\tilde{\zeta}=\zeta-r$，则 $\tilde{\zeta}$ 表示为等待第 $r$ 次成功所经历过的失败次数，那么，
+\begin{align*}
+P\{\tilde{\zeta}=l\}=P\{\zeta=r+l\}=\binom{r+l-1}{r-1}p^{r}q^{r+l-r}
+=\binom{r+l-1}{l}p^{r}q^{l}=\binom{-r}{l}p^{r}(-q)^{l},\qquad l=0,1,2,\cdots.
+\end{align*}
+\begin{align}\label{align:ch03-pascal失败次数}
+P\{\tilde{\zeta}=l\}=\binom{-r}{l}p^{r}(-q)^{l},\qquad l=0,1,2,\cdots.
+\end{align}
+
+显然，$\zeta$ 与 $\tilde{\zeta}$ 只是计数方式的不同，一个记全部试验数（包括成功次数与失败次数），另一个则只记失败的次数，它们描述的是同样的随机模型。
+
+这样定义的概率满足非负性及
+\begin{align*}\sum_{l=0}^{\infty}\binom{-r}{l}p^{r}(-q)^{l}=p^{r}(1-q)^{-r}=1.\end{align*}
+因此\eqref{align:ch03-pascal失败次数}也表示一个概率分布，不少书上把这个分布作为 Pascal 分布的定义。
+
+特别地，取 $r=1$，考察为等待第 $1$ 次成功所经历过的失败次数 $\tilde{\eta}$，那么，
+\begin{align}
+P\{\tilde{\eta}=l\}=q^{l}p,\qquad l=0,1,2,\cdots.\label{align:ch03-几何失败次数}
+\end{align}
+这也是一个分布，表示等待首次成功所经历过的失败数，也称为几何分布。
+
+有趣的是，等待第 $r$ 次成功所经历过的失败次数也可作如下分解：
+\begin{align*}\tilde{\zeta}=\tilde{\eta}_1+\cdots+\tilde{\eta}_r,\end{align*}
+其中 $\tilde{\eta}_i$ 也服从分布\eqref{align:ch03-几何失败次数}。
+
+总之，几何分布与 Pascal 分布都有两种表达式，本书采用前者，即\eqref{align:ch03-几何分布}及\eqref{align:ch03-pascal分布}，阅读参考书时务请注意。
+
+对 Pascal 分布，可以略加推广，即去掉 $r$ 是正整数的限制，这便得到
+
+\paragraph{[负二项分布]}对于任意实数 $r>0$，称
+\begin{align}
+Nb(l;r,p)=\binom{-r}{l}p^{r}(-q)^{l},\qquad l=0,1,2,\cdots\label{align:ch03-负二项分布}
+\end{align}
+为\textbf{负二项分布}。
+
+从前面的推导过程中很容易看出这的确是一个概率分布，它的取名也很自然。
+
+负二项分布作为某些离散随机现象的数学模型，正在逐步引起人们的注意。
+
+\subsection*{四、连续型随机变量}
+
+除了离散型随机变量之外，还有一类重要的随机变量——\textbf{连续型随机变量}。这种随机变量 $\xi$ 可取某个区间 $[c,d]$ 或 $(-\infty,\infty)$ 中的一切值，而且其分布函数 $F(x)$ 是绝对连续函数，即存在可积函数 $p(x)$，使
+\begin{align}
+F(x)=\int_{-\infty}^{x}p(y)\,\mathrm{d}y\label{align:ch03-连续分布函数}
+\end{align}
+称 $p(x)$ 为 $\xi$ 的（分布）\textbf{密度函数}（density function）。
+
+显然
+\begin{align}
+p(x)=F'(x),\label{align:ch03-密度导数}
+\end{align}
+由分布函数的性质可知对 $p(x)$ 应有
+\begin{align}
+p(x)\geqslant 0,\label{align:ch03-密度非负}
+\end{align}
+\begin{align}
+\int_{-\infty}^{\infty}p(x)\,\mathrm{d}x=1.\label{align:ch03-密度归一}
+\end{align}
+
+反之，对于定义在 $(-\infty,\infty)$ 上的可积函数 $p(x)$，若它满足\eqref{align:ch03-密度非负}及\eqref{align:ch03-密度归一}，则由\eqref{align:ch03-连续分布函数}定义的函数 $F(x)$ 是一个分布函数，即它有分布函数所必须具备的三个性质。
+
+顺便指出，由于在若干个点上甚至一个零测集上改变被积函数 $p(x)$ 的值，都不影响积分 $F(x)$ 之值，因此，关于 $p(x)$ 的论断通常都是在“几乎处处”的意义上成立，今后不再一一提及。
+
+由\eqref{align:ch03-区间概率差}立刻得到
+\begin{align}
+P\{a\leqslant\xi<b\}=F(b)-F(a)=\int_{a}^{b}p(x)\,\mathrm{d}x.\label{align:ch03-密度区间概率}
+\end{align}
+因此给定密度函数，便可以算出随机变量落入某一个区间的概率。
+
+进一步，可以证明，对于任何 Borel 点集 $B$，有
+\begin{align}
+P\{\xi\in B\}=\int_{B}p(x)\,\mathrm{d}x.\label{align:ch03-密度Borel概率}
+\end{align}
+
+下面对任意实数 $c$，计算 $P\{\xi=c\}$，因为
+\begin{align*}
+P\{\xi=c\}\leqslant P\{c\leqslant\xi<c+h\}=\int_{c}^{c+h}p(x)\,\mathrm{d}x,
+\end{align*}
+故
+\begin{align*}0\leqslant P\{\xi=c\}\leqslant\lim_{h\to 0}\int_{c}^{c+h}p(x)\,\mathrm{d}x=0,\end{align*}
+因此
+\begin{align*}P\{\xi=c\}=0.\end{align*}
+即连续型随机变量取个别值的概率为 $0$，这与离散型随机变量截然不同。因此用列举连续型随机变量取某个值的概率来描述这种随机变量不但做不到，而且也毫无意义。
+
+此外，上述结果还表明，一个事件的概率等于零，这事件并不一定是不可能事件；同样地，一个事件的概率等于 $1$，这事件也不一定是必然事件。
+
+密度函数不是概率，但在 $p(x)$ 的连续点 $x$ 处，
+\begin{align}
+p(x)\Delta x\approx\int_{x}^{x+\Delta x}p(y)\,\mathrm{d}y=F(x+\Delta x)-F(x).\label{align:ch03-密度概率意义}
+\end{align}
+因此密度函数 $p(x)$ 的数值反映了随机变量取 $x$ 的邻近的值的概率的大小。所以用密度函数描述连续型随机变量的概率分布在某种意义上与离散型时用分布列描述，又有相似之处。
+
+虽然密度函数与分布函数含有相同信息量，但在图形上，密度函数对各种分布的特征的显示要优胜得多，因此它比分布函数更常用。
+
+下面举一些常见的连续型分布的例子。
+
+\paragraph{[均匀分布]}若 $a,b$ 为有限数，由下列密度函数定义的分布称为 $[a,b]$ 上\textbf{均匀分布}：
+\begin{align}
+p(x)=
+\begin{cases}
+\dfrac{1}{b-a}, & a\leqslant x\leqslant b,\\[4pt]
+0, & x<a\text{ 或 }x>b.
+\end{cases}\label{align:ch03-均匀密度}
+\end{align}
+相应的分布函数为
+\begin{align}
+F(x)=
+\begin{cases}
+0, & x\leqslant a,\\[4pt]
+\dfrac{x-a}{b-a}, & a<x\leqslant b,\\[4pt]
+1, & x>b.
+\end{cases}\label{align:ch03-均匀分布函数}
+\end{align}
+$[a,b]$ 上均匀分布有时简记作 $U[a,b]$。
+
+若随机变量 $\xi$ 服从 $[a,b]$ 上均匀分布，则 $\xi$ 在 $[a,b]$ 中取值落在某一区域内的概率与这个区域的测度成正比。粗略地讲就是，$\xi$ 取 $[a,b]$ 中任一点的可能性一样。当然也可以反过来看，均匀分布正是把这种直观的讲法严格化。
+
+图\ref{figure:ch03-均匀分布}画出了 $[a,b]$ 上均匀分布的密度函数及分布函数。
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{ch03-fig-uniform.png}
+\caption{均匀分布的密度函数与分布函数}
+\label{figure:ch03-均匀分布}
+\end{figure}
+
+\begin{example}[定点计算中的舍入误差]\label{example:ch03-舍入误差}
+定点计算中的舍入误差可以作为常见的均匀分布随机变量的例子。假如我们在运算中，数据都只保留到小数点后第五位，而小数点第五位以后的数字按四舍五入处理。若以 $x$ 表示真值，以 $\hat{x}$ 表示舍入后的值，则误差 $\varepsilon=x-\hat{x}$ 一般假定为 $[-0.5\times10^{-5},0.5\times10^{-5}]$ 上均匀分布的随机变量，有了这个假定，就能对经过大量运算后的数据进行误差分析，这种误差分析在用数字计算机解题时是很必要的，因为数字计算机字长总是有限的。
+\end{example}
+
+\paragraph{[正态分布]}密度函数为
+\begin{align}
+p(x)=\frac{1}{\sqrt{2\pi}\sigma}\mathrm{e}^{-\frac{(x-\mu)^{2}}{2\sigma^{2}}},\qquad -\infty<x<\infty,\label{align:ch03-正态密度}
+\end{align}
+其中 $\sigma>0$，$\mu$ 与 $\sigma$ 均为常数，相应的分布函数为
+\begin{align}
+F(x)=\frac{1}{\sqrt{2\pi}\sigma}\int_{-\infty}^{x}\mathrm{e}^{-\frac{(y-\mu)^{2}}{2\sigma^{2}}}\,\mathrm{d}y,\qquad -\infty<x<\infty.\label{align:ch03-正态分布函数}
+\end{align}
+这分布称为\textbf{正态分布}（normal distribution），简记为 $N(\mu,\sigma^{2})$。
+
+特别当 $\mu=0$，$\sigma=1$，这时分布称为\textbf{标准正态分布}，记为 $N(0,1)$，相应的分布密度函数及分布函数分别记为 $\varphi(x)$ 及 $\Phi(x)$，见图\ref{figure:ch03-标准正态密度}及图\ref{figure:ch03-标准正态分布函数}。
+\begin{align}
+\varphi(x)=\frac{1}{\sqrt{2\pi}}\mathrm{e}^{-\frac{x^{2}}{2}},\qquad -\infty<x<\infty,\label{align:ch03-标准正态密度}
+\end{align}
+\begin{align}
+\Phi(x)=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{x}\mathrm{e}^{-\frac{y^{2}}{2}}\,\mathrm{d}y,\qquad -\infty<x<\infty.\label{align:ch03-标准正态分布函数}
+\end{align}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{ch03-fig-phix.png}
+\caption{标准正态密度函数 $\varphi(x)$}
+\label{figure:ch03-标准正态密度}
+\end{figure}
+
+习惯上把服从正态分布的随机变量称为\textbf{正态变量}。可以验证，若随机变量 $\xi$ 服从正态分布 $N(\mu,\sigma^{2})$，简记作 $\xi\sim N(\mu,\sigma^{2})$，则随机变量 $\zeta=\dfrac{\xi-\mu}{\sigma}$ 服从 $N(0,1)$。
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{ch03-fig-Phix.png}
+\caption{标准正态分布函数 $\Phi(x)$}
+\label{figure:ch03-标准正态分布函数}
+\end{figure}
+
+为了说明\eqref{align:ch03-正态密度}确实定义了一个密度函数，需要验证关系式\eqref{align:ch03-密度非负}及\eqref{align:ch03-密度归一}，显然 $p(x)>0$，因此剩下的是验证\eqref{align:ch03-密度归一}。令 $\dfrac{x-\mu}{\sigma}=z$，则
+\begin{align*}\int_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi}\sigma}\mathrm{e}^{-\frac{(x-\mu)^{2}}{2\sigma^{2}}}\,\mathrm{d}x=\int_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi}}\mathrm{e}^{-\frac{z^{2}}{2}}\,\mathrm{d}z.\end{align*}
+但是
+\begin{align*}
+&\left(\int_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi}}\mathrm{e}^{-\frac{x^{2}}{2}}\,\mathrm{d}x\right)\left(\int_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi}}\mathrm{e}^{-\frac{y^{2}}{2}}\,\mathrm{d}y\right)\\
+&\quad=\frac{1}{2\pi}\int_{-\infty}^{\infty}\int_{-\infty}^{\infty}\mathrm{e}^{-\frac{x^{2}+y^{2}}{2}}\,\mathrm{d}x\,\mathrm{d}y.
+\end{align*}
+变换到极坐标，令 $x=r\cos\varphi$，$y=r\sin\varphi$，则
+\begin{align*}
+\frac{1}{2\pi}\int_{-\infty}^{\infty}\int_{-\infty}^{\infty}\mathrm{e}^{-\frac{x^{2}+y^{2}}{2}}\,\mathrm{d}x\,\mathrm{d}y
+&=\frac{1}{2\pi}\int_{0}^{\infty}\int_{0}^{2\pi}\mathrm{e}^{-\frac{r^{2}}{2}}r\,\mathrm{d}r\,\mathrm{d}\varphi\\
+&=\int_{0}^{\infty}r\mathrm{e}^{-\frac{r^{2}}{2}}\,\mathrm{d}r=1.
+\end{align*}
+由 $\int_{-\infty}^{\infty}\dfrac{1}{\sqrt{2\pi}}\mathrm{e}^{-\frac{z^{2}}{2}}\,\mathrm{d}z$ 的非负性知
+\begin{align*}\int_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi}\sigma}\mathrm{e}^{-\frac{(x-\mu)^{2}}{2\sigma^{2}}}\,\mathrm{d}x=\int_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi}}\mathrm{e}^{-\frac{z^{2}}{2}}\,\mathrm{d}z=1.\end{align*}
+从而完成了\eqref{align:ch03-密度归一}的验证。
+
+这里的做法相当别致：采用耦合方法把一维问题化为二维问题，并很快得到解答，令人遐思。
+
+正态分布是概率论中最重要的分布。一方面，正态分布是自然界最常见的一种分布，例如测量的误差；炮弹弹落点的分布；人的生理特征的尺寸：身高，体重等；农作物的收获量；工厂产品的尺寸：直径，长度，宽度，高度；$\cdots\cdots$ 都近似服从正态分布。一般说来，若影响某一数量指标的随机因素很多，而每个因素所起的作用不太大，则这个指标服从正态分布，这点可以利用概率论的极限定理来加以证明。另一方面，正态分布具有许多良好的性质，许多分布可用正态分布来近似，另外一些分布又可以通过正态分布来导出，因此在理论研究中，正态分布十分重要。
+
+一般正态分布密度函数 $p(x)$ 的图形见图\ref{figure:ch03-正态密度比较}，通过图形或\eqref{align:ch03-正态密度}不难看出：$p(x)$ 在 $x=\mu$ 处达到极大，整个图形关于 $x=\mu$ 对称。当 $\sigma$ 不同时，$p(x)$ 的形状也不同，$\sigma$ 越小，分布越集中在 $x=\mu$ 附近；当 $\sigma$ 越大时，分布就越平坦。
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{ch03-fig-normcmp.png}
+\caption{$\mu=0$ 且具有不同的 $\sigma^{2}$ 的正态密度曲线}
+\label{figure:ch03-正态密度比较}
+\end{figure}
+
+由于正态分布在概率计算中的重要性，已编造了各种各样的正态分布表，本书的附表中就有 $\mu=0,\sigma=1$ 时的正态分布密度函数 $\varphi(x)$ 和正态分布函数 $\Phi(x)$ 的表。由于 $\varphi(-x)=\varphi(x)$ 及 $\Phi(-x)=1-\Phi(x)$，所以表中只对正的 $x$ 给出 $\varphi(x)$ 及 $\Phi(x)$ 的数值。一般 $N(\mu,\sigma^{2})$ 的分布函数值可由变换而得。
+
+事实上，若 $\xi\sim N(\mu,\sigma^{2})$，则
+\begin{align}
+F(x)=P\{\xi<x\}=P\left\{\frac{\xi-\mu}{\sigma}<\frac{x-\mu}{\sigma}\right\}=\Phi\left(\frac{x-\mu}{\sigma}\right),\label{align:ch03-一般正态标准化}
+\end{align}
+\begin{align}
+P\{a\leqslant\xi<b\}=\Phi\left(\frac{b-\mu}{\sigma}\right)-\Phi\left(\frac{a-\mu}{\sigma}\right),\label{align:ch03-正态区间}
+\end{align}
+\begin{align}
+P\{|\xi-\mu|<k\sigma\}=P\left\{-k<\frac{\xi-\mu}{\sigma}<k\right\}=\Phi(k)-\Phi(-k)=2\Phi(k)-1.\label{align:ch03-ksigma}
+\end{align}
+
+从表中可以看出，若 $\xi$ 服从 $N(\mu,\sigma^{2})$，则
+\begin{align}
+\begin{aligned}
+P\{|\xi-\mu|<\sigma\}&\approx 68.27\%,\\
+P\{|\xi-\mu|<2\sigma\}&\approx 95.45\%,\\
+P\{|\xi-\mu|<3\sigma\}&\approx 99.73\%.
+\end{aligned}\label{align:ch03-3sigma}
+\end{align}
+因此可以说，在一次试验里，$\xi$ 几乎总是落在 $(\mu-3\sigma,\mu+3\sigma)$ 之中。
+
+下例说明正态分布与实测数据符合得很好。
+
+\begin{example}[上海手表厂零件重量数据]\label{example:ch03-手表厂数据}
+上海手表厂曾对其生产的某个零件的重量收集了大量资料，对测量得的 $3\,805$ 个数据，按不同重量加以分组，并记录了不同范围内零件的个数（频数），计算了它们的频率，结果如下表所示，它们与 $\mu=56.94$，$\sigma=8.2$ 的正态分布符合得相当好，图\ref{figure:ch03-直方图正态}表示了两者符合的情况。
+\end{example}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{ch03-fig-hist.png}
+\caption{实测数据频率直方图与正态密度曲线}
+\label{figure:ch03-直方图正态}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{上海手表厂零件重量实测数据}
+\label{table:ch03-手表厂频数}
+\begin{tabular}{c c c c}
+区间 $[x_i,x_{i+1})$ & 频数 $n_i$ & 频率 $f_i=\dfrac{n_i}{n}$ & $\Phi\!\left(\dfrac{x_{i+1}-\mu}{\sigma}\right)-\Phi\!\left(\dfrac{x_i-\mu}{\sigma}\right)$\\
+\hline
+$(-\infty,41.5)$ & 125 & 0.032\,85 & 0.030\,05\\
+$[41.5,43.5)$ & 72 & 0.018\,92 & 0.021\,50\\
+$[43.5,45.5)$ & 124 & 0.032\,59 & 0.029\,21\\
+$[45.5,47.5)$ & 145 & 0.038\,11 & 0.044\,31\\
+$[47.5,49.5)$ & 193 & 0.050\,72 & 0.056\,30\\
+$[49.5,50.5)$ & 137 & 0.036\,0 & 0.033\,4\\
+$[50.5,51.5)$ & 131 & 0.034\,4 & 0.039\,8\\
+$[51.5,52.5)$ & 154 & 0.040\,5 & 0.040\,0\\
+$[52.5,53.5)$ & 156 & 0.041\,0 & 0.042\,6\\
+$[53.5,54.5)$ & 174 & 0.045\,7 & 0.045\,7\\
+$[54.5,55.5)$ & 186 & 0.048\,9 & 0.047\,2\\
+$[55.5,56.5)$ & 191 & 0.050\,2 & 0.048\,4\\
+$[56.5,57.5)$ & 206 & 0.054\,1 & 0.048\,6\\
+$[57.5,58.5)$ & 193 & 0.050\,7 & 0.048\,2\\
+$[58.5,59.5)$ & 185 & 0.048\,6 & 0.047\,2\\
+$[59.5,60.5)$ & 153 & 0.040\,2 & 0.045\,4\\
+$[60.5,61.5)$ & 176 & 0.046\,3 & 0.043\,0\\
+$[61.5,62.5)$ & 147 & 0.038\,6 & 0.040\,2\\
+$[62.5,63.5)$ & 144 & 0.037\,8 & 0.037\,0\\
+$[63.5,64.5)$ & 140 & 0.036\,8 & 0.033\,1\\
+$[64.5,65.5)$ & 109 & 0.028\,6 & 0.029\,9\\
+$[65.5,66.5)$ & 111 & 0.029\,2 & 0.028\,2\\
+$[66.5,67.5)$ & 93 & 0.024\,44 & 0.022\,47\\
+$[67.5,69.5)$ & 127 & 0.033\,38 & 0.035\,52\\
+$[69.5,71.5)$ & 81 & 0.021\,29 & 0.025\,47\\
+$[71.5,\infty)$ & 152 & 0.039\,95 & 0.037\,54\\
+\hline
+总和 & $n=3\,805$ & &\\
+\end{tabular}
+\end{table}
+
+我们通过下面例子来说明正态分布的计算。
+
+\begin{example}[赶火车路线选择]\label{example:ch03-赶火车}
+从南郊某地乘车前往北区火车站搭火车有两条路线可走，第一条路线穿过市区，路程较短，但交通拥挤，所需时间（单位为分）服从正态分布 $N(50,100)$，第二条路线沿环城公路走，路程较长，但意外阻塞较少，所需时间服从正态分布 $N(60,16)$，(1) 假如有 $70$ 分钟可用，问应走哪一条路线？(2) 若只有 $65$ 分钟可用，又应走哪一条路线？
+
+\paragraph*{解}显然应走在允许的时间内有较大概率及时赶到火车站的路线，若以 $\tau$ 记行车时间，则有关概率如下：
+
+(1) 有 $70$ 分钟可用时，走第一条路线及时赶到的概率为
+\begin{align*}P\{\tau\leqslant 70\}=\Phi\!\left(\frac{70-50}{10}\right)=\Phi(2)=0.977\,2.\end{align*}
+走第二条路线及时赶到的概率为
+\begin{align*}P\{\tau\leqslant 70\}=\Phi\!\left(\frac{70-60}{4}\right)=\Phi(2.5)=0.993\,8.\end{align*}
+因此在这种场合，应走第二条路线。
+
+(2) 只有 $65$ 分钟可用时，走第一条路线及时赶到的概率为
+\begin{align*}P\{\tau\leqslant 65\}=\Phi\!\left(\frac{65-50}{10}\right)=\Phi(1.5)=0.933\,2.\end{align*}
+走第二条路线及时赶到的概率为
+\begin{align*}P\{\tau\leqslant 65\}=\Phi\!\left(\frac{65-60}{4}\right)=\Phi(1.25)=0.894\,4.\end{align*}
+因此这种场合应走第一条路线。
+\end{example}
+
+\paragraph{[指数分布]}分布密度函数为
+\begin{align}
+p(x)=
+\begin{cases}
+\lambda\mathrm{e}^{-\lambda x}, & x\geqslant 0,\\
+0, & x<0,
+\end{cases}\label{align:ch03-指数密度}
+\end{align}
+分布函数为
+\begin{align}
+F(x)=
+\begin{cases}
+1-\mathrm{e}^{-\lambda x}, & x\geqslant 0,\\
+0, & x<0,
+\end{cases}\label{align:ch03-指数分布函数}
+\end{align}
+这里 $\lambda>0$，是参数，这分布称为\textbf{指数分布}。简记为 $\mathrm{Exp}(\lambda)$。
+
+指数分布有重要应用，常用它来作为各种“寿命”分布的近似，例如电子元件的寿命，某些动物的寿命，电话问题中的通话时间，随机服务系统中的服务时间等都常假定服从指数分布。
+
+指数分布的重要性还表现在它具有类似于几何分布的“无记忆性”。设随机变量 $\xi$ 服从指数分布\eqref{align:ch03-指数分布函数}，则对于任意的 $s>0,t>0$，
+\begin{align*}P\{\xi\geqslant s+t\mid\xi\geqslant s\}=\frac{P\{\xi\geqslant s+t\}}{P\{\xi\geqslant s\}}=\frac{\mathrm{e}^{-\lambda(s+t)}}{\mathrm{e}^{-\lambda s}}=\mathrm{e}^{-\lambda t}.\end{align*}
+因此
+\begin{align}
+P\{\xi\geqslant s+t\mid\xi\geqslant s\}=P\{\xi\geqslant t\}.\label{align:ch03-指数无记忆}
+\end{align}
+假如把 $\xi$ 解释为寿命，则\eqref{align:ch03-指数无记忆}表明，如果已知某人的年龄为 $s$，则再活 $t$ 年的概率与年龄 $s$ 无关，所以有时又风趣地称指数分布是“永远年青”的。
+
+下列事实也是正确的：指数分布是唯一具有性质\eqref{align:ch03-指数无记忆}的连续型分布。
+
+我们来证明这个论断。
+
+设 $\xi$ 是非负的，其分布函数为 $F(x)$，记
+\begin{align*}G(x)=P\{\xi\geqslant x\}.\end{align*}
+则由\eqref{align:ch03-指数无记忆}可以得到
+\begin{align*}G(s+t)=G(s)G(t)\end{align*}
+对一切 $s\geqslant 0,t\geqslant 0$ 成立。因为 $G(x)$ 关于 $x$ 单调，所以由引理 $2.4.1$ 知
+\begin{align*}G(x)=a^{x},\qquad x\geqslant 0.\end{align*}
+由于 $G(x)$ 是概率，故 $0<a<1$，可以写成 $a=\mathrm{e}^{-\lambda}$，其中 $\lambda>0$。因此
+\begin{align*}F(x)=1-G(x)=1-\mathrm{e}^{-\lambda x},\qquad x\geqslant 0.\end{align*}
+从而证明了结论。
+
+应当指出，指数分布与 Poisson 过程有密切关系，若以 $\xi(t)$ 记参数为 $\lambda t$ 的 Poisson 过程，以 $\tau_1$ 记它第一个跳跃发生的时刻，则
+\begin{align*}P\{\tau_1\geqslant t\}=P\{\xi(t)=0\}.\end{align*}
+因此
+\begin{align*}P\{\tau_1\geqslant t\}=\mathrm{e}^{-\lambda t}.\end{align*}
+这说明 $\tau_1$ 服从指数分布\eqref{align:ch03-指数分布函数}。下面把这个结果推广到更为一般的场合。
+
+\paragraph{[Erlang 分布]}若 $\xi(t)$ 是参数为 $\lambda t$ 的 Poisson 过程，以 $W_r$ 记它的第 $r$ 个跳跃发生的时刻。事件 $\{W_r<t\}$ 发生表明第 $r$ 个跳跃出现在时刻 $t$ 之前，因此事件 $\{\xi(t)\geqslant r\}$ 发生，即 $\{W_r<t\}\subset\{\xi(t)\geqslant r\}$；反之，若事件 $\{\xi(t)\geqslant r\}$ 发生，即在时刻 $t$ 时 $\xi(t)$ 之值不小于 $r$，这时第 $r$ 个跳跃已经出现过，因此事件 $\{W_r<t\}$ 发生，即有 $\{\xi(t)\geqslant r\}\subset\{W_r<t\}$。综上所述可知
+\begin{align*}\{W_r<t\}=\{\xi(t)\geqslant r\}.\end{align*}
+
+以 $F(x)$ 记 $W_r$ 的分布函数，则
+\begin{align}
+F(t)=P\{W_r<t\}=P\{\xi(t)\geqslant r\}
+=\sum_{k=r}^{\infty}\frac{(\lambda t)^{k}\mathrm{e}^{-\lambda t}}{k!}
+=1-\sum_{k=0}^{r-1}\frac{(\lambda t)^{k}\mathrm{e}^{-\lambda t}}{k!}.\label{align:ch03-erlang分布函数}
+\end{align}
+因此
+\begin{align*}
+p(t)=F'(t)
+&=-\left[\sum_{k=0}^{r-1}\frac{(\lambda t)^{k}\mathrm{e}^{-\lambda t}(-\lambda)}{k!}+\sum_{k=0}^{r-1}\frac{k(\lambda t)^{k-1}\cdot\lambda\mathrm{e}^{-\lambda t}}{k!}\right]\\
+&=\lambda\mathrm{e}^{-\lambda t}\sum_{k=0}^{r-1}\frac{(\lambda t)^{k}}{k!}-\lambda\mathrm{e}^{-\lambda t}\sum_{k=1}^{r-1}\frac{(\lambda t)^{k-1}}{(k-1)!}\\
+&=\frac{\lambda(\lambda t)^{r-1}}{(r-1)!}\mathrm{e}^{-\lambda t}=\frac{\lambda^{r}}{\Gamma(r)}t^{r-1}\mathrm{e}^{-\lambda t}.
+\end{align*}
+因对于任意的 $r>0,\lambda>0$，
+\begin{align}
+\int_{0}^{\infty}\frac{\lambda^{r}}{\Gamma(r)}x^{r-1}\mathrm{e}^{-\lambda x}\,\mathrm{d}x=1,\label{align:ch03-gamma归一}
+\end{align}
+所以，对任意的正整数 $r$ 及实数 $\lambda>0$，
+\begin{align}
+p(x)=\frac{\lambda^{r}}{(r-1)!}x^{r-1}\mathrm{e}^{-\lambda x},\qquad x\geqslant 0,\label{align:ch03-erlang密度}
+\end{align}
+是一个密度函数，称为\textbf{Erlang 分布}，它是丹麦科学家 Erlang 在研究电话问题时引进的，这些研究开创了排队论这一学科。
+
+前面的推导说明，Poisson 过程中第 $r$ 个跳跃发生的时刻 $W_r$ 服从 Erlang 分布。
+
+当 $r=1$ 时，Erlang 分布化作指数分布。另外，若记
+\begin{align}
+\begin{aligned}
+\tau_1&=W_1,\\
+\tau_r&=W_r-W_{r-1},\qquad r=2,3,\cdots,
+\end{aligned}\label{align:ch03-跳跃间隔}
+\end{align}
+则 $\tau_r$ 表示 Poisson 过程的第 $r$ 个跳跃间隔，用它们可以给出跳跃时刻 $W_r$ 的如下表达式
+\begin{align}
+W_r=\tau_1+\tau_2+\cdots+\tau_r.\label{align:ch03-跳跃间隔和}
+\end{align}
+可以证明，$\tau_1,\tau_2,\cdots,\tau_r$ 均服从参数为 $\lambda$ 的指数分布，且相互独立。
+
+这个性质与 Pascal 分布类似。
+
+Erlang 分布也可略加推广，当 $r$ 为任意正实数时，由\eqref{align:ch03-gamma归一}可知能定义如下分布。
+
+\paragraph{[$\Gamma$ 分布]}称密度函数为
+\begin{align}
+f(x)=
+\begin{cases}
+\dfrac{\lambda^{r}}{\Gamma(r)}x^{r-1}\mathrm{e}^{-\lambda x}, & x>0,\\[4pt]
+0, & x\leqslant 0
+\end{cases}\label{align:ch03-gamma密度}
+\end{align}
+的分布为 $\Gamma$ 分布，其中 $\lambda>0,r>0$ 为参数。简记作 $\Gamma(r,\lambda)$（图\ref{figure:ch03-gamma分布}）。这里，$r$ 称为\textbf{形状参数}，$\lambda$ 称为\textbf{尺度参数}。
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{ch03-fig-gamma.png}
+\caption{$\Gamma$ 分布密度函数}
+\label{figure:ch03-gamma分布}
+\end{figure}
+
+当然，$\Gamma$ 分布包含 Erlang 分布作为特例，此外，它在概率论和数理统计中还有许多应用，是重要分布之一。
+
+\paragraph{[Bernoulli 过程与 Poisson 过程]}若每隔 $\Delta t$ 进行一次试验，则 Bernoulli 试验也可以看作一个随时间而变化的过程。
+
+在 Bernoulli 试验中，到时刻 $n\Delta t$ 为止，共进行 $n$ 次试验，这时成功次数服从二项分布。而在 Poisson 过程中，到时刻 $t$ 的来到数则服从 Poisson 分布。
+
+为等待第一次成功，Bernoulli 试验中的等待时间服从几何分布；而 Poisson 过程中则服从指数分布。它们都有无记忆性。
+
+为等待第 $r$ 次成功，Bernoulli 试验中的等待时间服从 Pascal 分布；而 Poisson 过程中则服从 Erlang 分布。
+
+正如二项分布的 Poisson 逼近，上述结果可以严格化。不过在这里列出这个对比，只是想让读者有一种系统地记忆几种常见离散型分布和连续型分布的方法。
+
+\subsection*{五、关于分布函数的一些结论}
+
+我们已经证明了分布函数是单调函数，利用实变数函数论中关于单调函数的一般结果\footnote{参看复旦大学数学系，实变数函数论与泛函分析概要（第二版），上海科技出版社，1963，第四章。}，不难推出分布函数具有如下性质：
+\begin{enumerate}
+\item 分布函数至多只有可列个不连续点；
+\item 对分布函数 $F(x)$ 有 Lebesgue 分解
+\begin{align}
+F(x)=c_1F_1(x)+c_2F_2(x)+c_3F_3(x),\label{align:ch03-lebesgue分解}
+\end{align}
+其中 $F_1(x)$ 是跳跃函数，$F_2(x)$ 是绝对连续函数，$F_3(x)$ 是所谓奇异函数，它们都是分布函数；而 $0\leqslant c_i\leqslant 1$，$i=1,2,3$，且 $c_1+c_2+c_3=1$。
+\end{enumerate}
+
+在我们讨论过的分布函数中，离散型分布函数是跳跃函数，相当于在\eqref{align:ch03-lebesgue分解}中取 $c_1=1,c_2=c_3=0$ 的场合；而连续型分布函数是绝对连续函数，相当于在\eqref{align:ch03-lebesgue分解}中取 $c_2=1,c_1=c_3=0$ 的场合；自然会想到，也可以取 $c_3=1,c_1=c_2=0$，得到另一类分布函数。这个结论是正确的，理论上确实存在着另一类分布函数——\textbf{奇异型分布函数}，它是连续函数，但却不能表为不定积分，因此它没有密度函数。不过到目前为止，常用的分布都是离散型或连续型的，因此我们不准备对奇异型分布多加讨论。以后证明结果或是对离散型进行，或是对连续型进行，或者对一般分布进行。
+
+\end{document}

@@ -1,0 +1,135 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{../../image/}{../../figure/}}
+\begin{document}
+
+\section{Cauchy 问题}\label{section:ch16-cauchy问题}
+
+我们考虑一般非齐次、严格双曲的平衡律组
+\begin{align}
+\partial_t U(x,t)+\partial_x F(U(x,t),x,t)+P(U(x,t),x,t)=0.
+\label{align:ch16-s01-e01}
+\end{align}
+流 $F$ 与源项 $P$ 是定义在 $\mathscr{O}\times(-\infty,\infty)\times[0,\infty)$ 上、取值于 $\mathbb{R}^n$ 的 Lipschitz 函数。此外，Jacobi 矩阵 $DF(U,x,t)$ Lipschitz，具有实的互异特征值 $\lambda_1(U,x,t)<\cdots<\lambda_n(U,x,t)$，且在 $(x,t)$ 中一致严格分离。
+
+我们赋予初始条件
+\begin{align}
+U(x,0)=U_0(x),\qquad-\infty<x<\infty,
+\label{align:ch16-s01-e02}
+\end{align}
+并求该 Cauchy 问题的解。
+
+非齐次性与源项的效应将通过算子分裂算法计入，该算法按时间步推进。在每一步，非齐次平衡律的近似解由以下三类问题的近似解拼接而成：形式为 $\partial_xF(\bar U,x,\bar t)=0$、$\partial_tU+P(\bar U,\bar x,t)=0$ 的常微分方程，以及齐次守恒律 $\partial_tU+\partial_xF(U,\bar x,\bar t)=0$。这一一般格式允许若干变形。首先，齐次守恒律部分可用前面三章发展的任一方法处理，即随机选取、波前追踪或消失黏性。此处我们选用随机选取法。此外，正如我们将看到的，算法的细节可能需要调整，以适应系统的特定特征。在其最简单的一般形式下，算子分裂算法如下进行。
+
+如同第十三章第 2 节那样，我们从一个随机序列 $\mathscr{P}=\{a_0,a_1,\ldots\}$ 出发，其中 $a_s\in(-1,1)$。
+固定空间步长 $h$，相应的时间步长 $\tau=\lambda^{-1}h$，并构造交错网格：网格点 $(x_r,t_s)$，$r+s$ 为偶数；采样点 $(y_s^r,t_s)$，$y_s^r=x_r+a_sh$，$r+s$ 为奇数。
+
+假设 $U_h$ 在 $\{(x,t):-\infty<x<\infty,\,0\leqslant t<t_s\}$ 上已经已知，则对 $r+s$ 为奇数者，借助原书(13.2.5)定义 $U_s^r$，再令
+\begin{align}
+\hat U_s^r=U_s^r-\tau P(U_s^r,x_r,t_s).
+\label{align:ch16-s01-e03}
+\end{align}
+接着，对 $r+s$ 为奇数者，确定 $V_s^r$ 与 $W_s^r$ 为方程
+\begin{align}
+F(W_s^r,x_{r+1},t_s)=F(\hat U_s^r,x_r,t_s)=F(V_s^r,x_{r-1},t_s)
+\label{align:ch16-s01-e04}
+\end{align}
+的解。为使\eqref{align:ch16-s01-e04}可解，可能需要作坐标变换 $(x,t)\mapsto(y,t)$，其中 $y=y(x,t)$，以消除零特征速度。最后，对 $r+s$ 为偶数者，在矩形 $\{(x,t):x_{r-1}\leqslant x<x_{r+1},\,t_s\leqslant t<t_{s+1}\}$ 上把 $U_h$ 定义为下述 Riemann 问题在该矩形上的限制：
+\begin{align}
+\partial_tU_h(x,t)+\partial_xF(U_h(x,t),x_r,t_s)=0,\qquad t\geqslant t_s,
+\label{align:ch16-s01-e05}
+\end{align}
+\begin{align}
+U_h(x,t_s)=
+\begin{cases}
+W_s^{r-1},&x<x_r,\\
+V_s^{r+1},&x>x_r.
+\end{cases}
+\label{align:ch16-s01-e06}
+\end{align}
+算法在 $s=0$ 时由原书(13.1.10)启动。
+
+非齐次性与源项可能放大约似解的总变差，使其超出当前可用分析工具的范围。为控制非齐次性的效应，我们对 $F$ 与 $P$ 施加如下限制：对任意 $U\in\mathscr{O}$、$x\in(-\infty,\infty)$ 与 $t\in[0,\infty)$\footnote{本章通篇把 $n$ 维向量视为 $\ell_n^1$ 的元素并取其范数，把 $n\times n$ 矩阵视为 $\ell_n^1$ 上的线性算子并取其范数。}，
+\begin{align}
+|DF_x(U,x,t)|\leqslant\omega,\qquad|DF_t(U,x,t)|\leqslant\omega,
+\label{align:ch16-s01-e07}\\
+|DF_x(U,x,t)|\leqslant f(x),\qquad|P_x(U,x,t)|\leqslant f(x),
+\label{align:ch16-s01-e08}
+\end{align}
+其中 $f(x)$ 是 $W^{1,1}(-\infty,\infty)$ 函数，满足
+\begin{align}
+\int_{-\infty}^{\infty}f(x)\,\mathrm{d}x\leqslant\omega,
+\label{align:ch16-s01-e09}
+\end{align}
+而 $\omega$ 是非负数。在这些条件下，Cauchy 问题至少存在局部 $BV$ 解：
+
+\begin{theorem}\label{theorem:ch16-1611}
+对充分小的正数 $\omega$ 与 $\delta$，存在时刻 $T=T(\omega,\delta)$，当 $(\omega,\delta)\to0$ 时 $T(\omega,\delta)\to\infty$，使得当\eqref{align:ch16-s01-e07}、\eqref{align:ch16-s01-e08}、\eqref{align:ch16-s01-e09}成立且
+\begin{align}
+TV_{(-\infty,\infty)}U_0(\cdot)=\delta,
+\label{align:ch16-s01-e10}
+\end{align}
+时，\eqref{align:ch16-s01-e01}、\eqref{align:ch16-s01-e02}在时间区间 $[0,T)$ 上存在一个可容 $BV$ 解 $U$。对每一固定 $t\in[0,T)$，$U(\cdot,t)$ 是 $(-\infty,\infty)$ 上的有界变差函数，且
+\begin{align}
+TV_{(-\infty,\infty)}U(\cdot,t)\leqslant c_1(\delta+\omega)e^{\rho t},
+\label{align:ch16-s01-e11}
+\end{align}
+其中 $c_1$ 与 $\rho$ 为正常数。
+\end{theorem}
+
+上述命题的证明基于对第十三章中分析的一个相当直接却繁琐的改造，该分析最终得到原书定理 13.1.1 的证明，证明可见\cref{section:ch16-注记}所引文献。
+实际上，在\cref{section:ch16-变差界}中，读者将看到算子分裂方法的一个详细应用，其中使用了该算法的一个变种，专门适配\eqref{align:ch16-s01-e01}的一类特定形式。总变差的指数增长由非齐次性与源项共同诱导，指数 $\rho=O(\omega+\gamma)$，其中 $\gamma=\sup|DP|$。当然，只要 $TV_{(-\infty,\infty)}U_h(\cdot,t)$ 保持小，解就不会破裂。
+
+我们的下一个任务是识别那些使 Cauchy 问题存在整体 $BV$ 解的系统类别。保持总变差小的最简单机制，是非齐次性与源项随 $t\to\infty$ 快速衰减。设我们把假设\eqref{align:ch16-s01-e07}与\eqref{align:ch16-s01-e08}替换为
+\begin{align}
+|DF_x(U,x,t)|\leqslant\omega g(t),\qquad|DF_t(U,x,t)|\leqslant\omega g(t),
+\label{align:ch16-s01-e12}\\
+|P(U,x,t)|\leqslant\omega g(t),\qquad|DP(U,x,t)|\leqslant\omega g(t),
+\label{align:ch16-s01-e13}\\
+|DF_x(U,x,t)|\leqslant f(x)g(t),\qquad|P_x(U,x,t)|\leqslant f(x)g(t),
+\label{align:ch16-s01-e14}
+\end{align}
+对一切 $U\in\mathscr{O}$、$x\in(-\infty,\infty)$、$t\in[0,\infty)$ 成立，其中 $f(x)$ 与 $\omega$ 同上，而 $g(t)\in L^1(0,\infty)$ 有界。于是作为\cref{theorem:ch16-1611}的一个简单推论——也是估计\eqref{align:ch16-s01-e11}的一个特殊情形——我们有如下定理：
+
+\begin{theorem}\label{theorem:ch16-1612}
+对充分小的正数 $\omega$ 与 $\delta$，当\eqref{align:ch16-s01-e12}、\eqref{align:ch16-s01-e13}、\eqref{align:ch16-s01-e14}、\eqref{align:ch16-s01-e09}与\eqref{align:ch16-s01-e10}成立时，\eqref{align:ch16-s01-e01}、\eqref{align:ch16-s01-e02}存在整体可容 $BV$ 解 $U$。对每个 $t\in[0,\infty)$，$U(\cdot,t)$ 是 $(-\infty,\infty)$ 上的有界变差函数，且
+\begin{align}
+TV_{(-\infty,\infty)}U(\cdot,t)\leqslant c_1(\delta+\omega).
+\label{align:ch16-s01-e15}
+\end{align}
+\end{theorem}
+
+一个相当精妙的、为 Cauchy 问题诱导整体存在性的机制，是非齐次性与源项随 $|x|\to\infty$ 快速衰减，并与非零特征速度相结合。事实上，当所有特征速度都远离零时，可以预期：随 $t$ 增加，波的主体远离原点，最终进入并停留在非齐次性与源项影响可忽略的区域。要验证这一猜想，需要刻画整体波型并追踪波的主体。这只能借助第十三章第 8 节中勾勒的波追踪方法来实现。
+这一方向的一个代表性命题如下，其证明见\cref{section:ch16-注记}所引文献。
+
+\begin{theorem}\label{theorem:ch16-1613}
+考虑严格双曲平衡律组
+\begin{align}
+\partial_tU(x,t)+\partial_xF(U(x,t))+P(U(x,t),x)=0,
+\label{align:ch16-s01-e16}
+\end{align}
+具有非零特征速度，且特征族要么真非线性、要么线性退化。假设对任意 $U\in\mathscr{O}$ 与 $x\in(-\infty,\infty)$，
+\begin{align}
+|P(U,x)|\leqslant f(x),\qquad|DP(U,x)|\leqslant f(x),
+\label{align:ch16-s01-e17}
+\end{align}
+其中 $f(x)$ 满足\eqref{align:ch16-s01-e09}且 $\omega$ 充分小。若初始数据 $U_0$ 有界变差、\eqref{align:ch16-s01-e10}中 $\delta$ 充分小，则\eqref{align:ch16-s01-e16}、\eqref{align:ch16-s01-e02}存在整体可容 $BV$ 解 $U$。对每个固定 $t\in[0,\infty)$，$U(\cdot,t)$ 是 $(-\infty,\infty)$ 上的有界变差函数，且
+\begin{align}
+TV_{(-\infty,\infty)}U(\cdot,t)\leqslant c_1(\delta+\omega).
+\label{align:ch16-s01-e18}
+\end{align}
+\end{theorem}
+
+上述命题的一个典型应用是原书(7.1.24)，它控制气体通过变截面 $a(x)$ 管道的等熵流动。
+我们把原书(7.1.24)改写成\eqref{align:ch16-s01-e16}的形式：
+\begin{align}
+\begin{cases}
+\partial_tv+\partial_x(\rho v)+a^{-1}(x)a'(x)\rho v=0,\\
+\partial_t(\rho v)+\partial_x[\rho v^2+p(\rho)]+a^{-1}(x)a'(x)\rho v^2=0.
+\end{cases}
+\label{align:ch16-s01-e19}
+\end{align}
+显然，为满足\cref{theorem:ch16-1613}的要求\eqref{align:ch16-s01-e17}，需要假设 $a(x)$ 在 $(-\infty,\infty)$ 上的总变差充分小。
+
+还有一个可能为 Cauchy 问题诱导整体存在性的因素，是耗散源的存在。这将是本章余下部分的研究对象。
+
+\end{document}

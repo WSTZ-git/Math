@@ -1,0 +1,307 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}}
+
+\begin{document}
+
+\section{条件概率，全概率公式，Bayes 公式}\label{section:ch02-条件概率全概率公式Bayes公式}
+
+\subsection{条件概率}
+
+对概率的讨论总是在一组固定的条件限制下进行的. 以前的讨论总是假定除此之外再无别的信息可供使用, 可是, 有时我们却会遇到这样的情况, 即已知某一事件 $B$ 已经发生, 要求另一事件 $A$ 发生的概率. 例如考虑有两个孩子的家庭, 假定男女出生率一样, 则两个孩子（依大小排列）的性别为（男, 男）, （男, 女）, （女, 男）, （女, 女）的可能性是一样的. 若以 $A$ 记随机选取的这样一个家庭中有一男孩、一女孩这一事件, 则显然
+\begin{align*}
+P(A)=\frac{1}{2},
+\end{align*}
+但是如果我们预先知道这家庭至少有一个女孩, 那么, 上述事件的概率便应是 $\dfrac{2}{3}$.
+
+两种情况下算出的概率不同. 这也很容易理解, 因为在第二种情况下, 我们多知道了一个条件：事件 $B$（这一家庭至少有一女孩）发生, 因此我们算得的概率事实上是"在已知事件 $B$ 发生的条件下, 事件 $A$ 发生的概率", 这个概率我们将记之为 $P(A\mid B)$.
+
+这种带有条件的概率很重要, 下面我们就来研究它. 在给出严格定义之前, 先考察一些特殊的场合.
+
+就从上述例子出发. 这是一个古典概型问题, 样本点总数 $n=4$, 有利于事件 $A$ 的场合数 $m_A=2$, 因此 $P(A)=\dfrac{1}{2}$; 但是假如已知事件 $B$ 发生, 即至少有一女孩, 那么可能发生的样本点是（男, 女）, （女, 男）, （女, 女）, 总数为 $m_B=3$, 而有利场合（至少有一女孩, 而且有一男孩、一女孩）数 $m_{AB}=2$, 因此
+\begin{align}
+P(A\mid B)=\frac{2}{3}=\frac{m_{AB}}{m_B}=\frac{\dfrac{m_{AB}}{n}}{\dfrac{m_B}{n}}=\frac{P(AB)}{P(B)}
+\end{align}
+这式子很重要, 虽然我们以特例形式引入, 但读者不难证明, 它对一般古典概型问题也成立.
+
+在几何概率中, 若以 $m(A)$, $m(B)$, $m(AB)$, $m(\Omega)$ 分别记事件 $A$, $B$, $AB$, $\Omega$ 所对应点集的测度, 且 $m(B)>0$, 则
+\begin{align*}
+P(A\mid B)=\frac{m(AB)}{m(B)}=\frac{\dfrac{m(AB)}{m(\Omega)}}{\dfrac{m(B)}{m(\Omega)}}=\frac{P(AB)}{P(B)}
+\end{align*}
+结果与古典概型相同.
+
+对频率也有类似结果, 请读者自行验证.
+
+在一般场合, 我们将把这个算式作为条件概率的定义.
+
+\begin{definition}[条件概率]\label{definition:ch02-条件概率}
+设 $(\Omega, \mathscr{F}, P)$ 是一个概率空间, $B\in\mathscr{F}$, 而且 $P(B)>0$, 则对任意 $A\in\mathscr{F}$, 记
+\begin{align}\label{align:ch02-条件概率定义}
+P(A\mid B)=\frac{P(AB)}{P(B)}
+\end{align}
+并称 $P(A\mid B)$ 为在事件 $B$ 发生的条件下事件 $A$ 发生的条件概率（conditional probability）.
+\end{definition}
+
+若未经特别指出, 今后出现条件概率 $P(A\mid B)$ 时, 都假定 $P(B)>0$.
+
+不过, 即使 $P(B)=0$, 由于这时 $P(AB)$ 也必为 $0$, 因此\eqref{align:ch02-条件概率定义}式为待定型, 进一步的研究是可能的, 但已超出本书的范围.
+
+由\eqref{align:ch02-条件概率定义}式立刻得到
+\begin{align}\label{align:ch02-乘法公式}
+P(AB)=P(B)P(A\mid B)
+\end{align}
+这个等式被称为概率的乘法公式或乘法定理.
+
+若还有 $P(A)>0$, 则也可定义 $P(B\mid A)$, 这时有
+\begin{align}\label{align:ch02-乘法公式对称}
+P(AB)=P(A)P(B\mid A)=P(B)P(A\mid B)
+\end{align}
+
+\begin{example}[肝癌普查]\label{example:ch02-肝癌普查}
+在肝癌普查中发现, 某地区的自然人群中, 每十万人内平均有 $40$ 人患原发性肝癌, 有 $34$ 人甲胎球蛋白高含量, 有 $32$ 人既患原发性肝癌又出现甲胎球蛋白高含量.
+
+从这个地区的居民中任抽一人, 若他患有原发性肝癌则记为 $C$, 甲胎球蛋白高含量记为 $D$, 这时
+\begin{align*}
+P(C)=0.000\,4,\quad P(D)=0.000\,34,\quad P(CD)=0.000\,32
+\end{align*}
+由条件概率定义可得
+\begin{align*}
+P(D\mid C)=\frac{P(CD)}{P(C)}=\frac{0.000\,32}{0.000\,4}=0.8
+\end{align*}
+\begin{align*}
+P(C\mid D)=\frac{P(CD)}{P(D)}=\frac{0.000\,32}{0.000\,34}=0.941\,2
+\end{align*}
+
+通过计算得知, 患原发性肝癌的人有 $80\%$ 其甲胎球蛋白呈现出高含量, 而甲胎球蛋白的测定大大有助于发现原发性肝癌患者：若出现高含量, 则有高达 $94\%$ 以上的概率对患原发性肝癌作出正确诊断.
+
+由于事件 $D$ 的发生, 使事件 $C$ 发生的概率由 $0.000\,4$ 一下子上升到 $0.941\,2$. 可见, 事件发生的概率, 与条件有关, 也即与信息有关.
+\end{example}
+
+下面讨论条件概率的性质.
+
+首先, 不难验证条件概率 $P(A\mid B)$ 具有概率的三个基本性质：非负性、规范性、可列可加性.
+
+(i) $P(A\mid B)\geqslant 0$;
+
+(ii) $P(\Omega\mid B)=1$;
+
+(iii) $P\left(\sum_{i=1}^{\infty} A_i\mid B\right)=\sum_{i=1}^{\infty} P(A_i\mid B)$.
+
+因此, 类似于概率, 对条件概率也可由三个基本性质导出其他一些性质, 例如
+\begin{align*}
+P(\varnothing\mid B)=0
+\end{align*}
+\begin{align*}
+P(A\mid B)=1-P(\bar{A}\mid B)
+\end{align*}
+\begin{align*}
+P(A_1\cup A_2\mid B)=P(A_1\mid B)+P(A_2\mid B)-P(A_1A_2\mid B)
+\end{align*}
+特别当 $B=\Omega$ 时, 条件概率化为无条件概率, 因此把一般的概率看作条件概率也未尝不可.
+
+\begin{remark}[推广的乘法公式]\label{remark:ch02-推广乘法公式}
+可以把乘法公式推广到任意 $n$ 个事件之交的场合：
+\begin{align}\label{align:ch02-推广乘法公式}
+P(A_1A_2\cdots A_n)=P(A_1)P(A_2\mid A_1)P(A_3\mid A_1A_2)\cdots P(A_n\mid A_1A_2\cdots A_{n-1})
+\end{align}
+这里当然要求 $P(A_1A_2\cdots A_{n-1})>0$.
+\end{remark}
+
+\begin{example}[Polya 坛子模型]\label{example:ch02-Polya坛子模型}
+坛子中有 $b$ 只黑球及 $r$ 只红球, 随机取出一只, 把原球放回, 并加进与抽出球同色的球 $c$ 只, 再摸第二次, 这样下去共摸了 $n$ 次, 问前面的 $n_1$ 次出现黑球, 后面的 $n_2=n-n_1$ 次出现红球的概率是多少？
+
+\begin{proof}[解]
+以 $A_1$ 表示第一次摸出黑球这一事件, $\cdots$, $A_{n_1}$ 表示第 $n_1$ 次摸出黑球, $A_{n_1+1}$ 表示第 $n_1+1$ 次摸出红球, $\cdots$, $A_n$ 表示第 $n$ 次摸出红球. 则
+\begin{align*}
+P(A_1)=\frac{b}{b+r},\quad P(A_2\mid A_1)=\frac{b+c}{b+r+c}
+\end{align*}
+\begin{align*}
+P(A_3\mid A_1A_2)=\frac{b+2c}{b+r+2c},
+\end{align*}
+\begin{align*}
+P(A_{n_1}\mid A_1\cdots A_{n_1-1})=\frac{b+(n_1-1)c}{b+r+(n_1-1)c}
+\end{align*}
+\begin{align*}
+P(A_{n_1+1}\mid A_1\cdots A_{n_1})=\frac{r}{b+r+n_1c}
+\end{align*}
+\begin{align*}
+P(A_{n_1+2}\mid A_1\cdots A_{n_1+1})=\frac{r+c}{b+r+(n_1+1)c},\cdots
+\end{align*}
+\begin{align*}
+P(A_n\mid A_1\cdots A_{n-1})=\frac{r+(n_2-1)c}{b+r+(n-1)c}
+\end{align*}
+
+因此
+\begin{align*}
+P(A_1A_2\cdots A_n)&=\frac{b}{b+r}\cdot\frac{b+c}{b+r+c}\cdot\frac{b+2c}{b+r+2c}\\
+&\cdots\frac{b+(n_1-1)c}{b+r+(n_1-1)c}\\
+&\quad\cdot\frac{r}{b+r+n_1c}\cdot\frac{r+c}{b+r+(n_1+1)c}\\
+&\cdots\frac{r+(n_2-1)c}{b+r+(n-1)c}
+\end{align*}
+
+注意这个答案只与黑球及红球出现次数有关, 而与出现的顺序无关.
+
+这个模型曾被 Polya 用来作为描述传染病的数学模型. 这是很一般的摸球模型, 特别取 $c=0$, 则是有放回摸球; 取 $c=-1$, 则是不放回摸球.
+\end{proof}
+\end{example}
+
+\subsection{全概率公式}
+
+概率论的重要研究课题之一是希望从已知的简单事件的概率推算出未知的复杂的事件的概率. 为达到这个目的, 经常把一个复杂事件分解为若干个不相容的简单事件之和, 再通过分别计算这些简单事件的概率, 最后利用概率的可加性得到最终结果. 这里, 全概率公式起着很重要的作用.
+
+我们还是从最简单的情况开始. 为计算 $P(B)$, 找一个有关的事件 $A$, 利用下列关系式
+\begin{align}\label{align:ch02-全概率公式简单形式}
+P(B)&=P(AB)+P(\bar{A}B)\\
+&=P(A)P(B\mid A)+P(\bar{A})P(B\mid\bar{A})\nonumber
+\end{align}
+便是常用的方法之一.
+
+例如为计算从装有 $a$ 只黑球和 $b$ 只白球的袋子中不放回摸球, 第二次摸得黑球的概率 $P(B)$, 我们可以选 $A$ 为第一次摸得黑球, 则
+\begin{align*}
+P(B)=\frac{a}{a+b}\cdot\frac{a-1}{a+b-1}+\frac{b}{a+b}\cdot\frac{a}{a+b-1}
+\end{align*}
+\begin{align*}
+=\frac{a}{a+b}
+\end{align*}
+
+这不就是摸球与顺序无关吗？是的, 但这个计算让我们对这个结论有了新的理解：后摸者可能处于"不利境况", 那就是先摸者摸到黑球, 这时他摸到黑球的概率降为 $\dfrac{a-1}{a+b-1}$; 但是他也可能处于"有利境况", 那就是先摸者摸到白球, 从而使他摸到黑球的概率升为 $\dfrac{a}{a+b-1}$, 最终, 正确的答案是二者的加权平均, 这些权 $\dfrac{a}{a+b}$ 及 $\dfrac{b}{a+b}$, 正是处于"不利境况"与"有利境况"的概率. 这样一看, 这答案既合情又合理.
+
+下面讨论一般的情况.
+
+设事件 $A_1, A_2, \cdots, A_n, \cdots$ 是样本空间 $\Omega$ 的一个分割, 亦称完备事件组, 即 $A_i$（$i=1,2,\cdots,n,\cdots$）两两互不相容, 而且
+\begin{align*}
+\sum_{i=1}^{\infty} A_i=\Omega
+\end{align*}
+这样一来
+\begin{align*}
+B=\sum_{i=1}^{\infty} A_iB
+\end{align*}
+这里的 $A_iB$（$i=1,2,\cdots,n,\cdots$）也两两互不相容（参看图\ref{figure:ch02-样本空间分割}）.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{ch02-fig2-1-1.png}
+\caption{样本空间的分割}
+\label{figure:ch02-样本空间分割}
+\end{figure}
+
+由概率的完全可加性
+\begin{align*}
+P(B)=\sum_{i=1}^{\infty} P(A_iB)
+\end{align*}
+再利用乘法公式即得
+\begin{align}\label{align:ch02-全概率公式}
+P(B)=\sum_{i=1}^{\infty} P(A_i)P(B\mid A_i)
+\end{align}
+这公式称为全概率公式, 它是概率论中使用频率最高的一个基本公式.
+
+从推导中可以看出, 当 $P(A_i)=0$ 时, 只要把相应的项当作 $0$ 即可. 在多数问题中, \eqref{align:ch02-全概率公式}式只含有限项.
+
+\begin{example}[找回雨伞]\label{example:ch02-找回雨伞}
+雨伞掉了. 落在图书馆中的概率为 $50\%$, 这种情况下找回的概率为 $0.80$; 落在教室里的概率为 $30\%$, 这种情况下找回的概率为 $0.60$; 落在商场的概率为 $20\%$, 这种情况下找回的概率为 $0.05$, 求找回雨伞的概率.
+
+\begin{proof}[解]
+以 $B$ 表示找回雨伞, 而以 $A_1, A_2, A_3$ 分别记雨伞落在图书馆, 教室和商场, 显然 $A_1, A_2, A_3$ 满足
+\begin{align*}
+B=\sum_{i=1}^{3} A_iB
+\end{align*}
+而且 $P(A_1)=0.5$, $P(A_2)=0.3$, $P(A_3)=0.2$, $P(B\mid A_1)=0.8$, $P(B\mid A_2)=0.6$, $P(B\mid A_3)=0.05$, 因此
+\begin{align*}
+P(B)&=\sum_{i=1}^{3} P(A_i)P(B\mid A_i)\\
+&=0.5\times 0.8+0.3\times 0.6+0.2\times 0.05=0.59
+\end{align*}
+\end{proof}
+
+可以看出, 全概率公式之所以有力, 就在于它概括了一种普遍的解题策略：各个击破或分而食之.
+\end{example}
+
+\subsection{Bayes 公式}
+
+若事件 $B$ 能且只能与两两互不相容的事件 $A_1, A_2, \cdots, A_n, \cdots$ 之一同时发生, 即
+\begin{align*}
+B=\sum_{i=1}^{\infty} BA_i
+\end{align*}
+由于
+\begin{align*}
+P(A_iB)=P(B)P(A_i\mid B)=P(A_i)P(B\mid A_i)
+\end{align*}
+故
+\begin{align*}
+P(A_i\mid B)=\frac{P(A_i)P(B\mid A_i)}{P(B)}
+\end{align*}
+再利用全概率公式即得
+\begin{align}\label{align:ch02-Bayes公式}
+P(A_i\mid B)=\frac{P(A_i)P(B\mid A_i)}{\sum_{i=1}^{\infty} P(A_i)P(B\mid A_i)}
+\end{align}
+这个公式称为 Bayes 公式.
+
+Bayes 公式提出了重要的逻辑推理思路, 在概率论和数理统计中有着多方面的应用. 假定 $A_1, A_2, \cdots$ 是导致试验结果的"原因", $P(A_i)$ 称为先验概率, 它反映了各种"原因"发生的可能性大小, 一般是以往经验的总结, 在这次试验前已经知道. 现在若试验产生了事件 $B$, 这个信息将有助于探讨事件发生的"原因". 条件概率 $P(A_i\mid B)$ 称为后验概率, 它反映了试验之后对各种"原因"发生的可能性大小的新知识. 例如在医疗诊断中, 医生为了诊断病人到底是患了疾病 $A_1, A_2, \cdots, A_n$ 中的哪一种, 对病人进行观察与检查, 确定了某个指标 $B$（譬如是体温、脉搏、血液中转氨酶含量等等）, 他想用这类指标来帮助诊断. 这时就可以用 Bayes 公式来计算有关概率. 首先必须确定先验概率 $P(A_i)$, 这实际上是确定人患各种疾病的可能性大小, 以往的资料可以给出一些初步数据; 其次是要确定 $P(B\mid A_i)$, 这里当然主要依靠医学知识. 有了它们, 利用 Bayes 公式就可算出 $P(A_i\mid B)$. 显然, 对应于较大 $P(A_i\mid B)$ 的"病因" $A_i$, 应多加考虑. 在实际工作中, 检查的指标 $B$ 一般有多个, 综合所有的后验概率, 当然会对诊断有很大帮助. 在实现计算机自动诊断或辅助诊断的专家系统时, 这方法是有实用价值的.
+
+下面介绍应用 Bayes 公式的几个例子.
+
+\begin{example}[二进位信道]\label{example:ch02-二进位信道}
+在数字通信中, 由于存在着随机干扰, 因此接收到的信号与发出的信号可能不同, 为了确定发出的信号, 通常要计算各种概率, 下面只讨论一种比较简单的模型——二进位信道.
+
+若发报机以 $0.7$ 和 $0.3$ 的概率发出信号 $0$ 和 $1$（譬如分别用低电平与高电平表示）, 由于随机干扰的影响, 当发出信号 $0$ 时, 接收机不一定收到 $0$, 而是以概率 $0.8$ 和 $0.2$ 收到信号 $0$ 和 $1$; 同样地, 当发报机发出信号 $1$ 时, 接收机以概率 $0.9$ 和 $0.1$ 收到信号 $1$ 和 $0$. 其关系如图\ref{figure:ch02-二进位信道}所示.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{ch02-fig2-1-2.png}
+\caption{二进位信道}
+\label{figure:ch02-二进位信道}
+\end{figure}
+
+假如接收机收到信号 $0$, 则这时有两种可能情况：第一种情况是发报机确实发出信号 $0$, 而信号传输中没有出错; 第二种情况是发报机发出信号 $1$, 但是传输中出现错误, 因此接收到信号 $0$. 所以在这类问题中, 计算"当接收机收到信号 $0$ 时, 发报机是发出信号 $0$ 的概率"便很有必要.
+
+把发报机发出信号 $0$ 记为事件 $A_0$, 发出信号 $1$ 记为事件 $A_1$, 接收机接到信号 $0$ 记为事件 $B$, 我们要求的是 $P(A_0\mid B)$.
+
+由于 $P(A_0)=0.7$, $P(A_1)=0.3$, $P(B\mid A_0)=0.8$, $P(B\mid A_1)=0.1$, 用 Bayes 公式,
+\begin{align*}
+P(A_0\mid B)&=\frac{P(A_0)P(B\mid A_0)}{P(A_0)P(B\mid A_0)+P(A_1)P(B\mid A_1)}\\
+&=\frac{0.7\times 0.8}{0.7\times 0.8+0.3\times 0.1}=\frac{0.56}{0.59}=0.949
+\end{align*}
+\end{example}
+
+\begin{example}[血清甲胎球蛋白法诊断肝癌]\label{example:ch02-血清甲胎球蛋白诊断肝癌}
+假定用血清甲胎球蛋白法诊断肝癌, $P(A\mid C)=0.95$, $P(\bar{A}\mid\bar{C})=0.90$, 这里 $C$ 表示被检验者患有肝癌这一事件, $A$ 表示判断被检验者患有肝癌这一事件. 又设在自然人群中 $P(C)=0.000\,4$. 现在若有一人被此检验法诊断为患有肝癌, 求此人真正患有肝癌的概率 $P(C\mid A)$.
+
+\begin{proof}[解]
+由 Bayes 公式,
+\begin{align*}
+P(C\mid A)&=\frac{P(C)P(A\mid C)}{P(C)P(A\mid C)+P(\bar{C})P(A\mid\bar{C})}\\
+&=\frac{0.000\,4\times 0.95}{0.000\,4\times 0.95+0.999\,6\times 0.1}\\
+&=0.003\,8
+\end{align*}
+\end{proof}
+
+既然检验法相当可靠, 那么为什么用该法诊断为肝癌的人真正患有肝癌的可能性却如此之小呢？经过分析可以看出, 主要是先验概率 $P(C)$ 很小. 对自然人群来讲肝癌毕竟是一种罕见病. 假如对十万人进行普查, 肝癌患者约 $40$ 人, 用该法检查, 可正确查出约 $38$ 人, 漏掉 $2$ 人; 但对于 $99\,960$ 个正常者, 虽然该法的误检率只有 $10\%$, 却要错判 $9\,996$ 人, 因此在 $38+9\,996=10\,034$ 个嫌疑者中, 每人事实上只有 $\dfrac{38}{10\,034}=0.003\,8$ 的可能性真的患有肝癌.
+
+如果我们检查的是一个肝癌的可疑人群, 譬如一批普查中筛选出的甲胎球蛋白高含量者, 这时相应的先验概率就高得多, 例如就取例\ref{example:ch02-肝癌普查}中的 $0.941\,2$, 那么
+\begin{align*}
+P(C\mid A)=\frac{0.941\,2\times 0.95}{0.941\,2\times 0.95+0.058\,8\times 0.1}=0.993\,5
+\end{align*}
+因此相应的后验概率也就大大提高. 实际上, 从预防医学的普查到治疗医学的诊断正是如此一级一级筛选的.
+
+这个数值例子给我们的最大启示是：后验概率的大小很受先验概率选取的影响.
+
+在 Bayes 公式的使用中, 最有争议之点就是先验概率的选取. 我们上面所举的两个例子中, 这些先验概率都是通过以往大量实际调查而得出的, 符合概率的频率解释, 因此使用中不致于发生疑问.
+
+不过, 在 Bayes 公式的使用中也还存在着另一种情况, 就是先验概率是由某一种主观的方式给定的, 譬如对于未来宏观经济形势的看法, 对物价、利率、汇率变化的估计, 对某种新型产品上市后受欢迎程度的预估, 甚至对某星球上存在生命现象的估计等等. 这种把概率解释为信任程度的做法含有明显的主观性, 通常称为主观概率.
+
+主观概率与 Bayes 学派的发展息息相关, 后者是二战后得到很快发展的统计学派, 理论上与决策理论关系密切, 并且找到不少应用. 因此对于主观概率的争论看来将长期持续下去.
+
+Bayes 方法的大量应用出现在决策问题中, 下面是自动识别系统的一个例子.
+\end{example}
+
+\begin{example}[Bayes 决策]\label{example:ch02-Bayes决策}
+为了判断一个字母是"C"还是"O", 通常采用先抽取它的某一个特征 $X$, 然后再根据这个特征作出判决, 这时 Bayes 决策是常用方法之一.
+
+以 $A_1, A_2$ 分别记被检验的字母为 C 或 O 这一事件, 它们的先验概率 $P(A_1)$ 及 $P(A_2)$ 应预先给定, 此外要通过试验确定 $P(X\mid A_1)$ 及 $P(X\mid A_2)$, 由 Bayes 公式得
+\begin{align*}
+P(A_i\mid X)=\frac{P(A_i)P(X\mid A_i)}{\sum_{i=1}^{2} P(A_i)P(X\mid A_i)}
+\end{align*}
+其中, $i=1,2$. 若 $P(A_1\mid X)>P(A_2\mid X)$, 则作出决策：具有特征 $X$ 的字母是 C.
+
+这个方法在模式识别这一新兴学科中有重要应用, 当然, 这里是大为简化了的模型.
+\end{example}
+
+\end{document}

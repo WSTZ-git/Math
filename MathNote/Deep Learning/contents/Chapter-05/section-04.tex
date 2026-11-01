@@ -1,0 +1,110 @@
+﻿\documentclass[../../main.tex]{subfiles}
+
+\graphicspath{{../../image/}{../../figure/}}
+
+\begin{document}
+
+\section{判别分类器}\label{section:ch05-判别分类器}
+
+对于二分类情况，我们已经看到，针对指数族分布中多种类-条件概率密度$p(\boldsymbol{x}\mid C_k)$的选择，$C_k$类的后验概率可以写成作用于$\boldsymbol{x}$线性函数的逻辑斯谛sigmoid函数；对于多分类情况，后验概率由作用于$\boldsymbol{x}$线性函数的softmax变换给出。对于类-条件概率密度$p(\boldsymbol{x}\mid C_k)$的具体选择，生成式方法首先使用最大似然法确定密度参数和类的先验概率$p(C_k)$，然后使用贝叶斯定理求出类的后验概率。
+
+不过，还有一种方法是明确使用广义线性模型的函数形式并通过最大似然法直接确定其参数。在这种直接方法中，我们将似然函数（由条件分布$p(C_k\mid\boldsymbol{x})$定义）最大化，此为一种判别概率建模形式。判别法的一个优点是需要确定的可学习参数通常较少，并且在类-条件概率密度的假定形式与真实分布近似程度较低时，可以提高预测性能。
+
+\subsection{激活函数}\label{subsection:ch05-激活函数}
+
+在线性回归（参见\cref{section:ch04-线性回归}）中，模型预测值$y(\boldsymbol{x},\boldsymbol{w})$由参数的线性函数给出：
+
+\begin{align}
+  y(\boldsymbol{x},\boldsymbol{w})=\boldsymbol{w}^{\mathsf{T}}\boldsymbol{x}+w_0
+  \label{align:ch04-线性模型}
+\end{align}
+
+它给出了范围为$(-\infty,\infty)$的连续值输出。然而，对于分类问题，我们希望预测离散类标签，或者更一般地说，预测$(0,1)$范围内的后验概率。为此，我们考虑对这一模型进行泛化——用非线性函数$f(\cdot)$对$\boldsymbol{w}$和$w_0$的线性函数进行转换：
+
+\begin{align}
+  p(C_1\mid\boldsymbol{x},\boldsymbol{w})=f(\boldsymbol{w}^{\mathsf{T}}\boldsymbol{x}+w_0)
+  \label{align:ch05-激活模型}
+\end{align}
+
+在机器学习文献中，$f(\cdot)$称为激活函数（activation function），它的反函数在统计学文献中则称为连接函数（link function）。决策面对应于$y(\boldsymbol{x})=\text{常数}$，因此是$\boldsymbol{x}$的线性超平面。
+
+\subsection{逻辑斯谛回归}\label{subsection:ch05-逻辑斯谛回归}
+
+首先考虑二分类问题。在\cref{subsection:ch05-连续输入}关于生成方法的讨论中，我们看到了在一般假设下，$C_1$的后验概率可以写成作用于特征空间$\boldsymbol{\phi}$线性函数的逻辑斯谛sigmoid函数：
+
+\begin{align}
+  p(C_1\mid\boldsymbol{\phi})=y(\boldsymbol{\phi})=\sigma(\boldsymbol{w}^{\mathsf{T}}\boldsymbol{\phi})
+  \label{align:ch05-逻辑斯谛回归}
+\end{align}
+
+其中$p(C_2\mid\boldsymbol{\phi})=1-p(C_1\mid\boldsymbol{\phi})$。在统计学语境中，这种模型又称作逻辑斯谛回归（logistic regression）模型，但需要强调的是，这是一种分类模型，而不是连续变量模型。
+
+下面使用最大似然法确定逻辑斯谛回归模型的参数。逻辑斯谛sigmoid函数的导数可以方便地用其本身表示：
+
+\begin{align}
+  \sigma'(a)=\sigma(a)\bigl(1-\sigma(a)\bigr)
+  \label{align:ch05-sigmoid导数}
+\end{align}
+
+对于数据集$\{\boldsymbol{\phi}_n,t_n\}$，其中$\boldsymbol{\phi}_n=\boldsymbol{\phi}(\boldsymbol{x}_n)$，$t_n\in\{0,1\}$，似然函数可写成
+
+\begin{align}
+  p(\boldsymbol{t}\mid\boldsymbol{w})=\prod_{n=1}^{N}y_n^{t_n}(1-y_n)^{1-t_n}
+  \label{align:ch05-逻辑斯谛似然}
+\end{align}
+
+其中$y_n=p(C_1\mid\boldsymbol{\phi}_n)$。取似然的负对数，得到交叉熵（cross-entropy）误差函数：
+
+\begin{align}
+  E(\boldsymbol{w})=-\ln p(\boldsymbol{t}\mid\boldsymbol{w})=-\sum_{n=1}^{N}\bigl\{t_n\ln y_n+(1-t_n)\ln(1-y_n)\bigr\}
+  \label{align:ch05-交叉熵}
+\end{align}
+
+关于$\boldsymbol{w}$求梯度，利用\cref{align:ch05-sigmoid导数}，可得
+
+\begin{align}
+  \nabla E(\boldsymbol{w})=\sum_{n=1}^{N}(y_n-t_n)\boldsymbol{\phi}_n
+  \label{align:ch05-交叉熵梯度}
+\end{align}
+
+其中$y_n=\sigma(a_n)$且$a_n=\boldsymbol{w}^{\mathsf{T}}\boldsymbol{\phi}_n$。可以看到，涉及sigmoid导数的因子已被消去，数据点$n$对梯度的贡献由目标值与模型预测值之间的"误差"$(y_n-t_n)$乘以$\boldsymbol{\phi}_n$给出。这与线性回归模型的平方和误差函数梯度的形式完全相同。
+
+由于$y(\cdot)$的非线性，最大似然解$\nabla E(\boldsymbol{w})=0$没有闭式解，但误差函数是参数的凸函数，可以通过迭代重加权最小二乘（Iterative Reweighted Least Squares, IRLS）算法，或更简单地通过随机梯度下降法来求解。请注意，对于线性可分的数据集，最大似然法可能会表现出严重的过拟合：当$\boldsymbol{w}^{\mathsf{T}}\boldsymbol{\phi}=0$所对应的超平面将两个类分开，且$\boldsymbol{w}$的大小趋于无穷时，sigmoid函数在特征空间中变得无限陡峭，相当于单位阶跃函数，因此每个训练点都被赋予后验概率$p(C_1\mid\boldsymbol{x})=1$。在误差函数中加入正则化项可以避免这种奇异解。
+
+\subsection{多类逻辑斯谛回归}\label{subsection:ch05-多类逻辑斯谛回归}
+
+对于多分类问题，$C_k$类的后验概率由作用于特征变量线性函数的softmax变换给出：
+
+\begin{align}
+  p(C_k\mid\boldsymbol{\phi})=y_k(\boldsymbol{\phi})=\frac{\exp(a_k)}{\sum_j\exp(a_j)}
+  \label{align:ch05-多类后验}
+\end{align}
+
+其中预激活$a_k=\boldsymbol{w}_k^{\mathsf{T}}\boldsymbol{\phi}$。使用1-of-$K$编码方案，属于$C_k$类的$\boldsymbol{\phi}_n$的目标向量$\boldsymbol{t}_n$是一个二进制向量，除元素$t_{nk}=1$外其余元素均为$0$。似然函数为
+
+\begin{align}
+  p(\boldsymbol{T}\mid\boldsymbol{w}_1,\dots,\boldsymbol{w}_K)=\prod_{n=1}^{N}\prod_{k=1}^{K}y_{nk}^{t_{nk}}
+  \label{align:ch05-多类似然}
+\end{align}
+
+取负对数可得多分类问题的交叉熵误差函数：
+
+\begin{align}
+  E(\boldsymbol{w}_1,\dots,\boldsymbol{w}_K)=-\sum_{n=1}^{N}\sum_{k=1}^{K}t_{nk}\ln y_{nk}
+  \label{align:ch05-多类交叉熵}
+\end{align}
+
+关于参数向量$\boldsymbol{w}_k$求梯度，同样得到与平方和误差、逻辑斯谛回归形式相同的结果：
+
+\begin{align}
+  \nabla_{\boldsymbol{w}_k}E=\sum_{n=1}^{N}(y_{nk}-t_{nk})\boldsymbol{\phi}_n
+  \label{align:ch05-多类梯度}
+\end{align}
+
+\subsection{probit回归与规范连接}\label{subsection:ch05-probit回归}
+
+我们已经看到，对于各种类-条件分布，得到的后验类率由作用于特征变量线性函数的logistic（或softmax）变换给出。然而，这并非唯一的选择。probit回归（probit regression）使用累积高斯分布作为激活函数，它将线性模型的输出通过标准正态分布的累积分布函数$y=\Phi(a)$映射到$(0,1)$区间。
+
+更一般地，广义线性模型框架允许我们为激活函数选择其他形式，其中最常用的是由指数族分布导出的规范连接函数（canonical link function）。对于给定的观测噪声分布，规范连接函数使得对数似然的梯度具有与逻辑斯谛回归相同的简洁形式（即误差$(y-t)$与基函数激活$\boldsymbol{\phi}$的乘积），这与我们在线性模型的平方和误差和交叉熵误差中观察到的形式一致。
+
+\end{document}

@@ -1,0 +1,108 @@
+\documentclass[../../main.tex]{subfiles}
+
+\graphicspath{{../../image/}{../../figure/}}
+
+\begin{document}
+
+\section{概率法则}\label{section:ch02-概率法则}
+
+几乎所有机器学习应用场景，都需要处理不确定性。例如，区分皮肤病变是良性还是恶性的图像分类系统，在实际中不可能万无一失。不确定性可以分为两种。第一种是认知不确定性（epistemic uncertainty），也称系统不确定性（systematic uncertainty）。这种不确定性源自有限的数据集大小。随着观测数据的增多，例如更多良性和恶性皮肤病变图像样本，系统可以更好地预测新样本的类别。然而，即使数据集无限大，也仍然无法达到完美的准确率，因为存在第二种不确定性——偶然不确定性（aleatoric uncertainty），也称内在（intrinsic）不确定性或随机（stochastic）不确定性，有时简称噪声（noise）。一般来说，噪声源自人们只能观察到关于世界的部分信息。因此，一种从源头减小这种不确定性的方法是收集不同类型的数据。\cref{figure:ch02-不确定性示例}用扩展到二维的正弦曲线为例说明了这个问题（参见\cref{section:ch01-一个教学示例}）。
+
+\subsection{医学筛查示例}\label{subsection:ch02-医学筛查示例}
+
+考虑对人群进行筛查以便尽早发现癌症患者的示例。假设人群中有1\%的人患有癌症。理想情况下，我们的癌症检查对任何患有癌症的人都会给出阳性结果，而对任何未患癌症的人都会给出阴性结果。然而，癌症检查并不完美，所以我们假设当对未患癌症的人进行检查时，其中3\%的人会被误判为阳性，这就是所谓的假阳性（false positive）。类似地，当检查那些确实患有癌症的人时，其中10\%的人会被误判为阴性，这就是所谓的假阴性（false negative）。检查结果的准确性如\cref{figure:ch02-癌症检查}所示。
+
+\subsection{加和法则和乘积法则}\label{subsection:ch02-加和法则和乘积法则}
+
+我们可以通过考虑随机变量$X$（取值为$\{x_i\}$，其中$i=1,\cdots,L$）和$Y$（取值为$\{y_j\}$，其中$j=1,\cdots,M$）来推导概率的加和法则和乘积法则。其中，$L=5$，$M=3$。如果考虑总共$N$个实例中的这些变量，则用$n_{ij}$表示$X=x_i$和$Y=y_j$的实例数，这是阵列中对应单元格的实例数。用$c_i$表示第$i$列对应于$X=x_i$的实例数，用$r_j$表示第$j$行对应于$Y=y_j$的实例数。
+
+$X$取值为$x_i$且$Y$取值为$y_j$的概率记为$p(X=x_i, Y=y_j)$，称作$X=x_i$和$Y=y_j$的联合（joint）概率。它由落在单元格$(i,j)$中的点数占总点数的比例给出，因此有
+
+\begin{align}
+  p(X=x_i, Y=y_j) = \frac{n_{ij}}{N}
+  \label{align:ch02-联合概率}
+\end{align}
+
+这里隐式地考虑了极限$N\to\infty$。类似地，在不考虑$Y$取值的情况下，$X$取值为$x_i$的概率记为$p(X=x_i)$，它由落在第$i$列中的点数占总点数的比例给出，因此有
+
+\begin{align}
+  p(X=x_i) = \sum_{j=1}^{M} p(X=x_i, Y=y_j)
+  \label{align:ch02-边缘概率}
+\end{align}
+
+由于$\sum_i c_i = N$，可以看出
+
+\begin{align}
+  \sum_{i=1}^{L} p(X=x_i) = 1
+  \label{align:ch02-归一化}
+\end{align}
+
+使用这种更简单的记法，我们可以将概率论的两个基本法则写成如下形式：
+
+\begin{align}
+  p(X) = \sum_{Y} p(X, Y) \quad \text{加和法则}
+  \label{align:ch02-加和法则}
+\end{align}
+
+\begin{align}
+  p(X, Y) = p(Y \mid X) p(X) \quad \text{乘积法则}
+  \label{align:ch02-乘积法则}
+\end{align}
+
+这里$p(X,Y)$是联合概率，可以表达为"$X$和（and）$Y$同时成立的概率"。同样，$p(Y \mid X)$是条件概率，可以表述为"给定（given）$X$下$Y$的概率"。最后，$p(X)$是边缘概率，即"$X$的概率"。这两个简单的法则构成了我们在本书中使用的所有概率机制的基础。
+
+\subsection{贝叶斯定理}\label{subsection:ch02-贝叶斯定理}
+
+根据乘积法则以及对称性$p(X,Y)=p(Y,X)$，我们可以得到
+
+\begin{align}
+  p(Y \mid X) = \frac{p(X \mid Y) p(Y)}{p(X)}
+  \label{align:ch02-贝叶斯定理}
+\end{align}
+
+这就是著名的贝叶斯定理（Bayes' theorem）。利用加和法则，贝叶斯定理的分母可以表示为
+
+\begin{align}
+  p(X) = \sum_{Y} p(X \mid Y) p(Y)
+  \label{align:ch02-贝叶斯分母}
+\end{align}
+
+在贝叶斯定理中，$p(Y)$称为先验概率（prior probability），因为它表示在我们观测到$X$之前，$Y$的分布。相应地，$p(Y \mid X)$称为后验概率（posterior probability），因为它表示在我们观测到$X$之后，$Y$的分布。
+
+\subsection{再看医学筛查示例}\label{subsection:ch02-再看医学筛查示例}
+
+让我们回到之前的癌症筛查示例。设$Y=1$表示患有癌症，$Y=0$表示未患癌症。设$X=1$表示检查结果为阳性，$X=0$表示检查结果为阴性。
+
+我们知道人群中患癌症的先验概率为$p(Y=1)=0.01$，因此$p(Y=0)=0.99$。
+
+假阳性率为$p(X=1 \mid Y=0)=0.03$，因此$p(X=0 \mid Y=0)=0.97$。
+
+假阴性率为$p(X=0 \mid Y=1)=0.10$，因此$p(X=1 \mid Y=1)=0.90$。
+
+现在，假设某人的检查结果为阳性，我们想知道他真正患有癌症的概率，即$p(Y=1 \mid X=1)$。根据贝叶斯定理：
+
+\begin{align}
+  p(Y=1 \mid X=1) = \frac{p(X=1 \mid Y=1) p(Y=1)}{p(X=1)}
+\end{align}
+
+分母$p(X=1)$可以通过加和法则计算：
+
+\begin{align}
+  p(X=1) = p(X=1 \mid Y=1) p(Y=1) + p(X=1 \mid Y=0) p(Y=0)
+\end{align}
+
+代入数值：
+
+\begin{align}
+  p(X=1) = 0.90 \times 0.01 + 0.03 \times 0.99 = 0.009 + 0.0297 = 0.0387
+\end{align}
+
+因此：
+
+\begin{align}
+  p(Y=1 \mid X=1) = \frac{0.90 \times 0.01}{0.0387} \approx 0.2325
+\end{align}
+
+这意味着，即使检查结果为阳性，真正患有癌症的概率也只有约23\%。这是因为癌症在人群中的发病率很低（先验概率小），而假阳性率虽然只有3\%，但由于未患癌症的人数很多，假阳性的绝对数量仍然很大。
+
+\end{document}

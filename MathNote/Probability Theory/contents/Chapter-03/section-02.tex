@@ -1,0 +1,531 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}}
+
+\begin{document}
+
+\section{随机向量，随机变量的独立性}\label{section:ch03-随机向量与独立性}
+
+\subsection*{一、随机向量及其分布}
+
+在有些随机现象中，每次试验的结果不能只用一个数来描述，而要同时用几个数来描述，例如对于钢的成分，需要同时指出它的含碳量、含硫量、含磷量等等。这样，对应于每个样本点 $\omega$，试验的结果将是一个向量 $(\xi_1(\omega),\xi_2(\omega),\cdots,\xi_n(\omega))$，这个向量取值于 $n$ 维 Euclid 空间 $\mathbf{R}^{n}$。
+
+\begin{definition}[随机向量]\label{definition:ch03-随机向量}
+若随机变量 $\xi_1(\omega),\xi_2(\omega),\cdots,\xi_n(\omega)$ 定义在同一概率空间 $(\Omega,\mathscr{F},P)$ 上，则称
+\begin{align}
+\boldsymbol{\xi}(\omega)=(\xi_1(\omega),\xi_2(\omega),\cdots,\xi_n(\omega))\label{align:ch03-随机向量定义}
+\end{align}
+构成一个 $n$ 维随机向量，亦称 $n$ 维随机变量。显然，一维随机向量即为随机变量。
+\end{definition}
+
+固然可以对随机向量的一个个分量分别研究，但是我们马上就会看到，把它们作为一个向量，则不但能研究各个分量的性质，而且还可以考察它们之间的联系，对许多问题来说，这是十分必要的。
+
+对于任意的 $n$ 个实数 $x_1,x_2,\cdots,x_n$，
+\begin{align}
+\begin{aligned}
+&\left\{\xi_1(\omega)<x_1,\xi_2(\omega)<x_2,\cdots,\xi_n(\omega)<x_n\right\}\\
+&\quad=\bigcap_{i=1}^{n}\left\{\xi_i(\omega)<x_i\right\}\in\mathscr{F}.
+\end{aligned}\label{align:ch03-随机向量可测}
+\end{align}
+亦即对于 $\mathbf{R}^{n}$ 中的 $n$ 维矩形 $C_n=\prod_{i=1}^{n}(-\infty,x_i)$，有
+\begin{align*}\{\boldsymbol{\xi}(\omega)\in C_n\}\in\mathscr{F}.\end{align*}
+
+利用测度论的方法还可证明，若 $B_n$ 为 $\mathbf{R}^{n}$ 上任一 Borel 点集，也有
+\begin{align}
+\{\boldsymbol{\xi}(\omega)\in B_n\}\in\mathscr{F}.\label{align:ch03-随机向量Borel可测}
+\end{align}
+以后我们将要用到这个结论（图\ref{figure:ch03-二维随机向量}）。
+
+类似于一维的场合，我们引进如下定义。
+
+\begin{definition}[联合分布函数]\label{definition:ch03-联合分布函数}
+称 $n$ 元函数
+\begin{align}
+F(x_1,x_2,\cdots,x_n)=P\{\xi_1(\omega)<x_1,\xi_2(\omega)<x_2,\cdots,\xi_n(\omega)<x_n\}\label{align:ch03-联合分布函数定义}
+\end{align}
+为随机向量 $\boldsymbol{\xi}(\omega)=(\xi_1(\omega),\xi_2(\omega),\cdots,\xi_n(\omega))$ 的（联合）\textbf{分布函数}。
+\end{definition}
+
+给定了联合分布函数后，可以计算事件 $\{a_1\leqslant\xi_1<b_1,a_2\leqslant\xi_2<b_2,\cdots,a_n\leqslant\xi_n<b_n\}$ 的概率，例如当 $n=2$ 时，
+\begin{align}
+\begin{aligned}
+&P\{a_1\leqslant\xi_1<b_1,a_2\leqslant\xi_2<b_2\}\\
+&\quad=F(b_1,b_2)-F(a_1,b_2)-F(b_1,a_2)+F(a_1,a_2).
+\end{aligned}\label{align:ch03-二维矩形概率}
+\end{align}
+这个结果容易从图\ref{figure:ch03-二维概率计算}看出。
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{ch03-fig-rv2d.png}
+\caption{二维随机向量}
+\label{figure:ch03-二维随机向量}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{ch03-fig-rectprob.png}
+\caption{二维概率计算}
+\label{figure:ch03-二维概率计算}
+\end{figure}
+
+类似于一元的场合，可以证明多元分布函数的一些性质。
+\begin{enumerate}
+\item 单调性：关于每个变元是单调不减函数；
+\item $F(x_1,x_2,\cdots,-\infty,\cdots,x_n)=0$，
+\begin{align*}F(+\infty,+\infty,\cdots,+\infty)=1;\end{align*}
+\item 关于每个变元左连续。
+\end{enumerate}
+
+在二元场合，还应该有：
+\begin{enumerate}
+\item[(iv)] 对任意 $a_1<b_1,a_2<b_2$，都有
+\begin{align}F(b_1,b_2)-F(a_1,b_2)-F(b_1,a_2)+F(a_1,a_2)\geqslant 0.\label{align:ch03-二元分布非负性}\end{align}
+\end{enumerate}
+
+为保证\eqref{align:ch03-二维矩形概率}式中的概率的非负性，性质 (iv) 是必须的，而且由性质 (iv) 可以推出单调性，但存在着反例说明，由单调性并不能保证性质 (iv) 的成立（见习题 $12$）。这是多元场合与一元场合的不同之处。
+
+可以证明：满足 (ii)，(iii)，(iv) 这三条性质的二元函数是某二维随机变量的分布函数。
+
+类似的结论对 $n$ 元场合也成立。
+
+随机向量也有不同类型，最常见的也是离散型与连续型两类。
+
+在离散型场合，概率分布集中在有限或可列个点上。重要的多元离散型分布有多项分布与多元超几何分布，它们分别是二项分布与超几何分布在多元场合的推广。
+
+\paragraph{[多项分布]}在试验中，若每次试验的可能结果为 $A_1,A_2,\cdots,A_r$，而 $P(A_i)=p_i,i=1,2,\cdots,r$，且 $p_1+p_2+\cdots+p_r=1$，重复这种试验 $n$ 次，并假定这些试验是相互独立的，若以 $\xi_1,\xi_2,\cdots,\xi_r$ 分别记 $A_1,A_2,\cdots,A_r$ 出现的次数，则
+\begin{align}
+P\{\xi_1=k_1,\xi_2=k_2,\cdots,\xi_r=k_r\}=\frac{n!}{k_1!\,k_2!\,\cdots k_r!}p_1^{k_1}p_2^{k_2}\cdots p_r^{k_r}.\label{align:ch03-多项分布}
+\end{align}
+这里整数 $k_i\geqslant 0$，且仅当 $k_1+k_2+\cdots+k_r=n$ 时上式才成立，否则为 $0$。多项分布在第二章 \S\,3 中已出现过。
+
+\paragraph{[多元超几何分布]}袋中装 $i$ 号球 $N_i$ 只，$i=1,2,\cdots,r$，$N_1+N_2+\cdots+N_r=N$，从中随机摸出 $n$ 只，若以 $\xi_1,\xi_2,\cdots,\xi_r$ 分别记 $1,2,\cdots,r$ 号球的出现数，则
+\begin{align}
+P\{\xi_1=n_1,\xi_2=n_2,\cdots,\xi_r=n_r\}=\frac{\binom{N_1}{n_1}\binom{N_2}{n_2}\cdots\binom{N_r}{n_r}}{\binom{N}{n}}.\label{align:ch03-多元超几何}
+\end{align}
+这里整数 $n_i\geqslant 0$，且仅当 $n_1+n_2+\cdots+n_r=n$ 时上式才成立，否则为 $0$。古典概型一节的例 $2$ 就是这种类型。
+
+以上两个分布在抽样中常用，前者用于有放回场合，后者则用于不放回场合。
+
+在连续型场合，存在着非负函数 $p(x_1,\cdots,x_n)$，使
+\begin{align}
+F(x_1,\cdots,x_n)=\int_{-\infty}^{x_1}\cdots\int_{-\infty}^{x_n}p(y_1,\cdots,y_n)\,\mathrm{d}y_1\cdots\mathrm{d}y_n.\label{align:ch03-多元连续分布函数}
+\end{align}
+这里的 $p(x_1,\cdots,x_n)$ 称为（多元分布）\textbf{密度函数}，满足如下两个条件
+\begin{align}
+p(x_1,\cdots,x_n)\geqslant 0,\label{align:ch03-多元密度非负}
+\end{align}
+\begin{align}
+\int_{-\infty}^{\infty}\cdots\int_{-\infty}^{\infty}p(x_1,\cdots,x_n)\,\mathrm{d}x_1\cdots\mathrm{d}x_n=1.\label{align:ch03-多元密度归一}
+\end{align}
+
+随机向量的概念在各个基础学科和工程技术中已有广泛应用。例如在量子力学中，粒子在某个区域 $G$ 的出现是通过概率来描述的。若以 $\psi$ 表示它的波函数，则 $|\psi|^{2}$ 即为密度函数，而
+\begin{align*}\iiint_{G}|\psi|^{2}\,\mathrm{d}x\,\mathrm{d}y\,\mathrm{d}z\end{align*}
+就给出该粒子在区域 $G$ 出现的概率（也译作几率）。
+
+均匀分布和 $n$ 元正态分布是比较常见的两种多维连续型分布。
+
+\paragraph{[均匀分布]}若 $G$ 为 $\mathbf{R}^{n}$ 中有限区域，其测度 $S>0$；则由密度函数
+\begin{align}
+p(x_1,\cdots,x_n)=
+\begin{cases}
+\dfrac{1}{S}, & (x_1,\cdots,x_n)\in G,\\[4pt]
+0, & (x_1,\cdots,x_n)\notin G
+\end{cases}\label{align:ch03-多元均匀}
+\end{align}
+给出的分布称为 $G$ 上的\textbf{均匀分布}。
+
+在第一章几何概率一节中，我们已看到均匀分布的各种例子。
+
+\paragraph{[多元正态分布]}若 $\boldsymbol{\Sigma}=(\sigma_{ij})$ 是 $n$ 阶正定对称矩阵，以 $\boldsymbol{\Sigma}^{-1}=(\gamma_{ij})$ 表示 $\boldsymbol{\Sigma}$ 的逆阵；$\det\boldsymbol{\Sigma}$ 表示 $\boldsymbol{\Sigma}$ 的行列式的值。$\boldsymbol{\mu}=(\mu_1,\cdots,\mu_n)$ 是任意实值行向量，则由密度函数
+\begin{align}
+\begin{aligned}
+p(x_1,\cdots,x_n)
+&=\frac{1}{(2\pi)^{\frac{n}{2}}(\det\boldsymbol{\Sigma})^{\frac{1}{2}}}\\
+&\quad\cdot\exp\left\{-\frac{1}{2}\sum_{j,k=1}^{n}r_{jk}(x_j-\mu_j)(x_k-\mu_k)\right\}
+\end{aligned}\label{align:ch03-多元正态}
+\end{align}
+定义的分布称为 $n$ 元\textbf{正态分布}，简记为 $N(\boldsymbol{\mu},\boldsymbol{\Sigma})$。
+
+这个密度函数也可以写成如下向量形式：
+\begin{align}
+p(\boldsymbol{x})=\frac{1}{(2\pi)^{\frac{n}{2}}(\det\boldsymbol{\Sigma})^{\frac{1}{2}}}\exp\left\{-\frac{1}{2}(\boldsymbol{x}-\boldsymbol{\mu})\boldsymbol{\Sigma}^{-1}(\boldsymbol{x}-\boldsymbol{\mu})^{\mathrm{T}}\right\}.\label{align:ch03-多元正态向量}
+\end{align}
+这里 $(\boldsymbol{x}-\boldsymbol{\mu})^{\mathrm{T}}$ 表示行向量 $(\boldsymbol{x}-\boldsymbol{\mu})$ 的转置。
+
+$n$ 元正态分布是最重要的一种多维分布，它在概率论、数理统计、随机过程论中都占有重要地位，具有许多重要性质。对于这些性质的叙述和证明，我们将在引进了更有力的工具后再进行。本章中我们将对它的特殊场合——二元正态分布逐步直接导出这些性质。
+
+\subsection*{二、边际分布}
+
+为方便起见，讨论将对二维场合进行，多维时这些结论仍然成立。
+
+先讨论离散型分布的场合，在这种场合，有关概念特别容易理解。
+
+考虑二维随机向量 $(\xi,\eta)$，设 $\xi$ 取值 $x_1,x_2,\cdots$；$\eta$ 取值 $y_1,y_2,\cdots$，记
+\begin{align}
+P\{\xi=x_i,\eta=y_j\}=p(x_i,y_j),\qquad i,j=1,2,\cdots,\label{align:ch03-二维联合概率}
+\end{align}
+\begin{align}
+P\{\xi=x_i\}=p_1(x_i),\qquad i=1,2,\cdots,\label{align:ch03-二维边际概率xi}
+\end{align}
+\begin{align}
+P\{\eta=y_j\}=p_2(y_j),\qquad j=1,2,\cdots.\label{align:ch03-二维边际概率eta}
+\end{align}
+显然
+\begin{align}
+p(x_i,y_j)\geqslant 0,\qquad \sum_{i,j}p(x_i,y_j)=1.\label{align:ch03-二维联合概率归一}
+\end{align}
+此外，对固定的 $i$，
+\begin{align}
+\sum_{j}p(x_i,y_j)=P\{\xi=x_i\}=p_1(x_i),\label{align:ch03-边际求和i}
+\end{align}
+而对固定的 $j$，
+\begin{align}
+\sum_{i}p(x_i,y_j)=P\{\eta=y_j\}=p_2(y_j).\label{align:ch03-边际求和j}
+\end{align}
+换句话说，由联合概率分布，对于固定的 $i$ 关于 $j$ 求和得到 $\xi$ 的概率分布；而对于固定的 $j$ 关于 $i$ 求和得到 $\eta$ 的概率分布。
+
+这里 $\{p_1(x_i),i=1,2,\cdots\}$ 与 $\{p_2(y_j),j=1,2,\cdots\}$ 称为 $\{p(x_i,y_j);i,j=1,2,\cdots\}$ 的\textbf{边际分布}或\textbf{边缘分布}。这个名称的含义通过下两例将看得很清楚。
+
+\begin{example}[有放回摸球]\label{example:ch03-有放回摸球}
+袋中装有 $2$ 只白球及 $3$ 只黑球。现进行有放回的摸球，定义下列随机变量
+\begin{align*}\xi=\begin{cases}1, & \text{第 }1\text{ 次摸出白球},\\ 0, & \text{第 }1\text{ 次摸出黑球},\end{cases}\qquad
+\eta=\begin{cases}1, & \text{第 }2\text{ 次摸出白球},\\ 0, & \text{第 }2\text{ 次摸出黑球}.\end{cases}\end{align*}
+则 $(\xi,\eta)$ 的联合概率分布与边际分布由表\ref{table:ch03-有放回摸球}给出。
+\end{example}
+
+\begin{example}[不放回摸球]\label{example:ch03-不放回摸球}
+前例中若采用不放回摸球，则 $(\xi,\eta)$ 的联合概率分布及边际分布由表\ref{table:ch03-不放回摸球}给出。
+\end{example}
+
+\begin{table}[H]
+\centering
+\caption{有放回摸球的概率分布}
+\label{table:ch03-有放回摸球}
+\begin{tabular}{c|ccc}
+$\xi$ $\backslash$ $\eta$ & $0$ & $1$ & $p_2(y_j)$\\
+\hline
+$0$ & $\dfrac{3}{5}\cdot\dfrac{3}{5}$ & $\dfrac{2}{5}\cdot\dfrac{3}{5}$ & $\dfrac{3}{5}$\\
+$1$ & $\dfrac{3}{5}\cdot\dfrac{2}{5}$ & $\dfrac{2}{5}\cdot\dfrac{2}{5}$ & $\dfrac{2}{5}$\\
+\hline
+$p_1(x_i)$ & $\dfrac{3}{5}$ & $\dfrac{2}{5}$ & \\
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{不放回摸球的概率分布}
+\label{table:ch03-不放回摸球}
+\begin{tabular}{c|ccc}
+$\xi$ $\backslash$ $\eta$ & $0$ & $1$ & $p_2(y_j)$\\
+\hline
+$0$ & $\dfrac{3}{5}\cdot\dfrac{2}{4}$ & $\dfrac{2}{5}\cdot\dfrac{3}{4}$ & $\dfrac{3}{5}$\\
+$1$ & $\dfrac{3}{5}\cdot\dfrac{2}{4}$ & $\dfrac{2}{5}\cdot\dfrac{1}{4}$ & $\dfrac{2}{5}$\\
+\hline
+$p_1(x_i)$ & $\dfrac{3}{5}$ & $\dfrac{2}{5}$ & \\
+\end{tabular}
+\end{table}
+
+在上面两个表中，中间部分是 $(\xi,\eta)$ 的联合概率分布，而边沿部分是 $\xi$ 及 $\eta$ 的概率分布，它们由联合分布经同一行或同一列的相加而得出来，这种表称为\textbf{列联表}。在列联表中，$\xi$ 与 $\eta$ 的概率分布处于表的边沿部位，因此称为边际分布。
+
+让我们再注意一个重要事实，两例中 $\xi$ 及 $\eta$ 的（边际）分布是相同的，但是它们的联合分布却完全不同。这里可以看出联合分布不能由边际分布唯一确定，也就是说二维随机向量的性质并不能由它两个分量的个别性质来确定，这时还必须考虑它们之间的联系，这也说明了研究多维随机向量的作用。
+
+一般地，若 $(\xi,\eta)$ 是二维随机向量，其分布函数为 $F(x,y)$，我们能由 $F(x,y)$ 得出 $\xi$ 或 $\eta$ 的分布函数。事实上，
+\begin{align}
+F_1(x)=P\{\xi<x\}=P\{\xi<x,\eta<+\infty\}=F(x,+\infty).\label{align:ch03-边际分布函数xi}
+\end{align}
+同理
+\begin{align*}F_2(y)=P\{\eta<y\}=F(+\infty,y).\end{align*}
+$F_1(x)$ 及 $F_2(y)$ 称为 $F(x,y)$ 的\textbf{边际分布函数}。
+
+若 $F(x,y)$ 是连续型分布函数，有密度函数 $p(x,y)$，那么
+\begin{align*}F_1(x)=\int_{-\infty}^{x}\int_{-\infty}^{\infty}p(u,y)\,\mathrm{d}u\,\mathrm{d}y.\end{align*}
+因此 $F_1(x)$ 是连续型分布函数，其密度函数为
+\begin{align}
+p_1(x)=\int_{-\infty}^{\infty}p(x,y)\,\mathrm{d}y.\label{align:ch03-边际密度xi}
+\end{align}
+同理 $F_2(y)$ 是连续型分布函数，其密度函数为
+\begin{align}
+p_2(y)=\int_{-\infty}^{\infty}p(x,y)\,\mathrm{d}x.\label{align:ch03-边际密度eta}
+\end{align}
+$p_1(x)$ 及 $p_2(y)$ 称为 $p(x,y)$ 的\textbf{边际（分布）密度函数}。
+
+\paragraph{[二元正态分布]}函数
+\begin{align}
+\begin{aligned}
+p(x,y)=&\frac{1}{2\pi\sigma_1\sigma_2\sqrt{1-\rho^{2}}}\exp\left\{-\frac{1}{2(1-\rho^{2})}\times\right.\\
+&\left.\left[\frac{(x-\mu_1)^{2}}{\sigma_1^{2}}-2\rho\frac{(x-\mu_1)(y-\mu_2)}{\sigma_1\sigma_2}+\frac{(y-\mu_2)^{2}}{\sigma_2^{2}}\right]\right\}
+\end{aligned}\label{align:ch03-二元正态密度}
+\end{align}
+这里 $\mu_1,\mu_2,\sigma_1,\sigma_2,\rho$ 为常数，$\sigma_1>0,\sigma_2>0,|\rho|<1$，称为\textbf{二元正态（分布）密度函数}（图\ref{figure:ch03-二元正态曲面}）。简记为 $N(\mu_1,\mu_2,\sigma_1^{2},\sigma_2^{2},\rho)$。
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\textwidth]{ch03-fig-normal2d.png}
+\caption{二维正态密度曲面}
+\label{figure:ch03-二元正态曲面}
+\end{figure}
+
+显然这是 $n$ 元正态分布当 $n=2$ 时的特殊情况，相应的
+\begin{align*}\boldsymbol{\Sigma}=\begin{pmatrix}\sigma_1^{2}&\rho\sigma_1\sigma_2\\ \rho\sigma_1\sigma_2&\sigma_2^{2}\end{pmatrix},\qquad \boldsymbol{\mu}=(\mu_1,\mu_2).\end{align*}
+
+\begin{theorem}[二元正态密度的典型分解]\label{theorem:ch03-二元正态典型分解}
+二元正态密度函数\eqref{align:ch03-二元正态密度}具有如下两个分解式：
+\begin{align}
+p(x,y)=\frac{1}{\sqrt{2\pi}\sigma_1}\mathrm{e}^{-\frac{(x-\mu_1)^{2}}{2\sigma_1^{2}}}\times\frac{1}{\sqrt{2\pi}\sigma_2\sqrt{1-\rho^{2}}}\mathrm{e}^{-\frac{\left[y-\left(\mu_2+\rho\frac{\sigma_2}{\sigma_1}(x-\mu_1)\right)\right]^{2}}{2\sigma_2^{2}(1-\rho^{2})}}.\label{align:ch03-二元正态分解1}
+\end{align}
+\begin{align}
+p(x,y)=\frac{1}{\sqrt{2\pi}\sigma_2}\mathrm{e}^{-\frac{(y-\mu_2)^{2}}{2\sigma_2^{2}}}\times\frac{1}{\sqrt{2\pi}\sigma_1\sqrt{1-\rho^{2}}}\mathrm{e}^{-\frac{\left[x-\left(\mu_1+\rho\frac{\sigma_1}{\sigma_2}(y-\mu_2)\right)\right]^{2}}{2\sigma_1^{2}(1-\rho^{2})}}.\label{align:ch03-二元正态分解2}
+\end{align}
+\end{theorem}
+
+\begin{proof}
+证明\eqref{align:ch03-二元正态分解1}式的关键在于将\eqref{align:ch03-二元正态密度}表达式里方括号内的 $\dfrac{(x-\mu_1)^{2}}{\sigma_1^{2}}$ 分解成 $(1-\rho^{2})\dfrac{(x-\mu_1)^{2}}{\sigma_1^{2}}+\rho^{2}\dfrac{(x-\mu_1)^{2}}{\sigma_1^{2}}$，并把系数和指数都分解成两部分，这样一来
+\begin{align*}
+p(x,y)&=\frac{1}{\sqrt{2\pi}\sigma_1}\mathrm{e}^{-\frac{(x-\mu_1)^{2}}{2\sigma_1^{2}}}\times\frac{1}{\sqrt{2\pi}\sigma_2\sqrt{1-\rho^{2}}}\cdot\\
+&\quad\cdot\exp\left\{-\frac{1}{2(1-\rho^{2})}\left[\rho^{2}\frac{(x-\mu_1)^{2}}{\sigma_1^{2}}\right.\right.\\
+&\quad\left.\left.-2\rho\frac{(x-\mu_1)(y-\mu_2)}{\sigma_1\sigma_2}+\frac{(y-\mu_2)^{2}}{\sigma_2^{2}}\right]\right\}\\
+&=\frac{1}{\sqrt{2\pi}\sigma_1}\mathrm{e}^{-\frac{(x-\mu_1)^{2}}{2\sigma_1^{2}}}\times\frac{1}{\sqrt{2\pi}\sigma_2\sqrt{1-\rho^{2}}}\times\\
+&\quad\cdot\mathrm{e}^{-\frac{1}{2(1-\rho^{2})}\left[\frac{y-\mu_2}{\sigma_2}-\rho\frac{x-\mu_1}{\sigma_1}\right]^{2}}.
+\end{align*}
+把第 $2$ 个指数稍加整理，即得\eqref{align:ch03-二元正态分解1}。
+
+同理可证\eqref{align:ch03-二元正态分解2}。于是定理证毕。
+\end{proof}
+
+这是完全对称的两个分解式，初看有些复杂，实质却十分简单，它是理解二元正态的关键，用途极多。
+
+首先，我们要指出下面两个重要事实：
+\eqref{align:ch03-二元正态分解1}右边第一部分为 $N(\mu_1,\sigma_1^{2})$ 的密度函数，第二部分为 $N\!\left(\mu_2+\rho\dfrac{\sigma_2}{\sigma_1}(x-\mu_1),\sigma_2^{2}(1-\rho^{2})\right)$ 的密度函数。
+
+\eqref{align:ch03-二元正态分解2}右边第一部分为 $N(\mu_2,\sigma_2^{2})$ 的密度函数，第二部分为 $N\!\left(\mu_1+\rho\dfrac{\sigma_1}{\sigma_2}(y-\mu_2),\sigma_1^{2}(1-\rho^{2})\right)$ 的密度函数。
+
+接着我们来计算二元正态的边际分布密度。
+
+由\eqref{align:ch03-边际密度xi}和\eqref{align:ch03-二元正态分解1}知
+\begin{align*}
+p_1(x)&=\int_{-\infty}^{\infty}p(x,y)\,\mathrm{d}y\\
+&=\frac{1}{\sqrt{2\pi}\sigma_1}\mathrm{e}^{-\frac{(x-\mu_1)^{2}}{2\sigma_1^{2}}}\cdot\int_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi}\sigma_2\sqrt{1-\rho^{2}}}\mathrm{e}^{-\frac{\left[y-\left(\mu_2+\rho\frac{\sigma_2}{\sigma_1}(x-\mu_1)\right)\right]^{2}}{2\sigma_2^{2}(1-\rho^{2})}}\,\mathrm{d}y\\
+&=\frac{1}{\sqrt{2\pi}\sigma_1}\mathrm{e}^{-\frac{(x-\mu_1)^{2}}{2\sigma_1^{2}}}.
+\end{align*}
+即 $p_1(x)$ 是 $N(\mu_1,\sigma_1^{2})$ 的密度函数。同理
+\begin{align*}p_2(y)=\frac{1}{\sqrt{2\pi}\sigma_2}\mathrm{e}^{-\frac{(y-\mu_2)^{2}}{2\sigma_2^{2}}}.\end{align*}
+因此二元正态分布的边际分布仍为正态分布，这是一个重要的结论。
+
+由\eqref{align:ch03-二元正态密度}定义的 $p(x,y)$ 显然非负，又由于
+\begin{align*}\int_{-\infty}^{\infty}\int_{-\infty}^{\infty}p(x,y)\,\mathrm{d}x\,\mathrm{d}y=\int_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi}\sigma_1}\mathrm{e}^{-\frac{(x-\mu_1)^{2}}{2\sigma_1^{2}}}\,\mathrm{d}x=1,\end{align*}
+因此我们已顺带验证了 $p(x,y)$ 确实是一个密度函数。
+
+对于 $n$ 维场合可以类似讨论其边际分布，值得提醒的是，对 $n$ 维分布而言，存在着 $n-1$ 维，$n-2$ 维，$\cdots\cdots$，$2$ 维，$1$ 维的边际分布。
+
+在二维场合，两个随机变量可以都是离散型的，也可以都是连续型的，上举例子都是如此；但是也可以一个是离散型的，另一个却是连续型的。进一步，也容易举出既非离散型又非连续型的例子，这时整个概率测度集中在一个不可列的一维点集上，因此也不存在密度函数。例如，若 $\xi\sim U[0,1]$，令 $\eta=\xi^{2}$，则 $(\xi,\eta)$ 既非离散型又没有联合密度函数。
+
+\subsection*{三、条件分布}
+
+对于多个随机事件可以讨论它们的条件概率，同样地，对于多个随机变量也可以讨论它们的条件分布，并由此得出重要结果。
+
+仍对二维的场合进行讨论。也还是先从离散型开始，这时并无多大困难。
+
+若已知 $\xi=x_i$（$p_1(x_i)>0$），则事件 $\{\eta=y_j\}$ 的条件概率为
+\begin{align}
+P\{\eta=y_j\mid\xi=x_i\}=\frac{P\{\xi=x_i,\eta=y_j\}}{P\{\xi=x_i\}}=\frac{p(x_i,y_j)}{p_1(x_i)}.\label{align:ch03-离散条件概率}
+\end{align}
+这式子定义了随机变量 $\eta$ 关于随机变量 $\xi$ 的\textbf{条件分布}。在一般情况下，它不同于 $p_2(y_j)$，这表示从 $\xi$ 的取值可以得出关于 $\eta$ 的部分信息，反之亦然。
+
+对于一般随机向量 $(\xi,\eta)$，我们也想定义条件分布函数 $P\{\eta<y\mid\xi=x\}$，但是由于会出现 $P\{\xi=x\}=0$，因此我们不能像\eqref{align:ch03-离散条件概率}那样简单地定义。
+
+自然会想到可以用
+\begin{align}
+\begin{aligned}
+P\{\eta<y\mid\xi=x\}&=\lim_{\Delta x\to 0}P\{\eta<y\mid x\leqslant\xi<x+\Delta x\}\\
+&=\lim_{\Delta x\to 0}\frac{P\{x\leqslant\xi<x+\Delta x,\eta<y\}}{P\{x\leqslant\xi<x+\Delta x\}}\\
+&=\lim_{\Delta x\to 0}\frac{F(x+\Delta x,y)-F(x,y)}{F(x+\Delta x,\infty)-F(x,\infty)}.
+\end{aligned}\label{align:ch03-条件分布函数极限}
+\end{align}
+
+特别是对于有连续密度函数的场合，这定义导出
+\begin{align*}P\{\eta<y\mid\xi=x\}=\lim_{\Delta x\to 0}\frac{\displaystyle\int_{x}^{x+\Delta x}\int_{-\infty}^{y}p(u,v)\,\mathrm{d}u\,\mathrm{d}v}{\displaystyle\int_{x}^{x+\Delta x}\int_{-\infty}^{\infty}p(u,v)\,\mathrm{d}u\,\mathrm{d}v}.\end{align*}
+若把上式的分子分母分别除以 $\Delta x$，再令 $\Delta x\to 0$ 取极限，则当 $p_1(x)\neq 0$ 时，
+\begin{align*}P\{\eta<y\mid\xi=x\}=\frac{\displaystyle\int_{-\infty}^{y}p(x,v)\,\mathrm{d}v}{p_1(x)}=\int_{-\infty}^{y}\frac{p(x,v)}{p_1(x)}\,\mathrm{d}v.\end{align*}
+因此在给定 $\xi=x$ 的条件下，$\eta$ 的分布密度函数为
+\begin{align}
+p(y\mid x)=\frac{p(x,y)}{p_1(x)}.\label{align:ch03-条件密度xi}
+\end{align}
+同理可得在给定 $\eta=y$ 的条件下，$\xi$ 的分布密度函数为
+\begin{align}
+p(x\mid y)=\frac{p(x,y)}{p_2(y)}.\label{align:ch03-条件密度eta}
+\end{align}
+这里当然也要求 $p_2(y)\neq 0$。
+
+\begin{example}[二元正态的条件分布]\label{example:ch03-二元正态条件分布}
+对由\eqref{align:ch03-二元正态密度}定义的二元正态分布求条件密度函数 $p(y\mid x)$，由\eqref{align:ch03-条件密度xi}及\eqref{align:ch03-二元正态分解1}
+\begin{align}
+p(y\mid x)=\frac{p(x,y)}{p_1(x)}
+=\frac{1}{\sqrt{2\pi}\sigma_2\sqrt{1-\rho^{2}}}\mathrm{e}^{-\frac{\left[y-\left(\mu_2+\rho\frac{\sigma_2}{\sigma_1}(x-\mu_1)\right)\right]^{2}}{2\sigma_2^{2}(1-\rho^{2})}}.\label{align:ch03-二元正态条件密度}
+\end{align}
+从这里我们看到，二元正态分布的条件分布仍然是正态分布
+\begin{align}
+N\!\left(\mu_2+\rho\frac{\sigma_2}{\sigma_1}(x-\mu_1),\sigma_2^{2}(1-\rho^{2})\right).\label{align:ch03-二元正态条件分布}
+\end{align}
+
+特别指出，这里 $\mu=\mu_2+\rho\dfrac{\sigma_2}{\sigma_1}(x-\mu_1)$ 是 $x$ 的线性函数，这个结论在一些统计问题中很重要。
+\end{example}
+
+到此，二元正态密度典型分解式\eqref{align:ch03-二元正态分解1}的涵义完全清楚了：第一部分是边际密度 $p_1(x)$，第二部分则是条件密度 $p(y\mid x)$，整个式子不过是 $p(x,y)=p_1(x)p(y\mid x)$ 的一个特例。\eqref{align:ch03-二元正态分解2}则是 $p(x,y)=p_2(y)p(x\mid y)$ 的特例。弄明白这个道理，则此二式甚易记忆。
+
+\subsection*{四、随机变量的独立性}
+
+在上章中，我们看到随机事件的独立性起着很大的作用。下面研究随机变量的独立性。引入如下定义。
+
+\begin{definition}[随机变量的独立性]\label{definition:ch03-随机变量独立性}
+设 $\xi_1,\cdots,\xi_n$ 为 $n$ 个随机变量，若对于任意的 $x_1,\cdots,x_n$ 成立
+\begin{align}
+P\{\xi_1<x_1,\cdots,\xi_n<x_n\}=P\{\xi_1<x_1\}\cdots P\{\xi_n<x_n\},\label{align:ch03-独立性定义}
+\end{align}
+则称 $\xi_1,\cdots,\xi_n$ 是\textbf{相互独立}的。
+\end{definition}
+
+若 $\xi_i$ 的分布函数为 $F_i(x)$，$i=1,2,\cdots,n$，它们的联合分布函数为 $F(x_1,\cdots,x_n)$，则\eqref{align:ch03-独立性定义}等价于对一切 $x_1,\cdots,x_n$ 成立
+\begin{align}
+F(x_1,\cdots,x_n)=F_1(x_1)\cdots F_n(x_n).\label{align:ch03-独立性分布函数}
+\end{align}
+
+在这种场合，由每个随机变量的（边际）分布函数可以唯一地确定联合分布函数。而且由\eqref{align:ch03-条件分布函数极限}可以看到，这时条件分布化为无条件分布
+\begin{align}
+P\{\eta<y\mid\xi=x\}=P\{\eta<y\},\label{align:ch03-独立条件分布}
+\end{align}
+即由 $\xi$ 的取值不能得出任何关于 $\eta$ 的信息。
+
+对于离散型随机变量，\eqref{align:ch03-独立性定义}等价于对任何一组可能取的值 $(x_1,\cdots,x_n)$ 成立
+\begin{align}
+P\{\xi_1=x_1,\cdots,\xi_n=x_n\}=P\{\xi_1=x_1\}\cdots P\{\xi_n=x_n\}.\label{align:ch03-离散独立}
+\end{align}
+
+例\ref{example:ch03-有放回摸球}中有放回摸球时的 $\xi$ 与 $\eta$ 是相互独立的，这时联合分布取乘法表的形式；例\ref{example:ch03-不放回摸球}中的 $\xi$ 与 $\eta$ 不是独立的。
+
+这些例子也说明，两个有相同分布的随机变量可以是独立的，也可以不是独立的。
+
+对于连续型随机变量，条件\eqref{align:ch03-独立性定义}的等价形式是对 $x_1,\cdots,x_n$ 几乎处处成立
+\begin{align}
+p(x_1,\cdots,x_n)=p_1(x_1)\cdots p_n(x_n).\label{align:ch03-连续独立}
+\end{align}
+这里 $p(x_1,\cdots,x_n)$ 是联合分布密度函数，而 $p_i(x_i)$，$i=1,2,\cdots,n$ 是各随机变量的密度函数。
+
+\begin{example}[二元正态的独立性]\label{example:ch03-二元正态独立}
+对由\eqref{align:ch03-二元正态密度}定义的二元正态分布，有
+\begin{align*}p_1(x)p_2(y)=\frac{1}{2\pi\sigma_1\sigma_2}\exp\left\{-\frac{(x-\mu_1)^{2}}{2\sigma_1^{2}}-\frac{(y-\mu_2)^{2}}{2\sigma_2^{2}}\right\}.\end{align*}
+与\eqref{align:ch03-二元正态密度}比较可知，使关系式\eqref{align:ch03-连续独立}成立的充要条件是
+\begin{align*}\rho=0.\end{align*}
+即服从二元正态分布的随机变量独立的充要条件是 $\rho=0$，这时条件分布\eqref{align:ch03-二元正态条件密度}化为
+\begin{align*}p(y\mid x)=\frac{1}{\sqrt{2\pi}\sigma_2}\mathrm{e}^{-\frac{(y-\mu_2)^{2}}{2\sigma_2^{2}}}=p_2(y).\end{align*}
+这与\eqref{align:ch03-独立条件分布}是一致的。
+\end{example}
+
+\begin{example}[二维均匀分布]\label{example:ch03-二维均匀}
+若 $(\xi,\eta)$ 服从 $G=\{(x,y):a\leqslant x\leqslant b,c\leqslant y\leqslant d\}$ 上的均匀分布，即其联合密度函数为
+\begin{align}
+p(x,y)=
+\begin{cases}
+\dfrac{1}{(b-a)(c-d)}, & a\leqslant x\leqslant b,\ c\leqslant y\leqslant d,\\[4pt]
+0, & \text{其他}.
+\end{cases}\label{align:ch03-二维均匀密度}
+\end{align}
+则 $\xi\sim U[a,b]$，$\eta\sim U[c,d]$，且它们相互独立。（图\ref{figure:ch03-二维均匀分布}）
+
+反之，若 $\xi$ 与 $\eta$ 相互独立，且 $\xi\sim U[a,b]$，$\eta\sim U[c,d]$，则 $(\xi,\eta)$ 服从 $G$ 上均匀分布，密度函数为\eqref{align:ch03-二维均匀密度}。
+\end{example}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.4\textwidth]{ch03-fig-uniform2d.png}
+\caption{二维均匀分布}
+\label{figure:ch03-二维均匀分布}
+\end{figure}
+
+均匀分布为几何概率提供了精确的概率论语言。例如第一章 \S\,4 中的几个例子都有均匀分布的假定。
+
+在会面问题的解法中事实上假定了两人的到达时刻是相互独立的，而且都服从 $U[0,60]$。
+
+蒲丰投针问题中假定 $x\sim U\!\left[0,\dfrac{a}{2}\right]$，$\varphi\sim U[0,\pi]$，且它们相互独立，这些假定的适合性很难确证，但诸多试验结果表明它们近似成立。
+
+Monte Carlo 积分计算则要求产生 $N$ 对独立的随机向量 $(\xi,\eta)$，其中 $\xi\sim U[a,b]$，$\eta\sim U[0,M]$，且它们相互独立，这在近代计算机中不难实现。
+
+上面我们列举了随机变量独立性的各种表达形式，有些是对一般随机变量成立的，有些只对离散型或连续型才成立，一般说来，这些条件比较易于验证。下面我们介绍另外一个条件，这条件不易验证，但在理论研究中有用。
+
+随机变量 $\xi_1,\xi_2,\cdots,\xi_n$ 相互独立的充要条件是对一切一维 Borel 点集 $A_1,A_2,\cdots,A_n$ 成立
+\begin{align}
+\begin{aligned}
+&P\{\xi_1\in A_1,\xi_2\in A_2,\cdots,\xi_n\in A_n\}\\
+&\quad=P\{\xi_1\in A_1\}P\{\xi_2\in A_2\}\cdots P\{\xi_n\in A_n\}.
+\end{aligned}\label{align:ch03-独立Borel}
+\end{align}
+论断的证明要用到测度论，已超出本课程范围。
+
+当然也可以建立 $n$ 维随机向量 $\boldsymbol{\xi}$ 与 $m$ 维随机向量 $\boldsymbol{\eta}$ 相互独立的概念，这时要求成立
+\begin{align*}P\{\boldsymbol{\xi}\in A,\boldsymbol{\eta}\in B\}=P\{\boldsymbol{\xi}\in A\}P\{\boldsymbol{\eta}\in B\},\end{align*}
+其中 $A,B$ 分别是任意一个 $n$ 维及 $m$ 维的 Borel 点集。
+
+显然若 $\boldsymbol{\xi}$ 与 $\boldsymbol{\eta}$ 独立，则 $\boldsymbol{\xi}$ 的子向量与 $\boldsymbol{\eta}$ 的子向量是独立的。
+
+此外，注意到若 $\xi_1,\xi_2,\cdots,\xi_n$ 相互独立，则其中的任意 $r$（$2\leqslant r<n$）个随机变量也相互独立。例如，我们证明 $\xi_1,\xi_2,\cdots,\xi_{n-1}$ 相互独立。
+\begin{align*}
+P\{\xi_1<x_1,\cdots,\xi_{n-1}<x_{n-1}\}
+&=P\{\xi_1<x_1,\cdots,\xi_{n-1}<x_{n-1},\xi_n<\infty\}\\
+&=P\{\xi_1<x_1\}\cdots P\{\xi_{n-1}<x_{n-1}\}P\{\xi_n<\infty\}\\
+&=P\{\xi_1<x_1\}\cdots P\{\xi_{n-1}<x_{n-1}\}.
+\end{align*}
+
+最后，称无穷多个随机变量是相互独立的，如果其中任意有限多个随机变量都是相互独立的。
+
+随机变量的独立性概念是概率论中最基本的概念之一，也是最重要的概念之一，关于独立随机变量的研究构成了概率论的重要课题，我们将在第五章中介绍一些基本结果。
+
+\subsection*{五、正态分布的导出}
+
+正态分布在概率论和数理统计中处于核心地位。它最初作为二项分布计算的渐近公式由 De Moivre 引进，后被 Laplace 发展成系统的理论（见第五章）。但把它作为一个分布来研究则归功于 Gauss（Gauss，1777—1855），他在 $19$ 世纪初的测量误差研究中导出的误差函数，后被高尔顿命名为正态分布。因此，正态分布又称 Gauss 分布。这项研究又是当代统计学中重要思想——最大似然法的源头。在学过多维随机变量和独立性之后，可作如下介绍。
+
+在测量中，若 $\mu$ 为真值，$x_i$ 为观察值，而误差 $x_i-\mu$ 的分布密度函数为 $p(x_i-\mu)$。经验表明 $p(x)$ 关于 $x=0$ 对称，而且对一切 $x$ 成立 $p(x)>0$。为推导方便起见，还假设 $p(x)$ 具有连续导函数。
+
+如果有独立同分布的观察值 $x_1,x_2,\cdots,x_n$，则其似然函数为
+\begin{align*}L(\mu)=\prod_{i=1}^{n}p(x_i-\mu),\end{align*}
+它表征了这组观察值落在 $\mu$ 的附近的可能性的大小。Gauss 的假定是：观察值的平均值 $\bar{x}=\dfrac{1}{n}(x_1+x_2+\cdots+x_n)$ 作为未知参数 $\mu$ 的估值使 $L(\mu)$ 达到最大。
+
+下面利用这个假定导出正态分布。
+
+若 $\bar{x}$ 使似然函数 $L(\mu)$ 达到最大，则
+\begin{align}
+\left.\frac{\mathrm{d}\ln L(\mu)}{\mathrm{d}\mu}\right|_{\mu=\bar{x}}=0.\label{align:ch03-似然方程}
+\end{align}
+
+记 $\dfrac{\mathrm{d}\ln p(x)}{\mathrm{d}x}=g(x)$，则 $g(x)=\dfrac{p'(x)}{p(x)}$，由假设知道它好定义而且是连续函数。这时\eqref{align:ch03-似然方程}变成
+\begin{align}
+\sum_{i=1}^{n}g(x_i-\bar{x})=0.\label{align:ch03-似然方程和}
+\end{align}
+
+当 $n=2$ 时，方程\eqref{align:ch03-似然方程和}化为
+\begin{align*}g(x_1-\bar{x})+g(x_2-\bar{x})=0.\end{align*}
+由于 $x_1-\bar{x}=-(x_2-\bar{x})$，以及 $x_1,x_2$ 的任意性得到 $g(-x)=-g(x)$ 对一切实数 $x$ 成立。
+
+当 $n=3$ 时，方程化为
+\begin{align*}g(x_1-\bar{x})+g(x_2-\bar{x})+g(x_3-\bar{x})=0.\end{align*}
+由于 $x_1-\bar{x}=-[(x_2-\bar{x})+(x_3-\bar{x})]$，可知对一切实数 $x,y$ 成立
+\begin{align}
+g(x)+g(y)=g(x+y).\label{align:ch03-柯西函数方程}
+\end{align}
+这是 Cauchy 函数方程，很容易证明其解必为 $g(x)=bx$。
+
+事实上，若记 $f(x)=\mathrm{e}^{g(x)}$，则方程\eqref{align:ch03-柯西函数方程}化为
+\begin{align}
+f(x)f(y)=f(x+y)\label{align:ch03-指数函数方程}
+\end{align}
+这方程对一切 $x,y$ 成立，且 $f(x)$ 是连续函数，因此由引理 $2.4.1$ 知 $f(x)=a^{x}$，$a\geqslant 0$，从而得知
+\begin{align*}g(x)=bx.\end{align*}
+
+因此
+\begin{align*}\ln p(x)=\frac{b}{2}x^{2}+c,\end{align*}
+\begin{align*}p(x)=\mathrm{e}^{\frac{b}{2}x^{2}+c},\qquad -\infty<x<\infty.\end{align*}
+$p(x)$ 为密度函数，因此 $b<0$，记 $b=-\dfrac{1}{\sigma^{2}}$，则
+\begin{align*}p(x)=K\mathrm{e}^{-\frac{x^{2}}{2\sigma^{2}}},\qquad -\infty<x<\infty.\end{align*}
+由规范化条件 $\displaystyle\int_{-\infty}^{+\infty}p(x)\,\mathrm{d}x=1$ 知 $K=\dfrac{1}{\sqrt{2\pi}\sigma}$，故
+\begin{align*}p(x)=\frac{1}{\sqrt{2\pi}\sigma}\mathrm{e}^{-\frac{x^{2}}{2\sigma^{2}}},\qquad -\infty<x<\infty.\end{align*}
+这就是著名的误差函数，即正态分布密度函数。
+
+\end{document}

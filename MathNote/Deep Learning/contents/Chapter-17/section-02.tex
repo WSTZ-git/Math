@@ -1,0 +1,50 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{../../image/}{../../figure/}}
+\begin{document}
+
+\subsection{实战中的 GAN 训练}\label{subsection:ch17-实战GAN训练}
+
+尽管 GAN 可以产生高质量的结果，但由于对抗学习的特点，其并不容易训练成功（见习题 17.2）。此外，与标准的损失函数最小化不同，由于目标函数的值在训练过程中可能上升也可能下降，因此并没有一个明确的进展指标。
+
+GAN 在训练过程中可能出现\textbf{模式崩溃}（mode collapse）的问题，即在训练过程中，生成器网络的权重发生了适应性调整，导致所有潜变量样本 $z$ 都被映射到有效输出的一个子集上。在极端情况下，输出可能只对应一个或少数几个输出值 $x$。判别器网络随后将这些实例的值设置为 $0.5$ 并停止训练。例如，一个生成手写数字训练的 GAN 可能学会只生成数字``3''的实例，而判别器网络无法将这些实例与真正的数字``3''的实例区分开来，它没能认识到生成器网络并没有生成所有可能的数字。
+
+通过图~\ref{fig:ch17-one-d-discriminator}，我们可以更深入地理解训练 GAN 的困难。该图显示了一个简单的一维数据空间 $x$，其中样本 $\{x_n\}$ 来自固定但未知的数据分布 $p_{\mathrm{data}}(x)$。该图还显示了初始生成分布 $p_g(x)$ 以及从该分布中抽取的样本。因为数据分布和生成分布之间差异显著，最优的判别器函数 $d(x)$ 很容易学习，其函数值下降态势急剧，在真实样本或合成样本的邻近区域梯度几乎为零。考虑 GAN 损失函数 [式~\eqref{align:ch17-egan}] 中的第二项，由于在生成样本跨越的区域内 $d(g(z,w),\phi)$ 值等于零，生成器网络参数 $w$ 的微小变化在判别器网络的输出上将产生很小的变化，因此梯度较小，导致学习进程缓慢。
+
+这个问题可以通过使用判别器函数的平滑版本 $\tilde{d}(x)$ 来解决（见图~\ref{fig:ch17-one-d-discriminator}），从而为生成器网络提供更强的梯度以驱动训练。最小二乘 GAN（least-squares GAN, Mao et al., 2016）通过修改判别器网络输出一个实值而不是取值范围为 $0\sim 1$ 的概率，并用平方和损失函数替换交叉熵损失函数来实现平滑。另一种称为\textbf{实例噪声}（instance noise）（S\"onderby et al., 2016）的方法则向真实样本和合成样本中添加高斯噪声，这同样能使判别器函数更加平滑。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.7\textwidth]{ch17-fig487-one-d.png}
+\caption{为了从概念上说明为什么训练 GAN 可能会有难度，这里展示了一个简单的一维数据空间 $x$，其中有固定但未知的数据分布 $p_{\mathrm{data}}(x)$ 和初始生成分布 $p_g(x)$。最优的判别函数 $d(x)$ 在训练或合成数据点附近几乎没有梯度，使学习变得非常缓慢。判别函数的平滑版本 $\tilde{d}(x)$ 可以使学习变得更快。}
+\label{fig:ch17-one-d-discriminator}
+\end{figure}
+
+更直接的方法是修改误差标准，以反映这两个分布在数据空间中的距离。这可以使用\textbf{Wasserstein 距离}（也称推土机距离）来衡量。设想生成分布 $p_g(x)$ 是一堆土，我们需要分批运输这堆土以构建数据分布 $p_{\mathrm{data}}(x)$。Wasserstein 距离就是移动的土壤总量和平均移动距离的积。在重排这堆土以构建 $p_{\mathrm{data}}(x)$ 的许多方式中，能产生最小平均移动距离的方式被用于定义度量。为确保生成分布 $p_g(x)$ 向数据分布 $p_{\mathrm{data}}(x)$ 靠拢，这种方法在实践中并不能直接实现，需要通过使用一个具有实值输出的判别器网络来近似，然后通过权重裁剪限制判别器函数关于 $x$ 的梯度 $\nabla_x d(x,\phi)$，从而产生了 Wasserstein GAN（Arjovsky, Chintala, and Bottou, 2017）。
+
+另一种改进的方法是对梯度引入惩罚，从而产生了梯度惩罚 Wasserstein GAN（Gulrajani et al., 2017），其损失函数由下式给出：
+\begin{align}
+E_{\mathrm{WGAN}}(w,\phi)=-\frac{1}{N}\sum_n d(x_n,\phi)+\frac{1}{N_G}\sum_m d(g(z_m,w),\phi)+\lambda\,\mathbb{E}\big[(\|\nabla_{\hat{x}}d(\hat{x},\phi)\|_2-1)^2\big]
+\label{align:ch17-wgan-gp}
+\end{align}
+其中的 $\lambda$ 控制了惩罚项的相对重要性。
+
+为了改进 GAN 的训练，研究者们提出了许多对损失函数和训练过程的修改方案（Mescheder, Geiger, and Nowozin, 2018）。其中常见的一个建议是将原始损失函数中的生成器目标
+\begin{align}
+\mathbb{E}_z\ln\big(1-d(g(z,w),\phi)\big)
+\label{align:ch17-gen-orig}
+\end{align}
+替换为
+\begin{align}
+-\mathbb{E}_z\ln d(g(z,w),\phi)
+\label{align:ch17-gen-alt}
+\end{align}
+式~\eqref{align:ch17-gen-orig} 所示的第一种形式最小化了图像为假的概率，式~\eqref{align:ch17-gen-alt} 所示的第二种形式则最大化了图像为真的概率。这两种形式的不同属性可以通过图~\ref{fig:ch17-loss-curves} 来加以理解。当生成分布 $p_g(x)$ 与数据分布 $p_{\mathrm{data}}(x)$ 完全不重叠时，$d(g(z,w))$ 接近于零，因此第一种形式具有非常小的梯度，而第二种形式具有较大的梯度，从而能加快训练速度。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.6\textwidth]{ch17-fig487-loss-curves.png}
+\caption{$-\ln(d)$ 和 $-\ln(1-d)$ 的图像。在 $d=0$ 和 $d=1$ 附近，两者在梯度上的表现存在非常大的差异：$-\ln(1-d)$ 在 $d\to 0$ 时梯度趋近于零，而 $-\ln(d)$ 仍提供显著梯度。}
+\label{fig:ch17-loss-curves}
+\end{figure}
+
+\end{document}

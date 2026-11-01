@@ -1,0 +1,59 @@
+﻿\documentclass[../../main.tex]{subfiles}
+
+\graphicspath{{../../image/}{../../figure/}}
+
+\begin{document}
+
+\section{周期变量}\label{section:ch03-周期变量}
+
+尽管高斯分布本身具有重要的实际意义，并且作为构建更复杂概率模型的基础也十分有用，但在某些情况下，它们并不适合作为连续变量的密度模型。实际应用中存在的周期变量就属于这种情况。
+
+特定地理位置的风向是周期变量的一个例子。另一个例子是日历时间，我们想建模那些可能在$24$小时或一年内具有周期性的量。这样的量可以使用$0\leqslant\theta<2\pi$范围内的角（极）坐标来方便地表示。我们可以选择某个方向作为起始方向，然后应用高斯分布等常规分布来处理周期变量，然而这种方法所产生的结果极其依赖于我们随意选择的起始方向。例如，设有两个观测值$\theta_1=1^{\circ}$和$\theta_2=359^{\circ}$，并且使用标准的一元高斯分布对它们建模。如果将起始方向设置为$0^{\circ}$，那么该数据集的样本均值为$180^{\circ}$，标准差为$179^{\circ}$；而如果将起始方向设置为$180^{\circ}$，那么该数据集的样本均值为$0^{\circ}$，标准差为$1^{\circ}$。显然，我们需要一种专门用来处理周期变量的方法。
+
+考虑估计周期变量$\theta$的一组观测值$\mathcal{D}=\{\theta_1,\cdots,\theta_N\}$的均值，其中$\theta$的单位为弧度。简单计算均值$(\theta_1+\cdots+\theta_N)/N$将与坐标系强相关。为了找到均值的不变度量，我们注意到观测值可以视为单位圆上的点，因此可以用二维单位向量$\boldsymbol{x}_1,\cdots,\boldsymbol{x}_N$来描述它们。对向量$\{\boldsymbol{x}_n\}$求平均值，可得
+
+\begin{align}
+  \bar{\boldsymbol{x}}=\frac{1}{N}\sum_{n=1}^{N}\boldsymbol{x}_n,\qquad \boldsymbol{x}_n=(\cos\theta_n,\sin\theta_n)^{\mathsf{T}}
+  \label{align:ch03-周期均值向量}
+\end{align}
+
+然后找到与平均值对应的角度$\bar{\theta}$。显然，上述定义将确保均值的位置与角坐标的起始方向无关。注意$\bar{\boldsymbol{x}}$通常位于单位圆内。观测值的笛卡儿坐标由$\bar{\boldsymbol{x}}=(\bar{r}\cos\bar{\theta},\bar{r}\sin\bar{\theta})$给出。代入\cref{align:ch03-周期均值向量}并使$\bar{x}_1$和$\bar{x}_2$分量相等，对二者取比值，并使用恒等式$\tan\theta=\sin\theta/\cos\theta$，$\bar{\theta}$可由下式求解：
+
+\begin{align}
+  \bar{\theta}=\tan^{-1}\!\left(\frac{\sum_n\sin\theta_n}{\sum_n\cos\theta_n}\right)
+  \label{align:ch03-周期均值角}
+\end{align}
+
+读者很快就会看到这个结果是如何作为最大似然估计量而产生的。
+
+按照惯例，考虑分布$p(\theta)$，其具有$2\pi$周期。任何定义在$\theta$上的概率密度$p(\theta)$都必须是非负的且积分为$1$，同时还必须具有周期性。因此，$p(\theta)$必须满足以下三个条件：
+
+\begin{align}
+  p(\theta)\geqslant 0,\qquad \int_{0}^{2\pi}p(\theta)\,\mathrm{d}\theta=1,\qquad p(\theta+2\pi)=p(\theta)
+  \label{align:ch03-周期分布条件}
+\end{align}
+
+首先定义高斯分布的一个周期性推广，称为冯·米塞斯（von Mises）分布。考虑二维空间上的高斯分布，其均值为$\boldsymbol{\mu}=(\mu_1,\mu_2)^{\mathsf{T}}$，协方差矩阵为$\sigma^{2}\boldsymbol{I}$。通过从笛卡儿坐标$(x_1,x_2)$转换到极坐标$(r,\theta)$，并关注沿单位圆$r=1$这个分布的值，可以导出周期分布。利用三角恒等式
+
+\begin{align}
+  \cos^{2}A+\sin^{2}A=1,\qquad \cos A\cos B+\sin A\sin B=\cos(A-B)
+  \label{align:ch03-三角恒等式}
+\end{align}
+
+最终可以得到$p(\theta)$沿单位圆的分布形式：
+
+\begin{align}
+  p(\theta\mid\theta_0,m)=\frac{1}{2\pi I_0(m)}\exp\bigl\{m\cos(\theta-\theta_0)\bigr\}
+  \label{align:ch03-冯米塞斯分布}
+\end{align}
+
+这称为冯·米塞斯分布或圆形正态（circular normal）分布。这里的参数$\theta_0$对应于分布的均值，$m$则称为聚焦（concentration）参数，类似于高斯分布的逆方差（即精度）。式\eqref{align:ch03-冯米塞斯分布}中的归一化系数用$I_0(m)$表示，它是第一类零阶修正贝塞尔函数（modified Bessel function），定义如下：
+
+\begin{align}
+  I_0(m)=\frac{1}{2\pi}\int_{0}^{2\pi}\exp\{m\cos\theta\}\,\mathrm{d}\theta
+  \label{align:ch03-修正贝塞尔函数}
+\end{align}
+
+当$m$较大时，该分布近似为高斯分布（见习题~3.31）。关于参数$\theta_0$和$m$的最大似然估计，可以通过对对数似然函数求导得到，其中$\theta_0$的解与\cref{align:ch03-周期均值角}一致。冯·米塞斯分布的一个局限性是它是单峰的；我们可以通过构造包含多个冯·米塞斯分布的混合分布，来获得一个更为灵活的周期变量建模框架，以处理多峰数据。最后，实轴上的任何有效分布（如高斯分布）都可以通过将宽度为$2\pi$的连续区间映射到周期变量$(0,2\pi)$上，成为周期分布，这相当于将实轴"包裹"到单位圆上（环绕分布）。
+
+\end{document}

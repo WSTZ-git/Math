@@ -1,0 +1,101 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{../../image/}{../../figure/}}
+\begin{document}
+
+\section{错误平面}\label{section:ch07-错误平面}
+
+与前面讨论的回归模型和分类模型一样，我们通过优化误差函数来选择网络参数。我们的任务是基于一组训练数据，为网络参数（权重和偏置）寻找合适设置。在第~6~章中我们看到，神经网络是一类非常宽泛且灵活的函数，原则上可以使用足够多隐藏单元以高精度逼近所期望函数；此外深度网络能编码对应于层次化表示的归纳偏置。本章中，我们为便于后续讨论，首先把这些参数统一表示为向量 $\mathbf{w}$，并基于预先选定的误差函数 $E(\mathbf{w})$ 来优化 $\mathbf{w}$。
+
+为了直观理解这一优化过程，可以建立误差函数的几何图像：将其视为一个位于"权重空间"之上的曲面。首先注意，如果在权重空间中从 $\mathbf{w}$ 向 $\mathbf{w}+\delta\mathbf{w}$ 迈出一小步，那么误差函数变化由下式给出：
+\begin{align}
+\delta E \approx \delta\mathbf{w}^{\mathsf T}\nabla E(\mathbf{w}),
+\label{align:ch07-firstorder}
+\end{align}
+其中 $\nabla E(\mathbf{w})$ 指向误差函数增长率最大的方向。$\mathbf{w}$ 是一个局部极小值点，而 $\mathbf{w}^{\ast}$ 是全局最小值点，因此有 $E(\mathbf{w}^{\ast})<E(\mathbf{w})$。在任意点 $\mathbf{w}$ 处，误差曲面的局部梯度由 $\nabla E$ 给出。我们可以朝着 $-\nabla E(\mathbf{w})$ 的方向迈出一小步，从而进一步减小误差。只要 $E(\mathbf{w})$ 是 $\mathbf{w}$ 的平滑连续函数，它的最小值就会出现在权重空间中梯度为零的点处，即
+\begin{align}
+\nabla E(\mathbf{w})=\mathbf{0}.
+\label{align:ch07-stationary}
+\end{align}
+
+梯度为零的点称为\textbf{驻点}（stationary point，参见~7.1.1~小节），驻点可进一步分类为极小点、极大点和鞍点。
+
+我们需要找到这样一个向量 $\mathbf{w}$ 使 $E(\mathbf{w})$ 取最小值。然而误差函数通常对权重和偏置参数高度非线性地依赖，因此权重空间中能使梯度为零（或数值非常小）的点有很多。实际上对于任意局部极小值点，权重空间中通常存在其他等效的局部极小值点。例如在图~\ref{fig:ch06-mlp}~所示具有 $M$ 个隐藏单元的两层网络中，每个点都是 $M!\times 2^M$ 个等效点集合中的一员（参见~6.2.4~小节）。
+
+不仅如此，权重空间中还可能存在多个本质上并不等效的驻点，尤其是多个非等效的局部极小值点。在整个权重空间 $\mathbf{w}$ 中，对应于误差函数最小取值的那个极小值点称为\textbf{全局最小值点}（global minimum），其他所有对应于相对较高误差函数值的极小值点则称为\textbf{局部极小值点}（local minima）。深度网络的误差曲面形态可能极为复杂，人们曾认为基于梯度的优化方法可能陷入性能欠佳的局部极小值区域；然而在实践中，大型网络模型在各种不同初始条件下通常都能收敛到性能相近的解（见~9.3.2~节）。
+
+\subsection{局部二次近似}\label{section:ch07-局部二次近似}
+
+可以通过对误差函数进行局部二次近似来深入理解优化问题及各种优化技术。在权重空间中某点 $\hat{\mathbf{w}}$ 周围对 $E(\mathbf{w})$ 做泰勒展开：
+\begin{align}
+E(\mathbf{w}) = E(\hat{\mathbf{w}}) + (\mathbf{w}-\hat{\mathbf{w}})^{\mathsf T}\mathbf{b} + \frac{1}{2}(\mathbf{w}-\hat{\mathbf{w}})^{\mathsf T}\mathbf{H}(\mathbf{w}-\hat{\mathbf{w}}),
+\label{align:ch07-taylor}
+\end{align}
+其中省略了三阶及更高阶项。这里 $\mathbf{b}$ 定义为我们在 $\hat{\mathbf{w}}$ 处评估的 $E$ 的梯度：
+\begin{align}
+\mathbf{b} = \nabla E(\hat{\mathbf{w}}),
+\label{align:ch07-b}
+\end{align}
+\textbf{黑塞矩阵}（Hessian）定义为相应的二阶导数矩阵：
+\begin{align}
+\mathbf{H}(\mathbf{w}) = \nabla\nabla E(\mathbf{w}).
+\label{align:ch07-hessian}
+\end{align}
+
+如果网络中总共有 $W$ 个权重和偏置，那么 $\mathbf{w}$ 和 $\mathbf{b}$ 的长度为 $W$，$\mathbf{H}$ 的维度为 $W\times W$。根据~\eqref{align:ch07-taylor}，对应的局部梯度近似由下式给出：
+\begin{align}
+\nabla E(\mathbf{w}) = \mathbf{b} + \mathbf{H}(\mathbf{w}-\hat{\mathbf{w}}).
+\label{align:ch07-gradapprox}
+\end{align}
+对于足够接近 $\hat{\mathbf{w}}$ 的点 $\mathbf{w}$，这些表达式将给出误差及其梯度的合理近似。
+
+考虑围绕误差函数最小值点 $\mathbf{w}^{\ast}$ 进行局部二次近似这一特定情况。在这种情况下，因为在 $\mathbf{w}^{\ast}$ 处 $\nabla E=\mathbf{0}$，所以没有线性项，~\eqref{align:ch07-taylor}~变为
+\begin{align}
+E(\mathbf{w}) = E(\mathbf{w}^{\ast}) + \frac{1}{2}(\mathbf{w}-\mathbf{w}^{\ast})^{\mathsf T}\mathbf{H}(\mathbf{w}-\mathbf{w}^{\ast}),
+\label{align:ch07-quadratic-at-min}
+\end{align}
+其中黑塞矩阵 $\mathbf{H}$ 在点 $\mathbf{w}^{\ast}$ 处求得。为从几何角度解释这一点，考虑黑塞矩阵的特征方程：
+\begin{align}
+\mathbf{H}\mathbf{u}_i = \lambda_i \mathbf{u}_i,
+\label{align:ch07-eigen}
+\end{align}
+其中特征向量 $\mathbf{u}_i$ 形成一组完备正交规范集（参见附录~A），所以有
+\begin{align}
+\mathbf{u}_i^{\mathsf T}\mathbf{u}_j = \delta_{ij}.
+\label{align:ch07-eigenorth}
+\end{align}
+
+这可以视为坐标系变换：原点平移到 $\mathbf{w}^{\ast}$，轴与特征向量对齐。写
+\begin{align}
+\mathbf{w}-\mathbf{w}^{\ast} = \sum_i \alpha_i \mathbf{u}_i.
+\label{align:ch07-expansion}
+\end{align}
+将~\eqref{align:ch07-expansion}~代入~\eqref{align:ch07-quadratic-at-min}~并使用~\eqref{align:ch07-eigen}~和~\eqref{align:ch07-eigenorth}，误差函数可写成如下形式（见习题~7.1）：
+\begin{align}
+E(\mathbf{w}) = E(\mathbf{w}^{\ast}) + \frac{1}{2}\sum_i \lambda_i \alpha_i^2.
+\label{align:ch07-quadratic-diag}
+\end{align}
+
+假设对所有 $i\neq j$ 设置 $\alpha_j=0$，然后变化 $\alpha_i$，这相当于把 $\mathbf{w}$ 沿着 $\mathbf{u}_i$ 方向移动、远离 $\mathbf{w}^{\ast}$。从~\eqref{align:ch07-quadratic-diag}~可见：若对应特征值 $\lambda_i>0$，则误差函数值会增大；反之误差函数值将减小。如果所有特征值都是正的，则 $\mathbf{w}^{\ast}$ 对应误差函数的局部极小值；如果所有特征值都是负的，则 $\mathbf{w}^{\ast}$ 对应局部最大值；如果特征值有正有负，则 $\mathbf{w}^{\ast}$ 表示一个\textbf{鞍点}（saddle point）。
+
+如果对所有 $\mathbf{v}$ 有
+\begin{align}
+\mathbf{v}^{\mathsf T}\mathbf{H}\mathbf{v}>0,
+\label{align:ch07-posdef}
+\end{align}
+则称黑塞矩阵 $\mathbf{H}$ 为\textbf{正定矩阵}（positive definite）。因为特征向量 $\mathbf{u}_i$ 形成完备集，任意向量 $\mathbf{v}$ 可以写成
+\begin{align}
+\mathbf{v} = \sum_i c_i \mathbf{u}_i,
+\label{align:ch07-vexpand}
+\end{align}
+由~\eqref{align:ch07-eigen}~和~\eqref{align:ch07-eigenorth}~有
+\begin{align}
+\mathbf{v}^{\mathsf T}\mathbf{H}\mathbf{v} = \sum_i c_i^2 \lambda_i.
+\label{align:ch07-posdef-calc}
+\end{align}
+从而如果所有特征值都是正的，$\mathbf{H}$ 将是正定矩阵（见习题~7.2）。因此，$\mathbf{w}^{\ast}$ 是局部极小值的充分必要条件是：误差函数的梯度在 $\mathbf{w}^{\ast}$ 处为零，并且在 $\mathbf{w}^{\ast}$ 处评估的黑塞矩阵是正定矩阵（见习题~7.3）。
+
+在新的坐标系中，基向量由特征向量 $\mathbf{u}_i$ 给出，恒定误差 $E(\mathbf{w})$ 的等高线变为轴对齐的椭圆，以 $\mathbf{w}^{\ast}$ 为中心。椭圆的轴与黑塞矩阵的特征向量 $\mathbf{u}_i$ 对齐，轴的长度则与相应特征值 $\lambda_i$ 的平方根成反比（见习题~7.6）。
+
+对于神经网络这种具有复杂结构的误差函数，试图找到方程 $\nabla E(\mathbf{w})=\mathbf{0}$ 的解析解是不现实的，因此需要借助迭代式数值优化方法。
+
+\end{document}

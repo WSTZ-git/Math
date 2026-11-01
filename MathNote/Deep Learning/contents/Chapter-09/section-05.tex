@@ -1,0 +1,71 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{../../image/}{../../figure/}}
+\begin{document}
+
+\section{残差连接}\label{section:ch09-残差连接}
+
+深度神经网络（简称深度网络）的表征能力（也称表示能力）在很大程度上源于模型的多层处理。据观察，增加网络层数可以显著提高泛化能力。我们也看到了批量归一化以及对权重和偏置进行初始化，可以帮助解决深度网络中梯度消失或梯度爆炸的问题（参见~7.2.5~小节和~7.4.2~小节）。然而即使使用批量归一化，训练难度也仍然会随着网络层数增多而增加。
+
+这种现象的一种解释称为\textbf{破碎梯度}（shattered gradient）~\citep{Balduzzi2017}。我们已经看到神经网络表征能力随网络深度呈指数级增长。使用 ReLU 激活函数，网络可以表示的线性区域数量呈指数级增长。然而这样做的一个后果是误差函数梯度中的不连续现象激增。在这里输出变量对输入变量的导数（网络雅可比矩阵）是输入变量的函数。从微积分链式法则来看，这些导数决定了误差表面梯度。我们看到对于深度神经网络，网络浅层权重参数即便发生极其微小变化，也会产生显著梯度变化。基于梯度的迭代式优化算法假设梯度在参数空间中平滑变化，因此这种"破碎梯度"效应会使训练对非常深的网络无效（参见~6.3~节）。
+
+残差连接（residual connection）~\citep{He2015a}是对神经网络架构的一个重要修改，它对训练极深网络有很大帮助。残差连接是一种特殊形式的\textbf{跳层连接}（skip-layer connection）。考虑一个包含如下三层的神经网络：
+\begin{align}
+\mathbf{z}^{(1)} = F(\mathbf{x}),
+\label{align:ch09-res1}
+\end{align}
+\begin{align}
+\mathbf{z}^{(2)} = F^{(2)}(\mathbf{z}^{(1)}),
+\label{align:ch09-res2}
+\end{align}
+\begin{align}
+\mathbf{y} = F^{(3)}(\mathbf{z}^{(2)}).
+\label{align:ch09-res3}
+\end{align}
+
+这里函数 $F(\cdot)$ 可能仅由一个线性变换和一个 ReLU 激活函数组成，也可能很复杂，比如包含多个线性层、激活函数和归一化层。残差连接会将每个函数输入添加到函数输出，从而有
+\begin{align}
+\mathbf{z}^{(1)} = F(\mathbf{x})+\mathbf{x},
+\label{align:ch09-residual1}
+\end{align}
+\begin{align}
+\mathbf{z}^{(2)} = F^{(2)}(\mathbf{z}^{(1)})+\mathbf{z}^{(1)},
+\label{align:ch09-residual2}
+\end{align}
+\begin{align}
+\mathbf{y} = F^{(3)}(\mathbf{z}^{(2)})+\mathbf{z}^{(2)}.
+\label{align:ch09-residual3}
+\end{align}
+
+每个函数和残差连接的组合，如 $F(\mathbf{x})+\mathbf{x}$，称为\textbf{残差块}（residual block）。残差网络（residual network），也称 ResNet，由多层这样的块按顺序组成。通过残差连接修改后的网络如图~9.13~所示。如果非线性函数中参数足够小，使函数输出接近于零，则残差块可以很容易地生成恒等变换。
+
+"残差"一词指的是，在每个块中函数学习恒等映射和期望输出之间的残差，我们可以通过整理残差变换等式得到：
+\begin{align}
+F^{(2)}(\mathbf{z}^{(1)}) = \mathbf{z}^{(2)}-\mathbf{z}^{(1)}.
+\label{align:ch09-residual-def}
+\end{align}
+
+到目前为止还没有指定可学习非线性函数 $F(\cdot)$ 具体形式。最简单选择是使用一个标准前馈网络，它由可学习线性变换层和固定非线性激活函数（如 ReLU 函数）层交替构成。这为残差连接的放置提供了两种可能：在版本~(a)~中，被加的量总是非负的，因为它们由 ReLU 层输出给出，因此为了允许被加量可正可负，版本~(b)~更常用。
+
+现在可以代入中间变量 $\mathbf{z}^{(1)}$ 和 $\mathbf{z}^{(2)}$，从而给出将网络输出作为输入 $\mathbf{x}$ 的函数表达式（见习题~9.13）：
+\begin{align}
+\mathbf{y} = F^{(3)}\!\left(F^{(2)}\!\left(F(\mathbf{x})+\mathbf{x}\right)+\mathbf{z}^{(1)}\right)+\mathbf{z}^{(2)}.
+\label{align:ch09-residual-full}
+\end{align}
+
+如果结合式~\eqref{align:ch09-residual1}~至式~\eqref{align:ch09-residual3}~给出整个网络统一总体方程，就可以进一步深入了解残差连接促使误差表面变得平滑的方式：
+\begin{align}
+\mathbf{y} = F^{(3)}\!\left(F^{(2)}\!\left(F(\mathbf{x})+\mathbf{x}\right)+F^{(1)}(\mathbf{x})+\mathbf{x}\right)+F^{(2)}\!\left(F(\mathbf{x})+\mathbf{x}\right)+F(\mathbf{x})+\mathbf{x}.
+\label{align:ch09-residual-expanded}
+\end{align}
+
+图~9.15~描述了残差网络的这种扩展形式。可以看到函数整体由多个并行网络组成，每个网络层数较少。该网络具有深度网络表征能力，因为深度网络是它的一个特例。误差表面被浅层和深层子网络的组合所平滑。
+
+式~\eqref{align:ch09-residual-expanded}~定义的跳层连接要求输入变量和所有中间变量具有相同维度，以使它们能够相加。可以通过添加以下形式可学习参数的非方阵 $\mathbf{W}_s$ 来改变网络中某处维度：
+\begin{align}
+\mathbf{y} = F^{(3)}(\mathbf{z}^{(2)})+\mathbf{W}_s\mathbf{z}^{(1)}.
+\label{align:ch09-residual-proj}
+\end{align}
+
+Li 等人（2017）开发了一种直接可视化误差表面的方法，结果表明残差连接的作用是创建更平滑误差表面。残差网络中通常包含批量归一化层，它们一同显著减少了梯度消失和梯度爆炸问题。He 等人（2015a）证明残差连接可以使非常深的网络（可能有数百层）得到有效训练。与标准深度网络相比，具有残差连接的网络中梯度对输入值敏感度要低得多。
+
+\end{document}

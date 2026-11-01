@@ -1,0 +1,189 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{../../image/}{../../figure/}}
+\begin{document}
+
+\section{基本采样}\label{section:ch14-基本采样}
+
+在深度学习领域，我们经常需要从概率分布 $p(\bm{z})$ 中生成 $\bm{z}$ 的样本。这里的 $\bm{z}$ 可能是一个标量，分布可能是单变量高斯分布；或者 $\bm{z}$ 可能是一幅高分辨率的图像，而 $p(\bm{z})$ 可能是由深度神经网络定义的生成式模型。这种生成样本的过程称为采样（sampling），也称蒙特卡洛采样（Monte Carlo sampling）。对于许多简单的分布，我们可以使用数值技术直接生成合适的样本。而对于更复杂的分布，包括那些隐式定义的分布，我们则需要使用更复杂的方法。我们把每个实例化的值称为一个样本，而不像传统统计学那样把一组值称为一个样本。
+
+在本章中，我们将重点关注与深度学习最相关的采样方面的内容。关于蒙特卡洛采样方法的更通用的介绍，可以参考~Gilks, Richardson, and Spiegelhalter (1996)~以及~Robert and Casella (1999)。
+
+在本节中，我们将介绍一系列相对简单的采样策略，用于从给定分布中生成随机样本。由于样本是由计算机算法生成的，它们是伪随机（pseudo-random）的，也就是说，它们将使用确定性算法来运算，但仍必须通过适当的随机性测试。这里我们假设已经存在一个确定性算法，它能生成在 $(0,1)$ 区间均匀分布的伪随机数，事实上，大多数软件平台都内置了这样的功能。
+
+\subsection{期望}\label{subsection:ch14-期望}
+
+虽然在某些应用中我们可以直接使用样本本身，但在更多情况下，我们的目标是计算某个概率分布的期望。假设我们希望找到函数 $f(\bm{z})$ 关于概率分布 $p(\bm{z})$ 的期望。在这里，$\bm{z}$ 的分量可能包括离散变量、连续变量或它们两者的组合。对于连续变量，期望定义为
+\begin{align}
+\mathbb{E}[f]=\int f(\bm{z})\,p(\bm{z})\,\mathrm{d}\bm{z}
+\label{align:ch14-expectation}
+\end{align}
+其中，积分在离散变量的情况下被求和替代。
+
+我们在此假设这样的期望过于复杂，无法使用解析方法准确计算，这时候就需要用采样方法近似计算。采样方法的基本思路是获得从分布 $p(\bm{z})$ 中独立地抽取的一组样本 $\bm{z}^{(l)}$（其中 $l=1,\cdots,L$），使得期望\eqref{align:ch14-expectation}可以通过有限和的形式来近似：
+\begin{align}
+\overline{f}=\frac{1}{L}\sum_{l=1}^{L}f\!\left(\bm{z}^{(l)}\right).
+\label{align:ch14-mc-approx}
+\end{align}
+
+如果样本 $\bm{z}^{(l)}$ 是从概率分布 $p(\bm{z})$ 中抽取的，则 $\mathbb{E}[\overline{f}]=\mathbb{E}[f(\bm{z})]$，因此估计量 $\overline{f}$ 具有正确的均值（见习题~14.1）。我们也可以把它改成
+\begin{align}
+\mathbb{E}[f(\bm{z})]\simeq\frac{1}{L}\sum_{l=1}^{L}f\!\left(\bm{z}^{(l)}\right)
+\label{align:ch14-mc-unbiased}
+\end{align}
+其中符号 $\simeq$ 表示右侧是左侧的无偏估计量，也就是说，当对噪声分布进行平均时，两侧是相等的（见习题~14.2）。估计量\eqref{align:ch14-mc-approx}的方差由下式给出：
+\begin{align}
+\operatorname{var}[\overline{f}]=\frac{1}{L}\mathbb{E}\!\left[\left(f-\mathbb{E}[f]\right)^2\right]
+\label{align:ch14-mc-var}
+\end{align}
+该方差是函数 $f(\bm{z})$ 在概率分布 $p(\bm{z})$ 下的方差。注意，这种方差会随着 $L$ 的增加而线性减小，并且不依赖于 $\bm{z}$ 的维度，从原则上讲，使用相对较小的样本集合 $\{\bm{z}^{(l)}\}$ 就有可能获得高精度。然而，问题在于样本集合 $\{\bm{z}^{(l)}\}$ 中的样本可能不是独立的，所以有效样本量可能比表面上的样本量要小得多。另外，如果 $f(\bm{z})$ 在 $p(\bm{z})$ 较大的区域很小，在 $p(\bm{z})$ 较小的地方反而很大，则期望可能被小概率区域主导，这意味着为了达到足够的准确度，可能需要较大的样本量。
+
+\subsection{标准分布}\label{subsection:ch14-标准分布}
+
+现在假设我们已经有了一个均匀分布随机数的来源，我们讨论如何从简单的非均匀分布中生成随机数。假设 $z$ 在区间 $(0,1)$ 上均匀分布，并且我们使用某个函数 $g(\cdot)$ 来变换 $z$ 的值，使得 $y=g(z)$。$y$ 的分布将由下式决定：
+\begin{align}
+p(y)=p(z)\left|\frac{\mathrm{d}z}{\mathrm{d}y}\right|
+\label{align:ch14-change-var}
+\end{align}
+在这里，$p(z)=1$。我们的目标是选择合适的函数 $g(\cdot)$，让生成的 $y$ 具有某个特定的期望分布 $p(y)$。对式\eqref{align:ch14-change-var}进行积分，可以得到
+\begin{align}
+z=\int_{-\infty}^{y}p(\tilde{y})\,\mathrm{d}\tilde{y}\equiv h(y)
+\label{align:ch14-cdf-transform}
+\end{align}
+这是 $p(y)$ 的不定积分。$y=h^{-1}(z)$，所以我们需要使用一个变换函数，该函数是目标分布不定积分的反函数。
+
+以指数分布为例
+\begin{align}
+p(y)=\lambda\exp(-\lambda y),\qquad 0\leq y<\infty.
+\label{align:ch14-exponential}
+\end{align}
+在这种情况下，式\eqref{align:ch14-cdf-transform}中的积分的下限是 $0$，因此 $h(y)=1-\exp(-\lambda y)$。如果我们使用 $y=-\frac{1}{\lambda}\ln(1-z)$ 变换均匀分布的随机变量 $z$，那么 $y$ 将服从指数分布。
+
+可以应用变量变换方法的另一种分布是柯西分布：
+\begin{align}
+p(y)=\frac{1}{\pi}\frac{1}{1+y^2}
+\label{align:ch14-cauchy}
+\end{align}
+在这种情况下，不定积分的反函数可以用正切函数表示（见习题~14.4）。
+
+作为变换方法的最后一个例子，我们介绍用于生成高斯分布样本的~Box--Muller~方法。首先，我们生成一对均匀分布的随机数 $z_1,z_2\in(-1,1)$，这可以通过对在区间 $(0,1)$ 上均匀分布的变量 $z$ 进行 $z\rightarrow 2z-1$ 线性变换来实现。接下来，通过丢弃所有不满足条件 $z_1^2+z_2^2\leq 1$ 的数对，这将产生一个在单位圆内均匀分布的点集，且其概率密度为 $p(z_1,z_2)=1/\pi$。最后，对于每对 $z_1,z_2$，我们计算量
+\begin{align}
+r^2=z_1^2+z_2^2
+\label{align:ch14-box-muller-r}
+\end{align}
+其中 $r^2=z_1^2+z_2^2$（见习题~14.5）。$y_1$ 和 $y_2$ 的联合概率密度函数为
+\begin{align}
+p(y_1,y_2)=\frac{1}{2\pi}\exp\!\left(-\frac{1}{2}(y_1^2+y_2^2)\right)
+\label{align:ch14-box-muller-joint}
+\end{align}
+因此，$y_1$ 和 $y_2$ 是独立的，并且每个变量都服从均值为零、方差为 $1$ 的高斯分布。
+
+如果 $y$ 服从均值为零、方差为单位方差的高斯分布，那么 $\sigma y+\mu$ 将服从均值为 $\mu$、方差为 $\sigma^2$ 的高斯分布。为了生成具有多元高斯分布的向量值变量，假设多元高斯分布的均值为 $\bm{\mu}$、协方差矩阵为 $\bm{\Sigma}$，我们可以利用楚列斯基分解，其形式为 $\bm{\Sigma}=\bm{L}\bm{L}^{\mathsf T}$，其中 $\bm{L}$ 是一个下三角矩阵。然后，如果 $\bm{z}$ 是一个随机向量，其分量是独立的且具有零均值、单位方差的高斯分布（见习题~14.6），那么 $\bm{y}=\bm{\mu}+\bm{L}\bm{z}$ 将具有均值为 $\bm{\mu}$、协方差矩阵为 $\bm{\Sigma}$ 的高斯分布。
+
+显然，变换技术的成功依赖于计算所需分布的不定积分与求得其反函数的能力。这样的操作只对几种简单分布可行，因此我们必须转向替代方法，寻找更通用的策略。这里我们考虑两种替代方法：拒绝采样（rejection sampling）和重要性采样（importance sampling）。尽管这两种方法受限于单变量分布，并不能直接应用于多维的复杂问题，但它们是更通用策略的重要组成部分。
+
+\subsection{拒绝采样}\label{subsection:ch14-拒绝采样}
+
+假设我们想要从一个分布 $p(z)$ 中进行采样，该分布不属于目前为止考虑过的简单标准分布，并且直接从 $p(z)$ 中采样很困难。此外，假设我们能够轻易地计算任意给定值 $z$ 的 $\widetilde{p}(z)$，但计算结果需要乘以归一化常数 $Z_p$ 的倒数才能得到真实的 $p(z)$，即
+\begin{align}
+p(z)=\frac{1}{Z_p}\widetilde{p}(z)
+\label{align:ch14-unormalized}
+\end{align}
+其中 $\widetilde{p}(z)$ 很容易计算，但 $Z_p$ 是未知的。
+
+拒绝采样框架允许我们从相对复杂的分布中采样，但有一定的限制条件。首先考虑单变量分布，然后考虑扩展到多维的情形。要应用拒绝采样，我们需要一些更简单的分布 $q(z)$，它们有时称为提议分布（proposal distribution），我们可以容易地从中抽取样本。接下来引入常数 $k$，其值的选择需要满足对于所有的 $z$ 都有 $kq(z)\geq\widetilde{p}(z)$。函数 $kq(z)$ 称为比较函数。
+
+拒绝采样的每一步都需要生成两个随机数。首先，我们从分布 $q(z)$ 中生成一个随机数 $z^\star$。接下来，我们从区间 $[0,kq(z^\star)]$ 上的均匀分布中生成另一个随机数 $u$。这对随机数在函数 $kq(z)$ 的曲线下具有均匀分布。最后，如果 $u>\widetilde{p}(z^\star)$，则拒绝该样本，否则保留它。因此，这对随机数如果位于未归一化分布 $\widetilde{p}(z)$ 和缩放分布 $kq(z)$ 之间的灰色区域内，则会被拒绝。剩余的随机数对在 $\widetilde{p}(z)$ 曲线下具有均匀分布（见习题~14.7），因此相应的 $z$ 值服从我们期望的分布 $p(z)$。
+
+接受样本的概率由下式给出：
+\begin{align}
+p(\text{accept})=\int\min\!\left\{\frac{\widetilde{p}(z)}{kq(z)},1\right\}q(z)\,\mathrm{d}z
+\label{align:ch14-accept-prob}
+\end{align}
+原始的 $z$ 值是从分布 $q(z)$ 中生成的，然后这些样本以 $\widetilde{p}(z)/kq(z)$ 的概率得以接受，因此这种方法拒绝的点的比例取决于未归一化分布 $\widetilde{p}(z)$ 曲线下的面积与缩放分布 $kq(z)$ 曲线下的面积的比值。由此可见，常数 $k$ 应尽可能小，同时满足对于任意 $z$，$kq(z)$ 处处都不小于 $\widetilde{p}(z)$ 的限制条件。
+
+为了演示拒绝采样的用法，考虑从伽马分布中采样的任务：
+\begin{align}
+\operatorname{Gam}(z|a,b)=\frac{b^a z^{a-1}e^{-bz}}{\Gamma(a)}
+\label{align:ch14-gamma}
+\end{align}
+当 $a>1$，伽马分布具有钟形形状。因此，合适的提议分布是柯西分布\eqref{align:ch14-cauchy}，因为它也是钟形的，而且我们可以使用前面讨论的变换方法从中采样。我们需要稍微扩展一下柯西分布，以确保其在任何位置的值都不小于伽马分布的值。这可以通过使用 $z=b\tan y+c$ 变换均匀分布的随机变量来实现，这会产生服从下式分布的随机数
+\begin{align}
+q(z)=\frac{1}{\pi}\frac{b}{(z-c)^2+b^2}
+\label{align:ch14-scaled-cauchy}
+\end{align}
+通过设置 $c=a-1$、$b^2=2a-1$，并选择尽可能小的常数 $k$ 来满足 $kq(z)\geq\widetilde{p}(z)$ 的要求，可以获得最小的拒绝率。
+
+为了使拒绝采样具有实用价值，我们要求比较函数与目标分布尽可能接近，以便将拒绝率保持在最低限度。下面看看当我们试图在高维空间中使用拒绝采样时会发生什么。我们考虑一个有点儿故意设计的问题，希望从一个均值为零、协方差为 $\sigma_1^2\bm{I}$ 的高斯分布中采样（其中 $\bm{I}$ 是单位矩阵），而提议分布本身是一个均值为零、协方差为 $\sigma_2^2\bm{I}$ 的高斯分布。显然，必须有 $\sigma_2\geq\sigma_1$ 以确保存在一个常数 $k$ 使得 $kq(z)\geq p(z)$。在 $D$ 维空间中，$k$ 的最优值由 $k=(\sigma_2/\sigma_1)^D$ 给出。样本接受率将是 $p(z)$ 和 $kq(z)$ 曲线下面积的比值，因为这两个分布都是归一化的，所以结果为 $1/k$。对于 $\sigma_2$ 仅比 $\sigma_1$ 高出 $1\%$，在 $D=1000$ 维时，接受率大约为 $1/20\,000$。在这个例子中，比较函数接近目标分布。目标分布可能是多模态且具有尖锐峰值的，要找到一个好的提议分布和比较函数将极其困难。此外，接受率随维度呈指数下降是拒绝采样的一个普遍特性。尽管拒绝采样在一维或两维空间中可能是一种有用的技术，但它不适用于高维问题。然而，它可以作为在高维空间采样的更复杂算法中的一个子程序发挥作用。
+
+\subsection{适应性拒绝采样}\label{subsection:ch14-适应性拒绝采样}
+
+许多时候，我们希望使用拒绝采样方法却很难确定包络分布 $q(z)$ 的合适解析形式。一种替代方法是基于分布 $\widetilde{p}(z)$ 的测量值构造包络函数（Gilks and Wild, 1992）。当 $p(z)$ 是对数凹函数时，即 $\ln p(z)$ 的导数是 $z$ 的非增函数时，构造合适的包络函数尤其简单。
+
+首先，在一些初始网格点上计算 $\ln\widetilde{p}(z)$ 及其梯度，然后利用得到的切线交点来构造包络函数。接下来，从包络分布中抽取一个样本值（见习题~14.10）。这一步很简单，因为包络分布的对数是一系列线性函数，因此包络分布本身是由以下形式的分段指数分布构成的：
+\begin{align}
+q(z)=\sum_j k_j\exp\!\left\{-a_j(z-z_j)\right\},\qquad z_j<z\leq z_{j+1}.
+\label{align:ch14-adaptive-envelope}
+\end{align}
+一旦抽取了一个样本，就可以应用常规的拒绝标准。样本如果被接受，它将是期望分布的一个抽取。样本如果被拒绝，它就被纳入网格点集合中，用于计算新的切线，并由此完善包络函数。随着网格点数量的增加，包络函数会越来越逼近期望分布 $p(z)$，并且样本被拒绝的概率就会降低。
+
+Gilks~提出了旨在避免计算导数的自适应拒绝采样（Gilks, 1992）。自适应拒绝采样框架也可以扩展到非对数凹分布，只需要在每个拒绝采样步骤之后跟随一个~Metropolis--Hastings~步骤（将在\cref{subsection:ch14-metropolis-hastings}中讨论），从而产生自适应拒绝~Metropolis~采样（Gilks, Best, and Tan, 1995）。
+
+\subsection{重要性采样}\label{subsection:ch14-重要性采样}
+
+我们希望从复杂概率分布中进行采样的一个原因是为了计算形如\eqref{align:ch14-expectation}的期望。重要性采样技术提供了一个直接近似期望的框架，但它本身并不提供从分布 $p(\bm{z})$ 中抽取样本的方法。
+
+假设直接从 $p(\bm{z})$ 中采样是不现实的，但对于任意给定的 $\bm{z}$ 值，我们能够容易地计算出 $\widetilde{p}(\bm{z})$ 的值。一种简单的计算期望方法是将 $\bm{z}$ 空间离散化为均匀网格，并将期望表示成求和的形式。然而，这种方法的一个明显问题是，求和项的数量会随着 $\bm{z}$ 的维度的增加呈指数增长。此外，正如我们已经注意到的，我们感兴趣的概率分布通常会将它们的大部分概率密度限制在 $\bm{z}$ 空间的相对较小的区域内，所以在高维问题中，均匀采样将非常低效，因为只有很少一部分样本会对求和做出显著贡献。我们真正希望的是在 $p(\bm{z})$ 较大的区域，或理想情况下，从 $p(\bm{z})f(\bm{z})$ 较大的区域中选择样本点。
+
+与拒绝采样一样，重要性采样也基于易于抽取样本的提议分布 $q(\bm{z})$。我们可以利用从 $q(\bm{z})$ 中抽取的样本集 $\{\bm{z}^{(l)}\}$，将期望表达为样本上的有限和形式：
+\begin{align}
+\mathbb{E}[f]=\int f(\bm{z})p(\bm{z})\,\mathrm{d}\bm{z}\simeq\frac{1}{L}\sum_{l=1}^{L}\frac{\widetilde{p}(\bm{z}^{(l)})}{q(\bm{z}^{(l)})}f\!\left(\bm{z}^{(l)}\right).
+\label{align:ch14-importance}
+\end{align}
+权重 $r^{(l)}=\widetilde{p}(\bm{z}^{(l)})/q(\bm{z}^{(l)})$ 称为重要性权重（importance weights），用于纠正从错误分布中采样而引入的偏差。请注意，与拒绝采样不同，这里生成的所有样本都会被保留。
+
+通常分布 $p(\bm{z})$ 的计算只能达到一个归一化常数的精度，所以 $p(\bm{z})=\widetilde{p}(\bm{z})/Z_p$，其中 $\widetilde{p}(\bm{z})$ 可以轻易计算出来，而 $Z_p$ 是未知的。类似地，我们可能希望使用的重要性采样分布 $q(\bm{z})=\widetilde{q}(\bm{z})/Z_q$ 也具有同样的性质。我们可以使用相同的样本集来计算比值 $Z_p/Z_q$，结果为
+\begin{align}
+\mathbb{E}[f]=\int f(\bm{z})p(\bm{z})\,\mathrm{d}\bm{z}\simeq\frac{\sum_l r^{(l)}f(\bm{z}^{(l)})}{\sum_l r^{(l)}}.
+\label{align:ch14-importance-normalized}
+\end{align}
+因此，式\eqref{align:ch14-importance-normalized}中的期望可用加权和来表示：
+\begin{align}
+\mathbb{E}[f]=\sum_l w_l f\!\left(\bm{z}^{(l)}\right)
+\label{align:ch14-weighted-sum}
+\end{align}
+其中
+\begin{align}
+w_l=\frac{r^{(l)}}{\sum_{l'}r^{(l')}}.
+\label{align:ch14-normalized-weights}
+\end{align}
+请注意，$\{w_l\}$ 都是非负数且和为 $1$。
+
+与拒绝采样一样，重要性采样的成功严重依赖于采样分布 $q(\bm{z})$ 与目标分布 $p(\bm{z})$ 的匹配程度。如果 $p(\bm{z})f(\bm{z})$ 变化剧烈并且其大部分概率密度集中在 $\bm{z}$ 空间的相对较小的区域内（这种情况很常见），则一组重要性权重 $\{r^{(l)}\}$ 可能会被少数几个较大权重的支配，剩余的权重则相对无关紧要。因此，有效样本的数量可能比表面上的样本数 $L$ 少得多。如果没有任何样本落在 $p(\bm{z})f(\bm{z})$ 较大的区域内，问题将更为严重。在那种情况下，即使 $r^{(l)}$ 和 $r^{(l)}f(\bm{z}^{(l)})$ 的表面方差可能很小，对期望的估计也可能产生严重错误。因此，重要性采样的一个主要缺点是，它可能产生任意错误的结果，并且没有诊断指标。这也突出了采样分布 $q(\bm{z})$ 的一个关键要求，即在 $p(\bm{z})$ 可能显著的区域内，它的值不应该太小或为零。
+
+\subsection{采样--重要性--重采样}\label{subsection:ch14-采样重要性重采样}
+
+\cref{subsection:ch14-拒绝采样}讨论的拒绝采样部分地依赖于成功确定一个适当的正值 $k$。对于分布 $p(z)$ 和 $q(z)$ 的各种组合，想要确定一个适当的 $k$ 值是不切实际的，因为当 $k$ 值大到能保证目标分布被包络的时候，对应的样本接受率会小到没有实用价值。
+
+采样--重要性--重采样方案也使用一个采样分布 $q(z)$，但避免了确定 $k$ 值的要求。该方案分两个阶段。在第一阶段，从 $q(z)$ 中抽取 $L$ 个样本 $z^{(1)},\cdots,z^{(L)}$。然后在第二阶段，使用式\eqref{align:ch14-normalized-weights}构建权重 $(w_1,\cdots,w_L)$。最后从离散分布 $w_1,\cdots,w_L$ 中抽取第二组 $L$ 个样本，其被抽中的概率由权重 $(w_1,\cdots,w_L)$ 给出。
+
+为了理解这一点，考虑单变量情况，并注意重采样值的累积分布由下式给出：
+\begin{align}
+p(z<a)=\sum_l w_l\,\mathbb{I}\!\left(z^{(l)}\leq a\right)\simeq\int\mathbb{I}(z\leq a)\,p(z)\,\mathrm{d}z
+\label{align:ch14-resample-cdf}
+\end{align}
+其中 $\mathbb{I}(\cdot)$ 是指示函数（如果其参数为真，则函数值为 $1$，否则为 $0$）。使 $L$ 趋于无穷大，并假设分布的适当的正则性，我们就可以用根据原始采样分布 $q(z)$ 加权的积分来替换求和：
+\begin{align}
+p(z<a)\simeq\int\mathbb{I}(z\leq a)\frac{\widetilde{p}(z)}{q(z)}q(z)\,\mathrm{d}z
+\label{align:ch14-resample-limit}
+\end{align}
+这就是 $p(z)$ 的累积分布函数。同样，我们可以看到 $p(z)$ 的归一化并不是必需的。
+
+对于有限值 $L$ 和给定的初始样本集，重采样值只能近似地从目标分布中抽取。与拒绝采样一样，随着采样分布 $q(z)$ 更接近目标分布 $p(z)$，近似结果的效果也会越来越好。当 $q(z)=p(z)$ 时，初始样本 $\{z^{(1)},\cdots,z^{(L)}\}$ 具有目标分布，且权重 $w_l=1/L$，因此重采样值也具有目标分布。
+
+如果需要关于分布 $p(z)$ 的矩，则可以直接使用原始样本连同权重来计算，因为
+\begin{align}
+\mathbb{E}[f(z)]=\int f(z)p(z)\,\mathrm{d}z.
+\label{align:ch14-resample-moment}
+\end{align}
+
+\end{document}

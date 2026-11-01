@@ -1,0 +1,73 @@
+﻿\documentclass[../../main.tex]{subfiles}
+
+\graphicspath{{../../image/}{../../figure/}}
+
+\begin{document}
+
+\section{判别函数}\label{section:ch05-判别函数}
+
+判别式是一种函数，它取输入向量$\boldsymbol{x}$并将其归入$K$个类（用$C_k$表示）中的一个类。我们可以大致确定解决分类问题的三种方法（参见\cref{subsection:ch05-推理和决策}）。其中，最简单的方法是构建一个判别函数（discriminant function），该函数直接将每一个输入向量$\boldsymbol{x}$归入一个特定类。然而，一种更有效的方法是在推理阶段依据条件概率$p(C_k\mid\boldsymbol{x})$构建分布模型，然后利用这些分布模型做出最优决策。将推理和决策分开能带来很多好处。
+
+有两种不同的方法可以确定条件概率$p(C_k\mid\boldsymbol{x})$。一种方法是直接建模，例如将它表示为参数模型，然后使用训练集对参数进行优化，这就是判别概率模型（discriminative probabilistic model）。另一种方法是对类-条件概率密度$p(\boldsymbol{x}\mid C_k)$以及类的先验概率$p(C_k)$进行建模，然后使用贝叶斯定理计算所需的后验概率：
+
+\begin{align}
+  p(C_k\mid\boldsymbol{x})=\frac{p(\boldsymbol{x}\mid C_k)p(C_k)}{p(\boldsymbol{x})}
+  \label{align:ch05-贝叶斯后验}
+\end{align}
+
+此为生成概率模型（generative probabilistic model），它提供了从每个类-条件概率密度$p(\boldsymbol{x}\mid C_k)$生成样本的方法。本章仅关注线性判别式（linear discriminant），即决策面为超平面的判别式。
+
+\subsection{二分类}\label{subsection:ch05-二分类}
+
+线性判别函数的最简单表示是通过取输入向量的线性函数得出的：
+
+\begin{align}
+  y(\boldsymbol{x})=\boldsymbol{w}^{\mathsf{T}}\boldsymbol{x}+w_0
+  \label{align:ch05-线性判别}
+\end{align}
+
+其中$\boldsymbol{w}$为权重向量，$w_0$为偏置参数。如果$y(\boldsymbol{x})\geqslant 0$，输入向量$\boldsymbol{x}$将被归入$C_1$类，否则归入$C_2$类。因此，相应的决策边界由$y(\boldsymbol{x})=0$定义，对应于$D$维输入空间中的$(D-1)$维超平面。偏置参数$w_0$决定了决策面的位置，而$\boldsymbol{w}$决定了决策面的朝向。
+
+$y(\boldsymbol{x})$的值为点$\boldsymbol{x}$到决策面的带号距离的测度。设$\boldsymbol{x}_{\perp}$是$\boldsymbol{x}$在决策面上的正交投影，则点$\boldsymbol{x}$与决策面的带号正交距离为$y(\boldsymbol{x})/\lVert\boldsymbol{w}\rVert$。如同线性回归模型（参见\cref{subsection:ch04-基函数}），有时使用更简洁的符号较为方便，即给出一个额外的虚拟"输入"值$x_0=1$，然后定义$\tilde{\boldsymbol{w}}=(w_0,\boldsymbol{w})$和$\tilde{\boldsymbol{x}}=(1,\boldsymbol{x})$，从而有$y(\boldsymbol{x})=\tilde{\boldsymbol{w}}^{\mathsf{T}}\tilde{\boldsymbol{x}}$。
+
+\subsection{多分类}\label{subsection:ch05-多分类}
+
+下面将线性判别函数扩展到多分类（$K>2$）。我们可能会试图通过组合一些二分类判别函数来建立多分类判别式，然而这将导致分类区域不明确的困难。我们可以通过采用$K$个线性函数组成的单个$K$类判别式来避免这些困难：
+
+\begin{align}
+  y_k(\boldsymbol{x})=\boldsymbol{w}_k^{\mathsf{T}}\boldsymbol{x}+w_{k0}
+  \label{align:ch05-多类判别}
+\end{align}
+
+然后在所有$j\neq k$的情况下，如果$y_k(\boldsymbol{x})>y_j(\boldsymbol{x})$，就将点$\boldsymbol{x}$归入$C_k$类。因此，$C_k$类和$C_j$类之间的决策边界由$y_k(\boldsymbol{x})=y_j(\boldsymbol{x})$给出，对应于一个$(D-1)$维超平面。这种判别式的决策区域总是单连且凸出的。
+
+\subsection{1-of-$K$编码方案}\label{subsection:ch05-1ofK编码}
+
+在分类问题中，目标变量$\boldsymbol{t}$是我们希望预测其类标签的二进制向量。对于二分类问题，最方便的是单目标变量$t\in\{0,1\}$的二进制表示，$t=1$表示$C_1$类，$t=0$表示$C_2$类。对于多分类（$K>2$）问题，使用1-of-$K$编码方案较为方便，其也称独热编码方案，其中$\boldsymbol{t}$是长度为$K$的向量，从而如果该类是$C_k$类，则$\boldsymbol{t}$的所有元素都为$0$，只有元素$t_k$的值为$1$。例如，假设有$K=5$个类，则来自$C_3$类的数据点将得到目标向量$\boldsymbol{t}=(0,0,1,0,0)$。
+
+\subsection{最小二乘分类}\label{subsection:ch05-最小二乘分类}
+
+在线性回归模型中，通过最小化平方和误差函数，可以得到参数值的简单闭式解（参见\cref{subsection:ch04-最大似然}）。因此我们期待将同样的最小二乘形式应用于分类问题。考虑一个训练数据集$\{\boldsymbol{x}_n\}$，定义目标矩阵$\boldsymbol{T}$（第$n$行为$\boldsymbol{t}_n^{\mathsf{T}}$）和设计矩阵$\boldsymbol{X}$。平方和误差函数为
+
+\begin{align}
+  E_D(\tilde{\boldsymbol{W}})=\frac{1}{2}\,\mathrm{Tr}\!\left\{(\tilde{\boldsymbol{X}}\tilde{\boldsymbol{W}}-\boldsymbol{T})^{\mathsf{T}}(\tilde{\boldsymbol{X}}\tilde{\boldsymbol{W}}-\boldsymbol{T})\right\}
+  \label{align:ch05-最小二乘分类误差}
+\end{align}
+
+将与$\tilde{\boldsymbol{W}}$有关的导数设为$0$并重新排列，求得解
+
+\begin{align}
+  \tilde{\boldsymbol{W}}=(\tilde{\boldsymbol{X}}^{\mathsf{T}}\tilde{\boldsymbol{X}})^{-1}\tilde{\boldsymbol{X}}^{\mathsf{T}}\boldsymbol{T}=\tilde{\boldsymbol{X}}^{\dagger}\boldsymbol{T}
+  \label{align:ch05-最小二乘分类解}
+\end{align}
+
+其中$\tilde{\boldsymbol{X}}^{\dagger}$是矩阵$\tilde{\boldsymbol{X}}$的伪逆（参见\cref{subsection:ch04-最大似然}），从而求得判别函数
+
+\begin{align}
+  \boldsymbol{y}(\boldsymbol{x})=\tilde{\boldsymbol{W}}^{\mathsf{T}}\tilde{\boldsymbol{x}}=\tilde{\boldsymbol{X}}^{\dagger\mathsf{T}}\tilde{\boldsymbol{x}}
+  \label{align:ch05-分类判别函数}
+\end{align}
+
+最小二乘法给出了判别函数参数的精确闭式解。然而，即使作为一个判别函数（我们直接用它来做决定，且不需要做任何概率解释），它也存在一些严重的问题。特别是，最小二乘法对离群值（与大部分数据点相距甚远的数据点）的存在非常敏感。平方和误差函数对距离决策边界较远的、即使被正确分类的数据点赋予了过高的权重。回想一下，最小二乘法对应的是高斯条件分布假设下的最大似然，而二进制目标变量的分布显然远非高斯分布。为便于比较，使用逻辑斯谛回归（logistic regression）技术（参见\cref{subsection:ch05-逻辑斯谛回归}）得出的结果对离群值的鲁棒性更强。
+
+\end{document}

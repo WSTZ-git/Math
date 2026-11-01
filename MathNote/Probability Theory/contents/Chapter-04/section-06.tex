@@ -1,0 +1,470 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}}
+
+\begin{document}
+
+\section{*多元正态分布}\label{section:ch04-多元正态分布}
+
+\subsection*{一、密度函数与特征函数}
+
+在本节中，我们将讨论多元正态分布的定义与性质，假定读者具有矩阵论的基本知识。因为对二元的场合我们已直接推导过其中的大部分结果，所以基础知识不足的读者不妨跳过本节。
+
+下面，我们将以黑体的小写字母记列向量，如：
+\[
+\boldsymbol{\mu}=\begin{pmatrix}\mu_1\\\mu_2\\\vdots\\\mu_n\end{pmatrix},\qquad
+\boldsymbol{\xi}=\begin{pmatrix}\xi_1\\\xi_2\\\vdots\\\xi_n\end{pmatrix}.
+\]
+以黑体的大写字母记矩阵，例如
+\[
+\Sigma=\begin{pmatrix}
+\sigma_{11}&\sigma_{12}&\cdots&\sigma_{1n}\\
+\sigma_{21}&\sigma_{22}&\cdots&\sigma_{2n}\\
+\vdots&\vdots&&\vdots\\
+\sigma_{n1}&\sigma_{n2}&\cdots&\sigma_{nn}
+\end{pmatrix}.
+\]
+以 $\mathrm{T}$ 记矩阵（当然也包括向量）的转置，因此 $\boldsymbol{t}^{\mathrm{T}}\boldsymbol{\xi}=\sum_{i=1}^n t_i\xi_i$（其中，$\boldsymbol{t}$ 为列向量）；以 $\Sigma^{-1}$ 记 $\Sigma$ 的逆阵；以 $\det\Sigma$ 记 $\Sigma$ 的行列式之值。
+
+在~(3.2.13) 中，我们已定义了 $n$ 元正态分布的密度函数，采用列向量形式，其表达式为
+\begin{align}
+p(\boldsymbol{x})=\frac{1}{(2\pi)^{n/2}(\det\Sigma)^{1/2}}\exp\left\{-\frac12(\boldsymbol{x}-\boldsymbol{\mu})^{\mathrm{T}}\Sigma^{-1}(\boldsymbol{x}-\boldsymbol{\mu})\right\},\label{align:ch04-多元正态密度}
+\end{align}
+其中 $\Sigma$ 是 $n$ 阶正定对称矩阵，$\boldsymbol{\mu}$ 是实值列向量，并简记这个正态分布为 $N(\boldsymbol{\mu},\Sigma)$。
+
+事实上，我们还需要证明由~\eqref{align:ch04-多元正态密度} 定义的函数是 $\mathbb{R}^n$ 中的密度函数。
+
+显然
+\begin{align}
+p(\boldsymbol{x})>0,\qquad \boldsymbol{x}\in\mathbb{R}^n,\label{align:ch04-密度正}
+\end{align}
+因此只须验证下式成立
+\begin{align}
+\int_{\mathbb{R}^n}p(\boldsymbol{x})\,\mathrm{d}\boldsymbol{x}=1.\label{align:ch04-密度归一}
+\end{align}
+
+为了证明~\eqref{align:ch04-密度归一}，我们要用到矩阵论中这样一个结果：若 $\Sigma$ 是正定对称阵，则存在非奇阵 $L$，使
+\begin{align}
+\Sigma=LL^{\mathrm{T}}.\label{align:ch04-Cholesky}
+\end{align}
+
+作线性变换
+\begin{align}
+\boldsymbol{y}=L^{-1}(\boldsymbol{x}-\boldsymbol{\mu}),\label{align:ch04-多元正态变换}
+\end{align}
+则逆变换为
+\begin{align}
+\boldsymbol{x}=L\boldsymbol{y}+\boldsymbol{\mu}.\label{align:ch04-多元逆变换}
+\end{align}
+
+变换~\eqref{align:ch04-多元逆变换} 的雅可比行列式由下式给出
+\begin{align}
+\det L=(\det\Sigma)^{1/2}.\label{align:ch04-雅可比}
+\end{align}
+
+由于
+\begin{align}
+(\boldsymbol{x}-\boldsymbol{\mu})^{\mathrm{T}}\Sigma^{-1}(\boldsymbol{x}-\boldsymbol{\mu})
+=[L^{-1}(\boldsymbol{x}-\boldsymbol{\mu})]^{\mathrm{T}}[L^{-1}(\boldsymbol{x}-\boldsymbol{\mu})]=\boldsymbol{y}^{\mathrm{T}}\boldsymbol{y},\label{align:ch04-二次型化简}
+\end{align}
+因此
+\begin{align*}
+\int_{\mathbb{R}^n}p(\boldsymbol{x})\,\mathrm{d}\boldsymbol{x}
+&=\frac{1}{(2\pi)^{n/2}(\det\Sigma)^{1/2}}\int_{\mathbb{R}^n}\exp\left\{-\frac12\boldsymbol{y}^{\mathrm{T}}\boldsymbol{y}\right\}\cdot(\det\Sigma)^{1/2}\,\mathrm{d}\boldsymbol{y}\\
+&=\frac{1}{(2\pi)^{n/2}}\int_{-\infty}^{\infty}\cdots\int_{-\infty}^{\infty}\exp\left\{-\frac12\sum_{k=1}^n y_k^2\right\}\mathrm{d}y_1\cdots\mathrm{d}y_n\\
+&=\left[\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty}\mathrm{e}^{-u^2/2}\,\mathrm{d}u\right]^n=1.
+\end{align*}
+从而证明了~\eqref{align:ch04-密度归一}，所以~\eqref{align:ch04-多元正态密度} 确实定义了 $\mathbb{R}^n$ 上的一个密度函数。
+
+\begin{theorem}[多元正态的特征函数]\label{theorem:ch04-多元正态特征函数}
+$n$ 元正态分布~\eqref{align:ch04-多元正态密度} 的特征函数为
+\begin{align}
+f(\boldsymbol{t})=\exp\left\{\mathrm{i}\boldsymbol{\mu}^{\mathrm{T}}\boldsymbol{t}-\frac12\boldsymbol{t}^{\mathrm{T}}\Sigma\boldsymbol{t}\right\}.\label{align:ch04-多元正态特征函数}
+\end{align}
+\end{theorem}
+
+\begin{proof}
+按定义
+\begin{align*}
+f(\boldsymbol{t})&=\int_{\mathbb{R}^n}\mathrm{e}^{\mathrm{i}\boldsymbol{t}^{\mathrm{T}}\boldsymbol{x}}p(\boldsymbol{x})\,\mathrm{d}\boldsymbol{x}\\
+&=\frac{1}{(2\pi)^{n/2}(\det\Sigma)^{1/2}}
+\cdot\int_{\mathbb{R}^n}\mathrm{e}^{\mathrm{i}\boldsymbol{t}^{\mathrm{T}}\boldsymbol{x}}\exp\left\{-\frac12(\boldsymbol{x}-\boldsymbol{\mu})^{\mathrm{T}}\Sigma^{-1}(\boldsymbol{x}-\boldsymbol{\mu})\right\}\mathrm{d}\boldsymbol{x}.
+\end{align*}
+作变换~\eqref{align:ch04-多元正态变换}，注意到
+\begin{align}
+\mathrm{i}\boldsymbol{t}^{\mathrm{T}}\boldsymbol{x}=\mathrm{i}\boldsymbol{t}^{\mathrm{T}}\boldsymbol{\mu}+\mathrm{i}\boldsymbol{t}^{\mathrm{T}}L\boldsymbol{y}=\mathrm{i}\boldsymbol{t}^{\mathrm{T}}\boldsymbol{\mu}+\mathrm{i}(L^{\mathrm{T}}\boldsymbol{t})^{\mathrm{T}}\boldsymbol{y}.\label{align:ch04-特征函数化简}
+\end{align}
+记 $\boldsymbol{s}=L^{\mathrm{T}}\boldsymbol{t}$，则
+\begin{align*}
+\mathrm{i}\boldsymbol{t}^{\mathrm{T}}\boldsymbol{x}-\frac12(\boldsymbol{x}-\boldsymbol{\mu})^{\mathrm{T}}\Sigma^{-1}(\boldsymbol{x}-\boldsymbol{\mu})
+&=\mathrm{i}\boldsymbol{t}^{\mathrm{T}}\boldsymbol{\mu}+\mathrm{i}\boldsymbol{s}^{\mathrm{T}}\boldsymbol{y}-\frac12\boldsymbol{y}^{\mathrm{T}}\boldsymbol{y}\\
+&=\mathrm{i}\boldsymbol{\mu}^{\mathrm{T}}\boldsymbol{t}+\sum_{k=1}^n\left(\mathrm{i}s_k y_k-\frac12 y_k^2\right)\\
+&=\mathrm{i}\boldsymbol{\mu}^{\mathrm{T}}\boldsymbol{t}-\frac12\sum_{k=1}^n(y_k-\mathrm{i}s_k)^2-\frac12\sum_{k=1}^n s_k^2\\
+&=\mathrm{i}\boldsymbol{\mu}^{\mathrm{T}}\boldsymbol{t}-\frac12\sum_{k=1}^n(y_k-\mathrm{i}s_k)^2-\frac12\boldsymbol{t}^{\mathrm{T}}\Sigma\boldsymbol{t}.
+\end{align*}
+因此
+\begin{align*}
+f(\boldsymbol{t})
+&=\frac{\mathrm{e}^{\mathrm{i}\boldsymbol{\mu}^{\mathrm{T}}\boldsymbol{t}-\frac12\boldsymbol{t}^{\mathrm{T}}\Sigma\boldsymbol{t}}}{(2\pi)^{\frac{n}{2}}(\det\Sigma)^{\frac12}}
+\cdot\int_{-\infty}^{\infty}\cdots\int_{-\infty}^{\infty}\exp\left\{-\frac12\sum_{k=1}^n(y_k-\mathrm{i}s_k)^2\right\}(\det\Sigma)^{\frac12}\mathrm{d}y_1\cdots\mathrm{d}y_n\\
+&=\mathrm{e}^{\mathrm{i}\boldsymbol{\mu}^{\mathrm{T}}\boldsymbol{t}-\frac12\boldsymbol{t}^{\mathrm{T}}\Sigma\boldsymbol{t}}.
+\end{align*}
+\end{proof}
+
+在~\eqref{align:ch04-多元正态密度} 中，假定 $\Sigma$ 是正定对称阵，否则该表达式没有意义，因此我们只是对正定对称阵 $\Sigma$ 的场合定义了多元正态分布。但是利用特征函数表达式~\eqref{align:ch04-多元正态特征函数} 有可能把定义拓广到一般非负定对称阵 $\Sigma$ 的场合。
+
+事实上，设 $\Sigma$ 是非负定对称阵，令 $\Sigma_k=\Sigma+\dfrac{1}{k}I$，这里 $I$ 是 $n$ 阶单位阵，显然 $\Sigma_k$ 是正定对称阵，因此
+\[
+f_k(\boldsymbol{t})=\mathrm{e}^{\mathrm{i}\boldsymbol{\mu}^{\mathrm{T}}\boldsymbol{t}-\frac12\boldsymbol{t}^{\mathrm{T}}\Sigma_k\boldsymbol{t}}
+\]
+是 $n$ 元正态分布 $N(\boldsymbol{\mu},\Sigma_k)$ 的特征函数。现在
+\[
+\lim_{k\to\infty}f_k(\boldsymbol{t})=\mathrm{e}^{\mathrm{i}\boldsymbol{\mu}^{\mathrm{T}}\boldsymbol{t}-\frac12\boldsymbol{t}^{\mathrm{T}}\Sigma\boldsymbol{t}}=f(\boldsymbol{t}),
+\]
+而 $f(\boldsymbol{t})$ 在 $\mathbb{R}^n$ 上连续，因此由上节的连续性定理知 $f(\boldsymbol{t})$ 是 $\mathbb{R}^n$ 上某分布函数的特征函数。
+
+这样可以引进如下一般定义。
+
+\begin{definition}[一般 $n$ 元正态分布]\label{definition:ch04-一般多元正态}
+若 $\boldsymbol{\mu}$ 是 $n$ 维实向量，$\Sigma$ 是 $n$ 阶非负定对称阵，则称以~\eqref{align:ch04-多元正态特征函数} 式中的 $f(\boldsymbol{t})$ 为其特征函数的分布函数为 $n$ 元正态分布，并简记为 $N(\boldsymbol{\mu},\Sigma)$。
+\end{definition}
+
+按照这个定义，当 $\Sigma$ 为正定对称阵时，其密度函数由~\eqref{align:ch04-多元正态密度} 给出；但是当 $\det\Sigma=0$ 时，密度函数无法写出。可以证明，若 $\Sigma$ 的秩为 $r\,(r<n)$，则这时概率分布集中在一个 $r$ 维子空间上，这种正态分布称为\textbf{退化正态分布}或\textbf{奇异正态分布}。
+
+下面讨论中，我们总是假定随机向量 $\boldsymbol{\xi}=(\xi_1,\xi_2,\cdots,\xi_n)^{\mathrm{T}}$ 服从 $n$ 元正态分布 $N(\boldsymbol{\mu},\Sigma)$。
+
+\begin{theorem}[边际分布仍是正态]\label{theorem:ch04-边际正态}
+$\boldsymbol{\xi}$ 的任一子向量 $(\xi_{k_1},\xi_{k_2},\cdots,\xi_{k_m})^{\mathrm{T}}\,(m\leqslant n)$ 也服从正态分布，分布为 $N(\tilde{\boldsymbol{\mu}},\tilde{\Sigma})$，其中 $\tilde{\boldsymbol{\mu}}=(\mu_{k_1},\mu_{k_2},\cdots,\mu_{k_m})^{\mathrm{T}}$，$\tilde{\Sigma}$ 为保留 $\Sigma$ 的第 $k_1,k_2,\cdots,k_m$ 行及列所得的 $m$ 阶矩阵。
+
+特别地，$\xi_j$ 服从一元正态分布 $N(\mu_j,\sigma_{jj})$。
+\end{theorem}
+
+\begin{proof}
+只须在特征函数~\eqref{align:ch04-多元正态特征函数} 中对一切不等于 $k_1,k_2,\cdots,k_m$ 的 $l$，令 $t_l=0$，即得 $(\xi_{k_1},\xi_{k_2},\cdots,\xi_{k_m})^{\mathrm{T}}$ 的特征函数
+\[
+\tilde{f}(\tilde{\boldsymbol{t}})=\mathrm{e}^{\mathrm{i}\tilde{\boldsymbol{\mu}}^{\mathrm{T}}\tilde{\boldsymbol{t}}-\frac12\tilde{\boldsymbol{t}}^{\mathrm{T}}\tilde{\Sigma}\tilde{\boldsymbol{t}}},
+\]
+这里 $\tilde{\boldsymbol{t}}=(t_{k_1},t_{k_2},\cdots,t_{k_m})^{\mathrm{T}}$，这正是 $N(\tilde{\boldsymbol{\mu}},\tilde{\Sigma})$ 的特征函数。
+\end{proof}
+
+\cref{theorem:ch04-边际正态} 表明，多元正态分布的边际分布还是正态分布。
+
+\begin{theorem}[数字特征]\label{theorem:ch04-多元正态数字特征}
+$\boldsymbol{\mu}$ 及 $\Sigma$ 分别是随机向量 $\boldsymbol{\xi}$ 的数学期望及协方差矩阵，即
+\begin{align}
+\mu_j=E\xi_j,\qquad 1\leqslant j\leqslant n,\label{align:ch04-均值向量}\\
+\sigma_{jk}=E(\xi_j-\mu_j)(\xi_k-\mu_k),\qquad 1\leqslant j,k\leqslant n.\label{align:ch04-协方差元素}
+\end{align}
+\end{theorem}
+
+\begin{proof}
+由\cref{theorem:ch04-边际正态} 立即得到~\eqref{align:ch04-均值向量}，而且知道 $D\xi_j=\sigma_{jj}$，$j=1,2,\cdots,n$ 存在，由 Cauchy--Schwarz 不等式又知各协方差存在，因此由~(4.5.32)
+\[
+E\xi_j\xi_k=\frac{1}{\mathrm{i}^2}\cdot\left.\frac{\partial^2 f(t_1,\cdots,t_n)}{\partial t_j\partial t_k}\right|_{t_1=\cdots=t_n=0}=\sigma_{jk}+\mu_j\mu_k,
+\]
+故
+\[
+E(\xi_j-\mu_j)(\xi_k-\mu_k)=E\xi_j\xi_k-\mu_j\mu_k=\sigma_{jk}.
+\]
+\end{proof}
+
+因此 $n$ 元正态分布由它的前面二阶矩完全确定。
+
+\subsection*{二、独立性}
+
+正如在二元场合一样，对 $n$ 元正态分布而言，独立性与不相关性有密切联系。
+
+\begin{theorem}[不相关即独立]\label{theorem:ch04-正态不相关即独立}
+$\xi_1,\xi_2,\cdots,\xi_n$ 相互独立的充要条件是它们两两不相关。
+\end{theorem}
+
+\begin{proof}
+必要性显然成立，下证充分性。
+
+若 $\xi_1,\xi_2,\cdots,\xi_n$ 两两不相关，即对一切 $j\neq k$，
+\[
+\rho_{jk}=\frac{E[(\xi_j-E\xi_j)(\xi_k-E\xi_k)]}{\sqrt{D\xi_j}\sqrt{D\xi_k}}=0.
+\]
+因此 $\sigma_{jk}=E(\xi_j-E\xi_j)(\xi_k-E\xi_k)=0$，所以
+\begin{align*}
+f(t_1,\cdots,t_n)&=\mathrm{e}^{\mathrm{i}\sum_{k=1}^n\mu_k t_k-\frac12\sum_{k=1}^n\sigma_{kk}t_k^2}\\
+&=\prod_{k=1}^n\mathrm{e}^{\mathrm{i}\mu_k t_k-\frac12\sigma_{kk}t_k^2}\\
+&=\prod_{k=1}^n f_{\xi_k}(t_k).
+\end{align*}
+由上节多元特征函数的性质 5 可知 $\xi_1,\xi_2,\cdots,\xi_n$ 相互独立。
+\end{proof}
+
+\begin{theorem}[子向量独立的充要条件]\label{theorem:ch04-子向量独立}
+若 $\boldsymbol{\xi}=\begin{pmatrix}\xi_1\\\xi_2\end{pmatrix}$，这里 $\xi_1$ 与 $\xi_2$ 是 $\boldsymbol{\xi}$ 的子向量，记
+\begin{align}
+\Sigma=\begin{pmatrix}\Sigma_{11}&\Sigma_{12}\\\Sigma_{21}&\Sigma_{22}\end{pmatrix},\label{align:ch04-分块协方差}
+\end{align}
+其中 $\Sigma_{11}$ 及 $\Sigma_{22}$ 分别是 $\xi_1$ 及 $\xi_2$ 的协方差矩阵，$\Sigma_{12}$ 则是由 $\xi_1$ 与 $\xi_2$ 的相应分量的协方差构成的相互协方差矩阵，则 $\xi_1$ 与 $\xi_2$ 独立的充要条件是 $\Sigma_{12}=\boldsymbol{0}$。
+\end{theorem}
+
+\begin{proof}
+若 $\xi_1$ 与 $\xi_2$ 独立，则 $\xi_1$ 的任一分量与 $\xi_2$ 的任一分量独立，因此其协方差为 $0$，从而由它们构成的矩阵 $\Sigma_{12}=\boldsymbol{0}$，这就证明了必要性。
+
+下面来证明充分性。由 $\sigma_{ij}=\sigma_{ji}$，因此 $\Sigma_{21}=\Sigma_{12}^{\mathrm{T}}=\boldsymbol{0}$，若 $\boldsymbol{t}=\begin{pmatrix}t_1\\t_2\end{pmatrix}$，这里 $\boldsymbol{t}_1$ 与 $\xi_1$ 有相同维数，$\boldsymbol{t}_2$ 与 $\xi_2$ 有相同维数，则
+\[
+\boldsymbol{t}^{\mathrm{T}}\Sigma\boldsymbol{t}=\boldsymbol{t}_1^{\mathrm{T}}\Sigma_{11}\boldsymbol{t}_1+2\boldsymbol{t}_1^{\mathrm{T}}\Sigma_{12}\boldsymbol{t}_2+\boldsymbol{t}_2^{\mathrm{T}}\Sigma_{22}\boldsymbol{t}_2=\boldsymbol{t}_1^{\mathrm{T}}\Sigma_{11}\boldsymbol{t}_1+\boldsymbol{t}_2^{\mathrm{T}}\Sigma_{22}\boldsymbol{t}_2.
+\]
+因此若记 $\boldsymbol{\mu}=\begin{pmatrix}\mu_1\\\mu_2\end{pmatrix}$，其中 $\mu_1,\mu_2$ 分别为 $\xi_1$ 及 $\xi_2$ 的数学期望，则
+\begin{align*}
+f_{\boldsymbol{\xi}}(\boldsymbol{t})&=\exp\left\{\mathrm{i}\boldsymbol{\mu}^{\mathrm{T}}\boldsymbol{t}-\frac12\boldsymbol{t}^{\mathrm{T}}\Sigma\boldsymbol{t}\right\}\\
+&=\exp\left\{\mathrm{i}\boldsymbol{\mu}_1^{\mathrm{T}}\boldsymbol{t}_1+\mathrm{i}\boldsymbol{\mu}_2^{\mathrm{T}}\boldsymbol{t}_2-\frac12\boldsymbol{t}_1^{\mathrm{T}}\Sigma_{11}\boldsymbol{t}_1-\frac12\boldsymbol{t}_2^{\mathrm{T}}\Sigma_{22}\boldsymbol{t}_2\right\}\\
+&=\exp\left\{\mathrm{i}\boldsymbol{\mu}_1^{\mathrm{T}}\boldsymbol{t}_1-\frac12\boldsymbol{t}_1^{\mathrm{T}}\Sigma_{11}\boldsymbol{t}_1\right\}\cdot\exp\left\{\mathrm{i}\boldsymbol{\mu}_2^{\mathrm{T}}\boldsymbol{t}_2-\frac12\boldsymbol{t}_2^{\mathrm{T}}\Sigma_{22}\boldsymbol{t}_2\right\}\\
+&=f_{\xi_1}(\boldsymbol{t}_1)f_{\xi_2}(\boldsymbol{t}_2).
+\end{align*}
+由上节多元特征函数的性质 6 可知 $\xi_1$ 与 $\xi_2$ 独立。
+
+类似地可以证明，若 $\boldsymbol{\xi}$ 的子向量 $\xi_1,\xi_2,\cdots,\xi_k$ 两两独立，则它们也相互独立。
+\end{proof}
+
+\subsection*{三、线性变换}
+
+服从正态分布的随机向量在线性变换下具有许多特殊的性质，这些性质有很大的理论和实用价值，下面只讨论这类性质中最基本的一些。
+
+一般，若 $\boldsymbol{\xi}=(\xi_1,\cdots,\xi_n)^{\mathrm{T}}$ 是 $n$ 维随机向量，其数学期望为 $\boldsymbol{\mu}$，协方差矩阵为 $\Sigma$。
+
+考虑 $\boldsymbol{\xi}$ 的分量的线性组合 $\zeta=\sum_{j=1}^n l_j\xi_j=\boldsymbol{l}^{\mathrm{T}}\boldsymbol{\xi}$，显然
+\begin{align}
+E\zeta=\sum_{j=1}^n l_j\mu_j=\boldsymbol{l}^{\mathrm{T}}\boldsymbol{\mu},\label{align:ch04-线性组合期望}
+\end{align}
+\begin{align}
+D\zeta=\sum_{j=1}^n\sum_{k=1}^n l_j l_k\sigma_{jk}=\boldsymbol{l}^{\mathrm{T}}\Sigma\boldsymbol{l}.\label{align:ch04-线性组合方差}
+\end{align}
+
+同样地，若 $C=(c_{jk})$ 是 $m\times n$ 矩阵，则 $m$ 维随机向量 $\boldsymbol{\eta}=C\boldsymbol{\xi}$ 有
+\begin{align}
+E\boldsymbol{\eta}=C\boldsymbol{\mu},\label{align:ch04-线性变换期望}\\
+D\boldsymbol{\eta}=C\Sigma C^{\mathrm{T}},\label{align:ch04-线性变换协方差}
+\end{align}
+这里 $D\boldsymbol{\eta}$ 记 $\boldsymbol{\eta}$ 的协方差矩阵。
+
+\begin{theorem}[正态性的线性组合刻画]\label{theorem:ch04-线性组合正态}
+$\boldsymbol{\xi}=(\xi_1,\cdots,\xi_n)^{\mathrm{T}}$ 服从 $n$ 元正态分布 $N(\boldsymbol{\mu},\Sigma)$ 的充要条件是它的任何一个线性组合 $\zeta=\sum_{j=1}^n l_j\xi_j$ 服从一元正态分布 $N\left(\sum_{j=1}^n l_j\mu_j,\sum_{j,k=1}^n l_j l_k\sigma_{jk}\right)$。
+\end{theorem}
+
+\begin{proof}
+必要性：若 $\boldsymbol{\xi}$ 服从 $N(\boldsymbol{\mu},\Sigma)$，则由~\eqref{align:ch04-多元正态特征函数}
+\[
+E\mathrm{e}^{\mathrm{i}u\boldsymbol{l}^{\mathrm{T}}\boldsymbol{\xi}}=\exp\left\{\mathrm{i}\boldsymbol{\mu}^{\mathrm{T}}\boldsymbol{t}-\frac12\boldsymbol{t}^{\mathrm{T}}\Sigma\boldsymbol{t}\right\}.
+\]
+取 $\boldsymbol{t}=u\boldsymbol{l}$，这里 $u$ 是实数，则
+\begin{align}
+E\mathrm{e}^{\mathrm{i}u\zeta}=E\mathrm{e}^{\mathrm{i}u\boldsymbol{l}^{\mathrm{T}}\boldsymbol{\xi}}=\exp\left\{\mathrm{i}u\boldsymbol{\mu}^{\mathrm{T}}\boldsymbol{l}-\frac12 u^2\boldsymbol{l}^{\mathrm{T}}\Sigma\boldsymbol{l}\right\}.\label{align:ch04-线性组合特征函数}
+\end{align}
+对 $u$ 是任意实数上式都成立，这就说明随机变量 $\zeta$ 服从 $N(\boldsymbol{l}^{\mathrm{T}}\boldsymbol{\mu},\boldsymbol{l}^{\mathrm{T}}\Sigma\boldsymbol{l})$。
+
+充分性：若 $\zeta=\boldsymbol{l}^{\mathrm{T}}\boldsymbol{\xi}$ 服从 $N(\boldsymbol{l}^{\mathrm{T}}\boldsymbol{\mu},\boldsymbol{l}^{\mathrm{T}}\Sigma\boldsymbol{l})$，仍有~\eqref{align:ch04-线性组合特征函数}，在该式中取 $u=1$，得
+\[
+E\mathrm{e}^{\mathrm{i}\boldsymbol{l}^{\mathrm{T}}\boldsymbol{\xi}}=\exp\left\{\mathrm{i}\boldsymbol{\mu}^{\mathrm{T}}\boldsymbol{l}-\frac12\boldsymbol{l}^{\mathrm{T}}\Sigma\boldsymbol{l}\right\}.
+\]
+由于 $\boldsymbol{l}$ 的任意性，这说明 $\boldsymbol{\xi}$ 服从 $N(\boldsymbol{\mu},\Sigma)$。
+\end{proof}
+
+利用\cref{theorem:ch04-线性组合正态} 可以通过一维正态变量来研究多维正态变量。在有些场合这提供了很大的方便。
+
+\begin{theorem}[线性变换不变性]\label{theorem:ch04-线性变换不变性}
+若 $\boldsymbol{\xi}=(\xi_1,\cdots,\xi_n)^{\mathrm{T}}$ 服从 $n$ 元正态分布 $N(\boldsymbol{\mu},\Sigma)$，而 $C$ 为任意 $m\times n$ 阵，则 $\boldsymbol{\eta}=C\boldsymbol{\xi}$ 服从 $m$ 元正态分布 $N(C\boldsymbol{\mu},C\Sigma C^{\mathrm{T}})$。
+\end{theorem}
+
+\begin{proof}
+因为对于任意 $m$ 维实值列向量 $\boldsymbol{t}$，
+\begin{align*}
+f_{\boldsymbol{\eta}}(\boldsymbol{t})&=E\mathrm{e}^{\mathrm{i}\boldsymbol{t}^{\mathrm{T}}\boldsymbol{\eta}}=E\mathrm{e}^{\mathrm{i}\boldsymbol{t}^{\mathrm{T}}C\boldsymbol{\xi}}=E\mathrm{e}^{\mathrm{i}(C^{\mathrm{T}}\boldsymbol{t})^{\mathrm{T}}\boldsymbol{\xi}}\\
+&=\exp\left\{\mathrm{i}\boldsymbol{\mu}^{\mathrm{T}}(C^{\mathrm{T}}\boldsymbol{t})-\frac12(C^{\mathrm{T}}\boldsymbol{t})^{\mathrm{T}}\Sigma(C^{\mathrm{T}}\boldsymbol{t})\right\}\\
+&=\exp\left\{\mathrm{i}(C\boldsymbol{\mu})^{\mathrm{T}}\boldsymbol{t}-\frac12\boldsymbol{t}^{\mathrm{T}}(C\Sigma C^{\mathrm{T}})\boldsymbol{t}\right\}.
+\end{align*}
+按定义，$\boldsymbol{\eta}$ 服从 $m$ 元正态分布 $N(C\boldsymbol{\mu},C\Sigma C^{\mathrm{T}})$。
+\end{proof}
+
+\cref{theorem:ch04-线性变换不变性} 表明正态变量在线性变换下还是正态变量，这个性质简称为\textbf{正态变量的线性变换不变性}。
+
+\begin{corollary}[正交变换对角化]\label{corollary:ch04-正交对角化}
+若 $\boldsymbol{\xi}$ 服从 $n$ 元正态分布 $N(\boldsymbol{\mu},\Sigma)$，则存在一个正交变换 $U$，使得 $\boldsymbol{\eta}=U\boldsymbol{\xi}$ 是一个具有独立正态分布分量的随机向量，它的数学期望为 $U\boldsymbol{\mu}$，而它的方差分量是 $\Sigma$ 的特征值。
+\end{corollary}
+
+\begin{proof}
+从矩阵论知道，对实对称矩阵 $\Sigma$，存在正交阵 $U$，使 $U\Sigma U^{\mathrm{T}}=D$，其中
+\begin{align}
+D=\begin{pmatrix}
+d_1&0&0\\
+0&d_2&0\\
+\vdots&\vdots&\vdots\\
+0&0&\cdots&d_n
+\end{pmatrix},\label{align:ch04-对角阵}
+\end{align}
+这里 $d_1,d_2,\cdots,d_n$ 是 $\Sigma$ 的特征值。若 $\Sigma$ 的秩为 $r$，则有 $r$ 个特征值不为零。此处的 $U$ 是以特征向量为列构成的正交阵。
+
+把这里的 $U$ 作为\cref{theorem:ch04-线性变换不变性} 中的变换矩阵，则利用该定理的结果即得推论 1。
+\end{proof}
+
+从推论 1 可以看出，若 $\Sigma$ 的秩 $r<n$，则正态分布退化到一个 $r$ 维子空间上。
+
+推论 1 说明，对于多维正态变量，可以进行正交变换，使其既保持正态性不变又让各分量独立，这种方法在数理统计中十分有用。
+
+第三章 $\S 3$ 中的例 10 提供了利用坐标旋转（正交变换的一种）把二维正态变量化为独立分量的生动例子。
+
+\begin{corollary}[正交变换保持同方差]\label{corollary:ch04-正交同方差}
+在正交变换下，多维正态变量保持其独立、同方差性不变。
+\end{corollary}
+
+\begin{proof}
+设 $\boldsymbol{\xi}=(\xi_1,\cdots,\xi_n)^{\mathrm{T}}$，诸 $\xi_i$ 相互独立具有相同的方差 $\sigma^2$，则它们的协方差矩阵 $D\boldsymbol{\xi}=\sigma^2 I$，其中 $I$ 为 $n$ 阶单位阵。若 $U$ 是一个正交阵，$\boldsymbol{\eta}=U\boldsymbol{\xi}$，则由\cref{theorem:ch04-线性变换不变性} 知 $\boldsymbol{\eta}$ 服从正态分布，其协方差矩阵为
+\[
+U\sigma^2 I U^{\mathrm{T}}=\sigma^2 U I U^{\mathrm{T}}=\sigma^2 I.
+\]
+因而 $\boldsymbol{\eta}=(\eta_1,\cdots,\eta_n)^{\mathrm{T}}$ 仍是相互独立且具有相同方差。
+\end{proof}
+
+\begin{corollary}[Mahalanobis 距离服从 $\chi^2$ 分布]\label{corollary:ch04-Mahalanobis}
+若 $\boldsymbol{\xi}\sim N(\boldsymbol{\mu},\Sigma)$，其中 $\Sigma$ 为 $n$ 阶正定阵，则
+\begin{align}
+(\boldsymbol{\xi}-\boldsymbol{\mu})^{\mathrm{T}}\Sigma^{-1}(\boldsymbol{\xi}-\boldsymbol{\mu})\sim\chi_n^2.\label{align:ch04-Mahalanobis}
+\end{align}
+\end{corollary}
+
+\begin{proof}
+利用分解式~\eqref{align:ch04-Cholesky} 中的 $L$，
+\begin{align*}
+(\boldsymbol{\xi}-\boldsymbol{\mu})^{\mathrm{T}}\Sigma^{-1}(\boldsymbol{\xi}-\boldsymbol{\mu})
+&=(\boldsymbol{\xi}-\boldsymbol{\mu})^{\mathrm{T}}(LL^{\mathrm{T}})^{-1}(\boldsymbol{\xi}-\boldsymbol{\mu})\\
+&=[L^{-1}(\boldsymbol{\xi}-\boldsymbol{\mu})]^{\mathrm{T}}[L^{-1}(\boldsymbol{\xi}-\boldsymbol{\mu})]=\boldsymbol{\zeta}^{\mathrm{T}}\boldsymbol{\zeta}.
+\end{align*}
+其中 $\boldsymbol{\zeta}=L^{-1}(\boldsymbol{\xi}-\boldsymbol{\mu})$，由\cref{theorem:ch04-线性变换不变性} 知它是均值为 $\boldsymbol{0}$ 的 $n$ 维正态变量，其协方差矩阵为
+\[
+L^{-1}\Sigma(L^{-1})^{\mathrm{T}}=L^{-1}LL^{\mathrm{T}}(L^{-1})^{\mathrm{T}}=I.
+\]
+从而 $\boldsymbol{\zeta}=(\zeta_1,\cdots,\zeta_n)^{\mathrm{T}}$ 的各个分量是相互独立的标准正态变量，因此
+\[
+\boldsymbol{\zeta}^{\mathrm{T}}\boldsymbol{\zeta}=\zeta_1^2+\cdots+\zeta_n^2\sim\chi_n^2.
+\]
+\end{proof}
+
+正态变量在线性变换下保持其正态性不变，这个性质在理论和应用中都极其重要。要点之一是可以把许多关于分布的问题简化为前二阶矩的计算。
+
+\begin{example}[两个标准正态的线性组合]\label{example:ch04-线性组合正态例}
+若 $\xi_1,\xi_2$ 是相互独立的随机变量，均服从标准正态分布，而
+\[
+\eta_1=a\xi_1+b\xi_2,\qquad \eta_2=c\xi_1+d\xi_2.
+\]
+则由于
+\[
+E\eta_1=0,\qquad D\eta_1=a^2 D\xi_1+b^2 D\xi_2=a^2+b^2,
+\]
+\[
+E\eta_2=0,\qquad D\eta_2=c^2 D\xi_1+d^2 D\xi_2=c^2+d^2,
+\]
+\[
+\mathrm{cov}(\eta_1,\eta_2)=ac+bd,\qquad
+\rho_{\eta_1\eta_2}=\frac{ac+bd}{\sqrt{a^2+b^2}\sqrt{c^2+d^2}}.
+\]
+因此
+\[
+\eta_1\sim N(0,a^2+b^2),\qquad \eta_2\sim N(0,c^2+d^2),
+\]
+\[
+(\eta_1,\eta_2)\sim N\left(0,0,a^2+b^2,c^2+d^2,\frac{ac+bd}{\sqrt{a^2+b^2}\sqrt{c^2+d^2}}\right).
+\]
+
+当 $ac+bd=0$ 时，$\rho_{\eta_1\eta_2}=0$，$\eta_1$ 与 $\eta_2$ 独立。
+
+当 $\rho_{\eta_1\eta_2}=\pm 1$，即 $(ac+bd)^2=(a^2+b^2)(c^2+d^2)$，也即 $\Delta=ad-bc=0$ 时，$(\eta_1,\eta_2)$ 退化为一维分布，而当 $a=b=c=d=0$ 时，$(\eta_1,\eta_2)$ 退化为一个点。
+\end{example}
+
+\subsection*{四、条件分布}
+
+若 $\boldsymbol{\xi}=\begin{pmatrix}\xi_1\\\xi_2\end{pmatrix}$ 服从 $n$ 元正态分布 $N(\boldsymbol{\mu},\Sigma)$，这里 $\xi_1,\xi_2$ 是它的子向量，$E\xi_1=\boldsymbol{\mu}_1$，$E\xi_2=\boldsymbol{\mu}_2$，协方差矩阵 $\Sigma$ 仍由~\eqref{align:ch04-分块协方差} 表出。
+
+下面求在给定 $\xi_1=\boldsymbol{x}_1$ 的条件下 $\xi_2$ 的分布密度函数。假定 $\det\Sigma\neq 0$，即只讨论非奇异的场合，这时 $\det\Sigma_{11}\neq 0$。
+
+首先，我们来找一个线性变换
+\begin{align}
+\boldsymbol{\eta}_1=\xi_1,\label{align:ch04-条件变换1}\\
+\boldsymbol{\eta}_2=T\xi_1+\xi_2,\label{align:ch04-条件变换2}
+\end{align}
+这个线性变换使 $\boldsymbol{\eta}_1=\xi_1$，此外我们还要求它使得 $\boldsymbol{\eta}_1$ 与 $\boldsymbol{\eta}_2$ 独立。由\cref{theorem:ch04-线性变换不变性} 我们知道 $\boldsymbol{\eta}=\begin{pmatrix}\eta_1\\\eta_2\end{pmatrix}$ 是联合正态的，因此根据\cref{theorem:ch04-子向量独立} 为使 $\eta_1$ 与 $\eta_2$ 独立，只须它们的相互协方差矩阵为零阵。但是
+\begin{align*}
+E(\boldsymbol{\eta}_1-E\boldsymbol{\eta}_1)(\boldsymbol{\eta}_2-E\boldsymbol{\eta}_2)^{\mathrm{T}}
+&=E(\xi_1-E\xi_1)(T\xi_1+\xi_2-TE\xi_1-E\xi_2)^{\mathrm{T}}\\
+&=\Sigma_{11}T^{\mathrm{T}}+\Sigma_{12}.
+\end{align*}
+因此应取
+\begin{align}
+T=-\Sigma_{21}\Sigma_{11}^{-1},\label{align:ch04-条件变换T}
+\end{align}
+故
+\begin{align}
+\boldsymbol{\eta}_2=-\Sigma_{21}\Sigma_{11}^{-1}\xi_1+\xi_2.\label{align:ch04-条件变换eta2}
+\end{align}
+
+所求的线性变换为
+\begin{align}
+\begin{pmatrix}\boldsymbol{\eta}_1\\\boldsymbol{\eta}_2\end{pmatrix}
+=\begin{pmatrix}I&\boldsymbol{0}\\-\Sigma_{21}\Sigma_{11}^{-1}&I\end{pmatrix}\begin{pmatrix}\xi_1\\\xi_2\end{pmatrix}.\label{align:ch04-条件变换矩阵}
+\end{align}
+
+为求 $\boldsymbol{\eta}_1$ 及 $\boldsymbol{\eta}_2$ 的分布密度函数，先计算
+\[
+E\boldsymbol{\eta}_1=E\xi_1=\boldsymbol{\mu}_1,\qquad D\boldsymbol{\eta}_1=D\xi_1=\Sigma_{11},
+\]
+\[
+E\boldsymbol{\eta}_2=-\Sigma_{21}\Sigma_{11}^{-1}E\xi_1+E\xi_2=\boldsymbol{\mu}_2-\Sigma_{21}\Sigma_{11}^{-1}\boldsymbol{\mu}_1,
+\]
+\begin{align*}
+D\boldsymbol{\eta}_2&=E(\boldsymbol{\eta}_2-E\boldsymbol{\eta}_2)(\boldsymbol{\eta}_2-E\boldsymbol{\eta}_2)^{\mathrm{T}}\\
+&=E\left[(\xi_2-\boldsymbol{\mu}_2)-\Sigma_{21}\Sigma_{11}^{-1}(\xi_1-\boldsymbol{\mu}_1)\right]
+\left[(\xi_2-\boldsymbol{\mu}_2)-\Sigma_{21}\Sigma_{11}^{-1}(\xi_1-\boldsymbol{\mu}_1)\right]^{\mathrm{T}}\\
+&=\Sigma_{22}-\Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12}-\Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12}+\Sigma_{21}\Sigma_{11}^{-1}\Sigma_{11}\Sigma_{11}^{-1}\Sigma_{12}\\
+&=\Sigma_{22}-\Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12}.
+\end{align*}
+
+正如上述，$\boldsymbol{\eta}_1$ 与 $\boldsymbol{\eta}_2$ 是独立的，又变换~\eqref{align:ch04-条件变换矩阵} 的雅可比行列式等于 $1$，所以有
+\[
+p_{\boldsymbol{\xi}}(\boldsymbol{x}_1,\boldsymbol{x}_2)=p_{\boldsymbol{\eta}}(\boldsymbol{y}_1,\boldsymbol{y}_2)=p_{\boldsymbol{\eta}_1}(\boldsymbol{y}_1)p_{\boldsymbol{\eta}_2}(\boldsymbol{y}_2).
+\]
+这里 $\boldsymbol{y}_1=\boldsymbol{x}_1$，$\boldsymbol{y}_2=-\Sigma_{21}\Sigma_{11}^{-1}\boldsymbol{x}_1+\boldsymbol{x}_2$，显然 $p_{\xi_1}(\boldsymbol{x}_1)=p_{\eta_1}(\boldsymbol{y}_1)$，因此在给定 $\xi_1=\boldsymbol{x}_1$ 的条件下，$\xi_2$ 的密度函数
+\begin{align*}
+p(\boldsymbol{x}_2\mid\xi_1=\boldsymbol{x}_1)
+&=\frac{p_{\boldsymbol{\xi}}(\boldsymbol{x}_1,\boldsymbol{x}_2)}{p_{\xi_1}(\boldsymbol{x}_1)}
+=\frac{p_{\eta_1}(\boldsymbol{y}_1)p_{\eta_2}(\boldsymbol{y}_2)}{p_{\eta_1}(\boldsymbol{y}_1)}\\
+&=p_{\eta_2}(\boldsymbol{y}_2)=p_{\eta_2}(\boldsymbol{x}_2-\Sigma_{21}\Sigma_{11}^{-1}\boldsymbol{x}_1).
+\end{align*}
+
+因为 $\eta_2$ 服从 $N(\boldsymbol{\mu}_2-\Sigma_{21}\Sigma_{11}^{-1}\boldsymbol{\mu}_1,\ \Sigma_{22}-\Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12})$，所以 $\xi_2$ 对于 $\xi_1=\boldsymbol{x}_1$ 的条件分布是正态分布 $N(\boldsymbol{\mu}_2+\Sigma_{21}\Sigma_{11}^{-1}(\boldsymbol{x}_1-\boldsymbol{\mu}_1),\ \Sigma_{22}-\Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12})$，我们把这些结果总结为下列定理。
+
+\begin{theorem}[正态条件分布仍为正态]\label{theorem:ch04-正态条件分布}
+若 $\boldsymbol{\xi}=\begin{pmatrix}\xi_1\\\xi_2\end{pmatrix}$ 服从 $n$ 元正态分布 $N(\boldsymbol{\mu},\Sigma)$，$E\xi_1=\boldsymbol{\mu}_1$，$E\xi_2=\boldsymbol{\mu}_2$，$\Sigma$ 表示成~\eqref{align:ch04-分块协方差}，则在给定 $\xi_1=\boldsymbol{x}_1$ 下，$\xi_2$ 的条件分布还是正态分布，其条件数学期望
+\begin{align}
+\boldsymbol{\mu}_{2\cdot 1}=E(\xi_2\mid\xi_1=\boldsymbol{x}_1)=\boldsymbol{\mu}_2+\Sigma_{21}\Sigma_{11}^{-1}(\boldsymbol{x}_1-\boldsymbol{\mu}_1),\label{align:ch04-条件期望}
+\end{align}
+其条件方差
+\begin{align}
+\Sigma_{22\cdot 1}=\Sigma_{22}-\Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12}.\label{align:ch04-条件方差}
+\end{align}
+\end{theorem}
+
+这里 $E(\xi_2\mid\xi_1=\boldsymbol{x}_1)$ 称为 $\xi_2$ 关于 $\xi_1$ 的\textbf{回归}，注意到它是 $\boldsymbol{x}_1$ 的线性函数，又条件方差 $\Sigma_{22\cdot 1}$ 与 $\boldsymbol{x}_1$ 无关。
+
+此外，$\xi_1$ 与残差 $\xi_2-\Sigma_{21}\Sigma_{11}^{-1}\xi_1$ 独立，而 $\boldsymbol{\xi}$ 的密度函数有如下典型分解：$p_{\boldsymbol{\xi}}(\boldsymbol{x}_1,\boldsymbol{x}_2)=p_{\xi_1}(\boldsymbol{x}_1)p_{\xi_2\mid\xi_1}(\boldsymbol{x}_2\mid\boldsymbol{x}_1)$，其中 $p_{\xi_1}(\boldsymbol{x}_1)$ 为 $N(\boldsymbol{\mu}_1,\Sigma_{11})$ 相应的密度函数，而 $p_{\xi_2\mid\xi_1}(\boldsymbol{x}_2\mid\boldsymbol{x}_1)$ 是 $N(\boldsymbol{\mu}_{2\cdot 1},\Sigma_{22\cdot 1})$ 相应的密度函数。
+
+\begin{example}[二元正态的条件分布]\label{example:ch04-二元条件分布}
+二元场合，若 $(\xi_1,\xi_2)^{\mathrm{T}}\sim N(\mu_1,\mu_2,\sigma_1^2,\sigma_2^2,\rho)$，则
+\[
+\boldsymbol{\mu}=\begin{pmatrix}\mu_1\\\mu_2\end{pmatrix},\qquad
+\Sigma=\begin{pmatrix}\sigma_1^2&\rho\sigma_1\sigma_2\\\rho\sigma_1\sigma_2&\sigma_2^2\end{pmatrix}.
+\]
+在给定 $\xi_1=x_1$ 下，$\xi_2$ 的条件分布还是正态分布，而且其条件期望由~\eqref{align:ch04-条件期望} 推知为
+\[
+E(\xi_2\mid\xi_1=x_1)=\mu_2+\rho\frac{\sigma_2}{\sigma_1}(x_1-\mu_1).
+\]
+条件方差由~\eqref{align:ch04-条件方差} 推知为
+\[
+\sigma_2^2-\frac{(\rho\sigma_1\sigma_2)^2}{\sigma_1^2}=\sigma_2^2(1-\rho^2).
+\]
+
+这里得到的结果与本章 $\S 2$ 最后一段及上章关于二元正态密度的典型分解完全一致，也可以说，\cref{theorem:ch04-正态条件分布} 是它们的一般推广。
+\end{example}
+
+\end{document}

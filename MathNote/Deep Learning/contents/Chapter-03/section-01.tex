@@ -1,0 +1,158 @@
+﻿\documentclass[../../main.tex]{subfiles}
+
+\graphicspath{{../../image/}{../../figure/}}
+
+\begin{document}
+
+\section{离散变量}\label{section:ch03-离散变量}
+
+在本章中，我们假设观测数据是独立同分布的（independent and identically distributed, i.i.d.）。在后续章节中，我们还将探索包含结构化数据的更复杂情形，到那时，这一假设将不再成立。
+
+参数化方法的一个局限在于，它将分布假设为一种特定的函数形式，而这一做法可能在特定的应用中并不合适。另一种方法是非参数（nonparametric）密度估计方法，此时，分布的形式通常取决于数据集的大小。这类模型仍然包含一些参数，但这些参数将控制模型的复杂度而不是分布的形式。在本章的最后，我们将简述三种典型的非参数化方法，这三种方法分别基于直方图、最近邻和核函数。诸如此类的非参数化技术的一个主要局限，在于它们涉及存储所有训练数据；换言之，参数的数量将随数据量的增大而增加，因此这些方法在面对大型数据集时将变得非常低效。神经网络拥有大量但数量固定的参数，基于神经网络的灵活分布，深度学习同时具备参数模型的高效和非参数模型的泛化性。
+
+首先考虑离散变量的简单分布，以二元变量为起点，随后扩展到多状态变量。
+
+\subsection{伯努利分布}\label{subsection:ch03-伯努利分布}
+
+考虑一个二元随机变量$x\in\{0,1\}$。例如，$x$可能描述的是抛掷硬币的结果，其中$x=1$表示"正面"、$x=0$表示"反面"。如图~2.2 所示，如果这枚硬币有所损坏，则落地时正面朝上的概率和反面朝上的概率未必相等。$x=1$的概率可以用参数$\mu$来表示：
+
+\begin{align}
+  p(x=1\mid\mu)=\mu
+  \label{align:ch03-伯努利正面概率}
+\end{align}
+
+其中$0\leqslant\mu\leqslant 1$，于是可以得到$p(x=0\mid\mu)=1-\mu$。$x$的概率分布因此可以写成如下形式：
+
+\begin{align}
+  \mathrm{Bern}(x\mid\mu)=\mu^{x}(1-\mu)^{1-x}
+  \label{align:ch03-伯努利分布}
+\end{align}
+
+这就是伯努利（Bernoulli）分布（见习题~3.1）。伯努利分布是归一化的，且具有如下均值和方差：
+
+\begin{align}
+  \mathbb{E}[x]=\mu
+  \label{align:ch03-伯努利均值}
+\end{align}
+
+\begin{align}
+  \mathrm{var}[x]=\mu(1-\mu)
+  \label{align:ch03-伯努利方差}
+\end{align}
+
+假设我们有一个包含$x$的观测值的数据集$\mathcal{D}=\{x_1,\cdots,x_N\}$。基于所有观测值都是独立地从$p(x\mid\mu)$生成的，我们可以建立以$\mu$为参数的似然方程，使得
+
+\begin{align}
+  p(\mathcal{D}\mid\mu)=\prod_{n=1}^{N}p(x_n\mid\mu)=\prod_{n=1}^{N}\mu^{x_n}(1-\mu)^{1-x_n}
+  \label{align:ch03-伯努利似然}
+\end{align}
+
+我们可以通过最大化似然方程，或等价地最大化对数似然函数（对数似然函数是单调函数）来估计$\mu$的值。伯努利分布的对数似然函数形式如下：
+
+\begin{align}
+  \ln p(\mathcal{D}\mid\mu)=\sum_{n=1}^{N}\ln p(x_n\mid\mu)=\sum_{n=1}^{N}\bigl\{x_n\ln\mu+(1-x_n)\ln(1-\mu)\bigr\}
+  \label{align:ch03-伯努利对数似然}
+\end{align}
+
+注意对数似然函数仅依赖$x_n$的$N$个观测值的和$\sum_{n=1}^{N}x_n$。该值给出了数据在这一分布下的充分统计量（sufficient statistic）（参见\cref{section:ch03-指数族分布}）。令$\ln p(\mathcal{D}\mid\mu)$关于$\mu$的导数为$0$，就可以得到最大似然估计：
+
+\begin{align}
+  \mu_{\mathrm{ML}}=\frac{1}{N}\sum_{n=1}^{N}x_n
+  \label{align:ch03-伯努利均值估计}
+\end{align}
+
+它又称为样本均值（sample mean）。如果观测到$x=1$（正面）的次数为$m$，则\cref{align:ch03-伯努利均值估计}又可写作
+
+\begin{align}
+  \mu_{\mathrm{ML}}=\frac{m}{N}
+  \label{align:ch03-伯努利比例估计}
+\end{align}
+
+这样硬币落地时正面朝上的概率就可以在上述最大化似然的框架下，通过在数据集中计算正面朝上次数的比例得到。
+
+\subsection{二项分布}\label{subsection:ch03-二项分布}
+
+我们同样可以给出在包含$N$个观测值的数据集中，有$m$个观测值为$x=1$的二元变量$x$的分布。这一分布称为二项（binomial）分布，由\cref{align:ch03-伯努利似然}可以看出，它与$\mu^{m}(1-\mu)^{N-m}$成比例。为得到归一化系数，注意在抛掷硬币$N$次的过程中，我们需要将所有可能掷出$m$次正面朝上的情况加总起来，因此二项分布可写为如下形式：
+
+\begin{align}
+  \mathrm{Bin}(m\mid N,\mu)=\binom{N}{m}\mu^{m}(1-\mu)^{N-m}
+  \label{align:ch03-二项分布}
+\end{align}
+
+其中
+
+\begin{align}
+  \binom{N}{m}\equiv\frac{N!}{(N-m)!\,m!}
+  \label{align:ch03-组合数}
+\end{align}
+
+是从$N$个相同物品中无放回地选择$m$个物品的方法总数。\cref{figure:ch03-二项分布直方图}展示了一个$N=10$、$\mu=0.25$的二项分布（见习题~3.3）。
+
+对于独立的事件，和的均值就是均值的和，而和的方差就是方差的和。用这些结果就能找到二项分布的均值和方差（见习题~2.10）。由于$m=x_1+\cdots+x_N$且任意观测的均值和方差均可由\cref{align:ch03-伯努利均值}和\cref{align:ch03-伯努利方差}给出，故有
+
+\begin{align}
+  \mathbb{E}[m]\equiv\sum_{m=0}^{N}m\,\mathrm{Bin}(m\mid N,\mu)=N\mu
+  \label{align:ch03-二项均值}
+\end{align}
+
+\begin{align}
+  \mathrm{var}[m]\equiv\sum_{m=0}^{N}(m-\mathbb{E}[m])^{2}\mathrm{Bin}(m\mid N,\mu)=N\mu(1-\mu)
+  \label{align:ch03-二项方差}
+\end{align}
+
+这些结论也可以用微积分进行证明（见习题~3.4）。
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.62\textwidth]{ch03-fig3-1-binomial-hist.png}
+  \caption{当$N=10$且$\mu=0.25$时，二项分布式(\ref{align:ch03-二项分布})作为$m$的函数的直方图。}
+  \label{figure:ch03-二项分布直方图}
+\end{figure}
+
+\subsection{多项分布}\label{subsection:ch03-多项分布}
+
+二元变量可以用于描述只有两种可能取值的量。然而通常情况下，我们遇到的离散变量可能包含$K$个相互无关的状态。尽管存在多种表示这些变量的方法，但我们很快将会看到一种非常便捷的"$K$中之一"（1-of-$K$）的表示方案，有时又称"独热编码"。在该方案中，变量可以表示为一个$K$维的向量$\boldsymbol{x}$，$\boldsymbol{x}$中的一个元素$x_k$取值为$1$，其余元素均取值为$0$。因此，如果我们有一个变量存在$K=6$种状态，且该变量特定的一次观测值刚好对应状态$x_3=1$，则$\boldsymbol{x}$可以表示为
+
+\begin{align}
+  \boldsymbol{x}=(0,0,1,0,0,0)^{\mathsf{T}}
+  \label{align:ch03-独热编码}
+\end{align}
+
+注意，这些元素满足$\sum_{k=1}^{K}x_k=1$。如果我们将$x_k=1$的概率记为$\mu_k$，则$\boldsymbol{x}$的分布可以由下式给出：
+
+\begin{align}
+  p(\boldsymbol{x}\mid\boldsymbol{\mu})=\prod_{k=1}^{K}\mu_k^{x_k}
+  \label{align:ch03-类别分布}
+\end{align}
+
+其中$\boldsymbol{\mu}=(\mu_1,\cdots,\mu_K)^{\mathsf{T}}$，且因为参数$\mu_k$表示的是概率，它们满足约束$\mu_k\geqslant 0$和$\sum_{k=1}^{K}\mu_k=1$。\cref{align:ch03-类别分布}所示的分布可以看作将伯努利分布扩展到可以描述超过两种状态。可以看出，这一分布是归一化的：
+
+\begin{align}
+  \sum_{\boldsymbol{x}}p(\boldsymbol{x}\mid\boldsymbol{\mu})=\sum_{k=1}^{K}\mu_k=1
+  \label{align:ch03-类别分布归一}
+\end{align}
+
+且
+
+\begin{align}
+  \mathbb{E}[\boldsymbol{x}\mid\boldsymbol{\mu}]=\sum_{\boldsymbol{x}}p(\boldsymbol{x}\mid\boldsymbol{\mu})\boldsymbol{x}=\boldsymbol{\mu}
+  \label{align:ch03-类别分布均值}
+\end{align}
+
+考虑包括$N$个独立观测值$\boldsymbol{x}_1,\cdots,\boldsymbol{x}_N$的数据集$\mathcal{D}$。相应的似然函数有如下形式：
+
+\begin{align}
+  p(\mathcal{D}\mid\boldsymbol{\mu})=\prod_{n=1}^{N}\prod_{k=1}^{K}\mu_k^{x_{nk}}=\prod_{k=1}^{K}\mu_k^{\left(\sum_{n}x_{nk}\right)}=\prod_{k=1}^{K}\mu_k^{m_k}
+  \label{align:ch03-类别似然}
+\end{align}
+
+从中可以看出，包含$N$个数据点的似然函数其实可以只通过$K$个量来定义：
+
+\begin{align}
+  m_k=\sum_{n=1}^{N}x_{nk}
+  \label{align:ch03-充分统计量}
+\end{align}
+
+它表示观测值$x_k=1$的数量，称为分布的充分统计量（sufficient statistic）（参见\cref{section:ch03-指数族分布}）。注意变量$m_k$满足如下约束：$\sum_{k}m_k=N$。由$m_1,\cdots,m_K$这组观测计数所定义的分布称为多项（multinomial）分布，它是二项分布在$K>2$个状态时的推广。
+
+\end{document}

@@ -1,0 +1,375 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}}
+
+\begin{document}
+
+\section{中心极限定理}\label{section:ch05-中心极限定理}
+
+显然，Kolmogorov 的这个结果是 Khinchin 大数定律的加强，只有它才能保证在每次试验中当 $n\to\infty$ 时，样本的均值 $\dfrac1n\sum_{i=1}^{n}\xi_i$ 将最终地趋于总体的均值；当然从逻辑上讲也有可能失败，但是这种不愉快场合发生的概率等于 $0$。用 Monte Carlo 方法计算积分所需要的正是强大数定律。
+
+\subsection*{一、Lindeberg 条件与 Feller 条件}
+
+本节将最后解决古典的中心极限定理。为此先把问题的提法作进一步明确。
+
+古典的中心极限定理讨论的是独立和的分布函数向正态分布收敛的最普遍条件。这个问题一方面可以看作是 De Moivre--Laplace 古典结果的一般化，另一方面也解释了正态分布为什么是最常见的一种分布。
+
+自从 Gauss 指出测量误差服从正态分布之后，人们发现，正态分布在自然界中极为常见。例如炮弹的弹落点服从正态分布，人的许多生理特征如身长、体重等也服从正态分布。观察表明，如果一个量是由大量相互独立的随机因素的影响所造成，而每一个别因素在总影响中所起的作用不很大，则这种量通常都服从或近似服从正态分布。
+
+另外，在数理统计中，经常都假定总体服从正态分布，这也要求通过对中心极限定理的研究来阐明这个假定的正确性和适用条件。
+
+现在，这个问题从某种意义上来讲已经得到了最后解决。1922 年 Lindeberg 提出了充分条件；1935 年 Feller 进一步指出，在某种条件下，这个条件也是必要的。这样就搞清了向正态分布收敛的充要条件。下面就介绍这些条件。
+
+设 $\xi_1,\xi_2,\cdots,\xi_n,\cdots$ 是一个相互独立的随机变量序列，它们具有有限的数学期望和方差：
+\begin{align*}
+a_k=\boldsymbol{E}\xi_k,\quad b_k^{2}=\boldsymbol{D}\xi_k\quad(k=1,2,\cdots,n,\cdots).
+\end{align*}
+记
+\begin{align*}
+B_n^{2}=\sum_{k=1}^{n}b_k^{2},
+\end{align*}
+作标准化和数
+\begin{align}
+\zeta_n=\sum_{k=1}^{n}\frac{\xi_k-a_k}{B_n}.
+\end{align}
+我们需要寻找和数 $\zeta_n$ 的分布函数趋于正态分布函数的充要条件。
+
+与独立同分布场合比较，这里保留了独立性的假定，但是去掉了同分布的要求。今后我们将以 $F_k(x)$ 记 $\xi_k$ 的分布函数。显然为了讨论 $\zeta_n$ 的极限分布，要使问题的提法有意义，对各个加项必须有一定要求。例如若允许从第二项起都等于 $0$，则极限分布显然由 $F_1(x)$ 完全确定，这时就很难有什么有意思的结果。排除这个困难的办法是规定加项中不能有某些项起支配作用，在实际工作中人们就是这样处理的，例如为了讨论测量的随机误差，总预先把一些系统性的误差先扣除掉。
+
+为了使极限分布是正态分布，还要求各个加项``均匀地小''，怎样明确表达这个要求呢？下面先作一个启发性的推导。
+
+设 $A_k$ 表示下述事件：
+\begin{align*}
+\{|\xi_k-a_k|>\tau B_n\}\qquad(k=1,2,\cdots,n),
+\end{align*}
+则有
+\begin{align*}
+P\!\left\{\max_{1\leqslant k\leqslant n}|\xi_k-a_k|>\tau B_n\right\}
+=P\!\left\{\bigcup_{k=1}^{n}\left(|\xi_k-a_k|>\tau B_n\right)\right\}
+=P\{A_1\cup A_2\cup\cdots\cup A_n\}\leqslant\sum_{k=1}^{n}P(A_k)
+=\sum_{k=1}^{n}\int_{|x-a_k|>\tau B_n}\mathrm{d}F_k(x)
+\end{align*}
+\begin{align*}
+\leqslant\frac{1}{(\tau B_n)^{2}}\sum_{k=1}^{n}\int_{|x-a_k|>\tau B_n}(x-a_k)^{2}\,\mathrm{d}F_k(x)
+=\frac{1}{\tau^{2}B_n^{2}}\sum_{k=1}^{n}\int_{|x-a_k|>\tau B_n}(x-a_k)^{2}\,\mathrm{d}F_k(x).
+\end{align*}
+因此，只要对于任何 $\tau>0$，成立
+\begin{align}
+\lim_{n\to\infty}\frac{1}{B_n^{2}}\sum_{k=1}^{n}\int_{|x-a_k|>\tau B_n}(x-a_k)^{2}\,\mathrm{d}F_k(x)=0,
+\end{align}
+就可以保证总和中各加项``均匀地小''。上述条件称为\textbf{Lindeberg 条件}。Lindeberg 证明了 Lindeberg 条件是和数 $\zeta_n$ 的分布函数趋于正态分布函数的充分条件。
+
+但是 Lindeberg 条件不是中心极限定理成立的必要条件（参看习题五）。不过，Feller 进一步指出，假如下面条件得到满足：
+\begin{align}
+\lim_{n\to\infty}\max_{k\leqslant n}\frac{b_k}{B_n}=0,
+\end{align}
+则 Lindeberg 条件也是中心极限定理成立的必要条件。
+
+Feller 条件称为\textbf{Feller 条件}。下面考察一下 Feller 条件的含义。
+
+\begin{theorem}\label{theorem:ch05-Feller条件等价}
+Feller 条件 $\lim_{n\to\infty}\max_{k\leqslant n}\dfrac{b_k}{B_n}=0$ 等价于
+\begin{align}
+\lim_{n\to\infty}B_n=\infty,
+\end{align}
+\begin{align}
+\lim_{n\to\infty}\frac{b_n}{B_n}=0.
+\end{align}
+\end{theorem}
+
+\begin{proof}
+若 Feller 条件成立，则由 $\dfrac{b_n}{B_n}\leqslant\max_{k\leqslant n}\dfrac{b_k}{B_n}$ 立刻得到 $\dfrac{b_n}{B_n}\to0$；又若 $B_n\to B$（$B<\infty$），不妨假定 $b_1>0$，则因 $\max_{k\leqslant n}\dfrac{b_k}{B_n}\geqslant\dfrac{b_1}{B_n}$，故 $\lim_{n\to\infty}\max_{k\leqslant n}\dfrac{b_k}{B_n}\geqslant\dfrac{b_1}{B}>0$，这与 Feller 条件矛盾，因此应有 $\lim_{n\to\infty}B_n=\infty$。
+
+反之，设 $\lim_{n\to\infty}B_n=\infty$ 及 $\dfrac{b_n}{B_n}\to0$ 成立。对任意 $\varepsilon>0$，存在正整数 $M$，使 $\dfrac{b_k}{B_k}<\varepsilon$ 对一切 $k>M$ 成立。固定 $M$ 之后，由于 $\lim_{n\to\infty}B_n=\infty$，可以选一个正整数 $N\geqslant M$，使 $\max_{k\leqslant M}\dfrac{b_k}{B_N}<\varepsilon$，下证对一切 $n\geqslant N$ 均有
+\begin{align}
+\max_{k\leqslant n}\frac{b_k}{B_n}<\varepsilon.
+\end{align}
+事实上，利用 $B_n$ 的单调不减性，对一切 $n\geqslant N\geqslant M$ 有
+\begin{align*}
+\max_{k\leqslant M}\frac{b_k}{B_n}\leqslant\max_{k\leqslant M}\frac{b_k}{B_N}<\varepsilon,
+\end{align*}
+\begin{align*}
+\max_{M<k\leqslant n}\frac{b_k}{B_n}\leqslant\max_{M<k\leqslant n}\frac{b_k}{B_k}<\varepsilon.
+\end{align*}
+因此前式成立，这就证得了 Feller 条件，定理证毕。
+\end{proof}
+
+量 $\dfrac{b_k}{B_n}$ 可以看作是分量 $\xi_k$ 对总和 $\zeta_n$ 的贡献，因此 Feller 条件相当于说：总和是大量``可忽略的''分量之和。
+
+下面我们转入证明主要定理。
+
+\subsection*{二、Lindeberg--Feller 定理}
+
+为了不打断主要定理的证明，我们把在定理证明中要用到的若干事实，以引理的形式给出。
+
+\begin{lemma}\label{lemma:ch05-指数展开估计}
+对 $n=1,2,\cdots$ 及任意的 $t$，
+\begin{align}
+\left|\mathrm{e}^{\mathrm{i}t}-1-\frac{\mathrm{i}t}{1!}-\cdots-\frac{(\mathrm{i}t)^{n-1}}{(n-1)!}\right|\leqslant\frac{|t|^{n}}{n!}.
+\end{align}
+\end{lemma}
+
+\begin{proof}
+记
+\begin{align*}
+g_n(t)=\mathrm{e}^{\mathrm{i}t}-1-\frac{\mathrm{i}t}{1!}-\cdots-\frac{(\mathrm{i}t)^{n-1}}{(n-1)!}.
+\end{align*}
+先设 $t>0$，由于
+\begin{align}
+g_1(t)=\mathrm{i}\int_{0}^{t}\mathrm{e}^{\mathrm{i}x}\,\mathrm{d}x,
+\end{align}
+因此 $|g_1(t)|\leqslant t$。其次，对 $n>1$
+\begin{align}
+g_n(t)=\mathrm{i}\int_{0}^{t}g_{n-1}(x)\,\mathrm{d}x,
+\end{align}
+用归纳法即得引理。
+
+由于 $\overline{|g_n(t)|}=|g_n(t)|$，因此引理对 $t<0$ 也成立。$t=0$ 结论显然成立。
+
+特别地，我们要用到
+\begin{align}
+|\mathrm{e}^{\mathrm{i}t}-1-\mathrm{i}t|\leqslant\frac{|t|^{2}}{2},
+\end{align}
+\begin{align}
+\left|\mathrm{e}^{\mathrm{i}t}-1-\mathrm{i}t+\frac{t^{2}}2\right|\leqslant\frac{|t|^{3}}6.
+\end{align}
+类似地可以得到，对 $t>0$
+\begin{align}
+1-\cos t=\left|\int_{0}^{t}\sin x\,\mathrm{d}x\right|\leqslant\int_{0}^{t}|\sin x|\,\mathrm{d}x\leqslant\int_{0}^{t}x\,\mathrm{d}x=\frac{t^{2}}2.
+\end{align}
+这式两边都是 $t$ 的偶函数，故显然对 $t\leqslant0$ 也成立。
+\end{proof}
+
+\begin{lemma}\label{lemma:ch05-乘积估计}
+对于任何满足 $|a_k|\leqslant1$ 及 $|b_k|\leqslant1$（$k=1,2,\cdots,n$）的复数，有
+\begin{align}
+|a_1a_2\cdots a_n-b_1b_2\cdots b_n|\leqslant\sum_{k=1}^{n}|a_k-b_k|.
+\end{align}
+\end{lemma}
+
+\begin{proof}
+显然
+\begin{align*}
+a_1a_2-b_1b_2=(a_1-b_1)a_2+(a_2-b_2)b_1,
+\end{align*}
+因此
+\begin{align*}
+|a_1a_2-b_1b_2|\leqslant|a_1-b_1|+|a_2-b_2|.
+\end{align*}
+用归纳法即得引理。
+\end{proof}
+
+\begin{lemma}\label{lemma:ch05-Poisson化特征函数}
+若 $\varphi(t)$ 是特征函数，则 $\mathrm{e}^{\varphi(t)-1}$ 也是特征函数，特别地
+\begin{align}
+|\mathrm{e}^{\varphi(t)-1}|\leqslant1.
+\end{align}
+\end{lemma}
+
+\begin{proof}
+定义随机变量
+\begin{align*}
+\eta=\xi_1+\xi_2+\cdots+\xi_{\nu},
+\end{align*}
+其中 $\xi_1,\xi_2,\cdots$ 相互独立，均有特征函数 $\varphi(t)$，$\nu$ 服从参数 $\lambda=1$ 的 Poisson 分布，且与诸 $\xi_i$ 独立，不难验证 $\eta$ 的特征函数为 $\mathrm{e}^{\varphi(t)-1}$，由特征函数的性质即得引理。
+\end{proof}
+
+现在叙述并证明主要的结果。
+
+\begin{theorem}[Lindeberg--Feller]\label{theorem:ch05-LindebergFeller}
+对和数 $\zeta_n=\sum_{k=1}^{n}\dfrac{\xi_k-a_k}{B_n}$，成立
+\begin{align}
+\lim_{n\to\infty}P\{\zeta_n<x\}=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{x}\mathrm{e}^{-t^{2}/2}\,\mathrm{d}t
+\end{align}
+与 Feller 条件 $\lim_{n\to\infty}\max_{k\leqslant n}\dfrac{b_k}{B_n}=0$ 的充要条件是 Lindeberg 条件
+\begin{align*}
+\lim_{n\to\infty}\frac{1}{B_n^{2}}\sum_{k=1}^{n}\int_{|x-a_k|>\tau B_n}(x-a_k)^{2}\,\mathrm{d}F_k(x)=0
+\end{align*}
+成立。
+\end{theorem}
+
+\begin{proof}
+为书写方便起见，我们引用记号
+\begin{align}
+\xi_{nk}=\frac{\xi_k-a_k}{B_n}.
+\end{align}
+显然
+\begin{align}
+\boldsymbol{E}\xi_{nk}=0,\qquad\boldsymbol{D}\xi_{nk}=\frac{\boldsymbol{D}\xi_k}{B_n^{2}}=\frac{b_k^{2}}{B_n^{2}},
+\end{align}
+\begin{align}
+\sum_{k=1}^{n}\boldsymbol{D}\xi_{nk}=\frac{1}{B_n^{2}}\sum_{k=1}^{n}\boldsymbol{D}\xi_k=1.
+\end{align}
+以 $f_{nk}(t)$ 及 $F_{nk}(x)$ 分别表示 $\xi_{nk}$ 的特征函数与分布函数，那么
+\begin{align}
+F_{nk}(x)=P\!\left\{\frac{\xi_k-a_k}{B_n}<x\right\}=F_k(B_nx+a_k).
+\end{align}
+这时
+\begin{align*}
+\frac{1}{B_n^{2}}\int_{|x-a_k|>\tau B_n}(x-a_k)^{2}\,\mathrm{d}F_k(x)
+=\int_{\left|\frac{x-a_k}{B_n}\right|>\tau}\left(\frac{x-a_k}{B_n}\right)^{2}\mathrm{d}F_k(x)
+=\int_{|y|>\tau}y^{2}\,\mathrm{d}F_{nk}(y).
+\end{align*}
+因此 Lindeberg 条件化为：对任意 $\tau>0$，
+\begin{align}
+\lim_{n\to\infty}\sum_{k=1}^{n}\int_{|x|>\tau}x^{2}\,\mathrm{d}F_{nk}(x)=0.
+\end{align}
+
+现在开始证明定理。设 $t$ 是任意固定的实数。
+
+为证分布函数收敛于标准正态分布，必须证明，当 $n\to\infty$ 时
+\begin{align}
+f_{n1}(t)\cdots f_{nn}(t)\to\mathrm{e}^{-t^{2}/2}.
+\end{align}
+我们先证明，在 Feller 条件成立的假定下，上式与下式是等价的：
+\begin{align}
+\sum_{k=1}^{n}(f_{nk}(t)-1)+\frac12t^{2}\to0.
+\end{align}
+
+事实上，若 Feller 条件成立，则对任意 $\varepsilon>0$，只要 $n$ 充分大，均有
+\begin{align*}
+\frac{b_k}{B_n}<\varepsilon,\quad k=1,2,\cdots,n.
+\end{align*}
+另一方面，由 $|\mathrm{e}^{\mathrm{i}t}-1-\mathrm{i}t|\leqslant\dfrac{|t|^{2}}2$ 可知存在复数 $\theta$，使得
+\begin{align}
+\mathrm{e}^{\mathrm{i}tx}-1-\mathrm{i}tx=\theta\frac{(tx)^{2}}2,\qquad|\theta|\leqslant1.
+\end{align}
+因此
+\begin{align*}
+f_{nk}(t)-1-\mathrm{i}t\boldsymbol{E}\xi_{nk}=\frac{\theta t^{2}}2\int_{-\infty}^{\infty}x^{2}\,\mathrm{d}F_{nk}(x).
+\end{align*}
+再由 $\boldsymbol{E}\xi_{nk}=0$ 可得：
+\begin{align}
+|f_{nk}(t)-1|&=\left|\frac{\theta t^{2}}2\int_{-\infty}^{\infty}x^{2}\,\mathrm{d}F_{nk}(x)\right|\leqslant\frac{t^{2}}2\int_{-\infty}^{\infty}x^{2}\,\mathrm{d}F_{nk}(x)\notag\\
+&=\frac{t^{2}}2\frac{b_k^{2}}{B_n^{2}}<\frac12\varepsilon^{2}t^{2}.
+\end{align}
+对任意 $\delta>0$，只要 $|z|$ 充分小，就可以有
+\begin{align}
+|\mathrm{e}^{z}-1-z|<\delta|z|.
+\end{align}
+因此由关于 Poisson 化特征函数的引理、关于乘积估计的引理及前述两式，只要 $n$ 充分大，就有
+\begin{align}
+\left|\mathrm{e}^{\sum_{k=1}^{n}[f_{nk}(t)-1]}-f_{n1}(t)\cdots f_{nn}(t)\right|
+\leqslant\sum_{k=1}^{n}\left|\mathrm{e}^{f_{nk}(t)-1}-f_{nk}(t)\right|
+\leqslant\delta\sum_{k=1}^{n}|f_{nk}(t)-1|
+\leqslant\frac12\delta t^{2}\sum_{k=1}^{n}\frac{b_k^{2}}{B_n^{2}}=\frac12\delta t^{2}.
+\end{align}
+因为 $\delta$ 可以任意小，故左边趋于 $0$，因此证得特征函数乘积收敛与 $\sum(f_{nk}(t)-1)+\frac12t^{2}\to0$ 的等价性。
+
+接着证明定理的充分性。先证由 Lindeberg 条件可以推出 Feller 条件。事实上，
+\begin{align}
+\frac{b_k^{2}}{B_n^{2}}&=\int_{-\infty}^{\infty}x^{2}\,\mathrm{d}F_{nk}(x)\notag\\
+&=\int_{|x|\leqslant\tau}x^{2}\,\mathrm{d}F_{nk}(x)+\int_{|x|>\tau}x^{2}\,\mathrm{d}F_{nk}(x)\notag\\
+&\leqslant\tau^{2}+\sum_{k=1}^{n}\int_{|x|>\tau}x^{2}\,\mathrm{d}F_{nk}(x).
+\end{align}
+右边与 $k$ 无关，而且 $\tau$ 可选得任意地小；对选定的 $\tau$，由 Lindeberg 条件知道第二式当 $n$ 足够大时也可任意地小。这样，Feller 条件成立。
+
+其次证明 Lindeberg 条件能保证分布函数收敛于标准正态成立。注意到 $\boldsymbol{E}\xi_{nk}=0$ 及 $\sum\boldsymbol{D}\xi_{nk}=1$，可知
+\begin{align*}
+\sum_{k=1}^{n}[f_{nk}(t)-1]+\frac12t^{2}
+=\sum_{k=1}^{n}\int_{-\infty}^{\infty}\left[\mathrm{e}^{\mathrm{i}tx}-1-\mathrm{i}tx+\frac{t^{2}x^{2}}2\right]\mathrm{d}F_{nk}(x).
+\end{align*}
+利用指数展开估计，当 $|x|\leqslant\tau$ 时，
+\begin{align*}
+\left|\mathrm{e}^{\mathrm{i}tx}-1-\mathrm{i}tx+\frac{t^{2}x^{2}}2\right|\leqslant\frac{|tx|^{3}}6\leqslant\frac{\tau|t|^{3}x^{2}}6.
+\end{align*}
+又利用指数展开估计，当 $|x|>\tau$ 时，
+\begin{align*}
+\left|\mathrm{e}^{\mathrm{i}tx}-1-\mathrm{i}tx+\frac{t^{2}x^{2}}2\right|\leqslant|\mathrm{e}^{\mathrm{i}tx}-1-\mathrm{i}tx|+\frac{t^{2}x^{2}}2\leqslant t^{2}x^{2}.
+\end{align*}
+因此
+\begin{align}
+\left|\sum_{k=1}^{n}[f_{nk}(t)-1]+\frac12t^{2}\right|
+&\leqslant\sum_{k=1}^{n}\int_{|x|\leqslant\tau}\frac{\tau|t|^{3}x^{2}}6\,\mathrm{d}F_{nk}(x)+\sum_{k=1}^{n}\int_{|x|>\tau}t^{2}x^{2}\,\mathrm{d}F_{nk}(x)\notag\\
+&\leqslant\frac{\tau|t|^{3}}6\sum_{k=1}^{n}\int_{-\infty}^{\infty}x^{2}\,\mathrm{d}F_{nk}(x)+t^{2}\sum_{k=1}^{n}\int_{|x|>\tau}x^{2}\,\mathrm{d}F_{nk}(x)\notag\\
+&=\frac{\tau|t|^{3}}6+t^{2}\sum_{k=1}^{n}\int_{|x|>\tau}x^{2}\,\mathrm{d}F_{nk}(x).
+\end{align}
+对任给 $\varepsilon>0$，由于 $\tau$ 的任意性，可选得使 $\dfrac{\tau|t|^{3}}6<\dfrac{\varepsilon}2$，对选定的 $\tau$，用 Lindeberg 条件知只要 $n$ 充分大，也可使 $t^{2}\sum_{k=1}^{n}\int_{|x|>\tau}x^{2}\,\mathrm{d}F_{nk}(x)<\dfrac{\varepsilon}2$，因此我们已证得了 $\sum(f_{nk}(t)-1)+\frac12t^{2}\to0$，但由于我们已证过 Feller 条件成立，这时它与特征函数乘积收敛是等价的，因而特征函数乘积收敛也成立，根据特征函数连续性定理可知分布函数收敛于标准正态成立。
+
+再证定理的必要性。
+
+由于分布函数收敛于标准正态成立，因此相应的特征函数应满足 $f_{n1}(t)\cdots f_{nn}(t)\to\mathrm{e}^{-t^{2}/2}$。但在 Feller 条件成立时，这又推出 $\sum(f_{nk}(t)-1)+\frac12t^{2}\to0$，因此
+\begin{align}
+\sum_{k=1}^{n}[f_{nk}(t)-1]+\frac{t^{2}}2
+=\sum_{k=1}^{n}\int_{-\infty}^{\infty}\left[\mathrm{e}^{\mathrm{i}tx}-1+\frac{t^{2}x^{2}}2\right]\mathrm{d}F_{nk}(x)\to0.
+\end{align}
+因为由 $1-\cos t\leqslant\dfrac{t^{2}}2$ 可得 $\cos tx-1+\dfrac{t^{2}x^{2}}2\geqslant0$，因此上述被积函数的实部是非负的，故
+\begin{align}
+\operatorname{Re}\!\left(\sum_{k=1}^{n}\int_{-\infty}^{\infty}\left[\mathrm{e}^{\mathrm{i}tx}-1+\frac{t^{2}x^{2}}2\right]\mathrm{d}F_{nk}(x)\right)
+&=\sum_{k=1}^{n}\int_{-\infty}^{\infty}\left[\cos tx-1+\frac{t^{2}x^{2}}2\right]\mathrm{d}F_{nk}(x)\notag\\
+&\geqslant\sum_{k=1}^{n}\int_{|x|>\tau}\left[\cos tx-1+\frac{t^{2}x^{2}}2\right]\mathrm{d}F_{nk}(x)\notag\\
+&\geqslant\sum_{k=1}^{n}\int_{|x|>\tau}\left(\frac{t^{2}x^{2}}2-2\right)\mathrm{d}F_{nk}(x)\notag\\
+&=\frac{t^{2}}2\sum_{k=1}^{n}\int_{|x|>\tau}x^{2}\,\mathrm{d}F_{nk}(x)-2\sum_{k=1}^{n}\int_{|x|>\tau}\mathrm{d}F_{nk}(x)\notag\\
+&\geqslant\left(\frac{t^{2}}2-2\tau^{-2}\right)\sum_{k=1}^{n}\int_{|x|>\tau}x^{2}\,\mathrm{d}F_{nk}(x).
+\end{align}
+因为对任意 $\tau>0$，可找到 $t$，使 $\dfrac{t^{2}}2-2\tau^{-2}>0$，这时由前述趋于 $0$ 的式子及上式可得
+\begin{align*}
+\left(\frac{t^{2}}2-2\tau^{-2}\right)\sum_{k=1}^{n}\int_{|x|>\tau}x^{2}\,\mathrm{d}F_{nk}(x)\to0.
+\end{align*}
+故 Lindeberg 条件成立，定理证毕。
+\end{proof}
+
+\subsection*{三、若干推论}
+
+Lindeberg 条件给出了中心极限定理成立的普遍条件，由它可以推出许多特殊的结果。
+
+首先，我们来说明独立同分布场合的 Lindeberg--Lévy 定理是 Lindeberg--Feller 定理的特例。
+
+若 $\xi_1,\xi_2,\cdots$ 是独立同分布随机变量序列，$\boldsymbol{E}\xi_k=a$，$0<\sigma^{2}=\boldsymbol{D}\xi_k<\infty$，则
+\begin{align}
+B_n=\sqrt{n}\,\sigma.
+\end{align}
+这时
+\begin{align}
+\frac{1}{B_n^{2}}\sum_{k=1}^{n}\int_{|x-a_k|>\tau B_n}(x-a_k)^{2}\,\mathrm{d}F_k(x)
+=\frac{1}{n\sigma^{2}}\cdot n\int_{|x-a|>\tau\sigma\sqrt{n}}(x-a)^{2}\,\mathrm{d}F(x).
+\end{align}
+由于方差 $0<\sigma^{2}<\infty$，上式右边的积分当 $n\to\infty$ 时趋于 $0$，故 Lindeberg 条件得到满足，所以中心极限定理成立。
+
+下面我们再来给出两个有用的结果。
+
+\begin{theorem}\label{theorem:ch05-有界变量CLT}
+若 $\xi_1,\xi_2,\cdots$ 是独立随机变量序列，存在常数 $K_n$，使 $\max_{1\leqslant j\leqslant n}|\xi_j|\leqslant K_n$（$n=1,2,\cdots$），且 $\lim_{n\to\infty}\dfrac{K_n}{B_n}=0$，则
+\begin{align*}
+P\!\left\{\sum_{k=1}^{n}\frac{\xi_k-a_k}{B_n}<x\right\}\to\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{x}\mathrm{e}^{-t^{2}/2}\,\mathrm{d}t.
+\end{align*}
+\end{theorem}
+
+\begin{proof}
+由假定，对任意的 $\varepsilon>0$，只要 $n$ 充分大就有 $2K_n\leqslant\varepsilon B_n$，显然
+\begin{align*}
+|\xi_j-a_j|\leqslant2K_n,\quad j=1,2,\cdots,n,
+\end{align*}
+因此
+\begin{align}
+\{|\xi_j-a_j|\leqslant\varepsilon B_n\}=\Omega\quad(1\leqslant j\leqslant n).
+\end{align}
+所以
+\begin{align*}
+\lim_{n\to\infty}\frac{1}{B_n^{2}}\sum_{j=1}^{n}\int_{|x-a_j|\leqslant\varepsilon B_n}(x-a_j)^{2}\,\mathrm{d}F_j(x)
+=\lim_{n\to\infty}\frac{1}{B_n^{2}}\sum_{j=1}^{n}\int_{-\infty}^{\infty}(x-a_j)^{2}\,\mathrm{d}F_j(x)=1.
+\end{align*}
+因此 Lindeberg 条件得到满足，所以中心极限定理成立。
+\end{proof}
+
+\begin{theorem}[Lyapunov]\label{theorem:ch05-Lyapunov}
+如果对相互独立的随机变量序列 $\xi_1,\xi_2,\cdots,\xi_n,\cdots$ 能选择这样一个正数 $\delta>0$，使当 $n\to\infty$ 时，
+\begin{align}
+\frac{1}{B_n^{2+\delta}}\sum_{k=1}^{n}\boldsymbol{E}|\xi_k-a_k|^{2+\delta}\to0,
+\end{align}
+则
+\begin{align*}
+P\!\left\{\frac1{B_n}\sum_{k=1}^{n}(\xi_k-a_k)<x\right\}\to\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{x}\mathrm{e}^{-t^{2}/2}\,\mathrm{d}t.
+\end{align*}
+\end{theorem}
+
+\begin{proof}
+只要验证 Lindeberg 条件就行了。事实上，
+\begin{align*}
+\frac{1}{B_n^{2}}\sum_{k=1}^{n}\int_{|x-a_k|>\tau B_n}(x-a_k)^{2}\,\mathrm{d}F_k(x)
+\leqslant\frac{1}{B_n^{2}(\tau B_n)^{\delta}}\sum_{k=1}^{n}\int_{|x-a_k|>\tau B_n}|x-a_k|^{2+\delta}\,\mathrm{d}F_k(x)
+\leqslant\frac1{\tau^{\delta}}\cdot\frac{1}{B_n^{2+\delta}}\sum_{k=1}^{n}\int_{-\infty}^{\infty}|x-a_k|^{2+\delta}\,\mathrm{d}F_k(x)\to0\quad(n\to\infty).
+\end{align*}
+用 Lindeberg--Feller 定理就可推得所需的结论。
+\end{proof}
+
+\end{document}

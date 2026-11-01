@@ -1,0 +1,317 @@
+﻿\documentclass[../../main.tex]{subfiles}
+
+\graphicspath{{../../image/}{../../figure/}}
+
+\begin{document}
+
+\section{多元高斯分布}\label{section:ch03-多元高斯分布}
+
+高斯分布又称正态分布，已广泛用于建模连续变量的分布。我们已经看到对于单变量$x$（参见\cref{section:ch02-概率密度}），高斯分布可以写为如下形式：
+
+\begin{align}
+  \mathcal{N}(x\mid\mu,\sigma^{2})=\frac{1}{(2\pi\sigma^{2})^{1/2}}\exp\left\{-\frac{1}{2\sigma^{2}}(x-\mu)^{2}\right\}
+  \label{align:ch03-一元高斯}
+\end{align}
+
+其中$\mu$是均值，$\sigma^{2}$是方差。对于一个$D$维向量$\boldsymbol{x}$，多元高斯分布有如下形式：
+
+\begin{align}
+  \mathcal{N}(\boldsymbol{x}\mid\boldsymbol{\mu},\boldsymbol{\Sigma})=\frac{1}{(2\pi)^{D/2}\lvert\boldsymbol{\Sigma}\rvert^{1/2}}\exp\left\{-\frac{1}{2}(\boldsymbol{x}-\boldsymbol{\mu})^{\mathsf{T}}\boldsymbol{\Sigma}^{-1}(\boldsymbol{x}-\boldsymbol{\mu})\right\}
+  \label{align:ch03-多元高斯}
+\end{align}
+
+其中$\boldsymbol{\mu}$是$D$维均值向量，$\boldsymbol{\Sigma}$是$D\times D$的协方差矩阵，$\lvert\boldsymbol{\Sigma}\rvert$表示$\boldsymbol{\Sigma}$的行列式。
+
+在很多不同的场景中都可以看到高斯分布，因此可以从各种不同的角度来理解它的作用（参见\cref{section:ch02-概率密度}）。例如，我们已经看到，对于单个实数变量，能够使它的熵最大化的分布就是高斯分布，这一性质对于多元高斯分布同样适用（见习题~3.8）。当我们考虑多个随机变量之和的时候，同样会用到高斯分布。中心极限定理（central limit theorem）告诉我们，在某些温和的条件下，一组随机变量的和（它本身也是一个随机变量）的分布会随着其中随机变量数量的增加而越来越接近于高斯分布（Walker, 1969）。现实中，随着$N$的增大，分布会很快地收敛到高斯分布。
+
+\subsection{高斯几何}\label{subsection:ch03-高斯几何}
+
+高斯分布有很多重要的分析性质，本节比前几节更具技术性，读者需要熟悉多种矩阵相关的等式（参见附录~A）。高斯分布对$\boldsymbol{x}$的函数依赖是通过二次形式来呈现的：
+
+\begin{align}
+  \Delta^{2}=(\boldsymbol{x}-\boldsymbol{\mu})^{\mathsf{T}}\boldsymbol{\Sigma}^{-1}(\boldsymbol{x}-\boldsymbol{\mu})
+  \label{align:ch03-马氏距离}
+\end{align}
+
+其中，量$\Delta$称为$\boldsymbol{\mu}$到$\boldsymbol{x}$的马哈拉诺比斯距离（Mahalanobis distance）。当$\boldsymbol{\Sigma}$为单位矩阵时，它退化为欧氏距离。高斯分布在$\boldsymbol{x}$空间的曲面上是常数，因为该二次型为常数。
+
+首先，注意可以不失一般性地假设矩阵$\boldsymbol{\Sigma}$为对称矩阵，因为任何非对称的成分都会从指数中消失（见习题~3.11）。考虑协方差矩阵的特征方程：
+
+\begin{align}
+  \boldsymbol{\Sigma}\boldsymbol{u}_{i}=\lambda_{i}\boldsymbol{u}_{i}
+  \label{align:ch03-特征方程}
+\end{align}
+
+其中$i=1,\cdots,D$。由于$\boldsymbol{\Sigma}$是实对称矩阵，其特征值是实数，并且其特征向量可以正交化（见习题~3.12），故有
+
+\begin{align}
+  \boldsymbol{u}_{i}^{\mathsf{T}}\boldsymbol{u}_{j}=I_{ij}
+  \label{align:ch03-特征向量正交}
+\end{align}
+
+其中$I$是单位矩阵中的元素。协方差矩阵$\boldsymbol{\Sigma}$可以由其特征向量扩展获得，并且可以表示为如下形式（见习题~3.13）：
+
+\begin{align}
+  \boldsymbol{\Sigma}=\sum_{i=1}^{D}\lambda_{i}\boldsymbol{u}_{i}\boldsymbol{u}_{i}^{\mathsf{T}}
+  \label{align:ch03-协方差谱分解}
+\end{align}
+
+类似地，协方差矩阵的逆矩阵$\boldsymbol{\Sigma}^{-1}$可以表示为
+
+\begin{align}
+  \boldsymbol{\Sigma}^{-1}=\sum_{i=1}^{D}\frac{1}{\lambda_{i}}\boldsymbol{u}_{i}\boldsymbol{u}_{i}^{\mathsf{T}}
+  \label{align:ch03-逆协方差谱分解}
+\end{align}
+
+将\cref{align:ch03-逆协方差谱分解}代入\cref{align:ch03-马氏距离}，二次型变为
+
+\begin{align}
+  \Delta^{2}=\sum_{i=1}^{D}\frac{y_{i}^{2}}{\lambda_{i}}
+  \label{align:ch03-二次型对角}
+\end{align}
+
+其中
+
+\begin{align}
+  y_{i}=\boldsymbol{u}_{i}^{\mathsf{T}}(\boldsymbol{x}-\boldsymbol{\mu})
+  \label{align:ch03-旋转坐标}
+\end{align}
+
+我们可以将$\{y_{i}\}$解释为一个由正交向量定义的新坐标系，它由原始$\boldsymbol{x}$的坐标经过平移和旋转得到。构造向量$\boldsymbol{y}=(y_1,\cdots,y_D)^{\mathsf{T}}$，有
+
+\begin{align}
+  \boldsymbol{y}=\boldsymbol{U}(\boldsymbol{x}-\boldsymbol{\mu})
+  \label{align:ch03-旋转矩阵}
+\end{align}
+
+其中$\boldsymbol{U}$是以$\boldsymbol{u}_{i}$为行向量的矩阵。由\cref{align:ch03-特征向量正交}可知$\boldsymbol{U}$是正交矩阵，满足$\boldsymbol{U}\boldsymbol{U}^{\mathsf{T}}=\boldsymbol{U}^{\mathsf{T}}\boldsymbol{U}=\boldsymbol{I}$。由于\cref{align:ch03-二次型对角}为常数，因此二次型（即高斯密度）在曲面上也为常数。如果所有特征值$\lambda_i$均为正，则这些曲面表示以$\boldsymbol{\mu}$为中心、以$\boldsymbol{u}_{i}$的方向为坐标轴且以$\sqrt{\lambda_i}$为半轴长的椭球。为了给出良定的高斯分布，需要保证协方差矩阵的所有特征值$\lambda_i$均严格为正，否则分布就无法被正确归一化。特征值全部严格为正的矩阵是正定的（参见第~16~章）。在讨论隐变量模型时，我们将遇到高斯分布的一个或多个特征值为零的情形，这时分布是奇异的且限制在一个更低维的子空间中；如果所有特征值非负，则称这样的协方差矩阵为半正定的。
+
+\subsection{矩}\label{subsection:ch03-矩}
+
+下面考虑高斯分布的矩，并给出对参数$\boldsymbol{\mu}$和$\boldsymbol{\Sigma}$的一种解释。$\boldsymbol{x}$在高斯分布下的期望由下式给出：
+
+\begin{align}
+  \mathbb{E}[\boldsymbol{x}]=\boldsymbol{\mu}
+  \label{align:ch03-高斯均值}
+\end{align}
+
+$\boldsymbol{\mu}$可以视为高斯分布的均值。接下来考虑高斯分布的二阶矩。对于多变量的高斯分布，存在由$\mathbb{E}[x_i x_j]$给出的$D^{2}$个二阶矩，我们可以将它们组合成矩阵$\mathbb{E}[\boldsymbol{x}\boldsymbol{x}^{\mathsf{T}}]$。这里再一次进行了变量替换$\boldsymbol{z}=\boldsymbol{x}-\boldsymbol{\mu}$，交叉项会由于对称性而消去。最终可以得到
+
+\begin{align}
+  \mathbb{E}[\boldsymbol{x}\boldsymbol{x}^{\mathsf{T}}]=\boldsymbol{\mu}\boldsymbol{\mu}^{\mathsf{T}}+\boldsymbol{\Sigma}
+  \label{align:ch03-二阶矩}
+\end{align}
+
+在定义单个随机变量的方差时，我们在计算二阶矩之前减去了均值。类似地，在多元的情形中，我们再次减去均值，从而将随机变量$\boldsymbol{x}$的协方差定义为
+
+\begin{align}
+  \mathrm{cov}[\boldsymbol{x}]=\mathbb{E}\left[(\boldsymbol{x}-\mathbb{E}[\boldsymbol{x}])(\boldsymbol{x}-\mathbb{E}[\boldsymbol{x}])^{\mathsf{T}}\right]
+  \label{align:ch03-协方差定义}
+\end{align}
+
+对于高斯分布的情形，利用$\mathbb{E}[\boldsymbol{x}]=\boldsymbol{\mu}$并结合\cref{align:ch03-二阶矩}，得到
+
+\begin{align}
+  \mathrm{cov}[\boldsymbol{x}]=\boldsymbol{\Sigma}
+  \label{align:ch03-高斯协方差}
+\end{align}
+
+由于参数矩阵$\boldsymbol{\Sigma}$决定了高斯分布下$\boldsymbol{x}$的协方差，因此我们称其为协方差矩阵。
+
+\subsection{局限性}\label{subsection:ch03-局限性}
+
+尽管高斯分布式\eqref{align:ch03-多元高斯}经常用作简单的密度模型，但它也存在一些明显的局限。考虑分布中自由参数的数量：一个常规的对称协方差矩阵$\boldsymbol{\Sigma}$含有$D(D+1)/2$个独立的参数（见习题~3.15），$\boldsymbol{\mu}$中还另外存在$D$个独立的参数，因此总共有$D(D+3)/2$个参数。对于较大的$D$，参数量按$D$的平方增长，对较大矩阵的操作和取逆计算代价巨大。解决这个问题的一种方法是使用协方差矩阵的受限形式。考虑协方差矩阵是对角的，$\boldsymbol{\Sigma}=\mathrm{diag}(\sigma_i^{2})$，因此密度模型中总共有$2D$个独立参数，相应的概率密度等值线由轴对齐的椭球体给出。我们可以进一步将协方差矩阵限制为与单位矩阵成正比，$\boldsymbol{\Sigma}=\sigma^{2}\boldsymbol{I}$，即所谓各向同性的（isotropic）协方差，这时模型中有$D+1$个独立参数，并且概率密度等值线是一个球面。常规协方差矩阵、对角协方差矩阵和各向同性协方差矩阵这三种情形如\cref{figure:ch03-协方差等值线}所示。遗憾的是，虽然这些方法限制了分布中的自由度，并使协方差矩阵的求逆变得更快，但它们也极大限制了概率密度的形式，并限制了模型从数据中捕获有趣相关性的能力。
+
+高斯分布的另一个局限性是，它本质上是单峰的（即具有单个最大值），因此无法为多峰分布提供良好的近似。稍后我们将看到，引入潜变量（也称隐变量或无法观测的变量）可以同时解决上述问题。特别地，通过引入离散潜变量实现高斯混合，可以获得一大类多峰分布（参见\cref{subsection:ch03-高斯混合}）。
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.85\textwidth]{ch03-fig3-4-cov-contours.png}
+  \caption{二维高斯分布的概率密度等值线，其中协方差矩阵为：(a)~常规协方差矩阵；(b)~对角协方差矩阵，此时椭圆等值线与坐标轴对齐；(c)~各向同性协方差矩阵，与单位矩阵成正比，等值线是同心圆。}
+  \label{figure:ch03-协方差等值线}
+\end{figure}
+
+\subsection{条件分布}\label{subsection:ch03-条件分布}
+
+多元高斯分布的一个重要性质是，如果两组变量服从联合高斯分布，那么以其中一组变量为条件的另一组变量的条件分布也是高斯分布；同样，其中任意一组变量的边缘分布也是高斯分布。
+
+首先考虑条件分布。假设$D$维向量$\boldsymbol{x}$服从高斯分布$\mathcal{N}(\boldsymbol{x}\mid\boldsymbol{\mu},\boldsymbol{\Sigma})$，将$\boldsymbol{x}$划分为两个不相交的子集$\boldsymbol{x}_{a}$和$\boldsymbol{x}_{b}$。在不失一般性的情况下，取$\boldsymbol{x}_{a}$为前$M$个分量，$\boldsymbol{x}_{b}$为剩余的$D-M$个分量，于是
+
+\begin{align}
+  \boldsymbol{x}=\begin{pmatrix}\boldsymbol{x}_{a}\\ \boldsymbol{x}_{b}\end{pmatrix},\qquad
+  \boldsymbol{\mu}=\begin{pmatrix}\boldsymbol{\mu}_{a}\\ \boldsymbol{\mu}_{b}\end{pmatrix},\qquad
+  \boldsymbol{\Sigma}=\begin{pmatrix}\boldsymbol{\Sigma}_{aa} & \boldsymbol{\Sigma}_{ab}\\ \boldsymbol{\Sigma}_{ba} & \boldsymbol{\Sigma}_{bb}\end{pmatrix}
+  \label{align:ch03-分块}
+\end{align}
+
+在许多情况下，使用协方差矩阵的逆矩阵会更方便。这称为精度矩阵（precision matrix），记为
+
+\begin{align}
+  \boldsymbol{\Lambda}\equiv\boldsymbol{\Sigma}^{-1}=\begin{pmatrix}\boldsymbol{\Lambda}_{aa} & \boldsymbol{\Lambda}_{ab}\\ \boldsymbol{\Lambda}_{ba} & \boldsymbol{\Lambda}_{bb}\end{pmatrix}
+  \label{align:ch03-精度矩阵}
+\end{align}
+
+注意，协方差矩阵的对称性意味着$\boldsymbol{\Lambda}_{ab}=\boldsymbol{\Lambda}_{ba}^{\mathsf{T}}$。从概率的乘积法则中，只需要将$\boldsymbol{x}_{b}$固定为观测值并归一化表达式，就可以基于联合分布$p(\boldsymbol{x})=p(\boldsymbol{x}_{a},\boldsymbol{x}_{b})$得到条件分布$p(\boldsymbol{x}_{a}\mid\boldsymbol{x}_{b})$。通过在指数中对$\boldsymbol{x}_{a}$作"完全平方"，可以得到条件高斯分布的均值和协方差：
+
+\begin{align}
+  \boldsymbol{\mu}_{a\mid b}=\boldsymbol{\mu}_{a}+\boldsymbol{\Sigma}_{ab}\boldsymbol{\Sigma}_{bb}^{-1}(\boldsymbol{x}_{b}-\boldsymbol{\mu}_{b})
+  \label{align:ch03-条件均值}
+\end{align}
+
+\begin{align}
+  \boldsymbol{\Sigma}_{a\mid b}=\boldsymbol{\Sigma}_{aa}-\boldsymbol{\Sigma}_{ab}\boldsymbol{\Sigma}_{bb}^{-1}\boldsymbol{\Sigma}_{ba}
+  \label{align:ch03-条件协方差}
+\end{align}
+
+因此条件分布为
+
+\begin{align}
+  p(\boldsymbol{x}_{a}\mid\boldsymbol{x}_{b})=\mathcal{N}(\boldsymbol{x}_{a}\mid\boldsymbol{\mu}_{a\mid b},\boldsymbol{\Sigma}_{a\mid b})
+  \label{align:ch03-条件高斯}
+\end{align}
+
+注意，条件分布的均值$\boldsymbol{\mu}_{a\mid b}$是$\boldsymbol{x}_{b}$的线性函数，而协方差$\boldsymbol{\Sigma}_{a\mid b}$与$\boldsymbol{x}_{b}$无关。这是线性-高斯（linear-Gaussian）模型的一个示例（参见\cref{subsection:ch11-线性高斯}）。
+
+\subsection{边缘分布}\label{subsection:ch03-边缘分布}
+
+如果联合分布$p(\boldsymbol{x}_{a},\boldsymbol{x}_{b})$是高斯分布，则边缘分布
+
+\begin{align}
+  p(\boldsymbol{x}_{a})=\int p(\boldsymbol{x}_{a},\boldsymbol{x}_{b})\,\mathrm{d}\boldsymbol{x}_{b}
+  \label{align:ch03-边缘积分}
+\end{align}
+
+也是高斯分布。通过对$\boldsymbol{x}_{b}$作完全平方以完成积分，可以得到边缘分布的均值和协方差：
+
+\begin{align}
+  \mathbb{E}[\boldsymbol{x}_{a}]=\boldsymbol{\mu}_{a}
+  \label{align:ch03-边缘均值}
+\end{align}
+
+\begin{align}
+  \mathrm{cov}[\boldsymbol{x}_{a}]=\boldsymbol{\Sigma}_{aa}
+  \label{align:ch03-边缘协方差}
+\end{align}
+
+因此边缘分布为
+
+\begin{align}
+  p(\boldsymbol{x}_{a})=\mathcal{N}(\boldsymbol{x}_{a}\mid\boldsymbol{\mu}_{a},\boldsymbol{\Sigma}_{aa})
+  \label{align:ch03-边缘高斯}
+\end{align}
+
+可以看到，对于边缘分布，均值和协方差用分量协方差矩阵表达最简单；而对于条件分布，均值和协方差用分量精度矩阵表达最简单。
+
+\subsection{贝叶斯定理}\label{subsection:ch03-贝叶斯定理}
+
+在前面两节中，我们将向量$\boldsymbol{x}$分成两个子向量，然后找到了条件分布和边缘分布的表达式。这里考虑更一般的情形：假设我们有高斯边缘分布$p(\boldsymbol{x})$和高斯条件分布$p(\boldsymbol{y}\mid\boldsymbol{x})$，其中$p(\boldsymbol{y}\mid\boldsymbol{x})$的均值是$\boldsymbol{x}$的线性函数，协方差与$\boldsymbol{x}$无关：
+
+\begin{align}
+  p(\boldsymbol{x})=\mathcal{N}(\boldsymbol{x}\mid\boldsymbol{\mu},\boldsymbol{\Lambda}^{-1})
+  \label{align:ch03-先验高斯}
+\end{align}
+
+\begin{align}
+  p(\boldsymbol{y}\mid\boldsymbol{x})=\mathcal{N}(\boldsymbol{y}\mid\boldsymbol{A}\boldsymbol{x}+\boldsymbol{b},\boldsymbol{L}^{-1})
+  \label{align:ch03-线性高斯条件}
+\end{align}
+
+其中$\boldsymbol{\mu}$、$\boldsymbol{A}$和$\boldsymbol{b}$是控制均值的参数，$\boldsymbol{\Lambda}$和$\boldsymbol{L}$是精度矩阵。这种结构在好几种生成式模型中都有出现（参见第~16~章）。通过对联合分布的对数作完全平方，可以推导出边缘分布$p(\boldsymbol{y})$和条件分布$p(\boldsymbol{x}\mid\boldsymbol{y})$：
+
+\begin{align}
+  p(\boldsymbol{y})=\mathcal{N}(\boldsymbol{y}\mid\boldsymbol{A}\boldsymbol{\mu}+\boldsymbol{b},\ \boldsymbol{L}^{-1}+\boldsymbol{A}\boldsymbol{\Lambda}^{-1}\boldsymbol{A}^{\mathsf{T}})
+  \label{align:ch03-边缘贝叶斯}
+\end{align}
+
+\begin{align}
+  p(\boldsymbol{x}\mid\boldsymbol{y})=\mathcal{N}\bigl(\boldsymbol{x}\mid\ \boldsymbol{\Sigma}\{\boldsymbol{\Lambda}\boldsymbol{\mu}+\boldsymbol{A}^{\mathsf{T}}\boldsymbol{L}(\boldsymbol{y}-\boldsymbol{b})\},\ (\boldsymbol{\Lambda}+\boldsymbol{A}^{\mathsf{T}}\boldsymbol{L}\boldsymbol{A})^{-1}\bigr)
+  \label{align:ch03-后验高斯}
+\end{align}
+
+其中
+
+\begin{align}
+  \boldsymbol{\Sigma}=(\boldsymbol{\Lambda}+\boldsymbol{A}^{\mathsf{T}}\boldsymbol{L}\boldsymbol{A})^{-1}
+  \label{align:ch03-后验协方差}
+\end{align}
+
+对这种条件分布进行估计可以看作贝叶斯定理的一个示例：$p(\boldsymbol{x})$称为$\boldsymbol{x}$的先验分布，条件分布$p(\boldsymbol{x}\mid\boldsymbol{y})$表示观测到$\boldsymbol{y}$之后$\boldsymbol{x}$所对应的后验分布。
+
+\subsection{最大似然}\label{subsection:ch03-最大似然}
+
+给定数据集$X=\{\boldsymbol{x}_1,\cdots,\boldsymbol{x}_N\}$，假设其中的观测值$\{\boldsymbol{x}_n\}$服从多元高斯分布且相互独立，则可以通过最大似然来估计分布的参数。对数似然函数由下式给出：
+
+\begin{align}
+  \ln p(X\mid\boldsymbol{\mu},\boldsymbol{\Sigma})=-\frac{ND}{2}\ln(2\pi)-\frac{N}{2}\ln\lvert\boldsymbol{\Sigma}\rvert-\frac{1}{2}\sum_{n=1}^{N}(\boldsymbol{x}_n-\boldsymbol{\mu})^{\mathsf{T}}\boldsymbol{\Sigma}^{-1}(\boldsymbol{x}_n-\boldsymbol{\mu})
+  \label{align:ch03-高斯对数似然}
+\end{align}
+
+令导数为零，即可得到均值的最大似然估计解：
+
+\begin{align}
+  \boldsymbol{\mu}_{\mathrm{ML}}=\frac{1}{N}\sum_{n=1}^{N}\boldsymbol{x}_n
+  \label{align:ch03-高斯均值ML}
+\end{align}
+
+这是观测数据点集的平均值。协方差的最大似然解为
+
+\begin{align}
+  \boldsymbol{\Sigma}_{\mathrm{ML}}=\frac{1}{N}\sum_{n=1}^{N}(\boldsymbol{x}_n-\boldsymbol{\mu}_{\mathrm{ML}})(\boldsymbol{x}_n-\boldsymbol{\mu}_{\mathrm{ML}})^{\mathsf{T}}
+  \label{align:ch03-高斯协方差ML}
+\end{align}
+
+如果我们估计真实分布下最大似然解的期望，则有$\mathbb{E}[\boldsymbol{\mu}_{\mathrm{ML}}]=\boldsymbol{\mu}$，而$\mathbb{E}[\boldsymbol{\Sigma}_{\mathrm{ML}}]=\frac{N-1}{N}\boldsymbol{\Sigma}$。也就是说，协方差的最大似然估计期望小于真实值，因此它是有偏的。通过定义一个不同的估计量可以修正这一偏差：
+
+\begin{align}
+  \boldsymbol{\Sigma}=\frac{N}{N-1}\boldsymbol{\Sigma}_{\mathrm{ML}}
+  \label{align:ch03-无偏协方差}
+\end{align}
+
+\subsection{序贯估计}\label{subsection:ch03-序贯估计}
+
+对最大似然解的讨论采用了批处理（batch processing）方法，即一次性考虑整个训练集。也可以使用序贯（sequential）方法，该方法允许一次处理一个数据点，然后将其丢弃。这对于在线应用和大数据非常重要。考虑\cref{align:ch03-高斯均值ML}给出的最大似然估计，若分解出最末尾的数据点$\boldsymbol{x}_N$的贡献，则有
+
+\begin{align}
+  \boldsymbol{\mu}_{\mathrm{ML}}^{(N)}=\boldsymbol{\mu}_{\mathrm{ML}}^{(N-1)}+\frac{1}{N}(\boldsymbol{x}_N-\boldsymbol{\mu}_{\mathrm{ML}}^{(N-1)})
+  \label{align:ch03-序贯更新}
+\end{align}
+
+这个结果可以这样解释：在观测到$N-1$个数据点后，我们用$\boldsymbol{\mu}_{\mathrm{ML}}^{(N-1)}$来估计$\boldsymbol{\mu}$；而在观测到数据点$\boldsymbol{x}_N$后，我们可以通过将旧的估计值在"误差信号"$(\boldsymbol{x}_N-\boldsymbol{\mu}_{\mathrm{ML}}^{(N-1)})$的方向上移动一个较小的量来获得修订后的估计值，这个较小的量与$1/N$成正比。注意，随着$N$的增加，来自后续数据点的贡献会越来越小。
+
+\subsection{高斯混合}\label{subsection:ch03-高斯混合}
+
+尽管高斯分布具有一些重要的分析特性，但在用于对真实数据集建模时，它存在很大的局限性。例如美国黄石国家公园老忠实（Old Faithful）喷泉数据集，包含$272$个观测值，每个观测值都以分钟为单位给出喷发的持续时间和下一次喷发的间隔时间。该数据集形成了两个主要的簇，使用单一的高斯分布无法捕捉这种结构——最大似然拟合的单一高斯会把大部分概率质量放置在数据相对稀疏的簇间区域。可以预期，叠加两个高斯分布将能够更好地表示该数据集的结构。
+
+这种叠加是通过对更基本的分布（如高斯分布）进行线性组合来实现的，称作混合分布（mixture distribution）。考虑形如下式的$K$个高斯密度的叠加：
+
+\begin{align}
+  p(\boldsymbol{x})=\sum_{k=1}^{K}\pi_{k}\,\mathcal{N}(\boldsymbol{x}\mid\boldsymbol{\mu}_{k},\boldsymbol{\Sigma}_{k})
+  \label{align:ch03-高斯混合}
+\end{align}
+
+这称为高斯混合（mixture of Gaussians）。每个高斯密度$\mathcal{N}(\boldsymbol{x}\mid\boldsymbol{\mu}_{k},\boldsymbol{\Sigma}_{k})$称为混合的一个分量（component），且具有自己的均值$\boldsymbol{\mu}_{k}$和协方差$\boldsymbol{\Sigma}_{k}$。参数$\pi_{k}$称为混合系数（mixing coefficient）。在\cref{align:ch03-高斯混合}两边对$\boldsymbol{x}$进行积分，并注意到$p(\boldsymbol{x})$和单个高斯分量都可以归一化，便可得到
+
+\begin{align}
+  \sum_{k=1}^{K}\pi_{k}=1
+  \label{align:ch03-混合系数归一}
+\end{align}
+
+此外，给定$\mathcal{N}(\boldsymbol{x}\mid\boldsymbol{\mu}_{k},\boldsymbol{\Sigma}_{k})\geqslant 0$，则$p(\boldsymbol{x})\geqslant 0$的充分条件是对所有$k$都有$\pi_{k}\geqslant 0$。将其与\cref{align:ch03-混合系数归一}相结合，可以得到$0\leqslant\pi_{k}\leqslant 1$，因此混合系数满足将其作为概率的要求。
+
+根据概率的加和法则与乘积法则，边缘密度可以写为
+
+\begin{align}
+  p(\boldsymbol{x})=\sum_{k=1}^{K}p(k)\,p(\boldsymbol{x}\mid k)
+  \label{align:ch03-混合生成式}
+\end{align}
+
+这等价于\cref{align:ch03-高斯混合}，其中$\pi_{k}=p(k)$可以视为选择第$k$个分量的先验概率。将密度$\mathcal{N}(\boldsymbol{x}\mid\boldsymbol{\mu}_{k},\boldsymbol{\Sigma}_{k})=p(\boldsymbol{x}\mid k)$视为以$k$为条件时$\boldsymbol{x}$的概率。根据贝叶斯定理，相应的后验概率$p(k\mid\boldsymbol{x})$称为责任（responsibility），由下式给出：
+
+\begin{align}
+  \gamma_{k}(\boldsymbol{x})\equiv p(k\mid\boldsymbol{x})=\frac{\pi_{k}\,\mathcal{N}(\boldsymbol{x}\mid\boldsymbol{\mu}_{k},\boldsymbol{\Sigma}_{k})}{\sum_{j=1}^{K}\pi_{j}\,\mathcal{N}(\boldsymbol{x}\mid\boldsymbol{\mu}_{j},\boldsymbol{\Sigma}_{j})}
+  \label{align:ch03-责任}
+\end{align}
+
+通过使用足够数量的高斯分布，并调整它们的均值、协方差以及线性组合中的系数，我们可以把几乎任何连续分布近似到任意准确度。这种对混合分布的概率解释是非常强大的（参见第~15~章）。
+
+\end{document}

@@ -1,0 +1,262 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{../../image/}{../../figure/}}
+\begin{document}
+
+\section{梯度计算}\label{section:ch08-梯度计算}
+
+本章旨在寻找一种高效技术，用于评估前馈神经网络误差函数 $E(\mathbf{w})$ 的梯度。我们将看到，这可以通过一种本地消息传递方案来实现：信息会通过网络向后发送，称为\textbf{误差反向传播}（error backpropagation）。许多具有实际意义的误差函数（例如由一组独立同分布数据的最大似然定义的误差函数）都包含一些项的总和（每一项对应训练集中一个数据点），因此
+\begin{align}
+E(\mathbf{w}) = \sum_{n=1}^{N} E_n(\mathbf{w}).
+\label{align:ch08-decomp}
+\end{align}
+
+在此我们将考虑如何为误差函数中这样一项的 $\nabla E(\mathbf{w})$ 求值。这可以直接用于随机梯度下降法，也可以将结果累积到一组训练数据点上，用于批量处理或小批量处理方法。下面先为具有任意前馈拓扑结构、任意可微非线性激活函数和一大类误差函数的通用网络推导出反向传播算法，然后使用一个简单分层网络结构（具有单层 S 形隐藏单元以及平方和误差）来说明所得公式。
+
+注意"反向传播"一词在神经计算文献中有多种含义：有的神经计算文献可能把前馈结构称作反向传播网络；此外"反向传播"一词有时也用来描述神经网络端到端训练程序，包括梯度下降参数更新。本书专门使用"反向传播"来描述用于对导数进行数值计算的计算程序，例如计算关于网络权重和偏置的误差函数梯度。这一程序也可用于计算其他重要导数，如雅可比矩阵和黑塞矩阵。
+
+\subsection{单层网络}\label{section:ch08-单层网络}
+
+考虑一个简单线性模型，其中输出 $y_k$ 是输入变量 $x_i$ 的线性组合：
+\begin{align}
+a_k = \sum_i w_{ki} x_i.
+\label{align:ch08-single-linear}
+\end{align}
+
+对于特定输入数据点 $n$，平方和误差函数形式为
+\begin{align}
+E_n = \frac{1}{2}\sum_k\{y_k(x,\mathbf{w})-t_k\}^2,
+\label{align:ch08-single-sse}
+\end{align}
+其中 $y=y(x,\mathbf{w})$，$t_k$ 是关联目标值。该误差函数相对于权重 $w_{ji}$ 的梯度为
+\begin{align}
+\frac{\partial E_n}{\partial w_{ji}} = (y_j-t_j)\frac{\partial y_j}{\partial a_j}x_i.
+\label{align:ch08-single-grad}
+\end{align}
+
+这可以理解为"本地"计算：涉及与链路输出端 $w_{ji}$ 相关的"误差信号" $(y_j-t_j)$，以及与链路输入端相关的变量 $x_i$ 的乘积。~5.4.3~小节介绍了逻辑斯谛 sigmoid 激活函数与交叉熵误差函数、softmax 激活函数和与之匹配的多元交叉熵误差函数是如何产生类似公式的。接下来探究这一简单结果如何扩展到更复杂的多层前馈网络情境。
+
+\subsection{一般前馈网络}\label{section:ch08-一般前馈网络}
+
+一般来说，前馈网络由一组单元组成，每个单元计算其输入的加权和：
+\begin{align}
+a_j = \sum_i w_{ji} z_i,
+\label{align:ch08-general-preact}
+\end{align}
+其中 $z_i$ 是另一个单元的激活值，或是向单元 $j$ 发送连接的输入单元，而 $w_{ji}$ 是与该连接相关的权重。此外，可以通过引入一个额外单元或输入（激活值固定为 $+1$）来将偏置包含在该总和中，因此不需要显式处理偏置（参见~6.2~节）。在通过非线性激活函数 $h(\cdot)$ 进行转换后，式~\eqref{align:ch08-general-preact}~中的和（称为预激活）给出单元 $j$ 的激活值 $z_j$：
+\begin{align}
+z_j = h(a_j).
+\label{align:ch08-general-act}
+\end{align}
+
+请注意，式~\eqref{align:ch08-general-preact}~中参与求和的一个或多个变量 $z_i$ 可以是输入变量；同样，式~\eqref{align:ch08-general-act}~中的单元 $j$ 也可以是输出变量。对于训练集中每个数据点，假设已向网络提供相应输入向量，并通过连续应用式~\eqref{align:ch08-general-preact}~和式~\eqref{align:ch08-general-act}~计算出网络中所有隐藏单元和输出单元的激活值。这一过程叫作\textbf{前向传播}（forward propagation），因为它可以被视为信息通过网络的前向流动。
+
+下面计算相对于权重 $w_{ji}$ 的导数 $\partial E_n/\partial w_{ji}$。各单元输出将取决于特定输入数据点 $n$；不过为使符号简洁，省略网络变量下标 $n$。首先注意到 $E$ 对 $w_{ji}$ 的依赖仅体现在输入 $a_j$ 对单元 $j$ 的求和上。因此可以应用偏导数的链式法则，得出
+\begin{align}
+\frac{\partial E}{\partial w_{ji}} = \frac{\partial E}{\partial a_j}\frac{\partial a_j}{\partial w_{ji}} = \frac{\partial E}{\partial a_j} z_i.
+\label{align:ch08-chain1}
+\end{align}
+
+接下来引入一个有用符号：
+\begin{align}
+\delta_j \equiv \frac{\partial E}{\partial a_j},
+\label{align:ch08-delta-def}
+\end{align}
+其中 $\delta_j$ 通常称为\textbf{误差}，缘由后续很快揭晓。利用式~\eqref{align:ch08-general-preact}~可以写出
+\begin{align}
+\frac{\partial E}{\partial w_{ji}} = \delta_j z_i.
+\label{align:ch08-gradient-result}
+\end{align}
+
+将式~\eqref{align:ch08-delta-def}~和式~\eqref{align:ch08-general-preact}~代入式~\eqref{align:ch08-chain1}，得到式~\eqref{align:ch08-gradient-result}。根据式~\eqref{align:ch08-gradient-result}，只需将权重输出端单元的 $\delta$ 值乘以权重输入端单元的 $z$ 值，即可得到所需导数。请注意这与式~\eqref{align:ch08-single-grad}~中简单线性模型形式相同。因此为了计算导数，只需计算网络中每个隐藏单元和输出单元的 $\delta$ 值，然后应用式~\eqref{align:ch08-gradient-result} 即可。
+
+如前所述，对于输出单元有
+\begin{align}
+\delta_k = \frac{\partial E}{\partial a_k},
+\label{align:ch08-output-delta}
+\end{align}
+前提是使用规范连接函数作为输出单元激活函数（参见~5.4.6~小节）。为计算隐藏单元的 $\delta$ 值，再次使用偏导数链式法则：
+\begin{align}
+\delta_j = \frac{\partial E}{\partial a_j} = h'(a_j)\sum_k w_{kj}\delta_k,
+\label{align:ch08-backprop}
+\end{align}
+其中求和操作遍及所有单元 $k$，且单元 $j$ 向单元 $k$ 发送连接。注意在写出式~\eqref{align:ch08-backprop}~时，我们利用了这样一个事实：只有通过改变变量 $a_j$ 的值，$a_j$ 的变化才会引起误差函数的变化；所有 $k$ 的单元包括其他隐藏单元和/或输出单元。
+
+如果将式~\eqref{align:ch08-delta-def}~给出的 $\delta_j$ 定义代入式~\eqref{align:ch08-backprop}，并利用式~\eqref{align:ch08-general-preact}~和式~\eqref{align:ch08-general-act}，即可得出以下反向传播公式（见习题~8.1）：
+\begin{align}
+\delta_j = h'(a_j)\sum_k w_{kj}\delta_k.
+\label{align:ch08-backprop-final}
+\end{align}
+
+由此可知，特定隐藏单元的 $\delta_j$ 值可以通过从网络中较高单元后向传播误差信息来获得。注意反向传播~\eqref{align:ch08-backprop-final}~中的求和取自 $w_{kj}$ 上的第一个索引（对应于信息通过网络后向传播），而在前向传播式~\eqref{align:ch08-general-preact}~中求和取自第二个索引（见习题~8.2）。由于已知输出单元的 $\delta$ 值，因此通过递归应用式~\eqref{align:ch08-backprop-final}，可以计算前馈网络中所有隐藏单元的 $\delta$ 值，而无须考虑其拓扑结构。
+
+在上述推导中，我们隐式假设网络中每个隐藏单元或输出单元都具有相同激活函数 $h(\cdot)$。不过只需跟踪 $h(\cdot)$ 的哪种形式与哪个单元相匹配，就可以轻松地将推导结果拓展到不同单元，使其拥有单独激活函数。
+
+对于批量处理方法，对训练集中每个数据点重复上述步骤，然后对批量处理或小批量处理中所有数据点求和，即可得到总误差 $E$ 的导数：
+\begin{align}
+\frac{\partial E}{\partial w_{ji}} = \sum_n \delta_{j,n} z_{i,n}.
+\label{align:ch08-batch-grad}
+\end{align}
+
+\subsection{简单示例}\label{section:ch08-简单示例}
+
+上述推导采用了误差函数、激活函数和网络拓扑的一般形式。为演示反向传播的应用，考虑图~\ref{fig:ch06-mlp}~所示两层网络以及平方和误差。输出单元具有线性激活函数，因此 $y_k=a_k$；而隐藏单元具有 sigmoid 型激活函数，其计算公式为
+\begin{align}
+h(a) = \tanh(a),
+\label{align:ch08-example-act}
+\end{align}
+其中 $\tanh(a)$ 由式~\eqref{align:ch06-tanh}~定义。该函数一个有用特征是其导数可以用一种特别简单的形式来表示：
+\begin{align}
+h'(a) = 1-h(a)^2.
+\label{align:ch08-tanh-deriv}
+\end{align}
+
+考虑平方和误差函数，对于数据点 $n$，误差计算公式为
+\begin{align}
+E_n = \frac{1}{2}\sum_k(y_k-t_k)^2,
+\label{align:ch08-example-sse}
+\end{align}
+其中 $y_k$ 是输出单元 $k$ 的激活值，$t_k$ 是特定输入向量 $\mathbf{x}$ 对应的目标值。
+
+对于训练集中每个数据点，首先使用以下方法依次进行前向传播：
+\begin{align}
+a_j^{(1)} = \sum_{i=0}^{D} w_{ji}^{(1)} x_i, \qquad z_j^{(1)} = \tanh(a_j^{(1)}),
+\label{align:ch08-example-forward1}
+\end{align}
+\begin{align}
+a_k^{(2)} = \sum_{j=0}^{M} w_{kj}^{(2)} z_j^{(1)}, \qquad y_k = a_k^{(2)},
+\label{align:ch08-example-forward2}
+\end{align}
+其中 $D$ 是输入向量 $\mathbf{x}$ 的维度，$M$ 是隐藏单元总数。此外利用了 $x_0=z_0=1$，以便在权重中包含偏置参数。
+
+用以下方法计算每个输出单元的 $\delta$ 值：
+\begin{align}
+\delta_k^{(2)} = y_k - t_k.
+\label{align:ch08-example-outputdelta}
+\end{align}
+
+然后利用如下方法对误差进行反向传播，从而得出隐藏单元的 $\delta$ 值：
+\begin{align}
+\delta_j^{(1)} = (1-z_j^{(1)2})\sum_k w_{kj}^{(2)}\delta_k^{(2)}.
+\label{align:ch08-example-hiddenDelta}
+\end{align}
+
+式~\eqref{align:ch08-example-hiddenDelta}~可根据式~\eqref{align:ch08-backprop-final}~和式~\eqref{align:ch08-tanh-deriv}~得出。最后，第一层和第二层权重的导数为
+\begin{align}
+\frac{\partial E_n}{\partial w_{kj}^{(2)}} = \delta_k^{(2)} z_j^{(1)}, \qquad
+\frac{\partial E_n}{\partial w_{ji}^{(1)}} = \delta_j^{(1)} x_i.
+\label{align:ch08-example-weights}
+\end{align}
+
+\subsection{计算复杂度与数值微分}\label{section:ch08-计算复杂度}
+
+反向传播最重要的方面之一是计算效率。为此考察计算误差函数导数所需的计算操作数如何随网络中权重和偏置总数 $W$ 变化。
+
+在 $W$ 足够大的情况下，计算误差函数导数（给定输入数据点）需要 $O(W)$ 次运算。这是因为除连接非常稀疏的网络外，权重数量通常远大于单元数量，因此前向传播的大部分计算量来自式~\eqref{align:ch08-general-preact}~中的求和操作，而计算激活函数的工作量却很小。式~\eqref{align:ch08-general-preact}~中参与求和的每一项都需要一次乘法和一次加法运算，因此总计算成本为 $O(W)$。
+
+计算误差函数导数的另一种反向传播方法是使用有限差分法。具体做法是依次扰动每个权重，并利用该表达式近似求导来实现：
+\begin{align}
+\frac{\partial E_n}{\partial w_{ji}} \approx \frac{E_n(w_{ji}+\epsilon)-E_n(w_{ji})}{\epsilon}, \qquad \epsilon\ll 1.
+\label{align:ch08-finite-diff}
+\end{align}
+
+在软件模拟中，可以通过将 $\epsilon$ 最小化来提高导数近似精度，直到出现数值舍入问题为止。使用对称中心差分法可以显著提高有限差分法精度：
+\begin{align}
+\frac{\partial E_n}{\partial w_{ji}} \approx \frac{E_n(w_{ji}+\epsilon)-E_n(w_{ji}-\epsilon)}{2\epsilon} + O(\epsilon^2).
+\label{align:ch08-central-diff}
+\end{align}
+
+在这种情况下，正如式~\eqref{align:ch08-central-diff}~右侧泰勒展开所验证的，$O(\epsilon)$ 修正被抵消了，因此残差修正为 $O(\epsilon^2)$（见习题~8.3）。但请注意，计算步骤数量相比式~\eqref{align:ch08-finite-diff}~增加了大约一倍。
+
+数值微分法的主要问题是失去了非常理想的 $O(W)$ 缩放。每次前向传播需要执行 $O(W)$ 个步骤，而网络中有 $W$ 个权重，每个权重都必须单独扰动，因此总计算成本为 $O(W^2)$。不过数值微分法在实践中也能发挥重要作用，因为将直接实现反向传播或自动微分法计算出的导数与使用中心差分法计算出的导数进行比较，可以有力地检验软件的正确性。
+
+\subsection{雅可比矩阵与黑塞矩阵}\label{section:ch08-雅可比黑塞}
+
+我们已经了解如何通过网络反向传播误差来获得误差函数相对于权重的导数。反向传播也可用于计算其他导数。首先对雅可比矩阵进行求值，其元素由网络输出相对于输入的导数给出：
+\begin{align}
+J_{ki} = \frac{\partial y_k}{\partial x_i}.
+\label{align:ch08-jacobian}
+\end{align}
+
+我们可以使用反向传播程序来计算雅可比矩阵，该程序与前面计算误差函数相对于权重导数的程序类似。首先写下元素 $J_{ki}$ 的形式，利用式~\eqref{align:ch08-general-preact}：
+\begin{align}
+J_{ki} = \frac{\partial y_k}{\partial a_j}\frac{\partial a_j}{\partial x_i} = \sum_j \frac{\partial y_k}{\partial a_j} w_{ji},
+\label{align:ch08-jacobian-chain}
+\end{align}
+其中式~\eqref{align:ch08-jacobian-chain}~中的求和操作涉及所有单元 $j$（例如前面提到的第一隐藏层所有单元），且输入单元 $i$ 向单元 $j$ 发送连接。
+
+分层拓扑结构中第一隐藏层所有单元的 $\partial y_k/\partial a_j$ 的递归反向传播公式如下：
+\begin{align}
+\frac{\partial y_k}{\partial a_j} = h'(a_j)\sum_l w_{lj}\frac{\partial y_k}{\partial a_l},
+\label{align:ch08-jacobian-recurse}
+\end{align}
+其中求和操作涉及所有单元 $l$，且单元 $j$ 向单元 $l$ 发送连接（对应于 $w_{lj}$ 的第一个索引）。这种反向传播从输出单元开始，所需导数可直接从输出单元激活函数的函数形式中得到。对于线性输出单元，可以得出
+\begin{align}
+\frac{\partial y_k}{\partial a_{k'}} = \delta_{kk'},
+\label{align:ch08-linear-jac}
+\end{align}
+其中 $\delta_{kk'}$ 是单位矩阵元素。如果在每个输出单元上都有独立逻辑斯谛 sigmoid 激活函数，则有
+\begin{align}
+\frac{\partial y_k}{\partial a_{k'}} = y_k(\delta_{kk'}-y_{k'}).
+\label{align:ch08-sigmoid-jac}
+\end{align}
+而对于 softmax 输出，可以得出
+\begin{align}
+\frac{\partial y_k}{\partial a_{k'}} = y_k(\delta_{kk'}-y_{k'}).
+\label{align:ch08-softmax-jac}
+\end{align}
+
+由于雅可比矩阵度量了输出变量对每个输入变量变化的局部灵敏度，因此它还允许与输入相关的任何已知误差 $\Delta x_i$ 通过经训练网络传播，从而预估它们对输出误差的贡献 $\Delta y_k$：
+\begin{align}
+\Delta y_k \approx \sum_i J_{ki}\Delta x_i.
+\label{align:ch08-jacobian-apply}
+\end{align}
+
+一般来说，训练后神经网络所代表的网络映射是非线性的，因此雅可比矩阵元素不是常数，而取决于所使用的特定输入向量。式~\eqref{align:ch08-jacobian-apply}~只对输入的微小扰动有效，而且必须为每个新输入向量重新计算雅可比矩阵。
+
+雅可比矩阵在由多个不同模块构建的系统中发挥重要作用。每个模块都可以包含一个固定或可学习函数，该函数可以是线性或非线性的，但必须可微。假设希望最小化与参数 $\mathbf{w}$ 有关的误差函数 $E$，该误差函数的导数为
+\begin{align}
+\frac{\partial E}{\partial \mathbf{w}} = \frac{\partial E}{\partial \mathbf{y}}\frac{\partial \mathbf{y}}{\partial \mathbf{z}}\frac{\partial \mathbf{z}}{\partial \mathbf{w}},
+\label{align:ch08-modular}
+\end{align}
+其中红色模块所代表的雅可比矩阵出现在式~\eqref{align:ch08-modular}~右侧中间项。
+
+反向传播也可用于计算误差的二阶导数：
+\begin{align}
+H_{ij} = \frac{\partial^2 E}{\partial w_i \partial w_j},
+\label{align:ch08-hessian}
+\end{align}
+方便起见通常将所有权重和偏置参数视为单个向量 $\mathbf{w}$ 的元素，$i,j\in\{1,\cdots,W\}$ 是权重和偏置总数。在这种情况下，二阶导数构成黑塞矩阵 $\mathbf{H}$ 的元素 $H_{ij}$。
+
+由于神经网络可能包含数百万甚至数十亿参数，因此对许多模型的全黑塞矩阵进行计算甚至只进行存储都是不可行的。由于计算量被缩放为 $O(W^2)$，求黑塞矩阵的逆将变得更加困难。业内人士对寻找有效的全黑塞矩阵近似值很感兴趣。一种近似法是只对黑塞矩阵对角元素进行计算，并隐式地将非对角元素设为零；这需要 $O(W^2)$ 存储空间，并允许在 $O(W)$ 步骤内求逆，但仍需要 $O(W^2)$ 计算步骤。不过通过进一步近似，计算步骤可以减少到 $O(W)$ 个~\citep{BeckerLeCun1989,LeCunDenkerSolla1990}；但实际上黑塞矩阵通常具有重要非对角项，因此必须谨慎对待这一近似。
+
+另一种更有说服力的方法是\textbf{外积近似法}。考虑使用平方和误差函数的回归应用，平方和误差函数为
+\begin{align}
+E = \frac{1}{2}\sum_n (y_n-t_n)^2.
+\label{align:ch08-hessian-sse}
+\end{align}
+其中只使用一个单一输出以保持符号简洁（扩展到多个输出也很简单）。然后写下黑塞矩阵（见习题~8.8）：
+\begin{align}
+\mathbf{H} = \nabla\nabla E = \sum_n \nabla y_n (\nabla y_n)^{\mathsf T} + \sum_n (y_n-t_n)\nabla\nabla y_n.
+\label{align:ch08-hessian-derive}
+\end{align}
+其中 $\nabla$ 表示相对于 $\mathbf{w}$ 的梯度。如果网络已在数据集上经过训练，则输出 $y_n$ 将非常接近目标值 $t_n$，式~\eqref{align:ch08-hessian-derive}~中末尾项很小，可以忽略不计。
+
+忽略式~\eqref{align:ch08-hessian-derive}~右侧二阶导数项，即可得到\textbf{列文伯格--马夸尔特}（Levenberg--Marquardt）近似法，也叫\textbf{外积近似法}，因为黑塞矩阵是由向量外积之和构成的：
+\begin{align}
+\mathbf{H} \approx \sum_n \nabla y_n (\nabla y_n)^{\mathsf T}.
+\label{align:ch08-outer-product}
+\end{align}
+
+外积近似法之所以方便，是因为仅涉及误差函数的一阶导数，使用标准反向传播法即可在 $O(W)$ 个步骤内高效计算一阶导数；而通过简单乘法运算，只需 $O(W^2)$ 个步骤即可求出矩阵元素。需要强调的是，这种近似法可能只适用于经过适当训练的网络，且对于一般网络映射，式~\eqref{align:ch08-hessian-derive}~右侧二阶导数项通常不可忽略。
+
+对于具有逻辑斯谛 sigmoid 输出单元激活函数的网络，其交叉熵误差函数的相应近似值为
+\begin{align}
+\mathbf{H} \approx \sum_n y_n(1-y_n)\nabla y_n(\nabla y_n)^{\mathsf T}.
+\label{align:ch08-hessian-crossentropy}
+\end{align}
+
+对于具有 softmax 输出单元激活函数的多类网络，均可得到类似结果（见习题~8.11）。外积近似法还可用于开发一种高效序列程序，用于近似黑塞矩阵的逆~\citep{HassibiStork1993}（见习题~8.12）。
+
+有时我们并非直接需要黑塞矩阵，而只需要黑塞矩阵与某个向量 $\mathbf{v}$ 的乘积 $\mathbf{H}\mathbf{v}$。通过扩展反向传播程序，可以在 $O(W)$ 个步骤内高效计算出该乘积~\citep{Moller1993,Pearlmutter1994}。
+
+\end{document}

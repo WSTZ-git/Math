@@ -1,0 +1,59 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{../../image/}{../../figure/}}
+\begin{document}
+
+\section{对抗训练}\label{section:ch17-对抗训练}
+
+考虑一个基于从潜空间 $z$ 到数据空间 $x$ 的非线性变换的生成式模型。引入一个潜空间分布 $p(z)$，它可能是一个简单的高斯分布：
+\begin{align}
+p(z)=\mathcal{N}(z\mid \mathbf{0},\mathbf{I})
+\label{align:ch17-pz}
+\end{align}
+同时定义一个由深度神经网络实现的非线性变换 $x=g(z,w)$，其中可学习参数 $w$ 对应的网络称为\textbf{生成器}（generator）网络。它们共同隐式地定义了 $x$ 上的分布，我们的目标是将这个分布拟合到一组训练样本 $\{x_n\}$ 上，其中 $n=1,\cdots,N$。然而，我们并不能通过优化似然函数来确定 $w$，因为这通常无法以封闭形式来计算。生成对抗网络（Goodfellow et al., 2014; Ruthotto and Haber, 2021）的关键思想是引入判别器（critic）网络，判别器网络与生成器网络一起训练，并为更新生成器的权重提供训练信号，如图~\ref{fig:ch17-gan-schematic} 所示。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\textwidth]{ch17-fig484-gan-schematic.png}
+\caption{生成对抗网络的示意图。在这样的网络中，训练判别器网络 $d(x,\phi)$ 以区分来自训练集的真实样本（小猫的图像）和由生成器网络 $g(z,w)$ 产生的合成样本。生成器网络的目标是通过产生逼真的图像来让判别器网络产生更多的误判，而判别器网络的目的是通过更好地区分真实样本和合成样本来减少误判。}
+\label{fig:ch17-gan-schematic}
+\end{figure}
+
+判别器网络的目标是区分来自数据集的真实样本和由生成器网络的合成（或``假''）样本，它通过最小化传统的分类误差函数来进行训练。相反，生成器网络的目标是通过生成与训练集同分布的样本来最大化这个误差。因此，生成器网络和判别器网络互相对抗，``生成对抗网络''由此得名。这是一种\textbf{零和博弈}（zero-sum game），在这场零和博弈中，任何一个网络的收益都代表另一个网络的损失。生成对抗网络通过允许判别器网络提供一个训练信号来训练生成器网络，从而将无监督的密度建模问题转换成了一种监督学习的形式。
+
+\subsection{损失函数}\label{subsection:ch17-损失函数}
+
+判别器网络拥有单个输出单元，带有 sigmoid 激活函数，其输出表示数据向量 $x$ 为真实数据的概率：
+\begin{align}
+P(t=1)=d(x,\phi)
+\label{align:ch17-pt1}
+\end{align}
+为了明确这一点，我们定义一个二元目标变量 $t$：
+\begin{align}
+t=1,&\ \text{代表真实数据} \label{align:ch17-t1}\\
+t=0,&\ \text{代表合成数据} \label{align:ch17-t0}
+\end{align}
+
+我们可以使用如下标准的交叉熵损失函数来训练判别器网络：
+\begin{align}
+E(w,\phi)=\frac{1}{N}\sum_{n=1}^{N}\Big\{ t_n\ln d(x_n,\phi)+(1-t_n)\ln\big(1-d(g(z_n,w),\phi)\big)\Big\}
+\label{align:ch17-cross-entropy}
+\end{align}
+其中 $d_n=d(x_n,\phi)$ 是判别器网络的输出，我们已经通过数据点的总数对它进行了归一化（参见 1.2.4 小节）。训练集包括标记为 $x_n$ 的真实样本和由生成器网络 $g(z,w)$ 输出的合成样本，其中 $z$ 是从潜空间分布 $p(z)$ 中采样的随机样本。对于真实样本，$t_n=1$；对于合成样本，$t_n=0$。我们可以将损失函数写成以下形式：
+\begin{align}
+E_{\mathrm{GAN}}(w,\phi)=\frac{1}{N}\sum_{n=1}^{N}\ln d(x_n,\phi)+\frac{1}{N_G}\sum_{m=1}^{N_G}\ln\big(1-d(g(z_m,w),\phi)\big)
+\label{align:ch17-egan}
+\end{align}
+通常情况下，真实数据点的数量 $N$ 等于合成数据点的数量 $N_G$。这种生成器网络和判别器网络的组合可以使用随机梯度下降进行端到端的训练（参见第 7 章），并通过反向传播来计算梯度。然而，这种训练方式的独特之处在于其对抗性，即误差相对于 $\phi$ 最小化，而相对于 $w$ 最大化。
+
+这种最大化可以通过标准的基于梯度的方法来完成，通过反转梯度的符号，参数更新为
+\begin{align}
+\Delta\phi&=-\lambda\nabla_\phi E(w,\phi) \label{align:ch17-update-phi}\\
+\Delta w&=+\lambda\nabla_w E(w,\phi) \label{align:ch17-update-w}
+\end{align}
+其中 $E(w,\phi)$ 表示为数据点 $n$ 定义的误差，或者更一般地说，是为小批量数据点定义的误差。注意式~\eqref{align:ch17-update-phi} 和式~\eqref{align:ch17-update-w} 右侧的符号不同，因为判别器网络的训练目标是降低错误率，而生成器网络的训练目标是提高错误率。实际上，训练交替地在更新生成器网络的参数和更新判别器网络的参数之间进行，每次只使用一个小批量数据。
+
+一旦 GAN 训练完毕，判别器网络就会被舍弃，生成器网络则用来从潜空间中采样并将这些样本经训练好的生成器网络加以传播，从而在数据空间中合成新的样本。我们可以证明，对于具有无限灵活性的生成器网络和判别器网络，完全优化的 GAN 将具有与数据分布完全匹配的生成分布（见习题 17.1）。如果生成器网络成功找到完美解决方案，则判别器网络将无法区分真实数据和合成数据，因此其输出始终为 $0.5$。
+
+到目前为止我们所讨论的 GAN 都是从无条件分布 $p(x)$ 中生成样本的。例如，如果我们用狗的图像对 GAN 进行训练，它就会生成合成的狗的图像。我们也可以创建\textbf{条件 GAN}（Mirza and Osindero, 2014），它从条件分布 $p(x\mid c)$ 中采样，其中条件向量 $c$ 可能代表不同品种的狗。为此，生成器网络和判别器网络会将 $c$ 作为额外输入，并使用标有标签的图像实例 $\{x_n,c_n\}$ 对 GAN 进行训练。一旦 GAN 训练好了，我们就可以通过将 $c$ 设置为相应的类向量来生成所需类别的图像。与为每个类别训练单独的 GAN 相比，这样做有一个优势，就是可以跨所有类别学习共享的内部表示，从而更有效地利用数据。
+
+\end{document}

@@ -1,0 +1,133 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{../../image/}{../../figure/}}
+\begin{document}
+
+\section{证据下界}\label{section:ch15-证据下界}
+
+本节从更一般的角度介绍~EM~算法。推导对数似然函数的一个下界，这个下界称为证据下界（Evidence Lower BOund，ELBO），有时也称变分下界。这里的“证据”是指（对数）似然函数，在贝叶斯设置中有时也称“模型证据”，因为它允许在不使用验证集的情况下比较不同的模型（Bishop, 2006）。为了说明这个下界，我们使用它从第三个角度重新推导~EM~算法。ELBO~将在后续章节讨论的几个深度生成式模型中发挥重要作用。它还提供了一个关于变分框架的样板，在这个框架中，我们引入了一个关于隐变量的分布 $q(\bm{Z})$，然后使用变分法针对这个分布进行优化（见附录~B）。
+
+考虑一个概率模型，在该模型中我们将所有观测变量统称为 $\bm{X}$，并将所有隐变量统称为 $\bm{Z}$。联合分布 $p(\bm{X},\bm{Z}|\theta)$ 由一组参数 $\theta$ 控制。我们的目标是最大化似然函数：
+\begin{align}
+p(\bm{X}|\theta)=\sum_{\bm{Z}}p(\bm{X},\bm{Z}|\theta).
+\label{align:ch15-evidence}
+\end{align}
+在这里我们假设 $\bm{Z}$ 是离散的，当 $\bm{Z}$ 包含连续变量，或者包含离散变量与连续变量的组合时，要讨论的内容是相同的，将求和替换为适当的积分即可。
+
+假设直接优化 $p(\bm{X}|\theta)$ 是困难的，但优化完整数据似然函数 $p(\bm{X},\bm{Z}|\theta)$ 则简单得多。接下来我们引入一个定义在隐变量上的分布 $q(\bm{Z})$，我们观察到，对所选择的任何分布 $q(\bm{Z})$，以下分解成立：
+\begin{align}
+\ln p(\bm{X}|\theta)=\mathcal{L}(q,\theta)+\operatorname{KL}\!\left(q(\bm{Z})\,\|\,p(\bm{Z}|\bm{X},\theta)\right)
+\label{align:ch15-elbo-decomp}
+\end{align}
+其中
+\begin{align}
+\mathcal{L}(q,\theta)=\sum_{\bm{Z}}q(\bm{Z})\ln\!\left\{\frac{p(\bm{X},\bm{Z}|\theta)}{q(\bm{Z})}\right\}
+\label{align:ch15-elbo}
+\end{align}
+而
+\begin{align}
+\operatorname{KL}\!\left(q(\bm{Z})\,\|\,p(\bm{Z}|\bm{X},\theta)\right)=-\sum_{\bm{Z}}q(\bm{Z})\ln\!\left\{\frac{p(\bm{Z}|\bm{X},\theta)}{q(\bm{Z})}\right\}.
+\label{align:ch15-kl}
+\end{align}
+
+注意 $\mathcal{L}(q,\theta)$ 既是分布 $q(\bm{Z})$ 的泛函，也是参数 $\theta$ 的函数。仔细研究式\eqref{align:ch15-elbo}和式\eqref{align:ch15-kl}的形式，并特别注意它们在符号上的差异，$\mathcal{L}(q,\theta)$ 包含 $\bm{X}$ 和 $\bm{Z}$ 的联合分布，而 $\operatorname{KL}(q\|p)$ 包含给定 $\bm{X}$ 的 $\bm{Z}$ 的条件分布（见习题~15.21）。为了验证式\eqref{align:ch15-elbo-decomp}，我们首先利用概率的乘积法则给出：
+\begin{align}
+\ln p(\bm{X},\bm{Z}|\theta)=\ln p(\bm{Z}|\bm{X},\theta)+\ln p(\bm{X}|\theta).
+\label{align:ch15-product-rule}
+\end{align}
+然后将其代入 $\mathcal{L}(q,\theta)$ 的表达式中。这产生了两项：其中一项抵消了 $\operatorname{KL}(q\|p)$；而由于 $q(\bm{Z})$ 是一个归一化分布（其总和为 $1$），另一项给出了所需的对数似然函数 $\ln p(\bm{X}|\theta)$。
+
+从式\eqref{align:ch15-kl}中我们看到，$\operatorname{KL}(q\|p)$ 是 $q(\bm{Z})$ 与后验分布 $p(\bm{Z}|\bm{X},\theta)$ 之间的~Kullback--Leibler~散度。Kullback--Leibler~散度满足 $\operatorname{KL}(q\|p)\geq 0$，当且仅当 $q(\bm{Z})=p(\bm{Z}|\bm{X},\theta)$ 时等号成立。因此，从式\eqref{align:ch15-elbo-decomp}可以得出 $\mathcal{L}(q,\theta)\leq\ln p(\bm{X}|\theta)$，换句话说，$\mathcal{L}(q,\theta)$ 是 $\ln p(\bm{X}|\theta)$ 的一个下界。
+
+\subsection{EM算法回顾}\label{subsection:ch15-em回顾}
+
+我们可以使用式\eqref{align:ch15-elbo-decomp}来推导~EM~算法，并证明它确实能够最大化对数似然函数。假设当前的参数向量值为 $\theta^{\text{old}}$。在~E~步骤中，固定 $\theta^{\text{old}}$ 并通过优化 $q(\bm{Z})$ 来最大化下界 $\mathcal{L}(q,\theta)$。这个最大化问题的解可以很容易地看出来，因为 $\ln p(\bm{X}|\theta)$ 的值不依赖于 $q(\bm{Z})$，所以当~Kullback--Leibler~散度消失时，即 $q(\bm{Z})$ 等于后验分布 $p(\bm{Z}|\bm{X},\theta^{\text{old}})$ 时，$\mathcal{L}(q,\theta)$ 的值最大。在这种情况下，下界将等于对数似然函数的值，同时~KL~散度消失。
+
+在随后的~M~步骤中，固定分布 $q(\bm{Z})$ 并通过优化 $\theta$ 来最大化下界 $\mathcal{L}(q,\theta)$，得到新的参数值 $\theta^{\text{new}}$。这将导致下界增大（除非它已经达到最大值），这必然也会导致相应的对数似然函数增大。由于我们确定分布 $q(\bm{Z})$ 使用的是旧值而不是新值，并且在~M~步骤中保持固定，它不等于新的后验分布 $p(\bm{Z}|\bm{X},\theta^{\text{new}})$，因此会有一个非零的~Kullback--Leibler~散度。对数似然函数的增量将大于下界的增量。
+
+如果将 $q(\bm{Z})=p(\bm{Z}|\bm{X},\theta^{\text{old}})$ 代入式\eqref{align:ch15-elbo}，则可以看到，在~E~步骤之后，下界采取以下形式：
+\begin{align}
+\mathcal{L}(q,\theta)=\sum_{\bm{Z}}p(\bm{Z}|\bm{X},\theta^{\text{old}})\ln p(\bm{X},\bm{Z}|\theta)-\sum_{\bm{Z}}p(\bm{Z}|\bm{X},\theta^{\text{old}})\ln p(\bm{Z}|\bm{X},\theta^{\text{old}})
+\label{align:ch15-elbo-after-e}
+\end{align}
+其中的常数项 $\text{const}$ 只是分布 $q(\bm{Z})$ 的负熵，因此与 $\theta$ 无关。在这里我们将 $\mathcal{Q}(\theta,\theta^{\text{old}})$ 识别为式\eqref{align:ch15-q-function}定义的完整数据对数似然函数的期望，因此它是~M~步骤中被最大化的量，正如我们早先在高斯混合模型中看到的那样。
+
+EM~算法也可以从参数空间的角度来观察。这里红色曲线描述了我们希望最大化的（不完整数据的）对数似然函数。我们从某个初始参数值 $\theta^{\text{old}}$ 开始。在第一次~E~步骤中，我们评估隐变量的后验分布，产生了一个下界 $\mathcal{L}(q,\theta)$，其值在 $\theta^{\text{old}}$ 处等于对数似然函数的值。在~M~步骤中，下界被最大化，得到新的参数值 $\theta^{\text{new}}$，它能给出比 $\theta^{\text{old}}$ 更大的对数似然值。随后的~E~步骤构建了一个在 $\theta^{\text{new}}$ 处相切的下界。注意，这个下界曲线在 $\theta^{\text{old}}$ 处与对数似然函数曲线呈切线接触，因此这两条曲线具有相同的梯度。这个下界是一个凸函数，具有唯一的最大值（用于来自指数族分布的模型）。
+
+我们已经看到，EM~算法的~E~步骤和~M~步骤都会使良定义的对数似然函数的下界值增大，并且完整的~EM~循环将以这样一种方式改变模型参数；使对数似然值增大（除非它已经达到最大值，在这种情况下，参数保持不变）。
+
+\subsection{独立同分布数据}\label{subsection:ch15-独立同分布}
+
+对于一个独立同分布的数据集，$\bm{X}$ 将包含 $N$ 个数据点 $\{\bm{x}_n\}$，而 $\bm{Z}$ 将包含相应的 $N$ 个隐变量 $\{\bm{z}_n\}$，其中 $n=1,\cdots,N$。根据独立性假设，我们有 $p(\bm{X},\bm{Z})=\prod_n p(\bm{x}_n,\bm{z}_n)$。通过对 $\{\bm{z}_n\}$ 进行边缘化，我们得到 $p(\bm{X})=\prod_n p(\bm{x}_n)$。使用概率的求和法则和乘积法则，则，在~E~步骤中计算的后验概率具有以下形式：
+\begin{align}
+p(\bm{Z}|\bm{X},\bm{\mu},\bm{\Sigma},\bm{\pi})=\prod_{n=1}^{N}p(\bm{z}_n|\bm{x}_n,\bm{\mu},\bm{\Sigma},\bm{\pi})
+\label{align:ch15-iid-factorized}
+\end{align}
+则后验分布可以针对不同的数据点进行因子分解，即
+\begin{align}
+p(\bm{Z}|\bm{X},\theta)=\prod_{n=1}^{N}p(\bm{z}_n|\bm{x}_n,\theta).
+\label{align:ch15-iid-posterior}
+\end{align}
+
+因此，后验分布也可以针对 $n$ 进行分解。对于高斯混合模型，这简单地表明每个混合分量对特定数据点 $\bm{x}_n$ 所要承担的责任仅依赖于 $\bm{x}_n$ 的值以及混合分量的参数 $\theta$，而不依赖于其他数据点的值。
+
+\subsection{参数先验}\label{subsection:ch15-参数先验}
+
+我们也可以使用~EM~算法来最大化引入了参数先验 $p(\theta)$ 的模型中的后验分布 $p(\theta|\bm{X})$。为了理解这一点，注意作为 $\theta$ 的函数，我们有 $p(\theta|\bm{X})=p(\theta,\bm{X})/p(\bm{X})$，所以
+\begin{align}
+\ln p(\theta|\bm{X})=\ln p(\theta,\bm{X})-\ln p(\bm{X}).
+\label{align:ch15-map}
+\end{align}
+
+利用式\eqref{align:ch15-elbo-decomp}，我们有
+\begin{align}
+\ln p(\theta|\bm{X})=\mathcal{L}(q,\theta)+\operatorname{KL}(q\|p)+\ln p(\theta)-\ln p(\bm{X})
+\label{align:ch15-map-elbo}
+\end{align}
+其中 $\ln p(\bm{X})$ 是一个常数。我们可以再次交替地针对 $q$ 和 $\theta$ 优化式\eqref{align:ch15-map-elbo}右侧的表达式。针对 $q$ 的优化导致与标准~EM~算法相同的~E~步骤方程，因为 $q$ 只出现在 $\mathcal{L}(q,\theta)$ 中。通过引入先验项 $\ln p(\theta)$，M~步骤方程被修改，这通常只需要对标准最大似然的~M~步骤方程进行小幅度的修改即可（参见第~9~章）。附加项代表着一种正则化形式，并且具有消除高斯混合模型似然函数奇异性的作用。
+
+\subsection{广义EM算法}\label{subsection:ch15-广义em}
+
+EM~算法将最大化似然函数这个潜在的困难问题分解为两个阶段；E~步骤和~M~步骤，每个步骤通常都更容易实现。但尽管如此，对于复杂模型来说，E~步骤或~M~步骤，或者说两者都可能变得难以处理。因此~EM~算法有两种扩展。
+
+广义~EM（Generalized EM，GEM）算法解决了难以处理的~M~步骤问题。GEM~算法不对 $\theta$ 最大化 $\mathcal{L}(q,\theta)$，而是寻求以这样一种方式改变参数：增大其值。因为 $\mathcal{L}(q,\theta)$ 是对数似然函数的下界，所以~GEM~算法的每一个完整循环都保证了能够增大对数似然函数的值（除非参数已经对应于局部最大值）。利用~GEM~算法的一种方式是在~M~步骤中使用基于梯度的迭代优化算法。另一种形式的~GEM~算法称为期望条件最大化算法（expectation conditional maximization algorithm），涉及在每个~M~步骤中进行多个约束优化（Meng and Rubin, 1993）。例如，参数可能划分为几组，M~步骤则拆分为多个步骤，每个步骤涉及优化一个组，同时固定其他组。
+
+我们同样可以通过对 $q(\bm{Z})$ 进行部分优化而非完全优化来推广~EM~算法的~E~步骤（Neal and Hinton, 1999）。正如我们所见，对于任何给定的 $\theta$ 值，$\mathcal{L}(q,\theta)$ 关于 $q(\bm{Z})$ 有一个唯一的最大值，对应于后验分布 $q^\star(\bm{Z})=p(\bm{Z}|\bm{X},\theta)$，并且对于这个选择的 $q(\bm{Z})$，下界 $\mathcal{L}(q,\theta)$ 等于对数似然函数 $\ln p(\bm{X}|\theta)$。因此，任何收敛到 $\mathcal{L}(q,\theta)$ 全局最大值的算法都能找到一个同时也是对数似然函数 $\ln p(\bm{X}|\theta)$ 全局最大值的 $\theta$ 值。只要 $p(\bm{X},\bm{Z}|\theta)$ 是 $\theta$ 的连续函数，那么根据连续性，$\mathcal{L}(q,\theta)$ 的任何局部最大值也将是 $\ln p(\bm{X}|\theta)$ 的局部（或全局）最大值。这种增量版本中的每个~E~步骤或~M~步骤都会增加 $\mathcal{L}(q,\theta)$ 的值，如果算法收敛到 $\mathcal{L}(q,\theta)$ 的局部（或全局）最大值，这将对应于对数似然函数 $\ln p(\bm{X}|\theta)$ 的局部（或全局）最大值。
+
+\subsection{顺序EM算法}\label{subsection:ch15-顺序em}
+
+考虑 $N$ 个独立的数据点 $\bm{x}_1,\cdots,\bm{x}_N$ 及相应的隐变量 $\bm{z}_1,\cdots,\bm{z}_N$。将联合分布 $p(\bm{X},\bm{Z}|\theta)$ 在数据点上分解，这种结构可以在增量形式的~EM~算法中利用，在每一个~EM~循环中，一次只处理一个数据点。在~E~步骤中，我们不是重新计算所有数据点的责任，而是只重新计算一个数据点的责任。看起来随后的~M~步骤可能涉及对所有数据点的责任的计算。然而，如果混合分量是指数族分布，则责任仅存在于简单的充分统计量（sufficient statistic），并且可以高效地更新。例如，考虑一个高斯混合模型，假设我们对数据点 $\bm{x}_n$ 更新，其中相应的旧责任值和新责任值分别表示为 $\gamma(z_{nk})$ 和 $\gamma^{\text{new}}(z_{nk})$。在~M~步骤中，所需的充分统计量可以递增地更新。例如，对于均值，充分统计量由式\eqref{align:ch15-mu-update}和式\eqref{align:ch15-effective-n}定义，我们可以得到
+\begin{align}
+N_k^{\text{new}}=N_k^{\text{old}}+\gamma^{\text{new}}(z_{nk})-\gamma(z_{nk})
+\label{align:ch15-online-n}
+\end{align}
+并且
+\begin{align}
+\bm{\mu}_k^{\text{new}}=\bm{\mu}_k^{\text{old}}+\frac{\gamma^{\text{new}}(z_{nk})-\gamma(z_{nk})}{N_k^{\text{new}}}(\bm{x}_n-\bm{\mu}_k^{\text{old}}).
+\label{align:ch15-online-mu}
+\end{align}
+协方差和混合系数的相应结果是类似的。因此，E~步骤和~M~步骤花费的时间都是固定的，与数据点的数量无关。因为参数在每个数据点之后就修正了，而不是等到整个数据集处理完毕之后才修正，所以这种增量版本比批处理版本收敛得更快。
+
+\section*{习题}\label{section:ch15-习题}
+\addcontentsline{toc}{section}{习题}
+
+\textbf{15.1}（$\star$）考虑\cref{section:ch15-k均值}讨论的~K~均值算法。证明由于离散指示变量 $r_{nk}$ 存在有限数量的可能取值，对于每个这样的取值都有一个唯一的最优集合 $\{\bm{\mu}_k\}$，因此~K~均值算法在有限次迭代后必定会收敛。
+
+\textbf{15.2}（$\star\star$）推导~K~均值算法的顺序形式。在每一步，考虑一个新的数据点 $\pi$，并且只更新与数据点 $\bm{x}_n$ 最近的原型向量。从批处理设置中用于原型向量的式\eqref{align:ch15-kmeans-mu}出发，将来自最后一个数据点 $\bm{x}_n$ 的贡献单独分离出来。通过重新排列各项，证明这种更新采取的是式\eqref{align:ch15-kmeans-online}的形式。注意，由于在此推导过程中没有做任何近似，得到的原型向量具有以下性质：它们各自等于分配给它们的所有数据向量的均值。
+
+\textbf{15.3}（$\star$）考虑一个高斯混合模型，其中潜变量的边缘分布 $p(\bm{z})$ 由式\eqref{align:ch15-prior-factorized}给出，观测变量的条件分布 $p(\bm{x}|\bm{z})$ 由式\eqref{align:ch15-conditional-x}给出。证明边缘分布 $p(\bm{x})$（通过对所有可能的 $\bm{z}$ 值求和 $p(\bm{z})p(\bm{x}|\bm{z})$ 而获得），是形式为式\eqref{align:ch15-gmm-marginal}的高斯混合分布。
+
+\textbf{15.4}（$\star$）证明在具有 $K$ 个分量的混合模型中，交换对称性导致的等价参数设置的数量是 $K!$。
+
+\textbf{15.5}（$\star\star$）假设我们希望使用~EM~算法来最大化包含潜变量的模型的参数后验分布 $p(\theta|\bm{X})$，其中 $\bm{X}$ 是观测数据集。证明~E~步骤在最大似然情况下保持不变，而~M~步骤中要最大化的量由 $\mathcal{Q}(\theta,\theta^{\text{old}})+\ln p(\theta)$ 给出，其中 $\mathcal{Q}(\theta,\theta^{\text{old}})$ 由式\eqref{align:ch15-q-function}定义。
+
+\textbf{15.6}（$\star$）考虑图~15.9~所示的高斯混合模型的有向图。利用~d~分离准则，证明潜变量的后验分布可以关于不同的数据点进行因子分解，即
+\begin{align}
+p(\bm{Z}|\bm{X},\bm{\mu},\bm{\Sigma},\bm{\pi})=\prod_{n=1}^{N}p(\bm{z}_n|\bm{x}_n,\bm{\mu},\bm{\Sigma},\bm{\pi}).
+\label{align:ch15-ex-factor}
+\end{align}
+
+\textbf{15.7}（$\star\star$）考虑高斯混合模型的一种特殊情况，其中每个分量的协方差矩阵 $\bm{\Sigma}_k$ 受限于它们所具有的一个共同的值 $\bm{\Sigma}$。在这样的模型下推导用于最大化似然函数的~EM~方程。
+
+\textbf{15.8}（$\star\star$）验证对高斯混合模型的完整数据对数似然函数[式\eqref{align:ch15-complete-nll}]进行最大化给出的~EM~方程。
+
+\end{document}

@@ -1,0 +1,950 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{../../image/}}}
+
+\begin{document}
+
+\section{方差，相关系数，矩}\label{section:ch04-方差相关系数矩}
+
+\subsection*{一、方差}
+
+数学期望是随机变量的一个重要数字特征，它表示了随机变量取值的平均水平，从一个角度描述了随机变量。但是从下面例子马上可以看出，单用数学期望描述随机变量通常是不够的。
+
+再考察两个射手，他们的射击技术用下表表出：
+
+\begin{center}
+\begin{tabular}{c|ccc}
+\multicolumn{4}{c}{丙射手}\\
+击中环数 & 8 & 9 & 10\\
+\hline
+概\ 率 & $0.1$ & $0.8$ & $0.1$
+\end{tabular}
+\qquad
+\begin{tabular}{c|ccc}
+\multicolumn{4}{c}{丁射手}\\
+击中环数 & 8 & 9 & 10\\
+\hline
+概\ 率 & $0.3$ & $0.4$ & $0.3$
+\end{tabular}
+\end{center}
+
+显然，他们每射一枪的期望值都是 $9$ 环。不过，他们之间的技术差异是明显的，有必要进一步刻画。
+
+细察之下发现，丙射手的射击大部分集中在均值 $9$ 环，而丁射手则散布度比较大。
+
+一般地，当我们考察一组观察值 $x_1,x_2,\cdots,x_n$ 时，其平均值 $\bar{x}=\dfrac{1}{n}\sum_{i=1}^n x_i$ 给予我们一个关于这组数据中心的表征。接下来我们注意的便是这组数据对于平均值的偏离，也就是 $x_1-\bar{x},x_2-\bar{x},\cdots,x_n-\bar{x}$。当然我们也想用一个数字来刻画这种偏离。首先想到的可能是把这些偏离值求和，但是马上发现这是没有意义的，因为 $\sum_{i=1}^n(x_i-\bar{x})\equiv 0$，这是平均值的性质之一，它来自正负偏离相互抵消。这时可供选择的指标有两个，一个便是平均绝对偏差
+\[
+AD=\frac{1}{n}\sum_{i=1}^n|x_i-\bar{x}|.
+\]
+可惜，这个量从数学上不太容易处理，因此最后还是让位于另一个指标——方差
+\[
+\sigma^2=\frac{1}{n}\sum_{i=1}^n(x_i-\bar{x})^2.
+\]
+
+上述讨论容易过渡到带有``权''的场合，进而到离散型随机变量的场合，即对于数学期望的偏离的平方的加权平均
+\[
+\sum_{i=1}^n(x_i-E\xi)^2 p_i.
+\]
+
+这些直观讨论启发我们引进如下定义。
+
+\begin{definition}[方差与标准差]\label{definition:ch04-方差}
+若 $E(\xi-E\xi)^2$ 存在，则称它为随机变量 $\xi$ 的\textbf{方差}（variance），并记为 $D\xi$，而 $\sqrt{D\xi}$ 称为\textbf{根方差}、\textbf{均方差}或更多地称为\textbf{标准差}（standard deviation）。
+\end{definition}
+
+方差，以及它的正平方根——标准差，描述了随机变量对于其数学期望的偏离程度（dispersion），在概率论和数理统计中十分有用。在数字特征里，方差的重要性仅次于数学期望即均值。在许多场合，均值与方差连用就构成了相当精致的模型，这甚至有了专业名词——\textbf{均值--方差理论}。
+
+标准差与它描述的随机变量有相同的量纲，有时更便于应用；但方差有较好的数学性质，因此更为常用。不过由于它们的转换很方便，通常都视不同情况择便使用。
+
+在应用中，方差扮演的角色则因学科与题材而异。最成功的是在测量与预测问题中，方差作为误差起关键作用。本节开头讨论的丙、丁两射手，丁射手的方差大，即技术不够``稳定''；而丙射手方差小，较``稳定''，大体也属于这种类型。
+
+在物理学与电信理论中，方差常与能量相联系。
+
+当代金融学中，以均值表示收益，方差表示风险，所建立起的均值--方差模型，已成为该学科的奠基石，并应用于金融市场的每个角落。
+
+利用数学期望的线性性质，
+\begin{align}
+D\xi=E(\xi-E\xi)^2=E\bigl[\xi^2-2\xi\cdot E\xi+(E\xi)^2\bigr]
+=E\xi^2-2E\xi\cdot E\xi+(E\xi)^2=E\xi^2-(E\xi)^2.\label{align:ch04-方差计算公式}
+\end{align}
+在计算中，这个公式甚至比定义式更常用。
+
+当然方差也由概率分布完全确定。下面计算一些重要分布的方差，为书写方便，一律假定相应的随机变量为 $\xi$。
+
+\begin{example}[Bernoulli 分布的方差]\label{example:ch04-方差-Bernoulli}
+\[
+E\xi^2=1^2\cdot p+0^2\cdot(1-p)=p,
+\]
+\[
+D\xi=E\xi^2-(E\xi)^2=p-p^2=pq.
+\]
+$p=q=\dfrac{1}{2}$ 时方差最大——投币最难预测，预测阴晴则较易。
+\end{example}
+
+\begin{example}[二项分布的方差]\label{example:ch04-方差-二项}
+二项分布 $B(n,p)$，
+\[
+E\xi^2=\sum_{k=0}^n k^2\binom{n}{k}p^k q^{n-k}=npq+n^2p^2,
+\]
+\[
+D\xi=E\xi^2-(E\xi)^2=npq+n^2p^2-n^2p^2=npq.
+\]
+\end{example}
+
+\begin{example}[Poisson 分布的方差]\label{example:ch04-方差-Poisson}
+Poisson 分布 $P(\lambda)$，
+\begin{align*}
+E\xi^2&=\sum_{k=0}^{\infty}k^2 p_k=\sum_{k=1}^{\infty}k^2\cdot\frac{\lambda^k}{k!}\mathrm{e}^{-\lambda}
+=\sum_{k=1}^{\infty}k\frac{\lambda^k}{(k-1)!}\mathrm{e}^{-\lambda}\\
+&=\lambda\sum_{k=0}^{\infty}(k+1)\frac{\lambda^k}{k!}\mathrm{e}^{-\lambda}=\lambda^2+\lambda,
+\end{align*}
+\[
+D\xi=E\xi^2-(E\xi)^2=\lambda^2+\lambda-\lambda^2=\lambda.
+\]
+均值与方差都是 $\lambda$。
+\end{example}
+
+\begin{example}[均匀分布的方差]\label{example:ch04-方差-均匀}
+均匀分布 $U[a,b]$，
+\begin{align*}
+E\xi&=\int_a^b x\frac{1}{b-a}\,\mathrm{d}x=\frac{b+a}{2},\\
+E\xi^2&=\int_a^b x^2\frac{1}{b-a}\,\mathrm{d}x=\frac{b^2+ab+a^2}{3},\\
+D\xi&=E\xi^2-(E\xi)^2=\frac{b^2+ab+a^2}{3}-\left(\frac{b+a}{2}\right)^2=\frac{(b-a)^2}{12}.
+\end{align*}
+\end{example}
+
+\begin{example}[正态分布的方差]\label{example:ch04-方差-正态}
+正态分布 $N(\mu,\sigma^2)$，
+\begin{align*}
+D\xi&=\int_{-\infty}^{\infty}(x-\mu)^2\frac{1}{\sqrt{2\pi}\sigma}\mathrm{e}^{-(x-\mu)^2/(2\sigma^2)}\,\mathrm{d}x\\
+&=\frac{\sigma^2}{\sqrt{2\pi}}\int_{-\infty}^{\infty}z^2\mathrm{e}^{-z^2/2}\,\mathrm{d}z\\
+&=\frac{\sigma^2}{\sqrt{2\pi}}\left[\left.\left(-z\mathrm{e}^{-z^2/2}\right)\right|_{-\infty}^{\infty}+\int_{-\infty}^{\infty}\mathrm{e}^{-z^2/2}\,\mathrm{d}z\right]\\
+&=\frac{\sigma^2}{\sqrt{2\pi}}\sqrt{2\pi}=\sigma^2.
+\end{align*}
+这样，我们阐明了正态分布中第二个参数 $\sigma$ 的概率意义，它就是标准差；而正态分布也由它的数学期望及标准差唯一确定。
+\end{example}
+
+下面讨论方差的性质。
+
+\noindent\textbf{性质 1}\quad 常数的方差为 $0$。
+
+\noindent\textbf{性质 2}\quad $D(\xi+c)=D\xi$，这里 $c$ 是常数。
+
+\noindent\textbf{性质 3}\quad $D(c\xi)=c^2 D\xi$，这里 $c$ 是常数。
+
+对于随机变量 $\xi$，若它的数学期望 $E\xi$ 及方差 $D\xi$ 都存在，而且 $D\xi>0$，有时要考虑\textbf{标准化}了的随机变量
+\[
+\xi^*=\frac{\xi-E\xi}{\sqrt{D\xi}}.
+\]
+显然 $E\xi^*=0$，$D\xi^*=1$，这正是称 $\xi^*$ 为标准化随机变量的理由。
+
+\noindent\textbf{性质 4}\quad 若 $c\neq E\xi$，则 $D\xi<E(\xi-c)^2$。
+
+\begin{proof}
+因为
+\[
+D\xi=E(\xi-E\xi)^2=E(\xi-c)^2-(c-E\xi)^2,
+\]
+这个性质表明数学期望具有一个重要的极值性质：在 $E(\xi-c)^2$ 中，当 $c=E\xi$ 时达到极小；这也说明在 $D\xi$ 的定义中取 $c=E\xi$ 的合理性。
+\end{proof}
+
+\subsection*{二、Chebyshev 不等式}
+
+概率论中有许多不等式，下面的 Chebyshev 不等式（Chebyshev，1821--1894）是其中最基本和最重要的一个。
+
+\begin{theorem}[Chebyshev 不等式]\label{theorem:ch04-Chebyshev不等式}
+对于任何具有有限方差的随机变量 $\xi$，都有
+\begin{align}
+P\{|\xi-E\xi|\geqslant\varepsilon\}\leqslant\frac{D\xi}{\varepsilon^2},\label{align:ch04-Chebyshev}
+\end{align}
+其中 $\varepsilon$ 是任一正数。
+\end{theorem}
+
+\begin{proof}
+若 $F(x)$ 是 $\xi$ 的分布函数，则显然有
+\begin{align*}
+D\xi&=\int_{-\infty}^{\infty}(x-E\xi)^2\,\mathrm{d}F(x)\\
+&\geqslant\int_{|x-E\xi|\geqslant\varepsilon}(x-E\xi)^2\,\mathrm{d}F(x)
+\geqslant\int_{|x-E\xi|\geqslant\varepsilon}\varepsilon^2\,\mathrm{d}F(x)\\
+&=\varepsilon^2 P\{|\xi-E\xi|\geqslant\varepsilon\}.
+\end{align*}
+这就证得了不等式~\eqref{align:ch04-Chebyshev}。有时把~\eqref{align:ch04-Chebyshev} 改写成
+\[
+P\{|\xi-E\xi|<\varepsilon\}\geqslant 1-\frac{D\xi}{\varepsilon^2},
+\]
+或
+\[
+P\left\{\left|\frac{\xi-E\xi}{\sqrt{D\xi}}\right|\geqslant\delta\right\}\leqslant\frac{1}{\delta^2}.
+\]
+\end{proof}
+
+Chebyshev 不等式利用随机变量 $\xi$ 的数学期望 $E\xi$ 及方差 $D\xi=\sigma^2$ 对 $\xi$ 的概率分布进行估计。例如它断言不管 $\xi$ 的分布是什么，$\xi$ 落在 $(E\xi-\sigma\delta,E\xi+\sigma\delta)$ 中的概率均不小于 $1-\dfrac{1}{\delta^2}$。因为 Chebyshev 不等式只利用数学期望及方差就描述了随机变量的重要情况，因此它在理论研究及实际应用中都很有价值。
+
+从 Chebyshev 不等式还可以看出，当方差愈小时，事件 $\{|\xi-E\xi|\geqslant\varepsilon\}$ 的概率也愈小，从这里可以看出方差是描述随机变量与其期望值偏离程度的一个量，这与我们以前的理解完全一致。
+
+上面已经指出，常数的方差为 $0$，事实上方差为 $0$ 的随机变量必为常数。利用 Chebyshev 不等式可对此作出严格证明。假定 $D\xi=0$，注意到
+\[
+\{\xi\neq E\xi\}\subset\bigcup_{n=1}^{\infty}\left\{|\xi-E\xi|\geqslant\frac{1}{n}\right\},
+\]
+于是
+\begin{align*}
+P\{\xi\neq E\xi\}&\leqslant\sum_{n=1}^{\infty}P\left\{|\xi-E\xi|\geqslant\frac{1}{n}\right\}\\
+&\leqslant\sum_{n=1}^{\infty}n^2 D\xi=0,
+\end{align*}
+从而
+\[
+P\{\xi=E\xi\}=1,
+\]
+即 $\xi$ 为常数。
+
+\subsection*{三、相关系数}
+
+对于随机向量 $\xi=(\xi_1,\xi_2,\cdots,\xi_n)$，定义它的\textbf{方差}为 $(D\xi_1,D\xi_2,\cdots,D\xi_n)$。
+
+方差反映了随机向量各个分量对于各自的数学期望的偏离程度，它对于了解随机向量的分布有一定帮助。但对于随机向量，我们除了关心它的每个分量的情况外，还希望知道各个分量之间的联系，这光靠数学期望与方差是办不到的。下面引进的量则能起这个作用。
+
+让我们从计算 $\xi\pm\eta$ 的方差开始：
+\begin{align*}
+D(\xi\pm\eta)&=E\bigl[(\xi\pm\eta)-(E\xi\pm E\eta)\bigr]^2\\
+&=E(\xi-E\xi)^2+E(\eta-E\eta)^2\pm 2E\bigl[(\xi-E\xi)(\eta-E\eta)\bigr]\\
+&=D\xi+D\eta\pm 2E\bigl[(\xi-E\xi)(\eta-E\eta)\bigr].
+\end{align*}
+可见，即使为了计算 $\xi\pm\eta$ 的方差，也还是回避不了刻画 $\xi$ 与 $\eta$ 联系的 $E\bigl[(\xi-E\xi)(\eta-E\eta)\bigr]$，这个考察启发我们引入如下定义。
+
+\begin{definition}[协方差]\label{definition:ch04-协方差}
+称
+\begin{align}
+\sigma_{ij}=\mathrm{cov}(\xi_i,\xi_j)=E\bigl[(\xi_i-E\xi_i)(\xi_j-E\xi_j)\bigr],\qquad i,j=1,2,\cdots,n\label{align:ch04-协方差定义}
+\end{align}
+为 $\xi_i$ 与 $\xi_j$ 的\textbf{协方差}（covariance）。
+\end{definition}
+
+不难验算
+\begin{align}
+\mathrm{cov}(\xi_i,\xi_j)=E\xi_i\xi_j-E\xi_i\cdot E\xi_j,\label{align:ch04-协方差展开}
+\end{align}
+\begin{align}
+D\left(\sum_{i=1}^n\xi_i\right)=\sum_{i=1}^n D\xi_i+2\sum_{1\leqslant i<j\leqslant n}\mathrm{cov}(\xi_i,\xi_j),\label{align:ch04-方差和}
+\end{align}
+特别地，
+\begin{align}
+D(\xi_i\pm\xi_j)=D\xi_i+D\xi_j\pm 2\mathrm{cov}(\xi_i,\xi_j).\label{align:ch04-方差和两项}
+\end{align}
+
+方差是协方差的特例，显然 $\sigma_{ii}=D\xi_i$。矩阵
+\begin{align}
+\Sigma=\begin{pmatrix}
+\sigma_{11}&\sigma_{12}&\cdots&\sigma_{1n}\\
+\sigma_{21}&\sigma_{22}&\cdots&\sigma_{2n}\\
+\vdots&\vdots&&\vdots\\
+\sigma_{n1}&\sigma_{n2}&\cdots&\sigma_{nn}
+\end{pmatrix}\label{align:ch04-协方差矩阵}
+\end{align}
+称为 $\xi$ 的\textbf{协方差矩阵}，简记作 $D\xi$，显然这是一个对称矩阵。
+
+此外，对任何实数 $t_j$（$j=1,2,\cdots,n$）有
+\[
+\sum_{j,k}\sigma_{jk}t_j t_k=E\left[\sum_{j=1}^n t_j(\xi_j-E\xi_j)\right]^2\geqslant 0,
+\]
+因此 $\Sigma$ 是一个非负定矩阵，所以若以 $\det\Sigma$ 记 $\Sigma$ 的行列式，则有
+\[
+\det\Sigma\geqslant 0.
+\]
+
+更常用的是如下``标准化''了的协方差。
+
+\begin{definition}[相关系数]\label{definition:ch04-相关系数}
+称
+\begin{align}
+\rho_{ij}=\frac{\mathrm{cov}(\xi_i,\xi_j)}{\sqrt{D\xi_i}\sqrt{D\xi_j}}\label{align:ch04-相关系数定义}
+\end{align}
+为 $\xi_i$ 与 $\xi_j$ 的\textbf{相关系数}（correlation coefficient），这里当然要求 $D\xi_i$ 与 $D\xi_j$ 不为零。
+\end{definition}
+
+补充定义常数与任何随机变量的相关系数为 $0$。
+
+相关系数为正时，称两随机变量\textbf{正相关}，为负时则称\textbf{负相关}。
+
+相关系数也就是标准化的随机变量 $\dfrac{\xi_i-E\xi_i}{\sqrt{D\xi_i}}$ 与 $\dfrac{\xi_j-E\xi_j}{\sqrt{D\xi_j}}$ 的协方差。当然，协方差和相关系数都由概率分布确定。
+
+可以说相关系数是规格化了的协方差，其优点是排除了随机变量的量纲的影响，这样定义的相关系数在线性变换下保持不变。准确地说，若 $ac>0$，则 $a\xi+b$ 与 $c\eta+d$ 的相关系数仍为 $\rho_{\xi\eta}$。
+
+事实上，不难验算
+\[
+\mathrm{cov}(a\xi+b,c\eta+d)=ac\,\mathrm{cov}(\xi,\eta),
+\]
+因此当 $ac>0$ 时，
+\[
+\rho_{a\xi+b,c\eta+d}=\frac{ac\,\mathrm{cov}(\xi,\eta)}{|ac|\sqrt{D\xi}\sqrt{D\eta}}=\rho_{\xi\eta}.
+\]
+当 $ac<0$ 时，$\rho_{a\xi+b,c\eta+d}=-\rho_{\xi\eta}$，但总有 $\rho_{a\xi+b,c\eta+d}^2=\rho_{\xi\eta}^2$。
+
+\begin{example}[多项分布的相关系数]\label{example:ch04-多项分布相关系数}
+多项分布~(3.2.6) 的相关系数。
+
+显然，$\xi_i\sim B(n,p_i)$，$i=1,2,\cdots,r$。因此
+\[
+E\xi_i=np_i,\qquad D\xi_i=np_i(1-p_i).
+\]
+
+为求协方差或相关系数，可用下面技巧：注意到
+\[
+\xi_i+\xi_j\sim B(n,p_i+p_j),
+\]
+因此
+\[
+E(\xi_i+\xi_j)=n(p_i+p_j),\qquad D(\xi_i+\xi_j)=n(p_i+p_j)(1-p_i-p_j).
+\]
+由于
+\begin{align*}
+D(\xi_i+\xi_j)&=D\xi_i+D\xi_j+2\mathrm{cov}(\xi_i,\xi_j)\\
+&=np_i(1-p_i)+np_j(1-p_j)+2\mathrm{cov}(\xi_i,\xi_j),
+\end{align*}
+可以得到
+\begin{align}
+\mathrm{cov}(\xi_i,\xi_j)=-np_i p_j.\label{align:ch04-多项分布协方差}
+\end{align}
+相关系数为
+\[
+\rho_{ij}=\frac{-p_i p_j}{\sqrt{p_i p_j(1-p_i)(1-p_j)}}
+=-\sqrt{\frac{p_i p_j}{(1-p_i)(1-p_j)}}.
+\]
+\end{example}
+
+现在讨论相关系数的性质。因为相关系数只与两个随机变量有关，下面的讨论将假定这两个随机变量是 $\xi$ 与 $\eta$，它们的相关系数记为 $\rho$。
+
+先证明一条常用的定理。
+
+\begin{theorem}[Cauchy--Schwarz 不等式]\label{theorem:ch04-Cauchy-Schwarz}
+对任意随机变量 $\xi$ 与 $\eta$ 都有
+\begin{align}
+|E\xi\eta|^2\leqslant E\xi^2\cdot E\eta^2,\label{align:ch04-Cauchy-Schwarz}
+\end{align}
+等式成立当且仅当
+\begin{align}
+P\{\eta=t_0\xi\}=1,\label{align:ch04-Cauchy-Schwarz-等号}
+\end{align}
+这里 $t_0$ 是某一个常数。
+\end{theorem}
+
+\begin{proof}
+对任意实数 $t$，定义 $u(t)=E(t\xi-\eta)^2=t^2 E\xi^2-2tE\xi\eta+E\eta^2$，显然对一切 $t$，$u(t)\geqslant 0$，因此二次方程 $u(t)=0$ 或者没有实根或者有一个重根。所以判别式
+\[
+[E\xi\eta]^2-E\xi^2\cdot E\eta^2\leqslant 0,
+\]
+这正是~\eqref{align:ch04-Cauchy-Schwarz}。此外，方程 $u(t)=0$ 有一个重根 $t_0$ 存在的充要条件是
+\[
+[E\xi\eta]^2-E\xi^2 E\eta^2=0.
+\]
+这时 $E(t_0\xi-\eta)^2=0$，因此
+\[
+D(t_0\xi-\eta)=0,\qquad E(t_0\xi-\eta)=0,
+\]
+从而
+\[
+P\{t_0\xi-\eta=0\}=1,
+\]
+这就是~\eqref{align:ch04-Cauchy-Schwarz-等号} 式。定理证毕。
+\end{proof}
+
+由\cref{theorem:ch04-Cauchy-Schwarz} 立即可以推出，若两随机变量的方差存在，则它们的协方差也存在。
+
+把\cref{theorem:ch04-Cauchy-Schwarz} 应用到随机变量 $\dfrac{\xi-E\xi}{\sqrt{D\xi}}$ 及 $\dfrac{\eta-E\eta}{\sqrt{D\eta}}$，可以得到相关系数的如下重要性质：
+
+\noindent\textbf{性质 1}\quad 对相关系数 $\rho$，成立
+\begin{align}
+|\rho|\leqslant 1,\label{align:ch04-rho模长}
+\end{align}
+并且 $\rho=1$ 当且仅当
+\begin{align}
+P\left\{\frac{\xi-E\xi}{\sqrt{D\xi}}=\frac{\eta-E\eta}{\sqrt{D\eta}}\right\}=1,\label{align:ch04-rho1}
+\end{align}
+而 $\rho=-1$ 当且仅当
+\begin{align}
+P\left\{\frac{\xi-E\xi}{\sqrt{D\xi}}=-\frac{\eta-E\eta}{\sqrt{D\eta}}\right\}=1.\label{align:ch04-rhom1}
+\end{align}
+
+性质 1 表明，当 $\rho=\pm 1$ 时，$\xi$ 与 $\eta$ 存在着完全线性关系，这时如果给定一个随机变量之值，另一个随机变量的值便完全决定。
+
+$\rho=1$ 时，称为\textbf{完全正相关}；$\rho=-1$ 时，称为\textbf{完全负相关}。
+
+有完全线性关系是一个极端，另一个极端是 $\rho=0$ 的场合。为此我们引进：
+
+\begin{definition}[不相关]\label{definition:ch04-不相关}
+若随机变量 $\xi$ 与 $\eta$ 的相关系数 $\rho=0$，则我们称 $\xi$ 与 $\eta$ \textbf{不相关}。
+\end{definition}
+
+\noindent\textbf{性质 2}\quad 对随机变量 $\xi$ 与 $\eta$，下面事实是等价的：
+
+(i) $\mathrm{cov}(\xi,\eta)=0$；
+
+(ii) $\xi$ 与 $\eta$ 不相关；
+
+(iii) $E\xi\eta=E\xi E\eta$；
+
+(iv) $D(\xi+\eta)=D\xi+D\eta$。
+
+\begin{proof}
+显然 (i) 与 (ii) 是等价的。由于
+\[
+\mathrm{cov}(\xi,\eta)=E\xi\eta-E\xi\cdot E\eta,
+\]
+因此 (i) 与 (iii) 等价。又由于
+\[
+D(\xi+\eta)=D\xi+D\eta+2\,\mathrm{cov}(\xi,\eta),
+\]
+因此 (i) 与 (iv) 等价。
+\end{proof}
+
+独立性和不相关性都是随机变量间联系``薄弱''的一种反映，自然希望知道这两个概念之间的联系。首先，我们有
+
+\noindent\textbf{性质 3}\quad 若 $\xi$ 与 $\eta$ 独立，则 $\xi$ 与 $\eta$ 不相关。
+
+\begin{proof}
+我们只对连续型随机变量给出证明。因为 $\xi$ 与 $\eta$ 独立，故其密度函数 $p(x,y)=p_1(x)p_2(y)$，因此
+\begin{align*}
+\mathrm{cov}(\xi,\eta)&=\int_{-\infty}^{\infty}\int_{-\infty}^{\infty}(x-E\xi)(y-E\eta)p(x,y)\,\mathrm{d}x\,\mathrm{d}y\\
+&=\int_{-\infty}^{\infty}(x-E\xi)p_1(x)\,\mathrm{d}x\cdot\int_{-\infty}^{\infty}(y-E\eta)p_2(y)\,\mathrm{d}y=0.
+\end{align*}
+\end{proof}
+
+结合性质 2 及性质 3 可得：若 $\xi$ 与 $\eta$ 独立，则 $E\xi\eta=E\xi\cdot E\eta$ 及 $D(\xi+\eta)=D\xi+D\eta$ 成立。同样的论证可以证明类似的结论在 $n$ 个随机变量的场合也成立，即若 $\xi_1,\xi_2,\cdots,\xi_n$ 是相互独立的随机变量，则
+\begin{align}
+E\xi_1\xi_2\cdots\xi_n=E\xi_1 E\xi_2\cdots E\xi_n,\label{align:ch04-独立乘积期望}
+\end{align}
+\begin{align}
+D(\xi_1+\xi_2+\cdots+\xi_n)=D\xi_1+D\xi_2+\cdots+D\xi_n.\label{align:ch04-独立方差和}
+\end{align}
+
+由独立性可以推出不相关性，但是反过来是不成立的，试看下例。
+
+\begin{example}[不相关又不独立的最简例]\label{example:ch04-不相关不独立}
+下面一个列联表提供了不相关又不独立的最简例。
+\begin{center}
+\begin{tabular}{c|ccc|c}
+$\eta\backslash\xi$ & $-1$ & $0$ & $1$ & \\
+\hline
+$0$ & $0$ & $\frac13$ & $0$ & $\frac13$\\
+$1$ & $\frac13$ & $0$ & $\frac13$ & $\frac23$\\
+\hline
+ & $\frac13$ & $\frac13$ & $\frac13$ &
+\end{tabular}
+\end{center}
+事实上，成立着 $\eta=\xi^2$，因此
+\[
+E\xi=0,\qquad E\eta=E\xi^2=\frac{2}{3},\qquad E\xi\eta=E\xi^3=0,
+\]
+\[
+\mathrm{cov}(\xi,\eta)=E\xi\eta-E\xi\cdot E\eta=0.
+\]
+所以 $\xi$ 与 $\eta$ 不相关，但列联表明示 $\xi$ 与 $\eta$ 不独立。
+
+一般地，若 $\xi$ 服从对称分布，则 $\eta=\xi^2$ 或 $\eta=|\xi|$ 与 $\xi$ 不相关但不独立。
+\end{example}
+
+下面是含意更多的另一个例子。
+
+\begin{example}[圆周上的均匀分布]\label{example:ch04-圆周均匀}
+设 $\theta$ 服从 $[0,2\pi]$ 均匀分布，$\xi=\cos\theta$，$\eta=\cos(\theta+a)$，这里 $a$ 是定数。我们有
+\begin{align*}
+E\xi&=\frac{1}{2\pi}\int_0^{2\pi}\cos t\,\mathrm{d}t=0,\qquad
+E\eta=\frac{1}{2\pi}\int_0^{2\pi}\cos(t+a)\,\mathrm{d}t=0,\\
+E\xi^2&=\frac{1}{2\pi}\int_0^{2\pi}\cos^2 t\,\mathrm{d}t=\frac12,\qquad
+E\eta^2=\frac{1}{2\pi}\int_0^{2\pi}\cos^2(t+a)\,\mathrm{d}t=\frac12,\\
+E\xi\eta&=\frac{1}{2\pi}\int_0^{2\pi}\cos t\cos(t+a)\,\mathrm{d}t=\frac12\cos a.
+\end{align*}
+因此
+\[
+\rho=\cos a.
+\]
+当 $a=0$ 时，$\rho=1$，$\xi=\eta$；当 $a=\pi$ 时，$\rho=-1$，$\xi=-\eta$，存在完全线性关系。
+
+但是，当 $a=\dfrac{\pi}{2}$ 或 $\dfrac{3\pi}{2}$ 时，$\rho=0$，这时 $\xi$ 与 $\eta$ 不相关。不过，这时却有 $\xi^2+\eta^2=1$，因此 $\xi$ 与 $\eta$ 不独立。
+
+这个例子给我们：(1) 提供了 $\rho=\pm 1$ 之例；(2) 提供 $\rho=0$ 之例；(3) 说明不能由不相关性推出独立性；(4) 说明即使 $\xi$ 与 $\eta$ 不相关，它们之间也还是可能存在函数关系。事实上，相关系数只是 $\xi$ 与 $\eta$ 间线性联系程度的一种量度。
+\end{example}
+
+不过，在一种重要的特殊场合——正态分布，独立性与不相关性却是一致的。我们先对二元的场合来讨论这个事实。
+
+为此，我们先求二元正态分布~(3.2.22) 的相关系数。
+\begin{align*}
+\sigma_{12}&=\int_{-\infty}^{\infty}\int_{-\infty}^{\infty}(x-\mu_1)(y-\mu_2)p(x,y)\,\mathrm{d}x\,\mathrm{d}y\\
+&=\frac{1}{2\pi\sigma_1\sigma_2\sqrt{1-\rho^2}}\int_{-\infty}^{\infty}\mathrm{e}^{-(y-\mu_2)^2/(2\sigma_2^2)}\,\mathrm{d}y
+\int_{-\infty}^{\infty}(x-\mu_1)\\
+&\quad\cdot(y-\mu_2)\exp\left\{-\frac{1}{2(1-\rho^2)}\left(\frac{x-\mu_1}{\sigma_1}-\rho\frac{y-\mu_2}{\sigma_2}\right)^2\right\}\mathrm{d}x.
+\end{align*}
+作变数变换 $z=\dfrac{1}{\sqrt{1-\rho^2}}\left(\dfrac{x-\mu_1}{\sigma_1}-\rho\dfrac{y-\mu_2}{\sigma_2}\right)$，$t=\dfrac{y-\mu_2}{\sigma_2}$，则
+\begin{align*}
+\sigma_{12}
+&=\frac{1}{2\pi}\int_{-\infty}^{\infty}\int_{-\infty}^{\infty}(\sigma_1\sigma_2\sqrt{1-\rho^2}\,tz+\rho\sigma_1\sigma_2 t^2)\mathrm{e}^{-\frac{t^2}{2}-\frac{z^2}{2}}\,\mathrm{d}z\,\mathrm{d}t\\
+&=\frac{\rho\sigma_1\sigma_2}{2\pi}\int_{-\infty}^{\infty}t^2\mathrm{e}^{-t^2/2}\,\mathrm{d}t\int_{-\infty}^{\infty}\mathrm{e}^{-z^2/2}\,\mathrm{d}z
++\frac{\sigma_1\sigma_2\sqrt{1-\rho^2}}{2\pi}\\
+&\quad\cdot\int_{-\infty}^{\infty}t\mathrm{e}^{-t^2/2}\,\mathrm{d}t\int_{-\infty}^{\infty}z\mathrm{e}^{-z^2/2}\,\mathrm{d}z=\rho\sigma_1\sigma_2.
+\end{align*}
+因此
+\begin{align}
+\rho_{12}=\frac{\sigma_{12}}{\sigma_1\sigma_2}=\rho.\label{align:ch04-二元正态相关系数}
+\end{align}
+这样说明了参数 $\rho$ 是二元正态分布的相关系数。
+
+至此，我们已经完全搞清了二元正态分布中各个参数的含义。$\mu_1,\mu_2$ 分别是两个边际分布的数学期望，而 $\sigma_1,\sigma_2,\rho$ 则以下列形式构成它的协方差矩阵
+\begin{align}
+\begin{pmatrix}
+\sigma_1^2&\rho\sigma_1\sigma_2\\
+\rho\sigma_1\sigma_2&\sigma_2^2
+\end{pmatrix}.\label{align:ch04-二元正态协方差矩阵}
+\end{align}
+
+另外，在上章 $\S 2$ 例 4 中已指出，二元正态分布场合，独立的充要条件是 $\rho=0$，这表明：
+
+\noindent\textbf{性质 4}\quad 对于二元正态分布，不相关性与独立性是等价的。
+
+在 $\S 6$ 中，我们将把这个结果推广到多元的场合。
+
+下面，我们给出一个边际分布是正态分布而联合分布不是多元正态分布的例子。
+
+\begin{example}[边际正态而联合非正态]\label{example:ch04-边际正态非联合}
+令 $\varphi(x)=\dfrac{1}{\sqrt{2\pi}}\mathrm{e}^{-x^2/2}$，$-\infty<x<\infty$，
+\[
+g(x)=\begin{cases}
+\cos x,&|x|<\pi,\\
+0,&|x|\geqslant\pi,
+\end{cases}
+\]
+\[
+p(x,y)=\varphi(x)\varphi(y)+\frac{1}{2\pi}\mathrm{e}^{-\pi^2}g(x)g(y),\qquad -\infty<x,y<\infty.
+\]
+关于 $p(x,y)$，不难验证：(1) 是二元密度函数；(2) 边际分布都是正态分布；(3) 相关系数为 $0$；(4) 不独立；(5) 不是二元正态密度函数。这些留给读者作为练习。
+\end{example}
+
+独立性与不相关性一致的另一特殊场合是两个二值随机变量。
+
+\noindent\textbf{性质 5}\quad 若 $\xi$ 与 $\eta$ 都是二值随机变量，则不相关性与独立性是等价的。
+
+\begin{proof}
+设 $\xi$ 取二值 $a$ 及 $c$，$\eta$ 取二值 $b$ 及 $d$，需要证明的是由 $\rho_{\xi\eta}=0$ 可推得 $\xi$ 与 $\eta$ 独立。
+
+记 $A=\{\xi=a\}$，$B=\{\eta=b\}$，从而
+\[
+\bar{A}=\{\xi=c\},\qquad\bar{B}=\{\eta=d\}.
+\]
+于是它们的示性函数
+\[
+\mathbf{1}_A=\frac{\xi-c}{a-c},\qquad \mathbf{1}_B=\frac{\eta-d}{b-d}.
+\]
+由
+\[
+\mathrm{cov}(\mathbf{1}_A,\mathbf{1}_B)=E\mathbf{1}_A\mathbf{1}_B-E\mathbf{1}_A\cdot E\mathbf{1}_B=P(AB)-P(A)P(B),
+\]
+\[
+D\mathbf{1}_A=P(A)P(\bar{A}),\qquad D\mathbf{1}_B=P(B)P(\bar{B}),
+\]
+得到
+\[
+\rho_{\mathbf{1}_A\mathbf{1}_B}=\frac{P(AB)-P(A)P(B)}{\sqrt{P(A)P(\bar{A})P(B)P(\bar{B})}}=0.
+\]
+这是因为 $\mathbf{1}_A$ 与 $\mathbf{1}_B$ 分别为 $\xi$ 与 $\eta$ 的线性变换，而后者不相关。
+
+因而 $P(AB)=P(A)P(B)$，即
+\[
+P\{\xi=a,\eta=b\}=P\{\xi=a\}P\{\eta=b\}.
+\]
+再由 $(A,\bar{B}),(\bar{A},B)$ 及 $(\bar{A},\bar{B})$ 的独立性可知
+\begin{align*}
+P\{\xi=a,\eta=d\}&=P\{\xi=a\}P\{\eta=d\},\\
+P\{\xi=c,\eta=b\}&=P\{\xi=c\}P\{\eta=b\},\\
+P\{\xi=c,\eta=d\}&=P\{\xi=c\}P\{\eta=d\}.
+\end{align*}
+至此我们已证得 $\xi$ 与 $\eta$ 独立。
+\end{proof}
+
+从上述证明中可得如下推论。
+
+\begin{corollary}[事件相关系数]\label{corollary:ch04-事件相关系数}
+对事件 $A$ 与 $B$，若定义事件相关系数为
+\begin{align}
+\rho_{AB}=\rho_{\mathbf{1}_A\mathbf{1}_B}=\frac{P(AB)-P(A)P(B)}{\sqrt{P(A)P(\bar{A})P(B)P(\bar{B})}},\label{align:ch04-事件相关系数}
+\end{align}
+则 $A$ 与 $B$ 独立的充要条件为 $\rho_{AB}=0$。
+\end{corollary}
+
+\begin{corollary}\label{corollary:ch04-PAB界}
+\[
+|P(AB)-P(A)P(B)|\leqslant\frac14.\label{align:ch04-PAB界}
+\]
+\end{corollary}
+
+\noindent\textbf{[在抽样调查中的应用]}\quad 抽样调查（sampling survey）是社会经济中用得最多的统计方法。在国外，上至总统竞选前的民意调查，下至针对家庭的家计调查，十分普遍。近年，我国也已经进行了不少有效的抽样调查。
+
+为对总体的某个指标（主要是总值、平均值、比率和百分比）进行估算，特设计某种抽样方案，以随机的方式抽取若干个体作调查，利用所得数据算出估计值，并希望给出估计的精度。这是抽样调查的大意。
+
+最简单也是最基本的抽样方式是所谓\textbf{简单随机抽样}，这时总体的 $N$ 个个体中的每一个在一个大小为 $n$ 的抽样中有同样的机会被抽到。
+
+下面的例子可以概括水稻产量、家庭收入、收视率等等具体情况，采用的是简单随机抽样。
+
+\begin{example}[不放回抽样之和的期望与方差]\label{example:ch04-不放回抽样}
+袋中有 $N$ 张卡片，各记以数字 $Y_1,Y_2,\cdots,Y_N$，不放回地从中抽出 $n$ 张，求其和的数学期望与方差。
+\end{example}
+
+\begin{proof}[解]
+取一张时，其数字的均值及方差分别为
+\[
+\bar{Y}=\frac{1}{N}\sum_{i=1}^N Y_i
+\]
+及
+\[
+\sigma^2=\frac{1}{N}\sum_{i=1}^N(Y_i-\bar{Y})^2.
+\]
+
+若以 $\eta_n$ 记 $n$ 张卡片的数字之和，以 $\xi_i$，$i=1,2,\cdots,n$ 记第 $i$ 次抽得的卡片上的数字，则
+\[
+\eta_n=\xi_1+\xi_2+\cdots+\xi_n,
+\]
+\[
+P\{\xi_i=Y_l\}=\frac{1}{N},\qquad l=1,2,\cdots,N,\ i=1,2,\cdots,n.
+\]
+因此
+\[
+E\xi_i=\bar{Y},\qquad D\xi_i=\sigma^2.
+\]
+所以
+\begin{align}
+E\eta_n=E\xi_1+E\xi_2+\cdots+E\xi_n=n\bar{Y},\label{align:ch04-不放回和期望}
+\end{align}
+\begin{align}
+D\eta_n&=\sum_{i=1}^n D\xi_i+2\sum_{1\leqslant i<j\leqslant n}\mathrm{cov}(\xi_i,\xi_j)\nonumber\\
+&=n\sigma^2+n(n-1)\mathrm{cov}(\xi_1,\xi_2).\label{align:ch04-不放回和方差}
+\end{align}
+这里用到 $\xi_i$ 之间的对称性，也即抽签与顺序无关。
+
+在~\eqref{align:ch04-不放回和方差} 中令 $n=N$，这时 $\eta_N=Y_1+Y_2+\cdots+Y_N$ 是一个常数，因此 $D\eta_N=0$，于是
+\[
+N\sigma^2+N(N-1)\mathrm{cov}(\xi_1,\xi_2)=0,
+\]
+所以
+\begin{align}
+\mathrm{cov}(\xi_1,\xi_2)=-\frac{\sigma^2}{N-1}.\label{align:ch04-不放回协方差}
+\end{align}
+最后得到
+\begin{align}
+D\eta_n&=n\sigma^2-\frac{n(n-1)\sigma^2}{N-1}\nonumber\\
+&=\frac{n(N-n)}{N-1}\sigma^2.\label{align:ch04-不放回和方差2}
+\end{align}
+
+与有放回抽取的方差 $n\sigma^2$ 相比，多出了一个因子 $\dfrac{N-n}{N-1}$，称为\textbf{有限总体修正因子}。当 $n=1$ 时，它等于 $1$；而当 $n=N$ 时，它取值为 $0$。在不放回场合，添加抽取的信息量较大，即方差小，这与直观完全符合。
+
+特别地，若取 $Y_1=Y_2=\cdots=Y_M=1$，$Y_{M+1}=\cdots=Y_N=0$，则可以得到超几何分布的均值和方差的表达式。
+
+事实上，取 $1$ 者当次品，取 $0$ 者当合格品，则 $\xi_i$ 记第 $i$ 次摸到的次品数，$\eta_n$ 表示 $n$ 次共摸到的次品数，它服从超几何分布~(3.1.16)。这时
+\[
+\bar{Y}=\frac{M}{N},\qquad \sigma^2=\frac{M}{N}\left(1-\frac{M}{N}\right).
+\]
+由~\eqref{align:ch04-不放回和期望} 得到
+\begin{align}
+E\eta_n=\frac{nM}{N},\label{align:ch04-超几何期望2}
+\end{align}
+这个答案曾在上节例 16 中得到过。
+
+由~\eqref{align:ch04-不放回和方差2} 得到
+\begin{align}
+D\eta_n=\frac{nM}{N}\left(1-\frac{M}{N}\right)\frac{N-n}{N-1}.\label{align:ch04-超几何方差}
+\end{align}
+\end{proof}
+
+\subsection*{四、应用实例}
+
+下面提供有关均值与方差应用的若干例子。
+
+\begin{example}[信号--噪声模型]\label{example:ch04-信号噪声}
+在当代通信理论中，我们关心的是未知信号 $S$，信号在传输过程中不可避免地要受到噪声 $N$ 的随机干扰，因此我们接收到的是受到随机干扰的观察值 $\xi$，它们满足如下模型
+\begin{align}
+\xi=S+N.\label{align:ch04-信号噪声模型}
+\end{align}
+
+为了正确恢复信号 $S$，通常的做法是进行重复观察得到观察值 $\xi_1,\xi_2,\cdots,\xi_n$，并对它们作平均
+\begin{align}
+\frac{1}{n}\sum_{i=1}^n\xi_i=\frac{1}{n}\sum_{i=1}^n S+\frac{1}{n}\sum_{i=1}^n N_i
+=S+\frac{1}{n}\sum_{i=1}^n N_i.\label{align:ch04-平均观察}
+\end{align}
+若假定噪声 $N_1,N_2,\cdots,N_n$ 独立同分布，均值为 $0$，方差为 $\sigma^2$，则
+\begin{align}
+D\left[\frac{1}{n}\sum_{i=1}^n N_i\right]=\frac{\sigma^2}{n}.\label{align:ch04-噪声方差降低}
+\end{align}
+因此经过处理噪声方差降为原来的 $\dfrac{1}{n}$，从而大大提高了信号对噪声的功率比，可以实现强噪声背景下弱信号的接收。
+
+雷达信号接收中正是利用上述模型。
+
+在石油地球物理勘探中，目前最有效的方法是人工地震法。利用阵列布置的检波器收到的信号既有地层结构的信息，也混有多种无用的噪声，通过各种校正后的叠加以还原信息的工作，正在全世界的许多超大型计算机上日夜进行。
+
+对物理量的测量通常要重复多次再取其平均也是根据这个模型。直观上，误差有正有负，取平均则相互抵消，有利于得到物理量的真值。
+\end{example}
+
+\begin{example}[估计量的无偏性与有效性]\label{example:ch04-估计量}
+若手机的通话时间 $X$ 服从 $\mathrm{Exp}\left(\dfrac{1}{\mu}\right)$，在实际工作中需要确定唯一的未知参数 $\mu=EX$，这是数理统计中的参数估计问题。
+
+通常的做法是通过抽样获得 $X$ 的一个样本 $X_1,\cdots,X_n$，它们相互独立并且都服从 $\mathrm{Exp}\left(\dfrac{1}{\mu}\right)$，再由它们构造出统计量 $\hat{\mu}=\hat{\mu}(X_1,\cdots,X_n)$ 作为 $\mu$ 的估计量。
+
+$\mu$ 虽未知但是常数，而 $\hat{\mu}$ 则是样本的函数即随机变量，因此为了使 $\hat{\mu}$ 成为 $\mu$ 的有意义的估计量，通常要对它提出若干要求。很基本的一个要求是\textbf{无偏性}
+\[
+E\hat{\mu}=\mu,
+\]
+也就是说，在平均的意义下应当得到所期望的结果，无系统性偏差。显然无偏性是相当合理的一个优良性准则。
+
+满足无偏性要求的估计量很多，例如 $\hat{\mu}_1=X_1$，$\hat{\mu}_2=\dfrac{X_1+X_n}{2}$，$\cdots$，$\bar{X}=\dfrac{1}{n}(X_1+\cdots+X_n)$ 等等都是。如何从它们中选取最好的一个呢？按估计量本身的含义，自然希望估计量与被估计的参数的偏差越小越好。方差正是这样的度量，这样一来，由于 $D\hat{\mu}_1=DX$，$D\hat{\mu}_2=\dfrac{DX}{2}$，$\cdots$，$D\bar{X}=\dfrac{DX}{n}$，因此 $\bar{X}$ 是其中最好的。
+
+一般地，对于 $\mu$ 的无偏估计量 $\hat{\mu}'$ 及 $\hat{\mu}''$，若 $D\hat{\mu}'<D\hat{\mu}''$，则称 $\hat{\mu}'$ 比 $\hat{\mu}''$\textbf{有效}。因此\textbf{有效性}成为另一个优良性准则。
+
+长期以来无偏--有效性成为评价估计量优劣的一个很通用的准则。不过，若注意到
+\[
+E(\hat{\mu}-\mu)^2=D\hat{\mu}+(E\hat{\mu}-\mu)^2,
+\]
+则会发现还可以寻找这样的估计量，它有一定的偏度 $E\hat{\mu}-\mu$，但能得到更小的方差 $D\hat{\mu}$，并使``估计量与被估计的参数的均方误差'' $E(\hat{\mu}-\mu)^2$ 更小，这就开辟了有偏估计这一新方向。
+\end{example}
+
+\begin{example}[现代证券组合理论]\label{example:ch04-证券组合}
+Markowitz 在 50 年代引进的均值--方差模型成了现代证券组合理论的基石。在这个理论中，假定有 $n$ 种证券可以投资，并把它们的收益率看作是随机变量，通常记为 $r_1,r_2,\cdots,r_n$，相应的均值记为 $\bar{r}_1,\bar{r}_2,\cdots,\bar{r}_n$，方差记为 $\sigma_1^2,\sigma_2^2,\cdots,\sigma_n^2$，并以 $\rho_{ij}$ 记 $r_i$ 与 $r_j$ 的相关系数。一个相当自然的假定是：投资者都追求高收益而规避风险，也即希望有高的均值而不愿有大的方差。但是证券市场的历史记录表明，对于个别证券而言，高收益总是伴随着高风险。根本的出路在于采用证券组合，即把全部资金分散投资于各种证券。假定投资于上述 $n$ 种证券的资金比例分别为 $w_1,w_2,\cdots,w_n$，则总的收益率为
+\begin{align}
+r_p=\sum_{i=1}^n w_i r_i.\label{align:ch04-组合收益}
+\end{align}
+显然，其平均收益率为
+\begin{align}
+\bar{r}_p=Er_p=\sum_{i=1}^n w_i\bar{r}_i.\label{align:ch04-组合均值}
+\end{align}
+而方差则为
+\begin{align}
+\sigma_p^2=Dr_p=\sum_{i=1}^n\sum_{j=1}^n w_i w_j\rho_{ij}\sigma_i\sigma_j.\label{align:ch04-组合方差}
+\end{align}
+
+一般情况下，$\sigma_p^2$ 要大大小于 $\sigma_i^2$。若进行充分分散化投资，例如 $w_i=\dfrac{1}{n}$，$i=1,2,\cdots,n$。则 $\sigma_p^2=\dfrac{1}{n^2}\sum_{i=1}^n\sum_{j=1}^n\rho_{ij}\sigma_i\sigma_j$。在理想场合，若组合中大部分证券弱相关甚至不相关，那么 $\sigma_p^2$ 将接近于 $\dfrac{1}{n^2}\sum_{i=1}^n\sigma_i^2$，因此分散化投资确能降低投资风险。这就是通常所说的：不要把所有的鸡蛋放在一只篮子里。
+
+进一步可以讨论寻找最优证券组合的问题。一个自然的提法是：求投资比例 $w_1,w_2,\cdots,w_n$，使 $\bar{r}_p$ 等于某个目标值，而让其风险 $\sigma_p^2$ 达到最小。这是一个线性约束下的二次规划问题，不难求解。
+
+Markowitz 模型兼顾了金融市场中收益和风险两大要素，而且形式简便，为金融学的发展开创了新局面，他也因此获得了 1990 年度的诺贝尔经济学奖。
+\end{example}
+
+\begin{example}[蒙特卡罗法的方差]\label{example:ch04-蒙特卡罗方差}
+在第一章几何概率一节中我们介绍了积分计算的蒙特卡罗法。为计算积分 $I=\int_a^b f(x)\,\mathrm{d}x$，以区域 $G=\{(x,y):a\leqslant x\leqslant b,\ 0\leqslant y\leqslant M\}$ 包围它，然后产生在 $G$ 中均匀分布的随机数对 $(x_i,y_i)$，计 $N$ 对，其中 $n$ 对落入阴影区域，并用
+\[
+\hat{I}=\frac{nM(b-a)}{N}
+\]
+作为 $I$ 的近似值。这里的 $n$ 是随机变量，$En=N\cdot\dfrac{I}{M(b-a)}$，因此 $E\hat{I}=I$，
+\begin{align}
+D\hat{I}&=\frac{M^2(b-a)^2}{N^2}Dn
+=\frac{M^2(b-a)^2}{N^2}\cdot N\cdot\frac{I}{M(b-a)}\cdot\frac{M(b-a)-I}{M(b-a)}\nonumber\\
+&=\frac{I[M(b-a)-I]}{N}.\label{align:ch04-蒙特卡罗方差}
+\end{align}
+因此当包围积分区域（阴影部分）的区域 $G$ 取得越小时，积分计算的误差越小。降低方差是蒙特卡罗法的重要研究课题之一。
+
+总之，随机现象具有不确定性，因此随机变量具有正的方差可以说是这种不确定性的反映，是其固有的特征。在许多情况下，人们希望减少不确定性，降低方差。这一般通过三种途径实现，一是降低本身的变差，例如例 14；二是通过平均，例 11 及例 13 均是如此；三是加大观测次数，以上各例都是。
+
+但是也有希望增大方差的场合，下面略作评论。
+
+对于许多服务行业，过分集中的客流难于应付，例如车站、银行、食堂和旅游观光地等等，因此采取了各种减少拥挤的办法，无非是为了增大客人到达时刻的方差。
+
+以前讲过，各种机会游戏都是人们创造的随机现象，从而也就创造了各种方差。有时为了追求刺激，还特意加大方差。彩票就是例子：绝大部分彩民一无所得，个别幸运儿成为百万富翁。
+
+统计学与决策科学中广泛采用的随机化措施也基本上可列入此类，它们开拓了人类主动利用随机性的新局面。
+
+希望读者在日常生活中找出更多的例子。
+\end{example}
+
+\subsection*{五、矩}
+
+数学期望，方差，协方差是随机变量最常用的数字特征，它们都是某种矩。\textbf{矩}（moment）是最广泛使用的一种数字特征，在概率论和数理统计中占有重要地位。最常用的矩有两种：一种是原点矩，一种是中心矩。
+
+\begin{definition}[原点矩]\label{definition:ch04-原点矩}
+对正整数 $k$，称
+\begin{align}
+m_k=E\xi^k\label{align:ch04-原点矩}
+\end{align}
+为 $k$ 阶\textbf{原点矩}。数学期望是一阶原点矩。
+\end{definition}
+
+由于 $|\xi|^{k-1}\leqslant 1+|\xi|^k$，因此若 $k$ 阶矩存在，则所有低阶矩都存在。
+
+\begin{definition}[中心矩]\label{definition:ch04-中心矩}
+对正整数 $k$，称
+\begin{align}
+c_k=E(\xi-E\xi)^k\label{align:ch04-中心矩}
+\end{align}
+为 $k$ 阶\textbf{中心矩}。方差是 $2$ 阶中心矩。
+\end{definition}
+
+由于
+\[
+c_k=E(\xi-E\xi)^k=\sum_{i=0}^k\binom{k}{i}(-E\xi)^{k-i}E\xi^i
+=\sum_{i=0}^k\binom{k}{i}(-m_1)^{k-i}m_i,
+\]
+故中心矩可通过原点矩来表达，反之，
+\begin{align*}
+m_k=E\xi^k=E[(\xi-m_1)+m_1]^k
+&=\sum_{i=0}^k\binom{k}{i}E(\xi-m_1)^{k-i}m_1^i
+=\sum_{i=0}^k\binom{k}{i}c_{k-i}m_1^i,
+\end{align*}
+因此当已知数学期望之后，原点矩也可以通过中心矩给出。
+
+此外对正数 $p$ 还可以定义 $p$ 阶原点绝对矩 $E|\xi|^p$ 及 $p$ 阶中心绝对矩 $E|\xi-E\xi|^p$，它们较少使用。
+
+\begin{example}[正态分布的矩]\label{example:ch04-正态矩}
+设 $\xi$ 为正态随机变量，其密度函数为
+\[
+p(x)=\frac{1}{\sqrt{2\pi}\sigma}\mathrm{e}^{-x^2/(2\sigma^2)}.
+\]
+因此 $E\xi=0$，故
+\begin{align}
+m_k=c_k=E\xi^k=\int_{-\infty}^{\infty}x^k\frac{1}{\sqrt{2\pi}\sigma}\mathrm{e}^{-x^2/(2\sigma^2)}\,\mathrm{d}x.\label{align:ch04-正态矩积分}
+\end{align}
+显然，$k$ 为奇数时，$c_k=0$；$k$ 为偶数时，
+\begin{align*}
+c_k&=\sqrt{\frac{2}{\pi}}\int_0^{\infty}\frac{x^k}{\sigma}\mathrm{e}^{-\frac{x^2}{2\sigma^2}}\,\mathrm{d}x
+=\sqrt{\frac{2}{\pi}}\sigma^k\cdot 2^{\frac{k-1}{2}}\int_0^{\infty}z^{\frac{k-1}{2}}\mathrm{e}^{-z}\,\mathrm{d}z\\
+&=\sqrt{\frac{2}{\pi}}\sigma^k 2^{\frac{k-1}{2}}\Gamma\left(\frac{k+1}{2}\right)
+=\sigma^k(k-1)(k-3)\cdots 3\cdot 1.
+\end{align*}
+特别地，
+\begin{align}
+c_4=3\sigma^4.\label{align:ch04-正态四阶中心矩}
+\end{align}
+\end{example}
+
+对于多维随机变量，可以定义各种混合矩，例如
+\begin{align}
+E(\xi-E\xi)^k(\eta-E\eta)^l\label{align:ch04-混合中心矩}
+\end{align}
+称为 $k+l$ 阶混合中心矩。协方差是二阶混合中心矩，是其中最重要的一种。这里我们不一一赘述了。
+
+\subsection*{六、分位数}
+
+矩之外的主要数字特征是分位数。对分布函数 $F(x)$，常需作如下计算：对 $0<p<1$，要找 $x_p$ 使
+\begin{align}
+F(x_p)=p.\label{align:ch04-分位数方程}
+\end{align}
+这相当于求分布函数的反函数。当 $F(x)$ 连续又严格单调上升时（大部分连续型分布符合这个要求），显然有唯一解，但一般情况下则可能无解或有许多解。因此通常采用如下定义：
+
+\begin{definition}[分位数]\label{definition:ch04-分位数}
+对 $0<p<1$，若
+\begin{align}
+F(x_p)\leqslant p\leqslant F(x_p+0),\label{align:ch04-分位数定义}
+\end{align}
+则称 $x_p$ 为分布函数 $F(x)$ 的 $p$ \textbf{分位数}。
+\end{definition}
+
+最重要的分位数是 $x_{0.5}$，称为\textbf{中位数}（median）。它是与均值竞争的中心趋势度量，优点是少受个别特大或特小值的影响，具有一定纠错功能，缺点是不像均值那样容易作数学处理。目前各国已倾向于用中位数表征收入水平的中心趋势。此外，近年来，金融界已普遍采用损失分布的分位数作为风险的一种度量，称为\textbf{风险价值}（value at risk）。
+
+\subsection*{*七、条件数学期望，最佳线性预测}
+
+在第三章 $\S 2$ 我们曾经引进了条件分布函数的概念，现在要相应地引进条件数学期望的概念，并说明它的应用。
+
+为方便起见，我们讨论两个随机变量 $\xi$ 与 $\eta$ 的场合，假定它们具有密度函数 $p(x,y)$，并以 $p(y|x)$ 记已知 $\xi=x$ 的条件下，$\eta$ 的条件密度函数，以 $p_1(x)$ 记 $\xi$ 的密度函数。
+
+\begin{definition}[条件数学期望]\label{definition:ch04-条件期望}
+在 $\xi=x$ 的条件下，$\eta$ 的\textbf{条件数学期望}定义为
+\begin{align}
+E\{\eta\mid\xi=x\}=\int_{-\infty}^{\infty} y p(y\mid x)\,\mathrm{d}y.\label{align:ch04-条件期望定义}
+\end{align}
+\end{definition}
+
+条件数学期望在预测问题中起重要作用。问题这样提出：若 $\xi,\eta$ 是相依的随机变量，我们要找 $\xi$ 与 $\eta$ 的函数关系，设这个关系是 $y=h(x)$，如果 $E\eta^2$ 及 $E[h(\xi)]^2$ 都存在，我们的目的是找函数 $h(x)$，使 $\eta$ 与 $h(\xi)$``尽可能靠近''，这里的``靠近''需要一个标准，最常用的是 Gauss 的\textbf{最小二乘法}（least squares），这时要求使如下的均方误差达到最小：
+\begin{align}
+E[\eta-h(\xi)]^2=\min.\label{align:ch04-最小二乘}
+\end{align}
+
+因为
+\begin{align}
+E[\eta-h(\xi)]^2
+&=\int_{-\infty}^{\infty}\int_{-\infty}^{\infty}[y-h(x)]^2 p(x,y)\,\mathrm{d}x\,\mathrm{d}y\nonumber\\
+&=\int_{-\infty}^{\infty}p_1(x)\left\{\int_{-\infty}^{\infty}[y-h(x)]^2 p(y\mid x)\,\mathrm{d}y\right\}\mathrm{d}x.\label{align:ch04-最小二乘分解}
+\end{align}
+
+由\cref{definition:ch04-条件期望} 知道，当 $h(x)=E\{\eta\mid\xi=x\}$ 时，$\int_{-\infty}^{\infty}[y-h(x)]^2 p(y\mid x)\,\mathrm{d}y$ 达到最小，从而使~\eqref{align:ch04-最小二乘分解} 达到最小。即当我们观察到 $\xi=x$ 时，$E\{\eta\mid\xi=x\}$ 是一切对 $\eta$ 的估值中均方误差最小的一个。
+
+今后我们将称 $y=E\{\eta\mid\xi=x\}$ 是 $\eta$ 关于 $\xi$ 的\textbf{回归}。
+
+如果以 $E\{\eta\mid\xi\}$ 记随机变量 $\xi$ 的如下函数：当 $\xi=x$ 时，它取值 $E\{\eta\mid\xi=x\}$。这样定义的 $E\{\eta\mid\xi\}$ 是随机变量，对它可以求数学期望，并有下列关系式：
+\begin{align}
+E\eta=E[E\{\eta\mid\xi\}].\label{align:ch04-重期望公式}
+\end{align}
+这是条件数学期望的一个极端重要的性质，称为\textbf{重期望公式}，有广泛应用，下面仍对连续型随机变量的场合加以证明。
+\begin{align*}
+E[E\{\eta\mid\xi\}]
+&=\int_{-\infty}^{\infty}E\{\eta\mid\xi=x\}p_1(x)\,\mathrm{d}x\\
+&=\int_{-\infty}^{\infty}\left[\int_{-\infty}^{\infty}yp(y\mid x)\,\mathrm{d}y\right]p_1(x)\,\mathrm{d}x\\
+&=\int_{-\infty}^{\infty}\int_{-\infty}^{\infty}yp(x,y)\,\mathrm{d}x\,\mathrm{d}y=E\eta.
+\end{align*}
+
+\begin{example}[二元正态的条件期望]\label{example:ch04-二元正态条件期望}
+若 $(\xi,\eta)$ 服从二元正态分布，则由~(3.2.29) 知
+\begin{align*}
+p(y\mid x)&=\frac{1}{\sigma_2\sqrt{2\pi}\sqrt{1-\rho^2}}
+\exp\left\{-\frac{1}{2\sigma_2^2(1-\rho^2)}\right.\\
+&\qquad\left.\cdot\left[y-\left(\mu_2+\rho\frac{\sigma_2}{\sigma_1}(x-\mu_1)\right)\right]^2\right\}.
+\end{align*}
+这是正态分布 $N\left(\mu_2+\rho\dfrac{\sigma_2}{\sigma_1}(x-\mu_1),\,\sigma_2^2(1-\rho^2)\right)$，因此
+\begin{align}
+E\{\eta\mid\xi=x\}=\mu_2+\rho\frac{\sigma_2}{\sigma_1}(x-\mu_1).\label{align:ch04-二元正态条件期望结果}
+\end{align}
+值得提醒的是：这时条件数学期望 $E\{\eta\mid\xi=x\}$ 是 $x$ 的线性函数。
+\end{example}
+
+通常，$(\xi,\eta)$ 的联合分布函数是不知道的，或者虽然知道但是却不易算出 $E\{\eta\mid\xi=x\}$。假定已知 $\xi$ 与 $\eta$ 的数学期望 $\mu_1,\mu_2$，标准差 $\sigma_1,\sigma_2$ 及相关系数 $\rho$，这时可以降低一点要求，改为求\textbf{最佳线性预测}。也就是说，把 $h(x)$ 限定为 $x$ 的线性函数 $L(x)=a+bx$，求 $a,b$ 使
+\begin{align}
+e(a,b)=E[\eta-(a+b\xi)]^2\label{align:ch04-最佳线性预测}
+\end{align}
+达到最小。
+
+把 $e(a,b)$ 对 $a,b$ 求偏导数并令它们等于 $0$，得到
+\begin{align*}
+2E[\eta-(a+b\xi)]&=0,\\
+2E[(\eta-(a+b\xi))\xi]&=0.
+\end{align*}
+整理后变成
+\begin{align}
+a+b\mu_1=\mu_2,\qquad a\mu_1+bE\xi^2=E\xi\eta.\label{align:ch04-最佳线性预测正规方程}
+\end{align}
+因此解得
+\begin{align}
+a=\mu_2-b\mu_1,\qquad b=\frac{\mathrm{cov}(\xi,\eta)}{\sigma_1^2}=\rho\cdot\frac{\sigma_2}{\sigma_1}.\label{align:ch04-最佳线性预测系数}
+\end{align}
+最佳线性预测为
+\begin{align}
+L(x)=\mu_2+\rho\frac{\sigma_2}{\sigma_1}(x-\mu_1).\label{align:ch04-线性回归}
+\end{align}
+
+我们称~\eqref{align:ch04-线性回归} 为 $\eta$ 关于 $\xi$ 的\textbf{线性回归}。这个结果与 $E\{\eta\mid\xi=x\}$ 一般是不同的，但是在 $(\xi,\eta)$ 是二元正态分布的场合，由~\eqref{align:ch04-二元正态条件期望结果} 知两者是重合的，所以在正态分布场合，最佳预测是线性预测，这是一个十分重要的结果。
+
+进一步，我们还可以计算最佳线性预测的均方误差。
+\begin{align}
+E[\eta-L(\xi)]^2
+&=E[\eta-\mu_2-b(\xi-\mu_1)]^2\nonumber\\
+&=\sigma_2^2+b^2\sigma_1^2-2b\,\mathrm{cov}(\xi,\eta)\nonumber\\
+&=\sigma_2^2-\frac{\mathrm{cov}^2(\xi,\eta)}{\sigma_1^2}=\sigma_2^2(1-\rho^2).\label{align:ch04-最佳线性预测均方误差}
+\end{align}
+因此预测误差同 $\eta$ 的方差有关，也同 $\xi$ 与 $\eta$ 的相关系数有关，特别当 $|\rho|=1$ 时（这时 $\xi$ 与 $\eta$ 有线性关系），预测误差为 $0$，也就是说，可以完全准确地进行线性预测。从这个讨论再次看出，相关系数反映了 $\xi$ 与 $\eta$ 线性联系的程度。
+
+最佳线性预测理论中的另一个重要事实是：预测值 $\hat{\eta}=L(\xi)$ 与残差 $\eta-\hat{\eta}$ 是不相关的。证明如下：
+
+由~\eqref{align:ch04-线性回归} 知
+\begin{align}
+\hat{\eta}=L(\xi)=\mu_2+\rho\frac{\sigma_2}{\sigma_1}(\xi-\mu_1).\label{align:ch04-预测值}
+\end{align}
+因此
+\begin{align}
+E\hat{\eta}=\mu_2,\label{align:ch04-预测值期望}
+\end{align}
+\begin{align}
+E(\eta-\hat{\eta})=0.\label{align:ch04-残差期望}
+\end{align}
+这样一来
+\begin{align*}
+\mathrm{cov}(\hat{\eta},\eta-\hat{\eta})
+&=E[(\hat{\eta}-\mu_2)(\eta-\hat{\eta})]\\
+&=E\left[\rho\frac{\sigma_2}{\sigma_1}(\xi-\mu_1)\left((\eta-\mu_2)-\rho\frac{\sigma_2}{\sigma_1}(\xi-\mu_1)\right)\right]\\
+&=\rho\frac{\sigma_2}{\sigma_1}\left(\rho\sigma_1\sigma_2-\rho\frac{\sigma_2}{\sigma_1}\sigma_1^2\right)=0.
+\end{align*}
+这个事实可以解释为：残差中已不再包含对预测 $\eta$ 有用的知识。因此观察值 $\eta$ 被分解为两个不相关的随机变量之和：
+\begin{align}
+\eta=\hat{\eta}+(\eta-\hat{\eta}).\label{align:ch04-方差分解}
+\end{align}
+
+以上是二阶矩理论，或称均值--方差理论，它以最小二乘法为准则，研究最佳线性预测。它是概率论中最有实用价值的理论之一。
+
+\end{document}

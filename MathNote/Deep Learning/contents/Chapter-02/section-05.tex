@@ -1,0 +1,97 @@
+\documentclass[../../main.tex]{subfiles}
+
+\graphicspath{{../../image/}{../../figure/}}
+
+\begin{document}
+
+\section{信息论}\label{section:ch02-信息论}
+
+信息论（information theory）研究的是信息的量化、存储和通信。在机器学习中，信息论为概率分布的比较和度量提供了重要的工具。
+
+\subsection{熵}\label{subsection:ch02-熵}
+
+考虑一个离散随机变量$X$，它可以取$x_1, \cdots, x_K$这$K$个值。当我们观测到这个变量的一个具体值时，我们获得了多少信息呢？
+
+信息量的大小应该与事件的概率有关。一个不太可能发生的事件发生了，比一个很可能发生的事件发生了，我们获得的信息量更大。
+
+香农（Shannon）提出，信息量可以定义为
+
+\begin{align}
+  h(x) = -\log_2 p(x)
+  \label{align:ch02-信息量}
+\end{align}
+
+其中对数的底决定了信息量的单位。以2为底时，单位是比特（bit）。
+
+熵（entropy）是信息量的期望：
+
+\begin{align}
+  H[X] = -\sum_{k=1}^{K} p(x_k) \log_2 p(x_k)
+  \label{align:ch02-离散熵}
+\end{align}
+
+熵表示了观测到随机变量$X$之前，我们对它的不确定性的度量。
+
+\subsection{微分熵}\label{subsection:ch02-微分熵}
+
+对于连续变量，熵的概念可以推广为微分熵（differential entropy）：
+
+\begin{align}
+  H[x] = -\int p(x) \ln p(x) \,\mathrm{d}x
+  \label{align:ch02-微分熵}
+\end{align}
+
+需要注意的是，与离散熵不同，微分熵可以是负的。
+
+\subsection{Kullback-Leibler散度}\label{subsection:ch02-KL散度}
+
+Kullback-Leibler散度（KL散度），也称为相对熵，是用来度量两个概率分布之间差异的指标。
+
+对于两个分布$p(x)$和$q(x)$，KL散度定义为
+
+\begin{align}
+  \mathrm{KL}(p \| q) = -\int p(x) \ln \left\{ \frac{q(x)}{p(x)} \right\} \,\mathrm{d}x = \int p(x) \ln \left\{ \frac{p(x)}{q(x)} \right\} \,\mathrm{d}x
+  \label{align:ch02-KL散度}
+\end{align}
+
+KL散度满足
+
+\begin{align}
+  \mathrm{KL}(p \| q) \geqslant 0
+  \label{align:ch02-KL非负}
+\end{align}
+
+当且仅当$p$和$q$完全相同时，KL散度为零。
+
+需要注意的是，KL散度不是对称的，即$\mathrm{KL}(p \| q) \neq \mathrm{KL}(q \| p)$。
+
+\subsection{条件熵}\label{subsection:ch02-条件熵}
+
+给定随机变量$Y$，随机变量$X$的条件熵定义为
+
+\begin{align}
+  H[X \mid Y] = -\sum_{x,y} p(x, y) \ln p(x \mid y)
+  \label{align:ch02-条件熵}
+\end{align}
+
+它表示在知道$Y$之后，$X$的不确定性的大小。
+
+\subsection{互信息}\label{subsection:ch02-互信息}
+
+两个随机变量$X$和$Y$之间的互信息（mutual information）定义为
+
+\begin{align}
+  I[X, Y] = \mathrm{KL}\left(p(x, y) \| p(x) p(y)\right)
+  \label{align:ch02-互信息}
+\end{align}
+
+它表示知道其中一个变量之后，另一个变量的不确定性减少的程度。互信息满足
+
+\begin{align}
+  I[X, Y] = H[X] - H[X \mid Y]
+  \label{align:ch02-互信息关系}
+\end{align}
+
+以及$I[X, Y] \geqslant 0$，当且仅当$X$和$Y$相互独立时，互信息为零。
+
+\end{document}

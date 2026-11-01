@@ -1,0 +1,68 @@
+﻿\documentclass[../../main.tex]{subfiles}
+
+\graphicspath{{../../image/}{../../figure/}}
+
+\begin{document}
+
+\section{指数族分布}\label{section:ch03-指数族分布}
+
+到目前为止，本章所研究的概率分布（混合模型除外）都是指数族（exponential family）分布（Duda and Hart, 1973; Bernardo and Smith, 1994）这一大类里的具体例子。指数族分布的成员具有许多共同的重要性质，对这些性质的一般性讨论可以带来不少启发。
+
+给定参数$\boldsymbol{\eta}$，关于$\boldsymbol{x}$的指数族分布可以定义为以下形式的分布的集合：
+
+\begin{align}
+  p(\boldsymbol{x}\mid\boldsymbol{\eta})=h(\boldsymbol{x})\,g(\boldsymbol{\eta})\exp\bigl\{\boldsymbol{\eta}^{\mathsf{T}}\boldsymbol{u}(\boldsymbol{x})\bigr\}
+  \label{align:ch03-指数族定义}
+\end{align}
+
+其中$\boldsymbol{x}$可以是标量或矢量，可以是离散的或连续的。$\boldsymbol{\eta}$则称为分布的自然参数（natural parameters），$\boldsymbol{u}(\boldsymbol{x})$是$\boldsymbol{x}$的某个函数。函数$g(\boldsymbol{\eta})$可以解释为用来确保分布被归一化的系数，因此满足
+
+\begin{align}
+  g(\boldsymbol{\eta})\int h(\boldsymbol{x})\exp\bigl\{\boldsymbol{\eta}^{\mathsf{T}}\boldsymbol{u}(\boldsymbol{x})\bigr\}\,\mathrm{d}\boldsymbol{x}=1
+  \label{align:ch03-指数族归一}
+\end{align}
+
+其中$\boldsymbol{x}$若为离散变量，则积分改为求和。
+
+下面从本章前面介绍的分布示例入手，说明它们确实是指数族分布的成员。首先考虑伯努利分布：
+
+\begin{align}
+  p(x\mid\mu)=\mathrm{Bern}(x\mid\mu)=\mu^{x}(1-\mu)^{1-x}
+  \label{align:ch03-指数族伯努利}
+\end{align}
+
+将其表示为对数的指数，可得$p(x\mid\mu)=\exp\{x\ln\mu+(1-x)\ln(1-\mu)\}$。与\cref{align:ch03-指数族定义}比较后，令$\eta=\ln\{\mu/(1-\mu)\}$，对$\mu$进行求解可得$\mu=\sigma(\eta)$，其中
+
+\begin{align}
+  \sigma(\eta)=\frac{1}{1+\exp(-\eta)}
+  \label{align:ch03-sigmoid}
+\end{align}
+
+它又称为sigmoid函数。因此伯努利分布可以写成标准指数族形式$p(x\mid\eta)=\sigma(-\eta)\exp\{\eta x\}$，其中$\boldsymbol{u}(x)=x$，$h(x)=1$。
+
+接下来考虑多项分布。对于单个观测$\boldsymbol{x}$，其形式为$p(\boldsymbol{x}\mid\boldsymbol{\mu})=\prod_k\mu_k^{x_k}$。同样可以写成标准指数族形式，其中$\boldsymbol{u}(\boldsymbol{x})=\boldsymbol{x}$，$h(\boldsymbol{x})=1$。通过对参数施加$\sum_k\mu_k=1$的约束，可以将$\mu_k$用其余$M-1$个参数表示，从而得到
+
+\begin{align}
+  \mu_k=\frac{\exp\{\eta_k\}}{\sum_j\exp\{\eta_j\}}
+  \label{align:ch03-softmax}
+\end{align}
+
+它又称为softmax函数或归一化指数（normalized exponential）。最后考虑高斯分布，经过简单的重排，一元高斯分布同样可以写成\cref{align:ch03-指数族定义}的标准形式（见习题~3.35）。
+
+考虑使用最大似然来估计一般指数族分布中的参数向量$\boldsymbol{\eta}$。在\cref{align:ch03-指数族归一}两边对$\boldsymbol{\eta}$求导并重排，可以得到
+
+\begin{align}
+  -\nabla\ln g(\boldsymbol{\eta})=\mathbb{E}[\boldsymbol{u}(\boldsymbol{x})]
+  \label{align:ch03-指数族矩}
+\end{align}
+
+因此，如果可以对指数族分布进行归一化，则总是可以通过对归一化函数进行简单的微分来找到它的矩。考虑一组独立同分布数据$X=\{\boldsymbol{x}_1,\cdots,\boldsymbol{x}_N\}$，令对数似然对$\boldsymbol{\eta}$的梯度为零，可以得出最大似然估计$\boldsymbol{\eta}_{\mathrm{ML}}$必须满足
+
+\begin{align}
+  -\nabla\ln g(\boldsymbol{\eta}_{\mathrm{ML}})=\frac{1}{N}\sum_{n=1}^{N}\boldsymbol{u}(\boldsymbol{x}_n)
+  \label{align:ch03-指数族ML}
+\end{align}
+
+可以看到，最大似然估计量的解仅通过$\sum_n\boldsymbol{u}(\boldsymbol{x}_n)$依赖于数据，因此$\boldsymbol{u}(\boldsymbol{x})$又称为分布式\eqref{align:ch03-指数族定义}的充分统计量。我们不需要存储整个数据集本身，而只需要存储充分统计量的值。例如，对于伯努利分布，$\boldsymbol{u}(x)$仅由$x$给出，因此只需要存储$\{x_n\}$的和；而对于高斯分布，$\boldsymbol{u}(x)=(x,x^{2})^{\mathsf{T}}$，因此应该保留$\{x_n\}$的和与$\{x_n^{2}\}$的和。
+
+\end{document}

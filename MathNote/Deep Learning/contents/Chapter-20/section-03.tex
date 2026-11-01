@@ -1,0 +1,123 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{../../image/}{../../figure/}}
+\begin{document}
+
+\section{得分匹配}\label{section:ch20-得分匹配}
+
+截至目前，本章讨论的去噪扩散模型与另一类相对独立发展的深度生成式模型密切相关，它们都基于\textbf{得分匹配}（score matching）（Hyv\"arinen, 2005; Song and Ermon, 2019）。这些模型利用的得分函数（或斯坦因得分）则定义为对数似然函数关于数据向量 $x$ 的梯度：
+\begin{align}
+s(x)=\nabla_x\ln p(x)
+\label{align:ch20-score}
+\end{align}
+这里需要强调的是，梯度是针对数据向量 $x$ 计算的，而不是针对任何参数向量。注意 $s(x)$ 是一个与 $x$ 维度相同的向量值函数，并且其中的每个元素 $s_i(x)=\partial\ln p(x)/\partial x_i$ 都与 $x$ 的相应元素 $x_i$ 相关联。例如，如果 $x$ 是一个图像，那么 $s(x)$ 也可以表示为一个同尺寸的图像，其中对应的像素是图像的得分。
+
+为了理解得分函数的用处，考虑两个函数 $q(x)$ 和 $p(x)$，它们具有得分相等的属性，所以对于 $x$ 的所有值，$\nabla\ln q(x)=\nabla\ln p(x)$。我们对这个等式的两边关于 $x$ 积分并取指数，则可以得到 $q(x)=K p(x)$，其中 $K$ 是一个独立于 $x$ 的常数。所以如果我们能学习到一个得分函数的模型 $s(x,w)$，就可以重建原始数据分布，所得结果与之前的相比，最多相差一个常数倍数。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\textwidth]{ch20-fig535-score.png}
+\caption{得分函数的示意图，图中显示了两种信息的融合：由高斯混合分布构成的二维分布，其作为向量绘制在 $x$ 值的规则网格上，表示为热图；以及由式~\eqref{align:ch20-score} 定义的相应的概率密度示例以及相应的得分函数。}
+\label{fig:ch20-score}
+\end{figure}
+
+\subsection{得分损失函数}\label{subsection:ch20-得分损失}
+
+为了训练这样的模型，需要定义一个损失函数，用于将模型得分函数 $s(x,w)$ 匹配到旨在生成数据的分布 $p(x)$ 的得分函数 $\nabla_x\ln p(x)$。这样一个损失函数的例子是计算模型得分和真实得分之间的期望平方误差，其由下式给出：
+\begin{align}
+J(w)=\int\big\|s(x,w)-\nabla_x\ln p(x)\big\|^2 p(x)\,\mathrm{d}x
+\label{align:ch20-score-loss}
+\end{align}
+
+正如我们在讨论基于能量的模型时所看到的（参见 14.3.1 小节），得分函数不要求相关的概率密度被归一化，因为归一化常数被梯度算子移除了，所以我们在模型选择上有相当大的灵活性。使用深度神经网络表示得分函数 $s(x,w)$ 的方法有两种。$s$ 的每个元素 $s_i$ 都对应于 $x$ 中的一个元素 $x_i$，所以第一种方法是使用一个输入数量和输出数量相同的网络。然而，得分函数定义为标量函数（对数概率密度函数）的梯度，这是一类受限的函数（见习题 20.14）。另一种方法是使用一个拥有单一输出的网络 $\phi(x,w)$，然后使用自动微分计算 $\nabla_x\phi(x,w)$。然而，这方法需要进行两次反向传播，因此计算成本更高。大多数应用通常采用第一种方法（见习题 20.15）。
+
+\subsection{修改得分损失}\label{subsection:ch20-修改得分损失}
+
+损失函数 [式~\eqref{align:ch20-score-loss}] 的一个问题是不能直接最小化，因为我们不知道真实的数据得分 $\nabla_x\ln p(x)$。我们所知的只是有限的数据集 $\mathcal{D}=\{x_1,\cdots,x_N\}$，从中可以构建如下经验分布：
+\begin{align}
+\widehat{p}(x)=\frac{1}{N}\sum_{n=1}^{N}\delta(x-x_n)
+\label{align:ch20-empirical}
+\end{align}
+这里的 $\delta(x)$ 是狄拉克 delta 函数，我们可以将其形象地理解为在 $x=0$ 处无限高的``尖峰''，它具有以下性质：
+\begin{align}
+\delta(x)=0,\quad x\neq 0;\qquad \int\delta(x)\,\mathrm{d}x=1
+\label{align:ch20-delta}
+\end{align}
+
+由于式~\eqref{align:ch20-empirical} 所示的函数不是 $x$ 的可微函数，我们无法计算它的得分。但我们可以通过引入噪声模型来``抹平''数据点并给出密度的平滑、可微表示来解决这个问题，这称为 Parzen 估计器或核密度估计器（参见 3.5.2 小节），定义如下：
+\begin{align}
+q(z\mid x,\sigma)=\int q(z\mid x,\sigma)\,\widehat{p}(x)\,\mathrm{d}x=\frac{1}{N}\sum_{n=1}^{N}q(z\mid x_n,\sigma)
+\label{align:ch20-parzen}
+\end{align}
+其中 $q(z\mid x,\sigma)$ 是噪声核。常见的核选择是高斯核：
+\begin{align}
+q(z\mid x,\sigma)=\mathcal{N}(z\mid x,\sigma^2 I)
+\label{align:ch20-gaussian-kernel}
+\end{align}
+
+此时，我们不再最小化损失函数式~\eqref{align:ch20-score-loss}，而是使用对应于平滑后的 Parzen 密度的损失函数，形式为
+\begin{align}
+J(w)=\int\big\|s(z,w)-\nabla_z\ln q(z)\big\|^2 q(z)\,\mathrm{d}z
+\label{align:ch20-modified-loss}
+\end{align}
+
+一个关键结果是，通过将式~\eqref{align:ch20-parzen} 代入式~\eqref{align:ch20-modified-loss}，我们可以将这个损失函数重写为以下等价形式（Vincent, 2011）（见习题 20.17）：
+\begin{align}
+J(w)=\frac{1}{N}\sum_{n=1}^{N}\int\big\|s(z,w)-\nabla_z\ln q(z\mid x_n,\sigma)\big\|^2 q(z\mid x_n,\sigma)\,\mathrm{d}z+\mathrm{const}
+\label{align:ch20-denoising-loss}
+\end{align}
+
+对于高斯核式~\eqref{align:ch20-gaussian-kernel}，得分函数变为
+\begin{align}
+\nabla_z\ln q(z\mid x,\sigma)=-\frac{z-x}{\sigma^2}
+\label{align:ch20-gaussian-score}
+\end{align}
+其中 $\epsilon=z-x\sim\mathcal{N}(z\mid 0,I)$。考虑特定的噪声模型 [式~\eqref{align:ch20-diffusion-kernel}]，可以得到
+\begin{align}
+J(w)=\frac{1}{N}\sum_{n=1}^{N}\mathbb{E}_{z\sim q(z\mid x_n,\sigma)}\big[\|s(z,w)+\epsilon/\sqrt{1-\bar{\alpha}_t}\|^2\big]
+\label{align:ch20-denoise-score}
+\end{align}
+由此我们可以看出，损失函数式~\eqref{align:ch20-denoise-score} 衡量了神经网络预测与噪声 $\epsilon$ 之间的差异。所以，该损失函数与去噪扩散模型中使用的损失函数式~\eqref{align:ch20-noise-loss} 拥有相同的最小值，得分函数 $s(z,w)$ 扮演的角色与噪声预测网络 $g(z,w,t)$ 相同，但前者做了常数缩放 $-1/\sqrt{1-\bar{\alpha}_t}$（Song and Ermon, 2019）。最小化式~\eqref{align:ch20-denoise-score} 的过程称为\textbf{去噪得分匹配}（denoise score matching），并且我们看到它与去噪扩散模型有着密切的联系。
+
+训练完基于得分的模型后，我们需要生成新的样本。朗之万动力学（Langevin dynamics）非常适用于基于得分函数的模型，因为它以得分函数为基础进行运算，无须依赖归一化的概率分布，参见图~\ref{fig:ch20-langevin}。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.7\textwidth]{ch20-fig536-langevin.png}
+\caption{使用式~\eqref{align:ch19-langevin} 定义的朗之万动力学得到的采样轨迹，这里显示了三条都从图中心开始的采样轨迹（参见 14.3 节）。}
+\label{fig:ch20-langevin}
+\end{figure}
+
+\subsection{噪声方差}\label{subsection:ch20-噪声方差}
+
+我们已经了解怎么从一组训练数据中学习得分函数，以及如何使用朗之万动力学方法从学习到的分布中进行采样并生成新的样本。然而，这种方法存在三个潜在的问题（Song and Ermon, 2019; Luo, 2022）（参见第 16 章）。第一，如果数据分布位于比数据空间维度更低的流形上，那么流形之外的点的概率密度将为零，此时因为 $\ln p(x)$ 是未定义的，所以得分函数是未定义的。第二，在数据密度低的区域，得分函数的估计可能不准确，因为损失函数 [式~\eqref{align:ch20-score-loss}] 被密度加权了。一个不准确的得分函数会导致使用朗之万动力学方法采样时轨迹不佳。第三，即使有一个准确的得分函数，如果数据分布包括一系列不连续的混合分布，通过朗之万动力学方法也可能无法正确采样（见习题 20.18）。
+
+以上三个问题都可以通过选择核函数 [式~\eqref{align:ch20-gaussian-kernel}] 中使用的噪声方差 $\sigma^2$ 的足够大值来解决，因为这会使数据分布平滑。然而，过大的方差会导致原始分布显著失真，导致得分函数建模失准。一个折中方案是引入方差序列 $\sigma_1^2<\sigma_2^2<\cdots<\sigma_L^2$（Song and Ermon, 2019），其中 $\sigma_1^2$ 足够小，以便数据分布得到准确表示；而 $\sigma_L^2$ 则足够大，以避免导致得分函数建模失准。然后修改得分网络，使其将方差作为额外的输入 $s(x,w,\sigma^2)$，并通过使用一个加权和形式的损失函数 [式~\eqref{align:ch20-denoise-score}] 对其进行训练，其中的每一项表示相关网络与相应扰动数据集之间的误差。训练完成后，可以通过依次对 $i=L,L-1,\cdots,2,1$ 的每个模型逐个执行几步朗之万动力学方法进行采样并生成样本。这种技术称为\textbf{退火朗之万动力学}（annealed Langevin dynamics），类似于用来从去噪扩散概率模型中采样的算法 20.2。
+
+\subsection{随机微分方程}\label{subsection:ch20-SDE}
+
+在构建扩散模型的加噪过程时，使用大数量的步骤（通常为几千步）是有益处的。因此，我们需要考虑在无穷步数的极限情况下会发生什么，就像我们在引入神经微分方程时为无限深度的神经网络所做的那样（参见 18.3.1 小节）。在这种极限情况下，我们需要确保每一步的噪声方差 $\beta_t$ 随着步长变小而同步变小。这引出了连续时间下扩散模型的理论框架，即\textbf{随机微分方程}（Stochastic Differential Equation, SDE）（Song et al., 2020）。去噪扩散概率模型和得分匹配模型都可以视为连续时间 SDE 的离散化实现。
+
+我们可以将一般的 SDE 写成向量 $z$ 的无穷小更新：
+\begin{align}
+\mathrm{d}z=f(z,t)\,\mathrm{d}t+g(t)\,\mathrm{d}w
+\label{align:ch20-sde}
+\end{align}
+其中漂移项（drift term）是确定性的，类似于常微分方程（ODE），但扩散项（diffusion term）是随机的。这里的参数 $t$ 常常称为``时间''，类比于物理系统中的时间。扩散模型的前向加噪过程 [式~\eqref{align:ch20-step-t}]，可以通过采取连续时间极限而写成形如式~\eqref{align:ch20-sde} 的 SDE（见习题 20.19）。
+
+对于 SDE [式~\eqref{align:ch20-sde}]，存在一个对应的逆向 SDE（Song et al., 2020），如下所示：
+\begin{align}
+\mathrm{d}z=\Big\{f(z,t)-g^2(t)\nabla_z\ln p(z)\Big\}\,\mathrm{d}t+g(t)\,\mathrm{d}\bar{w}
+\label{align:ch20-reverse-sde}
+\end{align}
+其中 $\nabla_z\ln p(z)$ 是得分函数。对于式~\eqref{align:ch20-sde} 给出的 SDE，应从 $t=T$ 倒序求解至 $t=0$。
+
+对于所有由 SDE 支配的扩散过程，都存在一个相应的由 ODE 描述的确定性过程，其轨迹具有与 SDE 相同的边缘概率密度 $p(z\mid t)$（Song et al., 2020）。对于形如式~\eqref{align:ch20-sde} 的 SDE，相应的 ODE 为
+\begin{align}
+\frac{\mathrm{d}z}{\mathrm{d}t}=f(z,t)-\frac{1}{2}g^2(t)\nabla_z\ln p(z)
+\label{align:ch20-ode}
+\end{align}
+该 ODE 允许使用高效的自适应步长求解器以最大限度地减少函数评估次数。此外，ODE 还允许将概率扩散模型与标准化流模型相关联，后者允许使用变量替换式~\eqref{align:ch18-change-var} 来精确计算对数似然（参见第 18 章）。
+
+要想数值求解 SDE，我们需要对时间变量进行离散化。最简单的方法是使用固定且等间距的时间步，这称为 Euler--Maruyama 求解器。对于反向 SDE，我们可以先恢复朗之万方程的一种形式（参见 14.3 节），再采用更复杂的求解器，这些求解器使用了更灵活的离散化形式（Kloeden and Platen, 2013）。
+
+\end{document}

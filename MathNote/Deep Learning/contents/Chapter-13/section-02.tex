@@ -1,0 +1,183 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{../../image/}{../../figure/}}
+\begin{document}
+
+\section{神经信息传递}\label{section:ch13-神经信息传递}
+
+确保节点标签置换下的不变性或等变性是我们将深度神经网络应用于图结构化数据时的一个关键考虑。另一个关键考量是我们想要利用深度神经网络的表示能力，所以我们保留了“层”的概念，即可以对每一层进行重复的计算变换。如果网络的每一层都在节点重新排序后保持等变性，那么多层叠加后的网络也将保持等变性，同时网络的每一层都受益于图结构信息。
+
+对于输出代表节点级预测的网络，整个网络将按要求表现出等变性。如果网络用来预测图级属性，那么可以在网络的最后添加一个对输入的排列顺序不敏感（置换不变）的层。我们还想确保网络的每一层都是一个高度灵活的非线性函数，并且对其参数具有可微分性，以便可以使用自动微分计算梯度，从而通过随机梯度下降进行训练。
+
+图的规模各不相同。例如，不同的分子可以有不同数量的原子，因此标准神经网络使用固定长度表示是不合适的。因此，网络应该能够处理变长输入，正如我们在~Transformer~网络中看到的那样（参见第~12~章）。一些图可能非常大，例如有数百万参与者的社交网络，所以我们也希望构建具有良好扩展性的模型。为了将不变性和等变性内置于网络架构，并促进模型在大型图上的应用，参数共享将发挥重要作用，这一点毋庸置疑。
+
+\subsection{卷积滤波器}\label{subsection:ch13-卷积滤波器}
+
+为了开发符合所有这些要求的框架，我们可以从使用卷积神经网络的图像处理中寻找灵感（参见第~10~章）。首先我们注意到，图像可以视为图结构化数据的一个特定实例，在这个实例中，节点是像素，边代表图像中相邻的像素对，这里的相邻包括对角相邻的节点以及水平或垂直相邻的节点。
+
+在卷积网络中，我们对图像域进行逐层变换，某个层的一个像素的状态值是由前面层的相关像素的状态值通过计算决定的，用于计算的局部函数称为滤波器（参见~10.2~节）。考虑一个使用 $3\times 3$ 滤波器的卷积层，如\cref{fig:ch13-conv-graph}(a)所示。单个的滤波器在第 $(l+1)$ 层的一个像素上执行的计算可以表示为
+\begin{align}
+z_i^{(l+1)}=f\!\left(\sum_j w_j\,z_j^{(l)}+b\right)
+\label{align:ch13-conv-1}
+\end{align}
+其中 $f(\cdot)$ 是一个可微分的非线性激活函数，比如~ReLU~函数，而对 $j$ 的求和则是对第 $l$ 层中一个小块内的所有 $9$ 个像素进行的。相同的函数可以应用于图像中的多个小块，因此权重 $w_j$ 和偏置 $b$ 在各个小块间共享（因此它们不带索引 $i$）。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\textwidth]{ch13-fig13.3-conv-graph.png}
+\caption{图像的卷积滤波器可以表示为一种图结构计算：(a)~在深度卷积网络的第 $(l+1)$ 层，节点 $i$ 的值是由第 $l$ 层局部像素区域激活值通过滤波器函数计算得来的；(b)~将同样的计算结构以图的形式表达，“消息”从节点 $i$ 的邻居节点流向节点 $i$。}
+\label{fig:ch13-conv-graph}
+\end{figure}
+
+式\eqref{align:ch13-conv-1}在第 $l$ 层节点置换下不是等变的，因为权重向量中的 $w_j$ 元素在排列上不是不变的。然而，我们可以通过进行一些简单的修改来实现等变性，具体步骤如下。首先将滤波器视为一个图，如\cref{fig:ch13-conv-graph}(b)所示，并且从中分离出来自节点 $i$ 的贡献。其他 $8$ 个节点构成节点 $i$ 的邻居节点集合 $\mathcal{N}(i)$。然后假设单个权重参数 $w_{\mathrm{neigh}}$ 在邻居节点间共享，因此有
+\begin{align}
+z_i^{(l+1)}=f\!\left(w_{\mathrm{neigh}}\sum_{j\in\mathcal{N}(i)}z_j^{(l)}+w_{\mathrm{self}}\,z_i^{(l)}+b\right)
+\label{align:ch13-conv-2}
+\end{align}
+其中节点 $i$ 有自己的权重参数 $w_{\mathrm{self}}$。
+
+我们可以将式\eqref{align:ch13-conv-2}解释为通过从邻居节点收集信息来更新节点 $i$ 处的局部表示 $z_i$，这通过从邻居节点传递给节点 $i$ 的消息来实现。在这种情况下，消息直接是其他节点的激活状态。随后将这些消息与节点 $i$ 的信息结合，并使用非线性函数进行转换。来自邻居节点的信息通过式\eqref{align:ch13-conv-2}中的简单求和聚合起来，这显然对于与这些节点相关联的标签的任何排列都是不变的。将以上操作同步应用于图中的每个节点，因此如果节点被排序，则最终的计算将保持不变，但它们也将被相应地置换，因此这个计算在节点重新排序下是等变的。注意，上述推导依赖于参数 $w_{\mathrm{neigh}}$、$w_{\mathrm{self}}$ 和 $b$ 在所有节点之间共享这一假设。
+
+\subsection{图卷积网络}\label{subsection:ch13-图卷积网络}
+
+我们以卷积操作为例，构建用于处理图结构数据的深度神经网络模型。我们的目标是定义一种灵活的、非线性的节点嵌入转换，它对一组权重和偏置参数可微分，并且将第 $l$ 层中的变量映射到第 $(l+1)$ 层的相应变量。对于图中的每个节点 $n$ 以及网络中的每一层 $l$，引入一个 $D$ 维的列向量 $\bm{h}_n^{(l)}$ 作为节点嵌入变量，其中 $n=1,\cdots,N$ 且 $l=1,\cdots,L$。
+
+式\eqref{align:ch13-conv-2}给出的转换首先从邻居节点收集和合并信息，然后用当前节点嵌入和传入消息的函数更新节点。因此，我们可以将每一层的处理视为两个连续阶段。首先是聚合阶段，对于每个节点 $n$，将消息从其邻居节点传递到该节点，并以置换不变的方式组合成一个新的向量 $\bm{z}_n^{(l)}$。然后是更新阶段，将邻居节点的聚合信息与节点本身的局部信息结合，计算出该节点更新后的嵌入向量。
+
+考虑图中的一个特定节点 $n$。首先聚合来自节点 $n$ 的所有邻居节点的节点向量：
+\begin{align}
+\bm{z}_n^{(l)}=\operatorname{Aggregate}\!\left(\{\bm{h}_m^{(l)}:m\in\mathcal{N}(n)\}\right)
+\label{align:ch13-aggregate-def}
+\end{align}
+然后使用另一种操作来更新节点 $n$ 处的嵌入向量：
+\begin{align}
+\bm{h}_n^{(l+1)}=\operatorname{Update}\!\left(\bm{h}_n^{(l)},\bm{z}_n^{(l)}\right).
+\label{align:ch13-update-def}
+\end{align}
+
+如果聚合函数对变化的邻居节点数量有良好的定义，并且不依赖于这些节点的排序，那么该聚合函数的形式将非常灵活。只要它是一个对这些参数可微分的函数，便于进行梯度下降训练，它就可以包含可学习参数。同样，这可以是一组可学习参数的可微分函数。并行地对图中的每个节点执行聚合操作，然后执行更新操作。节点嵌入通常使用观测到的节点数据初始化，因此 $\bm{h}_n^{(0)}=\bm{x}_n$。
+
+注意，每一层通常都有自己的参数，尽管参数也可以跨层共享。这个框架称为消息传递神经网络（message-passing neural network）（Gilmer et al., 2017），算法~13.1~对它做了总结。
+
+\subsection{聚合算子}\label{subsection:ch13-聚合算子}
+
+聚合函数有许多可能的形式，但它必须仅依赖于输入的集合，而不依赖于输入的顺序。它还必须是任何可学习参数的可微分函数。根据式\eqref{align:ch13-conv-2}，最简单的聚合函数如下：
+\begin{align}
+\operatorname{Aggregate}\!\left(\{\bm{h}_m^{(l)}:m\in\mathcal{N}(n)\}\right)=\sum_{m\in\mathcal{N}(n)}\bm{h}_m^{(l)}.
+\label{align:ch13-agg-sum}
+\end{align}
+
+简单求和显然独立于邻居节点的排序，并且无论邻居节点集合中有多少节点，它都是明确定义的。注意这里没有可学习参数。
+
+相对于那些邻居节点较少的节点，拥有众多邻居的节点会被求和操作赋予更强的影响力，这可能导致数值计算问题，特别是在像社交网络这样的应用中，邻居节点集合的大小可能会相差好几个数量级。这种方法的一个变体是将聚合操作定义为邻居嵌入向量的平均值，即
+\begin{align}
+\operatorname{Aggregate}\!\left(\{\bm{h}_m^{(l)}:m\in\mathcal{N}(n)\}\right)=\frac{1}{|\mathcal{N}(n)|}\sum_{m\in\mathcal{N}(n)}\bm{h}_m^{(l)}
+\label{align:ch13-agg-mean}
+\end{align}
+其中 $|\mathcal{N}(n)|$ 表示邻居节点集合 $\mathcal{N}(n)$ 中的节点数量。然而，这种归一化抛弃了关于网络结构的信息，并且被证明比简单的求和（Hamilton, 2020）要弱，因此是否使用它取决于节点特征和图结构相比谁更重要。
+
+这种方法的另一个变体（Kipf and Welling, 2016）则考虑到了每个节点的邻居的数量：
+\begin{align}
+\operatorname{Aggregate}\!\left(\{\bm{h}_m^{(l)}:m\in\mathcal{N}(n)\}\right)=\sum_{m\in\mathcal{N}(n)}\frac{\bm{h}_m^{(l)}}{\sqrt{|\mathcal{N}(n)|\,|\mathcal{N}(m)|}}.
+\label{align:ch13-agg-gcn}
+\end{align}
+
+最后一种可能性是取邻居嵌入向量的逐元素最大值（或最小值），这同样满足所需特性，即对数量可变的邻居节点能作出良好定义，并且和邻居节点顺序无关。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.5\textwidth]{ch13-fig13.4-receptive.png}
+\caption{通过图神经网络连续层的信息流示意图。在第~3~层中，只有一个节点以红色突出显示。该节点从前一层的两个邻居节点接收信息，而这两个邻居节点又从第~1~层的邻居节点接收信息。就像用于图像的卷积神经网络一样，有效感受野——对应于显示为红色的节点数量——会随着处理层数的增加而扩大。}
+\label{fig:ch13-receptive}
+\end{figure}
+
+图神经网络中给定层的每个节点通过聚合前一层的邻居节点信息来更新，这就出现了感受野（receptive field）的概念，类似于第~10~章中~CNN~所使用的滤波器的感受野。随着信息通过连续的层被处理，对当前层某个节点的更新就会依赖于越来越多的早期层的其他节点，直到有效的感受野几乎覆盖整个图为止，如\cref{fig:ch13-receptive}所示。然而，大的稀疏图可能需要非常多的层，才能使每个输出受每个输入的影响。因此，有些架构引入了一个额外的“超级节点”，它直接连接到原始图中的每个节点，使信息得到快速传播。
+
+迄今为止我们所讨论的聚合算子都没有可学习参数。如果我们在组合邻居节点的嵌入向量之前，先使用一个多层神经网络（用 $\operatorname{MLP}_\phi$ 表示）对每个嵌入向量进行变换，那么我们就可以引入这样的参数。其中~MLP~代表“多层感知机”，其下标 $\phi$ 表示网络的参数。只要网络具有跨节点共享的结构和参数值，那么这个聚合算子就是排列不变的。我们还可以使用另一个参数为 $\theta$ 的神经网络 $\operatorname{MLP}_\theta$ 来转换组合向量，从而得到如下一般性的聚合操作：
+\begin{align}
+\operatorname{Aggregate}\!\left(\{\bm{h}_m^{(l)}:m\in\mathcal{N}(n)\}\right)=\operatorname{MLP}_\theta\!\left(\sum_{m\in\mathcal{N}(n)}\operatorname{MLP}_\phi(\bm{h}_m^{(l)})\right)
+\label{align:ch13-agg-deepset}
+\end{align}
+其中 $\operatorname{MLP}_\phi$ 和 $\operatorname{MLP}_\theta$ 在网络的第 $l$ 层是共享的。由于~MLP~的灵活性，式\eqref{align:ch13-agg-deepset}定义的转换代表了任何置换不变函数的通用逼近器，该函数能将一组嵌入映射到单个嵌入（Zaheer et al., 2017）。注意，这里的求和操作可以替换为其他的置换不变函数，例如平均值，逐元素取最大值或最小值。
+
+如果我们考虑一个没有边的图，它就退化成了一个简单的无结构节点集合，这时的图神经网络就成为一个特例。在这种情况下，如果我们对集合中的每个向量 $\bm{h}_n^{(l)}$ 应用式\eqref{align:ch13-agg-deepset}，其中求和是在除 $\bm{h}_n^{(l)}$ 外的所有其他向量上进行的，那么我们就有了一个关于无结构变量集合[称为深度集合（deep set）]的学习函数的通用框架。
+
+\subsection{更新算子}\label{subsection:ch13-更新算子}
+
+在选择了合适的聚合算子之后，我们同样需要决定更新算子的形式。类似于~CNN~的公式\eqref{align:ch13-conv-2}，一种简单的更新算子形式如下：
+\begin{align}
+\operatorname{Update}\!\left(\bm{h}_n^{(l)},\bm{z}_n^{(l)}\right)=f\!\left(\bm{W}_{\mathrm{self}}\bm{h}_n^{(l)}+\bm{W}_{\mathrm{neigh}}\bm{z}_n^{(l)}+\bm{b}\right)
+\label{align:ch13-update-mlp}
+\end{align}
+其中 $f(\cdot)$ 是一个非线性激活函数，例如可以逐元素应用到向量参数上的~ReLU~函数；$\bm{W}_{\mathrm{self}}$ 和 $\bm{W}_{\mathrm{neigh}}$ 是可学习权重；$\bm{b}$ 是偏置；$\bm{z}_n^{(l)}$ 由式\eqref{align:ch13-aggregate-def}定义。
+
+如果我们选择简单的求和[式\eqref{align:ch13-agg-sum}]作为聚合函数，并且在节点及其邻居节点之间共享相同的权重矩阵，使得 $\bm{W}_{\mathrm{self}}=\bm{W}_{\mathrm{neigh}}$，我们就能得到如下特别简单的更新算子形式：
+\begin{align}
+\bm{h}_n^{(l+1)}=\operatorname{Update}\!\left(\bm{h}_n^{(l)},\bm{z}_n^{(l)}\right)=f\!\left(\bm{W}_{\mathrm{neigh}}\sum_{m\in\mathcal{N}(n),n}\bm{h}_m^{(l)}+\bm{b}\right).
+\label{align:ch13-update-simple}
+\end{align}
+
+消息传递算法通常通过设置 $\bm{h}_n^{(0)}=\bm{x}_n$ 来初始化。然而，有时我们可能希望每个节点都有一个内部表示向量，其维度不同于 $\bm{x}_n$ 的维度。这样的表示可以通过用额外的零填充节点向量 $\bm{x}_n$（以达到更高的维度），或者简单地使用可学习的线性变换将节点向量转换到所需维度的空间来初始化。当节点没有与之关联的数据变量时，一种替代的初始化形式是使用一个标记了每个节点度数（即邻居节点数量）的独热向量。
+
+总的来说，我们可以将图神经网络表示为一系列连续变换节点嵌入的层。如果我们将这些嵌入分组到一个矩阵 $\bm{H}$ 中，其第 $n$ 行是向量 $\bm{h}_n^{\mathsf T}$，并初始化为数据矩阵 $\bm{X}$，则可以将这些连续的变换写成以下形式：
+\begin{align}
+\bm{H}^{(1)}&=\bm{F}\!\left(\bm{X},\bm{A},\bm{W}^{(1)}\right)\\
+\bm{H}^{(2)}&=\bm{F}\!\left(\bm{H}^{(1)},\bm{A},\bm{W}^{(2)}\right)\\
+&\vdots \nonumber\\
+\bm{H}^{(L)}&=\bm{F}\!\left(\bm{H}^{(L-1)},\bm{A},\bm{W}^{(L)}\right)
+\label{align:ch13-layers}
+\end{align}
+其中 $\bm{A}$ 是邻接矩阵，$\bm{W}^{(l)}$ 表示网络第 $l$ 层中全部权重和偏置的集合。在置换矩阵 $\bm{P}$ 定义的节点重新排序下，第 $l$ 层计算的节点嵌入的变换是等变的：
+\begin{align}
+\bm{P}\bm{H}^{(l)}=\bm{F}\!\left(\bm{P}\bm{H}^{(l-1)},\bm{P}\bm{A}\bm{P}^{\mathsf T},\bm{W}^{(l)}\right).
+\label{align:ch13-layer-equiv}
+\end{align}
+因此，整个网络计算出一个等变的转换（见习题~13.7）。
+
+\subsection{节点分类}\label{subsection:ch13-节点分类}
+
+图神经网络可以看作一系列层，其中的每一层都将一组节点嵌入向量 $\{\bm{h}_n^{(l)}\}$ 转换成同样大小和维度的新向量集合 $\{\bm{h}_n^{(l+1)}\}$。在网络的最后一个卷积层之后，我们需要得到预测结果，以便定义一个用于训练的损失函数，以及使用训练好的网络对新数据进行预测。
+
+考虑对图中节点分类的任务，这是图神经网络最常见的用途之一。我们可以定义一个输出层，有时称为读出层（readout layer），该层为每个节点计算一个与 $C$ 个分类相对应的~softmax~函数，形式如下：
+\begin{align}
+y_{ni}=\frac{\exp\!\left(\bm{w}_i^{\mathsf T}\bm{h}_n^{(L)}\right)}{\sum_j\exp\!\left(\bm{w}_j^{\mathsf T}\bm{h}_n^{(L)}\right)}
+\label{align:ch13-softmax}
+\end{align}
+其中 $\{\bm{w}_i\}$ 是一组可学习的权重向量，$i=1,\cdots,C$。我们可以将损失函数定义为所有节点和所有类别的交叉熵损失之和：
+\begin{align}
+\mathcal{L}=-\sum_{n\in\mathcal{V}_{\mathrm{train}}}\sum_{i=1}^{C}t_{ni}\ln y_{ni}
+\label{align:ch13-loss}
+\end{align}
+其中 $t_{ni}$ 是目标值，每个 $n$ 值都有一个独热编码。因为权重向量 $\bm{w}_i$ 在输出节点间是共享的，且输出 $y_{ni}$ 对于节点排序是等变的，因此损失函数[式\eqref{align:ch13-loss}]是不变的。如果目标是在输出处预测连续值，则可以将简单的线性变换与平方和误差结合起来，来定义一个合适的损失函数。
+
+式\eqref{align:ch13-loss}中对 $n$ 的求和是在用于训练的节点子集 $\mathcal{V}_{\mathrm{train}}$ 上进行的。我们需要区分以下~3~种类型的节点。
+
+（1）节点子集 $\mathcal{V}_{\mathrm{train}}$ 中的节点是有标签的，既参与图神经网络的消息传递操作，也用于计算训练的损失函数。
+
+（2）可能还有一个名为 $\mathcal{V}_{\mathrm{trans}}$ 的节点子集，里面是未标记的直推式（transductive）节点并且不参与用于训练的损失函数的计算。然而，它们仍然参与训练和推理阶段的消息传递，它们的标签可能会作为推理过程的一部分被预测。
+
+（3）剩余的节点标记为 $\mathcal{V}_{\mathrm{induct}}$，是一组归纳节点，它们不用于计算损失函数，并且这些节点及其关联的边在训练阶段不参与消息传递。然而，它们在推理阶段参与消息传递，它们的标签预测为推理的结果。
+
+如果没有直推式节点，即测试节点（及其关联的边）在训练阶段不可用，那么通常将这种训练称为归纳学习（inductive learning），这可以视为一种监督学习（supervised learning）的形式。然而，如果存在直推式节点，则称这种训练为直推式学习（transductive learning），这可以视为半监督（semi-supervised）学习的一种形式。
+
+\subsection{边分类}\label{subsection:ch13-边分类}
+
+在某些应用中，我们希望对图的边而不是节点进行预测。一种常见的边分类任务是边补全。在这种任务中，目标是确定两个节点之间是否应该存在一条边。给定一组节点嵌入，可以使用嵌入向量之间的点积，通过逻辑斯谛~sigmoid~函数定义两个节点 $n$ 和 $m$ 之间存在边的概率 $p(n,m)$：
+\begin{align}
+p(n,m)=\sigma\!\left(\bm{h}_n^{\mathsf T}\bm{h}_m\right).
+\label{align:ch13-edge-prob}
+\end{align}
+
+一个典型的应用实例是，预测社交网络中任意两个用户是否拥有共同的兴趣爱好，并愿意建立联系。
+
+\subsection{图分类}\label{subsection:ch13-图分类}
+
+在图神经网络的某些应用中，我们要在给定一组带标签的训练图 $\mathcal{G}_1,\cdots,\mathcal{G}_N$ 的情况下，预测新图的属性。这要求我们以不依赖于任意节点排序的方式组合最终层的嵌入向量，从而确保输出的预测结果与节点的排序无关。这任务有点像聚合函数，只不过这里考虑的是图中所有节点，而不仅仅是单个节点的邻域集。最简单的方法是对节点嵌入向量进行求和：
+\begin{align}
+y=f\!\left(\sum_{n\in\mathcal{V}}\bm{h}_n^{(L)}\right)
+\label{align:ch13-graph-readout}
+\end{align}
+其中，函数 $f$ 可能包含可学习参数，如线性变换或神经网络。也可以使用其他不变的聚合函数，例如平均值、逐元素的最小值或最大值。
+
+对于分类问题，例如将候选药物分子标记为有毒或安全，通常采用交叉熵损失函数；而对于回归问题，例如预测候选药物分子的溶解度，则通常采用平方误差损失函数。图级别的预测对应于归纳任务，因为必须有不同的图集合用于训练和推理。
+
+\end{document}

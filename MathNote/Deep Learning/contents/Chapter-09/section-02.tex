@@ -1,0 +1,122 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{../../image/}{../../figure/}}
+\begin{document}
+
+\section{权重衰减}\label{section:ch09-权重衰减}
+
+我们在线性回归背景下引入正则化（参见~1.2.5~小节）来控制模型复杂性。这是一种限制模型中参数数量的替代方法。最简单正则化项由模型参数平方和构成，从而形成式~\eqref{align:ch09-weight-decay}~的正则化误差函数。该误差函数会对较大参数值施加惩罚。有效的模型复杂性由正则化系数 $\lambda$ 的选择决定。
+
+式~\eqref{align:ch09-weight-decay}~中的平方和正则化项在机器学习文献中称为\textbf{权重衰减}（weight decay），因为在序贯学习算法中它鼓励权重值向零衰减（除非数据支持其不衰减，参见习题~9.3）。这种正则化项一个优点是其导数很容易计算，可用于梯度下降训练。具体来说对于式~\eqref{align:ch09-weight-decay}，梯度由下式给出：
+\begin{align}
+\nabla\widetilde{E}(\mathbf{w}) = \nabla E(\mathbf{w}) + \lambda\mathbf{w}.
+\label{align:ch09-weight-decay-grad}
+\end{align}
+可以看到式~\eqref{align:ch09-weight-decay}~中的因子 $1/2$ 在取导数时会消失。
+
+我们还看到这种加性正则化项可以解释为权重向量 $\mathbf{w}$ 上零均值高斯先验分布的负对数（参见~2.6.2~小节）。这为将先验知识纳入模型训练过程提供了概率性视角。遗憾的是这种先验是通过模型参数表示的，而我们具有的关于待解决问题领域知识更可能是通过从输入到输出的网络函数形式表示的。然而参数与网络函数之间关系极其复杂，因此只有非常有限类型先验知识可以直接轻松地表示为模型参数先验。
+
+通过考虑二维参数空间以及未正则化误差函数 $E(\mathbf{w})$，可以看到二次正则化项的一般效果。该误差函数是 $\mathbf{w}$ 的二次函数（对应于具有平方和误差函数的简单线性回归模型，参见~4.1.2~小节）。参数空间中轴已经旋转以与黑塞矩阵特征向量对齐，对应于椭圆误差函数等值线的轴（参见~8.1.6~小节）。可以看到正则化项效果是缩小权重参数大小；然而正则化项对于参数 $\mathbf{w}_1$ 的效果更大，因为未正则化误差对 $\mathbf{w}_1$ 值敏感性远低于对 $\mathbf{w}_2$ 值的敏感性。直观上只有参数 $\mathbf{w}_1$ 是"活跃的"，因为输出对 $\mathbf{w}_1$ 相对不敏感，正则化项会将 $\mathbf{w}_1$ 推向 $0$。
+
+正则化后仍然活跃的参数数量，这个概念可以从贝叶斯学派或频率学派角度形式化~\citep{Bishop2006,HastieTibshiraniFriedman2009}。对于 $\lambda\to\infty$，所有参数都被推向 $0$，有效参数数量因此为 $0$。随着 $\lambda$ 减小，有效参数数量开始增加，直至 $\lambda=0$ 时有效参数数量等于模型中实际参数总数。通过正则化控制模型复杂性与通过限制参数数量控制模型复杂性有相似之处。
+
+\subsection{一致性正则化项}\label{section:ch09-一致性正则化}
+
+简单权重衰减形式~\eqref{align:ch09-weight-decay}~的一个缺陷是它破坏了网络映射的某些我们希望保持的变换特性。为说明这一点，考虑一个有两层权重和线性输出单元的多层感知机网络，该网络从一组输入变量 $\{x_i\}$ 映射到一组输出变量 $\{y_k\}$。第一隐藏层激活由下式给出：
+\begin{align}
+z_j = h\!\left(\sum_i w_{ji}x_i+b_j\right),
+\label{align:ch09-cons-hidden}
+\end{align}
+而输出单元激活由下式给出：
+\begin{align}
+y_k = \sum_j w_{kj}z_j + b_k'.
+\label{align:ch09-cons-output}
+\end{align}
+
+假设我们对输入数据进行如下线性变换：
+\begin{align}
+x_i \longrightarrow \tilde{x}_i = a x_i + b.
+\label{align:ch09-cons-input-transform}
+\end{align}
+
+然后可以通过对从输入到隐藏层单元的权重和偏置进行相应线性变换来保证网络执行的映射不变（见习题~9.4）。如果使用原始数据训练一个网络，并使用输入和/或目标变量经过上述某种线性变换的数据训练另一个网络，那么一致性要求我们应该得到等价网络，它们区别仅仅在于是否对权重做了线性变换。任何正则化项都应该与这种性质一致，否则就会任意地偏好一种解而不是另一种等价解。显然简单权重衰减形式~\eqref{align:ch09-weight-decay}~因为平等地惩罚所有权重和偏置，所以不满足这一性质。
+
+为此需要寻找一个在线性变换下不变的正则化项。这要求正则化项对权重重新缩放和偏置移动保持不变。可以通过以下形式变换第一层权重和偏置：
+\begin{align}
+w_{ji} \longrightarrow \tilde{w}_{ji} = a w_{ji},
+\label{align:ch09-cons-w1-transform}
+\end{align}
+\begin{align}
+b_j \longrightarrow \tilde{b}_j = b_j - \frac{b}{a}w_{ji}.
+\label{align:ch09-cons-b1-transform}
+\end{align}
+
+类似地网络输出变量的如下线性变换：
+\begin{align}
+y_k \longrightarrow \tilde{y}_k = c y_k + d,
+\label{align:ch09-cons-y-transform}
+\end{align}
+
+可以通过用以下形式变换第二隐藏层权重和偏置来实现：
+\begin{align}
+w_{kj}' \longrightarrow \tilde{w}_{kj}' = c w_{kj}',
+\label{align:ch09-cons-w2-transform}
+\end{align}
+\begin{align}
+b_k' \longrightarrow \tilde{b}_k' = c b_k' + d.
+\label{align:ch09-cons-b2-transform}
+\end{align}
+
+这样的正则化项由下式给出：
+\begin{align}
+\Omega(\mathbf{w}) = \frac{1}{\alpha_1}\|\mathbf{W}^{(1)}\|^2 + \frac{1}{\alpha_2}\|\mathbf{W}^{(2)}\|^2,
+\label{align:ch09-cons-reg}
+\end{align}
+其中 $\mathbf{W}^{(1)}$ 表示第一层权重集合，$\mathbf{W}^{(2)}$ 表示第二层权重集合，且偏置被排除在求和之外。只要使用 $\alpha_1\to a^2\alpha_1$ 和 $\alpha_2\to c^2\alpha_2$ 来重新缩放正则化参数，这个正则化项在权重变换下就会保持不变。
+
+正则化项~\eqref{align:ch09-cons-reg}~对应于参数的先验分布形式：
+\begin{align}
+p(\mathbf{w}\mid \alpha_1,\alpha_2) \propto \exp\!\left(-\frac{1}{\alpha_1}\|\mathbf{W}^{(1)}\|^2-\frac{1}{\alpha_2}\|\mathbf{W}^{(2)}\|^2\right).
+\label{align:ch09-cons-prior}
+\end{align}
+
+注意这种形式先验是反常的（它们不能被规范化），因为偏置参数是不受约束的。使用反常先验可能会对选择正则化系数以及在贝叶斯框架内进行模型比较造成困难。因此通常会为偏置设置单独先验（从而打破平移不变性），这些先验都有自己的超参数。
+
+可以通过从先验中抽取样本并绘制相应网络函数来展示这~4~个超参数的效果。先验由~4~个超参数控制：$\alpha_1,\alpha_2,\alpha_1',\alpha_2'$，它们分别代表第一层偏置、第一层权重、第二层偏置和第二层权重的高斯分布精度。
+
+\subsection{广义权重衰减}\label{section:ch09-广义权重衰减}
+
+更一般地，考虑将权重分成任意多组 $\mathcal{W}_k$ 的正则化项，使得
+\begin{align}
+\Omega(\mathbf{w}) = \sum_k \frac{1}{\alpha_k}\|\mathbf{w}_k\|^2,
+\label{align:ch09-grouped-decay}
+\end{align}
+其中：
+\begin{align}
+\|\mathbf{w}_k\|^2 = \sum_{w_i\in\mathcal{W}_k} w_i^2.
+\label{align:ch09-group-norm}
+\end{align}
+
+例如可以为多层网络中每一层使用不同正则化项。我们有时使用简单二次正则化项的一般形式：
+\begin{align}
+\Omega(\mathbf{w}) = \frac{1}{2}\sum_i |w_i|^q.
+\label{align:ch09-general-decay}
+\end{align}
+
+当 $q=1$ 时，形如式~\eqref{align:ch09-general-decay}~的正则化项在统计学领域称为 \textbf{lasso}（least absolute shrinkage and selection operator）~\citep{Tibshirani1996}。对于二次误差函数，它的性质是如果 $\lambda$ 足够大，系数 $w_i$ 将趋于零，从而得到一个稀疏模型，对应基函数不起作用。
+
+为说明这一点，考虑最小化下式给出的正则化误差函数：
+\begin{align}
+\widetilde{E}(\mathbf{w}) = E(\mathbf{w}) + \lambda\|\mathbf{w}\|_q^q.
+\label{align:ch09-lasso-obj}
+\end{align}
+
+这等价于在约束条件（见习题~9.5）
+\begin{align}
+\|\mathbf{w}\|_q^q \le \eta
+\label{align:ch09-lasso-constraint}
+\end{align}
+下最小化未正则化误差函数 $E(\mathbf{w})$，其中 $\eta$ 有合适取值。这两种方法可以通过拉格朗日乘子法关联起来（参见附录~C）。
+
+模型稀疏的原因可以通过图~9.6~说明：该图显示了误差函数在约束条件~\eqref{align:ch09-lasso-constraint}~下的最小值。随着 $\lambda$ 增大，更多参数将趋于零。相比之下二次正则化项不会要求权重参数为零，只会将 $w_i$ 减小到一个较小值。lasso 正则化项提供了一个稀疏解，其中 $w_i=0$。
+
+\end{document}

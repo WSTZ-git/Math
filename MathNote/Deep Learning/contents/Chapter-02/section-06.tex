@@ -1,0 +1,60 @@
+\documentclass[../../main.tex]{subfiles}
+
+\graphicspath{{../../image/}{../../figure/}}
+
+\begin{document}
+
+\section{贝叶斯概率}\label{section:ch02-贝叶斯概率}
+
+在\cref{subsection:ch02-贝叶斯定理}中，我们介绍了贝叶斯定理。现在我们从更一般的角度来讨论贝叶斯概率（Bayesian probability）。
+
+频率学派的观点认为，概率是事件发生的长期频率。而贝叶斯学派则认为，概率是对不确定性的度量。这种观点更普遍，频率学派的概率只是贝叶斯观点下的一种特殊情况。
+
+\subsection{模型参数}\label{subsection:ch02-模型参数}
+
+在机器学习中，我们通常有一个模型，它由一些参数$\mathbf{w}$控制。我们的目标是从数据中学习这些参数。
+
+在频率学派的方法中，参数$\mathbf{w}$被认为是固定的未知量，而数据$\mathcal{D}$是从某个分布中随机抽取的。我们通过最大化似然函数$p(\mathcal{D} \mid \mathbf{w})$来确定参数$\mathbf{w}$。
+
+而在贝叶斯方法中，参数$\mathbf{w}$本身被认为是随机变量。我们对参数$\mathbf{w}$有一个先验分布$p(\mathbf{w})$，然后通过观测数据$\mathcal{D}$来更新我们对参数的认识，得到后验分布$p(\mathbf{w} \mid \mathcal{D})$。
+
+根据贝叶斯定理：
+
+\begin{align}
+  p(\mathbf{w} \mid \mathcal{D}) = \frac{p(\mathcal{D} \mid \mathbf{w}) p(\mathbf{w})}{p(\mathcal{D})}
+  \label{align:ch02-贝叶斯参数}
+\end{align}
+
+其中$p(\mathcal{D} \mid \mathbf{w})$是似然函数，$p(\mathbf{w})$是先验分布，分母$p(\mathcal{D})$是证据（evidence），用于归一化。
+
+\subsection{正则化}\label{subsection:ch02-正则化}
+
+在\cref{subsection:ch01-正则化}中，我们引入了正则化项来控制过拟合。现在我们可以从贝叶斯的角度来理解正则化。
+
+如果我们选择一个均值为零的高斯先验分布$p(\mathbf{w})$，那么后验分布的对数为
+
+\begin{align}
+  \ln p(\mathbf{w} \mid \mathcal{D}) = \ln p(\mathcal{D} \mid \mathbf{w}) + \ln p(\mathbf{w}) + \text{常数}
+  \label{align:ch02-后验对数}
+\end{align}
+
+最大化后验分布等价于最大化似然函数加上先验的对数。如果先验是高斯的，那么$\ln p(\mathbf{w})$项就对应于二次正则化项。
+
+因此，正则化可以被解释为在参数空间中加入了先验知识，即我们倾向于较小的参数值。
+
+\subsection{贝叶斯机器学习}\label{subsection:ch02-贝叶斯机器学习}
+
+在贝叶斯机器学习中，我们不只是找到参数的一个点估计，而是计算参数的完整后验分布。这使得我们可以量化预测的不确定性。
+
+对于新的输入$x$，我们的预测分布为
+
+\begin{align}
+  p(t \mid x, \mathcal{D}) = \int p(t \mid x, \mathbf{w}) p(\mathbf{w} \mid \mathcal{D}) \,\mathrm{d}\mathbf{w}
+  \label{align:ch02-贝叶斯预测}
+\end{align}
+
+这个积分考虑了所有可能的参数值，根据它们的后验概率进行加权。
+
+贝叶斯方法的一个主要优点是它自然地处理了模型复杂度的问题，不需要显式的模型选择过程。然而，后验分布的计算通常是困难的，需要近似方法。
+
+\end{document}

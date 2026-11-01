@@ -1,0 +1,85 @@
+﻿\documentclass[../../main.tex]{subfiles}
+
+\graphicspath{{../../image/}{../../figure/}}
+
+\begin{document}
+
+\section{非参数化方法}\label{section:ch03-非参数化方法}
+
+本章专注于使用由少量参数决定的、具有特定函数形式的概率分布，这些参数的值可从数据集中确定。这称为参数化（parametric）的密度估计方法。这种方法的一个关键局限是，所选择的密度模型可能不适合数据分布，这可能导致预测性能不佳。例如，如果生成数据的过程是多峰的，那么高斯分布永远无法捕捉到分布这一角度的特征，因为高斯分布必然是单峰的。本节将考虑一些非参数化（nonparametric）的密度估计方法，这些方法对分布的形式几乎不作任何假设。
+
+\subsection{直方图}\label{subsection:ch03-直方图}
+
+首先讨论密度估计的直方图方法。标准直方图简单地将$x$划分为互不相交的宽度为$\Delta$的分箱，然后计算落在不同分箱中的观测值$x$的数量$n_j$。为了将此计数值转换为归一化的概率密度，可以将其简单地除以观测值总数$N$和分箱宽度$\Delta$的乘积：
+
+\begin{align}
+  p_j=\frac{n_j}{N\Delta}
+  \label{align:ch03-直方图密度}
+\end{align}
+
+这种方法就给出了密度$p(x)$的一种模型，在每个分箱的宽度$\Delta$上，密度是恒定的。通常选择具有相同宽度的分箱。\cref{figure:ch03-直方图示例}展示了直方图密度估计的示例：当$\Delta$非常小时，得到的密度模型非常毛糙，具有许多在生成数据集的底层分布中不存在的结构；相反，如果$\Delta$太大，得到的密度模型将太过平滑，因此无法捕捉到双峰特性。最佳结果是$\Delta$取某个中间值。
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.6\textwidth]{ch03-fig3-13-histogram.png}
+  \caption{直方图密度估计的示例，根据绿色曲线所示的双峰混合分布生成含$50$个数据点的数据集。三种分箱宽度$\Delta=0.04,\,0.08,\,0.25$分别对应过毛糙、适中、过平滑三种结果。}
+  \label{figure:ch03-直方图示例}
+\end{figure}
+
+直方图方法的一个主要局限是，分箱边界导致估计的密度是不连续的，而且规模会随维度显著改变。如果将$D$维空间中的每个变量划分为$M$个区间，那么分箱将有$M^{D}$个，这种随$D$指数级扩展的特性是维度诅咒（curse of dimensionality）的一个例子。在实践中，直方图技术可以用于快速可视化一维或二维数据，但不适用于大多数据密度估计应用。
+
+\subsection{核密度}\label{subsection:ch03-核密度}
+
+假设观测值是从某个$D$维空间中的未知概率密度$p(\boldsymbol{x})$中产生的。考虑包含$\boldsymbol{x}$的一个小区域$\mathcal{R}$，与该区域相关联的概率质量为
+
+\begin{align}
+  P=\int_{\mathcal{R}}p(\boldsymbol{x})\,\mathrm{d}\boldsymbol{x}
+  \label{align:ch03-区域概率}
+\end{align}
+
+因为每个数据点在$\mathcal{R}$内的概率为$P$，所以$\mathcal{R}$内的点的总数$K$将服从二项分布。如果我们假设区域$\mathcal{R}$足够小，以至于概率密度$p(\boldsymbol{x})$在该区域内大致保持恒定，则$P\approx p(\boldsymbol{x})V$，其中$V$是区域$\mathcal{R}$的体积。结合起来，可以得到密度估计的形式：
+
+\begin{align}
+  p(\boldsymbol{x})=\frac{K}{NV}
+  \label{align:ch03-局部密度}
+\end{align}
+
+注意，此式的有效性依靠两个相互矛盾的假设：区域$\mathcal{R}$足够小，以至于密度在该区域内近似恒定；但区域$\mathcal{R}$又足够大，使得落入该区域的点的数量$K$足以使二项分布变得十分尖锐。
+
+可以通过两种不同的方式利用\cref{align:ch03-局部密度}。一种是固定$K$并根据数据确定$V$的值，这将引出$K$近邻技术；另一种是固定$V$并根据数据确定$K$的值，这将引出核密度估计技术。对于核密度，将区域$\mathcal{R}$取为以$\boldsymbol{x}$为中心、边长为$h$的超小立方体，并定义核函数（又称Parzen窗）
+
+\begin{align}
+  k(\boldsymbol{u})=\begin{cases}1, & \lvert u_i\rvert\leqslant 1/2\ \text{对所有}i\\ 0, & \text{其他}\end{cases}
+  \label{align:ch03-Parzen窗}
+\end{align}
+
+它表示以原点为中心的单位立方体。将其代入\cref{align:ch03-局部密度}，可得点$\boldsymbol{x}$处估计的密度为
+
+\begin{align}
+  p(\boldsymbol{x})=\frac{1}{N}\sum_{n=1}^{N}\frac{1}{h^{D}}\,k\!\left(\frac{\boldsymbol{x}-\boldsymbol{x}_n}{h}\right)
+  \label{align:ch03-核密度估计}
+\end{align}
+
+其中$h^{D}$是$D$维空间中边长为$h$的超小立方体的体积。如果选择更平滑的核函数（例如高斯函数），则可以获得更平滑的密度模型。使用高斯核时，导出的核密度模型为
+
+\begin{align}
+  p(\boldsymbol{x})=\frac{1}{N}\sum_{n=1}^{N}\mathcal{N}(\boldsymbol{x}\mid\boldsymbol{x}_n,h^{2}\boldsymbol{I})
+  \label{align:ch03-高斯核密度}
+\end{align}
+
+其中$h$代表所使用的高斯分量的标准差。只要核函数满足$k(\boldsymbol{u})\geqslant 0$且$\int k(\boldsymbol{u})\,\mathrm{d}\boldsymbol{u}=1$，这两个条件就确保了得到的概率分布在任何地方都是非负的并且积分为$1$。参数$h$充当平滑参数：$h$太小时对噪声敏感，$h$太大时则过度平滑。
+
+\subsection{最近邻}\label{subsection:ch03-最近邻}
+
+另一种方法是固定$K$值并允许小球的半径增长，直至恰好包含$K$个数据点。对于希望估计密度$p(\boldsymbol{x})$的点$\boldsymbol{x}$，考虑以$\boldsymbol{x}$为中心的小球，并允许小球的半径增长，直至恰好包含$K$个数据点。这种技术称为$K$近邻（$K$ nearest neighbor）方法。然后，密度$p(\boldsymbol{x})$的估计由\cref{align:ch03-局部密度}给出，其中$V$设置为小球的体积。参数$K$控制了模型的平滑程度，并且同样存在一个既不太大也不太小的最佳$K$值。
+
+$K$近邻技术可以扩展到分类问题。将$K$近邻密度估计分别应用于每个类别$C_k$，然后利用贝叶斯定理得到类别成员的后验概率。假设数据集包含$\sum_k N_k=N$个点，其中$N_k$个属于类别$C_k$。以新点$\boldsymbol{x}$为中心绘制一个恰好包含$K$个点的球体，该球体的体积为$V$且包含来自类别$C_k$的$K_k$个点。则条件密度、无条件密度和类别先验分别为
+
+\begin{align}
+  p(\boldsymbol{x}\mid C_k)=\frac{K_k}{N_k V},\qquad p(\boldsymbol{x})=\frac{K}{NV},\qquad p(C_k)=\frac{N_k}{N}
+  \label{align:ch03-近邻分类}
+\end{align}
+
+由贝叶斯定理可得后验概率$p(C_k\mid\boldsymbol{x})=K_k/K$。这种方法的一个优点是在"训练"阶段不涉及计算，因为只需要将训练集存储起来即可；然而，评估密度的计算成本会随着数据集的增大而线性增长，这是这类密度模型的一个巨大缺点。
+
+\end{document}
