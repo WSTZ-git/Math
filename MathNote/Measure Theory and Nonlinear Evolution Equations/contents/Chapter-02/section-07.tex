@@ -1,0 +1,242 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{Riesz 表示定理：有界泛函}\label{section:ch02-Riesz有界泛函}
+
+设 $X$ 为局部紧 Hausdorff 空间。考虑赋以上确界范数的 Banach 空间 $C_0(X)$，以及 $X$ 上有限带号 Radon 测度所成、赋以范数 $\mu\mapsto\|\mu\|_{\mathscr R_f(X)}\triangleq |\mu|(X)$ 的 Banach 空间 $\mathscr R_f(X)$。
+
+欲证对偶空间 $(C_0(X))^*$ 可与 $\mathscr R_f(X)$ 等同。更确切地，考虑映射
+\begin{align}
+T:\mathscr R_f(X)\to(C_0(X))^*,\qquad\langle T(\mu),f\rangle\triangleq \int_X f\,\mathrm{d}\mu, \label{align:ch02-2.50}
+\end{align}
+其中 $\mu\in\mathscr R_f(X)$，$f\in C_0(X)$。有下列结果。
+
+\begin{theorem}\label{theorem:ch02-Riesz对偶}
+设 $X$ 为局部紧 Hausdorff 空间。则由\eqref{align:ch02-2.50}定义的映射 $T$ 为 $\mathscr R_f(X)$ 到 $(C_0(X))^*$ 的等距同构。
+\end{theorem}
+
+\cref{theorem:ch02-Riesz对偶}的证明依赖下列引理，其证明在本小节末给出。
+
+\begin{lemma}\label{lemma:ch02-Jordan分解}
+设 $X$ 为局部紧 Hausdorff 空间，$F:C_0(X)\to\mathbb R$ 为有界线性泛函。则存在正线性泛函 $F^\pm:C_0(X)\to\mathbb R$，使
+\begin{align}
+F=F^+-F^-. \label{align:ch02-2.51}
+\end{align}
+此外：
+\begin{enumerate}[(i)]
+\item 有
+\begin{align}
+\langle F^+,f\rangle=\sup\{\langle F,g\rangle\mid g\in C_0(X),\ 0\leqslant g\leqslant f\}; \label{align:ch02-2.52}
+\end{align}
+\item 分解\eqref{align:ch02-2.51}在下列意义下极小：若 $F=F_1-F_2$，其中 $F_1,F_2$ 为 $C_0(X)$ 上正线性泛函，则线性泛函 $F_1-F^+=F_2-F^-$ 为正。
+\end{enumerate}
+\end{lemma}
+
+\begin{remark}\label{remark:ch02-Jordan分解名}
+分解\eqref{align:ch02-2.51}称为 $F$ 的 Jordan 分解。注意极小性结论 (ii) 是\cref{remark:ch01-Jordan变差}(i) 中相应结论的对偶。
+\end{remark}
+
+\begin{proof}[\cref{theorem:ch02-Riesz对偶}的证明]
+先证 $T$ 满射。固定 $F\in(C_0(X))^*$，设 $F^\pm:C_0(X)\to[0,\infty)$ 为由\cref{lemma:ch02-Jordan分解}给出的正线性泛函（由\cref{lemma:ch02-C0正泛函有界}知 $F^\pm$ 有界）。由\cref{theorem:ch02-RieszC0}，存在 $X$ 上两个有限 Radon 测度 $\mu^\pm$，使对任意 $f\in C_0(X)$ 有 $\langle F^\pm,f\rangle\triangleq \int_X f\,\mathrm{d}\mu^\pm$。则 $\mu\triangleq \mu^+-\mu^-\in\mathscr R_f(X)$（见\cref{definition:ch01-带号Radon测度}(ii)），由等式\eqref{align:ch02-2.10}、\eqref{align:ch02-2.50}与\eqref{align:ch02-2.51}得对所有 $f\in C_0(X)$ 有
+\begin{align*}
+\langle F,f\rangle=\int_X f\,\mathrm{d}\mu=\langle T(\mu),f\rangle.
+\end{align*}
+故 $F=T(\mu)\in(C_0(X))^*$，结论成立。
+
+现证 $T$ 等距，从而单射。显然由定义有对所有 $\mu\in\mathscr R_f(X)$，
+\begin{align*}
+\|T(\mu)\|_{(C_0(X))^*}\leqslant|\mu|(X)=\|\mu\|_{\mathscr R_f(X)}.
+\end{align*}
+为证反向不等式，固定 $\epsilon>0$。由\eqref{align:ch01-全变差公式}中等式，存在互不相交的 $E_1,\cdots ,E_n\in\mathscr B$，使 $X=\bigcup_{i=1}^n E_i$ 且 $\sum_{i=1}^n|\mu(E_i)|>|\mu|(X)-\epsilon$。由 $\mu$ 的正则性，存在 $K_1,\cdots ,K_n\in\mathscr K$ 与互不相交的 $A_1,\cdots ,A_n\in\mathscr T$，使：
+(a) $\sum_{i=1}^n|\mu(K_i)|>|\mu|(X)-2\epsilon$；
+(b) $K_i\subseteq E_i\subseteq A_i$，对每个 $i=1,\cdots ,n$ 有 $|\mu|(A_i\setminus K_i)<\epsilon/n$。
+
+此外，由\cref{lemma:appA-Urysohn}，对每个 $i=1,\cdots ,n$，存在 $f_i\in C_c(X)$，$f_i(X)\subseteq[0,1]$，$f_i|_{K_i}=1$，$\operatorname{supp}f_i\subseteq A_i$。令
+\begin{align*}
+g\triangleq \sum_{i=1}^n[\operatorname{sgn}\mu(K_i)]f_i.
+\end{align*}
+则 $\|g\|_\infty\leqslant1$，且
+\begin{align*}
+\left|\int_X g\,\mathrm{d}\mu\right|\geqslant\int_X g\,\mathrm{d}\mu
+&=\sum_{i=1}^n\int_{A_i}g\,\mathrm{d}\mu
+=\sum_{i=1}^n\left(\int_{A_i\setminus K_i}g\,\mathrm{d}\mu+[\operatorname{sgn}\mu(K_i)]\int_{K_i}f_i\,\mathrm{d}\mu\right)\\
+&\geqslant\sum_{i=1}^n\left(-|\mu|(A_i\setminus K_i)+|\mu(K_i)|\right)>|\mu|(X)-3\epsilon.
+\end{align*}
+由 $\epsilon$ 的任意性，由上述不等式得
+\begin{align*}
+\|T(\mu)\|_{(C_0(X))^*}\geqslant|\langle T(\mu),g\rangle|
+=\left|\int_X g\,\mathrm{d}\mu\right|\geqslant|\mu|(X)=\|\mu\|_{\mathscr R_f(X)}.
+\end{align*}
+结论成立。
+\end{proof}
+
+\begin{proof}[\cref{lemma:ch02-Jordan分解}的证明]
+令
+\begin{align*}
+\langle F^+,f\rangle\triangleq \sup_{g\in S_f}\langle F,g\rangle,\qquad
+S_f\triangleq \{g\in C_0(X)\mid 0\leqslant g\leqslant f\}\quad\text{对所有 }f\in C_0(X),\ f\geqslant0,
+\end{align*}
+\begin{align*}
+\langle F^+,f\rangle\triangleq \langle F^+,f^+\rangle-\langle F^+,f^-\rangle\quad\text{对所有 }f\in C_0(X).
+\end{align*}
+显然当 $f\geqslant0$ 时 $\langle F^+,f\rangle\geqslant0$，且对所有 $f\in C_0(X)$，
+\begin{align*}
+|\langle F^+,f\rangle|\leqslant|\langle F^+,f^+\rangle|+|\langle F^+,f^-\rangle|
+\leqslant\|F\|_{(C_0(X))^*}\|f\|_\infty,
+\end{align*}
+故 $F^+$ 为正有界泛函，$\|F^+\|_{(C_0(X))^*}\leqslant\|F\|_{(C_0(X))^*}$。此外由定义，对所有 $f\in C_0(X)$、$f\geqslant0$，有 $\langle F^+,f\rangle\geqslant\langle F,f\rangle$。
+
+现证 $F^+$ 线性。立即可见对所有 $c\geqslant0$、$f\geqslant0$，有 $\langle F^+,cf\rangle=c\langle F^+,f\rangle$。于是对所有 $f\in C_0(X)$：
+(a) 若 $c\geqslant0$，则
+\begin{align*}
+\langle F^+,cf\rangle=\langle F^+,(cf)^+\rangle-\langle F^+,(cf)^-\rangle
+=\langle F^+,cf^+\rangle-F^+(cf^-)
+=c\langle F^+,f^+\rangle-c\langle F^+,f^-\rangle=c\langle F^+,f\rangle;
+\end{align*}
+(b) 若 $c<0$，则
+\begin{align*}
+\langle F^+,cf\rangle=\langle F^+,(cf)^+\rangle-\langle F^+,(cf)^-\rangle
+=\langle F^+,|c|f^-\rangle-\langle F^+,|c|f^+\rangle
+=|c|[\langle F^+,f^-\rangle-\langle F^+,f^+\rangle]
+=c[\langle F^+,f^+\rangle-\langle F^+,f^-\rangle]=c\langle F^+,f\rangle.
+\end{align*}
+故对所有 $c\in\mathbb R$、$f\in C_0(X)$，$\langle F^+,cf\rangle=c\langle F^+,f\rangle$。若证得
+\begin{align}
+\langle F^+,f_1+f_2\rangle=\langle F^+,f_1\rangle+\langle F^+,f_2\rangle
+\quad\text{对所有 }f_1,f_2\in C_0(X),\ f_1,f_2\geqslant0, \label{align:ch02-2.53}
+\end{align}
+结论随之；事实上由 $F^+$ 的定义，等式对所有 $f_1,f_2\in C_0(X)$ 成立。
+
+固定 $f_1,f_2\in C_0(X)$，$f_1,f_2\geqslant0$。对任意 $g_1\in S_{f_1}$、$g_2\in S_{f_2}$，有
+\begin{align*}
+\langle F,g_1\rangle+\langle F,g_2\rangle=\langle F,g_1+g_2\rangle
+\leqslant\sup_{g\in S_{f_1+f_2}}\langle F,g\rangle=\langle F^+,f_1+f_2\rangle,
+\end{align*}
+故 $\langle F^+,f_1+f_2\rangle\geqslant\langle F^+,f_1\rangle+\langle F^+,f_2\rangle$。为证反向不等式，设 $0\leqslant g\leqslant f_1+f_2$。令 $g_1\triangleq \min\{g,f_1\}$。则 $g_1\in S_{f_1}$，令 $g_2\triangleq g-g_1$，显然 $g_2=[g-f_1]^+$。因
+\begin{align*}
+g_2-f_2=[g-f_1]^+-f_2=
+\begin{cases}
+-f_2, & g\leqslant f_1,\\
+g-(f_1+f_2), & g>f_1,
+\end{cases}
+\end{align*}
+得 $0\leqslant g_2\leqslant f_2$，即 $g_2\in S_{f_2}$。故对所有 $g\in S_f$，
+\begin{align*}
+\langle F,g\rangle=\langle F,g_1+g_2\rangle=\langle F,g_1\rangle+\langle F,g_2\rangle
+\leqslant\langle F^+,f_1\rangle+\langle F^+,f_2\rangle,
+\end{align*}
+从而 $\langle F^+,f_1+f_2\rangle\leqslant\langle F^+,f_1\rangle+\langle F^+,f_2\rangle$。
+
+因此 $F^+$ 为 $C_0(X)$ 上正线性泛函。令 $F^-\triangleq F^+-F$；则 $F^-:C_0(X)\to\mathbb R$ 线性正，因对所有 $f\geqslant0$ 有 $\langle F^-,f\rangle=\langle F^+,f\rangle-\langle F,f\rangle\geqslant0$。故等式\eqref{align:ch02-2.51}与结论 (i) 成立。为证 (ii)，设 $f\in C_0(X)$，$f\geqslant0$。因 $F_1$、$F_2$ 为正，对任意 $g\in S_f$，有 $\langle F_1,f\rangle\geqslant\langle F_1,g\rangle\geqslant\langle F_1,g\rangle-\langle F_2,g\rangle=\langle F,g\rangle$，故 $\langle F_1,f\rangle\geqslant\langle F^+,f\rangle$。证毕。
+\end{proof}
+
+简要讨论当 $C_0(X)$ 替换为 $C_c(X)$ 时上述情形如何变化。设 $\mu_1,\mu_2$ 为（正）Radon 测度。对任意 $f\in C_c(X)$，令
+\begin{align}
+\langle F,f\rangle\triangleq \int_X f\,\mathrm{d}\mu_1-\int_X f\,\mathrm{d}\mu_2; \label{align:ch02-2.54}
+\end{align}
+因右端两积分均有限，定义适定。于是对任意紧集 $K\subseteq X$ 与任意 $f\in C_c(X)$（$\operatorname{supp}f\subseteq K$），有
+\begin{align*}
+|\langle F,f\rangle|\leqslant[\mu_1(K)+\mu_2(K)]\|f\|_\infty.
+\end{align*}
+由该不等式，$F$ 在下列意义下局部有界。
+
+\begin{definition}\label{definition:ch02-局部有界泛函}
+称线性泛函 $F:C_c(X)\to\mathbb R$ 为局部有界的，若对任意 $K\in\mathscr K$，存在 $c_K>0$，使对所有 $f\in C_c(X)$（$\operatorname{supp}f\subseteq K$）有
+\begin{align*}
+|\langle F,f\rangle|\leqslant c_K\|f\|_\infty.
+\end{align*}
+\end{definition}
+
+\begin{lemma}\label{lemma:ch02-局部有界}
+设 $X$ 为局部紧 Hausdorff 空间。
+\begin{enumerate}[(i)]
+\item $C_c(X)$ 上每个正线性泛函均局部有界。
+\item 设 $F:C_c(X)\to\mathbb R$ 为局部有界线性泛函。则存在正线性泛函 $F^\pm:C_c(X)\to\mathbb R$，使等式\eqref{align:ch02-2.51}成立，且\cref{lemma:ch02-Jordan分解}(i)--(ii)成立。
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+仅证 (i)，因 (ii) 的证明与\cref{lemma:ch02-Jordan分解}相同，只需将 $C_0(X)$ 替换为 $C_c(X)$。设 $K\in\mathscr K$，取 $\varphi_K\in C_c(X)$，$\varphi_K(X)\subseteq[0,1]$，$\varphi_K=1$ 在 $K$ 上（见\cref{lemma:appA-Urysohn}）。对任意 $f\in C_c(X)$（$\operatorname{supp}f\subseteq K$），有
+\begin{align*}
+\|f\|_\infty\varphi_K\pm f=(\|f\|_\infty\pm f)\varphi_K\geqslant0\quad\text{在 }X\text{ 中}.
+\end{align*}
+因 $\|f\|_\infty\varphi_K\pm f\in C_c(X)$，$F$ 正线性，故
+\begin{align*}
+\langle F,\|f\|_\infty\varphi_K\pm f\rangle=\langle F,\varphi_K\rangle\|f\|_\infty\pm\langle F,f\rangle\geqslant0,
+\end{align*}
+从而 $|\langle F,f\rangle|\leqslant c_K\|f\|_\infty$，其中 $c_K\triangleq \langle F,\varphi_K\rangle$。
+\end{proof}
+
+由\cref{lemma:ch02-局部有界}与\cref{theorem:ch02-Riesz正泛函}得下列结果。
+
+\begin{theorem}\label{theorem:ch02-RieszCc}
+设 $X$ 为局部紧 Hausdorff 空间，$F:C_c(X)\to\mathbb R$ 为局部有界线性泛函。则存在 $X$ 上唯一一对相互奇异的 Radon 测度 $\mu_1,\mu_2$，使等式\eqref{align:ch02-2.54}成立。
+\end{theorem}
+
+\begin{proof}
+因等式\eqref{align:ch02-2.54}中测度 $\mu_1,\mu_2$ 相互奇异，唯一性易验证。
+
+证存在性。设 $F^\pm:C_c(X)\to\mathbb R$ 为由\cref{lemma:ch02-局部有界}相伴于 $F$ 的正线性泛函。于是等式\eqref{align:ch02-2.51}成立，且\cref{lemma:ch02-局部有界}(i)--(ii)成立。此外由\cref{theorem:ch02-Riesz正泛函}，存在唯一一对 Radon 测度 $\mu_1,\mu_2$，使对所有 $f\in C_c(X)$，
+\begin{align}
+\langle F^+,f\rangle=\int_X f\,\mathrm{d}\mu_1,\qquad
+\langle F^-,f\rangle=\int_X f\,\mathrm{d}\mu_2. \label{align:ch02-2.55}
+\end{align}
+由等式\eqref{align:ch02-2.51}与\eqref{align:ch02-2.55}，测度 $\mu_1,\mu_2$ 满足\eqref{align:ch02-2.54}。由内正则性，两个在 $\mathscr K$ 上一致的 Radon 测度为同一测度，故若证得下列断言，结论成立：
+
+\textbf{断言.} 对每个 $K\in\mathscr K$，测度 $\mu_1\llcorner K$ 与 $\mu_2\llcorner K$ 相互奇异。
+
+为证断言，固定 $K\in\mathscr K$，令 $\mu\triangleq \mu_1\llcorner K-\mu_2\llcorner K$。显然 $|\mu|(X)\leqslant\mu_1(K)+\mu_2(K)<\infty$，故 $\mu\in\mathscr R_f(X)$。若证得 $\mu_1\llcorner K=\mu^+$、$\mu_2\llcorner K=\mu^-$，其中 $\mu=\mu^+-\mu^-$ 为 $\mu$ 的 Jordan 分解，断言成立。事实上只需证
+\begin{align}
+\mu_1\llcorner K\leqslant\mu^+,\qquad\mu_2\llcorner K\leqslant\mu^-, \label{align:ch02-2.56}
+\end{align}
+因反向不等式由 $\mu^\pm$ 的定义即得（见\cref{remark:ch01-Jordan变差}）。
+
+为证\eqref{align:ch02-2.56}，令 $F_i:C_c(X)\to\mathbb R$（$i=1,2$）为正线性泛函
+\begin{align*}
+\langle F_1,f\rangle\triangleq \int_X f\,\mathrm{d}\mu^+,\qquad
+\langle F_2,f\rangle\triangleq \int_X f\,\mathrm{d}\mu^-\quad(f\in C_c(X)).
+\end{align*}
+令 $G^\pm\triangleq F^\pm|_{C_c(K)}$，$G\triangleq F|_{C_c(K)}=G^+-G^-$。则在 $C_c(K)$ 上有 $G^+-G^-=G=F_1-F_2$，由\cref{lemma:ch02-局部有界}(ii)，线性泛函 $F_1-G^+$ 与 $F_2-G^-$ 在 $C_c(K)$ 上为正。这蕴含对所有 $f\in C_c(K)$、$f\geqslant0$，
+\begin{align*}
+\int_K f\,\mathrm{d}\mu_1\leqslant\int_K f\,\mathrm{d}\mu^+,\qquad
+\int_K f\,\mathrm{d}\mu_2\leqslant\int_K f\,\mathrm{d}\mu^-,
+\end{align*}
+从而\eqref{align:ch02-2.56}成立。证毕。
+\end{proof}
+
+沿袭文献\cite{ref24}，给出下列定义。
+
+\begin{definition}\label{definition:ch02-带号Radon测度泛函}
+设 $(X,\mathscr T)$ 为 Hausdorff 空间。所谓 $X$ 上的带号 Radon 测度，指 $C_c(X)$ 上的局部有界线性泛函。
+\end{definition}
+
+\begin{remark}\label{remark:ch02-带号Radon注}
+\label{remark:ch02-带号约化}
+\label{remark:ch02-RN注}
+由\cref{theorem:ch02-RieszCc}，带号 Radon 测度与（正）相互奇异 Radon 测度的有序对 $(\mu_1,\mu_2)$ 之间存在一一对应。注意\cref{theorem:ch02-RieszCc}给出的测度 $\mu_1,\mu_2$ 不必有限，故一般其差无定义（又注意带号 Radon 测度不必为\cref{definition:ch01-带号测度}(ii)意义下的带号测度；见\cref{definition:ch01-带号测度}(ii)）。然而：
+a) \cref{definition:ch02-带号Radon测度泛函}化归为\cref{definition:ch01-带号Radon测度}，即当 $\mu_1,\mu_2$ 均有限时，带号 Radon 测度为有限带号 Radon 测度；
+b) 当 $\mu_1,\mu_2$ 中至少一个有限时，带号 Radon 测度为带号测度。
+\end{remark}
+
+$X$ 上带号 Radon 测度的向量空间记为 $\mathscr R(X)$。它为局部凸空间，其拓扑由半范
+\begin{align*}
+p_K(\mu)\triangleq (\mu_1+\mu_2)(K)\quad\text{对所有 }K\in\mathscr K,\ \mu\equiv(\mu_1,\mu_2)\in\mathscr R(X)
+\end{align*}
+生成。
+
+
+
+
+\end{document}

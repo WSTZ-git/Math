@@ -1,0 +1,196 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{Hausdorff 测度与容量}\label{section:ch01-Hausdorff}
+
+设 $(X,d)$ 为一度量空间。设 $h:(0,\infty)\to(0,\infty]$ 非减且 $\lim_{r\to0^+}h(r)=0$。如\cref{subsection:ch01-度量外测度} 中那样论证，对任意 $\delta\in(0,\infty]$ 和 $E\subseteq X$，令
+\begin{align}
+\mathcal{H}_{h,\delta}^*(E)\triangleq \inf\left\{\sum_{k=1}^\infty h(\operatorname{diam}(E_k))\ \middle|\ E\subseteq\bigcup_{k=1}^\infty E_k,\ \operatorname{diam}(E_k)\leqslant\delta\ \forall k\in\mathbb{N}\right\} \label{align:ch01-Hausdorff-delta}
+\end{align}
+若存在如\eqref{align:ch01-Hausdorff-delta} 中 $E$ 的覆盖 $\{E_k\}$，否则令 $\mathcal{H}_{h,\delta}^*(E)\triangleq \infty$（这对应于在\eqref{align:ch01-eta-delta} 中取 $\eta=h\circ\operatorname{diam}$）。于是对任意 $\delta\in(0,\infty]$，映射 $\mathcal{H}_{h,\delta}^*:\mathcal{P}(X)\to[0,\infty]$ 是一个外测度，因而是 $X$ 上的一个容量（见\cref{remark:ch01-eta是容量}）。映射
+\begin{align}
+\mathcal{H}_h^*:\mathcal{P}(X)\to[0,\infty],\qquad
+\mathcal{H}_h^*(E)\triangleq \lim_{\delta\to0^+}\mathcal{H}_{h,\delta}^*(E)=\sup_{\delta>0}\mathcal{H}_{h,\delta}^*(E)\quad(E\subseteq X) \label{align:ch01-Hausdorff星}
+\end{align}
+同理也是一个外测度，此外还是一个度量外测度（见\cref{lemma:ch01-eta星是度量外测度}）。
+
+\begin{definition}\label{definition:ch01-Hausdorff测度}
+设 $(X,d)$ 为一度量空间。
+\begin{enumerate}[(i)]
+\item $X$ 上的每个容量 $\mathcal{H}_{h,\delta}^*$（$\delta\in(0,\infty]$）以及 $\mathcal{H}_h^*$，都称为一个 Hausdorff 容量。将 $\mathcal{H}_h^*$ 限制在 $\mathcal{H}_h^*$--可测集的 $\sigma$--代数上所得的测度称为一个 Hausdorff 测度，记为 $\mathcal{H}_h$。函数 $h$ 称为 $\mathcal{H}_h^*$ 的一个尺度函数。
+\item 若 $h(r)=r^s$（$s\in(0,\infty)$），则 Hausdorff 容量和 Hausdorff 测度分别记为 $\mathcal{H}_{s,\delta}^*$、$\mathcal{H}_s^*$ 和 $\mathcal{H}_s$，$\mathcal{H}_s$ 称为 $s$ 维 Hausdorff 测度。0 维 Hausdorff 测度由定义即计数测度 $\mu^\#$。
+\end{enumerate}
+\end{definition}
+
+\begin{remark}\label{remark:ch01-Hausdorff性质}
+(i) 由于 $\mathcal{H}_h^*$ 是度量外测度，由\cref{theorem:ch01-Caratheodory}，$\mathcal{H}_h$ 的定义是适定的，且 $\mathcal{H}_h$ 是完备测度。注意由\cref{proposition:ch01-度量外测度等价}，所有 Borel 集都是 $\mathcal{H}_h^*$--可测的。
+
+(ii) 由其定义，Hausdorff 测度在每个满足 $d(\phi(x),\phi(y))=d(x,y)$（$x,y\in X$）的映射 $\phi:X\to X$ 下不变，特别地在旋转和平移下不变。
+\end{remark}
+
+Hausdorff 容量之间的以下联系将被使用（见\cref{theorem:ch03-Hausdorff}）。
+
+\begin{proposition}\label{proposition:ch01-Hausdorff零等价}
+设 $(X,d)$ 为一度量空间，$E\subseteq X$。则对任意 $\delta\in(0,\infty]$，$\mathcal{H}_{h,\delta}^*(E)=0$ 当且仅当 $\mathcal{H}_h^*(E)=0$。
+\end{proposition}
+
+\begin{proof}
+由不等式\eqref{align:ch01-eta不等式}，对任意 $E\subseteq X$ 有
+\begin{align}
+\mathcal{H}_{h,\infty}^*(E)\leqslant\mathcal{H}_{h,\delta}^*(E)\leqslant\mathcal{H}_h^*(E)\qquad(\delta\in(0,\infty)), \label{align:ch01-Hausdorff零等价1}
+\end{align}
+故"若"部分立即成立。为证"仅当"部分，设 $\mathcal{H}_h^*(E)>0$，固定 $c\in(0,\mathcal{H}_h^*(E))$，取 $\delta>0$ 充分小使得 $\mathcal{H}_{h,\delta}^*(E)>c$。则由定义\eqref{align:ch01-Hausdorff-delta}，对 $E$ 的任意由满足 $\operatorname{diam}(E_k)\leqslant\delta$ 的集合 $E_k$ 构成的可数覆盖，有
+\[
+\sum_{k=1}^\infty h(\operatorname{diam}(E_k))>c.
+\]
+对同类型的另一个覆盖，对某个 $\bar{k}\in\mathbb{N}$ 有 $\operatorname{diam}(E_{\bar{k}})>\delta$，故
+\[
+\sum_{k=1}^\infty h(\operatorname{diam}(E_k))\geqslant h(\delta)>0.
+\]
+这蕴含 $\mathcal{H}_{h,\infty}^*(E)\geqslant\min\{c,h(\delta)\}>0$，证毕。
+\end{proof}
+
+与\cref{proposition:ch01-Hausdorff零等价} 的精神相同，当 $X=\mathbb{R}^N$ 时，我们有以下 Hausdorff 容量之间的局部等价结果（证明见文献~[102, Lemma 3.4.1 and Proposition 3.4.15]）。
+
+\begin{proposition}\label{proposition:ch01-Hausdorff局部等价}
+设 $\alpha\in[0,N)$，$E\subseteq B(x_0,\rho)\subseteq\mathbb{R}^N$（$x_0\in\mathbb{R}^N$，$\rho>0$）。则存在 $C_1=C_1(\alpha,N)>0$ 使得对任意 $\delta\in(0,\infty)$，
+\begin{align}
+\mathcal{H}_{N-\alpha,\infty}^*(E)\leqslant\mathcal{H}_{N-\alpha,\delta}^*(E)\leqslant C\,\mathcal{H}_{N-\alpha,\infty}^*(E), \label{align:ch01-Hausdorff局部等价}
+\end{align}
+其中
+\[
+C\triangleq C_1\frac{\mathcal{H}_{N-\alpha,\delta}^*(B(x_0,\rho))}{\mathcal{H}_{N-\alpha,\infty}^*(B(x_0,\rho))}
+\max\left\{1,\left(\frac{\rho}{\delta}\right)^\alpha\right\}.
+\]
+\end{proposition}
+
+\begin{lemma}\label{lemma:ch01-Hausdorff维数二分}
+设 $(X,d)$ 为一度量空间。则对任意 $E\subseteq X$ 和 $s,t\in(0,\infty)$：
+\begin{enumerate}[(i)]
+\item 若 $s<t$，则 $\mathcal{H}_s^*(E)<\infty\Rightarrow\mathcal{H}_t^*(E)=0$；
+\item 若 $t<s$，则 $\mathcal{H}_s^*(E)>0\Rightarrow\mathcal{H}_t^*(E)=\infty$。
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+设 $s<t$。由\eqref{align:ch01-Hausdorff-delta}，对任意 $\delta\in(0,\infty)$ 有
+\[
+\mathcal{H}_{t,\delta}^*(E)\leqslant\delta^{t-s}\mathcal{H}_{s,\delta}^*(E).
+\]
+令 $\delta\to0^+$，得：若 $\mathcal{H}_s^*(E)<\infty$，则 $\mathcal{H}_t^*(E)=0$。这就证明了 (i)，交换 $s$ 与 $t$ 即得 (ii)。
+\end{proof}
+
+该引理引出以下定义。
+
+\begin{definition}\label{definition:ch01-Hausdorff维数}
+设 $(X,d)$ 为一度量空间。集合 $E\subseteq X$ 的 Hausdorff 维数为数
+\[
+\dim_H(E)\triangleq \inf\{s>0\mid\mathcal{H}_s^*(E)=0\}=\sup\{s>0\mid\mathcal{H}_s^*(E)=\infty\}.
+\]
+\end{definition}
+
+\begin{remark}\label{remark:ch01-Hausdorff维数与测度}
+若 $X$ 上存在维数为 $s$ 的测度 $\mu$，则 $X$ 的 Hausdorff 维数 $\dim_H(X)=s$，且存在 $c>0$ 使得对所有 $E\in\mathcal{B}(X)$ 有
+\[
+\frac{1}{c}\mathcal{H}_s(E)\leqslant\mu(E)\leqslant c\mathcal{H}_s(E)
+\]
+（例如见文献~[49, 2.10]、[62, 4.11]）。特别地，$\dim_H(\mathbb{R}^N)=N$。
+\end{remark}
+
+关于 Cantor 集的 Hausdorff 维数，我们有以下结果。
+
+\begin{proposition}\label{proposition:ch01-Cantor维数}
+设 $K^N$ 为对应于序列 $\{a^n\}$（$a\in(0,\frac{1}{2})$）的 $N$ 维 Cantor 集。则
+\[
+\dim_H(K^N)=\frac{N\log 2}{\log(1/a)}\qquad(N\in\mathbb{N}).
+\]
+特别地，一维 Cantor 三分集的 Hausdorff 维数为 $\frac{\log 2}{\log 3}$。\cref{proposition:ch01-Cantor维数} 直接由以下结果得到（证明见文献~[2, Theorem 5.3.1]）。
+\end{proposition}
+
+\begin{theorem}\label{theorem:ch01-Cantor测度估计}
+设 $h:[0,\infty)\to[0,\infty)$ 非减且 $\lim_{r\to0^+}h(r)=h(0)=0$。设 $K^N$ 为对应于序列 $\{m_n\}$ 的 $N$ 维 Cantor 集。则存在 $C>0$ 使得
+\begin{align}
+\frac{1}{C}\liminf_{n\to\infty}(2^{nN}h(m_n))\leqslant\mathcal{H}_h(K^N)\leqslant C\liminf_{n\to\infty}(2^{nN}h(m_n)). \label{align:ch01-Cantor估计}
+\end{align}
+\end{theorem}
+
+\begin{proof}[\cref{proposition:ch01-Cantor维数} 的证明]
+在\eqref{align:ch01-Cantor估计} 中取 $h(r)=r^s$ 和 $m_n=a^n$（$a\in(0,\frac{1}{2})$），得
+\[
+\liminf_{n\to\infty}(2^{Ns})^n=\mathcal{H}_s(K^N)=0
+\quad\text{对所有 }s>\frac{N\log 2}{\log(1/a)}.
+\]
+于是由\cref{definition:ch01-Hausdorff维数}，结论成立。
+\end{proof}
+
+我们通过证明 Lebesgue 测度 $\lambda_N$ 与 $N$ 维 Hausdorff 测度 $\mathcal{H}_N$ 之间的以下联系来结束本节。
+
+\begin{theorem}\label{theorem:ch01-Lebesgue-Hausdorff}
+有 $\lambda_N=\frac{\kappa_N}{2^N}\mathcal{H}_N$，其中 $\kappa_N$ 由\eqref{align:ch01-kappaN} 给出（$N\in\mathbb{N}$）。
+\end{theorem}
+
+\begin{remark}\label{remark:ch01-Lebesgue-Hausdorff}
+\cref{theorem:ch01-Lebesgue-Hausdorff} 建立的关系实际上在 Lebesgue 外测度与 Hausdorff 外测度之间成立，即
+\[
+\lambda_N^*=k_N\mathcal{H}_N^*
+\]
+（见文献~[45, Satz III.2.9]）。因此 $E\in\mathcal{L}_N$ 当且仅当 $E$ 是 $\mathcal{H}_N^*$--可测的。此外注意到
+\[
+\frac{\kappa_1}{2}=\frac{\sqrt{\pi}}{2\Gamma(3/2)}=1,
+\]
+故当 $N=1$ 时，Lebesgue 外测度与 Hausdorff 外测度重合。
+\end{remark}
+
+\begin{proof}[\cref{theorem:ch01-Lebesgue-Hausdorff} 的证明]
+令 $W\triangleq (0,1]^N$，$k_N\triangleq [\mathcal{H}_N^*(W)]^{-1}$（注意 $0<\mathcal{H}_N^*(W)<\infty$）。由于 $k_N\mathcal{H}_N^*$ 是度量外测度，由\cref{proposition:ch01-度量外测度等价}，所有 Borel 集都是 $\mathcal{H}_N^*$--可测的。此外，由\cref{remark:ch01-Hausdorff维数与测度}（取 $\mu=\lambda_N$），限制 $k_N\mathcal{H}_N^*|_{\mathcal{B}_N}$ 是局部有限测度，因而是 Borel 测度，它显然满足\cref{proposition:ch01-平移不变刻画} 的假设。由此
+\[
+k_N\mathcal{H}_N^*|_{\mathcal{B}_N}=\lambda_N|_{\mathcal{B}_N},
+\]
+故由\cref{theorem:ch01-测度延拓} 得 $\lambda_N=k_N\mathcal{H}_N$。
+
+还需证 $k_N=\frac{\kappa_N}{2^N}$。由 Vitali 覆盖引理（见\cref{remark:ch01-Vitali精细化}），对任意 $\delta>0$，存在不交闭球序列 $\{B_k\}$，$B_k\subseteq W$，对所有 $k\in\mathbb{N}$ 有 $\operatorname{diam}B_k<\delta$，使得
+\[
+\lambda_N\left(W\setminus\left(\bigcup_{k=1}^\infty B_k\right)\right)=0.
+\]
+于是也有 $\mathcal{H}_N\left(W\setminus\left(\bigcup_{k=1}^\infty B_k\right)\right)=0$。此外，由\eqref{align:ch01-Hausdorff-delta}，对任意 $\delta>0$，有
+\[
+\mathcal{H}_{N,\delta}^*\left(\bigcup_{k=1}^\infty B_k\right)
+\leqslant\sum_{k=1}^\infty[\operatorname{diam}(B_k)]^N
+=\frac{2^N}{\kappa_N}\sum_{k=1}^\infty\lambda_N(B_k)
+=\frac{2^N}{\kappa_N}\lambda_N\left(\bigcup_{k=1}^\infty B_k\right)
+\leqslant\frac{2^N}{\kappa_N}\lambda_N(W)=\frac{2^N}{\kappa_N}.
+\]
+在该不等式中令 $\delta\to0^+$，得
+\begin{align}
+\mathcal{H}_N(W)=\mathcal{H}_N\left(\bigcup_{k=1}^\infty B_k\right)
+=\mathcal{H}_N^*\left(\bigcup_{k=1}^\infty B_k\right)\leqslant\frac{2^N}{\kappa_N}. \label{align:ch01-Lebesgue-Hausdorff上界}
+\end{align}
+
+设 $W\subseteq\bigcup_{k=1}^\infty E_k$，对所有 $k\in\mathbb{N}$ 有 $\operatorname{diam}(E_k)\leqslant\delta$。则由不等式\eqref{align:ch01-等直径}，
+\[
+1=\lambda_N(W)\leqslant\sum_{k=1}^\infty\lambda_N^*(E_k)
+\leqslant\frac{\kappa_N}{2^N}\sum_{k=1}^\infty[\operatorname{diam}(E_k)]^N,
+\]
+故 $\mathcal{H}_N(W)\geqslant\frac{2^N}{\kappa_N}$。该不等式与\eqref{align:ch01-Lebesgue-Hausdorff上界} 证明了
+\[
+k_N=[\mathcal{H}_N^*(W)]^{-1}=\frac{\kappa_N}{2^N},
+\]
+证毕。
+\end{proof}
+
+
+
+
+\end{document}

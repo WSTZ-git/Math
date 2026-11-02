@@ -1,0 +1,444 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{向量 Sobolev 空间}\label{section:ch04-向量Sobolev}
+
+本节主要目的是证明两个有用的嵌入结果（\cref{theorem:ch04-Aubin}, \cref{theorem:ch04-Simon}）。
+
+\subsection{向量分布}\label{subsection:ch04-向量分布}
+
+设 $U\subseteq\mathbb{R}^N$ 开。设 $\mathcal{D}(U)$ 为 $U$ 上的检验函数空间，$Y$ 为赋范数 $\|\cdot\|_Y$ 的 Banach 空间。
+
+\begin{definition}[向量分布]\label{definition:ch04-向量分布}
+从 $U$ 到 $Y$ 的向量分布空间（记为 $\mathcal{D}'(U;Y)$）是连续线性映射 $T:\mathcal{D}(U)\to Y$ 的空间。即 $T\in\mathcal{D}'(U;Y)$ 若 $T:\mathcal{D}(U)\to Y$ 线性，且对任意在 $\mathcal{D}(U)$ 中 $T\zeta_k\to\zeta$ 的序列，有 $\|\langle T,\zeta_k\rangle-\langle T,\zeta\rangle\|_Y\to0$。
+\end{definition}
+
+此后我们使用记号 $T\zeta\equiv\langle T,\zeta\rangle\in Y$（$T\in\mathcal{D}'(U;Y)$，$\zeta\in\mathcal{D}(U)$）。我们还令 $\mathcal{D}'(U;\mathbb{R})\equiv\mathcal{D}^*(U)$。
+
+\begin{remark}\label{remark:ch04-向量分布例子}
+对每个向量测度 $\mu:\mathcal{B}(U)\to Y$，对应 $T_\mu\in\mathcal{D}'(U;Y)$，定义为
+\begin{align*}
+\langle T_\mu,\zeta\rangle\equiv\langle\mu,\zeta\rangle=\int_U\zeta\,\mathrm{d}\mu\quad(\zeta\in C_c^\infty(U)),
+\end{align*}
+且由不等式\eqref{align:ch04-4.60}有
+\begin{align*}
+\|\langle T_\mu,\zeta\rangle\|_Y\leqslant\int_U|\zeta|\,\mathrm{d}|\mu|\leqslant\|\zeta\|_\infty|\mu|(U).
+\end{align*}
+特别地，由\cref{remark:ch04-区域Lp}(ii)，对每个 $f\in L^1_{\mathrm{loc}}(U;Y)$，对应 $T_f\in\mathcal{D}'(U;Y)$，使
+\begin{align*}
+\langle T_f,\zeta\rangle=\int_U f\zeta\,\mathrm{d}x\quad(\zeta\in C_c^\infty(U)),
+\end{align*}
+\begin{align*}
+\|\langle T_f,\zeta\rangle\|_Y\leqslant\int_U\|f\|_Y|\zeta|\,\mathrm{d}x\leqslant\|\zeta\|_\infty\int_U\|f\|_Y\,\mathrm{d}x.
+\end{align*}
+\end{remark}
+
+\begin{definition}\label{definition:ch04-分布收敛}
+序列 $\{T_k\}\subseteq\mathcal{D}'(U;Y)$ 在 $\mathcal{D}'(U;Y)$ 中收敛于 $T\in\mathcal{D}'(U;Y)$（记为 $T_k\to T$ 在 $\mathcal{D}'(U;Y)$ 中），若对所有 $\zeta\in C_c^\infty(U)$ 有 $\|\langle T_k,\zeta\rangle-\langle T,\zeta\rangle\|_Y\to0$。
+\end{definition}
+
+\begin{definition}\label{definition:ch04-分布导数}
+设 $T\in\mathcal{D}'(U;Y)$。$T$ 的 $\alpha$ 阶分布导数，记为 $D^\alpha T$（$\alpha\in\mathbb{N}^N$），指向量分布 $D^\alpha T\in\mathcal{D}'(U;Y)$，
+\begin{align*}
+\langle D^\alpha T,\zeta\rangle\triangleq (-1)^{|\alpha|}\langle T,D^\alpha\zeta\rangle\quad\text{对所有 }\zeta\in C_c^\infty(U).
+\end{align*}
+\end{definition}
+
+我们对标量情形 $Y=\mathbb{R}$ 使用相同的分布导数记号，例如 $N=1$ 时 $\mathrm{d}T/\mathrm{d}x\equiv D_1T$。
+
+\begin{definition}\label{definition:ch04-分布卷积}
+$T\in\mathcal{D}'(\mathbb{R};Y)$ 与 $\rho\in C_c^\infty(\mathbb{R})$ 的卷积为
+\begin{align*}
+\langle T*\rho,\zeta\rangle\triangleq \langle T,\zeta*\hat\rho\rangle\quad\text{对所有 }\zeta\in C_c^\infty(U),
+\end{align*}
+其中 $\hat\rho(x)\triangleq \rho(-x)$（$x\in\mathbb{R}$）。
+
+若 $T=f\in L^1_{\mathrm{loc}}(\mathbb{R};Y)$，则易见
+\begin{align*}
+T*\rho=\int_{\mathbb{R}}\rho(\cdot-y)f(y)\,\mathrm{d}y.
+\end{align*}
+\end{definition}
+
+若 $\rho_\epsilon$ 为标准磨光子，则有如下结果。
+
+\begin{proposition}\label{proposition:ch04-磨光逼近}
+(i) 设 $T\in\mathcal{D}'(\mathbb{R};Y)$。则 $T*\rho_\epsilon\in C^\infty(\mathbb{R};Y)$，且当 $\epsilon\to0^+$ 时 $(D^\alpha T)*\rho_\epsilon\to D^\alpha T$ 在 $\mathcal{D}'(\mathbb{R};Y)$ 中（$\alpha\in\mathbb{N}^N$）。
+
+(ii) 设 $f\in L^p(\mathbb{R}^N;Y)$（$p\in[1,\infty)$）。则 $\{\rho_\epsilon*f\}\subseteq L^p(\mathbb{R}^N;Y)\cap C^\infty(\mathbb{R}^N;Y)$，对所有 $\epsilon>0$ 有 $\|\rho_\epsilon*f\|_p\leqslant\|f\|_p$，且当 $\epsilon\to0^+$ 时 $\rho_\epsilon*f\to f$ 在 $L^p(\mathbb{R}^N;Y)$ 中。
+\end{proposition}
+
+\begin{definition}\label{definition:ch04-分布像}
+设 $Y,Z$ 为 Banach 空间，$L\in\mathcal{L}(Y;Z)$。$T\in\mathcal{D}'(U;Y)$ 在 $L$ 下的像是向量分布 $L(T)\in\mathcal{D}'(U;Z)$，定义为
+\begin{align*}
+\langle L(T),\zeta\rangle\triangleq L(\langle T,\zeta\rangle)\quad\text{对所有 }\zeta\in C_c^\infty(U).
+\end{align*}
+\end{definition}
+
+\begin{remark}\label{remark:ch04-分布像性质}
+下列断言易验证：
+(i) 若 $T_k\to T$ 在 $\mathcal{D}'(U;Y)$ 中，则 $L(T_k)\to L(T)$ 在 $\mathcal{D}'(U;Z)$ 中；
+(ii) 对任意 $T\in\mathcal{D}'(U;Y)$，$D^\alpha(L(T))=L(D^\alpha T)\in\mathcal{D}'(U;Z)$。
+\end{remark}
+
+\subsection{定义与一般性质}\label{subsection:ch04-向量Sobolev定义}
+
+\begin{definition}\label{definition:ch04-向量Sobolev}
+设 $U\subseteq\mathbb{R}^N$ 开，$m\in\mathbb{N}$，$p\in[1,\infty]$。函数 $f\in L^p(U;Y)$ 属于 Sobolev 空间 $W^{m,p}(U;Y)$，若对所有 $\alpha\in\mathbb{N}^N$，$|\alpha|\leqslant m$，有 $D^\alpha f\in L^p(U;Y)$。空间 $W^{m,p}_{\mathrm{loc}}(U;Y)$ 通过把 $L^p(U;Y)$ 替换为 $L^p_{\mathrm{loc}}(U;Y)$ 来定义。
+\end{definition}
+
+我们令 $W^{m,p}(U;\mathbb{R})\equiv W^{m,p}(U)$。我们使用与标量情形相同的记号（见\cref{subsection:ch03-Sobolev定义}），例如令 $H^m(U;Y)\equiv W^{m,2}(U;Y)$。
+
+空间 $W^{m,p}(U;Y)$ 是赋范向量空间，形式上赋以与标量情形相同的范数 $\|\cdot\|_{m,p}$（见\eqref{align:ch03-3.2a}），其中
+\begin{align*}
+\|D^\alpha f\|_p^p=\int_U\|D^\alpha f\|_Y^p\,\mathrm{d}x\quad\text{若 }p\in[1,\infty),
+\end{align*}
+\begin{align*}
+\|D^\alpha f\|_\infty=\operatorname*{ess\,sup}\|D^\alpha f\|_Y\quad\text{若 }p=\infty.
+\end{align*}
+赋以此范数的空间 $W^{m,p}(U;Y)$ 是 Banach 空间，易证。
+
+如下结果是\cref{theorem:ch03-Sobolev基本}的对应。
+
+\begin{theorem}\label{theorem:ch04-Sobolev可分自反}
+设 $Y$ 可分。则：
+\begin{enumerate}[(i)]
+\item\label{item:ch04-Sobolev可分自反-i} 若 $p\in[1,\infty)$，则 $W^{m,p}(U;Y)$ 可分；
+\item\label{item:ch04-Sobolev可分自反-ii} 若 $p\in(1,\infty)$ 且 $Y$ 自反，则 $W^{m,p}(U;Y)$ 亦自反。
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+为简单计，只考虑 $N=m=1$ 的情形。设 $I\subseteq\mathbb{R}$ 为开区间。如\cref{proposition:ch03-Sobolev刻画}的证明中那样，令 $X\triangleq [L^p(I;Y)]^2$，赋范数
+\begin{align*}
+(f,g)\mapsto\|(f,g)\|_X\triangleq (\|f\|_p^p+\|g\|_p^p)^{1/p}\quad(p\in[1,\infty)).
+\end{align*}
+显然，映射 $T:W^{1,p}(I;Y)\to[L^p(I;Y)]^2$，$T(f)\triangleq (f,\mathrm{d}f/\mathrm{d}x)$，是等距同构，且 $Z\triangleq T(W^{1,p}(I;Y))\subseteq X$ 为闭子空间，从而是赋范数 $\|\cdot\|_X$ 的 Banach 空间。还注意 $(f,g)\in Z$ 当且仅当 $\mathrm{d}f/\mathrm{d}x=g$。
+
+(i) 由于 $Y$ 可分，由\cref{theorem:ch04-Lp可分}空间 $L^p(I;Y)$ 可分，从而 $X$ 与 $Z$ 可分。设 $D\subseteq Z$ 可数且稠密，令 $E\triangleq T^{-1}(D)$。设 $h\in W^{1,p}(I;Y)$。则 $Th=(h,\mathrm{d}h/\mathrm{d}x)\in Z$。由 $D$ 的稠密性，存在序列 $\{(f_k,g_k)\}\subseteq D$ 使 $\lim_{k\to\infty}\|(f_k,g_k)-Th\|_X=0$。于是对任意 $k\in\mathbb{N}$，有 $\mathrm{d}f_k/\mathrm{d}x=g_k$，$\{f_k\}\subseteq E$，且
+\begin{align*}
+\lim_{k\to\infty}\|(f_k,g_k)-Th\|_X^p=\lim_{k\to\infty}\Big(\|f_k-h\|_p^p+\Big\|\frac{\mathrm{d}f_k}{\mathrm{d}x}-\frac{\mathrm{d}h}{\mathrm{d}x}\Big\|_p^p\Big)=0,
+\end{align*}
+故 $f_k\to h$ 在 $W^{1,p}(I;Y)$ 中，断言 (i) 得证。
+
+(ii) 若 $Y$ 自反且 $p\in(1,\infty)$，则空间 $L^p(I;Y)$，从而 $X$ 与 $Z$，亦自反。由于 $W^{1,p}(I;Y)$ 同构于 $Z$，断言 (ii) 得证。
+\end{proof}
+
+\begin{remark}\label{remark:ch04-Sobolev算子}
+设 $Y,Z$ 为 Banach 空间，$L\in\mathcal{L}(Y;Z)$。对任意 $f\in W^{m,p}(U;Y)$（$m\in\mathbb{N}$，$p\in[1,\infty]$），令
+\begin{align*}
+l(f)(x)\triangleq L(f(x,\cdot))\quad\text{对几乎所有 }x\in U.
+\end{align*}
+由于 $D_y^\alpha(l(f)(x))=L(D_y^\alpha f(x,\cdot))$，有 $l(f)\in W^{m,p}(U;Z)$（见\cref{remark:ch04-分布像性质}(ii)）。由此 $l\in\mathcal{L}(W^{m,p}(U;Y);W^{m,p}(U;Z))$。
+
+例如，设 $U=I\subseteq\mathbb{R}$ 为开区间，$V\subseteq\mathbb{R}^N$ 开，$L:L^1(V)\to\mathbb{R}$，$L(g)=\int_V g\,\mathrm{d}x$（$g\in L^1(V)$）。则映射
+\begin{align*}
+l:W^{1,p}(I;L^1(V))\to W^{1,p}(I),\quad l(f)(x)\triangleq \int_V f(x,y)\,\mathrm{d}y\quad\text{对 }\lambda\text{-几乎所有 }x\in I,
+\end{align*}
+线性连续。此外，对 $\lambda$-几乎所有 $x\in I$，
+\begin{align*}
+\frac{\mathrm{d}}{\mathrm{d}x}\int_V f(x,y)\,\mathrm{d}y=\int_V\frac{\partial f}{\partial x}(x,y)\,\mathrm{d}y.
+\end{align*}
+\end{remark}
+
+当 $Y$ 为 Lebesgue 空间时，我们有 $W^{m,p}(U;Y)$ 的如下刻画，与\cref{proposition:ch04-LpULpV}、\cref{proposition:ch04-Sobolev嵌入}类似。我们只处理 $U$ 为开区间 $I\subseteq\mathbb{R}$ 的情形。设 $V\subseteq\mathbb{R}^N$ 开。由\cref{corollary:ch04-Lp乘积}，空间 $L^1_{\mathrm{loc}}(I\times V)$ 可等同于 $L^1_{\mathrm{loc}}(I;L^1_{\mathrm{loc}}(V))$。若 $f\in L^1_{\mathrm{loc}}(I\times V)$，则我们区分分布导数 $\partial f/\partial x\in\mathcal{D}^*(I\times V)$，
+\begin{align}
+\Big\langle\frac{\partial f}{\partial x},\zeta\Big\rangle=-\int_{I\times V}f\frac{\partial\zeta}{\partial x}\,\mathrm{d}x\mathrm{d}y\quad\text{对所有 }\zeta\in C_c^\infty(I\times V), \label{align:ch04-4.126}
+\end{align}
+与分布导数 $\mathrm{d}f/\mathrm{d}x\in\mathcal{D}'(I;L^1_{\mathrm{loc}}(V))$，
+\begin{align}
+\Big\langle\frac{\mathrm{d}f}{\mathrm{d}x},\xi\Big\rangle=-\int_I f(x,\cdot)\xi'(x)\,\mathrm{d}x\quad\text{对所有 }\xi\in C_c^\infty(I). \label{align:ch04-4.127}
+\end{align}
+
+如下结果的证明与\cref{proposition:ch04-Sobolev嵌入}类似，故从略（细节见文献 [43, 命题 2.6.1]）。
+
+\begin{proposition}\label{proposition:ch04-区间Sobolev}
+设 $I\subseteq\mathbb{R}$ 为开区间，$V\subseteq\mathbb{R}^N$ 开。设 $p,r\in[1,\infty)$。则下列命题等价：
+\begin{enumerate}[(i)]
+\item\label{item:ch04-区间Sobolev-i} $f\in W^{1,p}(I;L^r(V))$；
+\item\label{item:ch04-区间Sobolev-ii} $f,\partial f/\partial x\in L^1_{\mathrm{loc}}(I\times V)$，且
+\begin{align}
+\int_I\Big(\int_V|f(x,y)|^r\,\mathrm{d}y\Big)^{p/r}\mathrm{d}x<\infty,\quad
+\int_I\Big(\int_V\Big|\frac{\partial f}{\partial x}(x,y)\Big|^r\,\mathrm{d}y\Big)^{p/r}\mathrm{d}x<\infty. \label{align:ch04-4.128}
+\end{align}
+此外，对 $\lambda$-几乎所有 $x\in I$，
+\begin{align}
+\frac{\mathrm{d}f}{\mathrm{d}x}(x)=\frac{\partial f}{\partial x}(x,\cdot)\quad\text{在 }V\text{ 中几乎处处成立}. \label{align:ch04-4.129}
+\end{align}
+\end{enumerate}
+\end{proposition}
+
+\subsection{连续嵌入}\label{subsection:ch04-连续嵌入}
+
+设 $W,Y$ 为 Banach 空间。我们记 $W\hookrightarrow Y$ 若 $W$ 连续嵌入 $Y$，$W\overset{c}{\hookrightarrow}Y$ 若嵌入紧。我们将证明如下结果。
+
+\begin{theorem}\label{theorem:ch04-连续嵌入}
+设 $I\subseteq\mathbb{R}$ 为开区间。则：
+\begin{enumerate}[(i)]
+\item\label{item:ch04-连续嵌入-i} 对任意 $p\in(1,\infty)$，$W^{1,p}(I;Y)\hookrightarrow C^{1-1/p}(I;Y)$；
+\item\label{item:ch04-连续嵌入-ii} $W^{1,\infty}(I;Y)\hookrightarrow\mathrm{Lip}(I;Y)$。
+\end{enumerate}
+\end{theorem}
+
+为证\cref{theorem:ch04-连续嵌入}，我们必须证明：
+(i) 对任意 $p\in(1,\infty)$，每个 $f\in W^{1,p}(I;Y)$ 都有代表元 $\tilde f\in C^{1-1/p}(I;Y)$，且存在 $M_0>0$ 使
+\begin{align}
+\|\tilde f\|_{C^{0,1-1/p}(I;Y)}\leqslant M_0\|f\|_{1,p}; \label{align:ch04-4.130a}
+\end{align}
+(ii) 每个 $f\in W^{1,\infty}(I;Y)$ 都有代表元 $\tilde f\in\mathrm{Lip}(I;Y)$，且存在 $M_0>0$ 使
+\begin{align}
+\|\tilde f\|_{\mathrm{Lip}(I;Y)}\leqslant M_0\|f\|_{1,\infty}. \label{align:ch04-4.130b}
+\end{align}
+
+为此，我们需要如下初等引理。对任意 $g\in L^1_{\mathrm{loc}}(I;Y)$，令
+\begin{align*}
+\int_{x_1}^{x_2}g(x)\,\mathrm{d}x\triangleq 
+\begin{cases}
+\int_{(x_1,x_2)}g\,\mathrm{d}x & \text{若 }x_1<x_2,\\
+-\int_{(x_2,x_1)}g\,\mathrm{d}x & \text{若 }x_1>x_2.
+\end{cases}
+\end{align*}
+易验证
+\begin{align}
+\sum_{j=1}^{p-1}\int_{x_j}^{x_{j+1}}g(x)\,\mathrm{d}x=\int_{x_1}^{x_p}g(x)\,\mathrm{d}x\quad(x_1,\cdots ,x_p\in I). \label{align:ch04-4.131}
+\end{align}
+
+\begin{lemma}\label{lemma:ch04-绝对连续代表}
+设 $f\in W^{1,p}(I;Y)$（$p\in[1,\infty]$）。则
+\begin{enumerate}[(i)]
+\item\label{item:ch04-绝对连续代表-i} $f$ 有一致连续代表元 $\tilde f$；
+\item\label{item:ch04-绝对连续代表-ii} 对任意 $x_1,x_2\in I$，有
+\begin{align}
+\tilde f(x_2)-\tilde f(x_1)=\int_{x_1}^{x_2}\frac{\mathrm{d}f}{\mathrm{d}x}(x)\,\mathrm{d}x. \label{align:ch04-4.132}
+\end{align}
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+令 $g(\xi)\triangleq \int_{\bar x}^{\xi}\frac{\mathrm{d}f}{\mathrm{d}x}(x)\,\mathrm{d}x$（$\bar x,\xi\in I$）。此定义良定，因为 $\mathrm{d}f/\mathrm{d}x\in L^p(I;Y)\subseteq L^1_{\mathrm{loc}}(I;Y)$。此外，由\eqref{align:ch04-4.131}有
+\begin{align*}
+\|g(x_2)-g(x_1)\|_Y\leqslant\Big|\int_{x_1}^{x_2}\Big\|\frac{\mathrm{d}f}{\mathrm{d}x}\Big\|_Y(x)\,\mathrm{d}x\Big|.
+\end{align*}
+由于 $\|\mathrm{d}f/\mathrm{d}x\|_Y\in L^1_{\mathrm{loc}}(I)$，由上述不等式 $g$ 在 $I$ 中一致连续，从而特别地 $g\in L^1_{\mathrm{loc}}(I;Y)$。易验证其分布导数 $\mathrm{d}g/\mathrm{d}x$ 等于 $\mathrm{d}f/\mathrm{d}x$。显然这蕴含存在 $y\in Y$ 使在 $\mathcal{D}'(I;Y)$ 中 $f=g+y$（例如见文献 [43, 命题 2.1.2]），从而 $f\in L^1_{\mathrm{loc}}(I;Y)$。于是 $\tilde f\triangleq g+y$ 是 $f$ 的一致连续代表元，显然满足\eqref{align:ch04-4.132}。
+\end{proof}
+
+\begin{proof}[\textbf{证明\cref{theorem:ch04-连续嵌入}}]
+设 $p\in(1,\infty)$。由\eqref{align:ch04-4.132}得
+\begin{align}
+\|\tilde f(x_2)-\tilde f(x_1)\|_Y\leqslant\Big|\int_{x_1}^{x_2}\Big\|\frac{\mathrm{d}f(x)}{\mathrm{d}x}\Big\|_Y\,\mathrm{d}x\Big|
+\leqslant\Big\|\frac{\mathrm{d}f}{\mathrm{d}x}\Big\|_p|x_2-x_1|^{1-1/p}. \label{align:ch04-4.133}
+\end{align}
+
+现注意函数 $x\mapsto\|\tilde f(x)\|_Y$ 在 $I$ 中一致连续，从而 $\|\tilde f(\cdot)\|_Y\in C_b(I)$。设 $x_0\in I$ 为极大点，即 $\|\tilde f(x_0)\|_Y=\|\tilde f\|_\infty$。则由\eqref{align:ch04-4.132}得对所有 $x\in I$ 有
+\begin{align}
+\tilde f(x_0)=\tilde f(x)+\int_{x_0}^x\frac{\mathrm{d}f}{\mathrm{d}x}(x)\,\mathrm{d}x. \label{align:ch04-4.134}
+\end{align}
+固定 $a\in(0,\min\{1,\lambda(I)/2\})$。区间 $(x_0-a,x_0)$ 与 $(x_0,x_0+a)$ 中至少一个含于 $I$。设 $(x_0,x_0+a)\subseteq I$。则由\eqref{align:ch04-4.134}得对所有 $x\in(x_0,x_0+a)$ 有
+\begin{align*}
+\|\tilde f\|_\infty\leqslant\|\tilde f(x)\|_Y+\int_{x_0}^x\Big\|\frac{\mathrm{d}f}{\mathrm{d}x}(x)\Big\|_Y\mathrm{d}x.
+\end{align*}
+在 $I_a\triangleq (x_0,x_0+a)$ 上积分上述不等式，对任意 $p\in(1,\infty)$，得
+\begin{align}
+\|\tilde f\|_\infty&\leqslant\frac1a\|f\|_{L^1(I_a;Y)}+\Big\|\frac{\mathrm{d}f}{\mathrm{d}x}\Big\|_{L^1(I_a;Y)}
+\leqslant a^{-1/p}\|f\|_p+a^{1-1/p}\Big\|\frac{\mathrm{d}f}{\mathrm{d}x}\Big\|_p. \label{align:ch04-4.135}
+\end{align}
+由\eqref{align:ch04-4.133}与\eqref{align:ch04-4.135}适当选取 $M_0>0$，得\eqref{align:ch04-4.130a}。这就证明了 $p\in(1,\infty)$ 的结果。若 $p=\infty$，则由\eqref{align:ch04-4.132}得
+\begin{align}
+\|\tilde f(x_2)-\tilde f(x_1)\|_Y\leqslant\Big|\int_{x_1}^{x_2}\Big\|\frac{\mathrm{d}f}{\mathrm{d}x}\Big\|_Y(x)\,\mathrm{d}x\Big|
+\leqslant\Big\|\frac{\mathrm{d}f}{\mathrm{d}x}\Big\|_\infty|x_2-x_1|\quad\text{若 }p=\infty. \label{align:ch04-4.136}
+\end{align}
+由\eqref{align:ch04-4.136}得\eqref{align:ch04-4.130b}，其中 $M_0=1$，故结论成立。
+\end{proof}
+
+为后文起见，我们陈述如下延拓结果（证明见文献 [43, 推论 2.3.1]）。
+
+\begin{proposition}\label{proposition:ch04-延拓}
+设 $I\subseteq\mathbb{R}$ 为有界开区间。则存在线性有界算子 $P:L^1(I;Y)\to L^1(\mathbb{R};Y)$，使：
+\begin{enumerate}[(i)]
+\item\label{item:ch04-延拓-i} 对几乎所有 $x\in I$ 有 $(Pf)(x)=f(x)$；
+\item\label{item:ch04-延拓-ii} 存在 $M_1>0$（只依赖于 $\lambda(I)$），使对所有 $p\in[1,\infty]$ 与任意 Banach 空间 $Z$，
+\begin{align}
+f\in L^1(I;Y)\cap L^p(I;Z)\Rightarrow Pf\in L^p(\mathbb{R};Z),\quad \|Pf\|_{L^p(\mathbb{R};Z)}\leqslant M_1\|f\|_{L^p(I;Z)}, \label{align:ch04-4.137a}
+\end{align}
+\begin{align}
+f\in L^1(I;Y)\cap W^{1,p}(I;Z)\Rightarrow Pf\in W^{1,p}(\mathbb{R};Z),\quad \|Pf\|_{W^{1,p}(\mathbb{R};Z)}\leqslant M_1\|f\|_{W^{1,p}(I;Z)}. \label{align:ch04-4.137b}
+\end{align}
+\end{enumerate}
+\end{proposition}
+
+\subsection{紧嵌入}\label{subsection:ch04-紧嵌入}
+
+我们证明如下结果（见文献 [94]）。
+
+\begin{theorem}[Aubin]\label{theorem:ch04-Aubin}
+设 $I\subseteq\mathbb{R}$ 为有界开区间，$p\in(1,\infty]$，$r\in[1,\infty]$。设 $W,Y,Z$ 为 Banach 空间，满足 $W\overset{c}{\hookrightarrow}Y\hookrightarrow Z$。设 $E\subseteq W^{1,p}(I;Z)\cap L^r(I;W)$ 在两空间中都有界，即
+\begin{align}
+\sup_{f\in E}\big(\|f\|_{W^{1,p}(I;Z)}+\|f\|_{L^r(I;W)}\big)<\infty. \label{align:ch04-4.138}
+\end{align}
+则 $E$ 在 $C(I;Z)$ 与 $L^r(I;Y)$ 中都相对紧。
+\end{theorem}
+
+\begin{theorem}[Simon]\label{theorem:ch04-Simon}
+设 $I\subseteq\mathbb{R}$ 为有界开区间，$r\in[1,\infty)$。设 $W,Y,Z$ 为 Banach 空间，满足 $W\overset{c}{\hookrightarrow}Y\hookrightarrow Z$。设 $E\subseteq W^{1,1}(I;Z)\cap L^r(I;W)$ 在两空间中都有界，即
+\begin{align}
+\sup_{f\in E}\big(\|f\|_{W^{1,1}(I;Z)}+\|f\|_{L^r(I;W)}\big)<\infty. \label{align:ch04-4.139}
+\end{align}
+则 $E$ 在 $L^p(I;Z)$（$p\in[1,\infty)$）与 $L^r(I;Y)$ 中都相对紧。
+\end{theorem}
+
+为证\cref{theorem:ch04-Aubin}与\cref{theorem:ch04-Simon}，我们需要两个预备引理。
+
+\begin{lemma}\label{lemma:ch04-磨光紧}
+设 $I\subseteq\mathbb{R}$ 为有界开区间，$p\in[1,\infty]$。设 $W,Y,Z$ 为 Banach 空间，满足 $W\overset{c}{\hookrightarrow}Y\hookrightarrow Z$。设 $E\subseteq W^{1,p}(I;Z)\cap L^r(I;W)$ 满足\eqref{align:ch04-4.138}。对每个 $f\in E$ 与 $k\in\mathbb{N}$，令
+\begin{align*}
+f_k:I\to Z,\quad f_k\triangleq (Pf)*\rho_{1/k}|_I\ (k\in\mathbb{N}),
+\end{align*}
+其中 $P:L^1(I;Z)\to L^1(\mathbb{R};Z)$ 为\cref{proposition:ch04-延拓}中的延拓算子，$\rho_{1/k}$ 为标准磨光子。则对所有 $k\in\mathbb{N}$，集 $E_k\triangleq \{f_k\mid f\in E\}$ 在 $C(I;Z)$ 中相对紧。
+\end{lemma}
+
+\begin{proof}
+固定 $k\in\mathbb{N}$。首先注意，对任意 $f\in E\subseteq W^{1,p}(I;Z)\cap L^r(I;W)$，有 $Pf\in W^{1,p}(\mathbb{R};Z)\cap L^r(\mathbb{R};W)$，从而 $f_k\in C^\infty(I;Z)$。若我们证明 (a) 集 $E_k\subseteq C(I;Z)$ 等度连续，且 (b) 对任意 $x\in I$，集 $E_{k,x}\triangleq \{f_k(x)\mid f\in E\}$ 在 $Z$ 中相对紧，则由 Ascoli--Arzelà 定理得结果。
+
+(a) 我们必须证明，对任意 $\epsilon>0$，存在 $\delta>0$，使对所有 $f\in E$ 与满足 $|x_1-x_2|<\delta$ 的任意 $x_1,x_2\in I$，有 $|f_k(x_1)-f_k(x_2)|<\epsilon$。为此，只需证明集 $F_k\triangleq \{f_k'\mid f_k\in E_k\}$ 在 $C(I;Z)$ 中有界，即存在 $C_k>0$ 使
+\begin{align}
+\|f_k'\|_{C(I;Z)}\leqslant C_k\quad\text{对所有 }f\in E. \label{align:ch04-4.140}
+\end{align}
+
+事实上，对任意固定 $f\in E$，由定义 $f_k(x)=\int_{\mathbb{R}}(Pf)(y)\rho_{1/k}(x-y)\,\mathrm{d}y$，从而 $f_k'(x)=\int_{\mathbb{R}}(Pf)(y)\rho_{1/k}'(x-y)\,\mathrm{d}y$。于是由\eqref{align:ch04-4.137a}，
+\begin{align*}
+\|f_k'(x)\|_Z\leqslant\|\rho_{1/k}'\|_{L^q(\mathbb{R})}\|Pf\|_{L^p(\mathbb{R};Z)}
+\leqslant C\|\rho_{1/k}'\|_{L^q(\mathbb{R})}\|f\|_{L^p(I;Z)},
+\end{align*}
+其中 $q$ 表示 $p$ 的 Hölder 共轭。对 $x\in I$ 取上确界，并利用\eqref{align:ch04-4.138}，由上述不等式得 (a) 满足。
+
+(b) 由\eqref{align:ch04-4.137a}，对任意 $x\in I$，有
+\begin{align*}
+\|f_k(x)\|_W\leqslant\|\rho_{1/k}\|_{L^s(\mathbb{R})}\|Pf\|_{L^r(\mathbb{R};Z)}
+\leqslant C\|\rho_{1/k}\|_{L^s(\mathbb{R})}\|f\|_{L^r(I;W)},
+\end{align*}
+其中 $s$ 表示 $r$ 的 Hölder 共轭。于是由\eqref{align:ch04-4.138}，集 $E_{k,x}\triangleq \{f_k(x)\mid f\in E\}$ 在 $W$ 中有界，从而在 $Z$ 中相对紧。这就证明了 (b)，故结论成立。
+\end{proof}
+
+\begin{lemma}\label{lemma:ch04-插值不等式}
+设 $W,Y,Z$ 为 Banach 空间，满足 $W\overset{c}{\hookrightarrow}Y\hookrightarrow Z$。则对任意 $\eta>0$，存在 $C_\eta>0$，使对所有 $f\in W$，有
+\begin{align}
+\|f\|_Y\leqslant\eta\|f\|_W+C_\eta\|f\|_Z. \label{align:ch04-4.141}
+\end{align}
+\end{lemma}
+
+\begin{proof}
+反证，设存在 $\eta>0$，使对每个 $k\in\mathbb{N}$，存在 $f_k\in W$ 满足
+\begin{align}
+\|f_k\|_Y>\eta\|f_k\|_W+k\|f_k\|_Z. \label{align:ch04-4.142}
+\end{align}
+令 $g_k\triangleq f_k/\|f_k\|_Y$（$k\in\mathbb{N}$）。则对所有 $k\in\mathbb{N}$ 有 $\|g_k\|_Y=1$，从而由\eqref{align:ch04-4.142}
+\begin{align}
+\|g_k\|_W\leqslant\frac1\eta,\qquad \|g_k\|_Z\leqslant\frac1k. \label{align:ch04-4.143}
+\end{align}
+由\eqref{align:ch04-4.143}中第一式，序列 $\{g_k\}$ 在 $W$ 中有界。于是由于 $W\overset{c}{\hookrightarrow}Y\hookrightarrow Z$，存在 $\{g_k\}$ 的子列（不重新标号）与 $g\in Z$，使 $\lim_{k\to\infty}\|g_k-g\|_Y=\lim_{k\to\infty}\|g_k-g\|_Z=0$。由\eqref{align:ch04-4.143}中第二式 $g=0$，从而 $\lim_{k\to\infty}\|g_k\|_Y=0$。这与对所有 $k\in\mathbb{N}$ 有 $\|g_k\|_Y=1$ 矛盾，故结论成立。
+\end{proof}
+
+\begin{proof}[\textbf{证明\cref{theorem:ch04-Aubin}}]
+(i) 证 $E$ 在 $C(I;Z)$ 中相对紧。为此，首先证明
+\begin{align}
+\lim_{k\to\infty}\sup_{f\in E}\|f_k-f\|_{C(I;Z)}=0, \label{align:ch04-4.144}
+\end{align}
+其中 $\{f_k\}$ 为\cref{lemma:ch04-磨光紧}中与 $f$ 关联的序列。对任意 $x\in I$，$(Pf)(x)=f(x)$，从而
+\begin{align}
+\|f_k(x)-f(x)\|_Z&=\Big\|\int_{\mathbb{R}}[(Pf)(x-y)-(Pf)(x)]\rho_{1/k}(y)\,\mathrm{d}y\Big\|_Z\nonumber\\
+&\leqslant\int_{\mathbb{R}}\|(Pf)(x-y)-(Pf)(x)\|_Z\rho_{1/k}(y)\,\mathrm{d}y. \label{align:ch04-4.145}
+\end{align}
+由\eqref{align:ch04-4.130a}与\eqref{align:ch04-4.137b}，由\eqref{align:ch04-4.145}得
+\begin{align*}
+\|f_k(x)-f(x)\|_Z\leqslant M_0\|Pf\|_{W^{1,p}(\mathbb{R};Z)}\int_{(-1/k,1/k)}|y|^{1-1/p}\rho_{1/k}(y)\,\mathrm{d}y
+\leqslant\frac{M_0M_1}{k^{1-1/p}}\|f\|_{W^{1,p}(I;Z)}.
+\end{align*}
+因此
+\begin{align*}
+\sup_{f\in E}\|f_k-f\|_{C(I;Z)}\leqslant\frac{M_0M_1}{k^{1-1/p}}\sup_{f\in E}\|f\|_{W^{1,p}(I;Z)}.
+\end{align*}
+由\eqref{align:ch04-4.138}，在此不等式中令 $k\to\infty$，得\eqref{align:ch04-4.144}。
+
+固定 $\epsilon>0$。由\eqref{align:ch04-4.144}，存在 $m\in\mathbb{N}$，使对所有 $f\in E$ 有
+\begin{align}
+\|f\|_{C(I;Z)}\leqslant\|f_m\|_{C(I;Z)}+\frac{\epsilon}{3}. \label{align:ch04-4.146}
+\end{align}
+于是 $E\subseteq F_m\triangleq \{g\in C(I;Z)\mid d(g,E_m)<\epsilon/3\}$（回顾 $E_m\triangleq \{f_m\mid f\in E\}$；见\cref{lemma:ch04-磨光紧}）。另一方面，由于由\cref{lemma:ch04-磨光紧} $E_m$ 在 $C(I;Z)$ 中相对紧，存在 $n_m\in\mathbb{N}$ 与 $f_m^{(1)},\cdots ,f_m^{(n_m)}\in E_m$（对应 $f^{(1)},\cdots ,f^{(n_m)}\in E$），使
+\begin{align}
+E_m\subseteq\bigcup_{l=1}^{n_m}B\Big(f_m^{(l)},\frac{\epsilon}{3}\Big)\subseteq\bigcup_{l=1}^{n_m}B\Big(f^{(l)},\frac{2\epsilon}{3}\Big), \label{align:ch04-4.147}
+\end{align}
+其中 $B(g,r)\subseteq C(I;Z)$ 为以 $g$ 为中心、$r$ 为半径的开球，并用到了\eqref{align:ch04-4.146}。由\eqref{align:ch04-4.147}得
+\begin{align*}
+E\subseteq F_m\subseteq\bigcup_{l=1}^{n_m}B(f^{(l)},\epsilon),\quad f^{(1)},\cdots ,f^{(n_m)}\in E,
+\end{align*}
+故断言成立。
+
+(ii) 现证 $E$ 在 $L^r(I;Y)$ 中相对紧。由 (i)，$E$ 在 $C(I;Z)$ 中相对紧，从而在 $L^r(I;Z)$ 中相对紧。于是对任意 $\{f_i\}\subseteq E$，存在子列（为简便不重新标号）在 $L^r(I;Z)$（$r\in[1,\infty]$）中收敛。另一方面，对任意固定 $\epsilon>0$，令
+\begin{align*}
+\eta\triangleq \frac{\epsilon}{4\sup_{f\in E}\|f\|_{L^r(I;W)}}.
+\end{align*}
+则由\cref{lemma:ch04-插值不等式}，存在 $C_\eta>0$，使对所有 $i,j\in\mathbb{N}$，
+\begin{align}
+\|f_i-f_j\|_{L^r(I;Y)}\leqslant\eta\|f_i-f_j\|_{L^r(I;W)}+C_\eta\|f_i-f_j\|_{L^r(I;Z)}. \label{align:ch04-4.148}
+\end{align}
+由于 $\{f_i\}$ 在 $L^r(I;Z)$ 中收敛，存在 $l\in\mathbb{N}$，使对所有 $i,j\geqslant l$ 有 $\|f_i-f_j\|_{L^r(I;Z)}<\epsilon/(2C_\eta)$。于是由\eqref{align:ch04-4.148}，对 $i,j\geqslant l$ 有 $\|f_i-f_j\|_{L^r(I;Y)}<\epsilon$，从而 $\{f_i\}$ 在 $L^r(I;Y)$ 中收敛。证明完毕。
+\end{proof}
+
+\begin{proof}[\textbf{证明\cref{theorem:ch04-Simon}}]
+(i) 证 $E$ 在 $L^1(I;Z)$ 中相对紧。为此，注意由\cref{lemma:ch04-磨光紧}，集 $E_k\triangleq \{f_k\mid f\in E\}$（$k\in\mathbb{N}$）在 $C(I;Z)$ 中相对紧。由于 $C(I;Z)\hookrightarrow L^1(I;Z)$，$E_k$ 在 $L^1(I;Z)$ 中相对紧。我们证明
+\begin{align}
+\lim_{k\to\infty}\sup_{f\in E}\|f_k-f\|_{L^1(I;Z)}=0. \label{align:ch04-4.149}
+\end{align}
+仿照\eqref{align:ch04-4.145}中的论证，有
+\begin{align}
+\|f_k-f\|_{L^1(I;Z)}&\leqslant\int_I\mathrm{d}x\int_{\mathbb{R}}\|(Pf)(x-y)-(Pf)(x)\|_Z\rho_{1/k}(y)\,\mathrm{d}y\nonumber\\
+&=\int_{(-1/k,1/k)}\mathrm{d}y\,\rho_{1/k}(y)\int_I\|(Pf)(x-y)-(Pf)(x)\|_Z\,\mathrm{d}x\nonumber\\
+&\leqslant\sup_{|y|\leqslant1/k}\int_I\|(Pf)(x-y)-(Pf)(x)\|_Z\,\mathrm{d}x. \label{align:ch04-4.150}
+\end{align}
+另一方面，有
+\begin{align}
+\int_I\|(Pf)(x-y)-(Pf)(x)\|_Z\,\mathrm{d}x
+&\leqslant\int_I\mathrm{d}x\int_{\mathbb{R}}\|(Pf)'(\xi)\|_Z\chi_{J_{x-y,y}}(\xi)\,\mathrm{d}\xi\nonumber\\
+&=\int_{\mathbb{R}}\mathrm{d}\xi\,\|(Pf)'(\xi)\|_Z\int_I\chi_{K_{\xi,\xi+y}}(\eta)\,\mathrm{d}\eta
+\leqslant|y|\int_{\mathbb{R}}\mathrm{d}\xi\,\|(Pf)'(\xi)\|_Z, \label{align:ch04-4.151}
+\end{align}
+其中 $J_{x-y,y}$ 与 $K_{\xi,y}$ 分别表示端点为 $x-y,y$ 与 $\xi,\xi+y$ 的区间。由\eqref{align:ch04-4.150}--\eqref{align:ch04-4.151}，利用\eqref{align:ch04-4.137b}，得
+\begin{align*}
+\|f_k-f\|_{L^1(I;Z)}\leqslant\frac{M_1}{k}\|f\|_{W^{1,1}(I;Z)}.
+\end{align*}
+由\eqref{align:ch04-4.139}，在此不等式中令 $k\to\infty$，得\eqref{align:ch04-4.149}。
+
+固定 $\epsilon>0$。由\eqref{align:ch04-4.149}，存在 $m\in\mathbb{N}$，使对所有 $f\in E$ 有
+\begin{align}
+\|f\|_{L^1(I;Z)}\leqslant\|f_m\|_{L^1(I;Z)}+\frac{\epsilon}{3}. \label{align:ch04-4.152}
+\end{align}
+于是 $E\subseteq F_m\triangleq \{g\in L^1(I;Z)\mid d(g,E_m)<\epsilon/3\}$。另一方面，由于 $E_m$ 在 $L^1(I;Z)$ 中相对紧，存在 $n_m\in\mathbb{N}$ 与 $f_m^{(1)},\cdots ,f_m^{(n_m)}\in E_m$（对应 $f^{(1)},\cdots ,f^{(n_m)}\in E$），使
+\begin{align}
+E_m\subseteq\bigcup_{l=1}^{n_m}B\Big(f_m^{(l)},\frac{\epsilon}{3}\Big)\subseteq\bigcup_{l=1}^{n_m}B\Big(f^{(l)},\frac{2\epsilon}{3}\Big), \label{align:ch04-4.153}
+\end{align}
+其中 $B(g,r)\subseteq L^1(I;Z)$ 表示以 $g$ 为中心、$r$ 为半径的开球，并用到了不等式\eqref{align:ch04-4.152}。由\eqref{align:ch04-4.153}得
+\begin{align*}
+E\subseteq F_m\subseteq\bigcup_{l=1}^{n_m}B(f^{(l)},\epsilon),\quad f^{(1)},\cdots ,f^{(n_m)}\in E,
+\end{align*}
+故断言成立。
+
+(ii) 现可证 $E$ 在 $L^p(I;Z)$（$p\in(1,\infty)$）中相对紧。由 (i)，$E$ 在 $L^1(I;Z)$ 中相对紧，故对任意 $\{f_i\}\subseteq E$，存在子列（为简便不重新标号）在 $L^1(I;Z)$ 中收敛，从而在 $I$ 中 $\lambda$-几乎处处收敛。另一方面，由于 $E$ 在 $W^{1,1}(I;Z)\hookrightarrow C(I;Z)\hookrightarrow L^p(I;Z)$（$p\in(1,\infty)$）中有界，由\cref{corollary:ch04-有界收敛}，序列 $\{f_i\}$ 在 $L^p(I;Z)$（所有 $p\in(1,\infty)$）中收敛。故断言成立。
+
+(iii) 为证 $E$ 在 $L^r(I;Y)$ 中相对紧，注意由 (ii)，$E$ 在 $L^r(I;Z)$（$r\in[1,\infty)$）中相对紧。于是对任意 $\{f_i\}\subseteq E$，存在子列（为简便不重新标号）在 $L^r(I;Z)$ 中收敛。仿照\cref{theorem:ch04-Aubin}证明中的论证，可知 $\{f_i\}$ 在 $L^r(I;Y)$ 中收敛。故结论成立。
+\end{proof}
+
+
+
+
+\end{document}

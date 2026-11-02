@@ -1,0 +1,242 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{问题的提法}\label{section:ch07-问题提法}
+
+本章考察 Cauchy 问题
+\begin{align*}
+\begin{cases}
+\partial_t u + \partial_x[\phi(u)] = 0 & \text{在 }\mathbb{R}\times(0,T)=:S,\\
+u=u_0 & \text{在 }\mathbb{R}\times\{0\},
+\end{cases}
+\qquad(P)
+\end{align*}
+其中 $T>0$，$u_0$ 为 $\mathbb{R}$ 上的正有限 Radon 测度。关于 $u_0$ 为 $\mathbb{R}$ 上有限带号 Radon 测度的情形，我们请读者参见文献~\cite{ref19}。
+
+\subsection{假设与预备注记}\label{subsection:ch07-假设}
+
+假设
+\begin{align*}
+u_0\in\mathscr{R}_f^+(\mathbb{R}), \qquad(A0)
+\end{align*}
+\begin{align*}
+\phi\in\operatorname{Lip}([0,\infty)),\qquad \lim_{y\to\infty}\frac{\phi(y)}{y}=0, \qquad(A1)
+\end{align*}
+（不失一般性可设 $\phi(0)=0$）。需指出，$\lim_{y\to\infty}\phi(y)/y=C_\phi\neq0$ 的一般情形可通过将 $x$ 替换为 $x-C_\phi t$ 来处理（细节见文献~\cite{ref18}）。由 (A1)（及 $\phi(0)=0$），存在 $M>0$ 使
+\begin{align}
+|\phi'(y)|\leqslant M,\qquad |\phi(y)|\leqslant My\quad \text{对每个 }y>0. \label{align:ch07-7.1}
+\end{align}
+我们还将使用下列更强的假设（见\cref{section:ch07-唯一性}）：
+\begin{align*}
+\text{奇异部分 }u_{0s}\text{ 为 Dirac 质量的有限叠加，}
+\quad u_{0s}=\sum_{j=1}^p c_j\delta_{x_j}\ (x_1<x_2<\cdots<x_p;\ c_j>0,\ 1\leqslant j\leqslant p). \qquad(A0')
+\end{align*}
+为特定目的，我们再作如下假设（见\cref{section:ch07-存在性}）：
+\begin{align*}
+\begin{cases}
+\phi\in C^1([0,\infty)),\text{ 且对每个 }y_1>0,\text{ 存在 }a,b\geqslant0,\ a+b>0,\\
+\text{使 }\phi'\text{ 在 }[y_1-a,y_1+b]\text{ 上严格单调},
+\end{cases}
+\qquad(A2)
+\end{align*}
+\begin{align*}
+\begin{cases}
+\phi\in C^\infty([0,\infty));\ \lim_{y\to\infty}\phi(y)/y=0;\\
+\text{存在 }\alpha\geqslant-1\text{ 与 }\beta\in\mathbb{R}\text{ 使对一切 }y\in[0,\infty),\\
+\phi''(y)[\alpha\phi(y)+\beta]\leqslant-[\phi'(y)]^2<0.
+\end{cases}
+\qquad(A2')
+\end{align*}
+
+\begin{definition}[流的类]\label{definition:ch07-流类}
+称流 $\phi$ 属于\emph{正则流类}，若它满足上述结构假设 (A2')；其中常数 $\alpha\geqslant-1$、$\beta\in\mathbb{R}$ 区分\cref{remark:ch07-7.1.1}所述两种情形。存在唯一性与正则性结果（\cref{theorem:ch07-存在唯一}）即在该流类上建立。
+\end{definition}
+
+\begin{remark}\label{remark:ch07-7.1.1}
+由 (A2')，映射 $y\mapsto\phi''(y)[\alpha\phi(y)+\beta]$ 在 $[0,\infty)$ 上严格负且连续，故只有两种可能：要么 (a) $\alpha\phi+\beta>0$ 且 $\phi''<0$，要么 (b) $\alpha\phi+\beta<0$ 且 $\phi''>0$，均在 $[0,\infty)$ 上。在情形 (a)，由 $\phi''<0$ 与 $\lim_{y\to\infty}\phi'(y)=0$ 知 $0<\phi'\leqslant\phi'(0)$ 在 $[0,\infty)$ 上。类似地，在情形 (b) 显然有 $\phi'(0)\leqslant\phi'<0$ 在 $[0,\infty)$ 上。特别地，两种情形下 (A2') 均蕴含 (A2) 与 (A1)。此外，若 $\phi(0)=0$，则 $\alpha\phi+\beta>0$ 在 $[0,\infty)$ 上当且仅当 $\beta>0$。
+\end{remark}
+
+流 $\phi$ 为超线性（形如 $\phi(y)=y^p$，$p>1$）时的问题 (P) 已在文献~\cite{ref67}中研究，其中证明了非负熵解的存在唯一性（另见文献~\cite{ref33}）。按该文定义，对正的时刻解取 $L^1(\mathbb{R})$ 中的值，尽管 $u_0$ 是有限 Radon 测度。关于 $\phi$ 在无穷远处至多线性增长时 (P) 的有趣结果，见开创性论文文献~\cite{ref39}。
+
+当 $\phi(y)=Cy$（$C\in\mathbb{R}$）时，问题 (P) 即线性输运方程的 Cauchy 问题
+\begin{align*}
+\begin{cases}
+u_t+Cu_x=0 & \text{在 }S,\\
+u=u_0 & \text{在 }\mathbb{R}\times\{0\},
+\end{cases}
+\end{align*}
+其解平凡地为 $u_0$ 沿直线 $x=Ct+x_0$（$x_0\in\mathbb{R}$）的平移。特别地，解的奇异部分 $u_s(\cdot,t)$ 对 $t>0$ 非零当且仅当它在 $t=0$ 时非零。
+
+自然要问：当 $\phi$ 为次线性时会发生什么，若干数学模型正是如此提示（见文献~\cite{ref50,ref88,ref89}）。此情形下求 (P) 解的自然空间为 $L^\infty_{w^*}(0,T;\mathscr{R}_f^+(\mathbb{R}))$，如下列定义所设。
+
+\subsection{解的定义}\label{subsection:ch07-解的定义}
+
+本节始终假设 (A0)--(A1) 成立。
+
+\begin{definition}\label{definition:ch07-young测度解}
+问题 (P) 的 Young 测度解是一对 $(u,\nu)$，满足：
+\begin{enumerate}[(i)]
+\item $u\in L^\infty_{w^*}(0,T;\mathscr{R}_f^+(\mathbb{R}))$，$\nu\in\mathcal{Y}(S;\mathbb{R})$；
+\item 对几乎所有 $(x,t)\in S$，$\operatorname{supp}\nu_{(x,t)}\subseteq[0,\infty)$，且
+\begin{align}
+u_r(x,t)=\int_{[0,\infty)}y\,\mathrm{d}\nu_{(x,t)}(y), \label{align:ch07-7.2}
+\end{align}
+其中 $\{\nu_{(x,t)}\}_{(x,t)\in S}$ 为 $\nu$ 的离散分解；
+\item 对每个 $\zeta\in C^1([0,T];C^1_c(\mathbb{R}))$、$\zeta(\cdot,T)=0$ 在 $\mathbb{R}$ 上，有
+\begin{align}
+\iint_S[u_r\partial_t\zeta+\phi^*\partial_x\zeta]\,\mathrm{d}x\,\mathrm{d}t
++\int_0^T\langle u_s(\cdot,t),\partial_t\zeta(\cdot,t)\rangle\,\mathrm{d}t
+=-\langle u_0,\zeta(\cdot,0)\rangle, \label{align:ch07-7.3}
+\end{align}
+其中
+\begin{align}
+\phi^*(x,t)\triangleq \int_{[0,\infty)}\phi(y)\,\mathrm{d}\nu_{(x,t)}(y)
+\quad\text{对几乎所有 }(x,t)\in S. \label{align:ch07-7.4}
+\end{align}
+\end{enumerate}
+\end{definition}
+
+置 $H_+(y)\triangleq \chi_{(0,\infty)}(y)$，$H_-(y)\triangleq -\chi_{(-\infty,0)}(y)$，$\operatorname{sgn}(y)\triangleq H_+(y)+H_-(y)$（$y\in\mathbb{R}$）。
+
+\begin{definition}\label{definition:ch07-young熵解}
+问题 (P) 的 Young 测度熵解是一个 Young 测度解，满足对上述任意 $\zeta$、$\zeta\geqslant0$ 及 $l\in[0,\infty)$，
+\begin{align}
+\iint_S[E_l^*\partial_t\zeta+F_l^*\partial_x\zeta]\,\mathrm{d}x\,\mathrm{d}t
++\int_0^T\langle u_s(\cdot,t),\partial_t\zeta(\cdot,t)\rangle\,\mathrm{d}t
+\geqslant-\int_{\mathbb{R}}E_l(u_{0r}(x))\zeta(x,0)\,\mathrm{d}x
+-\langle u_{0s},\zeta(\cdot,0)\rangle, \label{align:ch07-7.5}
+\end{align}
+其中 $E_l(y)=|y-l|$，$F_l(y)=\operatorname{sgn}(y-l)[\phi(y)-\phi(l)]$（$y\in[0,\infty)$），且
+\begin{align*}
+E_l^*\triangleq \int_{[0,\infty)}E_l(y)\,\mathrm{d}\nu(y),\qquad
+F_l^*\triangleq \int_{[0,\infty)}F_l(y)\,\mathrm{d}\nu(y).
+\end{align*}
+(P) 的 Young 测度熵下解定义为：对上述任意 $\zeta$ 与 $l$ 要求\eqref{align:ch07-7.5}成立，但取 $E_l(y)=[y-l]_+$、$F_l(y)=H_+(y-l)[\phi(y)-\phi(l)]$。Young 测度熵上解类似定义。
+\end{definition}
+
+\begin{remark}\label{remark:ch07-7.1.2}
+(i) 由\eqref{align:ch07-7.1}、\eqref{align:ch07-7.2}与\eqref{align:ch07-7.4}得
+\begin{align}
+|\phi^*(x,t)|\leqslant M\int_{[0,\infty)}y\,\mathrm{d}\nu_{(x,t)}(y)=Mu_r(x,t)
+\quad\text{对几乎所有 }(x,t)\in S. \label{align:ch07-7.6}
+\end{align}
+因 $u_r\in L^\infty(0,T;L^1(\mathbb{R}))$，由\eqref{align:ch07-7.6}知 $\phi^*\in L^\infty(0,T;L^1(\mathbb{R}))$。
+\end{remark}
+
+对任意开集 $\Omega\subseteq\mathbb{R}$ 与 $\tau\in(0,T)$，置 $Q_\tau\triangleq \Omega\times(0,\tau)$。
+
+\begin{definition}\label{definition:ch07-熵解}
+测度 $u\in L^\infty_{w^*}(0,T;\mathscr{R}_f^+(\Omega))$ 称为 (P) 在 $Q_\tau$ 中的解，若对任意 $\zeta\in C^1([0,\tau];C^1_c(\Omega))$、$\zeta(\cdot,\tau)=0$ 在 $\Omega$ 上，有
+\begin{align}
+\iint_{Q_\tau}[u_r\partial_t\zeta+\phi(u_r)\partial_x\zeta]\,\mathrm{d}x\,\mathrm{d}t
++\int_0^\tau\langle u_s(\cdot,t),\partial_t\zeta(\cdot,t)\rangle\,\mathrm{d}t
+=-\langle u_0,\zeta(\cdot,0)\rangle. \label{align:ch07-7.7}
+\end{align}
+(P) 在 $S$ 中的解简称为 (P) 的解。
+\end{definition}
+
+\begin{definition}\label{definition:ch07-Qtau熵解}
+(P) 在 $Q_\tau$ 中的解称为 $Q_\tau$ 中的熵解，若它满足熵不等式：对所有 $\zeta\in C^1([0,\tau];C^1_c(\Omega))$、$\zeta\geqslant0$、$\zeta(\cdot,\tau)=0$ 在 $\Omega$ 上，以及所有 $l\in[0,\infty)$，
+\begin{align}
+\iint_{Q_\tau}\{E_l(u_r)\partial_t\zeta+F_l(u_r)\partial_x\zeta\}\,\mathrm{d}x\,\mathrm{d}t
++\int_0^\tau\langle u_s(\cdot,t),\partial_t\zeta(\cdot,t)\rangle\,\mathrm{d}t
+\geqslant-\int_\Omega E_l(u_{0r}(x))\zeta(x,0)\,\mathrm{d}x
+-\langle u_{0s},\zeta(\cdot,0)\rangle. \label{align:ch07-7.8}
+\end{align}
+\end{definition}
+
+\begin{definition}\label{definition:ch07-上下解}
+(P) 在 $Q_\tau$ 中的熵下解与熵上解分别由要求下列不等式成立来定义：
+\begin{align}
+\iint_{Q_\tau}\{[u_r-l]_+\partial_t\zeta+H_+(u_r-l)[\phi(u_r)-\phi(l)]\partial_x\zeta\}\,\mathrm{d}x\,\mathrm{d}t
++\int_0^\tau\langle u_s(\cdot,t),\partial_t\zeta(\cdot,t)\rangle_\Omega\,\mathrm{d}t
+\geqslant-\int_\Omega[u_{0r}-l]_+\zeta(x,0)\,\mathrm{d}x
+-\langle u_{0s},\zeta(\cdot,0)\rangle_\Omega, \label{align:ch07-7.9}
+\end{align}
+以及
+\begin{align}
+\iint_{Q_\tau}\{[u_r-l]_-\partial_t\zeta+H_-(u_r-l)[\phi(u_r)-\phi(l)]\partial_x\zeta\}\,\mathrm{d}x\,\mathrm{d}t
+\geqslant-\int_\Omega[u_{0r}-l]_-\zeta(x,0)\,\mathrm{d}x \label{align:ch07-7.10}
+\end{align}
+对上述所有 $\zeta$ 与 $l$ 成立。
+
+易见每个熵解同时是 (P) 的熵下解与熵上解。
+\end{definition}
+
+\begin{remark}\label{remark:ch07-7.1.3}
+(i) 等式\eqref{align:ch07-7.7}亦可写为
+\begin{align*}
+\langle u,\partial_t\zeta\rangle+\iint_S\phi(u_r)\partial_x\zeta\,\mathrm{d}x\,\mathrm{d}t=-\langle u_0,\zeta(\cdot,0)\rangle,
+\end{align*}
+表明 $u_t=-[\phi(u_r)]_x$ 在 $\mathcal{D}^*(S)$ 中。
+
+(ii) 问题 (P) 的解也是 Young 测度解。此外由\eqref{align:ch07-7.1}知 $\phi(u_r)\in L^\infty(0,T;L^1(\mathbb{R}))$。熵解、熵下解与熵上解有类似注记。
+\end{remark}
+
+下列结果与\cref{proposition:ch6-1.1}类似，证明亦类似，故从略（见文献~\cite{ref17} 命题 3.5）。
+
+\begin{proposition}\label{proposition:ch07-7.1.1}
+设 (A1) 成立，$(u,\nu)$ 为 (P) 的 Young 测度解。则：
+\begin{enumerate}[(i)]
+\item 存在零测集 $F^*\subseteq(0,T)$，使对一切 $t\in(0,T)\setminus F^*$ 与 $\rho\in C^1_c(\mathbb{R})$，
+\begin{align}
+\langle u(\cdot,t),\rho\rangle-\langle u_0,\rho\rangle
+=\int_0^t\int_{\mathbb{R}}\phi^*(x,s)\rho'(x)\,\mathrm{d}x\,\mathrm{d}s; \label{align:ch07-7.11}
+\end{align}
+\item 对一切 $\rho\in C_c(\mathbb{R})$，
+\begin{align}
+\operatorname*{ess\,lim}_{t\to0^+}\langle u(\cdot,t),\rho\rangle=\langle u_0,\rho\rangle, \label{align:ch07-7.12}
+\end{align}
+\begin{align}
+\operatorname*{ess\,lim}_{t\to t_0}\langle u(\cdot,t),\rho\rangle=\langle u(\cdot,t_0),\rho\rangle
+\quad\text{对几乎所有 }t_0\in(0,T). \label{align:ch07-7.13}
+\end{align}
+\end{enumerate}
+\end{proposition}
+
+\begin{remark}\label{remark:ch07-7.1.4}
+如\cref{remark:ch06-6.1.2}，易见映射 $t\mapsto u(\cdot,t)$ 有一个对任意 $t\in[0,T]$ 都有定义的代表元，使
+\begin{align}
+\lim_{t\to t_0}\langle u(\cdot,t),\rho\rangle=\langle u(\cdot,t_0),\rho\rangle
+\quad\text{对所有 }t_0\in[0,T]\text{ 与 }\rho\in C_c(\mathbb{R}). \label{align:ch07-7.14}
+\end{align}
+今后凡对 $t$ 在 $[0,T]$ 的某子区间上陈述映射 $t\mapsto u(\cdot,t)$ 的性质时，均指此连续代表元。
+\end{remark}
+
+如第 6 章所处理的抛物问题（见\cref{section:ch06-唯一性}），正则性信息对证明唯一性很重要。这方面的首个结果部分地使人想起不等式\eqref{align:ch6-6.33}，陈述如下。
+
+\begin{proposition}\label{proposition:ch07-7.1.2}
+设 (A0)--(A1) 成立。
+\begin{enumerate}[(i)]
+\item 设 $u$ 为 (P) 的 Young 测度熵解。则
+\begin{align}
+u_s(\cdot,t_2)\leqslant u_s(\cdot,t_1)\quad\text{在 }\mathscr{R}_f^+(\mathbb{R})\text{ 中对几乎所有 }0\leqslant t_1\leqslant t_2\leqslant T. \label{align:ch07-7.15}
+\end{align}
+特别地，
+\begin{align}
+u_s(\cdot,t)\leqslant u_{0s}\quad\text{在 }\mathscr{R}_f^+(\mathbb{R})\text{ 中对几乎所有 }t\in(0,T). \label{align:ch07-7.16}
+\end{align}
+\item 设 $u$ 为问题 (P) 的解。则质量守恒成立：
+\begin{align}
+\|u(\cdot,t)\|_{\mathscr{R}_f(\mathbb{R})}=\|u_0\|_{\mathscr{R}_f(\mathbb{R})}
+\quad\text{对几乎所有 }t\in(0,T). \label{align:ch07-7.17}
+\end{align}
+\end{enumerate}
+\end{proposition}
+
+
+
+
+\end{document}

@@ -1,0 +1,180 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{积分}\label{section:ch02-积分}
+
+\subsection{积分的定义}\label{subsection:ch02-积分定义}
+
+设 $(X,\mathscr A,\mu)$ 为测度空间，$s\in\mathscr S^+(X)$，即 $s=\sum_{i=1}^n c_i\chi_{E_i}$，其中 $c_1,\cdots ,c_n\geqslant0$，$E_1,\cdots ,E_n$ 可测，$E_i\cap E_j=\varnothing $（$i\neq j$），$\bigcup_{i=1}^n E_i=X$。
+
+\begin{definition}\label{definition:ch02-简单函数积分}
+设 $s\in\mathscr S^+(X)$。量
+\begin{align*}
+\int_X s\,\mathrm{d}\mu\triangleq \sum_{i=1}^N c_i\,\mu(E_i)
+\end{align*}
+称为 $s$ 在 $X$ 上的积分。
+\end{definition}
+
+此定义是适定的，因为积分 $\int_X s\,\mathrm{d}\mu$ 不依赖于划分 $\{E_1,\cdots ,E_N\}$ 的选取。此外，$\int_X s\,\mathrm{d}\mu$ 具有通常性质：线性、可加、单调等。
+
+\begin{definition}\label{definition:ch02-非负可测积分}\label{definition:ch02-Lebesgue}\label{definition:ch02-Lebesgue积分}
+设 $f:X\to[0,\infty]$ 为 $\mathscr A$-可测。量
+\begin{align}
+\int_X f\,\mathrm{d}\mu\triangleq \sup_{\substack{s\in\mathscr S^+(X)\\ s\leqslant f}}\int_X s\,\mathrm{d}\mu \label{align:ch02-2.4}
+\end{align}
+称为 $f$ 在 $X$ 上的积分。对每个可测集 $E\subseteq X$，令 $\int_E f\,\mathrm{d}\mu\triangleq \int_X f\chi_E\,\mathrm{d}\mu$。
+\end{definition}
+
+\begin{remark}\label{remark:ch02-简单逼近积分}
+\label{remark:ch02-简单积分}
+熟知，对任意 $\mathscr A$-可测 $f:X\to[0,\infty]$，集合 $\{s\in\mathscr S^+(X)\mid s\leqslant f\}$ 非空；事实上存在序列 $\{s_n\}\subseteq\mathscr S^+(X)$，使
+\begin{align}
+0\leqslant s_n\leqslant s_{n+1}\leqslant f\ \text{在 }X\text{ 中对所有 }n\in\mathbb N,\qquad s_n\to f\text{ 在 }X\text{ 上逐点}. \label{align:ch02-2.5}
+\end{align}
+显然这蕴含
+\begin{align}
+\int_X f\,\mathrm{d}\mu=\lim_{n\to\infty}\int_X s_n\,\mathrm{d}\mu. \label{align:ch02-2.6}
+\end{align}
+\end{remark}
+
+对每个 $f:X\to[-\infty,\infty]$，令 $f^\pm\triangleq \max\{\pm f,0\}$。
+
+\begin{definition}\label{definition:ch02-可积拟可积}
+称 $\mathscr A$-可测函数 $f:X\to[-\infty,\infty]$ 为可积的，若 $\int_X f^\pm\,\mathrm{d}\mu<\infty$。称 $f$ 为拟可积的，若两积分 $\int_X f^\pm\,\mathrm{d}\mu$ 中至少一个有限。
+\end{definition}
+
+对每个拟可积函数 $f:X\to[-\infty,\infty]$，（可能为无穷的）量
+\begin{align*}
+\int_X f\,\mathrm{d}\mu\triangleq \int_X f^+\,\mathrm{d}\mu-\int_X f^-\,\mathrm{d}\mu
+\end{align*}
+称为 $f$ 在 $X$ 上的积分。对每个可测集 $E\subseteq X$，令 $\int_E f\,\mathrm{d}\mu\triangleq \int_X f\chi_E\,\mathrm{d}\mu$。
+
+记可积函数 $f:X\to[-\infty,\infty]$ 的集合为 $L^1(X)\equiv L^1(X,\mathscr A,\mu)$。易见 $f\in L^1(X)$ 当且仅当
+\begin{align*}
+\|f\|_1\triangleq \int_X|f|\,\mathrm{d}\mu<\infty.
+\end{align*}
+
+积分 $\int_X f\,\mathrm{d}\mu$ 的线性、可加、单调等通常性质易证。由积分线性性、不等式
+\begin{align*}
+\left|\int_X f\,\mathrm{d}\mu\right|\leqslant\int_X|f|\,\mathrm{d}\mu
+\end{align*}
+及三角不等式，$L^1(X)$ 为向量空间。
+
+\begin{remark}\label{remark:ch02-Riemann可积}
+任意 Riemann 可积函数 $f:D\subseteq\mathbb R^N\to\mathbb R$ 在\cref{definition:ch02-可积拟可积}意义下可积。按记号滥用，常使用通常符号 $\int_D f\,\mathrm{d}x$ 代替 $\int_D f\,\mathrm{d}\lambda_N$。
+\end{remark}
+
+\begin{remark}\label{remark:ch02-测度密度}
+设 $(X,\mathscr A,\mu)$ 为测度空间，$f\geqslant0$ 为 $\mathscr A$-可测。立即可见映射
+\begin{align}
+\nu:\mathscr A\to[0,\infty],\qquad \nu(E)\triangleq \int_E f\,\mathrm{d}\mu\ (E\in\mathscr A) \label{align:ch02-2.7}
+\end{align}
+为测度。类似地，映射
+\begin{align}
+\nu:\mathscr A\to[-\infty,\infty],\qquad \nu(E)\triangleq \int_E f\,\mathrm{d}\mu=\int_E f^+\,\mathrm{d}\mu-\int_E f^-\,\mathrm{d}\mu\ (E\in\mathscr A) \label{align:ch02-2.8}
+\end{align}
+当 $f$ 拟可积时为带号测度，当 $f\in L^1(X,\mathscr A,\mu)$ 时为有限带号测度。此外，
+\begin{align}
+\nu^\pm(E)=\int_E f^\pm\,\mathrm{d}\mu, \label{align:ch02-2.9}
+\end{align}
+从而当 $f\in L^1(X,\mathscr A,\mu)$ 时 $|\nu|(E)=\int_E|f|\,\mathrm{d}\mu<\infty$。事实上，令 $\varphi^\pm(E)\triangleq \int_E f^\pm\,\mathrm{d}\mu$。则对任意 $F\subseteq E$、$F\in\mathscr A$，
+\begin{align*}
+\nu(F)=\varphi^+(F)-\varphi^-(F)\leqslant\varphi^+(F)\leqslant\varphi^+(E),
+\end{align*}
+故由\cref{proposition:ch01-正变差}知 $\nu^+(E)\leqslant\varphi^+(E)$。为证反向不等式，令 $H\triangleq \{f\geqslant0\}$。显然对任意 $E\in\mathscr A$，$\varphi^+(E\cap H^c)=0=\varphi^-(E\cap H)$，故
+\begin{align*}
+\varphi^+(E)=\varphi^+(E\cap H)=\nu(E\cap H)\leqslant\nu^+(E\cap H)\leqslant\nu^+(E).
+\end{align*}
+由此 $\nu^+=\varphi^+$，从而 $\nu^-=(-\nu)^+=\varphi^-$。结论成立。
+\end{remark}
+
+\begin{remark}\label{remark:ch02-简单函数稠密}
+由\cref{remark:ch02-简单逼近积分}（见\eqref{align:ch02-2.6}）知简单函数集合 $\mathscr S(X)$ 在 $L^1(X)$ 中稠密。
+\end{remark}
+
+关于带号测度的积分定义如下（此概念的推广见\cref{subsection:ch04-带号测度积分}）。
+
+\begin{definition}\label{definition:ch02-带号测度积分}\label{definition:ch02-带号积分}
+设 $(X,\mathscr A)$ 为可测空间，$\mu$ 为 $\mathscr A$ 上的带号测度。称 $f\in L^1(X,\mathscr A,\mu)$，若 $f\in L^1(X,\mathscr A,\mu^\pm)$，并令
+\begin{align}
+\int_X f\,\mathrm{d}\mu\triangleq \int_X f\,\mathrm{d}\mu^+-\int_X f\,\mathrm{d}\mu^-. \label{align:ch02-2.10}
+\end{align}
+\end{definition}
+
+由\eqref{align:ch02-2.10}易得
+\begin{align}
+\left|\int_X f\,\mathrm{d}\mu\right|\leqslant\int_X|f|\,\mathrm{d}|\mu|. \label{align:ch02-2.11}
+\end{align}
+
+回顾下列经典结果。
+
+\begin{theorem}[Beppo Levi]\label{theorem:ch02-BeppoLevi}\label{corollary:ch02-平均收敛}
+设 $(X,\mathscr A,\mu)$ 为测度空间。设 $f,f_n:X\to[0,\infty]$ 为 $\mathscr A$-可测。假设对任意 $n\in\mathbb N$，$f_n\leqslant f_{n+1}$ 在 $X$ 上 $\mu$-a.e.，且 $f$ 为序列 $\{f_n\}$ 在 $X$ 上的 $\mu$-逐点极限。则
+\begin{align*}
+\lim_{n\to\infty}\int_X f_n\,\mathrm{d}\mu=\int_X f\,\mathrm{d}\mu.
+\end{align*}
+\end{theorem}
+
+\begin{theorem}[Fatou]\label{theorem:ch02-Fatou}
+设 $(X,\mathscr A,\mu)$ 为测度空间。设 $f_n:X\to[0,\infty]$ 为 $\mathscr A$-可测。则
+\begin{align*}
+\int_X\left(\liminf_{n\to\infty}f_n\right)\mathrm{d}\mu\leqslant\liminf_{n\to\infty}\int_X f_n\,\mathrm{d}\mu.
+\end{align*}
+\end{theorem}
+
+\begin{theorem}[Lebesgue 控制收敛]\label{theorem:ch02-Lebesgue控制收敛}\label{corollary:ch02-控制收敛}
+设 $(X,\mathscr A,\mu)$ 为测度空间。设 $f,f_n$ 为 $\mathscr A$-可测，$f_n\to f$ 在 $X$ 上 $\mu$-a.e.。假设存在 $g\in L^1(X)$、$g\geqslant0$，使对所有 $n\in\mathbb N$，$|f_n|\leqslant g$ 在 $X$ 上 $\mu$-a.e.。
+\begin{align}
+\text{存在 }g\in L^1(X),\ g\geqslant0\text{ 使 }\sup_{n\in\mathbb N}|f_n|\leqslant g\ \mu\text{-a.e.} \label{align:ch02-2.12}
+\end{align}
+则 $f,f_n\in L^1(X)$，且
+\begin{align*}
+\lim_{n\to\infty}\int_X|f_n-f|\,\mathrm{d}\mu=0.
+\end{align*}
+\end{theorem}
+
+\cref{theorem:ch02-BeppoLevi}与\cref{theorem:ch02-Lebesgue控制收敛}通常分别称为单调收敛定理与控制收敛定理。利用\cref{theorem:ch02-BeppoLevi}可证下列结果。
+
+\begin{proposition}\label{proposition:ch02-变量替换积分}
+设 $(X,\mathscr A,\mu)$ 为测度空间。
+\begin{enumerate}[(i)]
+\item 设 $f:X\to[0,\infty)$ 为 $\mathscr A$-可测，$\nu$ 为由\eqref{align:ch02-2.7}定义的测度。则对任意 $\mathscr A$-可测 $g:X\to[0,\infty)$，有
+\begin{align}
+\int_X g\,\mathrm{d}\nu=\int_X fg\,\mathrm{d}\mu. \label{align:ch02-2.13}
+\end{align}
+\item 设 $f\in L^1(X,\mathscr A,\mu)$，$\nu$ 为由\eqref{align:ch02-2.8}定义的有限带号测度。则对任意 $g\in L^1(X,\mathscr A,\nu)$，有 $fg\in L^1(X,\mathscr A,\mu)$，且\eqref{align:ch02-2.13}成立。
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(i) 当 $g=\chi_E$ 时由定义\eqref{align:ch02-2.13}成立，从而当 $g=s\in\mathscr S^+(X)$ 时也成立。对任意 $\mathscr A$-可测 $g:X\to[0,\infty)$，存在\eqref{align:ch02-2.5}中的序列 $\{s_n\}\subseteq\mathscr S^+(X)$，由\cref{theorem:ch02-BeppoLevi}即得结论。
+
+(ii) 由\eqref{align:ch02-2.9}--\eqref{align:ch02-2.10}有
+\begin{align}
+\int_X g\,\mathrm{d}\nu
+&=\int_X(g^+-g^-)\,\mathrm{d}\nu^+-\int_X(g^+-g^-)\,\mathrm{d}\nu^- \nonumber\\
+&=\int_X g^+\,\mathrm{d}\nu^+-\int_X g^-\,\mathrm{d}\nu^+-\int_X g^+\,\mathrm{d}\nu^-+\int_X g^-\,\mathrm{d}\nu^-. \label{align:ch02-2.14}
+\end{align}
+由\eqref{align:ch02-2.13}有 $\int_X g^\pm\,\mathrm{d}\nu^\pm=\int_X g^\pm f^\pm\,\mathrm{d}\mu$；又因假设 $g\in L^1(X,\mathscr A,\nu^\pm)$（见\cref{definition:ch02-带号测度积分}），故 $\int_X g^\pm\,\mathrm{d}\nu^\pm<\infty$。由\eqref{align:ch02-2.14}得
+\begin{align*}
+\int_X g\,\mathrm{d}\nu=\int_X(f^+-f^-)(g^+-g^-)\,\mathrm{d}\mu=\int_X fg\,\mathrm{d}\mu,
+\end{align*}
+证毕。
+\end{proof}
+
+
+
+
+\end{document}

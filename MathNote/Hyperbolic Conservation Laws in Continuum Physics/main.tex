@@ -27,10 +27,25 @@
 
 \usepackage{../../Styles/mystyle-elegantbook}
 
+% 交叉引用显示格式：cleveref 默认把 \cref{chapter:...}、\cref{section:...} 显示为英文 "chapter 3"、"节 18.7"，
+% 与中文正文不匹配。此处统一为“第 X 章”“第 X.Y 节”“第 X.Y.Z 小节”，链接仍只包住编号。
+\crefname{chapter}{章}{章}
+\crefformat{chapter}{第~#2#1#3~章}
+\crefrangeformat{chapter}{第~#3#1#4~章--第~#5#2#6~章}
+\crefname{section}{节}{节}
+\crefformat{section}{第~#2#1#3~节}
+\crefrangeformat{section}{第~#3#1#4~节--第~#5#2#6~节}
+\crefname{subsection}{小节}{小节}
+\crefformat{subsection}{第~#2#1#3~小节}
+\crefrangeformat{subsection}{第~#3#1#4~小节--第~#5#2#6~小节}
+
 % 交叉引用设置（这里不要引用这个文件自身）
 % 注意这里的引用地址不是.sty文件相对于其他被引用的.tex文件地址,而是需要引用的.tex文件相对于其他被引用的.tex文件地址!!!
 % 条件加载：仅当目标 .aux 文件存在时才引入，避免因缺少文件而报错
 
+\newif\ifHCLexternalrefs
+\HCLexternalrefsfalse
+\ifHCLexternalrefs
 \IfFileExists{../Abstract Algebra/main.aux}{\externaldocument[Abstract Algebra-]{../Abstract Algebra/main}}{}
 \IfFileExists{../Analytic Geometry/main.aux}{\externaldocument[Analytic Geometry-]{../Analytic Geometry/main}}{}
 \IfFileExists{../Basis of Algebra/main.aux}{\externaldocument[Basis of Algebra-]{../Basis of Algebra/main}}{}
@@ -41,7 +56,8 @@
 \IfFileExists{../Draft/main.aux}{\externaldocument[Draft-]{../Draft/main}}{}
 \IfFileExists{../Functional Analysis/main.aux}{\externaldocument[Functional Analysis-]{../Functional Analysis/main}}{}
 \IfFileExists{../Harmonic Analysis/main.aux}{\externaldocument[Harmonic Analysis/-]{../Harmonic Analysis/main}}{}
-\IfFileExists{../Hyperbolic Conservation Laws in Continuum Physics/main.aux}{\externaldocument[Hyperbolic Conservation Laws in Continuum Physics/-]{../Hyperbolic Conservation Laws in Continuum Physics/main}}{}
+% 本工程自身的 main.aux 不在此重复引入：原先误将其作为 externaldocument 读取，会二次导入 6700 余条 label，
+% 既加倍内存占用，也使 latexmk 认为 main.aux 既是输入又是输出而反复重跑。
 % \IfFileExists{../Measure Theory and Nonlinear Evolution Equations/main.aux}{\externaldocument[Measure Theory and Nonlinear Evolution Equations/-]{../Measure Theory and Nonlinear Evolution Equations/main}}{}
 \IfFileExists{../Number Theory/main.aux}{\externaldocument[Number Theory-]{../Number Theory/main}}{}
 \IfFileExists{../Numerical Analysis/main.aux}{\externaldocument[Numerical Analysis-]{../Numerical Analysis/main}}{}
@@ -53,6 +69,7 @@
 \IfFileExists{../Set Theory/main.aux}{\externaldocument[Set Theory-]{../Set Theory/main}}{}
 \IfFileExists{../Topology/main.aux}{\externaldocument[Topology-]{../Topology/main}}{}
 \IfFileExists{../Topology(Munkres)/main.aux}{\externaldocument[Topology(Munkres)-]{../Topology(Munkres)/main}}{}
+\fi
 
 % 注意如果上述跨文档交叉引用代码报错，先执行Tasks: Run Task命令删除所有辅助文件，再编译
 
@@ -64,11 +81,18 @@
 
 \maketitle
 \frontmatter
+
+% 卷首部分：原书 Contents（物理页 31--36）之前的全部内容 —— 第四版前言、致谢、引言、
+% 双曲守恒律早期历史概述（物理页 7--30，印刷页码 VII--XXXIII）。原书这些标题均无编号，
+% 译本同样用 \chapter* 表达，不进入目录，与原书 Contents 的编排一致。
+\subfile{contents/frontmatter.tex}
+
 \tableofcontents
 \mainmatter
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%正文部分%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% v13 §2.1：不含前言(Preface)与索引(Index)
+% v13 §2.1 默认不含前言(Preface)与索引(Index)。本轮任务明确要求补齐原书 Contents 之前的全部内容，
+% 故卷首的前言、致谢、引言与历史概述按用户指示收录于 contents/frontmatter.tex；索引仍不收录。
 
 \subfile{contents/chapter-01.tex}
 \subfile{contents/chapter-02.tex}
@@ -94,7 +118,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%参考文献%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Bibliography 物理页 p717-p836；reference.bib 已由 mystyle-elegantbook.sty 加载
 \nocite{*}
-\printbibliography[heading=bibintoc, title=\ebibname]
+% sorting=none：biber 已按风格要求排好 .bbl 顺序，此处不再让 biblatex 在运行时重建全局排序表；
+% 1984 条文献的排序表会耗尽 XeTeX 固定的 main_memory（5,000,000），导致编译中断。
+\printbibliography[heading=bibintoc, title=\ebibname, sorting=none]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%参考文献%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \end{document}

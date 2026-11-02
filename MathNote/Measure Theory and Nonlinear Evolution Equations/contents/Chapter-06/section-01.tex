@@ -1,0 +1,153 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{问题陈述与预备结果}\label{section:ch06-问题陈述}
+
+\subsection{弱解}\label{subsection:ch06-弱解}
+
+下面引入我们的主要解概念。
+
+\begin{definition}\label{definition:ch06-弱解}
+设 (A0)--(A1) 成立。问题 (P) 的弱解指任意 $u\in L^\infty_{w^*}(0,T;\mathscr{R}_f(\Omega))$，满足：
+\begin{enumerate}[(i)]
+\item $\phi(u_r)\in L^2(0,T;H^1_0(\Omega))$;
+\item 对任意 $\zeta\in C^1([0,T];C^1_c(\Omega))$ 且 $\zeta(\cdot,T)=0$ 在 $\Omega$ 上，有
+\begin{align}
+\int_0^T\langle u(\cdot,t),\partial_t\zeta(\cdot,t)\rangle\,\mathrm{d}t
+= \iint_Q\nabla\phi(u_r)\cdot\nabla\zeta\,\mathrm{d}x\,\mathrm{d}t
+-\langle u_0,\zeta(\cdot,0)\rangle. \label{align:ch6-6.2}
+\end{align}
+\end{enumerate}
+\end{definition}
+
+置 $C^{1,2}(Q)\triangleq \{\zeta\in C(Q)\mid\exists\,\partial_t\zeta,\partial_{x_i}\zeta,\partial^2_{x_ix_j}\zeta\in C(Q)\ \forall i,j=1,\cdots ,N\}$。更弱的解概念如下。
+
+\begin{definition}\label{definition:ch06-极弱解}
+设 (A0)--(A1) 成立。(P) 的极弱解指任意 $u\in L^\infty_{w^*}(0,T;\mathscr{R}_f(\Omega))$，满足
+\begin{align}
+\int_0^T\langle u(\cdot,t),\partial_t\zeta(\cdot,t)\rangle\,\mathrm{d}t
+= -\iint_Q\phi(u_r)\Delta\zeta\,\mathrm{d}x\,\mathrm{d}t
+-\langle u_0,\zeta(\cdot,0)\rangle \label{align:ch6-6.3}
+\end{align}
+其中 $\zeta\in C^{1,2}(Q)$ 在 $\Gamma\cup(\Omega\times\{T\})$ 上为零。
+\end{definition}
+
+\begin{remark}\label{remark:ch06-6.1.1}
+由标准逼近论证，可在\eqref{align:ch6-6.2}中取在 $\Gamma\cup(\Omega\times\{T\})$ 上为零的试验函数 $\zeta\in C^1(Q)$。因此 (P) 的每个弱解都是极弱解。
+\end{remark}
+
+如下命题的 (ii) 款说明 (P) 中初值条件如何满足。
+
+\begin{proposition}\label{proposition:ch06-6.1.1}\label{proposition:ch6-1.1}
+设 (A0)--(A1) 成立，$u$ 为问题 (P) 的极弱解。则：
+\begin{enumerate}[(i)]
+\item 存在零测集 $F^*\subseteq(0,T)$，使对每个 $t\in(0,T)\setminus F^*$ 及所有 $\rho\in C^2_c(\Omega)$，
+\begin{align}
+\langle u(\cdot,t),\rho\rangle-\langle u_0,\rho\rangle
+= \int_0^t\mathrm{d}s\int_\Omega\phi(u_r(x,s))\Delta\rho(x)\,\mathrm{d}x; \label{align:ch6-6.4}
+\end{align}
+\item 对任意 $\rho\in C_0(\Omega)$，有
+\begin{align}
+\operatorname*{ess\,lim}_{t\to0^+}\langle u(\cdot,t),\rho\rangle=\langle u_0,\rho\rangle, \label{align:ch6-6.5a}\\
+\operatorname*{ess\,lim}_{t\to t_0}\langle u(\cdot,t),\rho\rangle=\langle u(\cdot,t_0),\rho\rangle
+\quad\text{对几乎所有 }t_0\in(0,T). \label{align:ch6-6.5b}
+\end{align}
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(i) 我们将证明存在零测集 $F^*\subseteq(0,T)$，使对所有 $\rho\in C_b(\overline\Omega)$ 及 $t\in(0,T)\setminus F^*$，
+\begin{align}
+\lim_{q\to\infty}\left(2q\int_{t-\frac{1}{q}}^{t+\frac{1}{q}}
+\left|\langle u(\cdot,s),\rho\rangle-\langle u(\cdot,t),\rho\rangle\right|\mathrm{d}s\right)=0. \label{align:ch6-6.6}
+\end{align}
+利用\eqref{align:ch6-6.3}与\eqref{align:ch6-6.6}，可证等式\eqref{align:ch6-6.4}。设 $\rho\in C^2_c(\Omega)$，$t_1\in(0,T)\setminus F^*$。由标准正则化论证，可在\eqref{align:ch6-6.3}中取 $\zeta(x,t)=\rho(x)k_q(t)$，其中 $q\in\mathbb{N}$，$q\geqslant1/(T-t_1)+1$，且
+\begin{align}
+k_q(t)\triangleq \chi_{(0,t_1]}(t)+[q(t_1-t)+1]\chi_{(t_1,t_1+\frac{1}{q}]}(t) \quad(t\in[0,T]). \label{align:ch6-6.7}
+\end{align}
+由\eqref{align:ch6-6.3}得
+\begin{align*}
+q\int_{t_1}^{t_1+\frac{1}{q}}\langle u(\cdot,t),\rho\rangle\,\mathrm{d}t-\langle u_0,\rho\rangle
+= \iint_Q\phi(u_r)\Delta\rho(x)k_q(t)\,\mathrm{d}x\,\mathrm{d}t.
+\end{align*}
+由于对所有 $t\in(0,T)$ 有 $\lim_{q\to\infty}k_q(t)=\chi_{(0,t_1]}(t)$，令 $q\to\infty$ 并利用\eqref{align:ch6-6.6}，得
+\begin{align*}
+\langle u(\cdot,t_1),\rho\rangle-\langle u_0,\rho\rangle
+= \int_0^{t_1}\mathrm{d}t\int_\Omega\phi(u_r(x,t))\Delta\rho(x)\,\mathrm{d}x,
+\end{align*}
+即\eqref{align:ch6-6.4}。
+
+为证\eqref{align:ch6-6.6}，注意因 $u\in L^\infty_{w^*}(0,T;\mathscr{R}_f(\Omega))$，由\cref{theorem:ch05-弱星可测}存在零测集 $F_0\subseteq(0,T)$，使对每个 $t\in(0,T)\setminus F_0$，离散分解 $u(\cdot,t)\in\mathscr{R}_f(\Omega)$ 有定义；且对任意 $\rho\in C_b(\overline\Omega)$，映射 $t\mapsto\psi_\rho(t)\triangleq \langle u(\cdot,t),\rho\rangle$ 属于 $L^\infty(0,T)$。设 $D\equiv\{\rho_k\}$ 为 $C_b(\overline\Omega)$ 的可数稠密集。因 $\psi_{\rho_k}\in L^\infty(0,T)$，存在零测集 $F_k\subseteq(0,T)$，使对每个 $t\in(0,T)\setminus F_k$，\eqref{align:ch6-6.6}成立（见\cref{corollary:ch02-平均收敛}(ii)）。不妨设 $F_0\subseteq F_k$ 对每个 $k\in\mathbb{N}$。置 $F^*\triangleq \bigcup_{k=1}^\infty F_k$。则对所有 $t\in(0,T)\setminus F^*$ 及 $k\in\mathbb{N}$，有
+\begin{align*}
+\lim_{q\to\infty}\left(2q\int_{t-\frac{1}{q}}^{t+\frac{1}{q}}
+\left|\langle u(\cdot,s),\rho_k\rangle-\langle u(\cdot,t),\rho_k\rangle\right|\mathrm{d}s\right)=0.
+\end{align*}
+由 $D$ 在 $C_b(\overline\Omega)$ 中的稠密性，等式\eqref{align:ch6-6.6}随之成立。这证明了该断言。
+
+(ii) 设 $\{t_n\}\subseteq(0,T)\setminus F^*$，$t_n\to0^+$（$n\to\infty$）。因 $\phi(u_r)\in L^\infty(Q)$，在\eqref{align:ch6-6.4}中取 $t=t_n$ 并令 $n\to\infty$，得
+\begin{align*}
+\langle u(\cdot,t_n),\rho\rangle\to\langle u_0,\rho\rangle
+\quad\text{对所有 }\rho\in C^2_c(\Omega).
+\end{align*}
+又因 $u\in L^\infty_{w^*}(0,T;\mathscr{R}_f(\Omega))$，有 $\sup_{n\in\mathbb{N}}\|u(\cdot,t_n)\|_{\mathscr{R}_f(\Omega)}<\infty$。由 Banach--Alaoglu 定理，存在 $\mu_0\in\mathscr{R}_f(\Omega)$ 及子列 $\{t_{n_k}\}\subseteq\{t_n\}$，使 $u(\cdot,t_{n_k})\stackrel{*}{\rightharpoonup}\mu_0$ 在 $\mathscr{R}_f(\Omega)$。由标准稠密性论证得 $\mu_0=u_0$ 在 $\mathscr{R}_f(\Omega)$。故 $u(\cdot,t_n)\stackrel{*}{\rightharpoonup}u_0$ 沿整列 $\{t_n\}$，\eqref{align:ch6-6.5a}由 $\{t_n\}$ 的任意性得证。对等式
+\begin{align*}
+\langle u(\cdot,t),\rho\rangle-\langle u(\cdot,t_0),\rho\rangle
+= \int_{t_0}^t\mathrm{d}s\int_\Omega\phi(u_r(x,s))\Delta\rho(x)\,\mathrm{d}x
+\end{align*}
+（这是\eqref{align:ch6-6.4}对几乎所有 $t_0,t\in(0,T)$ 的直接推论）应用同样论证，即证\eqref{align:ch6-6.5b}。结论随之成立。
+\end{proof}
+
+\begin{remark}\label{remark:ch06-6.1.2}
+由\cref{proposition:ch06-6.1.1}易见，映射 $t\mapsto u(\cdot,t)$ 存在一个对所有 $t\in[0,T]$ 有定义的代表元，使 $u(\cdot,0)=u_0$，且对每个 $\rho\in C_0(\Omega)$，
+\begin{align}
+\lim_{t\to0^+}\langle u(\cdot,t),\rho\rangle=\langle u_0,\rho\rangle, \label{align:ch6-6.8a}\\
+\lim_{t\to t_0}\langle u(\cdot,t),\rho\rangle=\langle u(\cdot,t_0),\rho\rangle
+\quad\text{对所有 }t_0\in[0,T]. \label{align:ch6-6.8b}
+\end{align}
+此后凡陈述映射 $t\mapsto u(\cdot,t)$ 在 $[0,T]$ 某子区间上对所有 $t$ 成立的性质时，均指此连续代表元。此时等式\eqref{align:ch6-6.4}对每个 $t\in(0,T)$ 成立，等式\eqref{align:ch6-6.5a}由\eqref{align:ch6-6.8a}替代。
+\end{remark}
+
+\subsection{弱熵解}\label{subsection:ch06-弱熵解}
+
+为后文需要，引入问题 (P) 的另一类解。设 (A1) 成立。对每个非减 $f\in C(\mathbb{R})$，置
+\begin{align}
+F_\phi(y)\triangleq \int_0^y f(\phi(z))\,\mathrm{d}z \quad(y\in\mathbb{R}), \label{align:ch6-6.9}
+\end{align}
+\begin{align}
+M^\pm_{F_\phi}\triangleq \lim_{y\to\pm\infty}\frac{F_\phi(y)}{y}
+=\lim_{y\to\pm\infty}f(\phi(y))\in\mathbb{R}. \label{align:ch6-6.10}
+\end{align}
+
+\begin{definition}\label{definition:ch06-熵解}
+设 (A0)--(A1) 成立。问题 (P) 的熵解指 (P) 的任意弱解 $u$，满足熵不等式：
+\begin{align}
+\begin{aligned}
+&\iint_Q\{F_\phi(u_r)\partial_t\zeta-f(\phi(u_r))\nabla\phi(u_r)\cdot\nabla\zeta\}\,\mathrm{d}x\,\mathrm{d}t\\
+&\quad+M^+_{F_\phi}\int_0^T\langle u^+_s(\cdot,t),\partial_t\zeta(\cdot,t)\rangle\,\mathrm{d}t
+-M^-_{F_\phi}\int_0^T\langle u^-_s(\cdot,t),\partial_t\zeta(\cdot,t)\rangle\,\mathrm{d}t\\
+&\geqslant -\int_\Omega F_\phi(u_{0r})\zeta(x,0)\,\mathrm{d}x
+-M^+_{F_\phi}\langle u^+_{0s},\zeta(\cdot,0)\rangle
++M^-_{F_\phi}\langle u^-_{0s},\zeta(\cdot,0)\rangle
+\end{aligned} \label{align:ch6-6.11}
+\end{align}
+对任意非减 $f\in C(\mathbb{R})$ 及 $\zeta\in C^1([0,T];C^1_c(\Omega))$，$\zeta\geqslant0$，$\zeta(\cdot,T)=0$ 在 $\Omega$ 上成立。
+\end{definition}
+
+易见\eqref{align:ch6-6.11}中各项均有定义，故\cref{definition:ch06-熵解}是适定的。
+
+
+
+
+\end{document}

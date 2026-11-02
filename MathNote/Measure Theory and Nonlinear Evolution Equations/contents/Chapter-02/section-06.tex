@@ -1,0 +1,302 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{Riesz 表示定理：正泛函}\label{section:ch02-Riesz正泛函}
+
+设 $X,Y$ 为赋范向量空间。以 $X^*$ 记 $X$ 的对偶空间，其范数为
+\begin{align*}
+X^*\ni x^*\mapsto\|x^*\|_{X^*}\triangleq \sup_{\|x\|_X\leqslant1}\left|\langle x^*,x\rangle_{X^*,X}\right|,
+\end{align*}
+其中 $\langle\cdot,\cdot\rangle_{X^*,X}$ 表示 $X$ 与 $X^*$ 之间的对偶映射，
+\begin{align*}
+\langle\cdot,\cdot\rangle_{X^*,X}:X^*\times X\to\mathbb R,\qquad(x^*,x)\mapsto\langle x^*,x\rangle_{X^*,X}.
+\end{align*}
+
+设 $(X,\mathscr T)$ 为 Hausdorff 空间，$\mu$ 为 $X$ 上的 Borel 测度。对任意 $f\in C_c(X)$，有 $|f|\leqslant\|f\|_\infty\chi_{\operatorname{supp}f}$，故 $C_c(X)\subseteq L^1_{\mathrm{loc}}(X,\mathscr B,\mu)$。于是映射
+\begin{align*}
+F:C_c(X)\to\mathbb R,\qquad \langle F,f\rangle\triangleq \int_X f\,\mathrm{d}\mu
+\end{align*}
+为 $C_c(X)$ 上的线性泛函，且在下列意义下为正的。
+
+\begin{definition}\label{definition:ch02-正泛函}
+称线性泛函 $F:C_c(X)\to\mathbb R$ 为正的，若对任意 $f\in C_c(X)$、$f\geqslant0$ 有 $\langle F,f\rangle\geqslant0$。
+\end{definition}
+
+反之，下列定理证明：当 $X$ 局部紧时，每个正线性泛函 $F:C_c(X)\to\mathbb R$ 均可表示为 $\langle F,f\rangle=\int_X f\,\mathrm{d}\mu$，其中 $\mu$ 为合适的 Radon 测度。
+
+\begin{theorem}[Riesz]\label{theorem:ch02-Riesz正泛函}
+设 $X$ 为局部紧 Hausdorff 空间，$F:C_c(X)\to\mathbb R$ 为正线性泛函。则存在 $X$ 上唯一 Radon 测度 $\mu$，使
+\begin{align}
+\langle F,f\rangle=\int_X f\,\mathrm{d}\mu\quad\text{对任意 }f\in C_c(X). \label{align:ch02-2.31}
+\end{align}
+此外，$\mu$ 有下列性质：
+\begin{enumerate}[(i)]
+\item 有
+\begin{align}
+\mu(A)=\sup\{\langle F,f\rangle\mid f\in C_c(X),\ f(X)\subseteq[0,1],\ \operatorname{supp}f\subseteq A\}\quad\text{对任意开集 }A\subseteq X,\ A\neq\varnothing , \label{align:ch02-2.32}\\
+\mu(K)=\inf\{\langle F,f\rangle\mid f\in C_c(X),\ f\geqslant\chi_K\}\quad\text{对任意紧集 }K\subseteq X; \label{align:ch02-2.33}
+\end{align}
+\item $\mu$ 有限当且仅当 $F$ 有界。此时 $\mu(X)=\|F\|$，其中
+\begin{align*}
+\|F\|\triangleq \sup\{|\langle F,f\rangle|\mid f\in C_c(X),\ \|f\|_\infty=1\}.
+\end{align*}
+\end{enumerate}
+\end{theorem}
+
+为简单起见，将在附加假设 $X$ 具有可数基下证明\cref{theorem:ch02-Riesz正泛函}（一般情形见文献\cite{ref45}）。存在性证明依赖下列引理。
+
+\begin{lemma}\label{lemma:ch02-Riesz构造}
+设 $X$ 为具有可数基的局部紧 Hausdorff 空间，$F:C_c(X)\to\mathbb R$ 为正线性泛函。则存在 $X$ 上 Radon 测度 $\mu$，使\eqref{align:ch02-2.32}--\eqref{align:ch02-2.33}成立。
+\end{lemma}
+
+\begin{proof}
+令 $\mu_0(\varnothing )\triangleq 0$，并对任意非空 $A\in\mathscr T$ 令
+\begin{align}
+\mu_0(A)\triangleq \sup\{\langle F,f\rangle\mid f\in C_c(X),\ f(X)\subseteq[0,1],\ \operatorname{supp}f\subseteq A\}. \label{align:ch02-2.34}
+\end{align}
+对任意 $E\subseteq X$，定义
+\begin{align}
+\mu^*(E)\triangleq \inf\left\{\sum_{n=1}^\infty\mu_0(A_n)\ \middle|\ E\subseteq\bigcup_{n=1}^\infty A_n,\ \{A_n\}\subseteq\mathscr T\right\} \label{align:ch02-2.35}
+\end{align}
+（注意因 $X$ 有可数基，任意 $E\subseteq X$ 可用开集可数覆盖）。由\cref{theorem:ch01-外测度}，映射 $\mu^*$ 为 $X$ 上外测度。由\cref{theorem:ch01-Caratheodory}，$\mu^*$-可测集族为 $\sigma$-代数，$\mu^*$ 在其上的限制 $\mu$ 为 $X$ 上完备测度。
+
+现证每个 $A\in\mathscr T$ 均为 $\mu^*$-可测，即
+\begin{align}
+\mu^*(Z)\geqslant\mu^*(Z\cap A)+\mu^*(Z\setminus A)\quad\text{对任意 }Z\subseteq X \label{align:ch02-2.36}
+\end{align}
+（见\cref{remark:ch01-Caratheodory}）。因 $\mathscr B=\sigma_0(\mathscr T)$，由此可知每个 Borel 集均可测，从而 $\mu$ 定义在 $\mathscr B$ 上。又因对每个 $A\in\mathscr T$ 有 $\mu^*(A)=\mu_0(A)$（见\eqref{align:ch02-2.35}），\eqref{align:ch02-2.32}随之成立。
+
+设 $\mu^*(Z)<\infty$（否则\eqref{align:ch02-2.36}显然），先设 $Z\in\mathscr T$。则 $Z\cap A\in\mathscr T$，故 $\mu^*(Z\cap A)=\mu_0(Z\cap A)$。由 $\mu_0$ 的定义，对任意 $\epsilon>0$，存在 $f\in C_c(X)$，$f(X)\subseteq[0,1]$，$\operatorname{supp}f\subseteq Z\cap A$，使
+\begin{align}
+\langle F,f\rangle>\mu_0(Z\cap A)-\epsilon. \label{align:ch02-2.37}
+\end{align}
+类似地，因 $Z\setminus\operatorname{supp}f\in\mathscr T$，$\mu^*(Z\setminus\operatorname{supp}f)=\mu_0(Z\setminus\operatorname{supp}f)$，故对任意 $\epsilon>0$，存在 $g\in C_c(X)$，$g(X)\subseteq[0,1]$，$\operatorname{supp}g\subseteq Z\setminus\operatorname{supp}f$，使
+\begin{align}
+\langle F,g\rangle>\mu_0(Z\setminus\operatorname{supp}f)-\epsilon. \label{align:ch02-2.38}
+\end{align}
+特别地，$f+g\in C_c(X)$，$(f+g)(X)\subseteq[0,1]$，$\operatorname{supp}(f+g)\subseteq Z$。由\eqref{align:ch02-2.37}--\eqref{align:ch02-2.38}得
+\begin{align*}
+\mu^*(Z)=\mu_0(Z)\geqslant\langle F,f+g\rangle=\langle F,f\rangle+\langle F,g\rangle
+\geqslant\mu_0(Z\cap A)+\mu_0(Z\setminus\operatorname{supp}f)-2\epsilon
+=\mu^*(Z\cap A)+\mu^*(Z\setminus\operatorname{supp}f)-2\epsilon
+\geqslant\mu^*(Z\cap A)+\mu^*(Z\setminus A)-2\epsilon.
+\end{align*}
+由 $\epsilon$ 的任意性，当 $Z$ 为开集时得\eqref{align:ch02-2.36}。一般情形下，由\eqref{align:ch02-2.35}，对任意 $\epsilon>0$，存在 $W\in\mathscr T$ 使 $Z\subseteq W$ 且 $\mu_0(W)<\mu^*(Z)+\epsilon$。由上述考虑与 $\mu^*$ 的单调性得
+\begin{align*}
+\mu^*(Z)>\mu_0(W)-\epsilon=\mu^*(W)-\epsilon
+\geqslant\mu^*(W\cap A)+\mu^*(W\setminus A)-\epsilon
+\geqslant\mu^*(Z\cap A)+\mu^*(Z\setminus A)-\epsilon,
+\end{align*}
+结论成立。
+
+现证\eqref{align:ch02-2.33}。固定任意 $K\in\mathscr K$，设 $f\in C_c(X)$，$f\geqslant\chi_K$。对任意 $\epsilon\in(0,1)$，令 $A_\epsilon\triangleq \{f>1-\epsilon\}$。则 $A_\epsilon$ 为开集，$K\subseteq A_\epsilon$。设 $g\in C_c(X)$，$g(X)\subseteq[0,1]$，$\operatorname{supp}g\subseteq A_\epsilon$。故对任意 $x\in X$ 有 $(1-\epsilon)g(x)\leqslant f(x)$，从而 $\langle F,g\rangle\leqslant\frac1{1-\epsilon}\langle F,f\rangle$。又因每个 $K\in\mathscr K$ 为 $\mu^*$-可测，$\mu^*(K)=\mu(K)$。由 $\mu^*$ 的单调性与\eqref{align:ch02-2.34}得
+\begin{align}
+\mu(K)=\mu^*(K)\leqslant\mu^*(A_\epsilon)=\mu_0(A_\epsilon)
+=\sup\{\langle F,f\rangle\mid g\in C_c(X),\ g(X)\subseteq[0,1],\ \operatorname{supp}g\subseteq A_\epsilon\}
+\leqslant\frac1{1-\epsilon}\langle F,f\rangle, \label{align:ch02-2.39}
+\end{align}
+由 $f$ 与 $\epsilon\in(0,1)$ 的任意性得
+\begin{align}
+\mu(K)\leqslant\inf\{\langle F,f\rangle\mid f\in C_c(X),\ f\geqslant\chi_K\}. \label{align:ch02-2.40}
+\end{align}
+
+现注意由\eqref{align:ch02-2.39}取 $\epsilon=1/2$ 得：对任意 $K\in\mathscr K$，$\mu(K)\leqslant\langle F,2f\rangle<\infty$，故 $\mu$ 局部有限（见\cref{remark:ch01-局部有限}；由假设 $X$ 局部紧）。因 $\mu$ 定义在含 $\mathscr B$ 的 $\sigma$-代数上，$\mu\in\mathscr B^+(X)$，由\cref{proposition:ch01-正则}知其正则。特别地，$\mu$ 内正则，故为 Radon 测度。
+
+现可证\eqref{align:ch02-2.40}的反向不等式。因 $\mu$ 外正则，对任意 $K\in\mathscr K$ 与 $\epsilon>0$，存在 $A\in\mathscr T$ 使 $K\subseteq A$ 且 $\mu(A)<\mu(K)+\epsilon$。由\cref{lemma:appA-Urysohn}存在 $\hat f\in C_c(X)$，$\hat f(X)\subseteq[0,1]$，$\hat f|_K=1$，故 $\hat f\geqslant\chi_K$，且 $\operatorname{supp}\hat f\subseteq A$。由\eqref{align:ch02-2.32}得
+\begin{align*}
+\inf\{\langle F,f\rangle\mid f\in C_c(X),\ f\geqslant\chi_K\}\leqslant\langle F,\hat f\rangle\leqslant\mu(A)<\mu(K)+\epsilon,
+\end{align*}
+由 $\epsilon$ 的任意性得
+\begin{align}
+\inf\{\langle F,f\rangle\mid f\in C_c(X),\ f\geqslant\chi_K\}\leqslant\mu(K). \label{align:ch02-2.41}
+\end{align}
+由\eqref{align:ch02-2.40}--\eqref{align:ch02-2.41}得\eqref{align:ch02-2.33}。证毕。
+\end{proof}
+
+\begin{proof}[\cref{theorem:ch02-Riesz正泛函}的证明]
+(i) 设 $f\in C_c(X)$；不妨设 $f(X)\subseteq[0,1]$。令 $K_0\triangleq \operatorname{supp}f$，$K_{j,n}\triangleq \{f\geqslant j/n\}$（任意 $n\in\mathbb N$，$j=1,\cdots ,n$）。显然每个 $K_{j,n}$ 为紧集，且
+\begin{align*}
+K_{n,n}=\{f=1\}\subseteq\cdots\subseteq K_{j,n}\subseteq K_{j-1,n}\subseteq\cdots\subseteq K_0.
+\end{align*}
+对任意 $x\in X$，令
+\begin{align*}
+f_{j,n}(x)\triangleq 
+\begin{cases}
+1/n, & x\in K_{j,n},\\
+f(x)-\dfrac{j-1}n, & x\in K_{j-1,n}\setminus K_{j,n},\\
+0, & x\in X\setminus K_{j-1,n}.
+\end{cases}
+\end{align*}
+则对所有 $j,n$，同上有 $f_{j,n}\in C_c(X)$，$f_{j,n}(X)\subseteq[0,1]$，$\sum_{j=1}^n f_{j,n}=f$，且
+\begin{align}
+\frac{\chi_{K_{j,n}}}{n}\leqslant f_{j,n}\leqslant\frac{\chi_{K_{j-1,n}}}{n}
+\Rightarrow\frac1n\sum_{j=1}^n\chi_{K_{j,n}}\leqslant f\leqslant\frac1n\sum_{j=1}^n\chi_{K_{j-1,n}}. \label{align:ch02-2.42}
+\end{align}
+
+设 $\mu$ 为由\cref{lemma:ch02-Riesz构造}给出的 Radon 测度。由\eqref{align:ch02-2.42}，对每个 $n\in\mathbb N$ 得
+\begin{align}
+\frac1n\sum_{j=1}^n\mu(K_{j,n})\leqslant\int_X f\,\mathrm{d}\mu
+\leqslant\frac1n\sum_{j=1}^n\mu(K_{j-1,n}). \label{align:ch02-2.43}
+\end{align}
+
+现证也有
+\begin{align}
+\frac1n\sum_{j=1}^n\mu(K_{j,n})\leqslant\langle F,f\rangle
+\leqslant\frac1n\sum_{j=1}^n\mu(K_{j-1,n})\quad(n\in\mathbb N). \label{align:ch02-2.44}
+\end{align}
+事实上，由\eqref{align:ch02-2.42}第一不等式得 $nf_{j,n}\geqslant\chi_{K_{j,n}}$，由\eqref{align:ch02-2.33}得
+\begin{align*}
+\mu(K_{j,n})\leqslant\langle F,nf_{j,n}\rangle=n\langle F,f_{j,n}\rangle
+\Rightarrow\frac{\mu(K_{j,n})}n\leqslant\langle F,f_{j,n}\rangle.
+\end{align*}
+此外，由定义 $\operatorname{supp}f_{j,n}\subseteq K_{j-1,n}$，且由\eqref{align:ch02-2.42}有 $nf_{j,n}\leqslant\chi_{K_{j-1,n}}$。另一方面，由\cref{lemma:ch01-紧外正则}(ii)，紧集 $K_{j-1,n}$ 为 $\mu$-外正则，故存在非增序列 $\{A_m\}\subseteq\mathscr T$，使对任意 $m\in\mathbb N$ 有 $K_{j-1,n}\subseteq A_m$ 且 $\mu(K_{j-1,n})=\lim_{m\to\infty}\mu(A_m)$。由\eqref{align:ch02-2.32}得
+\begin{align*}
+\langle F,nf_{j,n}\rangle=n\langle F,f_{j,n}\rangle\leqslant\mu(A_m)\quad\forall m\in\mathbb N
+\Rightarrow\langle F,f_{j,n}\rangle\leqslant\frac{\mu(K_{j-1,n})}n.
+\end{align*}
+因此对任意 $n\in\mathbb N$ 与 $j=1,\cdots ,n$，
+\begin{align*}
+\frac{\mu(K_{j,n})}n\leqslant\langle F,f_{j,n}\rangle\leqslant\frac1n\mu(K_{j-1,n}),
+\end{align*}
+从而\eqref{align:ch02-2.44}成立。
+
+由\eqref{align:ch02-2.43}--\eqref{align:ch02-2.44}得
+\begin{align*}
+\left|\langle F,f\rangle-\int_X f\,\mathrm{d}\mu\right|
+\leqslant\frac1n\sum_{j=1}^n[\mu(K_{j-1,n})-\mu(K_{j,n})]
+=\frac{\mu(K_0)-\mu(K_{n,n})}n\leqslant\frac{\mu(K_0)}n.
+\end{align*}
+令 $n\to\infty$ 即得\eqref{align:ch02-2.31}。
+
+现证唯一性。为此只需证明：每个使\eqref{align:ch02-2.31}成立的 Radon 测度 $\mu$ 也满足\eqref{align:ch02-2.33}（事实上，由内正则性，两个在 $\mathscr K$ 上一致的 Radon 测度在 $X$ 上一致）。设\eqref{align:ch02-2.31}成立。则对任意 $K\in\mathscr K$ 与任意 $f\in C_c(X)$、$f\geqslant\chi_K$，有
+\begin{align*}
+\langle F,f\rangle=\int_X f\,\mathrm{d}\mu\geqslant\mu(K)
+\Rightarrow\mu(K)\leqslant\inf\{\langle F,f\rangle\mid f\in C_c(X),\ f\geqslant\chi_K\}.
+\end{align*}
+
+反之，由\cref{lemma:ch01-紧外正则}(ii)，每个 $K\in\mathscr K$ 为 $\mu$-外正则，故对任意 $\epsilon>0$，存在 $A\in\mathscr T$ 使 $K\subseteq A$ 且 $\mu(A)<\mu(K)+\epsilon$。由\cref{lemma:appA-Urysohn}存在 $\bar f\in C_c(X)$ 使 $\chi_K\leqslant\bar f\leqslant\chi_A$。因此对任意 $\epsilon>0$，
+\begin{align*}
+\langle F,\bar f\rangle=\int_X\bar f\,\mathrm{d}\mu\leqslant\mu(A)<\mu(K)+\epsilon,
+\end{align*}
+由 $\epsilon$ 的任意性得
+\begin{align*}
+\mu(K)\geqslant\inf\{\langle F,f\rangle\mid f\in C_c(X),\ f\geqslant\chi_K\}.
+\end{align*}
+结论成立。
+
+(ii) 若 $\mu$ 有限，则由\eqref{align:ch02-2.31}得对任意 $f\in C_c(X)$，
+\begin{align*}
+|\langle F,f\rangle|=\left|\int_X f\,\mathrm{d}\mu\right|\leqslant\|f\|_\infty\mu(X),
+\end{align*}
+故 $F$ 有界且 $\|F\|\leqslant\mu(X)$。反之，若 $F$ 有界，则由\eqref{align:ch02-2.31}对任意 $f\in C_c(X)$ 有
+\begin{align*}
+\left|\int_X f\,\mathrm{d}\mu\right|=|\langle F,f\rangle|\leqslant\|F\|\,\|f\|_\infty.
+\end{align*}
+于是对任意 $K\in\mathscr K$ 与 $f\in C_c(X)$（$f(X)\subseteq[0,1]$，$f\geqslant\chi_K$），有 $\mu(K)\leqslant\|F\|$。由 $\mu$ 的内正则性，
+\begin{align*}
+\mu(X)=\sup\{\mu(K)\mid K\in\mathscr K\}\leqslant\|F\|.
+\end{align*}
+证毕。
+\end{proof}
+
+现证\cref{theorem:ch02-Riesz正泛函}对空间 $C_0(X)$ 的相伴结果。
+
+\begin{theorem}\label{theorem:ch02-RieszC0}\label{theorem:ch02-Riesz范数}\label{theorem:ch02-Riesz表示}
+\label{theorem:ch02-Rf对偶}
+设 $X$ 为局部紧 Hausdorff 空间，$F:C_0(X)\to\mathbb R$ 为正线性泛函。则存在 $X$ 上唯一 Radon 测度 $\mu$，使 $C_0(X)\subseteq L^1(X,\mathscr B,\mu)$ 且
+\begin{align}
+\langle F,f\rangle\triangleq \int_X f\,\mathrm{d}\mu\quad\text{对所有 }f\in C_0(X). \label{align:ch02-2.45}
+\end{align}
+此外，$\mu$ 有限且满足\eqref{align:ch02-2.32}--\eqref{align:ch02-2.33}。
+\end{theorem}
+
+证明需要下列独立引理。
+
+\begin{lemma}\label{lemma:ch02-C0正泛函有界}
+设 $X$ 为局部紧 Hausdorff 空间。则每个正线性泛函 $F:C_0(X)\to\mathbb R$ 有界。
+\end{lemma}
+
+\begin{proof}
+反证，设 $F$ 无界。则存在序列 $\{f_n\}\subseteq C_0(X)$ 使 $\|f_n\|_\infty=1$ 且对所有 $n\in\mathbb N$ 有 $|\langle F,f_n\rangle|\geqslant n^3$。不妨设 $f_n\geqslant0$，因 $|\langle F,f_n\rangle|\leqslant\langle F,|f_n|\rangle$（$n\in\mathbb N$）。因 $\sum_{n=1}^\infty\|f_n\|_\infty/n^2<\infty$，级数 $\sum_{n=1}^\infty f_n/n^2$ 在 $C_0(X)$ 中收敛。令 $f\triangleq \sum_{n=1}^\infty f_n/n^2$。则对所有 $n\in\mathbb N$ 有 $f_n/n^2\leqslant f$，从而 $n\leqslant\langle F,f_n\rangle/n^2\leqslant\langle F,f\rangle<\infty$，矛盾。
+\end{proof}
+
+\begin{proof}[\cref{theorem:ch02-RieszC0}的证明]
+由\cref{theorem:ch02-Riesz正泛函}(i)，存在唯一 Radon 测度 $\mu$，使限制 $\hat F\triangleq F|_{C_c(X)}$ 可如\eqref{align:ch02-2.31}表示，且\eqref{align:ch02-2.32}--\eqref{align:ch02-2.33}成立。由\cref{lemma:ch02-C0正泛函有界}，$F$ 有界，故 $\hat F$ 也有界。由\cref{theorem:ch02-Riesz正泛函}(ii)，$\mu$ 有限，从而线性泛函
+\begin{align*}
+G:C_c(X)\to\mathbb R,\qquad\langle G,f\rangle\triangleq \int_X f\,\mathrm{d}\mu
+\end{align*}
+良定义且有界。因 $C_c(X)$ 在 $C_0(X)$ 中稠密且 $F=G$ 在 $C_c(X)$ 上，结论成立。
+\end{proof}
+
+将上述考虑推广到空间 $C_b(X)$ 是有用的。下列\cref{lemma:ch02-Riesz构造}的类似结果可证（见文献\cite{ref45} Lemma VIII.2.11）。
+
+\begin{lemma}\label{lemma:ch02-Cb正泛函}
+设 $X$ 为局部紧 Hausdorff 空间。则对任意正线性泛函 $F:C_b(X)\to\mathbb R$，存在 $\mu\in\mathscr R^+_f(X)$，使
+\begin{align}
+\int_X f\,\mathrm{d}\mu\leqslant\langle F,f\rangle\quad\text{对所有 }f\in C_b(X),\ f\geqslant0. \label{align:ch02-2.46}
+\end{align}
+特别地，$C_b(X)\subseteq L^1(X,\mathscr B(X),\mu)$。
+\end{lemma}
+
+\cref{lemma:ch02-Cb正泛函}的证明需要对\cref{lemma:ch02-Riesz构造}的证明作适当修改。仅指出
+\begin{align}
+\mu(A)=\sup\{\mu_0(K)\mid K\text{ 紧},\ K\subseteq A\}\quad\text{对任意开集 }A\subseteq X,\ A\neq\varnothing , \label{align:ch02-2.47}
+\end{align}
+其中
+\begin{align}
+\mu_0(K)\triangleq \inf\{\langle F,f\rangle\mid f\in C_c(X),\ f\geqslant\chi_K\}\quad\text{对任意紧集 }K\subseteq X. \label{align:ch02-2.48}
+\end{align}
+
+现可证下列结果。
+
+\begin{proposition}\label{proposition:ch02-Cb表示}
+设 $X$ 为局部紧 Hausdorff 空间。设 $F:C_b(X)\to\mathbb R$ 为线性正泛函，$\mu\in\mathscr R^+_f(X)$ 由\cref{lemma:ch02-Cb正泛函}给出。则下列命题等价：
+\begin{enumerate}[(i)]
+\item 有
+\begin{align}
+\langle F,f\rangle=\int_X f\,\mathrm{d}\mu\quad\text{对任意 }f\in C_b(X); \label{align:ch02-2.49}
+\end{align}
+\item 对任意 $\epsilon>0$，存在紧集 $K\subseteq X$，使对所有 $f\in C_b(X)$（$f(X)\subseteq[0,1]$，$f|_K=0$）有 $\langle F,f\rangle<\epsilon$。
+\end{enumerate}
+若任一命题成立，则 $\mu$ 为 $\mathscr R^+_f(X)$ 中使\eqref{align:ch02-2.49}成立的唯一元素。
+\end{proposition}
+
+\begin{proof}
+唯一性由\eqref{align:ch02-2.49}与\cref{theorem:ch02-RieszC0}得到。
+
+(i)$\Rightarrow$(ii)。在\eqref{align:ch02-2.49}中取 $f=1$ 得 $\langle F,1\rangle=\mu(X)$。固定 $\epsilon>0$。由\cref{proposition:appA-σ紧}，$X$ 为 $\sigma$-紧，故存在紧集 $K\subseteq X$ 使 $\mu(K)>\mu(X)-\epsilon$。由不等式\eqref{align:ch02-2.46}，对所有 $f\in C_b(X)$（$f(X)\subseteq[0,1]$，$f|_K=0$），得
+\begin{align*}
+\mu(X)-\langle F,f\rangle=\langle F,1\rangle-\langle F,f\rangle=\langle F,1-f\rangle\geqslant\mu(K)>\mu(X)-\epsilon,
+\end{align*}
+结论成立。
+
+(ii)$\Rightarrow$(i)。由\eqref{align:ch02-2.46}有 $\mu(X)\leqslant\langle F,1\rangle$。现证反向不等式。固定 $\epsilon>0$。由假设存在紧集 $K\subseteq X$，使对所有 $f\in C_b(X)$（$f(X)\subseteq[0,1]$，$f|_K=0$）有 $\langle F,f\rangle<\epsilon$。由\eqref{align:ch02-2.47}--\eqref{align:ch02-2.48}与\cref{lemma:ch01-紧外正则}(ii)，存在 $g\in C_b(X)$，$g(X)\subseteq[0,1]$，$g|_K=1$，且 $\langle F,g\rangle<\mu(K)+\epsilon$。于是 $\langle F,1-g\rangle<\epsilon$，从而
+\begin{align*}
+\langle F,1\rangle=\langle F,g\rangle+\langle F,1-g\rangle<\mu(K)+2\epsilon\leqslant\mu(X)+2\epsilon.
+\end{align*}
+由 $\epsilon$ 的任意性得 $\langle F,1\rangle\leqslant\mu(X)$。故 $\langle F,1\rangle=\mu(X)$。
+
+现可对任意 $f\in C_b(X)$（$f(X)\subseteq[0,1]$）证明等式\eqref{align:ch02-2.49}（一般情形显然由此推出）。对函数 $1-f$ 应用不等式\eqref{align:ch02-2.46}，得
+\begin{align*}
+\mu(X)-\int_X f\,\mathrm{d}\mu=\int_X(1-f)\,\mathrm{d}\mu\leqslant\langle F,1-f\rangle
+=\langle F,1\rangle-\langle F,f\rangle=\mu(X)-\langle F,f\rangle,
+\end{align*}
+从而 $\int_X f\,\mathrm{d}\mu\geqslant\langle F,f\rangle$。结合上述不等式与\eqref{align:ch02-2.46}即得结论。
+\end{proof}
+
+
+
+
+\end{document}

@@ -1,0 +1,162 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{实值函数的向量 Lebesgue 空间}\label{section:ch04-实值向量Lp}
+
+本节中我们常涉及某欧氏空间 $\mathbb{R}^d$（$d\in\mathbb{N}$）上的 Lebesgue 测度。为简短计，令 $dx\equiv\mathrm{d}\lambda_d(x)$，$dy\equiv\mathrm{d}\lambda_{d'}(y)$，$dxdy\equiv\mathrm{d}\lambda_{d+d'}(x,y)$。
+
+设 $U\subseteq\mathbb{R}^M$ 开。当 $Y$ 为实函数的 Lebesgue 或 Sobolev 空间时，刻画空间 $L^p(U;Y)$ 是有意义的。一个自然问题是：空间 $L^p(U;L^p(V))$（$V\subseteq\mathbb{R}^N$ 开）能否等同于 $L^p(U\times V)$（$U\times V\subseteq\mathbb{R}^{M+N}$）。答案由如下结果给出。
+
+\begin{proposition}\label{proposition:ch04-LpULpV}
+设 $U\subseteq\mathbb{R}^M$、$V\subseteq\mathbb{R}^N$ 开。设 $p\in[1,\infty]$，$r\in[1,\infty)$。则下列命题等价：
+\begin{enumerate}[(i)]
+\item\label{item:ch04-LpULpV-i} $f\in L^p(U;L^r(V))$；
+\item\label{item:ch04-LpULpV-ii} $f\in L^1_{\mathrm{loc}}(U\times V)$，且
+\begin{align}
+\int_U\Big(\int_V|f(x,y)|^r\,\mathrm{d}y\Big)^{p/r}\mathrm{d}x<\infty\quad\text{若 }p\in[1,\infty), \label{align:ch04-4.118a}
+\end{align}
+\begin{align}
+\Big\|\int_V|f(\cdot,y)|^r\,\mathrm{d}y\Big\|_{L^\infty(U)}<\infty\quad\text{若 }p=\infty. \label{align:ch04-4.118b}
+\end{align}
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(i)$\Rightarrow$(ii)。首先证明 $f:U\times V\to\mathbb{R}$，$f(x,y)\triangleq f(x)(y)$（$x\in U$，$y\in V$），为 $\mathcal{B}(U)\times\mathcal{B}(V)$-可测。对任意 $x\in U$，令
+\begin{align*}
+\tilde f(x,y)\triangleq \begin{cases}
+f(x,y) & \text{若 }y\in V,\\
+0 & \text{若 }y\in\mathbb{R}^N\setminus V.
+\end{cases}
+\end{align*}
+若我们证明 $\tilde f:U\times\mathbb{R}^N\to\mathbb{R}$ 为 $\mathcal{B}(U)\times\mathcal{B}_N$-可测，则断言成立。
+
+由于 $f\in L^p(U;L^r(V))$，映射 $\tilde f:U\to L^r(\mathbb{R}^N)$，$\tilde f(x)(y)\triangleq \tilde f(x,y)$（$y\in\mathbb{R}^N$），为 $\lambda_N$-可测。于是存在序列 $\{s_j\}\subseteq\mathcal{S}(U;L^r(\mathbb{R}^N))$，使（见\cref{definition:ch04-mu可测}）
+\begin{align}
+\lim_{j\to\infty}\int_{\mathbb{R}^N}|s_j(x,y)-\tilde f(x)(y)|^r\,\mathrm{d}y=0\quad\text{对几乎所有 }x\in U. \label{align:ch04-4.119}
+\end{align}
+
+设 $\rho_{1/m}$（$m\in\mathbb{N}$）为标准磨光子。对任意 $(x,y)\in U\times\mathbb{R}^N$，令
+\begin{align}
+\tilde f_m(x)(y)\triangleq \int_{\mathbb{R}^N}\tilde f(x,y-z)\rho_{1/m}(z)\,\mathrm{d}z,\quad
+s_{j,m}(x,y)\triangleq \int_{\mathbb{R}^N}s_j(x,y-z)\rho_{1/m}(z)\,\mathrm{d}z. \label{align:ch04-4.120}
+\end{align}
+由\eqref{align:ch04-4.119}中的收敛，对任意固定 $m\in\mathbb{N}$ 与几乎所有 $x\in U$，有
+\begin{align}
+\lim_{j\to\infty}\sup_{y\in\mathbb{R}^N}|s_{j,m}(x,y)-\tilde f_m(x)(y)|=0. \label{align:ch04-4.121}
+\end{align}
+显然每个 $s_{j,m}$ 为 $\mathcal{B}(U)\times\mathcal{B}_N$-可测。另一方面，由\eqref{align:ch04-4.121}，函数 $\tilde f_m(x,y):U\times\mathbb{R}^N\to\mathbb{R}$，$\tilde f_m(x,y)\triangleq \tilde f_m(x)(y)$，是 $s_{j,m}(x,y)$ 对几乎所有 $(x,y)\in U\times\mathbb{R}^N$ 的极限。于是 $\tilde f_m$ 亦为 $\mathcal{B}(U)\times\mathcal{B}_N$-可测。
+
+现注意，对几乎所有 $x\in U$，$\tilde f_m(x,\cdot)\to\tilde f(x,\cdot)$ 在 $\mathbb{R}^N$ 中几乎处处成立（可能抽取子列，不重新标号；见\cref{proposition:ch04-收敛子列}(ii)）。于是由\cref{remark:ch02-截口可测}，$\tilde f$ 是 $\mathcal{B}(U)\times\mathcal{B}_N$-可测函数序列在 $U\times\mathbb{R}^N$ 中几乎处处的极限，从而为 $\mathcal{B}(U)\times\mathcal{B}_N$-可测。
+
+现 $f\in L^1_{\mathrm{loc}}(U\times V)$ 这一事实由不等式\eqref{align:ch04-4.118a}易得，而这些不等式本身又是假设的显然推论。故断言成立。
+
+(ii)$\Rightarrow$(i)。由\eqref{align:ch04-4.118a}，对几乎所有 $x\in U$ 有 $f(x,\cdot)\in L^r(V)$。于是若我们证明映射 $x\mapsto f(x,\cdot)$ 从 $U$ 到 $L^r(V)$ 为 $\lambda_N$-可测，则由\eqref{align:ch04-4.118a}得断言。进而，由 $L^r(V)$（$r\in[1,\infty)$）的可分性，若我们证明映射 $x\mapsto\int_V|f(x,y)-d(y)|^r\,\mathrm{d}y$（$x\in U$）对 $L^r(V)$ 的任一可数稠密子集中的每个 $d=d(y)$ 都可测，则由\cref{proposition:ch04-可分值判据}得结论。为此，注意映射 $(x,y)\mapsto|f(x,y)-d(y)|^r$ 从 $U\times V$ 到 $\mathbb{R}$ 为 $\mathcal{B}(U)\times\mathcal{B}(V)$-可测，因为由假设 $f$ 为 $\mathcal{B}(U)\times\mathcal{B}(V)$-可测，且 $d\in L^r(V)$，从而为 $\mathcal{B}(V)$-可测。于是由\cref{theorem:ch02-Fubini}(i)得结果。
+\end{proof}
+
+\begin{corollary}\label{corollary:ch04-Lp乘积}
+设 $U\subseteq\mathbb{R}^M$、$V\subseteq\mathbb{R}^N$ 开，$p\in[1,\infty)$。则下列命题等价：(i) $f\in L^p(U;L^p(V))$；(ii) $f\in L^p(U\times V)$。
+\end{corollary}
+
+\begin{proof}
+证明由\cref{proposition:ch04-LpULpV}取 $p=r\in[1,\infty)$ 立即得到，并注意由 Tonelli 定理，不等式\eqref{align:ch04-4.118a}给出
+\begin{align*}
+\int_{U\times V}|f|^p\,\mathrm{d}x\mathrm{d}y=\int_U\Big(\int_V|f(x,y)|^p\,\mathrm{d}y\Big)\mathrm{d}x<\infty.
+\end{align*}
+\end{proof}
+
+在\cref{proposition:ch04-LpULpV}的证明中，空间 $L^r(V)$（$r\in[1,\infty)$）的可分性起了重要作用。故如下结果并不意外。
+
+\begin{proposition}\label{proposition:ch04-L无穷不可交换}
+存在函数 $f\in L^\infty(\mathbb{R}^2)$，不属于 $L^\infty(\mathbb{R};L^\infty(\mathbb{R}))$。
+\end{proposition}
+
+\begin{proof}
+设 $f:\mathbb{R}^2\to\mathbb{R}$，$f(r,x)\triangleq \chi_{I_r}(x)$，其中 $I_r\equiv(-|r|,|r|)$（$(r,x)\in\mathbb{R}^2$）。易见 $f(r,x)=\chi_E$，其中 $E\triangleq \{(r,x)\in\mathbb{R}^2\mid |x|<|r|\}$。由于 $E\in\mathcal{B}_2$，$f$ 为 $\mathcal{B}_2$-可测，从而 $f\in L^\infty(\mathbb{R}^2)$。
+
+令 $F:\mathbb{R}\to L^\infty(\mathbb{R})$，对几乎所有 $r\in\mathbb{R}$ 有 $F(r)\triangleq f(r,\cdot)=\chi_{I_r}$。若我们证明 $F$ 不是 $(\mathcal{B}(L^\infty(\mathbb{R})),\mathcal{B}(\mathbb{R}))$-可测的（从而不是 $\lambda$-可测的；见\cref{remark:ch04-mu可测注}(ii)），则结果成立。
+
+为此，设 $S\subseteq\mathbb{R}$ 关于原点对称，并设 $S\notin\mathcal{B}(\mathbb{R})$。考虑 $L^\infty(\mathbb{R})$ 中的开子集
+\begin{align}
+A\triangleq \bigcup_{s\in S}B(\chi_{I_s},1/2),\quad B(\chi_{I_s},1/2)\triangleq \{f\in L^\infty(\mathbb{R})\mid\|f-\chi_{I_s}\|_\infty<1/2\} \label{align:ch04-4.122}
+\end{align}
+表示 $L^\infty(\mathbb{R})$ 中以 $\chi_{I_s}$ 为中心、半径 $1/2$ 的开球。由于当 $r\neq s$ 时 $\|\chi_{I_r}-\chi_{I_s}\|_\infty=1$，\eqref{align:ch04-4.122}中的球族两两不交。故
+\begin{align*}
+F^{-1}(A)=\{r\in\mathbb{R}\mid\exists s\in S\text{ 使 }\|F(r)-\chi_{I_s}\|_\infty<1/2\}
+=\{r\in\mathbb{R}\mid |r|=|s|\}=S,
+\end{align*}
+因为条件
+\begin{align*}
+\|F(r)-\chi_{I_s}\|_\infty=\|\chi_{I_r}-\chi_{I_s}\|_\infty<\frac12
+\end{align*}
+蕴含 $\chi_{I_r}\in B(\chi_{I_s},1/2)$，从而由于\eqref{align:ch04-4.122}中的球族两两不交，$\chi_{I_r}=\chi_{I_s}$。因此存在 $L^\infty(\mathbb{R})$ 的开子集 $A$，使 $F^{-1}(A)\notin\mathcal{B}(\mathbb{R})$。这就证明了结果。
+\end{proof}
+
+现讨论 $Y=W^{m,r}(U)$ 的情形（$m\in\mathbb{N}$，$r\in[1,\infty)$）。设 $U\subseteq\mathbb{R}^M$、$V\subseteq\mathbb{R}^N$ 开，$f\in L^1_{\mathrm{loc}}(U\times V)$，$f=f(x,y)$（$x\in U$，$y\in V$）。对任意 $k=1,\cdots ,N$，我们区分分布导数
+\begin{align}
+\Big\langle\frac{\partial f}{\partial y_k},\zeta\Big\rangle=-\int_{U\times V}f\frac{\partial\zeta}{\partial y_k}\,\mathrm{d}x\mathrm{d}y\quad\text{对所有 }\zeta\in C_c^\infty(U\times V) \label{align:ch04-4.123a}
+\end{align}
+与对几乎所有 $x\in U$ 如下定义的分布导数 $\partial_{y_k}f(x,\cdot)$：
+\begin{align}
+\langle\partial_{y_k}f(x,\cdot),\eta\rangle=-\int_V f(x,y)\frac{\partial\eta}{\partial y_k}(y)\,\mathrm{d}y\quad\text{对所有 }\eta\in C_c^\infty(V). \label{align:ch04-4.123b}
+\end{align}
+为简单计，我们只陈述 $Y=W^{1,r}(U)$ 的结果。
+
+\begin{proposition}\label{proposition:ch04-Sobolev嵌入}
+设 $U\subseteq\mathbb{R}^M$、$V\subseteq\mathbb{R}^N$ 开。设 $p\in[1,\infty]$，$r\in[1,\infty)$。则下列命题等价：
+\begin{enumerate}[(i)]
+\item\label{item:ch04-Sobolev嵌入-i} $f\in L^p(U;W^{1,r}(V))$；
+\item\label{item:ch04-Sobolev嵌入-ii} $f\in L^1_{\mathrm{loc}}(U\times V)$，且对所有 $k=1,\cdots ,N$，
+\begin{align}
+\int_U\Big(\int_V|f(x,y)|^r\,\mathrm{d}y\Big)^{p/r}\mathrm{d}x<\infty,\quad
+\int_U\Big(\int_V\Big|\frac{\partial f}{\partial y_k}(x,y)\Big|^r\,\mathrm{d}y\Big)^{p/r}\mathrm{d}x<\infty \label{align:ch04-4.124a}
+\end{align}
+若 $p\in[1,\infty)$，以及
+\begin{align}
+\Big\|\int_V|f(\cdot,y)|^r\,\mathrm{d}y\Big\|_{L^\infty(U)}<\infty,\quad
+\Big\|\int_V\Big|\frac{\partial f}{\partial y_k}(x,y)\Big|^r\,\mathrm{d}y\Big\|_{L^\infty(U)}<\infty \label{align:ch04-4.124b}
+\end{align}
+若 $p=\infty$。此外，对几乎所有 $x\in U$，有
+\begin{align}
+\partial_{y_k}f(x,\cdot)=\frac{\partial f}{\partial y_k}(x,\cdot)\quad\text{在 }V\text{ 中几乎处处成立}. \label{align:ch04-4.125}
+\end{align}
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(i)$\Rightarrow$(ii)。由\cref{proposition:ch04-LpULpV}，$f\in L^1_{\mathrm{loc}}(U\times V)$，且命题\eqref{align:ch04-4.124a}中第一式成立。此外，由\cref{proposition:ch04-LpULpV}，对所有 $k=1,\cdots ,N$，亦有
+\begin{align*}
+\int_U\Big(\int_V|\partial_{y_k}f(x,y)|^r\,\mathrm{d}y\Big)^{p/r}\mathrm{d}x<\infty\quad\text{若 }p\in[1,\infty),
+\end{align*}
+\begin{align*}
+\Big\|\int_V|\partial_{y_k}f(\cdot,y)|^r\,\mathrm{d}y\Big\|_{L^\infty(U)}<\infty\quad\text{若 }p=\infty.
+\end{align*}
+于是若我们证明等式\eqref{align:ch04-4.125}，则断言成立。在\eqref{align:ch04-4.123a}中令 $\zeta(x,y)=\xi(x)\eta(y)$，其中 $\xi\in C_c^\infty(U)$，$\eta\in C_c^\infty(V)$。则由\eqref{align:ch04-4.123b}与 Fubini 定理，
+\begin{align*}
+\Big\langle\frac{\partial f}{\partial y_k},\zeta\Big\rangle
+=-\int_{U\times V}f\,\xi\frac{\partial\eta}{\partial y_k}\,\mathrm{d}x\mathrm{d}y
+=-\int_U\mathrm{d}x\,\xi(x)\int_V f(x,y)\frac{\partial\eta}{\partial y_k}(y)\,\mathrm{d}y
+=\int_U\mathrm{d}x\,\xi(x)\langle\partial_{y_k}f(x,\cdot),\eta\rangle
+=\langle\partial_{y_k}f(x,\cdot),\zeta\rangle,
+\end{align*}
+故由标准论证得\eqref{align:ch04-4.125}。
+
+(ii)$\Rightarrow$(i)。由\eqref{align:ch04-4.124a}--\eqref{align:ch04-4.125}，若我们证明映射 $x\mapsto f(x,\cdot)$ 从 $U$ 到 $W^{1,r}(V)$ 为 $\lambda_N$-可测，则 $f,\partial_{y_k}f\in L^p(U;L^r(V))$（$k=1,\cdots ,N$）。由 $W^{1,r}(V)$（$r\in[1,\infty)$）的可分性，仿照\cref{proposition:ch04-LpULpV}证明中的论证，由\cref{proposition:ch04-可分值判据}得结论。证明完毕。
+\end{proof}
+
+
+
+
+\end{document}

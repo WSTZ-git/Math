@@ -1,0 +1,371 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{不同容量概念之间的关系}\label{section:ch03-容量关系}
+
+现在讨论迄今引入的各容量概念之间的关系。
+
+\subsection{Bessel 与 Hausdorff}\label{subsection:ch03-BesselHausdorff}
+
+设 $r>0$，$p\in(1,\infty)$。考虑函数 $h_{r,p}:(0,\infty)\to(0,\infty]$，定义为
+\begin{align}
+h_{r,p}(\rho)\triangleq \begin{cases}
+\rho^{N-rp} & \text{若 }rp<N,\\
+[-\log\rho]_+^{1-p} & \text{若 }rp=N.
+\end{cases}\label{align:ch03-3.64}
+\end{align}
+
+\begin{proposition}\label{proposition:ch03-BesselHausdorff上界}
+设 $r>0$，$p\in(1,\infty)$，$rp\leqslant N$。则存在 $c_1>0$ 使对任意 $E\subseteq\mathbb{R}^N$，
+\begin{align}
+B_{r,p}(E)\leqslant c_1\mathcal{H}^*_{h_{r,p},1}(E)\leqslant c_1\mathcal{H}^*_{h_{r,p}}(E).\label{align:ch03-3.65}
+\end{align}
+此外，
+\begin{align}
+\mathcal{H}^*_{h_{r,p}}(E)<\infty\Rightarrow B_{r,p}(E)=0.\label{align:ch03-3.66}
+\end{align}
+\end{proposition}
+
+\begin{proof}
+若 $\mathcal{H}^*_{h_{r,p},1}(E)=\infty$，结论显然。否则设 $E\subseteq\bigcup_{n=1}^\infty B(x_n,\rho_n)$，$\rho_n\leqslant\delta/2$。由次可列可加性，
+\begin{align*}
+B_{r,p}(E)\leqslant\sum_{n=1}^\infty B_{r,p}(B(x_n,\rho_n)).
+\end{align*}
+若 $rp=N$，由此与\eqref{align:ch03-3.52b}得
+\begin{align*}
+B_{r,p}(E)\leqslant\widetilde C_0\sum_{n=1}^\infty[-\log(2\rho_n)]^{1-p}
+=\widetilde C_0\sum_{n=1}^\infty h_{r,p}(2\rho_n).
+\end{align*}
+若 $rp<N$，由\eqref{align:ch03-3.57}类似得
+\begin{align*}
+B_{r,p}(E)\leqslant 8^{rp-N}C_0^{2p}B_{r,p}(\beta_4)\sum_{n=1}^\infty h_{r,p}(2\rho_n).
+\end{align*}
+对 $E$ 的所有上述球覆盖取下确界，得\eqref{align:ch03-3.65}。
+\end{proof}
+
+\begin{proposition}\label{proposition:ch03-BesselHausdorff下界}
+设 $r,s>0$，$p,q\in(1,\infty)$，$0<sq\leqslant rp\leqslant N$。则存在 $c_2>0$ 使对任意紧集 $K\subseteq\mathbb{R}^N$，
+\begin{align}
+[\mathcal{H}^*_{N-sq,\infty}(K)]^{N-rp}\leqslant c_2[B_{r,p}(K)]^{N-sq}
+\quad \text{若 }sq<rp<N,\label{align:ch03-3.67a}\\
+(1+[-\log\mathcal{H}^*_{N-sq,\infty}(K)]_+)^{1-p}\leqslant c_2 B_{r,p}(K)
+\quad \text{若 }sq<rp=N,\label{align:ch03-3.67b}\\
+[\mathcal{H}^*_{h_{s,q},\infty}(K)]^{p-1}\leqslant c_2[B_{r,p}(K)]^{q-1}
+\quad \text{若 }sq=rp=N\text{ 且 }p<q.\label{align:ch03-3.67c}
+\end{align}
+\end{proposition}
+
+\begin{corollary}\label{corollary:ch03-Hausdorff维数}\label{theorem:ch03-Hausdorff}
+设 $r>0$，$p\in(1,\infty)$，$0<rp<N$。设 $E\subseteq\mathbb{R}^N$ 的 Hausdorff 维数为 $N-n$（$n\in(0,N)$），且 $\mathcal{H}^*_{N-n}(E)<\infty$。则 $B_{r,p}(E)=0$ 当且仅当 $rp\leqslant n$。
+\end{corollary}
+
+\begin{proof}
+若 $rp\leqslant n$，则 $\mathcal{H}^*_{N-rp}(E)<\infty$，故由\eqref{align:ch03-3.66}，$B_{r,p}(E)=0$。反之，若 $B_{r,p}(E)=0$，则由\eqref{align:ch03-3.67a}，对每个 $s>0$ 及 $q\in(1,\infty)$ 使 $sq<rp$，有 $\mathcal{H}^*_{N-sq}(E)=0$。由 Hausdorff 维数定义，得 $N-rp\geqslant\dim_H(E)=N-n$。结论成立。
+\end{proof}
+
+\begin{theorem}\label{theorem:ch03-容量比较}
+\label{theorem:ch03-容量单调}
+设 $r,s>0$，$p,q\in(1,\infty)$，$0<sq\leqslant rp\leqslant N$。设 $E\subseteq\mathbb{R}^N$ 为任意 Borel 集，$\operatorname{diam}E\leqslant d$（$d>0$）。则存在 $c_3>0$ 使
+\begin{align}
+[B_{s,q}(E)]^{N-rp}\leqslant c_3[B_{r,p}(E)]^{N-sq}
+\quad \text{若 }sq<rp<N,\label{align:ch03-3.68a}\\
+(1+[\log(c_3/B_{s,q}(E))]_+)^{1-p}\leqslant c_3 B_{r,p}(E)
+\quad \text{若 }sq<rp=N,\label{align:ch03-3.68b}\\
+[B_{s,q}(E)]^{p-1}\leqslant c_3[B_{r,p}(E)]^{q-1}
+\quad \text{若 }sq=rp=N\text{ 且 }p<q,\label{align:ch03-3.68c}\\
+B_{s,q}(E)\leqslant c_3 B_{r,p}(E)
+\quad \text{若 }sq=rp<N\text{ 且 }p<q.\label{align:ch03-3.68d}
+\end{align}
+此外，在\eqref{align:ch03-3.68a}的所有情形中，存在 Borel 集 $E\subseteq\mathbb{R}^N$ 使 $B_{s,q}(E)=0$ 而 $B_{r,p}(E)>0$。
+\end{theorem}
+
+\begin{definition}\label{definition:ch03-容量强弱}
+设 $r,s>0$，$p,q\in[1,\infty)$。Bessel 容量 $B_{r,p}$：
+\begin{enumerate}[(i)]
+\item 强于 $B_{s,q}$，若对所有 $E\subseteq\mathbb{R}^N$，$B_{r,p}(E)=0\Rightarrow B_{s,q}(E)=0$；
+\item 严格强于 $B_{s,q}$，若此外存在 $E\subseteq\mathbb{R}^N$ 使 $B_{s,q}(E)=0$ 而 $B_{r,p}(E)>0$。
+\end{enumerate}
+称 $B_{r,p}$ 与 $B_{s,q}$ 等价，若对所有 $E\subseteq\mathbb{R}^N$，$B_{r,p}(E)=0\Leftrightarrow B_{s,q}(E)=0$。Riesz 与 Sobolev 容量同理。
+\end{definition}
+
+\begin{theorem}[du Plessis, Fuglede]\label{theorem:ch03-严格强弱}
+设 $r,s>0$，$p,q\in(1,\infty)$。设 $rp\leqslant N$，且要么 $sq<rp$，要么 $sq=rp$ 且 $p<q$。则 $B_{r,p}$ 严格强于 $B_{s,q}$。
+\end{theorem}
+
+\begin{corollary}\label{corollary:ch03-同阶强弱}
+设 $r>0$，$1<q<p<\infty$，$0<rp\leqslant N$。则 $B_{r,p}$ 强于 $B_{r,q}$。
+\end{corollary}
+
+\begin{remark}\label{remark:ch03-紧零集}
+设 $r>0$，$p\in(1,\infty)$，$0<rp\leqslant N$。由\cref{corollary:ch03-同阶强弱}与\cref{proposition:ch03-Bessel基本}(iii)，若 $K\subseteq\mathbb{R}^N$ 紧且 $B_{r,p}(K)=0$，则 $B_{r,1}(K)=0$。
+\end{remark}
+
+\subsection{Bessel 与 Riesz}\label{subsection:ch03-BesselRiesz关系}
+
+由\eqref{align:ch03-3.10}，显然
+\begin{align}
+R_{r,p}(E)\leqslant B_{r,p}(E)\quad \text{对所有 }E\subseteq\mathbb{R}^N\ (r\in(0,N);\ p\in[1,\infty)).\label{align:ch03-3.70}
+\end{align}
+
+\begin{proposition}\label{proposition:ch03-BesselRiesz等价}
+设 $r\in(0,N)$，$p\in(1,\infty)$，$rp<N$。
+\begin{enumerate}[(i)]
+\item 设 $E\subseteq\mathbb{R}^N$，$\operatorname{diam}E\leqslant2P$（$P>0$）。则存在 $M>0$ 使
+\begin{align}
+B_{r,p}(E)\leqslant MR_{r,p}(E).\label{align:ch03-3.71}
+\end{align}
+\item 设 $E\subseteq\mathbb{R}^N$ 有界。则 $B_{r,p}(E)=0$ 当且仅当 $R_{r,p}(E)=0$。
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(ii) 由\eqref{align:ch03-3.70}--\eqref{align:ch03-3.71}得到。为证 (i)，不妨设 $E\subseteq B(0,P)$。设 $h\in L^p(\mathbb{R}^N)$，$h\geqslant0$，$\gamma_r*h\geqslant1$ 在 $E$ 上，且 $\|h\|_p^p\leqslant2R_{r,p}(E)$。则由\eqref{align:ch03-3.52a}，
+\begin{align*}
+\|h\|_p^p\leqslant2B_{r,p}(\beta_{2P})\leqslant 2^{N-rp+1}CP^{N-rp}.
+\end{align*}
+则存在 $M_1>0$ 使对所有 $x\in E$，
+\begin{align}
+0\leqslant(\gamma_r*h)(x)-(\gamma_{r,\rho}*h)(x)
+\leqslant M_1\left(\frac P\rho\right)^{\frac{N-rp}{p}},\label{align:ch03-3.72}
+\end{align}
+由于 $\gamma_r*h\geqslant1$ 在 $E$ 上，由\eqref{align:ch03-3.72}，对所有 $\rho\geqslant(2M_1)^{\frac p{N-rp}}P$，$\gamma_{r,\rho}*h\geqslant1/2$ 在 $E$ 上。此外，存在 $M_2>0$ 使 $\gamma_{r,\rho}\leqslant M_2g_r$，因而 $g_r*(2M_2h)\geqslant1$ 在 $E$ 上。故 $B_{r,p}(E)\leqslant(2M_2)^pR_{r,p}(E)$。结论成立。
+\end{proof}
+
+\begin{remark}\label{remark:ch03-BesselRiesz一般}
+设 $r\in(0,N)$，$1<p<N/r$。则存在 $M>0$ 使对任意 $E\subseteq\mathbb{R}^N$，
+\begin{align}
+B_{r,p}(E)\leqslant M\left[R_{r,p}(E)+R_{r,p}(E)^{\frac N{N-rp}}\right].\label{align:ch03-3.73}
+\end{align}
+由\eqref{align:ch03-3.70}与\eqref{align:ch03-3.73}，$B_{r,p}$ 与 $R_{r,p}$ 等价。
+\end{remark}
+
+\subsection{Bessel 与 Sobolev}\label{subsection:ch03-BesselSobolev}
+
+\begin{theorem}\label{theorem:ch03-BesselSobolev等价}\label{theorem:ch03-Sobolev基本}
+设 $m\in\mathbb{N}^*$，$p\in(1,\infty)$。则对任意 Borel 集 $E\subseteq\mathbb{R}^N$，
+\begin{align}
+M^{-p}C_{m,p}(E)\leqslant B_{m,p}(E)\leqslant M^pC_{m,p}(E)\label{align:ch03-3.74}
+\end{align}
+其中 $M>0$ 如\eqref{align:ch03-3.8}。
+\end{theorem}
+
+\begin{proof}
+由\cref{proposition:ch03-Bessel基本}(ii)与定义\ref{definition:ch03-Sobolev容量}，只需在 $E=K$ 紧时证\eqref{align:ch03-3.74}。先证 $B_{m,p}(K)\leqslant M^pC_{m,p}(K)$。设 $h\in W_K$。则 $h\in W^{m,p}(\mathbb{R}^N)=L^{m,p}(\mathbb{R}^N)$。故存在 $f\in L^p(\mathbb{R}^N)$ 使 $g_m*f=h$，且 $M\|h\|_{m,p}\geqslant\|f\|_p\geqslant\|f^+\|_p$。此外 $g_m*f^+\geqslant g_m*f=h\geqslant1$ 在 $K$ 上，故 $f^+\in V_{K,m,p}$。于是
+\begin{align*}
+B_{m,p}(K)\leqslant\|f^+\|_p^p\leqslant M^p\|h\|_{m,p}^p
+\end{align*}
+对所有 $h\in W_K$。取下确界即得。
+
+反之，证 $M^{-p}C_{m,p}(K)\leqslant B_{m,p}(K)$。设 $f\in V_K$ 满足 $g_m*f>1$ 在 $K$ 上，且 $\|f\|_p^p<B_{m,p}(K)+\epsilon$。置
+\begin{align*}
+f_n(x)\triangleq \begin{cases}
+\min\{f(x),n\} & \text{若 }|x|\leqslant n,\\
+0 & \text{否则}.
+\end{cases}
+\end{align*}
+由单调收敛定理，$\lim_{n\to\infty}\|f_n\|_p^p=\|f\|_p^p$，且 $\lim_{n\to\infty}g_m*f_n=g_m*f$ 逐点。因此，存在 $\overline n\in\mathbb{N}$ 与 $\eta>0$ 使 $g_m*f_{\overline n}\geqslant1+\eta$ 在 $K$ 上，且 $\|f_{\overline n}\|_p^p<B_{m,p}(K)+\epsilon$。
+
+注意对任意 $q\in[1,\infty)$，存在 $h\in C^\infty_c(\mathbb{R}^N)$ 使 $\|f_{\overline n}-h\|_q<\epsilon$。则 $g_m*h\in\mathcal{S}(\mathbb{R}^N)$，且 $g_m*h\geqslant1$ 在 $K$ 上。由 Hölder 不等式，
+\begin{align}
+\|f_{\overline n}-h\|_p\leqslant\|f_{\overline n}-h\|_q[\lambda_N(B(0,\overline n))]^{\frac{q-p}{pq}}<\epsilon[\lambda_N(B(0,\overline n))]^{\frac{q-p}{pq}}.\label{align:ch03-3.75}
+\end{align}
+由\eqref{align:ch03-3.75}，
+\begin{align*}
+C_{m,p}(K)\leqslant\|g_m*h\|_{m,p}^p\leqslant M^p\|h\|_p^p
+\leqslant M^p\left\{[B_{m,p}(K)+\epsilon]^{1/p}+\epsilon[\lambda_N(B(0,\overline n))]^{\frac{q-p}{pq}}\right\}^p.
+\end{align*}
+由 $\epsilon$ 任意，得 $C_{m,p}(K)\leqslant M^pB_{m,p}(K)$。证明完毕。
+\end{proof}
+
+\subsection{Sobolev 与 Hausdorff}\label{subsection:ch03-SobolevHausdorff}
+
+由\cref{theorem:ch03-BesselSobolev等价}，Bessel 容量 $B_{m,p}$ 的度量性质及其推论对 Sobolev 容量 $C_{m,p}$ 成立。
+
+当 $p=1$ 时，有如下结果。
+
+\begin{theorem}\label{theorem:ch03-Cm1Hausdorff}
+设 $m\in\mathbb{N}^*$，$m\in[1,N)$。则存在 $M_1,M_2>0$ 使对任意紧集 $K\subseteq\mathbb{R}^N$，
+\begin{align}
+M_1\mathcal{H}^*_{N-m,1}(K)\leqslant C_{m,1}(K)\leqslant M_2\mathcal{H}^*_{N-m,1}(K).\label{align:ch03-3.76}
+\end{align}
+\end{theorem}
+
+\subsection{Laplacian 容量与 Sobolev 容量}\label{subsection:ch03-Laplacian}
+
+\begin{proposition}\label{proposition:ch03-Laplacian=Sobolev}
+对任意紧集 $K\subseteq\mathbb{R}^N$，
+\begin{align}
+C_{\Delta,1}(K)=2C_{1,2}(K).\label{align:ch03-3.77}
+\end{align}
+\end{proposition}
+
+\begin{proof}
+我们仅证 $C_{\Delta,1}(K)\geqslant2C_{1,2}(K)$。设 $f\in\Omega_K$。置 $h\triangleq \min\{f^+,1\}$。则 $0\leqslant h\leqslant1$ 在 $\mathbb{R}^N$ 上，且 $h=1$ 在某开集 $A\supseteq K$ 中。由磨光论证，存在 $\widehat h\in C^\infty_c(\mathbb{R}^N)$ 使 $0\leqslant\widehat h\leqslant1$ 在 $\mathbb{R}^N$ 上，且 $\widehat h=1$ 在 $A$ 中。则 $\widehat h\in W'_K$，故
+\begin{align*}
+C_{1,2}(K)\leqslant\int_{\mathbb{R}^N}|\nabla\widehat h|^2\,\mathrm{d}x
+\leqslant\int_{\mathbb{R}^N}|\nabla h|^2\,\mathrm{d}x
+=\int_{\mathbb{R}^N}\nabla h\cdot\nabla f\,\mathrm{d}x
+=-\int_{\mathbb{R}^N}h\Delta f\,\mathrm{d}x.
+\end{align*}
+由于 $\int_{\mathbb{R}^N}\Delta f\,\mathrm{d}x=0$，
+\begin{align*}
+C_{1,2}(K)\leqslant-\int_{\mathbb{R}^N}\left(h-\frac12\right)\Delta f\,\mathrm{d}x
+\leqslant\frac12\|\Delta f\|_1.
+\end{align*}
+由 $f\in\Omega_K$ 任意，结论成立。
+\end{proof}
+
+\subsection{$(m,p)$-集中与 $(m,p)$-弥散测度}\label{subsection:ch03-集中弥散}\label{subsection:ch03-集中分解}
+
+设 $U$ 为 $\mathbb{R}^N$ 的开有界子集。称 $\mathcal{B}(U)$ 上的带号测度为 $(m,p)$-集中的，若它为 $C_{m,p}$-集中的；称 $(m,p)$-弥散的，若它为 $C_{m,p}$-弥散的。
+
+\begin{proposition}\label{proposition:ch03-无非平凡集中}
+设 $m\in\mathbb{N}^*$。
+\begin{enumerate}[(i)]
+\item 设要么 $p=1$ 且 $m=N$，要么 $p\in(1,\infty)$ 且 $mp>N$。则每个 $\mu\in\mathscr{R}_f(U)$ 为 $B_{m,p}$-弥散。
+\item 设 $p\in(1,\infty)$ 且 $mp>N$。则每个 $\mu\in\mathscr{R}_f(U)$ 为 $(m,p)$-弥散。
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+由\cref{remark:ch03-无零容量集}(ii)，若要么 $p=1$ 且 $m=N$，要么 $p\in(1,\infty)$ 且 $mp>N$，则 $\mathbb{R}^N$ 中不存在 $B_{m,p}$-零集。因此由\cref{theorem:ch03-BesselSobolev等价}，若 $p\in(1,\infty)$ 且 $mp>N$，则不存在 $(m,p)$-零集。结论成立。
+\end{proof}
+
+记 $\mathscr{R}_{c,m,p}(U)$ 与 $\mathscr{R}_{d,m,p}(U)$ 分别为 $U$ 上 $(m,p)$-集中与 $(m,p)$-弥散的有限带号 Radon 测度之集。我们总置 $\mathscr{R}_{c,p}(U)\equiv\mathscr{R}_{c,1,p}(U)$，$\mathscr{R}_{d,p}(U)\equiv\mathscr{R}_{d,1,p}(U)$。
+
+\begin{remark}\label{remark:ch03-弥散测度性质}
+\begin{enumerate}[(i)]
+\item 若 $\mu\in\mathscr{R}_{d,m,p}(U)$，则每个 $(m,p)$-拟连续函数为 $\mu$-可测。事实上，若 $v$ $(m,p)$-拟连续，则存在 $(m,p)$-零集 $E\subseteq U$ 与序列 $\{v_n\}\subseteq C(U)$ 使 $v_n\to v$ 在 $U\setminus E$ 上逐点。由于 $\mu\in\mathscr{R}_{d,m,p}(U)$，集 $E$ 为 $\mu$-零集，故结论成立。
+\item 若 $\mu\in\mathscr{R}_{d,m,p}(U)$，则每个函数 $v\in W^{m,p}_0(U)\cap L^\infty(U)$ 也属于 $L^\infty(U,\mu)$。
+\end{enumerate}
+\end{remark}
+
+\begin{proposition}\label{proposition:ch03-集中弥散分解}
+设 $m\in\mathbb{N}^*$，$p\in[1,\infty)$。则存在唯一偶 $(\mu_{c,m,p},\mu_{d,m,p})$ 使 $\mu_{c,m,p}\in\mathscr{R}_{c,m,p}(U)$，$\mu_{d,m,p}\in\mathscr{R}_{d,m,p}(U)$，且
+\begin{align}
+\mu=\mu_{d,m,p}+\mu_{c,m,p}.\label{align:ch03-3.78}
+\end{align}
+\end{proposition}
+
+\begin{definition}\label{definition:ch03-集中弥散部分}
+\cref{proposition:ch03-集中弥散分解}给出的测度 $\mu_{c,m,p}$ 与 $\mu_{d,m,p}$ 分别称为 $\mu$ 的 $(m,p)$-集中部分与 $(m,p)$-弥散部分。
+\end{definition}
+
+下文置 $\mu_{c,p}\equiv\mu_{c,1,p}$，$\mu_{d,p}\equiv\mu_{d,1,p}$。置
+\begin{align*}
+\mathscr{R}_s(U)\triangleq \{\mu\in\mathscr{R}_f(U)\mid\mu\perp\lambda_N\},\qquad
+\mathscr{R}_{ac}(U)\triangleq \{\mu\in\mathscr{R}_f(U)\mid\mu\ll\lambda_N\}.
+\end{align*}
+
+由\cref{proposition:ch03-点容量}与\cref{theorem:ch03-BesselSobolev等价}，每个 $(m,p)$-零集 Lebesgue 可测且 $\lambda_N$-零。这显然蕴含对每个 $m\in\mathbb{N}^*$，$p\in(1,\infty)$，
+\begin{align}
+\mathscr{R}_{c,m,p}(U)\subseteq\mathscr{R}_s(U),\qquad
+\mathscr{R}_{ac}(U)\subseteq\mathscr{R}_{d,m,p}(U).\label{align:ch03-3.79}
+\end{align}
+
+由 Lebesgue 分解与\eqref{align:ch03-3.78}结合\eqref{align:ch03-3.79}，得
+\begin{align}
+\mu_{c,m,p}=[\mu_s]_{c,m,p},\label{align:ch03-3.80}\\
+\mu_{d,m,p}=\mu_{ac}+[\mu_s]_{d,m,p}\label{align:ch03-3.81}
+\end{align}
+对每个 $\mu\in\mathscr{R}_f(U)$。由\eqref{align:ch03-3.78}--\eqref{align:ch03-3.81}，得分解
+\begin{align}
+\mu=\mu_{ac}+[\mu_s]_{d,m,p}+\mu_{c,m,p}.\label{align:ch03-3.82}
+\end{align}
+
+\begin{remark}\label{remark:ch03-分解正负}
+类似于等式，有
+\begin{align}
+[\mu_{d,m,p}]^\pm=[\mu^\pm]_{d,m,p},\qquad
+[\mu_{c,m,p}]^\pm=[\mu^\pm]_{c,m,p}.\label{align:ch03-3.83}
+\end{align}
+特别地，由\eqref{align:ch03-3.80}与\eqref{align:ch03-3.83}，
+\begin{align}
+[\mu_s^\pm]_{c,m,p}=[\mu^\pm]_{c,m,p}=[\mu_{c,m,p}]^\pm.\label{align:ch03-3.84}
+\end{align}
+\end{remark}
+
+\begin{proposition}\label{proposition:ch03-集中弥散包含}\label{proposition:ch03-容量包含}
+设 $m,n\in\mathbb{N}^*$，$p,q\in(1,\infty)$。设 $mp\leqslant N$，且要么 $nq<mp$，要么 $nq=mp$ 且 $p<q$。则
+\begin{enumerate}[(i)]
+\item $\mathscr{R}_{d,n,q}(U)\subseteq\mathscr{R}_{d,m,p}(U)$；
+\item $\mathscr{R}_{c,m,p}(U)\subseteq\mathscr{R}_{c,n,q}(U)$。
+\end{enumerate}
+\end{proposition}
+
+由\cref{theorem:ch03-严格强弱}，得上述包含关系。
+
+若 $\mu\in W^{-m,q}(U)$ 为非负 Radon 测度，则 $\mu(K)\leqslant M\|g_m*\mu\|_q[C_{m,p}(K)]^{1/p}$，故 $\mu$ 关于 $(m,p)$-容量弥散。
+
+如下命题推广上述注记。
+
+\begin{proposition}[Gr\"un--Rehomme]\label{proposition:ch03-GrunRehomme}
+设 $m\in\mathbb{N}^*$，$p\in[1,\infty)$。则
+\begin{align*}
+\mathscr{R}_f(U)\cap W^{-m,q}(U)\subseteq\mathscr{R}_{d,m,p}(U).
+\end{align*}
+\end{proposition}
+
+\begin{proof}
+设 $\mu\in\mathscr{R}_f(U)\cap W^{-m,q}(U)$，$E\in\mathcal{B}(U)$ 使 $C_{m,p}(E)=0$。由 Hahn 分解，存在 $E^+\in\mathcal{B}(U)$，$E^+\subseteq E$，使 $\mu^+(E^+)=\mu(E^+)$，$\mu^-(E^+)=0$。由于 $\mu^\pm\in\mathscr{R}^+_f(U)$，对任意 $0<k<\mu^+(E)$ 及任意 $\epsilon>0$，存在紧集 $K\subseteq E^+$ 与开集 $A\supseteq E^+$，$A\subseteq U$，使 $\mu^+(K)>k$，$\mu^-(A)<\epsilon$。由 $C_{m,p}$ 的单调性，$C_{m,p}(K)=0$。则存在序列 $\{f_j\}\subseteq C^\infty_c(U)$ 使 $0\leqslant f_j\leqslant1$ 在 $U$ 中，$f_j=1$ 在 $K$ 上，且 $f_j\to0$ 在 $W^{m,p}_0(U)$ 中强收敛。显然，序列 $\{g_j\}$，$g_j\triangleq f_j\psi$（$\psi\in C^\infty_c(A)$，$0\leqslant\psi\leqslant1$，$\psi=1$ 在 $K$ 上）有相同性质。由此
+\begin{align*}
+k<\mu^+(K)\leqslant\int_U g_j\,\mathrm{d}\mu^+
+=\int_U g_j\,\mathrm{d}\mu+\int_U g_j\,\mathrm{d}\mu^-
+\leqslant\int_U g_j\,\mathrm{d}\mu+\mu^-(A)
+<\int_U g_j\,\mathrm{d}\mu+\epsilon.
+\end{align*}
+由于 $g_j\to0$ 在 $W^{m,p}_0(U)$ 中强收敛且 $\mu\in W^{-m,q}(U)$，令 $j\to\infty$，得对任意 $k<\mu^+(E)$，$k\leqslant\epsilon$，故 $\mu^+(E)=0$。类似可证 $\mu^-(E)=0$，结论成立。
+\end{proof}
+
+上述结果是如下 $\mathscr{R}_{d,m,p}(U)$ 刻画的一部分，其中记 $L^1(U)+W^{-m,q}(U)\equiv(W^{m,p}_0(U)\cap L^\infty(U))^*$。
+
+\begin{theorem}\label{theorem:ch03-Lp可解性}\label{theorem:ch03-奇性}
+设 $m\in\mathbb{N}^*$，$p\in(1,\infty)$。设 $\mu\in\mathscr{R}_f(U)$。下列陈述等价：
+\begin{enumerate}[(i)]
+\item $\mu\in L^1(U)+W^{-m,q}(U)$；
+\item $\mu\in\mathscr{R}_{d,m,p}(U)$。
+\end{enumerate}
+\end{theorem}
+
+显然 $L^1(U)\subseteq\mathscr{R}_{ac}(U)\subseteq\mathscr{R}_{d,m,p}(U)$，故 (i)$\Rightarrow$(ii) 由\cref{proposition:ch03-GrunRehomme}得到。为证反向蕴含，需要如下引理。
+
+\begin{lemma}\label{lemma:ch03-逼近弥散}
+设 $m\in\mathbb{N}^*$，$p\in(1,\infty)$，$\mu\in\mathscr{R}_{d,m,p}(U)$ 非负。则存在序列 $\{\mu_k\}\subseteq W^{-m,q}(U)\cap\mathscr{R}_f(U)$ 使对所有 $k\in\mathbb{N}$，$0\leqslant\mu_k\leqslant\mu_{k+1}\leqslant\mu$，且 $\lim_{k\to\infty}\|\mu_k-\mu\|_{\mathscr{R}_f(U)}=0$。
+\end{lemma}
+
+\begin{proof}[证明\cref{theorem:ch03-Lp可解性}]
+仅需证 (ii)$\Rightarrow$(i)。不妨设 $\mu$ 非负。对任意 $k\in\mathbb{N}$，置 $\nu_k\triangleq \mu_k-\mu_{k-1}$，其中 $\{\mu_k\}\subseteq W^{-m,q}(U)$ 由\cref{lemma:ch03-逼近弥散}给出，$\mu_0\triangleq 0$。则
+\begin{align}
+\sum_{k=1}^\infty\|\nu_k\|=\sum_{k=1}^\infty\nu_k(U)=\lim_{k\to\infty}\mu_k(U)=\mu(U)<\infty.\label{align:ch03-3.85}
+\end{align}
+设 $\{\rho_j\}\subseteq C^\infty_c(U)$ 为标准磨光子。对任意固定 $k\in\mathbb{N}$，$\lim_{j\to\infty}\|\nu_k-\nu_k*\rho_j\|_{W^{-m,q}(U)}=0$，故存在 $j_k\in\mathbb{N}$ 使
+\begin{align}
+\|\nu_k-\nu_k*\rho_{j_k}\|_{W^{-m,q}(U)}\leqslant\frac{1}{2^k}.\label{align:ch03-3.86}
+\end{align}
+置
+\begin{align}
+\nu_k=(\nu_k-\nu_k*\rho_{j_k})+\nu_{j_k}*\rho_{j_k}=:\omega_k+f_k\quad (k\in\mathbb{N}).\label{align:ch03-3.87}
+\end{align}
+注意由\cref{lemma:ch03-逼近弥散}，$\nu_k\in\mathscr{R}^+_f(U)$，故 $f_k\geqslant0$。由\eqref{align:ch03-3.86}，$\sum_{k=1}^\infty\|\omega_k\|_{W^{-m,q}(U)}\leqslant1$，故存在 $\omega\triangleq \sum_{k=1}^\infty\omega_k\in W^{-m,q}(U)$。另一方面，由\eqref{align:ch03-3.85}，$\sum_{k=1}^\infty\|f_k\|_{L^1(U)}\leqslant\|\mu\|+1$，故存在 $f\triangleq \sum_{k=1}^\infty f_k\in L^1(U)$。由于 $\lim_{n\to\infty}\|\sum_{k=1}^n\nu_k-\mu\|_{\mathscr{R}_f(U)}=0$，由\eqref{align:ch03-3.87}得 $\mu=f+\omega$。结论成立。
+\end{proof}
+
+\begin{remark}\label{remark:ch03-对偶意义}
+由\cref{theorem:ch03-Lp可解性}，对偶符号 $\langle\mu,\zeta\rangle$ 对任意 $\mu\in\mathscr{R}_{d,m,p}(U)$ 及 $\zeta\in W^{m,p}_0(U)\cap L^\infty(U)$ 有意义。
+\end{remark}
+
+
+
+
+\end{document}

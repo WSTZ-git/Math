@@ -1,0 +1,266 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{向量测度}\label{section:ch01-向量测度}
+
+至此所考虑的测度都是标量测度，与下面将引入的向量测度相对。贯穿本节，$(X,\mathcal{A})$ 为一可测空间，$Y$ 为赋范 $\|\cdot\|_Y$ 的 Banach 空间。
+
+\subsection{定义与一般结果}\label{subsection:ch01-向量测度定义}
+
+\begin{definition}\label{definition:ch01-向量sigma可加}
+映射 $\mu:\mathcal{A}\to Y$ 称为 $\sigma$--可加的，若对任意不交序列 $\{E_k\}\subseteq\mathcal{A}$，
+\[
+\lim_{n\to\infty}\left\|\sum_{k=1}^n\mu(E_k)-\mu\left(\bigcup_{k=1}^\infty E_k\right)\right\|_Y=0.
+\]
+\end{definition}
+
+\begin{remark}\label{remark:ch01-向量可加}
+$\sigma$--可加映射 $\mu:\mathcal{A}\to Y$ 是可加的，即对任意有限不交族 $\{E_1,\cdots ,E_n\}\subseteq\mathcal{A}$，有
+\[
+\mu\left(\bigcup_{k=1}^n E_k\right)=\sum_{k=1}^n\mu(E_k).
+\]
+\end{remark}
+
+\begin{definition}\label{definition:ch01-向量测度}
+(i) $\sigma$--可加映射 $\mu:\mathcal{A}\to Y$ 且 $\mu(\varnothing )=0$ 称为 $\mathcal{A}$ 上的向量测度。
+
+(ii) 函数 $|\mu|:\mathcal{A}\to[0,\infty]$ 定义为
+\begin{align}
+|\mu|(E)\triangleq \sup\left\{\sum_{i=1}^n\|\mu(E_i)\|_Y\ \middle|\ E_1,\cdots ,E_n\in\mathcal{A}\text{ 不交},\ E=\bigcup_{i=1}^n E_i,\ n\in\mathbb{N}\right\}\quad(E\in\mathcal{A}) \label{align:ch01-向量变差}
+\end{align}
+称为 $\mu$ 的变差。量 $|\mu|(X)$ 称为 $\mu$ 的全变差。
+
+(iii) 向量测度 $\mu:\mathcal{A}\to Y$ 称为有界变差的，若 $|\mu|(X)<\infty$。
+\end{definition}
+
+\begin{example}\label{example:ch01-向量测度例}
+设 $Y$ 为 Banach 空间，$T:L^1(0,1)\to Y$ 为有界线性算子。对任意 Borel 集 $E\in\mathcal{B}\cap(0,1)$，令 $\mu(E)\triangleq T(\chi_E)$。显然，
+\[
+\|\mu(E)\|_Y\leqslant\|T\|\lambda(E),
+\]
+特别地 $|\mu|(0,1)\leqslant\|T\|$（此处 $\|T\|$ 表示 $T$ 的算子范数）。则对任意不交序列 $\{E_k\}\subseteq\mathcal{A}$，
+\[
+\lim_{n\to\infty}\left\|\sum_{k=1}^n\mu(E_k)-\mu\left(\bigcup_{k=1}^\infty E_k\right)\right\|_Y
+=\lim_{n\to\infty}\left\|\mu\left(\bigcup_{k=n+1}^\infty E_k\right)\right\|_Y
+\leqslant\|T\|\lim_{n\to\infty}\lambda\left(\bigcup_{k=n+1}^\infty E_k\right)=0.
+\]
+故 $\mu$ 是有界变差的向量测度。
+\end{example}
+
+\begin{remark}\label{remark:ch01-向量测度Y=R}
+若 $Y=\mathbb{R}$，则向量测度的概念与有限带号测度的概念重合。
+\end{remark}
+
+\begin{proposition}\label{proposition:ch01-向量变差是测度}
+设 $\mu:\mathcal{A}\to Y$ 为一向量测度。则其变差 $|\mu|$ 是一个测度。
+\end{proposition}
+
+\begin{proof}
+由定义 $|\mu|(\varnothing )=0$。对任意不交序列 $\{E_k\}\subseteq\mathcal{A}$，令 $E\triangleq \bigcup_{k=1}^\infty E_k$，设 $F_1,\cdots ,F_n\in\mathcal{A}$ 不交且 $E=\bigcup_{i=1}^n F_i$。则由\cref{remark:ch01-向量可加} 得
+\[
+\begin{aligned}
+\|\mu(E)\|_Y
+&=\left\|\sum_{i=1}^n\mu(F_i)\right\|_Y
+\leqslant\sum_{i=1}^n\|\mu(F_i)\|_Y
+=\sum_{i=1}^n\|\mu(F_i\cap E)\|_Y\\
+&\leqslant\sum_{i=1}^n\sum_{k=1}^\infty\|\mu(F_i\cap E_k)\|_Y
+\leqslant\sum_{k=1}^\infty|\mu|(E_k),
+\end{aligned}
+\]
+因为由\eqref{align:ch01-向量变差}，
+\[
+E_k=E_k\cap E=\bigcup_{i=1}^n(F_i\cap E_k)
+\quad\Rightarrow\quad
+\sum_{i=1}^n\|\mu(F_i\cap E_k)\|_Y\leqslant|\mu|(E_k)\quad(k\in\mathbb{N}).
+\]
+由此
+\begin{align}
+|\mu|\left(\bigcup_{k=1}^\infty E_k\right)=|\mu|(E)\leqslant\sum_{k=1}^\infty|\mu|(E_k). \label{align:ch01-向量变差证明1}
+\end{align}
+另一方面，容易看出映射 $|\mu|:\mathcal{A}\to[0,\infty]$ 是可加且单调的。于是对任意 $n\in\mathbb{N}$，
+\[
+\sum_{k=1}^n|\mu|(E_k)=|\mu|\left(\bigcup_{k=1}^n E_k\right)\leqslant|\mu|\left(\bigcup_{k=1}^\infty E_k\right),
+\]
+故
+\begin{align}
+\sum_{k=1}^\infty|\mu|(E_k)\leqslant|\mu|\left(\bigcup_{k=1}^\infty E_k\right). \label{align:ch01-向量变差证明2}
+\end{align}
+由\eqref{align:ch01-向量变差证明1}--\eqref{align:ch01-向量变差证明2}，$|\mu|$ 是 $\sigma$--可加的，证毕。
+\end{proof}
+
+\begin{lemma}\label{lemma:ch01-向量单调序列收敛}
+\label{lemma:ch01-向量测度连续}
+设 $\mu:\mathcal{A}\to Y$ 为一向量测度。则对任意单调序列 $\{E_k\}\subset\mathcal{A}$，序列 $\{\mu(E_k)\}\subseteq Y$ 在 $Y$ 中收敛。
+\end{lemma}
+
+\begin{proof}
+若 $\{E_k\}\subseteq\mathcal{A}$ 非减，则对每个 $k\in\mathbb{N}$，有 $E_k=\bigcup_{i=1}^k F_i$，其中 $F_i\triangleq E_i\setminus E_{i-1}$（$i\in\mathbb{N}$，$E_0\triangleq \varnothing $）。由于 $\mu$ 是 $\sigma$--可加的且 $\{F_i\}$ 是不交序列，有
+\[
+\lim_{k\to\infty}\mu(E_k)=\lim_{k\to\infty}\sum_{i=1}^k\mu(F_i)
+=\mu\left(\bigcup_{i=1}^\infty F_i\right)=\mu\left(\bigcup_{k=1}^\infty E_k\right)\quad\text{在 }Y\text{ 中},
+\]
+故在此情形下结论成立。若 $\{E_k\}\subseteq\mathcal{A}$ 非增，则序列 $\{E_k^c\}\subseteq\mathcal{A}$ 非减，且对所有 $k\in\mathbb{N}$ 有 $\mu(E_k)=\mu(X)-\mu(E_k^c)$。于是由证明的第一部分，序列 $\{\mu(E_k)\}$ 在 $Y$ 中收敛，证毕。
+\end{proof}
+
+记 $\langle\cdot,\cdot\rangle_{Y^*,Y}:Y^*\times Y\to\mathbb{R}$ 为 Banach 空间 $Y$ 与其对偶空间 $Y^*$ 之间的对偶映射。
+
+\begin{proposition}\label{proposition:ch01-向量标量化}
+设 $\mu:\mathcal{A}\to Y$ 为一向量测度，$y^*\in Y^*$。则映射
+\begin{align}
+\langle y^*,\mu\rangle:\mathcal{A}\to\mathbb{R},\qquad
+\langle y^*,\mu\rangle(E)\triangleq \langle y^*,\mu(E)\rangle_{Y^*,Y}\quad(E\in\mathcal{A}) \label{align:ch01-标量化}
+\end{align}
+是一个有限带号测度。
+\end{proposition}
+
+\begin{proof}
+由定义有 $\langle y^*,\mu\rangle(\varnothing )=0$ 且 $\langle y^*,\mu\rangle(\mathcal{A})\subseteq\mathbb{R}$。由\cref{remark:ch01-向量可加}，映射 $\langle y^*,\mu\rangle$ 是可加的，即
+\[
+\langle y^*,\mu\rangle\left(\bigcup_{k=1}^n E_k\right)=\sum_{k=1}^n\langle y^*,\mu\rangle(E_k).
+\]
+则对任意不交序列 $\{E_k\}\subseteq\mathcal{A}$，
+\[
+\begin{aligned}
+&\lim_{n\to\infty}\left|\langle y^*,\mu\rangle\left(\bigcup_{k=1}^\infty E_k\right)-\sum_{k=1}^n\langle y^*,\mu\rangle(E_k)\right|\\
+&=\lim_{n\to\infty}\left|\langle y^*,\mu\rangle\left(\bigcup_{k=n+1}^\infty E_k\right)\right|
+=\lim_{n\to\infty}\left|\left\langle y^*,\mu\left(\bigcup_{k=n+1}^\infty E_k\right)\right\rangle_{Y^*,Y}\right|\\
+&\leqslant\|y^*\|_{Y^*}\lim_{n\to\infty}\left\|\mu\left(\bigcup_{k=n+1}^\infty E_k\right)\right\|_Y=0,
+\end{aligned}
+\]
+证毕。
+\end{proof}
+
+记 $|\langle y^*,\mu\rangle|$ 为带号测度 $\langle y^*,\mu\rangle$ 的变差。
+
+\begin{definition}\label{definition:ch01-半变差}
+函数 $|\mu|_w:\mathcal{A}\to[0,\infty)$，
+\begin{align}
+|\mu|_w(E)\triangleq \sup\left\{|\langle y^*,\mu\rangle|(E)\ \middle|\ y^*\in Y^*,\ \|y^*\|_{Y^*}\leqslant 1\right\}\quad(E\in\mathcal{A}), \label{align:ch01-半变差}
+\end{align}
+称为向量测度 $\mu:\mathcal{A}\to Y$ 的半变差。
+\end{definition}
+
+\begin{remark}\label{remark:ch01-半变差性质}
+由\eqref{align:ch01-向量变差} 和\eqref{align:ch01-半变差}，对所有 $E\in\mathcal{A}$ 有 $|\mu|_w(E)\leqslant|\mu|(E)$。若 $Y=\mathbb{R}$，则 $|\mu|_w=|\mu|$ 是有限带号测度 $\mu$ 的变差（见\cref{remark:ch01-向量测度Y=R}）。
+\end{remark}
+
+\begin{lemma}\label{lemma:ch01-半变差估计}
+设 $\mu:\mathcal{A}\to Y$ 为一向量测度。则对所有 $E\in\mathcal{A}$，
+\begin{align}
+\sup_{F\in\mathcal{A},\ F\subseteq E}\|\mu(F)\|_Y
+\leqslant|\mu|_w(E)
+\leqslant 2\sup_{F\in\mathcal{A},\ F\subseteq E}\|\mu(F)\|_Y. \label{align:ch01-半变差估计}
+\end{align}
+\end{lemma}
+
+\begin{proof}
+对任意 $E\in\mathcal{A}$ 和 $F\in\mathcal{A}$、$F\subseteq E$，有
+\[
+\|\mu(F)\|_Y=\sup_{y^*\in Y^*,\ \|y^*\|_{Y^*}\leqslant 1}|\langle y^*,\mu(F)\rangle_{Y^*,Y}|
+=\sup_{y^*\in Y^*,\ \|y^*\|_{Y^*}\leqslant 1}|\langle y^*,\mu\rangle(F)|
+\leqslant\sup_{y^*\in Y^*,\ \|y^*\|_{Y^*}\leqslant 1}|\langle y^*,\mu\rangle|(F)=|\mu|_w(E),
+\]
+故\eqref{align:ch01-半变差估计} 中的第一个不等式成立。
+
+设 $E=\bigcup_{i=1}^n F_i$，$F_1,\cdots ,F_n\in\mathcal{A}$ 不交，$y^*\in Y^*$，$\|y^*\|_{Y^*}\leqslant 1$。设 $\pi_\pm$ 为 $\{1,\cdots ,n\}$ 的子集，使得
+\[
+\operatorname{sgn}(\langle y^*,\mu\rangle(F_i))=\pm 1\Leftrightarrow i\in\pi_\pm.
+\]
+则
+\[
+\begin{aligned}
+\sum_{i=1}^n|\langle y^*,\mu\rangle(F_i)|
+&=\sum_{i\in\pi_+}\langle y^*,\mu\rangle(F_i)-\sum_{i\in\pi_-}\langle y^*,\mu\rangle(F_i)\\
+&=\left\langle y^*,\sum_{i\in\pi_+}\mu(F_i)-\sum_{i\in\pi_-}\mu(F_i)\right\rangle_{Y^*,Y}\\
+&=\left\langle y^*,\mu\left(\bigcup_{i\in\pi_+}F_i\right)\right\rangle_{Y^*,Y}
+-\left\langle y^*,\mu\left(\bigcup_{i\in\pi_-}F_i\right)\right\rangle_{Y^*,Y}\\
+&\leqslant 2\sup_{F\in\mathcal{A},\ F\subseteq E}\|\mu(F)\|_Y.
+\end{aligned}
+\]
+于是由\eqref{align:ch01-全变差公式} 和\eqref{align:ch01-半变差}，\eqref{align:ch01-半变差估计} 中的第二个不等式成立。
+\end{proof}
+
+\begin{proposition}\label{proposition:ch01-半变差有限}
+设 $\mu:\mathcal{A}\to Y$ 为一向量测度。则 $|\mu|_w(X)<\infty$。
+\end{proposition}
+
+\begin{proof}
+反设 $|\mu|_w(X)=\infty$。则由\eqref{align:ch01-半变差估计} 中的第二个不等式，
+\[
+\sup_{F\in\mathcal{A}}\|\mu(F)\|_Y=\infty.
+\]
+故存在 $F_1\in\mathcal{A}$ 使得
+\[
+\|\mu(F_1)\|_Y\geqslant 1+\|\mu(X)\|_Y,
+\]
+由此
+\[
+\|\mu(F_1^c)\|_Y\geqslant\|\mu(F_1)\|_Y-\|\mu(X)\|_Y\geqslant 1.
+\]
+于是
+\begin{align}
+\min\{\|\mu(F_1)\|_Y,\|\mu(F_1^c)\|_Y\}\geqslant 1. \label{align:ch01-半变差有限1}
+\end{align}
+另一方面，由于
+\[
+\infty=|\mu|_w(X)\leqslant|\mu|_w(F_1)+|\mu|_w(F_1^c),
+\]
+我们也有
+\begin{align}
+\max\{|\mu|_w(F_1),|\mu|_w(F_1^c)\}=\infty. \label{align:ch01-半变差有限2}
+\end{align}
+取 $E_1\triangleq F_1$ 或 $E_1\triangleq F_1^c$。则 $E_1\in\mathcal{A}$，且由\eqref{align:ch01-半变差有限2}--\eqref{align:ch01-半变差有限1}，
+\[
+E_1\subseteq X,\quad |\mu|_w(E_1)=\infty,\quad\|\mu(E_1)\|_Y\geqslant 1.
+\]
+迭代此论证，得到序列 $\{E_k\}\subset\mathcal{A}$，使得对所有 $k\geqslant 2$，
+\[
+E_k\subseteq E_{k-1},\quad |\mu|_w(E_k)=\infty,\quad\|\mu(E_k)\|_Y\geqslant k.
+\]
+序列 $\{E_k\}$ 非增，且 $\lim_{k\to\infty}\|\mu(E_k)\|_Y=\infty$，这与\cref{lemma:ch01-向量单调序列收敛} 矛盾。证毕。
+\end{proof}
+
+以下定义推广了\cref{definition:ch01-相互奇异绝对连续}(ii)。
+
+\begin{definition}\label{definition:ch01-向量绝对连续}
+设 $\nu:\mathcal{A}\to Y$ 为一向量测度，$\mu:\mathcal{A}\to[-\infty,\infty]$ 为一带号测度。我们说 $\nu$ 关于 $\mu$ 绝对连续（记为 $\nu\ll\mu$），若对任意 $E\in\mathcal{A}$，
+\[
+|\mu|(E)=0\Rightarrow\nu(E)=0.
+\]
+\end{definition}
+
+\begin{remark}\label{remark:ch01-向量绝对连续}
+设 $\mu,\nu$ 如\cref{definition:ch01-向量绝对连续} 所述，且 $\lim_{|\mu|(E)\to0}\nu(E)=0$，即对任意 $\epsilon>0$，存在 $\delta>0$ 使得对任意满足 $|\mu|(E)<\delta$ 的 $E\in\mathcal{A}$，有 $\|\nu(E)\|_Y<\epsilon$。则显然 $\nu\ll\mu$。若 $\mu$ 有限，则逆命题成立（见文献~[41, Theorem 1.2.1]）。
+\end{remark}
+
+以下结果将 Lebesgue 分解定理推广到向量测度（证明见文献~[41, Theorem 1.5.9]）。
+
+\begin{theorem}[Lebesgue 分解]\label{theorem:ch01-向量Lebesgue分解}
+设 $\nu:\mathcal{A}\to Y$ 为一向量测度，$\mu:\mathcal{A}\to\mathbb{R}$ 为一有限带号测度。则存在唯一的向量测度偶 $\nu_{ac},\nu_s:\mathcal{A}\to Y$ 使得：
+\begin{enumerate}[(i)]
+\item $\nu_{ac}\ll\mu$；
+\item 对所有 $y^*\in Y^*$，有 $\langle y^*,\nu_s\rangle\perp\mu$；
+\item $\nu=\nu_{ac}+\nu_s$。
+\end{enumerate}
+若 $\nu$ 有界变差，则 $\nu_{ac}$ 和 $\nu_s$ 有界变差，且
+\[
+|\nu|=|\nu_{ac}|+|\nu_s|,\qquad |\nu_s|\perp\mu.
+\]
+\end{theorem}
+
+
+
+
+\end{document}

@@ -1,0 +1,162 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{微分}\label{section:ch02-微分}
+
+\subsection{Radon--Nikod\'ym 定理}\label{subsection:ch02-RadonNikodym}
+
+设 $(X,\mathscr A)$ 为可测空间，$\mu,\nu:\mathscr A\to[0,\infty)$ 为测度。回顾 $\nu$ 关于 $\mu$ 绝对连续的定义：$\nu\ll\mu$ 当且仅当对所有 $E\in\mathscr A$（$\mu(E)=0$）有 $\nu(E)=0$。下列经典结果成立。
+
+\begin{theorem}[Radon--Nikod\'ym]\label{theorem:ch02-RadonNikodym}
+设 $(X,\mathscr A,\mu)$ 为 $\sigma$-有限测度空间，$\nu:\mathscr A\to[0,\infty)$ 为测度，$\nu\ll\mu$。则存在 $h\in L^1_{\mathrm{loc}}(X,\mathscr A,\mu)$，使
+\begin{align}
+\nu(E)=\int_E h\,\mathrm{d}\mu\quad\text{对所有 }E\in\mathscr A. \label{align:ch02-2.75}
+\end{align}
+此外，$h$ 在 $\mu$-a.e. 意义下唯一。
+\end{theorem}
+
+\cref{theorem:ch02-RadonNikodym}可推广到 $\sigma$-有限带号测度 $\nu$。对两个 $\sigma$-有限测度 $\mu,\nu:\mathscr A\to[0,\infty)$，下列 Jordan 类型分解成立。
+
+\begin{theorem}[Lebesgue 分解]\label{theorem:ch02-Lebesgue分解}
+设 $(X,\mathscr A)$ 为可测空间，$\mu,\nu:\mathscr A\to[0,\infty)$ 为 $\sigma$-有限测度。则存在唯一对 $\{\nu_a,\nu_s\}\subseteq\mathscr A$，使 $\nu=\nu_a+\nu_s$，$\nu_a\ll\mu$，$\nu_s\perp\mu$。
+\end{theorem}
+
+有下列 Riesz 表示定理（见\cref{theorem:ch02-RieszC0}）的相伴结果。
+
+\begin{proposition}\label{proposition:ch02-绝对连续泛函}
+\label{remark:ch02-绝对连续}
+设 $X$ 为局部紧 Hausdorff 空间，$\mu\in\mathscr R^+_f(X)$。设 $\nu\in\mathscr R^+(X)$，$\nu\ll\mu$。则存在 $h\in L^1_{\mathrm{loc}}(X,\mathscr B,\mu)$，使
+\begin{align}
+\int_X f\,\mathrm{d}\nu=\int_X fh\,\mathrm{d}\mu\quad\text{对所有 }f\in C_c(X). \label{align:ch02-2.76}
+\end{align}
+\end{proposition}
+
+\begin{proof}
+因 $\nu\ll\mu$，$\nu$ 在 $\mu$ 零测集上取值为零。由 Radon--Nikod\'ym 定理（见\cref{theorem:ch02-RadonNikodym}），存在 $h\in L^1_{\mathrm{loc}}(X,\mathscr B,\mu)$，使\eqref{align:ch02-2.75}成立，结论由标准逼近（见\cref{remark:ch02-简单函数稠密}）得到。
+\end{proof}
+
+\subsection{$\mathbb R^N$ 上的微分}\label{subsection:ch02-RN微分}
+
+现考虑 $X=\mathbb R^N$、$\mu=\lambda_N$ 的情形。先证明函数
+\begin{align*}
+\mathbb R^N\ni x\mapsto\int_{B(x,r)}f\,\mathrm{d}\lambda_N
+\end{align*}
+在 $f\in L^1_{\mathrm{loc}}(\mathbb R^N)$ 下的连续性。
+
+\begin{lemma}\label{lemma:ch02-球积分连续}
+设 $f\in L^1_{\mathrm{loc}}(\mathbb R^N)$。则函数 $g:\mathbb R^N\to\mathbb R$，$g(x)\triangleq \int_{B(x,r)}f\,\mathrm{d}\lambda_N$，对任意 $r>0$ 连续。
+\end{lemma}
+
+\begin{proof}
+设 $x_n\to x$。则 $f\chi_{B(x_n,r)}\to f\chi_{B(x,r)}$ $\lambda_N$-a.e.，因对任意 $y\in\partial B(x,r)$，$|\{y-x_n\}|-|\{y-x\}|\to0$。此外，若 $|x_n-x|<r$，则 $B(x_n,r)\subseteq B(x,2r)$，故由控制收敛定理得
+\begin{align*}
+g(x_n)=\int_{\mathbb R^N}f\chi_{B(x_n,r)}\,\mathrm{d}\lambda_N\to\int_{\mathbb R^N}f\chi_{B(x,r)}\,\mathrm{d}\lambda_N=g(x).
+\end{align*}
+\end{proof}
+
+下列 Vitali 覆盖引理是微分理论的基础。
+
+\begin{lemma}[Vitali 覆盖]\label{lemma:ch02-Vitali覆盖}
+设 $E\subseteq\mathbb R^N$，$\{B_\alpha\}_{\alpha\in I}$ 为 $E$ 的开球覆盖族。则存在两两不交的可数子族 $\{B_{\alpha_n}\}\subseteq\{B_\alpha\}$，使
+\begin{align*}
+\lambda_N(E\setminus\bigcup_{n=1}^\infty B_{\alpha_n})=0.
+\end{align*}
+此外，若 $\lambda_N(E)<\infty$，则对任意 $\epsilon>0$，子族可选为使
+\begin{align*}
+\lambda_N\left(E\setminus\bigcup_{n=1}^\infty B_{\alpha_n}\right)<\epsilon.
+\end{align*}
+\end{lemma}
+
+\begin{proof}
+设 $\lambda_N(E)<\infty$（一般情形由 $\sigma$-有限性归结）。令 $s\triangleq \sup\{\operatorname{diam}B_\alpha\mid\alpha\in I\}$。不妨设 $s<\infty$，否则直接取有限个球即可。
+
+递归选取：令 $B_{\alpha_1}$ 使 $\operatorname{diam}B_{\alpha_1}>s/2$。已选 $B_{\alpha_1},\cdots ,B_{\alpha_n}$，令
+\begin{align*}
+s_n\triangleq \sup\{\operatorname{diam}B_\alpha\mid B_\alpha\cap B_{\alpha_k}=\varnothing ,\ k=1,\cdots ,n\},
+\end{align*}
+取 $B_{\alpha_{n+1}}$ 使 $\operatorname{diam}B_{\alpha_{n+1}}>s_n/2$。若集合为空则停止。
+
+现证 $E\subseteq\bigcup_n 5B_{\alpha_n}$，其中 $5B$ 为同心五倍半径球。固定 $x\in E$。存在某球 $B_\alpha$ 使 $x\in B_\alpha$。若 $B_\alpha$ 被选取，则结论成立；否则存在最小 $n$ 使 $B_\alpha\cap B_{\alpha_n}\neq\varnothing $。由选取，$\operatorname{diam}B_{\alpha_n}\geqslant\operatorname{diam}B_\alpha/2$，故 $B_\alpha\subseteq 5B_{\alpha_n}$。
+
+于是 $E\setminus\bigcup_n B_{\alpha_n}\subseteq\bigcup_n(5B_{\alpha_n}\setminus B_{\alpha_n})$。因球两两不交，
+\begin{align*}
+\sum_n\lambda_N(B_{\alpha_n})\leqslant\lambda_N\left(\bigcup_n B_{\alpha_n}\right)\leqslant\lambda_N(E)<\infty,
+\end{align*}
+故 $\sum_n\lambda_N(5B_{\alpha_n}\setminus B_{\alpha_n})=(5^N-1)\sum_n\lambda_N(B_{\alpha_n})<\infty$，余项随 $n\to\infty$ 趋于零。
+\end{proof}
+
+下列结果是 Lebesgue 微分定理。
+
+\begin{theorem}[Lebesgue 微分]\label{theorem:ch02-Lebesgue微分}\label{corollary:ch02-Lebesgue点}\label{corollary:ch02-Lebesgue微分}
+设 $f\in L^1_{\mathrm{loc}}(\mathbb R^N)$。则对 $\lambda_N$-a.e. $x\in\mathbb R^N$，
+\begin{align}
+\lim_{r\to0}\frac1{\lambda_N(B(x,r))}\int_{B(x,r)}|f(y)-f(x)|\,\mathrm{d}y=0. \label{align:ch02-2.77}
+\end{align}
+特别地，
+\begin{align}
+\lim_{r\to0}\frac1{\lambda_N(B(x,r))}\int_{B(x,r)}f(y)\,\mathrm{d}y=f(x)\quad\text{对 }\lambda_N\text{-a.e. }x. \label{align:ch02-2.78}
+\end{align}
+\end{theorem}
+
+\begin{proof}
+固定 $g\in C_c(\mathbb R^N)$，则\eqref{align:ch02-2.77}对 $f-g$ 与 $g$ 分别考虑。对 $g$，由连续性显然成立；故只需证对每个 $f\in L^1_{\mathrm{loc}}(\mathbb R^N)$，
+\begin{align*}
+E_\alpha\triangleq \left\{x\in\mathbb R^N\ \middle|\ \limsup_{r\to0}\frac1{\lambda_N(B(x,r))}\int_{B(x,r)}|f(y)-f(x)|\,\mathrm{d}y>\alpha\right\}
+\end{align*}
+的测度为零。
+
+对任意 $\epsilon>0$，由 $C_c$ 稠密性（见\cref{lemma:ch02-Cc稠密}），存在 $g\in C_c(\mathbb R^N)$ 使 $\|f-g\|_1<\epsilon$。令 $h=f-g$。则
+\begin{align*}
+\frac1{\lambda_N(B(x,r))}\int_{B(x,r)}|h(y)-h(x)|\,\mathrm{d}y
+\leqslant\frac1{\lambda_N(B(x,r))}\int_{B(x,r)}|h(y)|\,\mathrm{d}y+|h(x)|.
+\end{align*}
+定义极大函数
+\begin{align*}
+\mathcal M h(x)\triangleq \sup_{r>0}\frac1{\lambda_N(B(x,r))}\int_{B(x,r)}|h(y)|\,\mathrm{d}y.
+\end{align*}
+由 Hardy--Littlewood--Wiener 极大不等式（见文献\cite{ref40} Theorem VIII.3.1），$\lambda_N(\{x\mid\mathcal M h(x)>\alpha/2\})\leqslant C\|h\|_1/\alpha$。又由 Chebyshev，$\lambda_N(\{x\mid|h(x)|>\alpha/2\})\leqslant2\|h\|_1/\alpha$。故
+\begin{align*}
+\lambda_N(E_\alpha)\leqslant\frac{C\|h\|_1}{\alpha}+\frac{2\|h\|_1}{\alpha}\leqslant\frac{(C+2)\epsilon}{\alpha}.
+\end{align*}
+由 $\epsilon$ 的任意性得 $\lambda_N(E_\alpha)=0$。结论成立。
+\end{proof}
+
+\begin{corollary}\label{corollary:ch02-带号Radon微分}
+设 $\mu$ 为 $\mathbb R^N$ 上局部有限带号 Radon 测度。则对 $\lambda_N$-a.e. $x$，极限
+\begin{align*}
+\frac{\mathrm{d}\mu}{\mathrm{d}\lambda_N}(x)\triangleq \lim_{r\to0}\frac{\mu(B(x,r))}{\lambda_N(B(x,r))}
+\end{align*}
+存在有限值。函数 $\mathrm{d}\mu/\mathrm{d}\lambda_N$ 为 $\mu$ 关于 $\lambda_N$ 的 Radon--Nikod\'ym 导数在绝对连续部分上的限制。
+\end{corollary}
+
+\cref{theorem:ch02-Lebesgue微分}的一个重要应用是绝对连续函数的刻画。回顾区间 $[a,b]$ 上函数 $f$ 为绝对连续的定义：对任意 $\epsilon>0$，存在 $\delta>0$，使对任意互不相交区间族 $(a_i,b_i)$（$i=1,\cdots ,n$），当 $\sum_i(b_i-a_i)<\delta$ 时有 $\sum_i|f(b_i)-f(a_i)|<\epsilon$。
+
+\begin{theorem}\label{theorem:ch02-绝对连续刻画}
+设 $f:[a,b]\to\mathbb R$。则下列命题等价：
+\begin{enumerate}[(i)]
+\item $f$ 绝对连续；
+\item $f$ 几乎处处可微，$f'\in L^1([a,b])$，且
+\begin{align*}
+f(x)-f(a)=\int_a^x f'(t)\,\mathrm{d}t\quad\text{对所有 }x\in[a,b].
+\end{align*}
+\end{enumerate}
+\end{theorem}
+
+本微分理论的进一步发展、包括 Sobolev 函数的刻画，将在后续章节中展开。
+
+
+
+
+\end{document}

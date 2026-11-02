@@ -1,0 +1,504 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{向量函数的积分}\label{section:ch04-积分}
+
+\subsection{Bochner 可积性}\label{subsection:ch04-Bochner可积}
+
+\begin{definition}[简单函数的积分]\label{definition:ch04-简单函数积分}
+设 $s:X\to Y$ 为简单函数，$s=\sum_{i=1}^p y_i\chi_{E_i}$，其中 $y_1,\cdots ,y_p\in Y$，$\{E_1,\cdots ,E_p\}\subseteq\mathcal{A}$ 为 $X$ 的一个划分（当 $\mu(E_i)=\infty$ 时 $y_i=0$）。量
+\begin{align*}
+\int_X s\,\mathrm{d}\mu\triangleq \sum_{i=1}^p y_i\,\mu(E_i)
+\end{align*}
+称为 $s$ 在 $X$ 上的积分。
+\end{definition}
+
+\begin{remark}\label{remark:ch04-简单积分性质}
+(i) 易见上述定义是良定的，因为积分 $\int_X s\,\mathrm{d}\mu$ 不依赖于划分 $\{E_1,\cdots ,E_p\}$ 的选取。类似计算表明，从 $\mathcal{S}(X;Y)$ 到 $Y$ 的映射 $s\mapsto\int_X s\,\mathrm{d}\mu$ 是线性的：若 $s=\sum_{i=1}^p y_i\chi_{E_i}$ 与 $t=\sum_{j=1}^q y_j'\chi_{F_j}$ 为简单函数，则对所有 $\alpha,\beta\in\mathbb{R}$，
+\begin{align}
+\int_X(\alpha s+\beta t)\,\mathrm{d}\mu=\alpha\int_X s\,\mathrm{d}\mu+\beta\int_X t\,\mathrm{d}\mu. \label{align:ch04-4.30}
+\end{align}
+
+(ii) 由三角不等式有
+\begin{align}
+\Big\|\int_X s\,\mathrm{d}\mu\Big\|_Y\leqslant\int_X\|s\|_Y\,\mathrm{d}\mu, \label{align:ch04-4.31}
+\end{align}
+其中 $\|s\|_Y\triangleq \sum_{i=1}^p\|y_i\|_Y\chi_{E_i}$。
+\end{remark}
+
+\begin{definition}[Bochner 可积与 Bochner 积分]\label{definition:ch04-Bochner可积}
+$\mu$-可测函数 $f:X\to Y$ 称为 Bochner 可积的，若存在序列 $\{s_n\}\subseteq\mathcal{S}(X;Y)$ 使 $s_n\to f$ 在 $X$ 中 $\mu$-几乎处处成立，且
+\begin{align}
+\lim_{n\to\infty}\int_X\|s_n-f\|_Y\,\mathrm{d}\mu=0. \label{align:ch04-4.32}
+\end{align}
+每个这样的序列 $\{s_n\}\subseteq\mathcal{S}(X;Y)$ 称为 $f$ 的一个逼近序列。量
+\begin{align}
+\int_X f\,\mathrm{d}\mu\triangleq \lim_{n\to\infty}\int_X s_n\,\mathrm{d}\mu, \label{align:ch04-4.33}
+\end{align}
+（该极限在 $Y$ 中强收敛意义下存在）称为 $f$ 在 $X$ 上的 Bochner 积分。
+\end{definition}
+
+若 $f:X\to Y$ 为 Bochner 可积，则对 $E\in\mathcal{A}$ 令
+\begin{align}
+\int_E f\,\mathrm{d}\mu\triangleq \int_X f\chi_E\,\mathrm{d}\mu. \label{align:ch04-4.34}
+\end{align}
+Bochner 可积函数 $f:X\to Y$ 的集合记为 $L^1(X;Y)\equiv L^1(X,\mathcal{A},\mu;Y)$；若 $Y=\mathbb{R}$，则记 $L^1(X;\mathbb{R})\equiv L^1(X)\equiv L^1(X,\mathcal{A},\mu)$。易见当 $Y=\mathbb{R}$ 时，Bochner 可积性与 Bochner 积分的概念与\cref{definition:ch02-Lebesgue积分}中的概念一致。
+
+\begin{remark}\label{remark:ch04-Bochner良定义}
+(i) 对每个 $n\in\mathbb{N}$，\eqref{align:ch04-4.32}右端的积分是良定的（见\cref{remark:ch04-范数可测}与\cref{definition:ch02-Lebesgue积分}）。此外，Bochner 积分是良定的，因为\eqref{align:ch04-4.33}中的极限存在且不依赖于序列 $\{s_n\}$ 的选取。事实上，若 $\{s_n\}$ 是 $f$ 的一个逼近序列，则由\eqref{align:ch04-4.30}--\eqref{align:ch04-4.31}有
+\begin{align*}
+\Big\|\int_X(s_m-s_n)\,\mathrm{d}\mu\Big\|_Y\leqslant\int_X\|s_m-s_n\|_Y\,\mathrm{d}\mu\leqslant\int_X\|s_m-f\|_Y\,\mathrm{d}\mu+\int_X\|s_n-f\|_Y\,\mathrm{d}\mu.
+\end{align*}
+故 $\{\int_X s_n\,\mathrm{d}\mu\}\subseteq Y$ 是 Cauchy 序列，从而在 $Y$ 中有强极限。此外，设 $\{s_n\}$ 与 $\{t_n\}$ 为 $f$ 的两个逼近序列。则当 $n\to\infty$ 时，
+\begin{align*}
+\Big\|\int_X(s_n-t_n)\,\mathrm{d}\mu\Big\|_Y\leqslant\int_X\|s_n-t_n\|_Y\,\mathrm{d}\mu\leqslant\int_X\|s_n-f\|_Y\,\mathrm{d}\mu+\int_X\|t_n-f\|_Y\,\mathrm{d}\mu\to0,
+\end{align*}
+从而序列 $\{\int_X s_n\,\mathrm{d}\mu\}$ 与 $\{\int_X t_n\,\mathrm{d}\mu\}$ 在 $Y$ 中有相同的极限。
+
+(ii) 若 $f:X\to Y$ 为 Bochner 可积且 $E\in\mathcal{A}$，则函数 $f\chi_E:X\to Y$ 为 Bochner 可积。于是\eqref{align:ch04-4.34}中的定义是良定的。
+\end{remark}
+
+\begin{remark}\label{remark:ch04-积分线性}
+(i) 由\eqref{align:ch04-4.30}与\eqref{align:ch04-4.33}，对所有 $f,g\in L^1(X;Y)$ 与 $\alpha,\beta\in\mathbb{R}$，有 $\alpha f+\beta g\in L^1(X;Y)$，故 $L^1(X;Y)$ 是一个向量空间。此外，
+\begin{align}
+\int_X(\alpha f+\beta g)\,\mathrm{d}\mu=\alpha\int_X f\,\mathrm{d}\mu+\beta\int_X g\,\mathrm{d}\mu. \label{align:ch04-4.35}
+\end{align}
+
+(ii) 由\eqref{align:ch04-4.34}--\eqref{align:ch04-4.35}，Bochner 积分是有限可加的：若 $E_1,\cdots ,E_p\in\mathcal{A}$ 两两不交，则
+\begin{align}
+\int_{\bigcup_{i=1}^p E_i}f\,\mathrm{d}\mu=\sum_{i=1}^p\int_{E_i}f\,\mathrm{d}\mu. \label{align:ch04-4.36}
+\end{align}
+\end{remark}
+
+以下结果给出 Bochner 可积性的一个简单判据。
+
+\begin{proposition}[Bochner 可积判据]\label{proposition:ch04-Bochner判据}\label{proposition:ch04-4.4.16}
+$\mu$-可测函数 $f:X\to Y$ 为 Bochner 可积当且仅当
+\begin{align}
+\int_X\|f\|_Y\,\mathrm{d}\mu<\infty. \label{align:ch04-4.37}
+\end{align}
+\end{proposition}
+
+\begin{proof}
+设 $f$ 为 Bochner 可积，$\{s_n\}$ 为其一个逼近序列。则对每个 $\epsilon>0$，存在 $\bar n\in\mathbb{N}$ 使
+\begin{align*}
+\int_X\|f\|_Y\,\mathrm{d}\mu\leqslant\int_X\|f-s_{\bar n}\|_Y\,\mathrm{d}\mu+\int_X\|s_{\bar n}\|_Y\,\mathrm{d}\mu<\int_X\|s_{\bar n}\|_Y\,\mathrm{d}\mu+\epsilon<\infty,
+\end{align*}
+故\eqref{align:ch04-4.37}成立。反之，设 $f:X\to Y$ 为满足\eqref{align:ch04-4.37}的 $\mu$-可测函数，$\{t_n\}\subseteq\mathcal{S}(X;Y)$ 为任一使 $t_n\to f$ 在 $X$ 中 $\mu$-几乎处处成立的序列。对每个 $n\in\mathbb{N}$，令 $s_n\triangleq t_n\chi_{E_n}$，其中
+\begin{align*}
+E_n\triangleq \{x\in X\mid\|t_n(x)\|_Y\leqslant2\|f(x)\|_Y\}.
+\end{align*}
+我们证明 $s_n\to f$ 在 $X$ 中 $\mu$-几乎处处成立且\eqref{align:ch04-4.32}成立，从而 $f$ 为 Bochner 可积。
+
+事实上，由于 $t_n\to f$ 在 $X$ 中 $\mu$-几乎处处成立，存在 $\mu$-零测集 $N\subseteq X$ 使对所有 $x\in N^c$ 有 $\lim_{n\to\infty}t_n(x)=f(x)$。于是对每个 $x\in N^c$，存在 $\bar n\in\mathbb{N}$ 使对所有 $n\geqslant\bar n$ 有 $\|t_n(x)\|_Y\leqslant2\|f(x)\|_Y$，即对所有 $n\geqslant\bar n$ 有 $x\in E_n$，从而 $\lim_{n\to\infty}\chi_{E_n}(x)=1$。因此对所有 $x\in N^c$ 有 $\lim_{n\to\infty}s_n(x)=\lim_{n\to\infty}t_n(x)=f(x)$。由于 $\mu(N)=0$，故 $s_n\to f$ 在 $X$ 中 $\mu$-几乎处处成立。
+
+由 $s_n$ 的定义，对所有 $x\in E_n^c$ 有 $\|s_n(x)\|_Y=0$，对所有 $x\in E_n$ 有 $\|s_n(x)\|_Y=\|t_n(x)\|_Y\leqslant2\|f(x)\|_Y$。因此对所有 $x\in X$ 有
+\begin{align*}
+\|s_n(x)-f(x)\|_Y\leqslant3\|f(x)\|_Y.
+\end{align*}
+由于 $s_n\to f$ 在 $X$ 中 $\mu$-几乎处处成立，且由\eqref{align:ch04-4.37}有 $\|f\|_Y\in L^1(X)$，故由上述不等式与控制收敛定理得\eqref{align:ch04-4.32}。于是结论成立。
+\end{proof}
+
+\begin{proposition}\label{proposition:ch04-Bochner性质}
+设 $f$ 为 Bochner 可积。则：
+\begin{enumerate}[(i)]
+\item\label{item:ch04-Bochner性质-i} 对所有 $E\in\mathcal{A}$，有
+\begin{align}
+\Big\|\int_E f\,\mathrm{d}\mu\Big\|_Y\leqslant\int_E\|f\|_Y\,\mathrm{d}\mu; \label{align:ch04-4.38}
+\end{align}
+\item\label{item:ch04-Bochner性质-ii} $\lim_{\mu(E)\to0}\int_E f\,\mathrm{d}\mu=0$；
+\item\label{item:ch04-Bochner性质-iii} Bochner 积分是 $\sigma$-可加的：对任意两两不交序列 $\{E_i\}\subseteq\mathcal{A}$，
+\begin{align}
+\int_{\bigcup_{i=1}^\infty E_i}f\,\mathrm{d}\mu=\sum_{i=1}^\infty\int_{E_i}f\,\mathrm{d}\mu, \label{align:ch04-4.39}
+\end{align}
+右端级数在 $Y$ 中绝对收敛。
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+设 $\{s_n\}\subseteq\mathcal{S}(X;Y)$ 为 $f$ 的一个逼近序列。由\eqref{align:ch04-4.32}、\eqref{align:ch04-4.34}与三角不等式，对任意 $E\in\mathcal{A}$，有
+\begin{align}
+\lim_{n\to\infty}\Big|\int_E\|s_n\|_Y\,\mathrm{d}\mu-\int_E\|f\|_Y\,\mathrm{d}\mu\Big|\leqslant\lim_{n\to\infty}\int_E\big|\|s_n\|_Y-\|f\|_Y\big|\,\mathrm{d}\mu\leqslant\lim_{n\to\infty}\int_X\|s_n-f\|_Y\,\mathrm{d}\mu=0. \label{align:ch04-4.40}
+\end{align}
+另一方面，对所有 $n\in\mathbb{N}$ 与 $E\in\mathcal{A}$，有
+\begin{align*}
+\Big\|\int_E s_n\,\mathrm{d}\mu\Big\|_Y\leqslant\int_E\|s_n\|_Y\,\mathrm{d}\mu
+\end{align*}
+（见\eqref{align:ch04-4.31}）。由\eqref{align:ch04-4.33}与\eqref{align:ch04-4.40}，在上式中令 $n\to\infty$ 得\eqref{align:ch04-4.38}，故断言 (i) 成立。由于 $\lim_{\mu(E)\to0}\int_E\|f\|_Y\,\mathrm{d}\mu=0$（见\cref{remark:ch02-绝对连续}(i)），由\eqref{align:ch04-4.38}得断言 (ii)。关于 (iii)，注意由 (i) 与\cref{proposition:ch04-Bochner判据}，
+\begin{align*}
+\sum_{i=1}^\infty\Big\|\int_{E_i}f\,\mathrm{d}\mu\Big\|_Y\leqslant\sum_{i=1}^\infty\int_{E_i}\|f\|_Y\,\mathrm{d}\mu=\int_{\bigcup_{i=1}^\infty E_i}\|f\|_Y\,\mathrm{d}\mu\leqslant\int_X\|f\|_Y\,\mathrm{d}\mu<\infty,
+\end{align*}
+故\eqref{align:ch04-4.39}右端级数绝对收敛。至于其和，由\eqref{align:ch04-4.36}与\eqref{align:ch04-4.38}有
+\begin{align*}
+\Big\|\int_{\bigcup_{i=1}^\infty E_i}f\,\mathrm{d}\mu-\sum_{i=1}^p\int_{E_i}f\,\mathrm{d}\mu\Big\|_Y
+=\Big\|\int_{\bigcup_{i=p+1}^\infty E_i}f\,\mathrm{d}\mu\Big\|_Y
+\leqslant\int_{\bigcup_{i=p+1}^\infty E_i}\|f\|_Y\,\mathrm{d}\mu
+=\sum_{i=p+1}^\infty\int_{E_i}\|f\|_Y\,\mathrm{d}\mu\to0\quad(p\to\infty),
+\end{align*}
+因为 $\sum_{i=1}^\infty\int_{E_i}\|f\|_Y\,\mathrm{d}\mu=\int_{\bigcup_{i=1}^\infty E_i}\|f\|_Y\,\mathrm{d}\mu\leqslant\int_X\|f\|_Y\,\mathrm{d}\mu<\infty$。这就证明了\eqref{align:ch04-4.39}，故结论成立。
+\end{proof}
+
+设 $Y,Z$ 为 Banach 空间，$B_1$ 表示 $Y$ 中的闭单位球。我们记 $\mathcal{L}(Y;Z)$ 为线性连续算子 $T:Y\to Z$ 的 Banach 空间，赋以算子范数 $\|T\|_{\mathcal{L}(Y;Z)}\triangleq \sup_{y\in B_1}\|Ty\|_Z$。
+
+\begin{proposition}\label{proposition:ch04-算子交换积分}
+设 $Z$ 为 Banach 空间，$T\in\mathcal{L}(Y;Z)$，$f:X\to Y$ 为 Bochner 可积。则函数 $Tf:X\to Z$，$(Tf)(x)\triangleq T(f(x))$，为 Bochner 可积，且
+\begin{align}
+T\Big(\int_X f\,\mathrm{d}\mu\Big)=\int_X(Tf)\,\mathrm{d}\mu. \label{align:ch04-4.41}
+\end{align}
+\end{proposition}
+
+\begin{proof}
+设 $\{s_n\}$ 为 $f$ 的一个逼近序列，$s_n=\sum_{k=1}^{p_n}y_{n,k}\chi_{E_{n,k}}$，其中 $y_{n,k}\in Y$，$\{E_{n,1},\cdots ,E_{n,p_n}\}\subseteq\mathcal{A}$ 为 $X$ 的一个划分。则 $\{Ts_n\}\subseteq\mathcal{S}(X;Z)$，因为 $Ts_n=\sum_{k=1}^{p_n}(Ty_{n,k})\chi_{E_{n,k}}$。由 $T$ 的连续性，$Ts_n\to Tf$ 在 $X$ 中 $\mu$-几乎处处成立，且
+\begin{align*}
+\int_X\|Ts_n-Tf\|_Z\,\mathrm{d}\mu\leqslant\|T\|_{\mathcal{L}(Y;Z)}\int_X\|s_n-f\|_Y\,\mathrm{d}\mu\to0\quad(n\to\infty).
+\end{align*}
+故 $\{Ts_n\}$ 为 $Tf$ 的一个逼近序列，从而 $Tf$ 为 Bochner 可积。最后，对每个 $n\in\mathbb{N}$，有
+\begin{align*}
+T\Big(\int_X s_n\,\mathrm{d}\mu\Big)=\sum_{k=1}^{p_n}(Ty_k)\mu(E_k)=\int_X(Ts_n)\,\mathrm{d}\mu.
+\end{align*}
+由于 $\{s_n\}$ 与 $\{Ts_n\}$ 分别为 $f$ 与 $Tf$ 的逼近序列，且 $T$ 连续，在上式中令 $n\to\infty$ 得\eqref{align:ch04-4.41}。证明完毕。
+\end{proof}
+
+\begin{corollary}\label{corollary:ch04-对偶配对}
+设 $f:X\to Y$ 为 Bochner 可积。则对每个 $y^*\in Y^*$，函数 $\langle y^*,f\rangle:X\to\mathbb{R}$，$\langle y^*,f\rangle(x)\triangleq \langle y^*,f(x)\rangle$，可积，且对每个 $E\in\mathcal{A}$ 有
+\begin{align}
+\Big\langle y^*,\int_E f\,\mathrm{d}\mu\Big\rangle=\int_E\langle y^*,f(x)\rangle\,\mathrm{d}\mu. \label{align:ch04-4.42}
+\end{align}
+\end{corollary}
+
+我们证明\cref{corollary:ch02-Lebesgue点}的如下推广。
+
+\begin{proposition}[Bochner 函数的 Lebesgue 点]\label{proposition:ch04-Lebesgue点}
+设 $f:U\subseteq X\to Y$ 为 Bochner 可积。则对 $\mu$-几乎所有 $x_0\in X$，
+\begin{align}
+\lim_{r\to0^+}\frac1{\mu(B_r(x_0))}\int_{B_r(x_0)}\|f-f(x_0)\|_Y\,\mathrm{d}\mu=0, \label{align:ch04-4.43a}
+\end{align}
+\begin{align}
+\lim_{r\to0^+}\Big\|\frac1{\mu(B_r(x_0))}\int_{B_r(x_0)}f\,\mathrm{d}\mu-f(x_0)\Big\|_Y=0. \label{align:ch04-4.43b}
+\end{align}
+\end{proposition}
+
+\begin{proof}
+等式\eqref{align:ch04-4.43b}由\eqref{align:ch04-4.43a}与\eqref{align:ch04-4.38}得到。为证\eqref{align:ch04-4.43a}，注意由\cref{proposition:ch04-mu可推可分值}，$f$ 为 $\mu$-几乎处处可分值，因为由假设它 Bochner 可积，从而 $\mu$-可测。不失一般性，可设值域 $f(U)$ 可分。令 $D\equiv\{y_n\}$ 为 $f(U)$ 的可数稠密集。由式 (2.96)，对每个 $n\in\mathbb{N}$，存在 $\mu$-零测集 $N_n\subseteq U$，使对所有 $x_0\in U\setminus N_n$ 有
+\begin{align}
+\lim_{r\to0^+}\frac1{\mu(B_r(x_0))}\int_{B_r(x_0)}\|f-y_n\|_Y\,\mathrm{d}\mu=\|f(x_0)-y_n\|_Y. \label{align:ch04-4.44}
+\end{align}
+于是集 $N\triangleq \bigcup_{n=1}^\infty N_n$ 为 $\mu$-零测集，且对任意 $x_0\in U\setminus N$，等式\eqref{align:ch04-4.44}对每个 $n\in\mathbb{N}$ 成立。
+
+固定 $x_0\in U\setminus N$。则对任意 $n\in\mathbb{N}$，
+\begin{align*}
+\limsup_{r\to0^+}\frac1{\mu(B_r(x_0))}\int_{B_r(x_0)}\|f-f(x_0)\|_Y\,\mathrm{d}\mu
+\leqslant\limsup_{r\to0^+}\frac1{\mu(B_r(x_0))}\int_{B_r(x_0)}\|f-y_n\|_Y\,\mathrm{d}\mu+\|f(x_0)-y_n\|_Y=2\|f(x_0)-y_n\|_Y.
+\end{align*}
+另一方面，由 $D$ 在 $f(U)$ 中的稠密性，对任意 $\epsilon>0$，存在 $\bar n\in\mathbb{N}$ 使对每个 $n>\bar n$ 有 $\|f(x_0)-y_n\|_Y<\epsilon/2$。于是由上述不等式，对任意 $\epsilon>0$ 有
+\begin{align*}
+\limsup_{r\to0^+}\frac1{\mu(B_r(x_0))}\int_{B_r(x_0)}\|f-f(x_0)\|_Y\,\mathrm{d}\mu\leqslant\epsilon,
+\end{align*}
+由此得\eqref{align:ch04-4.43a}。这就证明了该结果。
+\end{proof}
+
+\begin{proposition}\label{proposition:ch04-紧算子}
+设 $f:X\to Y$ 为 Bochner 可积。则线性算子
+\begin{align*}
+T:L^\infty(X)\to Y,\quad Tg\triangleq \int_X fg\,\mathrm{d}\mu\ (g\in L^\infty(X))
+\end{align*}
+是紧的。
+\end{proposition}
+
+\begin{proof}
+设 $\{s_n\}\subseteq\mathcal{S}(X;Y)$ 为 $f$ 的一个逼近序列，$s_n=\sum_{k=1}^{p_n}y_{n,k}\chi_{E_{n,k}}$，$y_{n,k}\in Y$，$\{E_{n,1},\cdots ,E_{n,p_n}\}\subseteq\mathcal{A}$ 为 $X$ 的一个划分，且当 $\mu(E_{n,k})=\infty$ 时 $y_{n,k}=0$。对所有 $n\in\mathbb{N}$，定义 $T_n\in\mathcal{L}(L^\infty(X);Y)$ 为
+\begin{align*}
+T_ng\triangleq \int_X s_ng\,\mathrm{d}\mu=\sum_{k=1}^{p_n}y_{n,k}\int_{E_{n,k}}g\,\mathrm{d}\mu\ (g\in L^\infty(X)).
+\end{align*}
+显然每个 $T_n$ 都是有限秩的。此外，由\eqref{align:ch04-4.32}与\eqref{align:ch04-4.38}有
+\begin{align*}
+\|T_n-T\|_{\mathcal{L}(L^\infty(X);Y)}=\sup_{\substack{g\in L^\infty(X)\\g\neq0}}\frac{\|(T_n-T)g\|_Y}{\|g\|_\infty}\leqslant\int_X\|s_n-f\|_Y\,\mathrm{d}\mu\to0\quad(n\to\infty).
+\end{align*}
+故结论成立。
+\end{proof}
+
+以下结果建立 Bochner 积分与向量测度之间的联系，推广了\cref{remark:ch02-简单积分}。
+
+\begin{proposition}\label{proposition:ch04-积分诱导向量测度}
+设 $f$ 为 Bochner 可积。则映射
+\begin{align}
+\nu:\mathcal{A}\to Y,\quad \nu(E)\triangleq \int_E f\,\mathrm{d}\mu\ (E\in\mathcal{A}), \label{align:ch04-4.45}
+\end{align}
+是关于 $\mu$ 绝对连续的向量测度，且有有界变差
+\begin{align}
+|\nu|(E)=\int_E\|f\|_Y\,\mathrm{d}\mu\ (E\in\mathcal{A}). \label{align:ch04-4.46}
+\end{align}
+\end{proposition}
+
+\begin{proof}
+由\cref{proposition:ch04-Bochner性质}(iii)与\cref{definition:ch01-向量测度}(i)，映射 $\nu$ 是向量测度；由\eqref{align:ch04-4.46}有 $\nu\ll\mu$（见\cref{definition:ch01-测度绝对连续}）。为证\eqref{align:ch04-4.46}，取 $E\in\mathcal{A}$，$E=\bigcup_{i=1}^n E_i$，其中 $E_1,\cdots ,E_n\in\mathcal{A}$ 两两不交。由\eqref{align:ch04-4.38}有
+\begin{align*}
+\sum_{i=1}^n\|\nu(E_i)\|_Y=\sum_{i=1}^n\Big\|\int_{E_i}f\,\mathrm{d}\mu\Big\|_Y\leqslant\sum_{i=1}^n\int_{E_i}\|f\|_Y\,\mathrm{d}\mu=\int_E\|f\|_Y\,\mathrm{d}\mu,
+\end{align*}
+故对所有 $E\in\mathcal{A}$ 有 $|\nu|(E)\leqslant\int_E\|f\|_Y\,\mathrm{d}\mu$（见式 (1.62)）。特别地，由于 $f$ Bochner 可积，$|\nu|(X)\leqslant\int_X\|f\|_Y\,\mathrm{d}\mu<\infty$（见\cref{proposition:ch04-Bochner判据}）。故 $\nu$ 有有界变差（见\cref{definition:ch01-向量测度}(ii)）。
+
+现证反向不等式 $|\nu|(E)\geqslant\int_E\|f\|_Y\,\mathrm{d}\mu$。设 $\{s_n\}\subseteq\mathcal{S}(X;Y)$ 为 $f$ 的一个逼近序列，故对任意 $\epsilon>0$，存在 $\bar n\in\mathbb{N}$ 使
+\begin{align}
+\int_X\|s_{\bar n}-f\|_Y\,\mathrm{d}\mu<\epsilon. \label{align:ch04-4.47}
+\end{align}
+设 $s_{\bar n}=\sum_{l=1}^p y_l\chi_{G_l}$，其中 $y_1,\cdots ,y_p\in Y$，$\{G_1,\cdots ,G_p\}\subseteq\mathcal{A}$ 为 $X$ 的一个划分，且当 $\mu(G_l)=\infty$ 时 $y_l=0$。固定 $E\in\mathcal{A}$，令 $F_l\triangleq G_l\cap E$（$l=1,\cdots ,p$）。则集 $F_1,\cdots ,F_p\in\mathcal{A}$ 两两不交，且 $E=\bigcup_{l=1}^p F_l$。易验证
+\begin{align}
+\sum_{l=1}^p\Big\|\int_{F_l}s_{\bar n}\,\mathrm{d}\mu\Big\|_Y=\int_E\|s_{\bar n}\|_Y\,\mathrm{d}\mu. \label{align:ch04-4.48}
+\end{align}
+由\eqref{align:ch04-4.47}--\eqref{align:ch04-4.48}有
+\begin{align*}
+\Big|\sum_{l=1}^p\Big\|\int_{F_l}f\,\mathrm{d}\mu\Big\|_Y-\int_E\|s_{\bar n}\|_Y\,\mathrm{d}\mu\Big|
+&=\Big|\sum_{l=1}^p\Big\|\int_{F_l}f\,\mathrm{d}\mu\Big\|_Y-\sum_{l=1}^p\Big\|\int_{F_l}s_{\bar n}\,\mathrm{d}\mu\Big\|_Y\Big|\\
+&\leqslant\sum_{l=1}^p\Big|\Big\|\int_{F_l}f\,\mathrm{d}\mu\Big\|_Y-\Big\|\int_{F_l}s_{\bar n}\,\mathrm{d}\mu\Big\|_Y\Big|\\
+&\leqslant\sum_{l=1}^p\Big\|\int_{F_l}f\,\mathrm{d}\mu-\int_{F_l}s_{\bar n}\,\mathrm{d}\mu\Big\|_Y
+\leqslant\sum_{l=1}^p\int_{F_l}\|s_{\bar n}-f\|_Y\,\mathrm{d}\mu=\int_E\|s_{\bar n}-f\|_Y\,\mathrm{d}\mu<\epsilon.
+\end{align*}
+由上述不等式、式 (1.62) 与\eqref{align:ch04-4.47}，对所有 $E\in\mathcal{A}$ 得
+\begin{align*}
+|\nu|(E)\geqslant\sum_{l=1}^p\Big\|\int_{F_l}f\,\mathrm{d}\mu\Big\|_Y\geqslant\int_E\|s_{\bar n}\|_Y\,\mathrm{d}\mu-\epsilon\geqslant\int_E\|f\|_Y\,\mathrm{d}\mu-2\epsilon,
+\end{align*}
+由 $\epsilon$ 的任意性得 $|\nu|(E)\geqslant\int_E\|f\|_Y\,\mathrm{d}\mu$。故结论成立。
+\end{proof}
+
+\begin{remark}\label{remark:ch04-RN反例}
+由\cref{proposition:ch04-积分诱导向量测度}，自然要问逆命题是否成立，即：设 $\nu:\mathcal{A}\to Y$ 为有有界变差的向量测度且 $\nu\ll\mu$，是否存在 Bochner 可积函数 $f:X\to Y$，使对所有 $E\in\mathcal{A}$ 有 $\nu(E)=\int_E f\,\mathrm{d}\mu$？
+
+若 $Y=\mathbb{R}$，则由 Radon--Nikodým 定理答案是肯定的（见\cref{theorem:ch02-RadonNikodym}）。值得注意的是，对一般的无穷维 Banach 空间 $Y$ 情况并非如此（见\cref{subsection:ch04-RNP}）。
+\end{remark}
+
+最后我们给出如下定义，它推广了\cref{definition:ch02-带号积分}。
+
+\begin{definition}[关于带号测度的 Bochner 积分]\label{definition:ch04-带号Bochner}
+设 $(X,\mathcal{A})$ 为可测空间，$Y$ 为 Banach 空间，$\mu$ 为 $\mathcal{A}$ 上的带号测度。函数 $f:X\to Y$ 称为关于 $\mu$ Bochner 可积的，若 $f\in L^1(X,\mathcal{A},\mu^\pm;Y)$。此时令
+\begin{align*}
+\int_X f\,\mathrm{d}\mu\triangleq \int_X f\,\mathrm{d}\mu^+-\int_X f\,\mathrm{d}\mu^-.
+\end{align*}
+\end{definition}
+
+\cref{proposition:ch04-Bochner性质}--\cref{proposition:ch04-算子交换积分}的结果易推广到\cref{definition:ch04-带号Bochner}的情形。特别地，不等式\eqref{align:ch04-4.38}替换为
+\begin{align*}
+\Big\|\int_E f\,\mathrm{d}\mu\Big\|_Y\leqslant\int_E\|f\|_Y\,\mathrm{d}|\mu|\quad\text{对所有 }E\in\mathcal{A},
+\end{align*}
+它推广了不等式 (2.11)。
+
+\subsection{Fubini 定理}\label{subsection:ch04-Fubini}
+
+我们证明\cref{theorem:ch02-Fubini}的如下推广。
+
+\begin{theorem}[Fubini]\label{theorem:ch04-Fubini}
+设 $(X_1,\mathcal{A}_1,\mu_1)$ 与 $(X_2,\mathcal{A}_2,\mu_2)$ 为 $\sigma$-有限测度空间。设 $f\in L^1(X_1\times X_2,\mathcal{A}_1\times\mathcal{A}_2,\mu_1\times\mu_2;Y)$。则：
+\begin{enumerate}[(i)]
+\item\label{item:ch04-Fubini-i} 对 $\mu_1$-几乎所有 $x_1\in X_1$，$f_{x_1}\in L^1(X_2,\mathcal{A}_2,\mu_2;Y)$；对 $\mu_2$-几乎所有 $x_2\in X_2$，$f_{x_2}\in L^1(X_1,\mathcal{A}_1,\mu_1;Y)$；
+\item\label{item:ch04-Fubini-ii} 函数
+\begin{align}
+X_1\to Y,\quad x_1\mapsto\int_{X_2}f_{x_1}\,\mathrm{d}\mu_2, \label{align:ch04-4.49}
+\end{align}
+属于 $L^1(X_1,\mathcal{A}_1,\mu_1;Y)$，且函数
+\begin{align}
+X_2\to Y,\quad x_2\mapsto\int_{X_1}f_{x_2}\,\mathrm{d}\mu_1, \label{align:ch04-4.50}
+\end{align}
+属于 $L^1(X_2,\mathcal{A}_2,\mu_2;Y)$；
+\item\label{item:ch04-Fubini-iii} 我们有
+\begin{align}
+\int_{X_1\times X_2}f\,\mathrm{d}(\mu_1\times\mu_2)=\int_{X_1}\mathrm{d}\mu_1\int_{X_2}f_{x_1}\,\mathrm{d}\mu_2=\int_{X_2}\mathrm{d}\mu_2\int_{X_1}f_{x_2}\,\mathrm{d}\mu_1. \label{align:ch04-4.51}
+\end{align}
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+(i) 由假设，$f$ 为 $\mu_1\times\mu_2$-可测。故存在序列 $\{s_n\}\subseteq\mathcal{S}(X_1\times X_2;Y)$，$s_n=s_n(x_1,x_2)$，使 $s_n\to f$ 在 $X_1\times X_2$ 中 $(\mu_1\times\mu_2)$-几乎处处成立。因此，对 $\mu_1$-几乎所有 $x_1\in X_1$，当 $n\to\infty$ 时 $x_1$-截口序列 $\{(s_n)_{x_1}\}$ 在 $X_2$ 中 $\mu_2$-几乎处处收敛于 $f_{x_1}$（见\cref{remark:ch02-截口注}）。回顾：对每个 $E\in\mathcal{A}_1\times\mathcal{A}_2$，有 $E_{x_1}\in\mathcal{A}_2$，且 $\chi_E(x_1,\cdot)=\chi_{E_{x_1}}$（$x_1\in X_1$）（见\cref{remark:ch02-截口可测}）。故 $\{(s_n)_{x_1}\}\subseteq\mathcal{S}(X_2;Y)$，从而对 $\mu_1$-几乎所有 $x_1\in X_1$，$f_{x_1}$ 为 $\mu_2$-可测。
+
+现注意由 Tonelli 定理与\cref{proposition:ch04-Bochner判据}有
+\begin{align*}
+\int_{X_1\times X_2}\|f\|_Y\,\mathrm{d}(\mu_1\times\mu_2)=\int_{X_1}\mathrm{d}\mu_1\int_{X_2}\|f_{x_1}\|_Y\,\mathrm{d}\mu_2<\infty,
+\end{align*}
+故对 $\mu_1$-几乎所有 $x_1\in X_1$ 有 $\int_{X_2}\|f_{x_1}\|_Y\,\mathrm{d}\mu_2<\infty$。于是由\cref{proposition:ch04-Bochner判据}，对 $\mu_1$-几乎所有 $x_1\in X_1$ 有 $f_{x_1}\in L^1(X_2,\mathcal{A}_2,\mu_2;Y)$。对 $f_{x_2}$ 类似论证，故断言 (i) 成立。
+
+(ii) 由于 $f\in L^1(X_1\times X_2,\mathcal{A}_1\times\mathcal{A}_2,\mu_1\times\mu_2;Y)$ 且 $s_n\to f$ 在 $X_1\times X_2$ 中 $(\mu_1\times\mu_2)$-几乎处处成立，由控制收敛定理与\cref{proposition:ch04-Bochner判据}得
+\begin{align*}
+\lim_{n\to\infty}\int_{X_1\times X_2}\|s_n-f\|_Y\,\mathrm{d}(\mu_1\times\mu_2)=0,
+\end{align*}
+故由 Tonelli 定理
+\begin{align*}
+\lim_{n\to\infty}\int_{X_1}\mathrm{d}\mu_1\int_{X_2}\|(s_n)_{x_1}-f_{x_1}\|_Y\,\mathrm{d}\mu_2=0.
+\end{align*}
+因此（可能至多差一个不重新标号的子列）对 $\mu_1$-几乎所有 $x_1\in X_1$ 有
+\begin{align*}
+\lim_{n\to\infty}\int_{X_2}\|(s_n)_{x_1}-f_{x_1}\|_Y\,\mathrm{d}\mu_2=0,
+\end{align*}
+于是由\cref{proposition:ch04-Bochner性质}(i)
+\begin{align}
+\lim_{n\to\infty}\int_{X_2}(s_n)_{x_1}\,\mathrm{d}\mu_2=\int_{X_2}f_{x_1}\,\mathrm{d}\mu_2\quad\text{对 }\mu_1\text{-几乎所有 }x_1\in X_1. \label{align:ch04-4.52}
+\end{align}
+易见对每个 $n\in\mathbb{N}$，映射 $x_1\mapsto\int_{X_2}(s_n)_{x_1}\,\mathrm{d}\mu_2$ 为 $\mu_1$-可测。事实上，设
+\begin{align*}
+s_n=\sum_{k=1}^{p_n}y_{n,k}\chi_{E_{n,k}},\qquad (s_n)_{x_1}=\sum_{k=1}^{p_n}y_{n,k}\chi_{(E_{n,k})_{x_1}}\quad(k=1,\cdots ,p_n),
+\end{align*}
+其中 $y_{n,k}\in Y$，$E_{n,k}\in\mathcal{A}_1\times\mathcal{A}_2$。对所有 $n\in\mathbb{N}$ 与 $k=1,\cdots ,p_n$，由 Tonelli 定理，实值函数 $x_1\mapsto\int_{X_2}\chi_{(E_{n,k})_{x_1}}\,\mathrm{d}\mu_2$ 为 $\mathcal{A}_1$-可测，从而显然映射 $x_1\mapsto y_{n,k}\int_{X_2}\chi_{(E_{n,k})_{x_1}}\,\mathrm{d}\mu_2=\int_{X_2}y_{n,k}\chi_{(E_{n,k})_{x_1}}\,\mathrm{d}\mu_2$ 为 $\mu_1$-可测（见\eqref{align:ch04-4.41}）。由于 $\mu_1$-可测函数的集合是一个向量空间，故断言成立。
+
+由等式\eqref{align:ch04-4.52}与上述说明，由\eqref{align:ch04-4.49}定义的函数为 $\mu_1$-可测。此外，由\cref{proposition:ch04-Bochner性质}(i)与 Tonelli 定理有
+\begin{align*}
+\int_{X_1}\mathrm{d}\mu_1\,\Big\|\int_{X_2}f_{x_1}\,\mathrm{d}\mu_2\Big\|_Y\leqslant\int_{X_1}\mathrm{d}\mu_1\int_{X_2}\|f_{x_1}\|_Y\,\mathrm{d}\mu_2=\int_{X_1\times X_2}\|f\|_Y\,\mathrm{d}(\mu_1\times\mu_2)<\infty,
+\end{align*}
+故函数\eqref{align:ch04-4.49}属于 $L^1(X_1,\mathcal{A}_1,\mu_1;Y)$。类似可见函数\eqref{align:ch04-4.50}属于 $L^1(X_2,\mathcal{A}_2,\mu_2;Y)$，故断言 (ii) 成立。
+
+(iii) 由\cref{corollary:ch04-对偶配对}，对每个 $y^*\in Y^*$，有
+\begin{align}
+\Big\langle y^*,\int_{X_1\times X_2}f\,\mathrm{d}(\mu_1\times\mu_2)\Big\rangle=\int_{X_1\times X_2}\langle y^*,f\rangle\,\mathrm{d}(\mu_1\times\mu_2), \label{align:ch04-4.53}
+\end{align}
+因为 $f\in L^1(X_1\times X_2,\mathcal{A}_1\times\mathcal{A}_2,\mu_1\times\mu_2;Y)$；
+\begin{align}
+\Big\langle y^*,\int_{X_2}f_{x_1}\,\mathrm{d}\mu_2\Big\rangle=\int_{X_2}\langle y^*,f_{x_1}\rangle\,\mathrm{d}\mu_2\quad\text{对 }\mu_1\text{-几乎所有 }x_1\in X_1, \label{align:ch04-4.54}
+\end{align}
+因为对 $\mu_1$-几乎所有 $x_1\in X_1$ 有 $f_{x_1}\in L^1(X_2,\mathcal{A}_2,\mu_2;Y)$；以及
+\begin{align}
+\Big\langle y^*,\int_{X_1}\mathrm{d}\mu_1\int_{X_2}f_{x_1}\,\mathrm{d}\mu_2\Big\rangle=\int_{X_1}\mathrm{d}\mu_1\Big\langle y^*,\int_{X_2}f_{x_1}\,\mathrm{d}\mu_2\Big\rangle, \label{align:ch04-4.55}
+\end{align}
+因为\eqref{align:ch04-4.49}中的函数属于 $L^1(X_1,\mathcal{A}_1,\mu_1;Y)$。由\eqref{align:ch04-4.53}--\eqref{align:ch04-4.55}与实值函数的 Fubini 定理（见式 (2.18) 中第一个等式），对每个 $y^*\in Y^*$ 得
+\begin{align*}
+\Big\langle y^*,\int_{X_1\times X_2}f\,\mathrm{d}(\mu_1\times\mu_2)\Big\rangle=\Big\langle y^*,\int_{X_1}\mathrm{d}\mu_1\int_{X_2}f_{x_1}\,\mathrm{d}\mu_2\Big\rangle,
+\end{align*}
+从而得\eqref{align:ch04-4.51}中第一个等式。第二个等式类似证明，故结论成立。
+\end{proof}
+
+\subsection{关于向量测度的积分}\label{subsection:ch04-向量测度积分}\label{subsection:ch04-带号测度积分}
+
+概念上与 Bochner 积分相关的，是标量函数关于向量测度的积分。我们概述这方面的一些结果，更一般的处理请读者参阅文献 [41]。
+
+设 $(X,\mathcal{A})$ 为可测空间，$Y$ 为 Banach 空间，$\mu:\mathcal{A}\to Y$ 为向量测度，且 $|\mu|_w(X)<\infty$（见\cref{definition:ch01-半变差}）。设 $s\in\mathcal{S}(X)$，$s=\sum_{i=1}^n\alpha_i\chi_{E_i}$。量
+\begin{align}
+\int_X s\,\mathrm{d}\mu\triangleq \sum_{i=1}^n\alpha_i\mu(E_i)\in Y \label{align:ch04-4.56}
+\end{align}
+称为 $s$ 的积分。
+
+\begin{remark}\label{remark:ch04-向量测度积分标量}
+若 $Y=\mathbb{R}$，则 $\mu$ 为有限带号测度，等式\eqref{align:ch04-4.56}写为
+\begin{align}
+\int_X s\,\mathrm{d}\mu=\int_X s\,\mathrm{d}\mu^+-\int_X s\,\mathrm{d}\mu^- \label{align:ch04-4.57}
+\end{align}
+与\cref{definition:ch02-带号积分}一致。
+\end{remark}
+
+对任意 $y^*\in Y^*$，由\eqref{align:ch04-4.56}得
+\begin{align*}
+\Big\langle y^*,\int_X s\,\mathrm{d}\mu\Big\rangle=\sum_{i=1}^n\alpha_i\langle y^*,\mu(E_i)\rangle=\sum_{i=1}^n\alpha_i\langle y^*,\mu\rangle(E_i)=\int_X s\,\mathrm{d}\langle y^*,\mu\rangle,
+\end{align*}
+其中 $\langle y^*,\mu\rangle$ 为式 (1.65) 定义的映射。由此，若 $\|s\|_\infty\neq0$，则
+\begin{align*}
+\Big|\Big\langle y^*,\int_X s\,\mathrm{d}\mu\Big\rangle\Big|
+\leqslant\sum_{i=1}^n|\alpha_i|\,|\langle y^*,\mu\rangle|(E_i)
+=\|s\|_\infty\sum_{i=1}^n\frac{|\alpha_i|}{\|s\|_\infty}|\langle y^*,\mu\rangle|(E_i)
+\leqslant\|s\|_\infty|\langle y^*,\mu\rangle|(X),
+\end{align*}
+由式 (1.66) 得
+\begin{align}
+\Big\|\int_X s\,\mathrm{d}\mu\Big\|_Y\leqslant\|s\|_\infty|\mu|_w(X). \label{align:ch04-4.58}
+\end{align}
+
+现设 $f:X\to\mathbb{R}$ 可测且有界，$\{s_n\}\subseteq\mathcal{S}(X)$，且当 $n\to\infty$ 时 $\|s_n-f\|_\infty\to0$。由不等式\eqref{align:ch04-4.58}，对所有 $m,n\in\mathbb{N}$ 有
+\begin{align*}
+\Big\|\int_X s_m\,\mathrm{d}\mu-\int_X s_n\,\mathrm{d}\mu\Big\|_Y\leqslant\|s_m-s_n\|_\infty|\mu|_w(X),
+\end{align*}
+故 $\{\int_X s_n\,\mathrm{d}\mu\}$ 是 $Y$ 中的 Cauchy 序列。极限
+\begin{align}
+\lim_{n\to\infty}\int_X s_n\,\mathrm{d}\mu=:\int_X f\,\mathrm{d}\mu \label{align:ch04-4.59}
+\end{align}
+称为 $f$ 的积分。
+
+由\eqref{align:ch04-4.58}--\eqref{align:ch04-4.59}得
+\begin{align}
+\Big\|\int_X f\,\mathrm{d}\mu\Big\|_Y\leqslant\int_X|f|\,\mathrm{d}|\mu|_w\leqslant\|f\|_\infty|\mu|_w(X). \label{align:ch04-4.60}
+\end{align}
+
+\begin{remark}\label{remark:ch04-向量测度积分一致}
+若 $Y=\mathbb{R}$，则\eqref{align:ch04-4.59}中定义的积分与式 (2.10) 给出的积分一致（见\eqref{align:ch04-4.57}）。
+\end{remark}
+
+\subsection{更弱的积分概念}\label{subsection:ch04-弱积分}
+
+为清楚起见，本小节中我们使用显式对偶记号 $\langle\cdot,\cdot\rangle_{Y^*,Y}$ 与 $\langle\cdot,\cdot\rangle_{Y^{**},Y^*}$。若把 $Y$ 视为嵌入 $Y^{**}$，则令 $\langle y,y^*\rangle_{Y^{**},Y^*}\equiv\langle y^*,y\rangle_{Y^*,Y}$。
+
+我们证明如下结果。
+
+\begin{proposition}\label{proposition:ch04-Pettis积分存在}
+(i) 设 $f:X\to Y$ 弱可测，且对每个 $y^*\in Y^*$，映射 $x\mapsto\langle y^*,f(x)\rangle_{Y^*,Y}$ 属于 $L^1(X)$。则对每个 $E\in\mathcal{A}$，存在 $y_E^{**}\in Y^{**}$ 使
+\begin{align}
+\langle y_E^{**},y^*\rangle_{Y^{**},Y^*}=\int_E\langle y^*,f(x)\rangle_{Y^*,Y}\,\mathrm{d}\mu(x)\quad\text{对所有 }y^*\in Y^*. \label{align:ch04-4.61}
+\end{align}
+
+(ii) 设 $f:X\to Y^*$ 弱$^*$可测，且对每个 $y\in Y$，映射 $x\mapsto\langle f(x),y\rangle_{Y^*,Y}$ 属于 $L^1(X)$。则对每个 $E\in\mathcal{A}$，存在 $y_E^*\in Y^*$ 使
+\begin{align}
+\langle y_E^*,y\rangle_{Y^*,Y}=\int_E\langle f(x),y\rangle_{Y^*,Y}\,\mathrm{d}\mu(x)\quad\text{对所有 }y\in Y. \label{align:ch04-4.62}
+\end{align}
+\end{proposition}
+
+\begin{proof}
+我们只证断言 (i)，(ii) 的证明类似。对每个 $E\in\mathcal{A}$，令
+\begin{align*}
+T_E:Y^*\to L^1(X),\quad T_E y^*\triangleq \langle y^*,f\chi_E\rangle_{Y^*,Y}\ (y^*\in Y^*).
+\end{align*}
+我们证明线性算子 $T_E$ 是闭的，从而因其定义在全空间 $Y^*$ 上而是有界的。于是
+\begin{align*}
+\Big|\int_E\langle y^*,f(x)\rangle_{Y^*,Y}\,\mathrm{d}\mu(x)\Big|
+\leqslant\int_E\big|\langle y^*,f(x)\rangle_{Y^*,Y}\big|\,\mathrm{d}\mu(x)
+=\|T_E y^*\|_{L^1(X)}
+\leqslant\|T_E\|_{\mathcal{L}(Y^*;L^1(X))}\|y^*\|_{Y^*}.
+\end{align*}
+由此，从 $Y^*$ 到 $\mathbb{R}$ 的映射 $y^*\mapsto\int_E\langle y^*,f(x)\rangle_{Y^*,Y}\,\mathrm{d}\mu(x)$ 是线性连续的。故断言 (i) 成立。
+
+还需证明 $T_E$ 是闭的。设 $\{y_n^*\}\subseteq Y^*$，$y^*\in Y^*$，$g\in L^1(X)$，使当 $n\to\infty$ 时 $\|y_n^*-y^*\|_{Y^*}\to0$ 且 $\|T_E y_n^*-g\|_{L^1(X)}\to0$。则由经典结果，存在子列 $\{y_{n_k}^*\}\subseteq\{y_n^*\}$ 使 $T_E y_{n_k}^*=\langle y_{n_k}^*,f\chi_E\rangle_{Y^*,Y}$ 在 $X$ 中 $\mu$-几乎处处收敛于 $g$。另一方面，由于 $y_n^*\to y^*$ 在 $Y^*$ 中强收敛，有
+\begin{align*}
+\lim_{k\to\infty}\langle y_{n_k}^*,f\chi_E\rangle_{Y^*,Y}=\langle y^*,f\chi_E\rangle_{Y^*,Y}\quad\text{在 }X\text{ 中 }\mu\text{-几乎处处成立}.
+\end{align*}
+由此 $g=\langle y^*,f\chi_E\rangle_{Y^*,Y}=T_E y^*$。证明完毕。
+\end{proof}
+
+\begin{definition}[Dunford、Pettis、Gelfand 积分]\label{definition:ch04-弱积分}
+设\cref{proposition:ch04-Pettis积分存在}的假设成立，$E\in\mathcal{A}$。\eqref{align:ch04-4.61}中的元素 $y_E^{**}\in Y^{**}$ 称为 $f$ 在 $E$ 上的 Dunford 积分。若 $y_E^{**}$ 属于 $Y$，即存在 $y_E\in Y$ 使
+\begin{align}
+\langle y^*,y_E\rangle_{Y^*,Y}=\int_E\langle y^*,f(x)\rangle_{Y^*,Y}\,\mathrm{d}\mu(x)\quad\text{对所有 }y^*\in Y^*, \label{align:ch04-4.63}
+\end{align}
+则元素 $y_E\in Y$ 称为 $f$ 在 $E$ 上的 Pettis 积分。若 $y_X^{**}$ 属于 $Y$，则函数 $f$ 称为在 $X$ 上 Pettis 可积。
+
+\eqref{align:ch04-4.62}中的元素 $y_E^*\in Y^*$ 称为 $f$ 在 $E$ 上的 Gelfand 积分。
+\end{definition}
+
+为避免上述各概念之间的混淆，必要时我们使用如下记号：
+\begin{align*}
+y_E^{**}\equiv D\!\int_E f\,\mathrm{d}\mu(x),\qquad
+y_E\equiv P\!\int_E f\,\mathrm{d}\mu(x),\qquad
+y_E^*\equiv G\!\int_E f\,\mathrm{d}\mu(x).
+\end{align*}
+于是等式\eqref{align:ch04-4.61}--\eqref{align:ch04-4.63}写为
+\begin{align}
+\Big\langle D\!\int_E f\,\mathrm{d}\mu,\,y^*\Big\rangle_{Y^{**},Y^*}=\int_E\langle y^*,f(x)\rangle_{Y^*,Y}\,\mathrm{d}\mu(x)\quad\text{对所有 }y^*\in Y^*; \label{align:ch04-4.64a}
+\end{align}
+\begin{align}
+\Big\langle y^*,\,P\!\int_E f\,\mathrm{d}\mu\Big\rangle_{Y^*,Y}=\int_E\langle y^*,f(x)\rangle_{Y^*,Y}\,\mathrm{d}\mu(x)\quad\text{对所有 }y^*\in Y^*; \label{align:ch04-4.64b}
+\end{align}
+\begin{align}
+\Big\langle G\!\int_E f\,\mathrm{d}\mu,\,y\Big\rangle_{Y^*,Y}=\int_E\langle f(x),y\rangle_{Y^*,Y}\,\mathrm{d}\mu(x)\quad\text{对所有 }y\in Y. \label{align:ch04-4.64c}
+\end{align}
+
+\begin{remark}\label{remark:ch04-弱积分比较}
+(i) 若 $f$ 为 Bochner 可积，则 $f$ 的 Bochner 积分与 Pettis 积分一致（见\cref{corollary:ch04-对偶配对}）。
+
+(ii) 若 $X$ 自反，则 $f$ 的 Dunford 积分与 Pettis 积分一致；否则未必如此（见文献 [41, 例 II.3.3]）。
+\end{remark}
+
+
+
+
+\end{document}

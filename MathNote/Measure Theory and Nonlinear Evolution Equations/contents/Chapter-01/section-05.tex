@@ -1,0 +1,387 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{Lebesgue 测度与 Lebesgue--Stieltjes 测度}\label{section:ch01-Lebesgue}
+
+\subsection{$\mathbb{R}^N$ 中的 Lebesgue 测度}\label{subsection:ch01-Lebesgue测度}
+
+设 $a\equiv(a_1,\cdots ,a_N)$、$b\equiv(b_1,\cdots ,b_N)$，其中 $a_i,b_i\in[-\infty,\infty]$ 且对每个 $i=1,\cdots ,N$（$N\in\mathbb{N}$）有 $a_i\leqslant b_i$。考虑 $N$--胞腔
+\[
+(a,b]\triangleq \{x\equiv(x_1,\cdots ,x_N)\mid x_i\in[-\infty,\infty],\ a_i<x_i\leqslant b_i\ \forall i=1,\cdots ,N\}
+\]
+其体积为
+\[
+\operatorname{vol}((a,b])\triangleq \prod_{i=1}^N(b_i-a_i)\leqslant\infty
+\]
+（$\mathbb{R}^N$ 的子集 $(a,b)$、$[a,b]$、$[a,b)$ 类似地定义）。回忆 $N$--胞腔族 $\mathcal{I}_N$ 是一个半代数，且对每个 $E\in\mathcal{A}_0(\mathcal{I}_N)$，存在不交的 $(a_1,b_1],\cdots ,(a_p,b_p]$ 使得
+\[
+E=\bigcup_{k=1}^p(a_k,b_k]
+\]
+（见\cref{example:ch01-N胞腔}）。令
+\begin{align}
+\lambda_N(E)\triangleq \sum_{k=1}^p\operatorname{vol}((a_k,b_k]). \label{align:ch01-lambdaN定义}
+\end{align}
+容易验证 $\lambda_N$ 是 $\mathcal{A}_0(\mathcal{I}_N)$ 上的 $\sigma$--有限测度。由\cref{section:ch01-测度与外测度} 中的结果（特别地，\cref{theorem:ch01-Caratheodory}），我们可以给出以下定义。
+
+\begin{remark}
+注意这里要证明$\lambda_N$与$E$的分解无关！进而说明$\lambda_N$是良定义的.
+\end{remark}
+
+\begin{definition}\label{definition:ch01-Lebesgue测度}
+由偶 $(\mathcal{A}_0(\mathcal{I}_N),\lambda_N)$ 生成的外测度 $\lambda_N^*$（其中 $\lambda_N$ 由\eqref{align:ch01-lambdaN定义} 给出）称为 Lebesgue 外测度。$\sigma$--代数
+\[
+\mathcal{L}_N\equiv\mathcal{L}(\mathbb{R}^N)\triangleq \{E\subseteq\mathbb{R}^N\mid E\text{ 为 }\lambda_N^*\text{--可测}\}
+\]
+的元素称为 Lebesgue 集。测度 $\lambda_N\triangleq \lambda_N^*|_{\mathcal{L}_N}$ 称为 $\mathbb{R}^N$ 上的 Lebesgue 测度。若 $N=1$，则令 $\lambda_1\equiv\lambda$，$\mathcal{L}_1\equiv\mathcal{L}\equiv\mathcal{L}(\mathbb{R})$。
+\end{definition}
+\begin{remark}\label{remark:ch01-Lebesgue性质}
+
+(i) 由于 $\mathbb{R}^N$ 中 Borel 集的 $\sigma$--代数 $\mathcal{B}_N=\mathcal{B}(\mathbb{R}^N)$ 由半代数 $\mathcal{I}_N$ 生成，由\cref{theorem:ch01-测度延拓} 有 $\mathcal{B}_N\subseteq\mathcal{L}_N$，故 $\lambda_N$ 是 $\mathbb{R}^N$ 上的 Borel 测度，且测度空间 $(\mathbb{R}^N,\mathcal{L}_N,\lambda_N)$ 是空间 $(\mathbb{R}^N,\mathcal{B}_N,\lambda_N|_{\mathcal{B}_N})$ 的完备化。
+
+(ii) 由于 $\mathbb{R}^N$ 是具有可数基的局部紧 Hausdorff 空间，$\lambda_N$ 是 Radon 测度且是正则的（见\cref{remark:ch01-BorelRadon一致}）。由 $\lambda_N$ 的正则性容易看出，对任意 $E\subseteq\mathbb{R}^N$，存在 $F,G\in\mathcal{B}_N$ 使得 $F\subseteq E\subseteq G$ 且
+\[
+\lambda_N(F)=\lambda_N(G)=\lambda_N^*(E).
+\]
+\end{remark}
+
+\begin{proposition}\label{proposition:ch01-仿射变换}
+设 $T:\mathbb{R}^N\to\mathbb{R}^N$ 为仿射映射，
+\[
+Tx\triangleq Ax+b,\qquad A\equiv(a_{ij}),\ b\in\mathbb{R}^N\quad(x\in\mathbb{R}^N;\ i,j=1,\cdots ,N).
+\]
+设行列式 $\det(A)$ 非零。则：
+\begin{enumerate}[(i)]
+\item 对任意 $E\subseteq\mathbb{R}^N$，有
+\[
+\lambda_N^*(T(E))=|\det(A)|\,\lambda_N^*(E);
+\]
+\item $T(E)\triangleq \{Tx\mid x\in E\}\in\mathcal{L}_N$ 当且仅当 $E\in\mathcal{L}_N$。
+\end{enumerate}
+\end{proposition}
+\begin{remark}\label{remark:ch01-位似}
+若 $E\in\mathcal{L}_N$ 且 $T$ 是位似的（即 $Tx=Ax$，$A=a(\delta_{ij})$，$a>0$），则由\cref{proposition:ch01-仿射变换}(i) 得 $\lambda_N(T(E))=a^N\lambda_N(E)$。特别地，若 $E=B(x_0,r)$，则 $\lambda_N(B(x_0,r))=\kappa_N r^N$，其中
+\begin{align}
+\kappa_N\triangleq \frac{\pi^{N/2}}{\Gamma\left(\frac{N}{2}+1\right)},\qquad
+\Gamma(t)\triangleq \int_0^\infty x^{t-1}\exp(-x)\,\mathrm{d}x\quad(t>0), \label{align:ch01-kappaN}
+\end{align}
+是单位球 $B(0,1)\subseteq\mathbb{R}^N$ 的体积。在此联系下注意到，$\lambda_N$ 是维数 $s=N$ 的测度，且加倍常数为 $c_D=2^N$（见\cref{definition:ch01-加倍测度}）。
+\end{remark}
+
+\begin{proposition}[等直径不等式]\label{proposition:ch01-等直径}\label{proposition:ch01-等直径不等式}
+\label{remark:ch01-等直径注}
+对任意 $E\subseteq\mathbb{R}^N$，有
+\begin{align}
+\lambda_N^*(E)\leqslant\frac{\kappa_N}{2^N}[\operatorname{diam}(E)]^N, \label{align:ch01-等直径}
+\end{align}
+其中 $\kappa_N$ 由\eqref{align:ch01-kappaN} 给出。
+\end{proposition}
+\begin{remark}
+证明将在\cref{subsection:ch02-等周}中给出。
+\end{remark}
+
+\cref{proposition:ch01-仿射变换} 蕴含 Lebesgue 测度在旋转和平移下的不变性。若配以适当的归一化条件，平移不变性是 $\lambda_N$ 的特征性质。这就是以下命题的内容。
+
+\begin{proposition}\label{proposition:ch01-平移不变刻画}
+设 $\mu:\mathcal{B}_N\to[0,\infty]$ 平移不变且 $\mu((0,1]^N)=1$。则 $\mu=\lambda_N|_{\mathcal{B}_N}$。
+\end{proposition}
+
+\begin{proof}
+设 $(K_1,\cdots ,K_N)\in\mathbb{N}^N$，考虑点 $\left(\frac{k_1}{K_1},\cdots ,\frac{k_N}{K_N}\right)$，其中 $(k_1,\cdots ,k_N)\in\mathbb{N}^N$，$0\leqslant k_i\leqslant K_i$，$i=1,\cdots ,N$。这些点是 $P\triangleq K_1K_2\cdots K_N$ 个不交 $N$--胞腔 $I_k$ 的顶点，使得 $(0,1]^N=\bigcup_{k=1}^P I_k$。由于 $\mu$ 平移不变，对每个 $k,l=1,\cdots ,P$ 有 $\mu(I_k)=\mu(I_l)$。因此，由于 $\mu((0,1]^N)=1$，有
+\[
+\mu\left(\prod_{i=1}^N\left(0,\frac{1}{K_i}\right]\right)=\frac{1}{P}=\lambda_N\left(\prod_{i=1}^N\left(0,\frac{1}{K_i}\right]\right).
+\]
+由 $\mu$ 和 $\lambda_N$ 的平移不变性，同样的等式在顶点属于 $\mathbb{Q}^N$ 的 $N$--胞腔族 $\mathcal{I}_{N,\mathbb{Q}}$ 上成立，因而在族 $\mathcal{I}_N$ 上也成立。于是由\cref{theorem:ch01-测度延拓} 和\cref{proposition:ch01-半代数延拓}，结论成立。
+\end{proof}
+
+以下覆盖结果的证明与上述注记有关。
+
+\begin{definition}\label{definition:ch01-精细覆盖}
+设 $E\subseteq\mathbb{R}^N$。$\mathbb{R}^N$ 的闭球族 $\mathcal{F}$ 称为 $E$ 的一个精细覆盖，若对任意 $x\in E$ 和任意 $\epsilon>0$，存在球 $B\in\mathcal{F}$ 使得 $x\in B$ 且 $\operatorname{diam}(B)<\epsilon$。
+\end{definition}
+
+\begin{theorem}[Vitali 覆盖引理]\label{theorem:ch01-Vitali}
+设 $E\subseteq\mathbb{R}^N$ 满足 $\lambda_N^*(E)<\infty$，$\mathcal{F}$ 为 $E$ 的一个精细覆盖。则存在不交序列 $\{B_k\}\subseteq\mathcal{F}$ 使得
+\[
+\lambda_N^*\left(E\setminus\left(\bigcup_{k=1}^\infty B_k\right)\right)=0.
+\]
+\end{theorem}
+
+\begin{proof}
+只需证对任意 $\epsilon>0$，存在 $B_1,\cdots ,B_K\in\mathcal{F}$ 使得 $B_j\cap B_k=\varnothing $（$j,k=1,\cdots ,K$，$j\neq k$），且
+\[
+\lambda_N^*\left(E\setminus\left(\bigcup_{k=1}^K B_k\right)\right)<\epsilon.
+\]
+
+由于 $\lambda_N^*(E)<\infty$，存在开集 $U\supseteq E$ 使得 $\lambda_N(U)<\infty$，且由\cref{definition:ch01-精细覆盖} 可设对所有 $B\in\mathcal{F}$ 有 $B\subseteq U$。我们归纳地构造不交序列 $\{B_k\}\subseteq\mathcal{F}$ 如下。假设已选出 $p$ 个不交闭球 $B_1,\cdots ,B_p\in\mathcal{F}$ 且
+\[
+E\setminus\left(\bigcup_{k=1}^p B_k\right)\neq\varnothing .
+\]
+令
+\[
+k_p\triangleq \sup\left\{\operatorname{diam}(B)\mid B\in\mathcal{F},\ B\subseteq E\setminus\left(\bigcup_{k=1}^p B_k\right)\right\}
+\leqslant\sup\{\operatorname{diam}(B)\mid B\in\mathcal{F}\}<\infty.
+\]
+则可选 $B_{p+1}$ 使得
+\begin{align}
+\operatorname{diam}(B_{p+1})\geqslant\frac{k_p}{2},\qquad B_{p+1}\cap B_k=\varnothing \ (k=1,\cdots ,p). \label{align:ch01-Vitali选择}
+\end{align}
+由于序列 $\{B_k\}$ 不交且 $\bigcup_{k=1}^\infty B_k\subseteq U$，有
+\begin{align}
+\frac{\kappa_N}{2^N}\sum_{k=1}^\infty[\operatorname{diam}(B_k)]^N
+=\sum_{k=1}^\infty\lambda_N(B_k)=\lambda_N\left(\bigcup_{k=1}^\infty B_k\right)
+\leqslant\lambda_N(U)<\infty \label{align:ch01-Vitali和}
+\end{align}
+其中 $\kappa_N$ 由\eqref{align:ch01-kappaN} 给出，故
+\begin{align}
+\lim_{k\to\infty}\operatorname{diam}(B_k)=0. \label{align:ch01-Vitali直径趋于零}
+\end{align}
+
+固定 $\epsilon>0$。由\eqref{align:ch01-Vitali和} 存在 $K\in\mathbb{N}$ 使得
+\begin{align}
+\sum_{k=K+1}^\infty[\operatorname{diam}(B_k)]^N<\frac{2^N\epsilon}{5^N\kappa_N}. \label{align:ch01-Vitali尾项}
+\end{align}
+令 $R\triangleq E\setminus\left(\bigcup_{k=1}^K B_k\right)$。若证得 $\lambda_N^*(R)<\epsilon$，结论即成立。
+
+设 $x\in R$。由于 $\bigcup_{k=1}^K B_k$ 是闭集且 $x\notin\bigcup_{k=1}^K B_k$，由\cref{definition:ch01-精细覆盖} 存在 $B\in\mathcal{F}$ 使得 $x\in B$ 且对 $k=1,\cdots ,K$ 有 $B\cap B_k=\varnothing $。一般地，若对 $k=1,\cdots ,M$ 有 $B\cap B_k=\varnothing $，则对某个 $M\in\mathbb{N}$，有 $B\subseteq E\setminus\left(\bigcup_{k=1}^M B_k\right)$，故由\eqref{align:ch01-Vitali选择}，
+\[
+\operatorname{diam}(B)\leqslant k_M\leqslant 2\operatorname{diam}(B_{M+1}).
+\]
+若对所有 $k\in\mathbb{N}$ 都有 $B\cap B_k=\varnothing $，则与\eqref{align:ch01-Vitali直径趋于零} 矛盾。因此存在最小整数 $m\in\mathbb{N}$ 使得 $B\cap B_m\neq\varnothing $，且 $m>K$。由于 $B\subseteq E\setminus\left(\bigcup_{k=1}^{m-1}B_k\right)$，由上述注记有
+\begin{align}
+\operatorname{diam}(B)\leqslant k_{m-1}\leqslant 2\operatorname{diam}(B_m). \label{align:ch01-Vitali直径估计}
+\end{align}
+设 $B_m\equiv B(x_m,r_m)$。由于 $x\in B$ 且 $B\cap B_m\neq\varnothing $，有
+\[
+|x-x_m|\leqslant\operatorname{diam}(B)+\frac{1}{2}\operatorname{diam}(B_m)\leqslant\frac{5}{2}\operatorname{diam}(B_m),
+\]
+故 $x\in B(x_m,5r_m)$。因此
+\[
+R\subseteq\bigcup_{m=K+1}^\infty B(x_m,5r_m),
+\]
+从而
+\[
+\lambda_N^*(R)\leqslant\sum_{m=K+1}^\infty\lambda_N(B(x_m,5r_m))
+=\frac{5^N\kappa_N}{2^N}\sum_{m=K+1}^\infty[\operatorname{diam}(B_m)]^N<\epsilon.
+\]
+证毕。
+\end{proof}
+
+\begin{remark}\label{remark:ch01-Vitali精细化}
+显然，\cref{theorem:ch01-Vitali} 的证明还提供了以下结论：
+
+设 $E\in\mathcal{B}_N$ 且 $\lambda_N(E)<\infty$，$\mathcal{F}$ 为 $E$ 的一个精细覆盖。设 $\delta>0$。则存在不交序列 $\{B_k\}\subseteq\mathcal{F}$，对所有 $k\in\mathbb{N}$ 有 $\operatorname{diam}B_k<\delta$，使得
+\[
+\lambda_N\left(E\setminus\left(\bigcup_{k=1}^\infty B_k\right)\right)=0.
+\]
+\end{remark}
+
+\cref{theorem:ch01-Vitali} 证明中的关键角色由\cref{remark:ch01-位似} 扮演。对于 $\mathbb{R}^N$ 上的一般 Radon 测度，必须使用更复杂的论证，由此导出以下结果（证明见文献~[5]）。
+
+\begin{theorem}[Vitali--Besicovitch]\label{theorem:ch01-VitaliBesicovitch}
+设 $U\in\mathcal{B}_N$ 有界，$\mathcal{F}\equiv\{F_i\}_{i\in I}$ 为 $U$ 的一个精细覆盖。设 $\mu\in\mathcal{R}^+(\mathbb{R}^N)$。则存在不交序列 $\{B_k\}\subseteq\mathcal{F}$ 使得
+\[
+\mu\left(U\setminus\left(\bigcup_{k=1}^\infty B_k\right)\right)=0.
+\]
+\end{theorem}
+
+\subsection{Lebesgue--Stieltjes 测度}\label{subsection:ch01-Stieltjes}
+
+上述构造可推广如下（我们仅考虑 $N=1$ 的情形，一般情形参见文献~[45]）。设 $\phi:\mathbb{R}\to\mathbb{R}$ 非减且右连续。考虑区间 $(a,b]$ 的半代数 $\mathcal{I}_1$（其中 $a,b\in[-\infty,\infty]$）和由 $\mathcal{I}_1$ 中元素的有限不交并组成的代数 $\mathcal{A}_0(\mathcal{I}_1)$，即对每个 $E\in\mathcal{A}_0(\mathcal{I}_1)$，存在不交的 $(a_1,b_1],\cdots ,(a_p,b_p]$ 且 $b_k\leqslant a_{k+1}$（$k=1,\cdots ,p-1$），使得
+\[
+E=\bigcup_{k=1}^p(a_k,b_k].
+\]
+令
+\begin{align}
+\lambda_\phi(E)\triangleq \sum_{k=1}^p[\phi(b_k)-\phi(a_k)], \label{align:ch01-Stieltjes定义}
+\end{align}
+其中当 $b_p=\infty$ 时 $\phi(b_p)\triangleq \lim_{x\to\infty}\phi(x)$，当 $a_1=-\infty$ 时 $\phi(a_1)\triangleq \lim_{x\to-\infty}\phi(x)$。由于 $\phi$ 非减且右连续，容易看出 $\lambda_\phi$ 是代数 $\mathcal{A}_0(\mathcal{I}_1)$ 上的 $\sigma$--有限测度。于是由\cref{section:ch01-测度与外测度} 的结果，以下定义是适定的。
+
+\begin{definition}\label{definition:ch01-Stieltjes测度}
+测度 $\lambda_\phi\triangleq (\lambda_\phi)^*|_{\mathcal{L}_\phi}$，其中 $(\lambda_\phi)^*$ 为由偶 $(\mathcal{A}_0(\mathcal{I}_1),\lambda_\phi)$ 生成的外测度（$\lambda_\phi$ 由\eqref{align:ch01-Stieltjes定义} 给出），$\mathcal{L}_\phi$ 为 $(\lambda_\phi)^*$--可测集的 $\sigma$--代数，称为 $\mathbb{R}$ 上的 Lebesgue--Stieltjes 测度。
+\end{definition}
+
+在 $\mathbb{R}^N$（$N\geqslant 2$）中类似的结果成立（见文献~[45, Korollar II.3.10, Beispiel II.4.7]）。
+
+对应于非减右连续函数 $\phi:\mathbb{R}\to\mathbb{R}$ 的 $\mathbb{R}$ 上 Lebesgue--Stieltjes 测度的集合记为 $\mathcal{L}_\phi(\mathbb{R})$。这些测度与 Borel 测度重合，因而与 $\mathbb{R}$ 上的 Radon 测度重合（见\cref{remark:ch01-BorelRadon一致}），如下列命题所示。
+
+\begin{proposition}\label{proposition:ch01-Stieltjes等于Radon}
+设 $\mathcal{L}_\phi(\mathbb{R})$ 为具有非减且右连续的 $\phi:\mathbb{R}\to\mathbb{R}$ 的 $\mathbb{R}$ 上 Lebesgue--Stieltjes 测度族。则
+\[
+\mathcal{L}_\phi(\mathbb{R})=\mathcal{B}^+(\mathbb{R})=\mathcal{R}^+(\mathbb{R}).
+\]
+\end{proposition}
+
+\begin{proof}
+固定 $\phi$。由于 $\sigma$--代数 $\mathcal{B}(\mathbb{R})$ 由区间半代数 $\mathcal{I}_1$ 生成，由\cref{theorem:ch01-测度延拓} 有 $\mathcal{B}\subseteq\mathcal{L}_\phi$，故 $\lambda_\phi$ 是 $\mathbb{R}$ 上的 Borel 测度。
+
+反之，现证 $\mathcal{B}^+(\mathbb{R})\subseteq\mathcal{L}_\phi(\mathbb{R})$。设 $\mu$ 为 $\mathbb{R}$ 上的 Radon 测度。固定 $c\in\mathbb{R}$，定义 $\phi_\mu:\mathbb{R}\to\mathbb{R}$ 如下：
+\begin{align}
+\phi_\mu(x)\triangleq 
+\begin{cases}
+\mu((c,x]) & \text{若 }x>c,\\
+0 & \text{若 }x=c,\\
+-\mu((x,c]) & \text{若 }x<c.
+\end{cases} \label{align:ch01-分布函数}
+\end{align}
+则 $\phi_\mu$ 非减且右连续，且
+\[
+\phi_\mu(b)-\phi_\mu(a)=\mu((a,b])\qquad(-\infty<a<b\leqslant\infty).
+\]
+由\cref{proposition:ch01-半代数延拓}，$\mu$ 与 $\phi_\mu$ 对应的 Lebesgue--Stieltjes 测度重合。故结论成立。
+\end{proof}
+
+\begin{remark}\label{remark:ch01-分布函数}
+由\cref{proposition:ch01-Stieltjes等于Radon}，$\mathbb{R}$ 上的 Radon 测度与非减右连续函数 $\phi:\mathbb{R}\to\mathbb{R}$ 的等价类之间存在一一对应，等价关系为
+\[
+\psi\sim\phi\overset{\mathrm{def}}{\Longleftrightarrow}\psi=\phi+c\quad\text{对某个 }c\in\mathbb{R}.
+\]
+若 $\mu\in\mathcal{R}^+(\mathbb{R})$，则其等价类的一个代表元称为 $\mu$ 的分布函数。
+
+若 $\phi:\mathbb{R}\to\mathbb{R}$ 非减且连续，则对每个区间 $I=(a,b]$，有
+\[
+\phi(I)\triangleq \{\phi(x)\mid x\in I\}=(\phi(a),\phi(b)],
+\]
+因而
+\begin{align}
+\lambda_\phi(I)=\phi(b)-\phi(a)=\lambda(\phi(I)). \label{align:ch01-Stieltjes像测度}
+\end{align}
+对每个非减右连续函数 $\phi:\mathbb{R}\to\mathbb{R}$，定义
+\begin{align}
+\widetilde{\phi}:\mathcal{P}(\mathbb{R})\to\mathcal{P}(\mathbb{R}),\qquad
+\begin{cases}
+\widetilde{\phi}(\varnothing )\triangleq \varnothing ,\\
+\widetilde{\phi}(E)\triangleq \bigcup_{x\in E}[\phi(x-),\phi(x)]\quad\forall E\subseteq\mathbb{R},\ E\neq\varnothing .
+\end{cases} \label{align:ch01-像映射}
+\end{align}
+则等式\eqref{align:ch01-Stieltjes像测度} 可推广如下。
+\end{remark}
+
+\begin{proposition}\label{proposition:ch01-Stieltjes像}\label{proposition:ch01-Radon投影}
+设 $\phi:\mathbb{R}\to\mathbb{R}$ 非减且右连续，$\widetilde{\phi}$ 由\eqref{align:ch01-像映射} 定义。则：
+\begin{enumerate}[(i)]
+\item 对任意 $E\in\mathcal{B}(\mathbb{R})$，$\widetilde{\phi}(E)\in\mathcal{L}(\mathbb{R})$；
+\item 有
+\begin{align}
+\lambda_\phi(E)=\lambda(\widetilde{\phi}(E))\qquad\text{对任意 }E\in\mathcal{B}(\mathbb{R}). \label{align:ch01-Stieltjes像公式}
+\end{align}
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+容易看出族
+\[
+\Sigma\triangleq \{E\in\mathcal{B}(\mathbb{R})\mid\widetilde{\phi}(E)\in\mathcal{L}(\mathbb{R})\}
+\]
+是一个包含区间半代数 $\mathcal{I}_1$ 的 $\sigma$--代数。由于 Borel $\sigma$--代数 $\mathcal{B}(\mathbb{R})$ 由 $\mathcal{I}_1$ 生成，结论 (i) 由\cref{theorem:ch01-测度延拓} 和\cref{proposition:ch01-半代数延拓} 得到。
+
+至于 (ii)，只需证映射
+\[
+m:\mathcal{B}(\mathbb{R})\to[0,\infty],\qquad m(E)\triangleq \lambda(\widetilde{\phi}(E))
+\]
+是 $\mathcal{B}(\mathbb{R})$ 上的一个测度，且满足
+\begin{align}
+\begin{cases}
+m((a,b])=\phi(b)-\phi(a) & \text{若 }-\infty\leqslant a<b<\infty,\\
+m((a,\infty))=\phi(\infty)-\phi(a) & \text{若 }a\in\mathbb{R}.
+\end{cases} \label{align:ch01-Stieltjes像条件}
+\end{align}
+于是由\cref{proposition:ch01-半代数延拓} 结论成立。
+
+由定义有 $m(\varnothing )=0$。为证 $m$ 是 $\sigma$--可加的，考虑不交序列 $\{E_k\}\subseteq\mathcal{B}(\mathbb{R})$，并记 $F\subseteq\phi(\mathbb{R})$ 为使得 $\phi^{-1}(\{y\})$ 不是单点集的点 $y$ 的可数集。则集合 $\widetilde{\phi}(E_k)\setminus F$ 不交，且
+\[
+\bigcup_{k=1}^\infty(\widetilde{\phi}(E_k)\setminus F)=\left[\widetilde{\phi}\left(\bigcup_{k=1}^\infty E_k\right)\right]\setminus F.
+\]
+由此
+\[
+\lambda\left(\widetilde{\phi}\left(\bigcup_{k=1}^\infty E_k\right)\right)
+=\lambda\left(\left[\widetilde{\phi}\left(\bigcup_{k=1}^\infty E_k\right)\right]\setminus F\right)
+=\sum_{k=1}^\infty\lambda(\widetilde{\phi}(E_k)\setminus F)
+=\sum_{k=1}^\infty\lambda(\widetilde{\phi}(E_k)).
+\]
+
+最后证等式\eqref{align:ch01-Stieltjes像条件}。由等式 $\widetilde{\phi}((a,b])=(\phi(a),\phi(b)]$ 得第一式，第二式由 $\phi$ 的单调性和\cref{proposition:ch01-测度性质}(iv) 得到。证毕。
+\end{proof}
+
+\begin{corollary}\label{corollary:ch01-Stieltjes连续}
+设 $\phi:\mathbb{R}\to\mathbb{R}$ 非减且右连续。则 $\phi$ 在 $x_0\in\mathbb{R}$ 处连续当且仅当 $\lambda_\phi(\{x_0\})=0$。
+\end{corollary}
+
+关于\cref{proposition:ch01-Stieltjes像}，我们陈述以下定义。
+
+\begin{definition}\label{definition:ch01-Lusin条件}
+函数 $\phi:\mathbb{R}\to\mathbb{R}$ 满足 Lusin 条件，若对任意 $\lambda$--零测集 $E\subseteq\mathbb{R}$，映射\eqref{align:ch01-像映射} 的值 $\widetilde{\phi}(E)$ 是 $\lambda$--零测的。
+\end{definition}
+
+我们讨论 Lusin 条件不满足的两个重要情形。
+
+\textbf{($\alpha$)} 若 $\phi$ 为 Heaviside 映射 $H\triangleq \chi_{[0,\infty)}$，则映射\eqref{align:ch01-像映射} 为
+\[
+\widetilde{\phi}(\{x\})=
+\begin{cases}
+\{0\} & \text{若 }x<0,\\
+[0,1] & \text{若 }x=0,\\
+\{1\} & \text{若 }x>0.
+\end{cases}
+\]
+于是由等式\eqref{align:ch01-Stieltjes像公式}，对任意 Borel 集 $E\neq\varnothing $，有
+\[
+\lambda_H(E)=
+\begin{cases}
+1 & \text{若 }0\in E,\\
+0 & \text{若 }0\notin E,
+\end{cases}
+\]
+即 $\lambda_H$ 是 Dirac 质量 $\delta_0$。更一般地，对非减阶梯函数
+\[
+\phi\triangleq c_0\chi_{(-\infty,x_1)}+\sum_{p=1}^{n-1}c_p\chi_{[x_p,x_{p+1})}+c_n\chi_{[x_n,\infty)}\quad(x_1<x_2<\cdots<x_n)
+\]
+其中 $c_p\neq c_{p+1}$（$p=0,\cdots ,n-1$），有
+\[
+\lambda_\phi=\sum_{p=1}^n[c_p-c_{p-1}]\delta_{x_p},
+\]
+故 Lusin 条件不满足。
+
+\textbf{($\beta$)} 设 $\{m_n\}\subseteq\mathbb{N}\cup\{0\}$ 为一递减序列，满足 $m_0=1$ 且对所有 $n=0,1,\cdots $ 有 $0<2m_{n+1}<m_n$。令 $K_0\equiv[0,1]$，设 $K_1\subseteq K_0$ 是由从 $K_0$ 中间去掉一个长度为 $m_0-2m_1$ 的开区间（即以 $\frac{1}{2}$ 为中心）得到的。于是 $K_1$ 是两个长度为 $m_1$ 的闭区间 $J_{1,1}$ 和 $J_{1,2}$ 的不交并。然后从 $J_{1,1}$ 和 $J_{1,2}$ 的中间各去掉一个长度为 $m_1-2m_2$ 的开区间。迭代此过程，经过 $n$ 步后，我们得到 $2^n$ 个闭区间 $J_{n,j}$（$j=1,\cdots ,2^n$）的不交并 $K_n$，满足
+\begin{align}
+\lambda(J_{n,j})=m_n,\qquad
+\lambda(K_n^c)=\sum_{k=0}^n 2^k(m_k-2m_{k+1}) \quad(n\in\mathbb{N}). \label{align:ch01-Cantor补}
+\end{align}
+交集 $K\triangleq \bigcap_{n=1}^\infty K_n$ 是对应于序列 $\{m_n\}$ 的 Cantor 集。一个可能的选择是 $m_n=a^n$，其中 $a\in(0,\frac{1}{2})$（当 $a=\frac{1}{3}$ 时得到标准的 Cantor 三分集）。在此情形下，由\eqref{align:ch01-Cantor补} 显然有 $\lambda(K^c)=1$，因而 $\lambda(K)=0$。
+
+设 $m_n=a^n$，$a\in(0,\frac{1}{2})$，设 $V\in C([0,1])$ 为分段线性函数序列 $V_n\in C([0,1])$ 在 $[0,1]$ 上的一致极限，其中 $V_n(0)\triangleq 0$，$V_n$ 在 $J_{n,j}$ 中斜率为 $(2a)^{-n}$（对每个 $j=1,\cdots ,2^n$），在其余处斜率为 $0$（$n\in\mathbb{N}$）。
+
+若 $n\in\mathbb{N}$ 固定，则对每个 $p>n$，在集合 $K_n^c$ 上有 $V_p=V_n$。由此
+\[
+\sup_{x\in[0,1]}|V_{n+1}(x)-V_n(x)|
+=\sup_{x\in[0,a^n]}\left|\frac{x}{(2a)^{n+1}}-\frac{x}{(2a)^n}\right|
+=\frac{1-2a}{a}\frac{1}{2^{n+1}},
+\]
+因而对任意 $p>n$，
+\[
+\sup_{x\in[0,1]}|V_p(x)-V_n(x)|\leqslant\frac{1-2a}{a}\sum_{k=n}^{p-1}\frac{1}{2^{k+1}}
+\leqslant\frac{1-2a}{a}\frac{1}{2^n}.
+\]
+由此不等式，序列 $\{V_n\}$ 在 $[0,1]$ 上一致收敛，故函数 $V$ 是适定的。此外，$V$ 非减，$V(0)=0$，$V(1)=1$，且 $V'=0$ a.e. 于 $(0,1)$。我们通过令 $V=0$ 在 $(-\infty,0)$ 上、$V=1$ 在 $(1,\infty)$ 上，将 $V$ 延拓到整个 $\mathbb{R}$。函数 $V$ 称为 Cantor--Vitali 函数。
+
+由\eqref{align:ch01-Stieltjes像测度} 有 $\lambda_V(K)=1$，故 Lusin 条件不满足。关于 $\lambda_V$ 的进一步注记将在\cref{section:ch02-进一步讨论} 中给出。
+
+\begin{remark}\label{remark:ch01-Cantor-Vitali}
+(i) 对任意 $n\in\mathbb{N}$ 和 $j=1,\cdots ,2^n$，由上述构造有 $\lambda_V(J_{n,j})=2^{-n}$。由于 $2^n$ 个区间 $J_{n,j}$ 不交，由可加性得对每个 $n$ 有 $\lambda_V(K_n)=1$，因而由\cref{proposition:ch01-测度性质}(v) 当 $n\to\infty$ 时再次得 $\lambda_V(K)=1$。
+
+(ii) 记 $K_n^N$ 为集合 $K_n$ 的 $N$ 个拷贝的乘积（$n,N\in\mathbb{N}$）。集合 $K^N\triangleq \bigcap_{n=1}^\infty K_n^N$ 称为对应于序列 $\{m_n\}$ 的 $N$ 维 Cantor 集（令 $K^1\equiv K$）。
+\end{remark}
+
+
+\end{document}

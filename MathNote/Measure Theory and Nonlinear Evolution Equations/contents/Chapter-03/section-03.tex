@@ -1,0 +1,288 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{Bessel、Riesz 与 Sobolev 容量}\label{section:ch03-特殊容量}
+
+本节结果依赖\cref{section:ch03-核容量}中概述的容量一般理论。
+
+\subsection{Bessel 与 Riesz 容量}\label{subsection:ch03-BesselRiesz}
+
+设 $g_r=g_r(x)$ 与 $\gamma_r=\gamma_r(x)$（$r>0$，$x\in\mathbb{R}^N$）分别为 Bessel 与 Riesz 核（见\cref{subsection:ch03-Bessel位势}）。
+
+\begin{definition}\label{definition:ch03-Bessel容量}
+设 $r>0$，$E\subseteq\mathbb{R}^N$。
+\begin{enumerate}[(i)]
+\item 设 $p\in(1,\infty)$。$E$ 的 $r$ 阶 $p$ 次 Bessel 容量为
+\begin{align}
+B_{r,p}(E)\triangleq \inf_{f\in V_{E,p}}\|f\|_p^p,\qquad
+V_{E,p}\triangleq \{f\in L^p(\mathbb{R}^N)\mid (g_r*f)(x)\geqslant1\ \forall x\in E\}.\label{align:ch03-3.48}
+\end{align}
+若 $V_{E,p}=\varnothing $，则 $B_{r,p}(E)\triangleq \infty$。
+\item $E$ 的 $r$ 阶 1 次 Bessel 容量为
+\begin{align}
+B_{r,1}(E)\triangleq \inf_{\sigma\in V_{E,1}}\|\sigma\|,\label{align:ch03-3.49a}
+\end{align}
+\begin{align}
+V_{E,1}\triangleq \left\{\sigma\in\mathscr{R}_f(\mathbb{R}^N)\ \middle|\ \int_{\mathbb{R}^N}g_r(x-y)\,\mathrm{d}\sigma(y)\geqslant1\ \forall x\in E\right\}.\label{align:ch03-3.49b}
+\end{align}
+若 $V_{E,1}=\varnothing $，则 $B_{r,1}(E)\triangleq \infty$。
+\end{enumerate}
+
+设 $r\in(0,N)$，$p\in[1,\infty)$。Riesz 容量 $R_{r,p}(E)$ 由将 $g_r$ 换为 $\gamma_r$ 定义。
+\end{definition}
+
+\begin{proposition}\label{proposition:ch03-Bessel基本}
+\begin{enumerate}[(i)]
+\item 设 $p\in(1,\infty)$，$E\subseteq\mathbb{R}^N$。则 $B_{r,p}(E)$ 与 $R_{r,p}(E)$ 在集 $E$ 的正交变换与平移下不变。
+\item 对任意 $p\in[1,\infty)$，$B_{r,p}$ 与 $R_{r,p}$ 为 $\mathbb{R}^N$ 上的外容量。此外，对任意 $p\in(1,\infty)$，$\mathbb{R}^N$ 的每个 Borel 子集均为 $B_{r,p}$-可容集，$R_{r,p}$ 同理。
+\item 对任意紧集 $K\subseteq\mathbb{R}^N$，映射 $p\mapsto B_{r,p}(K)$ 在 $[1,\infty)$ 上右连续。
+\item 对任意紧集 $K\subseteq\mathbb{R}^N$，映射 $p\mapsto R_{r,p}(K)$（$r\in(0,N)$）在 $[1,N/r)$ 上右连续。
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(i) 易验证。(ii) 由\cref{theorem:ch03-Cgp外容量}与\cref{proposition:ch03-Borel可容}得到。(iii) 由\cref{proposition:ch03-简单函数逼近}与\cref{proposition:ch03-p趋近1}得到。关于 (iv)，易验证 Riesz 核 $\gamma_r$（$r\in(0,N)$）对任意 $\alpha>N/(N-r)$ 满足条件\eqref{align:ch03-3.40}。由\cref{remark:ch03-条件替换}，结论成立。
+\end{proof}
+
+\subsection{Bessel 容量的度量性质}\label{subsection:ch03-度量性质}
+
+本小节中为记号简单置 $V_E\equiv V_{E,p}$（见定义\ref{definition:ch03-Bessel容量}）。指出 Bessel 容量与 Lebesgue 测度之间的关系是有益的。
+
+\begin{proposition}\label{proposition:ch03-点容量}
+设 $r>0$，$p\in(1,\infty)$。则存在常数 $M>0$（依赖于 $r,p,N$）使对任意 $E\subseteq\mathbb{R}^N$：
+\begin{enumerate}[(i)]
+\item 若 $rp<N$，则 $B_{r,p}(E)\geqslant M[\lambda_N^*(E)]^{\frac{N-rp}{N}}$；
+\item 若 $rp=N$，则 $B_{r,p}(E)\geqslant M[\lambda_N^*(E)]^\epsilon$ 对所有 $\epsilon\in(0,1]$；
+\item 若 $rp>N$，则当 $E\neq\varnothing $ 时 $B_{r,p}(E)\geqslant M$。
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+由于 $B_{r,p}$ 为外容量，只需在 $E=A$ 为开、有界、非空时证明。
+
+(i) 对任意 $f\in V_A$，
+\begin{align}
+\lambda_N(A)\leqslant\int_A(g_r*f)(x)\,\mathrm{d}x
+\leqslant\|g_r*f\|_{p^*}[\lambda_N(A)]^{1-1/p^*},\label{align:ch03-3.50}
+\end{align}
+其中 $p^*\triangleq Np/(N-rp)$。由 Sobolev 嵌入结果，存在 $M_0>0$ 使 $\|g_r*f\|_{p^*}\leqslant M_0\|f\|_p$。由\eqref{align:ch03-3.50}，
+\begin{align}
+[\lambda_N(A)]^{p/p^*}\leqslant M_0^p\|f\|_p^p,\label{align:ch03-3.51}
+\end{align}
+由 $f\in V_A$ 任意，结论成立。
+
+(ii) 如 (i) 那样论证，代替\eqref{align:ch03-3.51}，现得
+\begin{align*}
+[\lambda_N(A)]^{p/q}\leqslant M_0^p\|f\|_p^p
+\quad \text{对所有 }q\geqslant p.
+\end{align*}
+取 $\epsilon\triangleq p/q$，结论成立。
+
+(iii) 由\eqref{align:ch03-3.5}易验证此情形 $g_r\in L^{p/(p-1)}(\mathbb{R}^N)$。设 $A\ni0$。则对任意 $f\in V_A$，
+\begin{align*}
+1\leqslant(g_r*f)(0)\leqslant\|g_r\|_{p/(p-1)}\|f\|_p,
+\end{align*}
+故 $B_{r,p}(A)\geqslant B_{r,p}(\{0\})\geqslant[\|g_r\|_{p/(p-1)}]^{-p}$。由\cref{proposition:ch03-Bessel基本}(i)，结论成立。
+\end{proof}
+
+\begin{remark}\label{remark:ch03-零集可测}
+设 $r>0$，$p\in(1,\infty)$。由\cref{proposition:ch03-点容量}，$\mathbb{R}^N$ 中 $B_{r,p}$-零集仅当 $rp\leqslant N$ 时才能存在，此时它们为 $\lambda_N$-零集。因此，一个 $B_{r,p}$-拟处处成立的性质也 $\lambda_N$-a.e. 成立。
+\end{remark}
+
+为方便，置 $\beta_\rho\equiv B(x_0,\rho)$（$x_0\in\mathbb{R}^N$，$\rho>0$）。
+
+\begin{proposition}\label{proposition:ch03-球容量估计}
+设 $r>0$，$p\in(1,\infty)$，$rp<N$。则存在常数 $C>0$（依赖于 $r,p,N$）使
+\begin{align}
+C^{-1}\rho^{N-rp}\leqslant B_{r,p}(\beta_\rho)\leqslant C\rho^{N-rp}
+\quad \text{对所有 }\rho\in(0,1].\label{align:ch03-3.52a}
+\end{align}
+\end{proposition}
+
+\begin{proposition}\label{proposition:ch03-球容量log}
+设 $r>0$，$p\in(1,\infty)$，$rp=N$。设 $\rho_0\in(0,1)$。则存在常数 $\widetilde C>0$ 使
+\begin{align}
+\widetilde C^{-1}\left(-\log\frac{\rho}{\rho_0}\right)^{1-p}
+\leqslant B_{r,p}(\beta_\rho)
+\leqslant\widetilde C\left(-\log\frac{\rho}{\rho_0}\right)^{1-p}
+\quad \text{对所有 }\rho\in(0,1].\label{align:ch03-3.52b}
+\end{align}
+\end{proposition}
+
+我们仅证\cref{proposition:ch03-球容量估计}。
+
+\begin{proof}[证明\cref{proposition:ch03-球容量估计}]
+\eqref{align:ch03-3.52a}中第一个不等式由\cref{proposition:ch03-点容量}(i)得到。关于第二个，设 $f\in V_{\beta_4}$，因而 $g_r*f\geqslant1$ 在 $\beta_4$ 上。由变量替换，这蕴含
+\begin{align}
+\rho^{-N}\int_{\mathbb{R}^N}g_r\left(\frac{x-z}{\rho}\right)f\left(\frac{z}{\rho}\right)\mathrm{d}z\geqslant1
+\quad \text{在 }\beta_{4\rho}\text{ 上}.\label{align:ch03-3.53}
+\end{align}
+另一方面，存在 $C_0>0$ 使
+\begin{align}
+g_r\left(\frac{x}{\rho}\right)\leqslant C_0\rho^{N-r}|x|^{r-N}e^{-|x|/(2\rho)}
+\leqslant C_0^2\rho^{N-r}g_r(x)\label{align:ch03-3.54}
+\end{align}
+对所有 $\rho\in(0,1/4]$。
+
+由\eqref{align:ch03-3.53}--\eqref{align:ch03-3.54}，
+\begin{align}
+C_0^2\rho^{-r}\int_{\mathbb{R}^N}g_r(x-z)f\left(\frac{z}{\rho}\right)\mathrm{d}z\geqslant1
+\quad \text{在 }\beta_{4\rho}\text{ 上}\label{align:ch03-3.55}
+\end{align}
+对所有 $\rho\in(0,1/4]$。不等式\eqref{align:ch03-3.55}表明 $C_0^2\rho^{-r}f(z/\rho)\in V_{\beta_{4\rho}}$。由于
+\begin{align*}
+\left\|C_0^2\rho^{-r}f(\cdot/\rho)\right\|_p^p
+=C_0^{2p}\rho^{N-rp}\|f\|_p^p,
+\end{align*}
+显然
+\begin{align*}
+B_{r,p}(\beta_{4\rho})\leqslant C_0^{2p}\rho^{N-rp}B_{r,p}(\beta_4)
+\end{align*}
+对所有 $\rho\in(0,1/4]$。此不等式给出
+\begin{align}
+B_{r,p}(\beta_\rho)\leqslant 4^{rp-N}C_0^{2p}B_{r,p}(\beta_4)\rho^{N-rp}\label{align:ch03-3.56}
+\end{align}
+对所有 $\rho\in(0,1]$，结论成立。
+\end{proof}
+
+\begin{proposition}\label{proposition:ch03-单点容量}
+设 $r>0$，$p\in(1,\infty)$，$rp\leqslant N$。则对每个可数集 $E\subseteq\mathbb{R}^N$，$B_{r,p}(E)=0$。
+\end{proposition}
+
+\begin{proof}
+在\eqref{align:ch03-3.52a}中令 $\rho\to0^+$，得对所有 $x_0\in\mathbb{R}^N$，$B_{r,p}(\{x_0\})=0$。由于 $B_{r,p}$ 次可列可加，结论成立。
+\end{proof}
+
+\begin{remark}\label{remark:ch03-无零容量集}
+\begin{enumerate}[(i)]
+\item 设 $r>0$，$p\in(1,\infty)$，$rp<N$。由单调性与\eqref{align:ch03-3.56}，
+\begin{align}
+B_{r,p}(\beta_\rho)\leqslant 4^{rp-N}C_0^{2p}B_{r,p}(\beta_4)\rho^{N-rp}\label{align:ch03-3.57}
+\end{align}
+对所有 $\rho\in(0,1)$，令 $p\to1^+$，得
+\begin{align*}
+B_{r,1}(\beta_\rho)\leqslant 4^{r-N}C_0^2B_{r,1}(\beta_4)\rho^{N-r}
+\end{align*}
+对所有 $\rho\in(0,1)$。由此得对每个 $x_0\in\mathbb{R}^N$，$B_{r,1}(\{x_0\})=0$。若 $r=N$，则由\eqref{align:ch03-3.52b}类似得对所有 $x_0\in\mathbb{R}^N$，$B_{r,1}(\{x_0\})>0$。
+\item 由 (i) 与\cref{proposition:ch03-点容量}(iii)，若 $p=1$ 且 $r=N$，或 $p\in(1,\infty)$ 且 $rp>N$，则 $\mathbb{R}^N$ 中不存在 $B_{r,p}$-零集。在其余情形，\cref{remark:ch03-零集可测}中的讨论成立。
+\end{enumerate}
+\end{remark}
+
+\subsection{Sobolev 容量}\label{subsection:ch03-Sobolev容量}
+
+\begin{definition}\label{definition:ch03-Sobolev容量}
+设 $m\in\mathbb{N}^*$，$p\in[1,\infty)$。
+\begin{enumerate}[(i)]
+\item 任意紧集 $K\subseteq\mathbb{R}^N$ 的 $m$ 阶 $p$ 次 Sobolev 容量为
+\begin{align}
+C_{m,p}(K)\triangleq \inf_{f\in W_K}\|f\|_{m,p}^p,\qquad
+W_K\triangleq \{f\in C^\infty_c(\mathbb{R}^N)\mid f(x)\geqslant1\ \forall x\in K\}.\label{align:ch03-3.58a}
+\end{align}
+\item 对任意开集 $A\subseteq\mathbb{R}^N$，置
+\begin{align}
+C_{m,p}(A)\triangleq \sup\{C_{m,p}(K)\mid K\subseteq A,\ K\text{ 紧}\}.\label{align:ch03-3.58b}
+\end{align}
+\item 对任意 $E\subseteq\mathbb{R}^N$，置
+\begin{align}
+C_{m,p}(E)\triangleq \inf\{C_{m,p}(A)\mid A\supseteq E,\ A\text{ 开}\}.\label{align:ch03-3.58c}
+\end{align}
+\end{enumerate}
+\end{definition}
+
+由定义，$C_{m,p}$ 是 $\mathbb{R}^N$ 上的外容量。称一个性质 $(m,p)$-拟处处成立，若它 $C_{m,p}$-拟处处成立。当 $m=1$ 时，置 $C_p\equiv C_{1,p}$。
+
+\begin{remark}\label{remark:ch03-容量定义适定}
+定义\ref{definition:ch03-Sobolev容量}的适定性要求对任意紧集 $K\subseteq\mathbb{R}^N$，
+\begin{align}
+C_{m,p}(K)\triangleq \inf_{f\in W_K}\|f\|_{m,p}^p=\inf\{C_{m,p}(A)\mid A\supseteq K,\ A\text{ 开}\}.\label{align:ch03-3.59}
+\end{align}
+设 $\epsilon>0$。存在 $f\in W_K$ 使对任意 $x\in K$ 有 $f(x)>1$，且 $\|f\|_{m,p}^p<C_{m,p}(K)+\epsilon$。置 $K_1\triangleq \{f\geqslant1\}$，则 $K\subseteq\mathring K_1\subseteq K_1$。$f\in W_{K_1}$，故 $C_{m,p}(K_1)\leqslant\|f\|_{m,p}^p<C_{m,p}(K)+\epsilon$。由 $\epsilon$ 任意，\eqref{align:ch03-3.59}成立。
+\end{remark}
+
+使用定义\ref{definition:ch03-Sobolev容量}的一个变体常是有用的，其中 $W_K$ 替换为
+\begin{align}
+W'_K\triangleq \{f\in\mathcal{S}(\mathbb{R}^N)\mid f(x)\geqslant1\ \forall x\in K\}.\label{align:ch03-3.60}
+\end{align}
+则 $C_{m,p}$ 与 $C'_{m,p}$ 为等价容量。
+
+\begin{remark}\label{remark:ch03-其他容量定义}
+文献中存在 Sobolev 容量的其他定义；特别地：
+\begin{enumerate}[(a)]
+\item $W_K$ 替换为
+\begin{align}
+W''_K\triangleq \{f\in C^\infty_c(\mathbb{R}^N)\mid 0\leqslant f\leqslant1\text{ 在 }\mathbb{R}^N,\ f=1\text{ 在 }K\text{ 上}\};\label{align:ch03-3.61}
+\end{align}
+\item 对任意 $E\subseteq\mathbb{R}^N$，置
+\begin{align}
+C''_{m,p}(E)\triangleq \inf_{f\in Z_E}\|f\|_{m,p}^p,\label{align:ch03-3.62a}
+\end{align}
+其中
+\begin{align}
+Z_E\triangleq \{f\in W^{m,p}(\mathbb{R}^N)\mid f\geqslant1\text{ a.e. 在 }E\text{ 的邻域中}\}.\label{align:ch03-3.62b}
+\end{align}
+\end{enumerate}
+若 $p\in(1,\infty)$，则 $C_{m,p}$ 与 $C''_{m,p}$ 等价。
+\end{remark}
+
+\begin{definition}\label{definition:ch03-Laplacian容量}
+对任意紧集 $K\subseteq\mathbb{R}^N$，$K$ 的 Laplace 容量为
+\begin{align}
+C_{\Delta,1}(K)\triangleq \inf_{f\in\Omega_K}\|\Delta f\|_1,\label{align:ch03-3.63a}
+\end{align}
+其中
+\begin{align}
+\Omega_K\triangleq \{f\in C^\infty_c(\mathbb{R}^N)\mid f(x)\geqslant1\text{ 在 }K\text{ 的某邻域中}\}.\label{align:ch03-3.63b}
+\end{align}
+\end{definition}
+
+\begin{proposition}\label{proposition:ch03-mp零集}\label{proposition:ch03-零容量逼近}
+设 $m\in\mathbb{N}^*$，$p\in(1,\infty)$。
+\begin{enumerate}[(i)]
+\item 设 $K\subseteq\mathbb{R}^N$ 紧。下列陈述等价：(i1) $C_{m,p}(K)=0$；(i2) 存在序列 $\{f_k\}\subseteq C^\infty_c(\mathbb{R}^N)$ 使 $f_k\geqslant1$ a.e. 在 $K$ 的某邻域中，且 $\lim_{k\to\infty}\|f_k\|_{m,p}=0$。
+\item 设 $E\subseteq\mathbb{R}^N$。下列陈述等价：(ii1) $C_{m,p}(E)=0$；(ii2) 存在序列 $\{f_k\}\subseteq W^{m,p}(\mathbb{R}^N)$ 使 $f_k\geqslant1$ a.e. 在 $E$ 的某邻域中，且 $\lim_{k\to\infty}\|f_k\|_{m,p}=0$。
+\end{enumerate}
+\end{proposition}
+
+\begin{remark}\label{remark:ch03-零集磨光}
+\label{remark:ch03-磨光注}
+设 $m\in\mathbb{N}^*$，$p\in(1,\infty)$，$K\subseteq\mathbb{R}^N$ 紧且 $(m,p)$-零。易见对任意开集 $A\supseteq K$，存在序列 $\{f_k\}\subseteq C^\infty_c(A)$ 使 $0\leqslant f_k\leqslant1$ 在 $\mathbb{R}^N$ 上，$f_k=1$ 在 $K$ 的某邻域中，且 $\lim_{k\to\infty}\|f_k\|_{m,p}=0$。
+\end{remark}
+
+\begin{theorem}\label{theorem:ch03-拟连续代表}
+设 $m\in\mathbb{N}^*$，$p\in(1,\infty)$。则每个 $h\in W^{m,p}(\mathbb{R}^N)$ 有一个 $(m,p)$-拟连续代表 $\widehat h$。此外，$\widehat h$ $(m,p)$-本质唯一。
+\end{theorem}
+
+\begin{proof}
+由稠密性，对任意 $h\in W^{m,p}(\mathbb{R}^N)$，存在 $\{h_n\}\subseteq W^{m,p}(\mathbb{R}^N)\cap C(\mathbb{R}^N)$ 使 $\|h_n-h\|_{m,p}\to0$。由\cref{theorem:ch03-Calderon}，存在 $f\in L^p(\mathbb{R}^N)$ 与 $\{f_n\}\subseteq L^p(\mathbb{R}^N)$ 使 $h=g_m*f$，$h_n=g_m*f_n$，且 $\|f_n-f\|_p\to0$。存在子列 $\{h_{n_k}\}$ 在 $C_{m,p}$-容量意义下及 $(m,p)$-拟一致收敛于某个 $\widehat h\in W^{m,p}(\mathbb{R}^N)$。则 $\widehat h$ 为 $h$ 的 $(m,p)$-代表。
+
+为证唯一性，设 $u\in W^{m,p}(\mathbb{R}^N)$，$\widehat u$ 为 $(m,p)$-拟连续代表。则对任意 $\lambda>0$，
+\begin{align*}
+\lambda^p C_{m,p}(\{|\widehat h-\widehat u|\geqslant\lambda\})\leqslant\int_{\mathbb{R}^N}|h-u|^p\,\mathrm{d}\mu,
+\end{align*}
+故若 $h=u$，$C_{m,p}(\{|\widehat h-\widehat u|\geqslant\lambda\})=0$。由次可列可加性，
+\begin{align*}
+C_{m,p}(\{|f-g|>0\})\leqslant\sum_{k=1}^\infty C_{m,p}(\{|f-g|>1/k\})=0.
+\end{align*}
+结论成立。
+\end{proof}
+
+\begin{remark}\label{remark:ch03-等同拟连续}
+习惯上将每个函数 $h\in W^{m,p}(\mathbb{R}^N)$ 等同于其 $(m,p)$-拟连续代表 $\widehat h$。
+\end{remark}
+
+
+
+
+\end{document}

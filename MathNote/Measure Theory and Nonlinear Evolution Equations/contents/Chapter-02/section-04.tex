@@ -1,0 +1,141 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{应用}\label{section:ch02-应用}
+\label{section:ch02-进一步讨论}
+
+\subsection{一个有用的等式}\label{subsection:ch02-有用等式}
+
+设 $(X,\mathscr A,\mu)$ 为测度空间，$f:X\to[0,\infty]$ 为 $\mathscr A$-可测。则从 $[0,\infty)$ 到 $[0,\infty]$ 的函数 $t\mapsto\mu(\{f>t\})$ 非增；由 Chebyshev 不等式，若 $f\in L^1(X,\mathscr A,\mu)$，则 $\lim_{t\to\infty}\mu(\{f>t\})=0$。
+
+\begin{proposition}\label{proposition:ch02-尾部积分}
+设 $(X,\mathscr A,\mu)$ 为 $\sigma$-有限测度空间，$f:X\to[0,\infty]$ 为 $\mathscr A$-可测。则对任意 $\alpha>0$，有
+\begin{align}
+\int_X f^\alpha\,\mathrm{d}\mu=\alpha\int_{[0,\infty)}\mu(\{f>t\})\,t^{\alpha-1}\,\mathrm{d}t. \label{align:ch02-2.19}
+\end{align}
+\end{proposition}
+
+\begin{proof}
+在 Tonelli 定理中取 $(X_1,\mathscr A_1,\mu_1)=(X,\mathscr A,\mu)$，$(X_2,\mathscr A_2,\mu_2)=([0,\infty),\mathscr B\cap[0,\infty),\lambda_\varphi)$，其中 $\lambda_\varphi$ 为 $\mathscr B\cap[0,\infty)$ 上与 $\varphi(t)=t^\alpha$（$t\geqslant0$）相伴的 Lebesgue--Stieltjes 测度。易见集合 $E\triangleq \{(x,t)\in X\times[0,\infty)\mid f(x)>t\}$ 为 $\mathscr A_1\times\mathscr A_2$-可测。在\eqref{align:ch02-2.17}中取 $f=\chi_E$，得
+\begin{align*}
+\alpha\int_{[0,\infty)}\mu(\{f>t\})\,t^{\alpha-1}\,\mathrm{d}t
+&=\int_{[0,\infty)}\mu(\{f>t\})\,\mathrm{d}\lambda_\varphi(t)
+=\int_{[0,\infty)}\mathrm{d}\lambda_\varphi(t)\int_X\chi_{\{f(x)>t\}}\,\mathrm{d}\mu(x)\\
+&=\int_X\mathrm{d}\mu(x)\int_{[0,\infty)}\chi_{\{f(x)>t\}}\,\mathrm{d}\lambda_\varphi(t)
+=\int_X\mathrm{d}\mu(x)\,\lambda_\varphi(\{f(x)>0\})
+=\int_X f^\alpha(x)\,\mathrm{d}\mu(x).
+\end{align*}
+\end{proof}
+
+\subsection{Steiner 对称化}\label{subsection:ch02-Steiner对称化}
+\label{subsection:ch02-等周}
+
+对任意 $x\in\mathbb R^N$，记 $x\equiv(x_1,\hat x)$，其中 $x_1\in\mathbb R$，$\hat x\in\mathbb R^{N-1}$。设 $E$ 为 $\mathbb R^N$ 的 Borel 子集。对任意 $\hat x\in\mathbb R^{N-1}$，令 $E_{\hat x}\triangleq \{x_1\in\mathbb R\mid(x_1,\hat x)\in E\}$ 为其 $\hat x$-截面。由\cref{proposition:ch01-截面}，函数
+\begin{align}
+f:\mathbb R^{N-1}\to[0,\infty],\qquad f(\hat x)\triangleq \lambda(E_{\hat x}) \label{align:ch02-2.20}
+\end{align}
+良定义。考虑对称区间
+\begin{align*}
+I_{\hat x}\triangleq \left(-\frac{f(\hat x)}2,\frac{f(\hat x)}2\right)\quad\text{若 }f(\hat x)\neq0,\qquad I_{\hat x}\triangleq \varnothing \text{ 否则},
+\end{align*}
+并定义
+\begin{align}
+S_1(E)\triangleq \bigcup_{\hat x\in\mathbb R^{N-1}}(I_{\hat x}\times\{\hat x\})
+=\{(x_1,\hat x)\in\mathbb R^N\mid|x_1|\leqslant f(\hat x)/2\}. \label{align:ch02-2.21}
+\end{align}
+
+\begin{definition}\label{definition:ch02-Steiner对称化}
+由\eqref{align:ch02-2.21}定义的集合 $S_1(E)$ 称为 $E$ 关于平面 $x_1=0$ 的 Steiner 对称化。$E$ 关于平面 $x_j=0$（$j=2,\cdots ,N$）的 Steiner 对称化类似定义。$E$ 关于原点的 Steiner 对称化为
+\begin{align}
+S(E)\triangleq S_N(S_{N-1}(\cdots S_1(E)\cdots)). \label{align:ch02-2.22}
+\end{align}
+\end{definition}
+
+集合 $S_1(E)$ 的若干相关性质在下列引理中证明。
+
+\begin{lemma}\label{lemma:ch02-Steiner性质}
+设 $E\in\mathscr B_N$，$S_1(E)$ 由\eqref{align:ch02-2.21}定义。则：
+\begin{enumerate}[(i)]
+\item $(x_1,\hat x)\in S_1(E)\Rightarrow(-x_1,\hat x)\in S_1(E)$；
+\item $S_1(E)\in\mathscr B_N$；
+\item $\lambda_N(S_1(E))=\lambda_N(E)$；
+\item $\operatorname{diam}(S_1(E))\leqslant\operatorname{diam}(E)$。
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(i) 由\eqref{align:ch02-2.21}显然。为证 (ii)，设 $\{s_k\}\subseteq\mathscr S^+(\mathbb R^{N-1})$ 为非降简单函数列，使当 $k\to\infty$ 时 $s_k\to f$ 在 $\mathbb R^{N-1}$ 上逐点，其中 $f$ 由\eqref{align:ch02-2.20}定义。对任意 $k\in\mathbb N$，定义
+\begin{align*}
+g_k:\mathbb R^N\to\mathbb R,\qquad g_k(x_1,\hat x)\triangleq \frac{s_k(\hat x)}2-|x_1|.
+\end{align*}
+显然 $g_k$ 为 $\mathscr B_N$-可测，故 $F_k\triangleq \{g_k>0\}\in\mathscr B_N$（$k\in\mathbb N$）。因对所有 $k$ 有 $s_k\leqslant s_{k+1}$，易验证序列 $\{F_k\}$ 非增且 $S_1(E)=\bigcup_{k=1}^\infty F_k$。故 (ii) 成立。关于 (iii)，只需注意由\eqref{align:ch02-2.15b}（另见\cref{remark:ch02-乘积完备化}）有
+\begin{align*}
+\lambda_N(E)=\int_{\mathbb R^{N-1}}\lambda(E_{\hat x})\,\mathrm{d}\lambda_{N-1}(\hat x)
+=\int_{\mathbb R^{N-1}}f(\hat x)\,\mathrm{d}\lambda_{N-1}(\hat x)=\lambda_N(S_1(E)).
+\end{align*}
+
+最后证 (iv)。设 $\operatorname{diam}(E)<\infty$；否则结论显然。设 $E_{\hat x}\neq\varnothing $，定义 $K_{\hat x}\triangleq [\inf E_{\hat x},\sup E_{\hat x}]$。显然
+\begin{align}
+\lambda(K_{\hat x})=\sup E_{\hat x}-\inf E_{\hat x}\geqslant\lambda(E_{\hat x})=f(\hat x). \label{align:ch02-2.23}
+\end{align}
+设 $(x_1,\hat x),(y_1,\hat y)\in S_1(E)$，使
+\begin{align}
+\operatorname{diam}(S_1(E))\leqslant\sqrt{|x_1-y_1|^2+|\hat x-\hat y|^2}+\epsilon. \label{align:ch02-2.24}
+\end{align}
+不妨设
+\begin{align}
+\sup E_{\hat y}-\inf E_{\hat x}\geqslant\sup E_{\hat x}-\inf E_{\hat y}. \label{align:ch02-2.25}
+\end{align}
+因 $|x_1|\leqslant f(\hat x)/2$、$|y_1|\leqslant f(\hat y)/2$，由\eqref{align:ch02-2.23}与\eqref{align:ch02-2.25}立得
+\begin{align}
+|x_1-y_1|\leqslant\frac{f(\hat x)+f(\hat y)}2
+\leqslant\frac{\sup E_{\hat x}-\inf E_{\hat x}}2+\frac{\sup E_{\hat y}-\inf E_{\hat y}}2
+=\frac{\sup E_{\hat y}-\inf E_{\hat x}}2+\frac{\sup E_{\hat x}-\inf E_{\hat y}}2
+\leqslant\sup E_{\hat y}-\inf E_{\hat x}. \label{align:ch02-2.26}
+\end{align}
+由\eqref{align:ch02-2.24}与\eqref{align:ch02-2.26}得
+\begin{align*}
+[\operatorname{diam}(S_1(E))-\epsilon]^2\leqslant|x_1-y_1|^2+|\hat x_1-\hat y_1|^2
+\leqslant|\hat x_1-\hat y_1|^2+[\sup E_{\hat y}-\inf E_{\hat x}]^2\leqslant[\operatorname{diam}(E)]^2,
+\end{align*}
+由 $\epsilon$ 的任意性即得 (iv)。证毕。
+\end{proof}
+
+由\cref{lemma:ch02-Steiner性质}得下列结果。
+
+\begin{theorem}[Steiner 对称化]\label{theorem:ch02-Steiner}
+设 $E\in\mathscr B_N$，$S(E)$ 为其关于原点的 Steiner 对称化。则：
+\begin{enumerate}[(i)]
+\item $x\in S(E)\Rightarrow-x\in S(E)$；
+\item $S(E)\in\mathscr B_N$；
+\item $\lambda_N(S(E))=\lambda_N(E)$；
+\item $\operatorname{diam}(S(E))\leqslant\operatorname{diam}(E)$。
+\end{enumerate}
+\end{theorem}
+
+作为\cref{theorem:ch02-Steiner}的应用，现可证明等直径不等式（见\cref{proposition:ch01-等直径不等式}）。
+
+\begin{proof}[等直径不等式的证明]
+若 $\operatorname{diam}(E)=\infty$，结论显然；故设 $E\subseteq\mathbb R^N$ 有界。又由\cref{remark:ch01-等直径注}(ii)，不妨设 $E\in\mathscr B_N$。设 $S(E)$ 由\eqref{align:ch02-2.22}定义。由\cref{theorem:ch02-Steiner}(i,iv)，$S(E)$ 关于原点对称，且 $\operatorname{diam}(S(E))\leqslant\operatorname{diam}(E)$，故 $S(E)\subseteq B(0,\operatorname{diam}(E)/2)$。由\cref{theorem:ch02-Steiner}(iii)得
+\begin{align*}
+\lambda_N(E)=\lambda_N(S(E))\leqslant\kappa_N\left(\frac{\operatorname{diam}(E)}2\right)^N,
+\end{align*}
+其中 $\kappa_N$ 由\eqref{align:ch01-kappaN}给出。结论成立。
+\end{proof}
+
+
+
+
+\end{document}

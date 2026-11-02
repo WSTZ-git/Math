@@ -1,0 +1,462 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{带号测度}\label{section:ch01-带号测度}
+
+\begin{definition}\label{definition:ch01-带号测度}
+设 $(X,\mathcal{A})$ 为一可测空间。映射 $\mu:\mathcal{A}\to[-\infty,\infty]$ 称为 $\mathcal{A}$ 上的一个带号测度，若：
+\begin{enumerate}[(i)]
+\item $\mu(\varnothing )=0$；
+\item $\mu(\mathcal{A})$ 包含于 $[-\infty,\infty)$ 或 $(-\infty,\infty]$ 之一；
+\item 对任意不交序列 $\{E_n\}\subseteq\mathcal{A}$，有
+\[
+\mu\left(\bigcup_{n=1}^\infty E_n\right)=\sum_{n=1}^\infty\mu(E_n).
+\]
+\end{enumerate}
+带号测度 $\mu$ 称为有限的，若 $\mu(\mathcal{A})\subseteq\mathbb{R}$；称为 $\sigma$--有限的，若存在序列 $\{E_k\}\subseteq\mathcal{A}$ 使得 $X=\bigcup_{k=1}^\infty E_k$ 且对任意 $k\in\mathbb{N}$ 有 $|\mu(E_k)|<\infty$。
+\end{definition}
+
+由上述要求 (ii)，\cref{definition:ch01-带号测度} 中的级数 $\sum_{n=1}^\infty\mu(E_n)$ 是适定的。此外，由 (iii) 其收敛是绝对的：事实上，其和不能依赖于项的次序，因为 $\bigcup_{n=1}^\infty E_n$ 不依赖于次序。
+
+\begin{remark}\label{remark:ch01-带号测度性质}
+设 $(X,\mathcal{A})$ 为一可测空间，$\mu$ 为 $\mathcal{A}$ 上的带号测度。
+\begin{enumerate}[(i)]
+\item 对任意 $E,F\in\mathcal{A}$、$E\subseteq F$，有 $|\mu(F)|<\infty\Rightarrow|\mu(E)|<\infty$。
+\item 容易看出：
+\begin{itemize}
+\item 对任意非减序列 $\{E_n\}\subseteq\mathcal{A}$，有 $\mu\left(\bigcup_{n=1}^\infty E_n\right)=\lim_{n\to\infty}\mu(E_n)$；
+\item 对任意非增序列 $\{E_n\}\subseteq\mathcal{A}$ 且 $|\mu(E_1)|<\infty$，有 $\mu\left(\bigcap_{n=1}^\infty E_n\right)=\lim_{n\to\infty}\mu(E_n)$。
+\end{itemize}
+\end{enumerate}
+\end{remark}
+
+$X$ 上带号测度的集合是一个实向量空间，记为 $\mathcal{M}=\mathcal{M}(X)$。若序关系"$\leqslant$"定义为
+\[
+\nu\leqslant\mu\overset{\mathrm{def}}{\Longleftrightarrow}\nu(E)\leqslant\mu(E)\quad\text{对任意 }E\in\mathcal{A}\quad(\mu,\nu\in\mathcal{M}),
+\]
+则它是一个有序向量空间。有限带号测度的子空间记为 $\mathcal{M}_f(X)\subset\mathcal{M}(X)$，而 $\mathcal{M}_f^+(X)$ 表示有限（正）测度的锥。
+
+\subsection{Hahn 分解与 Jordan 分解}\label{subsection:ch01-HahnJordan}
+
+\begin{definition}\label{definition:ch01-正负集}
+设 $(X,\mathcal{A})$ 为一可测空间，$\mu$ 为 $\mathcal{A}$ 上的带号测度。
+\begin{enumerate}[(i)]
+\item 集合 $P\in\mathcal{A}$ 称为 $\mu$--正的，若对任意 $E\in\mathcal{A}$、$E\subseteq P$ 有 $\mu(E)\geqslant 0$；
+\item 集合 $N\in\mathcal{A}$ 称为 $\mu$--负的，若对任意 $E\in\mathcal{A}$、$E\subseteq N$ 有 $\mu(E)\leqslant 0$；
+\item 集合 $F\in\mathcal{A}$ 称为 $\mu$--零测的，若对任意 $E\in\mathcal{A}$、$E\subseteq F$ 有 $\mu(E)=0$。
+\end{enumerate}
+\end{definition}
+
+\begin{lemma}\label{lemma:ch01-正集子集}
+设 $(X,\mathcal{A})$ 为一可测空间，$\mu$ 为 $\mathcal{A}$ 上的带号测度且 $\mu(\mathcal{A})\subseteq[-\infty,\infty)$。则对任意集合 $E\in\mathcal{A}$ 满足 $\mu(E)>-\infty$，存在 $\mu$--正集 $P\subseteq E$ 使得 $\mu(P)\geqslant\mu(E)$。
+\end{lemma}
+
+\begin{proof}
+若集合 $E$ 是 $\mu$--正的，则结论显然成立。否则，结论由以下断言推出。
+
+\textbf{断言。} 对任意 $\epsilon>0$，存在 $E_\epsilon\in\mathcal{A}$、$E_\epsilon\subseteq E$，满足 $\mu(E_\epsilon)\geqslant\mu(E)$，使得对任意 $F\in\mathcal{A}$、$F\subseteq E_\epsilon$ 有 $\mu(F)\geqslant-\epsilon$。
+
+事实上，若断言成立，则集合 $P\triangleq \bigcap_{n=1}^\infty E_{1/n}$ 具有所述性质。
+
+反设断言对某个 $\bar{\epsilon}>0$ 不成立。由于由假设 $E$ 不是 $\mu$--正的，存在 $G\in\mathcal{A}$ 使得 $G\subseteq E$ 且 $\mu(G)<0$。这蕴含 $E\setminus G\in\mathcal{A}$ 是 $E$ 的一个子集且
+\[
+\mu(E\setminus G)=\mu(E)-\mu(G)>\mu(E),
+\]
+故存在 $F_1\in\mathcal{A}$ 使得 $F_1\subseteq E\setminus G$ 且 $\mu(F_1)<-\bar{\epsilon}$。接下来注意集合 $E\setminus F_1\in\mathcal{A}$ 满足以下性质：$E\setminus F_1\subseteq E$ 且
+\[
+\mu(E\setminus F_1)=\mu(E)-\mu(F_1)>\mu(E)+\bar{\epsilon}>\mu(E).
+\]
+于是存在 $F_2\in\mathcal{A}$ 使得 $F_2\subseteq E\setminus F_1$ 且 $\mu(F_2)<-\bar{\epsilon}$。如此归纳下去，存在不交序列 $\{F_n\}$，$F_1\subseteq E$，$F_n\subseteq E\setminus\left(\bigcup_{k=1}^{n-1}F_k\right)$（$n\geqslant 2$），使得对所有 $n$ 有 $\mu(F_n)<-\bar{\epsilon}$。由此
+\[
+\mu\left(\bigcup_{n=1}^\infty F_n\right)=-\infty.
+\]
+然而这是矛盾的，因为 $\bigcup_{n=1}^\infty F_n\subseteq E$ 且 $\mu(E)>-\infty$（见\cref{remark:ch01-带号测度性质}(i)）。
+\end{proof}
+
+\begin{theorem}[Hahn]\label{theorem:ch01-Hahn分解}
+设 $(X,\mathcal{A})$ 为一可测空间，$\mu$ 为 $\mathcal{A}$ 上的带号测度。则存在 $\mu$--正集 $P$ 和 $\mu$--负集 $N$ 使得 $P\cup N=X$，$P\cap N=\varnothing $。此外，偶 $(P,N)$ 唯一确定至 $\mu$--零测集。
+\end{theorem}
+
+\begin{proof}
+不失一般性，设 $\mu(\mathcal{A})\subseteq[-\infty,\infty)$。令
+\[
+\alpha\triangleq \sup_{E\in\mathcal{A}}\mu(E).
+\]
+则由\cref{lemma:ch01-正集子集}，存在 $\mu$--正集序列 $\{P_n\}$ 使得当 $n\to\infty$ 时 $\mu(P_n)\to\alpha$。则 $P\triangleq \bigcup_{n=1}^\infty P_n$ 是 $\mu$--正的，且对所有 $n$ 有 $\mu(P)\geqslant\mu(P_n)$，故 $\mu(P)=\alpha$（特别地，$\alpha\in\mathbb{R}$）。容易推出 $N\triangleq P^c$ 是 $\mu$--负的：事实上，若存在 $G\in\mathcal{A}$、$G\subseteq N$ 且 $\mu(G)>0$，则将有
+\[
+\mu(P\cup G)=\alpha+\mu(G)>\alpha,
+\]
+矛盾。
+
+为证最后一个陈述，设偶 $(P',N')$ 满足 $P'$ 为 $\mu$--正、$N'$ 为 $\mu$--负，且 $P'\cup N'=X$，$P'\cap N'=\varnothing $。对任意 $E\in\mathcal{A}$、$E\subseteq P\setminus P'=P\cap N'$，既有 $\mu(E)\geqslant 0$ 又有 $\mu(E)\leqslant 0$，故 $E$ 是 $\mu$--零测的。$P'\setminus P$ 的每个可测子集同理。故
+\[
+\mu(P\triangle P')=\mu(N\triangle N')=0
+\]
+（此处 $P\triangle P'\triangleq (P\setminus P')\cup(P'\setminus P)$，$N,N'$ 类似）。证毕。
+\end{proof}
+
+\begin{definition}\label{definition:ch01-变差}
+设 $(X,\mathcal{A})$ 为一可测空间，$\mu$ 为 $\mathcal{A}$ 上的带号测度，$P,N\in\mathcal{A}$ 由\cref{theorem:ch01-Hahn分解} 给出。
+\begin{enumerate}[(i)]
+\item 偶 $(P,N)$ 称为 $X$ 的 Hahn 分解。
+\item 测度 $\mu^+$，$\mu^+(E)\triangleq \mu(E\cap P)$（对任意 $E\in\mathcal{A}$），称为 $\mu$ 的正部（或正变差）。
+\item 测度 $\mu^-$，$\mu^-(E)\triangleq -\mu(E\cap N)$（对任意 $E\in\mathcal{A}$），称为 $\mu$ 的负部（或负变差）。
+\item 测度 $|\mu|$，$|\mu|(E)\triangleq \mu^+(E)+\mu^-(E)$（$E\in\mathcal{A}$），称为 $\mu$ 的变差。量 $|\mu|(X)$ 称为 $\mu$ 的全变差。
+\end{enumerate}
+\end{definition}
+
+由\cref{theorem:ch01-Hahn分解}，上述定义不依赖于偶 $(P,N)$ 的选取，因而是适定的。特别地，我们有
+\begin{align}
+\mu=\mu^+-\mu^-,\qquad |\mu|=\mu^++\mu^-, \label{align:ch01-Jordan分解}
+\end{align}
+因而特别地
+\begin{align}
+|\mu(E)|\leqslant|\mu|(E)\qquad\text{对所有 }E\in\mathcal{A}. \label{align:ch01-变差不等式}
+\end{align}
+
+\begin{definition}\label{definition:ch01-Jordan分解}
+\eqref{align:ch01-Jordan分解} 中的第一个等式称为带号测度 $\mu$ 的 Jordan 分解。
+\end{definition}
+
+\begin{remark}\label{remark:ch01-Jordan性质}\label{remark:ch01-Jordan变差}
+(i) $\mu$ 的 Jordan 分解在下述意义下是极小的：若存在（正）测度 $\rho$ 和 $\sigma$ 使得 $\mu=\rho-\sigma$，则对所有 $E\in\mathcal{A}$ 有 $\mu^+(E)\leqslant\rho(E)$ 且 $\mu^-(E)\leqslant\sigma(E)$。事实上，
+\[
+\mu^+(E)\triangleq \mu(E\cap P)=\rho(E\cap P)-\sigma(E\cap P)\leqslant\rho(E\cap P)\leqslant\rho(E),
+\]
+反向不等式同理。
+
+(ii) 容易看出，对任意 $E\in\mathcal{A}$，
+\[
+\mu^+(E)=\infty\Rightarrow\mu(E)=\infty,\qquad
+\mu^-(E)=\infty\Rightarrow\mu(E)=-\infty.
+\]
+由定义，带号测度 $\mu$ 不能同时取 $\pm\infty$，故 $\mu^\pm$ 中至少一个是有限的。
+
+(iii) 带号测度 $\mu$ 是有限的当且仅当其全变差是有限的。事实上，若 $|\mu|(X)<\infty$，则对所有 $E\in\mathcal{A}$ 有
+\[
+|\mu(E)|\leqslant|\mu|(E)\leqslant|\mu|(X)<\infty,
+\]
+故 $\mu$ 是有限的。反之，若对 $E\in\mathcal{A}$ 有 $|\mu(E)|<\infty$。则由 (ii) 对所有 $E\in\mathcal{A}$ 有 $|\mu|(E)<\infty$，特别地 $|\mu|(X)<\infty$。
+\end{remark}
+
+\label{subsection:ch01-全变差}
+
+\begin{proposition}\label{proposition:ch01-变差公式}\label{proposition:ch01-正变差}\label{proposition:ch01-全变差}
+设 $(X,\mathcal{A})$ 为一可测空间，$\mu$ 为 $\mathcal{A}$ 上的带号测度。则对任意 $E\in\mathcal{A}$，
+\[
+\mu^+(E)=\sup\{\mu(F)\mid F\in\mathcal{A},\ F\subseteq E\},\quad
+\mu^-(E)=-\inf\{\mu(F)\mid F\in\mathcal{A},\ F\subseteq E\},
+\]
+因而 $\mu^-=(-\mu)^+$。此外，
+\begin{align}
+|\mu|(E)&=\sup\left\{\sum_{i=1}^n|\mu(E_i)|\ \middle|\ E_1,\cdots ,E_n\in\mathcal{A}\text{ 不交},\ E=\bigcup_{i=1}^n E_i,\ n\in\mathbb{N}\right\} \nonumber\\
+&=\sup\left\{\sum_{i=1}^\infty|\mu(E_i)|\ \middle|\ E_i\in\mathcal{A}\text{ 不交},\ E=\bigcup_{i=1}^\infty E_i\right\}. \label{align:ch01-全变差公式}
+\end{align}
+\end{proposition}
+
+\begin{proof}
+我们仅证\eqref{align:ch01-全变差公式}。记右端第一个和第二个上确界分别为 $S_f$ 和 $S_i$。则
+\[
+|\mu|(E)=|\mu(E\cap P)|+|\mu(E\cap N)|\leqslant S_f\leqslant S_i.
+\]
+另一方面，对任意有限不交族 $\{E_1,\cdots ,E_n\}\subseteq\mathcal{A}$ 且 $\bigcup_{i=1}^n E_i\subseteq E$，
+\[
+\sum_{i=1}^n|\mu(E_i)|\leqslant\sum_{i=1}^n[\mu^+(E_i)+\mu^-(E_i)]
+\leqslant\mu^+(E)+\mu^-(E)=|\mu|(E),
+\]
+故 $S_f\leqslant S_i\leqslant|\mu|(E)$。于是\eqref{align:ch01-全变差公式} 成立。
+\end{proof}
+
+以下定义推广了\cref{definition:ch01-Borel测度}。
+
+\begin{definition}\label{definition:ch01-有限带号Borel}\label{definition:ch01-带号Radon测度}
+设 $(X,\mathcal{T})$ 为一 Hausdorff 空间，$\mathcal{B}=\mathcal{B}(X)=\sigma_0(\mathcal{T})$ 为 Borel $\sigma$--代数。有限带号测度 $\mu$ 称为有限带号 Borel 测度（相应地，有限带号 Radon 测度或有限带号正则测度），若它是两个有限 Borel 测度（相应地，两个有限 Radon 测度或两个有限正则测度）之差。
+\end{definition}
+
+$X$ 上有限带号 Radon 测度的向量空间记为 $\mathscr{R}_f(X)$，而 $\mathscr{R}^+_f(X)$ 表示有限（正）Radon 测度的锥。
+
+\begin{remark}\label{remark:ch01-有限带号正则}
+(i) 容易看出以下陈述等价：
+\begin{enumerate}[(a)]
+\item $\mu$ 是有限带号正则测度；
+\item $\mu^\pm$ 有限且正则；
+\item $|\mu|$ 有限且正则。
+\end{enumerate}
+事实上，设 $\mu=\mu_1-\mu_2$，其中 $\mu_1,\mu_2$ 有限、正、正则。设 $E\in\mathcal{B}$。则对任意 $\epsilon>0$，存在开集 $A$ 和紧集 $K$ 使得 $A\supseteq E\supseteq K$ 且 $\mu_i(A\setminus K)<\epsilon$，故 $\mu^\pm(A\setminus K)<\epsilon$（$i=1,2$；见\cref{remark:ch01-Borel测度性质}(i) 和\cref{remark:ch01-Jordan性质}）。故 (a)$\Rightarrow$(b)；其余蕴含显然。
+
+(ii) 有限带号测度是正则的当且仅当它是有限带号 Radon 测度。事实上，若 $\mu=\mu_1-\mu_2$ 且 $\mu_1,\mu_2$ 有限正则，则由定义 $\mu_1,\mu_2$ 是有限 Radon 测度，故 $\mu$ 是有限带号 Radon 测度。另一方面，若 $\mu=\mu_1-\mu_2$ 且 $\mu_1,\mu_2$ 是 $X$ 上的有限 Radon 测度，则由\cref{lemma:ch01-有限Radon正则}(i) 它们是正则的，故 $\mu$ 是正则的。
+
+(iii) 在具有可数基的局部紧 Hausdorff 空间中，带号 Borel 测度与带号 Radon 测度重合且是正则的（见\cref{remark:ch01-BorelRadon一致}）。
+\end{remark}
+
+\subsection{有限带号测度的 Banach 空间}\label{subsection:ch01-Banach空间}
+
+设 $(X,\mathcal{A})$ 为一可测空间。容易看出映射 $\|\cdot\|:\mathcal{M}_f(X)\to\mathbb{R}^+$，
+\[
+\|\mu\|\triangleq |\mu|(X)\quad\text{对任意 }\mu\in\mathcal{M}(X),
+\]
+是有限带号测度向量空间 $\mathcal{M}_f(X)$ 上的一个范数。子集 $\mathcal{M}\subseteq\mathcal{M}_f(X)$ 称为有界的，若 $\sup_{\mu\in\mathcal{M}}\|\mu\|<\infty$。此外，我们有以下结果。
+
+\begin{proposition}\label{proposition:ch01-Banach完备}
+设 $(X,\mathcal{A})$ 为一可测空间。则赋以范数 $\|\cdot\|$ 的向量空间 $\mathcal{M}_f(X)$ 是一个 Banach 空间。
+\end{proposition}
+
+\begin{proof}
+为证完备性，设 $\{\mu_k\}\subseteq\mathcal{M}_f(X)$ 为一 Cauchy 序列。则对任意 $\epsilon>0$，存在 $\bar{k}\in\mathbb{N}$ 使得对所有 $k,l>\bar{k}$ 和所有 $E\in\mathcal{A}$，
+\[
+|\mu_k(E)-\mu_l(E)|=|(\mu_k-\mu_l)(E)|\leqslant|\mu_k-\mu_l|(E)\leqslant\|\mu_k-\mu_l\|<\epsilon.
+\]
+故存在 $\mu:\mathcal{A}\to\mathbb{R}$ 使得当 $k\to\infty$ 时 $\|\mu_k-\mu\|\to 0$。显然 $\mu(\varnothing )=0$，标准的 $\epsilon/3$ 论证表明 $\mu$ 是 $\sigma$--可加的，故 $\mu\in\mathcal{M}_f(X)$。证毕。
+\end{proof}
+
+\subsection{绝对连续测度与奇异测度}\label{subsection:ch01-绝对连续奇异}
+
+\begin{definition}\label{definition:ch01-集中测度}
+设 $(X,\mathcal{A})$ 为一可测空间，$\mu$ 为 $\mathcal{A}$ 上的带号测度。$\mu$ 在集合 $E\in\mathcal{A}$ 上的限制 $\mu\lfloor E$ 定义如下：
+\[
+(\mu\lfloor E)(F)\triangleq \mu(E\cap F)\quad\text{对每个 }F\in\mathcal{A}.
+\]
+我们说 $\mu$ 集中于集合 $E\in\mathcal{A}$ 上，若对所有 $F\in\mathcal{A}$ 有 $(\mu\lfloor E)(F)=\mu(F)$。
+\end{definition}
+
+\begin{remark}\label{remark:ch01-集中注记}
+(i) 容易看出，不存在唯一的集合使 $\mu$ 集中于其上。例如，若 $E,F\in\mathcal{A}$ 且 $\mu(E\triangle F)=0$，则 $\mu\lfloor E=\mu\lfloor F$。
+
+(ii) 设 $(X,\mathcal{T})$ 为一 Hausdorff 空间，$\mu\in\mathcal{R}^+(X)$。由\cref{lemma:ch01-支集刻画}，$\mu$ 集中于 $\operatorname{supp}\mu$ 上，且 $\operatorname{supp}\mu$ 是使 $\mu$ 集中于其上的最小闭集。
+\end{remark}
+
+\begin{definition}\label{definition:ch01-相互奇异绝对连续}\label{definition:ch01-测度绝对连续}
+设 $(X,\mathcal{A})$ 为一可测空间，$\mu,\nu$ 为 $\mathcal{A}$ 上的两个带号测度。我们说：
+\begin{enumerate}[(i)]
+\item $\mu$ 与 $\nu$ 相互奇异（记为 $\mu\perp\nu$），若存在 $E\in\mathcal{A}$ 使得 $\mu=\mu\lfloor E$ 且 $\nu=\nu\lfloor E^c$；
+\item $\nu$ 关于 $\mu$ 绝对连续（记为 $\nu\ll\mu$），若对任意 $|\mu|$--零测集 $E\in\mathcal{A}$，有 $\nu(E)=0$。
+\end{enumerate}
+\end{definition}
+
+\begin{remark}\label{remark:ch01-奇异绝对连续注记}
+(i) 容易看出，$\mu,\nu$ 相互奇异当且仅当存在 $E\in\mathcal{A}$ 使得 $|\mu|(E^c)=|\nu|(E)=0$。
+
+(ii) 任意带号测度 $\mu$ 的正部 $\mu^+$ 与负部 $\mu^-$ 相互奇异。事实上，设 $(P,N)$ 为 $X$ 的任意 Hahn 分解。则由\cref{theorem:ch01-Hahn分解} 有 $P=N^c$，且由定义有 $\mu^+=\mu\lfloor P$，$\mu^-=\mu\lfloor N$。
+\end{remark}
+
+\begin{lemma}\label{lemma:ch01-绝对连续等价}
+设 $(X,\mathcal{A},\mu)$ 为一测度空间，$\nu$ 为 $\mathcal{A}$ 上的带号测度。则 $\nu\ll\mu$ 当且仅当 $|\nu|\ll\mu$。
+\end{lemma}
+
+\begin{proof}
+设 $\nu\ll\mu$，$(P,N)$ 为与测度 $\nu$ 相关的 $X$ 的 Hahn 分解（见\cref{theorem:ch01-Hahn分解}）。设 $E\in\mathcal{A}$ 满足 $\mu(E)=0$，故 $\mu(E\cap P)=\mu(E\cap N)=0$。于是由\cref{definition:ch01-相互奇异绝对连续}(ii) 有 $\nu(E\cap P)=\nu(E\cap N)=0$，即 $\nu^+(E)=\nu^-(E)=0$。由此 $|\nu|(E)=0$，故 $|\nu|\ll\mu$。反向由不等式\eqref{align:ch01-变差不等式} 显然。
+\end{proof}
+
+\begin{lemma}\label{lemma:ch01-绝对连续epsilon-delta}
+设 $(X,\mathcal{A})$ 为一可测空间，$\mu,\nu$ 为 $\mathcal{A}$ 上的两个带号测度，$\nu$ 有限。则 $\nu\ll\mu$ 当且仅当
+\[
+\lim_{|\mu|(G)\to0}|\nu|(G)=0\qquad(G\in\mathcal{A}).
+\]
+\end{lemma}
+
+\begin{proof}
+我们仅证必要性，因为反向是显然的。设 $\nu\ll\mu$，反设 $\limsup_{|\mu|(G)\to0}|\nu|(G)>0$。则存在 $\epsilon>0$ 和序列 $\{E_k\}\subset\mathcal{A}$ 使得对所有 $k\in\mathbb{N}$ 有 $|\nu|(E_k)\geqslant\epsilon$ 且 $|\mu|(E_k)\leqslant 2^{-k}$。令 $F_n\triangleq \bigcup_{k=n}^\infty E_k$（$n\in\mathbb{N}$），故对所有 $n\in\mathbb{N}$ 有 $|\nu|(F_n)\geqslant|\nu|(E_n)\geqslant\epsilon$。另一方面，由于序列 $\{F_n\}$ 非增且
+\[
+|\mu|(F_1)\leqslant\sum_{k=1}^\infty|\mu|(E_k)\leqslant\sum_{k=1}^\infty 2^{-k}<\infty,
+\]
+有
+\[
+|\mu|\left(\bigcap_{n=1}^\infty F_n\right)=\lim_{n\to\infty}|\mu|(F_n)=0.
+\]
+由于由假设 $\nu\ll\mu$，得
+\[
+|\nu|\left(\bigcap_{n=1}^\infty F_n\right)=0.
+\]
+现令 $G_1\triangleq F_1^c$，$G_n\triangleq F_{n-1}\setminus F_n$ 对每个 $n\geqslant 2$。序列 $\{G_n\}$ 不交，且对任意 $m\geqslant 2$ 有
+\[
+\bigcup_{n=m}^\infty G_n=F_{m-1}\setminus\left(\bigcap_{n=1}^\infty F_n\right).
+\]
+此外，由于 $\nu$ 有限且 $\bigcup_{n=1}^\infty G_n=X$，有
+\[
+|\nu|\left(\bigcup_{n=1}^\infty G_n\right)=\sum_{n=1}^\infty|\nu|(G_n)=|\nu|(X)<\infty.
+\]
+由于 $|\nu|\left(\bigcap_{n=1}^\infty F_n\right)=0$，得
+\[
+\lim_{m\to\infty}|\nu|(F_{m-1})
+=\lim_{m\to\infty}|\nu|\left(\bigcup_{n=m}^\infty G_n\right)
+=\lim_{m\to\infty}\sum_{n=m}^\infty|\nu|(G_n)=0.
+\]
+然而这与对所有 $n\in\mathbb{N}$ 有 $|\nu|(F_n)\geqslant\epsilon$ 矛盾。证毕。
+\end{proof}
+
+\begin{lemma}\label{lemma:ch01-既绝对连续又奇异}
+设 $(X,\mathcal{A},\mu)$ 为一测度空间，$\nu$ 为 $\mathcal{A}$ 上的带号测度。若 $\nu\ll\mu$ 且 $\nu\perp\mu$，则 $\nu=0$。
+\end{lemma}
+
+\begin{proof}
+由于 $\nu\perp\mu$，由\cref{remark:ch01-奇异绝对连续注记} 存在 $G\in\mathcal{A}$ 使得 $\mu(G)=|\nu|(G^c)=0$，故特别地对任意 $E\in\mathcal{A}$ 有 $|\nu|(E\cap G^c)=0$。另一方面，由于 $\nu\ll\mu$，由\cref{lemma:ch01-绝对连续等价} 有 $|\nu|(G)=0$，故对所有 $E\in\mathcal{A}$ 有 $|\nu|(E\cap G)=0$。于是对所有 $E\in\mathcal{A}$ 有 $|\nu|(E)=0$，证毕。
+\end{proof}
+
+\begin{remark}\label{remark:ch01-集中于零容量}
+设 $(X,\mathcal{A})$ 为一可测空间，$\Phi:\mathcal{A}\to[0,\infty]$ 单调。设 $\nu$ 为 $\mathcal{A}$ 上的带号测度，满足 (i) 对任意满足 $\Phi(E)=0$ 的 $E\in\mathcal{A}$ 有 $\nu(E)=0$，且 (ii) $\nu$ 集中于集合 $G\in\mathcal{A}$ 上且 $\Phi(G)=0$。则用于证明\cref{lemma:ch01-既绝对连续又奇异} 的同样论证表明 $\nu=0$。
+\end{remark}
+
+我们将使用以下分解结果（文献~[51]；见第 3 章）。
+
+\begin{proposition}[Fukushima--Sato--Taniguchi]\label{proposition:ch01-FST分解}
+设 $(X,\mathcal{A})$ 为一可测空间，$\nu$ 为 $\mathcal{A}$ 上的 $\sigma$--有限带号测度。设 $\Phi:\mathcal{A}\to[0,\infty]$ 为 $\sigma$--次可加且单调。则存在唯一的 $\sigma$--有限带号测度偶 $(\nu_1,\nu_2)$ 使得：
+\begin{enumerate}[(a)]
+\item $\nu=\nu_1+\nu_2$；
+\item 对任意满足 $\Phi(E)=0$ 的 $E\in\mathcal{A}$，有 $\nu_1(E)=0$；
+\item $\nu_2$ 集中于集合 $N\in\mathcal{A}$ 上且 $\Phi(N)=0$。
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+我们仅证 $\nu$ 有限且正的情形，因为推广到一般情形是标准的。首先证唯一性。设 $(\nu_1,\nu_2)$ 和 $(\nu_1',\nu_2')$ 具有所述性质。则由等式 (a) 对任意 $E\in\mathcal{A}$ 得
+\[
+\nu_1(E)-\nu_1'(E)=\nu_2'(E)-\nu_2(E).
+\]
+这蕴含 $\nu_1-\nu_1'$ 满足\cref{remark:ch01-集中于零容量} 的假设，故 $\nu_1=\nu_1'$，因而 $\nu_2=\nu_2'$。证毕。
+
+为证存在性，令
+\[
+\alpha\triangleq \sup\{\nu(E)\mid E\in\mathcal{A},\ \Phi(E)=0\}
+\]
+（注意 $\alpha<\infty$，因为由\cref{remark:ch01-Jordan性质}(iii) 有 $|\nu|(X)<\infty$）。设 $\{E_n\}\subseteq\mathcal{A}$ 为非减序列，满足对每个 $n\in\mathbb{N}$ 有 $\Phi(E_n)=0$ 且 $\lim_{n\to\infty}\nu(E_n)=\alpha$。令 $E_\infty\triangleq \bigcup_{n=1}^\infty E_n$。则 $E_\infty\in\mathcal{A}$，$\nu(E_\infty)=\lim_{n\to\infty}\nu(E_n)=\alpha$，且由 $\Phi$ 的 $\sigma$--次可加性有
+\[
+\Phi(E_\infty)\leqslant\sum_{n=1}^\infty\Phi(E_n)=0.
+\]
+因此，对任意满足 $\Phi(E)=0$ 的 $E\in\mathcal{A}$，有
+\[
+0\leqslant\nu(E\setminus E_\infty)=\nu(E)-\alpha\leqslant 0,
+\]
+故 $\nu(E\setminus E_\infty)=(\nu\lfloor E_\infty^c)(E)=0$。另一方面，测度 $\nu\lfloor E_\infty$ 集中于集合 $E_\infty$ 上，且 $\Phi(E_\infty)=0$。于是取 $N\triangleq E_\infty$、$\nu_1\triangleq \nu\lfloor E_\infty^c$、$\nu_2\triangleq \nu\lfloor E_\infty$，结论成立。
+\end{proof}
+
+\cref{proposition:ch01-FST分解} 立即给出以下结果。
+
+\begin{theorem}[Lebesgue]\label{theorem:ch01-Lebesgue分解}
+设 $(X,\mathcal{A},\mu)$ 为一测度空间，$\nu$ 为 $\mathcal{A}$ 上的 $\sigma$--有限带号测度。则存在唯一的 $\sigma$--有限带号测度偶 $(\nu_{ac},\nu_s)$ 使得 $\nu_{ac}\ll\mu$、$\nu_s\perp\mu$，且
+\begin{align}
+\nu=\nu_{ac}+\nu_s. \label{align:ch01-Lebesgue分解式}
+\end{align}
+\end{theorem}
+
+\begin{definition}\label{definition:ch01-Lebesgue分解定义}\label{definition:ch01-Lebesgue分解}
+等式\eqref{align:ch01-Lebesgue分解式} 称为 $\nu$ 关于 $\mu$ 的 Lebesgue 分解。
+\end{definition}
+
+为后续参考，我们提及以下结果。
+
+\begin{lemma}\label{lemma:ch01-Lebesgue分解正负部}
+设\cref{theorem:ch01-Lebesgue分解} 的假设满足。则
+\begin{align}
+[\nu_{ac}]^\pm=[\nu^\pm]_{ac},\qquad [\nu_s]^\pm=[\nu^\pm]_s. \label{align:ch01-Lebesgue分解正负部}
+\end{align}
+\end{lemma}
+
+\begin{proof}
+由\cref{definition:ch01-变差} 和\cref{definition:ch01-集中测度}，有 $\nu^+=\nu\lfloor P$，$\nu^-=\nu\lfloor N$，其中 $P,N$ 由\cref{theorem:ch01-Hahn分解} 给出。则由\eqref{align:ch01-Lebesgue分解式} 得
+\begin{align}
+\nu^+=\nu_{ac}\lfloor P+\nu_s\lfloor P,\qquad
+\nu^-=\nu_{ac}\lfloor N+\nu_s\lfloor N, \label{align:ch01-Lebesgue分解正负部1}
+\end{align}
+因而
+\begin{align}
+[\nu^+]_{ac}=\nu_{ac}\lfloor P,\qquad [\nu^-]_{ac}=\nu_{ac}\lfloor N \label{align:ch01-Lebesgue分解正负部2}
+\end{align}
+以及
+\begin{align}
+[\nu^+]_s=\nu_s\lfloor P,\qquad [\nu^-]_s=\nu_s\lfloor N. \label{align:ch01-Lebesgue分解正负部3}
+\end{align}
+另一方面，由\eqref{align:ch01-Lebesgue分解正负部1} 有
+\[
+\nu=\nu^+-\nu^-=(\nu_{ac}\lfloor P-\nu_{ac}\lfloor N)+(\nu_s\lfloor P-\nu_s\lfloor N),
+\]
+故
+\begin{align}
+\nu_{ac}=\nu_{ac}\lfloor P-\nu_{ac}\lfloor N,\qquad
+\nu_s=\nu_s\lfloor P-\nu_s\lfloor N. \label{align:ch01-Lebesgue分解正负部4}
+\end{align}
+由\eqref{align:ch01-Lebesgue分解正负部2} 和\eqref{align:ch01-Lebesgue分解正负部4} 中的第一个等式，集合 $P$ 是 $\nu_{ac}$--正的，而 $N$ 是 $\nu_{ac}$--负的。故由\cref{definition:ch01-变差}，
+\begin{align}
+[\nu_{ac}]^+=\nu_{ac}\lfloor P,\qquad [\nu_{ac}]^-=\nu_{ac}\lfloor N. \label{align:ch01-Lebesgue分解正负部5}
+\end{align}
+由\eqref{align:ch01-Lebesgue分解正负部2} 和\eqref{align:ch01-Lebesgue分解正负部5} 得\eqref{align:ch01-Lebesgue分解正负部} 中的第一个等式。第二个等式的证明类似，利用\eqref{align:ch01-Lebesgue分解正负部3} 和\eqref{align:ch01-Lebesgue分解正负部4} 中的第二个等式。
+\end{proof}
+
+\begin{definition}\label{definition:ch01-原子}
+设 $(X,\mathcal{A})$ 为一可测空间，$\mu$ 为 $\mathcal{A}$ 上的带号测度。
+\begin{enumerate}[(i)]
+\item 集合 $E\in\mathcal{A}$ 称为 $\mu$--原子，若 $|\mu|(E)>0$，且对所有 $F\in\mathcal{A}$、$F\subseteq E$，要么 $|\mu|(F)=0$，要么 $|\mu|(E\setminus F)=0$。
+\item 测度 $\mu$ 称为无原子的（或连续的），若不存在 $\mu$--原子。
+\item 测度 $\mu$ 称为纯原子的，若存在 $\mu$--原子序列 $\{E_n\}\subseteq\mathcal{A}$ 使得 $\mu=\mu\lfloor\left(\bigcup_{n=1}^\infty E_n\right)$。
+\end{enumerate}
+\end{definition}
+
+\begin{remark}\label{remark:ch01-原子注记}
+(i) 带号测度 $\mu$ 是无原子的当且仅当对任意 $E\in\mathcal{A}$ 且 $|\mu|(E)>0$，存在 $F\in\mathcal{A}$、$F\subseteq E$ 使得 $0<|\mu|(F)<|\mu|(E)$。若 $\mu$ 有限，则 $\mu$--原子的集合至多有限；若 $\mu$ 是 $\sigma$--有限的，则至多可数。
+
+(ii) 若 $\mu$ 既是纯原子的又是无原子的，则 $\mu=0$。
+\end{remark}
+
+\begin{proposition}\label{proposition:ch01-原子分解}
+设 $(X,\mathcal{A})$ 为一可测空间，$\mu$ 为 $\mathcal{A}$ 上的 $\sigma$--有限带号测度。则存在序列（可能为空或有限）$\{E_n\}\subseteq\mathcal{A}$ 由 $\mu$--原子组成，使得：
+\begin{enumerate}[(i)]
+\item $\mu_{pa}\triangleq \mu\lfloor\left(\bigcup_{n=1}^\infty E_n\right)$ 是纯原子的，$\mu_{na}\triangleq \mu\lfloor\left(\left(\bigcup_{n=1}^\infty E_n\right)^c\right)$ 是无原子的；
+\item $\mu$ 唯一地表示为和
+\begin{align}
+\mu=\mu_{pa}+\mu_{na}. \label{align:ch01-原子分解式}
+\end{align}
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(i) 和等式\eqref{align:ch01-原子分解式} 由 $\mu_{pa}$ 和 $\mu_{na}$ 的定义显然成立。为证唯一性，设 $\mu=\mu_{pa}'+\mu_{na}'$，其中 $\mu_{pa}'$ 纯原子，$\mu_{na}'$ 无原子。由此
+\[
+\mu_{na}-\mu_{na}'=\mu_{pa}'-\mu_{pa},
+\]
+故 $\mu_{na}-\mu_{na}'$ 和 $\mu_{pa}'-\mu_{pa}$ 既是离散的又是无原子的。于是由\cref{remark:ch01-原子注记}(ii)，结论成立。
+\end{proof}
+
+\subsection{集中测度与弥散测度}\label{subsection:ch01-集中弥散}
+
+以下定义是\cref{definition:ch01-相互奇异绝对连续} 在容量上的对应。
+
+\begin{definition}\label{definition:ch01-集中弥散}
+设 $(X,d)$ 为一度量空间。设 $\nu$ 为 $\mathcal{B}(X)$ 上的带号测度，$C:\mathcal{B}(X)\to[0,\infty]$ 为一容量。我们说：
+\begin{enumerate}[(i)]
+\item $\nu$ 关于 $C$ 是集中的，若存在 $C$--零测集 $E\in\mathcal{B}(X)$ 使得 $\nu=\nu\lfloor E$；
+\item $\nu$ 关于 $C$ 是弥散的，若对任意 $C$--零测集 $E\in\mathcal{B}(X)$，有 $|\nu|(E)=0$。
+\end{enumerate}
+\end{definition}
+
+我们记 $\mathscr{R}_{C,c}(X)$（相应地，$\mathscr{R}_{C,d}(X)$）为 $U$ 上关于 $C$ 集中（相应地，弥散）的有限带号 Radon 测度的集合。显然，
+\[
+\mathscr{R}_{C,c}(X)\cap\mathscr{R}_{C,d}(X)=\{0\}.
+\]
+由\cref{proposition:ch01-FST分解}，我们有以下结果。
+
+\begin{proposition}\label{proposition:ch01-集中弥散分解}
+设 $(X,d)$ 为一度量空间。设 $\nu$ 为 $\mathcal{B}(X)$ 上的带号测度，$C:\mathcal{B}(X)\to[0,\infty]$ 为一容量。则存在唯一的偶 $(\nu_{C,c},\nu_{C,d})$ 使得 $\nu_{C,c}\in\mathscr{R}_{C,c}(X)$，$\nu_{C,d}\in\mathscr{R}_{C,d}(X)$，且
+\begin{align}
+\nu=\nu_{C,d}+\nu_{C,c}. \label{align:ch01-集中弥散分解式}
+\end{align}
+\end{proposition}
+
+\begin{definition}\label{definition:ch01-集中弥散部分}
+由\cref{proposition:ch01-集中弥散分解} 给出的测度 $\nu_{C,c}$ 和 $\nu_{C,d}$ 分别称为 $\nu$ 关于 $C$ 的集中部分和弥散部分。
+\end{definition}
+
+
+
+
+\end{document}

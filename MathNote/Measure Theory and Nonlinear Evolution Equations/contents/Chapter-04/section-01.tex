@@ -1,0 +1,455 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{向量函数的可测性}\label{section:ch04-可测性}
+
+\subsection{可测性}\label{subsection:ch04-可测性}
+
+设 $(X,\mathcal{A})$ 为可测空间，$Y$ 为赋范数 $\|\cdot\|_Y$ 的 Banach 空间。以下可测性概念（其中 $\mathcal{B}(Y)$ 表示由范数拓扑生成的 $Y$ 上 Borel $\sigma$-代数）是\cref{definition:ch02-可测性}的特例。
+
+\begin{definition}[向量函数的可测性]\label{definition:ch04-可测性}
+函数 $f:X\to Y$ 称为可测的（或 $(\mathcal{A},\mathcal{B}(Y))$-可测的），若对所有 $E\in\mathcal{B}(Y)$ 有 $f^{-1}(E)\in\mathcal{A}$。
+\end{definition}
+
+以下命题部分推广了\cref{corollary:ch02-逐点极限}(ii)。
+
+\begin{proposition}[逐点极限的可测性]\label{proposition:ch04-逐点极限可测}\label{proposition:ch04-可测性}
+设 $f_n:X\to Y$ 可测（$n\in\mathbb{N}$），且对每个 $x\in X$ 有
+\begin{align}
+\lim_{n\to\infty}\|f_n(x)-f(x)\|_Y=0. \label{align:ch04-4.1}
+\end{align}
+则函数 $f$ 可测。
+\end{proposition}
+
+\begin{proof}
+设 $U\subseteq Y$ 为开集。易见对每个 $m\in\mathbb{N}$ 有
+\begin{align}
+f^{-1}(U)\subseteq\bigcup_{k\geqslant m}f_k^{-1}(U). \label{align:ch04-4.2}
+\end{align}
+事实上，固定 $x\in f^{-1}(U)$。则 $f(x)\in U$，故存在 $r>0$ 使开球 $B(f(x),r)\subseteq U$。另一方面，由\eqref{align:ch04-4.1}存在 $\bar k\in\mathbb{N}$ 使对所有 $k>\bar k$ 有 $f_k(x)\in B(f(x),r)$，由此立即得\eqref{align:ch04-4.2}。
+
+由\eqref{align:ch04-4.2}中 $m$ 的任意性得
+\begin{align}
+f^{-1}(U)\subseteq\bigcap_{m=1}^{\infty}\bigcup_{k\geqslant m}f_k^{-1}(U), \label{align:ch04-4.3}
+\end{align}
+而对每个闭集 $C\subseteq Y$，
+\begin{align}
+\bigcap_{m=1}^{\infty}\bigcup_{k\geqslant m}f_k^{-1}(C)\subseteq f^{-1}(C). \label{align:ch04-4.4}
+\end{align}
+令 $U_n\triangleq \{y\in U\mid d(y,U^c)>1/n\}$，$C_n\triangleq \overline{U_n}$（$n\in\mathbb{N}$）。显然 $U_n$ 开，且 $U=\bigcup_{n=1}^\infty U_n=\bigcup_{n=1}^\infty C_n$。由\eqref{align:ch04-4.3}--\eqref{align:ch04-4.4}得
+\begin{align*}
+f^{-1}(U)&=\bigcup_{n=1}^\infty f^{-1}(U_n)\subseteq\bigcup_{n=1}^\infty\bigcap_{m=1}^\infty\bigcup_{k\geqslant m}f_k^{-1}(U_n)\\
+&\subseteq\bigcup_{n=1}^\infty\bigcap_{m=1}^\infty\bigcup_{k\geqslant m}f_k^{-1}(C_n)\subseteq\bigcup_{n=1}^\infty f^{-1}(C_n)=f^{-1}(U).
+\end{align*}
+由此 $f^{-1}(U)=\bigcup_{n=1}^\infty\bigcap_{m=1}^\infty\bigcup_{k\geqslant m}f_k^{-1}(U_n)\in\mathcal{A}$，从而由\cref{lemma:ch02-基判定}得结论。
+\end{proof}
+
+\begin{remark}\label{remark:ch04-范数可测}
+若 $f:X\to Y$ 可测，则实值函数
+\begin{align}
+\|f\|_Y:X\to[0,\infty),\quad \|f\|_Y(x)\triangleq \|f(x)\|_Y\ (x\in X) \label{align:ch04-4.5}
+\end{align}
+可测。事实上，映射 $\|\cdot\|_Y:Y\to\mathbb{R}$，$y\mapsto\|y\|_Y$（$y\in Y$）连续，从而 Borel 可测（见\cref{remark:ch02-连续Borel}）。于是结论由\cref{proposition:ch02-复合可测}得到。
+\end{remark}
+
+\begin{definition}[简单函数]\label{definition:ch04-简单函数}
+函数 $s:X\to Y$ 称为简单的，若存在 $y_1,\cdots ,y_p\in Y$ 与 $X$ 的一个划分 $\{E_1,\cdots ,E_p\}\subseteq\mathcal{A}$（当 $\mu(E_i)=\infty$ 时 $y_i=0$），使 $s=\sum_{i=1}^p y_i\chi_{E_i}$。
+\end{definition}
+
+简单函数可测。我们把 $X$ 到 $Y$ 的简单函数的集合记为 $\mathcal{S}(X;Y)$，并记 $\mathcal{S}(X)\equiv\mathcal{S}(X;\mathbb{R})$。
+
+\subsection{$\mu$-可测性}\label{subsection:ch04-mu可测性}
+
+设 $(X,\mathcal{A},\mu)$ 为测度空间。
+
+\begin{definition}[$\mu$-可测性]\label{definition:ch04-mu可测}
+函数 $f:X\to Y$ 称为 $\mu$-可测的，若存在序列 $\{s_n\}\subseteq\mathcal{S}(X;Y)$ 使
+\begin{align}
+\lim_{n\to\infty}\|s_n(x)-f(x)\|_Y=0\quad\text{对 }\mu\text{-几乎所有 }x\in X. \label{align:ch04-4.6}
+\end{align}
+\end{definition}
+
+\begin{remark}\label{remark:ch04-mu可测注}
+(i) 设 $f,g:X\to Y$。若 $f$ 为 $\mu$-可测且 $g=f$ 在 $X$ 中 $\mu$-几乎处处成立，则 $g$ 亦为 $\mu$-可测。事实上，取 $\mu$-零测集 $N_1,N_2\in\mathcal{A}$，使对所有 $x\in N_1^c$ 有 $\lim_{n\to\infty}\|s_n(x)-f(x)\|_Y=0$，且对所有 $x\in N_2^c$ 有 $f(x)=g(x)$。则 $N\triangleq N_1\cup N_2$ 为 $\mu$-零测集，且对所有 $x\in N^c$ 有 $\lim_{n\to\infty}\|s_n(x)-g(x)\|_Y=0$。于是由\cref{definition:ch04-mu可测}得结论。
+
+(ii) 若 $f:X\to Y$ 为 $\mu$-可测，则存在 $\mu$-零测集 $N\in\mathcal{A}$ 与序列 $\{s_n\}\subseteq\mathcal{S}(X;Y)$，使对所有 $x\in N^c$ 有 $\lim_{n\to\infty}\|s_n(x)-f(x)\|_Y=0$。由于简单函数可测，由\cref{proposition:ch04-逐点极限可测}函数 $f$ 为 $(\mathcal{A}\cap N^c,\mathcal{B}(Y))$-可测，从而在按几乎处处定义的函数意义下可测（见\cref{definition:ch02-几乎处处可测}与\cref{definition:ch04-可测性}）。此外，若 $\mu$ 完备，则它在通常意义下亦可测（见\cref{proposition:ch02-完备化}）。我们约定俗成地把这些注记概括为：“$\mu$-可测函数是可测的”。
+
+(iii) 由 (ii) 与\cref{remark:ch04-范数可测}，若 $f:X\to Y$ 为 $\mu$-可测，则由\eqref{align:ch04-4.5}定义的函数 $\|f\|_Y$ 可测。
+\end{remark}
+
+$\mu$-可测函数的集合是一个向量空间。以下结果（与\cref{proposition:ch04-逐点极限可测}类似）表明：若 $\mu$ 为 $\sigma$-有限，则它关于 $\mu$-几乎处处收敛封闭。
+
+\begin{proposition}\label{proposition:ch04-mu逐点极限}
+设 $\mu$ 为 $\sigma$-有限，$f_n:X\to Y$ 为 $\mu$-可测（$n\in\mathbb{N}$）。则每个满足
+\begin{align*}
+\lim_{n\to\infty}\|f_n(x)-f(x)\|_Y=0\quad\text{对 }\mu\text{-几乎所有 }x\in X
+\end{align*}
+的函数 $f:X\to Y$ 都是 $\mu$-可测的。
+\end{proposition}
+
+为证\cref{proposition:ch04-mu逐点极限}，我们需要 Egorov 定理的如下一般形式（见\cref{theorem:ch02-Egorov}）。其证明与 $Y=\mathbb{R}$ 的情形几乎逐字相同，故从略。
+
+\begin{theorem}[Egorov]\label{theorem:ch04-Egorov}
+设 $\mu(X)<\infty$，$f_n:X\to Y$ 为 $\mu$-可测（$n\in\mathbb{N}$），且对 $\mu$-几乎所有 $x\in X$ 有 $\lim_{n\to\infty}\|f_n(x)-f(x)\|_Y=0$。则对每个 $\delta>0$，存在可测集 $E\subseteq X$ 使 $\mu(E^c)<\delta$，且
+\begin{align*}
+\lim_{n\to\infty}\sup_{x\in E}\|f_n(x)-f(x)\|_Y=0.
+\end{align*}
+\end{theorem}
+
+\begin{proof}[证明\cref{proposition:ch04-mu逐点极限}]
+(i) 先证 $\mu(X)<\infty$ 时的结果。我们证明如下断言。
+
+\noindent\textbf{断言.} 设 $(Z,\mathcal{A},\mu)$ 为有限测度空间，$g_n:Z\to Y$ 为 $\mu$-可测（$n\in\mathbb{N}$），$g:Z\to Y$ 满足对 $\mu$-几乎所有 $z\in Z$ 有 $\lim_{n\to\infty}\|g_n(z)-g(z)\|_Y=0$。则对每个 $\delta>0$，存在 $Z_\delta\subseteq Z$ 使 $\mu(Z_\delta)<\delta$，以及序列 $\{s_{\delta,m}\}\subseteq\mathcal{S}(Z;Y)$ 使
+\begin{align}
+\sup_{z\in Z_\delta^c}\|s_{\delta,m}(z)-g(z)\|_Y\leqslant\frac1m\quad\text{对所有 }m\in\mathbb{N}. \label{align:ch04-4.7}
+\end{align}
+
+利用该断言，论证如下。对每个 $k\in\mathbb{N}$，取 $Z=Z_{k-1}$（$Z_0\triangleq X$），$g_n=f_n$，$g=f$，$\delta=1/k$（按记号滥用记 $Z_k\equiv Z_{1/k}$）。于是存在 $Z_k\subseteq Z_{k-1}$ 使 $\mu(Z_k)<1/k$，以及序列 $\{s_{k,m}\}\subseteq\mathcal{S}(Z_{k-1};Y)$ 使
+\begin{align}
+\sup_{x\in X_k}\|s_{k,m}(x)-f(x)\|_Y\leqslant\frac1m\quad\text{对所有 }m\in\mathbb{N}, \label{align:ch04-4.8}
+\end{align}
+其中 $X_k\triangleq Z_{k-1}\setminus Z_k$（$k\in\mathbb{N}$）。注意序列 $\{Z_k\}$ 非增，集 $X_k$ 两两不交，且对所有 $k\in\mathbb{N}$ 有 $Z_k=\bigcap_{j=1}^k X_j^c=(\bigcup_{j=1}^k X_j)^c$。不失一般性，可设对所有 $x\in X_k^c$ 有 $s_{k,m}(x)=0$，从而在 $X$ 上 $s_{k,m}=s_{k,m}\chi_{X_k}$（$k,m\in\mathbb{N}$）。令 $t_m\triangleq \sum_{k=1}^m s_{k,m}=\sum_{k=1}^m s_{k,m}\chi_{X_k}$（$m\in\mathbb{N}$）。显然 $\{t_m\}\subseteq\mathcal{S}(X;Y)$。取 $x\in\bigcup_{k=1}^\infty X_k$，于是 $x\in X_j$ 对某个 $j\in\mathbb{N}$。由\eqref{align:ch04-4.8}有
+\begin{align*}
+\|t_m(x)-f(x)\|_Y\leqslant\sup_{x\in X_j}\|s_{j,m}(x)-f(x)\|_Y\leqslant\frac1m\quad\text{对所有 }m\in\mathbb{N},
+\end{align*}
+从而
+\begin{align}
+\lim_{m\to\infty}\|t_m(x)-f(x)\|_Y=0\quad\text{对所有 }x\in\bigcup_{k=1}^\infty X_k. \label{align:ch04-4.9}
+\end{align}
+另一方面，由于 $\{Z_k\}$ 非增且 $Z_k=(\bigcup_{j=1}^k X_j)^c$、$\mu(Z_k)<1/k$（对所有 $k\in\mathbb{N}$），由\cref{proposition:ch01-测度上连续}有 $\mu((\bigcup_{j=1}^\infty X_j)^c)=\lim_{k\to\infty}\mu(Z_k)=0$。因此\eqref{align:ch04-4.9}中的收敛在 $X$ 中 $\mu$-几乎处处成立，从而 $f$ 为 $\mu$-可测。故此情形下结论成立。
+
+还需证明该断言。由\cref{theorem:ch04-Egorov}，对任意 $\delta>0$，存在 $Z_1\subseteq Z$ 使 $\mu(Z_1)<\delta/2$，且
+\begin{align*}
+\sup_{z\in Z_1^c}\|g_n(z)-g(z)\|_Y\to0\quad(n\to\infty).
+\end{align*}
+于是对每个 $m\in\mathbb{N}$，存在 $n_m\in\mathbb{N}$ 使
+\begin{align}
+\sup_{z\in Z_1^c}\|g_{n_m}(z)-g(z)\|_Y\leqslant\frac1{2^m}. \label{align:ch04-4.10}
+\end{align}
+由于 $g_{n_m}:Z\to Y$ 为 $\mu$-可测，存在序列 $\{u_{m,k}\}\subseteq\mathcal{S}(Z;Y)$ 使对 $\mu$-几乎所有 $z\in Z$ 有
+\begin{align*}
+\lim_{k\to\infty}\|u_{m,k}(z)-g_{n_m}(z)\|_Y=0.
+\end{align*}
+再由\cref{theorem:ch04-Egorov}，存在 $Z_{2,m}\subseteq Z$ 使 $\mu(Z_{2,m})<\delta/2^{m+1}$，且
+\begin{align*}
+\sup_{z\in Z_{2,m}^c}\|u_{m,k}-g_{n_m}(z)\|_Y\to0\quad(k\to\infty).
+\end{align*}
+于是存在 $k_m\in\mathbb{N}$ 使
+\begin{align}
+\sup_{z\in Z_{2,m}^c}\|u_{m,k_m}(z)-g_{n_m}(z)\|_Y\leqslant\frac1{2^m}. \label{align:ch04-4.11}
+\end{align}
+令 $Z_\delta\triangleq Z_1\cup(\bigcup_{m=1}^\infty Z_{2,m})$，$s_{\delta,m}\triangleq u_{m,k_m}$（$m\in\mathbb{N}$）。则 $\mu(Z_\delta)<\delta$，$\{s_{\delta,m}\}\subseteq\mathcal{S}(Z;Y)$，且由\eqref{align:ch04-4.10}--\eqref{align:ch04-4.11}得\eqref{align:ch04-4.7}。故断言成立。
+
+(ii) 一般情形，取 $\{E_k\}\subseteq\mathcal{A}$ 满足：对所有 $k\in\mathbb{N}$ 有 $\mu(E_k)<\infty$，当 $k\neq l$ 时 $E_k\cap E_l=\varnothing $，且 $X=\bigcup_{k=1}^\infty E_k$。对每个 $k,n\in\mathbb{N}$，限制 $f_n|_{E_k}$ 为 $\mu$-可测，且当 $n\to\infty$ 时在 $E_k$ 中 $\mu$-几乎处处有 $f_n|_{E_k}\to f|_{E_k}$。由于 $\mu(E_k)<\infty$，由 (i) 得 $f|_{E_k}$ 为 $\mu$-可测（$k\in\mathbb{N}$）。于是存在简单函数序列 $\{v_{k,m}\}\subseteq\mathcal{S}(E_k;Y)$ 使
+\begin{align*}
+\lim_{m\to\infty}\|v_{k,m}(x)-f(x)\|_Y=0\quad\text{对每个 }k\in\mathbb{N}\text{ 与 }\mu\text{-几乎所有 }x\in E_k.
+\end{align*}
+对 $x\in E_k^c$ 令 $v_{k,m}(x)\triangleq 0$，并令 $s_m\triangleq \sum_{k=1}^m v_{k,m}=\sum_{k=1}^m v_{k,m}\chi_{E_k}$（$m\in\mathbb{N}$）。则 $\{s_m\}\subseteq\mathcal{S}(X;Y)$，且
+\begin{align*}
+\lim_{m\to\infty}\|s_m(x)-f(x)\|_Y\to0\quad\text{对 }\mu\text{-几乎所有 }x\in\bigcup_{k=1}^\infty E_k=X.
+\end{align*}
+故结论成立。
+\end{proof}
+
+以下命题给出\cref{remark:ch04-mu可测注}(ii)之逆成立的条件。
+
+\begin{proposition}\label{proposition:ch04-可推mu可}
+设 $\mu$ 为 $\sigma$-有限，$Y$ 可分。则每个可测函数 $f:X\to Y$ 都是 $\mu$-可测的。
+\end{proposition}
+
+\begin{proof}
+先证 $\mu(X)<\infty$ 的情形，一般情形如\cref{proposition:ch04-mu逐点极限}证明中那样推导。固定 $n\in\mathbb{N}$，令 $D_n\equiv\{y_{n,k}\}$ 为开球 $B(0,n)\subseteq Y$ 中的可数稠密集。考虑开球 $B(y_{n,k},1/n)\subseteq Y$，并令
+\begin{align*}
+W_{n,1}&\triangleq B(y_{n,1},1/n)\cap B(0,n),\\
+W_{n,k}&\triangleq \big[B(y_{n,k},1/n)\cap B(0,n)\big]\setminus\Big(\bigcup_{j=1}^{k-1}W_{n,j}\Big)\quad(k\geqslant2).
+\end{align*}
+则
+\begin{align}
+W_{n,k}\cap W_{n,l}=\varnothing \ (k\neq l),\qquad \bigcup_{k=1}^\infty W_{n,k}=B(0,n). \label{align:ch04-4.12}
+\end{align}
+事实上，集 $W_{n,k}$ 两两不交，且 $\bigcup_{k=1}^\infty W_{n,k}\subseteq B(0,n)$。反之，对每个 $y\in B(0,n)$，存在序列 $\{y_{n,k_j}\}\subseteq D_n$ 使当 $j\to\infty$ 时 $\|y_{n,k_j}-y\|_Y\to0$。故对某个 $j_0\in\mathbb{N}$ 有 $\|y_{n,k_{j_0}}-y\|_Y<1/n$，即 $y\in\bigcup_{k=1}^\infty W_{n,k}$。因此 $\bigcup_{k=1}^\infty W_{n,k}\supseteq B(0,n)$。注意由\eqref{align:ch04-4.12}中第二个等式有 $Y=\bigcup_{n,k=1}^\infty W_{n,k}$。
+
+现令 $C_{n,k}\triangleq f^{-1}(W_{n,k})\subseteq X$。由于 $W_{n,k}\in\mathcal{B}(Y)$ 且 $f$ 可测，故 $C_{n,k}\in\mathcal{A}$。于是对所有 $n,p\in\mathbb{N}$，函数
+\begin{align*}
+s_{n,p}:X\to Y,\quad s_{n,p}(x)\triangleq \sum_{k=1}^p y_{n,k}\chi_{C_{n,k}}(x)\ (x\in X)
+\end{align*}
+为简单函数。此外，由\eqref{align:ch04-4.12}有
+\begin{align*}
+C_{n,k}\cap C_{n,l}=f^{-1}(W_{n,k}\cap W_{n,l})=f^{-1}(\varnothing )=\varnothing \quad(k\neq l),\qquad
+X=f^{-1}(Y)=\bigcup_{n,k=1}^\infty C_{n,k}.
+\end{align*}
+令
+\begin{align*}
+f_n:X\to Y,\quad f_n(x)\triangleq \sum_{k=1}^\infty y_{n,k}\chi_{C_{n,k}}(x)\ (n\in\mathbb{N},\ x\in X);
+\end{align*}
+注意对每个 $x\in X$，上述和退化为单项，因为集 $C_{n,k}$ 两两不交。
+
+由上述说明有
+\begin{align*}
+\lim_{p\to\infty}\|s_{n,p}(x)-f_n(x)\|_Y=0\quad\text{对每个 }x\in X,
+\end{align*}
+故 $f_n$ 为 $\mu$-可测。于是若我们证明
+\begin{align}
+\lim_{n\to\infty}\|f_n(x)-f(x)\|_Y=0\quad\text{对每个 }x\in X, \label{align:ch04-4.13}
+\end{align}
+则由\cref{proposition:ch04-mu逐点极限}得结论。
+
+为此，固定 $x_0\in X$，令 $\bar n$ 为大于 $\|f(x_0)\|_Y$ 的最小整数。则对每个 $n\geqslant\bar n$ 有 $f(x_0)\in B(0,n)$，故由\eqref{align:ch04-4.12}存在唯一 $k_n\in\mathbb{N}$ 使 $f(x_0)\in W_{n,k_n}$，即 $x_0\in C_{n,k_n}$。由 $f_n$ 的定义这蕴含 $f_n(x_0)=y_{n,k_n}$。于是
+\begin{align*}
+\|f(x_0)-f_n(x_0)\|_Y=\|f(x_0)-y_{n,k_n}\|_Y<\frac1n.
+\end{align*}
+令 $n\to\infty$，由 $x_0$ 的任意性得\eqref{align:ch04-4.13}。这就证明了该结果。
+\end{proof}
+
+我们给出如下定义。
+
+\begin{definition}[可分值]\label{definition:ch04-可分值}
+函数 $f:X\to Y$ 称为：
+\begin{enumerate}[(i)]
+\item\label{item:ch04-可分值-i} 可分值的，若值域 $f(X)\subseteq Y$ 可分；
+\item\label{item:ch04-可分值-ii} $\mu$-几乎处处可分值的，若存在 $\mu$-零测集 $N\subseteq X$ 使 $f(N^c)\subseteq Y$ 可分。
+\end{enumerate}
+\end{definition}
+
+\begin{proposition}\label{proposition:ch04-可分值判据}
+设 $\mu$ 为 $\sigma$-有限。设 $f:X\to Y$ 可分值，$D\equiv\{y_n\}\subseteq f(X)$ 可数且在 $f(X)$ 中稠密。则 $f$ 为 $\mu$-可测当且仅当对每个 $n\in\mathbb{N}$，映射 $F_n:X\to[0,\infty)$，$x\mapsto F_n(x)\triangleq \|f(x)-y_n\|_Y$，可测。
+\end{proposition}
+
+\begin{proof}
+我们只证 $\mu$ 有限时的结果。若 $f$ 为 $\mu$-可测，则存在序列 $\{s_k\}\subseteq\mathcal{S}(X;Y)$ 使对 $\mu$-几乎所有 $x\in X$ 有 $\lim_{k\to\infty}\|s_k(x)-f(x)\|_Y=0$。固定 $n\in\mathbb{N}$。由于对所有 $k\in\mathbb{N}$ 有
+\begin{align*}
+\big|F_n(x)-\|s_k(x)-y_n\|_Y\big|\leqslant\|s_k(x)-f(x)\|_Y,
+\end{align*}
+故对 $\mu$-几乎所有 $x\in X$ 有 $F_n(x)=\lim_{k\to\infty}\|s_k(x)-y_n\|_Y$。另一方面，对所有 $n\in\mathbb{N}$ 有 $\{s_k-y_n\}\subseteq\mathcal{S}(X;Y)$，故映射 $x\mapsto\|s_k(x)-y_n\|_Y$ 可测。于是由\cref{corollary:ch02-逐点极限}(ii)得结论。
+
+反之，设对每个 $n\in\mathbb{N}$ $F_n$ 可测。由于 $f^{-1}(B(y_n,1/k))=F_n^{-1}((0,1/k))$（$k\in\mathbb{N}$），故 $f^{-1}(B(y_n,1/k))\in\mathcal{A}$（见\cref{proposition:ch02-Borel判定}；此处 $B(y_n,1/k)\triangleq \{y\in Y\mid\|y-y_n\|_Y<1/k\}$）。另一方面，由于 $D$ 在 $f(X)$ 中稠密，可数族 $\{B(y_n,1/k)\mid n,k\in\mathbb{N}\}$ 是 $f(X)$ 上相对拓扑的一组基，故由\cref{lemma:ch02-基判定}对所有 $F\in\mathcal{B}(Y)$ 有 $f^{-1}(F)\in\mathcal{A}$。因此 $f$ 可测，从而由\cref{proposition:ch04-可推mu可}为 $\mu$-可测。故结论成立。
+\end{proof}
+
+我们提及\cref{remark:ch02-连续Borel}(i)与\cref{proposition:ch04-可推mu可}的如下推论。
+
+\begin{corollary}\label{corollary:ch04-连续可测}
+设 $(X,\mathcal{T})$ 为拓扑空间，$\mu$ 为 $(X,\mathcal{B}(X))$ 上的 $\sigma$-有限测度，$Y$ 可分。则每个连续函数 $f:X\to Y$ 都是 $\mu$-可测的。
+\end{corollary}
+
+以下结果可视为\cref{proposition:ch04-可推mu可}的部分逆。如其证明所示，它是 $\mu$-可测性定义的自然推论。
+
+\begin{proposition}\label{proposition:ch04-mu可推可分值}
+设 $\mu$ 为 $\sigma$-有限，$f:X\to Y$ 为 $\mu$-可测。则 $f$ 为 $\mu$-几乎处处可分值。
+\end{proposition}
+
+\begin{proof}
+先设 $\mu(X)<\infty$。由\eqref{align:ch04-4.6}与\cref{theorem:ch04-Egorov}，对每个 $k\in\mathbb{N}$，存在 $\mu$-可测集 $E_k\subseteq X$ 使 $\mu(E_k)<1/k$，且
+\begin{align}
+\lim_{n\to\infty}\sup_{x\in E_k^c}\|s_n(x)-f(x)\|_Y=0. \label{align:ch04-4.14}
+\end{align}
+由于对所有 $n\in\mathbb{N}$ 值域 $s_n(X)\subseteq Y$ 有限，集 $\bigcup_{n=1}^\infty s_n(X)$ 可数。于是由\eqref{align:ch04-4.14}，对每个 $k\in\mathbb{N}$ 集 $f(E_k^c)\subseteq Y$ 可分，从而 $f(\bigcup_{k=1}^\infty E_k^c)=\bigcup_{k=1}^\infty f(E_k^c)$ 亦可分。令 $N\triangleq \bigcap_{k=1}^\infty E_k$，则 $f(N^c)=f(\bigcup_{k=1}^\infty E_k^c)$，且 $\mu(N)=\lim_{k\to\infty}\mu(E_k)=0$。故此情形下结论成立。
+
+一般情形，取两两不交可测集列 $\{E_k\}$ 使 $X=\bigcup_{k=1}^\infty E_k$ 且对所有 $k\in\mathbb{N}$ 有 $\mu(E_k)<\infty$。由上述讨论，对每个 $k\in\mathbb{N}$，限制 $f|_{E_k}$ 为 $\mu$-几乎处处可分值，即存在 $\mu$-零测子集 $N_k\subseteq E_k$ 使集 $f(E_k\setminus N_k)$ 可分。因此集 $\bigcup_{k=1}^\infty f(E_k\setminus N_k)=f(\bigcup_{k=1}^\infty(E_k\setminus N_k))$ 可分。令 $N\triangleq \bigcup_{k=1}^\infty N_k$。则 $N$ 为 $\mu$-零测集，且 $f(N^c)=f(\bigcup_{k=1}^\infty(E_k\setminus N_k))$。故结论成立。
+\end{proof}
+
+\subsection{弱与弱$^*$可测性}\label{subsection:ch04-弱可测性}
+
+设 $(X,\mathcal{A},\mu)$ 为测度空间，$Y$ 为 Banach 空间，$Y^*$ 为 $Y$ 的对偶空间。本章此后，记 $\langle\cdot,\cdot\rangle\equiv\langle\cdot,\cdot\rangle_{Y^*,Y}$ 为 $Y$ 与 $Y^*$ 之间的对偶映射。
+
+\begin{definition}[弱、弱$^*$可测性]\label{definition:ch04-弱可测}\label{definition:ch04-弱星可测}
+(i) 函数 $f:X\to Y$ 称为弱可测的，若对每个 $y^*\in Y^*$，从 $X$ 到 $\mathbb{R}$ 的函数 $x\mapsto\langle y^*,f(x)\rangle$ 可测。
+
+(ii) 函数 $f:X\to Y^*$ 称为弱$^*$可测的，若对每个 $y\in Y$，从 $X$ 到 $\mathbb{R}$ 的函数 $x\mapsto\langle f(x),y\rangle$ 可测。
+\end{definition}
+
+\begin{remark}\label{remark:ch04-弱可测注}
+(i) $\mu$-可测函数 $f:X\to Y$ 是弱可测的。事实上，取 $\{s_n\}\subseteq\mathcal{S}(X;Y)$ 满足\eqref{align:ch04-4.6}。则对所有 $y^*\in Y^*$，
+\begin{align}
+\lim_{n\to\infty}\langle y^*,s_n(x)\rangle=\langle y^*,f(x)\rangle\quad\text{对 }\mu\text{-几乎所有 }x\in X. \label{align:ch04-4.15}
+\end{align}
+对每个 $n\in\mathbb{N}$，函数 $x\mapsto\langle y^*,s_n(x)\rangle:X\to\mathbb{R}$ 是简单的，从而可测。于是由\eqref{align:ch04-4.15}与\cref{corollary:ch02-逐点极限}(ii)，对所有 $y^*\in Y^*$，实值映射 $x\in X\mapsto\langle y^*,f(x)\rangle$ 可测。
+
+(ii) 显然，弱可测函数 $f:X\to Y^*$ 是弱$^*$可测的。于是由 (i)，$\mu$-可测函数 $f:X\to Y^*$ 弱可测，从而弱$^*$可测。
+\end{remark}
+
+\begin{remark}\label{remark:ch04-弱可测空间}
+弱可测函数（相应地，弱$^*$可测函数）的集合是一个向量空间。若 $\{f_n\}$ 为弱可测函数列，且对所有 $x\in X$ 有 $f_n(x)\rightharpoonup f(x)$，则 $f:X\to Y$ 亦弱可测。类似地，若 $\{f_n\}$ 为弱$^*$可测函数列且 $f_n\overset{*}{\rightharpoonup}f$，则 $f:X\to Y^*$ 弱$^*$可测。
+\end{remark}
+
+我们回顾如下定义（例如见文献 [44]）。
+
+\begin{definition}[极集]\label{definition:ch04-极集}
+(i) 设 $Z\subseteq Y$。$Z$ 的极集是集合
+\begin{align*}
+Z^p\triangleq \{y^*\in Y^*\mid |\langle y^*,y\rangle|\leqslant1\text{ 对所有 }y\in Z\}\subseteq Y^*.
+\end{align*}
+(ii) 设 $Z^*\subseteq Y^*$。$Z^*$ 的极集是集合
+\begin{align*}
+Z_p^*\triangleq \{y\in Y\mid |\langle y^*,y\rangle|\leqslant1\text{ 对所有 }y^*\in Z^*\}\subseteq Y.
+\end{align*}
+\end{definition}
+
+\begin{remark}\label{remark:ch04-单位球极集}
+令
+\begin{align*}
+B_1\triangleq \{y\in Y\mid\|y\|_Y\leqslant1\},\qquad B_1^*\triangleq \{y^*\in Y^*\mid\|y^*\|_{Y^*}\leqslant1\}
+\end{align*}
+分别为 $Y$ 与 $Y^*$ 中的闭单位球。则
+\begin{align}
+(B_1)^p=B_1^*,\qquad (B_1^*)_p=B_1. \label{align:ch04-4.16}
+\end{align}
+\end{remark}
+
+我们证明一个预备结果（见文献 [44, 第 8.15 节引理 1]）。
+
+\begin{proposition}\label{proposition:ch04-可数支撑范数}
+设 $S$ 为 $Y$ 的可分子空间，$B_1$ 为 $Y$ 的单位闭球，$(B_1)^p$ 为 $B_1$ 的极集。则存在可数集 $W\subseteq(B_1)^p$ 使对所有 $y\in S$ 有
+\begin{align}
+\|y\|_Y=\sup_{a\in W}|\langle a,y\rangle|. \label{align:ch04-4.17}
+\end{align}
+\end{proposition}
+
+\begin{proof}
+由于 $\|y\|_Y=\sup_{a\in(B_1)^p}|\langle a,y\rangle|$（见\eqref{align:ch04-4.16}），只需证明存在可数集 $W\subseteq(B_1)^p$ 使对所有 $y\in S$ 有
+\begin{align}
+\|y\|_Y\leqslant\sup_{a\in W}|\langle a,y\rangle|. \label{align:ch04-4.18}
+\end{align}
+令 $D\equiv\{y_n\}$ 为 $S$ 中的可数稠密集，固定 $n\in\mathbb{N}$。由于 $\|y_n\|_Y=\sup_{a\in(B_1)^p}|\langle a,y_n\rangle|$，存在序列 $\{a_{n,j}\}\subseteq(B_1)^p$ 使
+\begin{align}
+\|y_n\|_Y=\sup_{j\in\mathbb{N}}|\langle a_{n,j},y_n\rangle|. \label{align:ch04-4.19}
+\end{align}
+考虑可数集 $W\triangleq \{a_{k,j}\mid k,j\in\mathbb{N}\}$。则由\eqref{align:ch04-4.19}有
+\begin{align}
+\|y_n\|_Y\leqslant\sup_{k,j\in\mathbb{N}}|\langle a_{k,j},y_n\rangle|=\sup_{a\in W}|\langle a,y_n\rangle|. \label{align:ch04-4.20}
+\end{align}
+现固定 $z\in S$。由 $D$ 的稠密性，对任意 $\epsilon>0$，存在 $y_m\in D$ 使 $\|z-y_m\|_Y<\epsilon$。于是由\eqref{align:ch04-4.20}
+\begin{align}
+\|z\|_Y\leqslant\|z-y_m\|_Y+\|y_m\|_Y\leqslant\sup_{k,j\in\mathbb{N}}|\langle a_{k,j},y_m\rangle|+\epsilon. \label{align:ch04-4.21}
+\end{align}
+另一方面，由于 $W\subseteq(B_1)^p$，有
+\begin{align}
+\sup_{k,j\in\mathbb{N}}|\langle a_{k,j},y_m\rangle|
+&\leqslant\sup_{k,j\in\mathbb{N}}|\langle a_{k,j},z\rangle|+\sup_{k,j\in\mathbb{N}}|\langle a_{k,j},z-y_m\rangle|\nonumber\\
+&\leqslant\sup_{k,j\in\mathbb{N}}|\langle a_{k,j},z\rangle|+\|z-y_m\|_Y\leqslant\sup_{k,j\in\mathbb{N}}|\langle a_{k,j},z\rangle|+\epsilon. \label{align:ch04-4.22}
+\end{align}
+由\eqref{align:ch04-4.21}--\eqref{align:ch04-4.22}得
+\begin{align*}
+\|z\|_Y\leqslant\sup_{a\in W}|\langle a,z\rangle|+2\epsilon,
+\end{align*}
+由 $\epsilon$ 的任意性得不等式\eqref{align:ch04-4.18}。这就证明了该结果。
+\end{proof}
+
+\begin{proposition}\label{proposition:ch04-范数可测弱}
+(i) 设 $f:X\to Y$ 弱可测且 $\mu$-几乎处处可分值。则函数 $x\mapsto\|f(x)\|_Y$ 可测。
+
+(ii) 设 $f:X\to Y^*$ 弱$^*$可测且 $\mu$-几乎处处可分值。则函数 $x\mapsto\|f(x)\|_{Y^*}$ 可测。
+\end{proposition}
+
+\begin{proof}
+(i) 不妨设 $f(X)$ 本身可分。于是由\cref{proposition:ch04-可数支撑范数}与\eqref{align:ch04-4.16}中第一个等式，存在可数集 $W\subseteq B_1^*$ 使对所有 $x\in X$ 有
+\begin{align}
+\|f(x)\|_Y=\sup_{a\in W}|\langle a,f(x)\rangle|. \label{align:ch04-4.23}
+\end{align}
+由于 $f$ 弱可测且 $|\cdot|$ 连续，对任意 $a\in W$，映射 $x\mapsto|\langle a,f(x)\rangle|$ 可测。于是由\eqref{align:ch04-4.23}与\cref{corollary:ch02-逐点极限}(ii)得结论。
+
+(ii) 如 (i) 那样论证并利用\eqref{align:ch04-4.16}中第二个等式，存在可数集 $W\subseteq B_1$ 使对所有 $x\in X$ 有
+\begin{align}
+\|f(x)\|_{Y^*}=\sup_{a\in W}|\langle f(x),a\rangle|. \label{align:ch04-4.24}
+\end{align}
+由于 $f$ 弱$^*$可测且 $|\cdot|$ 连续，对任意 $a\in W$，映射 $x\mapsto|\langle a,f(x)\rangle|$ 可测。于是由\eqref{align:ch04-4.24}与\cref{corollary:ch02-逐点极限}(ii)得结论。
+\end{proof}
+
+\begin{remark}\label{remark:ch04-对偶注}
+注意 $Y^*$ 既是带弱拓扑 $\sigma(Y,Y^*)$ 的 $Y$ 的拓扑对偶，又是带弱$^*$拓扑 $\sigma(Y^{**},Y^*)$ 的 $Y^{**}$ 的拓扑对偶。因此，由于嵌入 $Y\subseteq Y^{**}$ 是等距的，将\cref{proposition:ch04-范数可测弱}(ii) 应用于 $Y^{**}=(Y^*)^*$ 与\cref{proposition:ch04-范数可测弱}(i) 是一致的。
+
+特别地，由\cref{proposition:ch04-范数可测弱}(ii)，若 $Y^*$ 可分且 $f:X\to Y^*$ 弱$^*$可测，则函数 $x\mapsto\|f(x)\|_{Y^*}$ 可测。如下命题所示，若 $Y$ 可分，同样的结论成立。
+\end{remark}
+
+\begin{proposition}\label{proposition:ch04-弱星范数可测}\label{proposition:ch04-有界密度}
+设 $Y$ 可分，$f:X\to Y^*$ 弱$^*$可测。则函数 $x\mapsto\|f(x)\|_{Y^*}$ 可测。
+\end{proposition}
+
+\begin{proof}
+令 $D\equiv\{y_n\}\subseteq Y$ 可数且稠密。对每个 $n\in\mathbb{N}$，函数 $l_n:X\to\mathbb{R}$，$l_n(x)\triangleq |\langle f(x),y_n\rangle|$，可测，从而映射 $l:X\to\mathbb{R}$，$l(x)\triangleq \sup_{y_n\in D,\ \|y_n\|_Y\leqslant1}l_n(x)$，可测（见\cref{corollary:ch02-逐点极限}(ii)）。于是若我们证明对所有 $x\in X$ 有
+\begin{align}
+l(x)=\|f(x)\|_{Y^*}, \label{align:ch04-4.25}
+\end{align}
+则结论成立。
+
+为此，首先注意
+\begin{align*}
+\|f(x)\|_{Y^*}=\sup_{y\in Y,\ \|y\|_Y\leqslant1}|\langle f(x),y\rangle|\geqslant\sup_{y_n\in D,\ \|y_n\|_Y\leqslant1}|\langle f(x),y_n\rangle|=l(x).
+\end{align*}
+为证反向不等式，令 $\alpha\triangleq \|f(x)\|_{Y^*}>0$（若 $\|f(x)\|_{Y^*}=0$，则等式\eqref{align:ch04-4.25}显然成立）。对任意 $k\in\mathbb{N}$，取 $u_k\in Y$ 使 $\|u_k\|_Y\leqslant1$ 且
+\begin{align}
+|\langle f(x),u_k\rangle|\geqslant\alpha-\frac1{2^k}. \label{align:ch04-4.26}
+\end{align}
+由 $D$ 的稠密性，存在 $y_k\in D$ 使 $\|u_k-y_k\|_Y<1/(4\alpha k)$，于是
+\begin{align}
+\|y_k\|_Y\leqslant\|y_k-u_k\|_Y+\|u_k\|_Y\leqslant\frac1{4\alpha k}+1, \label{align:ch04-4.27}
+\end{align}
+\begin{align}
+|\langle f(x),u_k-y_k\rangle|\leqslant\alpha\cdot\frac1{4\alpha k}=\frac1{4k}. \label{align:ch04-4.28}
+\end{align}
+令
+\begin{align*}
+\bar y_k\triangleq 
+\begin{cases}
+\dfrac{y_k}{\|y_k\|_Y} & \text{若 }\|y_k\|_Y>1,\\
+y_k & \text{若 }\|y_k\|_Y\leqslant1.
+\end{cases}
+\end{align*}
+若 $\|y_k\|_Y>1$，则由\eqref{align:ch04-4.27}--\eqref{align:ch04-4.28}，
+\begin{align}
+|\langle f(x),u_k-\bar y_k\rangle|
+&\leqslant|\langle f(x),u_k-y_k\rangle|+|\langle f(x),y_k-\bar y_k\rangle|\nonumber\\
+&\leqslant\frac1{4k}+\alpha(\|y_k\|_Y-1)\leqslant\frac1{4k}+\alpha\cdot\frac1{4\alpha k}=\frac1{2k}. \label{align:ch04-4.29}
+\end{align}
+由\eqref{align:ch04-4.26}与\eqref{align:ch04-4.28}--\eqref{align:ch04-4.29}，对每个 $k\in\mathbb{N}$，存在 $\bar y_k\in D$ 使 $\|\bar y_k\|_Y\leqslant1$，且
+\begin{align*}
+|\langle f(x),\bar y_k\rangle|\geqslant|\langle f(x),u_k\rangle|-|\langle f(x),\bar y_k-u_k\rangle|\geqslant\alpha-\frac1k.
+\end{align*}
+这就证明了\eqref{align:ch04-4.25}，从而结论成立。
+\end{proof}
+
+$\mu$-可测性与弱可测性之间的关系由以下定理阐明。
+
+\begin{theorem}[Pettis]\label{theorem:ch04-Pettis}
+设 $\mu$ 为 $\sigma$-有限，$f:X\to Y$。则下列命题等价：
+\begin{enumerate}[(i)]
+\item\label{item:ch04-Pettis-i} $f$ 为 $\mu$-可测；
+\item\label{item:ch04-Pettis-ii} $f$ 弱可测且 $\mu$-几乎处处可分值。
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+(i)$\Rightarrow$(ii)。由\cref{remark:ch04-弱可测注} $f$ 弱可测，而 $f$ 为 $\mu$-几乎处处可分值由\cref{proposition:ch04-mu可推可分值}得到。故结论成立。
+
+(ii)$\Rightarrow$(i)。不妨设 $f(X)$ 可分。令 $D\equiv\{y_n\}$ 为 $f(X)$ 中的可数稠密集。由\cref{proposition:ch04-范数可测弱}(i)，对任意 $y_n\in D$，函数 $x\mapsto\|f(x)-y_n\|_Y$ 可测，于是由\cref{proposition:ch04-可分值判据} $f$ 为 $\mu$-可测。故结论成立。
+\end{proof}
+
+类似地，由\cref{proposition:ch04-范数可测弱}(ii) 得如下结果。
+
+\begin{proposition}\label{proposition:ch04-弱星等价}
+设 $\mu$ 为 $\sigma$-有限，$f:X\to Y^*$。则下列命题等价：
+\begin{enumerate}[(i)]
+\item\label{item:ch04-弱星等价-i} $f$ 为 $\mu$-可测；
+\item\label{item:ch04-弱星等价-ii} $f$ 弱$^*$可测且 $\mu$-几乎处处可分值。
+\end{enumerate}
+\end{proposition}
+
+\begin{remark}\label{remark:ch04-三概念重合}
+设 $\mu$ 为 $\sigma$-有限，$Y^*$ 可分。由\cref{theorem:ch04-Pettis}与\cref{proposition:ch04-弱星等价}，对每个 $f:X\to Y^*$，$\mu$-可测性、弱可测性与弱$^*$可测性这三个概念重合。
+\end{remark}
+
+
+
+
+\end{document}

@@ -1,0 +1,353 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{可测函数}\label{section:ch02-可测函数}
+
+\subsection{定义与一般性质}\label{subsection:ch02-定义与一般性质}
+
+\begin{definition}\label{definition:ch02-可测函数}\label{definition:ch02-可测性}
+设 $(X,\mathscr A)$ 与 $(X',\mathscr A')$ 为可测空间。称映射 $f:X\to X'$ 为 $(\mathscr A,\mathscr A')$-可测（或简称可测），若对任意 $E'\in\mathscr A'$ 有 $f^{-1}(E')\in\mathscr A$。
+\end{definition}
+
+\begin{remark}\label{remark:ch02-Borel可测}
+若 $X'$ 为拓扑空间，则 $\mathscr A'$ 为其 Borel $\sigma$-代数 $\mathscr B(X')$。特别地，称 $f:X\to\mathbb R^N$ 为 $\mathscr A$-可测（或简称可测），若它是 $(\mathscr A,\mathscr B(\mathbb R^N))$-可测的。
+\end{remark}
+
+\begin{proposition}\label{proposition:ch02-复合可测}
+设 $(X,\mathscr A)$、$(X',\mathscr A')$、$(X'',\mathscr A'')$ 为可测空间。设 $f:X\to X'$ 为 $(\mathscr A,\mathscr A')$-可测，$g:X'\to X''$ 为 $(\mathscr A',\mathscr A'')$-可测。则 $g\circ f:X\to X''$ 为 $(\mathscr A,\mathscr A'')$-可测。
+\end{proposition}
+
+\begin{proof}
+由假设，对任意 $E'\in\mathscr A'$ 有 $f^{-1}(E')\in\mathscr A$，对任意 $E''\in\mathscr A''$ 有 $g^{-1}(E'')\in\mathscr A'$。从而对任意 $E''\in\mathscr A''$ 有 $(g\circ f)^{-1}(E'')=f^{-1}(g^{-1}(E''))\in\mathscr A$。
+\end{proof}
+
+\begin{lemma}\label{lemma:ch02-生成集可测}
+\label{lemma:ch02-基判定}
+设 $(X,\mathscr A)$ 与 $(X',\mathscr A')$ 为可测空间。设 $\mathscr C'\subseteq\mathscr P(X')$ 满足极小 $\sigma$-代数 $\sigma_0(\mathscr C')=\mathscr A'$。则 $f:X\to X'$ 为 $(\mathscr A,\mathscr A')$-可测当且仅当
+\begin{align}
+f^{-1}(E')\in\mathscr A\quad\text{对任意 }E'\in\mathscr C'. \label{align:ch02-2.1}
+\end{align}
+\end{lemma}
+
+\begin{proof}
+设 $f$ 为 $(\mathscr A,\mathscr A')$-可测，则对任意 $E'\in\mathscr A'$ 有 $f^{-1}(E')\in\mathscr A$。由 $\mathscr C'\subseteq\sigma_0(\mathscr C')=\mathscr A'$，"仅当"部分成立。为证"当"部分，令
+\begin{align*}
+\Sigma\triangleq \{E'\subseteq X'\mid f^{-1}(E')\in\mathscr A\}.
+\end{align*}
+利用等式
+\begin{align}
+f^{-1}(X')=X,\quad f^{-1}(X'\setminus E')=X\setminus f^{-1}(E'),\quad
+f^{-1}\!\left(\bigcup_{k=1}^\infty E'_k\right)=\bigcup_{k=1}^\infty f^{-1}(E'_k), \label{align:ch02-2.2}
+\end{align}
+易见 $\Sigma$ 为 $\sigma$-代数。另一方面，若\eqref{align:ch02-2.1}成立，则 $\mathscr C'\subseteq\Sigma$，从而 $\mathscr A'=\sigma_0(\mathscr C')\subseteq\Sigma$。
+\end{proof}
+
+\begin{proposition}\label{proposition:ch02-限制可测}\label{proposition:ch02-可测拼接}
+设 $(X,\mathscr A)$ 与 $(X',\mathscr A')$ 为可测空间，$X=\bigcup_{k=1}^\infty E_k$，$\{E_k\}\subseteq\mathscr A$。则 $f:X\to X'$ 为 $(\mathscr A,\mathscr A')$-可测当且仅当每个限制 $f|_{E_k}:E_k\to X'$ 为 $(\mathscr A\cap E_k,\mathscr A')$-可测。
+\end{proposition}
+
+\begin{proof}
+设对每个 $k\in\mathbb N$，$f|_{E_k}$ 为 $(\mathscr A\cap E_k,\mathscr A')$-可测。对任意 $F'\in\mathscr A'$，因 $E_k\in\mathscr A$，$(f|_{E_k})^{-1}(F')\in\mathscr A\cap E_k\subseteq\mathscr A$。故
+\begin{align*}
+f^{-1}(F')=\left(\bigcup_{k=1}^\infty E_k\right)\cap f^{-1}(F')
+=\bigcup_{k=1}^\infty\bigl(E_k\cap f^{-1}(F')\bigr)
+=\bigcup_{k=1}^\infty (f|_{E_k})^{-1}(F')\in\mathscr A,
+\end{align*}
+从而 $f$ 为 $(\mathscr A,\mathscr A')$-可测。反之，注意 $f|_{E_k}=f\circ j_{E_k}$，其中 $j_{E_k}$ 为 $E_k$ 到 $X$ 的嵌入。对任意 $E\in\mathscr A$，$j_{E_k}^{-1}(E)\triangleq \{x\in E_k\mid j_{E_k}(x)\in E\}=E\cap E_k$，故 $j_{E_k}$ 为 $(\mathscr A\cap E_k,\mathscr A)$-可测。由\cref{proposition:ch02-复合可测}即得 $f|_{E_k}$ 为 $(\mathscr A\cap E_k,\mathscr A')$-可测。
+\end{proof}
+
+对任意 $f:X\to\mathbb R$ 与 $\alpha\in\mathbb R$，记 $\{f>\alpha\}\triangleq \{x\in X\mid f(x)>\alpha\}=f^{-1}((\alpha,\infty))$；集合 $\{f\geqslant\alpha\}$、$\{f<\alpha\}$、$\{f\leqslant\alpha\}$、$\{f=\alpha\}$ 类似定义。对实值函数有如下可测性判据，它易由\cref{lemma:ch02-生成集可测}与\cref{remark:ch02-Borel可测}得到。
+
+\begin{proposition}\label{proposition:ch02-可测判据}\label{proposition:ch02-Borel判定}
+设 $(X,\mathscr A)$ 为可测空间，$f:X\to\mathbb R$。则下列命题等价：(i) $f$ 为 $\mathscr A$-可测；(ii) $\{f>\alpha\}\in\mathscr A$ 对任意 $\alpha\in\mathbb R$；(iii) $\{f\geqslant\alpha\}\in\mathscr A$ 对任意 $\alpha\in\mathbb R$；(iv) $\{f<\alpha\}\in\mathscr A$ 对任意 $\alpha\in\mathbb R$；(v) $\{f\leqslant\alpha\}\in\mathscr A$ 对任意 $\alpha\in\mathbb R$。
+\end{proposition}
+
+利用等式 $\{\sup_n f_n>\alpha\}=\bigcup_{n=1}^\infty\{f_n>\alpha\}$，由\cref{proposition:ch02-可测判据}立得：
+
+\begin{corollary}\label{corollary:ch02-可测运算}\label{corollary:ch02-逐点极限}
+设 $(X,\mathscr A)$ 为可测空间。
+\begin{enumerate}[(i)]
+\item 若 $f,g:X\to\mathbb R$ 为 $\mathscr A$-可测，则函数 $f+g$、$fg$、$|f|$、$\min\{f,g\}$、$\max\{f,g\}$ 以及 $f/g$（后者要求 $g\neq0$）均为 $\mathscr A$-可测。
+\item 若对每个 $n\in\mathbb N$，函数 $f_n:X\to[-\infty,\infty]$ 为 $\mathscr A$-可测，则函数 $\sup_{n\in\mathbb N}f_n$、$\inf_{n\in\mathbb N}f_n$、$\limsup_{n\to\infty}f_n$、$\liminf_{n\to\infty}f_n$ 均为 $\mathscr A$-可测。特别地，若逐点极限 $\lim_{n\to\infty}f_n$ 存在，则它为 $\mathscr A$-可测。
+\end{enumerate}
+\end{corollary}
+
+\begin{proposition}\label{proposition:ch02-a.e.相等可测}
+设 $(X,\mathscr A,\mu)$ 为完备测度空间，$(X',\mathscr A')$ 为可测空间。设 $f,g:X\to X'$ 在 $X$ 上 $\mu$-a.e. 相等。则 $f$ 为 $(\mathscr A,\mathscr A')$-可测当且仅当 $g$ 为 $(\mathscr A,\mathscr A')$-可测。
+\end{proposition}
+
+\begin{proof}
+由假设存在零测集 $N\in\mathscr A$ 使对任意 $x\in N^c$ 有 $g(x)=f(x)$。易见对所有 $E'\in\mathscr A'$，
+\begin{align*}
+g^{-1}(E')=\bigl(g^{-1}(E')\cap N\bigr)\cup\bigl(f^{-1}(E')\cap N^c\bigr).
+\end{align*}
+若 $f$ 为 $(\mathscr A,\mathscr A')$-可测，则 $f^{-1}(E')\cap N^c\in\mathscr A$。又因 $\mu$ 完备且 $g^{-1}(E')\cap N\subseteq N$，故 $g^{-1}(E')\cap N\in\mathscr A$，从而 $g$ 为 $(\mathscr A,\mathscr A')$-可测。交换 $f$ 与 $g$ 即得结论。
+\end{proof}
+
+若 $\mu$ 不完备，则上述结论不必成立。为避免这一困难，将可测性定义推广到几乎处处定义的函数是方便的。
+
+\begin{definition}\label{definition:ch02-a.e.可测函数}\label{definition:ch02-几乎处处可测}
+设 $(X,\mathscr A,\mu)$ 为测度空间，$(X',\mathscr A')$ 为可测空间。设 $N\subseteq X$ 为零测集，$f:N^c\to X'$。称 $f$ 为 $(\mathscr A,\mathscr A')$-可测，若它为 $(\mathscr A\cap N^c,\mathscr A')$-可测。
+\end{definition}
+
+若 $N=\varnothing $，则上述定义化归为\cref{definition:ch02-可测函数}。若 $N^c\subsetneq X$ 且\cref{definition:ch02-a.e.可测函数}成立，则易将 $f$ 延拓为 $X$ 上 $(\mathscr A,\mathscr A')$-可测函数（在\cref{definition:ch02-可测函数}意义下）。显然，\cref{proposition:ch02-a.e.相等可测}的结论在\cref{definition:ch02-a.e.可测函数}意义下成立。
+
+下一条注记此后将默认使用。
+
+\begin{remark}\label{remark:ch02-a.e.极限可测}
+\label{remark:ch02-几乎处处}
+设 $(X,\mathscr A,\mu)$ 为完备测度空间。若 $\{f_n\}$ 为 $\mathscr A$-可测函数列且 $f_n\to g$ 在 $X$ 上 $\mu$-a.e.，则由\cref{corollary:ch02-可测运算}与\cref{proposition:ch02-a.e.相等可测}知 $g$ 为 $\mathscr A$-可测。若 $\mu$ 不完备，则在\cref{definition:ch02-a.e.可测函数}意义下同样成立，因为 $g\triangleq \lim_{n\to\infty}f_n$ 定义在某 $E\in\mathscr A$（$\mu(E^c)=0$）上，并由\cref{corollary:ch02-可测运算}知其为 $(\mathscr A\cap E,\mathscr A')$-可测。
+\end{remark}
+
+给出如下定义。
+
+\begin{definition}\label{definition:ch02-Borel函数}
+设 $(X,\mathscr T)$ 与 $(X',\mathscr T')$ 为拓扑空间，$\mathscr B\triangleq \sigma_0(\mathscr T)$、$\mathscr B'\triangleq \sigma_0(\mathscr T')$ 为相应 Borel $\sigma$-代数。称 $f:X\to X'$ 为 Borel 可测（或 Borel 函数），若它为 $(\mathscr B,\mathscr B')$-可测。
+\end{definition}
+
+\begin{remark}\label{remark:ch02-连续半连续Borel}\label{remark:ch02-连续Borel}
+\label{remark:ch02-连续逼近注}
+\begin{enumerate}[(i)]
+\item 若 $(X,\mathscr T)$、$(X',\mathscr T')$ 为拓扑空间，则由\cref{lemma:ch02-生成集可测}知每个连续函数 $f:X\to X'$ 均为 Borel 可测。
+\item 设 $(X,\mathscr T)$ 为拓扑空间。函数 $f:X\to(-\infty,\infty]$ 为下半连续当且仅当对任意 $\alpha\in\mathbb R$，集合 $\{f>\alpha\}$ 为开集。类似地，函数 $f:X\to[-\infty,\infty)$ 为上半连续当且仅当对任意 $\alpha\in\mathbb R$，集合 $\{f<\alpha\}$ 为开集。于是由\cref{proposition:ch02-可测判据}，上、下半连续函数均为 Borel 可测。
+\end{enumerate}
+\end{remark}
+
+\begin{definition}\label{definition:ch02-简单函数}
+设 $(X,\mathscr A)$ 为可测空间。称函数 $s:X\to\mathbb R$ 为简单函数，若存在 $c_1,\cdots ,c_n\in\mathbb R$ 与 $X$ 的划分 $\{E_1,\cdots ,E_n\}\subseteq\mathscr A$，使 $s=\sum_{i=1}^n c_i\chi_{E_i}$。
+\end{definition}
+
+显然简单函数可测。对任意可测空间 $(X,\mathscr A)$，记 $\mathscr S(X)$ 为实值简单函数集合，$\mathscr S^+(X)$ 为非负简单函数 $s:X\to[0,\infty)$ 的集合。
+
+下列结果的证明是熟知的。
+
+\begin{theorem}\label{theorem:ch02-简单逼近}\label{theorem:ch02-简单函数逼近}
+设 $(X,\mathscr A)$ 为可测空间，$f:X\to\mathbb R$ 为 $\mathscr A$-可测。则存在简单函数列 $\{s_n\}$ 使 $s_n\to f$ 在 $X$ 上逐点收敛。此外：
+\begin{enumerate}[(i)]
+\item 若 $f\geqslant0$，则 $\{s_n\}$ 非降，且对任意 $n\in\mathbb N$ 有 $0\leqslant s_n\leqslant f$；
+\item 若 $f$ 有界，则 $s_n\to f$ 在 $X$ 上一致收敛。
+\end{enumerate}
+\end{theorem}
+
+为后续需要，考虑定义在可测空间乘积上或取值于可测空间乘积的函数的可测性（见\cref{subsection:ch01-乘积}）。
+
+\begin{definition}\label{definition:ch02-投影分量迹}
+给定集合 $X$、$X_1$、$X_2$。
+\begin{enumerate}[(i)]
+\item 映射 $p_k:X_1\times X_2\to X_k$，$p_k(x_1,x_2)\triangleq x_k$，称为 $X_1\times X_2$ 到 $X_k$ 的投影（$k=1,2$）。
+\item 设 $f:X\to X_1\times X_2$。映射 $f_k:X\to X_k$，$f_k\triangleq p_k\circ f$，称为 $f$ 的第 $k$ 分量（$k=1,2$）。
+\item 设 $f:X_1\times X_2\to X$。对任意 $x_1\in X_1$，映射 $f_{x_1}:X_2\to X$，$f_{x_1}(x_2)\triangleq f(x_1,x_2)$，称为 $f$ 的 $x_1$-迹。类似地，对任意 $x_2\in X_2$，$x_2$-迹为映射 $f_{x_2}:X_1\to X$，$f_{x_2}(x_1)\triangleq f(x_1,x_2)$。
+\end{enumerate}
+\end{definition}
+
+\begin{remark}\label{remark:ch02-特征函数截面}
+\label{remark:ch02-截口}
+设 $\chi_E$ 为 $E\subseteq X_1\times X_2$ 的特征函数。显然，对任意 $x_1\in X_1$，$\chi_E$ 的 $x_1$-迹 $(\chi_E)_{x_1}$ 与 $E$ 的 $x_1$-截面 $E_{x_1}\triangleq \{x_2\in X_2\mid(x_1,x_2)\in E\}$ 的特征函数 $\chi_{E_{x_1}}$ 一致。类似地，对任意 $x_2\in X_2$，$(\chi_E)_{x_2}=\chi_{E_{x_2}}$，其中 $E_{x_2}\triangleq \{x_1\in X_1\mid(x_1,x_2)\in E\}$。
+\end{remark}
+
+\begin{lemma}\label{lemma:ch02-投影可测}
+设 $(X_1\times X_2,\mathscr A_1\times\mathscr A_2)$ 为可测空间 $(X_1,\mathscr A_1)$ 与 $(X_2,\mathscr A_2)$ 的乘积。则对每个 $k=1,2$，投影 $p_k$ 为 $(\mathscr A_1\times\mathscr A_2,\mathscr A_k)$-可测。
+\end{lemma}
+
+\begin{proof}
+对任意 $E_1\in\mathscr A_1$，$p_1^{-1}(E_1)\triangleq \{(x_1,x_2)\in X_1\times X_2\mid x_1\in E_1\}=E_1\times X_2$，即可测矩形，故 $p_1^{-1}(E_1)\in\mathscr A_1\times\mathscr A_2$。对 $p_2$ 同理。
+\end{proof}
+
+\begin{proposition}\label{proposition:ch02-乘积可测分量}
+设 $(X,\mathscr A)$、$(X_1,\mathscr A_1)$、$(X_2,\mathscr A_2)$ 为可测空间，$(X_1\times X_2,\mathscr A_1\times\mathscr A_2)$ 为 $(X_1,\mathscr A_1)$ 与 $(X_2,\mathscr A_2)$ 的乘积。设 $f:X\to X_1\times X_2$。则 $f$ 为 $(\mathscr A,\mathscr A_1\times\mathscr A_2)$-可测当且仅当每个分量 $f_k$ 为 $(\mathscr A,\mathscr A_k)$-可测（$k=1,2$）。
+\end{proposition}
+
+\begin{proof}
+若 $f$ 为 $(\mathscr A,\mathscr A_1\times\mathscr A_2)$-可测，则由\cref{proposition:ch02-复合可测}与\cref{lemma:ch02-投影可测}知每个 $f_k$ 为 $(\mathscr A,\mathscr A_k)$-可测。反之，设 $f_k$ 为 $(\mathscr A,\mathscr A_k)$-可测，从而对任意 $E_k\in\mathscr A_k$ 有 $f_k^{-1}(E_k)\in\mathscr A$。令 $\mathscr R$ 为可测矩形集合。只需证对任意 $E\in\mathscr R$ 有 $f^{-1}(E)\in\mathscr A$；因 $\mathscr A_1\times\mathscr A_2\triangleq \sigma_0(\mathscr R)$，由\cref{lemma:ch02-生成集可测}即得结论。事实上，设 $E=E_1\times E_2$，$E_k\in\mathscr A_k$，则
+\begin{align*}
+f^{-1}(E)=\{x\in X\mid(f_1(x),f_2(x))\in E\}
+=\{x\in X\mid f_1(x)\in E_1\}\cap\{x\in X\mid f_2(x)\in E_2\}
+=f_1^{-1}(E_1)\cap f_2^{-1}(E_2)\in\mathscr A.
+\end{align*}
+\end{proof}
+
+\begin{proposition}\label{proposition:ch02-迹可测}
+设 $(X_1,\mathscr A_1)$、$(X_2,\mathscr A_2)$、$(X,\mathscr A)$ 为可测空间，$f:X_1\times X_2\to X$ 为 $(\mathscr A_1\times\mathscr A_2,\mathscr A)$-可测。则：
+\begin{enumerate}[(i)]
+\item 对任意 $x_1\in X_1$，$f$ 的 $x_1$-迹为 $(\mathscr A_2,\mathscr A)$-可测；
+\item 对任意 $x_2\in X_2$，$f$ 的 $x_2$-迹为 $(\mathscr A_1,\mathscr A)$-可测。
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+对任意 $x_1\in X_1$，$f_{x_1}=f\circ g$，其中 $g:X_2\to X_1\times X_2$，$g(x_2)\equiv(g_1(x_2),g_2(x_2))\triangleq (x_1,x_2)$。显然每个分量 $g_k$ 为 $(\mathscr A_2,\mathscr A_k)$-可测（$k=1,2$），故由\cref{proposition:ch02-乘积可测分量}知 $g$ 为 $(\mathscr A_2,\mathscr A_1\times\mathscr A_2)$-可测。再由\cref{proposition:ch02-复合可测}知 $f_{x_1}$ 为 $(\mathscr A_2,\mathscr A)$-可测。(ii) 同理可证。
+\end{proof}
+
+\begin{remark}\label{remark:ch02-截面可测}
+\label{remark:ch02-截口可测}
+设 $\chi_E$ 为 $E\subseteq X_1\times X_2$ 的特征函数。若 $E\in\mathscr A_1\times\mathscr A_2$，则 $\chi_E$ 为 $\mathscr A_1\times\mathscr A_2$-可测，由\cref{proposition:ch02-迹可测}知 $(\chi_E)_{x_1}=\chi_{E_{x_1}}$ 为 $\mathscr A_2$-可测（注意由\cref{proposition:ch01-截面}知 $E_{x_1}\in\mathscr A_2$）。类似地，对任意 $x_2\in X_2$，$(\chi_E)_{x_2}=\chi_{E_{x_2}}$ 为 $\mathscr A_1$-可测。
+\end{remark}
+
+\subsection{收敛结果}\label{subsection:ch02-收敛结果}
+
+设 $(X,\mathscr A,\mu)$ 为测度空间，$f,f_n:X\to\mathbb R$ 为 $\mathscr A$-可测函数（$n\in\mathbb N$）。下列收敛概念（记 $f_n\to f$）是熟知的：
+\begin{itemize}
+\item $f_n$ 依测度收敛于 $f$，若对所有 $\epsilon>0$ 有 $\lim_{n\to\infty}\mu(\{x\in X\mid|f_n(x)-f(x)|>\epsilon\})=0$；
+\item $f_n$ 几乎一致收敛于 $f$，若对任意 $\delta>0$，存在 $E\in\mathscr A$ 使 $\mu(E^c)<\delta$ 且
+\begin{align}
+\lim_{n\to\infty}\sup_{x\in E}|f_n(x)-f(x)|=0. \label{align:ch02-2.3}
+\end{align}
+\end{itemize}
+
+回顾上述概念之间的关系。
+
+\begin{proposition}\label{proposition:ch02-收敛关系}
+设 $(X,\mathscr A,\mu)$ 为测度空间，$f,f_n:X\to\mathbb R$ 为 $\mathscr A$-可测。
+\begin{enumerate}[(i)]
+\item 设 $\mu(X)<\infty$。若 $f_n\to f$ $\mu$-a.e.，则 $f_n\to f$ 依测度。
+\item 若 $f_n\to f$ 依测度，则存在 $\{f_{n_k}\}\subseteq\{f_n\}$ 使 $f_{n_k}\to f$ $\mu$-a.e.
+\item 若 $f_n\to f$ 几乎一致，则 $f_n\to f$ $\mu$-a.e. 且依测度。
+\end{enumerate}
+\end{proposition}
+
+下列结果部分逆转\cref{proposition:ch02-收敛关系}(iii)。
+
+\begin{theorem}[Egorov]\label{theorem:ch02-Egorov}
+设 $(X,\mathscr A,\mu)$ 为有限测度空间，$f,f_n:X\to\mathbb R$ 为 $\mathscr A$-可测。若 $f_n\to f$ $\mu$-a.e.，则 $f_n\to f$ 几乎一致。
+\end{theorem}
+
+\begin{proof}
+由假设存在 $\mu$-零测集 $N\subseteq X$，使对每个 $x\in N^c$ 有 $\lim_{n\to\infty}|f_n(x)-f(x)|=0$。对所有 $k,n,p\in\mathbb N$，令
+\begin{align*}
+E_{n,k}\triangleq \{x\in X\mid|f_n(x)-f(x)|\geqslant 1/k\}\in\mathscr A,\qquad
+F_{p,k}\triangleq \bigcup_{n=p}^\infty E_{n,k}
+\end{align*}
+（见\cref{remark:ch02-a.e.极限可测}）。易见对每个 $k\in\mathbb N$，$G_k\triangleq \bigcap_{p=1}^\infty F_{p,k}\subseteq N$。事实上，固定 $k\in\mathbb N$ 与 $x\in G_k$。由 $F_{p,k}$ 与 $E_{n,k}$ 的定义，对每个 $p\in\mathbb N$，存在 $n_p\geqslant p$ 使 $|f_{n_p}(x)-f(x)|\geqslant 1/k$。显然这蕴含 $|f_{n_p}(x)-f(x)|\not\to0$，故 $x\notin N^c$，结论成立。
+
+因对任意 $k\in\mathbb N$，集合 $G_k$ 可测且 $G_k\subseteq N$，故 $\mu(G_k)=0$。此外，对每个固定 $k\in\mathbb N$，序列 $\{F_{p,k}\}$ 非增且 $\mu(F_{1,k})\leqslant\mu(X)<\infty$，故 $\lim_{p\to\infty}\mu(F_{p,k})=\mu(G_k)=0$。于是对任意 $\delta>0$ 与 $k\in\mathbb N$，存在 $p_k\in\mathbb N$ 使 $\mu(F_{p_k,k})<\delta/2^{k+1}$。令 $F_\delta\triangleq \bigcup_{k=1}^\infty F_{p_k,k}$。则 $\mu(F_\delta)<\delta$ 且
+\begin{align*}
+F_\delta^c=\bigcap_{k=1}^\infty F_{p_k,k}^c=\bigcap_{k=1}^\infty\left(\bigcap_{n=p_k}^\infty E_{n,k}^c\right).
+\end{align*}
+固定 $x\in F_\delta^c$。则对每个 $k\in\mathbb N$，存在 $p_k\in\mathbb N$ 使 $x\in F_{p_k,k}^c$，从而对所有 $n\geqslant p_k$ 有 $x\notin E_{n,k}$，即 $|f_n(x)-f(x)|<1/k$。取 $E=F_\delta^c$，由 $\mu(F_\delta)<\delta$ 即得结论。
+\end{proof}
+
+若以容量代替测度，类似概念与结果成立。
+
+\begin{definition}\label{definition:ch02-容量收敛}
+设 $(X,d)$ 为度量空间，$\mathscr F\subseteq\mathscr P(X)$ 如\cref{definition:ch01-容量}所定义，$C:\mathscr F\to[0,\infty]$ 为容量。设 $f,f_n:X\to\mathbb R$（$n\in\mathbb N$）。称：
+\begin{enumerate}[(i)]
+\item $f_n$ 在 $X$ 上 $C$-拟处处收敛于 $f$，若对 $C$-q.e. $x\in X$，$f_n(x)$ 收敛于 $f(x)$；
+\item $f_n$ 依容量收敛于 $f$，若对所有 $\epsilon>0$ 有 $\lim_{n\to\infty}C(\{|f_n-f|>\epsilon\})=0$；
+\item $f_n$ $C$-拟一致收敛于 $f$，若对任意 $\delta>0$，存在 $E\in\mathscr F$ 使 $C(E^c)<\delta$ 且\eqref{align:ch02-2.3}成立。
+\end{enumerate}
+\end{definition}
+
+\begin{remark}\label{remark:ch02-依容量判据}
+显然，$f_n\to f$ 依容量当且仅当对任意 $\delta>0$、$\epsilon>0$，存在 $\bar n\in\mathbb N$，使对所有 $n\geqslant\bar n$ 有 $C(\{|f_n-f|\geqslant\epsilon\})<\delta$。
+\end{remark}
+
+下列命题与\cref{proposition:ch02-收敛关系}类似；为完整起见给出证明。
+
+\begin{proposition}\label{proposition:ch02-容量收敛关系}
+设 $X$ 及 $f,f_n:X\to\mathbb R$（$n\in\mathbb N$）如\cref{definition:ch02-容量收敛}。
+\begin{enumerate}[(i)]
+\item 若 $f_n\to f$ $C$-拟一致，则 $f_n\to f$ 依容量且 $C$-q.e.
+\item 若 $f_n\to f$ 依容量，则存在 $\{f_{n_k}\}\subseteq\{f_n\}$ 使 $f_{n_k}\to f$ $C$-拟一致。
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(i) 先证 $f_n\to f$ 依容量。由假设，对任意 $\delta>0$，存在 $E\in\mathscr F$ 使 $C(E^c)<\delta$ 且 $\lim_{n\to\infty}\sup_{x\in E}|f_n(x)-f(x)|=0$——即对任意 $\epsilon>0$，存在 $\bar n\in\mathbb N$，使对所有 $n\geqslant\bar n$ 有 $E\subseteq\{|f_n-f|<\epsilon\}$。故 $E^c\supseteq\{|f_n-f|\geqslant\epsilon\}$，从而 $C(\{|f_n-f|\geqslant\epsilon\})\leqslant C(E^c)<\delta$。综上，对任意 $\epsilon>0$、$\delta>0$，存在 $\bar n\in\mathbb N$，使对所有 $n\geqslant\bar n$ 有 $C(\{|f_n-f|\geqslant\epsilon\})<\delta$，结论成立。
+
+再证 $f_n\to f$ $C$-q.e.。由假设，对任意 $k\in\mathbb N$，存在 $E_k\in\mathscr A$ 使 $C(E_k^c)<1/k$ 且 $\lim_{n\to\infty}\sup_{x\in E_k}|f_n(x)-f(x)|=0$。令 $E\triangleq \bigcup_{k=1}^\infty E_k$。则对任意 $x\in E$，$f_n(x)\to f(x)$。又因对任意 $k\in\mathbb N$ 有 $E^c\subseteq E_k^c$，故 $C(E^c)\leqslant\lim_{k\to\infty}C(E_k^c)=0$。结论 (i) 成立。
+
+(ii) 由\cref{remark:ch02-依容量判据}，对任意 $k\in\mathbb N$，存在 $n_k\in\mathbb N$，使对所有 $n\geqslant n_k$ 有 $C(\{|f_n-f|\geqslant 1/2^k\})<1/2^k$。特别取 $n=n_k$，得对所有 $k\in\mathbb N$ 有 $C(B_k)<1/2^k$，其中 $B_k\triangleq \{|f_{n_k}-f|\geqslant 1/2^k\}$。不妨设 $n_{k+1}>n_k$，从而 $\{f_{n_k}\}$ 为 $\{f_n\}$ 的子列。令 $A_m\triangleq \bigcup_{k=m}^\infty B_k$（$m\in\mathbb N$）。则对每个 $m\in\mathbb N$，$A_m\subseteq A_{m-1}$ 且 $C(A_m)\leqslant\sum_{k=m}^\infty C(B_k)<\sum_{k=m}^\infty 1/2^k$，故 $\lim_{m\to\infty}C(A_m)=0$。因此对任意 $\delta>0$，存在 $\bar m\in\mathbb N$，使对所有 $m\geqslant\bar m$ 有 $C(A_m)<\delta$。令 $F_m\triangleq (A_m)^c$（$m\geqslant\bar m$）。则对所有 $k\geqslant m\geqslant\bar m$ 有 $F_m\subseteq B_k^c$，从而
+\begin{align*}
+\sup_{x\in F_{\bar m}}|f_{n_k}(x)-f(x)|\leqslant\sup_{x\in B_k^c}|f_{n_k}(x)-f(x)|\leqslant\frac1{2^k}\leqslant\frac1{2^{\bar m}}.
+\end{align*}
+故 $f_{n_k}\to f$ 在 $F_{\bar m}$ 上一致。证毕。
+\end{proof}
+
+\subsection{拟连续函数}\label{subsection:ch02-拟连续}
+
+\begin{theorem}[Lusin]\label{theorem:ch02-Lusin}
+设 $X$ 为 Hausdorff 空间，$\mu$ 为 $\mathscr B(X)$ 上的正则测度。设 $f:X\to\mathbb R$ 为 $\mathscr B(X)$-可测。则对任意 $E\in\mathscr B(X)$（$\mu(E)<\infty$）与任意 $\delta>0$，存在紧集 $K\subseteq E$ 使 $\mu(E\setminus K)<\delta$，且限制 $f|_K$ 连续。
+\end{theorem}
+
+\begin{proof}
+只需考虑 $E=X$、$\mu(X)<\infty$ 的情形。设 $\{B_n\}$ 为 $\mathbb R$ 中开区间的可数基。于是 $f^{-1}(B_n)\in\mathscr B(X)$（$n\in\mathbb N$）。固定 $\delta>0$。因 $\mu$ 正则，对每个 $n\in\mathbb N$，存在紧集 $K_n$ 与开集 $A_n$ 使 $K_n\subseteq f^{-1}(B_n)\subseteq A_n$ 且 $\mu(A_n\setminus K_n)<\delta/2^{n+1}$。令 $A\triangleq \bigcup_{n=1}^\infty(A_n\setminus K_n)$，$C\triangleq A^c$；显然 $A$ 为开集，$C$ 为闭集，且 $\mu(A)=\mu(C^c)\leqslant\delta/2$。此外对任意 $n\in\mathbb N$，
+\begin{align*}
+A_n\cap C=K_n\cap C\subseteq f^{-1}(B_n)\cap C\subseteq A_n\cap C,
+\end{align*}
+故
+\begin{align*}
+f^{-1}(B_n)\cap C=(f|_C)^{-1}(B_n)=A_n\cap C.
+\end{align*}
+因对任意 $n$，$A_n\cap C$ 在 $C$ 的相对拓扑中为开集，限制 $f|_C$ 连续。
+
+再利用 $\mu$ 的正则性，可选紧集 $K\subseteq C$ 使 $\mu(C\setminus K)<\delta/2$。于是 $\mu(K^c)=\mu(C^c)+\mu(C\setminus K)<\delta$；因 $f|_C$ 连续且 $K\subseteq C$，$f|_K$ 连续。结论成立。
+\end{proof}
+
+\begin{definition}\label{definition:ch02-拟连续}
+设 $X$ 为 Hausdorff 空间，$\mu$ 为 $\mathscr B(X)$ 上的测度。称函数 $f:X\to\mathbb R$ 在 $E\in\mathscr B(X)$ 中为 $\mu$-拟连续（或简称拟连续），若对任意 $\delta>0$，存在闭集 $C\subseteq E$ 使 $\mu(E\setminus C)<\delta$ 且限制 $f|_C$ 连续。
+\end{definition}
+
+利用此定义，Lusin 定理可重述为：若 $\mu$ 有限且正则，则每个 $\mathscr B(X)$-可测函数均为 $\mu$-拟连续。下列结果表明逆命题（至多差零测集）成立。
+
+\begin{proposition}\label{proposition:ch02-拟连续a.e.可测}
+设 $X$ 为 Hausdorff 空间，$\mu$ 为 $\mathscr B(X)$ 上的有限正则测度。设 $f:X\to\mathbb R$ 为 $\mu$-拟连续。则存在 $\mathscr B(X)$-可测函数 $g:X\to\mathbb R$，使 $g=f$ 在 $X$ 上 $\mu$-a.e.
+\end{proposition}
+
+\begin{proof}
+由\cref{definition:ch02-拟连续}，对每个 $n\in\mathbb N$，存在闭集 $C_n\subseteq X$ 使 $\mu(C_n^c)<1/n$ 且 $f|_{C_n}$ 连续。令 $C\triangleq \bigcup_{n=1}^\infty C_n$，$g\triangleq f\chi_C$。不妨设 $\{C_n\}$ 非增，故 $\mu(C^c)=\lim_{n\to\infty}\mu(C_n^c)=0$。此外，对每个 $n$，函数 $f|_{C_n}=f\chi_{C_n}$ 连续，从而 $(\mathscr B(X)\cap C_n)$-可测，且 $f\chi_{C_n}\to f\chi_C=g$ 在 $X$ 上逐点。由\cref{proposition:ch02-限制可测}，$g$ 为 $(\mathscr B(X)\cap C)$-可测，从而 $\mathscr B(X)$-可测。因 $f=g$ 在 $C$ 上且 $\mu(C^c)=0$，结论成立。
+\end{proof}
+
+\begin{proposition}\label{proposition:ch02-Tietze逼近}\label{proposition:ch02-连续逼近}
+设 $X$ 为局部紧 Hausdorff 空间，$\mu$ 为 $\mathscr B(X)$ 上的正则测度。设 $f:X\to\mathbb R$ 为 $\mu$-拟连续。则对任意开集 $A\subseteq X$（$\mu(A)<\infty$）与任意 $\delta>0$，存在紧集 $K\subseteq A$ 与函数 $\zeta\in C_c(X)$（$\operatorname{supp}\zeta\subseteq A$），使 $\mu(\{f\neq\zeta\})<\delta$ 且 $\|\zeta\|_\infty=\|f\|_K\triangleq \sup_{x\in K}|f(x)|$。
+\end{proposition}
+
+\begin{proof}
+设 $A\subseteq X$ 为开集且 $\mu(A)<\infty$，固定 $\delta>0$。由 Lusin 定理存在紧集 $K\subseteq A$ 使 $f|_K$ 连续。由标准紧化论证与 Tietze 延拓定理，存在 $h\in C(X)$ 使 $h|_K=f|_K$（细节见文献\cite{ref45} Korollar VIII.1.19）。另一方面，由\cref{lemma:appA-Urysohn}存在 $g\in C_c(X)$ 使 $g(X)\subseteq[0,1]$、$g|_K=1$、$\operatorname{supp}g\subseteq A$。于是 $\eta\triangleq gh|_K\in C_c(X)$，$\operatorname{supp}\eta\subseteq A$，且 $\eta|_K=h|_K=f|_K$。易见函数
+\begin{align*}
+\zeta(x)\triangleq 
+\begin{cases}
+\eta(x), & |\eta(x)|\leqslant\|f\|_K,\\
+\|f\|_K\operatorname{sgn}\eta(x), & \text{否则}
+\end{cases}
+\end{align*}
+具有所述性质。证毕。
+\end{proof}
+
+\begin{remark}\label{remark:ch02-Lusin对可测函数}
+由 Lusin 定理，\cref{proposition:ch02-Tietze逼近}对 $\mathscr B(X)$-可测函数也成立。
+\end{remark}
+
+对容量有类似概念与结果。
+
+\begin{definition}\label{definition:ch02-C拟连续}
+设 $(X,d)$ 为度量空间，$\mathscr F\subseteq\mathscr P(X)$ 如\cref{definition:ch01-容量}，$C:\mathscr F\to[0,\infty]$ 为容量。称函数 $f:X\to\mathbb R$ 在 $X$ 上为 $C$-拟连续，若对任意 $\delta>0$，存在子集 $E\subseteq X$ 使 $C(E^c)<\delta$ 且限制 $f|_E$ 连续。
+\end{definition}
+
+\begin{remark}\label{remark:ch02-外容量开集}
+若 $C$ 为外容量，则在\cref{definition:ch02-C拟连续}中不妨设 $E^c$ 为开集。
+\end{remark}
+
+\begin{proposition}\label{proposition:ch02-容量拟连续闭}
+设 $X$ 及 $f,f_n:X\to\mathbb R$（$n\in\mathbb N$）如\cref{definition:ch02-C拟连续}。设每个 $f_n$ 为 $C$-拟连续，且 $f_n\to f$ 依容量。则 $f$ 为 $C$-拟连续。
+\end{proposition}
+
+\begin{proof}
+由假设，对每个 $\delta>0$ 与每个 $n\in\mathbb N$，存在子集 $E_n\subseteq X$ 使 $C(E_n^c)<\delta/2^{n+1}$ 且限制 $f_n|_{E_n}$ 连续。令 $E\triangleq \bigcap_{n=1}^\infty E_n$。则 $C(E^c)\leqslant\sum_{n=1}^\infty C(E_n^c)\leqslant\delta/2$，且对每个 $n$，$f_n|_E$ 连续。此外由\cref{proposition:ch02-容量收敛关系}(ii)，存在 $\{f_{n_k}\}\subseteq\{f_n\}$ 与 $F\subseteq X$ 使 $C(F^c)<\delta/2$ 且 $f_{n_k}\to f$ 在 $F$ 上一致。令 $G\triangleq E\cap F$；则 $C(G^c)\leqslant C(E^c)+C(F^c)<\delta$。此外，对每个 $n_k$，$f_{n_k}|_G$ 连续，且 $f_{n_k}\to f$ 在 $G$ 上一致，故 $f|_G$ 连续。证毕。
+\end{proof}
+
+
+
+
+\end{document}

@@ -1,0 +1,253 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{空间 $L^p(X;Y)$、$L^p_w(X;Y)$ 与 $L^p_{w^*}(X;Y^*)$}\label{section:ch04-Lp空间}
+
+\subsection{定义与一般性质}\label{subsection:ch04-Lp定义}
+
+设 $(X,\mathcal{A},\mu)$ 为测度空间，$Y$ 为赋范数 $\|\cdot\|_Y$ 的 Banach 空间，$Y^*$ 为 $Y$ 的赋范数 $\|\cdot\|_{Y^*}$ 的对偶空间。设 $f:X\to Y$，$\|f\|_Y:X\to[0,\infty)$，$\|f\|_Y(x)\triangleq \|f(x)\|_Y$。对任意 $p\in[1,\infty]$，定义
+\begin{align*}
+L^p(X;Y)&\triangleq \{f:X\to Y\ \mu\text{-可测}\mid \|f\|_Y\in L^p(X)\};\\
+L^p_w(X;Y)&\triangleq \{f:X\to Y\ \text{弱可测}\mid \|f\|_Y\in L^p(X)\};\\
+L^p_{w^*}(X;Y^*)&\triangleq \{f:X\to Y^*\ \text{弱}^*\text{可测}\mid \|f\|_{Y^*}\in L^p(X)\}.
+\end{align*}
+必要时将使用扩充记号 $L^p(X,\mathcal{A},\mu;Y)\equiv L^p(X;Y)$，以及 $L^p_w(X,\mathcal{A},\mu;Y)$、$L^p_{w^*}(X,\mathcal{A},\mu;Y^*)$。我们还令 $L^p(X)\equiv L^p(X;\mathbb{R})$。
+
+\begin{remark}\label{remark:ch04-Lp包含}
+(i) 集 $L^p(X;Y)$、$L^p_w(X;Y)$ 与 $L^p_{w^*}(X;Y^*)$ 是向量空间。由\cref{remark:ch04-弱可测注}(i) 有 $L^p(X;Y)\subseteq L^p_w(X;Y)$；若 $\mu$ 为 $\sigma$-有限且 $Y$ 可分，则等号成立（见\cref{theorem:ch04-Pettis}）。类似地，由\cref{remark:ch04-弱可测注}(ii) 有 $L^p(X;Y^*)\subseteq L^p_w(X;Y^*)\subseteq L^p_{w^*}(X;Y^*)$；若 $\mu$ 为 $\sigma$-有限且 $Y^*$ 可分，则等号成立（见\cref{proposition:ch04-弱星等价}）。
+
+(ii) $L^p(X;Y)$ 与 $L^p_w(X;Y)$ 的定义要求映射 $x\mapsto\|f(x)\|_Y$ 可测。这由 $f$ 的 $\mu$-可测性保证（见\cref{remark:ch04-mu可测注}(iii)），或当 $Y$ 可分时由 $f:X\to Y$ 的弱可测性保证（见\cref{proposition:ch04-范数可测弱}(i)）。类似地，$L^p_{w^*}(X;Y^*)$ 的定义要求映射 $x\mapsto\|f(x)\|_{Y^*}$ 可测；当 $Y$ 可分时，这由 $f:X\to Y^*$ 的弱$^*$可测性保证（见\cref{proposition:ch04-弱星范数可测}与\cref{proposition:ch04-范数可测弱}(ii)）。
+\end{remark}
+
+\begin{remark}\label{remark:ch04-标量嵌入}
+设 $p\in[1,\infty]$，固定 $\bar y\in Y$ 使 $\|\bar y\|_Y=1$。易见映射 $T:L^p(X)\to L^p(X;Y)$，$Tf\triangleq f\bar y$（$f\in L^p(X)$），是 $L^p(X;Y)$ 到其像的等距同构。故实值函数的 Lebesgue 空间 $L^p(X)$ 嵌入 $L^p(X;Y)$。
+\end{remark}
+
+\begin{remark}\label{remark:ch04-区域Lp}
+(i) 设 $U\subseteq\mathbb{R}^N$ 为开集。考虑 Borel $\sigma$-代数 $\mathcal{B}_N\equiv\mathcal{B}(\mathbb{R}^N)$ 在 $U$ 上的迹 $\mathcal{B}_N\cap U$ 及诱导 Lebesgue 测度 $\lambda_N|_{\mathcal{B}_N\cap U}$。推广\cref{remark:ch02-Lp局部}，令 $L^p(U;Y)\equiv L^p(U,\mathcal{B}_N\cap U,\lambda_N|_{\mathcal{B}_N\cap U};Y)$（$L^p_w(U;Y)$ 与 $L^p_{w^*}(U;Y^*)$ 类似）。若对每个开子集 $V\Subset U$ 有 $f\in L^p(V,\mathcal{B}_N\cap V,\mu|_{\mathcal{B}_N\cap V})$，则称 $f\in L^p_{\mathrm{loc}}(U;Y)$。
+
+(ii) 若 $f\in L^1_{\mathrm{loc}}(U;Y)$，则映射 $\mu:\mathcal{B}_N\cap U\to Y$，$\mu(E)\triangleq \int_E f\,\mathrm{d}x$（对任意 Borel 子集 $E\subseteq U$），是一个向量测度（见\cref{proposition:ch04-积分诱导向量测度}）。
+\end{remark}
+
+设 $f:X\to Y$，$\|f\|_Y:X\to[0,\infty)$ 可测。令
+\begin{align}
+\|f\|_p\triangleq \Big(\int_X\|f\|_Y^p\,\mathrm{d}\mu\Big)^{1/p}\quad\text{若 }p\in[1,\infty), \label{align:ch04-4.65a}
+\end{align}
+\begin{align}
+\|f\|_\infty\triangleq \operatorname*{ess\,sup}\|f\|_Y. \label{align:ch04-4.65b}
+\end{align}
+类似地，对任意 $f:X\to Y^*$，$\|f\|_{Y^*}:X\to[0,\infty)$ 可测，令
+\begin{align}
+\|f\|_p^*\triangleq \Big(\int_X\|f\|_{Y^*}^p\,\mathrm{d}\mu\Big)^{1/p}\quad\text{若 }p\in[1,\infty), \label{align:ch04-4.66a}
+\end{align}
+\begin{align}
+\|f\|_\infty^*\triangleq \operatorname*{ess\,sup}\|f\|_{Y^*}. \label{align:ch04-4.66b}
+\end{align}
+映射 $f\mapsto\|f\|_p$ 是 $L^p(X;Y)$ 与 $L^p_w(X;Y)$ 上的半范数，映射 $f\mapsto\|f\|_p^*$ 是 $L^p_{w^*}(X;Y^*)$ 上的半范数（$p\in[1,\infty]$）。与 $Y=\mathbb{R}$ 时一样，我们把在 $X$ 中 $\mu$-几乎处处相等的函数等同起来。于是 $L^p(X;Y)$ 与 $L^p_w(X;Y)$ 是赋范空间，范数为 $\|\cdot\|_p$；$L^p_{w^*}(X;Y^*)$ 是赋范空间，范数为 $\|\cdot\|_p^*$。
+
+\begin{definition}[向量 Lebesgue 空间]\label{definition:ch04-向量Lebesgue}
+设 $p\in[1,\infty]$。赋范空间 $L^p(X;Y)$、$L^p_w(X;Y)$ 与 $L^p_{w^*}(X;Y^*)$ 称为向量 Lebesgue 空间。
+\end{definition}
+
+若不致混淆，向量 Lebesgue 空间简称为“Lebesgue 空间”。
+
+\begin{remark}\label{remark:ch04-Lp闭子空间}
+若 $\mu$ 为 $\sigma$-有限，则 $L^p(X;Y)$ 是 $L^p_w(X;Y)$ 的闭子空间（$p\in[1,\infty]$；见\cref{remark:ch04-Lp包含}(i)）。事实上，设 $\{f_n\}\subseteq L^p(X;Y)$，$f\in L^p_w(X;Y)$，且当 $n\to\infty$ 时 $\|f_n-f\|_p\to0$。则实值函数列 $g_n\triangleq \|f_n-f\|_Y$ 当 $n\to\infty$ 时在 $L^p(X)$ 中收敛于 $0$，故存在子列 $\{g_{n_k}\}\subseteq\{g_n\}$ 使当 $k\to\infty$ 时 $g_{n_k}(x)=\|f_{n_k}(x)-f(x)\|_Y\to0$，对 $\mu$-几乎所有 $x\in X$。由于每个 $f_{n_k}$ 为 $\mu$-可测，由\cref{proposition:ch04-mu逐点极限} $f$ 亦为 $\mu$-可测，从而 $f\in L^p(X;Y)$。
+\end{remark}
+
+\begin{proposition}\label{proposition:ch04-Lp包含阶}
+设 $\mu$ 有限，$1\leqslant p<r\leqslant\infty$。则 $L^r(X;Y)\subseteq L^p(X;Y)$。类似地，$L^r_w(X;Y)\subseteq L^p_w(X;Y)$，$L^r_{w^*}(X;Y^*)\subseteq L^p_{w^*}(X;Y^*)$。
+\end{proposition}
+
+\begin{proof}
+若 $r=\infty$，则由不等式 $\|f\|_p\leqslant[\mu(X)]^{1/p}\|f\|_\infty$ 得结论。若 $r\in[1,\infty)$，则由 Hölder 不等式有 $\|f\|_p\leqslant[\mu(X)]^{(r-p)/(pr)}\|f\|_r$。故结论成立。
+\end{proof}
+
+\begin{theorem}\label{theorem:ch04-Lp完备}
+设 $p\in[1,\infty]$。则 $L^p(X;Y)$ 是 Banach 空间。
+\end{theorem}
+
+\begin{proof}
+我们只证 $p\in[1,\infty)$ 的情形；$p=\infty$ 的证明与 $Y=\mathbb{R}$ 时相同，把 $\mathbb{R}$ 中的绝对值替换为范数 $\|\cdot\|_Y$，并利用\cref{proposition:ch04-mu逐点极限}。
+
+设 $\{f_k\}\subseteq L^p(X;Y)$ 满足 $\sum_{k=1}^\infty\|f_k\|_p=:M<\infty$，令 $S_n\triangleq \sum_{k=1}^n f_k$（$n\in\mathbb{N}$）。由 Banach 空间的一个熟知刻画（例如见文献 [66, 定理 8.1]），只需证明存在 $S\in L^p(X;Y)$ 使 $\lim_{n\to\infty}\|S_n-S\|_p=0$。
+
+对所有 $n\in\mathbb{N}$ 与 $\mu$-几乎所有 $x\in X$，定义 $F_n:X\to[0,\infty]$，$F_n(x)\triangleq \sum_{k=1}^n\|f_k(x)\|_Y$。于是由\cref{remark:ch04-mu可测注}(iii)与\cref{corollary:ch02-逐点极限}，$F_n$ 为 $\mathcal{A}$-可测，且
+\begin{align*}
+\|F_n\|_{L^p(X)}\leqslant\sum_{k=1}^n\|f_k\|_p\leqslant M\quad(n\in\mathbb{N}).
+\end{align*}
+于是由\cref{corollary:ch02-逐点极限}（另见\cref{remark:ch02-几乎处处}），函数 $F:X\to[0,\infty]$，
+\begin{align*}
+F(x)\triangleq \lim_{n\to\infty}F_n(x)=\sum_{k=1}^\infty\|f_k(x)\|_Y,
+\end{align*}
+为 $\mathcal{A}$-可测，且由 Fatou 引理有
+\begin{align}
+\int_X F^p\,\mathrm{d}\mu\leqslant\liminf_{n\to\infty}\int_X(F_n)^p\,\mathrm{d}\mu=\liminf_{n\to\infty}\|F_n\|_{L^p(X)}^p\leqslant M^p<\infty. \label{align:ch04-4.67}
+\end{align}
+由\eqref{align:ch04-4.67}，函数 $F$ 在 $X$ 中 $\mu$-几乎处处有限，即级数 $\sum_{k=1}^\infty\|f_k(x)\|_Y$ 对 $\mu$-几乎所有 $x\in X$ 收敛。因此，对 $\mu$-几乎所有 $x\in X$ 与任意 $\epsilon>0$，存在 $\bar n\in\mathbb{N}$，使对所有 $n>\bar n$ 与 $p\in\mathbb{N}$，
+\begin{align*}
+\|S_{n+p}(x)-S_n(x)\|_Y=\Big\|\sum_{k=n+1}^{n+p}f_k(x)\Big\|_Y\leqslant\sum_{k=n+1}^{n+p}\|f_k(x)\|_Y<\epsilon.
+\end{align*}
+故对 $\mu$-几乎所有 $x\in X$，$\{S_n(x)\}\subseteq Y$（$n\in\mathbb{N}$）是 Cauchy 序列。由于 $Y$ 是 Banach 空间，这蕴含对 $\mu$-几乎所有 $x\in X$，$\lim_{n\to\infty}S_n(x)\in Y$ 存在。定义
+\begin{align}
+S:X\to Y,\quad S(x)\triangleq \lim_{n\to\infty}S_n(x)\quad(\text{对 }\mu\text{-几乎所有 }x\in X). \label{align:ch04-4.68}
+\end{align}
+则由\cref{proposition:ch04-mu逐点极限} $S$ 为 $\mu$-可测。此外，对 $\mu$-几乎所有 $x\in X$，
+\begin{align}
+\|S(x)\|_Y=\lim_{n\to\infty}\|S_n(x)\|_Y\leqslant\lim_{n\to\infty}F_n(x)=F(x). \label{align:ch04-4.69}
+\end{align}
+由\eqref{align:ch04-4.67}与\eqref{align:ch04-4.69}，$S\in L^p(X;Y)$。此外，由 Fatou 引理，
+\begin{align}
+\|S_n-S\|_p^p&=\int_X\|S_n(x)-S(x)\|_Y^p\,\mathrm{d}\mu
+\leqslant\liminf_{m\to\infty}\int_X\Big\|\sum_{k=n+1}^m f_k(x)\Big\|_Y^p\,\mathrm{d}\mu\nonumber\\
+&\leqslant\liminf_{m\to\infty}\int_X\Big(\sum_{k=n+1}^m\|f_k(x)\|_Y\Big)^p\,\mathrm{d}\mu
+\leqslant\int_X\Big(\sum_{k=n+1}^\infty\|f_k(x)\|_Y\Big)^p\,\mathrm{d}\mu\nonumber\\
+&=\int_X[F(x)-F_n(x)]^p\,\mathrm{d}\mu\quad(n\in\mathbb{N}). \label{align:ch04-4.70}
+\end{align}
+由\eqref{align:ch04-4.67}与控制收敛定理，在上式中令 $n\to\infty$ 即证得结果。
+\end{proof}
+
+\begin{remark}\label{remark:ch04-弱Lp完备}
+设 $p\in[1,\infty]$。由\cref{theorem:ch04-Lp完备}与\cref{remark:ch04-Lp包含}(i)，若 $\mu$ 为 $\sigma$-有限且 $Y$ 可分，则 $L^p_w(X;Y)$ 是 Banach 空间。若 $\mu$ 为 $\sigma$-有限且 $Y^*$ 可分，$L^p_{w^*}(X;Y^*)$ 同样是 Banach 空间。
+\end{remark}
+
+\subsection{连续函数空间}\label{subsection:ch04-连续函数空间}
+
+设 $U\subseteq\mathbb{R}^N$ 为开集。我们记 $C(U;Y)$ 为连续函数 $f:U\to Y$ 的向量空间，$C_b(U;Y)\subseteq L^\infty(U;Y)$ 为有界连续函数的闭子空间。令 $C(U;\mathbb{R})\equiv C(U)$，其子空间类似。
+
+\begin{definition}[Hölder 空间]\label{definition:ch04-Holder}
+设 $U\subseteq\mathbb{R}^N$ 为开集，$\alpha\in(0,1)$。指数为 $\alpha$ 的 Hölder 函数空间为
+\begin{align*}
+C^\alpha(U;Y)\triangleq \Big\{f:U\to Y\ \Big|\ \exists C>0\text{ 使 }\|f(x)-f(y)\|_Y\leqslant C|x-y|^\alpha\ \forall x,y\in U\Big\}.
+\end{align*}
+每个 Hölder 函数一致连续，从而在 $U$ 上有界。$C^\alpha(U;Y)$ 赋以范数
+\begin{align*}
+f\mapsto\|f\|_{C^{0,\alpha}(U;Y)}\triangleq \|f\|_\infty+\sup_{\substack{x,y\in U\\x\neq y}}\frac{\|f(x)-f(y)\|_Y}{|x-y|^\alpha}
+\end{align*}
+后为 Banach 空间。形式上，取 $\alpha=1$，我们得到 Lipschitz 连续函数 $f:U\to Y$ 的 Banach 空间，赋以范数
+\begin{align*}
+f\mapsto\|f\|_{\mathrm{Lip}(U;Y)}\triangleq \|f\|_\infty+\sup_{\substack{x,y\in U\\x\neq y}}\frac{\|f(x)-f(y)\|_Y}{|x-y|}.
+\end{align*}
+若 $U$ 有界，则对任意 $0<\alpha<\beta<1$，
+\begin{align*}
+\mathrm{Lip}(U;Y)\hookrightarrow C^\beta(U;Y)\hookrightarrow C^\alpha(U;Y)\hookrightarrow C_b(U;Y).
+\end{align*}
+\end{definition}
+
+对任意 $m\in\mathbb{N}$，我们记 $C^m(U;Y)$ 为映射 $f:U\to Y$ 在 $U$ 中 $m$ 次 Fréchet 可微的向量空间。$f$ 在任一点 $x_0\in U$ 处的 $m$ 阶 Fréchet 导数 $f^{(m)}(x_0)$ 是
+\begin{align*}
+\mathcal{L}\big(U;\mathcal{L}(U;\cdots \mathcal{L}(U;Y)\cdots )\big)
+\end{align*}
+（共 $m-1$ 重）$\cong\mathcal{L}^m(U;Y)$ 中的元素，其中 $\mathcal{L}^m(U;Y)$ 表示从 $U^m$ 到 $Y$ 的线性连续映射空间。对任意 $m\in\mathbb{N}$，$\mathcal{L}^m(U;Y)$ 与 $Y$ 之间有自然等距，故 $f^{(m)}:U\to\mathcal{L}^m(U;Y)$ 可等同于从 $U$ 到 $Y$ 的映射。我们记
+\begin{align*}
+D^\alpha f\equiv\frac{\partial^{|\alpha|}f}{\partial^{\alpha_1}x_1\cdots\partial^{\alpha_n}x_n}
+\end{align*}
+（$\alpha\equiv(\alpha_1,\cdots ,\alpha_n)$，$\alpha_k$ 为整数，$|\alpha|\triangleq \sum_{k=1}^N\alpha_k$）为 $f$ 的任一 $|\alpha|$ 阶偏导数，从而对任意 $x_0\in U$ 有 $D^\alpha f(x_0)\in Y$。我们令 $D^0f\equiv f$，$C^0(U;Y)\equiv C(U;Y)$，$C^\infty(U;Y)\triangleq \bigcap_{m=0}^\infty C^m(U;Y)$，$C_c^\infty(U;Y)\triangleq C^\infty(U;Y)\cap C_c(U;Y)$。空间 $C^m(U;Y)$ 是 Banach 空间，范数为
+\begin{align*}
+\|f\|_{C^m(U;Y)}\triangleq \sum_{|\alpha|\leqslant m}\|D^\alpha f\|_\infty.
+\end{align*}
+
+\subsection{收敛定理}\label{subsection:ch04-收敛定理}
+
+以下概念与结果推广了\cref{subsection:ch02-一致可积}中的部分内容。其证明是 $Y=\mathbb{R}$ 情形证明的简单修改，故从略。
+
+\begin{definition}[$p$-一致可积]\label{definition:ch04-p一致可积}
+设 $p\in[1,\infty)$。子集 $\mathcal{F}\subseteq L^p(X;Y)$ 称为 $p$-一致可积的，若对任意 $\epsilon>0$：
+\begin{enumerate}[(i)]
+\item\label{item:ch04-p一致可积-i} 存在 $E\in\mathcal{A}$ 使 $\mu(E)<\infty$，且 $\sup_{f\in\mathcal{F}}\int_{E^c}\|f\|_Y^p\,\mathrm{d}\mu<\epsilon$；
+\item\label{item:ch04-p一致可积-ii} 存在 $\delta>0$，使对所有满足 $\mu(F)<\delta$ 的 $F\in\mathcal{A}$，有 $\sup_{f\in\mathcal{F}}\int_F\|f\|_Y^p\,\mathrm{d}\mu<\epsilon$。
+\end{enumerate}
+我们说 $\mathcal{F}\subseteq L^1(X;Y)$ 一致可积，若它是 $1$-一致可积的。
+\end{definition}
+
+\begin{remark}\label{remark:ch04-p一致可积}
+\cref{definition:ch04-p一致可积} 等价于要求集合 $\widetilde{\mathcal{F}}\triangleq \{\|f\|_Y\mid f\in\mathcal{F}\}\subseteq L^p(X)$ 是 $p$-一致可积的。故\cref{proposition:ch02-一致可积判据}给出的一致可积判据可用于本情形。
+\end{remark}
+
+\begin{theorem}[Vitali]\label{theorem:ch04-Vitali}
+设 $p\in[1,\infty)$。设 $\{f_n\}\subseteq L^p(X;Y)$ 为在 $X$ 中 $\mu$-几乎处处收敛于某函数 $f:X\to Y$ 的序列。则下列命题等价：
+\begin{enumerate}[(i)]
+\item\label{item:ch04-Vitali-i} $f\in L^p(X;Y)$ 且 $f_n\to f$ 在 $L^p(X;Y)$ 中；
+\item\label{item:ch04-Vitali-ii} 序列 $\{f_n\}$ 是 $p$-一致可积的。
+\end{enumerate}
+\end{theorem}
+
+\begin{theorem}[控制收敛定理]\label{theorem:ch04-控制收敛}
+设 $p\in[1,\infty)$。设 $\{f_n\}\subseteq L^p(X;Y)$ 为在 $X$ 中 $\mu$-几乎处处收敛于某函数 $f:X\to Y$ 的序列。设存在 $g\in L^p(X)$，使对所有 $n\in\mathbb{N}$ 有 $\|f_n\|_Y\leqslant g$ 在 $X$ 中 $\mu$-几乎处处成立。则 $f_n\to f$ 在 $L^p(X;Y)$ 中。
+\end{theorem}
+
+\begin{corollary}\label{corollary:ch04-有界收敛}
+设 $\mu(X)<\infty$，$1\leqslant p<r<\infty$。设 $\{f_n\}\subseteq L^r(X;Y)$ 为有界序列，在 $X$ 中 $\mu$-几乎处处收敛于某函数 $f:X\to Y$。则 $f_n\to f$ 在 $L^p(X;Y)$ 中。
+\end{corollary}
+
+\subsection{逼近结果与可分性}\label{subsection:ch04-逼近可分}
+
+\begin{proposition}\label{proposition:ch04-简单函数稠密}\label{proposition:ch04-稠密}
+设 $p\in[1,\infty)$。
+\begin{enumerate}[(i)]
+\item\label{item:ch04-简单函数稠密-i} 简单函数的集合 $\mathcal{S}(X;Y)$ 在 $L^p(X;Y)$ 中稠密。
+\item\label{item:ch04-简单函数稠密-ii} 设 $X$ 为 $\sigma$-紧 Hausdorff 空间，$\mu\in\mathcal{R}^+(X)$。若 $D\subseteq Y$ 在 $Y$ 中稠密，则集合
+\begin{align}
+\mathcal{E}_D(X;Y)\triangleq \Big\{\sum_{j=1}^m y_jg_j\ \Big|\ y_j\in D,\ g_j\in C_c(X),\ m\in\mathbb{N}\Big\} \label{align:ch04-4.71}
+\end{align}
+在 $L^p(X;Y)$ 中稠密。
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(i) 设 $f\in L^p(X;Y)$。由定义，存在 $\{s_n\}\subseteq\mathcal{S}(X;Y)$ 使对 $\mu$-几乎所有 $x\in X$ 有 $\lim_{n\to\infty}\|s_n(x)-f(x)\|_Y=0$。令 $t_n\triangleq s_n\chi_{E_n}$，其中 $E_n\triangleq \{x\in X\mid\|s_n(x)\|_Y\leqslant2\|f(x)\|_Y\}$（$n\in\mathbb{N}$）。则对 $\mu$-几乎所有 $x\in X$ 有 $\lim_{n\to\infty}\|t_n(x)-f(x)\|_Y=0$，且 $\|t_n-f\|_Y\leqslant3\|f\|_Y\in L^p(X)$，故由控制收敛定理 $\lim_{n\to\infty}\int_X\|t_n-f\|_Y^p\,\mathrm{d}\mu=0$。故断言 (i) 成立。
+
+(ii) 由 (i)，只需证明对任意 $s\in\mathcal{S}(X;Y)$，存在序列 $\{f_n\}\subseteq\mathcal{E}_D(X;Y)$ 在 $L^p(X;Y)$ 中收敛于 $s$。若我们证明：对所有 $E\in\mathcal{B}(X)$ 与 $y\in Y$，$y\chi_E$ 可由 $\mathcal{E}_D(X;Y)$ 中的元素在 $L^p(X;Y)$ 中逼近，则上式成立。此外，由于 $\mu$ 为 $\sigma$-有限，只需设 $\mu(E)<\infty$。
+
+取 $E\in\mathcal{B}(X)$，$\mu(E)<\infty$，固定 $y\in Y$。由\cref{lemma:ch02-稠密逼近}存在 $\{g_n\}\subseteq C_c(X)$ 使 $g_n\to\chi_E$ 在 $L^p(X)$ 中。此外，由 $D$ 在 $Y$ 中的稠密性，存在 $\{y_n\}\subseteq D$ 使 $\|y_n-y\|_Y\to0$。于是对充分大的 $n\in\mathbb{N}$，
+\begin{align*}
+\|y_ng_n-y\chi_E\|_p\leqslant\|(y_n-y)\chi_E\|_p+\|y_n(g_n-\chi_E)\|_p
+\leqslant\|y_n-y\|_Y[\mu(E)]^{1/p}+2\|y\|_Y\|g_n-\chi_E\|_{L^p(X)}.
+\end{align*}
+在上式中令 $n\to\infty$，即得结论。
+\end{proof}
+
+\begin{theorem}\label{theorem:ch04-Lp可分}
+\label{theorem:ch04-可分}
+设 $X$ 为 $\sigma$-紧 Hausdorff 空间，$\mu\in\mathcal{R}^+(X)$，$Y$ 可分。则对每个 $p\in[1,\infty)$，空间 $L^p(X;Y)$ 可分。
+\end{theorem}
+
+\begin{proof}
+由假设，存在非紧降紧子集列 $K_n$ 使 $X=\bigcup_{n=1}^\infty K_n$。由控制收敛定理，对任意 $f\in L^p(X;Y)$，序列 $\{f\chi_{K_n}\}$ 在 $L^p(X;Y)$ 中收敛于 $f$。故只需证 $X$ 紧时的结果。
+
+设 $X$ 紧。由假设，存在 $D\subseteq Y$ 可数且稠密；由\cref{proposition:ch04-简单函数稠密}，相应集合 $\mathcal{E}_D(X;Y)$（见\eqref{align:ch04-4.71}）在 $L^p(X;Y)$ 中稠密。另一方面，由 Stone--Weierstrass 定理，可数集
+\begin{align*}
+\widehat{\mathcal{E}}_D(X;Y)\triangleq \Big\{\sum_{j=1}^m y_jp_{j,k}\ \Big|\ y_j\in D,\ p_{j,k}\text{ 为有理系数多项式};\ k,m\in\mathbb{N}\Big\}
+\end{align*}
+在 $\|\cdot\|_\infty$ 范数下于 $\mathcal{E}_D(X;Y)$ 中稠密，从而因 $\mu(X)<\infty$，对所有 $p\in[1,\infty)$ 在 $L^p(X;Y)$ 中稠密。故结论成立。
+\end{proof}
+
+\begin{remark}\label{remark:ch04-L无穷不可分}
+众所周知 $L^\infty(X)$ 不可分，故由\cref{remark:ch04-标量嵌入}，$L^\infty(X;Y)$ 同样不可分。
+\end{remark}
+
+利用 $\mathcal{S}(X;Y)$ 在 $L^1(X;Y)$ 中的稠密性（见\cref{proposition:ch04-简单函数稠密}(i)），我们可证明\cref{lemma:ch02-像测度}的如下推广。证明相同，故从略。
+
+\begin{proposition}[变量替换公式]\label{proposition:ch04-像测度积分}
+设 $(X,\mathcal{A},\mu)$ 为测度空间，$Y$ 为 Banach 空间。设 $(X',\mathcal{A}')$ 为可测空间，$f:X\to X'$ 为 $(\mathcal{A},\mathcal{A}')$-可测，$\mu_f:\mathcal{A}'\to\mathbb{R}^+$ 为 $\mu$ 在 $f$ 下的像测度。则对任意 $g\in L^1(X',\mathcal{A}',\mu_f;Y)$，有 $g\circ f\in L^1(X,\mathcal{A},\mu;Y)$，且
+\begin{align}
+\int_F g\,\mathrm{d}\mu_f=\int_{f^{-1}(F)}g\circ f\,\mathrm{d}\mu\quad\text{对所有 }F\in\mathcal{A}'. \label{align:ch04-4.72}
+\end{align}
+\end{proposition}
+
+
+
+
+\end{document}

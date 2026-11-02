@@ -1,0 +1,448 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{唯一性}\label{section:ch07-唯一性}
+
+本节考虑 $\phi$ 有界的情形（$\phi$ 无界时的唯一性结果见\cref{remark:ch07-7.3.1}）。
+
+对 (P) 的解 $u$，定义等待时间 $t_0\in[0,T]$：
+\begin{align}
+t_0\triangleq \inf\{\tau\in(0,T]\mid u_s(\cdot,t)=0,\ u_r(\cdot,t)\in L^\infty(\mathbb{R})
+\text{ 对几乎所有 }t\in(\tau,T)\}. \label{align:ch07-7.18}
+\end{align}
+
+\begin{proposition}\label{proposition:ch07-7.2.1}
+设 $\phi$ 有界，(A0)--(A1) 成立。设对某 $x_0\in\mathbb{R}$ 有 $u_{0s}(\{x_0\})>0$，$u$ 为问题 (P) 的解。则由\eqref{align:ch07-7.18}定义的等待时间 $t_0$ 满足
+\begin{align}
+t_0\geqslant\min\left\{T,\frac{u_{0s}(\{x_0\})}{2\|\phi\|_\infty}\right\}>0. \label{align:ch07-7.19}
+\end{align}
+\end{proposition}
+
+\begin{remark}\label{remark:ch07-7.2.1}
+联系等式\eqref{align:ch07-7.12}，注意若 $u_{0s}\neq0$ 且等待时间 $t_0=0$，则映射 $t\mapsto u(\cdot,t)$ 在 $t=0$ 处不可能在 $\mathscr{R}_f(\mathbb{R})$ 的强拓扑下连续。反之，等待时间为正时强连续性可能成立（见文献~\cite{ref18} 定理 4.1）。
+\end{remark}
+
+等待时间以 $\phi$ 与 $u_0$ 表出的上界由下列命题给出，其证明依赖密度 $u_r$ 的 Aronson--Bénilan 型估计，我们请读者参见文献~\cite{ref18} 定理 3.11(ii)。等待时间的精细估计另见文献~\cite{ref20}。
+
+\begin{proposition}\label{proposition:ch07-7.2.2}
+设 (A0') 与 (A2') 成立，$\phi$ 有界，$\alpha>-1$，$|\beta|<\lim_{y\to\infty}|\phi(y)|=:\gamma$。设 $u$ 为由\cref{theorem:ch07-存在唯一}给出的问题 (P) 的熵解。则由\eqref{align:ch07-7.18}定义的等待时间 $t_0$ 满足
+\begin{align}
+t_0\leqslant\min\left\{T,\frac{(\alpha+1)\|u_0\|_{\mathscr{R}_f(\mathbb{R})}}{\gamma-|\beta|}\right\}. \label{align:ch07-7.20}
+\end{align}
+\end{proposition}
+
+\begin{remark}\label{remark:ch07-7.2.2}
+若 $\phi(y)=1-(1+y)^p$（$p<0$），则由\cref{proposition:intro-0.2.4}的证明可知\eqref{align:ch07-7.18}定义的等待时间为 $t_0=1$。故此情形下估计\eqref{align:ch07-7.20}是精确的，因 (A2') 在 $\alpha=p/(1-p)$、$\beta=-p/(1-p)$ 下成立，从而
+\begin{align*}
+\frac{(\alpha+1)\|\delta_0\|_{\mathscr{R}_f(\mathbb{R})}}{\gamma-|\beta|}
+=\frac{(p/(1-p)+1)\|\delta_0\|_{\mathscr{R}_f(\mathbb{R})}}{1+p/(1-p)}=1.
+\end{align*}
+\end{remark}
+
+借助\cref{proposition:ch07-7.1.2}与\cref{proposition:ch07-7.2.1}（其证明在\cref{section:ch07-正则证明}中给出），现在可处理唯一性。设 (A0') 与 (A1) 成立（后者中 $\phi$ 有界）。则 $u_{0s}=\sum_{j=1}^p c_j\delta_{x_j}$，置
+\begin{align*}
+I_1\triangleq (-\infty,x_1),\qquad I_j\triangleq (x_{j-1},x_j)\ (j=2,\cdots ,p),\qquad I_{p+1}\triangleq (x_p,\infty),
+\end{align*}
+及 $S_j\triangleq I_j\times(0,T)$（$j=1,\cdots ,p+1$）。由\cref{proposition:ch07-7.2.1}，若 $u$ 为问题 (P) 的解，则
+\begin{align*}
+\forall x_j\ \exists t_j\in(0,T]\ \text{使得}\ 
+\begin{cases}
+u_s(\cdot,t)(\{x_j\})>0 & \text{对几乎所有 }t\in[0,t_j),\\
+u_s(\cdot,t)(\{x_j\})=0 & \text{对几乎所有 }t\in(t_j,T).
+\end{cases}
+\end{align*}
+于是可陈述如下定义。
+
+\begin{definition}\label{definition:ch07-相容条件}
+设 $\phi$ 有界，(A0')--(A1) 成立，$j=1,\cdots ,p$，$\tau\in(0,t_j]$。(P) 的熵解称为在 $[0,\tau]$ 上于 $x_j$ 处满足相容条件，若对所有 $\beta\in C^1_c(0,\tau)$、$\beta\geqslant0$ 及 $l\in[0,\infty)$，
+\begin{align*}
+\pm\operatorname*{ess\,lim}_{x\to x_j^\pm}\int_0^\tau H_-(u_r(x,t)-l)[\phi(u_r(x,t))-\phi(l)]\beta(t)\,\mathrm{d}t\leqslant0. \qquad(C^\pm)
+\end{align*}
+\end{definition}
+
+下列引理表明\cref{definition:ch07-相容条件}是适定的。
+
+\begin{lemma}\label{lemma:ch07-7.2.3}
+设 $u$ 为 (P) 的熵上解，$\beta\in C^1_c(0,T)$，$\beta\geqslant0$。则：
+\begin{enumerate}[(i)]
+\item 对每个 $l\in[0,\infty)$，函数
+\begin{align}
+x\mapsto-\int_0^T H_-(u_r(x,t)-l)[\phi(u_r(x,t))-\phi(l)]\beta(t)\,\mathrm{d}t+lT\|\beta'\|_\infty x \label{align:ch07-7.21}
+\end{align}
+的分布导数非负；
+\item 对一切 $x_0\in\mathbb{R}$ 与 $l\in[0,\infty)$，存在有限极限
+\begin{align}
+\operatorname*{ess\,lim}_{x\to x_0^\pm}\int_0^T H_-(u_r(x,t)-l)[\phi(u_r(x,t))-\phi(l)]\beta(t)\,\mathrm{d}t. \label{align:ch07-7.22}
+\end{align}
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+设 $\alpha\in C^1_c(\mathbb{R})$，$\alpha\geqslant0$。在\eqref{align:ch07-7.10}中取 $Q_\tau=S$、$\zeta(x,t)=\alpha(x)\beta(t)$，得
+\begin{align*}
+\iint_S\{[u_r(x,t)-l]_-\alpha(x)\beta'(t)+H_-(u_r(x,t)-l)[\phi(u_r(x,t))-\phi(l)]\alpha'(x)\beta(t)\}\,\mathrm{d}x\,\mathrm{d}t\geqslant0.
+\end{align*}
+因 $0\leqslant[u_r-l]_-\leqslant l$，由上式得
+\begin{align*}
+-\int_{\mathbb{R}}\left(\int_0^T H_-(u_r(x,t)-l)[\phi(u_r(x,t))-\phi(l)]\beta(t)\,\mathrm{d}t\right)\alpha'(x)\,\mathrm{d}x
+\leqslant lT\|\beta'\|_\infty\int_{\mathbb{R}}\alpha(x)\,\mathrm{d}x,
+\end{align*}
+由此得 (i)。
+
+故函数\eqref{align:ch07-7.21}的分布导数为 Radon 测度。显然，$L^1_{\mathrm{loc}}(\mathbb{R})$ 中函数
+\begin{align*}
+\widetilde H(x)\triangleq -\int_0^T H_-(u_r(x,t)-l)[\phi(u_r(x,t))-\phi(l)]\beta(t)\,\mathrm{d}t
+\end{align*}
+的分布导数（记为 $\mu$）亦然。固定 $\bar x\in\mathbb{R}$，当 $x\geqslant\bar x$ 时置 $f_\mu(x)\triangleq \mu((\bar x,x])$，当 $x<\bar x$ 时置 $f_\mu(x)\triangleq -\mu((x,\bar x])$。则 $f_\mu$ 右连续，且在每个紧集 $K\subset\mathbb{R}$ 上（至多差一个可能依赖于 $K$ 的常数）与 $\widetilde H$ 几乎处处相等（例如见文献~\cite{ref05} 定理 3.28）。结论得证。
+\end{proof}
+
+现可陈述唯一性结果。
+
+\begin{theorem}\label{theorem:ch07-唯一性}
+设 $\phi$ 有界，(A0')--(A1) 成立。则问题 (P) 至多存在一个熵解，它属于 $C([0,T];\mathscr{R}_f^+(\mathbb{R}))$，且对所有 $j=1,\cdots ,p$ 在 $[0,t_j]$ 上于每个 $x_j$ 处满足相容条件。
+\end{theorem}
+
+为证\cref{theorem:ch07-唯一性}，需要若干引理。
+
+\begin{lemma}\label{lemma:ch07-7.2.5}
+设 $\phi$ 有界，(A0')--(A1) 成立，$u$ 为 (P) 的熵解。则对所有 $\beta\in C^1_c(0,T)$、$\beta\geqslant0$、$l\in[0,\infty)$ 及 $j=1,\cdots ,p$，存在有限极限
+\begin{align}
+\operatorname*{ess\,lim}_{x\to x_j^\pm}\int_0^T\operatorname{sgn}(u_r(x,t)-l)[\phi(u_r(x,t))-\phi(l)]\beta(t)\,\mathrm{d}t. \label{align:ch07-7.23}
+\end{align}
+\end{lemma}
+
+\begin{proof}
+只证右极限，左极限类似。固定 $j=1,\cdots ,p$。由\cref{proposition:ch07-7.1.2}，(P) 每个熵解的奇异部分关于时间非增，故由 (A0') 知对所有 $t\in[0,T]$ 有 $u_s(\cdot,t)(I_{j+1})=0$。设 $\alpha\in C^1_c(I_{j+1})$，$\alpha\geqslant0$。在\eqref{align:ch07-7.8}中取 $Q_\tau=S$、$\zeta(x,t)=\alpha(x)\beta(t)$，得
+\begin{align*}
+\iint_{S_{j+1}}\{|u_r(x,t)-l|\alpha(x)\beta'(t)+\operatorname{sgn}(u_r(x,t)-l)[\phi(u_r(x,t))-\phi(l)]\alpha'(x)\beta(t)\}\,\mathrm{d}x\,\mathrm{d}t\geqslant0.
+\end{align*}
+因 $0\leqslant|u_r-l|\leqslant u_r+l$，有
+\begin{align*}
+\begin{aligned}
+-\int_{I_{j+1}}\alpha'(x)\bigg(&\int_0^T\operatorname{sgn}(u_r(x,t)-l)[\phi(u_r(x,t))-\phi(l)]\beta(t)\,\mathrm{d}t\bigg)\mathrm{d}x\\
+&\leqslant\|\beta'\|_\infty\int_{I_{j+1}}\alpha(x)\left(\int_0^T u_r(x,t)\,\mathrm{d}t+lT\right)\mathrm{d}x.
+\end{aligned}
+\end{align*}
+此不等式表明映射
+\begin{align*}
+x\mapsto-\int_0^T\operatorname{sgn}(u_r(x,t)-l)[\phi(u_r(x,t))-\phi(l)]\beta(t)\,\mathrm{d}t
++\|\beta'\|_\infty\left(\int_0^T\int_{x_j}^x u_r(y,t)\,\mathrm{d}y\,\mathrm{d}t+lTx\right)
+\end{align*}
+在 $I_{j+1}$ 中非负。如\cref{lemma:ch07-7.2.3}证明中那样论证即得结论。
+\end{proof}
+
+\begin{lemma}\label{lemma:ch07-7.2.6}
+设 (A0')--(A1') 成立，$u$ 为 (P) 的熵解。则对每个 $j=1,\cdots ,p$：
+\begin{enumerate}[(i)]
+\item 存在 $h_j^-,h_j^+\in L^\infty(0,T)$，使对所有 $\beta\in C^1_c(0,T)$，
+\begin{align}
+\operatorname*{ess\,lim}_{x\to x_j^\pm}\int_0^T\phi(u_r(x,t))\beta(t)\,\mathrm{d}t
+=\int_0^T h_j^\pm(t)\beta(t)\,\mathrm{d}t; \label{align:ch07-7.24}
+\end{align}
+\item 若 $u$ 在 $[0,\tau]$ 上于 $x_j$ 处满足相容条件 (C$^\pm$)，则
+\begin{align}
+h_j^-\leqslant\liminf_{l\to\infty}\phi(l)\leqslant\limsup_{l\to\infty}\phi(l)\leqslant h_j^+
+\quad\text{在 }(0,\tau)\text{ 中几乎处处}. \label{align:ch07-7.25}
+\end{align}
+\end{enumerate}
+\end{lemma}
+
+\begin{remark}\label{remark:ch07-7.2.3}
+由标准稠密性论证，从\eqref{align:ch07-7.24}得
+\begin{align}
+\operatorname*{ess\,lim}_{x\to x_j^\pm}\int_0^T\phi(u_r(x,t))\zeta(x,t)\,\mathrm{d}t
+=\int_0^T h_j^\pm(t)\zeta(x_j,t)\,\mathrm{d}t \label{align:ch07-7.26}
+\end{align}
+对每个 $\zeta\in L^1(0,T;C_c(U_j))$ 成立，其中 $x_j\in U_j\subseteq\mathbb{R}$，$U_j$ 开。
+\end{remark}
+
+\begin{proof}[证明\cref{lemma:ch07-7.2.6}(i)]
+只证右极限。因对 $y\in\mathbb{R}$ 有 $\operatorname{sgn}y=1+2H_-(y)$，由\eqref{align:ch07-7.22}--\eqref{align:ch07-7.23}，\eqref{align:ch07-7.24}左端极限存在且有限。另一方面，对每个收敛于 $x_j^+$ 的序列 $\{x_n\}$，序列 $\{\phi(u_r(x_n,\cdot))\}$ 在 $L^\infty(0,T)$ 中有界，故存在子列 $\{x_{n_k}\}\subseteq\{x_n\}$ 与函数 $h_j^+\in L^\infty(0,T)$，使
+\begin{align*}
+\{\phi(u_r(x_{n_k},\cdot))\}\stackrel{*}{\rightharpoonup}h_j^+\quad\text{在 }L^\infty(0,T).
+\end{align*}
+因对所有 $\beta\in C^1_c(0,T)$，\eqref{align:ch07-7.24}左端极限存在，由可分性论证易见 $h_j^+$ 与序列 $\{x_n$ 的选取无关。故 (i) 成立。
+
+(ii) 因 $u$ 是 $I_{j+1}\times(0,\tau)$ 中 (P) 的解且 $u_s\llcorner(I_{j+1}\times(0,\tau))=0$，由\eqref{align:ch07-7.7}，对所有 $l\in[0,\infty)$ 与 $\zeta\in C^1([0,\tau];C^1_c(I_{j+1}))$、$\zeta(\cdot,\tau)=0$ 在 $I_{j+1}$ 上，有
+\begin{align*}
+\int_0^\tau\int_{I_{j+1}}\{(u_r-l)\zeta_t+[\phi(u_r)-\phi(l)]\zeta_x\}\,\mathrm{d}x\,\mathrm{d}t
+=-\int_{I_{j+1}}[u_{0r}(x)-l]\zeta(x,0)\,\mathrm{d}x.
+\end{align*}
+令
+\begin{align}
+\eta_\epsilon(x)\triangleq \frac{2(x-x_j)-\epsilon}{\epsilon}\chi_{[x_j+\epsilon/2,\,x_j+\epsilon]}(x)+\chi_{(x_j+\epsilon,\,x_{j+1}]}(x)
+\quad(x\in I_{j+1}), \label{align:ch07-7.27}
+\end{align}
+并取 $\zeta\in C^1([0,\tau];C^1_c([x_j,x_{j+1})))$ 使 $\zeta(\cdot,\tau)=0$ 在 $I_{j+1}$ 上（$j=p$ 时 $x_{j+1}=\infty$）。由标准论证可在上式中取 $\zeta=\zeta\eta_\epsilon$，得
+\begin{align*}
+\begin{aligned}
+\int_0^\tau\int_{I_{j+1}}&\{(u_r-l)\zeta_t\eta_\epsilon+[\phi(u_r)-\phi(l)]\zeta_x\eta_\epsilon\}\,\mathrm{d}x\,\mathrm{d}t
++\int_{I_{j+1}}[u_{0r}(x)-l]\zeta(x,0)\eta_\epsilon(x)\,\mathrm{d}x\\
+&=-\frac{2}{\epsilon}\int_0^\tau\int_{x_j+\epsilon/2}^{x_j+\epsilon}[\phi(u_r)-\phi(l)]\zeta\,\mathrm{d}x\,\mathrm{d}t.
+\end{aligned}
+\end{align*}
+令 $\epsilon\to0^+$，由上式即得（见\eqref{align:ch07-7.26}）
+\begin{align}
+\begin{aligned}
+\int_0^\tau\int_{I_{j+1}}&\{(u_r-l)\zeta_t+[\phi(u_r)-\phi(l)]\zeta_x\}\,\mathrm{d}x\,\mathrm{d}t
++\int_{I_{j+1}}[u_{0r}(x)-l]\zeta(x,0)\,\mathrm{d}x\\
+&=-\operatorname*{ess\,lim}_{x\to x_j^+}\int_0^\tau[\phi(u_r(x,t))-\phi(l)]\zeta(x,t)\,\mathrm{d}t
+=-\int_0^\tau[h_j^+(t)-\phi(l)]\zeta(x_j,t)\,\mathrm{d}t.
+\end{aligned} \label{align:ch07-7.28}
+\end{align}
+因 $u$ 是 $I_{j+1}\times(0,\tau)$ 中 (P) 的熵解，如前论证得
+\begin{align*}
+\begin{aligned}
+\int_0^\tau\int_{I_{j+1}}&\{|u_r-l|\zeta_t+\operatorname{sgn}(u_r-l)[\phi(u_r)-\phi(l)]\zeta_x\}\,\mathrm{d}x\,\mathrm{d}t
++\int_{I_{j+1}}|u_{0r}(x)-l|\zeta(x,0)\,\mathrm{d}x\\
+&\geqslant-\operatorname*{ess\,lim}_{x\to x_j^+}\int_0^\tau\operatorname{sgn}(u_r(x,t)-l)[\phi(u_r(x,t))-\phi(l)]\zeta(x,t)\,\mathrm{d}t
+\end{aligned}
+\end{align*}
+对上述一切 $\zeta$、$\zeta\geqslant0$ 成立。取 $\zeta(x,t)=\alpha(x)\beta(t)$，其中 $\alpha\in C^1_c([x_j,x_{j+1}))$、$\alpha\geqslant0$，$\beta\in C^1([0,\tau])$、$\beta\geqslant0$、$\beta(\tau)=0$。由相容条件 (C$^\pm$) 得
+\begin{align}
+\begin{aligned}
+\int_0^\tau\int_{I_{j+1}}&\{|u_r-l|\zeta_t+\operatorname{sgn}(u_r-l)[\phi(u_r)-\phi(l)]\zeta_x\}\,\mathrm{d}x\,\mathrm{d}t
++\int_{I_{j+1}}|u_{0r}(x)-l|\zeta(x,0)\,\mathrm{d}x\\
+&+\operatorname*{ess\,lim}_{x\to x_j^+}\int_0^\tau[\phi(u_r(x,t))-\phi(l)]\zeta(x,t)\,\mathrm{d}t
+\geqslant-2\operatorname*{ess\,lim}_{x\to x_j^+}\int_0^\tau H_-(u_r(x,t)-l)[\phi(u_r(x,t))-\phi(l)]\zeta(x,t)\,\mathrm{d}t\\
+&=-2\alpha(x_j)\operatorname*{ess\,lim}_{x\to x_j^+}\int_0^\tau H_-(u_r(x,t)-l)[\phi(u_r(x,t))-\phi(l)]\beta(t)\,\mathrm{d}t\geqslant0,
+\end{aligned} \label{align:ch07-7.29}
+\end{align}
+因 $\operatorname{sgn}(y)=1+2H_-(y)$。由\eqref{align:ch07-7.28}与\eqref{align:ch07-7.29}得
+\begin{align*}
+\begin{aligned}
+\int_0^\tau\int_{I_{j+1}}&\{[u_r-l]_+\zeta_t+H_+(u_r-l)[\phi(u_r)-\phi(l)]\zeta_x\}\,\mathrm{d}x\,\mathrm{d}t
++\int_{I_{j+1}}[u_{0r}(x)-l]_+\zeta(x,0)\,\mathrm{d}x\\
+&\geqslant-\int_0^\tau[h_j^+(t)-\phi(l)]\zeta(x_j,t)\,\mathrm{d}t.
+\end{aligned}
+\end{align*}
+令 $l\to\infty$，得
+\begin{align*}
+\liminf_{l\to\infty}\int_0^\tau[h_j^+(t)-\phi(l)]\zeta(x_j,t)\,\mathrm{d}t
+=\int_0^\tau\left[h_j^+(t)-\limsup_{l\to\infty}\phi(l)\right]\zeta(x_j,t)\,\mathrm{d}t\geqslant0,
+\end{align*}
+由 $\zeta$ 的任意性得\eqref{align:ch07-7.25}中后一不等式。
+
+将 $I_{j+1}\times(0,\tau)$ 换为 $I_j\times(0,\tau)$，类似\eqref{align:ch07-7.28}与\eqref{align:ch07-7.29}可得
+\begin{align}
+\begin{aligned}
+\int_0^\tau\int_{I_j}&\{(u_r-l)\zeta_t+[\phi(u_r)-\phi(l)]\zeta_x\}\,\mathrm{d}x\,\mathrm{d}t
++\int_{I_j}[u_{0r}(x)-l]\zeta(x,0)\,\mathrm{d}x\\
+&=\operatorname*{ess\,lim}_{x\to x_j^-}\int_0^\tau[\phi(u_r(x,t))-\phi(l)]\zeta(x,t)\,\mathrm{d}t
+=\int_0^\tau[h_j^-(t)-\phi(l)]\zeta(x_j,t)\,\mathrm{d}t,
+\end{aligned} \label{align:ch07-7.30}
+\end{align}
+\begin{align}
+\begin{aligned}
+\int_0^\tau\int_{I_j}&\{|u_r-l|\zeta_t+\operatorname{sgn}(u_r-l)[\phi(u_r)-\phi(l)]\zeta_x\}\,\mathrm{d}x\,\mathrm{d}t
++\int_{I_j}|u_{0r}(x)-l|\zeta(x,0)\,\mathrm{d}x\\
+&-\operatorname*{ess\,lim}_{x\to x_j^-}\int_0^\tau[\phi(u_r(x,t))-\phi(l)]\zeta(x,t)\,\mathrm{d}t\geqslant0,
+\end{aligned} \label{align:ch07-7.31}
+\end{align}
+从而
+\begin{align*}
+\begin{aligned}
+\int_0^\tau\int_{I_j}&\{[u_r-l]_+\zeta_t+H_+(u_r-l)[\phi(u_r)-\phi(l)]\zeta_x\}\,\mathrm{d}x\,\mathrm{d}t
++\int_{I_j}[u_{0r}(x)-l]_+\zeta(x,0)\,\mathrm{d}x\\
+&\geqslant\int_0^\tau[h_j^-(t)-\phi(l)]\zeta(x_j,t)\,\mathrm{d}t
+\end{aligned}
+\end{align*}
+且
+\begin{align*}
+\limsup_{l\to\infty}\int_0^\tau[h_j^-(t)-\phi(l)]\zeta(x_j,t)\,\mathrm{d}t
+=\int_0^\tau\left[h_j^-(t)-\liminf_{l\to\infty}\phi(l)\right]\zeta(x_j,t)\,\mathrm{d}t\leqslant0.
+\end{align*}
+由 $\zeta$ 任意得\eqref{align:ch07-7.25}中前一不等式。
+\end{proof}
+
+\begin{remark}\label{remark:ch07-7.2.4}
+由标准稠密性论证与\eqref{align:ch07-7.26}，从\eqref{align:ch07-7.31}得：若 $\zeta\in C^1([0,\tau];C^1_c((-\infty,x_1]))$、$\zeta\geqslant0$、$\zeta(\cdot,\tau)=0$ 在 $(-\infty,x_1]$ 上，则
+\begin{align}
+\begin{aligned}
+\int_0^\tau\int_{I_1}&\{|u_r-l|\zeta_t+\operatorname{sgn}(u_r-l)[\phi(u_r)-\phi(l)]\zeta_x\}\,\mathrm{d}x\,\mathrm{d}t
++\int_{I_1}|u_{0r}(x)-l|\zeta(x,0)\,\mathrm{d}x\\
+&\geqslant\int_0^\tau[h_1^-(t)-\phi(l)]\zeta(x_1,t)\,\mathrm{d}t,
+\end{aligned} \label{align:ch07-7.32}
+\end{align}
+并从\eqref{align:ch07-7.29}得：对所有 $\zeta\in C^1([0,\tau];C^1_c([x_p,\infty)))$、$\zeta\geqslant0$、$\zeta(\cdot,\tau)=0$ 在 $[x_p,\infty)$ 上，
+\begin{align*}
+\begin{aligned}
+\int_0^\tau\int_{I_{p+1}}&\{|u_r-l|\zeta_t+\operatorname{sgn}(u_r-l)[\phi(u_r)-\phi(l)]\zeta_x\}\,\mathrm{d}x\,\mathrm{d}t
++\int_{I_{p+1}}|u_{0r}(x)-l|\zeta(x,0)\,\mathrm{d}x\\
+&\geqslant-\int_0^\tau[h_p^+(t)-\phi(l)]\zeta(x_p,t)\,\mathrm{d}t.
+\end{aligned}
+\end{align*}
+此外，将\eqref{align:ch07-7.27}中 $\eta_\epsilon$ 换为
+\begin{align*}
+\frac{2(x-x_j)-\epsilon}{\epsilon}\chi_{[x_j+\epsilon/2,\,x_j+\epsilon]}+\chi_{[x_j+\epsilon,\,x_{j+1}-\epsilon]}+\frac{2(x_{j+1}-x)-\epsilon}{\epsilon}\chi_{[x_{j+1}-\epsilon,\,x_{j+1}-\epsilon/2]},
+\end{align*}
+如\cref{lemma:ch07-7.2.6}证明那样论证，可得对任意 $j=1,\cdots ,p-1$，
+\begin{align*}
+\begin{aligned}
+\int_0^\tau\int_{I_{j+1}}&\{|u_r-l|\zeta_t+\operatorname{sgn}(u_r-l)[\phi(u_r)-\phi(l)]\zeta_x\}\,\mathrm{d}x\,\mathrm{d}t
++\int_{I_{j+1}}|u_{0r}(x)-l|\zeta(x,0)\,\mathrm{d}x\\
+&\geqslant-\int_0^\tau[h_j^+(t)-\phi(l)]\zeta(x_j,t)\,\mathrm{d}t
++\int_0^\tau[h_{j+1}^-(t)-\phi(l)]\zeta(x_{j+1},t)\,\mathrm{d}t
+\end{aligned}
+\end{align*}
+对所有 $\zeta\in C^1([0,\tau];C^1_c([x_j,x_{j+1}])$、$\zeta\geqslant0$、$\zeta(\cdot,\tau)=0$ 在 $[x_j,x_{j+1}]$ 上成立。
+\end{remark}
+
+\begin{remark}\label{remark:ch07-7.2.5}
+给出下列不等式，它们对所有 $\zeta\in C^1([0,\tau];C^1_c((-\infty,x_1]))$、$\zeta\geqslant0$、$\zeta(\cdot,\tau)=0$ 在 $(-\infty,x_1]$ 上成立：
+\begin{align}
+\begin{aligned}
+\int_0^\tau\int_{I_1}&\{[u_r-l]_+\zeta_t+H_+(u_r-l)[\phi(u_r)-\phi(l)]\zeta_x\}\,\mathrm{d}x\,\mathrm{d}t
++\int_{I_1}[u_{0r}(x)-l]_+\zeta(x,0)\,\mathrm{d}x\\
+&\geqslant\int_0^\tau[h_1^-(t)-\phi(l)]\zeta(x_1,t)\,\mathrm{d}t,
+\end{aligned} \label{align:ch07-7.33}
+\end{align}
+\begin{align}
+\begin{aligned}
+\int_0^\tau\int_{I_1}&\{[u_r-l]_-\zeta_t+H_-(u_r-l)[\phi(u_r)-\phi(l)]\zeta_x\}\,\mathrm{d}x\,\mathrm{d}t
++\int_{I_1}[u_{0r}(x)-l]_-\zeta(x,0)\,\mathrm{d}x\geqslant0.
+\end{aligned} \label{align:ch07-7.34}
+\end{align}
+其证明由\eqref{align:ch07-7.9}与\eqref{align:ch07-7.10}（而非\eqref{align:ch07-7.8}）出发，类似\eqref{align:ch07-7.32}而得。$j=2,\cdots ,p+1$ 的 $S_j$ 中有类似不等式。
+\end{remark}
+
+现可证明\cref{theorem:ch07-唯一性}。
+
+\begin{proof}[证明\cref{theorem:ch07-唯一性}]
+设 $u,v\in C([0,T];\mathscr{R}_f^+(\Omega))$ 为满足在每个 $x_j$ 于 $[0,t_j]$ 处相容条件的熵解，令
+\begin{align}
+\tau\triangleq \min\{t_u,t_v\},\quad
+\text{其中}\ 
+\begin{cases}
+t_u\triangleq \sup\{t\in[0,T)\mid\operatorname{supp}u_s(\cdot,t)=\operatorname{supp}u_{0s}\},\\
+t_v\triangleq \sup\{t\in[0,T)\mid\operatorname{supp}v_s(\cdot,t)=\operatorname{supp}u_{0s}\}.
+\end{cases} \label{align:ch07-7.35}
+\end{align}
+只需证
+\begin{align}
+u=v\quad\text{在 }\mathscr{R}_f(S_\tau), \label{align:ch07-7.36}
+\end{align}
+因若 $\tau<T$，标准迭代程序即可得结论。显然，若证得
+\begin{align}
+u_r=v_r\quad\text{在 }S_\tau\text{ 中几乎处处}, \label{align:ch07-7.37}
+\end{align}
+则\eqref{align:ch07-7.36}成立。事实上，由\eqref{align:ch07-7.7}与\eqref{align:ch07-7.37}得
+\begin{align*}
+\int_0^\tau\langle u_s(\cdot,t)-v_s(\cdot,t),\partial_t\zeta(\cdot,t)\rangle\,\mathrm{d}t
+=-\iint_{S_\tau}\{(u_r-v_r)\partial_t\zeta+[\phi(u_r)-\phi(u_r)]\partial_x\zeta\}\,\mathrm{d}x\,\mathrm{d}t=0
+\end{align*}
+对所有 $\zeta\in C^1([0,\tau];C^1_c(\mathbb{R}))$、$\zeta(\cdot,\tau)=0$ 成立。故对几乎所有 $t\in(0,\tau)$ 与所有 $\alpha\in C^1_c(\mathbb{R})$，$\langle u_s(\cdot,t)-v_s(\cdot,t),\alpha\rangle=0$。因此 $u_s=v_s$ 在 $L^\infty(0,\tau;\mathscr{R}_f(\mathbb{R}))$，结合\eqref{align:ch07-7.37}得\eqref{align:ch07-7.36}。
+
+余下需证\eqref{align:ch07-7.37}，等价于证对任意 $j=1,\cdots ,p+1$，
+\begin{align}
+u_r=v_r\quad\text{在 }I_j\times(0,\tau)\text{ 中几乎处处}. \label{align:ch07-7.38}
+\end{align}
+只证 $j=1$，其余情形类似。置 $Q_1\triangleq (-\infty,x_1]\times(0,\tau)$。我们应用适配边值问题的 Kružkov 双变量法（见文献~\cite{ref68,ref75,ref91}）。设 $\xi=\xi(x,t,y,s)\geqslant0$ 定义于 $Q_1\times Q_1$，使对每个 $(y,s)\in Q_1$ 有 $\xi(\cdot,\cdot,y,s)\in C^1_c(Q_1)$，对每个 $(x,t)\in Q_1$ 有 $\xi(x,t,\cdot,\cdot)\in C^1_c(Q_1)$。由\eqref{align:ch07-7.32}得
+\begin{align*}
+\begin{aligned}
+\iint_{Q_1}\{&\operatorname{sgn}(u_r(x,t)-v(y,s))[\phi(u_r(x,t))-\phi(v_r(y,s))]\xi_x(x,t,y,s)\\
+&+|u_r(x,t)-v_r(y,s)|\xi_t(x,t,y,s)\}\,\mathrm{d}x\,\mathrm{d}t
+\geqslant\int_0^\tau[h_1^-(t)-\phi(v_r(y,s))]\xi(x_1,t,y,s)\,\mathrm{d}t,
+\end{aligned}
+\end{align*}
+\begin{align*}
+\begin{aligned}
+\iint_{Q_1}\{&\operatorname{sgn}(u_r(x,t)-v(y,s))[\phi(u_r(x,t))-\phi(v_r(y,s))]\xi_y(x,t,y,s)\\
+&+|u_r(x,t)-v_r(y,s)|\xi_s(x,t,y,s)\}\,\mathrm{d}y\,\mathrm{d}s
+\geqslant\int_0^\tau[g_1^-(s)-\phi(u_r(x,t))]\xi(x,t,x_1,s)\,\mathrm{d}s,
+\end{aligned}
+\end{align*}
+其中由\cref{lemma:ch07-7.2.6}(i)，$g_j^\pm\in L^\infty(0,T)$ 对每个 $j=1,\cdots ,p$ 满足：若 $\beta\in C^1_c(0,T)$，
+\begin{align}
+\operatorname*{ess\,lim}_{x\to x_j^\pm}\int_0^T\phi(v_r(x,t))\beta(t)\,\mathrm{d}t
+=\int_0^T g_j^\pm(t)\beta(t)\,\mathrm{d}t. \label{align:ch07-7.39}
+\end{align}
+设 $\rho_\epsilon$（$\epsilon>0$）为 $\mathbb{R}$ 上对称磨光核，在上式中取
+\begin{align}
+\xi(x,t,y,s)=\eta\left(\frac{x+y}{2},\frac{t+s}{2}\right)\rho_\epsilon(x-y)\rho_\epsilon(t-s) \label{align:ch07-7.40}
+\end{align}
+其中 $\eta\in C^1_c((-\infty,x_1]\times(0,\tau))$，$\eta\geqslant0$。于是得
+\begin{align}
+\begin{aligned}
+\iint_{Q_1\times Q_1}&\rho_\epsilon(x-y)\rho_\epsilon(t-s)\Big\{|u_r(x,t)-v_r(y,s)|\eta_t\left(\frac{x+y}{2},\frac{t+s}{2}\right)\\
+&+\operatorname{sgn}(u_r(x,t)-v_r(y,s))[\phi(u_r(x,t))-\phi(v_r(y,s))]\eta_x\left(\frac{x+y}{2},\frac{t+s}{2}\right)\Big\}\,\mathrm{d}x\,\mathrm{d}t\,\mathrm{d}y\,\mathrm{d}s\\
+\geqslant\int_0^\tau\iint_{Q_1}&[g_1^-(s)-\phi(u_r(x,t))]\eta\left(\frac{x+x_1}{2},\frac{t+s}{2}\right)\rho_\epsilon(x_1-x)\rho_\epsilon(t-s)\,\mathrm{d}x\,\mathrm{d}t\,\mathrm{d}s\\
++&\int_0^\tau\iint_{Q_1}[h_1^-(t)-\phi(v_r(y,s))]\eta\left(\frac{x_1+y}{2},\frac{t+s}{2}\right)\rho_\epsilon(y-x_1)\rho_\epsilon(t-s)\,\mathrm{d}y\,\mathrm{d}s\,\mathrm{d}t.
+\end{aligned} \label{align:ch07-7.41}
+\end{align}
+关于\eqref{align:ch07-7.41}右端，由磨光核熟知性质，当 $\epsilon\to0^+$ 时
+\begin{align*}
+\int_0^\tau\iint_{Q_1}g_1^-(s)\eta\left(\frac{x+x_1}{2},\frac{t+s}{2}\right)\rho_\epsilon(x_1-x)\rho_\epsilon(t-s)\,\mathrm{d}x\,\mathrm{d}t\,\mathrm{d}s
+\to\frac12\int_0^\tau g_1^-(s)\eta(x_1,s)\,\mathrm{d}s,
+\end{align*}
+\begin{align*}
+\int_0^\tau\iint_{Q_1}h_1^-(t)\eta\left(\frac{x_1+y}{2},\frac{t+s}{2}\right)\rho_\epsilon(y-x_1)\rho_\epsilon(t-s)\,\mathrm{d}y\,\mathrm{d}s\,\mathrm{d}t
+\to\frac12\int_0^\tau h_1^-(t)\eta(x_1,t)\,\mathrm{d}t.
+\end{align*}
+此外，因 $\iint_{Q_1}\rho_\epsilon(x_1-x)\rho_\epsilon(t-s)\,\mathrm{d}x\,\mathrm{d}s=\frac12$（当 $\epsilon<\min\{t,\tau-t\}$），由 $\eta$ 的光滑性与等式\eqref{align:ch07-7.26}，差
+\begin{align*}
+\int_0^\tau\iint_{Q_1}\phi(u_r(x,t))\eta\left(\frac{x+x_1}{2},\frac{t+s}{2}\right)\rho_\epsilon(x_1-x)\rho_\epsilon(t-s)\,\mathrm{d}x\,\mathrm{d}t\,\mathrm{d}s
+-\frac12\int_0^\tau h_1^-(t)\eta(x_1,t)\,\mathrm{d}t
+\end{align*}
+当 $\epsilon\to0^+$ 时趋于零。类似地，
+\begin{align*}
+\int_0^\tau\iint_{Q_1}\phi(v_r(y,s))\eta\left(\frac{x_1+y}{2},\frac{t+s}{2}\right)\rho_\epsilon(y-x_1)\rho_\epsilon(t-s)\,\mathrm{d}y\,\mathrm{d}s\,\mathrm{d}t
+\to\frac12\int_0^\tau g_1^-(s)\eta(x_1,s)\,\mathrm{d}s.
+\end{align*}
+在\eqref{align:ch07-7.41}中令 $\epsilon\to0^+$，得对每个 $\eta\in C^1_c((-\infty,x_1]\times(0,\tau))$、$\eta\geqslant0$，
+\begin{align}
+\iint_{Q_1}\{|u_r(x,t)-v_r(x,t)|\eta_t(x,t)+\operatorname{sgn}(u_r-v_r)[\phi(u_r)-\phi(v_r)]\eta_x(x,t)\}\,\mathrm{d}x\,\mathrm{d}t\geqslant0. \label{align:ch07-7.42}
+\end{align}
+现固定 $t'$、$t''$ 使 $0<t'<t''<\tau$，并取 $x_0<x_1$。设 $\alpha_\delta=\alpha_\delta(x)$、$\beta_\vartheta=\beta_\vartheta(t)$ 为磨光核族，$0<\delta<1$，$0<\vartheta<\min\{t',\tau-t''\}$。在\eqref{align:ch07-7.42}中取
+\begin{align*}
+\eta(x,t)=\eta_{\delta,\vartheta}(x,t)\triangleq \int_{t-t''}^{t-t'}\beta_\vartheta(z)\,\mathrm{d}z\int_{\|\phi'\|_\infty(t-t'')+x_0}^{x_1+\delta}\alpha_\delta(x-y)\,\mathrm{d}y\quad(\delta>0)
+\end{align*}
+其中 $x\in(\|\phi'\|_\infty(t-t'')+x_0,x_1]$，$t\in(t'-\vartheta,t''+\vartheta)$（显然 $\eta_{\delta,\vartheta}\geqslant0$ 且属于 $C^\infty_c((-\infty,x_1]\times(0,\tau))$）。因 $x\in(-\infty,x_1]$ 时 $\alpha_\delta(x-x_1-\delta)=0$，
+\begin{align*}
+\begin{aligned}
+\iint_{Q_1}&|u_r-v_r|[\beta_\vartheta(t-t')-\beta_\vartheta(t-t'')]\left(\int_{\|\phi'\|_\infty(t-t'')+x_0}^{x_1+\delta}\alpha_\delta(x-y)\,\mathrm{d}y\right)\mathrm{d}x\,\mathrm{d}t\\
+-&\iint_{Q_1}\{\|\phi'\|_\infty|u_r-v_r|+\operatorname{sgn}(u_r-v_r)[\phi(u_r)-\phi(v_r)]\}\\
+&\qquad\times\alpha_\delta(x-\|\phi'\|_\infty(t-t'')-x_0)\left(\int_{t-t''}^{t-t'}\beta_\vartheta(z)\,\mathrm{d}z\right)\mathrm{d}x\,\mathrm{d}t\geqslant0.
+\end{aligned}
+\end{align*}
+因对一切 $y_1,y_2\geqslant0$，$\|\phi'\|_\infty|y_1-y_2|+\operatorname{sgn}(y_1-y_2)[\phi(y_1)-\phi(y_2)]\geqslant0$，故
+\begin{align*}
+\iint_{Q_1}|u_r-v_r|[\beta_\vartheta(t-t')-\beta_\vartheta(t-t'')]\left(\int_{\|\phi'\|_\infty(t-t'')+x_0}^{x_1+\delta}\alpha_\delta(x-y)\,\mathrm{d}y\right)\mathrm{d}x\,\mathrm{d}t\geqslant0.
+\end{align*}
+令 $\delta\to0^+$，由控制收敛定理得
+\begin{align*}
+\int_0^\tau\int_{\|\phi'\|_\infty(t-t'')+x_0}^{x_1}|u_r(x,t)-v_r(x,t)|[\beta_\vartheta(t-t')-\beta_\vartheta(t-t'')]\,\mathrm{d}x\,\mathrm{d}t\geqslant0,
+\end{align*}
+从而令 $\vartheta\to0^+$（回忆 $u,v\in C([0,T];\mathscr{R}_f^+(\Omega))$ 时 $u_r,v_r\in C([0,T];L^1(\mathbb{R}))$），得
+\begin{align}
+\int_{x_0}^{x_1}|u_r(x,t'')-v_r(x,t'')|\,\mathrm{d}x
+\leqslant\int_{x_0-\|\phi'\|_\infty(t''-t')}^{x_1}|u_r(x,t')-v_r(x,t')|\,\mathrm{d}x. \label{align:ch07-7.43}
+\end{align}
+因 $u,v\in C([0,T];\mathscr{R}_f^+(\Omega))$，在\eqref{align:ch07-7.43}中令 $t'\to0^+$，对一切 $(x_0,t'')\in Q_1$ 得
+\begin{align*}
+\int_{x_0}^{x_1}|u_r(x,t'')-v_r(x,t'')|\,\mathrm{d}x
+\leqslant\int_{x_0-\|\phi'\|_\infty t''}^{x_1}|u_r(x,0)-v_r(x,0)|\,\mathrm{d}x=0,
+\end{align*}
+因 $u_r(\cdot,0)=v_r(\cdot,0)=u_{0r}$。由 $t''\in(0,\tau)$ 任意得 $u_r=v_r$ 在 $Q_1$ 中。
+\end{proof}
+
+\begin{remark}\label{remark:ch07-7.2.6}
+如\cref{remark:ch06-6.3.2}那样论证，易构造问题 (P) 不满足 (C$^\pm$)、从而不是所构造解（见\cref{definition:ch07-构造解}与\cref{theorem:ch07-存在唯一}）的熵解。故无相容条件时唯一性失效。
+\end{remark}
+
+
+
+
+\end{document}

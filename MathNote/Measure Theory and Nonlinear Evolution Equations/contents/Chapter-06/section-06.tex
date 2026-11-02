@@ -1,0 +1,556 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{存在性结果的证明：令 $n\to\infty$}\label{section:ch06-令n趋于无穷}
+
+\cref{theorem:ch06-6.4.1}的证明依赖如下结果，其证明需要若干步骤。
+
+\begin{theorem}\label{theorem:ch06-6.6.1}
+设 (A0)--(A2) 成立，$\{u_n\}$ 为问题 (Pn) 的解序列。则存在子列 $\{u_{n_k}\}\subseteq\{u_n\}$，具有如下性质：
+\begin{enumerate}[(i)]
+\item 存在 $u\in L^\infty_{w^*}(0,T;\mathscr{R}_f(\Omega))$，使 $\phi(u_r)\in L^2(0,T;H^1_0(\Omega))$，且
+\begin{align}
+u_{n_k}\stackrel{*}{\rightharpoonup}u \quad\text{在 }L^\infty_{w^*}(0,T;\mathscr{R}_f(\Omega)); \label{align:ch6-6.77}
+\end{align}
+\item 与 $\{u_{n_k}\}$ 相伴的 Young 测度序列 $\{\nu_{n_k}\}\subseteq\mathcal{Y}^+(Q;\mathbb{R})$ 窄收敛于 Young 测度 $\nu\in\mathcal{Y}^+(Q;\mathbb{R})$，且对几乎所有 $(x,t)\in Q$，有
+\begin{align}
+u_r(x,t)=\int_\mathbb{R}y\,\mathrm{d}\nu_{(x,t)}(y), \label{align:ch6-6.78}
+\end{align}
+\begin{align}
+\operatorname{supp}\nu_{(x,t)}\subseteq\phi^{-1}(\{\phi(u_r(x,t))\}), \label{align:ch6-6.79}
+\end{align}
+其中 $\{\nu_{(x,t)}\}_{(x,t)\in Q}$ 为 $\nu$ 的离散分解；
+\item 对每个满足\cref{proposition:ch05-函数弱星}的 $f\in C(\mathbb{R})$ 及所有 $\zeta\in C([0,T];C_c(\Omega))$，有
+\begin{align}
+\begin{aligned}
+\lim_{k\to\infty}\iint_Q f(u_{n_k})\zeta\,\mathrm{d}x\,\mathrm{d}t
+={}&\iint_Q f^*\zeta\,\mathrm{d}x\,\mathrm{d}t
++M^+_f\int_0^T\langle u^+_s(\cdot,t),\zeta(\cdot,t)\rangle\,\mathrm{d}t\\
+&-M^-_f\int_0^T\langle u^-_s(\cdot,t),\zeta(\cdot,t)\rangle\,\mathrm{d}t,
+\end{aligned} \label{align:ch6-6.80}
+\end{align}
+其中 $f^*\in L^\infty(0,T;L^1(\Omega))$ 定义为
+\begin{align}
+f^*(x,t)\triangleq \int_\mathbb{R}f(y)\,\mathrm{d}\nu_{(x,t)}(y)
+\quad\text{对几乎所有 }(x,t)\in Q. \label{align:ch6-6.81}
+\end{align}
+\end{enumerate}
+\end{theorem}
+
+为证\cref{theorem:ch06-6.6.1}，需要如下结果。
+
+\begin{proposition}\label{proposition:ch06-6.6.2}
+设 (A0)--(A2) 成立，$\{u_n\}$ 为问题 (Pn) 的解序列。则存在子列 $\{u_{n_k}\}\subseteq\{u_n\}$ 及 Young 测度 $\nu\in\mathcal{Y}^+(Q;\mathbb{R})$，使：
+\begin{align}
+\phi(u_{n_k})\stackrel{*}{\rightharpoonup}\phi^* \text{ 在 }L^\infty(Q),\quad
+\phi(u_{n_k})\rightharpoonup\phi^* \text{ 在 }L^2(Q), \label{align:ch6-6.82}
+\end{align}
+其中
+\begin{align}
+\phi^*(x,t)\triangleq \int_\mathbb{R}\phi(y)\,\mathrm{d}\nu_{(x,t)}(y)\in L^2(0,T;H^1_0(\Omega)), \label{align:ch6-6.83}
+\end{align}
+$\{\nu_{(x,t)}\}_{(x,t)\in Q}$ 为 $\nu$ 的离散分解；
+\begin{align}
+\nabla\phi(u_{n_k}),\ \nabla\phi_{n_k}(u_{n_k})\rightharpoonup\nabla\phi^* \quad\text{在 }[L^2(Q)]^N; \label{align:ch6-6.84}
+\end{align}
+对任意 $\tau\in(0,T)$，
+\begin{align}
+\partial_t[\phi(u_{n_k})],\ \partial_t[\phi_{n_k}(u_{n_k})]\rightharpoonup\partial_t\phi^*
+\quad\text{在 }L^2(\Omega\times(\tau,T)), \label{align:ch6-6.85}
+\end{align}
+\begin{align}
+\phi(u_{n_k}),\ \phi_{n_k}(u_{n_k})\rightharpoonup\phi^* \quad\text{在 }H^1(\Omega\times(\tau,T)), \label{align:ch6-6.86}
+\end{align}
+\begin{align}
+\phi(u_{n_k}),\ \phi_{n_k}(u_{n_k})\to\phi^* \text{ 在 }Q\text{ 中几乎处处}; \label{align:ch6-6.87}
+\end{align}
+且对几乎所有 $t\in(0,T)$，
+\begin{align}
+\phi(u_{n_k}(\cdot,t)),\ \phi_{n_k}(u_{n_k}(\cdot,t))\to\phi^*(\cdot,t)
+\quad\text{在 }\Omega\text{ 中几乎处处}, \label{align:ch6-6.88}
+\end{align}
+\begin{align}
+\phi(u_{n_k}(\cdot,t))\rightharpoonup\phi^*(\cdot,t) \quad\text{在 }H^1_0(\Omega). \label{align:ch6-6.89}
+\end{align}
+\end{proposition}
+
+\begin{proof}
+因序列 $\{\phi(u_n)\}$ 在 $L^\infty(Q)$ 中有界，由 Banach--Alaoglu 定理存在子列 $\{u_{n_k}\}\subseteq\{u_n\}$ 及 $v\in L^\infty(Q)$，使 $\phi(u_{n_k})\stackrel{*}{\rightharpoonup}v$ 在 $L^\infty(Q)$。同时序列 $\{u_n\}$ 在 $L^1(Q)$ 中有界，故其相伴 Young 测度序列 $\{\nu_n\}$ 在 $Q\times\mathbb{R}$ 上 Young 测度的窄拓扑中相对紧，极限 Young 测度 $\nu$ 的存在性直接得到。又因 $Q$ 有界，子列 $\{\phi(u_{n_k})\}$ 在 $L^1(Q)$ 中有界且一致可积（见\cref{lemma:ch02-有界一致可积}）。故由\cref{proposition:ch05-弱紧YoungL1}存在 $\{\phi(u_{n_k})\}$ 的子列（不重新标号），使 $\phi(u_{n_k})\rightharpoonup\phi^*$ 在 $L^1(Q)$，$\phi^*$ 如\eqref{align:ch6-6.83}。于是 $v=\phi^*$，\eqref{align:ch6-6.82}得证。
+
+关于\eqref{align:ch6-6.84}，注意由\eqref{align:ch6-6.57}与\eqref{align:ch6-6.63}，序列 $\{\nabla\phi(u_{n_k})\}$ 与 $\{\nabla\phi_{n_k}(u_{n_k})\}$ 在 $[L^2(Q)]^N$ 中弱收敛。由\eqref{align:ch6-6.82}得 $\nabla\phi(u_{n_k})\rightharpoonup\nabla\phi^*$ 在 $[L^2(Q)]^N$。因
+\begin{align}
+|\phi_{n_k}(u_{n_k})-\phi(u_{n_k})|=\frac{|u_{n_k}|}{n_k}\to0 \text{ 在 }L^1(Q) \label{align:ch6-6.90}
+\end{align}
+（见\eqref{align:ch6-6.56}），也得\eqref{align:ch6-6.84}中第二个收敛。由\eqref{align:ch6-6.84}、\eqref{align:ch6-6.82}中第二个收敛及范数半连续性，有 $\phi^*\in L^2(0,T;H^1_0(\Omega))$。
+
+现在证\eqref{align:ch6-6.85}。由\eqref{align:ch6-6.82}中第二个收敛，对所有 $\zeta\in C^1_c(Q)$，
+\begin{align}
+\lim_{k\to\infty}\iint_Q\partial_t[\phi(u_{n_k})]\zeta\,\mathrm{d}x\,\mathrm{d}t
+=-\lim_{k\to\infty}\iint_Q\phi(u_{n_k})\partial_t\zeta\,\mathrm{d}x\,\mathrm{d}t
+=-\iint_Q\phi^*\partial_t\zeta\,\mathrm{d}x\,\mathrm{d}t. \label{align:ch6-6.91}
+\end{align}
+另一方面，由\eqref{align:ch6-6.70b}，对任意 $\tau\in(0,T)$，序列 $\{\partial_t[\phi(u_{n_k})]\}$ 在 $L^2(\Omega\times(\tau,T))$ 中有界，故存在 $\{\partial_t[\phi(u_{n_k})]\}$ 的子列（不重新标号）及 $g_\tau\in L^2(\Omega\times(\tau,T))$，使对所有 $\zeta\in L^2(\Omega\times(\tau,T))$，
+\begin{align}
+\lim_{k\to\infty}\iint_{\Omega\times(\tau,T)}\partial_t[\phi(u_{n_k})]\zeta\,\mathrm{d}x\,\mathrm{d}t
+=\iint_{\Omega\times(\tau,T)}g_\tau\zeta\,\mathrm{d}x\,\mathrm{d}t. \label{align:ch6-6.92}
+\end{align}
+由\eqref{align:ch6-6.91}--\eqref{align:ch6-6.92}，对每个 $\zeta\in C^1_c(\Omega\times(\tau,T))$，有
+\begin{align}
+\iint_{\Omega\times(\tau,T)}g_\tau\zeta\,\mathrm{d}x\,\mathrm{d}t
+=-\iint_Q\phi^*\partial_t\zeta\,\mathrm{d}x\,\mathrm{d}t. \label{align:ch6-6.93}
+\end{align}
+于是分布导数 $\partial_t\phi^*$ 可等同于 $L^2(\Omega\times(\tau,T))$ 中一元，故\eqref{align:ch6-6.85}中第一个收敛成立。第二个类似证明。
+
+\eqref{align:ch6-6.86}中的收敛由\eqref{align:ch6-6.84}--\eqref{align:ch6-6.85}显然成立。故序列 $\{\phi(u_{n_k})\}$ 与 $\{\phi_{n_k}(u_{n_k})\}$ 均在 $H^1(\Omega\times(\tau,T))$ 中有界。由嵌入定理（可能抽取子列，为简便不重新标号），对每个 $\tau\in(0,T)$，有 $\phi_{n_k}(u_{n_k}),\phi(u_{n_k})\to\phi^*$ 在 $\Omega\times(\tau,T)$ 中几乎处处。由 $\tau$ 的任意性及标准对角论证，可构造子列（为简便不重新标号），使\eqref{align:ch6-6.87}中两个收敛同时成立。
+
+最后，\eqref{align:ch6-6.88}中的收敛由\eqref{align:ch6-6.87}得到，而\eqref{align:ch6-6.89}是\eqref{align:ch6-6.88}与\eqref{align:ch6-6.69}的直接推论。证明完成。
+\end{proof}
+
+\begin{proposition}\label{proposition:ch06-6.6.3}
+设 (A0)--(A1) 成立，$\{u_n\}$ 为问题 (Pn) 的解序列，$\nu\in\mathcal{Y}^+(Q;\mathbb{R})$ 为\cref{proposition:ch06-6.6.2}中给出的 Young 测度。则存在子列 $\{u_{n_k}\}\subseteq\{u_n\}$ 及 $\sigma^\pm\in L^\infty_{w^*}(0,T;\mathscr{R}^+_f(\Omega))$，使
+\begin{align}
+u^\pm_{n_k}\stackrel{*}{\rightharpoonup}u_{b,\pm}+\sigma^\pm
+\quad\text{在 }L^\infty_{w^*}(0,T;\mathscr{R}_f(\Omega)), \label{align:ch6-6.94}
+\end{align}
+其中 $u_{b,\pm}\in L^\infty(0,T;L^1(\Omega))$，
+\begin{align}
+u_{b,\pm}(x,t)\triangleq \int_\mathbb{R}y^\pm\,\mathrm{d}\nu_{(x,t)}(y)\geqslant0
+\quad\text{对几乎所有 }(x,t)\in Q. \label{align:ch6-6.95}
+\end{align}
+\end{proposition}
+
+\begin{proof}
+由不等式\eqref{align:ch6-6.54}，序列 $\{u_n\}$ 在 $L^\infty(0,T;L^1(\Omega))\subseteq L^\infty_{w^*}(0,T;\mathscr{R}_f(\Omega))$ 中有界。于是由\cref{theorem:ch05-弱星紧性}与 Banach--Alaoglu 定理，存在 $\mu^\pm\in L^\infty_{w^*}(0,T;\mathscr{R}^+_f(\Omega))$，使
+\begin{align}
+u^\pm_{n_k}\stackrel{*}{\rightharpoonup}\mu^\pm
+\quad\text{在 }L^\infty_{w^*}(0,T;\mathscr{R}_f(\Omega)). \label{align:ch6-6.96}
+\end{align}
+另一方面，因序列 $\{u_{n_k}\}$ 在 $L^1(Q)$ 中有界，由\cref{remark:ch05-biting注}存在 $\{u_{n_k}\}$ 的子列（不重新标号）及 $\sigma^\pm\in\mathscr{R}^+_f(Q)$，使
+\begin{align}
+u^\pm_{n_k}\stackrel{*}{\rightharpoonup}u_{b,\pm}+\sigma^\pm
+\quad\text{在 }\mathscr{R}_f(Q). \label{align:ch6-6.97}
+\end{align}
+由\eqref{align:ch6-6.96}--\eqref{align:ch6-6.97}，$\mu^\pm=u_{b,\pm}+\sigma^\pm$，结论成立。
+\end{proof}
+
+\begin{proposition}\label{proposition:ch06-6.6.4}
+设 (A0)--(A1) 成立，$\{u_n\}$ 为问题 (Pn) 的解序列。设 $\{u_{n_k}\}\subseteq\{u_n\}$，$\nu\in\mathcal{Y}^+(Q;\mathbb{R})$，及 $\sigma^\pm\in L^\infty_{w^*}(0,T;\mathscr{R}^+_f(\Omega))$ 由\cref{proposition:ch06-6.6.3}给出。则对每个满足\cref{proposition:ch05-函数弱星}的 $f\in C(\mathbb{R})$ 及所有 $\zeta\in C([0,T];C_c(\Omega))$，有
+\begin{align}
+\begin{aligned}
+\lim_{k\to\infty}\iint_Q f(u_{n_k})\zeta\,\mathrm{d}x\,\mathrm{d}t
+={}&\iint_Q f^*\zeta\,\mathrm{d}x\,\mathrm{d}t
++M^+_f\int_0^T\langle\sigma^+(\cdot,t),\zeta(\cdot,t)\rangle\,\mathrm{d}t\\
+&-M^-_f\int_0^T\langle\sigma^-(\cdot,t),\zeta(\cdot,t)\rangle\,\mathrm{d}t
+\end{aligned} \label{align:ch6-6.98}
+\end{align}
+其中 $f^*\in L^\infty(0,T;L^1(\Omega))$ 定义为
+\begin{align}
+f^*(x,t)\triangleq \int_\mathbb{R}f(y)\,\mathrm{d}\nu_{(x,t)}(y)
+\quad\text{对几乎所有 }(x,t)\in Q. \label{align:ch6-6.99}
+\end{align}
+\end{proposition}
+
+\begin{proof}
+由\cref{proposition:ch05-函数弱星}，存在 $L>0$，使对所有 $y\in\mathbb{R}$，$|f(y)|\leqslant L(1+|y|)$，故由不等式\eqref{align:ch6-6.54}，
+\begin{align*}
+\sup_{n\in\mathbb{N}}\|f(u_n)\|_{L^\infty(0,T;L^1(\Omega))}
+=\sup_{n\in\mathbb{N}}\|f(u_n)\|_{L^\infty_{w^*}(0,T;\mathscr{R}_f(\Omega))}
+\leqslant L[\lambda_N(\Omega)+\|u_0\|_{\mathscr{R}_f(\Omega)}].
+\end{align*}
+由 Banach--Alaoglu 定理，存在子列 $\{f(u_{n_k})\}\subseteq\{f(u_n)\}$ 及 $\mu\in L^\infty_{w^*}(0,T;\mathscr{R}_f(\Omega))$，使
+\begin{align}
+f(u_{n_k})\stackrel{*}{\rightharpoonup}\mu
+\quad\text{在 }L^\infty_{w^*}(0,T;\mathscr{R}_f(\Omega)). \label{align:ch6-6.100}
+\end{align}
+此外，如\cref{proposition:ch05-集中测度极限}证明中那样论证，得
+\begin{align}
+f(u_{n_k})\stackrel{*}{\rightharpoonup}f^*+M^+_f\sigma^+-M^-_f\sigma^-
+\quad\text{在 }\mathscr{R}_f(Q). \label{align:ch6-6.101}
+\end{align}
+由\eqref{align:ch6-6.100}--\eqref{align:ch6-6.101}，结论成立。
+\end{proof}
+
+置
+\begin{align}
+u_b(x,t)\triangleq u_{b,+}(x,t)-u_{b,-}(x,t)=\int_\mathbb{R}y\,\mathrm{d}\nu_{(x,t)}(y)
+\quad\text{对几乎所有 }(x,t)\in Q, \label{align:ch6-6.102a}
+\end{align}
+\begin{align}
+u\triangleq u_b+\sigma^+-\sigma^-. \label{align:ch6-6.102b}
+\end{align}
+
+由\cref{proposition:ch06-6.6.3}与\cref{proposition:ch06-6.6.4}，有如下结果。
+
+\begin{proposition}\label{proposition:ch06-6.6.5}
+设 (A0)--(A1) 成立，$\{u_n\}$ 为问题 (Pn) 的解序列。设 $\{u_{n_k}\}\subseteq\{u_n\}$ 及 $\sigma^\pm\in L^\infty_{w^*}(0,T;\mathscr{R}^+_f(\Omega))$ 由\cref{proposition:ch06-6.6.3}给出，$u\in L^\infty_{w^*}(0,T;\mathscr{R}_f(\Omega))$ 由\eqref{align:ch6-6.102b}定义。则\eqref{align:ch6-6.77}中的收敛成立。进而，
+\begin{align}
+u_r=u_b \quad\text{在 }Q\text{ 中几乎处处}, \label{align:ch6-6.103a}
+\end{align}
+\begin{align}
+u^\pm_s=\sigma^\pm \quad\text{在 }L^\infty_{w^*}(0,T;\mathscr{R}_f(\Omega)). \label{align:ch6-6.103b}
+\end{align}
+\end{proposition}
+
+\begin{proof}
+\eqref{align:ch6-6.77}中的收敛是\eqref{align:ch6-6.94}--\eqref{align:ch6-6.95}与\eqref{align:ch6-6.102a}的直接推论。此外，其余断言\eqref{align:ch6-6.103a}--\eqref{align:ch6-6.103b}将由证明 $\sigma^\pm$ 相互奇异且关于 Lebesgue 测度奇异而得到。
+
+为此，证明如下断言。
+
+\begin{quote}
+对任意 $k\in\mathbb{N}$，$p>0$，及 $\zeta\in C^1([0,T];C^2_c(\Omega))$，$\zeta\geqslant0$ 在 $Q$ 中，$\zeta(\cdot,T)=0$，有
+\begin{align}
+\begin{aligned}
+-\iint_Q[u_{n_k}\mp p]^\pm\partial_t\zeta\,\mathrm{d}x\,\mathrm{d}t
+\leqslant{}&\int_\Omega[u_{0n_k}\mp p]^\pm\zeta(x,0)\,\mathrm{d}x\\
+&+\|\zeta\|_{C^1(\overline\Omega)}\left(\frac{C_2T\|u_0\|_{\mathscr{R}_f(\Omega)}}{p}\right)^{1/2},
+\end{aligned} \label{align:ch6-6.104}
+\end{align}
+其中 $C_2=C_2(\lambda_N(\Omega),\|\phi\|_\infty,\|u_0\|_{\mathscr{R}_f(\Omega)})>0$ 为\cref{lemma:ch06-6.5.5}(ii) 中给出的常数。
+\end{quote}
+
+依赖上述断言，可证
+\begin{align}
+\sigma^\pm(\cdot,t)\leqslant u^\pm_{0s} \quad\text{在 }\mathscr{R}^+_f(\Omega)
+\quad\text{对几乎所有 }t\in(0,T). \label{align:ch6-6.105}
+\end{align}
+因测度 $\sigma^\pm$ 非负，这蕴含 $\sigma^\pm(\cdot,t)$ 关于 $u^\pm_{0s}$ 绝对连续，对几乎所有 $t\in(0,T)$。结论随之成立。
+
+我们仅证\eqref{align:ch6-6.105}中 $+$ 号情形，$-$ 号证明类似。在\eqref{align:ch6-6.51}中取 $f(y)=[y-p]_+$（$y\in\mathbb{R}$，$p>0$），得
+\begin{align}
+[u_{0n_k}-p]^+\stackrel{*}{\rightharpoonup}[u_{0r}-p]^++u^+_{0s}
+\quad\text{在 }\mathscr{R}_f(\Omega), \label{align:ch6-6.106}
+\end{align}
+而由\eqref{align:ch6-6.98}--\eqref{align:ch6-6.99}中同样的 $f$ 选择，得
+\begin{align*}
+\begin{aligned}
+\lim_{k\to\infty}\iint_Q[u_{n_k}-p]^+\partial_t\zeta\,\mathrm{d}x\,\mathrm{d}t
+={}&\iint_Q\left(\int_\mathbb{R}[y-p]^+\,\mathrm{d}\nu_{(x,t)}(y)\right)\partial_t\zeta\,\mathrm{d}x\,\mathrm{d}t\\
+&+\int_0^T\langle\sigma^+(\cdot,t),\partial_t\zeta(\cdot,t)\rangle\,\mathrm{d}t
+\end{aligned}
+\end{align*}
+对所有 $\zeta\in C^1([0,T];C^2_c(\Omega))$ 成立。由此等式，在\eqref{align:ch6-6.104}中取上号，令 $k\to\infty$，并利用\eqref{align:ch6-6.106}，得
+\begin{align}
+\begin{aligned}
+&-\iint_Q\left(\int_\mathbb{R}[y-p]^+\,\mathrm{d}\nu_{(x,t)}(y)\right)\partial_t\zeta\,\mathrm{d}x\,\mathrm{d}t
+-\int_0^T\langle\sigma^+(\cdot,t),\partial_t\zeta(\cdot,t)\rangle\,\mathrm{d}t\\
+&\quad\leqslant\int_\Omega[u_{0r}-p]^+\zeta(x,0)\,\mathrm{d}x
++\langle u^+_{0s},\zeta(\cdot,0)\rangle
++\|\zeta\|_{C^1(\overline\Omega)}\left(\frac{C_2T\|u_0\|_{\mathscr{R}_f(\Omega)}}{p}\right)^{1/2}
+\end{aligned} \label{align:ch6-6.107}
+\end{align}
+对每个 $\zeta\in C^1([0,T];C^2_c(\Omega))$，$\zeta\geqslant0$ 在 $Q$ 中，$\zeta(\cdot,T)=0$ 在 $\Omega$ 上成立。
+
+因对每个 $y\in\mathbb{R}$ 有 $\lim_{p\to+\infty}[y-p]^+=0$，且对几乎所有 $(x,t)\in Q$，$[y-p]^+\leqslant y^+\in L^1(\mathbb{R},\mathscr{B},\nu_{(x,t)})$（见\cref{proposition:ch05-矩估计}(i)），由控制收敛定理，
+\begin{align*}
+\lim_{p\to\infty}\int_\mathbb{R}[y-p]^+\,\mathrm{d}\nu_{(x,t)}(y)=0
+\quad\text{对几乎所有 }(x,t)\in Q.
+\end{align*}
+此外，对几乎所有 $(x,t)\in Q$，有 $\int_\mathbb{R}[y-p]^+\,\mathrm{d}\nu_{(x,t)}(y)\leqslant\int_\mathbb{R}y^+\,\mathrm{d}\nu_{(x,t)}(y)=u_{b,+}(x,t)$（见\eqref{align:ch6-6.95}）。因 $u_{b,+}\in L^\infty(0,T;L^1(\Omega))\subseteq L^1(Q)$，由控制收敛定理得
+\begin{align}
+\lim_{p\to\infty}\iint_Q\left(\int_\mathbb{R}[y-p]^+\,\mathrm{d}\nu_{(x,t)}(y)\right)\partial_t\zeta\,\mathrm{d}x\,\mathrm{d}t=0. \label{align:ch6-6.108a}
+\end{align}
+类似地，
+\begin{align}
+\lim_{p\to\infty}\int_\Omega[u_{0r}-p]^+\zeta(x,0)\,\mathrm{d}x=0. \label{align:ch6-6.108b}
+\end{align}
+由\eqref{align:ch6-6.108a}，如前在\eqref{align:ch6-6.107}中令 $p\to\infty$，对每个 $\zeta$ 得
+\begin{align}
+-\int_0^T\langle\sigma^+(\cdot,t),\partial_t\zeta(\cdot,t)\rangle\,\mathrm{d}t
+\leqslant\langle u^+_{0s},\zeta(\cdot,0)\rangle. \label{align:ch6-6.109}
+\end{align}
+
+设 $t_0\in(0,T)$，对任意充分大的 $q>0$，置
+\begin{align*}
+h_q(t)\triangleq \chi_{[0,t_0-\frac{1}{q}]}(t)+q(t_0-t)\chi_{(t_0-\frac{1}{q},t_0]}(t) \quad(t\in(0,T)).
+\end{align*}
+由标准逼近论证，可在\eqref{align:ch6-6.109}中取 $\zeta(x,t)=\rho(x)h_q(t)$，$\rho\in C^2_c(\Omega)$，$\rho\geqslant0$。于是得
+\begin{align*}
+q\int_{t_0-\frac{1}{q}}^{t_0}\langle\sigma^+(\cdot,t),\rho\rangle\,\mathrm{d}t\leqslant\langle u^+_{0s},\rho\rangle,
+\end{align*}
+从而当 $q\to\infty$ 时，
+\begin{align*}
+\langle\sigma^+(\cdot,t_0),\rho\rangle\leqslant\langle u^+_{0s},\rho\rangle
+\quad\text{对几乎所有 }t_0\in(0,T).
+\end{align*}
+由 $\rho$ 的任意性，\eqref{align:ch6-6.105}中 $+$ 号情形得证。
+
+最后证明该断言。由标准逼近论证，对每个 $p>0$，可在\eqref{align:ch6-6.58}中取 $h=\chi_{(p,\infty)}$，从而在\eqref{align:ch6-6.59}中 $H(y)=[y-p]_+$。于是对每个非负 $\zeta\in C^1([0,T];C^1_c(\Omega))$，$\zeta(\cdot,T)=0$ 在 $\Omega$ 上，得（见\eqref{align:ch6-6.60}）
+\begin{align}
+-\iint_Q[u_{n_k}-p]^+\partial_t\zeta\,\mathrm{d}x\,\mathrm{d}t
+\leqslant\int_\Omega[u_{0n_k}-p]^+\zeta(x,0)\,\mathrm{d}x
+-\iint_{\{u_{n_k}>p\}}\nabla\phi_{n_k}(u_{n_k})\cdot\nabla\zeta\,\mathrm{d}x\,\mathrm{d}t. \label{align:ch6-6.110}
+\end{align}
+由\cref{lemma:ch06-6.5.5}(ii)，存在 $C_2=C_2(\lambda_N(\Omega),\|\phi\|_\infty,\|u_0\|_{\mathscr{R}_f(\Omega)})>0$，使
+\begin{align*}
+\iint_{\{u_{n_k}>p\}}|\nabla\phi_{n_k}(u_{n_k})||\nabla\zeta|\,\mathrm{d}x\,\mathrm{d}t
+\leqslant C_2^{1/2}\|\zeta\|_{C^1(Q)}[\lambda_{N+1}(\{u_{n_k}>p\})]^{1/2},
+\end{align*}
+从而由 Chebyshev 不等式，
+\begin{align}
+\iint_{\{u_{n_k}>p\}}|\nabla\phi_{n_k}(u_{n_k})||\nabla\zeta|\,\mathrm{d}x\,\mathrm{d}t
+\leqslant\|\zeta\|_{C^1(\overline\Omega)}\left(\frac{C_2\|u_{n_k}\|_{L^1(Q)}}{p}\right)^{1/2}. \label{align:ch6-6.111}
+\end{align}
+由\eqref{align:ch6-6.54}与\eqref{align:ch6-6.110}--\eqref{align:ch6-6.111}，得上号情形的\eqref{align:ch6-6.104}。结论随之成立。
+\end{proof}
+
+\begin{proposition}\label{proposition:ch06-6.6.6}
+设 (A0)--(A2) 成立，$\{u_n\}$ 为问题 (Pn) 的解序列。设 $\{u_{n_k}\}\subseteq\{u_n\}$ 与 $\nu\in\mathcal{Y}^+(Q;\mathbb{R})$ 由\cref{proposition:ch06-6.6.3}给出，$u\in L^\infty_{w^*}(0,T;\mathscr{R}_f(\Omega))$ 由\eqref{align:ch6-6.102b}定义。则对几乎所有 $(x,t)\in Q$：
+\begin{enumerate}[(i)]
+\item 有
+\begin{align}
+\operatorname{supp}\nu_{(x,t)}\subseteq\phi^{-1}(\{\phi^*(x,t)\}) \label{align:ch6-6.112}
+\end{align}
+其中 $\phi^*$ 由\eqref{align:ch6-6.83}给出；
+\item 有
+\begin{align}
+\phi^*(x,t)=\phi(u_r(x,t)),\quad
+\phi(u_r)\in L^2(0,T;H^1_0(\Omega)), \label{align:ch6-6.113}
+\end{align}
+\begin{align}
+\operatorname{supp}\nu_{(x,t)}\subseteq\phi^{-1}(\{\phi(u_r(x,t))\}). \label{align:ch6-6.114}
+\end{align}
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+对每个 $f\in C(\mathbb{R})$，序列 $\{(f\circ\phi)(u_{n_k})\}$ 在 $L^1(Q)$ 中有界且一致可积，故（可能抽取子列，不重新标号）由\cref{proposition:ch05-弱紧YoungL1}得
+\begin{align}
+f(\phi(u_{n_k}))\rightharpoonup(f\circ\phi)^* \text{ 在 }L^1(Q),\quad
+(f\circ\phi)^*(x,t)\triangleq \int_\mathbb{R}f(\phi(y))\,\mathrm{d}\nu_{(x,t)}(y). \label{align:ch6-6.115}
+\end{align}
+注意由\eqref{align:ch6-6.87}中的收敛，有
+\begin{align*}
+f(\phi(u_{n_k}))\to f(\phi^*) \text{ 在 }Q\text{ 中几乎处处},
+\end{align*}
+从而（回忆 $\phi$ 有界）
+\begin{align*}
+f(\phi(u_{n_k}))\to f(\phi^*) \text{ 在 }L^1(Q).
+\end{align*}
+由上述收敛与\eqref{align:ch6-6.115}得
+\begin{align}
+f(\phi^*(x,t))=\int_\mathbb{R}f(\phi(y))\,\mathrm{d}\nu_{(x,t)}(y)
+\quad\text{对所有 }(x,t)\in Q\setminus N, \label{align:ch6-6.116}
+\end{align}
+其中 $N\subseteq Q$ 为零测集。
+
+固定 $(x,t)\in Q\setminus N$，置 $B=\mathbb{R}\setminus\phi^{-1}(\{\phi^*(x,t)\})$。选取 $f\in C(\mathbb{R})$，使当 $z\neq\phi^*(x,t)$ 时 $f(z)>0$，当 $z=\phi^*(x,t)$ 时 $f(z)=0$，由\eqref{align:ch6-6.116}得
+\begin{align*}
+0=\int_B f(\phi(y))\,\mathrm{d}\nu_{(x,t)}(y).
+\end{align*}
+因对所有 $y\in B$ 有 $f(\phi(y))>0$，上述等式保证 $\nu_{(x,t)}(B)=0$。因 $B=\mathbb{R}\setminus\phi^{-1}(\{\phi^*(x,t)\})$ 为开集，(i) 得证。
+
+关于 (ii)，注意由\eqref{align:ch6-6.102a}、\eqref{align:ch6-6.103a}与\eqref{align:ch6-6.112}，
+\begin{align*}
+u_r(x,t)=\int_\mathbb{R}y\,\mathrm{d}\nu_{(x,t)}(y)
+=\int_{\phi^{-1}(\{\phi^*(x,t)\})}y\,\mathrm{d}\nu_{(x,t)}(y)
+\in\phi^{-1}(\{\phi^*(x,t)\}),
+\end{align*}
+因为 $\phi^{-1}(\{\phi^*(x,t)\})$ 为闭区间，$\nu_{(x,t)}$ 为概率测度。于是对几乎所有 $(x,t)\in Q$，有 $\phi(u_r(x,t))=\phi^*(x,t)$，\eqref{align:ch6-6.113}中第二个陈述随之成立，因为由\eqref{align:ch6-6.82}与\eqref{align:ch6-6.84}，$\phi^*\in L^2(0,T;H^1_0(\Omega))$。因 $\phi(u_r)=\phi^*$，由\eqref{align:ch6-6.112}得\eqref{align:ch6-6.114}。证明完成。
+\end{proof}
+
+\begin{proof}[证明\cref{theorem:ch06-6.6.1}]
+设 $u\in L^\infty_{w^*}(0,T;\mathscr{R}_f(\Omega))$ 由\eqref{align:ch6-6.102b}定义。则由\cref{proposition:ch06-6.6.3}--\cref{proposition:ch06-6.6.6}，结论成立。
+\end{proof}
+
+现在可以证明\cref{theorem:ch06-6.4.1}。
+
+\begin{proof}[证明\cref{theorem:ch06-6.4.1}]
+我们证明\cref{theorem:ch06-6.6.1}所给出的测度 $u\in L^\infty_{w^*}(0,T;\mathscr{R}_f(\Omega))$ 是问题 (P) 的弱解。因 $\phi(u_r)\in L^2(0,T;H^1_0(\Omega))$，\cref{definition:ch06-弱解}的条件 (i) 满足。设 $\{u_{n_k}\}$ 为逼近问题解的子列，使 $u_{n_k}\stackrel{*}{\rightharpoonup}u$ 在 $L^\infty_{w^*}(0,T;\mathscr{R}_f(\Omega))$（见\eqref{align:ch6-6.77}）。考虑 $(Pn_k)$ 的弱形式：
+\begin{align*}
+\iint_Q\{u_{n_k}\partial_t\zeta-\nabla\phi_{n_k}(u_{n_k})\cdot\nabla\zeta\}\,\mathrm{d}x\,\mathrm{d}t
+=-\int_\Omega u_{0n_k}(x)\zeta(x,0)\,\mathrm{d}x
+\end{align*}
+其中 $\zeta\in C^1([0,T];C^1_c(\Omega))$，$\zeta(\cdot,T)=0$ 在 $\Omega$ 上。令 $k\to\infty$，利用\eqref{align:ch6-6.77}、\eqref{align:ch6-6.84}与\eqref{align:ch6-6.113}、以及\eqref{align:ch6-6.49c}，得\eqref{align:ch6-6.2}。故结果第一部分成立。
+
+以 $+$ 号为例证明 (i)、(ii) 款。为此注意由\eqref{align:ch6-6.103b}与不等式\eqref{align:ch6-6.109}，对所有 $\rho\in C([0,T];C_c(\Omega))$，$\zeta\geqslant0$ 在 $Q$ 中，$\zeta(\cdot,T)=0$ 在 $\Omega$ 上，有
+\begin{align*}
+-\int_0^T\langle u^+_s(\cdot,t),\zeta(\cdot,t)\rangle\,\mathrm{d}t
+\leqslant\langle u^+_{0s},\zeta(\cdot,0)\rangle.
+\end{align*}
+在上一不等式中置 $\zeta(x,t)=\rho(x)h(t)$，$\rho\in C_c(\Omega)$，$\rho\geqslant0$。如\cref{theorem:ch06-6.4.5}证明中那样，通过适当选取函数 $h$，(i)、(ii) 两款均容易得到。
+\end{proof}
+
+设 $\pm\phi_{\pm\infty}>0$，设 $f_{c,\pm}:[0,\pm\phi_{\pm\infty}]\to[0,1]$ 及 $f_c\in C^1([0,\pm\phi_{\pm\infty}])$ 满足
+\begin{align}
+f_{c,\pm}(y)=
+\begin{cases}
+0 & \text{若 }y\in[0,c],\\
+1 & \text{若 }y\in[\frac{c\pm\phi_{\pm\infty}}{2},\pm\phi_{\pm\infty}]
+\end{cases} \label{align:ch6-6.117}
+\end{align}
+对某个 $c\in(0,\pm\phi_{+\infty})$。为证\cref{theorem:ch06-6.4.2}，需要如下引理。
+
+\begin{lemma}\label{lemma:ch06-6.6.7}
+设 (A0)--(A2) 成立，$\pm\phi_{\pm\infty}>0$，$u$ 为\cref{theorem:ch06-6.4.1}所给出的问题 (P) 弱解。则对几乎所有 $t\in(0,T)$，对任意 $c\in(0,\pm\phi_{\pm\infty})$，及任意 $\rho\in C^1_c(\Omega)$，$\rho\geqslant0$，有
+\begin{align}
+\langle[u^\pm_s(\cdot,t)]_{d,2},\rho\rangle
+\leqslant\langle[u^\pm_{0s}]_{d,2},f_c(\phi^\pm(u_r(\cdot,t)))\rho\rangle. \label{align:ch6-6.118}
+\end{align}
+\end{lemma}
+
+\begin{proof}[证明\cref{theorem:ch06-6.4.2}]
+我们仅证\eqref{align:ch6-6.21a}中 $+$ 号等式，$-$ 号证明类似。注意 $\phi_{+\infty}=0$ 蕴含对所有 $y\in[0,\infty)$ 有 $\phi(y)=0$，因而在此情形 $\phi^+\equiv0$，$\mathscr{S}^+_t=\Omega$，\eqref{align:ch6-6.2}显然满足。
+
+设 $\phi_{+\infty}>0$，为简便置 $f_c\equiv f_{c,+}$（见\eqref{align:ch6-6.117}）。固定任意 $t\in(0,T)$，使对所有非负 $\rho\in C^1_c(\Omega)$，
+\begin{align*}
+\langle[u^+_s(\cdot,t)]_{d,2},\rho\rangle
+\leqslant\langle[u^+_{0s}]_{d,2},f_c(\phi^+(u_r(\cdot,t)))\rho\rangle,
+\end{align*}
+设 $g_c\in C^1(\mathbb{R})$ 为任意函数，$g_c\geqslant0$，$\operatorname{supp}g_c\subseteq[0,c)$。由 $f_c$ 的定义（见\eqref{align:ch6-6.117}），在 $[0,\infty)$ 上 $f_c g_c=0$。
+
+回忆对几乎所有 $t\in(0,T)$，函数 $\phi^+(u_r(\cdot,t))$ 等同于其 $2$-拟连续代表元，后者定义到相差 $2$-零容集（见\cref{remark:ch06-6.3.1}）。故对几乎所有 $t\in(0,T)$ 及任意 $c\in(0,\phi_{+\infty})$，有
+\begin{align}
+f_c(\phi^+(u_r(x,t)))g_c(\phi^+(u_r(x,t)))=0
+\quad\text{对所有 }x\in\Omega^*, \label{align:ch6-6.119}
+\end{align}
+对某个子集 $\Omega^*\subseteq\Omega$，$C_2(\Omega\setminus\Omega^*)=0$。
+
+因 $g_c((\phi^+(u_r))(\cdot,t))\in H^1(\Omega)\cap L^\infty(\Omega)$，函数 $g_c((\phi^+(u_r))(\cdot,t))\widetilde\rho$（$\widetilde\rho\in C^1_c(\Omega)$，$\widetilde\rho\geqslant0$）属于 $H^1_0(\Omega)\cap L^\infty(\Omega)$，故可作为不等式\eqref{align:ch6-6.118}中的试验函数。由\eqref{align:ch6-6.119}得
+\begin{align}
+\begin{aligned}
+&\langle[u_s(x,t)]_{d,2},g_c(\phi^+(u_r(x,t)))\widetilde\rho\rangle\\
+&\quad\leqslant\langle[u^\pm_{0s}]_{d,2},f_c(\phi^\pm(u_r(x,t)))g_c(\phi^+(u_r(x,t)))\widetilde\rho\rangle=0
+\end{aligned} \label{align:ch6-6.120}
+\end{align}
+对每个如上 $g_c$ 与 $\widetilde\rho$ 及 $x\in\Omega^*$ 成立。
+
+取 $c=c_q\triangleq \phi_{+\infty}-\frac{1}{q}$，使 $\operatorname{supp}g_{c_q}\subseteq[0,\phi_{+\infty}-\frac{1}{q})$（$q\in\mathbb{N}$）。显然这蕴含
+\begin{align}
+[u_s(\cdot,t)]_{d,2}(E^t_q)=0, \label{align:ch6-6.121}
+\end{align}
+其中
+\begin{align*}
+E^t_q\triangleq \{x\in\Omega^*\mid\phi^+(u_r(x,t))\leqslant\phi_{+\infty}-\frac{2}{q}\}.
+\end{align*}
+因对所有 $q\in\mathbb{N}$ 有 $E^t_q\subseteq E^t_{q+1}$，且
+\begin{align*}
+F^t\triangleq \{x\in\Omega^*\mid\phi^+(u_r(x,t))<\phi_{+\infty}\}=\bigcup_{q=1}^\infty E^t_q,
+\end{align*}
+由等式\eqref{align:ch6-6.121}得
+\begin{align*}
+[u_s(\cdot,t)]_{d,2}(F^t)=\lim_{q\to\infty}[u_s(\cdot,t)]_{d,2}(E^t_q)=0.
+\end{align*}
+于是
+\begin{align}
+[u_s(\cdot,t)]_{d,2}\llcorner\Omega^*
+=[u_s(\cdot,t)]_{d,2}\llcorner\{x\in\Omega^*\mid\phi^+(u_r(x,t))=\phi_{+\infty}\}. \label{align:ch6-6.122}
+\end{align}
+另一方面，$[u_s(\cdot,t)]_{d,2}(\Omega\setminus\Omega^*)=0$，因 $C_2(\Omega\setminus\Omega^*)=0$。由\eqref{align:ch6-6.122}，结论成立。
+\end{proof}
+
+\begin{proof}[证明\cref{lemma:ch06-6.6.7}]
+我们仅证\eqref{align:ch6-6.21a}中 $+$ 号情形，另一情形证明类似。设 $\phi_{+\infty}\in(0,\infty)$。对每个 $m\in\mathbb{N}$，置
+\begin{align*}
+h_m(y)\triangleq (y-m)\chi_{[m,m+1]}(y)+\chi_{(m+1,+\infty)}(y),\quad
+H_m(y)\triangleq \int_0^y h_m(z)\,\mathrm{d}z \quad(y\in\mathbb{R}).
+\end{align*}
+设 $\{u_{n_k}\}$ 与 $u$ 由\cref{theorem:ch06-6.6.1}给出。因 $\|h_m\|_\infty=1$，由\eqref{align:ch6-6.54}与\eqref{align:ch6-6.64}，对所有 $\rho\in C^1_c(\Omega)$ 及 $m\in\mathbb{N}$，序列 $\{\int_\Omega H_m(u_{n_k}(x,\cdot))\rho(x)\,\mathrm{d}x\}$ 在 $BV(0,T)$ 中有界。于是存在零测集 $N_1\subseteq(0,T)$ 及 $\{u_{n_k}\}$ 的子列（为简便不重新标号），使序列 $\{\int_\Omega H_m(u_{n_k}(x,t))\rho(x)\,\mathrm{d}x\}$ 对所有 $t\in(0,T)\setminus N_1$ 在 $L^1((0,T))$ 中收敛。由 $C_0(\Omega)$ 的可分性及标准对角论证，零测集 $N_1$ 可取得与 $\rho\in C^1_c(\Omega)$ 及 $m\in\mathbb{N}$ 均无关。因 $\{\int_\Omega H_m(u_{n_k}(x,t))\rho(x)\,\mathrm{d}x\}$ 对 $t\in(0,T)\setminus N_1$ 收敛，因 $\lim_{y\to+\infty}H_m(y)/y=1$，$\lim_{y\to-\infty}H_m(y)/y=0$，在\eqref{align:ch6-6.98}中取 $\zeta(x,t)=\rho(x)h(t)$ 并利用\eqref{align:ch6-6.103b}，对所有 $t\in(0,T)\setminus N_1$，$\rho\in C^1_c(\Omega)$，及 $m\in\mathbb{N}$，得
+\begin{align}
+\lim_{k\to\infty}\int_\Omega H_m(u_{n_k}(x,t))\rho\,\mathrm{d}x
+=\int_\Omega\left(\int_\mathbb{R}H_m(y)\,\mathrm{d}\nu_{(x,t)}(y)\right)\rho(x)\,\mathrm{d}x
++\langle u^+_s(\cdot,t),\rho\rangle. \label{align:ch6-6.123}
+\end{align}
+
+由\eqref{align:ch6-6.88}--\eqref{align:ch6-6.89}与\eqref{align:ch6-6.113}，存在零测集 $N_2\subseteq(0,T)$，使对所有 $t\in(0,T)\setminus N_2$，
+\begin{align}
+\phi(u_{n_k}(\cdot,t))\to\phi^+(u_r(\cdot,t)) \quad\text{在 }\Omega\text{ 中几乎处处}, \label{align:ch6-6.124a}
+\end{align}
+\begin{align}
+\phi(u_{n_k}(\cdot,t))\rightharpoonup\phi^+(u_r(\cdot,t)) \quad\text{在 }H^1_0(\Omega). \label{align:ch6-6.124b}
+\end{align}
+置 $N\triangleq N_1\cup N_2$，固定 $t_0\in(0,T)\setminus N$。注意对每个充分大的 $m\in\mathbb{N}$，有
+\begin{align*}
+H_m(s)[1-f_c(\phi(s))]=0
+\end{align*}
+对每个 $s\in\mathbb{R}$ 成立，其中 $f_c\equiv f_{c,+}$ 由\eqref{align:ch6-6.117}给出。于是对所有充分大的 $m\in\mathbb{N}$ 及 $\rho\in C^1_c(\Omega)$，$\rho\geqslant0$，由\eqref{align:ch6-6.60}、\eqref{align:ch6-6.62}、\eqref{align:ch6-6.74}及\eqref{align:ch6-6.124a}，有
+\begin{align*}
+\begin{aligned}
+&\int_\Omega H_m(u_{n_k}(x,t_0))\rho(x)\,\mathrm{d}x\\
+&\quad=\int_\Omega H_m(u_{n_k}(x,t_0))f_c(\phi(u_{n_k}(x,t_0)))\rho(x)\,\mathrm{d}x\\
+&\quad\leqslant\left|\iint_{\{u_{n_k}>m\}}h_m(u_{n_k})\nabla\phi_{n_k}(u_{n_k})\cdot
+\nabla(f_c(\phi(u_{n_k}(x,t_0)))\rho)\,\mathrm{d}x\,\mathrm{d}t\right|\\
+&\qquad+\int_\Omega H_m(u_{0n_k})f_c(\phi(u_{n_k}(x,t_0)))\rho(x)\,\mathrm{d}x\\
+&\quad\leqslant\|f_c(\phi(u_{n_k}(\cdot,t_0)))\rho\|_{H^1_0(\Omega)}
+\left(\iint_{\{u_{n_k}>m\}}|\nabla\phi_{n_k}(u_{n_k})|^2\,\mathrm{d}x\,\mathrm{d}t\right)^{1/2}\\
+&\qquad+\int_\Omega H_m(u_{0n_k})f_c(\phi(u_{n_k}(x,t_0)))\rho(x)\,\mathrm{d}x\\
+&\quad\leqslant M_c[\phi_{+\infty}-\phi(m)+n_k^{-1/2}]^{1/2}\\
+&\qquad+\int_\Omega[u^+_0]_{n_k}f_c(\phi(u_{n_k}(x,t_0)))\rho(x)\,\mathrm{d}x\\
+&\quad\leqslant M_c[\phi_{+\infty}-\phi(m)+n_k^{-1/2}]^{1/2}\\
+&\qquad+\int_\Omega[\delta^+]_{n_k}f_c(\phi(u_{n_k}(x,t_0)))\rho(x)\,\mathrm{d}x
++\int_\Omega[\gamma^+]_{n_k}\rho(x)\,\mathrm{d}x.
+\end{aligned}
+\end{align*}
+上述常数 $M_c$ 取得使 $M_0\|f_c(\phi(u_{n_k}(\cdot,t_0)))\rho\|_{H^1_0(\Omega)}\leqslant M_c$ 对所有 $k\in\mathbb{N}$，其中 $M_0$ 为\eqref{align:ch6-6.75}中的常数。由\eqref{align:ch6-6.49d}中第二个收敛、\eqref{align:ch6-6.49e}及\eqref{align:ch6-6.123}--\eqref{align:ch6-6.124a}，先令 $k\to+\infty$ 再令 $m\to+\infty$，对所有 $c\in(0,\phi_{+\infty})$ 及如上 $\rho$，得
+\begin{align}
+\langle u^+_s(\cdot,t_0),\rho\rangle
+\leqslant\langle[u^+_0]_{d,2},f_c(\phi^+(u_r(\cdot,t_0)))\rho\rangle
++\langle[u^+_0]_{c,2},\rho\rangle. \label{align:ch6-6.125}
+\end{align}
+由\cref{theorem:ch06-6.2.1}（见\eqref{align:ch6-6.12}）与等式\eqref{align:ch03-3.82}，对几乎所有 $t\in(0,T)$，有 $[u^\pm_s(\cdot,t)]_{c,2}=[u^\pm(\cdot,t)]_{c,2}=[u^\pm_0]_{c,2}$。于是不等式\eqref{align:ch6-6.125}给出\eqref{align:ch6-6.118}。结果得证。
+\end{proof}
+
+\begin{proof}[证明\cref{proposition:ch06-6.4.4}]
+由\cref{definition:ch06-构造解}，(P) 的每个构造解 $u$ 是逼近问题解序列子列 $\{u_{n_k}\}$ 在 $L^\infty_{w^*}(0,T;\mathscr{M}(\Omega))$ 中的弱$^*$极限（见\cref{theorem:ch06-6.4.1}）。在\eqref{align:ch6-6.61}中取 $t_1=0$，$t_2=T$，得
+\begin{align}
+\iint_Q\{F_\phi(u_{n_k})\partial_t\zeta-f(\phi(u_{n_k}))\nabla\phi_{n_k}(u_{n_k})\cdot\nabla\zeta\}\,\mathrm{d}x\,\mathrm{d}t
+\geqslant-\int_\Omega F_\phi(u_{0n_k}(x))\zeta(x,0)\,\mathrm{d}x \label{align:ch6-6.126}
+\end{align}
+对所有 $\zeta\in C^1([0,T];C^1_c(\Omega))$，$\zeta\geqslant0$ 在 $Q$ 中，$\zeta(\cdot,T)=0$ 在 $\Omega$ 上，及所有非减 $f\in C(\mathbb{R})$ 成立，函数 $F_\phi$ 由\eqref{align:ch6-6.9}定义。
+
+由\eqref{align:ch6-6.84}、\eqref{align:ch6-6.87}中的收敛及\eqref{align:ch6-6.113}中的等式，直接得
+\begin{align}
+\lim_{k\to\infty}\iint_Q f(\phi(u_{n_k}))\nabla\phi_{n_k}(u_{n_k})\cdot\nabla\zeta\,\mathrm{d}x\,\mathrm{d}t
+=\iint_Q f(\phi(u_r))\nabla\phi(u_r)\cdot\nabla\zeta\,\mathrm{d}x\,\mathrm{d}t, \label{align:ch6-6.127}
+\end{align}
+而由\eqref{align:ch6-6.51}，
+\begin{align}
+\begin{aligned}
+&\lim_{k\to\infty}\int_\Omega F_\phi(u_{0n_k}(x))\zeta(x,0)\,\mathrm{d}x\\
+&\quad=\int_\Omega F_\phi(u_{0r})\zeta(x,0)\,\mathrm{d}x
++M^+_{F_\phi}\langle u^+_{0s},\zeta(\cdot,0)\rangle
+-M^-_{F_\phi}\langle u^-_{0s},\zeta(\cdot,0)\rangle
+\end{aligned} \label{align:ch6-6.128}
+\end{align}
+其中 $M^\pm_{F_\phi}\in\mathbb{R}$ 如\eqref{align:ch6-6.10}。另一方面，由\cref{proposition:ch06-6.6.4}与\cref{proposition:ch06-6.6.5}，有
+\begin{align}
+\begin{aligned}
+&\lim_{k\to\infty}\iint_Q F_\phi(u_{n_k})\partial_t\zeta\,\mathrm{d}x\,\mathrm{d}t\\
+&\quad=\iint_Q F^*_\phi\partial_t\zeta\,\mathrm{d}x\,\mathrm{d}t
++M^+_{F_\phi}\int_0^T\langle u^+_s(\cdot,t),\partial_t\zeta(\cdot,t)\rangle_\Omega\,\mathrm{d}t\\
+&\qquad-M^-_{F_\phi}\int_0^T\langle u^-_s(\cdot,t),\partial_t\zeta(\cdot,t)\rangle_\Omega\,\mathrm{d}t
+\end{aligned} \label{align:ch6-6.129}
+\end{align}
+（见\eqref{align:ch6-6.102a}），其中对几乎所有 $(x,t)\in Q$，
+\begin{align*}
+F^*_\phi(x,t)=\int_\mathbb{R}F_\phi(y)\,\mathrm{d}\nu_{(x,t)}(y),
+\end{align*}
+Young 测度 $\nu\in\mathcal{Y}^+(Q;\mathbb{R})$ 由\cref{proposition:ch06-6.6.4}给出。由\eqref{align:ch6-6.114}有
+\begin{align}
+\begin{aligned}
+\int_\mathbb{R}F_\phi(y)\,\mathrm{d}\nu_{(x,t)}(y)
+&=\int_{\operatorname{supp}\nu_{(x,t)}}F_\phi(y)\,\mathrm{d}\nu_{(x,t)}(y)\\
+&=\int_{\operatorname{supp}\nu_{(x,t)}}\mathrm{d}\nu_{(x,t)}(y)\int_0^y f(\phi(z))\,\mathrm{d}z
+=F_\phi(u_r(x,t))
+\end{aligned} \label{align:ch6-6.130}
+\end{align}
+对几乎所有 $(x,t)\in Q$ 成立。
+
+由上述说明，在\eqref{align:ch6-6.126}中令 $k\to\infty$，利用\eqref{align:ch6-6.127}--\eqref{align:ch6-6.130}，证明 $u$ 满足熵不等式\eqref{align:ch6-6.11}。结论成立。
+\end{proof}
+
+
+
+
+\end{document}

@@ -1,0 +1,216 @@
+\documentclass[../../main.tex]{subfiles}% 注意这里的文件路径不能用 ./main.tex ,否则用latexmk编译子文件会报错
+\graphicspath{{\subfix{./image/}}{\subfix{../../image/}}} % 指定图片引用路径,后续可以直接使用图片文件名
+% 如果图片存放在上级目录,则使用 ../../image/ 作为备用路径
+
+% 例如:
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.3\textwidth]{图.png}
+% \caption{}
+% \label{figure:图}
+% \end{figure}
+% 注意:上述\label{}一定要放在\caption{}之后,否则引用图片序号会只会显示??.
+
+\begin{document}
+
+\section{参数化测度与离散分解}
+
+设 $X$ 与 $Y$ 为局部紧 Hausdorff 空间，$\mathscr{B}(X)$ 与 $\mathscr{B}(Y)$ 为相应 Borel $\sigma$-代数。回忆由\cref{theorem:ch02-Rf对偶}，Banach 空间 $\mathscr{R}_f(X)$ 是 $C_0(X)$ 的对偶空间。于是我们可给出如下定义。
+
+\begin{definition}\label{definition:ch05-参数测度}
+设 $X$ 与 $Y$ 为局部紧 Hausdorff 空间。从 $X$ 到 $\mathscr{R}_f(Y)$ 的弱$^*$可测映射称为 $Y$ 上的\textbf{参数化测度}。
+
+对 $Y$ 上的参数化测度，我们使用记号 $\{\nu_x\}_{x\in X}$，其中对每个 $x\in X$ 有 $\nu_x\in\mathscr{R}_f(Y)$。
+\end{definition}
+
+\begin{remark}\label{remark:ch05-参数测度等价}
+我们指出\cref{definition:ch05-参数测度}的两种等价表述（例如见文献~\cite{ref05}）。首先，由\cref{definition:ch04-弱星可测}(ii)与\cref{theorem:ch02-Rf对偶}，族 $\{\nu_x\}_{x\in X}\subseteq\mathscr{R}_f(Y)$ 是 $Y$ 上的参数化测度，当且仅当
+\begin{align}
+x\mapsto\langle\nu_x,g\rangle=\int_Y g(y)\,\mathrm{d}\nu_x(y)
+\text{ 对每个 }g\in C_0(Y)\text{ 为 }\mathscr{B}(X)\text{-可测}.\label{align:ch05-5.30}
+\end{align}
+其次，条件\eqref{align:ch05-5.30}可重述如下：
+\begin{align}
+x\mapsto\nu_x(F)\text{ 对每个 }F\in\mathscr{B}(Y)\text{ 为 }\mathscr{B}(X)\text{-可测}.\label{align:ch05-5.31}
+\end{align}
+事实上，由\eqref{align:ch05-5.31}，映射 $x\mapsto\int_Y\chi_F(y)\,\mathrm{d}\nu_x(y)$ 对每个 $F\in\mathscr{B}(Y)$ 为 $\mathscr{B}(X)$-可测，故将 $\chi_F$ 替换为任意简单函数 $s\in\mathcal{S}(Y)$ 后同样成立。另一方面，对每个 $g\in C_0(Y)$，存在序列 $\{s_n\}\subseteq\mathcal{S}(Y)$ 使当 $n\to\infty$ 时 $\|s_n-g\|_\infty\to0$（见\cref{theorem:ch02-简单函数逼近}(ii)）。故对所有 $x\in X$，
+\begin{align*}
+\lim_{n\to\infty}\int_Y[s_n(y)-g(y)]\,\mathrm{d}\nu_x(y)=0,
+\end{align*}
+于是由\cref{corollary:ch02-控制收敛}(ii)得\eqref{align:ch05-5.30}。
+
+反之，设\eqref{align:ch05-5.30}成立，$F\in\mathscr{B}(Y)$。由\cref{proposition:ch02-连续逼近}（另见\cref{remark:ch02-连续逼近注}），存在序列 $\{\zeta_m\}\subseteq C_c(Y)$ 使 $\zeta_m\to\chi_F$ 在 $Y$ 中 $\mu$-几乎处处成立，且对所有 $m\in\mathbb{N}$ 有 $\|\zeta_m\|_\infty\leqslant1$。然后在\eqref{align:ch05-5.30}中取 $g=\zeta_m$，令 $m\to\infty$，并用控制收敛定理，即得\eqref{align:ch05-5.31}。
+\end{remark}
+
+\begin{remark}\label{remark:ch05-变差可测}
+若 $\{\nu_x\}_{x\in X}$ 为 $Y$ 上的参数化测度，则实值函数 $x\mapsto|\nu_x|(F)$ 对每个 $F\in\mathscr{B}(Y)$ 也为 $\mathscr{B}(X)$-可测。事实上，由\cref{corollary:ch02-控制收敛}(i)，函数 $x\mapsto\sum_{i=1}^n|\nu_x(F_i)|$ 对 $F$ 的任意划分 $\{F_1,\cdots ,F_n\}\subseteq\mathscr{B}(Y)$ 为 $\mathscr{B}(X)$-可测，故由\cref{proposition:ch01-全变差}(见\eqref{align:ch01-全变差公式})与\cref{corollary:ch02-控制收敛}(ii)断言得证。
+\end{remark}
+
+设 $X$ 与 $Y$ 为具可数基的局部紧 Hausdorff 空间。则拓扑积 $X\times Y$ 为具可数基的局部紧 Hausdorff 空间，且由\cref{theorem:ch01-Borel积}
+\begin{align*}
+\mathscr{B}(X\times Y)=\mathscr{B}(X)\otimes\mathscr{B}(Y).
+\end{align*}
+由\cref{lemma:ch02-投影可测}，投影
+\begin{align*}
+p_X:X\times Y\to X,\qquad p_X(x,y)\triangleq x
+\end{align*}
+为 $(\mathscr{B}(X\times Y),\mathscr{B}(X))$-可测，投影
+\begin{align*}
+p_Y:X\times Y\to Y,\qquad p_Y(x,y)\triangleq y
+\end{align*}
+为 $(\mathscr{B}(X\times Y),\mathscr{B}(Y))$-可测。故对任意 $\mu\in\mathcal{M}_f(X\times Y)$，像测度（见\eqref{align:ch02-2.28a}）
+\begin{align}
+\mu_{p_X}:\mathscr{B}(X)\to\mathbb{R},\quad
+\mu_{p_X}(E)\triangleq \mu(p_X^{-1}(E))=\mu(E\times Y)
+\quad\text{对所有 }E\in\mathscr{B}(X),\label{align:ch05-5.32}\\
+\mu_{p_Y}:\mathscr{B}(Y)\to\mathbb{R},\quad
+\mu_{p_Y}(F)\triangleq \mu(p_Y^{-1}(F))=\mu(X\times F)
+\quad\text{对所有 }F\in\mathscr{B}(Y),\label{align:ch05-5.33}
+\end{align}
+是良定义的。若 $\mu\in\mathscr{R}_f(X\times Y)$，则由\cref{proposition:ch01-Radon投影}，$\mu_{p_X}\in\mathscr{R}_f(X)$，$\mu_{p_Y}\in\mathscr{R}_f(Y)$。
+
+\begin{theorem}[离散分解]\label{theorem:ch05-离散分解}
+设 $X$ 与 $Y$ 为具可数基的局部紧 Hausdorff 空间。设 $\nu\in\mathscr{R}_f(X\times Y)$，$|\nu|_{p_X}\in\mathscr{R}^+_f(X)$ 为其全变差 $|\nu|$ 到空间 $X$ 的投影。则存在 $Y$ 上的参数化测度 $\nu\equiv\{\nu_x\}_{x\in X}$ 具有下列性质：
+\begin{enumerate}[(i)]
+\item\label{item:ch05-dis-i} $|\nu_x|(Y)=1$ 对 $|\nu|_{p_X}$-几乎所有 $x\in X$；
+\item\label{item:ch05-dis-ii} 对每个 $h\in L^1(X\times Y,\mathscr{B}(X\times Y),|\nu|)$，
+\begin{align}
+h(x,\cdot)\in L^1(Y,\mathscr{B}(Y),|\nu_x|)
+\quad\text{对 }|\nu|_{p_X}\text{-几乎所有 }x\in X,\label{align:ch05-5.34}\\
+\text{映射 }x\mapsto\int_Y h(x,y)\,\mathrm{d}\nu_x(y)
+\text{ 属于 }L^1(X,\mathscr{B}(X),|\nu|_{p_X}),\label{align:ch05-5.35}
+\end{align}
+且
+\begin{align}
+\int_{X\times Y}h(x,y)\,\mathrm{d}\nu(x,y)
+=\int_X\mathrm{d}|\nu|_{p_X}(x)\int_Y h(x,y)\,\mathrm{d}\nu_x(y).\label{align:ch05-5.36}
+\end{align}
+\end{enumerate}
+此外，参数化测度 $\{\nu_x\}_{x\in X}$ 在如下意义下唯一：设 $\{\nu'_x\}_{x\in X}$ 为 $Y$ 上的参数化测度使
+\begin{align}
+\text{映射 }x\mapsto\int_Y h(x,y)\,\mathrm{d}\nu'_x(y)
+\text{ 属于 }L^1(X,\mathscr{B}(X),|\nu|_{p_X})\label{align:ch05-5.37}
+\end{align}
+且
+\begin{align}
+\int_{X\times Y}h(x,y)\,\mathrm{d}\nu(x,y)
+=\int_X\mathrm{d}|\nu|_{p_X}(x)\int_Y h(x,y)\,\mathrm{d}\nu'_x(y)\label{align:ch05-5.38}
+\end{align}
+对每个有界 $\mathscr{B}(X\times Y)$-可测、紧支撑的 $h:X\times Y\to\mathbb{R}$ 成立。则 $\nu'_x=\nu_x$ 对 $|\nu|_{p_X}$-几乎所有 $x\in X$。
+\end{theorem}
+
+\begin{definition}\label{definition:ch05-离散分解定义}
+参数化测度 $\{\nu_x\}_{x\in X}$ 称为测度 $\nu$ 的\textbf{离散分解}（disintegration）。
+\end{definition}
+
+\begin{remark}\label{remark:ch05-离散分解注}
+(i) 设 $G\in\mathscr{B}(X\times Y)$，$G_x\triangleq \{y\in Y\mid(x,y)\in G\}\in\mathscr{B}(Y)$ 为其 $x$-截口（见\cref{proposition:ch01-截口}）。在\eqref{align:ch05-5.36}中取 $h=\chi_G$，并注意 $\chi_G(x,\cdot)=\chi_{G_x}$（见\cref{remark:ch02-截口}），得
+\begin{align}
+\nu(G)=\int_X\nu_x(G_x)\,\mathrm{d}|\nu|_{p_X}(x)
+\quad\text{对所有 }G\in\mathscr{B}(X\times Y).\label{align:ch05-5.39}
+\end{align}
+若 $\nu$ 正，则由\eqref{align:ch05-5.39}与 $G$ 的任意性，$\nu_x$ 对 $|\nu|_{p_X}$-几乎所有 $x\in X$ 为正。
+
+(ii) 设 $\nu_{p_Y}\in\mathscr{R}_f(Y)$ 为 $\nu$ 到 $Y$ 的投影（见\eqref{align:ch05-5.33}）。对任意 $F\in\mathscr{B}(Y)$，在\eqref{align:ch05-5.39}中取 $G=X\times F$（从而对每个 $x\in X$ 有 $G_x=F$），得
+\begin{align}
+\nu_{p_Y}(F)=\nu(X\times F)=\int_X\nu_x(F)\,\mathrm{d}|\nu|_{p_X}(x).\label{align:ch05-5.40}
+\end{align}
+\end{remark}
+
+\begin{proof}[证明\cref{theorem:ch05-离散分解}]
+对任意 $g\in C_0(Y)$，$g=g(y)$，置
+\begin{align*}
+\mu_g:\mathscr{B}(X)\to[0,\infty),\quad
+\mu_g(E)\triangleq \int_{E\times Y}g\,\mathrm{d}\nu
+\quad\text{对所有 }E\in\mathscr{B}(X).
+\end{align*}
+显然 $\mu_g\in\mathscr{R}_f(X)$，且
+\begin{align}
+|\mu_g(E)|\leqslant\|g\|_\infty|\nu|(E\times Y)
+=\|g\|_\infty|\nu|_{p_X}(E)
+\quad\text{对所有 }E\in\mathscr{B}(X).\label{align:ch05-5.42}
+\end{align}
+由不等式\eqref{align:ch05-5.42}，$\mu_g\ll|\nu|_{p_X}$，故由 Radon–Nikodým 定理存在 $(\mu_g)_r\in L^1(X,\mathscr{B}(X),|\nu|_{p_X})$ 使
+\begin{align}
+\mu_g(E)=\int_E(\mu_g)_r\,\mathrm{d}|\nu|_{p_X}
+\quad\text{对所有 }E\in\mathscr{B}(X).\label{align:ch05-5.43}
+\end{align}
+此外，由\eqref{align:ch05-5.42}与\cref{proposition:ch04-有界密度}(见\eqref{align:ch04-4.43b})，$(\mu_g)_r\in L^\infty(X,\mathscr{B}(X),|\nu|_{p_X})$，且 $\|(\mu_g)_r\|_\infty\leqslant\|g\|_\infty$。显然，映射 $g\mapsto\mu_g$（$g\in C_0(Y)$，$\mu_g$ 由\eqref{align:ch05-5.42}定义）是线性的。设 $D\subseteq C_0(Y)$ 可数且稠密（注意空间 $C_0(Y)$ 可分；见附录 A,\cref{paragraph:appA-可分}）。则由\eqref{align:ch05-5.43}，存在 $|\nu|_{p_X}$-零测集 $N\in\mathscr{B}(X)$ 使
+\begin{align}
+(\mu_{\alpha g+\beta g'})_r(x)=\alpha(\mu_g)_r(x)+\beta(\mu_{g'})_r(x)
+\quad\text{对所有 }x\in N^c,\ \alpha,\beta\in\mathbb{R},\ g,g'\in D.\label{align:ch05-5.44}
+\end{align}
+置
+\begin{align*}
+T_x:D\to\mathbb{R},\qquad T_xg\triangleq (\mu_g)_r(x)
+\quad\text{对所有 }x\in N^c\text{ 与 }g\in D.
+\end{align*}
+
+由\eqref{align:ch05-5.44}，$T_x$ 线性。此外，
+\begin{align}
+|T_xg|=|(\mu_g)_r(x)|\leqslant\|(\mu_g)_r\|_\infty\leqslant\|g\|_\infty
+\qquad(x\in N^c),\label{align:ch05-5.45}
+\end{align}
+故 $T_x$ 有界。由于 $D$ 在 $C_0(Y)$ 中稠密，$T_x$ 可唯一延拓（仍记为 $T_x$）到整个空间 $C_0(Y)$。因而对所有 $x\in N^c$，$T_x\in(C_0(Y))^*$，故由\cref{theorem:ch02-Rf对偶}存在 $\nu_x\in\mathscr{R}_f(Y)$ 使
+\begin{align}
+T_xg=(\mu_g)_r(x)=\int_Y g(y)\,\mathrm{d}\nu_x(y)
+\quad\text{对所有 }g\in C_0(Y)\ (x\in N^c)\label{align:ch05-5.46}
+\end{align}
+且
+\begin{align}
+\|\nu_x\|=|\nu_x|(Y)=\|T_x\|\leqslant1\label{align:ch05-5.47}
+\end{align}
+（见\eqref{align:ch05-5.45}）。我们可通过对任意 $x\in N$ 置 $\nu_x\triangleq \delta_{\bar{y}}$（其中 $\bar{y}\in Y$ 任意固定）来补全 $\nu_x$ 在 $X$ 上的定义。
+
+我们证明函数 $x\mapsto\nu_x(F)$ 对每个 $F\in\mathscr{B}(Y)$ 为 $\mathscr{B}(X)$-可测，从而族 $\{\nu_x\}_{x\in X}$ 为 $Y$ 上的参数化测度（见\cref{remark:ch05-参数测度等价}）。事实上，由定义对所有 $x\in N^c$ 有 $T_xg=(\mu_g)_r(x)$；由于 $(\mu_g)_r\in L^\infty(X,\mathscr{B}(X),|\nu|_{p_X})$，因而为 $\mathscr{B}(X)$-可测，映射 $x\mapsto T_xg$ 对任意 $g\in C_0(Y)$ 为 $(\mathscr{B}(X)\cap N^c)$-可测。现注意对每个 $F\in\mathscr{B}(Y)$，存在序列 $\{g_n\}\subseteq C_0(Y)$ 使当 $n\to\infty$ 时 $g_n\to\chi_F$ 在 $L^1(Y,\mathscr{B}(Y),\nu_x)$ 中（见\cref{proposition:ch02-连续逼近}与\cref{remark:ch02-连续逼近注}）。则
+\begin{align*}
+T_xg_n=\int_Y g_n(y)\,\mathrm{d}\nu_x(y)\to\nu_x(F)
+\quad(n\to\infty),
+\end{align*}
+故由\cref{corollary:ch02-控制收敛}(ii)，映射 $x\mapsto\nu_x(F)$ 为 $\mathscr{B}(X)\cap N^c$-可测。另一方面，显然映射 $x\mapsto\nu_x(F)=\delta_{\bar{y}}(F)$（$x\in N$）对所有 $F\in\mathscr{B}(Y)$ 为 $(\mathscr{B}(X)\cap N)$-可测。于是由\cref{proposition:ch02-可测拼接}断言得证。
+
+鉴于上述注记，显然每个形如 $h(x,y)\triangleq s(x)g(y)$ 的映射（$s\in\mathcal{S}(X)$，$g\in C_0(Y)$）满足\eqref{align:ch05-5.34}–\eqref{align:ch05-5.35}（见\cref{remark:ch05-参数测度等价}）。此外，等式\eqref{align:ch05-5.36}在此 $h(x,y)$ 的选取下也成立。事实上，由\eqref{align:ch05-5.42}、\eqref{align:ch05-5.43}与\eqref{align:ch05-5.46}，对任意 $g\in C_0(Y)$ 与 $E\in\mathscr{B}(X)$，
+\begin{align*}
+\mu_g(E)=\int_{X\times Y}\chi_E(x)g(y)\,\mathrm{d}\nu
+=\int_E(\mu_g)_r(x)\,\mathrm{d}|\nu|_{p_X}(x)
+=\int_X\mathrm{d}|\nu|_{p_X}(x)\int_Y\chi_E(x)g(y)\,\mathrm{d}\nu_x(y),
+\end{align*}
+由此
+\begin{align*}
+\int_{X\times Y}s(x)g(y)\,\mathrm{d}\nu
+=\int_X\mathrm{d}|\nu|_{p_X}(x)\int_Y s(x)g(y)\,\mathrm{d}\nu_x(y)
+\end{align*}
+对所有 $s\in\mathcal{S}(X)$ 与 $g\in C_0(Y)$ 成立。由\cref{lemma:ch02-简单函数}与控制收敛定理，上述等式对所有 $s\in\mathcal{S}(X)$ 与 $g\in\mathcal{S}(Y)$ 也成立。由于集合 $\{s(x)g(y)\mid s\in\mathcal{S}(X),\ g\in\mathcal{S}(Y)\}$ 在 $L^1(X\times Y,\mathscr{B}(X\times Y),\nu)$ 中稠密，断言 (ii) 得证。
+
+由\cref{remark:ch05-变差可测}、\cref{proposition:ch01-全变差}与\cref{corollary:ch02-控制收敛}(ii)，对每个 $F\in\mathscr{B}(Y)$，函数 $x\mapsto|\nu_x|(F)$ 为 $\mathscr{B}(X)$-可测。于是由\eqref{align:ch05-5.39}，
+\begin{align*}
+|\nu(G)|\leqslant\int_X|\nu_x|(G_x)\,\mathrm{d}|\nu|_{p_X}(x)
+\quad\text{对所有 }G\in\mathscr{B}(X\times Y),
+\end{align*}
+故由 $G$ 的任意性与 $|\nu|$ 的定义，
+\begin{align*}
+|\nu|(G)\leqslant\int_X|\nu_x|(G_x)\,\mathrm{d}|\nu|_{p_X}(x).
+\end{align*}
+在此不等式中取 $G=X\times Y$ 并用\eqref{align:ch05-5.47}，得
+\begin{align*}
+|\nu|(X\times Y)\leqslant\int_X|\nu_x|(Y)\,\mathrm{d}|\nu|_{p_X}(x)
+\leqslant|\nu|(X\times Y)
+\end{align*}
+（见\eqref{align:ch05-5.32}），故断言 (i) 得证。
+
+最后，设 $\{\nu'_x\}_{x\in X}$ 为 $Y$ 上的参数化测度，对所有有界 $\mathscr{B}(X\times Y)$-可测紧支撑 $h$ 满足\eqref{align:ch05-5.37}–\eqref{align:ch05-5.38}。由\eqref{align:ch05-5.36}与\eqref{align:ch05-5.38}得
+\begin{align*}
+\int_X\mathrm{d}|\nu|_{p_X}(x)\int_Y h(x,y)\,\mathrm{d}\nu_x(y)
+=\int_X\mathrm{d}|\nu|_{p_X}(x)\int_Y h(x,y)\,\mathrm{d}\nu'_x(y)
+\end{align*}
+对所有上述 $h$ 成立，故显然 $\nu'_x=\nu_x$ 对 $|\nu|_{p_X}$-几乎所有 $x\in X$。证明完成。
+\end{proof}
+
+\begin{remark}\label{remark:ch05-离散分解绝对连续}
+设 $X,Y$ 如\cref{theorem:ch05-离散分解}，$\nu\in\mathscr{R}^+_f(X\times Y)$，$\{\nu_x\}_{x\in X}$ 为其离散分解。由等式\eqref{align:ch05-5.40}，对每个使 $\nu_{p_Y}(F)=0$ 的 $F\in\mathscr{B}(Y)$，存在 $\nu_{p_X}$-零测集 $N\subseteq X$ 使对所有 $x\in N^c$ 有 $\nu_x(F)=0$。由于 $Y$ 具有可数基，可测空间 $(Y,\mathscr{B}(Y))$ 是可分的（见\cref{definition:ch01-可分空间}）。于是由标准论证，$\nu_{p_X}$-零测集 $N$ 的选取可独立于 $F\in\mathscr{B}(Y)$。由此 $\nu_x\ll\nu_{p_Y}$ 对 $\nu_{p_X}$-几乎所有 $x\in X$。
+\end{remark}
+
+
+
+
+\end{document}
