@@ -1,0 +1,104 @@
+% ==========================================================================
+\chapter{核心代码与复现说明}
+% ==========================================================================
+
+本附录给出论文核心代码的结构与关键片段。完整代码位于配套的 \texttt{Code} 文件夹（其下的 \texttt{Undergraduate Thesis Code} 子文件夹），数据位于 \texttt{data} 子文件夹，图片位于 \texttt{figures} 子文件夹。
+
+\section{代码结构}
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \caption{代码文件与功能}
+  \label{tab:code-files}
+  \begin{tabularx}{\textwidth}{lX}
+    \toprule
+    文件 & 功能 \\
+    \midrule
+    \texttt{burgers\_imex.py} & 有限体积离散、Rusanov 通量、MUSCL/minmod、IMEX-Euler \\
+    \texttt{stability\_analysis.py} & 双变量稳定性函数、圆盘/相图、联合稳定域、离散符号 \\
+    \texttt{run\_burgers\_experiments.py} & 刚性相图、最大步长、激波精度、收敛性 \\
+    \texttt{plot\_results.py} & 从缓存数据绘制论文图 \\
+    \texttt{jinxin.py} & Jin--Xin 松弛系统、两种源项分裂、谱分析 \\
+    \texttt{run\_jinxin\_experiments.py} & 谱半径扫描、临界 CFL、数值对比 \\
+    \texttt{stiff\_ode\_example.py} & 第二章刚性 ODE 算例 \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\clearpage
+\section{IMEX-Euler 的时间推进}
+
+下面的片段对应 \texttt{burgers\_imex.py} 中的核心循环。矩阵 $\bA=\bI-(1-\theta)\nu\Delta t\bD$ 只分解一次，随后每步用三角回代求解。
+
+\begin{lstlisting}[language=Python,caption={IMEX-Euler 时间推进的核心循环}]
+c = (1.0 - theta) * nu * dt / dx**2
+main = np.full(N, 1.0 + 2.0 * c)
+off = np.full(N - 1, -c)
+A = diags([off, main, off], [-1, 0, 1], format="csc")
+lu = splu(A)
+
+for n in range(nsteps):
+    conv = rhs_convective(u, grid, bcl, bcr, order=order)
+    lap = laplacian(u, grid, bcl, bcr)
+    rhs = u + dt * (conv + theta * nu * lap)
+    rhs[0] += c * bcl
+    rhs[-1] += c * bcr
+    u = lu.solve(rhs)
+\end{lstlisting}
+
+\section{双变量放大因子}
+
+\begin{lstlisting}[language=Python,caption={离散符号与放大因子}]
+def amplification(xi, dt, nu, theta, a, dx):
+    lam_c = (-1j * a * np.sin(xi) / dx
+             - abs(a) * (1.0 - np.cos(xi)) / dx)
+    lam_d = -2.0 * (1.0 - np.cos(xi)) / dx**2
+    z_e = dt * (lam_c + theta * nu * lam_d)
+    z_i = dt * (1.0 - theta) * nu * lam_d
+    return (1.0 + z_e) / (1.0 - z_i)
+\end{lstlisting}
+
+\section{Jin--Xin 源项更新}
+
+\begin{lstlisting}[language=Python,caption={策略 A 与策略 B 的源项更新}]
+du, dv = transport_rhs(u, v, grid.dx, a, uL, uR)
+u_new = u + dt * du
+if strategy == "A":
+    v_new = (v + dt * dv + mu * f_burgers(u_new)) / (1.0 + mu)
+elif strategy == "B":
+    v_new = (v + dt * dv + mu * f_burgers(u)) / (1.0 + mu)
+\end{lstlisting}
+
+\section{谱半径扫描}
+
+\begin{lstlisting}[language=Python,caption={策略 B 刚性极限的谱半径}]
+g = cfl * (1.0 - np.cos(xi))
+h = (cfl / a) * np.sin(xi)
+M = np.array([[1.0 - g, -1j * h], [b, 0.0]])
+rho = np.max(np.abs(np.linalg.eigvals(M)))
+\end{lstlisting}
+
+\section{复现步骤}
+
+代码依赖 Python 3.10 以上版本、NumPy、SciPy 与 Matplotlib。为避免污染系统环境，可将依赖安装到本地目录：
+
+\begin{lstlisting}[language=bash,caption={安装依赖}]
+cd "Code/Undergraduate Thesis Code"
+python3 -m pip install --target .pylibs \
+    --break-system-packages numpy scipy matplotlib
+\end{lstlisting}
+
+然后依次运行：
+
+\begin{lstlisting}[language=bash,caption={生成图片与数据}]
+cd "Code/Undergraduate Thesis Code"
+export PYTHONPATH=.:.pylibs
+export MPLCONFIGDIR=/tmp/mplconfig
+python3 stability_analysis.py
+python3 run_burgers_experiments.py all
+python3 run_jinxin_experiments.py
+python3 plot_results.py
+\end{lstlisting}
+
+全部实验在普通笔记本电脑上约需数分钟。随机数未使用，结果可完全复现。

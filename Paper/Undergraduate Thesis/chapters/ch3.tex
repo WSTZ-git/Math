@@ -1,0 +1,275 @@
+% ==========================================================================
+\chapter{模型与参数化分裂族}
+% ==========================================================================
+
+本章建立全文的研究对象。第 \ref{sec:burgers-model} 节介绍粘性 Burgers 方程及其精确行波解；第 \ref{sec:fv-discretization} 节给出有限体积半离散格式；第 \ref{sec:theta-family} 节引入参数化分裂族；第 \ref{sec:imex-implementation} 节说明 IMEX-Euler 的实现与离散参数。
+
+\section{粘性 Burgers 方程}
+\label{sec:burgers-model}
+
+\subsection{模型与基本性质}
+
+一维粘性 Burgers 方程为
+\begin{equation}
+  u_t+\left(\frac{u^2}{2}\right)_x=\nu u_{xx},
+  \qquad x\in\Omega,\quad t>0,
+  \label{eq:burgers}
+\end{equation}
+其中 $u=u(x,t)$ 为未知函数，$\nu>0$ 为粘性系数。它可以写成守恒形式
+\begin{equation}
+  u_t+f(u)_x=\nu u_{xx},\qquad f(u)=\frac{u^2}{2}.
+  \label{eq:burgers-conservation}
+\end{equation}
+当 $\nu=0$ 时，方程退化为无粘 Burgers 方程。即使初始条件光滑，无粘解也会在有限时间内形成激波；粘性项则把激波光滑化为一个厚度为 $O(\nu)$ 的过渡层。因此，Burgers 方程是研究“非线性对流与扩散竞争”的最简单模型，也是检验激波捕捉格式的常用算例。
+
+Burgers 方程有一个著名的非线性变换。令
+\begin{equation}
+  u=-2\nu\frac{\phi_x}{\phi},
+  \label{eq:cole-hopf}
+\end{equation}
+则 \eqref{eq:burgers} 化为热方程 $\phi_t=\nu\phi_{xx}$。这就是 Cole--Hopf 变换。它说明粘性 Burgers 方程的解可以表示为热核的积分，但在数值分析中，我们更关心的是格式在激波附近的稳定性与精度，而不是解析表达式本身。
+
+\subsection{精确行波解}
+
+设解为行波 $u(x,t)=\phi(x-st)$，其中 $s$ 为波速。代入 \eqref{eq:burgers} 并积分一次，得
+\begin{equation}
+  -s\phi+\frac{\phi^2}{2}=\nu\phi'+C.
+  \label{eq:travelling-ode}
+\end{equation}
+取左右无穷远处的状态为 $u_L$ 与 $u_R$（$u_L>u_R$），并要求 $\phi'(\pm\infty)=0$。由两端的代数关系可解出
+\begin{equation}
+  s=\frac{u_L+u_R}{2},\qquad
+  C=-s u_R+\frac{u_R^2}{2}.
+  \label{eq:wave-speed}
+\end{equation}
+代回 \eqref{eq:travelling-ode}，得
+\begin{equation}
+  \nu\phi'=\frac{(\phi-u_R)(\phi-u_L)}{2}.
+  \label{eq:travelling-phi}
+\end{equation}
+分离变量并积分，得到
+\begin{equation}
+  u(x,t)=u_R+\frac{u_L-u_R}{1+\exp\!\left(\dfrac{A(x-st)}{2\nu}\right)},
+  \qquad A=u_L-u_R.
+  \label{eq:exact-shock}
+\end{equation}
+这是一条以速度 $s=(u_L+u_R)/2$ 向右传播的粘性激波。在 $x=st$ 处 $u=(u_L+u_R)/2$，过渡层的特征厚度为
+\begin{equation}
+  w_{\rm ex}=\frac{4\nu\ln 9}{A}.
+  \label{eq:layer-width}
+\end{equation}
+本文取 $u_L=1$、$u_R=0$，此时 $s=1/2$，$w_{\rm ex}=4\nu\ln9\approx8.789\nu$。当 $\nu=0.01$ 时，$w_{\rm ex}\approx0.0879$。这一解析解将作为第五章数值实验的基准。
+
+\section{有限体积半离散格式}
+\label{sec:fv-discretization}
+
+\subsection{网格与单元平均}
+
+将区间 $\Omega=[x_{\min},x_{\max}]$ 划分为 $N$ 个等长单元
+\begin{equation}
+  I_j=\left[x_{j-1/2},x_{j+1/2}\right],\qquad
+  x_{j+1/2}=x_{\min}+j\Delta x,\quad \Delta x=\frac{x_{\max}-x_{\min}}{N}.
+\end{equation}
+记单元平均
+\begin{equation}
+  \bar u_j(t)=\frac{1}{\Delta x}\int_{I_j}u(x,t)\,\dd x.
+\end{equation}
+在 $I_j$ 上积分 \eqref{eq:burgers-conservation}，得
+\begin{equation}
+  \frac{\dd\bar u_j}{\dd t}
+  =-\frac{1}{\Delta x}\left(F^{c}_{j+1/2}-F^{c}_{j-1/2}\right)
+  +\frac{\nu}{\Delta x}\left(\frac{\bar u_{j+1}-\bar u_j}{\Delta x}
+  -\frac{\bar u_j-\bar u_{j-1}}{\Delta x}\right),
+  \label{eq:fv-semidiscrete}
+\end{equation}
+其中 $F^{c}_{j+1/2}$ 为对流数值通量。式 \eqref{eq:fv-semidiscrete} 即本文的半离散系统。
+
+\subsection{Rusanov 通量与 MUSCL 重构}
+
+本文采用局部 Lax--Friedrichs（Rusanov）通量
+\begin{equation}
+  F^{c}_{j+1/2}
+  =\frac12\left(f(u^-_{j+1/2})+f(u^+_{j+1/2})\right)
+  -\frac{\alpha_{j+1/2}}{2}\left(u^+_{j+1/2}-u^-_{j+1/2}\right),
+  \label{eq:rusanov-burgers}
+\end{equation}
+其中 $\alpha_{j+1/2}=\max(|u^-_{j+1/2}|,|u^+_{j+1/2}|)$。一阶格式取
+\begin{equation}
+  u^-_{j+1/2}=\bar u_j,\qquad u^+_{j+1/2}=\bar u_{j+1}.
+  \label{eq:first-order-states}
+\end{equation}
+二阶格式采用 MUSCL 重构
+\begin{equation}
+  u^-_{j+1/2}=\bar u_j+\frac12\sigma_j\Delta x,\qquad
+  u^+_{j+1/2}=\bar u_{j+1}-\frac12\sigma_{j+1}\Delta x,
+  \label{eq:muscl-burgers}
+\end{equation}
+其中
+\begin{equation}
+  \sigma_j=\operatorname{minmod}\left(
+  \frac{\bar u_j-\bar u_{j-1}}{\Delta x},
+  \frac{\bar u_{j+1}-\bar u_j}{\Delta x}\right),
+  \label{eq:minmod-burgers}
+\end{equation}
+\begin{equation}
+  \operatorname{minmod}(a,b)=
+  \begin{cases}
+    \dfrac{\sgn a+\sgn b}{2}\min(|a|,|b|), & ab>0,\\[6pt]
+    0, & ab\le0.
+  \end{cases}
+  \label{eq:minmod-burgers-def}
+\end{equation}
+当解单调时，重构达到二阶精度；在极值点附近，限制器将斜率压为零，格式退化为一阶，从而抑制非物理振荡。本文的稳定性分析以一阶格式的线性化符号为基础，因为一阶符号给出的稳定域是二阶格式的保守下界；MUSCL 重构主要用于精度实验。
+
+\subsection{边界条件与向量形式}
+
+对 Dirichlet 边界条件，在两端各设置一个虚拟单元（ghost cell），其值取边界值 $u_L$ 与 $u_R$。界面通量与扩散项均使用虚拟单元计算。对周期边界条件，则令 $\bar u_0=\bar u_N$、$\bar u_{N+1}=\bar u_1$。周期条件便于用 Fourier 符号作线性稳定性分析，Dirichlet 条件则用于激波算例。
+
+将 \eqref{eq:fv-semidiscrete} 写成向量形式：
+\begin{equation}
+  \frac{\dd\bU}{\dd t}=\bC(\bU)+\nu\bD\bU,
+  \label{eq:semidiscrete-system}
+\end{equation}
+其中 $\bU=(\bar u_1,\dots,\bar u_N)^{\mathsf T}$，$\bC(\bU)$ 为对流项，$\bD$ 为三对角（周期情形为循环三对角）扩散矩阵：
+\begin{equation}
+  \bD=\frac{1}{\Delta x^2}
+  \begin{pmatrix}
+    -2 & 1 & & & \\
+    1 & -2 & 1 & & \\
+      & \ddots & \ddots & \ddots & \\
+      & & 1 & -2 & 1\\
+      & & & 1 & -2
+  \end{pmatrix}.
+  \label{eq:laplacian-matrix}
+\end{equation}
+对 Dirichlet 边界，$\bD$ 的首末行还要包含边界值贡献，在时间推进中移到右端项。
+
+\section{参数化分裂族}
+\label{sec:theta-family}
+
+\subsection{分裂的构造}
+
+引入分裂参数 $\theta\in[0,1]$，把方程 \eqref{eq:semidiscrete-system} 的右端写成
+\begin{equation}
+  \frac{\dd\bU}{\dd t}
+  =\left[\bC(\bU)+\theta\nu\bD\bU\right]
+  +\left[(1-\theta)\nu\bD\bU\right].
+  \label{eq:theta-split}
+\end{equation}
+方括号中的第一项由显式 Euler 处理，第二项由隐式 Euler 处理，得到 IMEX-Euler 格式
+\begin{equation}
+  \bU^{n+1}=\bU^n+\Delta t\left[\bC(\bU^n)+\theta\nu\bD\bU^n\right]
+  +\Delta t(1-\theta)\nu\bD\bU^{n+1}.
+  \label{eq:theta-imex}
+\end{equation}
+整理得线性方程组
+\begin{equation}
+  \left[\bI-(1-\theta)\nu\Delta t\bD\right]\bU^{n+1}
+  =\bU^n+\Delta t\bC(\bU^n)+\theta\nu\Delta t\bD\bU^n.
+  \label{eq:theta-linear-system}
+\end{equation}
+对任意 $\theta$，分裂后的两项之和仍为 $\nu\bD\bU$，因此格式与 \eqref{eq:semidiscrete-system} 相容；$\theta$ 只改变显隐分配，不改变格式的极限方程。这正是“参数化分裂族”的含义：它在保持相容性的前提下，提供了一个连续的设计空间。
+
+表 \ref{tab:theta-cases} 列出了三个端点与中点对应的格式。
+
+\begin{table}[htbp]
+  \centering
+  \caption{参数化分裂族的特殊情形}
+  \label{tab:theta-cases}
+  \begin{tabular}{ccc}
+    \toprule
+    $\theta$ & 显式部分 & 隐式部分 \\
+    \midrule
+    $0$ & 对流 & 全部耗散 \\
+    $1/2$ & 对流 $+$ 一半耗散 & 一半耗散 \\
+    $1$ & 对流 $+$ 全部耗散 & 无 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{为什么按比例分裂耗散}
+
+一个自然的问题是：为什么不把对流项也纳入隐式部分？原因有两方面。其一，对流项是非线性的，隐式处理需要在每个时间步求解非线性方程组，计算量大；其二，对本文考虑的粘性激波，刚性主要来自扩散项，其 Jacobian 特征值为 $O(\nu/\Delta x^2)$，而对流项只有 $O(1/\Delta x)$。把扩散项隐式化，已经足以消除最严苛的稳定性限制；对流项保持显式，则可以沿用成熟的有限体积通量计算。
+
+按比例分裂耗散，而不是简单地“全隐式或全显式”，是为了研究稳定性边界的位置与机制。全隐式（$\theta=0$）具有最好的稳定性，但每步的线性系统更“重”；全显式（$\theta=1$）最便宜，却受 $\Delta t\lesssim\Delta x^2/(2\nu)$ 的限制。中间取值可能在这两者之间取得平衡，也可能在某个临界值处失稳。第四章将证明，临界值恰好是 $\theta=1/2$。
+
+\subsection{与算子分裂的区别}
+
+需要强调，本文的“分裂”是\textbf{右端算子的加性分裂}，不是 Strang 型算子分裂\cite{strang1968}。在加性分裂中，显式与隐式部分在同一个时间步内耦合求解，格式的精度与稳定性由 IMEX 方法本身决定；在算子分裂中，不同算子分别推进不同的子步，会引入分裂误差。本文不涉及后一种意义下的分裂。
+
+\section{IMEX-Euler 的实现}
+\label{sec:imex-implementation}
+
+\subsection{三对角系统}
+
+对一维问题，矩阵
+\begin{equation}
+  \bA=\bI-(1-\theta)\nu\Delta t\bD
+  \label{eq:matrix-A}
+\end{equation}
+是三对角矩阵。其对角元与非对角元分别为
+\begin{equation}
+  b_j=1+\frac{2(1-\theta)\nu\Delta t}{\Delta x^2},\qquad
+  a_j=c_j=-\frac{(1-\theta)\nu\Delta t}{\Delta x^2}.
+  \label{eq:tridiag-coeffs}
+\end{equation}
+对 Dirichlet 边界，边界贡献移到右端项；对周期边界，矩阵的右上角与左下角各多一个非零元，成为循环三对角矩阵。
+
+采用 Thomas 算法求解三对角系统，计算量为 $O(N)$。当时间步长固定时，矩阵 \eqref{eq:matrix-A} 不变，可以在时间推进前作一次 LU 分解并重复使用，从而把每步的计算量进一步降为两次三角回代。本文的 Python 实现使用 SciPy 的稀疏 LU 分解 \texttt{splu}，对周期情形同样适用。
+
+\subsection{离散守恒性}
+
+对流部分的有限体积格式是守恒的：相邻单元的界面通量相互抵消，总质量（在周期或闭边界条件下）在离散意义下保持不变。扩散部分则根据边界条件产生通量。对 Dirichlet 问题，总质量一般不守恒，这是由边界流入/流出造成的，与格式无关。
+
+需要指出，IMEX-Euler 的时间离散是一阶的，且对显式部分与隐式部分分别作 Euler 处理，因此整体精度为一阶。若采用高阶 IMEX Runge--Kutta 格式，可以提高精度，但稳定性分析的基本结构不变。
+
+\subsection{时间步长的选取}
+
+在实际计算中，时间步长通常由两类约束共同决定：显式对流部分的 CFL 条件
+\begin{equation}
+  \CFL=\frac{a\Delta t}{\Delta x}\le1,
+  \label{eq:cfl}
+\end{equation}
+以及显式扩散部分的扩散数条件。在扩散主导（$c\ll1$）时，网格尺度条件给出
+\begin{equation}
+  r=\frac{\nu\Delta t}{\Delta x^2}\le\frac{1}{2(2\theta-1)}\quad(\theta>1/2).
+  \label{eq:diffusion-number}
+\end{equation}
+当 $\theta\le1/2$ 时，第二个约束消失，时间步长主要由 CFL 条件或低波数的扩散条件控制；当 $\theta=1/2$ 时，约束退化为 $c\le1$。第四章将给出这些条件的严格推导，并说明它们与连续极限的关系。
+
+\section{离散参数与实验设计}
+\label{sec:parameters}
+
+为便于后续章节的对照，这里集中列出本文使用的无量纲参数与实验设置。
+
+\begin{itemize}[leftmargin=2.2em]
+  \item $\CFL=a\Delta t/\Delta x$：对流 CFL 数，$a=\max|u|$；
+  \item $r=\nu\Delta t/\Delta x^2$：扩散数；
+  \item $z_D=\Delta t\nu\lambda_D$：耗散变量的无量纲值，在网格尺度 $\xi=\pi$ 处 $z_D=-4r$；
+  \item $w_{\rm ex}=4\nu\ln9/A$：精确过渡层厚度，用于衡量数值扩散；
+  \item $N$：单元数，$\Delta x=|\Omega|/N$。
+\end{itemize}
+
+表 \ref{tab:experiment-setup} 汇总了第五章的主要实验设置。所有计算均在 Python 3.14 上完成，使用 NumPy 与 SciPy 的稀疏线性代数；绘图使用 Matplotlib。代码与数据见附录及配套文件夹。
+
+\begin{table}[H]
+  \centering
+  \caption{第五章数值实验的主要参数}
+  \label{tab:experiment-setup}
+  \begin{tabular}{lcccccc}
+    \toprule
+    实验 & $N$ & $\Omega$ & $\nu$ & $T$ & $\CFL$ & 边界 \\
+    \midrule
+    刚性相图 & 200 & $[0,1]$ & $10^{-2}$--$10^{2}$ & 1 & 0.4 & 周期 \\
+    最大步长 & 200 & $[0,1]$ & 1 & --- & 变 & 周期 \\
+    激波精度 & 800 & $[-2,3]$ & 0.01 & 2 & 0.2 & Dirichlet \\
+    收敛性 & 100--800 & $[-2,3]$ & 0.01 & 1 & 0.2 & Dirichlet \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+最大步长实验不固定物理终时，而是固定推进 20000 步；稳定性是每步性质，固定步数比固定物理时间更能区分稳定与不稳定。
+
+\section{本章小结}
+
+本章建立了粘性 Burgers 方程的有限体积半离散模型，引入了以 $\theta$ 为参数的显隐分裂族，并给出了 IMEX-Euler 的线性系统、三对角结构与离散参数。该分裂族在保持相容性的同时，把“全显式”与“全隐式”连接为一个连续的设计空间。下一章将对这个空间作系统的稳定性分析，核心工具是双变量稳定性函数。

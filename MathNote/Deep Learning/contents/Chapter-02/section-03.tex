@@ -4,121 +4,498 @@
 
 \begin{document}
 
-\section{高斯分布}\label{section:ch02-高斯分布}
+\section{Gauss 分布}\label{section:ch02-Gauss分布}
 
-高斯分布（Gaussian distribution），也称为正态分布（normal distribution），是概率论中最重要的分布之一。对于单变量实值变量$x$，高斯分布定义为
+连续变量最重要的概率分布之一是 Gauss（Gaussian）分布或称正态（normal）分布，我们将在本书的其余部分广泛使用这种分布。对于单个实值变量 $x$，Gauss 分布定义为
 
 \begin{align}
-  \mathcal{N}(x \mid \mu, \sigma^2) = \frac{1}{\sqrt{2\pi \sigma^2}} \exp\left\{ -\frac{(x-\mu)^2}{2\sigma^2} \right\}
-  \label{align:ch02-单变量高斯}
+  \mathcal{N}(x\mid\mu,\sigma^{2}) = \frac{1}{(2\pi\sigma^{2})^{1/2}}\exp\left\{-\frac{1}{2\sigma^{2}}(x-\mu)^{2}\right\}
+  \label{align:ch02-单变量Gauss}
 \end{align}
 
-其中$\mu$称为均值（mean），$\sigma^2$称为方差（variance）。方差的平方根$\sigma$称为标准差（standard deviation）。
+\begin{definition}[Gauss 分布]\label{definition:ch02-Gauss分布}
+称由\eqref{align:ch02-单变量Gauss}给出的概率密度为均值 $\mu$、方差 $\sigma^{2}$ 的 \textbf{Gauss} 分布（Gaussian distribution），也称\textbf{正态}分布（normal distribution）。其中 $\mu$ 称为\textbf{均值}（mean），$\sigma^{2}$ 称为\textbf{方差}（variance），方差的平方根 $\sigma$ 称为\textbf{标准差}（standard deviation），方差的倒数 $\beta=1/\sigma^{2}$ 称为\textbf{精度}（precision）。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch02-Gauss分布; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+Gauss 分布之所以成为全书的主角，是因为它在两个意义上都是“最自然”的选择：给定均值和方差，它是使\cref{section:ch02-信息论}中微分熵最大的分布（\cref{subsection:ch02-最大熵}），也是独立随机变量之和在适当缩放下的极限分布（中心极限定理，参见\cref{section:ch03-多元Gauss分布}）。因此它既可作为“信息最少”的先验，也可作为“大量微小扰动叠加”的模型。
+
+参数 $\mu$ 与 $\sigma^{2}$ 的地位不同：$\mu$ 决定位置，$\sigma^{2}$ 决定宽度，且 $\sigma^{2}>0$ 不可省（否则\eqref{align:ch02-单变量Gauss}无定义）。精度 $\beta$ 只是 $\sigma^{2}$ 的另一种写法，但在后文推导共轭先验时它比 $\sigma^{2}$ 更方便——这正是“你很快就会看到这个术语的由来”所指。
+\end{remark}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.5\textwidth]{ch02-fig2-8-gaussian.png}
+  \caption{单个连续变量 $x$ 的 Gauss 分布，其平均值为 $\mu$，标准差为 $\sigma$。}
+  \label{figure:ch02-Gauss分布}
+\end{figure}
+
+\eqref{align:ch02-单变量Gauss}给出的密度由两个参数 $\mu$ 和 $\sigma^{2}$ 控制，它们的名称与含义见\cref{definition:ch02-Gauss分布}。下文你很快就会看到“精度”这一术语的由来。\cref{figure:ch02-Gauss分布}展示了 Gauss 分布。虽然 Gauss 分布的形式看起来是任意的，但你稍后会看到，它是从最大熵（参见\cref{subsection:ch02-最大熵}）的概念和中心极限定理的角度自然产生的（参见\cref{section:ch03-多元Gauss分布}）。
+
+由\eqref{align:ch02-单变量Gauss}可知，Gauss 分布满足
+
+\begin{align}
+  \mathcal{N}(x\mid\mu,\sigma^{2}) > 0
+  \label{align:ch02-Gauss正性}
+\end{align}
+
+可以很直观地看到 Gauss 分布是归一化的（见\cref{exercise:ch02-12}），即
+
+\begin{align}
+  \int_{-\infty}^{\infty}\mathcal{N}(x\mid\mu,\sigma^{2})\,\mathrm{d}x = 1
+  \label{align:ch02-Gauss归一化}
+\end{align}
+
+因此，\eqref{align:ch02-单变量Gauss}满足概率密度有效的两个要求。
+
+\begin{proposition}[Gauss 分布的正性与归一化]\label{proposition:ch02-Gauss归一化}
+设 $\sigma^{2}>0$，则\eqref{align:ch02-单变量Gauss}定义的 $\mathcal{N}(x\mid\mu,\sigma^{2})$ 满足\eqref{align:ch02-Gauss正性}与\eqref{align:ch02-Gauss归一化}，因而确实是概率密度。
+\end{proposition}
+
+\begin{proof}
+正性由指数函数恒正、系数 $(2\pi\sigma^{2})^{-1/2}>0$ 直接得到。归一化：作换元 $u=(x-\mu)/\sigma$，得 $\mathrm{d}x=\sigma\,\mathrm{d}u$，于是
+\begin{align*}
+  \int_{-\infty}^{\infty}\mathcal{N}(x\mid\mu,\sigma^{2})\,\mathrm{d}x
+  = \frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty}e^{-u^{2}/2}\,\mathrm{d}u .
+\end{align*}
+记 $I=\int_{-\infty}^{\infty}e^{-u^{2}/2}\,\mathrm{d}u$，则
+\begin{align*}
+  I^{2} = \int_{-\infty}^{\infty}\!\!\int_{-\infty}^{\infty} e^{-(u^{2}+v^{2})/2}\,\mathrm{d}u\,\mathrm{d}v
+  = \int_{0}^{2\pi}\!\!\int_{0}^{\infty} e^{-r^{2}/2}\,r\,\mathrm{d}r\,\mathrm{d}\theta = 2\pi ,
+\end{align*}
+其中第二个等号用了极坐标 $(u,v)=(r\cos\theta,r\sin\theta)$、$\mathrm{d}u\,\mathrm{d}v=r\,\mathrm{d}r\,\mathrm{d}\theta$。故 $I=\sqrt{2\pi}$，代回得积分值为 $1$。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch02-Gauss归一化; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+归一化常数 $(2\pi\sigma^{2})^{-1/2}$ 不是人为挑选的，而是被\eqref{align:ch02-Gauss归一化}唯一确定的：若把系数改成别的数，密度下的面积就不再是 $1$。证明中的关键一步是把二重积分化为极坐标，这一步之所以可行，是因为 $e^{-(u^{2}+v^{2})/2}$ 只依赖 $r$。
+
+条件 $\sigma^{2}>0$ 在整个证明中不可省：$\sigma=0$ 时换元 $u=(x-\mu)/\sigma$ 无意义，而且此时分布退化为集中在 $\mu$ 处的 $\delta$ 函数（\cref{definition:ch02-狄拉克delta}），不再是普通密度。此外，$\mu$ 在归一化中不起作用——平移不改变面积，这也预示了后文 $\mu$ 只影响位置而不影响形状。
+\end{remark}
 
 \subsection{均值和方差}\label{subsection:ch02-均值和方差}
 
-高斯分布的均值为
+我们可以很容易地找到 Gauss 分布下 $x$ 的期望（见\cref{exercise:ch02-13}）。$x$ 的平均值由下式给出：
 
 \begin{align}
-  \mathbb{E}[x] = \int_{-\infty}^{\infty} x \, \mathcal{N}(x \mid \mu, \sigma^2) \,\mathrm{d}x = \mu
-  \label{align:ch02-高斯均值}
+  \mathbb{E}[x] = \int_{-\infty}^{\infty}\mathcal{N}(x\mid\mu,\sigma^{2})\,x\,\mathrm{d}x = \mu
+  \label{align:ch02-Gauss均值}
 \end{align}
 
-方差为
+由于参数 $\mu$ 表示 $x$ 在该分布下的平均值，因此称其为均值。\eqref{align:ch02-Gauss均值}中的积分称为分布的一阶矩（first-order moment），因为是对 $x$ 的期望取一次方。我们可以类似地给出分布的二阶矩：
 
 \begin{align}
-  \mathrm{var}[x] = \mathbb{E}\left[(x-\mu)^2\right] = \sigma^2
-  \label{align:ch02-高斯方差}
+  \mathbb{E}\left[x^{2}\right] = \int_{-\infty}^{\infty}\mathcal{N}(x\mid\mu,\sigma^{2})\,x^{2}\,\mathrm{d}x = \mu^{2}+\sigma^{2}
+  \label{align:ch02-Gauss二阶矩}
 \end{align}
 
-高斯分布的最大值出现在$x=\mu$处，其宽度由参数$\sigma$控制。当$\sigma$较大时，分布较宽；当$\sigma$较小时，分布较窄。
+\begin{proposition}[Gauss 分布的一阶矩与二阶矩]\label{proposition:ch02-Gauss矩}
+设 $x\sim\mathcal{N}(x\mid\mu,\sigma^{2})$，则\eqref{align:ch02-Gauss均值}与\eqref{align:ch02-Gauss二阶矩}成立，即 $\mathbb{E}[x]=\mu$、$\mathbb{E}[x^{2}]=\mu^{2}+\sigma^{2}$。
+\end{proposition}
+
+\begin{proof}
+作换元 $u=(x-\mu)/\sigma$，则 $x=\mu+\sigma u$、$\mathrm{d}x=\sigma\,\mathrm{d}u$，且 $\mathcal{N}(x\mid\mu,\sigma^{2})\,\mathrm{d}x=\varphi(u)\,\mathrm{d}u$，其中 $\varphi(u)=(2\pi)^{-1/2}e^{-u^{2}/2}$ 为标准正态密度。由 $\varphi$ 是偶函数，$\int u\,\varphi(u)\,\mathrm{d}u=0$，故
+\begin{align*}
+  \mathbb{E}[x] = \int(\mu+\sigma u)\,\varphi(u)\,\mathrm{d}u = \mu\int\varphi(u)\,\mathrm{d}u + \sigma\int u\,\varphi(u)\,\mathrm{d}u = \mu .
+\end{align*}
+再由 $\int u^{2}\varphi(u)\,\mathrm{d}u=1$（分部积分：$\int u^{2}\varphi(u)\,\mathrm{d}u=\int\varphi(u)\,\mathrm{d}u=1$），
+\begin{align*}
+  \mathbb{E}[x^{2}] = \int(\mu+\sigma u)^{2}\varphi(u)\,\mathrm{d}u
+  = \mu^{2} + 2\mu\sigma\int u\varphi(u)\,\mathrm{d}u + \sigma^{2}\int u^{2}\varphi(u)\,\mathrm{d}u = \mu^{2}+\sigma^{2} .
+\end{align*}
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch02-Gauss矩; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+这两条矩公式表明参数的名字名副其实：$\mu$ 就是一阶矩，$\sigma^{2}$ 则由二阶矩与一阶矩之差给出（见\cref{proposition:ch02-Gauss方差}）。它们也是“矩”这一术语的来源——$k$ 阶矩就是 $x^{k}$ 的期望。
+
+证明只用到标准正态密度的两个积分 $\int\varphi=1$、$\int u^{2}\varphi=1$，而这两个积分又依赖\cref{proposition:ch02-Gauss归一化}中的 $I=\sqrt{2\pi}$。条件 $\sigma^{2}>0$ 仍是换元的前提；若 $\sigma^{2}$ 未知而需要从数据估计，则得到的是\eqref{align:ch02-均值最大似然}中的 $\mu_{\mathrm{ML}}$ 而不是 $\mu$ 本身。
+\end{remark}
+
+由\eqref{align:ch02-Gauss均值}和\eqref{align:ch02-Gauss二阶矩}可知，$x$ 的方差为
+
+\begin{align}
+  \mathrm{var}[x] = \mathbb{E}\left[x^{2}\right] - \mathbb{E}[x]^{2} = \sigma^{2}
+  \label{align:ch02-Gauss方差}
+\end{align}
+
+\begin{proposition}[Gauss 分布的方差]\label{proposition:ch02-Gauss方差}
+设 $x\sim\mathcal{N}(x\mid\mu,\sigma^{2})$，则\eqref{align:ch02-Gauss方差}成立，即 $\mathrm{var}[x]=\sigma^{2}$。
+\end{proposition}
+
+\begin{proof}
+把\cref{proposition:ch02-Gauss矩}给出的 $\mathbb{E}[x^{2}]=\mu^{2}+\sigma^{2}$ 与 $\mathbb{E}[x]=\mu$ 代入方差展开式\eqref{align:ch02-方差展开}：
+\begin{align*}
+  \mathrm{var}[x] = \mathbb{E}[x^{2}] - \mathbb{E}[x]^{2} = (\mu^{2}+\sigma^{2}) - \mu^{2} = \sigma^{2} .
+\end{align*}
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch02-Gauss方差; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+这条结果说明 Gauss 分布的两个参数恰好就是它的前两阶矩，因此“均值—方差”这一对参数已经完全刻画了分布的位置与宽度；这也是后文用 $\mathcal{N}(x\mid\mu,\sigma^{2})$ 直接以矩为参数书写的原因。
+
+推导依赖\eqref{align:ch02-方差展开}，而后者要求二阶矩存在——对 Gauss 分布而言这总是成立。需要注意，$\mathrm{var}[x]$ 与 $\sigma^{2}$ 相等并不是定义，而是计算的结果；若把\eqref{align:ch02-单变量Gauss}中的 $\sigma^{2}$ 换成其他常数，方差就会随之改变。
+\end{remark}
+
+$\sigma^{2}$ 称为方差参数，分布的最大值称为众数。对于 Gauss 分布，众数与均值重合（见\cref{exercise:ch02-14}）。
+
+\begin{definition}[众数]\label{definition:ch02-众数}
+称概率密度（或概率质量函数）取最大值的点为该分布的\textbf{众数}（mode）。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch02-众数; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+众数描述分布的“峰在哪里”，它与均值、中位数一起构成位置的三类刻画；三者对对称分布重合，对偏斜分布则分开。Gauss 分布的众数与均值重合，正是因为它关于 $\mu$ 对称且单峰。
+
+众数的定义要求最大值确实取到；对某些密度（例如在开区间上单调的密度）最大值不存在，此时众数无定义。这与均值要求积分收敛是两类不同的存在性条件，不可混用。
+\end{remark}
 
 \subsection{似然函数}\label{subsection:ch02-似然函数}
 
-假设我们有一组观测数据$\mathbf{x} = (x_1, \cdots, x_N)^{\mathsf{T}}$，我们假设这些数据是从高斯分布中独立同分布抽取的。给定参数$\mu$和$\sigma^2$，观测到这组数据的概率（即似然函数）为
+假设我们有一个观测数据集，记作行向量 $\mathbf{x}=(x_1,\cdots,x_N)$，表示标量变量 $x$ 的 $N$ 个观测值。特别值得注意的是，我们用 $\mathbf{x}$ 这一特定的字体样式，与 $D$ 维向量值变量的单个观测值加以区分。对于 $D$ 维向量值变量的单个观测值，我们则是以列向量 $\mathbf{x}=(x_1,\cdots,x_D)^{\mathsf{T}}$ 来表示。假设观测值是从 Gauss 分布独立采样的，其均值 $\mu$ 和方差 $\sigma^{2}$ 是未知的，我们希望从数据集中确定这些参数。给定观测值的一个有限集合估计分布的问题叫作密度估计（density estimation）问题。需要强调的是，密度估计问题基本上是不适定的，因为有可能存在无数个概率分布都能产生这一组观测到的有限数据集。事实上，任意在 $x_1,\cdots,x_N$ 处非零的分布 $p(x)$ 都有可能是真实的概率分布。在这里，我们将分布空间限制为 Gauss 分布，以产生定义明确的解。
+
+从相同分布中独立产生的数据点是独立同分布（independent and identical distribution，缩写为 i.i.d. 或 IID）的。你已经看到，两个独立事件的联合概率由每个事件边缘概率的乘积给出。因为数据集 $\mathbf{x}$ 是独立同分布的，所以我们可以将给定 $\mu$ 和 $\sigma^{2}$ 下数据集 $\mathbf{x}$ 的概率写成以下形式：
 
 \begin{align}
-  p(\mathbf{x} \mid \mu, \sigma^2) = \prod_{n=1}^{N} \mathcal{N}(x_n \mid \mu, \sigma^2)
-  \label{align:ch02-高斯似然}
+  p(\mathbf{x}\mid\mu,\sigma^{2}) = \prod_{n=1}^{N}\mathcal{N}(x_n\mid\mu,\sigma^{2})
+  \label{align:ch02-Gauss似然}
 \end{align}
 
-在实际应用中，我们通常使用对数似然函数，因为对数函数是单调递增的，最大化对数似然等价于最大化似然：
+\begin{definition}[独立同分布与似然函数]\label{definition:ch02-似然函数}
+若一组随机变量 $x_1,\cdots,x_N$ 相互独立，且每个都服从同一个分布 $p(x)$，则称它们是\textbf{独立同分布}的（independent and identically distributed，i.i.d.）。此时它们的联合分布为 $\prod_{n=1}^{N}p(x_n)$。若把\eqref{align:ch02-Gauss似然}右端视为参数 $\mu,\sigma^{2}$ 的函数（数据固定），则称之为 \textbf{Gauss} 分布的\textbf{似然函数}（likelihood function）。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch02-似然函数; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+“独立同分布”这一假设使联合概率从一般的 $p(x_1,\cdots,x_N)$ 退化为 $N$ 个相同因子的乘积，这是似然函数能够写出显式形式的唯一原因；没有它，\eqref{align:ch02-Gauss似然}无从成立。
+
+似然函数与概率密度在数学上是同一个表达式，区别只在于“谁固定、谁变化”：作为 $x$ 的函数它是密度（对 $x$ 积分为 $1$），作为 $\mu,\sigma^{2}$ 的函数它是似然（对 $\mu,\sigma^{2}$ 的积分不必为 $1$，见\cref{subsection:ch02-模型参数}）。这一区别是频率学派与 Bayes 学派分歧的技术根源之一。
+\end{remark}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.48\textwidth]{ch02-fig2-9-likelihood.png}
+  \caption{红色曲线为 Gauss 分布似然函数的图示。这里灰色的点表示数据集 $\{x_n\}$ 中的值，似然函数［见\eqref{align:ch02-Gauss似然}］由对应的 $p(x)$ 值（蓝色的点）的乘积给出。最大似然法通过调整 Gauss 分布的均值和方差来最大化这个乘积（参见\cref{subsection:ch02-正则化}）。}
+  \label{figure:ch02-似然函数}
+\end{figure}
+
+如果将其视为 $\mu$ 和 $\sigma^{2}$ 的函数，则称之为 Gauss 分布的似然函数（likelihood function），如\cref{figure:ch02-似然函数}所示。
+
+一种常见的使用观测数据集确定概率分布中参数的方法就是最大似然（maximum likelihood）法，其目的是找到使似然函数最大化的参数值。这个准则似乎有些奇怪，因为从我们之前对概率论的讨论来看，在给定数据的情况下最大化参数的几率，似乎比在给定参数的情况下最大化数据的概率更加自然。事实上，这两个准则是相关的。
+
+\begin{definition}[最大似然估计]\label{definition:ch02-最大似然估计}
+设数据 $\mathbf{x}=(x_1,\cdots,x_N)$ 的似然函数为 $p(\mathbf{x}\mid\boldsymbol{\theta})$。称使该似然函数取最大值的参数值
+\begin{align*}
+  \boldsymbol{\theta}_{\mathrm{ML}} = \arg\max_{\boldsymbol{\theta}} p(\mathbf{x}\mid\boldsymbol{\theta})
+\end{align*}
+为参数 $\boldsymbol{\theta}$ 的\textbf{最大似然估计}（maximum likelihood estimate），简称最大似然解。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch02-最大似然估计; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+最大似然准则的动机是：在已经观测到 $\mathbf{x}$ 的前提下，取“使这组数据最可能出现”的参数值作为估计，是把“数据已发生”这一事实反过来用于推断参数的最直接方式。
+
+需要强调，$\boldsymbol{\theta}_{\mathrm{ML}}$ 是数据的函数，因而本身是随机变量：换一组数据就会得到不同的估计。这正是\cref{subsection:ch02-最大似然的偏差}讨论偏差时的出发点。另外，最大值若不存在（例如似然在参数空间边界上取到上确界而不取到），则最大似然解不存在，此时只能说“最大似然估计在极限意义下取到”。
+\end{remark}
+
+首先，我们将通过最大化似然函数［见\eqref{align:ch02-Gauss似然}］来确定 Gauss 分布中未知参数 $\mu$ 和 $\sigma^{2}$ 的值。在实践中，最大化似然函数的对数更为方便。由于对数函数是单调递增函数，最大化一个函数的对数等价于最大化这个函数本身。取对数不仅可以简化后续的数学分析，而且在数值计算上也有帮助，因为大量小概率的乘积很容易因计算机数值精度不够而产生下溢，而这个问题可以通过计算对数概率的和来解决。基于\eqref{align:ch02-单变量Gauss}和\eqref{align:ch02-Gauss似然}，对数似然函数可以写成以下形式：
 
 \begin{align}
-  \ln p(\mathbf{x} \mid \mu, \sigma^2) = -\frac{N}{2} \ln(2\pi) - \frac{N}{2} \ln(\sigma^2) - \frac{1}{2\sigma^2} \sum_{n=1}^{N} (x_n - \mu)^2
+  \ln p(\mathbf{x}\mid\mu,\sigma^{2}) = -\frac{1}{2\sigma^{2}}\sum_{n=1}^{N}(x_n-\mu)^{2} - \frac{N}{2}\ln\sigma^{2} - \frac{N}{2}\ln(2\pi)
   \label{align:ch02-对数似然}
 \end{align}
 
-最大似然估计通过最大化对数似然来确定参数$\mu$和$\sigma^2$。
+\begin{proposition}[Gauss 分布的对数似然]\label{proposition:ch02-对数似然}
+设数据 $\mathbf{x}$ 独立同分布于 $\mathcal{N}(x\mid\mu,\sigma^{2})$，则对数似然由\eqref{align:ch02-对数似然}给出。
+\end{proposition}
 
-对$\mu$求导并令其为零，可以得到均值的最大似然估计：
+\begin{proof}
+对\eqref{align:ch02-Gauss似然}取对数，把乘积化为求和：
+\begin{align*}
+  \ln p(\mathbf{x}\mid\mu,\sigma^{2}) = \sum_{n=1}^{N}\ln\mathcal{N}(x_n\mid\mu,\sigma^{2}) .
+\end{align*}
+对每一项用\eqref{align:ch02-单变量Gauss}，
+\begin{align*}
+  \ln\mathcal{N}(x_n\mid\mu,\sigma^{2}) = -\frac{1}{2}\ln(2\pi\sigma^{2}) - \frac{1}{2\sigma^{2}}(x_n-\mu)^{2} .
+\end{align*}
+把 $N$ 项相加，常数项 $-\frac{N}{2}\ln(2\pi)$ 与 $-\frac{N}{2}\ln\sigma^{2}$ 合并，即得\eqref{align:ch02-对数似然}。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch02-对数似然; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+取对数的合法性来自 $\ln$ 严格单调：$p\mapsto\ln p$ 保持大小关系，故最大值点不变。但要注意“等价”只对最大化成立，最大值本身会变（对数似然的最大值与似然的极大值不相等），因此不能把对数似然的数值当作概率使用。
+
+把乘积化为求和，除了避免下溢，还使求导变得可行：\eqref{align:ch02-对数似然}右端对 $\mu$ 与 $\sigma^{2}$ 的偏导数都很容易写出，这正是下面两式能够显式求解的原因。条件 $x_n\in\mathbb{R}$ 与 $\sigma^{2}>0$ 保证对数内的量有意义。
+\end{remark}
+
+将\eqref{align:ch02-对数似然}关于 $\mu$ 最大化，可以得到最大似然解为（见\cref{exercise:ch02-15}）
 
 \begin{align}
-  \mu_{\mathrm{ML}} = \frac{1}{N} \sum_{n=1}^{N} x_n
+  \mu_{\mathrm{ML}} = \frac{1}{N}\sum_{n=1}^{N} x_n
   \label{align:ch02-均值最大似然}
 \end{align}
 
-这就是样本均值。
-
-类似地，对$\sigma^2$求导并令其为零，可以得到方差的最大似然估计：
+这是样本均值（sample mean），即观测值 $\{x_n\}$ 的均值。类似地，将\eqref{align:ch02-对数似然}关于 $\sigma^{2}$ 最大化，可以得到方差的最大似然解为
 
 \begin{align}
-  \sigma_{\mathrm{ML}}^2 = \frac{1}{N} \sum_{n=1}^{N} (x_n - \mu_{\mathrm{ML}})^2
+  \sigma_{\mathrm{ML}}^{2} = \frac{1}{N}\sum_{n=1}^{N}\big(x_n-\mu_{\mathrm{ML}}\big)^{2}
   \label{align:ch02-方差最大似然}
 \end{align}
 
-这就是样本方差。
+\begin{theorem}[Gauss 分布的最大似然解]\label{theorem:ch02-Gauss最大似然}
+设数据 $\mathbf{x}=(x_1,\cdots,x_N)$ 独立同分布于 $\mathcal{N}(x\mid\mu,\sigma^{2})$，则对数似然\eqref{align:ch02-对数似然}的驻点由\eqref{align:ch02-均值最大似然}与\eqref{align:ch02-方差最大似然}给出，且该驻点是全局最大值点。
+\end{theorem}
+
+\begin{proof}
+记 $L(\mu,\sigma^{2})=\ln p(\mathbf{x}\mid\mu,\sigma^{2})$。先对 $\mu$ 求偏导并令其为零：
+\begin{align*}
+  \frac{\partial L}{\partial\mu} = \frac{1}{\sigma^{2}}\sum_{n=1}^{N}(x_n-\mu) = 0
+  \quad\Longrightarrow\quad
+  \sum_{n=1}^{N}x_n = N\mu ,
+\end{align*}
+即 $\mu=\frac{1}{N}\sum_n x_n$，这就是\eqref{align:ch02-均值最大似然}。又 $\partial^{2}L/\partial\mu^{2}=-N/\sigma^{2}<0$，故该驻点关于 $\mu$ 是最大值点。
+
+再对 $\sigma^{2}$ 求偏导并令其为零：
+\begin{align*}
+  \frac{\partial L}{\partial\sigma^{2}} = \frac{1}{2\sigma^{4}}\sum_{n=1}^{N}(x_n-\mu)^{2} - \frac{N}{2\sigma^{2}} = 0
+  \quad\Longrightarrow\quad
+  \sigma^{2} = \frac{1}{N}\sum_{n=1}^{N}(x_n-\mu)^{2} .
+\end{align*}
+由于 $\mu$ 的解与 $\sigma^{2}$ 的解解耦（$\partial L/\partial\sigma^{2}$ 中出现的 $\mu$ 已是上面求得的值），把 $\mu=\mu_{\mathrm{ML}}$ 代入即得\eqref{align:ch02-方差最大似然}。最后，$L$ 关于 $(\mu,\ln\sigma^{2})$ 是凹函数（其 Hessian 为负定），故驻点必为全局最大值点。
+\end{proof}
+
+% SUPPLEMENT: parent=theorem:ch02-Gauss最大似然; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+定理的结论有两点值得注意。其一，$\mu$ 的解与 $\sigma^{2}$ 的解是解耦的：可以先用\eqref{align:ch02-均值最大似然}算出 $\mu_{\mathrm{ML}}$，再把它代入\eqref{align:ch02-方差最大似然}，而不必解联立方程。其二，$\sigma_{\mathrm{ML}}^{2}$ 的分母是 $N$ 而不是 $N-1$，这正是\cref{subsection:ch02-最大似然的偏差}要讨论的偏差来源。
+
+证明中用 $\ln\sigma^{2}$（而非 $\sigma^{2}$）作自变量使 Hessian 为负定，从而把“驻点”升级为“最大值点”；若直接对 $\sigma^{2}$ 求二阶导，需要额外验证。条件 $N\geqslant1$ 与 $\sigma^{2}>0$ 不可省：$N=1$ 时\eqref{align:ch02-方差最大似然}给出 $\sigma_{\mathrm{ML}}^{2}=0$，分布退化。
+\end{remark}
+
+这是关于样本均值 $\mu_{\mathrm{ML}}$ 测量的样本方差（sample variance）。需要注意的是，我们正在关于 $\mu$ 和 $\sigma^{2}$ 进行\eqref{align:ch02-对数似然}的联合最大化，但对于 Gauss 分布，$\mu$ 的解与 $\sigma^{2}$ 的解是解耦的，因此我们可以先计算\eqref{align:ch02-均值最大似然}，再用得到的结果计算\eqref{align:ch02-方差最大似然}。
 
 \subsection{最大似然的偏差}\label{subsection:ch02-最大似然的偏差}
 
-需要注意的是，最大似然估计得到的方差是有偏的（biased）。具体来说，
+最大似然技术已广泛应用于深度学习中，它是大多数机器学习算法的基础。然而，它也有一些局限性，我们用单变量 Gauss 分布来说明。
+
+我们首先注意到最大似然解 $\mu_{\mathrm{ML}}$ 和 $\sigma_{\mathrm{ML}}^{2}$ 是数据集值 $x_1,\cdots,x_N$ 的函数。假设这些值都是从一个真实参数为 $\mu$ 和 $\sigma^{2}$ 的 Gauss 分布中独立产生的，现在考虑 $\mu_{\mathrm{ML}}$ 和 $\sigma_{\mathrm{ML}}^{2}$ 在这些数据集值上的期望，显然有（见\cref{exercise:ch02-16}）
 
 \begin{align}
-  \mathbb{E}[\sigma_{\mathrm{ML}}^2] = \frac{N-1}{N} \sigma^2
-  \label{align:ch02-最大似然偏差}
+  \mathbb{E}\left[\mu_{\mathrm{ML}}\right] = \mu
+  \label{align:ch02-均值无偏}
 \end{align}
 
-因此，最大似然估计低估了真实的方差。为了得到无偏估计，我们通常使用
+\begin{align}
+  \mathbb{E}\left[\sigma_{\mathrm{ML}}^{2}\right] = \left(\frac{N-1}{N}\right)\sigma^{2}
+  \label{align:ch02-方差有偏}
+\end{align}
+
+\begin{definition}[偏差]\label{definition:ch02-偏差}
+设 $\hat{\theta}$ 是参数 $\theta$ 的一个估计。若 $\mathbb{E}[\hat{\theta}]\neq\theta$，则称 $\hat{\theta}$ 是\textbf{有偏的}（biased），并称 $\mathbb{E}[\hat{\theta}]-\theta$ 为它的\textbf{偏差}（bias）；若 $\mathbb{E}[\hat{\theta}]=\theta$，则称它是\textbf{无偏的}（unbiased）。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch02-偏差; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+偏差描述的是“平均而言偏不偏”，而不是“某一次估计准不准”：一个估计可以有偏但方差很小，也可以无偏但方差很大。\eqref{align:ch02-方差有偏}说明 $\sigma_{\mathrm{ML}}^{2}$ 系统性地偏小，偏差为 $-\sigma^{2}/N$，它与 $N$ 成反比，因此大样本下可以忽略。
+
+需要区分偏差与\cref{subsection:ch02-最大似然的偏差}中“最大似然低估方差”的直观原因：方差的估计是相对于 $\mu_{\mathrm{ML}}$ 而不是真实的 $\mu$ 计算的，而 $\mu_{\mathrm{ML}}$ 恰好是使 $\sum_n(x_n-\mu)^{2}$ 最小的那个点（见\cref{exercise:ch02-15}），因此用它中心化必然使平方和偏小。
+\end{remark}
+
+\begin{proposition}[最大似然估计的期望]\label{proposition:ch02-最大似然期望}
+设 $x_1,\cdots,x_N$ 独立同分布于 $\mathcal{N}(x\mid\mu,\sigma^{2})$，$\mu_{\mathrm{ML}},\sigma_{\mathrm{ML}}^{2}$ 由\eqref{align:ch02-均值最大似然}与\eqref{align:ch02-方差最大似然}给出，则\eqref{align:ch02-均值无偏}与\eqref{align:ch02-方差有偏}成立。
+\end{proposition}
+
+\begin{proof}
+先算二阶混合矩：由独立性，当 $n\neq m$ 时 $\mathbb{E}[x_nx_m]=\mu^{2}$；当 $n=m$ 时 $\mathbb{E}[x_n^{2}]=\mu^{2}+\sigma^{2}$。把两者统一写成
+\begin{align*}
+  \mathbb{E}[x_nx_m] = \mu^{2} + I_{nm}\sigma^{2},\qquad
+  I_{nm} = \begin{cases}1, & n=m,\\ 0, & n\neq m.\end{cases}
+\end{align*}
+于是由\eqref{align:ch02-均值最大似然}与期望的线性性，$\mathbb{E}[\mu_{\mathrm{ML}}]=\frac{1}{N}\sum_n\mathbb{E}[x_n]=\mu$，即\eqref{align:ch02-均值无偏}。
+
+再算 $\mathbb{E}[\mu_{\mathrm{ML}}^{2}]$。由 $\mathrm{var}[\mu_{\mathrm{ML}}]=\frac{1}{N^{2}}\sum_{n}\mathrm{var}[x_n]=\sigma^{2}/N$（独立性使交叉项消失）与\cref{proposition:ch02-方差展开}，
+\begin{align*}
+  \mathbb{E}\left[\mu_{\mathrm{ML}}^{2}\right] = \mathrm{var}\left[\mu_{\mathrm{ML}}\right] + \mu^{2} = \frac{\sigma^{2}}{N} + \mu^{2} .
+\end{align*}
+而 $\mathbb{E}[x_n\mu_{\mathrm{ML}}]=\frac{1}{N}\sum_m\mathbb{E}[x_nx_m]=\frac{1}{N}\big(N\mu^{2}+\sigma^{2}\big)=\mu^{2}+\frac{\sigma^{2}}{N}$。把\eqref{align:ch02-方差最大似然}展开并逐项取期望：
+\begin{align*}
+  \mathbb{E}\left[\sigma_{\mathrm{ML}}^{2}\right]
+  &= \frac{1}{N}\sum_{n=1}^{N}\left(\mathbb{E}[x_n^{2}] - 2\mathbb{E}[x_n\mu_{\mathrm{ML}}] + \mathbb{E}[\mu_{\mathrm{ML}}^{2}]\right) \\
+  &= \frac{1}{N}\sum_{n=1}^{N}\left((\mu^{2}+\sigma^{2}) - 2\left(\mu^{2}+\frac{\sigma^{2}}{N}\right) + \left(\mu^{2}+\frac{\sigma^{2}}{N}\right)\right) \\
+  &= \frac{1}{N}\sum_{n=1}^{N}\sigma^{2}\left(1-\frac{1}{N}\right) = \frac{N-1}{N}\sigma^{2} ,
+\end{align*}
+即\eqref{align:ch02-方差有偏}。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch02-最大似然期望; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+证明的关键是 $I_{nm}$：它把“同一点”与“不同点”的二阶矩统一成一个公式，从而使 $\mathbb{E}[x_n\mu_{\mathrm{ML}}]$ 与 $\mathbb{E}[\mu_{\mathrm{ML}}^{2}]$ 都能一次算出。这个技巧在\cref{exercise:ch02-16}中原样出现。
+
+结论中的 $(N-1)/N$ 因子解释了为什么样本方差通常除以 $N-1$：除以 $N$ 会低估 $\sigma^{2}$，而\eqref{align:ch02-无偏方差} 的修正恰好抵消这一因子。条件“独立同分布”不可省：若 $x_n$ 之间有相关性，$\mathrm{var}[\mu_{\mathrm{ML}}]$ 不再是 $\sigma^{2}/N$，上述计算需改写。
+\end{remark}
+
+可以看到，当对给定大小的数据集进行平均时，均值的最大似然解等于真实的均值。然而，方差的最大似然估计会变为真实方差的 $(N-1)/N$ 倍。这是一个被称作偏差（bias）现象的例子，即一个随机变量的估计与真实值存在系统性的差异。这个结果的直觉解释如\cref{figure:ch02-最大似然偏差}所示。
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.95\textwidth]{ch02-fig2-10-ml-bias.png}
+  \caption{当使用最大似然来确定 Gauss 分布的均值和方差时，偏差如何产生的图示。红色曲线表示所生成数据的真实 Gauss 分布，三条蓝色曲线表示使用最大似然结果［\eqref{align:ch02-均值最大似然}和\eqref{align:ch02-方差最大似然}］对 $3$ 个数据集进行拟合得到的 Gauss 分布，每个数据集由绿色所示的两个数据点组成。这 $3$ 个数据集上的均值是正确的，但方差被系统地低估了，因为它是相对于样本均值而不是相对于真实均值测量的。}
+  \label{figure:ch02-最大似然偏差}
+\end{figure}
+
+注意，偏差的产生是因为方差是相对于均值的最大似然估计来测量的，而均值本身是根据数据调整的。相反，假设我们可以获得真实的均值 $\mu$，并用它来估计方差：
 
 \begin{align}
-  \tilde{\sigma}^2 = \frac{1}{N-1} \sum_{n=1}^{N} (x_n - \mu_{\mathrm{ML}})^2
+  \tilde{\sigma}^{2} = \frac{1}{N}\sum_{n=1}^{N}(x_n-\mu)^{2}
+  \label{align:ch02-真值方差估计}
+\end{align}
+
+我们可以得到（见\cref{exercise:ch02-17}）
+
+\begin{align}
+  \mathbb{E}\left[\tilde{\sigma}^{2}\right] = \sigma^{2}
+  \label{align:ch02-真值方差无偏}
+\end{align}
+
+它是无偏的。当然，我们只有观测数据，因而无法获得真正的均值。根据\eqref{align:ch02-方差有偏}，对于 Gauss 分布，方差参数的以下估计是无偏的：
+
+\begin{align}
+  \tilde{\sigma}^{2} = \frac{N}{N-1}\sigma_{\mathrm{ML}}^{2} = \frac{1}{N-1}\sum_{n=1}^{N}\big(x_n-\mu_{\mathrm{ML}}\big)^{2}
   \label{align:ch02-无偏方差}
 \end{align}
 
-这个偏差问题在小样本时尤为明显，但当$N$很大时，偏差可以忽略不计。
+\begin{proposition}[方差的无偏估计]\label{proposition:ch02-无偏方差}
+设 $x_1,\cdots,x_N$ 独立同分布于 $\mathcal{N}(x\mid\mu,\sigma^{2})$，$\tilde{\sigma}^{2}$ 由\eqref{align:ch02-真值方差估计}定义，则由\eqref{align:ch02-无偏方差}定义的估计满足 $\mathbb{E}[\tilde{\sigma}^{2}]=\sigma^{2}$，即\eqref{align:ch02-真值方差无偏}成立。
+\end{proposition}
+
+\begin{proof}
+对\eqref{align:ch02-真值方差估计}取期望，并用 $\mathbb{E}[(x_n-\mu)^{2}]=\mathrm{var}[x_n]=\sigma^{2}$：
+\begin{align*}
+  \mathbb{E}\left[\tilde{\sigma}^{2}\right] = \frac{1}{N}\sum_{n=1}^{N}\mathbb{E}\left[(x_n-\mu)^{2}\right] = \frac{1}{N}\cdot N\sigma^{2} = \sigma^{2} .
+\end{align*}
+这证明了\eqref{align:ch02-真值方差无偏}。再由\eqref{align:ch02-方差有偏}，
+\begin{align*}
+  \mathbb{E}\left[\frac{N}{N-1}\sigma_{\mathrm{ML}}^{2}\right] = \frac{N}{N-1}\cdot\frac{N-1}{N}\sigma^{2} = \sigma^{2},
+\end{align*}
+故\eqref{align:ch02-无偏方差}中的估计是无偏的。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch02-无偏方差; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+两条估计的差别只在于中心：\eqref{align:ch02-真值方差估计}用真实的 $\mu$，\eqref{align:ch02-无偏方差}用 $\mu_{\mathrm{ML}}$ 但把分母改为 $N-1$。后者的代价是除以 $N-1$ 会使估计在 $N$ 很小时方差较大，因此“无偏”并不等于“更好”——这是偏差—方差权衡（参见\cref{section:ch04-偏差方差权衡}）的一个简单实例。
+
+条件 $N\geqslant2$ 不可省：$N=1$ 时 $N-1=0$，\eqref{align:ch02-无偏方差}无定义，这与“单个观测无法估计方差”的直觉一致。
+\end{remark}
+
+我们注意到，随着数据点数量 $N$ 的增加，最大似然解的偏差变得不显著。当 $N\to\infty$ 时，方差的最大似然解等于所生成数据分布的真实方差。在 Gauss 分布下，除了 $N$ 比较小的情况，这种偏差不是很严重的问题。然而，在本书中，我们会关注许多具备大量参数的复杂模型，对它们而言，与最大似然相关的偏差问题将会严重得多。事实上，最大似然中的偏差问题与过拟合（over-fitting）问题密切相关（参见\cref{subsection:ch02-Bayes机器学习}）。
 
 \subsection{线性回归}\label{subsection:ch02-线性回归}
 
-在\cref{section:ch01-一个教学示例}中，我们使用平方和误差函数来拟合多项式曲线。现在我们可以从概率的角度来理解这个误差函数。
+我们已经知道可以利用误差最小化来表示线性回归问题。下面让我们回到这个示例并从概率的角度看待，从而进一步了解误差函数和正则化（参见\cref{section:ch01-一个教学示例}）。
 
-假设目标变量$t$是由输入变量$x$通过某个函数生成的，但带有高斯噪声：
+回归问题的目标是，通过使用包含 $N$ 个输入值 $\mathbf{x}=(x_1,\cdots,x_N)$ 及对应目标值 $\mathbf{t}=(t_1,\cdots,t_N)$ 的训练数据集，对于给定的新的输入变量 $x$，能够对目标变量 $t$ 进行预测。我们可以用概率分布来表示对于目标变量值的不确定性。为此，我们假设给定 $x$ 值，对应的 $t$ 值服从 Gauss 分布，其均值为\eqref{align:ch01-多项式模型}中多项式曲线的值 $y(x,\mathbf{w})$，方差为 $\sigma^{2}$，其中 $\mathbf{w}$ 是多项式系数，因此有
 
 \begin{align}
-  t = y(x, \mathbf{w}) + \epsilon
-  \label{align:ch02-噪声模型}
+  p(t\mid x,\mathbf{w},\sigma^{2}) = \mathcal{N}\big(t\mid y(x,\mathbf{w}),\sigma^{2}\big)
+  \label{align:ch02-条件Gauss}
 \end{align}
 
-其中$\epsilon$是均值为0、方差为$\sigma^2$的高斯噪声。因此，给定$x$和参数$\mathbf{w}$，$t$服从高斯分布：
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.52\textwidth]{ch02-fig2-11-regression-noise.png}
+  \caption{通过\eqref{align:ch02-条件Gauss}定义的给定 $x$ 时 $t$ 的 Gauss 条件分布，其中均值由多项式函数 $y(x,\mathbf{w})$ 给出，方差由参数 $\sigma^{2}$ 给出。}
+  \label{figure:ch02-回归噪声}
+\end{figure}
+
+\cref{figure:ch02-回归噪声}对此做了示意说明。
+
+我们现在使用训练数据 $\{\mathbf{x},\mathbf{t}\}$，通过最大似然来确定未知参数 $\mathbf{w}$ 和 $\sigma^{2}$ 的值。假设数据从\eqref{align:ch02-条件Gauss}所示的分布中独立产生，则似然函数为
 
 \begin{align}
-  p(t \mid x, \mathbf{w}, \sigma^2) = \mathcal{N}(t \mid y(x, \mathbf{w}), \sigma^2)
-  \label{align:ch02-条件高斯}
-\end{align}
-
-现在，给定训练数据集$\{\mathbf{x}, \mathbf{t}\}$，我们可以写出似然函数：
-
-\begin{align}
-  p(\mathbf{t} \mid \mathbf{x}, \mathbf{w}, \sigma^2) = \prod_{n=1}^{N} \mathcal{N}(t_n \mid y(x_n, \mathbf{w}), \sigma^2)
+  p(\mathbf{t}\mid\mathbf{x},\mathbf{w},\sigma^{2}) = \prod_{n=1}^{N}\mathcal{N}\big(t_n\mid y(x_n,\mathbf{w}),\sigma^{2}\big)
   \label{align:ch02-回归似然}
 \end{align}
 
-取对数似然，我们得到
+正如我们之前对简单 Gauss 分布所做的那样，我们可以很方便地最大化似然函数的对数。代入\eqref{align:ch02-单变量Gauss}所示的 Gauss 分布，得到对数似然函数的形式为
 
 \begin{align}
-  \ln p(\mathbf{t} \mid \mathbf{x}, \mathbf{w}, \sigma^2) = -\frac{N}{2} \ln(2\pi) - \frac{N}{2} \ln(\sigma^2) - \frac{1}{2\sigma^2} \sum_{n=1}^{N} \{ y(x_n, \mathbf{w}) - t_n \}^2
+  \ln p(\mathbf{t}\mid\mathbf{x},\mathbf{w},\sigma^{2}) = -\frac{1}{2\sigma^{2}}\sum_{n=1}^{N}\big\{y(x_n,\mathbf{w})-t_n\big\}^{2} - \frac{N}{2}\ln\sigma^{2} - \frac{N}{2}\ln(2\pi)
   \label{align:ch02-回归对数似然}
 \end{align}
 
-如果我们假设噪声方差$\sigma^2$是固定的，那么最大化对数似然等价于最小化平方和误差函数。这就是为什么我们在\cref{section:ch01-一个教学示例}中使用平方和误差函数的概率解释。
+首先对多项式系数的最大似然解进行估计，用 $\mathbf{w}_{\mathrm{ML}}$ 表示，它们是通过对 $\mathbf{w}$ 最大化\eqref{align:ch02-回归对数似然}来确定的。为此，我们可以省略\eqref{align:ch02-回归对数似然}右边的最后两项，因为它们与 $\mathbf{w}$ 无关。此外，我们注意到使用一个正的常数系数将对数似然缩放后，不会改变最大值相对于 $\mathbf{w}$ 的位置，因此可以将系数 $1/2\sigma^{2}$ 替换为 $1/2$。最后，我们将最大化对数似然等价地替换为最小化负对数似然。可以看到，当 $\mathbf{w}$ 确定时，最大化似然等价于最小化\eqref{align:ch02-平方和误差}定义的平方和误差函数（sum-of-squares error function）：
+
+\begin{align}
+  E(\mathbf{w}) = \frac{1}{2}\sum_{n=1}^{N}\big\{y(x_n,\mathbf{w})-t_n\big\}^{2}
+  \label{align:ch02-平方和误差}
+\end{align}
+
+\begin{proposition}[Gauss 噪声下的最大似然等价于最小平方和误差]\label{proposition:ch02-最大似然等价平方和}
+设 $t_n=y(x_n,\mathbf{w})+\varepsilon_n$，其中 $\varepsilon_n$ 独立同分布于 $\mathcal{N}(0,\sigma^{2})$，则关于 $\mathbf{w}$ 最大化\eqref{align:ch02-回归对数似然}等价于关于 $\mathbf{w}$ 最小化\eqref{align:ch02-平方和误差}。
+\end{proposition}
+
+\begin{proof}
+\eqref{align:ch02-回归对数似然}右端只有第一项依赖 $\mathbf{w}$，且它以负号出现、系数为正。因此关于 $\mathbf{w}$ 最大化该式等价于关于 $\mathbf{w}$ 最小化
+\begin{align*}
+  \frac{1}{2\sigma^{2}}\sum_{n=1}^{N}\big\{y(x_n,\mathbf{w})-t_n\big\}^{2} .
+\end{align*}
+再乘以正常数 $2\sigma^{2}$（不改变最小值点）即得\eqref{align:ch02-平方和误差}。反过来，最小化\eqref{align:ch02-平方和误差}的点也使\eqref{align:ch02-回归对数似然}取最大，因为二者只相差一个正常数因子与一个与 $\mathbf{w}$ 无关的常数。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch02-最大似然等价平方和; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+这条等价性是全书把“误差函数”与“概率模型”联系起来的枢纽：平方和误差并不是人为选定的，它等价于“噪声服从 Gauss 分布”这一假设下的最大似然。因此，凡是使用平方损失的地方，都可以解读为隐含地假定了 Gauss 噪声。
+
+证明只用到一个事实：$\sigma^{2}$ 固定时，\eqref{align:ch02-回归对数似然}中依赖 $\mathbf{w}$ 的部分就是平方和。若 $\sigma^{2}$ 也随 $\mathbf{w}$ 变化（例如异方差噪声），这一等价性不再成立；若噪声服从 Laplace 分布，对应的则是绝对误差而非平方误差（见\cref{definition:ch02-Laplace分布}）。
+\end{remark}
+
+因此，平方和误差函数是在 Gauss 噪声分布的假设下最大化似然的结果。
+
+也可以使用最大似然来确定方差参数 $\sigma^{2}$。关于 $\sigma^{2}$ 最大化\eqref{align:ch02-回归对数似然}可得（见\cref{exercise:ch02-18}）
+
+\begin{align}
+  \sigma_{\mathrm{ML}}^{2} = \frac{1}{N}\sum_{n=1}^{N}\big\{y(x_n,\mathbf{w}_{\mathrm{ML}})-t_n\big\}^{2}
+  \label{align:ch02-回归方差}
+\end{align}
+
+\begin{proposition}[噪声方差的最大似然解]\label{proposition:ch02-回归方差}
+在\cref{proposition:ch02-最大似然等价平方和}的条件下，关于 $\sigma^{2}$ 最大化\eqref{align:ch02-回归对数似然}得到的解由\eqref{align:ch02-回归方差}给出。
+\end{proposition}
+
+\begin{proof}
+记 $S(\mathbf{w})=\sum_{n=1}^{N}\{y(x_n,\mathbf{w})-t_n\}^{2}$。对\eqref{align:ch02-回归对数似然}关于 $\sigma^{2}$ 求偏导并令其为零：
+\begin{align*}
+  \frac{\partial}{\partial\sigma^{2}}\left(-\frac{S(\mathbf{w})}{2\sigma^{2}}-\frac{N}{2}\ln\sigma^{2}\right)
+  = \frac{S(\mathbf{w})}{2\sigma^{4}} - \frac{N}{2\sigma^{2}} = 0 ,
+\end{align*}
+解得 $\sigma^{2}=S(\mathbf{w})/N$。由于 $\mathbf{w}$ 与 $\sigma^{2}$ 的解解耦（与\cref{theorem:ch02-Gauss最大似然}的情形相同），把 $\mathbf{w}=\mathbf{w}_{\mathrm{ML}}$ 代入即得\eqref{align:ch02-回归方差}。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch02-回归方差; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+这条结果说明：在拟合好均值函数之后，噪声方差的最大似然估计就是残差的均方值。它与\eqref{align:ch02-方差最大似然}形式完全一致，只是把 $x_n$ 换成了 $y(x_n,\mathbf{w}_{\mathrm{ML}})$，因此在样本量小时同样存在 $(N-1)/N$ 型的低估。
+
+使用它时要注意 $\mathbf{w}_{\mathrm{ML}}$ 必须先确定：若把 $\mathbf{w}$ 与 $\sigma^{2}$ 的方程联立，虽然解相同，但推导会更繁琐。此外，\eqref{align:ch02-回归方差}只在 $\sigma^{2}>0$ 时有意义；若残差全为零（模型完全插值），则 $\sigma_{\mathrm{ML}}^{2}=0$，分布退化。
+\end{remark}
+
+我们可以首先确定控制均值的参数向量 $\mathbf{w}_{\mathrm{ML}}$，然后与简单 Gauss 分布情况一样，用它来找到方差 $\sigma_{\mathrm{ML}}^{2}$。
+
+在确定了参数 $\mathbf{w}$ 和 $\sigma^{2}$ 后，就可以对 $x$ 的新值进行预测了。我们现在有了一个预测分布（predictive distribution）方面的概率模型。不同于简单地给出一个点估计，该模型给出了 $t$ 的概率分布，它可以通过将最大似然参数代入\eqref{align:ch02-条件Gauss}得到
+
+\begin{align}
+  p\big(t\mid x,\mathbf{w}_{\mathrm{ML}},\sigma_{\mathrm{ML}}^{2}\big) = \mathcal{N}\big(t\mid y(x,\mathbf{w}_{\mathrm{ML}}),\sigma_{\mathrm{ML}}^{2}\big)
+  \label{align:ch02-回归预测分布}
+\end{align}
+
+\begin{definition}[预测分布]\label{definition:ch02-预测分布}
+设已由训练数据确定参数，则给定新输入 $x$ 后目标变量 $t$ 的\textbf{预测分布}（predictive distribution）是条件密度 $p(t\mid x,\mathcal{D})$。当参数取最大似然值、模型由\eqref{align:ch02-条件Gauss}给定时，预测分布由\eqref{align:ch02-回归预测分布}给出。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch02-预测分布; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+预测分布与点估计的差别在于它保留了不确定性：\eqref{align:ch02-回归预测分布}不仅给出“预测值 $y(x,\mathbf{w}_{\mathrm{ML}})$”，还给出围绕它的整个 Gauss 分布，其宽度由 $\sigma_{\mathrm{ML}}^{2}$ 决定。这样才可能回答“预测有多可靠”这类问题。
+
+\eqref{align:ch02-回归预测分布}只反映了噪声带来的不确定性（偶然不确定性），没有反映参数 $\mathbf{w}$ 本身的不确定性（认知不确定性）；后者需要把 $\mathbf{w}$ 的后验也积分掉，正是\cref{subsection:ch02-Bayes机器学习}中\eqref{align:ch02-Bayes预测}的做法。
+\end{remark}
 
 \end{document}

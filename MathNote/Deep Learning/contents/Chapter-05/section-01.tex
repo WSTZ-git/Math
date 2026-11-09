@@ -1,4 +1,4 @@
-﻿\documentclass[../../main.tex]{subfiles}
+\documentclass[../../main.tex]{subfiles}
 
 \graphicspath{{../../image/}{../../figure/}}
 
@@ -6,68 +6,311 @@
 
 \section{判别函数}\label{section:ch05-判别函数}
 
-判别式是一种函数，它取输入向量$\boldsymbol{x}$并将其归入$K$个类（用$C_k$表示）中的一个类。我们可以大致确定解决分类问题的三种方法（参见\cref{subsection:ch05-推理和决策}）。其中，最简单的方法是构建一个判别函数（discriminant function），该函数直接将每一个输入向量$\boldsymbol{x}$归入一个特定类。然而，一种更有效的方法是在推理阶段依据条件概率$p(C_k\mid\boldsymbol{x})$构建分布模型，然后利用这些分布模型做出最优决策。将推理和决策分开能带来很多好处。
-
-有两种不同的方法可以确定条件概率$p(C_k\mid\boldsymbol{x})$。一种方法是直接建模，例如将它表示为参数模型，然后使用训练集对参数进行优化，这就是判别概率模型（discriminative probabilistic model）。另一种方法是对类-条件概率密度$p(\boldsymbol{x}\mid C_k)$以及类的先验概率$p(C_k)$进行建模，然后使用贝叶斯定理计算所需的后验概率：
-
-\begin{align}
-  p(C_k\mid\boldsymbol{x})=\frac{p(\boldsymbol{x}\mid C_k)p(C_k)}{p(\boldsymbol{x})}
-  \label{align:ch05-贝叶斯后验}
-\end{align}
-
-此为生成概率模型（generative probabilistic model），它提供了从每个类-条件概率密度$p(\boldsymbol{x}\mid C_k)$生成样本的方法。本章仅关注线性判别式（linear discriminant），即决策面为超平面的判别式。
+判别式是一种函数，它取输入向量$\boldsymbol{x}$并将其归入$K$个类（用$C_k$表示）中的一个类，也就是\cref{definition:ch05-判别函数}意义下的判别函数。本章仅关注线性判别式（linear discriminant），即决策面为超平面的判别式（\cref{definition:ch05-线性判别式}）。为了简化讨论，在研究多分类（$K>2$）之前，我们首先分析二分类。
 
 \subsection{二分类}\label{subsection:ch05-二分类}
 
-线性判别函数的最简单表示是通过取输入向量的线性函数得出的：
+线性判别函数的最简单表示是通过取输入向量的线性函数得出的，即
 
 \begin{align}
   y(\boldsymbol{x})=\boldsymbol{w}^{\mathsf{T}}\boldsymbol{x}+w_0
   \label{align:ch05-线性判别}
 \end{align}
 
-其中$\boldsymbol{w}$为权重向量，$w_0$为偏置参数。如果$y(\boldsymbol{x})\geqslant 0$，输入向量$\boldsymbol{x}$将被归入$C_1$类，否则归入$C_2$类。因此，相应的决策边界由$y(\boldsymbol{x})=0$定义，对应于$D$维输入空间中的$(D-1)$维超平面。偏置参数$w_0$决定了决策面的位置，而$\boldsymbol{w}$决定了决策面的朝向。
+其中，$\boldsymbol{w}$为权重向量，$w_0$为偏置参数（请勿与统计学意义上的偏差混淆）。如果$y(\boldsymbol{x})\geqslant 0$，输入向量$\boldsymbol{x}$将被归入$C_1$类，否则归入$C_2$类。因此，相应的决策边界由关系$y(\boldsymbol{x})=0$定义，对应于$D$维输入空间中的$(D-1)$维超平面。
 
-$y(\boldsymbol{x})$的值为点$\boldsymbol{x}$到决策面的带号距离的测度。设$\boldsymbol{x}_{\perp}$是$\boldsymbol{x}$在决策面上的正交投影，则点$\boldsymbol{x}$与决策面的带号正交距离为$y(\boldsymbol{x})/\lVert\boldsymbol{w}\rVert$。如同线性回归模型（参见\cref{subsection:ch04-基函数}），有时使用更简洁的符号较为方便，即给出一个额外的虚拟"输入"值$x_0=1$，然后定义$\tilde{\boldsymbol{w}}=(w_0,\boldsymbol{w})$和$\tilde{\boldsymbol{x}}=(1,\boldsymbol{x})$，从而有$y(\boldsymbol{x})=\tilde{\boldsymbol{w}}^{\mathsf{T}}\tilde{\boldsymbol{x}}$。
+\begin{proposition}[决策面的几何性质]\label{proposition:ch05-决策面几何}
+设$\boldsymbol{w}\neq\boldsymbol{0}$，$y(\boldsymbol{x})=\boldsymbol{w}^{\mathsf{T}}\boldsymbol{x}+w_0$。
+\begin{enumerate}[(i)]
+  \item 决策面$\{\boldsymbol{x}:y(\boldsymbol{x})=0\}$是$\mathbb{R}^{D}$中的一个$(D-1)$维超平面，且$\boldsymbol{w}$是它的一个法向量；
+  \item 原点到该决策面的带号距离为$-w_0/\lVert\boldsymbol{w}\rVert$，其中正号取在$\boldsymbol{w}$所指的方向上。
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+（原书论证）考虑两个点$\boldsymbol{x}_A$和$\boldsymbol{x}_B$，它们都位于决策面上。因为$y(\boldsymbol{x}_A)=y(\boldsymbol{x}_B)=0$，所以得出$\boldsymbol{w}^{\mathsf{T}}(\boldsymbol{x}_A-\boldsymbol{x}_B)=0$。由于$\boldsymbol{x}_A-\boldsymbol{x}_B$是决策面内的任意方向，故$\boldsymbol{w}$与位于决策面内的每个向量都正交，$\boldsymbol{w}$决定了决策面的朝向。
+
+（重构新增）下面补足维数与距离两部分。记$H=\{\boldsymbol{x}:\boldsymbol{w}^{\mathsf{T}}\boldsymbol{x}+w_0=0\}$。若$\boldsymbol{w}\neq\boldsymbol{0}$，则$H$非空：取$\boldsymbol{x}_0=-w_0\boldsymbol{w}/\lVert\boldsymbol{w}\rVert^{2}$即可验证$y(\boldsymbol{x}_0)=0$。$H$是仿射子空间，其方向空间为$\{\boldsymbol{v}:\boldsymbol{w}^{\mathsf{T}}\boldsymbol{v}=0\}$，即$\boldsymbol{w}$的正交补；由于$\boldsymbol{w}\neq\boldsymbol{0}$，该正交补的维数为$D-1$，故$H$的维数为$D-1$。又对任意$\boldsymbol{x}\in H$，有$\boldsymbol{x}-\boldsymbol{x}_0\in\boldsymbol{w}^{\perp}$，故$\boldsymbol{w}^{\mathsf{T}}\boldsymbol{x}=\boldsymbol{w}^{\mathsf{T}}\boldsymbol{x}_0=-w_0$，于是
+
+\begin{align}
+  \frac{\boldsymbol{w}^{\mathsf{T}}\boldsymbol{x}}{\lVert\boldsymbol{w}\rVert}=-\frac{w_0}{\lVert\boldsymbol{w}\rVert}
+\end{align}
+
+左端正是$\boldsymbol{x}$在$\boldsymbol{w}$方向上的投影长度，它与$\boldsymbol{x}\in H$的选取无关，因此它就是原点到决策面的法向距离，符号由$\boldsymbol{w}$的方向确定。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch05-决策面几何; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+\cref{proposition:ch05-决策面几何}的两个结论分别说明了参数的几何含义：$\boldsymbol{w}$只决定决策面的朝向（改变$\boldsymbol{w}$的方向会旋转超平面），而$w_0$只决定决策面的位置（改变$w_0$会平移超平面，且平移量为$-w_0/\lVert\boldsymbol{w}\rVert$）。条件$\boldsymbol{w}\neq\boldsymbol{0}$不可去掉：若$\boldsymbol{w}=\boldsymbol{0}$，则$y\equiv w_0$为常数，决策面或者为空集（$w_0\neq0$）或者为整个空间（$w_0=0$），此时既没有法向量也没有到原点的距离。结论(ii)中的“带号”不能省略：若只关心距离，则应为$|w_0|/\lVert\boldsymbol{w}\rVert$；带号版本在下一段讨论点到决策面的带号距离时是必要的。注意$\boldsymbol{w}$与$w_0$同时乘以一个正数不改变决策面，因此线性判别式的参数并不唯一，这一点在讨论最大似然的奇异性时还会出现（见\cref{proposition:ch05-线性可分最大似然}）。
+\end{remark}
+
+可以看到，偏置参数$w_0$决定了决策面的位置。\cref{figure:ch05-线性判别几何}展示了$D=2$情况下的此类特性。
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.56\textwidth]{ch05-fig5-1-linear-discriminant.png}
+  \caption{二维线性判别函数的几何图解。红色所示的决策面垂直于$\boldsymbol{w}$，它离原点的位移由偏置参数$w_0$控制。同样，点$\boldsymbol{x}$与决策面的带号正交距离由$y(\boldsymbol{x})/\lVert\boldsymbol{w}\rVert$给出}
+  \label{figure:ch05-线性判别几何}
+\end{figure}
+
+此外，请注意，$y(\boldsymbol{x})$的值为点$\boldsymbol{x}$到决策面的垂直距离$r$的带号测度。为了方便理解，考虑任意一个点$\boldsymbol{x}$，设$\boldsymbol{x}_{\perp}$是它在决策面上的正交投影。
+
+\begin{proposition}[点到决策面的带号距离]\label{proposition:ch05-带号距离}
+设$\boldsymbol{w}\neq\boldsymbol{0}$，$\boldsymbol{x}_{\perp}$是$\boldsymbol{x}$在决策面$y(\boldsymbol{x})=0$上的正交投影，$r$为$\boldsymbol{x}$沿$\boldsymbol{w}$方向到该决策面的带号距离。则
+\begin{align}
+  \boldsymbol{x}=\boldsymbol{x}_{\perp}+r\,\frac{\boldsymbol{w}}{\lVert\boldsymbol{w}\rVert}
+  \label{align:ch05-正交分解}
+\end{align}
+并且
+\begin{align}
+  r=\frac{y(\boldsymbol{x})}{\lVert\boldsymbol{w}\rVert}
+  \label{align:ch05-带号距离}
+\end{align}
+\end{proposition}
+
+\begin{proof}
+（重构新增）因为$\boldsymbol{x}_{\perp}$是$\boldsymbol{x}$在决策面上的正交投影，所以$\boldsymbol{x}-\boldsymbol{x}_{\perp}$与决策面正交。由\cref{proposition:ch05-决策面几何}(i)，决策面的法向量为$\boldsymbol{w}$，故$\boldsymbol{x}-\boldsymbol{x}_{\perp}$平行于$\boldsymbol{w}$，即存在实数$r$使\eqref{align:ch05-正交分解}成立；这里$r$的符号约定为沿$\boldsymbol{w}$方向为正，其绝对值就是$\boldsymbol{x}$到决策面的距离。
+
+在\eqref{align:ch05-正交分解}的两边左乘$\boldsymbol{w}^{\mathsf{T}}$并加上$w_0$，利用$y(\boldsymbol{x})=\boldsymbol{w}^{\mathsf{T}}\boldsymbol{x}+w_0$以及$\boldsymbol{x}_{\perp}$位于决策面上即$y(\boldsymbol{x}_{\perp})=\boldsymbol{w}^{\mathsf{T}}\boldsymbol{x}_{\perp}+w_0=0$，可得
+
+\begin{align}
+  y(\boldsymbol{x})=y(\boldsymbol{x}_{\perp})+r\,\frac{\boldsymbol{w}^{\mathsf{T}}\boldsymbol{w}}{\lVert\boldsymbol{w}\rVert}=r\,\lVert\boldsymbol{w}\rVert
+\end{align}
+
+由于$\boldsymbol{w}\neq\boldsymbol{0}$，两边除以$\lVert\boldsymbol{w}\rVert$即得\eqref{align:ch05-带号距离}。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch05-带号距离; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+\cref{proposition:ch05-带号距离}说明$y(\boldsymbol{x})$本身就是一个“带尺度”的距离：它等于真实距离乘以$\lVert\boldsymbol{w}\rVert$。因此$y(\boldsymbol{x})$的符号给出分类结果，而$y(\boldsymbol{x})=0$恰好是决策面。这个解释在\cref{subsection:ch05-连续输入}中很重要：当后验概率写成$p(C_1\mid\boldsymbol{x})=\sigma(y(\boldsymbol{x}))$时，$y$的绝对值越大，分类的置信度越高，但置信度与到决策面的几何距离之间相差因子$\lVert\boldsymbol{w}\rVert$。若$\lVert\boldsymbol{w}\rVert$很小，则离决策面很远的数据点也可能有很小的$|y|$，这说明“用$|y|$衡量置信度”依赖于参数的尺度，而参数的尺度又可以通过重新缩放任意改变。
+\end{remark}
+
+如同线性回归模型（参见\cref{subsection:ch04-基函数}），有时使用更简洁的符号较为方便，即给出一个额外的虚拟“输入”值$x_0=1$，然后定义$\tilde{\boldsymbol{w}}=(w_0,\boldsymbol{w})$和$\tilde{\boldsymbol{x}}=(x_0,\boldsymbol{x})$，从而有
+
+\begin{align}
+  y(\boldsymbol{x})=\tilde{\boldsymbol{w}}^{\mathsf{T}}\tilde{\boldsymbol{x}}
+  \label{align:ch05-增广判别}
+\end{align}
+
+在此情况下，决策面是通过$(D+1)$维扩展输入空间原点的$D$维超平面。
+
+\begin{definition}[增广权重与增广输入]\label{definition:ch05-增广记号}
+在输入向量$\boldsymbol{x}\in\mathbb{R}^{D}$之前添加虚拟输入$x_0=1$，得到增广输入向量$\tilde{\boldsymbol{x}}=(x_0,\boldsymbol{x})=(1,\boldsymbol{x})\in\mathbb{R}^{D+1}$；相应地，在权重向量$\boldsymbol{w}$之前添加偏置$w_0$，得到增广权重向量$\tilde{\boldsymbol{w}}=(w_0,\boldsymbol{w})\in\mathbb{R}^{D+1}$。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch05-增广记号; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+增广记号的作用是把仿射函数$y=\boldsymbol{w}^{\mathsf{T}}\boldsymbol{x}+w_0$写成线性函数$y=\tilde{\boldsymbol{w}}^{\mathsf{T}}\tilde{\boldsymbol{x}}$，从而使偏置与权重在求导、矩阵化时享有同一地位；\cref{subsection:ch05-最小二乘分类}中的设计矩阵$\tilde{\boldsymbol{X}}$正是由此得到的。其几何代价是：决策面在$\mathbb{R}^{D}$中是仿射的（不过原点），而在$\mathbb{R}^{D+1}$中是过原点的线性子空间，维数为$D$。由于虚拟输入恒为1，增广向量只张成$\mathbb{R}^{D+1}$中的一个$D$维仿射子集，因此$\tilde{\boldsymbol{w}}$并不唯一：任何与所有训练增广输入都正交的方向都可以加到$\tilde{\boldsymbol{w}}$上，而不改变训练点处的预测（但在新的$\boldsymbol{x}$处预测可能改变）。这一观察在讨论最小二乘解需要伪逆时还会用到（见\cref{proposition:ch05-最小二乘极小性}）。
+\end{remark}
 
 \subsection{多分类}\label{subsection:ch05-多分类}
 
-下面将线性判别函数扩展到多分类（$K>2$）。我们可能会试图通过组合一些二分类判别函数来建立多分类判别式，然而这将导致分类区域不明确的困难。我们可以通过采用$K$个线性函数组成的单个$K$类判别式来避免这些困难：
+下面将线性判别函数扩展到多分类（$K>2$）。我们可能会试图通过组合一些二分类判别函数来建立多分类判别式。然而，这将导致一些困难（Duda and Hart, 1973）。
+
+假设一个模型有$K-1$个分类器，每个分类器都要解决一个二分类问题，也就是将特定$C_k$类中的点与其他的点分开。这就是所谓的一对多分类器。\cref{figure:ch05-多分类歧义}的左图给出了一个涉及3个类的例子，在该例中，这种方法会导致输入空间的区域分类不明确。
+
+另一种方法是使用$K(K-1)/2$个二元判别函数，且每一对可能的类都有一个二元判别函数。这就是所谓的一对一分类器。然后根据判别函数的多数票对每个点进行分类。然而，这也会导致区域分类不明确的问题，如\cref{figure:ch05-多分类歧义}的右图所示。
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.92\textwidth]{ch05-fig5-2-multiclass-ambiguity.png}
+  \caption{尝试从一组二分类判别函数中构建一个$K$类判别式会导致分类不明确的区域，如图中绿色所示。左图给出了一个涉及两个判别函数的例子，旨在对$C_1$类中的点与非$C_1$类中的点进行区分。右图给出了一个涉及3个判别函数的例子，其中的每个判别函数用于区分一对$C_k$类和$C_j$类}
+  \label{figure:ch05-多分类歧义}
+\end{figure}
+
+可通过采用$K$个线性函数组成的单个$K$类判别式来避免这些困难，其形式如下：
 
 \begin{align}
   y_k(\boldsymbol{x})=\boldsymbol{w}_k^{\mathsf{T}}\boldsymbol{x}+w_{k0}
   \label{align:ch05-多类判别}
 \end{align}
 
-然后在所有$j\neq k$的情况下，如果$y_k(\boldsymbol{x})>y_j(\boldsymbol{x})$，就将点$\boldsymbol{x}$归入$C_k$类。因此，$C_k$类和$C_j$类之间的决策边界由$y_k(\boldsymbol{x})=y_j(\boldsymbol{x})$给出，对应于一个$(D-1)$维超平面。这种判别式的决策区域总是单连且凸出的。
+然后在所有$j\neq k$的情况下，如果$y_k(\boldsymbol{x})>y_j(\boldsymbol{x})$，就将点$\boldsymbol{x}$归入$C_k$类。因此，$C_k$类和$C_j$类之间的决策边界由$y_k(\boldsymbol{x})=y_j(\boldsymbol{x})$给出，且对应于一个$(D-1)$维的超平面，该超平面定义如下：
+
+\begin{align}
+  (\boldsymbol{w}_k-\boldsymbol{w}_j)^{\mathsf{T}}\boldsymbol{x}+(w_{k0}-w_{j0})=0
+  \label{align:ch05-多类边界}
+\end{align}
+
+由于它的形式与\cref{subsection:ch05-二分类}中讨论的二分类案例的决策边界相同，因此其具有类似的几何特性。
+
+这种判别式的决策区域总是单连且凸出的。考虑两个点$\boldsymbol{x}_A$和$\boldsymbol{x}_B$，它们都位于决策区域$\mathcal{R}_k$内，如\cref{figure:ch05-决策区域凸性}所示。连接$\boldsymbol{x}_A$和$\boldsymbol{x}_B$的直线上的任何点$\hat{\boldsymbol{x}}$都可以用如下形式来表示：
+
+\begin{align}
+  \hat{\boldsymbol{x}}=\lambda\boldsymbol{x}_A+(1-\lambda)\boldsymbol{x}_B
+  \label{align:ch05-凸组合}
+\end{align}
+
+其中$0\leqslant\lambda\leqslant 1$。根据判别函数的线性关系，可得
+
+\begin{align}
+  y_k(\hat{\boldsymbol{x}})=\lambda y_k(\boldsymbol{x}_A)+(1-\lambda)y_k(\boldsymbol{x}_B)
+  \label{align:ch05-凸性线性}
+\end{align}
+
+\begin{proposition}[多类线性判别式的决策区域是凸的]\label{proposition:ch05-多类决策区域凸性}
+设$y_k(\boldsymbol{x})=\boldsymbol{w}_k^{\mathsf{T}}\boldsymbol{x}+w_{k0}$，$k=1,\cdots,K$，并令$\mathcal{R}_k=\{\boldsymbol{x}:y_k(\boldsymbol{x})>y_j(\boldsymbol{x})\ \text{对一切}\ j\neq k\}$。则每个$\mathcal{R}_k$都是凸集；若$\mathcal{R}_k\neq\varnothing$，则它还是单连通的。
+\end{proposition}
+
+\begin{proof}
+（原书论证）因为$\boldsymbol{x}_A$和$\boldsymbol{x}_B$都在决策区域$\mathcal{R}_k$内，所以在所有$j\neq k$的情况下，$y_k(\boldsymbol{x}_A)>y_j(\boldsymbol{x}_A)$且$y_k(\boldsymbol{x}_B)>y_j(\boldsymbol{x}_B)$。对\eqref{align:ch05-凸性线性}两端作同样的展开，并对每个$j\neq k$用这两个不等式，得
+
+\begin{align}
+  y_k(\hat{\boldsymbol{x}})=\lambda y_k(\boldsymbol{x}_A)+(1-\lambda)y_k(\boldsymbol{x}_B)>\lambda y_j(\boldsymbol{x}_A)+(1-\lambda)y_j(\boldsymbol{x}_B)=y_j(\hat{\boldsymbol{x}})
+\end{align}
+
+（重构新增）其中中间的不等号对$\lambda\in[0,1]$成立：当$\lambda=0$或$\lambda=1$时它退化为端点处已证的严格不等式，当$0<\lambda<1$时两个严格不等式分别乘以正系数$\lambda$与$1-\lambda$后相加。于是$\hat{\boldsymbol{x}}\in\mathcal{R}_k$，即$\mathcal{R}_k$对任意两点之间的线段封闭，故为凸集。凸集是单连通的，因此$\mathcal{R}_k$单连且凸出。注意$\mathcal{R}_k$是有限个开半空间之交，故它还是开集；边界$\partial\mathcal{R}_k$由若干超平面片组成，这些超平面片正是形如\eqref{align:ch05-多类边界}的决策边界的部分。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch05-多类决策区域凸性; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+凸性来自“取最大”这一运算与线性函数之间的相容性：$\mathcal{R}_k$是$K-1$个开半空间$\{\boldsymbol{x}:(\boldsymbol{w}_k-\boldsymbol{w}_j)^{\mathsf{T}}\boldsymbol{x}+(w_{k0}-w_{j0})>0\}$的交，而半空间是凸集。命题中的严格不等号意味着决策面上的点不属于任何$\mathcal{R}_k$，这些点可以任意归入相邻类之一而不改变决策区域的凸性。需要强调，凸性是这种“$K$个线性函数取最大”的判别式所特有的：若改用一对一或一对多组合，决策区域一般不是凸的，甚至可能出现\cref{figure:ch05-多分类歧义}所示的既不连通也不单值的区域。此外，$\mathcal{R}_k$可以为空：当某个类在参数上被其他类完全“压倒”时，没有任何输入会被归入该类。
+\end{remark}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.42\textwidth]{ch05-fig5-3-decision-regions.png}
+  \caption{多分类线性判别式的决策区域，决策边界如红色所示。如果两点$\boldsymbol{x}_A$和$\boldsymbol{x}_B$都在同一决策区域$\mathcal{R}_k$内，那么连接这两点的直线上的任何一点也必须在决策区域$\mathcal{R}_k$内，从而决策区域必须是单连且凸出的}
+  \label{figure:ch05-决策区域凸性}
+\end{figure}
+
+请注意，对于二分类问题，我们既可以采用书中讨论的基于两个判别函数$y_1(\boldsymbol{x})$和$y_2(\boldsymbol{x})$的形式，也可以采用基于单个判别函数$y(\boldsymbol{x})$的更简单但本质上等价的形式（参见\cref{subsection:ch05-二分类}）。
 
 \subsection{1-of-$K$编码方案}\label{subsection:ch05-1ofK编码}
 
-在分类问题中，目标变量$\boldsymbol{t}$是我们希望预测其类标签的二进制向量。对于二分类问题，最方便的是单目标变量$t\in\{0,1\}$的二进制表示，$t=1$表示$C_1$类，$t=0$表示$C_2$类。对于多分类（$K>2$）问题，使用1-of-$K$编码方案较为方便，其也称独热编码方案，其中$\boldsymbol{t}$是长度为$K$的向量，从而如果该类是$C_k$类，则$\boldsymbol{t}$的所有元素都为$0$，只有元素$t_k$的值为$1$。例如，假设有$K=5$个类，则来自$C_3$类的数据点将得到目标向量$\boldsymbol{t}=(0,0,1,0,0)$。
+对于回归问题，多元目标变量$\boldsymbol{t}$只是我们希望预测其值的实数向量。在分类问题中，有多种使用目标值来表示类标签的方法。对于二分类问题，最方便的是单目标变量$t\in\{0,1\}$的二进制表示，所以$t=1$表示$C_1$类，$t=0$表示$C_2$类。我们可将$t$的值理解为该类是$C_1$类的概率，概率值仅取0和1的极值。对于多分类（$K>2$）问题，使用1-of-$K$编码方案较为方便，其也称独热编码方案。
+
+\begin{definition}[1-of-$K$编码方案]\label{definition:ch05-1ofK编码}
+设共有$K$个类。若把类标签编码为长度为$K$的向量$\boldsymbol{t}=(t_1,\cdots,t_K)^{\mathsf{T}}$，使得当且仅当样本属于$C_k$类时$t_k=1$而其余分量$t_j=0$（$j\neq k$），则称这种编码为1-of-$K$编码方案，也称独热（one-hot）编码方案。
+\end{definition}
+
+例如，假设有$K=5$个类，则来自$C_2$类的数据点将得到目标向量
+
+\begin{align}
+  \boldsymbol{t}=(0,1,0,0,0)^{\mathsf{T}}
+  \label{align:ch05-1ofK向量}
+\end{align}
+
+同样，我们可以把$t_k$的值理解为该类是$C_k$类的概率，其中概率仅有0和1两种取值。
+
+% SUPPLEMENT: parent=definition:ch05-1ofK编码; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+1-of-$K$编码的意义在于把“类别”这一离散对象嵌入$\mathbb{R}^{K}$，从而使线性模型$y_k(\boldsymbol{x})=\boldsymbol{w}_k^{\mathsf{T}}\boldsymbol{x}+w_{k0}$可以逐分量地作用于它。该编码有两个直接推论。其一，各分量之和恒为1（这正是\cref{proposition:ch05-预测保持约束}所讨论的线性约束的特例）。其二，把$t_k$读作“属于$C_k$的概率”只在真实标签意义上成立：$t_k\in\{0,1\}$，而模型输出$y_k(\boldsymbol{x})$是实值的，未必落在$[0,1]$内，故不能直接解释为概率（见\cref{subsection:ch05-最小二乘分类}）。若改用$t\in\{0,1\}$的二分类编码，则两种类别的地位不对称，编码依赖于任意选定的参照类；1-of-$K$编码避免了这种不对称，代价是参数个数增加为$K$倍。注意编码向量的分量个数$K$是固定的，不能把不同$K$的编码混用。
+\end{remark}
 
 \subsection{最小二乘分类}\label{subsection:ch05-最小二乘分类}
 
-在线性回归模型中，通过最小化平方和误差函数，可以得到参数值的简单闭式解（参见\cref{subsection:ch04-最大似然}）。因此我们期待将同样的最小二乘形式应用于分类问题。考虑一个训练数据集$\{\boldsymbol{x}_n\}$，定义目标矩阵$\boldsymbol{T}$（第$n$行为$\boldsymbol{t}_n^{\mathsf{T}}$）和设计矩阵$\boldsymbol{X}$。平方和误差函数为
+在线性回归模型中，通过最小化平方和误差函数，可以得到参数值的简单闭式解（参见\cref{subsection:ch04-最大似然}）。因此，我们期待将同样的最小二乘形式应用于分类问题。考虑一个涉及$K$个类的一般分类问题，以及目标向量$\boldsymbol{t}$的1-of-$K$二进制编码方案。在此种情况下使用最小二乘法的一个理由是，它近似于给定输入向量时目标值的条件期望$\mathbb{E}[\boldsymbol{t}\mid\boldsymbol{x}]$。对于二进制编码方案，该条件期望由类的后验概率向量给出（见\cref{exercise:ch05-01}）。遗憾的是，这些概率的近似值通常很低，而且近似值的取值范围实际上可能超出$(0,1)$。但尽管如此，研究这些简单的模型并了解这些局限性是如何产生的仍具有指导意义。
+
+每个$C_k$类都由各自的线性模型描述，所以
 
 \begin{align}
-  E_D(\tilde{\boldsymbol{W}})=\frac{1}{2}\,\mathrm{Tr}\!\left\{(\tilde{\boldsymbol{X}}\tilde{\boldsymbol{W}}-\boldsymbol{T})^{\mathsf{T}}(\tilde{\boldsymbol{X}}\tilde{\boldsymbol{W}}-\boldsymbol{T})\right\}
-  \label{align:ch05-最小二乘分类误差}
+  y_k(\boldsymbol{x})=\boldsymbol{w}_k^{\mathsf{T}}\boldsymbol{x}+w_{k0}
+  \label{align:ch05-多类线性模型}
 \end{align}
 
-将与$\tilde{\boldsymbol{W}}$有关的导数设为$0$并重新排列，求得解
+其中$k=1,\cdots,K$。我们可以方便地使用向量表示法将它们归为一组，从而
+
+\begin{align}
+  \boldsymbol{y}(\boldsymbol{x})=\tilde{\boldsymbol{W}}^{\mathsf{T}}\tilde{\boldsymbol{x}}
+  \label{align:ch05-矩阵判别}
+\end{align}
+
+其中$\tilde{\boldsymbol{W}}$是一个矩阵，其第$k$列包含$(D+1)$维向量$\tilde{\boldsymbol{w}}_k=(w_{k0},\boldsymbol{w}_k)^{\mathsf{T}}$，$\tilde{\boldsymbol{x}}$是相应的增广输入向量$(1,\boldsymbol{x}^{\mathsf{T}})^{\mathsf{T}}$，虚拟输入$x_0=1$。然后将新输入$\boldsymbol{x}$归入输出$y_k=\tilde{\boldsymbol{w}}_k^{\mathsf{T}}\tilde{\boldsymbol{x}}$最大的类。
+
+下面我们通过将平方和误差函数最小化来确定参数矩阵$\tilde{\boldsymbol{W}}$。考虑一个训练数据集$\{\boldsymbol{x}_n,\boldsymbol{t}_n\}$，其中$n=1,\cdots,N$，并定义一个第$n$行为向量$\boldsymbol{t}_n^{\mathsf{T}}$的矩阵$\boldsymbol{T}$和另一个第$n$行为向量$\tilde{\boldsymbol{x}}_n^{\mathsf{T}}$的矩阵$\tilde{\boldsymbol{X}}$。因此，平方和误差函数可以写成
+
+\begin{align}
+  E_D(\tilde{\boldsymbol{W}})=\frac{1}{2}\operatorname{tr}\left\{(\tilde{\boldsymbol{X}}\tilde{\boldsymbol{W}}-\boldsymbol{T})^{\mathsf{T}}(\tilde{\boldsymbol{X}}\tilde{\boldsymbol{W}}-\boldsymbol{T})\right\}
+  \label{align:ch05-平方和分类误差}
+\end{align}
+
+将与$\tilde{\boldsymbol{W}}$有关的导数设为0并进行重新排列，从而求得$\tilde{\boldsymbol{W}}$的解，其形式为
 
 \begin{align}
   \tilde{\boldsymbol{W}}=(\tilde{\boldsymbol{X}}^{\mathsf{T}}\tilde{\boldsymbol{X}})^{-1}\tilde{\boldsymbol{X}}^{\mathsf{T}}\boldsymbol{T}=\tilde{\boldsymbol{X}}^{\dagger}\boldsymbol{T}
-  \label{align:ch05-最小二乘分类解}
+  \label{align:ch05-最小二乘解}
 \end{align}
 
-其中$\tilde{\boldsymbol{X}}^{\dagger}$是矩阵$\tilde{\boldsymbol{X}}$的伪逆（参见\cref{subsection:ch04-最大似然}），从而求得判别函数
+其中$\tilde{\boldsymbol{X}}^{\dagger}$是矩阵$\tilde{\boldsymbol{X}}$的伪逆（参见\cref{subsection:ch04-最大似然}）。
+
+\begin{proposition}[最小二乘分类解的极小性]\label{proposition:ch05-最小二乘极小性}
+设$\tilde{\boldsymbol{X}}$为$N\times(D+1)$矩阵，$\boldsymbol{T}$为$N\times K$矩阵。若$\tilde{\boldsymbol{X}}^{\mathsf{T}}\tilde{\boldsymbol{X}}$可逆，则由\eqref{align:ch05-最小二乘解}给出的$\tilde{\boldsymbol{W}}$是\eqref{align:ch05-平方和分类误差}中$E_D$的唯一全局极小点。
+\end{proposition}
+
+\begin{proof}
+（重构新增）记$\boldsymbol{R}=\tilde{\boldsymbol{X}}\tilde{\boldsymbol{W}}-\boldsymbol{T}$。由迹的性质$\operatorname{tr}(\boldsymbol{A}^{\mathsf{T}}\boldsymbol{A})=\sum_{ij}A_{ij}^{2}$知$E_D=\frac{1}{2}\lVert\tilde{\boldsymbol{X}}\tilde{\boldsymbol{W}}-\boldsymbol{T}\rVert_F^{2}$，其中$\lVert\cdot\rVert_F$为 Frobenius 范数。对$\tilde{\boldsymbol{W}}$求导（分母布局），利用$\mathrm{d}\,\operatorname{tr}(\boldsymbol{A}^{\mathsf{T}}\boldsymbol{A})=2\operatorname{tr}(\boldsymbol{A}^{\mathsf{T}}\mathrm{d}\boldsymbol{A})$，得
 
 \begin{align}
-  \boldsymbol{y}(\boldsymbol{x})=\tilde{\boldsymbol{W}}^{\mathsf{T}}\tilde{\boldsymbol{x}}=\tilde{\boldsymbol{X}}^{\dagger\mathsf{T}}\tilde{\boldsymbol{x}}
+  \frac{\partial E_D}{\partial\tilde{\boldsymbol{W}}}=\tilde{\boldsymbol{X}}^{\mathsf{T}}(\tilde{\boldsymbol{X}}\tilde{\boldsymbol{W}}-\boldsymbol{T})
+\end{align}
+
+令其为零，得到正规方程$\tilde{\boldsymbol{X}}^{\mathsf{T}}\tilde{\boldsymbol{X}}\tilde{\boldsymbol{W}}=\tilde{\boldsymbol{X}}^{\mathsf{T}}\boldsymbol{T}$。当$\tilde{\boldsymbol{X}}^{\mathsf{T}}\tilde{\boldsymbol{X}}$可逆时，该方程有唯一解\eqref{align:ch05-最小二乘解}。为说明它是极小点，把$E_D$在$\tilde{\boldsymbol{W}}_0=\tilde{\boldsymbol{X}}^{\dagger}\boldsymbol{T}$处展开：由正规方程$\tilde{\boldsymbol{X}}^{\mathsf{T}}(\tilde{\boldsymbol{X}}\tilde{\boldsymbol{W}}_0-\boldsymbol{T})=\boldsymbol{0}$，交叉项消失，于是对任意$\boldsymbol{\Delta}$，
+
+\begin{align}
+  E_D(\tilde{\boldsymbol{W}}_0+\boldsymbol{\Delta})=E_D(\tilde{\boldsymbol{W}}_0)+\frac{1}{2}\operatorname{tr}\left\{(\tilde{\boldsymbol{X}}\boldsymbol{\Delta})^{\mathsf{T}}(\tilde{\boldsymbol{X}}\boldsymbol{\Delta})\right\}
+\end{align}
+
+而$\operatorname{tr}\{(\tilde{\boldsymbol{X}}\boldsymbol{\Delta})^{\mathsf{T}}(\tilde{\boldsymbol{X}}\boldsymbol{\Delta})\}=\lVert\tilde{\boldsymbol{X}}\boldsymbol{\Delta}\rVert_F^{2}\geqslant 0$。又$\tilde{\boldsymbol{X}}^{\mathsf{T}}\tilde{\boldsymbol{X}}$可逆蕴含$\tilde{\boldsymbol{X}}$列满秩，故$\tilde{\boldsymbol{X}}\boldsymbol{\Delta}=\boldsymbol{0}$仅当$\boldsymbol{\Delta}=\boldsymbol{0}$，即增量严格为正，故$\tilde{\boldsymbol{W}}_0$是唯一全局极小点。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch05-最小二乘极小性; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+命题中的可逆性条件等价于$\tilde{\boldsymbol{X}}$列满秩，即$N\geqslant D+1$且增广输入向量线性无关；若该条件失败（例如样本数少于参数个数，或某些特征线性相关），则极小点不唯一，此时\eqref{align:ch05-最小二乘解}中的逆应换为 Moore--Penrose 伪逆$\tilde{\boldsymbol{X}}^{\dagger}$，它给出所有极小点中范数最小的那一个。\eqref{align:ch05-最小二乘解}的第二个等号$\tilde{\boldsymbol{X}}^{\dagger}=(\tilde{\boldsymbol{X}}^{\mathsf{T}}\tilde{\boldsymbol{X}})^{-1}\tilde{\boldsymbol{X}}^{\mathsf{T}}$只在列满秩时成立。还要注意，最小二乘的目标函数是$\boldsymbol{y}$与$\boldsymbol{t}$的平方误差，它并不是分类问题的似然：只有当$\boldsymbol{t}$的条件分布为 Gauss 分布时，最小化$E_D$才等价于最大似然（参见\cref{subsection:ch04-最大似然}）。这正是本节末将要讨论的局限性的来源。
+\end{remark}
+
+将\eqref{align:ch05-最小二乘解}代回\eqref{align:ch05-矩阵判别}，即得如下形式的判别函数：
+
+\begin{align}
+  \boldsymbol{y}(\boldsymbol{x})=\tilde{\boldsymbol{W}}^{\mathsf{T}}\tilde{\boldsymbol{x}}=\boldsymbol{T}^{\mathsf{T}}(\tilde{\boldsymbol{X}}^{\dagger})^{\mathsf{T}}\tilde{\boldsymbol{x}}
   \label{align:ch05-分类判别函数}
 \end{align}
 
-最小二乘法给出了判别函数参数的精确闭式解。然而，即使作为一个判别函数（我们直接用它来做决定，且不需要做任何概率解释），它也存在一些严重的问题。特别是，最小二乘法对离群值（与大部分数据点相距甚远的数据点）的存在非常敏感。平方和误差函数对距离决策边界较远的、即使被正确分类的数据点赋予了过高的权重。回想一下，最小二乘法对应的是高斯条件分布假设下的最大似然，而二进制目标变量的分布显然远非高斯分布。为便于比较，使用逻辑斯谛回归（logistic regression）技术（参见\cref{subsection:ch05-逻辑斯谛回归}）得出的结果对离群值的鲁棒性更强。
+具有多元目标变量的最小二乘解拥有一个有趣的特性，即如果训练集中的每个目标向量都满足某些线性约束条件，如
+
+\begin{align}
+  \boldsymbol{a}^{\mathsf{T}}\boldsymbol{t}_n+b=0
+  \label{align:ch05-目标线性约束}
+\end{align}
+
+则对于某些常数$\boldsymbol{a}$和$b$，$\boldsymbol{x}$的任意值的模型预测都将满足相同的约束条件，从而（参见\cref{exercise:ch05-03}）
+
+\begin{align}
+  \boldsymbol{a}^{\mathsf{T}}\boldsymbol{y}(\boldsymbol{x})+b=0
+  \label{align:ch05-预测约束}
+\end{align}
+
+\begin{proposition}[最小二乘预测保持目标向量的线性约束]\label{proposition:ch05-预测保持约束}
+设$\tilde{\boldsymbol{X}}^{\mathsf{T}}\tilde{\boldsymbol{X}}$可逆，$\tilde{\boldsymbol{W}}$由\eqref{align:ch05-最小二乘解}给出，且训练集的每个目标向量都满足\eqref{align:ch05-目标线性约束}。则对任意$\boldsymbol{x}$，\eqref{align:ch05-分类判别函数}给出的$\boldsymbol{y}(\boldsymbol{x})$满足\eqref{align:ch05-预测约束}。
+\end{proposition}
+
+\begin{proof}
+（重构新增）记$\boldsymbol{1}=(1,\cdots,1)^{\mathsf{T}}\in\mathbb{R}^{N}$。条件\eqref{align:ch05-目标线性约束}对$n=1,\cdots,N$成立，等价于矩阵等式$\boldsymbol{T}\boldsymbol{a}+b\boldsymbol{1}=\boldsymbol{0}$。于是
+$\boldsymbol{T}\boldsymbol{a}=-b\boldsymbol{1}$；转置得$\boldsymbol{a}^{\mathsf{T}}\boldsymbol{T}^{\mathsf{T}}=-b\boldsymbol{1}^{\mathsf{T}}$。由\eqref{align:ch05-分类判别函数}，
+
+\begin{align}
+  \boldsymbol{a}^{\mathsf{T}}\boldsymbol{y}(\boldsymbol{x})=\boldsymbol{a}^{\mathsf{T}}\boldsymbol{T}^{\mathsf{T}}(\tilde{\boldsymbol{X}}^{\dagger})^{\mathsf{T}}\tilde{\boldsymbol{x}}=-b\boldsymbol{1}^{\mathsf{T}}(\tilde{\boldsymbol{X}}^{\dagger})^{\mathsf{T}}\tilde{\boldsymbol{x}}
+\end{align}
+
+另一方面，由$\tilde{\boldsymbol{X}}^{\dagger}=(\tilde{\boldsymbol{X}}^{\mathsf{T}}\tilde{\boldsymbol{X}})^{-1}\tilde{\boldsymbol{X}}^{\mathsf{T}}$以及$\tilde{\boldsymbol{X}}$的第一列（由虚拟输入$x_0=1$组成）为$\boldsymbol{1}$，有$\tilde{\boldsymbol{X}}^{\mathsf{T}}\boldsymbol{1}=\tilde{\boldsymbol{X}}^{\mathsf{T}}\tilde{\boldsymbol{X}}\boldsymbol{e}_1$，其中$\boldsymbol{e}_1=(1,0,\cdots,0)^{\mathsf{T}}$；两边左乘$(\tilde{\boldsymbol{X}}^{\mathsf{T}}\tilde{\boldsymbol{X}})^{-1}$得$\tilde{\boldsymbol{X}}^{\dagger}\boldsymbol{1}=\boldsymbol{e}_1$。故$\boldsymbol{1}^{\mathsf{T}}(\tilde{\boldsymbol{X}}^{\dagger})^{\mathsf{T}}\tilde{\boldsymbol{x}}=(\tilde{\boldsymbol{X}}^{\dagger}\boldsymbol{1})^{\mathsf{T}}\tilde{\boldsymbol{x}}=\tilde{\boldsymbol{x}}_1=1$。代入上式得$\boldsymbol{a}^{\mathsf{T}}\boldsymbol{y}(\boldsymbol{x})=-b$，即\eqref{align:ch05-预测约束}。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch05-预测保持约束; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+证明中用到了“某个基函数恒为1”这一条件，它保证了$\tilde{\boldsymbol{X}}$的第一列为$\boldsymbol{1}$，从而使常数项$b$可以被表示出来；这正是原书在\cref{exercise:ch05-03}中要求“假设其中一个基函数$\phi_0(\boldsymbol{x})=1$”的原因。若没有这一列，则$\tilde{\boldsymbol{X}}^{\dagger}\boldsymbol{1}$不再是$\boldsymbol{e}_1$，结论一般不成立。该命题的一个重要特例是1-of-$K$编码：此时每个$\boldsymbol{t}_n$都满足$\boldsymbol{1}^{\mathsf{T}}\boldsymbol{t}_n=1$，取$\boldsymbol{a}=\boldsymbol{1}$、$b=-1$即得$\sum_k y_k(\boldsymbol{x})=1$。但如正文所述，仅有求和为1并不能保证$y_k(\boldsymbol{x})\in(0,1)$，因此这些输出仍不能解释为概率。
+\end{remark}
+
+因此，如果我们针对多分类问题使用1-of-$K$编码方案，那么模型所做的预测将具有这样的特性：对于任意$\boldsymbol{x}$值，$\boldsymbol{y}(\boldsymbol{x})$的元素之和都为1。然而，仅凭该求和约束条件还不足以将模型输出理解为概率，因为它们并没有被限制在区间$(0,1)$内。
+
+最小二乘法给出了判别函数参数的精确闭式解。然而，即使作为一个判别函数（我们直接用它来做决定，且不需要做任何概率解释），它也存在一些严重的问题。你已经看到，在 Gauss 噪声分布的假设下，平方和误差函数可以看作负对数似然（参见\cref{subsection:ch02-线性回归}）。如果数据的真实分布明显不同于 Gauss 分布，则最小二乘法的结果就会很差。特别是，最小二乘法对离群值（与大部分数据点相距甚远的数据点）的存在非常敏感，如\cref{figure:ch05-最小二乘与logistic}所示。我们可以看到，\cref{figure:ch05-最小二乘与logistic}右图中的附加数据点使决策边界的位置发生了显著变化，尽管这些数据点会被左图中的原始决策边界正确分类。平方和误差函数对距离决策边界较远的数据点赋予了过高的权重，即使这些数据点是被正确分类的。离群值可能由于罕见事件，或仅仅由于数据集中的错误而产生。由此，对极少数数据点敏感的技术是缺乏鲁棒性的。为便于比较，\cref{figure:ch05-最小二乘与logistic}还显示了使用一种称为 logistic 回归（logistic regression）的技术（参见\cref{subsection:ch05-logistic回归}）得出的结果，该技术对离群值的鲁棒性更强。
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.95\textwidth]{ch05-fig5-4-least-squares-logistic.png}
+  \caption{左图显示了来自两个类的数据（分别用红色十字和蓝色圆圈表示），以及通过使用最小二乘法（洋红色曲线）和 logistic 回归模型（绿色曲线）得到的决策边界。右图展示了在图右下方添加额外数据点后得到的相应结果。与 logistic 回归不同的是，最小二乘法对离群值高度敏感}
+  \label{figure:ch05-最小二乘与logistic}
+\end{figure}
+
+回想一下，最小二乘法对应的是 Gauss 条件分布假设下的最大似然，而二进制目标向量的分布显然远非 Gauss 分布，于是最小二乘法的失败也就不足为奇了。通过采用更合适的概率模型，我们可以获得相比最小二乘法性能更好的分类技术，而且还可以将其扩展以得到灵活的非线性神经网络模型，详见后续章节。
 
 \end{document}

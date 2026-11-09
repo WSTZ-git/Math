@@ -1,118 +1,204 @@
 \documentclass[../../main.tex]{subfiles}
+
 \graphicspath{{../../image/}{../../figure/}}
+
 \begin{document}
 
 \section{前向编码器}\label{section:ch20-前向编码器}
 
-构建丰富的生成式模型的一种行之有效的方法是引入一个潜变量 $z$ 上的分布 $p(z)$，然后使用深度神经网络将 $z$ 转换到数据空间 $x$ 中。我们仅需要使用一个简单的固定分布来表示 $p(z)$，例如高斯分布 $\mathcal{N}(z\mid 0,I)$，因为神经网络的通用性能够将其转换成一组关于 $x$ 的高度灵活的分布。在前面的章节（参见 16.4.4 小节）中，我们探讨了多种属于这一框架但基于不同方法定义和训练深度神经网络的模型，包括生成对抗网络、变分自编码器和标准化流。
+扩散模型可以视为一种层次化的变分自编码器，其中编码器分布是固定的，并由噪声过程定义，只有生成分布是学习得来的（Luo, 2022）（参见\cref{section:ch19-变分自编码器}）。它们易于训练，在并行硬件上具有良好的可扩展性，在避免对抗训练所带来的挑战和不稳定性的同时，可以产生与生成对抗网络相当或更优的结果。然而，由于需要通过解码器网络进行多次前向传播，它在生成新样本时会产生高昂的计算成本（Dhariwal and Nichol, 2021）。
 
-在本章中，我们将讨论这一通用框架下的第 $4$ 类模型---\textbf{扩散模型}（diffusion model），也叫去噪扩散概率模型（Denoising Diffusion Probabilistic Model, DDPM）（Sohl-Dickstein et al., 2015; Ho, Jain, and Abbeel, 2020），在许多应用领域，它们已经成为最先进的技术。尽管这个框架有更广泛的适用性，但我们仍将以图像数据为例讲述。这类模型的核心思想是对每一个训练图像，通过多步骤的噪声来损坏它，将其转变为高斯分布的样本，如图~\ref{fig:ch20-forward} 所示。然后训练一个深度神经网络来逆转这个过程，一旦训练完成，该网络就可以基于高斯分布的样本开始生成新的图像。
+从训练集中选取一个图像，表示为 $\bm{x}$，然后将图像中的每个像素独立地与 Gauss 噪声混合，得到一个被噪声损坏的图像 $\bm{z}_1$，其定义如下：
+\begin{align}
+\bm{z}_1=\sqrt{1-\beta_1}\,\bm{x}+\sqrt{\beta_1}\,\bm{\varepsilon}_1.
+\label{align:ch20-第一步}
+\end{align}
+其中 $\bm{\varepsilon}_1\sim\mathcal{N}(\bm{\varepsilon}_1\mid\bm{0},\bm{I})$ 且 $\beta_1<1$ 是噪声分布的方差。\eqref{align:ch20-第一步}中的系数 $\sqrt{1-\beta_1}$ 和 $\sqrt{\beta_1}$ 确保了 $\bm{z}_1$ 的分布均值比 $\bm{x}$ 的分布均值更接近于零，且 $\bm{z}_1$ 的方差比 $\bm{x}$ 的方差更接近单位矩阵（见\cref{exercise:ch20-01}）。我们可以将\eqref{align:ch20-第一步}写成以下形式（参见\cref{exercise:ch20-02}）：
+\begin{align}
+q(\bm{z}_1\mid\bm{x})=\mathcal{N}\big(\bm{z}_1\mid\sqrt{1-\beta_1}\,\bm{x},\,\beta_1\bm{I}\big).
+\label{align:ch20-一步分布}
+\end{align}
+
+然后重复这个过程，加入额外的独立 Gauss 噪声，从而生成一系列越来越多的加噪图像 $\bm{z}_1,\cdots,\bm{z}_T$。注意，在关于扩散模型的文献中，这些加噪图像或潜变量有时表示为 $\bm{x}_1,\cdots,\bm{x}_T$，而观测变量则表示为 $\bm{x}_0$。在本书中，我们使用 $\bm{z}$ 来表示潜变量，并使用 $\bm{x}$ 来表示观测变量。每一个后续图像由下式给出：
+\begin{align}
+\bm{z}_t=\sqrt{1-\beta_t}\,\bm{z}_{t-1}+\sqrt{\beta_t}\,\bm{\varepsilon}_t,
+\label{align:ch20-递推}
+\end{align}
+其中 $\bm{\varepsilon}_t\sim\mathcal{N}(\bm{\varepsilon}_t\mid\bm{0},\bm{I})$。同样，我们也可以将\eqref{align:ch20-递推}写成以下形式：
+\begin{align}
+q(\bm{z}_t\mid\bm{z}_{t-1})=\mathcal{N}\big(\bm{z}_t\mid\sqrt{1-\beta_t}\,\bm{z}_{t-1},\,\beta_t\bm{I}\big).
+\label{align:ch20-转移核}
+\end{align}
+
+条件分布序列\eqref{align:ch20-转移核}形成了一条 Markov 链，并且可以表示为\cref{figure:ch20-概率图模型}所示的概率图模型（参见\cref{section:ch11-概率图模型}）。方差参数 $\beta_t\in(0,1)$，并且通常是手动设置的，它们按预定的计划递增，即 $\beta_1<\beta_2<\cdots<\beta_T$。
 
 \begin{figure}[htbp]
-\centering
-\includegraphics[width=0.9\textwidth]{ch20-fig523-forward.png}
-\caption{扩散模型中编码过程的示意图。一幅图像 $x$ 逐渐被叠加的高斯噪声破坏，在经过多个阶段后，得到一系列越来越嘈杂的图像。最后的结果与从高斯分布中抽取的样本已无法区分。我们想要训练一个深度神经网络来逆转这个过程。}
-\label{fig:ch20-forward}
+  \centering
+  \includegraphics[width=0.95\textwidth]{ch20-fig20-2-graphical.png}
+  \caption{扩散过程可以表示为一个概率图模型。原始图像 $\bm{x}$ 表示为带有底色的节点，因为它是一个观测变量，而加噪图像 $\bm{z}_1,\cdots,\bm{z}_T$ 则视为潜变量。加噪过程由前向分布 $q(\bm{z}_t\mid\bm{z}_{t-1})$ 定义，它可以视为一个编码器。我们的目标是学习一个条件分布 $p(\bm{z}_{t-1}\mid\bm{z}_t,\bm{w})$ 并试图逆转这个过程，可以把它视为一个解码器。正如我们稍后将看到的，条件分布 $q(\bm{z}_{t-1}\mid\bm{z}_t,\bm{x})$ 在定义训练的过程中扮演了重要角色}
+  \label{figure:ch20-概率图模型}
 \end{figure}
-
-扩散模型可以视为一种层次化的变分自编码器，其中编码器分布是固定的，并由噪声过程定义，只有生成分布是学习得来的（Luo, 2022）（参见 19.2 节）。它们易于训练，在并行硬件上具有良好的可扩展性，在避免对抗训练所带来的挑战和不稳定性的同时，可以产生与生成对抗网络相当或更优的结果。然而，由于需要通过解码器网络进行多次前向传播，它在生成新样本时会产生高昂的计算成本（Dhariwal and Nichol, 2021）。
-
-从训练集中选取一个图像，表示为 $x$，然后将图像中的每个像素独立地与高斯噪声混合，得到一个被噪声损坏的图像 $z_1$，其定义如下：
-\begin{align}
-z_1=\sqrt{1-\beta_1}\,x+\sqrt{\beta_1}\,\epsilon_1
-\label{align:ch20-step1}
-\end{align}
-其中 $\epsilon_1\sim\mathcal{N}(\epsilon_1\mid 0,I)$ 且 $\beta_1<1$ 是噪声分布的方差。式~\eqref{align:ch20-step1} 中的系数 $\sqrt{1-\beta_1}$ 和 $\sqrt{\beta_1}$ 确保了 $z_1$ 的分布均值比 $x$ 的分布均值更接近于零，且 $z_1$ 的方差比 $x$ 的方差更接近单位矩阵（见习题 20.1）。我们可以将式~\eqref{align:ch20-step1} 写成以下形式（参见习题 20.2）：
-\begin{align}
-q(z_1\mid x)=\mathcal{N}\big(z_1\mid \sqrt{1-\beta_1}\,x,\,\beta_1 I\big)
-\label{align:ch20-qz1}
-\end{align}
-然后重复这个过程，加入额外的独立高斯噪声，从而生成一系列越来越多的加噪图像 $z_1,\cdots,z_T$。在关于扩散模型的文献中，这些加噪图像或潜变量有时表示为 $x_1,\cdots,x_T$，而观测变量则表示为 $x_0$。在本书中，我们使用 $z$ 来表示潜变量，并使用 $x$ 来表示观测变量。每一个后续图像由下式给出：
-\begin{align}
-z_t=\sqrt{1-\beta_t}\,z_{t-1}+\sqrt{\beta_t}\,\epsilon_t
-\label{align:ch20-step-t}
-\end{align}
-其中 $\epsilon_t\sim\mathcal{N}(\epsilon_t\mid 0,I)$。同样，我们也可以将式~\eqref{align:ch20-step-t} 写成以下形式：
-\begin{align}
-q(z_t\mid z_{t-1})=\mathcal{N}\big(z_t\mid \sqrt{1-\beta_t}\,z_{t-1},\,\beta_t I\big)
-\label{align:ch20-markov}
-\end{align}
-
-条件分布序列 [式~\eqref{align:ch20-markov}] 形成了一条马尔可夫链，并且可以表示为图~\ref{fig:ch20-graphical} 所示的概率图模型（参见 11.3 节）。方差参数 $\beta_t\in(0,1)$，并且通常是手动设置的，它们按预定的计划递增，即 $\beta_1<\beta_2<\cdots<\beta_T$。
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.85\textwidth]{ch20-fig524-graphical.png}
-\caption{扩散过程可以表示为一个概率图模型。原始图像 $x$ 表示为带有底色的节点，因为它是一个观测变量，而加噪图像 $z_1,\cdots,z_T$ 则视为潜变量。加噪过程由前向分布 $q(z_t\mid z_{t-1})$ 定义，它可以视为一个编码器。我们的目标是学习一个条件分布 $p(z_{t-1}\mid z_t,w)$ 并试图逆转这个过程，可以把它视为一个解码器。}
-\label{fig:ch20-graphical}
-\end{figure}
-
-这个马尔可夫链 [式~\eqref{align:ch20-markov}] 通常称为\textbf{前向过程}（forward process），它类似于 VAE 中的编码器，但这里的马尔可夫链是固定的而不是通过训练得来的。
 
 \subsection{扩散核}\label{subsection:ch20-扩散核}
 
-在观测到数据向量 $x$ 的条件下，潜变量的联合分布由下式给出：
+在观测到数据向量 $\bm{x}$ 的条件下，潜变量的联合分布由下式给出：
 \begin{align}
-q(z_1,z_2,\cdots,z_T\mid x)=\prod_{t=1}^{T}q(z_t\mid z_{t-1})
-\label{align:ch20-joint}
-\end{align}
-对中间变量 $z_1,\cdots,z_{T-1}$ 进行边缘化，即可得到\textbf{扩散核}（diffusion kernel）（参见习题 20.3）：
-\begin{align}
-q(z_t\mid x)=\mathcal{N}\big(z_t\mid \sqrt{\bar{\alpha}_t}\,x,\,(1-\bar{\alpha}_t)I\big)
-\label{align:ch20-diffusion-kernel}
-\end{align}
-其中的 $\bar{\alpha}_t$ 由下式给出：
-\begin{align}
-\bar{\alpha}_t=\prod_{s=1}^{t}(1-\beta_s)
-\label{align:ch20-alpha-bar}
+q(\bm{z}_1,\cdots,\bm{z}_T\mid\bm{x})=q(\bm{z}_1\mid\bm{x})\prod_{t=2}^{T}q(\bm{z}_t\mid\bm{z}_{t-1}).
+\label{align:ch20-联合分布}
 \end{align}
 
-可以看到，每一个中间分布都是一个简单的闭式的高斯分布，我们可以直接从中采样，这在训练 DDPM 时非常有用，因为它允许我们使用马尔可夫链中随机选择的中间项进行高效的随机梯度下降，而不必运行整个马尔可夫链。我们也可以将式~\eqref{align:ch20-step-t} 写成以下形式：
+\begin{definition}[累积噪声系数]\label{definition:ch20-累积系数}
+设 $\beta_1,\cdots,\beta_T$ 为噪声调度。对 $t=1,\cdots,T$，定义
 \begin{align}
-z_t=\sqrt{\bar{\alpha}_t}\,x+\sqrt{1-\bar{\alpha}_t}\,\epsilon_t
-\label{align:ch20-direct-sample}
+\alpha_t=\prod_{s=1}^{t}(1-\beta_s),
+\label{align:ch20-alpha}
 \end{align}
-其中仍然有 $\epsilon_t\sim\mathcal{N}(\epsilon_t\mid 0,I)$。请注意，这里的 $\epsilon_t$ 代表添加到原始图像上的总噪声，而不是在马尔可夫链这一步骤中添加的增量噪声。
+并约定 $\alpha_0=1$。称 $\alpha_t$ 为前 $t$ 步的\textbf{累积噪声系数}（cumulative noise coefficient）。
+\end{definition}
 
-在经过多个这样的步骤之后，图像变得与高斯噪声无法区分。在 $T\to\infty$ 的情况下，我们有（见习题 20.4）
+% SUPPLEMENT: parent=definition:ch20-累积系数; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+引入 $\alpha_t$ 的目的是把“逐步相乘的噪声调度”压缩为一个标量。由\eqref{align:ch20-alpha}立刻得到两个递推关系：$\alpha_t=(1-\beta_t)\alpha_{t-1}$，以及 $1-\alpha_t$ 随 $t$ 单调增加。后者正是“总噪声方差”的度量：$\sqrt{\alpha_t}$ 是原始信号在 $\bm{z}_t$ 中保留的幅度，$\sqrt{1-\alpha_t}$ 是累计注入的噪声幅度，二者平方和为 $1$，这与\eqref{align:ch20-直接采样}的系数完全一致。\par
+约定 $\alpha_0=1$ 不是多余的记号：它使 $t=1$ 时的\eqref{align:ch20-扩散核}退化为\eqref{align:ch20-一步分布}，从而下面的归纳法可以从 $t=1$ 统一处理。由于 $\beta_t\in(0,1)$，数列 $\{\alpha_t\}$ 严格递减且恒正；$\alpha_T$ 的大小由噪声调度决定，它衡量前向过程结束时还剩多少信号。\par
+需要提示的是，扩散模型文献（例如 DDPM）常把这里的 $\alpha_t$ 记作 $\bar{\alpha}_t$，以便与单步系数 $1-\beta_t$ 区分。本书直接使用 $\alpha_t$ 表示累积量，阅读其他文献时须注意这一记号差异。
+\end{remark}
+
+对中间变量 $\bm{z}_1,\cdots,\bm{z}_{t-1}$ 进行边缘化，即可得到\textbf{扩散核}（diffusion kernel）（参见\cref{exercise:ch20-03}）：
+
+\begin{proposition}[扩散核的闭式边缘分布]\label{proposition:ch20-扩散核}
+设前向过程由\eqref{align:ch20-转移核}给出，$\alpha_t$ 由\eqref{align:ch20-alpha}定义。则对任意 $t=1,\cdots,T$，
 \begin{align}
-q(z_T\mid x)=\mathcal{N}(z_T\mid 0,I)
-\label{align:ch20-asymptotic}
+q(\bm{z}_t\mid\bm{x})=\mathcal{N}\big(\bm{z}_t\mid\sqrt{\alpha_t}\,\bm{x},\,(1-\alpha_t)\bm{I}\big).
+\label{align:ch20-扩散核}
 \end{align}
-由于式~\eqref{align:ch20-asymptotic} 的右侧独立于 $x$，因此可以得出 $z_T$ 的边缘分布：
+\end{proposition}
+
+\begin{proof}（重构新增）
+对 $t$ 作归纳。当 $t=1$ 时，$\alpha_1=1-\beta_1$，而\eqref{align:ch20-一步分布}正是\eqref{align:ch20-扩散核}在 $t=1$ 时的形式。
+设\eqref{align:ch20-扩散核}对 $t-1$ 成立，即 $\bm{z}_{t-1}=\sqrt{\alpha_{t-1}}\,\bm{x}+\sqrt{1-\alpha_{t-1}}\,\bm{\eta}$，其中 $\bm{\eta}\sim\mathcal{N}(\bm{0},\bm{I})$ 且与 $\bm{\varepsilon}_t$ 独立。代入\eqref{align:ch20-递推}得
+\begin{align*}
+\bm{z}_t&=\sqrt{1-\beta_t}\Big(\sqrt{\alpha_{t-1}}\,\bm{x}+\sqrt{1-\alpha_{t-1}}\,\bm{\eta}\Big)+\sqrt{\beta_t}\,\bm{\varepsilon}_t\\
+&=\sqrt{(1-\beta_t)\alpha_{t-1}}\,\bm{x}+\sqrt{(1-\beta_t)(1-\alpha_{t-1})}\,\bm{\eta}+\sqrt{\beta_t}\,\bm{\varepsilon}_t.
+\end{align*}
+两个独立 Gauss 变量之和仍为 Gauss 变量，且均值与协方差分别相加，故 $\bm{z}_t$ 的条件分布为 Gauss 分布，其均值为 $\sqrt{(1-\beta_t)\alpha_{t-1}}\,\bm{x}=\sqrt{\alpha_t}\,\bm{x}$，协方差为
+\begin{align*}
+(1-\beta_t)(1-\alpha_{t-1})\bm{I}+\beta_t\bm{I}=\big(1-\alpha_{t-1}-\beta_t+\beta_t\alpha_{t-1}+\beta_t\big)\bm{I}=\big(1-(1-\beta_t)\alpha_{t-1}\big)\bm{I}=(1-\alpha_t)\bm{I},
+\end{align*}
+其中最后一个等号用了 $\alpha_t=(1-\beta_t)\alpha_{t-1}$。这正是\eqref{align:ch20-扩散核}。证毕。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch20-扩散核; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+\eqref{align:ch20-扩散核}是整章的计算基石：它把“沿着 Markov 链走 $t$ 步”换成了“一次加噪”，因而训练时可以从任意中间步骤直接采样，无须逐级展开整条链。这一点的实际意义在于，随机梯度下降的每一步只需一次前向传播，计算量与 $t$ 无关。\par
+条件必须交代清楚：推导只用到“各步噪声 $\bm{\varepsilon}_t$ 相互独立且与 $\bm{x}$ 独立”，以及 $\beta_t\in(0,1)$ 保证 $\alpha_t>0$、从而 $\sqrt{\alpha_t}$ 与 $1-\alpha_t$ 都有意义。若 $\beta_t$ 允许取 $1$，则 $\alpha_t=0$，$\bm{z}_t$ 与 $\bm{x}$ 完全独立，扩散核退化为先验，链在该步之后不再携带任何数据信息。\par
+还要注意\eqref{align:ch20-扩散核}中的 $\bm{x}$ 被当作固定向量处理：它是“以 $\bm{x}$ 为条件”的分布，而不是对数据分布 $p(\bm{x})$ 求边缘后的分布。对 $\bm{x}$ 再积分得到的是混合分布（见\eqref{align:ch20-边缘z}），一般不再是 Gauss 分布。
+\end{remark}
+
+可以看到，每一个中间分布都是一个简单的闭式的 Gauss 分布，我们可以直接从中采样，这在训练 DDPM 时非常有用，因为它允许我们使用 Markov 链中随机选择的中间项进行高效的随机梯度下降，而不必运行整个 Markov 链。我们也可以将\eqref{align:ch20-递推}写成以下形式：
 \begin{align}
-q(z_T)=\mathcal{N}(z_T\mid 0,I)
-\label{align:ch20-marginal-t}
+\bm{z}_t=\sqrt{\alpha_t}\,\bm{x}+\sqrt{1-\alpha_t}\,\bm{\varepsilon}_t,
+\label{align:ch20-直接采样}
 \end{align}
-因此，关于原始图像的所有信息都丢失了。在式~\eqref{align:ch20-step-t} 中，系数 $\sqrt{1-\beta_t}$ 和 $\sqrt{\beta_t}$ 确保了一旦马尔可夫链收敛到均值为零、协方差为单位矩阵的分布后，就不会再受进一步更新的影响（见习题 20.5）。
+其中仍然有 $\bm{\varepsilon}_t\sim\mathcal{N}(\bm{\varepsilon}_t\mid\bm{0},\bm{I})$。请注意，这里的 $\varepsilon_t$ 代表添加到原始图像上的总噪声，而不是在 Markov 链这一步骤中添加的增量噪声。
+
+在经过多个这样的步骤之后，图像变得与 Gauss 噪声无法区分。在 $T\to\infty$ 的情况下，我们有（见\cref{exercise:ch20-04}）
+\begin{align}
+q(\bm{z}_T\mid\bm{x})=\mathcal{N}(\bm{z}_T\mid\bm{0},\bm{I}),
+\label{align:ch20-极限}
+\end{align}
+因此，关于原始图像的所有信息都丢失了。在\eqref{align:ch20-递推}中，系数 $\sqrt{1-\beta_t}$ 和 $\sqrt{\beta_t}$ 确保了一旦 Markov 链收敛到均值为零、协方差为单位矩阵的分布后，就不会再受进一步更新的影响了（见\cref{exercise:ch20-05}）。由于\eqref{align:ch20-极限}的右侧独立于 $\bm{x}$，因此可以得出 $\bm{z}_T$ 的边缘分布：
+\begin{align}
+q(\bm{z}_T)=\mathcal{N}(\bm{z}_T\mid\bm{0},\bm{I}).
+\label{align:ch20-边缘极限}
+\end{align}
+
+\begin{definition}[前向过程]\label{definition:ch20-前向过程}
+设噪声调度 $\beta_1,\cdots,\beta_T$ 满足 $0<\beta_t<1$。由条件分布族\eqref{align:ch20-转移核}所确定的、以观测数据 $\bm{x}$ 为起点的 Markov 链
+\begin{align*}
+q(\bm{z}_1,\cdots,\bm{z}_T\mid\bm{x})=q(\bm{z}_1\mid\bm{x})\prod_{t=2}^{T}q(\bm{z}_t\mid\bm{z}_{t-1})
+\end{align*}
+称为扩散模型的\textbf{前向过程}（forward process），也称\textbf{前向编码器}。其中 $\bm{x}$ 为观测变量，$\bm{z}_1,\cdots,\bm{z}_T$ 为潜变量。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch20-前向过程; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+前向过程在结构上类似于 VAE 中的编码器，但有一个决定性的差别：它没有任何可学习参数，$\beta_t$ 与 $\bm{x}$ 都事先给定，因此“编码”是纯随机的加噪，而不是对后验的推断。这一差别使扩散模型的训练目标里不存在编码器参数，也使重参数化技巧变得不必要（\cref{section:ch19-变分自编码器}中的 VAE 需要它，是因为其编码器含参数）。\par
+术语上要小心一处冲突：在标准化流的文献中，“前向过程”通常指从潜空间到数据空间的可逆映射（即生成方向），而这里的前向过程是从数据到噪声的破坏方向。两者方向相反，遇到跨文献的表述时必须按上下文确认，不能把\eqref{align:ch20-转移核}的箭头反过来。\par
+条件的意义：$0<\beta_t<1$ 保证每一步都是“部分保留信号 + 部分注入噪声”的压缩映射，因而\eqref{align:ch20-扩散核}中 $\sqrt{\alpha_t}$ 与 $\sqrt{1-\alpha_t}$ 同时为正；$\beta_1<\beta_2<\cdots<\beta_T$ 则保证噪声水平单调上升，使链最终到达先验。若调度不递增，中间某些步骤可能“变清晰”，扩散核的单调性被破坏，后续的逆过程假设也随之失效。
+\end{remark}
 
 \subsection{条件分布}\label{subsection:ch20-条件分布}
 
-我们的目标是学会逆转加噪过程，因此很自然地要考虑条件分布 $q(z_{t-1}\mid z_t)$ 的逆过程，可以使用贝叶斯定理把它表示为
+我们的目标是学会逆转加噪过程，因此很自然地要考虑条件分布 $q(\bm{z}_t\mid\bm{z}_{t-1})$ 的逆过程，可以使用 Bayes 定理把它表示为
 \begin{align}
-q(z_{t-1}\mid z_t)=\frac{q(z_t\mid z_{t-1})\,q(z_{t-1})}{q(z_t)}
-\label{align:ch20-reverse-bayes}
+q(\bm{z}_{t-1}\mid\bm{z}_t)=\frac{q(\bm{z}_t\mid\bm{z}_{t-1})\,q(\bm{z}_{t-1})}{q(\bm{z}_t)}.
+\label{align:ch20-Bayes逆}
 \end{align}
-我们可以将边缘分布 $q(z_t)$ 写成如下形式：
+我们可以将边缘分布 $q(\bm{z}_{t-1})$ 写成如下形式：
 \begin{align}
-q(z_t)=\int q(z_t\mid x)\,p(x)\,\mathrm{d}x
-\label{align:ch20-marginal-z}
+q(\bm{z}_{t-1})=\int q(\bm{z}_{t-1}\mid\bm{x})\,p(\bm{x})\,\mathrm{d}\bm{x},
+\label{align:ch20-边缘z}
 \end{align}
-其中 $q(z_t\mid x)$ 由条件高斯分布 [式~\eqref{align:ch20-diffusion-kernel}] 给出。然而，这个分布是难以计算的，因为我们必须对未知的数据密度 $p(x)$ 进行积分。如果我们使用训练集中的样本来近似地进行积分，则会得到一个以高斯函数混合形式表示的复杂分布。
+其中 $q(\bm{z}_{t-1}\mid\bm{x})$ 由条件 Gauss 分布\eqref{align:ch20-扩散核}给出。然而，这个分布是难以计算的，因为我们必须对未知的数据密度 $p(\bm{x})$ 进行积分。如果我们使用训练集中的样本来近似地进行积分，则会得到一个以 Gauss 函数混合形式表示的复杂分布。
 
-换个思路，考虑逆向分布的条件版本，该分布以数据向量 $x$ 为条件，定义为 $q(z_{t-1}\mid z_t,x)$，这实际上是一个简单的高斯分布。从直观上看这是合理的，因为我们很难猜测哪个低噪声图像演变为某个具体的加噪图像，然而如果我们知道原始图像，那么问题解决起来就会变得容易很多。利用前向过程的马尔可夫性质，可以得到
+换个思路，考虑逆向分布的条件版本，该分布以数据向量 $\bm{x}$ 为条件，定义为 $q(\bm{z}_{t-1}\mid\bm{z}_t,\bm{x})$，这实际上是一个简单的 Gauss 分布。从直观上看这是合理的，因为我们很难猜测哪个低噪声图像演变为某个具体的加噪图像，然而如果我们知道原始图像，那么问题解决起来就会变得容易很多。我们可以使用 Bayes 定理来计算这个条件分布：
 \begin{align}
-q(z_{t-1}\mid z_t,x)=\frac{q(z_t\mid z_{t-1},x)\,q(z_{t-1}\mid x)}{q(z_t\mid x)}
-\label{align:ch20-conditional-reverse}
+q(\bm{z}_{t-1}\mid\bm{z}_t,\bm{x})=\frac{q(\bm{z}_t\mid\bm{z}_{t-1},\bm{x})\,q(\bm{z}_{t-1}\mid\bm{x})}{q(\bm{z}_t\mid\bm{x})}.
+\label{align:ch20-条件逆}
 \end{align}
+利用前向过程的 Markov 性质，可以得到
+\begin{align}
+q(\bm{z}_t\mid\bm{z}_{t-1},\bm{x})=q(\bm{z}_t\mid\bm{z}_{t-1}).
+\label{align:ch20-Markov消去}
+\end{align}
+\eqref{align:ch20-Markov消去}的右侧由\eqref{align:ch20-转移核}给出。作为 $\bm{z}_{t-1}$ 的函数，这里采用指数的二次型形式。在\eqref{align:ch20-条件逆}中，分子中的 $q(\bm{z}_{t-1}\mid\bm{x})$ 是由\eqref{align:ch20-扩散核}给出的扩散核，这同样涉及关于 $\bm{z}_{t-1}$ 的指数的二次型形式。我们可以忽略\eqref{align:ch20-条件逆}中的分母，因为作为 $\bm{z}_{t-1}$ 的函数，它是一个常数。\eqref{align:ch20-条件逆}右侧的形式是一个 Gauss 分布，我们可以使用“配方法”这一技巧来确定其均值和协方差，得到以下结论（见\cref{exercise:ch20-06}）。
 
-从直观上看，如果我们保持方差较小，使得 $\beta_t$ 远小于 $1$，那么潜向量之间的步骤变化将相对较小，因此学会逆转变换应该更容易。更具体地说，如果 $\beta_t$ 远小于 $1$，那么分布 $q(z_{t-1}\mid z_t)$ 将近似于关于 $z_t$ 的高斯分布。这一点从式~\eqref{align:ch20-reverse-bayes} 中可以看出，因为等式右边是通过 $q(z_t\mid z_{t-1})$ 和 $q(z_{t-1})$ 与 $z_t$ 相关联的。如果 $q(z_t\mid z_{t-1})$ 是一个极其狭窄的高斯分布，那么在 $q(z_{t-1}\mid z_t)$ 具有显著概率质量的区域，$q(z_{t-1})$ 的变化将非常小，因此 $q(z_{t-1}\mid z_t)$ 也可以近似认为是高斯分布。这种直觉可以通过图~\ref{fig:ch20-reverse-approx} 所示的简单例子来证实。然而，由于每一步的方差都很小，我们必须使用大量的步骤来确保从前向加噪过程中获得的最终潜变量 $z_T$ 的分布仍然接近高斯分布，这增加了生成新样本的成本。在实践中，$T$ 的值可能达到数千。
+\begin{proposition}[逆条件分布的 Gauss 形式]\label{proposition:ch20-逆条件分布}
+设前向过程由\eqref{align:ch20-转移核}给出，$\alpha_t$ 由\eqref{align:ch20-alpha}定义，$t\geqslant 2$。则在给定 $\bm{x}$ 与 $\bm{z}_t$ 的条件下，逆条件分布为 Gauss 分布
+\begin{align}
+q(\bm{z}_{t-1}\mid\bm{z}_t,\bm{x})=\mathcal{N}\big(\bm{z}_{t-1}\mid\bm{m}_t(\bm{x},\bm{z}_t),\,\sigma_t^2\bm{I}\big),
+\label{align:ch20-逆条件}
+\end{align}
+其均值和方差分别为
+\begin{align}
+\bm{m}_t(\bm{x},\bm{z}_t)&=\frac{(1-\alpha_{t-1})\sqrt{1-\beta_t}\,\bm{z}_t+\sqrt{\alpha_{t-1}}\,\beta_t\,\bm{x}}{1-\alpha_t},
+\label{align:ch20-逆均值}\\
+\sigma_t^2&=\frac{\beta_t(1-\alpha_{t-1})}{1-\alpha_t}.
+\label{align:ch20-逆方差}
+\end{align}
+\end{proposition}
 
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.85\textwidth]{ch20-fig528-reverse-approx.png}
-\caption{用于标量变量的贝叶斯定理 [式~\eqref{align:ch20-reverse-bayes}] 的逆向分布 $q(z_{t-1}\mid z_t)$ 的计算示意图。右图中的红色曲线展示了使用三个高斯分布混合而成的边缘分布 $q(z_{t-1})$；左图则展示了以 $z_t$ 为中心的高斯前向加噪过程 $q(z_t\mid z_{t-1})$。通过将这些相乘并归一化，我们得到了特定选择的 $z_t$ 的分布 $q(z_{t-1}\mid z_t)$，如蓝色曲线所示。因为左侧的分布相对较宽，对应于一个较大的方差 $\beta_t$，所以分布 $q(z_{t-1}\mid z_t)$ 具有复杂的多模态结构。}
-\label{fig:ch20-reverse-approx}
-\end{figure}
+\begin{proof}（重构新增）
+记 $Z$ 为\eqref{align:ch20-条件逆}右端作为 $\bm{z}_{t-1}$ 的函数所对应的归一化常数（它不依赖 $\bm{z}_{t-1}$）。由\eqref{align:ch20-条件逆}、\eqref{align:ch20-Markov消去}、\eqref{align:ch20-转移核}与\eqref{align:ch20-扩散核}，有
+\begin{align*}
+q(\bm{z}_{t-1}\mid\bm{z}_t,\bm{x})=\frac{1}{Z}\exp\Big\{-\frac{\|\bm{z}_t-\sqrt{1-\beta_t}\,\bm{z}_{t-1}\|^2}{2\beta_t}-\frac{\|\bm{z}_{t-1}-\sqrt{\alpha_{t-1}}\,\bm{x}\|^2}{2(1-\alpha_{t-1})}\Big\}.
+\end{align*}
+把指数中的两个平方项展开，只保留依赖 $\bm{z}_{t-1}$ 的部分（其余并入常数），得到
+\begin{align*}
+\ln q(\bm{z}_{t-1}\mid\bm{z}_t,\bm{x})=-\frac{1}{2}\Big(\frac{1-\beta_t}{\beta_t}+\frac{1}{1-\alpha_{t-1}}\Big)\|\bm{z}_{t-1}\|^2+\Big(\frac{\sqrt{1-\beta_t}}{\beta_t}\,\bm{z}_t+\frac{\sqrt{\alpha_{t-1}}}{1-\alpha_{t-1}}\,\bm{x}\Big)^{\!\mathsf T}\bm{z}_{t-1}+\mathrm{const}.
+\end{align*}
+这是关于 $\bm{z}_{t-1}$ 的二次型，故分布为 Gauss 分布。由二次项系数可知其精度矩阵为
+\begin{align*}
+\frac{1-\beta_t}{\beta_t}+\frac{1}{1-\alpha_{t-1}}=\frac{(1-\beta_t)(1-\alpha_{t-1})+\beta_t}{\beta_t(1-\alpha_{t-1})}=\frac{1-\alpha_t}{\beta_t(1-\alpha_{t-1})},
+\end{align*}
+其中最后一个等号用了 $(1-\beta_t)(1-\alpha_{t-1})+\beta_t=1-(1-\beta_t)\alpha_{t-1}=1-\alpha_t$；求逆即得\eqref{align:ch20-逆方差}。再令二次型对 $\bm{z}_{t-1}$ 的梯度为零，得
+\begin{align*}
+\bm{m}_t(\bm{x},\bm{z}_t)&=\sigma_t^2\Big(\frac{\sqrt{1-\beta_t}}{\beta_t}\,\bm{z}_t+\frac{\sqrt{\alpha_{t-1}}}{1-\alpha_{t-1}}\,\bm{x}\Big)\\
+&=\frac{\beta_t(1-\alpha_{t-1})}{1-\alpha_t}\cdot\frac{\sqrt{1-\beta_t}}{\beta_t}\,\bm{z}_t+\frac{\beta_t(1-\alpha_{t-1})}{1-\alpha_t}\cdot\frac{\sqrt{\alpha_{t-1}}}{1-\alpha_{t-1}}\,\bm{x}\\
+&=\frac{(1-\alpha_{t-1})\sqrt{1-\beta_t}}{1-\alpha_t}\,\bm{z}_t+\frac{\sqrt{\alpha_{t-1}}\,\beta_t}{1-\alpha_t}\,\bm{x},
+\end{align*}
+这正是\eqref{align:ch20-逆均值}。证毕。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch20-逆条件分布; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+\eqref{align:ch20-逆均值}与\eqref{align:ch20-逆方差}合起来说明：只要把原始图像 $\bm{x}$ 也当作条件，逆向的一步仍然是 Gauss 分布，而且协方差是各向同性的 $\sigma_t^2\bm{I}$。这解释了为什么后文可以用一个只输出均值、方差固定为 $\beta_t$ 的网络来近似逆过程——逆分布本身的“形状”已经由前向调度决定，网络要学的只是“均值往哪里走”。
+均值\eqref{align:ch20-逆均值}是 $\bm{z}_t$ 与 $\bm{x}$ 的加权平均，两个权重之和为
+\begin{align*}
+\frac{(1-\alpha_{t-1})\sqrt{1-\beta_t}+\sqrt{\alpha_{t-1}}\,\beta_t}{1-\alpha_t},
+\end{align*}
+它一般不等于 $1$，因此不能简单理解为“凸组合”；两个权重分别衡量“当前噪声样本”和“原始图像”在估计 $\bm{z}_{t-1}$ 时的可信度。当 $t$ 较大（$\alpha_{t-1}$ 很小）时，$\bm{x}$ 的权重很小而 $\bm{z}_t$ 的权重接近 $1$，这与“噪声大时几乎无法回推一步”的直觉一致。\par
+条件 $t\geqslant2$ 不能去掉：$t=1$ 时 $\alpha_0=1$，\eqref{align:ch20-逆方差}的分母 $1-\alpha_1=\beta_1>0$ 尚可，但\eqref{align:ch20-逆均值}中 $\sqrt{\alpha_0}\,\beta_1/(1-\alpha_1)=1$ 会使公式退化为 $\bm{m}_1=\bm{x}$，即“已知 $\bm{x}$ 时 $\bm{z}_0$ 就是 $\bm{x}$”，这需要单独约定 $\bm{z}_0\triangleq\bm{x}$。实际算法对 $t=1$ 单独处理，见\cref{section:ch20-反向解码器}中的采样步骤。
+\end{remark}
 
 \end{document}

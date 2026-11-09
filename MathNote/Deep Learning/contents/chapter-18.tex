@@ -5,9 +5,143 @@
 \begin{document}
 
 \chapter{标准化流}\label{chapter:ch18-标准化流}
+
+\cref{chapter:ch17-生成对抗网络}介绍的生成对抗网络扩展了线性潜变量模型的框架，其关键是使用深度神经网络来表示从潜空间到数据空间的高度灵活且可学习的非线性变换。然而，因为网络函数无法求逆，似然函数通常很难处理，当潜空间的维度低于数据空间的维度时，似然函数甚至可能都无法定义。因此，研究人员在 GAN 中引入了一个新的判别器网络来支持对抗训练。
+
+本章将讨论训练非线性潜变量模型的 $4$ 种方法中的第 $2$ 种方法（参见\cref{subsection:ch16-四种生成模型}），它通过限制神经网络模型的形式，在确保能够从训练好的模型中易于采样的前提下，无须近似即可计算似然函数。假设我们定义了一个分布 $p_z(\bm{z})$[有时也称\textbf{基础分布}（base distribution）]，这个分布定义在潜变量 $\bm{z}$ 上，以及一个由深度神经网络给出的非线性函数 $\bm{x}=\bm{f}(\bm{z},\bm{w})$，该函数要将潜空间转换成数据空间。假设 $p_z(\bm{z})$ 是一个简单的分布，比如 Gauss 分布，那么从这样的模型中抽样就很容易，因为每一个潜样本 $\bm{z}^{*}\sim p_z(\bm{z})$ 只需要通过神经网络就可以生成对应的数据样本 $\bm{x}^{*}=\bm{f}(\bm{z}^{*},\bm{w})$。
+
+为了计算这个模型的似然函数，我们需要知道数据空间分布，而它依赖于神经网络函数的逆函数，记为 $\bm{z}=\bm{g}(\bm{x},\bm{w})$，并且满足 $\bm{z}=\bm{g}(\bm{f}(\bm{z},\bm{w}),\bm{w})$。这要求对于每一个 $\bm{w}$ 值，函数 $\bm{f}(\bm{z},\bm{w})$ 和 $\bm{g}(\bm{x},\bm{w})$ 都是可逆的。
+
+\begin{definition}[可逆映射与双射]\label{definition:ch18-双射}
+设 $S\subseteq\mathbb{R}^{D}$，$\bm{f}:S\rightarrow\mathbb{R}^{D}$ 是一映射。若对每个 $\bm{x}\in\bm{f}(S)$ 都存在唯一的 $\bm{z}\in S$ 使得 $\bm{f}(\bm{z})=\bm{x}$，则称 $\bm{f}$ 在 $S$ 上是\textbf{可逆的}（invertible），并称 $\bm{f}$ 是 $S$ 与 $\bm{f}(S)$ 之间的\textbf{双射}（bijection），即每个 $\bm{x}$ 值都对应唯一的 $\bm{z}$ 值，反之亦然。此时把 $\bm{x}$ 映到上述唯一 $\bm{z}$ 的映射称为 $\bm{f}$ 的\textbf{逆映射}，记为 $\bm{f}^{-1}$。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch18-双射; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+定义里的“唯一”二字是全部要害：变量变换公式要用 $\bm{x}$ 唯一地决定 $\bm{z}$，才能给 $p_x(\bm{x})$ 赋一个确定的值。若映射是多对一的，同一个 $\bm{x}$ 会来自多个 $\bm{z}$，密度就无从定义；\cref{chapter:ch17-生成对抗网络}中的生成对抗网络正是放弃了这一要求（允许网络不可逆、允许潜空间维度低于数据空间），代价是失去可计算的似然函数。标准化流则反过来：保留可逆性以换取精确似然。
+
+逐项看条件。其一，定义域与值域的维数必须相同（这里都是 $D$），否则 Jacobian 矩阵不是方阵、行列式没有定义，\cref{proposition:ch18-变量变换}根本无法写出。其二，“双射”是一个整体性的要求，它比“Jacobian 处处非奇异”更强：由反函数定理，$\mathcal{C}^{1}$ 且 Jacobian 非奇异只保证局部可逆，而流模型需要的是在整个数据空间上存在全局逆映射 $\bm{g}$。其三，$\bm{f}$ 与 $\bm{g}$ 互为逆映射这一条在下一段的推导中被反复使用：它把事件 $\{\bm{x}\in A\}$ 与 $\{\bm{z}\in\bm{g}(A)\}$ 等同起来。
+
+一个容易被误解之处是术语“潜变量”：$\bm{x}$ 与 $\bm{z}$ 由确定性映射互相决定，给定 $\bm{x}$ 后 $\bm{z}$ 不再有任何不确定性，严格说来已不是通常意义下的隐变量。但由于生成过程仍从 $\bm{z}$ 出发，书中沿用了这一名称。
+\end{remark}
+
+然后我们可以使用变量变换公式来计算数据密度（参见\cref{section:ch02-密度变换}）：
+
+\begin{proposition}[变量变换公式]\label{proposition:ch18-变量变换}
+设 $\bm{f}(\cdot,\bm{w}):\mathbb{R}^{D}\rightarrow\mathbb{R}^{D}$ 是连续可微的双射，其逆映射为 $\bm{g}(\cdot,\bm{w})$，且 $\bm{g}$ 的 Jacobian 矩阵处处非奇异。若潜变量 $\bm{z}$ 的密度为 $p_z$，则数据变量 $\bm{x}=\bm{f}(\bm{z},\bm{w})$ 的密度为
+\begin{align}
+  p_x(\bm{x}\mid\bm{w})=p_z\big(\bm{g}(\bm{x},\bm{w})\big)\left|\det\bm{J}(\bm{x})\right|,
+  \label{align:ch18-change-var}
+\end{align}
+其中 $\bm{J}(\bm{x})$ 是偏导数的 Jacobian 矩阵，其元素由下式给出：
+\begin{align}
+  J_{ij}(\bm{x})=\frac{\partial g_i(\bm{x},\bm{w})}{\partial x_j}.
+  \label{align:ch18-Jacobian元素}
+\end{align}
+\end{proposition}
+
+\begin{proof}（重构新增）
+设 $A\subseteq\mathbb{R}^{D}$ 为任意 Borel 集。由于 $\bm{f}$ 与 $\bm{g}$ 互为逆映射，事件 $\{\bm{x}\in A\}$ 与事件 $\{\bm{z}\in\bm{g}(A)\}$ 是同一个事件，于是概率质量守恒给出
+\begin{align*}
+  \int_{A}p_x(\bm{x})\,\mathrm{d}\bm{x}=\int_{\bm{g}(A)}p_z(\bm{z})\,\mathrm{d}\bm{z}.
+\end{align*}
+因为 $\bm{g}$ 连续可微且 Jacobian 处处非奇异，由多元积分的变量代换定理，右端可以改写为对 $A$ 的积分：
+\begin{align*}
+  \int_{\bm{g}(A)}p_z(\bm{z})\,\mathrm{d}\bm{z}=\int_{A}p_z\big(\bm{g}(\bm{x},\bm{w})\big)\left|\det\frac{\partial\bm{g}}{\partial\bm{x}}(\bm{x})\right|\mathrm{d}\bm{x}.
+\end{align*}
+上式对一切 Borel 集 $A$ 成立，故两个被积函数几乎处处相等，即得\eqref{align:ch18-change-var}，其中 $\bm{J}(\bm{x})=\partial\bm{g}/\partial\bm{x}$ 的元素正是\eqref{align:ch18-Jacobian元素}。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch18-变量变换; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+这个公式的直观内容是一维情形 $p_x(x)=p_z(g(x))|g'(x)|$ 的多元推广：$\bm{f}$ 把 $\bm{z}$ 空间中的一个无穷小体积元拉伸或压缩了 $|\det\bm{J}|$ 倍，概率质量必须守恒，所以密度要乘以这个因子的倒数，而 $\bm{J}=\partial\bm{z}/\partial\bm{x}$ 恰好就是该因子的倒数（见\cref{exercise:ch18-01}）。这也是“非体积保持”（non-volume-preserving）这一名称的来源：一般的光滑双射并不保持体积，唯当 $|\det\bm{J}|\equiv1$ 时才保持（如\cref{exercise:ch18-03}中的平移）。
+
+条件的作用。第一，双射与同维数是公式有意义的前提（见\cref{definition:ch18-双射}的注记）。第二，$\bm{g}$ 的连续可微性保证 Jacobian 存在、变量代换定理可用；仅有可微还不够，还需要 $\bm{g}(A)$ 可测等测度论条件，这些在最常见的 $\mathcal{C}^{1}$ 双射情形下自动成立。第三，$\det\bm{J}\neq0$ 保证密度不退化：若某点处 $\det\bm{J}=0$，则该点附近 $\bm{f}$ 把 $D$ 维体积压成低维集合，$p_x$ 在那里会出现奇异性，这正是\cref{proposition:ch16-流形奇异}所描述的退化情形。
+
+公式中的绝对值不可省。当 $\det\bm{J}<0$ 时映射改变定向，但密度必须非负，所以只能取 $|\det\bm{J}|$；换句话说，公式只关心体积的缩放倍数，不关心定向。
+\end{remark}
+
+\eqref{align:ch18-change-var}中的 $|\cdot|$ 表示模或绝对值。尽管确定性映射意味着任何给定的数据值 $\bm{x}$ 都对应一个唯一的 $\bm{z}$ 值，$\bm{z}$ 值因此不再不确定，但我们仍继续将 $\bm{z}$ 称为“潜变量”。
+
+映射函数 $\bm{f}(\bm{z},\bm{w})$ 则定义为一种特殊形式的神经网络，我们稍后会讨论其结构。要求可逆映射的一个结果是潜空间的维度必须与数据空间的维度相同，这可能导致像图像这样的高维数据会需要很大的模型。另外，评估 $D\times D$ 矩阵的行列式的成本通常是 $\mathcal{O}(D^{3})$，所以我们需要对模型施加一些额外的限制，以便更高效地计算 Jacobian 行列式。
+
+考虑一个训练集 $\mathcal{D}=\{\bm{x}_1,\cdots,\bm{x}_N\}$，它由独立数据点组成，根据\eqref{align:ch18-change-var}得到的对数似然函数为
+\begin{align}
+  \ln p(\mathcal{D}\mid\bm{w})&=\sum_{n=1}^{N}\ln p_x(\bm{x}_n\mid\bm{w})\label{align:ch18-对数似然}\\
+  &=\sum_{n=1}^{N}\left\{\ln p_z\big(\bm{g}(\bm{x}_n,\bm{w})\big)+\ln\left|\det\bm{J}(\bm{x}_n)\right|\right\}.\label{align:ch18-对数似然展开}
+\end{align}
+
+我们的目标是使用似然函数来训练神经网络。为了能够建模各种各样的分布，我们希望转换函数 $\bm{x}=\bm{f}(\bm{z},\bm{w})$ 高度灵活，因而使用了深度神经网络架构。如果能够保证网络的每一层都是可逆的，那么整个函数就是可逆的（见\cref{exercise:ch18-02}）。考虑三个连续的转换，其中的每个转换对应于一个层，形式如下：
+\begin{align}
+  \bm{x}=\bm{f}^{A}\big(\bm{f}^{B}(\bm{f}^{C}(\bm{z}))\big).\label{align:ch18-分层复合}
+\end{align}
+
+\begin{proposition}[分层流的逆与 Jacobian 链]\label{proposition:ch18-分层流}
+设 $\bm{f}^{A},\bm{f}^{B},\bm{f}^{C}$ 都可逆，其逆分别为 $\bm{g}^{A},\bm{g}^{B},\bm{g}^{C}$，且\eqref{align:ch18-分层复合}中的复合在相应点上连续可微。则逆函数为
+\begin{align}
+  \bm{z}=\bm{g}^{C}\big(\bm{g}^{B}(\bm{g}^{A}(\bm{x}))\big),\label{align:ch18-分层逆}
+\end{align}
+并且 $\bm{z}$ 关于 $\bm{x}$ 的 Jacobian 矩阵的元素满足链式法则
+\begin{align}
+  J_{ij}=\frac{\partial z_i}{\partial x_j}=\sum_{k}\sum_{l}\frac{\partial g_i^{C}}{\partial g_k^{B}}\frac{\partial g_k^{B}}{\partial g_l^{A}}\frac{\partial g_l^{A}}{\partial x_j},\label{align:ch18-分层Jacobian}
+\end{align}
+从而 $\ln\left|\det\bm{J}\right|$ 等于三个层各自对数行列式之和。
+\end{proposition}
+
+\begin{proof}（重构新增）
+先证\eqref{align:ch18-分层逆}。把\eqref{align:ch18-分层复合}的右端逐层代入：由 $\bm{g}^{A}$ 是 $\bm{f}^{A}$ 的逆、$\bm{g}^{B}$ 是 $\bm{f}^{B}$ 的逆、$\bm{g}^{C}$ 是 $\bm{f}^{C}$ 的逆，依次有
+\begin{align*}
+  \bm{g}^{A}(\bm{x})=\bm{f}^{B}\big(\bm{f}^{C}(\bm{z})\big),\qquad
+  \bm{g}^{B}\big(\bm{g}^{A}(\bm{x})\big)=\bm{f}^{C}(\bm{z}),\qquad
+  \bm{g}^{C}\big(\bm{g}^{B}(\bm{g}^{A}(\bm{x}))\big)=\bm{z}.
+\end{align*}
+反向代入同样成立，故\eqref{align:ch18-分层逆}确是\eqref{align:ch18-分层复合}的逆（亦可由\cref{exercise:ch18-02}的一般结论得到）。
+
+再证\eqref{align:ch18-分层Jacobian}。记 $\bm{y}=\bm{g}^{A}(\bm{x})$、$\bm{u}=\bm{g}^{B}(\bm{y})$，则 $\bm{z}=\bm{g}^{C}(\bm{u})$，由多元复合函数的链式法则
+\begin{align*}
+  \frac{\partial z_i}{\partial x_j}=\sum_{k}\frac{\partial g_i^{C}}{\partial u_k}\frac{\partial u_k}{\partial x_j}
+  =\sum_{k}\frac{\partial g_i^{C}}{\partial u_k}\sum_{l}\frac{\partial g_k^{B}}{\partial y_l}\frac{\partial y_l}{\partial x_j}
+  =\sum_{k}\sum_{l}\frac{\partial g_i^{C}}{\partial u_k}\frac{\partial g_k^{B}}{\partial y_l}\frac{\partial g_l^{A}}{\partial x_j},
+\end{align*}
+其中 $\partial g_i^{C}/\partial u_k$ 与 $\partial g_k^{B}/\partial y_l$ 分别就是\eqref{align:ch18-分层Jacobian}中写作 $\partial g_i^{C}/\partial g_k^{B}$ 与 $\partial g_k^{B}/\partial g_l^{A}$ 的偏导数（即在相应中间变量处取值）。写成矩阵形式即 $\bm{J}=\bm{J}^{C}\bm{J}^{B}\bm{J}^{A}$，每层 Jacobian 在相应的中间点上计算。由行列式的乘积法则，
+\begin{align*}
+  \left|\det\bm{J}\right|=\left|\det\bm{J}^{C}\right|\left|\det\bm{J}^{B}\right|\left|\det\bm{J}^{A}\right|,
+\end{align*}
+取对数即得 $\ln|\det\bm{J}|=\ln|\det\bm{J}^{C}|+\ln|\det\bm{J}^{B}|+\ln|\det\bm{J}^{A}|$。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch18-分层流; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+动机很直接：若把整个 $\bm{f}$ 当成一个黑箱，算 $\det\bm{J}$ 要 $\mathcal{O}(D^{3})$；改成分层结构后，只需每层各算一次行列式再相乘，总代价是各层代价之和，而每层都可以设计得让行列式便宜（例如三角矩阵，只需 $\mathcal{O}(D)$）。这一条是整章的结构性基础：耦合流与自回归流都是在“让每层 Jacobian 成为三角矩阵”这一思路上做文章。
+
+条件方面：每一层都必须可逆（否则复合不可逆），且都要在相应的中间点连续可微；$\bm{J}=\bm{J}^{C}\bm{J}^{B}\bm{J}^{A}$ 中的三个矩阵在不同的点上取值，不能误认为同一个点处的常数矩阵。另外，层数增加并不改变“可逆性由每层保证”这一逻辑，但对数行列式的累计是相加的，这正是深度流模型仍可训练的原因。
+
+一个边界情形：若某一层 Jacobian 奇异，则整体 $\det\bm{J}=0$，\eqref{align:ch18-change-var}在该点失效。因此实际模型中每层的变换都被设计成行列式恒不为零（耦合层与自回归流均如此）。
+\end{remark}
+
+\eqref{align:ch18-分层Jacobian}的右侧为三个矩阵的乘积，而乘积的行列式是行列式的乘积。因此，整体 Jacobian 矩阵的对数行列式将是每层对应对数行列式之和（参见\hyperref[chapter:appA-线性代数]{附录\ref*{chapter:appA-线性代数}}）。
+
+\begin{definition}[标准化流]\label{definition:ch18-标准化流}
+设 $p_z$ 是潜变量 $\bm{z}$ 上的简单分布（基础分布），$\bm{f}(\cdot,\bm{w})$ 是由深度神经网络给出的可逆映射。若数据分布 $p_x$ 由\cref{proposition:ch18-变量变换}的变量变换公式从 $p_z$ 与 $\bm{f}$ 确定，则称这种对灵活分布进行建模的方法为\textbf{标准化流}（normalizing flow），并称复合成 $\bm{f}$ 的每个可逆映射为一层流。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch18-标准化流; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+“流”这个名称来自直观图像：通过一系列映射来转换概率分布的过程，在某种程度上类似于流体的流动——密度沿着流线被搬运、被拉伸压缩，而质量始终守恒。逆映射方向的效果则相反：它把复杂的数据分布“标准化”成简单形式，通常就是 Gauss 分布，这正是名称中“标准化”的含义。
+
+这个定义与\cref{chapter:ch19-自编码器}的变分自编码器、\cref{chapter:ch17-生成对抗网络}的生成对抗网络构成对照：三者都用一个神经网络把简单分布搬到数据空间，差别在于对“可逆”与“似然精确”的取舍。标准化流要求可逆，代价是潜空间与数据空间必须同维、网络结构受限；回报是似然函数可以被精确计算，而且采样只需一次前向传播。
+
+条件方面，定义要求 $p_z$ 是“简单”分布，这是为了让 $p_z$ 的对数密度容易计算（例如标准 Gauss 的对数密度就是 $-\|\bm{z}\|^{2}/2$ 加常数），并且容易采样；要求 $\bm{f}$ 可逆，是为了让\eqref{align:ch18-change-var}成立。这两条缺一不可。
+
+还要注意，定义并未要求 $\bm{f}$ 只有一层；恰恰相反，实际模型总是把许多层复合起来，用\cref{proposition:ch18-分层流}把整体的对数行列式化归为各层之和。单层负责“便宜且可逆”，多层负责“灵活”，这是标准化流的基本设计原则。
+\end{remark}
+
+标准化流的详细介绍参见 Kobyzev, Prince, and Brubaker (2019) 以及 Papamakarios et al. (2019)。在本章中，我们将讨论实践中经常使用的两个主要类型的标准化流的核心概念：耦合流（coupling flow）和自回归流（autoregressive flow）。此外，我们还将介绍使用神经微分方程定义可逆映射的方法，并引入连续流（continuous flow）这一概念。
+
 \subfile{Chapter-18/section-01.tex}
 \subfile{Chapter-18/section-02.tex}
 \subfile{Chapter-18/section-03.tex}
 \subfile{Chapter-18/section-04.tex}
+\subfile{Chapter-18/section-05.tex}
 
 \end{document}

@@ -1,0 +1,312 @@
+% ==========================================================================
+\chapter{预备知识}
+% ==========================================================================
+
+本章回顾论文所需的基础知识。偏微分方程的理论基础可参阅文献\cite{zhou2005}。第 \ref{sec:ode-stiff} 节从常微分方程初值问题出发，介绍刚性概念与几类基本算法；第 \ref{sec:stability} 节整理 A-稳定、L-稳定等稳定性概念；第 \ref{sec:von-neumann} 节介绍 von Neumann 分析方法；第 \ref{sec:fv-mol} 节介绍有限体积方法与直线法；第 \ref{sec:imex-basic} 节给出 IMEX-Euler 的推导与双变量稳定性函数的初步定义。
+
+\section{常微分方程初值问题与刚性}
+\label{sec:ode-stiff}
+
+考虑初值问题 \eqref{eq:ode-ivp}。假设 $f:\R\times\R^m\to\R^m$ 关于 $y$ 满足 Lipschitz 条件，则由 Picard--Lindel\"of 定理，问题在局部存在唯一解。数值方法的目标是构造离散时刻 $t_n$ 上的近似值 $y_n$，使得当步长 $\Delta t\to0$ 时，整体误差以预期的阶数趋于零。
+
+最简单的两种方法是显式 Euler 法与隐式 Euler 法：
+\begin{align}
+  y_{n+1} &= y_n+\Delta t\,f(t_n,y_n), \label{eq:explicit-euler}\\
+  y_{n+1} &= y_n+\Delta t\,f(t_{n+1},y_{n+1}). \label{eq:implicit-euler}
+\end{align}
+显式 Euler 法是一阶单步法，每步只需一次函数求值；隐式 Euler 法也是一阶，但每步需要解方程 \eqref{eq:implicit-euler}。当 $f$ 关于 $y$ 非线性时，通常采用 Newton 迭代；当 $f$ 线性时，则化为线性方程组。梯形法则
+\begin{equation}
+  y_{n+1}=y_n+\frac{\Delta t}{2}\bigl[f(t_n,y_n)+f(t_{n+1},y_{n+1})\bigr]
+  \label{eq:trapezoidal}
+\end{equation}
+是二阶的，但它对刚性模态的衰减不够强，这一点将在第 \ref{sec:stability} 节说明。
+
+\subsection{刚性的含义}
+
+“刚性”并没有一个完全统一的定义，但其核心是时间尺度的分离。对线性系统
+\begin{equation}
+  y'=Ay,\qquad A\in\R^{m\times m},
+  \label{eq:linear-system}
+\end{equation}
+设 $A$ 的特征值为 $\lambda_1,\dots,\lambda_m$，且 $\mathrm{Re}\,\lambda_j<0$。若
+\begin{equation}
+  S=\frac{\max_j|\mathrm{Re}\,\lambda_j|}{\min_j|\mathrm{Re}\,\lambda_j|}\gg1,
+  \label{eq:stiffness-ratio}
+\end{equation}
+则称系统是刚性的，$S$ 称为刚性比。对非线性问题，可以用 Jacobian 矩阵 $f_y(t,y)$ 的特征值作局部化的定义。
+
+刚性带来的困难可以通过一个简单例子说明。取
+\begin{equation}
+  y'=-1000\bigl(y-\cos t\bigr)-\sin t,\qquad y(0)=1,
+  \label{eq:stiff-example}
+\end{equation}
+其精确解为 $y(t)=\cos t$。该问题的 Jacobian 为 $-1000$，快模态以时间尺度 $10^{-3}$ 衰减，而解本身以 $O(1)$ 的尺度变化。表 \ref{tab:stiff-example} 给出了显式 Euler 与隐式 Euler 在不同步长下的最大误差。
+
+\begin{table}[htbp]
+  \centering
+  \caption{刚性初值问题 \eqref{eq:stiff-example} 的数值结果（$t\in[0,1]$）}
+  \label{tab:stiff-example}
+  \begin{tabular}{lccc}
+    \toprule
+    方法 & 步长 $\Delta t$ & 最大误差 & 是否稳定 \\
+    \midrule
+    显式 Euler & $1.0\times10^{-3}$ & $5.00\times10^{-7}$ & 是 \\
+    显式 Euler & $2.0\times10^{-3}$ & $2.00\times10^{-6}$ & 是 \\
+    显式 Euler & $2.1\times10^{-3}$ & 发散 & 否 \\
+    \midrule
+    隐式 Euler & $1.0\times10^{-2}$ & $8.39\times10^{-3}$ & 是 \\
+    隐式 Euler & $5.0\times10^{-2}$ & $4.14\times10^{-2}$ & 是 \\
+    隐式 Euler & $1.0\times10^{-1}$ & $8.13\times10^{-2}$ & 是 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+显式 Euler 的稳定条件是 $|1-1000\Delta t|\le1$，即 $\Delta t\le2\times10^{-3}$；一旦越过该阈值，误差迅速放大。隐式 Euler 对任意 $\Delta t>0$ 都稳定，但步长增大时精度下降。这一对比揭示了刚性问题的基本矛盾：稳定性要求与精度要求往往指向不同的步长。IMEX 方法试图在两者之间取得平衡：把导致刚性限制的项隐式处理，把其余项显式处理。
+
+\subsection{从偏微分方程到刚性初值问题}
+
+直线法把偏微分方程的空间变量离散，得到一个关于时间的大型常微分方程组。以一维对流扩散方程
+\begin{equation}
+  u_t+a u_x=\nu u_{xx}
+  \label{eq:adv-diff}
+\end{equation}
+为例，若用中心差分离散空间导数，得到
+\begin{equation}
+  \frac{\dd u_j}{\dd t}
+  =-a\frac{u_{j+1}-u_{j-1}}{2\Delta x}
+  +\nu\frac{u_{j+1}-2u_j+u_{j-1}}{\Delta x^2}.
+  \label{eq:adv-diff-semi}
+\end{equation}
+对 Fourier 模态 $u_j=\hat u\ee^{\ii kx_j}$，右端符号为
+\begin{equation}
+  \lambda(k)=-\ii ak-\nu k^2.
+  \label{eq:adv-diff-symbol}
+\end{equation}
+在网格可分辨的波数范围内，$|k|\le\pi/\Delta x$，因此对流特征值的模为 $O(a/\Delta x)$，扩散特征值的模为 $O(\nu/\Delta x^2)$。当 $\Delta x\to0$ 时，扩散特征值增长得更快，刚性比 $S=O(\nu/(a\Delta x))\to\infty$。这说明：即使原偏微分方程并不“刚性”，空间离散也会把刚性引入半离散系统。对 Burgers 方程，这一机制同样成立，只是对流项变成了非线性。
+
+\section{稳定性概念}
+\label{sec:stability}
+
+\subsection{测试方程与放大因子}
+
+线性稳定性分析通常以标量测试方程
+\begin{equation}
+  y'=\lambda y,\qquad \mathrm{Re}\,\lambda<0
+  \label{eq:test-equation}
+\end{equation}
+为出发点。若数值方法作用在 \eqref{eq:test-equation} 上给出
+\begin{equation}
+  y_{n+1}=R(z)y_n,\qquad z=\Delta t\lambda,
+  \label{eq:amplification}
+\end{equation}
+则 $R(z)$ 称为放大因子（或稳定性函数）。方法的绝对稳定域定义为
+\begin{equation}
+  \mathcal{S}=\{z\in\mathbb{C}: |R(z)|\le1\}.
+  \label{eq:stability-region}
+\end{equation}
+显式 Euler 的 $R(z)=1+z$，稳定域是以 $-1$ 为圆心、半径为 $1$ 的圆盘；隐式 Euler 的 $R(z)=1/(1-z)$，稳定域是圆盘 $|z-1|>1$ 的外部，特别地，整个左半平面都在其中。
+
+\subsection{A-稳定与 L-稳定}
+
+\begin{definition}[A-稳定]
+  若数值方法的绝对稳定域包含整个左半复平面
+  \begin{equation}
+    \mathbb{C}^-=\{z\in\mathbb{C}:\mathrm{Re}\,z\le0\},
+  \end{equation}
+  则称该方法是 A-稳定的。
+\end{definition}
+
+\begin{definition}[L-稳定]
+  若方法是 A-稳定的，并且
+  \begin{equation}
+    \lim_{\mathrm{Re}\,z\to-\infty}R(z)=0,
+    \label{eq:L-stability}
+  \end{equation}
+  则称该方法是 L-稳定的。
+\end{definition}
+
+L-稳定的意义在于：当刚性模态的衰减率趋于无穷时，数值解能够把该模态迅速压掉，而不产生持续的寄生振荡。隐式 Euler 是 L-稳定的；梯形法则的 $R(z)=(1+z/2)/(1-z/2)$ 满足 $R(z)\to-1$，因此是 A-稳定但非 L-稳定的。对刚性很强的问题，梯形法则会在快模态上产生不衰减的振荡，这是它不如隐式 Euler 的地方。
+
+Dahlquist 第二障碍定理指出，A-稳定的线性多步法阶数不超过 $2$，且二阶 A-稳定方法的误差常数受限制。这一结果说明了为什么高阶方法很难同时具备良好的刚性稳定性，也解释了 IMEX 方法为何常以低阶格式（如 IMEX-Euler、IMEX-BDF2）为基础。
+
+\subsection{IMEX 格式的双变量稳定性}
+
+对分裂系统
+\begin{equation}
+  y'=\lambda_E y+\lambda_I y,
+  \label{eq:split-test}
+\end{equation}
+IMEX-Euler 给出
+\begin{equation}
+  y_{n+1}=y_n+\Delta t\lambda_E y_n+\Delta t\lambda_I y_{n+1},
+\end{equation}
+从而
+\begin{equation}
+  R(z_E,z_I)=\frac{1+z_E}{1-z_I},\qquad
+  z_E=\Delta t\lambda_E,\quad z_I=\Delta t\lambda_I.
+  \label{eq:R-two-var}
+\end{equation}
+与单变量情形不同，$z_E$ 与 $z_I$ 并不是独立的：它们来自同一个物理算子的分裂，因而在刚性极限下按固定比例同时趋于无穷。正是这一耦合关系，使得“分别考察显式稳定域与隐式稳定域”不足以判断格式的稳定性，必须引入双变量稳定性函数。
+
+\section{von Neumann 稳定性分析}
+\label{sec:von-neumann}
+
+von Neumann 分析是研究常系数线性差分格式稳定性的经典工具。其基本步骤是：将数值解展开为 Fourier 级数，考察单个模态在一个时间步后的放大倍数，并要求所有模态的放大倍数不超过 $1$。
+
+\subsection{对流方程}
+
+考虑周期区间上的一维对流方程 $u_t+au_x=0$。采用一阶迎风格式（$a>0$）
+\begin{equation}
+  u_j^{n+1}=u_j^n-\frac{a\Delta t}{\Delta x}\bigl(u_j^n-u_{j-1}^n\bigr).
+  \label{eq:upwind}
+\end{equation}
+代入模态 $u_j^n=\hat u^n\ee^{\ii kx_j}$，得
+\begin{equation}
+  \hat u^{n+1}=\bigl[1-C\bigl(1-\ee^{-\ii k\Delta x}\bigr)\bigr]\hat u^n,
+  \qquad C=\frac{a\Delta t}{\Delta x}.
+\end{equation}
+放大因子为 $R=1-C+C\ee^{-\ii\theta}$，其中 $\theta=k\Delta x$。计算得
+\begin{equation}
+  |R|^2=1-2C(1-C)(1-\cos\theta).
+\end{equation}
+因此当 $0\le C\le1$ 时 $|R|\le1$，CFL 条件 $C\le1$ 是充分必要的。若采用中心差分，放大因子为 $R=1-\ii C\sin\theta$，$|R|^2=1+C^2\sin^2\theta>1$，格式对任意 $C>0$ 都不稳定。这说明空间离散的耗散性对显式格式的稳定性至关重要。
+
+\subsection{扩散方程}
+
+对扩散方程 $u_t=\nu u_{xx}$，显式 Euler 与中心差分给出
+\begin{equation}
+  u_j^{n+1}=u_j^n+r\bigl(u_{j+1}^n-2u_j^n+u_{j-1}^n\bigr),
+  \qquad r=\frac{\nu\Delta t}{\Delta x^2}.
+\end{equation}
+放大因子为
+\begin{equation}
+  R=1-2r(1-\cos\theta),
+\end{equation}
+稳定条件为 $0\le r\le1/2$。隐式 Euler 的放大因子为
+\begin{equation}
+  R=\frac{1}{1+2r(1-\cos\theta)},
+\end{equation}
+对任意 $r>0$ 都满足 $|R|\le1$，且当 $r\to\infty$ 时 $R\to0$，因此是 L-稳定的。
+
+\subsection{对流扩散方程与 IMEX 格式}
+
+对 \eqref{eq:adv-diff} 采用一阶迎风对流与中心扩散，并取 IMEX-Euler，其中对流显式、扩散隐式，则放大因子为
+\begin{equation}
+  R=\frac{1-C(1-\ee^{-\ii\theta})}{1+2r(1-\cos\theta)}.
+  \label{eq:imex-adv-diff-R}
+\end{equation}
+当 $r$ 很大时，分母很大，格式稳定；当 $r$ 很小时，稳定性主要由 CFL 条件控制。更细致的分析需要同时保留 $z_E$ 与 $z_I$，这正是本文第四章的任务。
+
+\section{有限体积方法与直线法}
+\label{sec:fv-mol}
+
+\subsection{守恒形式与单元平均}
+
+一维守恒律
+\begin{equation}
+  u_t+f(u)_x=0
+  \label{eq:conservation-law}
+\end{equation}
+在单元 $I_j=[x_{j-1/2},x_{j+1/2}]$ 上积分，得
+\begin{equation}
+  \frac{\dd \bar u_j}{\dd t}
+  =-\frac{1}{\Delta x}\bigl(F_{j+1/2}-F_{j-1/2}\bigr),
+  \label{eq:fv-semi}
+\end{equation}
+其中 $\bar u_j$ 为单元平均，$F_{j+1/2}$ 为界面数值通量。式 \eqref{eq:fv-semi} 是有限体积方法的出发点：它只依赖于界面通量，因而天然保持离散守恒性。
+
+对粘性 Burgers 方程，扩散项也写成通量形式。令 $F^{c}(u)=u^2/2$，$F^{v}(u)=\nu u_x$，则
+\begin{equation}
+  \frac{\dd \bar u_j}{\dd t}
+  =-\frac{1}{\Delta x}\bigl(F^{c}_{j+1/2}-F^{c}_{j-1/2}\bigr)
+  +\frac{1}{\Delta x}\bigl(F^{v}_{j+1/2}-F^{v}_{j-1/2}\bigr),
+  \label{eq:fv-burgers}
+\end{equation}
+其中 $F^{v}_{j+1/2}=\nu(\bar u_{j+1}-\bar u_j)/\Delta x$。代入后即得标准的三点 Laplacian。
+
+\subsection{Rusanov 通量与 MUSCL 重构}
+
+本文采用局部 Lax--Friedrichs（Rusanov）通量
+\begin{equation}
+  F_{j+1/2}=\frac12\bigl(f(u^-_{j+1/2})+f(u^+_{j+1/2})\bigr)
+  -\frac{\alpha_{j+1/2}}{2}\bigl(u^+_{j+1/2}-u^-_{j+1/2}\bigr),
+  \label{eq:rusanov}
+\end{equation}
+其中 $u^\mp_{j+1/2}$ 为界面左右状态，$\alpha_{j+1/2}=\max(|u^-|,|u^+|)$ 为局部波速。Rusanov 通量可以看作中心通量加一项数值耗散，其数值粘性系数约为 $\alpha\Delta x/2$。这一项对稳定性有利，但会降低激波的分辨率。
+
+一阶格式直接取 $u^-_{j+1/2}=\bar u_j$，$u^+_{j+1/2}=\bar u_{j+1}$。为提高精度，采用 MUSCL 重构
+\begin{equation}
+  u^-_{j+1/2}=\bar u_j+\frac12\sigma_j\Delta x,\qquad
+  u^+_{j+1/2}=\bar u_{j+1}-\frac12\sigma_{j+1}\Delta x,
+  \label{eq:muscl}
+\end{equation}
+其中斜率 $\sigma_j$ 由 minmod 限制器给出：
+\begin{equation}
+  \sigma_j=\operatorname{minmod}\left(
+  \frac{\bar u_j-\bar u_{j-1}}{\Delta x},
+  \frac{\bar u_{j+1}-\bar u_j}{\Delta x}\right),
+  \label{eq:minmod}
+\end{equation}
+\begin{equation}
+  \operatorname{minmod}(a,b)=
+  \begin{cases}
+    \dfrac{\sgn a+\sgn b}{2}\min(|a|,|b|), & ab>0,\\[6pt]
+    0, & ab\le0.
+  \end{cases}
+  \label{eq:minmod-def}
+\end{equation}
+当解单调时，重构达到二阶；在极值点附近，限制器把斜率压为零，格式退化为一阶，从而避免非物理振荡。这一性质称为总变差有界（TVD）。高分辨率格式的系统综述可参阅文献\cite{shu1998}。
+
+\subsection{半离散系统与刚性}
+
+将 \eqref{eq:fv-burgers} 写成向量形式：
+\begin{equation}
+  \frac{\dd \bU}{\dd t}=\bC(\bU)+\nu\bD\bU,
+  \label{eq:semidiscrete}
+\end{equation}
+其中 $\bC$ 为对流算子，$\nu\bD$ 为扩散算子。对一阶 Rusanov 格式，$\bC$ 的线性化符号为
+\begin{equation}
+  \lambda_C(\xi)=-\frac{\ii a\sin\xi}{\Delta x}
+  -\frac{|a|(1-\cos\xi)}{\Delta x},
+  \label{eq:lambda-C}
+\end{equation}
+$\bD$ 的符号为
+\begin{equation}
+  \lambda_D(\xi)=-\frac{2(1-\cos\xi)}{\Delta x^2},
+  \label{eq:lambda-D}
+\end{equation}
+其中 $\xi=k\Delta x\in[0,\pi]$。在长波极限 $\xi\to0$ 下，$\lambda_C\approx-\ii ak-|a|k^2\Delta x/2$，$\lambda_D\approx-k^2$，与连续符号 \eqref{eq:adv-diff-symbol} 一致，但多出一项 $O(\Delta x)$ 的数值耗散。
+
+半离散系统 \eqref{eq:semidiscrete} 是一个大型刚性初值问题。刚性来源于 $\bD$ 的特征值 $O(\nu/\Delta x^2)$ 与 $\bC$ 的特征值 $O(a/\Delta x)$ 之间的尺度分离。若对扩散项采用显式处理，时间步长必须满足 $\Delta t\lesssim\Delta x^2/(2\nu)$；当 $\Delta x$ 很小时，这一限制极其苛刻。这正是引入 IMEX 格式的直接动机。
+
+\section{IMEX-Euler 与双变量稳定性函数}
+\label{sec:imex-basic}
+
+对半离散系统
+\begin{equation}
+  \frac{\dd \bU}{\dd t}=\bC(\bU)+\bD(\bU),
+\end{equation}
+将右端分裂为显式部分 $\bC$ 与隐式部分 $\bD$，IMEX-Euler 格式为
+\begin{equation}
+  \bU^{n+1}=\bU^n+\Delta t\,\bC(\bU^n)+\Delta t\,\bD(\bU^{n+1}).
+  \label{eq:imex-euler-general}
+\end{equation}
+若 $\bD$ 为线性算子 $\nu\bD$，则每步只需解线性方程组
+\begin{equation}
+  \bigl(\bI-\Delta t\nu\bD\bigr)\bU^{n+1}
+  =\bU^n+\Delta t\,\bC(\bU^n).
+  \label{eq:imex-linear-solve}
+\end{equation}
+对本文的三点 Laplacian，系数矩阵是三对角（周期情形为循环三对角）矩阵，可用 Thomas 算法或稀疏 LU 分解在 $O(N)$ 时间内求解。
+
+在标量线性测试问题上，设显式、隐式特征值分别为 $\lambda_E,\lambda_I$，则
+\begin{equation}
+  R(z_E,z_I)=\frac{1+z_E}{1-z_I}.
+\end{equation}
+对本文的参数化分裂，$\lambda_E=\lambda_C+\theta\nu\lambda_D$，$\lambda_I=(1-\theta)\nu\lambda_D$。当 $\theta=0$ 时，全部耗散隐式，$R=1/(1-z_I)$ 具有 L-稳定结构；当 $\theta=1$ 时，全部耗散显式，$R=1+z_E$，退化为显式 Euler；当 $0<\theta<1$ 时，格式在两者之间连续过渡。第四章将证明：这一连续过渡并不是“越接近隐式越稳定”的单调过程，而是存在一个尖锐的阈值 $\theta=1/2$。
+
+IMEX-Euler 的局部截断误差为 $O(\Delta t^2)$，整体误差为 $O(\Delta t)$。它对显式部分与隐式部分分别作一阶处理，因此是一阶格式。若需要更高阶，可以构造 IMEX Runge--Kutta 或 IMEX 线性多步格式，但稳定性分析的基本结构——双变量稳定性函数与刚性射线——保持不变。本文选择 IMEX-Euler，是因为它结构最简单、稳定性机制最清晰，适合作为系统分析的起点。
+
+\section{本章小结}
+
+本章回顾了常微分方程初值问题的基本算法与刚性概念，介绍了 A-稳定、L-稳定、von Neumann 分析、有限体积方法与直线法，并给出了 IMEX-Euler 的推导。核心结论是：空间离散会把偏微分方程转化为刚性初值问题；IMEX 方法通过隐式处理刚性部分来放宽时间步长；而其稳定性必须用双变量稳定性函数来描述。下一章将把这些工具应用到粘性 Burgers 方程，建立参数化分裂族。

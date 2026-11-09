@@ -1,120 +1,371 @@
 \documentclass[../../main.tex]{subfiles}
+
 \graphicspath{{../../image/}{../../figure/}}
+
 \begin{document}
 
 \section{误差函数}\label{section:ch06-误差函数}
 
-在之前的章节中，我们探讨了用于回归和分类的线性模型（参见第~4~、~5~章），并在此过程中推导出了误差函数的适当形式以及相应的输出单元激活函数。这些选择误差函数所考虑的因素同样适用于多层网络，为方便起见我们在此总结关键点。
+在之前的章节中，我们探讨了用于回归和分类的线性模型（参见\cref{section:ch04-线性回归}），并在此过程中推导出了误差函数的适当形式（参见\cref{section:ch05-判别函数}）以及相应的输出单元激活函数。选择误差函数考虑的因素同样也适用于多层（神经）网络，为了方便起见，我们将在总结关键点。
 
-\subsection{回归}\label{section:ch06-回归}
+\subsection{回归}\label{subsection:ch06-回归}
 
-首先讨论回归问题。此处暂时考虑可以取任意实值的单目标变量 $t$。回到对单层网络中回归的讨论（参见~2.3.4~小节），假设 $t$ 服从高斯分布，其均值是以 $\mathbf{x}$ 为输入的神经网络的输出 $y(\mathbf{x},\mathbf{w})$：
+我们首先讨论回归问题。此处我们暂时考虑可以取任意实值的单目标变量 $t$。让我们回到对单层网络中回归的讨论（参见\cref{subsection:ch02-线性回归}），假设 $t$ 服从 Gauss 分布，其均值是以 $\boldsymbol{x}$ 为输入的神经网络的输出，则有
+
 \begin{align}
-p(t\mid \mathbf{x},\mathbf{w}) = \mathcal{N}\!\left(t\,\middle|\, y(\mathbf{x},\mathbf{w}),\sigma^2\right),
-\label{align:ch06-regression-gauss}
-\end{align}
-其中 $\sigma^2$ 是高斯噪声方差。当然这是一个有点严格的假设，在某些应用中我们需要扩展此方法以支持更一般的分布（参见~6.5~节）。对于由~\eqref{align:ch06-regression-gauss}~给出的条件分布，将输出单元激活函数取为恒等函数就足够了，因为这样的网络可以近似从 $\mathbf{x}$ 到 $y$ 的任意连续函数。
-
-给定由 $N$ 个独立同分布观测值 $\mathbf{X}=\{\mathbf{x}_1,\cdots,\mathbf{x}_N\}$ 和相应目标值 $\mathbf{t}=\{t_1,\cdots,t_N\}$ 组成的数据集，可以构造相应的似然函数：
-\begin{align}
-p(\mathbf{t}\mid \mathbf{X},\mathbf{w},\sigma^2) = \prod_{n=1}^{N}\mathcal{N}\!\left(t_n\,\middle|\, y(\mathbf{x}_n,\mathbf{w}),\sigma^2\right).
-\label{align:ch06-regression-lik}
+p(t\mid\boldsymbol{x},\boldsymbol{w})=\mathcal{N}\bigl(t\,\big|\,y(\boldsymbol{x},\boldsymbol{w}),\sigma^{2}\bigr),
+\label{align:ch06-回归条件Gauss}
 \end{align}
 
-在机器学习文献中，通常考虑最小化误差函数而非最大化似然。对~\eqref{align:ch06-regression-lik}~取负对数，得到误差函数
+其中 $\sigma^{2}$ 是 Gauss 噪声的方差。当然，这是一个有点严格的假设，在某些应用中，我们需要扩展这个方法以支持更一般的分布（参见\cref{section:ch06-混合密度网络}）。对于由\eqref{align:ch06-回归条件Gauss}给出的条件分布，将输出单元的激活函数取为恒等函数就足够了，因为这样的网络可以近似从 $\boldsymbol{x}$ 到 $y$ 的任意连续函数。
+
+\begin{definition}[回归的条件 Gauss 模型]\label{definition:ch06-回归条件Gauss}
+若目标变量 $t\in\mathbb{R}$ 在给定输入 $\boldsymbol{x}$ 与网络参数 $\boldsymbol{w}$ 时的条件分布由\eqref{align:ch06-回归条件Gauss}给出，其中 $y(\boldsymbol{x},\boldsymbol{w})$ 是神经网络的输出、$\sigma^{2}>0$ 是噪声方差，则称该模型为回归的\textbf{条件 Gauss 模型}（conditional Gaussian model）。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch06-回归条件Gauss; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{definition:ch06-回归条件Gauss}把“网络输出”解释为条件均值而不是条件众数或中位数，这一解释只在噪声对称（此处为 Gauss）时才与最小二乘一致。若噪声是重尾的（如 Laplace 分布），条件均值不再是最优预测，相应的误差函数也会从平方和变为绝对值和。因此，\emph{误差函数的选择本质上是对噪声分布的假设}，这是本节反复出现的主题。
+\end{remark}
+
+给定一个由 $N$ 个独立同分布的观测值 $\boldsymbol{X}=\{\boldsymbol{x}_1,\cdots,\boldsymbol{x}_N\}$ 和相应的目标值 $\boldsymbol{t}=\{t_1,\cdots,t_N\}$ 组成的数据集，我们可以构造出相应的似然函数：
+
 \begin{align}
-E(\mathbf{w}) = \frac{1}{2\sigma^2}\sum_{n=1}^{N}\|y(\mathbf{x}_n,\mathbf{w})-t_n\|^2 + \frac{N}{2}\ln \sigma^2 + \frac{N}{2}\ln(2\pi).
-\label{align:ch06-regression-nll}
+p(\boldsymbol{t}\mid\boldsymbol{X},\boldsymbol{w},\sigma^{2})=\prod_{n=1}^{N}p\bigl(t_n\,\big|\,y(\boldsymbol{x}_n,\boldsymbol{w}),\sigma^{2}\bigr).
+\label{align:ch06-回归似然}
 \end{align}
 
-最大化似然首先用于确定 $\mathbf{w}$，它等价于最小化下式给出的平方和误差函数（此处舍弃了加性和乘性常数）：
+值得注意的是，在机器学习文献中，通常考虑最小化误差函数而不是最大化似然函数，所以此处我们将遵循这个惯例。对似然函数\eqref{align:ch06-回归似然}取负对数，得到误差函数为
+
 \begin{align}
-E(\mathbf{w}) = \frac{1}{2}\sum_{n=1}^{N}\{y(\mathbf{x}_n,\mathbf{w})-t_n\}^2.
-\label{align:ch06-sse}
+\frac{1}{2\sigma^{2}}\sum_{n=1}^{N}\bigl\{y(\boldsymbol{x}_n,\boldsymbol{w})-t_n\bigr\}^{2}+\frac{N}{2}\ln\sigma^{2}+\frac{N}{2}\ln(2\pi).
+\label{align:ch06-回归负对数似然}
 \end{align}
 
-找到 $\mathbf{w}$ 后，可通过最小化~\eqref{align:ch06-regression-nll}~来找到 $\sigma^2$ 的值（见习题~6.8）：
+\begin{proposition}[回归的负对数似然]\label{proposition:ch06-回归负对数似然}
+在\cref{definition:ch06-回归条件Gauss}与独立同分布假设下，负对数似然（忽略与参数无关的常数）为\eqref{align:ch06-回归负对数似然}，即
 \begin{align}
-\sigma^{2\ast} = \frac{1}{N}\sum_{n=1}^{N}\{y(\mathbf{x}_n,\mathbf{w}^\ast)-t_n\}^2,
-\label{align:ch06-noise-var}
+-\ln p(\boldsymbol{t}\mid\boldsymbol{X},\boldsymbol{w},\sigma^{2})
+=\frac{1}{2\sigma^{2}}\sum_{n=1}^{N}\bigl\{y(\boldsymbol{x}_n,\boldsymbol{w})-t_n\bigr\}^{2}+\frac{N}{2}\ln\sigma^{2}+\frac{N}{2}\ln(2\pi).
+\label{align:ch06-回归负对数展开}
 \end{align}
-并记为 $\sigma^{2\ast}$。值得注意的是，一旦完成找到 $\mathbf{w}$ 所需的迭代优化，就可以计算该值。
+\end{proposition}
 
-如果有多个目标变量，并假设它们在给定 $\mathbf{x}$ 和 $\mathbf{w}$ 条件下独立、且共享噪声方差 $\sigma^2$，那么目标值的条件分布可写为
+\begin{proof}
+（重构新增）由 Gauss 密度 $\mathcal{N}(t\mid y,\sigma^{2})=(2\pi\sigma^{2})^{-1/2}\exp\{-(t-y)^{2}/(2\sigma^{2})\}$，逐个代入\eqref{align:ch06-回归似然}并取负对数：
 \begin{align}
-p(\mathbf{t}\mid \mathbf{x},\mathbf{w}) = \mathcal{N}\!\left(\mathbf{t}\,\middle|\, \mathbf{y}(\mathbf{x},\mathbf{w}),\sigma^2\mathbf{I}\right).
-\label{align:ch06-multitarget-gauss}
+-\ln p&=\sum_{n=1}^{N}\left[\frac{1}{2}\ln(2\pi\sigma^{2})+\frac{(y(\boldsymbol{x}_n,\boldsymbol{w})-t_n)^{2}}{2\sigma^{2}}\right]\nonumber\\
+&=\frac{1}{2\sigma^{2}}\sum_{n=1}^{N}\bigl\{y(\boldsymbol{x}_n,\boldsymbol{w})-t_n\bigr\}^{2}+\frac{N}{2}\ln\sigma^{2}+\frac{N}{2}\ln(2\pi),
+\end{align}
+其中用到 $\sum_{n=1}^{N}\frac{1}{2}\ln(2\pi\sigma^{2})=\frac{N}{2}\ln\sigma^{2}+\frac{N}{2}\ln(2\pi)$。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch06-回归负对数似然; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\eqref{align:ch06-回归负对数似然}的后两项只依赖于 $\sigma^{2}$，与 $\boldsymbol{w}$ 无关。因此“对 $\boldsymbol{w}$ 最大化似然”与“最小化平方和误差”在 $\sigma^{2}$ 固定时完全等价；而当 $\sigma^{2}$ 也被当作待估参数时，两项会相互制衡——增大 $\sigma^{2}$ 会减小第一项但增大第二项，最优值恰为残差均方（见\cref{proposition:ch06-噪声方差估计}）。
+\end{remark}
+
+它可以用来学习参数 $\boldsymbol{w}$ 和 $\sigma^{2}$。首先考虑确定 $\boldsymbol{w}$。最大化似然函数等价于最小化下式给出的平方和误差函数：
+
+\begin{align}
+E(\boldsymbol{w})=\frac{1}{2}\sum_{n=1}^{N}\bigl\{y(\boldsymbol{x}_n,\boldsymbol{w})-t_n\bigr\}^{2}.
+\label{align:ch06-平方和误差}
 \end{align}
 
-遵循与单目标变量相同的论证，关于权重最大化似然等价于最小化平方和误差函数（见习题~6.9）：
+\begin{proposition}[最大似然等价于最小平方和]\label{proposition:ch06-平方和误差}
+在 $\sigma^{2}$ 固定时，\eqref{align:ch06-回归似然}的最大似然解与\eqref{align:ch06-平方和误差}的最小化解相同，即
 \begin{align}
-E(\mathbf{w}) = \frac{1}{2}\sum_{n=1}^{N}\|\mathbf{y}(\mathbf{x}_n,\mathbf{w})-\mathbf{t}_n\|^2.
-\label{align:ch06-multitarget-sse}
+\boldsymbol{w}^{\ast}=\arg\min_{\boldsymbol{w}}\ \frac{1}{2}\sum_{n=1}^{N}\bigl\{y(\boldsymbol{x}_n,\boldsymbol{w})-t_n\bigr\}^{2}.
+\label{align:ch06-最大似然解}
+\end{align}
+\end{proposition}
+
+\begin{proof}
+（重构新增）由\eqref{align:ch06-回归负对数似然}，$-\ln p$ 关于 $\boldsymbol{w}$ 只通过第一项依赖 $\boldsymbol{w}$，且该项等于 $E(\boldsymbol{w})/\sigma^{2}$。因 $\sigma^{2}>0$，最小化 $-\ln p$ 等价于最小化 $E(\boldsymbol{w})$，二者有相同的极小点集。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch06-平方和误差; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）该等价性依赖于 $\sigma^{2}$ 固定这一前提：$\sigma^{2}$ 只以正因子的形式出现在 $E(\boldsymbol{w})$ 之前，因此不改变极小点的位置。若把 $\sigma^{2}$ 也视为待估参数并与之联合优化，$\boldsymbol{w}$ 的最优解仍然不变，但目标函数的最优值会不同——这正是下一段要分别处理 $\boldsymbol{w}^{\ast}$ 与 $\sigma^{2\ast}$ 的原因。
+\end{remark}
+
+这里舍弃了加性的和乘性的常数。我们把通过最小化 $E(\boldsymbol{w})$ 找到的 $\boldsymbol{w}$ 的值记为 $\boldsymbol{w}^{\ast}$。值得注意的是，它通常并不对应于似然函数的全局最大值，因为网络函数 $y(\boldsymbol{x}_n,\boldsymbol{w})$ 的非线性导致误差 $E(\boldsymbol{w})$ 是非凸的，通常很难找到全局最优解。此外，由于可以向误差函数添加正则化项（参见\cref{section:ch09-归纳偏置}）或者对其训练过程做出其他修改，因此得到的网络参数的解可能与最大似然解有很大差异。
+
+找到 $\boldsymbol{w}^{\ast}$ 后，可以通过最小化误差函数\eqref{align:ch06-回归负对数似然}来找到 $\sigma^{2}$ 的值（见\cref{exercise:ch06-08}），记为 $\sigma^{2\ast}$。
+
+\begin{align}
+\sigma^{2\ast}=\frac{1}{N}\sum_{n=1}^{N}\bigl\{y(\boldsymbol{x}_n,\boldsymbol{w}^{\ast})-t_n\bigr\}^{2}.
+\label{align:ch06-噪声方差}
+\end{align}
+
+\begin{proposition}[噪声方差的最大似然解]\label{proposition:ch06-噪声方差估计}
+固定 $\boldsymbol{w}=\boldsymbol{w}^{\ast}$，则使\eqref{align:ch06-回归负对数似然}关于 $\sigma^{2}$ 最小的解由\eqref{align:ch06-噪声方差}给出，即噪声方差的最优估计是残差的均方值。
+\end{proposition}
+
+\begin{proof}
+（重构新增）记 $S=\sum_{n}\{y(\boldsymbol{x}_n,\boldsymbol{w}^{\ast})-t_n\}^{2}$，把\eqref{align:ch06-回归负对数似然}视为 $\sigma^{2}$ 的函数：
+\begin{align}
+f(\sigma^{2})=\frac{S}{2\sigma^{2}}+\frac{N}{2}\ln\sigma^{2}+\frac{N}{2}\ln(2\pi).
+\end{align}
+对 $\sigma^{2}$ 求导并令其为零：
+\begin{align}
+\frac{\mathrm{d}f}{\mathrm{d}\sigma^{2}}=-\frac{S}{2\sigma^{4}}+\frac{N}{2\sigma^{2}}=0
+\quad\Longrightarrow\quad \sigma^{2}=\frac{S}{N},
+\end{align}
+即\eqref{align:ch06-噪声方差}。又因二阶导数在驻点处为 $N/(2\sigma^{4})>0$，该驻点是极小点。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch06-噪声方差估计; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）值得注意的是，$\sigma^{2\ast}$ 依赖 $\boldsymbol{w}^{\ast}$，而 $\boldsymbol{w}^{\ast}$ 又是通过迭代优化得到的，因此 $\sigma^{2\ast}$ 只能在训练收敛之后计算。若把 $\sigma^{2}$ 与 $\boldsymbol{w}$ 联合优化，通常采用交替或重参数化（例如令 $\sigma=\exp(a)$）的方式，以避免 $\sigma^{2}$ 趋零导致的数值不稳定。
+\end{remark}
+
+值得注意的是，一旦完成找到 $\boldsymbol{w}^{\ast}$ 所需的迭代优化，就可以计算该值了。
+
+如果有多个目标变量，并假设它们在给定 $\boldsymbol{x}$ 和 $\boldsymbol{w}$ 的条件下是独立的，且共享噪声方差 $\sigma^{2}$，那么目标值的条件分布可以表示为
+
+\begin{align}
+p(\boldsymbol{t}\mid\boldsymbol{x},\boldsymbol{w})=\mathcal{N}\bigl(\boldsymbol{t}\,\big|\,\boldsymbol{y}(\boldsymbol{x},\boldsymbol{w}),\sigma^{2}\boldsymbol{I}\bigr).
+\label{align:ch06-多输出条件Gauss}
+\end{align}
+
+遵照与单目标变量相同的论证，则关于权重最大化似然函数等价于最小化平方和误差函数（见\cref{exercise:ch06-09}）：
+
+\begin{align}
+E(\boldsymbol{w})=\frac{1}{2}\sum_{n=1}^{N}\bigl\|\boldsymbol{y}(\boldsymbol{x}_n,\boldsymbol{w})-\boldsymbol{t}_n\bigr\|^{2}.
+\label{align:ch06-多输出平方和}
 \end{align}
 
 噪声方差则由下式给出：
-\begin{align}
-\sigma^{2\ast} = \frac{1}{NK}\sum_{n=1}^{N}\|\mathbf{y}(\mathbf{x}_n,\mathbf{w})-\mathbf{t}_n\|^2,
-\label{align:ch06-multitarget-noise}
-\end{align}
-其中 $K$ 是目标变量维度。目标变量的条件独立性假设在所承受的优化问题稍微变复杂的代价下也是可以舍弃的（见习题~6.10）。
 
-回想一下，误差函数（由负对数似然给出）和输出单元激活函数之间存在自然的配对关系（参见~5.4.6~小节）。在回归问题中，可以将网络视为具有恒等输出单元激活函数，即 $y=a$。相应的平方和误差函数因此具有以下性质：
 \begin{align}
-\frac{\partial E}{\partial a_k} = y_k - t_k.
-\label{align:ch06-regression-deriv}
+\sigma^{2\ast}=\frac{1}{NK}\sum_{n=1}^{N}\bigl\|\boldsymbol{y}(\boldsymbol{x}_n,\boldsymbol{w}^{\ast})-\boldsymbol{t}_n\bigr\|^{2},
+\label{align:ch06-多输出噪声方差}
 \end{align}
 
-\subsection{二分类}\label{section:ch06-二分类}
+其中 $K$ 是目标变量的维度。目标变量的条件独立性假设，在所承受的优化问题变得稍微复杂一些的代价下，也是可以舍弃的（见\cref{exercise:ch06-10}）。
 
-接下来考虑二分类问题，其中有一个单目标变量 $t\in\{0,1\}$，$t=1$ 表示类别 $\mathcal{C}_1$，$t=0$ 表示类别 $\mathcal{C}_2$。回到对规范连接函数的讨论（参见~5.4.6~小节），考虑具有单个输出的网络，其激活函数是 sigmoid 函数~\eqref{align:ch06-sigmoid}，因此 $0\le y(\mathbf{x},\mathbf{w})\le 1$。我们可以将 $y(\mathbf{x},\mathbf{w})$ 解释为条件概率 $p(\mathcal{C}_1\mid \mathbf{x})$，而 $p(\mathcal{C}_2\mid \mathbf{x})$ 由 $1-y(\mathbf{x},\mathbf{w})$ 给出。给定输入下，目标的条件分布是伯努利分布：
+\begin{proposition}[多输出回归的误差函数与噪声方差]\label{proposition:ch06-多输出回归}
+设 $\boldsymbol{t}\in\mathbb{R}^{K}$ 的条件分布由\eqref{align:ch06-多输出条件Gauss}给出，且各观测独立。则负对数似然（忽略常数）为
 \begin{align}
-p(t\mid \mathbf{x},\mathbf{w}) = y(\mathbf{x},\mathbf{w})^{t}\{1-y(\mathbf{x},\mathbf{w})\}^{1-t}.
-\label{align:ch06-bernoulli}
+\frac{1}{2\sigma^{2}}\sum_{n=1}^{N}\bigl\|\boldsymbol{y}(\boldsymbol{x}_n,\boldsymbol{w})-\boldsymbol{t}_n\bigr\|^{2}+\frac{NK}{2}\ln\sigma^{2},
+\label{align:ch06-多输出负对数似然}
+\end{align}
+故关于 $\boldsymbol{w}$ 的最大似然等价于最小化\eqref{align:ch06-多输出平方和}，而关于 $\sigma^{2}$ 的最优解为\eqref{align:ch06-多输出噪声方差}。
+\end{proposition}
+
+\begin{proof}
+（重构新增）由 $\mathcal{N}(\boldsymbol{t}\mid\boldsymbol{y},\sigma^{2}\boldsymbol{I})=(2\pi\sigma^{2})^{-K/2}\exp\{-\|\boldsymbol{t}-\boldsymbol{y}\|^{2}/(2\sigma^{2})\}$，对 $n$ 求和后取负对数得\eqref{align:ch06-多输出负对数似然}。关于 $\boldsymbol{w}$ 的依赖只在前一项，故与最小化\eqref{align:ch06-多输出平方和}等价。关于 $\sigma^{2}$ 求导：$-\frac{S}{2\sigma^{4}}+\frac{NK}{2\sigma^{2}}=0$，其中 $S=\sum_{n}\|\boldsymbol{y}_n-\boldsymbol{t}_n\|^{2}$，解得 $\sigma^{2}=S/(NK)$，即\eqref{align:ch06-多输出噪声方差}。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch06-多输出回归; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\eqref{align:ch06-多输出负对数似然}中的 $\ln\sigma^{2}$ 系数是 $NK/2$ 而不是 $N/2$，这正对应“每个输出分量各贡献一个噪声维度”。若各输出分量的噪声方差不同（协方差为一般正定矩阵 $\boldsymbol{\Sigma}$），则误差函数变为带权重的马氏距离形式，且 $\boldsymbol{w}$ 与 $\boldsymbol{\Sigma}$ 的优化相互耦合——这正是\cref{exercise:ch06-10}要讨论的内容。
+\end{remark}
+
+回想一下，误差函数（由负对数似然给出）和输出单元激活函数之间存在自然的配对关系（参见\cref{subsection:ch05-probit回归}）。在回归问题中，我们可以将网络视为具有恒等的输出单元激活函数，即 $y_k=a_k$。相应的平方和误差函数因此具有以下性质：
+
+\begin{align}
+\frac{\partial E}{\partial a_k}=y_k-t_k.
+\label{align:ch06-输出单元导数}
 \end{align}
 
-如果考虑观测值独立的训练集，则由负对数似然给出的误差函数为以下形式的交叉熵误差函数：
+\begin{proposition}[恒等输出单元的误差导数]\label{proposition:ch06-恒等输出导数}
+设输出单元激活函数为恒等函数 $y_k=a_k$，误差函数取\eqref{align:ch06-多输出平方和}（单输出时取\eqref{align:ch06-平方和误差}）。则对第 $n$ 个样本，
 \begin{align}
-E(\mathbf{w}) = -\sum_{n=1}^{N}\left\{t_n\ln y_n + (1-t_n)\ln(1-y_n)\right\},
-\label{align:ch06-binary-crossentropy}
+\frac{\partial E_n}{\partial a_k}=y_k-t_k,
+\label{align:ch06-恒等输出导数}
 \end{align}
-其中 $y_n$ 表示 $y(\mathbf{x}_n,\mathbf{w})$。Simard、Steinkraus and Platt（2003）指出对于分类问题，使用交叉熵误差函数而非平方和误差函数能加速训练并提高泛化能力。
+即误差对预激活的导数恰为“预测减目标”的残差。
+\end{proposition}
 
-注意在~\eqref{align:ch06-binary-crossentropy}~中，因为假设目标值被正确打标签，所以不存在类似于噪声方差 $\sigma^2$ 的概念。可通过引入一个概率 $\varepsilon$ 来表示目标值 $t$ 被错误翻转的可能性，从而轻松扩展以允许标签错误~\citep{OpperWinther2000}（见习题~6.11）；这里 $\varepsilon$ 可以预先设定，或者视为一个超参数，其值可从数据中推断。
-
-如果有 $K$ 个单独二分类任务要执行，可以使用具有 $K$ 个输出的网络，每个输出都有一个 sigmoid 激活函数。与每个输出相关联的是一个二元类标签 $t_k\in\{0,1\}$，其中 $k=1,\cdots,K$。如果我们假设在给定输入向量的情况下类标签独立，则目标的条件分布为
+\begin{proof}
+（重构新增）由 $E_n=\frac{1}{2}\sum_{k}(y_k-t_k)^{2}$ 与 $y_k=a_k$，链式法则给出
 \begin{align}
-p(\mathbf{t}\mid \mathbf{x},\mathbf{w}) = \prod_{k=1}^{K} y_k(\mathbf{x},\mathbf{w})^{t_k}\{1-y_k(\mathbf{x},\mathbf{w})\}^{1-t_k}.
-\label{align:ch06-multilabel}
+\frac{\partial E_n}{\partial a_k}=\frac{\partial E_n}{\partial y_k}\cdot\frac{\partial y_k}{\partial a_k}=(y_k-t_k)\cdot1=y_k-t_k.
 \end{align}
+\end{proof}
 
-取相应似然函数的负对数，可以得出以下误差函数（见习题~6.13）：
+% SUPPLEMENT: parent=proposition:ch06-恒等输出导数; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\eqref{align:ch06-输出单元导数}之所以被称为“自然配对”，是因为它把误差函数与激活函数的选择绑定在一起：只有当输出激活与噪声模型匹配时，导数才会简化成残差。这一简化不仅是计算上的便利，更是数值稳定性的保证——若用平方和误差配 sigmoid 输出，导数中会多出一个 $\sigma'(a)=y(1-y)$ 因子，在饱和区趋于零，导致学习停滞。
+\end{remark}
+
+\subsection{二分类}\label{subsection:ch06-二分类}
+
+接下来考虑二分类问题，其中我们有一个单目标变量 $t$，$t=1$ 表示类别 $\mathcal{C}_1$，$t=0$ 表示类别 $\mathcal{C}_2$。让我们回到对规范连接函数的讨论（参见\cref{subsection:ch05-probit回归}），考虑具有单个输出的网络，其激活函数是 sigmoid 函数［\eqref{align:ch06-sigmoid}］，因此有 $0\leqslant y(\boldsymbol{x},\boldsymbol{w})\leqslant1$。我们可以将 $y(\boldsymbol{x},\boldsymbol{w})$ 解释为条件概率 $p(\mathcal{C}_1\mid\boldsymbol{x})$，而 $p(\mathcal{C}_2\mid\boldsymbol{x})$ 由 $1-y(\boldsymbol{x},\boldsymbol{w})$ 给出。给定输入下，目标的条件分布是Bernoulli分布，形式为
+
 \begin{align}
-E(\mathbf{w}) = -\sum_{n=1}^{N}\sum_{k=1}^{K}\left\{t_{nk}\ln y_{nk} + (1-t_{nk})\ln(1-y_{nk})\right\},
-\label{align:ch06-multilabel-crossentropy}
-\end{align}
-其中 $y_{nk}$ 表示 $y_k(\mathbf{x}_n,\mathbf{w})$。
-
-如果在误差函数中添加适当正则化项，这种退化性将被消除（参见第~9~章）。再次强调，对于特定输出单元预激活，误差函数的导数采用了我们熟悉的形式~\eqref{align:ch06-regression-deriv}，即 $y_k-t_k$（见习题~6.14）。
-
-\subsection{多分类}\label{section:ch06-多分类}
-
-最后考虑多分类问题，其中每个输入被分配到 $K$ 个互斥类别中。二元目标变量 $t_k\in\{0,1\}$ 采用 $1$-of-$K$ 编码方案表示类别（参见~5.1.3~小节），而网络输出解释为 $y_k(\mathbf{x},\mathbf{w})=p(t_k=1\mid \mathbf{x})$，从而引出误差函数
-\begin{align}
-E(\mathbf{w}) = -\sum_{n=1}^{N}\sum_{k=1}^{K} t_{nk}\ln y_k(\mathbf{x}_n,\mathbf{w}).
-\label{align:ch06-multiclass-crossentropy}
+p(t\mid\boldsymbol{x},\boldsymbol{w})=y(\boldsymbol{x},\boldsymbol{w})^{t}\bigl\{1-y(\boldsymbol{x},\boldsymbol{w})\bigr\}^{1-t}.
+\label{align:ch06-Bernoulli}
 \end{align}
 
-对应于规范连接的输出单元激活函数由 softmax 函数给出（参见~5.4.4~小节）：
+\begin{definition}[二分类的Bernoulli模型]\label{definition:ch06-二分类Bernoulli}
+若二分类网络以 sigmoid 为输出激活、且目标的条件分布取\eqref{align:ch06-Bernoulli}，则称该模型为\textbf{二分类的Bernoulli模型}，其中 $y(\boldsymbol{x},\boldsymbol{w})=p(\mathcal{C}_1\mid\boldsymbol{x})$。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch06-二分类Bernoulli; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\eqref{align:ch06-Bernoulli}的两点分布形式自动满足归一化：$t=1$ 时取 $y$，$t=0$ 时取 $1-y$。这也解释了为什么二分类只需要一个输出单元而不是两个：$p(\mathcal{C}_2\mid\boldsymbol{x})$ 由 $1-y$ 给出，若用两个 sigmoid 输出则二者之和不必为 $1$，会造成表示上的冗余与不一致。
+\end{remark}
+
+如果考虑一个观测值独立的训练集，则由负对数似然给出的误差函数为以下形式的交叉熵误差函数：
+
 \begin{align}
-y_k(\mathbf{x},\mathbf{w}) = \frac{\exp(a_k)}{\sum_{j=1}^{K}\exp(a_j)},
+E(\boldsymbol{w})=-\sum_{n=1}^{N}\bigl\{t_n\ln y_n+(1-t_n)\ln(1-y_n)\bigr\},
+\label{align:ch06-二分类交叉熵}
+\end{align}
+
+其中 $y_n$ 表示 $y(\boldsymbol{x}_n,\boldsymbol{w})$。Simard、Steinkraus and Platt（2003）对于分类问题，使用交叉熵误差函数而不是平方和误差函数能加速训练并提高泛化能力。
+
+\begin{proposition}[二分类的交叉熵误差]\label{proposition:ch06-二分类交叉熵}
+在\cref{definition:ch06-二分类Bernoulli}与样本独立假设下，负对数似然为
+\begin{align}
+-\ln p(\boldsymbol{t}\mid\boldsymbol{X},\boldsymbol{w})=-\sum_{n=1}^{N}\bigl\{t_n\ln y_n+(1-t_n)\ln(1-y_n)\bigr\},
+\label{align:ch06-二分类负对数}
+\end{align}
+即\eqref{align:ch06-二分类交叉熵}。
+\end{proposition}
+
+\begin{proof}
+（重构新增）由\eqref{align:ch06-Bernoulli}与独立性，
+\begin{align}
+p(\boldsymbol{t}\mid\boldsymbol{X},\boldsymbol{w})=\prod_{n=1}^{N}y_n^{t_n}(1-y_n)^{1-t_n},
+\end{align}
+取负对数并用 $\ln\prod=\sum\ln$ 即得\eqref{align:ch06-二分类负对数}。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch06-二分类交叉熵; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）交叉熵只惩罚“把正确类预测得很不自信”的情形：若 $t_n=1$ 而 $y_n\to1$，则 $-\ln y_n\to0$；若 $y_n\to0$，则损失发散。这与平方和误差不同——后者在 $y_n$ 饱和时梯度反而消失，因而在分类任务上收敛更慢。这一差别正是 Simard 等人观察到交叉熵训练更快的原因。
+\end{remark}
+
+注意在\eqref{align:ch06-Bernoulli}中，因为假设目标值被正确打了标签，所以不存在类似于噪声方差 $\sigma^{2}$ 的概念。可通过引入一个概率 $\varepsilon$ 来表示目标值 $t$ 被错误翻转的可能性，该模型可以很容易地扩展为允许标签错误（Opper and Winther，2000）（见\cref{exercise:ch06-11}）。这里的 $\varepsilon$ 可以预先设定，或者视为一个超参数，其值可以从数据中推断得出。
+
+如果我们有 $K$ 个单独的二分类任务要执行，则可以使用具有 $K$ 个输出的网络，每个输出都有一个 sigmoid 激活函数。与每个输出相关联的是一个二元类标签 $t_k\in\{0,1\}$，其中 $k=1,\cdots,K$。如果我们假设在给定输入向量的情况下类标签是独立的，则目标的条件分布为
+
+\begin{align}
+p(\boldsymbol{t}\mid\boldsymbol{x},\boldsymbol{w})=\prod_{k=1}^{K}y_k(\boldsymbol{x},\boldsymbol{w})^{t_k}\bigl[1-y_k(\boldsymbol{x},\boldsymbol{w})\bigr]^{1-t_k}.
+\label{align:ch06-多标签分布}
+\end{align}
+
+取相应似然函数的负对数，可以得出以下误差函数（见\cref{exercise:ch06-13}）：
+
+\begin{align}
+E(\boldsymbol{w})=-\sum_{n=1}^{N}\sum_{k=1}^{K}\bigl\{t_{nk}\ln y_{nk}+(1-t_{nk})\ln(1-y_{nk})\bigr\},
+\label{align:ch06-多标签交叉熵}
+\end{align}
+
+其中 $y_{nk}$ 表示 $y_k(\boldsymbol{x}_n,\boldsymbol{w})$。
+
+\begin{proposition}[多标签交叉熵]\label{proposition:ch06-多标签交叉熵}
+在\eqref{align:ch06-多标签分布}与样本独立假设下，负对数似然为\eqref{align:ch06-多标签交叉熵}。它等于 $K$ 个独立二分类交叉熵之和。
+\end{proposition}
+
+\begin{proof}
+（重构新增）对\eqref{align:ch06-多标签分布}取负对数并对 $n$ 求和：
+\begin{align}
+-\ln p(\boldsymbol{t}\mid\boldsymbol{X},\boldsymbol{w})
+=-\sum_{n=1}^{N}\sum_{k=1}^{K}\Bigl\{t_{nk}\ln y_{nk}+(1-t_{nk})\ln(1-y_{nk})\Bigr\},
+\end{align}
+逐项整理即得\eqref{align:ch06-多标签交叉熵}。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch06-多标签交叉熵; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）多标签情形与多分类情形的区别在于标签是否互斥：这里 $K$ 个标签可以同时为 $1$（例如一幅图像同时含“人”和“狗”），因此用 $K$ 个独立 sigmoid 而不是一个 softmax。若错误地使用 softmax，就人为加入了“只有一个标签为真”的约束，属于模型设定错误。
+\end{remark}
+
+同样，误差函数相对于特定输出单元的预激活的导数采取了与回归情况相同的形式［\eqref{align:ch06-输出单元导数}］（见\cref{exercise:ch06-14}）。
+
+\begin{proposition}[sigmoid 输出单元的误差导数]\label{proposition:ch06-sigmoid输出导数}
+设 $y_k=\sigma(a_k)$，误差函数取\eqref{align:ch06-多标签交叉熵}。则
+\begin{align}
+\frac{\partial E_n}{\partial a_k}=y_k-t_k.
+\label{align:ch06-sigmoid输出导数}
+\end{align}
+\end{proposition}
+
+\begin{proof}
+（重构新增）单个输出分量的损失为 $E_n^{(k)}=-\{t_k\ln y_k+(1-t_k)\ln(1-y_k)\}$。利用 $\sigma'(a)=\sigma(a)(1-\sigma(a))=y_k(1-y_k)$，
+\begin{align}
+\frac{\partial E_n^{(k)}}{\partial a_k}
+&=-\left\{\frac{t_k}{y_k}-\frac{1-t_k}{1-y_k}\right\}\cdot y_k(1-y_k)\nonumber\\
+&=-\Bigl\{t_k(1-y_k)-(1-t_k)y_k\Bigr\}=y_k-t_k .
+\end{align}
+各分量相加即得\eqref{align:ch06-sigmoid输出导数}。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch06-sigmoid输出导数; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\eqref{align:ch06-sigmoid输出导数}与\cref{proposition:ch06-恒等输出导数}的形式完全一致，这不是巧合：sigmoid 是Bernoulli分布的规范连接函数，交叉熵是其负对数似然，二者配对后导数中的 $\sigma'$ 因子被精确消去。这一“误差 = 残差”的结构使得输出层的梯度不会因激活函数饱和而消失，是深度网络能够训练的重要前提（参见\cref{section:ch08-梯度计算}）。
+\end{remark}
+
+\subsection{多分类}\label{subsection:ch06-多分类}
+
+最后考虑多分类问题，其中每个输入被分配到 $K$ 个互斥的类别中。二元目标变量 $t_k\in\{0,1\}$ 采用 $1$-of-$K$ 编码方案来表示类别（参见\cref{subsection:ch05-1ofK编码}），而网络输出则解释为 $y_k(\boldsymbol{x},\boldsymbol{w})=p(t_k=1\mid\boldsymbol{x})$，从而引出误差函数：
+
+\begin{align}
+E(\boldsymbol{w})=-\sum_{n=1}^{N}\sum_{k=1}^{K}t_{nk}\ln y_k(\boldsymbol{x}_n,\boldsymbol{w}).
+\label{align:ch06-多分类交叉熵}
+\end{align}
+
+对应于规范连接的输出单元激活函数由 softmax 函数给出（参见\cref{subsection:ch05-多类logistic回归}）：
+
+\begin{align}
+y_k(\boldsymbol{x},\boldsymbol{w})=\frac{\exp\bigl(a_k(\boldsymbol{x},\boldsymbol{w})\bigr)}{\sum_{j=1}^{K}\exp\bigl(a_j(\boldsymbol{x},\boldsymbol{w})\bigr)}.
 \label{align:ch06-softmax}
 \end{align}
 
-~\eqref{align:ch06-softmax}~满足 $0\le y_k\le 1$ 且 $\sum_k y_k=1$。注意，如果将常数项添加到所有 $a_k(\mathbf{x},\mathbf{w})$ 上，导致误差函数在某些权重空间方向上保持不变，则 $y(\mathbf{x},\mathbf{w})$ 也不会改变；添加适当正则化项可消除这种退化（参见第~9~章）。
+\begin{definition}[softmax 输出模型]\label{definition:ch06-softmax模型}
+称\eqref{align:ch06-softmax}定义的映射为 \textbf{softmax} 函数，称以 softmax 为输出激活、以\eqref{align:ch06-多分类交叉熵}为误差函数的网络为\textbf{多分类模型}（multiclass model）。该模型给出互斥类别的后验概率 $y_k=p(\mathcal{C}_k\mid\boldsymbol{x})$。
+\end{definition}
 
-对于具有 softmax 输出单元的网络，误差函数关于特定预激活 $a_k$ 的导数取与回归情况相同的形式~\eqref{align:ch06-regression-deriv}（见习题~6.15）。
+% SUPPLEMENT: parent=definition:ch06-softmax模型; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）softmax 满足 $0\leqslant y_k\leqslant1$ 且 $\sum_ky_k=1$，因此它是一个合法的概率向量；但它对预激活的平移不变：$a_k\mapsto a_k+c$ 不改变输出。这既是优点（数值上可以减去 $\max_ka_k$ 以防止溢出），也是缺点（权重空间中存在一条不改变模型的方向，需要正则化来固定尺度）。这一退化性与\cref{subsection:ch06-参数矩阵}中增广输入的冗余不是同一回事，后者不会影响输出。
+\end{remark}
 
-总之，根据所解决问题的类型，输出单元激活函数和匹配的误差函数都有自然选择：对于回归问题，使用线性输出和平方和误差函数；对于多个独立二分类问题，使用 sigmoid 输出和交叉熵误差函数；对于多分类问题，使用 softmax 输出和相应的多类交叉熵误差函数。对于涉及两个类别的分类问题（即二分类问题），可以使用单个 sigmoid 输出，也可以使用由 softmax 函数激活的有两个输出的网络。通过考虑其他形式的条件分布，可以推导出相应的误差函数作为对应的负对数似然函数。
+\eqref{align:ch06-softmax}满足 $0\leqslant y_k\leqslant1$ 且 $\sum_ky_k=1$。注意，如果将常数项添加到所有的 $a_k(\boldsymbol{x},\boldsymbol{w})$ 上，导致误差函数在某些权重空间方向上保持不变，则 $y_k(\boldsymbol{x},\boldsymbol{w})$ 也不会改变。如果在误差函数中添加适当的正则化项，这种退化性将被消除（参见\cref{section:ch09-归纳偏置}）。再次强调，对于特定输出单元的预激活，误差函数的导数采用了我们熟悉的形式［\eqref{align:ch06-输出单元导数}］（见\cref{exercise:ch06-15}）。
+
+\begin{proposition}[多分类交叉熵是负对数似然]\label{proposition:ch06-多分类交叉熵}
+设 $t_n$ 为 $1$-of-$K$ 编码，且 $p(\boldsymbol{t}_n\mid\boldsymbol{x}_n,\boldsymbol{w})=\prod_{k=1}^{K}y_{nk}^{t_{nk}}$，则样本独立时的负对数似然为\eqref{align:ch06-多分类交叉熵}。
+\end{proposition}
+
+\begin{proof}
+（重构新增）若样本 $n$ 属于类别 $c$，则 $t_{nk}=\delta_{kc}$，于是 $\prod_k y_{nk}^{t_{nk}}=y_{nc}$，即模型对正确类给出的概率。对 $n$ 取负对数并求和：
+\begin{align}
+-\ln\prod_{n=1}^{N}y_{n,c(n)}=-\sum_{n=1}^{N}\ln y_{n,c(n)}=-\sum_{n=1}^{N}\sum_{k=1}^{K}t_{nk}\ln y_{nk},
+\end{align}
+即\eqref{align:ch06-多分类交叉熵}。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch06-多分类交叉熵; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\eqref{align:ch06-多分类交叉熵}只对正确类求和，等价于“最大化正确类的对数概率”。这与二分类交叉熵\eqref{align:ch06-二分类交叉熵}是一致的：当 $K=2$ 且 $y_2=1-y_1$ 时，两式完全相同。因此在实现中，二分类既可以写成单个 sigmoid，也可以写成两个输出的 softmax，二者在数学上等价，数值上则略有差异。
+\end{remark}
+
+\begin{proposition}[softmax 输出单元的误差导数]\label{proposition:ch06-softmax输出导数}
+设 $y_k$ 由\eqref{align:ch06-softmax}给出，误差函数取\eqref{align:ch06-多分类交叉熵}。则
+\begin{align}
+\frac{\partial E_n}{\partial a_k}=y_k-t_k .
+\label{align:ch06-softmax输出导数}
+\end{align}
+\end{proposition}
+
+\begin{proof}
+（重构新增）先求 softmax 的Jacobi矩阵。由 $y_k=e^{a_k}/S$，$S=\sum_j e^{a_j}$，
+\begin{align}
+\frac{\partial y_k}{\partial a_j}=\frac{e^{a_k}}{S}\delta_{kj}-\frac{e^{a_k}e^{a_j}}{S^{2}}=y_k(\delta_{kj}-y_j).
+\end{align}
+于是
+\begin{align}
+\frac{\partial E_n}{\partial a_j}
+&=-\sum_{k}\frac{t_k}{y_k}\frac{\partial y_k}{\partial a_j}
+=-\sum_{k}\frac{t_k}{y_k}\,y_k(\delta_{kj}-y_j)
+=-\sum_{k}t_k(\delta_{kj}-y_j)\nonumber\\
+&=-t_j+\Bigl(\sum_{k}t_k\Bigr)y_j=y_j-t_j,
+\end{align}
+其中用到 $\sum_kt_k=1$（$1$-of-$K$ 编码）。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch06-softmax输出导数; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）注意证明中关键的一步是 $\sum_kt_k=1$：若标签不是 one-hot（例如标签平滑或软标签），则\eqref{align:ch06-softmax输出导数}变为 $y_j\sum_kt_k-t_j$，不再是简单的残差。这也从另一侧面说明“输出激活 + 误差函数”必须成对选择：softmax 配平方和误差时，导数中会残留一个非平凡的Jacobi因子，训练效率显著下降。
+\end{remark}
+
+总之，根据所要解决问题的类型，输出单元激活函数和匹配的误差函数都有自然的选择。对于回归问题，我们使用线性输出和平方和误差函数；对于多个独立的二分类问题，我们使用 sigmoid 输出和交叉熵误差函数；对于多分类问题，我们使用 softmax 输出和相应的多元交叉熵误差函数。对于涉及两个类别的分类问题（即二分类问题），我们可以使用单个 sigmoid 输出，也可以使用由 softmax 函数激活的有两个输出的网络。
+
+\begin{remark}（重构新增）把本节的配对关系汇总起来，可以看成“分布 $\to$ 负对数似然 $\to$ 输出激活”的一条链：Gauss 分布给出平方和误差与恒等输出；Bernoulli分布给出二分类交叉熵与 sigmoid 输出；类别分布给出多分类交叉熵与 softmax 输出。任何新的输出分布（如Poisson、负二项、混合 Gauss）都可以按同样的方式导出误差函数与激活函数，这也是\cref{section:ch06-混合密度网络}的出发点。
+\end{remark}
+
+这个过程相当通用，通过考虑其他形式的条件分布，我们可以推导出相应的误差函数作为对应的负对数似然函数。
 
 \end{document}

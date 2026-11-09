@@ -1,106 +1,274 @@
 \documentclass[../main.tex]{subfiles}
+
 \graphicspath{{../image/}{../figure/}}
+
 \begin{document}
 
-\chapter{拉格朗日乘子}\label{appendix:c-拉格朗日乘子}
+% 附录章使用 chapter 计数器；本行让附录内的章标签按 appendix 类型显示为「附录 X」。
+\crefalias{chapter}{appendix}
 
-拉格朗日乘子也称拉格朗日乘数或未定乘子，用于在一个或多个约束条件下，寻找多变量函数的驻点。考虑在与 $x_1,x_2$ 有关的约束条件下找到函数 $f(x_1,x_2)$ 最大值的问题。该约束条件可以写成如下形式：
+\chapter{Lagrange 乘子}\label{chapter:appC-Lagrange乘子}
+
+Lagrange 乘子也称 Lagrange 乘数或未定乘子，用于在一个或多个约束条件下，寻找多变量函数的驻点。
+
+考虑在与 $x_1,x_2$ 有关的约束条件下找到函数 $f(x_1,x_2)$ 最大值的问题。该约束条件可以写成如下形式：
 \begin{align}
-g(x_1,x_2)=0
-\label{align:appC-constraint}
+  g(x_1,x_2)=0
+  \label{align:appC-约束条件}
 \end{align}
 
-一种方法是求解约束方程 [式~\eqref{align:appC-constraint}]，从而将 $x_2$ 表示为 $x_1$ 的函数，形式为 $x_2=h(x_1)$。然后将其代入 $f(x_1,x_2)$，得到形式为 $f(x_1,h(x_1))$ 的仅关于 $x_1$ 的函数。接下来，可以通过常用的微分方法找到关于 $x_1$ 的最大值，得到驻点值 $x_1^{*}$，相应的 $x_2^{*}$ 值由 $x_2^{*}=h(x_1^{*})$ 给出。
+一种方法是求解约束方程 [\eqref{align:appC-约束条件}]，从而将 $x_2$ 表示为 $x_1$ 的函数，形式为 $x_2=h(x_1)$。然后将其代入 $f(x_1,x_2)$，得到形式为 $f(x_1,h(x_1))$ 的仅关于 $x_1$ 的函数。接下来，可以通过常用的微分方法找到关于 $x_1$ 的最大值，得到驻点值 $x_1^{*}$，相应的 $x_2$ 值由 $x_2^{*}=h(x_1^{*})$ 给出。
 
 这种方法存在的一个问题是，找到约束方程的一个解析解可能会很困难（该方程使得 $x_2$ 可以表示为 $x_1$ 的显式函数）。此外，这种方法区别对待 $x_1$ 和 $x_2$，因而会破坏这些变量之间的自然对称性。
 
-一种更优雅且通常更简单的方法是引入一个称为\textbf{拉格朗日乘子}的参数 $\lambda$。我们将从几何角度来说明这一技术。考虑一个具有 $x_1,\cdots,x_D$ 分量的 $D$ 维向量 $x$。约束方程 $g(x)=0$ 表示 $x$ 空间中的一个 $(D-1)$ 维曲面。如果 $x$ 是 $D$ 维的，则约束条件 $g(x)=0$ 对应一个维度为 $D-1$ 的子空间。我们想在约束条件 $g(x)=0$ 下最大化函数 $f(x)$。
+一种更优雅且通常更简单的方法是引入一个称为 Lagrange 乘子的参数 $\lambda$。我们将从几何角度来说明这一技术。考虑一个具有 $x_1,\cdots,x_D$ 分量的 $D$ 维向量 $\bm{x}$。约束方程 $g(\bm{x})=0$ 表示 $\bm{x}$ 空间中的一个 $(D-1)$ 维曲面，如\cref{figure:appC-Lagrange几何}所示。
+
+\begin{definition}[约束曲面]\label{definition:appC-约束曲面}
+约束方程 $g(\bm{x})=0$ 在 $\bm{x}$ 空间中表示的那个 $(D-1)$ 维曲面，称为\textbf{约束曲面}；当 $D=2$ 时它就是一条约束曲线。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:appC-约束曲面; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+“$(D-1)$ 维”来自一个方程消去一个自由度这一朴素计数，但它成立需要条件：若在某点处 $\nabla g(\bm{x})\neq\bm{0}$，则由隐函数定理，$g(\bm{x})=0$ 在该点附近确实是 $D-1$ 维的光滑曲面；若 $\nabla g=0$，曲面可能退化成一个点（例如 $g(\bm{x})=\|\bm{x}\|^{2}=0$ 只给出原点），计数就失效。本附录后面所有几何论证都默认 $\nabla g\neq\bm{0}$，\cref{proposition:appC-梯度正交}的证明中也显式用到这一点。
+\end{remark}
 
 \begin{figure}[htbp]
-\centering
-\includegraphics[width=0.6\textwidth]{appC-fig556-lagrange.png}
-\caption{拉格朗日乘子法的几何解释。我们想要在约束条件 $g(x)=0$ 下最大化函数 $f(x)$。约束曲面上任何一点，约束函数的梯度 $\nabla g(x)$ 都与曲面正交；在约束曲面上使 $f(x)$ 最大的点 $x^{*}$ 处，$\nabla f(x^{*})$ 也与约束曲面垂直，因此 $\nabla f$ 与 $\nabla g$ 平行。}
-\label{fig:appC-lagrange}
+  \centering
+  \includegraphics[width=0.42\textwidth]{appC-figC1-lagrange-geometry.png}
+  \caption{Lagrange 乘子法的几何解释。我们想要在约束条件 $g(\bm{x})=0$ 下最大化函数 $f(\bm{x})$。如果 $\bm{x}$ 是 $D$ 维的，则约束条件 $g(\bm{x})=0$ 对应一个维度为 $D-1$ 的子空间，如红色曲线所示。这个问题可以通过优化 Lagrange 函数 $L(\bm{x},\lambda)=f(\bm{x})+\lambda g(\bm{x})$ 来解决。}
+  \label{figure:appC-Lagrange几何}
 \end{figure}
 
-首先注意，在该约束曲面上的任何一点，约束函数的梯度 $\nabla g(x)$ 都与曲面正交。为了说明这一点，考虑一个位于该约束曲面上的点 $x$ 以及另一个位于该约束曲面上的附近点 $x+\epsilon$。如果我们在点 $x$ 附近进行泰勒展开，则有
-\begin{align}
-g(x+\epsilon)\approx g(x)+\epsilon^{\mathsf{T}}\nabla g(x)
-\end{align}
-因为点 $x$ 和点 $x+\epsilon$ 都位于约束曲面上，所以我们有 $g(x)=g(x+\epsilon)$，从而有 $\epsilon^{\mathsf{T}}\nabla g(x)\approx 0$。当 $\epsilon\to 0$ 时，我们有 $\epsilon^{\mathsf{T}}\nabla g(x)=0$，并且因为 $\epsilon$ 与约束曲面 $g(x)=0$ 平行，所以我们看到 $\nabla g$ 与约束曲面是垂直的。
+首先注意，在该约束曲面上的任何一点，约束函数的梯度 $\nabla g(\bm{x})$ 都与曲面正交。
 
-接下来我们寻找约束曲面上使得 $f(x)$ 最大化的点 $x^{*}$。这样的点满足 $\nabla f(x^{*})$ 也与约束曲面垂直的性质，否则我们可以通过沿约束曲面移动一小段距离来增大 $f(x)$ 的值。因此，$\nabla f$ 和 $\nabla g$ 是平行（或反平行）的，并且必定存在一个参数 $\lambda$，使得
-\begin{align}
-\nabla f+\lambda\nabla g=0
-\label{align:appC-stationary}
-\end{align}
-其中 $\lambda\neq 0$ 称为拉格朗日乘子。注意，$\lambda$ 可正可负。
+\begin{proposition}[梯度与约束曲面正交]\label{proposition:appC-梯度正交}
+设 $g$ 在点 $\bm{x}$ 处连续可微，$g(\bm{x})=0$ 且 $\nabla g(\bm{x})\neq\bm{0}$。则 $\nabla g(\bm{x})$ 与约束曲面在 $\bm{x}$ 处的切空间正交：对曲面在 $\bm{x}$ 处的任意切向量 $\bm{\varepsilon}$，都有 $\bm{\varepsilon}^{\mathsf{T}}\nabla g(\bm{x})=0$。
+\end{proposition}
 
-至此，我们很容易引出下式定义的\textbf{拉格朗日函数}（Lagrangian）：
+\begin{proof}
+为了说明这一点，考虑一个位于该约束曲面上的点 $\bm{x}$ 以及另一个同样位于该约束曲面上的附近点 $\bm{x}+\bm{\varepsilon}$。如果我们在点 $\bm{x}$ 附近进行 Taylor 展开，则有
 \begin{align}
-L(x,\lambda)=f(x)+\lambda g(x)
-\label{align:appC-lagrangian}
+  g(\bm{x}+\bm{\varepsilon})\approx g(\bm{x})+\bm{\varepsilon}^{\mathsf{T}}\nabla g(\bm{x})
+  \label{align:appC-Taylor展开}
 \end{align}
-为了找到在约束条件 $g(x)=0$ 下函数 $f(x)$ 的最大值，首先定义式~\eqref{align:appC-lagrangian} 所示的拉格朗日函数，然后寻找 $L(x,\lambda)$ 关于 $x$ 和 $\lambda$ 的驻点。对于一个 $D$ 维向量 $x$，这会给出 $D+1$ 个方程，用于确定驻点 $x^{*}$ 以及 $\lambda^{*}$ 的值。可通过设置 $\nabla L=0$ 得到带约束的驻点条件 [式~\eqref{align:appC-stationary}]。此外，通过 $\partial L/\partial\lambda=0$ 可推出约束条件 $g(x)=0$。如果只对 $x$ 感兴趣，则可以从驻点方程中消去 $\lambda$，而不需要计算 $\lambda$ 的值（``未定乘子''由此得名）。
+因为点 $\bm{x}$ 和点 $\bm{x}+\bm{\varepsilon}$ 都位于约束曲面上，所以我们有 $g(\bm{x})=g(\bm{x}+\bm{\varepsilon})$，从而有 $\bm{\varepsilon}^{\mathsf{T}}\nabla g(\bm{x})\approx0$。当 $\|\bm{\varepsilon}\|\to0$ 时，我们有 $\bm{\varepsilon}^{\mathsf{T}}\nabla g(\bm{x})=0$，并且因为 $\bm{\varepsilon}$ 与约束曲面 $g(\bm{x})=0$ 平行，所以我们看到 $\nabla g$ 与约束曲面是垂直的。
+
+（重构新增）上面“$\approx$ 取极限”一步补全如下：取曲面上的光滑曲线 $\bm{\gamma}(t)$ 使 $\bm{\gamma}(0)=\bm{x}$、$\bm{\gamma}'(0)=\bm{\varepsilon}$，则 $g(\bm{\gamma}(t))\equiv0$，对 $t$ 求导并取 $t=0$ 得 $\bm{\gamma}'(0)^{\mathsf{T}}\nabla g(\bm{x})=\bm{\varepsilon}^{\mathsf{T}}\nabla g(\bm{x})=0$。可见该等式是精确的，不依赖 $O(\|\bm{\varepsilon}\|^{2})$ 的余项；同时它说明“切向量”就是与 $\nabla g(\bm{x})$ 正交的向量，故 $\nabla g(\bm{x})$ 是曲面的法向量。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:appC-梯度正交; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+这条命题是 Lagrange 乘子法的几何基础：它把“约束曲面”这个几何对象翻译成“梯度”这个可计算对象，从而可以用向量运算代替曲面上的移动。条件 $\nabla g(\bm{x})\neq\bm{0}$ 不能省：若梯度为零，曲面在该点可能退化，“法向量”无从定义，后面的“平行”论断也就失去依据。命题本身只断言 $\nabla g$ 与切空间正交，并未断言任何极值性质——极值条件是下一条命题的内容。
+\end{remark}
+
+接下来我们寻找约束曲面上使得 $f(\bm{x})$ 最大化的点 $\bm{x}^{*}$。这样的点满足 $\nabla f(\bm{x})$ 也与约束曲面垂直的性质，如\cref{figure:appC-Lagrange几何}所示，否则我们可以通过沿约束曲面移动一小段距离来增大 $f(\bm{x})$ 的值。因此，$\nabla f$ 和 $\nabla g$ 是平行（或反平行）的，并且必定存在一个参数 $\lambda$，使得
+\begin{proposition}[约束极值点的必要条件]\label{proposition:appC-约束驻点}
+设 $\bm{x}^{*}$ 是 $f$ 在约束曲面 $g(\bm{x})=0$ 上的局部极大值点，$f$、$g$ 在 $\bm{x}^{*}$ 附近连续可微且 $\nabla g(\bm{x}^{*})\neq\bm{0}$。则存在实数 $\lambda$，使得
+\begin{align}
+  \nabla f+\lambda\nabla g=0
+  \label{align:appC-平行条件}
+\end{align}
+这里的梯度都在 $\bm{x}^{*}$ 处取值。
+\end{proposition}
+
+\begin{proof}
+原书论证如下：在约束曲面上使 $f$ 最大的点 $\bm{x}^{*}$ 处，$\nabla f(\bm{x}^{*})$ 必须与约束曲面垂直，否则我们可以沿约束曲面移动一小段距离来增大 $f$ 的值；而由\cref{proposition:appC-梯度正交}，$\nabla g(\bm{x}^{*})$ 也与曲面垂直。因此 $\nabla f$ 和 $\nabla g$ 是平行（或反平行）的，必定存在一个参数 $\lambda$ 使\eqref{align:appC-平行条件}成立。
+
+（重构新增）补全“平行”的理由：由\cref{proposition:appC-梯度正交}，$\nabla f(\bm{x}^{*})$ 与 $\nabla g(\bm{x}^{*})$ 都正交于曲面在 $\bm{x}^{*}$ 处的切空间；当 $\nabla g(\bm{x}^{*})\neq\bm{0}$ 时该切空间的余维为 $1$，其正交补是一维的，于是两个非零向量共线，即存在 $\lambda$ 使 $\nabla f(\bm{x}^{*})=-\lambda\nabla g(\bm{x}^{*})$。若 $\nabla g(\bm{x}^{*})=\bm{0}$，余维论断失效，结论可能不成立，这正是本命题需要该条件的原因。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:appC-约束驻点; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+\eqref{align:appC-平行条件}给出的是必要条件而非充分条件：满足它的点可能是极大值、极小值或鞍点，判断类型需要看二阶信息（或直接在约束曲面上比较函数值）。条件 $\nabla g(\bm{x}^{*})\neq\bm{0}$ 称为约束规范条件，它保证约束曲面在极值点附近是光滑的；若梯度为零，即使 $\bm{x}^{*}$ 是极值点也可能找不到这样的 $\lambda$。此外，$\lambda$ 的符号不是任意的：在等式约束下它可正可负，而在不等式约束下它会被符号条件固定（见\cref{proposition:appC-不等式驻点条件}）。
+\end{remark}
+
+其中 $\lambda\neq0$ 称为 Lagrange 乘子。注意，$\lambda$ 可正可负。
+
+\begin{definition}[Lagrange 乘子]\label{definition:appC-乘子}
+在\eqref{align:appC-平行条件}中出现的参数 $\lambda$ 称为\textbf{Lagrange 乘子}（Lagrange multiplier），它度量约束对目标函数驻点的影响强度。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:appC-乘子; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+乘子 $\lambda$ 不是待求的“中间量”，它本身携带信息：$|\lambda|$ 越大，说明约束 $g(\bm{x})=0$ 对最优值的影响越强（在灵敏度分析中，$\lambda$ 恰是目标函数最优值对约束右端项的导数）。定义中 $\lambda\neq0$ 是等式约束情形的约定；在不等式约束下，非激活约束对应 $\lambda=0$（见\cref{definition:appC-激活约束}），因此那里不再要求 $\lambda\neq0$。$\lambda$ 可正可负，这一点与\cref{proposition:appC-不等式驻点条件}中 $\lambda\geqslant0$ 的符号限制形成对照。
+\end{remark}
+
+至此，我们很容易引出下式定义的 Lagrange 函数：
+\begin{definition}[Lagrange 函数]\label{definition:appC-乘子函数}
+\begin{align}
+  L(\bm{x},\lambda)=f(\bm{x})+\lambda g(\bm{x})
+  \label{align:appC-Lagrange函数}
+\end{align}
+称为与约束问题\eqref{align:appC-约束条件}对应的\textbf{Lagrange 函数}（Lagrangian）。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:appC-乘子函数; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+引入 $L$ 的目的是把“带约束的驻点问题”改写成“无约束的驻点问题”：$L$ 把约束 $g$ 以乘子 $\lambda$ 为权并入目标函数，于是约束是否被满足不再需要单独处理，而由 $\partial L/\partial\lambda=g(\bm{x})=0$ 自动给出（见\cref{proposition:appC-乘子法}）。这一构造的关键是 $\lambda$ 被当作与 $\bm{x}$ 平等的自变量：正因如此，$L$ 的驻点条件才同时包含\eqref{align:appC-平行条件}与约束方程两组方程。
+\end{remark}
+
+可通过设置 $\nabla_{\bm{x}}L=\bm{0}$ 得到带约束的驻点条件 [\eqref{align:appC-平行条件}]。此外，通过 $\partial L/\partial\lambda=0$ 可推出约束条件 $g(\bm{x})=0$。为了找到在约束条件 $g(\bm{x})=0$ 下函数 $f(\bm{x})$ 的最大值，首先定义\eqref{align:appC-Lagrange函数}所示的 Lagrange 函数，然后寻找 $L(\bm{x},\lambda)$ 关于 $\bm{x}$ 和 $\lambda$ 的驻点。对于一个 $D$ 维向量 $\bm{x}$，这会给出 $D+1$ 个方程，用于确定驻点 $\bm{x}^{*}$ 以及 $\lambda$ 的值。如果只对 $\bm{x}^{*}$ 感兴趣，则可以从驻点方程中消去 $\lambda$，而不需要计算 $\lambda$ 的值（“未定乘子”由此得名）。
+
+\begin{proposition}[Lagrange 乘子法]\label{proposition:appC-乘子法}
+设 $f$、$g$ 连续可微。点 $\bm{x}^{*}$ 满足\eqref{align:appC-平行条件}与约束 $g(\bm{x}^{*})=0$，当且仅当存在 $\lambda^{*}$ 使 $L$ 在 $(\bm{x}^{*},\lambda^{*})$ 处关于 $\bm{x}$ 与 $\lambda$ 的偏导数都为零，即
+\begin{align*}
+  \nabla_{\bm{x}}L(\bm{x}^{*},\lambda^{*})=\bm{0},\qquad \frac{\partial L}{\partial\lambda}(\bm{x}^{*},\lambda^{*})=0.
+\end{align*}
+\end{proposition}
+
+\begin{proof}
+（重构新增）原书把这一等价性直接作为方法的描述，这里补全两向论证。由\eqref{align:appC-Lagrange函数}，$\nabla_{\bm{x}}L=\nabla f+\lambda\nabla g$，而 $\partial L/\partial\lambda=g(\bm{x})$。若 $\bm{x}^{*}$ 满足\eqref{align:appC-平行条件}与 $g(\bm{x}^{*})=0$，取 $\lambda^{*}$ 为\eqref{align:appC-平行条件}中的乘子，则两个偏导数同时为零。反之，若存在 $\lambda^{*}$ 使两个偏导数为零，则 $\partial L/\partial\lambda=0$ 给出 $g(\bm{x}^{*})=0$，而 $\nabla_{\bm{x}}L=\bm{0}$ 给出 $\nabla f(\bm{x}^{*})+\lambda^{*}\nabla g(\bm{x}^{*})=\bm{0}$，即\eqref{align:appC-平行条件}。方程个数方面：$\nabla_{\bm{x}}L=\bm{0}$ 是 $D$ 个方程，$\partial L/\partial\lambda=0$ 是 $1$ 个方程，共 $D+1$ 个，未知量为 $D$ 个分量与 $\lambda$，故一般可确定离散的驻点。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:appC-乘子法; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+这条命题说明 Lagrange 乘子法并没有引入新的数学原理，它只是把\eqref{align:appC-平行条件}与约束方程合并成同一个函数 $L$ 的驻点条件，从而可以套用无约束优化的全部工具。“未定乘子”这个名字来自实践：若只关心 $\bm{x}^{*}$，可以把 $\lambda$ 当作中间变量从方程组中消去，例如从 $\nabla f=-\lambda\nabla g$ 的两个分量式中解出 $\lambda$ 再令其相等，就得到只含 $\bm{x}$ 的方程。注意该等价性只依赖可微性，不保证驻点一定是极值点。
+\end{remark}
+
+举个简单的例子，假设我们希望找到函数 $f(x_1,x_2)=1-x_1^{2}-x_2^{2}$ 在约束条件 $g(x_1,x_2)=x_1+x_2-1=0$ 下的驻点，如\cref{figure:appC-约束示例}所示。相应的 Lagrange 函数由下式给出：
 
 \begin{figure}[htbp]
-\centering
-\includegraphics[width=0.6\textwidth]{appC-fig557-example.png}
-\caption{使用拉格朗日乘子法的一个简单示例。在约束条件 $g(x_1,x_2)=0$ 下最大化函数 $f(x_1,x_2)=1-x_1^2-x_2^2$，其中 $g(x_1,x_2)=x_1+x_2-1$。椭圆表示函数 $f(x_1,x_2)$ 的等值线，对角线则代表约束曲面 $g(x_1,x_2)=0$。}
-\label{fig:appC-example}
+  \centering
+  \includegraphics[width=0.4\textwidth]{appC-figC2-lagrange-example.png}
+  \caption{使用 Lagrange 乘子法的一个简单示例。在约束条件 $g(x_1,x_2)=0$ 下最大化函数 $f(x_1,x_2)=1-x_1^{2}-x_2^{2}$，其中 $g(x_1,x_2)=x_1+x_2-1$。圆圈表示函数 $f(x_1,x_2)$ 的等值线，对角线则代表约束曲面 $g(x_1,x_2)=0$。}
+  \label{figure:appC-约束示例}
 \end{figure}
 
-举个简单的例子，假设我们希望找到函数 $f(x_1,x_2)=1-x_1^2-x_2^2$ 在约束条件 $g(x_1,x_2)=x_1+x_2-1=0$ 下的驻点。相应的拉格朗日函数由下式给出：
+\begin{example}[ 二次函数的约束驻点]\label{example:appC-二次约束驻点}
 \begin{align}
-L(x,\lambda)=1-x_1^2-x_2^2+\lambda(x_1+x_2-1)
-\label{align:appC-example-lag}
+  L(\bm{x},\lambda)=1-x_1^{2}-x_2^{2}+\lambda(x_1+x_2-1)
+  \label{align:appC-例Lagrange}
 \end{align}
-这个拉格朗日函数关于 $x_1$、$x_2$ 和 $\lambda$ 的驻点条件给出了如下耦合方程：
+这个 Lagrange 函数关于 $x_1$、$x_2$ 和 $\lambda$ 的驻点条件给出了如下耦合方程：
 \begin{align}
--2x_1+\lambda=0
-\label{align:appC-ex1}
+  -2x_1+\lambda&=0
+  \label{align:appC-例方程1}\\
+  -2x_2+\lambda&=0
+  \label{align:appC-例方程2}\\
+  x_1+x_2-1&=0
+  \label{align:appC-例方程3}
 \end{align}
-\begin{align}
--2x_2+\lambda=0
-\label{align:appC-ex2}
-\end{align}
-\begin{align}
-x_1+x_2-1=0
-\label{align:appC-ex3}
-\end{align}
-解这些方程，可以得到驻点 $(x_1^{*},x_2^{*})=(1/2,1/2)$，相应的拉格朗日乘子为 $\lambda=1$。
+解这些方程，可以得到驻点 $(x_1^{*},x_2^{*})=(1/2,1/2)$，相应的 Lagrange 乘子为 $\lambda=1$。
+\end{example}
 
-到目前为止，我们已经讨论了在形如 $g(x)=0$ 的\textbf{等式约束}（equality constraint）下如何最大化函数的问题。接下来考虑在形如 $g(x)\ge 0$ 的\textbf{不等式约束}（inequality constraint）下如何最大化 $f(x)$ 的问题。
+\begin{solution}
+（重构新增）补全求解过程。由\eqref{align:appC-例方程1}与\eqref{align:appC-例方程2}得 $x_1=x_2=\lambda/2$；代入\eqref{align:appC-例方程3}得 $\lambda/2+\lambda/2-1=0$，故 $\lambda=1$，于是 $x_1^{*}=x_2^{*}=1/2$。此时 $f(x_1^{*},x_2^{*})=1-1/4-1/4=1/2$。
 
-根据带约束的驻点是否位于 $g(x)>0$ 的区域内，这个问题有两种可能的解。如果驻点位于 $g(x)>0$ 的区域内，则约束是\textbf{非激活的}（inactive）；而如果驻点位于边界 $g(x)=0$ 上，则约束是\textbf{激活的}（active）。在前一种情况下，函数 $g(x)$ 不起作用，因此驻点条件是 $\nabla f(x)=0$，这对应于 $\lambda=0$ 的拉格朗日函数 [式~\eqref{align:appC-lagrangian}] 的驻点。在后一种情况下，驻点位于边界上，类似于前面讨论的等式约束，对应于 $\lambda\neq 0$ 的拉格朗日函数 [式~\eqref{align:appC-lagrangian}] 的驻点。可见拉格朗日乘子的符号是关键，因为只有当 $f(x)$ 的梯度远离 $g(x)>0$ 的区域时，函数 $f(x)$ 才会达到最大值。因此，当 $\lambda>0$ 时，我们有 $\nabla f(x^{*})=-\lambda\nabla g(x^{*})$。
+\end{solution}
+
+\begin{remark}（重构新增）
+这个例子可以纯几何地验证：$f$ 的等值线是以原点为心的圆，约束是一条直线，直线上离原点最近的点正是 $(1/2,1/2)$，它使 $f$ 最大（因为 $f$ 随到原点距离增大而减小），而该点处圆的切线与直线相切，故 $\nabla f$ 与 $\nabla g$ 共线——这正是\eqref{align:appC-平行条件}的几何内容。乘子 $\lambda=1>0$ 也符合直觉：约束 $x_1+x_2=1$ 把最优点从原点推离，且推得越远 $\lambda$ 越大。
+\end{remark}
+
+到目前为止，我们已经讨论了在形如 $g(\bm{x})=0$ 的等式约束（equality constraint）下如何最大化函数的问题。接下来考虑在形如 $g(\bm{x})\geqslant0$ 的不等式约束（inequality constraint）下如何最大化 $f(\bm{x})$ 的问题，如\cref{figure:appC-不等式约束}所示。
+
+\begin{definition}[等式约束与不等式约束]\label{definition:appC-等式不等式约束}
+形如 $g(\bm{x})=0$ 的约束称为\textbf{等式约束}（equality constraint）；形如 $g(\bm{x})\geqslant0$ 的约束称为\textbf{不等式约束}（inequality constraint）。
+\end{definition}
 
 \begin{figure}[htbp]
-\centering
-\includegraphics[width=0.6\textwidth]{appC-fig558-inequality.png}
-\caption{在不等式约束 $g(x)\ge 0$ 下最大化 $f(x)$ 的问题示意图。当驻点位于 $g(x)>0$ 的区域内时约束非激活；当驻点位于 $g(x)=0$ 的边界上时约束激活。}
-\label{fig:appC-inequality}
+  \centering
+  \includegraphics[width=0.42\textwidth]{appC-figC3-inequality.png}
+  \caption{在不等式约束 $g(\bm{x})\geqslant0$ 下最大化函数 $f(\bm{x})$ 的问题示意图。}
+  \label{figure:appC-不等式约束}
 \end{figure}
 
-对于这两种情况，乘积 $\lambda g(x)=0$。因此，在 $g(x)\ge 0$ 的不等式约束下最大化 $f(x)$ 的问题，可通过在以下条件下关于 $x$ 和 $\lambda$ 优化拉格朗日函数 [式~\eqref{align:appC-lagrangian}] 来求解：
-\begin{align}
-g(x)\ge 0
-\label{align:appC-kkst1}
-\end{align}
-\begin{align}
-\lambda\ge 0
-\label{align:appC-kkst2}
-\end{align}
-\begin{align}
-\lambda g(x)=0
-\label{align:appC-kkst3}
-\end{align}
-我们称它们为\textbf{卡鲁什-库恩-塔克}（Karush-Kuhn-Tucker, KKT）条件（Karush, 1939; Kuhn and Tucker, 1951）。注意，如果我们希望在不等式约束 $g(x)\ge 0$ 下最小化（而非最大化）函数 $f(x)$，则需要关于 $x$ 最小化拉格朗日函数 $L(x,\lambda)=f(x)-\lambda g(x)$，这同样要求 $\lambda\ge 0$。
+% SUPPLEMENT: parent=definition:appC-等式不等式约束; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+等式约束要求最优点恰好落在曲面上，可行集是“薄”的 $D-1$ 维集合；不等式约束只要求 $g\geqslant0$，可行集是带内部的 $D$ 维区域，它的边界才是 $g=0$。这一差别决定了乘子符号：等式约束两侧都可移动，故 $\lambda$ 可正可负；不等式约束只能向区域内部移动，故乘子的符号被固定（见\cref{proposition:appC-不等式驻点条件}）。后文所有结论都要求 $g$ 连续可微，且在最优点处 $\nabla g\neq\bm{0}$。
+\end{remark}
 
-最后，拉格朗日乘子法可以很容易地扩展到具有多个等式约束和不等式约束的情况。假设我们希望在约束条件 $g_j(x)=0$（$j=1,\cdots,J$）和 $h_k(x)\ge 0$（$k=1,\cdots,K$）下最大化 $f(x)$，则可以引入拉格朗日乘子 $\{\lambda_j\}$ 和 $\{\mu_k\}$，并优化如下拉格朗日函数：
+根据带约束的驻点是否位于 $g(\bm{x})>0$ 的区域内，这个问题有两种可能的解。
+
+\begin{definition}[激活约束与非激活约束]\label{definition:appC-激活约束}
+如果驻点位于 $g(\bm{x})>0$ 的区域内，则约束是\textbf{非激活的}（inactive）；而如果驻点位于边界 $g(\bm{x})=0$ 上，则约束是\textbf{激活的}（active）。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:appC-激活约束; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+“激活”是对约束是否起作用的白话描述：非激活时约束把最优点放过了，去掉它最优解不变；激活时最优点被压在边界上，去掉约束后最优解会跑到区域外。这个二分法与下一命题的两种情形一一对应，也是\eqref{align:appC-KKT3}（互补松弛条件）的直观来源：$\lambda g(\bm{x})=0$ 说的正是“要么约束不起作用（$\lambda=0$），要么边界起作用（$g=0$）”，两种情形不能同时“半起作用”。
+\end{remark}
+
+在前一种情况下，函数 $g(\bm{x})$ 不起作用，因此驻点条件是 $\nabla f(\bm{x})=\bm{0}$，这对应于 $\lambda=0$ 的 Lagrange 函数 [\eqref{align:appC-Lagrange函数}] 的驻点。在后一种情况下，驻点位于边界上，类似于前面讨论的等式约束，对应于 $\lambda\neq0$ 的 Lagrange 函数 [\eqref{align:appC-Lagrange函数}] 的驻点。可见 Lagrange 乘子的符号是关键，因为只有当 $f(\bm{x})$ 的梯度远离 $g(\bm{x})>0$ 的区域时，函数 $f(\bm{x})$ 才会达到最大值，如\cref{figure:appC-不等式约束}所示。因此，当 $\lambda>0$ 时，我们有 $\nabla f(\bm{x})=-\lambda\nabla g(\bm{x})$。
+
+\begin{proposition}[不等式约束下驻点的两种情形]\label{proposition:appC-不等式驻点条件}
+设 $\bm{x}^{*}$ 是 $f$ 在区域 $g(\bm{x})\geqslant0$ 上的局部极大值点，$f$、$g$ 连续可微，且在最优点处 $\nabla g(\bm{x}^{*})\neq\bm{0}$。则恰有两种可能：
+\begin{enumerate}
+  \item 非激活情形：$g(\bm{x}^{*})>0$，此时 $\nabla f(\bm{x}^{*})=\bm{0}$，且相应的乘子为零；
+  \item 激活情形：$g(\bm{x}^{*})=0$，此时存在 $\lambda>0$ 使 $\nabla f(\bm{x}^{*})=-\lambda\nabla g(\bm{x}^{*})$。
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+原书论证如下：在前一种情况下，函数 $g(\bm{x})$ 不起作用，因此驻点条件是 $\nabla f(\bm{x})=\bm{0}$，这对应于 $\lambda=0$ 的 Lagrange 函数的驻点；在后一种情况下，驻点位于边界上，类似于前面讨论的等式约束，对应于 $\lambda\neq0$ 的 Lagrange 函数的驻点。可见 Lagrange 乘子的符号是关键，因为只有当 $f(\bm{x})$ 的梯度远离 $g(\bm{x})>0$ 的区域时，函数 $f(\bm{x})$ 才会达到最大值。因此，当 $\lambda>0$ 时，我们有 $\nabla f(\bm{x}^{*})=-\lambda\nabla g(\bm{x}^{*})$。
+
+（重构新增）补全符号论证。非激活情形是区域内部的驻点，无需约束，故 $\nabla f(\bm{x}^{*})=\bm{0}$。激活情形中，任取方向 $\bm{d}$ 满足 $\nabla g(\bm{x}^{*})^{\mathsf{T}}\bm{d}>0$（即 $\bm{d}$ 指向区域 $g>0$ 的内部，这样的 $\bm{d}$ 存在是因为 $\nabla g(\bm{x}^{*})\neq\bm{0}$），当 $t>0$ 充分小时点 $\bm{x}^{*}+t\bm{d}$ 仍可行；由 $\bm{x}^{*}$ 是极大值点得一阶必要条件 $\nabla f(\bm{x}^{*})^{\mathsf{T}}\bm{d}\leqslant0$。于是 $\nabla f(\bm{x}^{*})$ 在所有使 $\nabla g(\bm{x}^{*})^{\mathsf{T}}\bm{d}>0$ 的方向上取非正值，这迫使 $\nabla f(\bm{x}^{*})$ 与 $\nabla g(\bm{x}^{*})$ 反向共线，即存在 $\lambda\geqslant0$ 使 $\nabla f(\bm{x}^{*})=-\lambda\nabla g(\bm{x}^{*})$；再由 $g(\bm{x}^{*})=0$ 与\cref{proposition:appC-梯度正交}知 $\nabla f(\bm{x}^{*})\neq\bm{0}$，故 $\lambda>0$。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:appC-不等式驻点条件; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+两种情形的分界是“约束是否被触及”，而 $\lambda$ 的符号则记录“约束把最优点往哪边推”：$\lambda>0$ 表示目标函数的上升方向被约束挡住。这一符号条件是不等式约束与等式约束的本质区别：在等式约束下 $\lambda$ 可正可负（见\cref{definition:appC-乘子}），而在不等式约束下 $\lambda\geqslant0$。命题给出的是必要条件；由于可行集带有边界，极大值点还可能出现在不可微的角点处，此时 $\nabla g$ 不存在，本命题不适用。
+\end{remark}
+
+对于这两种情况，乘积 $\lambda g(\bm{x})=0$。因此，在 $g(\bm{x})\geqslant0$ 的不等式约束下最大化 $f(\bm{x})$ 的问题，可通过在以下条件下关于 $\bm{x}$ 和 $\lambda$ 优化 Lagrange 函数 [\eqref{align:appC-Lagrange函数}] 来求解：
+\begin{theorem}[Karush-Kuhn-Tucker 条件]\label{theorem:appC-KKT}
+在约束 $g(\bm{x})\geqslant0$ 下最大化 $f(\bm{x})$ 的问题，其驻点满足
 \begin{align}
-L(x,\{\lambda_j\},\{\mu_k\})=f(x)+\sum_j \lambda_j g_j(x)+\sum_k \mu_k h_k(x)
-\label{align:appC-general}
+  g(\bm{x})&\geqslant0
+  \label{align:appC-KKT1}\\
+  \lambda&\geqslant0
+  \label{align:appC-KKT2}\\
+  \lambda g(\bm{x})&=0
+  \label{align:appC-KKT3}
 \end{align}
-其中 $\mu_k\ge 0$ 且 $\mu_k h_k(x)=0$，$k=1,\cdots,K$。关于拉格朗日乘子法更详细的讨论，请参阅 Nocedal and Wright (1999)。
+并且 $\nabla_{\bm{x}}L(\bm{x},\lambda)=\bm{0}$。我们称它们为\textbf{Karush-Kuhn-Tucker}（KKT）条件（Karush, 1939; Kuhn and Tucker, 1951）。
+\end{theorem}
+
+\begin{proof}
+（重构新增）原书由两种情形直接归纳出这三条，这里补全。由\cref{proposition:appC-不等式驻点条件}，驻点只有两种可能。非激活情形：$g(\bm{x})>0$，乘子 $\lambda=0$，于是 $\lambda\geqslant0$ 与 $\lambda g(\bm{x})=0$ 同时成立，且 $\nabla_{\bm{x}}L=\nabla f+\lambda\nabla g=\nabla f=\bm{0}$。激活情形：$g(\bm{x})=0$，$\lambda>0$，于是 $\lambda\geqslant0$ 成立且 $\lambda g(\bm{x})=0$，而 $\nabla_{\bm{x}}L=\bm{0}$ 正是\eqref{align:appC-平行条件}。两种情形中 $g(\bm{x})\geqslant0$ 都成立，故\eqref{align:appC-KKT1}--\eqref{align:appC-KKT3}与 $\nabla_{\bm{x}}L=\bm{0}$ 都是必要条件。
+\end{proof}
+
+% SUPPLEMENT: parent=theorem:appC-KKT; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+三条条件各司其职：\eqref{align:appC-KKT1}是可行性（最优点必须落在可行区域内），\eqref{align:appC-KKT2}是不等式约束的乘子符号，\eqref{align:appC-KKT3}称为互补松弛条件，它把“激活/非激活”这一定性区分写成了一个方程。互补松弛的含义是：$g(\bm{x})>0$ 时必有 $\lambda=0$，$\lambda>0$ 时必有 $g(\bm{x})=0$，两者不能同时严格为正。需要强调 KKT 条件只是必要条件：满足它们的点可能是极大值、极小值或鞍点；当 $f$ 为凹函数、$g$ 为凹函数且满足约束规范时，KKT 条件才是充分条件。
+\end{remark}
+
+注意，如果我们希望在不等式约束 $g(\bm{x})\geqslant0$ 下最小化（而非最大化）函数 $f(\bm{x})$，则需要关于 $\bm{x}$ 最小化 Lagrange 函数 $L(\bm{x},\lambda)=f(\bm{x})-\lambda g(\bm{x})$，这同样要求 $\lambda\geqslant0$。
+
+\begin{proposition}[最小化情形的 KKT 条件]\label{proposition:appC-最小化KKT}
+若把\cref{theorem:appC-KKT}中的“最大化 $f$”改为“最小化 $f$”，则相应的 Lagrange 函数改为 $L(\bm{x},\lambda)=f(\bm{x})-\lambda g(\bm{x})$，其余三条条件\eqref{align:appC-KKT1}--\eqref{align:appC-KKT3}不变，仍要求 $\lambda\geqslant0$。
+\end{proposition}
+
+\begin{proof}
+（重构新增）原书只给出结论，这里补全。令 $\tilde{f}=-f$，则“在 $g\geqslant0$ 下最小化 $f$”等价于“在 $g\geqslant0$ 下最大化 $\tilde{f}$”。对 $\tilde{f}$ 用\cref{theorem:appC-KKT}，存在 $\lambda\geqslant0$ 使 $\nabla\tilde{f}+\lambda\nabla g=\bm{0}$，即 $-\nabla f+\lambda\nabla g=\bm{0}$，等价于 $\nabla(f-\lambda g)=\bm{0}$。这正是以 $f-\lambda g$ 为 Lagrange 函数、关于 $\bm{x}$ 求驻点的条件，而 $\lambda\geqslant0$、$g\geqslant0$、$\lambda g=0$ 均不变。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:appC-最小化KKT; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+最大化与最小化的差别只在于 $L$ 中 $\lambda g$ 的符号，这与“把目标函数取负”是同一件事；乘子的符号条件却保持不变，因为它是约束的几何性质（只能向区域内移动）而不是目标的性质。使用这条结论时最容易出错的地方是：最小化时若仍写成 $f+\lambda g$，则必须配 $\lambda\leqslant0$，两种写法不能混用。
+\end{remark}
+
+最后，Lagrange 乘子法可以很容易地扩展到具有多个等式约束和不等式约束的情况。假设我们希望在约束条件 $g_j(\bm{x})=0$（$j=1,\cdots,J$）和 $h_k(\bm{x})\geqslant0$（$k=1,\cdots,K$）下最大化 $f(\bm{x})$，则可以引入 Lagrange 乘子 $\{\lambda_j\}$ 和 $\{\mu_k\}$，并优化如下 Lagrange 函数：
+\begin{theorem}[多个约束下的 KKT 条件]\label{theorem:appC-多约束KKT}
+设 $f$、$g_j$、$h_k$ 连续可微，$\bm{x}^{*}$ 是 $f$ 在约束 $g_j(\bm{x})=0$（$j=1,\cdots,J$）与 $h_k(\bm{x})\geqslant0$（$k=1,\cdots,K$）下的局部极大值点，且各约束的梯度在 $\bm{x}^{*}$ 处线性无关。则存在乘子 $\{\lambda_j\}$ 与 $\{\mu_k\}$，使
+\begin{align}
+  L(\bm{x},\{\lambda_j\},\{\mu_k\})=f(\bm{x})+\sum_{j=1}^{J}\lambda_j g_j(\bm{x})+\sum_{k=1}^{K}\mu_k h_k(\bm{x})
+  \label{align:appC-多约束}
+\end{align}
+在 $\bm{x}^{*}$ 处关于 $\bm{x}$ 的梯度为零，其中 $\mu_k\geqslant0$ 且 $\mu_k h_k(\bm{x})=0$，$k=1,\cdots,K$。
+\end{theorem}
+
+\begin{proof}
+（重构新增）原书未给证明，这里补全思路。把等式约束视为双侧约束、不等式约束视为单侧约束，重复\cref{proposition:appC-不等式驻点条件}的论证：在 $\bm{x}^{*}$ 处，所有激活的不等式约束（$h_k(\bm{x}^{*})=0$）与等式约束一起把可行方向限制在一个多面锥内，而局部极大性要求 $\nabla f(\bm{x}^{*})$ 在该锥的所有方向上取非正值；由 Farkas 引理（或梯度的线性无关条件），这等价于 $\nabla f(\bm{x}^{*})$ 可以写成等式约束梯度与激活不等式约束梯度的非负线性组合的相反数，即存在 $\lambda_j$ 与 $\mu_k\geqslant0$ 使
+\begin{align*}
+  \nabla f(\bm{x}^{*})+\sum_{j=1}^{J}\lambda_j\nabla g_j(\bm{x}^{*})+\sum_{k=1}^{K}\mu_k\nabla h_k(\bm{x}^{*})=\bm{0},
+\end{align*}
+其中非激活的 $h_k$ 取 $\mu_k=0$，故 $\mu_k h_k(\bm{x}^{*})=0$ 对每个 $k$ 成立。这正是\eqref{align:appC-多约束}关于 $\bm{x}$ 的梯度为零。
+\end{proof}
+
+% SUPPLEMENT: parent=theorem:appC-多约束KKT; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+\eqref{align:appC-多约束}只是把单约束的 Lagrange 函数按约束个数线性叠加：每个等式约束配一个符号自由的乘子 $\lambda_j$，每个不等式约束配一个非负乘子 $\mu_k$，互补松弛 $\mu_k h_k(\bm{x})=0$ 对每个不等式约束分别成立。定理中“梯度线性无关”是约束规范条件，它排除约束曲面在极值点处相互重合或退化导致的乘子不唯一；若该条件不满足，乘子可能不存在或有无穷多组，KKT 条件就不再是必要条件。与单约束情形一样，这些条件只是必要条件，充分性需要额外的凸性假设。关于 Lagrange 乘子法更详细的讨论，请参阅 Nocedal and Wright (1999)。
+\end{remark}
 
 \end{document}

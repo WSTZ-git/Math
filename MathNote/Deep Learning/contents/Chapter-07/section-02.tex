@@ -1,86 +1,228 @@
 \documentclass[../../main.tex]{subfiles}
+
 \graphicspath{{../../image/}{../../figure/}}
+
 \begin{document}
 
 \section{梯度下降优化}\label{section:ch07-梯度下降优化}
 
-除了最简单的神经网络模型之外，绝大多数网络的误差曲面都具有极其复杂的形态，因此最终求得的解将很大程度上依赖于初始参数值 $\mathbf{w}^{(0)}$ 的选取等因素。为获得一个足够好的解，通常需要多次运行基于梯度的优化算法，每次都选用一个不同的随机初始点，最终通过在一个独立验证集上进行性能评估来确定最优解。
-
-大多数优化技术首先要为权重向量选取一个初始值 $\mathbf{w}^{(0)}$，然后按照如下迭代规则在权重空间中逐步搜索：
+对于神经网络这种具有复杂结构的误差函数而言，试图找到方程 $\nabla E(\mathbf{w})=\mathbf{0}$ 的解析解是不现实的，因此我们需要借助于迭代式的数值优化方法。连续非线性函数的优化问题一直是学术界广泛研究的课题，有大量的文献详细阐述了各种高效求解的方法。大多数优化技术首先要为权重向量选取一个初始值 $\mathbf{w}^{(0)}$，然后按照如下所示的迭代规则在权重空间中逐步搜索：
 \begin{align}
-\mathbf{w}^{(\tau)} = \mathbf{w}^{(\tau-1)} + \Delta\mathbf{w}^{(\tau-1)},
-\label{align:ch07-iter}
+\mathbf{w}^{(\tau)} = \mathbf{w}^{(\tau-1)}+\Delta\mathbf{w}^{(\tau-1)},
+\label{align:ch07-迭代规则}
 \end{align}
-其中 $\tau$ 标记迭代步骤。不同算法对权重向量如何更新 $\Delta\mathbf{w}^{(\tau)}$ 有不同选择。连续非线性函数的优化问题一直是学术界广泛研究的课题。
+其中 $\tau$ 标记了迭代步骤。不同的算法对权重向量如何更新 $\Delta\mathbf{w}^{(\tau)}$ 有不同选择。
 
-\subsection{梯度信息的使用}\label{section:ch07-梯度信息的使用}
+除了最简单的神经网络模型之外，绝大多数神经网络的误差曲面都具有极其复杂的形态，因此最终求得的解将会很大程度上依赖于初始参数值 $\mathbf{w}^{(0)}$ 的选取等因素。为了获得一个足够好的解，通常需要多次运行基于梯度的优化算法，每次运行都选用一个不同的随机初始点，最终通过在一个独立的验证集上进行性能评估来确定最优解。
 
-在~\eqref{align:ch07-taylor}~给出的误差函数二次近似表达式中，误差曲面形态由向量 $\mathbf{b}$ 和矩阵 $\mathbf{H}$ 共同决定，它们总共包含 $W(W+3)/2$ 个独立元素（由于 $\mathbf{H}$ 具有对称性），其中 $W$ 表示权重向量 $\mathbf{w}$ 的维度（即网络中可学习参数总数，见习题~7.7）。因此该二次近似所对应的最小值位置取决于 $O(W^2)$ 个参数，这意味着我们至少需要收集到 $O(W^2)$ 个相互独立的信息片段才能准确定位到该最小值。如果不考虑梯度信息，预计需要 $O(W^2)$ 次误差函数数值评估，而每次评估又需要 $O(W)$ 步计算操作。这样一来，采用这种策略寻找最小值所需的总计算量将高达 $O(W^3)$。
+\subsection{梯度信息的使用}\label{subsection:ch07-梯度信息的使用}
 
-现在将上述情况与利用梯度信息的优化算法进行对比。由于梯度向量 $\nabla E$ 的长度为 $W$，每次计算 $\nabla E$ 都能提供 $W$ 个独立信息片段。据此推断，我们有望仅通过 $O(W)$ 次梯度评估就能找到函数最小值（参见第~8~章）。正如后续章节将展示的那样，利用误差反向传播算法，每次梯度评估的计算复杂度仅为 $O(W)$，因此现在能够在 $O(W^2)$ 的总计算复杂度内找到最小值。尽管二次近似的有效性仅限于最小值附近的局部区域，但这种效率提升具有普遍性。正是基于这一关键优势，利用梯度信息成了当前所有实用神经网络训练算法的基础。
+深度神经网络的误差函数梯度可以通过误差反向传播技术高效计算（参见\cref{section:ch08-梯度计算}），应用这些梯度信息可以显著提高网络训练速度。请看下面的解释。
 
-深度网络的误差函数梯度可以通过误差反向传播技术高效计算（参见第~8~章），因此应用这些梯度信息可以显著提高网络训练速度。
+在\eqref{align:ch07-Taylor展开}所给出的误差函数二次近似表达式中，误差曲面的形态由向量 $\mathbf{b}$ 和矩阵 $\mathbf{H}$ 共同决定，它们总共包含了 $W(W+3)/2$ 个独立的元素（由于矩阵 $\mathbf{H}$ 具有对称性）（参见\cref{exercise:ch07-07}），其中 $W$ 表示权重向量 $\mathbf{w}$ 的维度（即网络中可学习参数的总数）。因此，该二次近似所对应的最小值位置取决于 $O(W^{2})$ 个参数，这意味着我们至少需要收集到 $O(W^{2})$ 个相互独立的信息片段，才能准确定位到该最小值。如果不考虑梯度信息，我们预计需要进行 $O(W^{2})$ 次误差函数的数值评估，而每一次评估又需要进行 $O(W)$ 步计算操作。这样一来，采用这种策略来寻找最小值所需的总计算量将高达 $O(W^{3})$。
 
-\subsection{批量梯度下降}\label{section:ch07-批量梯度下降}
+现在，我们将上述情况与利用梯度信息的优化算法进行对比。由于梯度向量 $\nabla E$ 的长度为 $W$，因此每次计算 $\nabla E$ 都能提供 $W$ 个独立的信息片段。据此推断，我们有望仅通过 $O(W)$ 次梯度评估操作就能找到函数的最小值（参见\cref{section:ch08-梯度计算}）。正如后续章节将要展示的那样，利用误差反向传播算法，每次梯度评估的计算复杂度仅为 $O(W)$，因此，现在我们能够在 $O(W^{2})$ 的总计算复杂度内找到最小值。尽管二次近似的有效性仅局限于最小值点附近的局部区域，但这种效率上的提升是具有普遍性的。正是基于这一关键优势，利用梯度信息成了当前所有实用的神经网络训练算法的基础。
 
-利用梯度信息指导权重更新的一种最朴素方法是在~\eqref{align:ch07-iter}~中按照负梯度方向进行小步长的迭代调整：
+\subsection{批量梯度下降}\label{subsection:ch07-批量梯度下降}
+
+利用梯度信息指导权重更新的一种最朴素的方法是在\eqref{align:ch07-迭代规则}中按照负梯度方向进行小步长的迭代调整，即
 \begin{align}
-\mathbf{w}^{(\tau)} = \mathbf{w}^{(\tau-1)} - \eta\,\nabla E(\mathbf{w}^{(\tau-1)}),
-\label{align:ch07-batchgd}
+\mathbf{w}^{(\tau)} = \mathbf{w}^{(\tau-1)}-\eta\,\nabla E(\mathbf{w}^{(\tau-1)}),
+\label{align:ch07-批量梯度下降}
 \end{align}
-其中参数 $\eta>0$ 被定义为\textbf{学习率}（learning rate）。在完成每次权重更新后，需要基于新权重向量 $\mathbf{w}^{(\tau)}$ 重新计算梯度，并重复上述过程。在每一次迭代过程中，权重向量都朝着当前位置处误差函数下降最快的方向进行更新，因此这种方法称为\textbf{梯度下降}（gradient descent），或称\textbf{最速下降}（steepest descent）。
+其中参数 $\eta$（$\eta>0$）被定义为学习率（learning rate）。在完成每次权重更新后，需要基于新的权重向量 $\mathbf{w}^{(\tau)}$ 重新计算梯度，并重复上述过程。在每一次迭代过程中，权重向量都朝着当前位置处误差函数下降最快的方向进行更新。
 
-注意，由于误差函数是基于整个训练集进行定义的，因此每次计算 $\nabla E$ 都需要遍历所有训练样本。这种一次性处理全部训练数据的技术称为\textbf{批处理}（batch）方法。
+\begin{definition}[学习率]\label{definition:ch07-学习率}
+在权重更新规则\eqref{align:ch07-批量梯度下降}中，决定每一步沿负梯度方向移动幅度的正参数 $\eta>0$ 称为\textbf{学习率}（learning rate）。
+\end{definition}
 
-\subsection{随机梯度下降}\label{section:ch07-随机梯度下降}
+% SUPPLEMENT: parent=definition:ch07-学习率; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+学习率是梯度下降中唯一不由误差函数本身决定的正参数，因而也是最重要的超参数。它的量纲必须与“梯度乘以参数”的量纲相消，所以固定 $\eta$ 的做法隐含了一种尺度约定：当误差函数整体乘以常数、或参数被重新缩放时，合适的 $\eta$ 会随之改变，这正是\cref{subsection:ch07-数据归一化}要讨论输入归一化的原因之一。$\eta$ 过小会使每一步的下降量被二阶项淹没，收敛缓慢；$\eta$ 过大会使迭代在极小值两侧来回跳跃甚至发散。本章\cref{section:ch07-收敛}将在二次近似下给出定量边界 $\eta<2/\lambda_{\max}$，其中 $\lambda_{\max}$ 是黑塞矩阵的最大特征值，这个边界说明了“学习率必须与曲率匹配”的确切含义。
+\end{remark}
 
-深度学习方法的性能通常会随训练数据集规模扩大而显著提升。然而当训练集中包含海量数据时，批处理方法的效率会急剧下降，因为每一次误差函数或梯度的计算都需要遍历整个数据集。为寻求更高效优化策略，我们注意到：对于一组独立同分布观测样本，基于最大似然估计构建的误差函数可以自然地分解为每个数据点对应项的和：
+\begin{definition}[梯度下降与最速下降]\label{definition:ch07-梯度下降}
+按\eqref{align:ch07-批量梯度下降}沿当前位置的负梯度方向迭代更新权重向量的方法称为\textbf{梯度下降}（gradient descent），也称\textbf{最速下降}（steepest descent）。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch07-梯度下降; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+“最速下降”这一名称来自如下事实：在所有单位长度的方向 $\mathbf{d}$ 中，方向导数 $\mathbf{d}^{\mathsf T}\nabla E$ 在 $\mathbf{d}=-\nabla E/\|\nabla E\|$ 处取到最小值，因此负梯度方向是局部下降最快的方向。但“局部最快”不等于“全局最优路径”：\cref{figure:ch07-山谷}所示的狭长山谷中，负梯度方向几乎垂直于通向极小值的方向，于是梯度下降会在山谷两侧来回振荡而沿谷底前进极慢。理解这一点是理解动量法、Adam 等改进算法的前提：它们改动的都不是“下降方向最快”这一局部性质，而是对该局部性质的累积与修正。
+\end{remark}
+
+\begin{definition}[批处理方法]\label{definition:ch07-批处理}
+每次计算误差函数或其梯度都遍历全部训练样本的技术称为\textbf{批处理}（batch）方法。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch07-批处理; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+由于误差函数是基于整个训练集定义的（见\eqref{align:ch07-误差分解}），批处理是\eqref{align:ch07-批量梯度下降}最直接的实现方式，它给出的梯度是误差函数梯度的精确值，不含随机误差。代价是单次迭代的计算量与训练集规模 $N$ 成正比：当 $N$ 达到 $10^{6}$ 量级时，一次参数更新就要处理上百万个样本，这在数据规模增长时很快变得不可接受。批处理的这一缺点直接催生了后面的随机梯度下降与小批量方法；反过来，当数据集很小或需要精确梯度（例如做数值诊断）时，批处理仍是首选。
+\end{remark}
+
+\subsection{随机梯度下降}\label{subsection:ch07-随机梯度下降}
+
+深度学习方法的性能通常会随着训练数据集规模的扩大而显著提升。然而，当训练集中包含海量数据时，批处理方法的效率会急剧下降，因为每一次误差函数或梯度的计算都需要遍历整个数据集。为了寻求一种更为高效的优化策略，我们注意到，对于一组独立同分布的观测样本，基于最大似然估计构建的误差函数可以自然地分解为每个数据点对应项的和：
 \begin{align}
-E(\mathbf{w}) = \sum_{n=1}^{N} E_n(\mathbf{w}).
-\label{align:ch07-sse-decomp}
+E(\mathbf{w}) = \sum_{n=1}^{N}E_n(\mathbf{w}).
+\label{align:ch07-误差分解}
 \end{align}
-
-在处理大规模数据集时，应用最广泛的训练算法是基于梯度下降的\textbf{随机梯度下降}（Stochastic Gradient Descent, SGD）逐次迭代算法~\citep{Bottou2010}。该算法每次仅基于一个数据点来更新权重向量，具体更新规则如下：
+在处理大规模数据集时，应用最为广泛的训练算法是基于梯度下降的一种称为随机梯度下降（Stochastic Gradient Descent, SGD）的逐次迭代算法（Bottou, 2010）。该算法每次仅基于一个数据点来更新权重向量，具体的更新规则如下：
 \begin{align}
-\mathbf{w}^{(\tau)} = \mathbf{w}^{(\tau-1)} - \eta\,\nabla E_n(\mathbf{w}^{(\tau-1)}),
-\label{align:ch07-sgd}
+\mathbf{w}^{(\tau)} = \mathbf{w}^{(\tau-1)}-\eta\,\nabla E_n(\mathbf{w}^{(\tau-1)}),
+\label{align:ch07-随机梯度下降}
 \end{align}
-其中索引 $n$ 在每次迭代后循环递增。上述更新过程通过循环遍历训练集中数据点来反复执行。对整个训练集进行一次完整遍历称为一个\textbf{训练轮次}（epoch）。当数据以流的形式持续生成时，这种技术有时也称为\textbf{在线梯度下降}（online gradient descent）。
+其中索引 $n$ 在每次迭代后循环递增。
 
-与批量梯度下降相比，随机梯度下降能更高效地处理数据中的冗余。为理解这一点，考虑一个极端例子：复制某数据集的每个数据点，把规模扩大一倍。这种情况下误差函数数值就是原来两倍；如果相应调整学习率的值，则仍可使用原来的误差函数。对于批处理方法，由于数据集加倍，评估批误差函数梯度所需计算量也将加倍，而随机梯度下降算法则完全不受影响。
+\begin{definition}[随机梯度下降]\label{definition:ch07-随机梯度下降}
+按\eqref{align:ch07-随机梯度下降}每次仅用单个数据点的误差函数 $E_n$ 计算梯度并更新权重的方法称为\textbf{随机梯度下降}（Stochastic Gradient Descent, SGD）。其中索引 $n$ 按 $1,2,\cdots,N$ 循环递增；对整个训练集进行一次完整的遍历称为一个\textbf{训练轮次}（epoch）；当数据以流的形式持续生成时，这种技术也称为\textbf{在线梯度下降}（online gradient descent）。
+\end{definition}
 
-随机梯度下降的另一个重要特性是其具备逃离局部极小值的能力，因为整个数据集误差函数的驻点通常并不会是每个单独数据点对应误差函数的驻点。
+% SUPPLEMENT: parent=definition:ch07-随机梯度下降; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+随机梯度下降的合理性在于 $\nabla E_n$ 是 $\nabla E$ 的无偏估计：若 $n$ 从 $\{1,\cdots,N\}$ 中均匀抽取，则 $\mathbb{E}[\nabla E_n(\mathbf{w})]=\frac{1}{N}\sum_n\nabla E_n(\mathbf{w})=\nabla E(\mathbf{w})$。因此单步梯度虽然带有随机噪声，但其期望指向真实梯度方向，噪声在迭代平均中会被部分抵消。这一性质依赖“数据点独立同分布”这一前提（见\eqref{align:ch07-误差分解}上方）；若数据高度相关，单点梯度会产生系统性偏差，此时必须先打乱数据（见\cref{subsection:ch07-小批量方法}）。另外，单个数据点对应的误差函数 $E_n$ 与整体误差函数 $E$ 的驻点一般不同，正是这一差异使 SGD 的噪声具有逃离较浅局部极小值的作用，这一点与批处理梯度下降有本质区别。
+\end{remark}
 
-\subsection{小批量方法}\label{section:ch07-小批量方法}
+上述更新过程通过循环遍历训练集中的数据点来反复执行。对整个训练集进行一次完整的遍历称为一个训练轮次（epoch）。当数据以流的形式持续生成时，这种技术有时也称为在线梯度下降（online gradient descent）。下面的算法对随机梯度下降做了总结。
 
-随机梯度下降的一个缺点是：基于单个数据点计算出的梯度可能大大偏离整个数据集上误差函数的梯度。为兼顾计算效率和估计精度，我们折衷一下，每次迭代时使用一小批数据点（称为\textbf{小批量}，mini-batch）来估计梯度。在确定小批量合适大小时需要注意：利用 $N$ 个样本估计均值的误差为 $\sigma/\sqrt{N}$（参见练习~7.8），其中 $\sigma$ 为生成这些数据的分布的标准差。这表明通过增加小批量规模来提升梯度估计精度的收益是递减的——例如将小批量规模增加~100~倍，估计误差仅能降低到原先的十分之一。选择小批量规模时还需要考虑充分利用运行代码的底层硬件架构：例如在某些硬件平台上，小批量规模如果是~2~的幂次（如~64、128、256~等）就可以获得更好性能。
+\begin{center}
+\setlength{\fboxsep}{7pt}%
+\fbox{\begin{minipage}{0.8\textwidth}
+\centering\textbf{算法 7.1\quad 随机梯度下降}\par
+\vspace{5pt}
+\begin{flushleft}
+\textbf{Input:} 由 $n\in\{1,\cdots,N\}$ 索引的数据点构成的训练集\\
+\hspace*{1.5em}每个数据点的误差函数 $E_n(\mathbf{w})$\\
+\hspace*{1.5em}学习率参数 $\eta$\\
+\hspace*{1.5em}初始权重向量 $\mathbf{w}$\\
+\textbf{Output:} 最终的权重向量 $\mathbf{w}$\\
+$n\leftarrow 1$\\
+\textbf{repeat}\\
+\hspace*{1.5em}$\mathbf{w}\leftarrow\mathbf{w}-\eta\nabla E_n(\mathbf{w})$ \quad // 更新权重向量\\
+\hspace*{1.5em}$n\leftarrow n+1\ (\mathrm{mod}\ N)$ \quad // 遍历所有数据\\
+\textbf{until} 收敛\\
+\textbf{return} $\mathbf{w}$
+\end{flushleft}
+\end{minipage}}
+\end{center}
 
-在使用小批量方法时，要注意数据点应当从整个数据集中随机选取。因为在原始数据集中，由于数据采集方式（例如数据点按字母顺序或日期排序），相邻数据点之间可能存在相关性。为消除这种相关性的影响，通常做法是先将整个数据集进行随机打乱，然后按顺序划分为多个小批量；此外在每次完整遍历数据集后，还可以再次打乱数据以确保每个小批量的数据组合都是全新的，这有助于模型跳出局部最优解。即使采用了小批量方法，这种学习算法通常仍被称为"随机梯度下降"。
+\begin{example}[ 数据冗余下的计算量对比]\label{example:ch07-数据冗余}
+考虑一个极端的例子：复制某数据集的每一个数据点，把它的规模扩大一倍。此时比较批处理梯度下降与随机梯度下降完成同样多“有效”更新所需的工作量。
+\end{example}
+\begin{solution}
+设原数据集含 $N$ 个数据点，复制后含 $2N$ 个。复制不改变数据的经验分布，因此整体误差函数满足 $E_{\text{新}}(\mathbf{w})=2E_{\text{旧}}(\mathbf{w})$，其梯度也恰好是原来的两倍。对批处理梯度下降，把学习率取为原来的一半即可保持更新量不变，然而评估一次批梯度所需遍历的样本数由 $N$ 变成 $2N$，单次更新的计算量随之加倍，故完成同样多迭代的总计算量加倍。对随机梯度下降，每次更新只用到单个数据点，更新规则\eqref{align:ch07-随机梯度下降}与 $N$ 无关；若把遍历顺序安排为在每个原始数据点及其副本上各更新一次，则相邻两次更新的梯度相同（因为 $E_n$ 被复制），其效果等价于把原数据集上的那一步重复执行两次，而单步代价不变。也就是说，SGD 完全不受数据冗余的影响，它把重复数据带来的额外计算“浪费”在重复的信息上，而不是浪费在计算批梯度上。
+\end{solution}
 
-\subsection{参数初始化}\label{section:ch07-参数初始化}
+随机梯度下降的另一个重要特性是其具备逃离局部极小值的能力，因为整个数据集的误差函数的驻点，通常并不会是每个单独数据点对应误差函数的驻点。
 
-像梯度下降这样的迭代式优化算法都要求我们为需要学习的参数设定初始值。参数初始化的具体策略会对算法收敛速度以及训练得到网络的泛化能力产生显著影响；遗憾的是目前还没有能够系统性指导参数初始化过程的完善理论。
+\subsection{小批量方法}\label{subsection:ch07-小批量方法}
 
-尽管如此，参数初始化过程中一个关键考虑因素是\textbf{对称性破缺}（symmetry breaking）。考虑网络中一组隐藏单元或输出单元，它们都接收相同输入信号。如果这些单元的所有参数都被赋予相同值（例如全部初始化为零），那么这些参数在训练过程中将始终步调一致地进行更新，并且每个单元都计算出相同函数，导致功能上冗余。为解决这一问题，可以从某个预先定义分布中随机采样来初始化参数，以打破这种对称性。在计算资源允许的情况下，可以采用不同随机初始化策略多次训练网络，最终选择在独立验证集上性能最佳的模型。
+随机梯度下降的一个缺点是，基于单个数据点计算出的梯度，可能大大偏离整个数据集上误差函数的梯度。为了兼顾计算效率和估计精度，我们折衷一下，每次迭代时使用一小批数据点（称为小批量，mini-batch）来估计梯度。在确定小批量的合适大小时，需要注意，利用 $N$ 个样本估计均值的误差为 $\sigma/\sqrt{N}$（参见\cref{exercise:ch07-08}），其中 $\sigma$ 为生成这些数据的分布的标准差。这表明，通过增加小批量的规模来提升梯度估计精度的收益是递减的。例如，将小批量的规模增加 100 倍，估计误差仅能降低到原先的十分之一。选择小批量规模时还需要考虑的另一个因素是，充分利用运行代码的底层硬件架构。例如，在某些硬件平台上，小批量的规模如果是 2 的幂次（如 64、128、256 等）就可以获得更好的性能。
 
-用于初始化权重的分布通常要么是范围为 $[-\epsilon,\epsilon]$ 的均匀分布，要么是形式为 $\mathcal{N}(0,\epsilon^2)$ 的零均值高斯分布。$\epsilon$ 值的选择很重要；在各种经验方法中，何恺明初始化~\citep{He2015b}得到了广泛使用。考虑一个网络，其中第 $l$ 层计算以下转换：
+\begin{definition}[小批量]\label{definition:ch07-小批量}
+在每次迭代中从整个训练集中随机抽取的、用于估计整体误差函数梯度的一小组数据点称为\textbf{小批量}（mini-batch）。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch07-小批量; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+小批量方法在批处理与单点 SGD 之间插值：批量规模 $B=1$ 时退化为\eqref{align:ch07-随机梯度下降}，$B=N$ 时退化为批处理。它的两个极端分别对应“梯度噪声大、但单步代价低”和“梯度精确、但单步代价高”，而 $B$ 取中间值时，梯度估计的方差按 $1/B$ 下降，单步代价按 $B$ 增长，二者的乘积大致不变——这正是“收益递减”的确切含义：把 $B$ 扩大 100 倍只能把标准差降到 $1/10$。定义中“随机抽取”不是可有可无的措辞：若数据按类别或时间排序，连续取出的 $B$ 个样本会高度相关，梯度估计将产生系统偏差，因此实践中必须先打乱数据，并在每个训练轮次重新打乱。
+\end{remark}
+
+在使用小批量方法时，要注意，数据点应当从整个数据集中随机选取。因为在原始数据集中，由于数据采集方式（例如数据点是按照字母顺序或日期排序），相邻的数据点之间可能存在相关性。为了消除这种相关性的影响，通常的做法是先将整个数据集进行随机打乱，然后按顺序划分为多个小批量。此外，在每次完整遍历数据集后，还可以再次进行数据打乱，以确保每个小批量的数据组合都是全新的，这有助于模型跳出局部最优解。下面的算法总结了这种算法的变体。值得注意的是，即使采用了小批量方法，这种学习算法通常仍被称为“随机梯度下降”。
+
+\begin{center}
+\setlength{\fboxsep}{7pt}%
+\fbox{\begin{minipage}{0.8\textwidth}
+\centering\textbf{算法 7.2\quad 带有小批量的随机梯度下降}\par
+\vspace{5pt}
+\begin{flushleft}
+\textbf{Input:} 由 $n\in\{1,\cdots,N\}$ 索引的数据点构成的训练集\\
+\hspace*{1.5em}批量规模 $B$\\
+\hspace*{1.5em}每个小批量的误差函数 $E_{n:n+B-1}(\mathbf{w})$\\
+\hspace*{1.5em}学习率参数 $\eta$\\
+\hspace*{1.5em}初始权重向量 $\mathbf{w}$\\
+\textbf{Output:} 最终的权重向量 $\mathbf{w}$\\
+$n\leftarrow 1$\\
+\textbf{repeat}\\
+\hspace*{1.5em}$\mathbf{w}\leftarrow\mathbf{w}-\eta\nabla E_{n:n+B-1}(\mathbf{w})$ \quad // 更新权重向量\\
+\hspace*{1.5em}$n\leftarrow n+B$\\
+\hspace*{1.5em}\textbf{if} $n>N$ \textbf{then}\\
+\hspace*{3em}打乱数据\\
+\hspace*{3em}$n\leftarrow 1$\\
+\hspace*{1.5em}\textbf{end if}\\
+\textbf{until} 收敛\\
+\textbf{return} $\mathbf{w}$
+\end{flushleft}
+\end{minipage}}
+\end{center}
+
+\subsection{参数初始化}\label{subsection:ch07-参数初始化}
+
+像梯度下降这样的迭代式优化算法，都要求我们为需要学习的参数设定初始值。参数初始化的具体策略会对算法收敛的速度以及训练得到的网络的泛化能力产生显著的影响。遗憾的是，目前还没有能够系统性地指导参数初始化过程的完善理论。
+
+尽管如此，在参数初始化过程中一个关键的考虑因素是对称性破缺（symmetry breaking）。考虑网络中的一组隐藏单元或输出单元，它们都接收相同的输入信号。如果这些单元的所有参数都被赋予了相同的值，例如全部初始化为零，那么这些单元的参数在训练过程中将始终步调一致地进行更新，并且每个单元都计算出相同的函数，导致功能上的冗余。为了解决这一问题，可以从某个预先定义的分布中随机采样来初始化参数，以打破这种对称性。在计算资源允许的情况下，可以采用不同的随机初始化策略来多次训练网络，最终选择在独立验证集上性能最佳的模型。
+
+\begin{definition}[对称性破缺]\label{definition:ch07-对称性破缺}
+在参数初始化时，通过给本可互换的单元赋予互不相同的随机参数值，使这些单元在训练中不再保持同步更新的做法，称为\textbf{对称性破缺}（symmetry breaking）。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch07-对称性破缺; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+对称性的根源是网络函数对隐藏单元的置换不变（见\cref{subsection:ch06-权重空间的对称性}）：若同一层的两个单元具有完全相同的输入连接与参数，则它们的输出相同，反向传播传给它们的梯度也相同，于是无论训练多久二者始终保持相同。此时这两个单元在功能上等价于一个单元，网络的表达能力被白白浪费。随机初始化只是打破对称性的一种手段，其要点是“各不相同”而非“接近零”：初始化值过大同样会破坏训练，因为过大的预激活会使 sigmoid、tanh 等饱和激活函数的导数趋近于零（参见\cref{subsection:ch07-批量归一化}关于梯度消失的讨论）。初始化尺度与激活函数、网络深度之间的定量关系由下面的 He 初始化给出。
+\end{remark}
+
+用于初始化权重的分布通常要么是范围为 $[-\varepsilon,\varepsilon]$ 的均匀分布，要么是形式为 $\mathcal{N}(0,\varepsilon^{2})$ 的零均值 Gauss 分布。$\varepsilon$ 值的选择很重要，在各种经验方法中，He 初始化（He et al., 2015b）得到了广泛使用。考虑一个网络，其中第 $l$ 层计算以下转换：
 \begin{align}
-a_i^{(l)} = \sum_{j} w_{ij}^{(l)} z_j^{(l-1)}, \qquad z_i^{(l)} = \mathrm{ReLU}(a_i^{(l)}),
-\label{align:ch07-heinit}
+a_i^{(l)} = \sum_{j=1}^{M}w_{ij}^{(l)}z_j^{(l-1)},
+\label{align:ch07-前向计算}
 \end{align}
-其中 $j$ 是发送连接到单元 $i$ 的单元数，ReLU 激活函数由式~\eqref{align:ch06-relu}~给出。假设使用高斯分布 $\mathcal{N}(0,\sigma_w^2)$ 初始化权重，并假设第 $(l-1)$ 层中单元的输出 $z_j^{(l-1)}$ 具有零均值和方差 $s^2$（见习题~7.9），则可以容易地证明
 \begin{align}
-\mathbb{E}[a_i^{(l)}] = 0, \qquad \mathrm{var}[a_i^{(l)}] = M s^2 \sigma_w^2.
-\label{align:ch07-hevar}
+z_i^{(l)} = \mathrm{ReLU}\bigl(a_i^{(l)}\bigr),
+\label{align:ch07-激活函数}
 \end{align}
-其中的因子来自 ReLU 激活函数。理想情况下我们希望确保在从一层传播到下一层时，预激活的方差既不会衰减到零，也不会显著增长。如果因此要求第 $l$ 层单元也具有方差 $s^2$，那么对于一个具有 $M$ 个输入的单元，用于初始化其权重的高斯分布标准差为：
+其中 $M$ 是发送连接到单元 $i$ 的单元数，ReLU 激活函数由\eqref{align:ch06-relu}给出。假设我们使用 Gauss 分布 $\mathcal{N}(0,\varepsilon^{2})$ 初始化权重，并假设第 $(l-1)$ 层的预激活 $a_j^{(l-1)}$ 具有零均值和方差 $\lambda^{2}$（参见\cref{exercise:ch07-09}），则可以容易地证明
 \begin{align}
-\sigma_w = \sqrt{\frac{2}{M}}.
-\label{align:ch07-hestd}
+\mathbb{E}\bigl[a_i^{(l)}\bigr] = 0,
+\label{align:ch07-初始化均值}
+\end{align}
+\begin{align}
+\mathrm{var}\bigl[a_i^{(l)}\bigr] = \frac{M}{2}\varepsilon^{2}\lambda^{2}.
+\label{align:ch07-初始化方差}
 \end{align}
 
-我们还可以将初始化分布的尺度 $\epsilon$ 视为一个超参数，并在多次训练中探索不同的 $\epsilon$ 值。偏置参数通常设置为小的正值，以确保大多数预激活在学习开始时处于激活状态——这对 ReLU 特别有帮助，我们希望预激活为正值，以便有非零梯度来驱动学习过程。
+\begin{proposition}[He 初始化的方差传播]\label{proposition:ch07-初始化方差}
+设第 $l-1$ 层的预激活 $a_j^{(l-1)}$ 相互独立、分布关于原点对称，并满足 $\mathbb{E}[a_j^{(l-1)}]=0$、$\mathrm{var}[a_j^{(l-1)}]=\lambda^{2}$；设 $z_j^{(l-1)}=\mathrm{ReLU}(a_j^{(l-1)})$ 相互独立、与权重独立，权重 $\{w_{ij}^{(l)}\}$ 相互独立且服从 $\mathcal{N}(0,\varepsilon^{2})$，第 $l$ 层的预激活由\eqref{align:ch07-前向计算}给出。则\eqref{align:ch07-初始化均值}与\eqref{align:ch07-初始化方差}成立；特别地，若要求第 $l$ 层的预激活也具有方差 $\lambda^{2}$，则初始化分布的标准差应取
+\begin{align}
+\varepsilon = \sqrt{\frac{2}{M}}.
+\label{align:ch07-初始化尺度}
+\end{align}
+\end{proposition}
+\begin{proof}（重构新增）
+由 $\mathbb{E}[w_{ij}^{(l)}]=0$ 及独立性，
+\begin{align*}
+\mathbb{E}\bigl[a_i^{(l)}\bigr] = \sum_{j=1}^{M}\mathbb{E}\bigl[w_{ij}^{(l)}\bigr]\mathbb{E}\bigl[z_j^{(l-1)}\bigr] = 0,
+\end{align*}
+即\eqref{align:ch07-初始化均值}。再由各项独立且均值为零，
+\begin{align*}
+\mathrm{var}\bigl[a_i^{(l)}\bigr] = \sum_{j=1}^{M}\mathrm{var}\bigl(w_{ij}^{(l)}z_j^{(l-1)}\bigr)
+= \sum_{j=1}^{M}\mathbb{E}\bigl[(w_{ij}^{(l)})^{2}\bigr]\mathbb{E}\bigl[(z_j^{(l-1)})^{2}\bigr]
+= M\varepsilon^{2}\,\mathbb{E}\bigl[(z_j^{(l-1)})^{2}\bigr].
+\end{align*}
+由于 $z_j^{(l-1)}=\mathrm{ReLU}(a_j^{(l-1)})$，而 $a=a_j^{(l-1)}$ 的分布关于原点对称，故 $a$ 与 $-a$ 同分布；又 $\mathrm{ReLU}(a)^{2}=a^{2}$ 当 $a>0$、为 $0$ 当 $a\leqslant0$，于是
+\begin{align*}
+\mathbb{E}\bigl[\mathrm{ReLU}(a)^{2}\bigr] = \frac{1}{2}\mathbb{E}\bigl[a^{2}\bigr] = \frac{1}{2}\lambda^{2},
+\end{align*}
+其中最后一步用到 $\mathbb{E}[a]=0$。于是 $\mathrm{var}[a_i^{(l)}]=M\varepsilon^{2}\lambda^{2}/2$，即\eqref{align:ch07-初始化方差}。令其等于 $\lambda^{2}$ 并解出 $\varepsilon$，即得\eqref{align:ch07-初始化尺度}。
+\end{proof}
 
-除上述方法外，另一类重要参数初始化策略是利用在其他相关任务上预训练得到的网络权重，或者利用各种无监督学习方法。这些技术都属于迁移学习（transfer learning）的范畴（参见~6.3.4~节）。
+% SUPPLEMENT: parent=proposition:ch07-初始化方差; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+推导中每一步的条件都不可省。独立性保证方差可以逐项相加，且交叉项 $\mathbb{E}[w_{ij}z_jw_{ik}z_k]=\mathbb{E}[w_{ij}]\mathbb{E}[w_{ik}]\mathbb{E}[z_jz_k]$ 因零均值而消失；$\mathbb{E}[w_{ij}^{(l)}]=0$ 使 $\mathbb{E}[wz]=0$，从而 $\mathrm{var}(wz)=\mathbb{E}[w^{2}]\mathbb{E}[z^{2}]$；$a_j^{(l-1)}$ 的分布关于原点对称则是因子 $1/2$ 的来源——ReLU 把负半边截成零，恰有一半的概率质量被保留，故 $\mathbb{E}[\mathrm{ReLU}(a)^{2}]=\mathbb{E}[a^{2}]/2$。若把激活函数换成 tanh 或恒等映射，该因子变为 $1$，相应的尺度是 $\sqrt{1/M}$ 型（Glorot 初始化的取值即介于 $\sqrt{1/M}$ 与 $\sqrt{2/M}$ 之间，由前后层单元数决定）。原书把 $\lambda^{2}$ 归于第 $l-1$ 层单元的输出 $z_j^{(l-1)}$；由于 ReLU 输出的二阶矩只有预激活二阶矩的一半，因子 $1/2$ 只有在把 $\lambda^{2}$ 理解为预激活方差时才成立，这里按后一理解陈述，二者在 $\mathbb{E}[z]\approx0$ 的近似下一致。结论的实际意义是：若每层都按\eqref{align:ch07-初始化尺度}初始化，则前向传播中预激活的方差逐层保持不变；若 $\varepsilon$ 偏小，方差逐层衰减到零，信号无法传到深层；若 $\varepsilon$ 偏大，方差逐层放大，最终饱和或溢出。这正是“既不衰减也不爆炸”的定量表述，也是后面\cref{subsection:ch07-批量归一化}讨论梯度消失与梯度爆炸的出发点。需要注意，推导假定各层之间严格独立同分布，真实网络中这一假定只是近似，因此\eqref{align:ch07-初始化尺度}应视为尺度选择的指导而非精确公式。
+\end{remark}
+
+理想情况下，我们希望确保在从一层传播到下一层时，预激活的方差既不会衰减到零，也不会显著增长。如果我们因此要求第 $l$ 层的单元也具有方差 $\lambda^{2}$，那么对于一个具有 $M$ 个输入的单元，用于初始化其权重的 Gauss 分布的标准差由\eqref{align:ch07-初始化尺度}给出。
+
+我们还可以将初始化分布的尺度 $\varepsilon$ 视为一个超参数，并在多次训练中探索不同的 $\varepsilon$ 值。偏置参数通常设置为小的正值，以确保大多数预激活在学习开始时处于激活状态。这对 ReLU 特别有帮助，我们希望预激活为正值，以便有非零的梯度来驱动学习过程。
+
+除了上述方法之外，另一类重要的神经网络参数初始化策略，是利用在其他相关任务上预训练得到的网络权重，或者利用各种无监督学习方法。这些技术都属于迁移学习（transfer learning）的范畴（参见\cref{subsection:ch06-迁移学习}）。
 
 \end{document}

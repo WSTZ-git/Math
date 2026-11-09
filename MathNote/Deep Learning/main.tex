@@ -1,12 +1,12 @@
-﻿\documentclass[lang=cn,newtx,10pt,scheme=Chinese,citestyle=authoryear,bibstyle=authoryear]{../../Template/elegantbook}
+\documentclass[lang=cn,newtx,10pt,scheme=Chinese,citestyle=authoryear,bibstyle=authoryear]{../../Template/elegantbook}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%导航区%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \title{深度学习：基础与概念}
-% \subtitle{}
+\subtitle{Foundations and Concepts}
 
 \author{Christopher M. Bishop \& Hugh Bishop}
-\institute{中译本}
+\institute{邹欣\quad 阮思捷\quad 刘志毅\quad 王树良\quad 译}
 \date{\today}
 \version{ElegantBook-4.5}
 
@@ -18,32 +18,42 @@
 \definecolor{customcolor}{RGB}{0,176,183}
 \colorlet{coverlinecolor}{customcolor}
 
-% 正文额外使用的宏包和命令
 % ================= 隐藏/显示 证明、解答、笔记 的全局开关 =================
-% 默认隐藏内容，且不需要点按钮（保留原本的空白占位）
-% 如果想恢复原本带按钮的交互效果，只需把下面第一行"% HideEnvContenttrue"注释掉，把第二行"% HideEnvContentfalse"取消注释即可。
+% 验收要求：必须为 false，证明、解答与注记全部可见。
 \newif\ifHideEnvContent
-% \HideEnvContenttrue
 \HideEnvContentfalse
 % =========================================================================
 
-\makeatletter
-\ifHideEnvContent\else
-  \bioinfo{全局显示/隐藏证明/解答/笔记}{\AllToggle}% 全局显示/隐藏证明/解答/笔记
-\fi
-\makeatother
-
 \usepackage{../../Styles/mystyle-elegantbook}% 注意根据文件位置修改模板和宏包的索引。！
 
-% 临时兼容：reference.bib 尚未录入条目，\citep 暂输出为空（待迁移参考文献后移除本宏）
-\providecommand{\citep}[1]{}
-
-% 交叉引用设置（这里不引用这个文件自身）
-% 注意这里的引用地址不是.sty文件相对于其他被引用的.tex文件地址，而是需要引用的.tex文件相对于其他被引用的.tex地址！
+% 习题难度星号：正文字体不含 U+2605，统一映射到 amssymb 的 \bigstar，避免缺字。
+\newunicodechar{★}{\ensuremath{\bigstar}}% 注意根据文件位置修改模板和宏包的索引。！
 
 \usepackage{subfiles}
 
+% 防止「证明」「注」的标题孤零零落在页底、正文翻到下一页：
+% 环境开始前预留若干行，空间不足就整体移到下一页。
+\usepackage{needspace}
+\AtBeginEnvironment{proof}{\needspace{5\baselineskip}}
+\AtBeginEnvironment{remark}{\needspace{4\baselineskip}}
+\AtBeginEnvironment{solution}{\needspace{5\baselineskip}}
+
+% 章级交叉引用：模板只为 section/subsection 与 appendix 登记了 crefname，
+% 未登记 chapter。此处在本工程内补上，使 \cref{chapter:...} 显示为「第X章」。
+% 注意：附录章同样使用 chapter 计数器，引用附录章时用
+% \hyperref[chapter:appA-线性代数]{附录\ref*{chapter:appA-线性代数}} 形式。
+% cleveref 的输出 = 名字(#2) + 标签格式(#1)；名字若写「第」会与标签格式里的「第」重复，
+% 因此章名留空，只在标签格式里补「第…章」。
+% cleveref 输出 = 名字(#2) + 标签(#1)：名字取「第」，标签只补「章」，
+% 合起来即「第18章」，不会出现重复的「第」。
+\crefname{chapter}{第}{第}
+\Crefname{chapter}{第}{第}
+\creflabelformat{chapter}{#1章#3}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%导航区%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% 这里把它重定义为空：内容本来常显（HideEnvContentfalse），按钮只是多余的 UI 残留。
+\renewcommand{\switchocg}[2]{}
 
 \begin{document}
 
@@ -92,11 +102,29 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%附录%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%参考文献%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%参考资料%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\nocite{*}% 显示所有参考文献（原本只显示已引用的参考文献）
-\printbibliography[heading=bibintoc, title=\ebibname]
+\renewcommand{\bibname}{参考资料}
+\clearpage
+\begingroup
+\small
+\begin{thebibliography}{999}
+\input{contents/references-1.tex}
+\input{contents/references-2.tex}
+\end{thebibliography}
+\endgroup
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%参考文献%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%参考资料%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%索引%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\chapter*{索引}
+\addcontentsline{toc}{chapter}{索引}
+\markboth{索引}{索引}
+\begingroup
+\small
+
+\input{contents/index-1.tex}
+\input{contents/index-2.tex}
+
+\endgroup
 \end{document}

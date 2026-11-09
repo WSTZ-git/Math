@@ -6,9 +6,65 @@
 
 \chapter{单层网络：分类}\label{chapter:ch05-分类}
 
+\cref{chapter:ch04-回归}探讨了一类回归模型，其中输出变量是模型参数的线性函数，因此可表示为具有单层权重和偏置参数的简单神经网络。接下来，我们将目光转向分类问题。本章将重点关注类似的一类模型，这类模型同样可以表示为单层神经网络。由此，本章先介绍诸多有关分类的关键概念，以便在后面各章讨论更为通用的深度神经网络。
+
+分类旨在取一个输入向量$\boldsymbol{x}\in\mathbb{R}^{D}$，并将其归入$K$个离散类$C_k$中的一个类，其中$k=1,\cdots,K$。在最常见的场景中，这些类是不相交的，因此每个输入向量都只能归入一个类。本章使用线性模型进行分类，这意味着决策面是输入向量$\boldsymbol{x}$的线性函数，由$D$维输入空间内的$(D-1)$维超平面定义。线性分类模型可应用于非线性可分数据集，但并非所有的输入向量都能进行正确的分类。
+
+\begin{definition}[决策区域、决策边界与线性可分]\label{definition:ch05-决策区域}
+将输入空间划分为若干区域$\mathcal{R}_k$，并令每个区域对应一个类$C_k$，即约定当且仅当$\boldsymbol{x}\in\mathcal{R}_k$时把$\boldsymbol{x}$归入$C_k$类。这些区域称为决策区域（decision region）。决策区域之间的边界称为决策边界（decision boundary）或决策面（decision surface）。若存在一个线性决策面，使得数据集中的每个输入向量都被归入其所属的类，则称该数据集是线性可分（linearly separable）的。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch05-决策区域; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+引入决策区域是为了把分类器的工作方式几何化：一个分类器等价于一个从输入空间到类标签的映射，而该映射的等值面就是决策面。注意定义并不要求$\mathcal{R}_k$连通，这一点在\cref{subsection:ch05-误分类率}中会明确写出：一个决策区域可以是若干互不相交的区域之并。定义中的“线性”一词限定的是决策面的形状，而不是类-条件密度的形状；因此同一个线性决策面既可以由线性判别函数给出，也可以由共享协方差矩阵的 Gauss 类-条件密度经 Bayes 定理导出（见\cref{subsection:ch05-连续输入}）。$D=1$时超平面的维数为$0$，即决策面退化为单个点，此时“线性可分”等价于存在一个阈值把两类数据分开。线性可分的定义依赖于给定的决策面族：一个数据集对线性决策面不可分，对二次决策面却可能可分（见\cref{definition:ch05-二次判别式}）。
+\end{remark}
+
+我们可以大致确定解决分类问题的3种方法（参见\cref{subsection:ch05-推理和决策}）。其中，最简单的方法是构建一个判别函数（discriminant function），该函数直接将每一个输入向量$\boldsymbol{x}$归入一个特定类。然而，一种更有效的方法是在推理阶段依据条件概率$p(C_k\mid\boldsymbol{x})$构建分布模型，然后利用这些分布模型做出最优决策。将推理和决策分开能带来很多好处。
+
+\begin{definition}[判别函数]\label{definition:ch05-判别函数}
+判别函数（discriminant function）是把每个输入向量$\boldsymbol{x}$直接映射到某个类标签上的函数$f(\boldsymbol{x})$；等价地说，它不借助任何概率模型，直接把输入空间划分为若干决策区域。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch05-判别函数; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+判别函数的动机是把\cref{subsection:ch05-推理和决策}中的“推理”与“决策”两个阶段合并为一个学习问题：只需求出$f$，无需知道任何后验概率。其代价是丢失了概率信息：当损失矩阵改变、需要设置拒绝选项或需要补偿类的先验时，都必须重新训练（这些理由在\cref{subsection:ch05-推理和决策}中逐条给出）。注意“判别函数”与“判别式”在本书中同义使用：前者强调它是一般的映射，后者强调它确定决策边界。对二分类问题，判别函数可以取为$y(\boldsymbol{x})=\boldsymbol{w}^{\mathsf{T}}\boldsymbol{x}+w_0$的符号，此时$f$的值域只有两个元素；对$K$类问题，判别函数常取为$\arg\max_k y_k(\boldsymbol{x})$（见\cref{subsection:ch05-多分类}）。
+\end{remark}
+
+有两种不同的方法可以确定条件概率$p(C_k\mid\boldsymbol{x})$，它们的区别在于对哪一组分布做参数假设。
+
+\begin{definition}[判别概率模型与生成概率模型]\label{definition:ch05-生成与判别概率模型}
+设$p(C_k\mid\boldsymbol{x})$为给定输入$\boldsymbol{x}$时类$C_k$的后验概率。
+\begin{enumerate}[(i)]
+  \item 直接对后验概率$p(C_k\mid\boldsymbol{x})$建模，例如把它表示为参数模型并用训练集优化参数，这样得到的方法称为判别概率模型（discriminative probabilistic model）。
+  \item 先对类-条件概率密度$p(\boldsymbol{x}\mid C_k)$以及类的先验概率$p(C_k)$建模，再使用 Bayes 定理计算所需的后验概率，这样得到的方法称为生成概率模型（generative probabilistic model）。
+\end{enumerate}
+\end{definition}
+
+\begin{align}
+  p(C_k\mid\boldsymbol{x})=\frac{p(\boldsymbol{x}\mid C_k)\,p(C_k)}{p(\boldsymbol{x})}
+  \label{align:ch05-Bayes后验}
+\end{align}
+
+% SUPPLEMENT: parent=definition:ch05-生成与判别概率模型; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+两种建模方式的分界在于“对谁做参数假设”。判别概率模型只假设后验概率的函数形式，可学习参数通常较少；生成概率模型要对输入空间的密度做假设，参数通常更多，但它带来两个额外能力：其一，可从$p(\boldsymbol{x}\mid C_k)$采样生成合成数据；其二，可由\eqref{align:ch05-Bayes后验}的分母$p(\boldsymbol{x})=\sum_k p(\boldsymbol{x}\mid C_k)p(C_k)$得到边缘密度，从而识别概率很低的新数据点（离群值检测）。式\eqref{align:ch05-Bayes后验}本身只是概率的乘积法则与加和法则的推论，对$p(\boldsymbol{x})>0$成立；它并不假定任何具体的密度形式。$p(\boldsymbol{x})$的作用只是归一化，因此在比较大小时可以约去。
+\end{remark}
+
+此为生成概率模型，它提供了从每个类-条件概率密度$p(\boldsymbol{x}\mid C_k)$生成样本的方法。本章仅关注线性判别式（linear discriminant），即决策面为超平面的判别式。
+
+\begin{definition}[线性判别式]\label{definition:ch05-线性判别式}
+若一个判别式（判别函数）的决策面是输入空间中的超平面，则称它为线性判别式（linear discriminant）。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch05-线性判别式; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+线性判别式在本章中会出现三种等价的外形：单个线性函数$y(\boldsymbol{x})=\boldsymbol{w}^{\mathsf{T}}\boldsymbol{x}+w_0$的符号（二分类，见\cref{subsection:ch05-二分类}）；$K$个线性函数中取最大者（多分类，见\cref{subsection:ch05-多分类}）；以及后验概率经 logistic sigmoid 或 softmax 变换后的最大值（见\cref{subsection:ch05-连续输入}与\cref{subsection:ch05-logistic回归}）。之所以值得单独研究，是因为决策面为超平面时，其几何性质（法向量、到原点的距离、决策区域的凸性）可以完全由参数$\boldsymbol{w}$与$w_0$读出，而且这些性质不依赖于用哪种方式得到该超平面。
+\end{remark}
+
 \subfile{Chapter-05/section-01.tex}
 \subfile{Chapter-05/section-02.tex}
 \subfile{Chapter-05/section-03.tex}
 \subfile{Chapter-05/section-04.tex}
+\subfile{Chapter-05/section-05.tex}
 
 \end{document}

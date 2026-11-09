@@ -1,4 +1,4 @@
-﻿\documentclass[../../main.tex]{subfiles}
+\documentclass[../../main.tex]{subfiles}
 
 \graphicspath{{../../image/}{../../figure/}}
 
@@ -8,61 +8,354 @@
 
 到目前为止，本章所研究的概率分布（混合模型除外）都是指数族（exponential family）分布（Duda and Hart, 1973; Bernardo and Smith, 1994）这一大类里的具体例子。指数族分布的成员具有许多共同的重要性质，对这些性质的一般性讨论可以带来不少启发。
 
-给定参数$\boldsymbol{\eta}$，关于$\boldsymbol{x}$的指数族分布可以定义为以下形式的分布的集合：
-
+\begin{definition}[指数族分布]\label{definition:ch03-指数族分布}
+称一族由参数 $\boldsymbol{\eta}$ 控制的分布属于指数族（exponential family），如果其中的分布都可以写成如下形式：
 \begin{align}
-  p(\boldsymbol{x}\mid\boldsymbol{\eta})=h(\boldsymbol{x})\,g(\boldsymbol{\eta})\exp\bigl\{\boldsymbol{\eta}^{\mathsf{T}}\boldsymbol{u}(\boldsymbol{x})\bigr\}
-  \label{align:ch03-指数族定义}
+p(\boldsymbol{x}\mid\boldsymbol{\eta})=h(\boldsymbol{x})\,g(\boldsymbol{\eta})\exp\bigl\{\boldsymbol{\eta}^{\mathsf{T}}\boldsymbol{u}(\boldsymbol{x})\bigr\},
+\label{align:ch03-指数族定义}
+\end{align}
+其中 $\boldsymbol{x}$ 可以是标量或矢量，也可以是离散的或连续的；$\boldsymbol{\eta}$ 称为分布的自然参数（natural parameters），$\boldsymbol{u}(\boldsymbol{x})$ 是 $\boldsymbol{x}$ 的某个函数，$h(\boldsymbol{x})$ 是取非负值的基底函数。函数 $g(\boldsymbol{\eta})$ 是确保分布被归一化的系数，因此满足
+\begin{align}
+g(\boldsymbol{\eta})\int h(\boldsymbol{x})\exp\bigl\{\boldsymbol{\eta}^{\mathsf{T}}\boldsymbol{u}(\boldsymbol{x})\bigr\}\,\mathrm{d}\boldsymbol{x}=1,
+\label{align:ch03-指数族归一}
+\end{align}
+其中 $\boldsymbol{x}$ 若为离散变量，则积分改为求和。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch03-指数族分布; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+引入指数族的意义在于“提取公因子”：本章前面遇到的 Bernoulli、二项、多项（类别）与 Gauss 分布，尽管形式各异，却都可以写成\eqref{align:ch03-指数族定义}这一统一形式。一旦写成这种形式，许多性质（矩、最大似然、充分统计量、共轭先验）就可以一次性对整族证明，而不必逐个分布重复推导。
+
+三个组成部分各司其职：$h(\boldsymbol{x})$ 只依赖数据、与参数无关；$g(\boldsymbol{\eta})$ 只依赖参数、由\eqref{align:ch03-指数族归一}确定；$\exp\{\boldsymbol{\eta}^{\mathsf{T}}\boldsymbol{u}(\boldsymbol{x})\}$ 是数据与参数的“交互项”，它必须是 $\boldsymbol{\eta}$ 与 $\boldsymbol{u}(\boldsymbol{x})$ 的内积这一特殊形式。条件\eqref{align:ch03-指数族归一}要求\eqref{align:ch03-指数族定义}右端的积分有限且可积，这实际上限制了 $\boldsymbol{\eta}$ 的取值范围（自然参数空间）；对某些 $\boldsymbol{\eta}$，积分发散，$g(\boldsymbol{\eta})$ 无定义，该参数值就不被允许。
+\end{remark}
+
+下面我们从本章前面介绍的分布示例入手，说明它们确实是指数族分布的成员。首先考虑 Bernoulli 分布：
+\begin{align}
+p(x\mid\mu)=\mathrm{Bern}(x\mid\mu)=\mu^{x}(1-\mu)^{1-x}.
+\label{align:ch03-指数族Bernoulli}
+\end{align}
+将\eqref{align:ch03-指数族Bernoulli}的右侧表示为对数的指数，可得
+\begin{align}
+p(x\mid\mu)&=\exp\bigl\{x\ln\mu+(1-x)\ln(1-\mu)\bigr\}\nonumber\\
+&=(1-\mu)\exp\left\{\ln\left(\frac{\mu}{1-\mu}\right)x\right\}.
+\label{align:ch03-指数族Bernoulli重写}
+\end{align}
+与\eqref{align:ch03-指数族定义}比较后，我们可以确定
+\begin{align}
+\eta=\ln\left(\frac{\mu}{1-\mu}\right).
+\label{align:ch03-自然参数}
+\end{align}
+对 $\mu$ 进行求解可得 $\mu=\sigma(\eta)$，其中
+\begin{align}
+\sigma(\eta)=\frac{1}{1+\exp(-\eta)}.
+\label{align:ch03-sigmoid}
 \end{align}
 
-其中$\boldsymbol{x}$可以是标量或矢量，可以是离散的或连续的。$\boldsymbol{\eta}$则称为分布的自然参数（natural parameters），$\boldsymbol{u}(\boldsymbol{x})$是$\boldsymbol{x}$的某个函数。函数$g(\boldsymbol{\eta})$可以解释为用来确保分布被归一化的系数，因此满足
+\begin{definition}[sigmoid 函数]\label{definition:ch03-sigmoid}
+称由\eqref{align:ch03-sigmoid}定义的函数 $\sigma:\mathbb{R}\to(0,1)$ 为 sigmoid 函数（又称逻辑斯谛函数）。
+\end{definition}
 
+% SUPPLEMENT: parent=definition:ch03-sigmoid; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+sigmoid 函数在这里充当“自然参数到均值参数”的桥梁：它把无约束的实数 $\eta\in\mathbb{R}$ 一一映射到概率 $\mu\in(0,1)$，其反函数正是\eqref{align:ch03-自然参数}的 logit 变换。这一对互逆变换是指数族理论中的典型结构——自然参数可以取遍整个实数轴，而均值参数被限制在概率单纯形内。
+
+$\sigma$ 严格单调递增、值域为 $(0,1)$、且满足 $\sigma(-\eta)=1-\sigma(\eta)$，最后这一对称性在下一段把 Bernoulli 分布写成标准形式时会被直接用到。注意 $\sigma$ 是光滑函数，因此 $\eta\mapsto\mu$ 的变换不会破坏可微性，这为后面用梯度方法求最大似然提供了便利。
+\end{remark}
+
+它又称为 sigmoid 函数。因此，我们可以使用以下标准表达式来描述 Bernoulli 分布：
 \begin{align}
-  g(\boldsymbol{\eta})\int h(\boldsymbol{x})\exp\bigl\{\boldsymbol{\eta}^{\mathsf{T}}\boldsymbol{u}(\boldsymbol{x})\bigr\}\,\mathrm{d}\boldsymbol{x}=1
-  \label{align:ch03-指数族归一}
+p(x\mid\eta)=\sigma(-\eta)\exp(\eta x).
+\label{align:ch03-Bernoulli指数族}
+\end{align}
+这里使用了等式 $1-\sigma(\eta)=\sigma(-\eta)$，其易由\eqref{align:ch03-sigmoid}证得。
+
+\begin{proposition}[Bernoulli 分布的指数族形式]\label{proposition:ch03-Bernoulli指数族}
+Bernoulli 分布\eqref{align:ch03-指数族Bernoulli}可以写成\eqref{align:ch03-指数族定义}的标准形式，其中
+\begin{align}
+u(x)=x,\qquad h(x)=1,\qquad g(\eta)=\sigma(-\eta),
+\label{align:ch03-Bernoulli指数族参数}
+\end{align}
+而自然参数 $\eta$ 与均值参数 $\mu$ 由\eqref{align:ch03-自然参数}相联系。
+\end{proposition}
+\begin{proof}
+（重构新增）由\eqref{align:ch03-指数族Bernoulli重写}，$p(x\mid\mu)=(1-\mu)\exp\{\eta x\}$，其中 $\eta=\ln\frac{\mu}{1-\mu}$。把 $\mu=\sigma(\eta)$ 代入系数 $1-\mu$，利用 $1-\sigma(\eta)=\sigma(-\eta)$ 得 $1-\mu=\sigma(-\eta)$，于是
+\begin{align*}
+p(x\mid\eta)=\sigma(-\eta)\exp(\eta x),
+\end{align*}
+即\eqref{align:ch03-Bernoulli指数族}。与\eqref{align:ch03-指数族定义}逐项对照：$h(x)=1$、$u(x)=x$、$g(\eta)=\sigma(-\eta)$，即\eqref{align:ch03-Bernoulli指数族参数}。
+
+最后验证归一化条件\eqref{align:ch03-指数族归一}：$x$ 只取 $0,1$，故
+\begin{align*}
+\sum_{x=0}^{1}h(x)\exp\{\eta u(x)\}=1+\exp(\eta),
+\end{align*}
+而 $g(\eta)=\sigma(-\eta)=\frac{1}{1+\exp(\eta)}$，两者相乘为 $1$，条件满足。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch03-Bernoulli指数族; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+这条结论说明 Bernoulli 分布之所以“简单”，是因为它属于指数族：整个分布只通过 $\eta x$ 这一项依赖数据，因此数据的作用被压缩为“$x$ 的线性函数”。这也解释了为什么它的最大似然解只依赖 $\sum_n x_n$——指数族的一般理论（\cref{proposition:ch03-指数族最大似然}）会给出同一个结论。
+
+注意均值参数 $\mu$ 与自然参数 $\eta$ 的对应不是线性的：$\eta=\ln\frac{\mu}{1-\mu}$ 在 $\mu\to0$ 或 $\mu\to1$ 时发散，因此 $\mu\in(0,1)$ 对应 $\eta\in\mathbb{R}$，自然参数空间是整条实轴。若允许 $\mu=0$ 或 $\mu=1$，则 $\eta=\pm\infty$，不在自然参数空间内，这提示退化分布处于指数族的边界。
+\end{remark}
+
+接下来考虑多项分布。对于单个观测 $\boldsymbol{x}$，其形式为
+\begin{align}
+p(\boldsymbol{x}\mid\boldsymbol{\mu})=\prod_{k=1}^{M}\mu_k^{x_k}=\exp\left\{\sum_{k=1}^{M}x_k\ln\mu_k\right\},
+\label{align:ch03-指数族多项}
+\end{align}
+其中 $\boldsymbol{x}=(x_1,\cdots,x_M)^{\mathsf{T}}$。\eqref{align:ch03-指数族多项}同样可以写成标准表达式：
+\begin{align}
+p(\boldsymbol{x}\mid\boldsymbol{\eta})=\exp\bigl(\boldsymbol{\eta}^{\mathsf{T}}\boldsymbol{x}\bigr),
+\label{align:ch03-多项指数族}
+\end{align}
+其中 $\eta_k=\ln\mu_k$，并且我们定义 $\boldsymbol{\eta}=(\eta_1,\cdots,\eta_M)^{\mathsf{T}}$。与\eqref{align:ch03-指数族定义}比较可得
+\begin{align}
+\boldsymbol{u}(\boldsymbol{x})=\boldsymbol{x},\qquad h(\boldsymbol{x})=1,\qquad g(\boldsymbol{\eta})=1.
+\label{align:ch03-多项指数族参数}
+\end{align}
+注意，参数 $\eta_k$ 不是独立的，因为参数 $\mu_k$ 受到下式的约束：
+\begin{align}
+\sum_{k=1}^{M}\mu_k=1.
+\label{align:ch03-多项约束}
+\end{align}
+因此，对于给定的任意 $M-1$ 个参数 $\mu_k$，剩余参数的值被固定。在某些情况下，通过仅用 $M-1$ 个参数表达分布，可以方便地去除这一约束。这可以通过使用关系式\eqref{align:ch03-多项约束}将 $\mu_M$ 用剩余的 $\{\mu_k\}$（其中 $k=1,\cdots,M-1$）表示，从而留下 $M-1$ 个参数来实现。请注意，这些剩余参数仍然受到下式的约束：
+\begin{align}
+0\leqslant\mu_k<1,\qquad \sum_{k=1}^{M-1}\mu_k<1.
+\label{align:ch03-多项剩余约束}
+\end{align}
+利用约束\eqref{align:ch03-多项约束}，多项分布变为
+\begin{align}
+&\exp\left\{\sum_{k=1}^{M}x_k\ln\mu_k\right\}\nonumber\\
+&\quad=\exp\left\{\sum_{k=1}^{M-1}x_k\ln\mu_k+\Bigl(1-\sum_{k=1}^{M-1}x_k\Bigr)\ln\Bigl(1-\sum_{k=1}^{M-1}\mu_k\Bigr)\right\}\nonumber\\
+&\quad=\exp\left\{\sum_{k=1}^{M-1}x_k\ln\left(\frac{\mu_k}{1-\sum_{j=1}^{M-1}\mu_j}\right)+\ln\Bigl(1-\sum_{k=1}^{M-1}\mu_k\Bigr)\right\}.
+\label{align:ch03-多项重写}
+\end{align}
+现在我们确定了
+\begin{align}
+\ln\left(\frac{\mu_k}{1-\sum_{j}\mu_j}\right)=\eta_k.
+\label{align:ch03-多项自然参数}
+\end{align}
+可以通过首先对\eqref{align:ch03-多项自然参数}两边的 $k$ 求和，然后重新排列和反向代入来求解 $k$：
+\begin{align}
+\mu_k=\frac{\exp(\eta_k)}{1+\sum_{j}\exp(\eta_j)}.
+\label{align:ch03-softmax}
 \end{align}
 
-其中$\boldsymbol{x}$若为离散变量，则积分改为求和。
+\begin{definition}[softmax 函数]\label{definition:ch03-softmax}
+称由\eqref{align:ch03-softmax}给出的映射 $\boldsymbol{\eta}\mapsto\boldsymbol{\mu}$ 为 softmax 函数或归一化指数（normalized exponential），它把 $\mathbb{R}^{M-1}$ 中的自然参数映射为概率向量 $\boldsymbol{\mu}$。
+\end{definition}
 
-下面从本章前面介绍的分布示例入手，说明它们确实是指数族分布的成员。首先考虑伯努利分布：
+% SUPPLEMENT: parent=definition:ch03-softmax; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+softmax 是 sigmoid 在多类别情形下的推广：$M=2$ 时\eqref{align:ch03-softmax}退化为 $\mu_1=\sigma(\eta_1)$、$\mu_2=\sigma(-\eta_1)$，正是 Bernoulli 的 sigmoid 形式。它的作用是“把任意实数打分变成概率”：先取指数保证非负，再除以总和保证归一。
 
+由于 $\mu_k$ 只由 $M-1$ 个 $\eta_k$ 决定（第 $M$ 个由归一化补足），softmax 的参数是冗余的：把所有 $\eta_k$ 同时加上常数 $c$，$\mu_k$ 不变。这一“平移不变性”是不使用全部 $M$ 个自然参数的原因，也解释了为什么多项分布的指数族表示只保留 $M-1$ 个自然参数。
+\end{remark}
+
+因此在这种表示中，多项分布将采用以下形式：
 \begin{align}
-  p(x\mid\mu)=\mathrm{Bern}(x\mid\mu)=\mu^{x}(1-\mu)^{1-x}
-  \label{align:ch03-指数族伯努利}
+p(\boldsymbol{x}\mid\boldsymbol{\eta})=\left(1+\sum_{k=1}^{M-1}\exp(\eta_k)\right)^{-1}\exp\bigl(\boldsymbol{\eta}^{\mathsf{T}}\boldsymbol{x}\bigr).
+\label{align:ch03-多项标准形式}
+\end{align}
+这是带有参数向量 $\boldsymbol{\eta}=(\eta_1,\cdots,\eta_{M-1})^{\mathsf{T}}$ 的指数族分布的标准形式。与\eqref{align:ch03-指数族定义}比较可得
+\begin{align}
+\boldsymbol{u}(\boldsymbol{x})=\boldsymbol{x},\qquad h(\boldsymbol{x})=1,\qquad g(\boldsymbol{\eta})=\left(1+\sum_{k=1}^{M-1}\exp(\eta_k)\right)^{-1}.
+\label{align:ch03-多项标准参数}
 \end{align}
 
-将其表示为对数的指数，可得$p(x\mid\mu)=\exp\{x\ln\mu+(1-x)\ln(1-\mu)\}$。与\cref{align:ch03-指数族定义}比较后，令$\eta=\ln\{\mu/(1-\mu)\}$，对$\mu$进行求解可得$\mu=\sigma(\eta)$，其中
+\begin{proposition}[多项（类别）分布的指数族形式]\label{proposition:ch03-多项指数族}
+多项分布\eqref{align:ch03-指数族多项}可以写成\eqref{align:ch03-指数族定义}的标准形式。若保留全部 $M$ 个自然参数 $\eta_k=\ln\mu_k$，则 $g(\boldsymbol{\eta})=1$、$\boldsymbol{u}(\boldsymbol{x})=\boldsymbol{x}$、$h(\boldsymbol{x})=1$；若消去归一化约束\eqref{align:ch03-多项约束}而只保留 $M-1$ 个自然参数，则形式为\eqref{align:ch03-多项标准形式}，其中 $g$ 由\eqref{align:ch03-多项标准参数}给出。
+\end{proposition}
+\begin{proof}
+（重构新增）第一种写法：由\eqref{align:ch03-指数族多项}，$p(\boldsymbol{x}\mid\boldsymbol{\mu})=\exp\{\sum_k x_k\ln\mu_k\}$。取 $\eta_k=\ln\mu_k$，则 $p=\exp\{\boldsymbol{\eta}^{\mathsf{T}}\boldsymbol{x}\}$，即\eqref{align:ch03-多项指数族}，故 $\boldsymbol{u}(\boldsymbol{x})=\boldsymbol{x}$、$h(\boldsymbol{x})=1$、$g(\boldsymbol{\eta})=1$，即\eqref{align:ch03-多项指数族参数}。注意此时 $\boldsymbol{\eta}$ 落在约束 $\sum_k\exp(\eta_k)=1$ 上，并非自由参数。
 
+第二种写法：由\eqref{align:ch03-多项约束}，$\mu_M=1-\sum_{k=1}^{M-1}\mu_k$，且 $\sum_k x_k=1$，故\eqref{align:ch03-多项重写}成立。把\eqref{align:ch03-多项自然参数}代入\eqref{align:ch03-多项重写}，得
+\begin{align*}
+p(\boldsymbol{x}\mid\boldsymbol{\eta})=\Bigl(1-\sum_{k=1}^{M-1}\mu_k\Bigr)\exp\Bigl\{\sum_{k=1}^{M-1}\eta_k x_k\Bigr\}.
+\end{align*}
+再由\eqref{align:ch03-多项自然参数}解出 $\mu_k$：对 $k$ 求和得 $\sum_k\mu_k/(1-\sum_j\mu_j)=\sum_k\exp(\eta_k)$，即 $\frac{\sum_k\mu_k}{1-\sum_j\mu_j}=\sum_k\exp(\eta_k)$，而 $\sum_k\mu_k=1-\mu_M$，解得 $1-\sum_{k=1}^{M-1}\mu_k=\bigl(1+\sum_k\exp(\eta_k)\bigr)^{-1}$，代回即得\eqref{align:ch03-多项标准形式}。对照\eqref{align:ch03-指数族定义}读出\eqref{align:ch03-多项标准参数}。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch03-多项指数族; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+两种写法各有取舍：保留 $M$ 个参数时 $g\equiv1$、形式最简洁，但自然参数被约束在 $\sum_k e^{\eta_k}=1$ 上，不是“标准”的指数族（标准形式要求自然参数在开集内自由取值）；改用 $M-1$ 个参数后，自然参数可以自由取值，代价是 $g(\boldsymbol{\eta})$ 变成非平凡的归一化函数。指数族的一般理论（例如\cref{proposition:ch03-指数族矩}）要求自然参数自由，因此第二种写法才是范式。
+
+这也解释了为什么\cref{subsection:ch03-多项分布}中类别分布的参数只有 $K-1$ 个自由度：冗余不是书写习惯，而是分布本身的几何性质（概率向量位于单纯形上）。
+\end{remark}
+
+最后考虑 Gauss 分布。对于一元 Gauss 分布，我们有
 \begin{align}
-  \sigma(\eta)=\frac{1}{1+\exp(-\eta)}
-  \label{align:ch03-sigmoid}
+p(x\mid\mu,\sigma^{2})&=\frac{1}{(2\pi\sigma^{2})^{1/2}}\exp\left\{-\frac{1}{2\sigma^{2}}(x-\mu)^{2}\right\}\nonumber\\
+&=\frac{1}{(2\pi\sigma^{2})^{1/2}}\exp\left\{-\frac{1}{2\sigma^{2}}x^{2}+\frac{\mu}{\sigma^{2}}x-\frac{1}{2\sigma^{2}}\mu^{2}\right\}.
+\label{align:ch03-指数族Gauss展开}
+\end{align}
+经过一些简单的重排，就可以得到标准指数族分布的形式[\eqref{align:ch03-指数族定义}]（见\cref{exercise:ch03-35}）：
+\begin{align}
+\boldsymbol{\eta}=\begin{pmatrix}\mu/\sigma^{2}\\ -1/(2\sigma^{2})\end{pmatrix},
+\label{align:ch03-Gauss自然参数}
+\end{align}
+\begin{align}
+\boldsymbol{u}(x)=\begin{pmatrix}x\\ x^{2}\end{pmatrix},
+\label{align:ch03-Gauss指数族统计量}
+\end{align}
+\begin{align}
+h(x)=(2\pi)^{-1/2},
+\label{align:ch03-Gauss基底}
+\end{align}
+\begin{align}
+g(\boldsymbol{\eta})=(-2\eta_2)^{1/2}\exp\left(\frac{\eta_1^{2}}{4\eta_2}\right).
+\label{align:ch03-Gauss归一化}
 \end{align}
 
-它又称为sigmoid函数。因此伯努利分布可以写成标准指数族形式$p(x\mid\eta)=\sigma(-\eta)\exp\{\eta x\}$，其中$\boldsymbol{u}(x)=x$，$h(x)=1$。
+\begin{proposition}[一元 Gauss 分布的指数族形式]\label{proposition:ch03-Gauss指数族}
+一元 Gauss 分布\eqref{align:ch03-一元Gauss}可以写成\eqref{align:ch03-指数族定义}的标准形式，其中 $\boldsymbol{\eta}$、$\boldsymbol{u}(x)$、$h(x)$、$g(\boldsymbol{\eta})$ 分别由\eqref{align:ch03-Gauss自然参数}至\eqref{align:ch03-Gauss归一化}给出。
+\end{proposition}
+\begin{proof}
+（重构新增）记 $\eta_1=\mu/\sigma^{2}$、$\eta_2=-1/(2\sigma^{2})$，则 $\sigma^{2}=-1/(2\eta_2)$，且 $\mu=\eta_1\sigma^{2}=-\eta_1/(2\eta_2)$。由\eqref{align:ch03-指数族Gauss展开}，
+\begin{align*}
+p(x\mid\mu,\sigma^{2})&=(2\pi)^{-1/2}(\sigma^{2})^{-1/2}\exp\left\{\eta_2x^{2}+\eta_1x-\frac{\mu^{2}}{2\sigma^{2}}\right\}\\
+&=(2\pi)^{-1/2}\Bigl(-\frac{1}{2\eta_2}\Bigr)^{-1/2}\exp\left\{-\frac{\mu^{2}}{2\sigma^{2}}\right\}\exp\{\eta_1x+\eta_2x^{2}\}.
+\end{align*}
+第一项与 $x$ 无关，可并入 $g(\boldsymbol{\eta})$。计算常数因子：
+\begin{align*}
+(-\tfrac{1}{2\eta_2})^{-1/2}=(-2\eta_2)^{1/2},\qquad -\frac{\mu^{2}}{2\sigma^{2}}=-\frac{1}{2\sigma^{2}}\cdot\frac{\eta_1^{2}\sigma^{4}}{1}=-\frac{\eta_1^{2}\sigma^{2}}{2}=\frac{\eta_1^{2}}{4\eta_2},
+\end{align*}
+故 $g(\boldsymbol{\eta})=(-2\eta_2)^{1/2}\exp\bigl(\eta_1^{2}/(4\eta_2)\bigr)$，即\eqref{align:ch03-Gauss归一化}。于是
+\begin{align*}
+p(x\mid\boldsymbol{\eta})=(2\pi)^{-1/2}g(\boldsymbol{\eta})\exp\{\eta_1x+\eta_2x^{2}\}=h(x)g(\boldsymbol{\eta})\exp\{\boldsymbol{\eta}^{\mathsf{T}}\boldsymbol{u}(x)\},
+\end{align*}
+其中 $\boldsymbol{\eta},\boldsymbol{u}(x),h(x)$ 由\eqref{align:ch03-Gauss自然参数}至\eqref{align:ch03-Gauss基底}给出。
+\end{proof}
 
-接下来考虑多项分布。对于单个观测$\boldsymbol{x}$，其形式为$p(\boldsymbol{x}\mid\boldsymbol{\mu})=\prod_k\mu_k^{x_k}$。同样可以写成标准指数族形式，其中$\boldsymbol{u}(\boldsymbol{x})=\boldsymbol{x}$，$h(\boldsymbol{x})=1$。通过对参数施加$\sum_k\mu_k=1$的约束，可以将$\mu_k$用其余$M-1$个参数表示，从而得到
+% SUPPLEMENT: parent=proposition:ch03-Gauss指数族; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+一元 Gauss 分布的自然参数是二维的，且第二个分量 $\eta_2=-1/(2\sigma^{2})$ 必须为负——这正是它的自然参数空间是“下半平面”而非整个 $\mathbb{R}^{2}$ 的原因。充分统计量 $\boldsymbol{u}(x)=(x,x^{2})^{\mathsf{T}}$ 说明：要知道 Gauss 分布的似然，只需知道样本的和与平方和，而不必保存全部样本。
 
+这条结论也解释了为什么 Gauss 分布的共轭先验（正态-逆 Gamma）形式复杂：自然参数空间是受约束的区域，先验必须支撑在这个区域上。当 $\sigma^{2}\to\infty$ 时 $\eta_2\to0^{-}$，自然参数趋于边界，$g$ 的表达式出现退化。
+\end{remark}
+
+有时我们会使用\eqref{align:ch03-指数族定义}所示的带约束形式，其中我们选择 $\boldsymbol{u}(\boldsymbol{x})=\boldsymbol{x}$。不过，我们也可以将其稍微推广一下。如果 $f(x)$ 是一个归一化的密度函数，则
 \begin{align}
-  \mu_k=\frac{\exp\{\eta_k\}}{\sum_j\exp\{\eta_j\}}
-  \label{align:ch03-softmax}
+\frac{1}{s}f\left(\frac{x}{s}\right)
+\label{align:ch03-尺度族}
+\end{align}
+也是一个归一化的密度函数，其中 $s>0$ 是尺度参数。结合这些，我们可以得到指数族分布的类-条件密度的一个约束集，形式为
+\begin{align}
+p(x\mid\lambda_k,s)=\frac{1}{s}h\left(\frac{x}{s}\right)g(\lambda_k)\exp\left\{\frac{1}{s}\lambda_k^{\mathsf{T}}x\right\}.
+\label{align:ch03-类条件指数族}
+\end{align}
+注意，我们允许每个类别都有自己的参数向量 $\lambda_k$，并且我们假设这些类别共享相同的尺度参数 $s$。
+
+\begin{proposition}[尺度变换保持归一化]\label{proposition:ch03-尺度变换}
+设 $f(x)$ 为归一化密度，$s>0$，则\eqref{align:ch03-尺度族}也是归一化密度。
+\end{proposition}
+\begin{proof}
+（重构新增）作变量替换 $y=x/s$，则 $\mathrm{d}x=s\,\mathrm{d}y$，于是
+\begin{align*}
+\int\frac{1}{s}f\left(\frac{x}{s}\right)\mathrm{d}x=\int\frac{1}{s}f(y)\,s\,\mathrm{d}y=\int f(y)\,\mathrm{d}y=1,
+\end{align*}
+且被积函数非负，故\eqref{align:ch03-尺度族}是归一化密度。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch03-尺度变换; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+\eqref{align:ch03-尺度族}是“把一个密度横向拉伸 $s$ 倍、纵向压缩 $s$ 倍”的操作，它保持总积分为 $1$，因此仍是合法密度。\eqref{align:ch03-类条件指数族}把这一尺度参数引入指数族，使不同类别可以共享同一个“宽度”而各自拥有位置参数 $\lambda_k$，这在分类问题中常用于建模各类条件密度形状相似、尺度相同的情形。
+
+条件 $s>0$ 保证变换不翻转坐标轴；$s\to0$ 或 $s\to\infty$ 会使密度趋于奇异或平坦，不在正常模型范围内。注意这里各类共享 $s$ 是一个实质性假设，若各类尺度不同则应把 $s$ 也加上下标 $k$。
+\end{remark}
+
+\subsection{充分统计量}\label{subsection:ch03-充分统计量}
+
+\begin{definition}[充分统计量]\label{definition:ch03-充分统计量}
+设数据 $X=\{\boldsymbol{x}_1,\cdots,\boldsymbol{x}_N\}$ 来自以 $\boldsymbol{\eta}$ 为参数的分布族。若存在函数 $\boldsymbol{T}(X)$ 使得在给定 $\boldsymbol{T}(X)$ 的条件下 $X$ 的分布与 $\boldsymbol{\eta}$ 无关，则称 $\boldsymbol{T}(X)$ 为该分布族的充分统计量（sufficient statistic）。对指数族\eqref{align:ch03-指数族定义}，$\sum_{n}\boldsymbol{u}(\boldsymbol{x}_n)$ 是充分统计量。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch03-充分统计量; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+充分统计量的直观含义是“数据中关于参数的全部信息都压缩在 $\boldsymbol{T}(X)$ 里”：一旦知道 $\boldsymbol{T}(X)$，再保留原始数据也不会提供关于 $\boldsymbol{\eta}$ 的额外信息。因此它可以用于数据压缩、在线学习与分布式计算。
+
+这一定义在指数族情形下有一个非常具体的体现：似然只通过 $\sum_n\boldsymbol{u}(\boldsymbol{x}_n)$ 依赖数据（\cref{proposition:ch03-指数族最大似然}），故该和式必然是充分的。对 Bernoulli 分布 $\boldsymbol{u}(x)=x$，充分统计量是 $\sum_n x_n$；对一元 Gauss 分布 $\boldsymbol{u}(x)=(x,x^{2})^{\mathsf{T}}$，充分统计量是 $\sum_n x_n$ 与 $\sum_n x_n^{2}$。注意充分性依赖于分布族的选择：同一组数据对不同模型可能有不同的充分统计量。
+\end{remark}
+
+考虑使用最大似然估计的方法来估计一般指数族分布[\eqref{align:ch03-指数族定义}]中的参数向量 $\boldsymbol{\eta}$。在\eqref{align:ch03-指数族归一}的两边对 $\boldsymbol{\eta}$ 求导，可得
+\begin{align}
+\nabla g(\boldsymbol{\eta})\int h(\boldsymbol{x})\exp\bigl\{\boldsymbol{\eta}^{\mathsf{T}}\boldsymbol{u}(\boldsymbol{x})\bigr\}\mathrm{d}\boldsymbol{x}+g(\boldsymbol{\eta})\int h(\boldsymbol{x})\exp\bigl\{\boldsymbol{\eta}^{\mathsf{T}}\boldsymbol{u}(\boldsymbol{x})\bigr\}\boldsymbol{u}(\boldsymbol{x})\,\mathrm{d}\boldsymbol{x}=0.
+\label{align:ch03-指数族求导}
+\end{align}
+重排并再次使用\eqref{align:ch03-指数族归一}，可得
+\begin{align}
+\frac{1}{g(\boldsymbol{\eta})}\nabla g(\boldsymbol{\eta})=g(\boldsymbol{\eta})\int h(\boldsymbol{x})\exp\bigl\{\boldsymbol{\eta}^{\mathsf{T}}\boldsymbol{u}(\boldsymbol{x})\bigr\}\boldsymbol{u}(\boldsymbol{x})\,\mathrm{d}\boldsymbol{x}=\mathbb{E}[\boldsymbol{u}(\boldsymbol{x})],
+\label{align:ch03-指数族矩推导}
+\end{align}
+从而得到
+\begin{align}
+-\nabla\ln g(\boldsymbol{\eta})=\mathbb{E}[\boldsymbol{u}(\boldsymbol{x})].
+\label{align:ch03-指数族矩}
 \end{align}
 
-它又称为softmax函数或归一化指数（normalized exponential）。最后考虑高斯分布，经过简单的重排，一元高斯分布同样可以写成\cref{align:ch03-指数族定义}的标准形式（见习题~3.35）。
+\begin{proposition}[指数族的矩]\label{proposition:ch03-指数族矩}
+设 $p(\boldsymbol{x}\mid\boldsymbol{\eta})=h(\boldsymbol{x})g(\boldsymbol{\eta})\exp\{\boldsymbol{\eta}^{\mathsf{T}}\boldsymbol{u}(\boldsymbol{x})\}$ 为指数族分布，$g$ 可微且\eqref{align:ch03-指数族归一}成立。则
+\begin{align*}
+-\nabla\ln g(\boldsymbol{\eta})=\mathbb{E}[\boldsymbol{u}(\boldsymbol{x})],
+\end{align*}
+即 $g$ 的对数的负梯度给出充分统计量的期望。
+\end{proposition}
+\begin{proof}
+（重构新增）对\eqref{align:ch03-指数族归一}两边关于 $\boldsymbol{\eta}$ 求导。左边用乘积法则得\eqref{align:ch03-指数族求导}，其中第二项来自 $\exp\{\boldsymbol{\eta}^{\mathsf{T}}\boldsymbol{u}(\boldsymbol{x})\}$ 对 $\boldsymbol{\eta}$ 的导数 $\boldsymbol{u}(\boldsymbol{x})\exp\{\boldsymbol{\eta}^{\mathsf{T}}\boldsymbol{u}(\boldsymbol{x})\}$。
 
-考虑使用最大似然来估计一般指数族分布中的参数向量$\boldsymbol{\eta}$。在\cref{align:ch03-指数族归一}两边对$\boldsymbol{\eta}$求导并重排，可以得到
+由\eqref{align:ch03-指数族归一}，$\int h\exp\{\boldsymbol{\eta}^{\mathsf{T}}\boldsymbol{u}\}\mathrm{d}\boldsymbol{x}=1/g(\boldsymbol{\eta})$，代入\eqref{align:ch03-指数族求导}的第一项得 $\nabla g/g+g\int h e^{\boldsymbol{\eta}^{\mathsf{T}}\boldsymbol{u}}\boldsymbol{u}\,\mathrm{d}\boldsymbol{x}=0$。而
+\begin{align*}
+g(\boldsymbol{\eta})\int h(\boldsymbol{x})e^{\boldsymbol{\eta}^{\mathsf{T}}\boldsymbol{u}(\boldsymbol{x})}\boldsymbol{u}(\boldsymbol{x})\,\mathrm{d}\boldsymbol{x}=\int p(\boldsymbol{x}\mid\boldsymbol{\eta})\boldsymbol{u}(\boldsymbol{x})\,\mathrm{d}\boldsymbol{x}=\mathbb{E}[\boldsymbol{u}(\boldsymbol{x})],
+\end{align*}
+即\eqref{align:ch03-指数族矩推导}。故 $\frac{1}{g}\nabla g=-\mathbb{E}[\boldsymbol{u}]$，即 $-\nabla\ln g(\boldsymbol{\eta})=\mathbb{E}[\boldsymbol{u}(\boldsymbol{x})]$。
+\end{proof}
 
+% SUPPLEMENT: parent=proposition:ch03-指数族矩; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+这条结论给出了一个极其便利的“矩的微分公式”：只要知道归一化函数 $g$，就能通过对 $\ln g$ 求导得到充分统计量的期望，而无需做任何积分。若对\eqref{align:ch03-指数族归一}再求一次导数，还能得到 $\mathrm{cov}[\boldsymbol{u}(\boldsymbol{x})]=-\nabla^{2}\ln g(\boldsymbol{\eta})$（\cref{exercise:ch03-36}），于是所有低阶矩都可以由 $g$ 的导数读出。
+
+推导只用到“积分与求导可交换”这一分析事实，其合法性由 $g$ 可微、积分在 $\boldsymbol{\eta}$ 的邻域内一致收敛保证。若 $\boldsymbol{\eta}$ 取在自然参数空间的边界上，积分可能发散，公式失效。
+\end{remark}
+
+因此，如果可以对指数族分布进行归一化，则总是可以通过对归一化函数进行简单的微分来找到它的矩。
+
+考虑一组由 $X=\{\boldsymbol{x}_1,\cdots,\boldsymbol{x}_N\}$ 表示的独立同分布数据，其似然函数为
 \begin{align}
-  -\nabla\ln g(\boldsymbol{\eta})=\mathbb{E}[\boldsymbol{u}(\boldsymbol{x})]
-  \label{align:ch03-指数族矩}
+p(X\mid\boldsymbol{\eta})=\left(\prod_{n=1}^{N}h(\boldsymbol{x}_n)\right)g(\boldsymbol{\eta})^{N}\exp\left\{\boldsymbol{\eta}^{\mathsf{T}}\sum_{n=1}^{N}\boldsymbol{u}(\boldsymbol{x}_n)\right\}.
+\label{align:ch03-指数族似然}
+\end{align}
+令 $\ln p(X\mid\boldsymbol{\eta})$ 对 $\boldsymbol{\eta}$ 的梯度为零，可以得出最大似然估计量 $\boldsymbol{\eta}_{\mathrm{ML}}$ 必须满足以下条件：
+\begin{align}
+-\nabla\ln g(\boldsymbol{\eta}_{\mathrm{ML}})=\frac{1}{N}\sum_{n=1}^{N}\boldsymbol{u}(\boldsymbol{x}_n).
+\label{align:ch03-指数族ML}
 \end{align}
 
-因此，如果可以对指数族分布进行归一化，则总是可以通过对归一化函数进行简单的微分来找到它的矩。考虑一组独立同分布数据$X=\{\boldsymbol{x}_1,\cdots,\boldsymbol{x}_N\}$，令对数似然对$\boldsymbol{\eta}$的梯度为零，可以得出最大似然估计$\boldsymbol{\eta}_{\mathrm{ML}}$必须满足
+\begin{proposition}[指数族分布的最大似然估计]\label{proposition:ch03-指数族最大似然}
+设 $X=\{\boldsymbol{x}_1,\cdots,\boldsymbol{x}_N\}$ 为来自指数族\eqref{align:ch03-指数族定义}的独立同分布观测。则最大似然估计 $\boldsymbol{\eta}_{\mathrm{ML}}$ 满足\eqref{align:ch03-指数族ML}，即“充分统计量的样本平均等于其期望”。当 $N\to\infty$ 时，$\boldsymbol{\eta}_{\mathrm{ML}}$ 收敛到真实参数 $\boldsymbol{\eta}$。
+\end{proposition}
+\begin{proof}
+（重构新增）对\eqref{align:ch03-指数族似然}取对数：
+\begin{align*}
+\ln p(X\mid\boldsymbol{\eta})=\sum_{n}\ln h(\boldsymbol{x}_n)+N\ln g(\boldsymbol{\eta})+\boldsymbol{\eta}^{\mathsf{T}}\sum_{n}\boldsymbol{u}(\boldsymbol{x}_n).
+\end{align*}
+对 $\boldsymbol{\eta}$ 求梯度并令其为零：
+\begin{align*}
+N\frac{\nabla g(\boldsymbol{\eta})}{g(\boldsymbol{\eta})}+\sum_{n}\boldsymbol{u}(\boldsymbol{x}_n)=0\quad\Longrightarrow\quad-\nabla\ln g(\boldsymbol{\eta})=\frac{1}{N}\sum_{n}\boldsymbol{u}(\boldsymbol{x}_n),
+\end{align*}
+即\eqref{align:ch03-指数族ML}。
 
-\begin{align}
-  -\nabla\ln g(\boldsymbol{\eta}_{\mathrm{ML}})=\frac{1}{N}\sum_{n=1}^{N}\boldsymbol{u}(\boldsymbol{x}_n)
-  \label{align:ch03-指数族ML}
-\end{align}
+关于 $N\to\infty$：由大数定律，\eqref{align:ch03-指数族ML}右端几乎必然收敛到 $\mathbb{E}[\boldsymbol{u}(\boldsymbol{x})]$；而由\cref{proposition:ch03-指数族矩}，左端 $-\nabla\ln g(\boldsymbol{\eta})$ 正是 $\mathbb{E}[\boldsymbol{u}(\boldsymbol{x})]$，即真实参数 $\boldsymbol{\eta}$ 满足同一方程。若 $-\nabla\ln g$ 在自然参数空间上单射（这是指数族自然参数化的标准性质），则解唯一，故 $\boldsymbol{\eta}_{\mathrm{ML}}\to\boldsymbol{\eta}$。
+\end{proof}
 
-可以看到，最大似然估计量的解仅通过$\sum_n\boldsymbol{u}(\boldsymbol{x}_n)$依赖于数据，因此$\boldsymbol{u}(\boldsymbol{x})$又称为分布式\eqref{align:ch03-指数族定义}的充分统计量。我们不需要存储整个数据集本身，而只需要存储充分统计量的值。例如，对于伯努利分布，$\boldsymbol{u}(x)$仅由$x$给出，因此只需要存储$\{x_n\}$的和；而对于高斯分布，$\boldsymbol{u}(x)=(x,x^{2})^{\mathsf{T}}$，因此应该保留$\{x_n\}$的和与$\{x_n^{2}\}$的和。
+% SUPPLEMENT: parent=proposition:ch03-指数族最大似然; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+可以看到，最大似然估计量的解仅通过 $\sum_{n}\boldsymbol{u}(\boldsymbol{x}_n)$ 依赖于数据，因此 $\boldsymbol{u}(\boldsymbol{x})$ 又称为分布\eqref{align:ch03-指数族定义}的充分统计量（\cref{definition:ch03-充分统计量}）。我们不需要存储整个数据集本身，而只需要存储充分统计量的值。
+
+例如，对于 Bernoulli 分布，函数 $\boldsymbol{u}(x)$ 仅由 $x$ 给出，因此只需要保留数据点 $\{x_n\}$ 的和；而对于 Gauss 分布，$\boldsymbol{u}(x)=(x,x^{2})^{\mathsf{T}}$，因此应该保留 $\{x_n\}$ 的和与 $\{x_n^{2}\}$ 的和。这一“压缩”性质是指数族在工程上极为常用的原因之一。
+
+注意\eqref{align:ch03-指数族ML}一般没有闭式解：左端是 $\boldsymbol{\eta}$ 的非线性函数，需要数值求解。但对若干具体分布（如 Bernoulli、Gauss），该方程恰好可解，因而得到\cref{subsection:ch03-Bernoulli分布}与\cref{subsection:ch03-最大似然}中的显式公式。
+\end{remark}
+
+考虑极限 $N\to\infty$，\eqref{align:ch03-指数族ML}的右边将变为 $\mathbb{E}[\boldsymbol{u}(\boldsymbol{x})]$，通过与\eqref{align:ch03-指数族矩}进行比较，我们可以看到在此极限下，$\boldsymbol{\eta}_{\mathrm{ML}}$ 将等于真实值 $\boldsymbol{\eta}$。
 
 \end{document}

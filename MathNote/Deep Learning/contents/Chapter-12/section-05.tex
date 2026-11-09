@@ -1,0 +1,174 @@
+\documentclass[../../main.tex]{subfiles}
+
+\graphicspath{{../../image/}{../../figure/}}
+
+\begin{document}
+
+\section{习题}\label{section:ch12-习题}
+
+\begin{exercise}[（$\star\star$）]\label{exercise:ch12-01}
+考虑 $m=1,\cdots,N$ 时的一组系数 $a_{nm}$，它们必须满足
+\begin{align}
+a_{nm}\geqslant0
+\label{align:ch12-习题系数非负}
+\end{align}
+\begin{align}
+\sum_{m}a_{nm}=1
+\label{align:ch12-习题系数归一}
+\end{align}
+使用Lagrange乘子证明它们还必须满足
+\begin{align}
+a_{nm}\leqslant1,\qquad \text{其中 }n=1,\cdots,N.
+\label{align:ch12-习题系数上界}
+\end{align}
+\end{exercise}
+
+\begin{remark}（重构新增）
+本题的真正内容是“归一化加非负把系数锁在 $[0,1]$ 内”，Lagrange乘子只是把它形式化。互补松弛条件在这里承担了关键作用：它迫使除 $a_n$ 外的所有系数取零，从而把“最大”钉在顶点上。这个上界是\cref{proposition:ch12-单位分解}的直接来源，也保证了注意力权重可以被解释为“比例”。
+\end{remark}
+
+\begin{exercise}[（$\star$）]\label{exercise:ch12-02}
+验证对于向量 $\mathbf{x}_1,\cdots,\mathbf{x}_N$ 的任意值，softmax 函数[\eqref{align:ch12-点积注意力系数}]满足约束条件[\eqref{align:ch12-系数非负}和\eqref{align:ch12-系数归一}]。
+\end{exercise}
+
+\begin{remark}（重构新增）
+证明的关键是“分母恰为分子的和”，这使得归一化是自动的而非外加的。需要留意分母永远不为零：即使所有 $s_m$ 都很小，每个指数项也严格大于零。若改用线性归一化 $s_m/\sum s_{m'}$，则在 $s_m$ 有正有负时分母可能为零，非负性也不成立——这正是选择指数函数的理由之一。
+\end{remark}
+
+\begin{exercise}[（$\star$）]\label{exercise:ch12-03}
+考虑\eqref{align:ch12-注意力加权}定义的简单变换的输入向量 $\mathbf{x}_n$，其中加权系数 $a_{nm}$ 由\eqref{align:ch12-点积注意力系数}定义。证明如果所有输入向量都是正交的，即 $n\neq m$ 时 $\mathbf{x}_n^{\mathsf{T}}\mathbf{x}_m=0$，则输出向量将等于输入向量，即 $n=1,\cdots,N$ 时 $\mathbf{y}_n=\mathbf{x}_n$。
+\end{exercise}
+
+\begin{remark}（重构新增）
+原题把“正交”误当成“恒等映射”的充分条件，实际起作用的量是点积的绝对尺度而非其为零。正交只保证非对角元相等，因而输出是“自身 + 其余向量等权平均”的混合；要消除混合，必须让对角元的指数远大于其余项，也就是范数足够大或温度足够低。这一辨析对理解实际模型很重要：训练中注意力权重很少接近 one-hot，模型正是靠这种“部分混合”来聚合上下文信息。
+\end{remark}
+
+\begin{exercise}[（$\star$）]\label{exercise:ch12-04}
+考虑两个独立的随机向量 $\mathbf{a}$ 和 $\mathbf{b}$，这两个向量的长度均为 $D$，并且都取自均值为零、方差为单位方差的Gauss分布 $\mathcal{N}(\mathbf{0},\mathbf{I})$。证明 $\left(\mathbf{a}^{\mathsf{T}}\mathbf{b}\right)^{2}$ 的期望值由 $D$ 给出。
+\end{exercise}
+
+\begin{remark}（重构新增）
+本题是\cref{proposition:ch12-缩放点积注意力}中“点积方差为 $D_k$”的严格来源：$\mathbb{E}[(\mathbf{a}^{\mathsf{T}}\mathbf{b})^{2}]$ 是零均值随机变量 $\mathbf{a}^{\mathsf{T}}\mathbf{b}$ 的二阶矩，也就是它的方差，因此点积的标准差为 $\sqrt{D}$。这正是缩放因子取 $1/\sqrt{D_k}$ 的理由。证明中“交叉项期望为零”依赖于两个向量的各个分量相互独立且均值为零；若分量相关（例如词向量各维高度相关），方差会偏离 $D$，缩放就不再精确。
+\end{remark}
+
+\begin{exercise}[（$\star\star\star$）]\label{exercise:ch12-05}
+证明\eqref{align:ch12-多头注意力合并}定义的多头注意力可以重写为每个注意力头贡献之和的形式，并给出相应的组合权重矩阵。
+\end{exercise}
+
+\begin{remark}（重构新增）
+该恒等式说明多头注意力在代数上就是“$H$ 个带不同注意力矩阵的线性映射之和”，并不比单头多出本质的表达类型；多头的收益来自每个头拥有独立的 $\mathbf{W}_h^{(v)},\mathbf{W}_h^{(o)}$ 与独立的注意力模式。这里把 $\mathbf{W}_h^{(v)}$ 与 $\mathbf{W}_h^{(o)}$ 的连续乘积合并为一个 $\mathbf{W}^{(h)}$，正是文中提到的“冗余”：若不合并，两个矩阵之间可以插入任意可逆矩阵而不改变乘积，参数化不唯一。合并后每个头只剩一个 $D\times D$ 矩阵，参数量的记账也更清楚。
+\end{remark}
+
+\begin{exercise}[（$\star\star$）]\label{exercise:ch12-06}
+将自注意力函数[\eqref{align:ch12-缩放点积注意力}]以矩阵的形式表达为一个全连接网络，该矩阵可以将全部输入序列的合并词向量映射为相同维度的输出向量。请注意，这样的矩阵有 $O(N^{2}D^{2})$ 个参数。证明自注意力网络对应于参数共享矩阵的稀疏版本。画出该矩阵的结构草图，指出哪些参数块是共享的，以及哪些参数块的所有元素都等于零。
+\end{exercise}
+
+\begin{remark}（重构新增）
+本题给出了\cref{proposition:ch12-计算复杂度}的矩阵视角：一般全连接层需要为每一对（输入位置，输出位置）单独学习 $D^{2}$ 个参数，而注意力把这 $N^{2}$ 个块用一个 $\mathbf{W}^{(v)}$ 统一起来，块间的差异由只需 $O(ND^{2})$ 计算量的点积给出。这种“结构化的参数共享”正是归纳偏置的来源，也解释了为什么注意力在 $N$ 很大时远比全连接层经济。需要注意的是，$a_{nm}$ 虽不是参数，却使整个映射对 $\mathbf{X}$ 非线性（softmax 非线性），因此它并不是一个线性层。
+\end{remark}
+
+\begin{exercise}[（$\star$）]\label{exercise:ch12-07}
+证明如果省略输入向量的位置编码，那么\eqref{align:ch12-多头注意力合并}定义的多头注意力层的输出对于输入序列的重新排序将是等变化的。
+\end{exercise}
+
+\begin{remark}（重构新增）
+证明的要点是“置换与逐行运算可交换”：softmax、层归一化、MLP 都在单个 token 内部进行，因此重排 token 只是把结果一起重排。这解释了为什么位置编码必须加在输入上而不是网络结构中——一旦加上依赖位置的向量，$\mathbf{P}\mathbf{X}$ 与 $\mathbf{X}$ 的位置编码不再对应，等变性被有意破坏，模型才能区分词序。反之，若任务本身与顺序无关（如集合上的分类），保持等变性反而是优点。
+\end{remark}
+
+\begin{exercise}[（$\star\star\star$）]\label{exercise:ch12-08}
+考虑两个 $D$ 维单位向量 $\mathbf{a}$ 和 $\mathbf{b}$，它们满足 $\|\mathbf{a}\|=1$ 和 $\|\mathbf{b}\|=1$ 并且是从随机分布中抽取的。假设该随机分布是围绕原点的对称分布。证明对于 $D$ 的较大值，这两个向量之间夹角的余弦值接近零，因此这两个向量在高维空间中几乎是正交的。为此，考虑一个正交基 $\mathbf{u}_i$，其中 $\mathbf{u}_i^{\mathsf{T}}\mathbf{u}_j=\delta_{ij}$ 并将 $\mathbf{a}$ 和 $\mathbf{b}$ 表示为这个正交基中的展开式。
+\end{exercise}
+
+\begin{remark}（重构新增）
+这个结论是位置编码可以“相加”而不严重破坏词向量的根据（见\cref{definition:ch12-位置编码}）：把 $\mathbf{r}_n$ 加到 $\mathbf{x}_n$ 上，相当于给向量一个近似正交的扰动，网络可以分别从投影中读出身份与位置。证明中没有用到Gauss性，只用到“各方向同分布”的旋转对称性，因此结论对球面上任何对称分布都成立。注意 $1/D$ 是均方值，典型绝对值约为 $1/\sqrt{D}$，这正是高维几何中“几乎所有方向都近似正交”的定量表述。
+\end{remark}
+
+\begin{exercise}[（$\star\star$）]\label{exercise:ch12-09}
+考虑一种位置编码，其中输入 token 向量 $\mathbf{x}$ 与位置编码向量 $\mathbf{e}$ 已合并为一个向量。证明当这个合并向量在通过矩阵进行一般线性变换时，结果可以表示为线性变换输入向量和线性变换位置向量的和。
+\end{exercise}
+
+\begin{remark}（重构新增）
+本题说明“相加”与“拼接”在线性层看来是等价的：拼接后分块相乘再相加，恰好等于两个独立线性变换之和。这正是文中说“线性处理层能使合并表示法与加法表示法具有相似的特性”的含义。差别只在于参数量与维数：拼接需要 $D+D'$ 维输入，而相加保持 $D$ 维。若变换是非线性的（例如经过 ReLU），这一分解就不再成立，这也是为什么位置编码要在第一个线性层之前加入。
+\end{remark}
+
+\begin{exercise}[（$\star\star$）]\label{exercise:ch12-10}
+证明\eqref{align:ch12-正弦位置编码}定义的位置编码具有这样的特性：对于固定偏移 $k$，位置 $n+k$ 的编码可以表示为位置 $n$ 的编码的线性组合，其系数取决于 $k$ 而非取决于 $n$。为此，使用以下三角恒等式：
+\begin{align}
+\cos(A+B)=\cos A\cos B-\sin A\sin B
+\label{align:ch12-余弦和角}
+\end{align}
+\begin{align}
+\sin(A+B)=\cos A\sin B+\sin A\cos B.
+\label{align:ch12-正弦和角}
+\end{align}
+证明如果编码只基于正弦函数而非余弦函数，这一特性将不再成立。
+\end{exercise}
+
+\begin{remark}（重构新增）
+该性质的意义在于“相对位置可被线性读取”：注意力层本身是线性的，若它能学会用 $\mathbf{M}_k$ 作用于查询或键，就能识别固定的位移 $k$，而不必为每个绝对位置单独记忆参数。证明揭示了正弦与余弦必须成对出现的代数原因——它们构成一个二维旋转，位移 $k$ 对应旋转角 $k\omega$，而旋转是线性的。这也说明位置编码的频率集合 $\{\omega_i\}$ 决定了模型能分辨的位移尺度：频率越高（$i$ 越小）分辨短位移，频率越低分辨长位移。
+\end{remark}
+
+\begin{exercise}[（$\star$）]\label{exercise:ch12-11}
+考虑词袋模型[\eqref{align:ch12-词袋模型}]，其中每个组件分布 $p(x_n)$ 都是由所有词共享的通用概率表给出的。证明在给定向量训练集的情况下，最大似然解是由一个表格给出的，该表格中的条目是每个词在训练集中出现的次数。
+\end{exercise}
+
+\begin{remark}（重构新增）
+记忆要点是“词袋的充分统计量就是计数”：所有位置共享同一张表，因此每个词的计数把所有出现位置的信息压缩成一个数。这也暴露了零频问题——若某词未出现，$n_k=0$，最大似然给 $p(k)=0$，任何含该词的新句子概率为零。习题中的结论与\cref{proposition:ch12-词袋最大似然}一致，只是这里强调“表格条目即计数”这一实现形式。
+\end{remark}
+
+\begin{exercise}[（$\star$）]\label{exercise:ch12-12}
+考虑\eqref{align:ch12-自回归语言模型}给出的自回归模型，并假设\eqref{align:ch12-自回归语言模型}右侧的项 $p\left(x_n\mid x_1,\cdots,x_{n-1}\right)$ 可用一般概率表来表示。证明这些表格中的条目数会随着 $n$ 值的增大呈指数增长。
+\end{exercise}
+
+\begin{remark}（重构新增）
+这正是自回归模型必须参数化的原因：不作假设时，等价于为每个可能的历史存一张表，参数量随长度爆炸。词袋模型把参数降到 $K-1$，$n$ 元模型降到与 $N$ 无关的 $K^{L}(K-1)$，而 Transformer 用一个固定大小的网络在每种历史上共享参数——三者是同一分解在不同假设下的极端。题目要求“证明条目数指数增长”，本质上是说明“查表法不可行”的定量版本。
+\end{remark}
+
+\begin{exercise}[（$\star$）]\label{exercise:ch12-13}
+在使用 $n$ 元模型时，通常会同时训练 $n$ 元模型和 $(n-1)$ 元模型，然后使用概率的乘积法则计算条件概率，其形式为
+\begin{align}
+p\left(x_n\mid x_{n-L+1},\cdots,x_{n-1}\right)=\frac{p_{L}\left(x_{n-L+1},\cdots,x_{n}\right)}{p_{L-1}\left(x_{n-L+1},\cdots,x_{n-1}\right)}
+\label{align:ch12-元模型比值}
+\end{align}
+解释为什么这样做更方便，并证明在求 $p_{L-1}(\cdot)$ 时，必须省略每个序列的最后一个 token 才能得到正确的概率。
+\end{exercise}
+
+\begin{remark}（重构新增）
+本题的实质是“分子分母必须基于同一组窗口计数”。若不省略末尾 token，分母多计了没有后继的窗口，导致 $\sum_{x_n}p(x_n\mid\cdot)\neq1$，概率模型不再自洽。这一细节在实现中表现为：统计 $(L-1)$ 元组频次时只扫描那些后面至少还有一个 token 的位置。回退语言模型（如 Kneser-Ney）正是在这一计数结构上做插值。
+\end{remark}
+
+\begin{exercise}[（$\star\star$）]\label{exercise:ch12-14}
+写出在具有\cref{figure:ch12-递归神经网络}所示架构的经训练递归神经网络中进行推理的伪代码。
+\end{exercise}
+
+\begin{remark}（重构新增）
+伪代码体现了递归网络推理的两个结构性特征：一是串行，第 $n$ 步必须等待第 $n-1$ 步的状态，无法在时间维并行；二是状态复用，编码器只需把 $\mathbf{z}^{*}$ 交给解码器，整个输入句子的信息都被压缩进这一个固定长度的向量——这正是\cref{subsection:ch12-通过时间反向传播}中瓶颈问题的来源。与 Transformer 的写法对比，自注意力的推理可以一次并行算出全部位置，代价是 $O(N^{2})$ 的内存。
+\end{remark}
+
+\begin{exercise}[（$\star\star$）]\label{exercise:ch12-15}
+考虑一个由两个 token $y_1$ 和 $y_2$ 组成的序列，其中的每个 token 都可以有 $A$ 和 $B$ 两种状态。联合概率分布 $p(y_1,y_2)$ 如下表所示。
+
+\begin{center}
+\begin{tabular}{c|cc}
+ & $y_1=A$ & $y_1=B$\\\hline
+$y_2=A$ & $0.0$ & $0.4$\\
+$y_2=B$ & $0.1$ & $0.25$
+\end{tabular}
+\end{center}
+
+可以看到，最可能序列是 $y_1=B,y_2=A$，概率为 $0.4$。利用概率的加法和乘法法则，写出边缘分布 $p(y_1)$ 和条件分布 $p(y_2\mid y_1)$ 的值。证明如果我们先最大化 $p(y_1)$ 而得出一个值 $y_1^{*}$，再最大化 $p(y_2\mid y_1^{*})$，那么我们得到的序列将与总体最可能序列不同。求该序列的概率。
+\end{exercise}
+
+\begin{remark}（重构新增）
+本题是\cref{subsection:ch12-抽样策略}中“逐阶段取最大不等于最大化联合概率”的最小反例：贪心在第一步就锁定了 $y_1$，而联合概率的最大值可能位于 $p(y_1)$ 较小的分支上。原因是 $p(y_1,y_2)=p(y_1)p(y_2\mid y_1)$ 中两个因子此消彼长——$y_1=A$ 的边缘概率大，但其条件下的 $y_2$ 分布较平；$y_1=B$ 边缘概率小，却几乎必然跟着 $A$。这也说明为什么需要束搜索：保留 $B$ 个候选可以在后续步骤纠正第一步的“近视”。原表不归一化属于印刷错误，按 v14 规范已在解答中指出并给出可验证的修正版本。
+\end{remark}
+
+\begin{exercise}[（$\star$）]\label{exercise:ch12-16}
+BERT-Large 模型（Devlin et al., 2018）的最大输入长度为 512 个 token，每个 token 的维度 $D=1024$，取自 30\,000 个词汇。该模型有 24 个 Transformer 层，每个 Transformer 层有 16 个自注意力头，且 $D_q=D_k=D_v=64$；多层感知机定位网络有两层，共有 4096 个隐节点。证明 BERT 编码器型 Transformer 语言模型中的参数总数约为 3.4 亿。
+\end{exercise}
+
+\begin{remark}（重构新增）
+估算的关键是“参数量与序列长度无关”：所有投影矩阵都在 token 之间共享，$N=512$ 只影响计算量 $O(ND^{2})$ 与注意力矩阵 $O(N^{2}D)$，不影响参数个数。这也解释了为什么大模型可以处理任意长度输入而参数不变。注意 $D_q=D_k=D_v=64$ 与 $H=16$ 给出 $HD_v=1024=D$，因此每个头的拼接恰好回到模型维度，总参数与单头情形同量级——这是\cref{definition:ch12-多头注意力}中“$D_v=D/H$”惯例的由来。
+\end{remark}
+
+\end{document}

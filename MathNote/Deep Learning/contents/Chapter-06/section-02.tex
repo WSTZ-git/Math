@@ -1,122 +1,342 @@
 \documentclass[../../main.tex]{subfiles}
+
 \graphicspath{{../../image/}{../../figure/}}
+
 \begin{document}
 
 \section{多层网络}\label{section:ch06-多层网络}
 
-考虑具有两层可学习参数的基本神经网络。首先用以下形式构造输入变量 $x_1,\cdots,x_D$ 的 $M$ 个线性组合：
-\begin{align}
-a_j^{(1)} = \sum_{i=1}^{D} w_{ji}^{(1)} x_i + b_j^{(1)}, \qquad j=1,\cdots,M,
-\label{align:ch06-preact1}
-\end{align}
-其中 $j=1,\cdots,M$，上标 $(1)$ 表示相应参数位于神经网络的第一层。参数 $w_{ji}^{(1)}$ 称为\textbf{权重}（weight），$b_j^{(1)}$ 称为\textbf{偏置}参数（bias），$a_j^{(1)}$ 则称为\textbf{预激活}（pre-activation，参见第~4~章）。然后，每个 $a_j^{(1)}$ 通过一个可微的非线性激活函数 $h(\cdot)$ 被转换为
-\begin{align}
-z_j^{(1)} = h\!\left(a_j^{(1)}\right),
-\label{align:ch06-hidden}
-\end{align}
-它代表~\eqref{align:ch06-linear-basis}~中基函数的输出。在神经网络语境中，这些基函数 $z_j^{(1)}$ 称为\textbf{隐藏单元}（hidden unit）。
+为了将形如\eqref{align:ch06-线性基函数}的线性模型应用于涉及大规模数据集和高维空间的问题，我们需要找到一组针对所要解决问题的基函数。神经网络背后的关键思想是选择具有可学习参数的基函数 $\phi_j(\boldsymbol{x})$，然后在训练过程中调整这些参数以及系数 $\{w_j\}$。我们可以通过使用基于梯度的优化方法最小化误差函数来优化整个模型（参见\cref{section:ch07-错误平面}），如随机梯度下降法，其中误差函数是在模型的所有参数上共同定义的。
 
-只要导数 $h'(\cdot)$ 可以计算，整个网络函数就是可微的。遵循~\eqref{align:ch06-linear-basis}，这些值可以再次被线性组合为
+当然，有许多方法可以构造参数化的非线性基函数。但有一个关键要求，就是这些函数必须是关于可学习参数的可微函数，这样我们就可以应用基于梯度的优化方法。最成功的选择是使用与\eqref{align:ch06-线性基函数}形式相同的基函数，从而每个基函数本身是输入的线性组合的非线性函数，其中线性组合中的系数是可学习参数。注意，这种构造显然可以递归扩展以给出一个具有多层的层次化模型，这构成了深度神经网络的基础（参见\cref{section:ch06-深度网络}）。
+
+考虑具有两层可学习参数的基本神经网络。首先，我们用以下形式构造输入变量 $x_1,\cdots,x_D$ 的 $M$ 个线性组合：
+
 \begin{align}
-a_k^{(2)} = \sum_{j=1}^{M} w_{kj}^{(2)} z_j^{(1)} + b_k^{(2)}, \qquad k=1,\cdots,K,
-\label{align:ch06-preact2}
+a_j^{(1)}=\sum_{i=1}^{D}w_{ji}^{(1)}x_i+w_{j0}^{(1)},
+\label{align:ch06-第一层预激活}
 \end{align}
-其中 $k=1,\cdots,K$，$K$ 是输出总数。该变换对应神经网络的第二层，$w_{kj}^{(2)}$ 同样是权重参数。最后，$a_k^{(2)}$ 通过适当的输出单元激活函数 $f(\cdot)$ 被转换为网络输出 $y_k$。两层神经网络可以用图~\ref{fig:ch06-mlp}~所示的有向图表示。
+
+其中 $j=1,\cdots,M$，“$(1)$”表示相应的参数位于神经网络的第一层。参数 $w_{ji}^{(1)}$ 称为\textbf{权重}（weight），参数 $w_{j0}^{(1)}$ 称为\textbf{偏置参数}（bias），量 $a_j^{(1)}$ 则称为\textbf{预激活}（pre-activation）（参见\cref{subsection:ch04-基函数}）。然后，每个量 $a_j$ 通过一个可微的、非线性的激活函数 $h(\cdot)$ 被转换为
+
+\begin{align}
+z_j^{(1)}=h\!\left(a_j^{(1)}\right),
+\label{align:ch06-隐藏单元}
+\end{align}
+
+它代表了\eqref{align:ch06-线性基函数}中基函数的输出。在神经网络的上下文中，这些基函数 $z_j^{(1)}$ 称为\textbf{隐藏单元}（hidden unit）。我们将很快探索非线性函数 $h(\cdot)$ 的各种选择，但在这里我们注意到，只要导数 $h'(\cdot)$ 是可以计算的，整个网络函数就将是可微的。遵循\eqref{align:ch06-线性基函数}，这些值可以再次被线性组合为
+
+\begin{align}
+a_k^{(2)}=\sum_{j=1}^{M}w_{kj}^{(2)}z_j^{(1)}+w_{k0}^{(2)},
+\label{align:ch06-第二层预激活}
+\end{align}
+
+其中 $k=1,\cdots,K$，$K$ 是输出的总数。这个转换对应于神经网络的第二层，$w_{k0}^{(2)}$ 同样是偏置参数。最后，$a_k^{(2)}$ 则通过一个适当的输出单元激活函数 $f(\cdot)$ 被转换为一组网络输出 $y_k$。两层的神经网络可以用\cref{figure:ch06-两层网络}来表示。
+
+\begin{definition}[两层神经网络]\label{definition:ch06-两层神经网络}
+由\eqref{align:ch06-第一层预激活}、\eqref{align:ch06-隐藏单元}与\eqref{align:ch06-第二层预激活}依次复合而成的映射
+\begin{align}
+y_k(\boldsymbol{x},\boldsymbol{w})=f\!\left(\sum_{j=1}^{M}w_{kj}^{(2)}\,h\!\left(\sum_{i=1}^{D}w_{ji}^{(1)}x_i+w_{j0}^{(1)}\right)+w_{k0}^{(2)}\right),\qquad k=1,\cdots,K
+\label{align:ch06-两层网络函数}
+\end{align}
+称为具有 $M$ 个隐藏单元的\textbf{两层神经网络}（two-layer neural network）。集合 $\{w_{ji}^{(1)},w_{j0}^{(1)},w_{kj}^{(2)},w_{k0}^{(2)}\}$ 统称为网络的\textbf{权重}（weights），其中下标为 $0$ 的项为偏置参数。
+\end{definition}
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.55\textwidth]{ch06-fig6-9-mlp.png}
-\caption{两层神经网络示意图。输入变量、隐藏单元和输出变量由节点表示，权重参数由节点之间的连接表示。偏置参数由来自额外输入 $x_0=1$ 和隐藏变量 $z_0=1$ 的连接表示；箭头表示前向传播过程中信息流动的方向。}
-\label{fig:ch06-mlp}
+\includegraphics[width=0.66\textwidth]{ch06-fig6-9-mlp.png}
+\caption{两层神经网络的示意图。输入变量、隐藏单元和输出变量由节点表示，权重参数由节点之间的连接表示。偏置参数由来自额外输入 $x_0$ 和隐变量 $z_0$ 的连接表示，其中隐变量本身由实心节点表示。箭头表示前向传播过程中信息流动的方向}
+\label{figure:ch06-两层网络}
 \end{figure}
 
-\subsection{参数矩阵}\label{section:ch06-参数矩阵}
+% SUPPLEMENT: parent=definition:ch06-两层神经网络; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{definition:ch06-两层神经网络}中“层数”只计入\emph{可学习权重}的层数：输入层不参与计数，因此带有一个隐藏层的网络称为两层网络。这一点在本章后文讨论深度网络时会反复用到。另一处需要留意的是记号：偏置在这里记为 $w_{j0}^{(1)}$ 而不是单独的 $b_j$，目的是让偏置与权重共享同一个下标结构，从而在\cref{subsection:ch06-参数矩阵}中自然地并入矩阵。
+\end{remark}
 
-如~4.1.1~小节所述，通过定义一个额外值恒为 $1$ 的输入变量 $x_0$，可以将~\eqref{align:ch06-preact1}~中的偏置参数吸收到权重参数集合中，使~\eqref{align:ch06-preact1}~变为
+\subsection{参数矩阵}\label{subsection:ch06-参数矩阵}
+
+我们在讨论线性回归模型时谈到（参见\cref{subsection:ch04-基函数}），通过定义一个额外的值固定为 $1$ 的输入变量 $x_0$，可以将\eqref{align:ch06-第一层预激活}中的偏置参数吸收到权重参数集合中，使\eqref{align:ch06-第一层预激活}变为
+
 \begin{align}
-a_j^{(1)} = \sum_{i=0}^{D} w_{ji}^{(1)} x_i.
-\label{align:ch06-preact1-biased}
+a_j=\sum_{i=0}^{D}w_{ji}^{(1)}x_i.
+\label{align:ch06-偏置吸收}
 \end{align}
 
-同样也可以把第二层的偏置吸收到第二层权重集合中，于是整个网络函数变为
+\begin{definition}[增广输入]\label{definition:ch06-增广输入}
+在输入向量中追加分量 $x_0\triangleq1$，得到 $\boldsymbol{x}=(x_0,x_1,\cdots,x_D)^{\mathsf T}$，称为\textbf{增广输入}（augmented input）。类似地，在隐藏单元中追加 $z_0\triangleq1$，可把第二层的偏置 $w_{k0}^{(2)}$ 吸收进第二层权重。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch06-增广输入; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）增广输入只是一个记号技巧，不引入任何新的表达能力：常数输入 $x_0=1$ 对应的权重就是原来的偏置。它的好处是让\eqref{align:ch06-偏置吸收}成为一个纯粹的线性变换，从而可以写成矩阵乘法；代价是每次写维度时要记得把 $D$ 换成 $D+1$。本书在推导反向传播和讨论正则化时都采用这一约定，因此不应把 $x_0$ 视为真正的数据特征，也不应对其权重施加与数据特征相同的正则化。
+\end{remark}
+
+我们同样也可以将第二层的偏置参数吸收到第二层的权重参数集合中，于是整个网络函数变为
+
 \begin{align}
-z_j^{(1)} = h\!\left(\sum_{i=0}^{D} w_{ji}^{(1)} x_i\right), \qquad
-y_k = f\!\left(\sum_{j=0}^{M} w_{kj}^{(2)} z_j^{(1)}\right).
-\label{align:ch06-mlp-scalar}
+y_k(\boldsymbol{x},\boldsymbol{w})=f\!\left(\sum_{j=0}^{M}w_{kj}^{(2)}\,h\!\left(\sum_{i=0}^{D}w_{ji}^{(1)}x_i\right)\right).
+\label{align:ch06-网络函数}
 \end{align}
 
-一种方便的表示法是把输入表示为列向量 $\mathbf{x} = (x_1,\cdots,x_D)^{\mathsf T}$，然后将~\eqref{align:ch06-mlp-scalar}~中的权重和偏置参数聚集成矩阵。写 $\mathbf{z}^{(1)} = h(\mathbf{W}^{(1)}\mathbf{x} + \mathbf{b}^{(1)})$，$\mathbf{y} = f(\mathbf{W}^{(2)}\mathbf{z}^{(1)} + \mathbf{b}^{(2)})$，其中 $h(\cdot)$ 和 $f(\cdot)$ 分别逐元素作用于向量。
+一种方便的表示法是将输入表示为一个列向量 $\boldsymbol{x}=(x_1,\cdots,x_N)^{\mathsf T}$，然后将\eqref{align:ch06-网络函数}中的权重和偏置参数聚集成矩阵，得到
 
-\subsection{通用近似}\label{section:ch06-通用近似}
-
-图~6.10~展示了两层神经网络近似四种不同函数的能力：$f(x)=x^2$、$f(x)=\sin x$、$f(x)=1/x$ 以及 Heaviside 阶跃函数 $H(x)$。该图还展示了各个隐藏单元如何协作从而近似最终函数；图~6.11~则在一个简单二分类问题中说明了隐藏单元的作用。
-
-20~世纪~80~年代，两层前馈网络的近似性质得到了广泛研究。各种定理表明：对于大多数激活函数而言，这样的网络可以以任意精度近似定义在紧的连续子集上的任何函数~\citep{Funahashi1989,Cybenko1989,HornikStinchcombeWhite1989,Leshno1993}。对于从任意有限维离散空间到另一空间的映射，也有类似结论。因此，神经网络可以视为\textbf{通用近似器}（universal approximator）。
-
-虽然这些定理令人安心，但已有研究只告诉我们\emph{存在}可表示所需函数的网络，并未说明这样的网络能否通过学习算法找到；此外，某些情况下它们可能需要指数级数量的隐藏单元。更重要的是，我们永远无法找到一个真正通用的机器学习算法（参见~9.1.2~小节）。最后，尽管两层权重的网络是通用近似器，但在实际应用中，远超两层的网络可能带来巨大好处——因为它可以学习分层的内部表示。以上所有这些论点都支持了深度学习的发展。
-
-\subsection{隐藏单元激活函数}\label{section:ch06-隐藏单元激活函数}
-
-输出单元的激活函数由被建模分布的类型决定；而对隐藏单元的唯一要求是它们可微，这为网络结构设计留下了广泛空间。虽然原则上网络不同部分可以使用不同激活函数，但大多数情况下所有隐藏单元使用相同激活函数。
-
-最简单的隐藏单元激活函数是恒等函数，意味着所有隐藏单元都是线性的。然而对于任何这样的网络，我们总能找到一个没有隐藏单元的等价网络——因为连续线性变换的组合本身仍是线性变换，其表示能力不会强于单个线性层。但若隐藏单元数量少于输入或输出单元数量，这样的网络所生成的变换将不是从输入到输出最一般的线性变换：考虑一个 $N$ 输入、$M$ 隐藏、$K$ 输出且全部使用线性激活的网络，它有 $M(N+K)$ 个参数，而直接线性变换有 $NK$ 个参数。当 $M$ 相对 $N$ 或 $K$ 较小时，这等价于一个比直接线性映射参数更少的两层线性网络，对应一个秩亏变换。这种线性"瓶颈"网络对应标准数据分析技术主成分分析（PCA，参见第~16~章）。
-
-一个简单、非线性且可微的早期选择是 sigmoid 激活函数
 \begin{align}
-\sigma(a) = \frac{1}{1+\exp(-a)}.
+\boldsymbol{y}(\boldsymbol{x},\boldsymbol{w})=f\!\left(\boldsymbol{W}^{(2)}h\!\left(\boldsymbol{W}^{(1)}\boldsymbol{x}\right)\right),
+\label{align:ch06-矩阵形式}
+\end{align}
+
+其中 $f(\cdot)$ 和 $h(\cdot)$ 分别用于在每个向量元素上求值。
+
+\begin{proposition}[偏置吸收的等价性]\label{proposition:ch06-偏置吸收}
+设 $\boldsymbol{W}^{(1)}\in\mathbb{R}^{M\times(D+1)}$ 的第一列取为原网络的偏置 $w_{j0}^{(1)}$，其余列为 $w_{ji}^{(1)}$，并令 $\boldsymbol{x}=(1,x_1,\cdots,x_D)^{\mathsf T}$，则\eqref{align:ch06-网络函数}与\eqref{align:ch06-两层网络函数}定义同一个网络函数。若再令 $\boldsymbol{W}^{(2)}$ 的第一列取为 $w_{k0}^{(2)}$，并对隐藏单元追加 $z_0=1$，则\eqref{align:ch06-矩阵形式}与\eqref{align:ch06-网络函数}等价。
+\end{proposition}
+
+\begin{proof}
+（重构新增）由矩阵乘法的定义，$\left(\boldsymbol{W}^{(1)}\boldsymbol{x}\right)_j=\sum_{i=0}^{D}w_{ji}^{(1)}x_i$，这正是\eqref{align:ch06-偏置吸收}的右端；逐元素作用 $h$ 后得到 $z_j^{(1)}$。再左乘 $\boldsymbol{W}^{(2)}$ 得 $\sum_{j=0}^{M}w_{kj}^{(2)}z_j^{(1)}$，其中 $z_0=1$ 的项即偏置 $w_{k0}^{(2)}$。最后逐元素作用 $f$ 即得\eqref{align:ch06-网络函数}。由于每一步都是恒等变形，两个网络对任意输入给出相同的输出。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch06-偏置吸收; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）把网络写成\eqref{align:ch06-矩阵形式}之后，一次前向传播只需要两次矩阵--向量乘法，计算量为 $\mathcal{O}(MD+MK)$，并且可以整批数据并行处理：把 $N$ 个输入按列排成 $D\times N$ 的矩阵 $\boldsymbol{X}$，则 $\boldsymbol{Z}^{(1)}=h(\boldsymbol{W}^{(1)}\boldsymbol{X})$ 一次算出所有样本的隐藏单元。这是深度网络能利用 GPU 的前提，也是\cref{subsection:ch06-张量}中“张量”概念的雏形。
+\end{remark}
+
+\subsection{通用近似}\label{subsection:ch06-通用近似}
+
+\cref{figure:ch06-函数近似}展示了两层神经网络近似 $4$ 个不同函数的能力。该图还展示了各个隐藏单元是如何协作从而近似最终函数的。\cref{figure:ch06-分类决策面}说明了简单分类问题中隐藏单元的作用。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.68\textwidth]{ch06-fig6-10-approx.png}
+\caption{两层神经网络近似 $4$ 个不同函数的能力示意图。(a) $f(x)=x^{2}$；(b) $f(x)=\sin(x)$；(c) $f(x)=|x|$；(d) $f(x)=H(x)$，其中 $H(x)$ 是 Heaviside 阶跃函数。在每种情况下，对 $x$ 在 $(-1,1)$ 区间均匀采样 $N=50$ 个数据点（以蓝点显示），并评估相应的 $f(x)$ 的值。然后使用这些数据点训练一个具有三个隐藏单元的两层神经网络，该网络具有 tanh 激活函数和线性输出单元。得到的网络函数由红色曲线显示，三个隐藏单元的输出由三条虚线显示}
+\label{figure:ch06-函数近似}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.52\textwidth]{ch06-fig6-11-boundary.png}
+\caption{使用神经网络解决在合成数据上进行简单二分类的示例。该神经网络包含两个输入、两个由 tanh 函数激活的隐藏单元，以及一个由 sigmoid 函数激活的输出。蓝色虚线显示了每个隐藏单元 $z=0.5$ 的等值线，红色实线显示了网络 $y=0.5$ 的决策面，绿色实线表示从用于生成数据的分布中计算出的最优决策边界}
+\label{figure:ch06-分类决策面}
+\end{figure}
+
+20 世纪 80 年代，两层前馈网络的近似性质得到了广泛研究。各种定理表明，对于大多数激活函数而言，这样的网络可以以任意精度近似定义在 $\mathbb{R}^{D}$ 的连续子集上的任何函数（Funahashi，1989；Cybenko，1989；Hornik，Stinchcombe，and White，1989；Leshno et al.，1993）。对于从任何有限维离散空间到另一个空间的映射函数，也有类似的结论。因此，神经网络可以视为\textbf{通用近似器}（universal approximator）。
+
+\begin{theorem}[通用近似定理]\label{theorem:ch06-通用近似}
+设 $K\subset\mathbb{R}^{D}$ 为紧集，$h:\mathbb{R}\to\mathbb{R}$ 连续且不是多项式（例如 sigmoid、tanh、ReLU）。则对任意连续函数 $f:K\to\mathbb{R}$ 与任意 $\varepsilon>0$，存在整数 $M$、实数 $w_j$、$\boldsymbol{u}_j\in\mathbb{R}^{D}$ 与 $b_j$，使得
+\begin{align}
+\sup_{\boldsymbol{x}\in K}\left|f(\boldsymbol{x})-\sum_{j=1}^{M}w_j\,h\!\left(\boldsymbol{u}_j^{\mathsf T}\boldsymbol{x}+b_j\right)\right|<\varepsilon .
+\label{align:ch06-通用近似}
+\end{align}
+换言之，具有一个隐藏层、激活函数为 $h$ 的两层网络在 $(C(K),\|\cdot\|_{\infty})$ 中稠密。
+\end{theorem}
+
+\begin{proof}
+（重构新增）先证 $D=1$、$K=[0,1]$、$h=\tanh$ 的情形，再说明一般情形。
+
+\emph{（i）用两个隐藏单元构造区间指示函数。}对 $a<b$ 与 $\lambda>0$，令
+\begin{align*}
+g_{\lambda}(x)=\frac{1}{2}\left[\tanh\bigl(\lambda(x-a)\bigr)-\tanh\bigl(\lambda(x-b)\bigr)\right].
+\end{align*}
+当 $x\in(a,b)$ 时两项分别趋于 $+1$ 与 $-1$，故 $g_\lambda(x)\to1$；当 $x\notin[a,b]$ 时两项趋于同一个值，故 $g_\lambda(x)\to0$。并且在 $[0,1]\setminus(a-\delta,b+\delta)$ 上该收敛是一致的，收敛速度为 $\mathcal{O}(e^{-\lambda\delta})$。
+
+\emph{（ii）用阶梯函数逼近连续函数。}设 $f$ 在 $[0,1]$ 上连续，取 $m$ 等分点 $x_i=i/m$，令阶梯函数 $s_m(x)=\sum_{i=1}^{m}f(x_i)\,\mathbf{1}_{(x_{i-1},x_i]}(x)$，则由一致连续性，$\|f-s_m\|_{\infty}\leqslant\omega_f(1/m)$，其中 $\omega_f$ 是 $f$ 的连续模，且 $\omega_f(1/m)\to0$。
+
+\emph{（iii）组合。}把 $s_m$ 中的每个指示函数用上式替换，得到形如\eqref{align:ch06-通用近似}的网络函数 $\hat f$，其隐藏单元数为 $2m$、输出权重为 $f(x_i)$。于是
+\begin{align}
+\|f-\hat f\|_{\infty}\leqslant\omega_f(1/m)+2\|f\|_{\infty}\,m\,e^{-\lambda\delta}.
+\end{align}
+先取 $m$ 使第一项小于 $\varepsilon/2$，再取 $\lambda$ 充分大使第二项小于 $\varepsilon/2$，即得 $D=1$ 的结论。
+
+\emph{（iv）一般 $D$ 与一般 $h$。}多元情形不能直接沿用上述区间构造，但结论仍成立。证明的关键是 Cybenko 的判别准则：若形如\eqref{align:ch06-通用近似}的函数族在 $C(K)$ 中不稠密，则由 Hahn--Banach 定理与 Riesz 表示定理，存在非零有限符号测度 $\mu$ 使 $\int h(\boldsymbol{u}^{\mathsf T}\boldsymbol{x}+b)\,\mathrm{d}\mu(\boldsymbol{x})=0$ 对所有 $\boldsymbol{u},b$ 成立；再令 $\boldsymbol{u}$ 的尺度趋于无穷并利用 $h$ 的单调性（sigmoid 型），可推出 $\mu$ 在一切半空间上的取值为零，从而 $\mu=0$，矛盾。Leshno 等（1993）进一步把条件减弱为“$h$ 连续且不是多项式”。故\eqref{align:ch06-通用近似}对一般的 $D$ 与上述 $h$ 均成立。
+\end{proof}
+
+% SUPPLEMENT: parent=theorem:ch06-通用近似; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{theorem:ch06-通用近似}只刻画\emph{表达能力}：单隐藏层网络的线性组合在紧集上可以逼近任意连续函数，但它对所需的宽度 $M$ 没有任何定量控制，也不保证基于梯度的优化能找到这些权重。证明中“$D=1$ 的显式构造 + Cybenko 判别准则”的结构也说明了结论为何对几乎任何非常数连续激活函数都成立：起作用的不是 $h$ 的具体形状，而是它与平移、伸缩复合后张成的函数族的稠密性。
+\end{remark}
+
+\begin{definition}[通用近似器]\label{definition:ch06-通用近似器}
+若某类函数族 $\mathcal{F}$ 在紧集上的连续函数空间 $(C(K),\|\cdot\|_{\infty})$ 中稠密，即对任意 $f\in C(K)$ 与 $\varepsilon>0$ 都存在 $g\in\mathcal{F}$ 使 $\|f-g\|_{\infty}<\varepsilon$，则称该函数族为\textbf{通用近似器}（universal approximator）。\cref{theorem:ch06-通用近似}说明，单隐藏层的两层网络（在适当激活函数下）是通用近似器。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch06-通用近似器; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{theorem:ch06-通用近似}是一个\emph{存在性}定理，它有三个容易被误读的地方。第一，它只保证存在某个宽度 $M$，并未给出 $M$ 的大小；对某些函数，$M$ 必须随 $D$ 指数增长（见后文关于分段线性区域数的讨论）。第二，它没有说明梯度下降能否找到这组权重：误差函数关于权重是非凸的，定理对此不置一词。第三，稠密性是在紧集 $K$ 上、以一致范数度量的；在无界区域或要求导数也逼近时，结论不再成立。因此“通用近似”并不能推出“深度网络可以解决任意问题”，它只排除了\emph{表达能力}上的根本障碍。
+\end{remark}
+
+虽然这样的定理让我们安心，但现有研究只告诉我们存在可以表示所需函数的网络。在某些情况下，它们可能需要指数级数量规模的隐藏单元。更重要的是，它们没有说明这样的网络是否可以通过学习算法找到。此外，我们永远无法找到一个真正通用的机器学习算法（参见\cref{subsection:ch09-无免费午餐}）。最后，尽管具有两层权重的网络是通用近似器，但在实际应用中，远超两层的网络可能带来巨大的好处，因为其可以学习分层的内部表示。以上所有这些论点都支持了深度学习的发展。
+
+\subsection{隐藏单元激活函数}\label{subsection:ch06-隐藏单元激活函数}
+
+你已经看到，输出单元的激活函数由被建模分布的类型决定。然而，对隐藏单元的唯一要求是，它们需要是可微的，这为网络结构设计留下了广泛的可能性。虽然原则上不同部分的网络可以应用不同的激活函数，但大多数情况下，网络中所有的隐藏单元将被赋予相同的激活函数。
+
+最简单的隐藏单元激活函数是恒等函数，这意味着所有的隐藏单元都是线性的。然而，对于任何这样的网络，我们总能找到一个没有隐藏单元的等价网络。这是因为连续线性变换的组合本身也是线性变换，所以其表示能力不会强于单个线性层。然而，如果隐藏单元的数量少于输入或输出单元的数量，那么此类网络所能生成的变换将不是从输入到输出最一般可能的线性变换，因为隐藏单元处的降维丢失了信息。考虑一个有 $N$ 个输入、$M$ 个隐藏单元和 $K$ 个输出的网络，其中所有激活函数都是线性的。这样的网络有 $M(N+K)$ 个参数，而直接将输入转换为输出的线性变换有 $NK$ 个参数。如果 $M$ 相对于 $N$ 或 $K$ 较小，或者相对于它们都小，这将得到一个比直接的线性映射包含更少参数的两层线性网络，对应一个秩亏变换。这种线性单元的“瓶颈”网络对应一种标准的数据分析技术，称为主成分分析（Principal Component Analysis, PCA）（参见\cref{section:ch16-主成分分析}）。然而，一般来说，使用线性单元的多层网络意义有限，因为用其计算的整体函数仍然是线性的。
+
+\begin{proposition}[线性隐藏单元的等价性]\label{proposition:ch06-线性隐藏层}
+若两层网络的隐藏单元激活函数 $h$ 为恒等函数，则\eqref{align:ch06-两层网络函数}等价于单个线性映射 $\boldsymbol{y}=\boldsymbol{W}\boldsymbol{x}+\boldsymbol{b}$，其中 $\boldsymbol{W}=\boldsymbol{W}^{(2)}\boldsymbol{W}^{(1)}$。当 $M<\min(D,K)$ 时，$\operatorname{rank}\boldsymbol{W}\leqslant M$，即该网络只能实现秩不超过 $M$ 的线性变换，其参数个数为 $M(D+K)$，小于一般线性映射的 $(D+1)(K+1)$。
+\end{proposition}
+
+\begin{proof}
+（重构新增）恒等激活下 $h$ 是线性映射，故 $\boldsymbol{W}^{(2)}h(\boldsymbol{W}^{(1)}\boldsymbol{x})=\boldsymbol{W}^{(2)}\boldsymbol{W}^{(1)}\boldsymbol{x}$，即复合后仍是线性映射。秩的不等式由 $\operatorname{rank}(\boldsymbol{A}\boldsymbol{B})\leqslant\min\{\operatorname{rank}\boldsymbol{A},\operatorname{rank}\boldsymbol{B}\}\leqslant M$ 得到。参数个数为 $MD+MK$（不含偏置）或 $M(D+1)+M(K+1)$（含偏置），在 $M<\min(D,K)$ 时小于一般线性映射的 $(D+1)(K+1)$。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch06-线性隐藏层; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{proposition:ch06-线性隐藏层}说明：多层线性网络的价值不在于增加表达能力（它始终是线性的），而在于\emph{参数压缩}与\emph{低秩约束}。当 $M<\min(D,K)$ 时它是一个秩 $M$ 的瓶颈，其最优解在均方误差下由数据的主成分给出——这正是 PCA 的神经网络解释。反过来，只要激活函数是非线性的，复合就不再塌缩为单层，深度才真正带来表达能力的提升。
+\end{remark}
+
+有一个简单的、非线性的、可微的函数，叫作 sigmoid 激活函数，由下式给出：
+
+\begin{align}
+\sigma(a)=\frac{1}{1+\exp(-a)}.
 \label{align:ch06-sigmoid}
 \end{align}
 
-与 sigmoid 密切相关且部分受到生物神经元性质启发的是 tanh 激活函数
+\cref{figure:ch06-激活函数}展示了多种非线性激活函数，它们在早期的多层神经网络研究中使用广泛，且部分受到生物神经元性质研究的启发。一个与 sigmoid 激活函数密切相关的函数是 tanh 激活函数，由下式给出：
+
 \begin{align}
-\tanh(a) = \frac{e^{a}-e^{-a}}{e^{a}+e^{-a}}.
+\tanh(a)=\frac{e^{a}-e^{-a}}{e^{a}+e^{-a}}.
 \label{align:ch06-tanh}
 \end{align}
 
-tanh 与 sigmoid 的区别在于输入和输出都是对称的。由于
-\begin{align}
-\tanh(a) = 2\sigma(2a) - 1,
-\end{align}
-对于任何具有 sigmoid 隐藏单元的网络，都存在具有 tanh 激活的等价网络（见习题~6.4）。然而在训练网络时这些并不一定等价，因为基于梯度的优化需要初始化权重和偏置，激活函数变了，初始化方案也必须相应调整。
+\begin{definition}[sigmoid 与 tanh 激活函数]\label{definition:ch06-sigmoid-tanh}
+称\eqref{align:ch06-sigmoid}定义的 $\sigma(a)$ 为 \textbf{sigmoid} 激活函数，称\eqref{align:ch06-tanh}定义的 $\tanh(a)$ 为 \textbf{tanh} 激活函数（双曲正切）。二者都把实轴映到有界区间：$0<\sigma(a)<1$，$-1<\tanh(a)<1$。
+\end{definition}
 
-tanh 的硬版本~\citep{Collobert2024}由下式给出：
+% SUPPLEMENT: parent=definition:ch06-sigmoid-tanh; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）sigmoid 与 tanh 的共同点是“饱和”：当 $|a|$ 很大时函数值趋于常数，导数趋于零，这是\cref{subsection:ch06-隐藏单元激活函数}后文所说的梯度消失问题的根源。tanh 相对 sigmoid 的优势在于输出关于原点对称、均值接近零，因而隐藏单元的激活不会系统性地偏向某一侧；在输入为零附近 tanh 的导数达到最大值 $1$，而 sigmoid 的最大导数只有 $1/4$。
+\end{remark}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.86\textwidth]{ch06-fig6-12-activations.png}
+\caption{多种非线性激活函数}
+\label{figure:ch06-激活函数}
+\end{figure}
+
+如\cref{figure:ch06-激活函数}(a) 所示，tanh 激活函数与 sigmoid 激活函数的不同之处在于输入和输出的线性变换，因此对于任何具有 sigmoid 隐藏单元激活函数的网络，都存在具有 tanh 激活函数的等价网络（见\cref{exercise:ch06-04}）。然而在训练网络时，这些并不一定是等价的，因为对于基于梯度的优化方法，需要初始化网络权重和偏置。因此，如果激活函数变了，那么初始化方案也必须做相应调整。
+
+\begin{proposition}[tanh 网络与 sigmoid 网络的等价性]\label{proposition:ch06-tanh等价}
+对任意 $a\in\mathbb{R}$ 有
 \begin{align}
-h(a) = \max(-1,\min(1,a)).
-\label{align:ch06-hardtanh}
+\tanh(a)=2\sigma(2a)-1 .
+\label{align:ch06-tanh-sigmoid关系}
+\end{align}
+从而对任何隐藏单元激活函数为 sigmoid 的两层网络\eqref{align:ch06-两层网络函数}，都存在一个隐藏单元激活函数为 tanh、且对一切输入给出相同输出的两层网络；二者的权重由线性变换互相转换。
+\end{proposition}
+
+\begin{proof}
+（重构新增）由定义
+\begin{align}
+2\sigma(2a)-1=\frac{2}{1+e^{-2a}}-1=\frac{1-e^{-2a}}{1+e^{-2a}}=\frac{e^{a}-e^{-a}}{e^{a}+e^{-a}}=\tanh(a).
+\end{align}
+设原网络第 $j$ 个隐藏单元的预激活为 $a_j=\sum_i w_{ji}x_i+w_{j0}$，输出为 $\sigma(a_j)$。把该单元的输入权重与偏置同乘 $2$，则新预激活为 $2a_j$，由\eqref{align:ch06-tanh-sigmoid关系}，$\tanh(2a_j)=2\sigma(2a_j)-1=2\sigma(a_j)-1$。于是新隐藏单元的输出等于原输出的仿射变换。再把从该单元到输出层的所有权重乘以 $1/2$，并在输出层偏置中补上相应的常数（每个隐藏单元贡献 $-1$ 的偏移），即可完全抵消这一仿射变换，使网络函数逐点相等。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch06-tanh等价; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{proposition:ch06-tanh等价}是“函数层面等价、优化层面不等价”的典型例子：两者的假设空间完全相同（只差一个可逆的仿射重参数化），但损失曲面在参数空间中的形状不同，因此梯度下降的轨迹和收敛速度也不同。这也解释了为什么更换激活函数时必须重新调整权重的初始化尺度——初始化分布应当与激活函数的“线性工作区”相匹配，否则信号在深层网络中会逐层放大或衰减。
+\end{remark}
+
+tanh 激活函数的 hard 版本（Collobert，2024）由下式给出：
+
+\begin{align}
+h(a)=\max\bigl(-1,\min(1,a)\bigr).
+\label{align:ch06-hard-tanh}
 \end{align}
 
-sigmoid 和 tanh 的一个主要缺点是当输入具有很大正值或很小负值时，梯度会指数级趋于零（参见~7.4.2~小节），即"梯度消失"问题。使用非零梯度的激活函数通常更好。一个选择是 softplus 激活函数（见习题~6.7）
+函数曲线如\cref{figure:ch06-激活函数}(b) 所示。
+
+\begin{definition}[hard tanh]\label{definition:ch06-hard-tanh}
+称\eqref{align:ch06-hard-tanh}定义的函数为 \textbf{hard tanh} 激活函数：它在 $[-1,1]$ 上是恒等映射，在此区间外被截断为 $\pm1$。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch06-hard-tanh; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）hard tanh 是 tanh 的分段线性近似，除 $a=\pm1$ 两点外处处可微，导数在 $(-1,1)$ 内恒为 $1$、在外恒为 $0$。与 tanh 相比它的计算只涉及比较与截断，适合低精度硬件；代价是区间外梯度恒为零，因此同样存在“神经元失活”的风险。
+\end{remark}
+
+sigmoid 激活函数和 tanh 激活函数的一个主要缺点，是当输入具有很大的正值或很小的负值时，梯度会呈指数级趋于零（参见\cref{section:ch07-梯度下降优化}）。我们稍后将讨论“梯度消失”问题，就目前而言，我们注意到使用非零梯度的激活函数通常会更好，至少当输入为很大的正值时是这样。其中一个激活函数的选择是 softplus 激活函数（见\cref{exercise:ch06-07}），由下式给出：
+
 \begin{align}
-h(a) = \ln\!\left(1+e^{a}\right).
+h(a)=\ln\bigl(1+\exp(a)\bigr).
 \label{align:ch06-softplus}
 \end{align}
 
-当输入为很大正值时，$h(a)\approx a$，因此即使输入很大，梯度仍非零，有助于缓解梯度消失问题。softplus 可视为 ReLU 的平滑版本，有时也称 soft ReLU（见习题~6.5）。
+函数曲线如\cref{figure:ch06-激活函数}(c) 所示。对于 $a\gg1$，有 $h(a)\approx a$，因此即使当 softplus 激活函数的输入很大且为正时，梯度也仍然非零，从而有助于缓解梯度消失问题。
 
-另一个更简单的选择是 ReLU（Rectified Linear Unit）激活函数
+\begin{definition}[softplus]\label{definition:ch06-softplus}
+称\eqref{align:ch06-softplus}定义的函数为 \textbf{softplus} 激活函数。它满足 $h'(a)=\sigma(a)$，且在 $a\to-\infty$ 时 $h(a)\to0$、在 $a\to+\infty$ 时 $h(a)\approx a$。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch06-softplus; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）softplus 可以看作 ReLU 的光滑版本：它处处可微，且在 $a$ 很大时与 ReLU 的差别只有指数小的一项。它的导数恰好是 sigmoid，因此在 $a$ 很负时导数仍然很小（趋于 $0$），只是不像 sigmoid/tanh 那样\emph{双侧}饱和——正半轴上梯度恒为 $1$，这正是它缓解梯度消失的原因。代价是需要计算指数与对数，运算量高于 ReLU。
+\end{remark}
+
+另一个更简单的选择是 ReLU（Rectified Linear Unit）激活函数，由下式给出：
+
 \begin{align}
-h(a) = \max(0,a).
+h(a)=\max(0,a).
 \label{align:ch06-relu}
 \end{align}
 
-从经验上看它是表现最好的激活函数之一，得到了广泛使用。严格来说 ReLU 的导数在 $a=0$ 处未定义，但实践中可忽略。ReLU 的引入在训练效率上较之前的 sigmoid 有巨大提升~\citep{KrizhevskySutskeverHinton2012}：除了能高效训练更深的网络外，它对权重随机初始化也不太敏感，且非常适合低精度计算（如~8~位定点数而非~64~位浮点数）。在许多实际应用中 ReLU 是默认选择，除非明确需要探索其他激活函数。
+函数曲线如\cref{figure:ch06-激活函数}(d) 所示。从经验上看，它是表现最好的激活函数，得到了广泛使用。注意，严格来说，ReLU 激活函数的导数在 $a=0$ 处是未定义的，但实践中这可以安全地忽略。softplus 激活函数［\eqref{align:ch06-softplus}］可以视为 ReLU 激活函数的平滑版本，因此有时也称 soft ReLU 激活函数（见\cref{exercise:ch06-05}）。
 
-ReLU 的一个问题是对负输入梯度为零，意味着某些隐藏单元在训练期间可能接收不到"误差信号"。避免该问题的一个办法是使用 ReLU 的修改版 leaky ReLU：
+\begin{definition}[ReLU]\label{definition:ch06-ReLU}
+称\eqref{align:ch06-relu}定义的函数为\textbf{修正线性单元}（Rectified Linear Unit, ReLU）激活函数。它在 $a>0$ 时取 $a$、在 $a\leqslant0$ 时取 $0$，除 $a=0$ 外处处可微，且 $h'(a)=\mathbf{1}\{a>0\}$。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch06-ReLU; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）ReLU 的非零梯度在正半轴上恒为 $1$，因此深网络中梯度不会因激活函数本身而逐层衰减；同时它的计算只需一次比较，且对权重的随机初始化不敏感。它的代价是负半轴梯度恒为零：若某个单元的预激活在训练中长期为负，该单元将不再接收任何误差信号（“死亡 ReLU”）。这一缺陷正是下一段 leaky ReLU 的动机。
+\end{remark}
+
+尽管 ReLU 激活函数对于正的输入值有非零梯度，但对于负的输入值却不是这样，这意味着某些隐藏单元在训练期间可能无法接收到“误差信号”。避免该问题的一个办法是使用 ReLU 激活函数的修改版，称为 leaky ReLU 激活函数，由下式给出：
+
 \begin{align}
-h(a) = \max(0,a) + \alpha\min(0,a), \qquad 0<\alpha<1.
-\label{align:ch06-leakyrelu}
+h(a)=\max(0,a)+\alpha\min(0,a),
+\label{align:ch06-leaky-relu}
 \end{align}
 
-一个变体取 $\alpha=-1$，此时 $h(a)=|a|$；另一个变体允许每个隐藏单元有自己的 $\alpha_j$，从而在训练期间通过计算关于 $\alpha_j$ 以及权重和偏置的梯度来学习。
+其中 $0<\alpha<1$。函数曲线如\cref{figure:ch06-激活函数}(e) 所示。与 ReLU 激活函数不同，这个激活函数对于 $a<0$ 的输入值有非零梯度，以确保有信号驱动训练。这个激活函数的一个变体使用 $\alpha=-1$，在这种情况下，$h(a)=|a|$，如\cref{figure:ch06-激活函数}(f) 所示；另一个变体则允许每个隐藏单元有自己的值 $\alpha_j$，从而可以在网络训练期间通过计算关于 $\alpha_j$ 以及权重和偏置的梯度来学习。
 
-\subsection{权重空间的对称性}\label{section:ch06-权重空间的对称性}
+\begin{definition}[leaky ReLU]\label{definition:ch06-leaky-ReLU}
+称\eqref{align:ch06-leaky-relu}定义的函数为 \textbf{leaky ReLU} 激活函数，其中 $\alpha\in(0,1)$ 为泄漏系数。其导数为 $h'(a)=1$（$a>0$）与 $h'(a)=\alpha$（$a<0$）。
+\end{definition}
 
-前馈网络的一个性质是：多个不同权重向量 $\mathbf{w}$ 的选择都可以产生相同的从输入到输出的映射函数~\citep{ChenLuHechtNielsen1993}。考虑图~\ref{fig:ch06-mlp}~所示的两层网络，具有 $M$ 个 tanh 激活的隐藏单元，每一层都是全连接。
+% SUPPLEMENT: parent=definition:ch06-leaky-ReLU; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）leaky ReLU 用一条斜率 $\alpha$ 很小的直线替换了 ReLU 在负半轴的零值，从而保证每个单元始终有非零梯度。$\alpha=-1$ 的特例给出 $h(a)=|a|$，它在原点不可微；若允许 $\alpha_j$ 逐单元学习，则相当于把“泄漏多少”也交给优化过程决定。需要强调，这些变体在实践中的收益依赖于任务与数据，并非总是优于 ReLU。
+\end{remark}
 
-\emph{符号翻转对称}：如果改变输入到某一特定隐藏单元的所有权重和偏置的符号，那么对给定输入数据点，该隐藏单元预激活的符号将被反转，从而激活也被反转——这是因为 $\tanh$ 是奇函数，$\tanh(-a)=-\tanh(a)$。这种反转可以通过改变从该隐藏单元输出的所有权重符号来准确补偿。因此网络所表示的输入--输出映射保持不变。对于 $M$ 个隐藏单元，存在 $2^M$ 种这样的"符号翻转"对称，任何给定权重向量都属于具有这种交换对称性的 $2^M$ 个等价权重向量集合。
+ReLU 激活函数的引入在训练效率上较之前的 sigmoid 激活函数有了巨大提升（Krizhevsky，Sutskever，and Hinton，2012）。除了能够高效地训练更深的网络外，它对权重的随机初始化也不太敏感。它非常适合低精度计算，如 $8$ 位定点数而非 $64$ 位浮点数，并且计算成本较低。在许多实际应用中，ReLU 激活函数是默认选择，除非明确地需要探索不同激活函数选择的效果。
 
-\emph{隐藏单元置换对称}：类似地，假设把输入到和输出自两个不同隐藏单元的所有权重（和偏置）值交换，这显然没有改变网络的输入--输出映射，但对应于不同权重向量。对于 $M$ 个隐藏单元，任何给定权重向量都属于具有这种交换对称性的 $M!$ 个等价权重向量集合。
+\subsection{权重空间的对称性}\label{subsection:ch06-权重空间的对称性}
 
-对于具有超过两层权重的网络，总对称水平由这样因子的乘积给出，每个隐藏单元层对应一个这样的因子。事实证明，这些因子解释了权重空间中所有对称（权重值的特定选择导致的偶然对称除外），并且这些对称并非 tanh 所特有，而是适用于大多数激活函数~\citep{Kurkovakainen1994}。一般来说，权重空间中的这些对称在实践中几乎无用，因为网络训练旨在找到参数的特定设置，其他等价设置的存在没有什么用；然而当使用贝叶斯方法评估不同规模网络的概率分布时，权重空间对称确实发挥作用~\citep{Bishop2006}。
+前馈网络的一个性质是，多个不同的权重向量 $\boldsymbol{w}$ 的选择都可以产生相同的从输入到输出的映射函数（Chen，Lu，and Hecht-Nielsen，1993）。考虑\cref{figure:ch06-两层网络}所示的两层神经网络，其具有 $M$ 个由 tanh 函数激活的隐藏单元，每一层都是全连接结构。如果我们改变输入特定隐藏单元的所有权重和偏置的符号，那么对于给定的输入数据点，隐藏单元的预激活的符号将被反转，从而激活也将被反转，这是因为 tanh 函数是一个奇函数，所以 $\tanh(-a)=-\tanh(a)$。这种转变可以通过改变从隐藏单元输出的所有权重的符号来准确补偿。因此，通过改变一个特定组的权重（和偏置）符号，网络所代表的输入--输出映射函数将保持不变。我们找到了两个不同的权重向量，它们可以产生相同的映射函数。对于 $M$ 个隐藏单元，将存在 $M$ 种这样的“符号翻转”对称性，因此任何给定的权重向量都将是 $2^{M}$ 个等价权重向量的集合中的一个。
+
+类似地，假设现在我们将输入到和输出自特定隐藏单元的所有权重（和偏置）值与不同隐藏单元所关联的权重（和偏置）值交换。同样，这显然没有改变网络的输入--输出映射函数，但它对应于权重向量的不同选择。对于 $M$ 个隐藏单元，任何给定的权重向量都将属于具有这种交换对称性的 $M\times(M-1)\times\cdots\times2\times1=M!$ 个等价权重向量的集合，对应于隐藏单元的 $M!$ 种不同排序。因此，网络将有一个权重空间的对称性因子 $M!\,2^{M}$。对于具有超过两层权重的网络，总对称性水平将由这样的因子的乘积给出，每一个隐藏单元层对应一个这样的因子。
+
+\begin{theorem}[权重空间的对称性]\label{theorem:ch06-权重对称性}
+考虑\eqref{align:ch06-两层网络函数}定义的两层网络，设所有隐藏单元使用奇激活函数 $h$（例如 $h=\tanh$ 或 $h(a)=a$）。对任意符号向量 $\boldsymbol{s}=(s_1,\cdots,s_M)\in\{\pm1\}^{M}$ 与任意置换 $\pi\in S_M$，定义新权重
+\begin{align}
+\tilde w_{\pi(j)i}^{(1)}=s_jw_{ji}^{(1)},\quad
+\tilde w_{\pi(j)0}^{(1)}=s_jw_{j0}^{(1)},\quad
+\tilde w_{k\pi(j)}^{(2)}=s_jw_{kj}^{(2)},\quad
+\tilde w_{k0}^{(2)}=w_{k0}^{(2)},
+\label{align:ch06-对称变换}
+\end{align}
+则新网络与原网络定义同一个输入--输出映射。若权重处于一般位置（各隐藏单元的预激活两两不同、且没有任何单元恒为零），则这 $M!\,2^{M}$ 个权重向量互不相同，即对称群的作用是自由的。
+\end{theorem}
+
+\begin{proof}
+（重构新增）记原网络第 $j$ 个隐藏单元的输出为 $z_j=h(a_j)$。由\eqref{align:ch06-对称变换}，新网络的第 $\pi(j)$ 个单元的预激活为
+\begin{align}
+\tilde a_{\pi(j)}=\sum_{i}s_jw_{ji}^{(1)}x_i+s_jw_{j0}^{(1)}=s_ja_j,
+\end{align}
+故由 $h$ 为奇函数得 $\tilde z_{\pi(j)}=h(s_ja_j)=s_jh(a_j)=s_jz_j$。于是新网络第 $k$ 个输出为
+\begin{align}
+\tilde y_k=f\!\left(\sum_{j}\tilde w_{k\pi(j)}^{(2)}\tilde z_{\pi(j)}+w_{k0}^{(2)}\right)
+=f\!\left(\sum_{j}s_jw_{kj}^{(2)}\cdot s_jz_j+w_{k0}^{(2)}\right)
+=f\!\left(\sum_{j}w_{kj}^{(2)}z_j+w_{k0}^{(2)}\right)=y_k,
+\end{align}
+因为 $s_j^{2}=1$。故映射不变。至于自由性：若两个变换 $(\boldsymbol{s},\pi)$ 与 $(\boldsymbol{s}',\pi')$ 给出同一权重向量，则对每个 $j$ 必有 $\pi(j)=\pi'(j)$ 且 $s_j=s_j'$（否则某个权重分量或某个单元的输出会变号，而在一般位置下预激活非零、各单元可区分），故只有恒等变换才使权重不变。
+\end{proof}
+
+% SUPPLEMENT: parent=theorem:ch06-权重对称性; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{theorem:ch06-权重对称性}解释了为什么损失曲面在权重空间中存在大量完全等价的“副本”：对称群把参数空间分成大小为 $M!\,2^{M}$ 的轨道，轨道上每一点的损失值相同。这对优化本身影响不大（找到一个副本就够了），但对 Bayes 方法影响很大：在计算参数的后验分布或模型证据时，必须把这些等价模式正确地计入，否则会重复计数（Bishop，2006）。此外，该结论不依赖于 tanh 的具体形式，只依赖于 $h$ 为奇函数；对非奇激活函数（如 sigmoid），符号翻转不再是对称性，但置换对称性仍然成立（Kurková and Kainen，1994）。
+\end{remark}
+
+事实证实，这些因子解释了权重空间中所有的对称性（权重值的特定选择可能导致的偶然对称性除外）。此外，这些对称性的存在并不是 tanh 激活函数的特定性质，而是适用于大部分激活函数（Kurková and Kainen，1994）。一般来说，权重空间中的这些对称性在实践中几乎没有什么用，因为网络训练旨在找到参数的特定设置，而其他等价设置的存在几乎没有什么用。然而，当使用 Bayes 方法评估不同规模网络的概率分布时，权重空间的对称性确实发挥了作用（Bishop，2006）。
 
 \end{document}

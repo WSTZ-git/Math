@@ -1,146 +1,225 @@
 \documentclass[../../main.tex]{subfiles}
+
 \graphicspath{{../../image/}{../../figure/}}
+
 \begin{document}
 
 \section{证据下界}\label{section:ch16-证据下界}
 
-在讨论离散潜变量模型时，我们推导出了边缘对数似然的证据下界（ELBO），并展示了它是如何构成期望最大化（EM）算法的基础的。相同的框架同样适用于连续潜变量模型。这里我们提供一个稍微不同的~ELBO~推导，并且假设潜变量 $\bm{z}$ 是连续的。
+在讨论离散潜变量模型时，我们推导出了边缘对数似然的证据下界（ELBO），并展示了它是如何构成期望最大化（EM）算法的基础的，包括其扩展，例如变分推断（参见\cref{section:ch15-证据下界}）。相同的框架同样适用于连续潜变量模型，以及结合了离散和连续变量的模型。这里我们提供一个稍微不同的 ELBO 推导，并且假设潜变量 $\bm{z}$ 是连续的。
 
-考虑一个带有观测变量 $\bm{x}$、潜变量 $\bm{z}$ 和可学习参数向量 $\bm{w}$ 的模型 $p(\bm{x},\bm{z}|\bm{w})$。只要引入潜变量上的任意一个分布 $q(\bm{z})$，我们就可以将对数似然函数 $\ln p(\bm{x}|\bm{w})$ 写成两项之和的形式：
+考虑一个带有观测变量 $\bm{x}$、潜变量 $\bm{z}$ 和可学习参数向量 $\bm{w}$ 的模型 $p(\bm{x},\bm{z}|\bm{w})$。只要引入潜变量上的任意一个分布 $q(\bm{z})$，我们就可以将对数似然函数 $\ln p(\bm{x}|\bm{w})$ 写成两项之和的形式（见\cref{exercise:ch16-18}）：
 \begin{align}
-\ln p(\bm{x}|\bm{w})=\mathcal{L}(q,\bm{w})+\operatorname{KL}\!\left(q(\bm{z})\,\|\,p(\bm{z}|\bm{x},\bm{w})\right)
-\label{align:ch16-elbo}
+  \ln p(\bm{x}|\bm{w})=\mathcal{L}(\bm{w})+\operatorname{KL}\left(q(\bm{z})\|p(\bm{z}|\bm{x},\bm{w})\right),
+  \label{align:ch16-ELBO分解}
 \end{align}
 其中
 \begin{align}
-\mathcal{L}(q,\bm{w})=\int q(\bm{z})\ln\!\left\{\frac{p(\bm{x},\bm{z}|\bm{w})}{q(\bm{z})}\right\}\mathrm{d}\bm{z}
-\label{align:ch16-elbo-def}
+  \mathcal{L}(q,\bm{w})=\int q(\bm{z})\ln\!\left\{\frac{p(\bm{x},\bm{z}|\bm{w})}{q(\bm{z})}\right\}\mathrm{d}\bm{z},
+  \label{align:ch16-ELBO定义}
 \end{align}
 而
 \begin{align}
-\operatorname{KL}\!\left(q(\bm{z})\,\|\,p(\bm{z}|\bm{x},\bm{w})\right)=-\int q(\bm{z})\ln\!\left\{\frac{p(\bm{z}|\bm{x},\bm{w})}{q(\bm{z})}\right\}\mathrm{d}\bm{z}.
-\label{align:ch16-kl}
+  \operatorname{KL}\left(q(\bm{z})\|p(\bm{z}|\bm{x},\bm{w})\right)=-\int q(\bm{z})\ln\!\left\{\frac{p(\bm{z}|\bm{x},\bm{w})}{q(\bm{z})}\right\}\mathrm{d}\bm{z}.
+  \label{align:ch16-KL}
 \end{align}
 
-$\operatorname{KL}(q\|p)$ 是一种~Kullback--Leibler~散度，满足 $\operatorname{KL}(q\|p)\geq 0$，从中可以得出
+\begin{proposition}[证据下界分解]\label{proposition:ch16-ELBO分解}
+设 $q(\bm{z})$ 是潜变量上的任意一个概率密度，且\eqref{align:ch16-ELBO定义}与\eqref{align:ch16-KL}中的积分绝对收敛。则\eqref{align:ch16-ELBO分解}成立，其中 $\mathcal{L}(q,\bm{w})$ 由\eqref{align:ch16-ELBO定义}给出、$\operatorname{KL}$ 由\eqref{align:ch16-KL}给出；并且
 \begin{align}
-\ln p(\bm{x}|\bm{w})\geq\mathcal{L}(q,\bm{w})
-\label{align:ch16-elbo-ineq}
+  \ln p(\bm{x}|\bm{w})\geqslant\mathcal{L}(q,\bm{w}),
+  \label{align:ch16-ELBO不等式}
 \end{align}
-式\eqref{align:ch16-elbo-def}给出的 $\mathcal{L}(q,\bm{w})$ 构成了对数似然的下界，称为证据下界（ELBO）。
+等号成立当且仅当 $q(\bm{z})=p(\bm{z}|\bm{x},\bm{w})$（几乎处处）。
+\end{proposition}
 
-我们可以使用~EM~算法的两阶段迭代过程来最大化对数似然函数。在~EM~算法中，我们交替地针对 $q(\bm{z})$（E~步骤）和 $\bm{w}$（M~步骤）最大化 $\mathcal{L}(q,\bm{w})$。首先初始化参数 $\bm{w}$。然后在~E~步骤中保持 $\bm{w}$ 固定，并针对 $q(\bm{z})$ 最大化下界。我们注意到，可以通过最小化式\eqref{align:ch16-kl}中的~Kullback--Leibler~散度来获得下界的最高值。换言之，当~Kullback--Leibler~散度为零时，$q(\bm{z})=p(\bm{z}|\bm{x},\bm{w})$。
+\begin{proof}（重构新增）
+由概率的乘积法则，$p(\bm{x},\bm{z}|\bm{w})=p(\bm{z}|\bm{x},\bm{w})p(\bm{x}|\bm{w})$。于是
+\begin{align*}
+  \mathcal{L}(q,\bm{w})+\operatorname{KL}\left(q\|p(\cdot|\bm{x},\bm{w})\right)
+  &=\int q(\bm{z})\ln\frac{p(\bm{x},\bm{z}|\bm{w})}{q(\bm{z})}\mathrm{d}\bm{z}-\int q(\bm{z})\ln\frac{p(\bm{z}|\bm{x},\bm{w})}{q(\bm{z})}\mathrm{d}\bm{z}\\
+  &=\int q(\bm{z})\ln\frac{p(\bm{x},\bm{z}|\bm{w})}{p(\bm{z}|\bm{x},\bm{w})}\mathrm{d}\bm{z}
+  =\int q(\bm{z})\ln p(\bm{x}|\bm{w})\,\mathrm{d}\bm{z}=\ln p(\bm{x}|\bm{w}),
+\end{align*}
+其中最后一步用了 $\int q(\bm{z})\mathrm{d}\bm{z}=1$，且 $\ln p(\bm{x}|\bm{w})$ 与 $\bm{z}$ 无关。这就证明了\eqref{align:ch16-ELBO分解}。
 
-在~M~步骤中，我们保持所选的 $q(\bm{z})$ 固定，并针对 $\bm{w}$ 最大化 $\mathcal{L}(q,\bm{w})$。将 $q(\bm{z})=p(\bm{z}|\bm{x},\bm{w}^{\text{old}})$ 代入式\eqref{align:ch16-elbo-def}，可以得到
+再由 Kullback-Leibler 散度的非负性（\cref{proposition:ch02-kl非负}），$\operatorname{KL}\geqslant0$，故\eqref{align:ch16-ELBO不等式}成立。等号成立当且仅当两个密度几乎处处相等，即 $q(\bm{z})=p(\bm{z}|\bm{x},\bm{w})$。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch16-ELBO分解; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+这个分解是整章的枢纽：它把一个难以直接计算的量 $\ln p(\bm{x}|\bm{w})$ 拆成“可算的下界”与“非负的差距”两部分，而差距恰是 $q$ 与真实后验之间的 Kullback-Leibler 散度。因此，想让下界接近真值，就要让 $q$ 接近后验；想提高似然，就要提高下界。EM 算法的两个步骤正是分别对应这两件事。
+
+条件方面：分解本身只要求 $q$ 是概率密度且相关积分绝对收敛，对 $q$ 的形式没有任何限制，因此可以取任意易处理的分布族来做变分近似（这正是变分推断的出发点）。等号成立的条件“$q$ 等于后验”说明下界是紧的，但它一般无法达到：只有当后验恰好落在所选分布族内时才可能。
+
+原文在\eqref{align:ch16-ELBO分解}与\eqref{align:ch16-ELBO不等式}中把下界简记为 $\mathcal{L}(\bm{w})$，此后又记作 $\mathcal{L}(q,\bm{w})$；两者是同一个量（下界同时依赖于 $q$ 与 $\bm{w}$，简记时省略了 $q$）。本译本保留原文的两种写法。
+\end{remark}
+
+$\operatorname{KL}(q(\bm{z})\|p(\bm{z}|\bm{x},\bm{w}))$ 是一种 Kullback-Leibler 散度，满足特性 $\operatorname{KL}(\cdot\|\cdot)\geqslant0$（参见\cref{subsection:ch02-KL散度}），从中可以得出\eqref{align:ch16-ELBO不等式}。\eqref{align:ch16-ELBO定义}给出的 $\mathcal{L}(q,\bm{w})$ 构成了对数似然的下界，称为证据下界（ELBO）。$\mathcal{L}(q,\bm{w})$ 采用了与离散情况相同的形式[\eqref{align:ch15-elbo}]，但是将求和替换成了积分。
+
+我们可以使用 EM 算法的两阶段迭代过程来最大化对数似然函数。在 EM 算法中，我们可以交替地针对 $q(\bm{z})$（E 步骤）和 $\bm{w}$（M 步骤）最大化 $\mathcal{L}(q,\bm{w})$。首先初始化参数 $\bm{w}^{\text{old}}$。然后在 E 步骤中保持 $\bm{w}$ 固定，并针对 $q(\bm{z})$ 最大化下界。我们注意到，可以通过最小化\eqref{align:ch16-KL}中的 Kullback-Leibler 散度来获得下界的最高值。换言之，当 Kullback-Leibler 散度为零时，$q(\bm{z})=p(\bm{z}|\bm{x};\bm{w}^{\text{old}})$。在 M 步骤中，我们保持所选的 $q(\bm{z})$ 固定，并针对 $\bm{w}$ 最大化 $\mathcal{L}(q,\bm{w})$。将 $q(\bm{z})$ 代入\eqref{align:ch16-ELBO定义}，可以得到
 \begin{align}
-\mathcal{L}(q,\bm{w})=\int p(\bm{z}|\bm{x},\bm{w}^{\text{old}})\ln p(\bm{x},\bm{z}|\bm{w})\,\mathrm{d}\bm{z}-\int p(\bm{z}|\bm{x},\bm{w}^{\text{old}})\ln p(\bm{z}|\bm{x},\bm{w}^{\text{old}})\,\mathrm{d}\bm{z}.
-\label{align:ch16-q-continuous}
+  \mathcal{L}(q,\bm{w})&=\int p(\bm{z}|\bm{x},\bm{w}^{\text{old}})\ln p(\bm{x},\bm{z}|\bm{w})\,\mathrm{d}\bm{z}\nonumber\\
+  &\quad-\int p(\bm{z}|\bm{x},\bm{w}^{\text{old}})\ln p(\bm{z}|\bm{x},\bm{w}^{\text{old}})\,\mathrm{d}\bm{z}.
+  \label{align:ch16-M步目标}
 \end{align}
 
-右侧的第二项独立于 $\bm{w}$，因此在~M~步骤中可以忽略。式\eqref{align:ch16-q-continuous}右侧的第一项则是完整数据对数似然的期望，该期望来自我们用 $\bm{w}^{\text{old}}$ 计算得到的 $\bm{z}$ 的后验分布。
+在 M 步骤中保持 $\bm{w}^{\text{old}}$ 固定，并针对 $\bm{w}$ 最大化 $\mathcal{L}(q,\bm{w})$。请注意，\eqref{align:ch16-M步目标}右侧的第二项独立于 $\bm{w}$，因此在 M 步骤中可以忽略。\eqref{align:ch16-M步目标}右侧的第一项则是完整数据对数似然的期望，该期望来自我们用 $\bm{w}^{\text{old}}$ 计算得到的 $\bm{z}$ 的后验分布（参见\cref{section:ch15-em算法}）。
 
 如果我们有一个由独立同分布观测值组成的数据集 $\bm{x}_1,\cdots,\bm{x}_N$，则似然函数的形式为
 \begin{align}
-\ln p(\bm{X}|\bm{w})=\sum_{n=1}^{N}\ln p(\bm{x}_n|\bm{w})
-\label{align:ch16-iid-nll}
+  \ln p(\bm{X}|\bm{w})=\sum_{n=1}^{N}\ln p(\bm{x}_n|\bm{w}),
+  \label{align:ch16-iid似然}
 \end{align}
-其中数据矩阵 $\bm{X}$ 包含 $\bm{x}_1,\cdots,\bm{x}_N$，并且参数 $\bm{w}$ 在所有数据点之间是共享的。对于每一个数据点，引入一个相应的潜变量 $\bm{z}_n$ 及其关联的分布 $q(\bm{z}_n)$，并且通过遵循类似于推导式\eqref{align:ch16-elbo}时使用的步骤，我们得到了以下形式的~ELBO：
+其中数据矩阵 $\bm{X}$ 包含 $\bm{x}_1,\cdots,\bm{x}_N$，并且参数 $\bm{w}$ 在所有数据点之间是共享的。对于每一个数据点，引入一个相应的潜变量 $\bm{z}_n$ 及其关联的分布 $q(\bm{z}_n)$，并且通过遵循类似于推导\eqref{align:ch16-ELBO定义}时使用的步骤，我们得到了以下形式的 ELBO（参见\cref{section:ch19-变分自编码器}）：
 \begin{align}
-\mathcal{L}(q,\bm{w})=\sum_{n=1}^{N}\int q(\bm{z}_n)\ln p(\bm{x}_n,\bm{z}_n|\bm{w})\,\mathrm{d}\bm{z}_n-\sum_{n=1}^{N}\int q(\bm{z}_n)\ln q(\bm{z}_n)\,\mathrm{d}\bm{z}_n.
-\label{align:ch16-elbo-iid}
+  \mathcal{L}(q,\bm{w})=\sum_{n=1}^{N}\int q(\bm{z}_n)\ln\!\left\{\frac{p(\bm{x}_n,\bm{z}_n|\bm{w})}{q(\bm{z}_n)}\right\}\mathrm{d}\bm{z}_n.
+  \label{align:ch16-ELBO-iid}
 \end{align}
 
-当讨论变分自编码器（见第~19~章）时，我们将遇到一个模型，其~E~步骤的精确解无法实现，因此我们改为使用深度神经网络对 $q(\bm{z})$ 进行建模，然后使用~ELBO~来学习网络的参数。
+当讨论变分自编码器（见\cref{chapter:ch19-自编码器}）时，我们将遇到一个模型，其 E 步骤的精确解无法实现，因此我们改为使用深度神经网络对 $q(\bm{z})$ 进行建模，然后使用 ELBO 来学习网络的参数。
 
-\subsection{EM算法}\label{subsection:ch16-em算法}
+\subsection{EM算法}\label{subsection:ch16-EM算法}
 
-我们可以按照~EM~算法的通用框架来导出概率~PCA~的~EM~算法。为此，我们写下完整数据对数似然函数并根据用"旧"参数值评估的潜变量分布的后验分布来获取期望，然后最大化这个完整数据对数似然函数的期望以产生"新"的参数值。因为我们假定数据点是独立的，所以完整数据对数似然函数的形式为
-\begin{align}
-\ln p(\bm{X},\bm{Z}|\bm{W},\bm{\mu},\sigma^2)=-\frac{ND}{2}\ln(2\pi\sigma^2)-\frac{1}{2\sigma^2}\sum_{n=1}^{N}\|\bm{x}_n-\bm{\mu}-\bm{W}\bm{z}_n\|^2-\frac{N}{2}\ln(2\pi)-\frac{1}{2}\sum_{n=1}^{N}\|\bm{z}_n\|^2
-\label{align:ch16-complete-nll}
-\end{align}
-其中矩阵 $\bm{Z}$ 的第 $n$ 行由 $\bm{z}_n^{\mathsf T}$ 给出。我们已经知道 $\bm{\mu}$ 的精确最大似然解是由样本均值 $\bar{\bm{x}}$[式\eqref{align:ch16-mean}]给出的，在这个阶段替代 $\bm{\mu}$ 是很方便的。利用式\eqref{align:ch16-prior-z}和式\eqref{align:ch16-conditional-x}所示的潜变量分布和条件分布，并且考虑到对潜变量的后验分布的期望，我们得到
-\begin{align}
-\mathbb{E}_{\bm{Z}}\!\left[\ln p(\bm{X},\bm{Z}|\bm{W},\sigma^2)\right]=-\frac{ND}{2}\ln(2\pi\sigma^2)-\frac{1}{2\sigma^2}\sum_{n=1}^{N}\left\{\|\bm{x}_n-\bar{\bm{x}}\|^2-2(\bm{x}_n-\bar{\bm{x}})^{\mathsf T}\bm{W}\mathbb{E}[\bm{z}_n]+\operatorname{tr}(\bm{W}^{\mathsf T}\bm{W}\,\mathbb{E}[\bm{z}_n\bm{z}_n^{\mathsf T}])\right\}-\frac{1}{2}\sum_{n=1}^{N}\mathbb{E}[\bm{z}_n^{\mathsf T}\bm{z}_n]+\text{常数}.
-\label{align:ch16-q-ppca}
-\end{align}
+在本小节，我们将使用 EM 算法，通过迭代地最大化证据下界来学习概率 PCA 模型的参数。这看起来有些多余，因为我们已经得到了一个精确的闭式解来求解最大似然参数值，然而在高维空间中，与直接处理样本协方差矩阵相比，使用迭代的 EM 过程可能在计算上有优势。这个 EM 过程也可以扩展到没有闭式解的因子分析模型（参见\cref{subsection:ch16-因子分析}）。最后，它允许以合理的方式处理缺失数据。
 
-注意，此情况仅通过高斯分布的充分统计量与后验分布产生关联。因此，在~E~步骤中，我们使用旧的参数值来计算期望：
+我们可以按照 EM 算法的通用框架来导出概率 PCA 的 EM 算法（参见\cref{section:ch15-em算法}）。为此，我们写下完整数据对数似然函数并根据用“旧”参数值评估的潜变量分布的后验分布来获取期望，然后最大化这个完整数据对数似然函数的期望以产生“新”的参数值。因为我们假定数据点是独立的，所以完整数据对数似然函数的形式为
 \begin{align}
-\mathbb{E}[\bm{z}_n]=\bm{M}^{-1}\bm{W}^{\mathsf T}(\bm{x}_n-\bar{\bm{x}})
-\label{align:ch16-e-step-z}
+  \ln p(\bm{X},\bm{Z}|\bm{\mu},\bm{W},\sigma^2)=\sum_{n=1}^{N}\left\{\ln p(\bm{x}_n|\bm{z}_n)+\ln p(\bm{z}_n)\right\},
+  \label{align:ch16-完全数据似然}
 \end{align}
+其中矩阵 $\bm{Z}$ 的第 $n$ 行由 $\bm{z}_n^{\mathsf T}$ 给出。我们已经知道 $\bm{\mu}$ 的精确最大似然解是由样本均值 $\bar{\bm{x}}$[\eqref{align:ch16-均值}]给出的，在这个阶段替代 $\bm{\mu}$ 是很方便的。利用\eqref{align:ch16-先验}和\eqref{align:ch16-条件分布}所示的潜变量分布和条件分布，并且考虑到对潜变量的后验分布的期望，我们得到
 \begin{align}
-\mathbb{E}[\bm{z}_n\bm{z}_n^{\mathsf T}]=\sigma^2\bm{M}^{-1}+\mathbb{E}[\bm{z}_n]\mathbb{E}[\bm{z}_n]^{\mathsf T}
-\label{align:ch16-e-step-zz}
-\end{align}
-这里的 $\bm{M}$ 由式\eqref{align:ch16-matrix-m}定义。以上这些可以直接从后验分布和标准结果 $\mathbb{E}[\bm{z}_n\bm{z}_n^{\mathsf T}]=\operatorname{cov}[\bm{z}_n]+\mathbb{E}[\bm{z}_n]\mathbb{E}[\bm{z}_n]^{\mathsf T}$ 中得出。
-
-在~M~步骤中，我们固定后验统计量，并针对 $\bm{W}$ 和 $\sigma^2$ 进行最大化。针对 $\sigma^2$ 的最大化相对简单，针对 $\bm{W}$ 的最大化则需要我们利用矩阵导数获得~M~步骤的如下方程：
-\begin{align}
-\bm{W}^{\text{new}}=\left[\sum_{n=1}^{N}(\bm{x}_n-\bar{\bm{x}})\mathbb{E}[\bm{z}_n]^{\mathsf T}\right]\left[\sum_{n=1}^{N}\mathbb{E}[\bm{z}_n\bm{z}_n^{\mathsf T}]\right]^{-1}
-\label{align:ch16-m-step-w}
-\end{align}
-\begin{align}
-(\sigma^2)^{\text{new}}=\frac{1}{ND}\sum_{n=1}^{N}\left\{\|\bm{x}_n-\bar{\bm{x}}\|^2-2(\bm{x}_n-\bar{\bm{x}})^{\mathsf T}\bm{W}^{\text{new}}\mathbb{E}[\bm{z}_n]+\operatorname{tr}(\bm{W}^{\text{new}\mathsf T}\bm{W}^{\text{new}}\,\mathbb{E}[\bm{z}_n\bm{z}_n^{\mathsf T}])\right\}.
-\label{align:ch16-m-step-sigma}
+  \mathbb{E}\left[\ln p(\bm{X},\bm{Z}|\bm{\mu},\bm{W},\sigma^2)\right]&=-\sum_{n=1}^{N}\Bigg\{\frac{D}{2}\ln(2\pi\sigma^2)+\frac{1}{2}\operatorname{Tr}\left(\mathbb{E}[\bm{z}_n\bm{z}_n^{\mathsf T}]\right)\nonumber\\
+  &\quad+\frac{1}{2\sigma^2}\left\|\bm{x}_n-\bm{\mu}\right\|^2-\frac{1}{\sigma^2}\mathbb{E}[\bm{z}_n]^{\mathsf T}\bm{W}^{\mathsf T}(\bm{x}_n-\bm{\mu})\nonumber\\
+  &\quad+\frac{1}{2\sigma^2}\operatorname{Tr}\left(\mathbb{E}[\bm{z}_n\bm{z}_n^{\mathsf T}]\bm{W}^{\mathsf T}\bm{W}\right)+\frac{M}{2}\ln(2\pi)\Bigg\}.
+  \label{align:ch16-完全数据期望}
 \end{align}
 
-概率~PCA~的~EM~算法将首先初始化参数，然后交替地在~E~步骤中使用式\eqref{align:ch16-e-step-z}和式\eqref{align:ch16-e-step-zz}计算潜空间后验分布的充分统计量，并在~M~步骤中使用式\eqref{align:ch16-m-step-w}和式\eqref{align:ch16-m-step-sigma}修正参数值。
-
-概率~PCA~的~EM~算法的一个好处是，其在大规模应用中的计算效率较高。与基于样本协方差矩阵的特征向量分解的传统~PCA~不同，~EM~算法是迭代的。传统~PCA~的计算效率要高得多：协方差矩阵的特征分解需要 $O(D^3)$ 次计算。通常我们只对前 $M$ 个特征向量及对应的特征值感兴趣，在这种情况下，我们可以使用计算成本仅为 $O(MD^2)$ 的算法。然而，计算协方差矩阵需要 $O(ND^2)$ 的计算成本。这里描述的~EM~算法也没有显式构造协方差矩阵。计算最密集的步骤涉及数据集的求和，其复杂度为 $O(NDM)$。对于很大的维度 $D$，$M$ 要远小于 $D$，与 $O(ND^2)$ 相比，这可以显著节省计算成本。
-
-\subsection{PCA的EM算法}\label{subsection:ch16-pca-em}
-
-EM~算法的另一个优雅特性是，我们可以取极限 $\sigma^2\rightarrow 0$，这对应于传统~PCA，并且仍然是一个有效的类~EM~算法。从式\eqref{align:ch16-e-step-z}中可以看到，在~E~步骤中唯一需要计算的量是 $\mathbb{E}[\bm{z}_n]$。此外，因为 $\bm{M}=\bm{W}^{\mathsf T}\bm{W}$，所以~M~步骤也简化了。为了强调算法的简洁性，定义 $\tilde{\bm{X}}$ 为一个大小为 $N\times D$ 的矩阵，其第 $n$ 行由向量 $(\bm{x}_n-\bar{\bm{x}})^{\mathsf T}$ 给出。类似地，定义 $\bm{\Omega}$ 为一个大小为 $M\times N$ 的矩阵，其第 $n$ 列由 $\mathbb{E}[\bm{z}_n]$ 给出。~PCA~的~EM~算法的~E~步骤变为
+注意，此情况仅通过 Gauss 分布的充分统计量与后验分布产生关联。因此，在 E 步骤中，我们使用旧的参数值来计算期望：
 \begin{align}
-\bm{\Omega}=(\bm{W}^{\mathsf T}\bm{W})^{-1}\bm{W}^{\mathsf T}\tilde{\bm{X}}^{\mathsf T}
-\label{align:ch16-pca-e}
+  \mathbb{E}[\bm{z}_n]&=\bm{M}^{-1}\bm{W}^{\mathsf T}(\bm{x}_n-\bar{\bm{x}}),
+  \label{align:ch16-E步z}
 \end{align}
-EM~算法的~M~步骤变为
 \begin{align}
-\bm{W}^{\text{new}}=\tilde{\bm{X}}^{\mathsf T}\bm{\Omega}^{\mathsf T}(\bm{\Omega}\bm{\Omega}^{\mathsf T})^{-1}.
-\label{align:ch16-pca-m}
+  \mathbb{E}[\bm{z}_n\bm{z}_n^{\mathsf T}]&=\sigma^2\bm{M}^{-1}+\mathbb{E}[\bm{z}_n]\mathbb{E}[\bm{z}_n]^{\mathsf T}.
+  \label{align:ch16-E步zz}
 \end{align}
+以上这些可以直接从后验分布[\eqref{align:ch16-后验}]和标准结果 $\mathbb{E}[\bm{z}_n\bm{z}_n^{\mathsf T}]=\operatorname{cov}[\bm{z}_n]+\mathbb{E}[\bm{z}_n]\mathbb{E}[\bm{z}_n]^{\mathsf T}$ 中得出。这里的 $\bm{M}$ 由\eqref{align:ch16-矩阵M}定义。
+
+在 M 步骤中，我们固定后验统计量，并针对 $\bm{W}$ 和 $\sigma^2$ 进行最大化。针对 $\sigma^2$ 的最大化相对简单，针对 $\bm{W}$ 的最大化（见\cref{exercise:ch16-21}）则需要我们利用\eqref{align:appA-矩阵导数性质3}获得 M 步骤的如下方程：
+\begin{align}
+  \bm{W}_{\text{new}}=\left[\sum_{n=1}^{N}(\bm{x}_n-\bar{\bm{x}})\mathbb{E}[\bm{z}_n]^{\mathsf T}\right]\left[\sum_{n=1}^{N}\mathbb{E}[\bm{z}_n\bm{z}_n^{\mathsf T}]\right]^{-1},
+  \label{align:ch16-M步W}
+\end{align}
+\begin{align}
+  \left(\sigma^2\right)_{\text{new}}&=\frac{1}{ND}\sum_{n=1}^{N}\Bigg\{\left\|\bm{x}_n-\bar{\bm{x}}\right\|^2-2\mathbb{E}[\bm{z}_n]^{\mathsf T}\bm{W}_{\text{new}}^{\mathsf T}(\bm{x}_n-\bar{\bm{x}})\nonumber\\
+  &\quad+\operatorname{tr}\left(\mathbb{E}[\bm{z}_n\bm{z}_n^{\mathsf T}]\bm{W}_{\text{new}}^{\mathsf T}\bm{W}_{\text{new}}\right)\Bigg\}.
+  \label{align:ch16-M步sigma}
+\end{align}
+
+概率 PCA 的 EM 算法将首先初始化参数，然后交替地在 E 步骤中使用\eqref{align:ch16-E步z}和\eqref{align:ch16-E步zz}计算潜空间后验分布的充分统计量，并在 M 步骤中使用\eqref{align:ch16-M步W}和\eqref{align:ch16-M步sigma}修正参数值。
+
+\begin{proposition}[概率 PCA 的 EM 算法的单调性]\label{proposition:ch16-EM单调性}
+设 $\bm{\theta}=(\bm{W},\sigma^2)$，并记 $\ln p(\bm{X}|\bm{\theta})$ 为数据对数似然。在\cref{subsection:ch16-EM算法}的 EM 迭代中，若第 $t$ 轮参数为 $\bm{\theta}^{(t)}$，则对每一轮 $t$ 都有
+\begin{align*}
+  \ln p\left(\bm{X}\left|\bm{\theta}^{(t+1)}\right.\right)\geqslant\ln p\left(\bm{X}\left|\bm{\theta}^{(t)}\right.\right),
+\end{align*}
+即对数似然函数沿 EM 迭代单调不减；若 $\bm{\theta}^{(t+1)}=\bm{\theta}^{(t)}$，则对数似然不再增加，迭代已到达驻点。
+\end{proposition}
+
+\begin{proof}（重构新增）
+记第 $t$ 轮 E 步骤选定的变分分布为 $q^{(t)}(\bm{Z})=p(\bm{Z}|\bm{X},\bm{\theta}^{(t)})$，第 $t$ 轮 M 步骤把 $\bm{\theta}$ 更新为 $\bm{\theta}^{(t+1)}=\arg\max_{\bm{\theta}}\mathcal{L}(q^{(t)},\bm{\theta})$。由\cref{proposition:ch16-ELBO分解}，
+\begin{align*}
+  \ln p(\bm{X}|\bm{\theta})=\mathcal{L}(q,\bm{\theta})+\operatorname{KL}\left(q(\bm{Z})\|p(\bm{Z}|\bm{X},\bm{\theta})\right),\qquad \operatorname{KL}\geqslant0.
+\end{align*}
+在 E 步骤中取 $q=q^{(t)}$ 时 Kullback-Leibler 散度为零，故
+\begin{align*}
+  \mathcal{L}\left(q^{(t)},\bm{\theta}^{(t)}\right)=\ln p\left(\bm{X}\left|\bm{\theta}^{(t)}\right.\right).
+\end{align*}
+在 M 步骤中 $\bm{\theta}^{(t+1)}$ 使 $\mathcal{L}(q^{(t)},\cdot)$ 取最大，故
+\begin{align*}
+  \mathcal{L}\left(q^{(t)},\bm{\theta}^{(t+1)}\right)\geqslant\mathcal{L}\left(q^{(t)},\bm{\theta}^{(t)}\right)=\ln p\left(\bm{X}\left|\bm{\theta}^{(t)}\right.\right).
+\end{align*}
+再用一次下界不等式（此时 $q=q^{(t)}$、$\bm{\theta}=\bm{\theta}^{(t+1)}$），得
+\begin{align*}
+  \ln p\left(\bm{X}\left|\bm{\theta}^{(t+1)}\right.\right)\geqslant\mathcal{L}\left(q^{(t)},\bm{\theta}^{(t+1)}\right)\geqslant\ln p\left(\bm{X}\left|\bm{\theta}^{(t)}\right.\right),
+\end{align*}
+即对数似然单调不减。
+
+若 $\bm{\theta}^{(t+1)}=\bm{\theta}^{(t)}$，则上面两处不等号都取等号：第二处取等号说明 $\operatorname{KL}(q^{(t)}\|p(\bm{Z}|\bm{X},\bm{\theta}^{(t)}))=0$，第一处取等号说明 $\bm{\theta}^{(t)}$ 已是 $\mathcal{L}(q^{(t)},\cdot)$ 的最大值点。由 $\mathcal{L}$ 与 $\ln p$ 在 $\bm{\theta}^{(t)}$ 处的值相等，$\bm{\theta}^{(t)}$ 也是 $\ln p(\bm{X}|\cdot)$ 的驻点。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch16-EM单调性; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+单调性是说 EM “不会把似然弄差”，这是 EM 能作为通用算法使用的最基本保证。证明本身只用 ELBO 分解与非负性，没有用到概率 PCA 的具体公式，因此对任何满足正则性条件的潜变量模型都成立；概率 PCA 的特殊之处只在于 E 步骤与 M 步骤都有闭式解，所以每次迭代都可以精确执行。
+
+条件方面：证明要求 M 步骤的解存在（\eqref{align:ch16-M步W}中的矩阵 $\sum_n\mathbb{E}[\bm{z}_n\bm{z}_n^{\mathsf T}]$ 可逆）。这个矩阵等于 $N(\sigma^2\bm{M}^{-1}+\text{后验均值的外积})$，由 $\sigma^2>0$ 保证正定，故可逆；若 $\sigma^2=0$（即\cref{subsection:ch16-PCA的EM算法}的极限情形），需要另行论证，那里用的是“类 EM”的表述。另外，单调性只保证收敛到驻点，不保证收敛到全局最大值；概率 PCA 的全局最大值由\cref{theorem:ch16-最大似然解}给出，EM 的极限点是否为其一取决于初值。
+\end{remark}
+
+概率 PCA 的 EM 算法的一个好处是，其在大规模应用中的计算效率较高（Roweis, 1998）。与基于样本协方差矩阵的特征向量分解的传统 PCA 不同，EM 算法是迭代的，因此可能看起来不那么吸引人。然而，EM 算法的每个循环在高维空间中可能比传统 PCA 的计算效率要高得多。为了理解这一点，请注意，协方差矩阵的特征分解需要 $\mathcal{O}(D^3)$ 次计算。通常我们只对前 $M$ 个特征向量及对应的特征值感兴趣，在这种情况下我们可以使用计算成本仅为 $\mathcal{O}(MD^2)$ 的算法。然而，计算协方差矩阵需要 $\mathcal{O}(ND^2)$ 的计算成本，其中 $N$ 是数据点的数量。快照方法（Sirovich, 1987）等算法假设特征向量是数据向量的线性组合，这样虽然避免了直接计算协方差矩阵，但是需要 $\mathcal{O}(N^3)$ 的计算成本，因此不适用于大数据集。这里描述的 EM 算法也没有显式构造协方差矩阵。相反，计算最密集的步骤涉及数据集的求和，其复杂度为 $\mathcal{O}(NDM)$。对于很大的维度 $D$，$M$ 要远小于 $D$，与 $\mathcal{O}(ND^2)$ 相比，这可以显著节省计算成本，并且可以抵消 EM 算法的迭代成本。
+
+请注意，这个 EM 算法可以通过在线方式实现，依次读取、处理每个 $D$ 维数据点，然后丢弃并考虑下一个数据点。请注意，那些在 E 步骤中计算的量（一个 $M$ 维向量和一个 $M\times M$ 矩阵）可以针对每个数据点单独计算。在 M 步骤中，需要对数据点进行累加求和，这可以逐步进行。如果 $N$ 和 $D$ 都很大，这种方法可能会有优势。
+
+我们现在有了一个完全概率化的 PCA 模型。我们可以处理缺失数据，前提是这些数据是随机缺失的（missing at random）。换句话说，决定哪些值缺失的过程不依赖于任何观测到或未观测到的变量的值。这样的数据集可以通过边缘化未观测变量的分布来处理，生成的似然函数可以使用 EM 算法来最大化（见\cref{exercise:ch16-22}）。
+
+\subsection{PCA的EM算法}\label{subsection:ch16-PCA的EM算法}
+
+EM 算法的另一个优雅特性是，我们可以取极限 $\sigma^2\rightarrow0$，这对应于传统 PCA，并且仍然是一个有效的类 EM 算法（Roweis, 1998）。从\eqref{align:ch16-E步zz}中可以看到，在 E 步骤中唯一需要计算的量是 $\mathbb{E}[\bm{z}_n]$。此外，因为 $\bm{M}=\bm{W}^{\mathsf T}\bm{W}$，所以 M 步骤也简化了。为了强调算法的简洁性，定义 $\widetilde{\bm{X}}$ 为一个大小为 $N\times D$ 的矩阵，其第 $n$ 行由向量 $(\bm{x}_n-\bar{\bm{x}})^{\mathsf T}$ 给出。类似地，定义 $\bm{\Omega}$ 为一个大小为 $M\times N$ 的矩阵，其第 $n$ 列由 $\mathbb{E}[\bm{z}_n]$ 给出。PCA 的 EM 算法的 E 步骤[\eqref{align:ch16-E步z}]变为
+\begin{align}
+  \bm{\Omega}=\left(\bm{W}_{\text{old}}^{\mathsf T}\bm{W}_{\text{old}}\right)^{-1}\bm{W}_{\text{old}}^{\mathsf T}\widetilde{\bm{X}}^{\mathsf T},
+  \label{align:ch16-PCA-E步}
+\end{align}
+M 步骤[\eqref{align:ch16-M步W}]变为
+\begin{align}
+  \bm{W}_{\text{new}}=\widetilde{\bm{X}}^{\mathsf T}\bm{\Omega}^{\mathsf T}\left(\bm{\Omega}\bm{\Omega}^{\mathsf T}\right)^{-1}.
+  \label{align:ch16-PCA-M步}
+\end{align}
+
+以上这些也可以通过在线学习的方式实现。这些方程的简单解释如下。根据我们之前的讨论，E 步骤涉及将数据点正交投影到当前估计的主子空间。相应地，M 步骤表示在固定投影的情况下重新估计主子空间以最小化重建误差。
+
+我们可以用一个简单的物理类比理解这个 EM 算法，它在 $D=2$ 和 $M=1$ 时很容易描绘。考虑二维空间中的一系列数据点，用一根坚硬的棒子代表一维主子空间。然后通过符合 Hooke 定律（力与弹簧伸长量成正比，因此储能与弹簧伸长量的平方成正比）的弹簧将每个数据点连接到棒子上。在 E 步骤中，我们保持棒子固定并允许连接点沿着棒子上下滑动以最小化能量。这会导致每个连接点（独立地）将自己定位在相应数据点到棒子的正交投影位置。在 M 步骤中，我们保持连接点固定，然后释放棒子，并允许棒子移动到最小能量位置。然后重复 E 步骤和 M 步骤，直至满足适当的收敛标准，如\cref{figure:ch16-EM弹簧}所示。
 
 \begin{figure}[htbp]
-\centering
-\includegraphics[width=0.9\textwidth]{ch16-fig16.10-em-spring.png}
-\caption{用一个简单的物理类比来说明~PCA~的~EM~算法。(a)~一组绿色的数据点以及真实的主成分（显示为按特征值平方根缩放的特征向量）；(b)~由 $\bm{W}$ 定义的主子空间的初始配置（显示为红色），以及潜在点 $\bm{Z}$ 在数据空间中的投影（由 $\bm{Z}\bm{W}^{\mathsf T}$ 给出，显示为青色）；(c)~经过第一个~M~步骤后，$\bm{W}$ 已经在 $\bm{Z}$ 保持固定的情况下得到更新；(d)~在随后的~E~步骤中，$\bm{Z}$ 的值已更新并给出了正交投影，并且 $\bm{W}$ 保持不变；(e)~经过第二个~M~步骤之后的结果；(f)~收敛后的解。}
-\label{fig:ch16-em-spring}
+  \centering
+  \includegraphics[width=0.95\textwidth]{ch16-fig16.10-em-spring.png}
+  \caption{用一个简单的物理类比来说明 PCA 的 EM 算法。(a) 一组绿色的数据点以及真实的主成分（显示为按特征值平方根缩放的特征向量）；(b) 由 $\bm{W}$ 定义的主子空间的初始配置（显示为红色），以及潜在点 $\bm{Z}$ 在数据空间中的投影（由 $\bm{Z}\bm{W}^{\mathsf T}$ 给出，显示为青色）；(c) 经过第一个 M 步骤后，$\bm{W}$ 已经在 $\bm{Z}$ 保持固定的情况下得到更新；(d) 在随后的 E 步骤中，$\bm{Z}$ 的值已更新并给出了正交投影，并且 $\bm{W}$ 保持不变；(e) 经过第二个 M 步骤之后的结果；(f) 收敛后的解}
+  \label{figure:ch16-EM弹簧}
 \end{figure}
 
-我们可以用一个简单的物理类比理解这个~EM~算法，它在 $D=2$ 和 $M=1$ 时很容易描绘。考虑二维空间中的一系列数据点，用一根坚硬的棒子代表一维主子空间。然后通过符合胡克定律（力与弹簧伸长量成正比，因此储能与弹簧伸长量的平方成正比）的弹簧将每个数据点连接到棒子上。在~E~步骤中，我们保持棒子固定并允许连接点沿着棒子上下滑动以最小化能量。这会导致每个连接点（独立地）将自己定位在相应数据点到棒子的正交投影位置。在~M~步骤中，我们保持连接点固定，然后释放棒子，并允许棒子移动到最小能量位置。然后重复~E~步骤和~M~步骤，直至满足适当的收敛标准。
+\subsection{因子分析的EM算法}\label{subsection:ch16-因子分析的EM算法}
 
-以上这些也可以通过在线学习的方式实现。这些方程的简单解释如下：根据我们之前的讨论，E~步骤涉及将数据点正交投影到当前估计的主子空间。相应地，M~步骤表示在固定投影的情况下重新估计主子空间以最小化重建误差。
-
-\subsection{因子分析的EM算法}\label{subsection:ch16-fa-em}
-
-我们可以使用最大似然法来确定因子分析模型中的参数 $\bm{\mu}$、$\bm{W}$ 和 $\bm{\Psi}$。$\bm{\mu}$ 的解再次由样本均值给出。然而，与概率~PCA~不同的是，$\bm{W}$ 不再有闭式的最大似然解，只能通过迭代来找到。由于因子分析模型是一个潜变量模型，因此可以使用类似于概率~PCA~的~EM~算法来完成这项工作。具体来说，E~步骤方程为
+我们可以使用最大似然法来确定因子分析模型中的参数 $\bm{\mu}$、$\bm{W}$ 和 $\bm{\Psi}$。$\bm{\mu}$ 的解再次由样本均值给出（参见\cref{subsection:ch16-因子分析}）。然而，与概率 PCA 不同的是，$\bm{W}$ 不再有闭式的最大似然解，只能通过迭代来找到。由于因子分析模型是一个潜变量模型，因此可以使用类似于概率 PCA 的 EM 算法来完成这项工作（见\cref{exercise:ch16-24}）（Rubin and Thayer, 1982）。具体来说，E 步骤方程为
 \begin{align}
-\mathbb{E}[\bm{z}_n]=\bm{G}\bm{W}^{\mathsf T}\tilde{\bm{X}}_n^{-1}(\bm{x}_n-\bar{\bm{x}})
-\label{align:ch16-fa-e-z}
+  \mathbb{E}[\bm{z}_n]&=\bm{G}\bm{W}^{\mathsf T}\bm{\Psi}^{-1}(\bm{x}_n-\bar{\bm{x}}),
+  \label{align:ch16-FA-E步z}
 \end{align}
 \begin{align}
-\mathbb{E}[\bm{z}_n\bm{z}_n^{\mathsf T}]=\bm{G}+\mathbb{E}[\bm{z}_n]\mathbb{E}[\bm{z}_n]^{\mathsf T}
-\label{align:ch16-fa-e-zz}
+  \mathbb{E}[\bm{z}_n\bm{z}_n^{\mathsf T}]&=\bm{G}+\mathbb{E}[\bm{z}_n]\mathbb{E}[\bm{z}_n]^{\mathsf T},
+  \label{align:ch16-FA-E步zz}
 \end{align}
 其中
 \begin{align}
-\bm{G}=(\bm{I}+\bm{W}^{\mathsf T}\bm{\Psi}^{-1}\bm{W})^{-1}
-\label{align:ch16-fa-g}
+  \bm{G}=\left(\bm{I}+\bm{W}^{\mathsf T}\bm{\Psi}^{-1}\bm{W}\right)^{-1}.
+  \label{align:ch16-FA-G}
 \end{align}
-注意这是以一种涉及对 $M\times M$ 而不是 $D\times D$ 的矩阵（除了 $D\times D$ 对角矩阵，其逆在 $O(D)$ 步内可以轻松计算）求逆的形式来表示的，这很方便，因为通常情况下 $M<D$。
+注意这是以一种涉及对 $M\times M$ 而不是 $D\times D$ 的矩阵（除了 $D\times D$ 对角矩阵 $\bm{\Psi}$，其逆在 $\mathcal{O}(D)$ 步内可以轻松计算）求逆的形式来表示的，这很方便，因为通常情况下 $M\ll D$（见\cref{exercise:ch16-25}）。
 
-同样，M~步骤方程为
+同样，M 步骤方程为
 \begin{align}
-\bm{W}^{\text{new}}=\left[\sum_{n=1}^{N}(\bm{x}_n-\bar{\bm{x}})\mathbb{E}[\bm{z}_n]^{\mathsf T}\right]\left[\sum_{n=1}^{N}\mathbb{E}[\bm{z}_n\bm{z}_n^{\mathsf T}]\right]^{-1}
-\label{align:ch16-fa-m-w}
+  \bm{W}_{\text{new}}=\left[\sum_{n=1}^{N}(\bm{x}_n-\bar{\bm{x}})\mathbb{E}[\bm{z}_n]^{\mathsf T}\right]\left[\sum_{n=1}^{N}\mathbb{E}[\bm{z}_n\bm{z}_n^{\mathsf T}]\right]^{-1},
+  \label{align:ch16-FA-M步W}
 \end{align}
 \begin{align}
-\bm{\Psi}^{\text{new}}=\operatorname{diag}\!\left\{\tilde{\bm{S}}-\frac{1}{N}\sum_{n=1}^{N}(\bm{x}_n-\bar{\bm{x}})\mathbb{E}[\bm{z}_n]^{\mathsf T}\bm{W}^{\text{new}\mathsf T}\right\}
-\label{align:ch16-fa-m-psi}
+  \bm{\Psi}_{\text{new}}=\operatorname{diag}\left\{\bm{S}-\bm{W}_{\text{new}}\frac{1}{N}\sum_{n=1}^{N}\mathbb{E}[\bm{z}_n](\bm{x}_n-\bar{\bm{x}})^{\mathsf T}\right\},
+  \label{align:ch16-FA-M步Psi}
 \end{align}
 其中 $\operatorname{diag}$ 运算符会将矩阵的所有非对角元素设置为零。
+
+\begin{remark}（重构新增）
+因子分析的 M 步骤与概率 PCA 的唯一差别在 $\bm{\Psi}$ 的更新：概率 PCA 对所有方向共用标量 $\sigma^2$，所以只能取一个全局平均；因子分析允许每个坐标有自己的噪声方差，于是 $\bm{\Psi}_{\text{new}}$ 取残差协方差 $\bm{S}-\bm{W}_{\text{new}}\frac{1}{N}\sum_n\mathbb{E}[\bm{z}_n](\bm{x}_n-\bar{\bm{x}})^{\mathsf T}$ 的对角部分，非对角元被强制置零。这也解释了为什么因子分析没有闭式解：$\bm{\Psi}$ 与 $\bm{W}$ 的更新互相依赖，只能交替进行。
+
+条件方面：$\bm{\Psi}$ 必须保持正定，因此 $\operatorname{diag}\{\cdot\}$ 中若出现非正的对角元，算法会失效，实践中需要加下界或改用其他优化方法。E 步骤中 $\bm{G}$ 的定义依赖 $\bm{\Psi}^{-1}$，这正是“对角”这一假设的价值所在：对角矩阵求逆只需 $\mathcal{O}(D)$，而 $\bm{G}$ 只涉及 $M\times M$ 矩阵的逆，从而整个算法的复杂度与 $D$ 呈线性关系。
+\end{remark}
 
 \end{document}

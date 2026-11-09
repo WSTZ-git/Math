@@ -1,103 +1,355 @@
 \documentclass[../../main.tex]{subfiles}
+
 \graphicspath{{../../image/}{../../figure/}}
+
 \begin{document}
 
 \section{深度网络}\label{section:ch06-深度网络}
 
-我们通过使用可学习参数控制线性回归/分类模型的基函数，阐述了发展神经网络的动机，从而产生了图~\ref{fig:ch06-mlp}~所示的两层网络。多年来它一直是最广为使用的架构——主要因为很难有效训练超过两层的网络。然而最近训练技术的发展使多层网络变得有效（参见第~7~章）。
+我们通过使用可学习参数控制线性回归模型或分类模型的基函数，阐述了发展神经网络的动机，从而产生了\cref{figure:ch06-两层网络}所示的两层神经网络。多年来，它一直是最广为使用的架构——主要是因为很难有效训练超过两层的网络。然而，我们将很快讨论到，将神经网络扩展到两层以上会带来许多优势，并且最近神经网络训练技术的发展对多层网络是有效的（参见\cref{section:ch07-错误平面}）。
 
-注意此类网络中"层数"的术语存在一些混乱：图~\ref{fig:ch06-mlp}~所示网络有时被描述为"三层网络"（对单元层数计数，把输入视为单元），有时被描述为"单隐藏层网络"（对隐藏单元层数计数）。我们建议将图~\ref{fig:ch06-mlp}~所示网络称为"\textbf{两层网络}"，因为可学习权重的层数对网络性质十分重要。
+我们可以轻松地将两层网络架构［\eqref{align:ch06-矩阵形式}］扩展到任意有限层数 $L$，其中第 $l=1,\cdots,L$ 层计算以下函数：
 
-我们可以轻松地把两层网络架构~\eqref{align:ch06-mlp-scalar}~扩展到任意有限层数 $L$，其中第 $l=1,\cdots,L$ 层计算
 \begin{align}
-\mathbf{z}^{(l)} = h^{(l)}\!\left(\mathbf{W}^{(l)}\mathbf{z}^{(l-1)}+\mathbf{b}^{(l)}\right),
-\label{align:ch06-deep-layer}
-\end{align}
-其中 $h^{(l)}$ 是与第 $l$ 层相关联的激活函数，$\mathbf{W}^{(l)}$ 表示相应的权重和偏置参数矩阵。此外 $\mathbf{z}^{(0)} = \mathbf{x}$ 表示输入向量，$\mathbf{z}^{(L)} = \mathbf{y}$ 表示输出向量。
-
-虽然图~\ref{fig:ch06-mlp}~所示的两层网络具有通用近似能力，但具有超过两层的网络有时可以用比两层网络少得多的参数来表示给定函数。Montufar 等人（2014）指出，网络函数将输入空间划分成多个区域，这些区域在网络深度上是指数级增长的，但在隐藏层宽度上却是多项式级的；使用两层网络表示相同函数则需要指数级数量的隐藏单元。
-
-\subsection{层次化表示}\label{section:ch06-层次化表示}
-
-虽然通用近似定理是有趣的结果，但另一个更令人信服的探索深度网络的理由是：网络架构编码了一种特定形式的归纳偏置，即输出空间与输入空间之间通过层次化表示相关联。这方面一个很好的例子是图像中物体识别（参见第~10~章）：像素与高级概念（如"猫"）之间的关系非常复杂且非线性，对两层网络而言是极具挑战性的识别任务；然而深度网络会首先在浅层检测低级特征（如边缘），然后在后续层中将它们结合起来以得到更高级的特征（如眼睛或胡须），之后继续在深层组合这些特征以检测猫的存在。
-
-这可以看作一种\textbf{组合}（compositional）归纳偏置：更高级对象（如猫）由低级对象（如眼睛）组成，而这些低级对象又由更低级元素（如边缘）组成。也可以从相反角度考虑图像生成：从低级特征（如边缘）开始，组合起来形成简单形状（如圆），之后进一步组合形成更高级对象（如猫）。每个阶段都有许多不同方式组合不同组件，随着深度增加，可能性数量呈指数级增长。
-
-\subsection{分布式表示}\label{section:ch06-分布式表示}
-
-在概念上，隐藏层中的每个单元都可以视为表示网络在该层的一个"特征"：激活值高表示相应特征存在，激活值低表示不存在。当给定层中有 $M$ 个单元时，网络可以表示 $M$ 个不同特征。然而网络也可能学习到不同表示——其中隐藏单元的\emph{组合}表示特征，从而使具有 $M$ 个单元的隐藏层能表示 $2^M$ 个不同特征。
-
-例如考虑一个用于处理人脸图像的网络：每张特定人脸图像可能有（或没有）眼镜、有（或没有）帽子、有（或没有）胡须，从而导致 $2^3=8$ 种组合。尽管这可以用 $8$ 个单元来表示（检测到相应组合时对应单元"打开"），但也可以更紧凑地只使用 $3$ 个单元，每个单元代表一个属性。这些属性可以独立存在（尽管统计上它们的存在可能一定程度上相关）。稍后我们将在第~10~章详细探讨深度学习网络在训练过程中自行发现的内部表示类型。
-
-\subsection{表示学习}\label{section:ch06-表示学习}
-
-我们可以把连续经过深度网络不同层视为对数据进行变换，以便更容易地完成任务。例如成功学习将皮肤病变分类为良性或恶性（参见~1.1.1~小节）的网络必须学会将原始图像数据转换为由最终隐藏层输出表示的新空间，以便网络最终层可以区分这两类数据。这个最终层可以视为一个简单线性分类器，因此在最后隐藏层的表示中，两类数据必须能被一个线性面很好地分开。
-
-这种发现数据的非线性变换使后续任务更容易完成的能力称为\textbf{表示学习}（representation learning）~\citep{BengioCourvilleVincent2012}。学习到的表示有时称为\textbf{嵌入空间}（embedding space），它们由网络中一个隐藏层的输出给出，从而对于任何输入向量（无论来自训练集还是新数据集）都可以通过网络前向传播转换为这个表示。
-
-表示学习异常强大的原因在于它使我们能够利用无标签数据。通常收集大量无标签数据很容易，但获取相关标签可能更困难：例如车辆行驶在城市周边时，车载摄像头可以收集大量城市场景图像，但识别相关物体（如行人、路标）却需要成本高昂且耗时的人工标注。
-
-从无标签数据中学习称为\textbf{无监督学习}（unsupervised learning），人们已开发出许多不同算法。例如可以训练神经网络将图像作为输入并创建相同图像作为输出；为使其成为一项具有挑战性的任务，网络可能使用比图像像素数更少的隐藏层单元，从而要求网络学习对图像进行某种压缩。这只需要无标签数据，因为训练集中每张图像同时充当输入向量和目标向量。这种网络又称为\textbf{自编码器}（参见~19.1~节），训练目标是使网络发现对解决其他任务（如图像分类）有用的数据内部表示。
-
-无监督学习在成功训练第一个深度网络（卷积网络除外）方面扮演了重要角色：网络每一层首先使用无监督学习进行预训练，然后整个网络再使用基于梯度的监督训练方式。后来人们发现预训练阶段可以省略，在适当条件下可以纯粹使用监督学习从头训练深度网络。然而预训练和表示学习仍然是深度学习的核心。最值得一提的预训练是在自然语言处理中进行的（参见第~12~章）：Transformer 模型在大量文本上进行训练，从而学习到高度复杂的语言内部表示，使其各项能力达到甚至超越人类水平。
-
-\subsection{迁移学习}\label{section:ch06-迁移学习}
-
-从一个特定任务学习到的内部表示也可能对相关任务有帮助。例如在一个大型有标签常见对象数据集上训练的网络，可以学习到如何将图像表示转换为更适合对象分类的表示；然后可以使用一个较小的有标签数据集对网络最终分类层重新训练，以创建一个病变分类器（参见~1.1.1~小节）。这是\textbf{迁移学习}（transfer learning）~\citep{Hospedales2021}的一个示例，相较于仅使用病变图像数据训练可以获得更高准确率，因为网络可以利用自然图像的通用共性。
-
-一般来说，迁移学习可以通过使用来自相关任务 $B$ 的数据来提升任务 $A$ 的性能，其中任务 $A$ 训练数据匮乏而任务 $B$ 训练数据更丰富。两个任务应具有相同类型输入，且任务之间应存在一些共性，使得从任务 $B$ 学到的低级特征或内部表示对任务 $A$ 有帮助。当研究卷积网络（参见第~10~章）时，我们会发现许多图像处理任务在网络早期层中需要相似低级特征，而后续层则专门用于特定任务，因此这样的网络非常适合迁移学习。
-
-当任务 $A$ 训练数据非常稀缺时，可能只需重新训练网络最终层；如果训练数据更多，重新训练多个层也可行。使用一个任务学习参数，然后应用于一个或多个其他任务的过程称为\textbf{预训练}（pre-training）。对于新任务，相较于对整个网络应用随机梯度下降，更高效的方式是将新训练数据一次通过参数固定的预训练网络，以便在新表示中评估训练输入，然后在仅包含最终层的较小网络上应用基于迭代梯度的优化。除了把预训练网络作为固定预处理器之外，也可以应用\textbf{微调}（fine-tuning），即将整个网络适配到任务 $A$ 的训练数据上；这通常通过非常小的学习率和有限次迭代完成，以确保网络不会过拟合新任务中相对较小的可用数据集。
-
-跨多个任务学习可以扩展到\textbf{多任务学习}（multitask learning）~\citep{Caruana1997}：网络同时联合学习多个相关任务。例如希望建立一个垃圾邮件过滤器，允许不同用户有不同分类器以适应各自偏好；训练数据可能包括许多不同用户的垃圾邮件和非垃圾邮件样本，但任何一个用户的样本数量可能相当有限，因此为每个用户单独训练分类器可能效果不佳。相反，可以将数据集组合并训练一个单一较大网络，该网络共享早期层，但对不同用户后续层具有单独可学习参数。跨任务共享数据允许网络利用任务之间的共性，从而提高对所有用户的准确率。大量训练样本使我们能够使用具有更多参数的更深层网络，进一步提高性能。
-
-跨多个任务学习还可以扩展到\textbf{元学习}（meta-learning），也称"学会学习"（learning to learn）~\citep{Hospedales2021}。多任务学习旨在对一组固定任务进行预测，而元学习的目标是对训练期间未见过的未来任务进行预测。这不仅可以通过跨任务学习共享内部表示来实现，还可以通过学习学习算法本身来实现。例如当新类的有标签样本非常少时，元学习可以用于促进分类模型泛化到新类上，称为\textbf{小样本学习}（few-shot learning）；当只使用一个有标签样本时，则称为\textbf{单样本学习}（one-shot learning）。
-
-\subsection{对比学习}\label{section:ch06-对比学习}
-
-\textbf{对比学习}（contrastive learning）是最常见和强大的表示学习方法之一~\citep{GutmannHyvarinen2010,OordLiVinyals2018,ChenKornblith2020}。它背后的思想是学习一种表示，使得在嵌入空间中某些输入对（称为\textbf{正对}）之间距离近，而其他输入对（称为\textbf{负对}）之间距离远。直觉上，如果选择语义相似的为正对、语义不相似的为负对，那么将学习到一个表示空间，在该空间中相似输入之间距离近，从而使完成下游任务（如分类）更容易。
-
-与其他形式的表示学习一样，我们通常不直接使用训练好的网络输出，而是使用某个早期层的激活来构建嵌入空间。对比学习任务与其他大多数机器学习任务不同：给定输入的误差函数仅取决于其他输入，而非每个输入单独的标签或目标输出。
-
-给定数据点 $\mathbf{x}$（称为\textbf{锚点} anchor），指定另一个数据点 $\mathbf{x}^{+}$ 与之组成一个正对；还必须指定一组数据点 $\{\mathbf{x}^{-}_{1},\cdots,\mathbf{x}^{-}_{N}\}$，其中每个点都与 $\mathbf{x}$ 组成一个负对。我们需要一个损失函数：如果 $\mathbf{x}$ 和 $\mathbf{x}^{+}$ 的表示较为接近则给予奖励，同时拉大 $\mathbf{x}$ 与每个 $\mathbf{x}^{-}$ 之间的距离。
-
-一个示例，也是对比学习中最常用的损失函数，称为 InfoNCE 损失函数~\citep{GutmannHyvarinen2010,OordLiVinyals2018}，其中 NCE 表示"噪声对比估计"（noise contrastive estimation）。假设有一个神经网络函数 $f_{\mathbf{w}}(\mathbf{x})$，用于将来自输入空间的点 $\mathbf{x}$ 映射到一个由可学习参数 $\mathbf{w}$ 控制的表示空间。该表示是归一化的，即 $\|f_{\mathbf{w}}(\mathbf{x})\|=1$。对于数据点 $\mathbf{x}$，InfoNCE 损失函数定义如下：
-\begin{align}
-\mathcal{L}_{\mathrm{NCE}} = -\ln\!\left(\frac{\exp(f_{\mathbf{w}}(\mathbf{x})\cdot f_{\mathbf{w}}(\mathbf{x}^{+})/\tau)}{\exp(f_{\mathbf{w}}(\mathbf{x})\cdot f_{\mathbf{w}}(\mathbf{x}^{+})/\tau)+\sum_{j=1}^{N}\exp(f_{\mathbf{w}}(\mathbf{x})\cdot f_{\mathbf{w}}(\mathbf{x}^{-}_{j})/\tau)}\right).
-\label{align:ch06-infonce}
+\boldsymbol{z}^{(l)}=h^{(l)}\!\left(\boldsymbol{W}^{(l)}\boldsymbol{z}^{(l-1)}\right),
+\label{align:ch06-深层递推}
 \end{align}
 
-在这个函数中，锚点表示 $f_{\mathbf{w}}(\mathbf{x})$ 和正样本表示 $f_{\mathbf{w}}(\mathbf{x}^{+})$ 之间的余弦相似度给出了在习得空间中度量正对样本有多近的方法；同样的方法也可用于评估锚点与负对样本之间的接近程度。注意这个函数类似于分类交叉熵误差函数，其中正对的余弦相似度给出了标签类的对数概率，而负对的余弦相似度给出了错误类的对数概率。负对非常重要：如果没有它们，嵌入空间将简单地学习将每个点映射到相同表示的退化解。
+其中 $h^{(l)}$ 表示与第 $l$ 层相关联的激活函数，$\boldsymbol{W}^{(l)}$ 表示相应的权重和偏置参数矩阵。此外，$\boldsymbol{z}^{(0)}=\boldsymbol{x}$ 表示输入向量，$\boldsymbol{z}^{(L)}=\boldsymbol{y}$ 表示输出向量。
 
-一个特定的对比学习算法主要由正对和负对的选择方式定义，也就是如何使用先验知识来指定什么是好的表示。例如考虑学习图像表示：一个常见选择是通过\emph{破坏}输入图像来创建正对，这种方式保留了图像的语义信息，同时极大地改变了像素空间中的图像~\citep{Wu2018,He2019,ChenKornblith2020}；破坏可以是旋转、平移和颜色转换。数据集中其他图像可用来创建负对。这种对比学习方法称为\textbf{个体判别}（instance discrimination）。
+\begin{definition}[深度神经网络]\label{definition:ch06-深度网络}
+称由\eqref{align:ch06-深层递推}递推定义、以 $\boldsymbol{z}^{(0)}=\boldsymbol{x}$ 为输入、以 $\boldsymbol{z}^{(L)}=\boldsymbol{y}$ 为输出的复合映射为具有 $L$ 层可学习权重的\textbf{深度神经网络}（deep neural network）。当 $L>2$ 时通常称为\textbf{深度}网络，其层数 $L$ 称为网络\textbf{深度}（depth），各层向量的维数称为该层的\textbf{宽度}（width）。
+\end{definition}
 
-然而如果可以访问类标签，则可以使用同一类别的图像作为正对，而使用不同类别的图像作为负对。这放宽了对指定表征应保持不变的增强方法的依赖，并且避免了将两个语义相似图像视为负对。这称为\textbf{监督对比学习}（supervised contrastive learning）~\citep{Khosla2020}，因为它依赖于类标签，并且通常能得到比仅使用交叉熵分类学习的表示更好的结果。
+% SUPPLEMENT: parent=definition:ch06-深度网络; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{definition:ch06-深度网络}把“深度”定义为可学习权重的层数，与\cref{definition:ch06-两层神经网络}的约定一致：输入层和输出层的激活函数本身不是权重层，但输出层的变换仍计入 $L$。由此，\cref{figure:ch06-两层网络}的网络是 $L=2$ 的特例。深度与宽度的区分很重要：“深”指的是复合的次数，“宽”指的是单层单元数；后文的通用近似讨论关心的是宽度，而表达效率的讨论关心的是深度。
+\end{remark}
 
-正对和负对的成员不一定非要来自同一数据模态。在对比语言--图像预训练（Contrastive-Language Image Pretraining, CLIP）~\citep{Radford2021}中，一个正对由一幅图像和对应的文本说明组成；用两个单独函数将每个模态输入分别映射到相同表示空间，其中 $f$ 表示从图像到表示空间的映射，$g$ 表示从文本输入到表示空间的映射。还需要从数据集中获取一组图像 $\{\mathbf{x}_1,\cdots,\mathbf{x}_N\}$，并假设对它们来说文本说明 $\mathbf{y}^{+}$ 是不恰当的，还需一组同样不匹配输入图像 $\mathbf{x}$ 的文本说明 $\{\mathbf{y}^{-}_{1},\cdots,\mathbf{y}^{-}_{N}\}$。损失函数由下式给出：
+注意，此类网络中计算层数的术语存在一些混乱。因此，\cref{figure:ch06-两层网络}所示的网络有时描述为“三层网络”（对单元的层数进行计数，并将输入视为单元），有时描述为“单隐藏层网络”（对隐藏单元的层数进行计数）。建议将\cref{figure:ch06-两层网络}所示的网络称为“两层网络”，因为可学习权重的层数对于网络的性质是十分重要的。
+
+我们已经看到，\cref{figure:ch06-两层网络}所示的具有两层可学习参数的网络具有通用近似能力。然而，具有超过两层的网络有时可以用比两层网络少得多的参数来表示给定的函数。Montúfar 等人（2014）指出，网络函数将输入空间划分成了多个区域，这些区域在网络深度上是指数级的，但在隐藏层的宽度上却是多项式级的。使用两层网络表示相同的函数需要指数级数量规模的隐藏单元。
+
+\begin{proposition}[分段线性区域数随深度指数增长]\label{proposition:ch06-区域数量}
+考虑使用 ReLU 激活的全连接网络，其输入维数为 $D$、每层宽度为 $W$、深度为 $L$。则该网络把输入空间划分成的线性区域数 $\mathcal{R}$ 满足
 \begin{align}
-\mathcal{L}_{\mathrm{CLIP}} = -\ln\!\left(\frac{\exp(f(\mathbf{x}^{+})\cdot g(\mathbf{y}^{+})/\tau)}{\sum_{j=0}^{N}\exp(f(\mathbf{x}^{+})\cdot g(\mathbf{y}^{-}_{j})/\tau)}\right)
--\ln\!\left(\frac{\exp(g(\mathbf{y}^{+})\cdot f(\mathbf{x}^{+})/\tau)}{\sum_{j=0}^{N}\exp(g(\mathbf{y}^{+})\cdot f(\mathbf{x}^{-}_{j})/\tau)}\right),
-\label{align:ch06-clip}
+\mathcal{R}=\mathcal{O}\bigl(W^{DL}\bigr),
+\label{align:ch06-区域数深度}
 \end{align}
-其中 $\mathbf{x}^{+}$ 和 $\mathbf{y}^{+}$ 表示一个正对。损失函数中的两项确保了：(a) 图像表示与对应的文本说明表示相对于其他图像表示而言是接近的；(b) 文本说明表示与它所描述的图像表示相对于其他文本说明表示而言是接近的。虽然 CLIP 使用文本--图像对，但任何具有配对模态的数据集都可以用来学习表示。这通常称为\textbf{弱监督学习}，因为它依赖于带文本说明的图像，这些数据通常从互联网上爬取，比手动标注图像类别更容易。
+即对固定的输入维数 $D$，$\mathcal{R}$ 关于宽度 $W$ 是 $DL$ 次多项式、关于深度 $L$ 是指数级；若改用深度为 $2$ 的网络表示同一个分段线性函数，则所需隐藏单元数在最坏情况下随 $L$ 指数增长。
+\end{proposition}
 
-\subsection{通用网络结构}\label{section:ch06-通用网络结构}
+\begin{proof}
+（重构新增，思路）每增加一层，该层的超平面集会把上一层的每个线性区域继续细分，故区域数至多乘以该层能产生的细分份数；逐层累乘即得 Montúfar 等人（2014）给出的上界 $\mathcal{O}(W^{DL})$，其中指数含 $D$ 与 $L$。反之，深度为 $2$ 的网络只有一层隐藏单元 $M$ 个超平面，它把 $\mathbb{R}^{D}$ 划分成的区域数至多按 $M^{D}$ 增长；若要达到 $L$ 层网络所能产生的 $W^{DL}$ 个区域，就必须 $M^{D}\gtrsim W^{DL}$，即 $M\gtrsim W^{L}$，随 $L$ 指数增长。严格的计数论证见原文及其中引用的组合几何结果。
+\end{proof}
 
-到目前为止我们探讨了组织成一系列全连接层的神经网络架构。然而由于网络图与其数学函数之间存在直接对应关系，我们可以通过考虑更复杂的网络图来设计更通用的网络映射。这些网络必须限制为\textbf{前馈}（feed forward）网络，换句话说不能有闭合的有向环，以确保输出是输入的确定性函数。在这样的网络中，每个（隐藏或输出）单元计算的函数为
+% SUPPLEMENT: parent=proposition:ch06-区域数量; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{proposition:ch06-区域数量}给出了“深度为何有用”的一个纯表达能力的论据：在参数量相同的情况下，深网络能表达的分段线性函数比浅网络多得多。但要注意这是最坏情形下的计数结论，并不说明实际任务一定需要这些区域，也不说明梯度下降能找到它们；它只说明\emph{存在}需要深度才能高效表示的函数。真正让深度在实践中胜出的，是下一小节讨论的层次化归纳偏置。
+\end{remark}
+
+\subsection{层次化表示}\label{subsection:ch06-层次化表示}
+
+虽然这是一个有趣的结果，但另一个更令人信服地探索深度神经网络的理由是，网络架构编码了一种特定形式的归纳偏置，即输出空间与输入空间之间通过层次化表示相关联。这方面一个很好的例子是识别图像中物体的任务（参见\cref{section:ch10-计算机视觉}）。图像的像素与高级概念（比如“猫”）之间的关系非常复杂且非线性，对于两层网络而言，这将是一个极具挑战性的识别任务。然而，深度神经网络会首先学习在浅层中检测低级特征（比如边缘），然后在后续层中将它们结合起来以得到更高级的特征（比如眼睛或胡须），之后继续在深层中将它们组合起来以检测猫的存在。
+
+\begin{definition}[层次化表示]\label{definition:ch06-层次化表示}
+若一个 $L$ 层网络的第 $l$ 层输出 $\boldsymbol{z}^{(l)}$ 可以理解为对第 $l-1$ 层特征的一次\emph{组合}，即存在（在训练后学到的）映射使
 \begin{align}
-a_k = \sum_{j\in \mathrm{pa}(k)} w_{kj} z_j + b_k, \qquad z_k = h\!\left(a_k\right),
-\label{align:ch06-graph-net}
+\boldsymbol{z}^{(l)}=\boldsymbol{h}^{(l)}\circ\boldsymbol{g}^{(l)}\bigl(\boldsymbol{z}^{(l-1)}\bigr),\qquad l=1,\cdots,L,
+\label{align:ch06-层次化表示}
 \end{align}
-其中 $\mathrm{pa}(k)$ 表示节点 $k$ 的祖先（ancestor）集，换句话说就是指向单元 $k$ 的单元所构成的集合，而 $\{b_k\}$ 表示相关联的偏置参数。对于应用于网络输入的一组给定值，连续应用~\eqref{align:ch06-graph-net}~可以计算网络中所有单元的激活，包括输出单元的激活。
+且低层特征在输入空间中具有较小的感受野、高层特征由低层特征组合而成，则称该网络学习到了\textbf{层次化表示}（hierarchical representation）。相应的归纳偏置称为\textbf{组合}（compositional）归纳偏置。
+\end{definition}
 
-\subsection{张量}\label{section:ch06-张量}
+% SUPPLEMENT: parent=definition:ch06-层次化表示; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{definition:ch06-层次化表示}中的“组合”不是数学上的新运算，而是对网络复合结构的语义解释：它把“输出是输入的复杂非线性函数”这一事实，替换成“输出是若干简单函数的逐层复合”。这一归纳偏置的有效性依赖于数据本身具有层次结构——自然图像、语音、文本都满足这一点；若数据没有这种结构（例如各特征之间完全独立），深度带来的先验反而可能有害。
+\end{remark}
 
-可以看到线性代数在神经网络中发挥着核心作用，其中数据集、激活和网络参数等表示为标量、向量和矩阵。此外我们还遇到了更高维度的变量。例如考虑一个包含 $N$ 张彩色图像的数据集，每张图像高度为 $I$ 像素，宽度为 $J$ 像素。每个像素可通过其在图像内所处的行和列索引，并具有红、绿、蓝值；对数据集中每张图像我们都有这样一个值，因此可以用一个四维数组 $\mathcal{X}$ 来表示：
+这可以看作一种组合（compositional）归纳偏置，其中更高级的对象（比如猫）由低级对象（比如眼睛）组成，而这些低级对象又有着更低级的要素（比如边缘）。我们也可以从相反的角度来考虑图像生成过程，即从低级特征（比如边缘）开始，然后将这些组合起来形成简单的形状（比如圆），之后进一步将这些形状组合起来形成更高级的对象（比如猫）。在每个阶段都有许多不同的方式组合不同组件，随着深度的增加，可能性的数量呈指数级增长。
+
+\subsection{分布式表示}\label{subsection:ch06-分布式表示}
+
+神经网络可以利用另一种称为\textbf{分布式表示}（distributed representation）的组合形式。在概念上，隐藏层中的每个单元都可以视为表示了网络在该层的一个“特征”，激活值高表示相应的特征存在，激活值低表示相应的特征不存在。当给定层中有 $M$ 个单元时，网络可以表示 $M$ 个不同的特征。然而，网络也可能会学习到不同的表示，其中隐藏单元的组合表示特征，从而使具有 $M$ 个单元的隐藏层能够表示 $2^{M}$ 个不同的特征，其随着单元数量的增加呈指数增长。
+
+\begin{definition}[分布式表示]\label{definition:ch06-分布式表示}
+若某层 $M$ 个单元中的每一个都编码一个独立的属性，且该层所表示的“概念”由这些属性的\emph{组合}给出，则称该层使用了\textbf{分布式表示}（distributed representation）。此时该层可区分的概念数为 $2^{M}$，而若采用“每个概念一个单元”的局部表示（local representation），同样的 $M$ 个单元只能表示 $M$ 个概念。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch06-分布式表示; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）分布式表示的核心是“用 $M$ 个二值单元编码 $2^{M}$ 种组合”，这与用 $M$ 位二进制数编码 $2^{M}$ 个整数是同一件事。它的代价是：单个单元的含义不再是“某个概念存在”，而是“某个属性存在”，因此表示的可解释性下降；好处是样本效率与泛化能力显著提高——从未见过的组合可以由已知属性的新搭配自然得到。深度网络的隐藏层通常同时具有层次化与分布式两种结构。
+\end{remark}
+
+例如，考虑一个用于处理人脸图像的网络。每个特定的人脸图像可能有（或没有）眼镜，有（或没有）帽子，有（或没有）胡须，从而导致 $8$ 种不同的组合。尽管这可以用 $8$ 个单元来表示，当检测到相应的组合时对应的单元会“打开”，但也可以更紧凑地只使用 $3$ 个单元来表示，每个单元代表一个属性。这些属性可以独立存在（尽管统计上它们的存在可能一定程度上相关）。稍后我们将详细探讨深度学习网络在训练过程中自行发现的内部表示类型（参见\cref{section:ch10-计算机视觉}）。
+
+\begin{example}[ 人脸属性的分布式编码]\label{example:ch06-人脸属性}
+设三个属性分别为“戴眼镜”“戴帽子”“有胡须”，用三个二值单元 $z_1,z_2,z_3\in\{0,1\}$ 编码，则 $8$ 种外观对应 $8$ 个不同的三元组。若改用局部表示，则需要 $8$ 个单元、每个单元对应一种外观组合，参数量与所需样本数都随属性数指数增长。
+\end{example}
+
+\subsection{表示学习}\label{subsection:ch06-表示学习}
+
+我们可以将连续经过深度神经网络的不同层视为对数据进行转换，以便更容易地完成任务。例如，成功学习将皮肤病变分类为良性或恶性（参见\cref{subsection:ch01-医疗诊断}）的神经网络必须学会将原始图像数据转换为由最终隐藏单元层的输出表示的新空间，以便网络的最终层可以区分这两类数据。这个最终层可以视为一个简单的线性分类器，因此在最后隐藏层的表示中，这两类数据必须能被一个线性面很好地分开。
+
+\begin{definition}[表示学习]\label{definition:ch06-表示学习}
+设 $\boldsymbol{z}=\boldsymbol{\phi}_{\boldsymbol{\theta}}(\boldsymbol{x})$ 是由参数 $\boldsymbol{\theta}$ 控制的特征映射（例如深度网络某个隐藏层的输出）。若 $\boldsymbol{\theta}$ 是通过在数据上优化某个目标而学到的，且学到的映射使后续任务（如分类、回归）更容易完成，则称这一过程为\textbf{表示学习}（representation learning），$\boldsymbol{z}$ 称为数据的一个\textbf{表示}。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch06-表示学习; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{definition:ch06-表示学习}与传统的“特征工程”形成对照：后者的 $\boldsymbol{\phi}$ 由人根据领域知识固定，前者的 $\boldsymbol{\phi}$ 由数据决定。表示学习并不神秘——它只是把“选择基函数”这一步也纳入优化。其代价是模型不再凸、需要更多数据与更细致的正则化；其收益是表示的\emph{可迁移性}：同一个 $\boldsymbol{\phi}$ 可以服务于多个下游任务（见\cref{subsection:ch06-迁移学习}）。
+\end{remark}
+
+这种发现数据的非线性变换使后续任务更容易完成的能力称为\textbf{表示学习}（representation learning）（Bengio，Courville，and Vincent，2012）。学习到的表示有时称为\textbf{嵌入空间}（embedding space），它们是由网络中一个隐藏层的输出给出的，从而对于任何的输入向量，无论是来自训练集还是来自某些新的数据集，都可以通过网络的前向传播转换为这个表示。
+
+\begin{definition}[嵌入空间]\label{definition:ch06-嵌入空间}
+设 $\boldsymbol{\phi}:\mathbb{R}^{D}\to\mathbb{R}^{d}$ 为某隐藏层定义的特征映射，则称其像空间 $\{\boldsymbol{\phi}(\boldsymbol{x}):\boldsymbol{x}\in\mathbb{R}^{D}\}\subseteq\mathbb{R}^{d}$ 为\textbf{嵌入空间}（embedding space），$\boldsymbol{\phi}(\boldsymbol{x})$ 称为 $\boldsymbol{x}$ 的\textbf{嵌入}（embedding）。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch06-嵌入空间; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）嵌入空间的维数 $d$ 通常远小于输入维数 $D$，因此嵌入可以看作一种\emph{有监督或有约束的降维}：与 PCA 等线性降维不同，嵌入的映射由任务目标驱动，可以是非线性且高度任务相关的。也正因如此，同一个数据集针对不同任务会得到不同的嵌入空间，嵌入之间没有跨任务的统一坐标意义。
+\end{remark}
+
+表示学习异常强大的原因是，它使得我们能够利用无标签数据。通常，收集大量的无标签数据很容易，但获取相关的标签可能更加困难。例如，当车辆行驶在城市周边时，车载摄像头可以收集大量城市场景的图像，但是获取这些图像并识别相关的物体，如行人和路标，却需要进行成本高昂且耗时的人工标注。
+
+\begin{definition}[无监督学习]\label{definition:ch06-无监督学习}
+只使用输入数据 $\{\boldsymbol{x}_n\}$、不使用目标值 $\{t_n\}$ 的学习方式称为\textbf{无监督学习}（unsupervised learning）。与之相对，使用成对 $(\boldsymbol{x}_n,t_n)$ 的学习方式称为\textbf{监督学习}（supervised learning）。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch06-无监督学习; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）无监督学习之所以对表示学习重要，是因为它把“标签”这一稀缺资源替换成了数据自身的结构（相关性、可压缩性、可预测性）。但也应看到：无监督目标只是表示学习的\emph{代理目标}，最小化重构误差并不保证得到的表示对下游分类有用；实践中往往需要在下游任务上微调，或设计与下游任务更匹配的自监督目标（如\cref{subsection:ch06-对比学习}）。
+\end{remark}
+
+从无标签数据中学习称为\textbf{无监督学习}（unsupervised learning），人们已经开发出许多不同的算法来实现这一点。例如，可以训练神经网络将图像作为输入并创建相同的图像作为输出。为了使其成为一项具有挑战性的任务，网络可能会使用比图像中像素数量更少的隐藏层单元数，从而要求网络学习对图像进行某种压缩。只需要无标签数据的原因是，训练集中的每个图像都同时充当输入向量和目标向量。这种网络又称为\textbf{自编码器}（参见\cref{section:ch19-确定性自编码器}）。这种训练的目标是使网络发现一些对解决其他任务（比如图像分类）有用的数据的内部表示。
+
+\begin{definition}[自编码器]\label{definition:ch06-自编码器}
+设编码器 $\boldsymbol{z}=\boldsymbol{\phi}(\boldsymbol{x})$ 与解码器 $\hat{\boldsymbol{x}}=\boldsymbol{\psi}(\boldsymbol{z})$ 均由神经网络实现，且 $\dim\boldsymbol{z}<\dim\boldsymbol{x}$。以重构误差
 \begin{align}
-x_{nij k}, \qquad i\in\{1,\cdots,I\},\ j\in\{1,\cdots,J\},\ k\in\{1,2,3\},\ n\in\{1,\cdots,N\},
+E(\boldsymbol{\theta},\boldsymbol{\phi})=\sum_{n=1}^{N}\bigl\|\boldsymbol{x}_n-\boldsymbol{\psi}\bigl(\boldsymbol{\phi}(\boldsymbol{x}_n)\bigr)\bigr\|^{2}
+\label{align:ch06-自编码器}
 \end{align}
-其中 $i,j$ 是图像内行和列的索引，$k\in\{1,2,3\}$ 是红、绿、蓝强度索引，$n\in\{1,\cdots,N\}$ 是数据集中特定图像的索引。
+为目标的网络称为\textbf{自编码器}（autoencoder），其中 $\boldsymbol{z}$ 称为\textbf{编码}（code）或\emph{潜表示}。
+\end{definition}
 
-这些高维数组称为\textbf{张量}（tensor），而标量、向量和矩阵是张量的特例。等到后面讨论更复杂的神经网络架构时，我们会看到许多张量的例子。像 GPU 这样的大规模并行处理器特别适合处理张量。
+% SUPPLEMENT: parent=definition:ch06-自编码器; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{definition:ch06-自编码器}中的瓶颈 $\dim\boldsymbol{z}<\dim\boldsymbol{x}$ 是迫使网络学习有用表示的关键：若容量不受限制，网络可以学会恒等映射而毫无收获。自编码器与 PCA 的关系是：当编码器与解码器都取线性、误差取平方和时，最优解张成的子空间正是数据的主成分子空间（参见\cref{section:ch16-主成分分析}）；非线性自编码器则给出 PCA 的非线性推广。
+\end{remark}
+
+无监督学习在成功训练第一个深度网络（卷积网络除外）方面扮演了重要的角色。网络的每一层首先使用无监督学习进行预训练，然后整个网络进一步使用基于梯度的监督训练方式来训练。人们后来发现预训练阶段可以省略，并且在适当的条件下，可以纯粹使用监督学习从头开始训练深度网络。
+
+然而，在讨论其他内容时，预训练和表示学习仍然是深度学习的核心。最值得一提的预训练是在自然语言处理中进行的（参见\cref{section:ch12-注意力}），Transformer 模型在大量文本上进行训练的，从而学习到了高度复杂的语言内部表示，促进其各项能力达到甚至超越人类水平。
+
+\subsection{迁移学习}\label{subsection:ch06-迁移学习}
+
+从一个特定任务学习到的内部表示也可能对相关的任务有帮助。例如，在一个大型有标签的常见对象数据集上训练的网络可以学习到如何将图像表示转换为更适合于对象分类的表示。然后可以使用一个较小的有标签数据集对网络的最终分类层重新进行训练，以创建一个病变分类器（参见\cref{subsection:ch01-医疗诊断}）。这是\textbf{迁移学习}（transfer learning）（Hospedales et al.，2021）的一个示例，它相较于仅使用病变图像数据训练可以获得更高的准确率，因为网络可以利用自然图像的通用共性。迁移学习如\cref{figure:ch06-迁移学习}所示。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.82\textwidth]{ch06-fig6-13-transfer.png}
+\caption{迁移学习的示意图。(a) 首先在具有丰富数据的任务上对网络进行训练，比如自然图像的对象分类。(b) 网络的早期层（以红色表示）从第一个任务中复制，然后对网络的最后几层（以蓝色表示）在新任务上重新进行训练，比如训练数据更稀缺的皮肤病变分类}
+\label{figure:ch06-迁移学习}
+\end{figure}
+
+\begin{definition}[迁移学习]\label{definition:ch06-迁移学习}
+设任务 $A$ 的有标签数据稀少，任务 $B$ 的有标签数据丰富，且两任务的输入类型相同。若把在任务 $B$ 上学到的表示或参数用于任务 $A$ 的训练，从而提升 $A$ 的性能，则称这一过程为\textbf{迁移学习}（transfer learning）。其中任务 $B$ 称为\textbf{源任务}（source task），任务 $A$ 称为\textbf{目标任务}（target task）。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch06-迁移学习; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）迁移学习能够成立的前提是两任务共享某些\emph{低层}结构：图像任务的边缘、纹理，语音任务的频谱包络，文本任务的词法模式，都具有跨任务的通用性；而高层语义（“猫”与“皮肤病变”）则不通用。因此，迁移的通常做法是固定早期层、只重训后几层，这与\cref{definition:ch06-层次化表示}中“浅层学通用特征、深层学任务特异特征”的图景完全一致。
+\end{remark}
+
+一般来说，迁移学习可以通过使用来自相关任务 $B$ 的数据来提升某个任务 $A$ 的性能，其中任务 $A$ 的训练数据较为匮乏，而任务 $B$ 的训练数据则更为丰富。这两个任务应该具有相同类型的输入，并且这两个任务之间应该存在一些共性，使得从任务 $B$ 学到的低级特征或内部表示对任务 $A$ 有帮助。当我们研究卷积网络（参见\cref{section:ch10-计算机视觉}）时，我们会发现许多图像处理任务在深度神经网络的早期层中需要相似的低级特征，而后继层则专门用于特定任务，因此这样的网络非常适合用于迁移学习应用。
+
+当任务 $A$ 的训练数据非常稀缺时，我们可能只需要简单地重新训练网络的最终层。相比之下，如果训练数据更多，则重新训练多个层也是可行的。使用一个任务学习参数，然后应用于一个或多个其他任务的过程称为\textbf{预训练}（pre-training）。需要注意的是，对于新任务，相较于对整个网络应用随机梯度下降，更高效的方式是将新的训练数据一次通过参数固定的预训练网络，以便在新的表示中评估训练输入。然后在仅包含最终层的较小网络上应用基于迭代梯度的优化。除了使用预训练网络作为不同任务的固定预处理器之外，也可以应用\textbf{微调}（fine-tuning），即将整个网络适配到任务 $A$ 的训练数据上。这通常是通过非常小的学习率和有限次迭代来完成的，以确保网络不会过拟合于新任务中相对较小的可用数据集。
+
+\begin{definition}[预训练与微调]\label{definition:ch06-预训练与微调}
+在源任务上训练好参数 $\boldsymbol{\theta}_B$ 后，将其作为目标任务 $A$ 的初始参数（或固定为特征提取器）的过程称为\textbf{预训练}（pre-training）。若在任务 $A$ 的数据上以较小的学习率继续更新全部（或大部分）参数，则称为\textbf{微调}（fine-tuning）。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch06-预训练与微调; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{definition:ch06-预训练与微调}的关键区别在于\emph{是否更新预训练参数}：固定参数时，预训练网络只是一个固定的非线性特征映射，训练成本低、不易过拟合；微调时，网络可以调整内部表示以适配新任务，但小数据集上容易过拟合，因此需要小学习率与早停。两者的选择取决于目标任务的数据量：数据越少，越倾向于只重训最后一层。
+\end{remark}
+
+有一个相关的方法叫作\textbf{多任务学习}（multitask learning）（Caruana，1997），其中网络同时联合学习多个相关任务。例如，我们可能希望建立一个垃圾邮件过滤器，其允许不同用户有不同的分类器以适应他们各自的偏好。训练数据可能包括许多不同用户的垃圾邮件和非垃圾邮件的样本，但是任何一个用户的样本数量都可能相当有限，因此为每个用户训练一个单独的分类器可能效果不佳。相反，我们可以将数据集组合并训练一个单一的较大网络，该网络可以共享早期层，但对于不同用户，后续层具有单独的可学习参数。跨任务共享数据允许网络利用任务之间的共性，从而提高对所有用户的准确率。大量的训练样本使得我们能够使用具有更多参数的更深层网络，这可以进一步提高性能。
+
+\begin{definition}[多任务学习]\label{definition:ch06-多任务学习}
+设共有 $T$ 个任务，第 $t$ 个任务的训练数据为 $\mathcal{D}_t$。若网络由共享的底层表示 $\boldsymbol{\phi}$ 与任务专用层 $\{\boldsymbol{\psi}_t\}$ 组成，并通过最小化
+\begin{align}
+E(\boldsymbol{\theta})=\sum_{t=1}^{T}\sum_{(\boldsymbol{x},t)\in\mathcal{D}_t}\ell_t\bigl(\boldsymbol{\psi}_t(\boldsymbol{\phi}(\boldsymbol{x})),t\bigr)
+\label{align:ch06-多任务目标}
+\end{align}
+联合训练，则称该过程为\textbf{多任务学习}（multitask learning），其中 $\ell_t$ 是第 $t$ 个任务的损失函数。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch06-多任务学习; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）多任务学习与迁移学习的区别在于“谁是主、谁是辅”：迁移学习有一个明确的目标任务，源任务只是手段；多任务学习则同时优化所有任务，共享表示必须在所有任务上都表现良好。这在数据不平衡时会产生“负迁移”的风险——某个任务的数据量过大时，共享表示会被它主导。实践中常通过对各任务损失加权或使用梯度归一化来缓解。
+\end{remark}
+
+跨多个任务学习可以扩展到\textbf{元学习}（meta-learning），也称学会学习（learning to learn）。多任务学习旨在对一组固定任务进行预测，而元学习的目标是对我们在训练期间未见过的未来任务进行预测。这不仅可以通过跨任务学习共享的内部表示来实现，还可以通过学习学习算法本身来实现（Hospedales et al.，2021）。例如，当新类的有标签样本非常少时，元学习可以用于促进分类模型泛化到新类上，称为\textbf{小样本学习}（few-shot learning）。当只使用一个有标签样本时，则称为\textbf{单样本学习}（one-shot learning）。
+
+\begin{definition}[元学习]\label{definition:ch06-元学习}
+设任务分布为 $p(\mathcal{T})$，每个任务 $\mathcal{T}$ 带有训练集 $\mathcal{D}_{\mathcal{T}}^{\mathrm{tr}}$ 与测试集 $\mathcal{D}_{\mathcal{T}}^{\mathrm{te}}$。若学习算法 $\mathcal{A}$ 通过在一批任务上优化
+\begin{align}
+\min_{\mathcal{A}}\ \mathbb{E}_{\mathcal{T}\sim p(\mathcal{T})}\Bigl[\mathcal{L}\bigl(\mathcal{A}(\mathcal{D}_{\mathcal{T}}^{\mathrm{tr}}),\mathcal{D}_{\mathcal{T}}^{\mathrm{te}}\bigr)\Bigr]
+\label{align:ch06-元学习}
+\end{align}
+而得到，则称该过程为\textbf{元学习}（meta-learning）。若每个任务只提供 $K$ 个（或 $1$ 个）有标签样本，则相应的问题称为\textbf{$K$ 样本学习}（$K$-shot learning）或\textbf{单样本学习}（one-shot learning）。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch06-元学习; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{definition:ch06-元学习}与普通学习的差别在于优化的对象：普通学习优化“模型参数”，元学习优化“产生模型参数的算法”。这也解释了为什么元学习需要“任务分布”：只有在任务层面存在共同结构时，学会学习才可能。小样本学习的成功主要来自这种任务层面的先验，而不是来自单个任务内的少量样本。
+\end{remark}
+
+\subsection{对比学习}\label{subsection:ch06-对比学习}
+
+\textbf{对比学习}（contrastive learning）是最常见和强大的表示学习方法之一（Gutmann and Hyvärinen，2010；Oord，Li and Vinyals，2018；Chen，Kornblith，et al.，2020）。它背后的思想是学习一种表示，使得在嵌入空间中，某些输入对（称为\textbf{正对}）之间的距离近，而其他输入对（称为\textbf{负对}）之间的距离远。直觉上，如果我们选择语义上相似的为正对，并选择语义上不相似的为负对，那么我们将学习到一个表示空间，在这个表示空间中，相似的输入之间的距离近，从而使得完成下游任务（比如分类）变得更加容易。与其他形式的表示学习一样，我们通常不直接使用训练好的网络的输出，而是使用某个早期层的激活来构建嵌入空间。对比学习任务与其他大多数机器学习任务不同，因为给定输入的误差函数仅取决于其他输入，而非取决于每个输入单独的标签或目标输出。
+
+\begin{definition}[对比学习]\label{definition:ch06-对比学习}
+设 $\boldsymbol{z}=f_{\boldsymbol{w}}(\boldsymbol{x})$ 为表示映射。给定由正对 $(\boldsymbol{x},\boldsymbol{x}^{+})$ 与负对 $(\boldsymbol{x},\boldsymbol{x}^{-})$ 组成的训练数据，若通过最小化某个只依赖于这些对之间表示距离的损失函数来学习 $\boldsymbol{w}$，则称该学习方法为\textbf{对比学习}（contrastive learning）。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch06-对比学习; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{definition:ch06-对比学习}的“误差函数只取决于其他输入”这一点值得强调：它是\emph{自监督}（self-supervised）学习的标志——标签不是人工给出的，而是由数据本身的结构（哪些样本应当相似）构造出来的。因此对比学习的关键设计不在损失函数，而在“如何定义正对与负对”，这等价于把关于“什么是不变因素”的先验知识编码进训练目标。
+\end{remark}
+
+给定数据点 $\boldsymbol{x}$，称为\textbf{锚点}（anchor），然后指定另一个数据点 $\boldsymbol{x}^{+}$，它与 $\boldsymbol{x}$ 一起组成一个正对。我们还必须指定一组数据点 $\{\boldsymbol{x}_1^{-},\cdots,\boldsymbol{x}_N^{-}\}$，其中的每个数据点都与 $\boldsymbol{x}$ 组成一个负对。我们现在需要一个损失函数，如果 $\boldsymbol{x}$ 和 $\boldsymbol{x}^{+}$ 的表示较为接近，则给予奖励，同时拉大每一对 $\{\boldsymbol{x},\boldsymbol{x}_n^{-}\}$ 之间的距离。这种函数的一个例子，也是对比学习中最常用的损失函数，称为 InfoNCE 损失函数（Gutmann and Hyvärinen，2010；Oord，Li and Vinyals，2018），其中 NCE 表示“噪声对比估计”（noise contrastive estimation）。假设我们有一个神经网络函数 $f_{\boldsymbol{w}}(\boldsymbol{x})$，用于将来自输入空间的点 $\boldsymbol{x}$ 映射到一个由可学习参数 $\boldsymbol{w}$ 控制的表示空间。这个表示是归一化的，即 $\|f_{\boldsymbol{w}}(\boldsymbol{x})\|=1$。对于数据点 $\boldsymbol{x}$，InfoNCE 损失函数定义如下：
+
+\begin{align}
+E(\boldsymbol{w})=-\ln\frac{\exp\bigl\{f_{\boldsymbol{w}}(\boldsymbol{x})^{\mathsf T}f_{\boldsymbol{w}}(\boldsymbol{x}^{+})\bigr\}}{\exp\bigl\{f_{\boldsymbol{w}}(\boldsymbol{x})^{\mathsf T}f_{\boldsymbol{w}}(\boldsymbol{x}^{+})\bigr\}+\sum_{n=1}^{N}\exp\bigl\{f_{\boldsymbol{w}}(\boldsymbol{x})^{\mathsf T}f_{\boldsymbol{w}}(\boldsymbol{x}_n^{-})\bigr\}}.
+\label{align:ch06-InfoNCE}
+\end{align}
+
+\begin{definition}[InfoNCE 损失]\label{definition:ch06-InfoNCE}
+设 $\|f_{\boldsymbol{w}}(\boldsymbol{x})\|=1$，温度参数 $\tau>0$。称
+\begin{align}
+E(\boldsymbol{w})=-\ln\frac{\exp\bigl(f_{\boldsymbol{w}}(\boldsymbol{x})^{\mathsf T}f_{\boldsymbol{w}}(\boldsymbol{x}^{+})/\tau\bigr)}{\exp\bigl(f_{\boldsymbol{w}}(\boldsymbol{x})^{\mathsf T}f_{\boldsymbol{w}}(\boldsymbol{x}^{+})/\tau\bigr)+\sum_{n=1}^{N}\exp\bigl(f_{\boldsymbol{w}}(\boldsymbol{x})^{\mathsf T}f_{\boldsymbol{w}}(\boldsymbol{x}_n^{-})/\tau\bigr)}
+\label{align:ch06-InfoNCE温度}
+\end{align}
+为\textbf{InfoNCE 损失}（information noise contrastive estimation loss），其中 $\tau$ 控制分布的锐度。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch06-InfoNCE; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{definition:ch06-InfoNCE}中温度 $\tau$ 的作用与统计物理中的温度一致：$\tau\to0$ 时 softmax 趋于 one-hot，损失只关心最难的负样本；$\tau$ 较大时损失对所有负样本一视同仁。原书\eqref{align:ch06-InfoNCE}的写法相当于 $\tau=1$。此外，由于表示已归一化，内积 $f_{\boldsymbol{w}}(\boldsymbol{x})^{\mathsf T}f_{\boldsymbol{w}}(\boldsymbol{x}^{+})$ 就是余弦相似度，取值范围为 $[-1,1]$，这使得相似度在不同样本之间可比。
+\end{remark}
+
+在这个函数中，锚点的表示 $f_{\boldsymbol{w}}(\boldsymbol{x})$ 和正样本的表示 $f_{\boldsymbol{w}}(\boldsymbol{x}^{+})$ 之间的余弦相似度 $f_{\boldsymbol{w}}(\boldsymbol{x})^{\mathsf T}f_{\boldsymbol{w}}(\boldsymbol{x}^{+})$ 提供了我们在习得空间中度量正对样本有多近的方法，同样的方法也可以用于评估锚点与负对样本之间的接近程度。注意这个函数类似于分类交叉熵误差函数，其中正对的余弦相似度给出了标签类的对数概率，而负对的余弦相似度给出了错误类的对数概率。负对是非常重要的，因为如果没有它们，嵌入空间将简单地学习将每个点映射到相同的表示的退化解。
+
+\begin{proposition}[InfoNCE 是 $(N+1)$ 类交叉熵]\label{proposition:ch06-InfoNCE交叉熵}
+设 $\tau=1$，记 $s^{+}=f_{\boldsymbol{w}}(\boldsymbol{x})^{\mathsf T}f_{\boldsymbol{w}}(\boldsymbol{x}^{+})$，$s_n^{-}=f_{\boldsymbol{w}}(\boldsymbol{x})^{\mathsf T}f_{\boldsymbol{w}}(\boldsymbol{x}_n^{-})$，并令 $p^{+}=\operatorname{softmax}(s^{+},s_1^{-},\cdots,s_N^{-})$ 的第一分量为正对的预测概率。则\eqref{align:ch06-InfoNCE}恰为以“正对为正确类、$N$ 个负对为错误类”的 $(N+1)$ 类交叉熵。
+\end{proposition}
+
+\begin{proof}
+（重构新增）把 $(s^{+},s_1^{-},\cdots,s_N^{-})$ 视为 $(N+1)$ 个类别的 logit，softmax 给出
+\begin{align}
+p^{+}=\frac{\exp(s^{+})}{\exp(s^{+})+\sum_{n=1}^{N}\exp(s_n^{-})}.
+\end{align}
+正确类的 one-hot 目标为 $(1,0,\cdots,0)$，故交叉熵为 $-\ln p^{+}$，正是\eqref{align:ch06-InfoNCE}。当 $s^{+}$ 相对所有 $s_n^{-}$ 都很大时 $p^{+}\to1$、损失趋于 $0$；当 $s^{+}$ 很小时损失增大。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch06-InfoNCE交叉熵; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{proposition:ch06-InfoNCE交叉熵}说明 InfoNCE 并不是新奇的损失，而是把“正样本应被认出来”表述成一个分类问题：$N$ 个负样本就是 $N$ 个干扰类。由此可以立刻看出负样本为何不可缺少——若 $N=0$，损失恒为零，网络可以学到常数表示。也正因如此，负样本的数量与质量决定了表示的好坏，后续许多方法（如记忆库、大批量训练）都在设法增加有效负样本。
+\end{remark}
+
+一个特定的对比学习算法主要由正对和负对的选择方式定义，也就是如何使用先验知识来指定什么是好的表示。例如，考虑学习图像表示的问题。在这里，一个常见的选择是通过破坏输入图像来创建正对，这种方式保留了图像的语义信息，同时极大地改变了像素空间中的图像（Wu et al.，2018；He et al.，2019；Chen，Kornblith，et al.，2020）。输入图像的破坏与\textbf{数据增强}（data augmentation）（参见\cref{section:ch09-归纳偏置}）密切相关，可以是旋转、平移和颜色转换。然后数据集中的其他图像可以用来创建负对。这种对比学习方法称为\textbf{个体判别}（instance discrimination）。
+
+\begin{definition}[个体判别]\label{definition:ch06-个体判别}
+若正对由同一幅图像的两种随机增强版本 $(\boldsymbol{x},\mathcal{T}(\boldsymbol{x}))$ 构成、负对由数据集中其他图像构成，则称该对比学习方案为\textbf{个体判别}（instance discrimination）。它不需要任何类别标签。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch06-个体判别; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）个体判别的有效性完全取决于增强方式的选择：增强必须保持\emph{语义不变}（旋转、平移、颜色抖动），否则网络会把语义不同的两个版本强行拉近，学到错误的表示。因此“选择哪些增强”实际上等价于“声明哪些变换不应改变表示”，这是一种很强的先验，也解释了个体判别在不同数据类型上效果差异很大的原因。
+\end{remark}
+
+然而，如果我们可以访问类标签，则可以使用同一类别的图像作为正对，而使用不同类别的图像作为负对。这放宽了对指定表征应保持不变的增强方法的依赖，并且避免了将两个语义相似的图像视为负对。这称为\textbf{监督对比学习}（Khosla et al.，2020），因为它依赖于类标签，并且它通常能得到比仅使用交叉熵分类学习的表示更好的结果。
+
+\begin{definition}[监督对比学习]\label{definition:ch06-监督对比学习}
+若正对由属于同一类别的两幅不同图像构成、负对由属于不同类别的图像构成，则称该对比学习方案为\textbf{监督对比学习}（supervised contrastive learning）。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch06-监督对比学习; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）监督对比学习与普通交叉熵分类的差别在于\emph{损失作用的位置}：交叉熵直接约束输出层的类后验，而对比损失约束的是嵌入空间中样本间的相对距离，因此它对类内紧凑性有更强的要求。代价是它需要成对采样，计算量随批大小增长；同时，若数据集中存在标注噪声，同一“类别”内的错误标签会被强行拉近，伤害比交叉熵更明显。
+\end{remark}
+
+正对和负对的成员不一定非要来自同一数据模态。在对比语言--图像预训练（Contrastive-Language Image Pretraining, CLIP）（Radford et al.，2021）中，一个正对由一幅图像和对应的文本说明组成。用两个单独的函数将每个模态输入分别映射到相同的表示空间。负对则由不匹配的图像和文本说明组成。这通常称为\textbf{弱监督学习}，因为它依赖于带文本说明的图像。这些数据通常是从互联网上爬取的，比手动标注图像类别更容易。在这种情况下，损失函数由下式给出：
+
+\begin{align}
+E(\boldsymbol{w})=
+&-\frac{1}{2}\ln\frac{\exp\bigl\{f_{\boldsymbol{w}}(\boldsymbol{x}^{+})^{\mathsf T}g_{\boldsymbol{\theta}}(\boldsymbol{y}^{+})\bigr\}}{\exp\bigl\{f_{\boldsymbol{w}}(\boldsymbol{x}^{+})^{\mathsf T}g_{\boldsymbol{\theta}}(\boldsymbol{y}^{+})\bigr\}+\sum_{n=1}^{N}\exp\bigl\{f_{\boldsymbol{w}}(\boldsymbol{x}_n^{-})^{\mathsf T}g_{\boldsymbol{\theta}}(\boldsymbol{y}^{+})\bigr\}}\nonumber\\
+&-\frac{1}{2}\ln\frac{\exp\bigl\{f_{\boldsymbol{w}}(\boldsymbol{x}^{+})^{\mathsf T}g_{\boldsymbol{\theta}}(\boldsymbol{y}^{+})\bigr\}}{\exp\bigl\{f_{\boldsymbol{w}}(\boldsymbol{x}^{+})^{\mathsf T}g_{\boldsymbol{\theta}}(\boldsymbol{y}^{+})\bigr\}+\sum_{m=1}^{M}\exp\bigl\{f_{\boldsymbol{w}}(\boldsymbol{x}^{+})^{\mathsf T}g_{\boldsymbol{\theta}}(\boldsymbol{y}_m^{-})\bigr\}},
+\label{align:ch06-CLIP}
+\end{align}
+
+其中 $\boldsymbol{x}^{+}$ 和 $\boldsymbol{y}^{+}$ 表示一个正对，这里的 $\boldsymbol{x}$ 是一幅图像，$\boldsymbol{y}$ 是对应的文本说明，$f_{\boldsymbol{w}}$ 表示从图像到表示空间的映射，而 $g_{\boldsymbol{\theta}}$ 则是从文本输入到表示空间的映射。我们还需要从数据集中获取一组图像 $\{\boldsymbol{x}_1^{-},\cdots,\boldsymbol{x}_N^{-}\}$，并假设对它们来说，文本说明 $\boldsymbol{y}^{+}$ 是不恰当的，还需一组同样不匹配输入图像 $\boldsymbol{x}$ 的文本说明 $\{\boldsymbol{y}_1^{-},\cdots,\boldsymbol{y}_M^{-}\}$。损失函数中的两项确保了 (a) 图像的表示与对应的文本说明表示相对于其他图像表示而言是接近的，以及 (b) 文本说明表示与它所描述的图像表示相对于其他文本说明表示而言是接近的。虽然 CLIP 使用文本--图像对，但任何具有配对模态的数据集都可以用来学习表示。\cref{figure:ch06-对比学习}对我们讨论过的三种不同对比学习方法做了比较。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\textwidth]{ch06-fig6-14-contrastive.png}
+\caption{对三种不同的对比学习方法的说明。(a) 个体判别方法，其中正对由锚点和同一图像的增强版本组成。它们会被映射到归一化空间（可以认为是单位超球体）中的点。彩色箭头显示这种损失促使正对的表示更靠近，但会将负对进一步分开。(b) 监督对比学习，其中正对由来自同一类别的两幅不同图像组成。(c) CLIP 模型，其中正对由一幅图像和与之关联的文本说明组成}
+\label{figure:ch06-对比学习}
+\end{figure}
+
+\begin{definition}[CLIP]\label{definition:ch06-CLIP}
+设图像编码器 $f_{\boldsymbol{w}}$ 与文本编码器 $g_{\boldsymbol{\theta}}$ 都把输入映到同一单位球面，损失取\eqref{align:ch06-CLIP}，则称该对比学习框架为\textbf{对比语言--图像预训练}（Contrastive-Language Image Pretraining, CLIP）。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch06-CLIP; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{definition:ch06-CLIP}中的两项互为“对称”的 InfoNCE：第一项以图找文，第二项以文找图，因子 $1/2$ 只是取平均。这样设计的原因是对称化能避免模型只在一个方向上对齐（例如把文本编码器退化成常数）。\eqref{align:ch06-CLIP}与\eqref{align:ch06-InfoNCE}的关系是：若把 $g_{\boldsymbol{\theta}}(\boldsymbol{y}^{+})$ 视为“正样本的表示”、把 $g_{\boldsymbol{\theta}}(\boldsymbol{y}_m^{-})$ 视为负样本，则第二项就是\eqref{align:ch06-InfoNCE}；第一项则是在图像侧做同样的构造。
+\end{remark}
+
+\subsection{通用网络结构}\label{subsection:ch06-通用网络结构}
+
+到目前为止，我们已经探讨了组织成一系列全连接层的神经网络架构。然而，由于网络图与其数学函数之间存在直接对应关系，我们可以通过考虑更复杂的网络图来设计更通用的网络映射。这些网络必须限制为\textbf{前馈}（feed forward）网络，换句话说，不能有闭合的有向环，以确保输出是输入的确定性函数。\cref{figure:ch06-前馈图}用一个简单的示例对此进行了说明。在这样的网络中，每个（隐藏或输出）单元计算的函数为
+
+\begin{align}
+z_k=h\!\left(\sum_{j\in\mathcal{A}(k)}w_{kj}z_j+b_k\right),
+\label{align:ch06-图网络}
+\end{align}
+
+其中 $\mathcal{A}(k)$ 表示节点 $k$ 的祖先（ancestor）集，换句话说，就是指向单元 $k$ 的单元所构成的集合，而 $b_k$ 表示相关联的偏置参数。对于应用于网络输入的一组给定值，连续应用\eqref{align:ch06-图网络}可以计算网络中所有单元的激活，包括输出单元的激活。
+
+\begin{definition}[前馈网络]\label{definition:ch06-前馈网络}
+设网络的单元集合为 $V$，有向边集合为 $E$，边 $(j,k)\in E$ 表示单元 $j$ 的输出送入单元 $k$。若 $(V,E)$ 作为有向图不含任何有向环，则称该网络为\textbf{前馈网络}（feed-forward network）。此时单元 $k$ 的\textbf{祖先集}定义为
+\begin{align}
+\mathcal{A}(k)=\bigl\{j\in V:\text{存在从 }j\text{ 到 }k\text{ 的有向路径}\bigr\}.
+\label{align:ch06-祖先集}
+\end{align}
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch06-前馈网络; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{definition:ch06-前馈网络}中的“无有向环”不是为了简化，而是为了保证 $z_k$ 的定义是良定的：若存在环，\eqref{align:ch06-图网络}就变成一个关于 $\{z_k\}$ 的隐式方程，可能无解或多解，输出也就不再是输入的确定性函数。无环条件等价于存在一个拓扑序，使得每个单元只依赖于排在它前面的单元，这正是下一命题的内容。
+\end{remark}
+
+\begin{proposition}[前向传播的可计算性]\label{proposition:ch06-前向传播}
+设网络为\cref{definition:ch06-前馈网络}意义下的前馈网络。则存在单元的一个排序 $k_1,\cdots,k_{|V|}$，使得对每个 $i$，$z_{k_i}$ 只依赖于输入 $\boldsymbol{x}$ 与 $\{z_{k_1},\cdots,z_{k_{i-1}}\}$。因此给定 $\boldsymbol{x}$，按该顺序依次应用\eqref{align:ch06-图网络}即可在 $\mathcal{O}(|V|+|E|)$ 时间内算出所有单元（包括输出）的激活。
+\end{proposition}
+
+\begin{proof}
+（重构新增）有限无环有向图必存在拓扑序：反复删除入度为零的节点即可，每步至少存在一个这样的节点（否则沿入边回溯必得环）。把删除顺序记为 $k_1,\cdots,k_{|V|}$，则 $k_i$ 的所有祖先都在 $\{k_1,\cdots,k_{i-1}\}$ 中，故按序计算\eqref{align:ch06-图网络} 时右端各项已知。每个单元计算一次、每条边贡献一次乘法，总时间为 $\mathcal{O}(|V|+|E|)$。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch06-前向传播; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{proposition:ch06-前向传播}是“网络图即计算图”这一观点的形式化：它不仅保证前向传播可行，也说明后向传播可以按\emph{逆}拓扑序进行（参见\cref{section:ch08-梯度计算}）。因此，任意前馈拓扑（卷积、残差、分支）都可以用同一套自动微分机制训练，网络设计的自由度只受“无环”这一条限制。
+\end{remark}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.56\textwidth]{ch06-fig6-15-graph.png}
+\caption{具有一般前馈拓扑结构的神经网络示例。注意每个隐藏单元和输出单元都有一个相关的偏置参数（此处为简单起见而省略）}
+\label{figure:ch06-前馈图}
+\end{figure}
+
+\subsection{张量}\label{subsection:ch06-张量}
+
+可以看到，线性代数在神经网络中发挥着核心作用，其中数据集、激活和网络参数等表示为标量、向量和矩阵。此外，我们还遇到了更高维度的变量。例如，考虑一个包含 $N$ 张彩色图像的数据集，每张图像的高度为 $I$ 像素，宽度为 $J$ 像素。每个像素可通过其在图像内所处的行和列进行索引，并具有红色、绿色和蓝色值。对于数据集中的每个图像，我们都有一个这样的值，因此我们可以用一个四维数组 $\mathcal{X}$ 来表示特定的强度值，数组中的元素表示为
+\begin{align}
+x_{ijkn},\qquad i\in\{1,\cdots,I\},\ j\in\{1,\cdots,J\},\ k\in\{1,2,3\},\ n\in\{1,\cdots,N\},
+\label{align:ch06-张量元素}
+\end{align}
+其中 $i$ 和 $j$ 是图像内行和列的索引，$k\in\{1,2,3\}$ 是红色、绿色和蓝色强度的索引，$n\in\{1,\cdots,N\}$ 是数据集中特定图像的索引。
+
+\begin{definition}[张量]\label{definition:ch06-张量}
+称多重指标数组 $(x_{i_1i_2\cdots i_K})$ 为一个 $K$ 阶\textbf{张量}（tensor），其中每个指标 $i_k$ 取值于有限集合。$0$ 阶张量是标量，$1$ 阶张量是向量，$2$ 阶张量是矩阵。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch06-张量; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{definition:ch06-张量}采用的是“多维数组”这一工程含义，与微分几何中“张量是多重线性映射”的数学含义不同：在深度学习中，张量只是把数据按多个索引排布，并约定各阶指标的语义（样本、通道、行、列）。这一约定之所以重要，是因为它决定了卷积、池化等算子在哪些指标上共享参数——这也是\cref{section:ch10-计算机视觉}的核心。
+\end{remark}
+
+这些高维数组称为\textbf{张量}（tensor），而标量、向量和矩阵是张量的特例。等到后面讨论更为复杂的神经网络架构时，我们会看到许多张量的例子。像 GPU 这样的大规模并行处理器特别适合处理张量。
 
 \end{document}

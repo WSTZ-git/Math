@@ -1,80 +1,288 @@
 \documentclass[../../main.tex]{subfiles}
+
 \graphicspath{{../../image/}{../../figure/}}
+
 \begin{document}
+
+近年来，神经网络已迅速成为实际应用中最重要的机器学习技术，因此我们在本书中专门花了大量篇幅来介绍它。之前的章节已经为我们奠定了许多必要的基础。特别是，我们已经看到，由固定非线性基函数的线性组合构成的线性回归模型可以表达为单层权重和偏置参数的神经网络（参见\cref{section:ch04-线性回归}）。同样，基于基函数线性组合的分类模型也可以视作单层（神经）网络（参见\cref{section:ch05-判别函数}）。这使我们能在讨论更复杂的多层（神经）网络之前引入几个重要概念。
+
+给定足够数量的适当选择的基函数，这样的线性模型可以以任意所需精度近似任何给定的从输入到输出的非线性变换，因此似乎足以应对任何实际应用。然而，这些模型具有一些严重的局限性，因此我们将通过探索这些局限性并理解为什么需要从数据中学习得到基函数，来开始我们对神经网络的讨论。这自然地引出了对具有多层可学习参数的神经网络的讨论（参见\cref{subsection:ch06-通用网络结构}），它们被称为前馈网络（feed-forward network）或多层感知机（multi-layer perceptron）。我们还将讨论多层处理的好处，并引出目前支配了机器学习领域的关键概念——深度神经网络（Deep Neural Network, DNN）。
 
 \section{固定基函数的局限性}\label{section:ch06-固定基函数的局限性}
 
-近年来，神经网络已迅速成为实际应用中最重要的机器学习技术。本书前几章已经为这一主题奠定了必要的基础：基于固定非线性基函数线性组合的回归模型可以被视为单层神经网络（参见第~4~章），同样地，基于基函数线性组合的分类模型也可以视为单层网络（参见第~5~章）。这使我们能够在讨论更复杂的多层（神经）网络之前先引入几个重要概念。
+用于分类的线性基函数模型是基于基函数 $\phi_j(\boldsymbol{x})$ 的线性组合（参见\cref{section:ch05-判别函数}），形式如下：
 
-用于分类的线性基函数模型是基函数 $\{\phi_j(\mathbf{x})\}$ 的线性组合（参见第~5~章），形式为
+\begin{definition}[线性基函数模型]\label{definition:ch06-线性基函数模型}
+设 $\{\phi_j(\boldsymbol{x})\}_{j=1}^{M}$ 是一组给定的非线性基函数，$w_0,w_1,\cdots,w_M$ 为可学习参数，$f(\cdot)$ 为输出激活函数。形如
 \begin{align}
-y(\mathbf{x},\mathbf{w}) = f\!\left(\sum_{j=1}^{M} w_j \phi_j(\mathbf{x}) + b\right),
-\label{align:ch06-linear-basis}
+y(\boldsymbol{x},\boldsymbol{w})=f\!\left(\sum_{j=1}^{M}w_j\phi_j(\boldsymbol{x})+w_0\right)
+\label{align:ch06-线性基函数}
 \end{align}
-其中 $f(\cdot)$ 是一个非线性输出激活函数；用于回归的线性模型具有相同形式，但将 $f(\cdot)$ 换成了恒等函数。由于这些基函数的一般性，这样的模型原则上可以解决任何回归或分类问题——只要其中某个基函数恰好对应所期望的输入--输出映射，可学习的线性层只需把该基函数的值复制到输出即可。
+的模型称为\textbf{线性基函数模型}（linear basis function model），其中 $\boldsymbol{w}=(w_1,\cdots,w_M)^{\mathsf T}$。
+\end{definition}
 
-更一般地，我们期望有一个足够大且丰富的基函数集合，从而能以任意精度拟合所需函数。然而，遗憾的是，线性模型存在一些重大缺陷：它们假设基函数 $\phi_j(\mathbf{x})$ 是固定的、与训练数据无关。为了理解这些局限，我们首先观察当输入变量数量增加时线性模型的行为会如何变化。
+其中 $f(\cdot)$ 是一个非线性输出激活函数。用于回归的线性模型具有相同的形式，但用恒等函数替换了 $f(\cdot)$（参见\cref{subsection:ch04-基函数}）。这些模型允许使用任意一组非线性基函数 $\{\phi_j(\boldsymbol{x})\}$，并且由于这些基函数的一般性，这样的模型原则上可以解决任何回归或分类问题。我们可以简单地这么理解，如果其中一个基函数对应希望的输入--输出转换，则可学习的线性层只需要将这个基函数的值复制到模型的输出即可。
 
-\subsection{维度诅咒}\label{section:ch06-维度诅咒}
+% SUPPLEMENT: parent=definition:ch06-线性基函数模型; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{definition:ch06-线性基函数模型}把“线性”限定在参数 $\boldsymbol{w}$ 上，而不限定在输入 $\boldsymbol{x}$ 上：只要 $f$ 与 $\{\phi_j\}$ 中至少有一个是非线性的，$y(\boldsymbol{x},\boldsymbol{w})$ 就是 $\boldsymbol{x}$ 的非线性函数。这一区分是理解本章的关键：模型的表达能力由固定基函数族 $\{\phi_j\}$ 决定，而训练只在这个固定族上做线性组合。也正因如此，参数估计是凸问题（最小二乘）或单峰问题（交叉熵），但表达能力被基函数族事先锁死。
+\end{remark}
 
-考虑由如下 $M$ 阶多项式给出的单输入变量简单回归模型（参见~1.2~节）：
+更一般地，我们期望有一个足够大且丰富的基函数集合，从而能以任意精度拟合需要的函数。因此，看似这样的线性模型构成了解决机器学习问题的通用框架。遗憾的是，线性模型存在一些重大缺陷，因为它们假设基函数 $\phi_j(\boldsymbol{x})$ 是固定的且与训练数据无关。为了理解这些局限性，我们首先观察随着输入变量数量的增加线性模型的行为有何变化。
+
+\subsection{维度诅咒}\label{subsection:ch06-维度诅咒}
+
+考虑由如下 $M$ 阶多项式给出的单输入变量的简单回归模型（参见\cref{section:ch01-一个教学示例}）：
+
 \begin{align}
-v(x,\mathbf{w}) = w_0 + w_1 x + w_2 x^2 + \cdots + w_M x^M.
-\label{align:ch06-poly-1d}
-\end{align}
-
-如果增加输入变量的数量，假设有 $D$ 个输入变量 $\{x_1,\cdots,x_D\}$，那么至多三阶系数的通用多项式形式如下：
-\begin{align}
-v(\mathbf{x},\mathbf{w}) = w_0 + \sum_i w_i x_i + \sum_{i\le j} w_{ij} x_i x_j + \sum_{i\le j\le k} w_{ijk} x_i x_j x_k.
-\label{align:ch06-poly-3d}
-\end{align}
-
-随着 $D$ 增大，独立系数的数量增长为 $O(D^3)$，而对于 $M$ 阶多项式，系数数量增长为 $O(D^M)$~\citep{Bishop2006}。我们看到，在高维空间中多项式会迅速变得笨重且几乎不具实用性。
-
-这种朴素方法在扩展到具有更多输入变量的分类问题时同样存在许多问题。以鸢尾花数据为例：将输入空间划分为规则单元，新测试点的类别被推断为同一单元内训练点最多的类别。如果将输入空间划分为规则单元，那么单元数量将随维度 $D$ 呈指数级增长，这就要求指数级数量的训练数据才能保证单元不空，否则许多单元将不包含任何训练点，其中的测试点将得不到分类。这种在高维空间中出现的巨大困难称为\textbf{维度诅咒}（curse of dimensionality）~\citep{Bellman1961}。
-
-\subsection{高维空间}\label{section:ch06-高维空间}
-
-在高维空间中，我们在三维空间中形成的几何直觉可能会严重失效。考虑 $D$ 维空间中一个半径 $r=1$ 的超球体，我们想知道介于半径 $r=1-\varepsilon$ 和 $r=1$ 之间的壳层体积占超球体总体积的比例。半径为 $r$ 的 $D$ 维超球体体积 $V_D(r)$ 必须按 $r^D$ 缩放，即
-\begin{align}
-V_D(r) = K_D r^D,
-\label{align:ch06-sphere-vol}
-\end{align}
-其中常数 $K_D$ 仅依赖于 $D$。该壳层占总体积的比例由下式给出（见习题~6.1）：
-\begin{align}
-1 - (1-\varepsilon)^D.
-\label{align:ch06-shell-frac}
+y(x,\boldsymbol{w})=w_0+w_1x+w_2x^{2}+\cdots+w_Mx^{M}.
+\label{align:ch06-多项式一维}
 \end{align}
 
-对于较大的 $D$，即使 $\varepsilon$ 很小，占比也趋近于 $1$。于是得到一个重要结论：在高维空间中，超球体的大部分体积集中在靠近表面的薄壳之中。
+假设增加输入变量的数量，如果有 $D$ 个输入变量 $\{x_1,\cdots,x_D\}$，那么至多三阶系数的通用多项式形式如下：
 
-接下来考虑高维空间中高斯分布的行为。从笛卡尔坐标变换到极坐标并积分掉方向变量，可以得到径向密度 $p(r)$ 的表达式（见习题~6.3）。$p(r)\,\delta r$ 是位于半径 $r$ 处厚度为 $\delta r$ 的薄壳内的概率质量。对于较大的 $D$，高斯分布的大部分概率质量集中在特定半径的薄壳内。
-
-\subsection{数据流形}\label{section:ch06-数据流形}
-
-虽然维度诅咒确实带来了严重问题，但这并不妨碍我们找到适用高维空间的有效技术。背后的一个原因是：真实数据通常被限制在具有较低有效维度的数据空间区域内。
-
-考虑手写数字图像。每幅图像都是高维空间中的一个点，维度由像素数决定；但由于对象可在图像内不同位置、以不同朝向出现，图像之间只有三个可变自由度。一组图像大致处在高维空间中的一个三维\textbf{流形}（manifold）上，且由于对象位置/朝向与像素强度之间的复杂关系，该流形是高度非线性的。
-
-实际上，像素数量只是图像生成过程的人为产物。以更高分辨率捕获相同图像会增加数据空间维度 $D$，但并不改变图像仍然存在于三维流形上这一事实。如果我们能将局部化的基函数与数据流形关联起来，而不是与整个高维数据空间相关联，那么所需基函数数量将随流形维度（而非数据空间维度）呈指数级增长——而流形维度通常低得多，这将是巨大的改进。
-
-另一种观察方式是考虑随机图像生成任务：逐像素独立从均匀分布采样 RGB 强度得到的合成图像，没有任何一幅看起来像自然图像，原因在于合成图像缺乏自然图像所表现出的相邻像素强相关性。自然图像只覆盖了整个高维空间的一小部分。
-
-\subsection{数据依赖的基函数}\label{section:ch06-数据依赖的基函数}
-
-独立于所解决问题而选择的简单基函数在高维空间中具有严重局限。传统方法是由专家针对每个应用手工设计特定基函数（通常称为特征），这种方法在过去数十年中是机器学习的主流。
-
-一种数据依赖的做法是让每个训练数据点都与一个基函数相关联，从而确保基函数自动适应于底层数据流形。例如\textbf{径向基函数}（radial basis function）~\citep{BroomheadLowe1988}：每个基函数仅依赖于到中心向量的径向距离（通常是欧氏距离）。若基中心选为输入数据值 $\{\mathbf{x}_n\}$，则对每个数据点都有一个基函数，其典型形式为
 \begin{align}
-\phi_j(\mathbf{x}) = \exp\!\left(-\frac{\|\mathbf{x}-\mathbf{x}_j\|^2}{2s^2}\right),
-\label{align:ch06-rbf}
+y(\boldsymbol{x},\boldsymbol{w})=w_0+\sum_{i=1}^{D}w_ix_i+\sum_{i=1}^{D}\sum_{j=1}^{D}w_{ij}x_ix_j+\sum_{i=1}^{D}\sum_{j=1}^{D}\sum_{k=1}^{D}w_{ijk}x_ix_jx_k.
+\label{align:ch06-多项式多维}
 \end{align}
-其中 $s$ 控制基函数宽度。这类模型的主要问题是对大型数据集计算困难。
 
-相关方法是\textbf{支持向量机}（Support Vector Machine, SVM）~\citep{Vapnik1995,ScholkopfSmola2002,Bishop2006}，它通过以每个训练点为中心重新定义基函数，并在训练过程中自动选择这些基函数的一个子集。最终模型中有效基函数数量通常远少于训练点数，但仍相对较大，并随训练集增大而增大；SVM 不产生概率化输出，无法自然推广到多类情况。这些方法已被深度神经网络所取代。
+随着 $D$ 的增大，独立系数的数量增长为 $\mathcal{O}(D^{3})$，而对于 $M$ 阶多项式，系数的数量增长为 $\mathcal{O}(D^{M})$（Bishop，2006）。我们看到，在高维空间中，多项式可以迅速变得笨重并且几乎不具有实用性。
 
-为了将形如~\eqref{align:ch06-linear-basis}~的线性模型应用于大规模、高维问题，我们需要一组针对所解决问题的基函数。神经网络背后的关键思想是：选择具有可学习参数的基函数 $\phi_j(\mathbf{x})$，然后在训练过程中同时调整这些参数以及系数 $\{w_j\}$。整个模型可通过基于梯度的优化方法最小化误差函数来训练（参见第~7~章），例如随机梯度下降。
+\begin{proposition}[多项式系数的数量]\label{proposition:ch06-多项式系数增长}
+$D$ 个变量的所有次数不超过 $M$ 的单项式所构成的线性模型，其独立系数（包括常数项）的个数为
+\begin{align}
+\binom{D+M}{M}=\frac{(D+M)!}{D!\,M!}.
+\label{align:ch06-多项式系数个数}
+\end{align}
+特别地，当 $M=3$ 时该个数为 $(D+3)(D+2)(D+1)/6=\mathcal{O}(D^{3})$；对固定的 $M$，一般地有 $\mathcal{O}(D^{M})$。
+\end{proposition}
 
-有许多方法可以构造参数化的非线性基函数，但有一个关键要求：这些函数必须关于可学习参数可微，以便应用基于梯度的优化。最成功的选择是使用与~\eqref{align:ch06-linear-basis}~形式相同的基函数，其中每个基函数本身是输入的线性组合的非线性函数，而组合系数是可学习参数。这种构造显然可以递归扩展为具有多层的层次化模型，这正是深度神经网络的基础（参见~6.3~节）。
+\begin{proof}
+（重构新增）次数不超过 $M$ 的单项式与“把 $M$ 个不可区分的球放入 $D+1$ 个盒子”的方案一一对应：$D$ 个盒子分别记录 $x_1,\cdots,x_D$ 的指数，第 $D+1$ 个盒子记录“剩余次数”，它使总次数补足到 $M$。由隔板法，方案数为 $\binom{(D+1)+M-1}{M}=\binom{D+M}{M}$，即\eqref{align:ch06-多项式系数个数}。当 $M=3$ 时，$\binom{D+3}{3}=(D+3)(D+2)(D+1)/6$；而对固定的 $M$，分子是 $D$ 的 $M$ 次多项式、分母是常数 $M!$，故为 $\mathcal{O}(D^{M})$。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch06-多项式系数增长; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{proposition:ch06-多项式系数增长}说明了“维度诅咒”的代数根源：需要估计的参数个数随维度 $D$ 呈多项式增长，而 $M$ 阶多项式在 $D$ 增大时迅速失去实用性。注意这里统计的是\emph{独立}系数：由于 $x_ix_j=x_jx_i$，若把\eqref{align:ch06-多项式多维}中的 $w_{ij}$ 与 $w_{ji}$ 视为同一个参数，二阶项只有 $D(D+1)/2$ 个而非 $D^{2}$ 个，但阶数不变。换言之，对称性只能把常数因子减半，不能改变指数增长的趋势。
+\end{remark}
+
+高维空间中出现的这种巨大困难有时称为维度诅咒（Bellman，1961）。这是一个相当普遍的问题，不仅限于多项式回归。我们来考虑使用线性模型解决分类问题：\cref{figure:ch06-鸢尾花}展示了来自鸢尾花数据集的数据，其中包括来自三种鸢尾花的各 $50$ 个观测值。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.42\textwidth]{ch06-fig6-1-iris.png}
+\caption{鸢尾花数据的散点图。其中红色、绿色和蓝色的点分别代表鸢尾花的三个亚种，轴代表萼片长度和宽度的测量值。我们的目标是对一个新的测试点（图中用叉号表示）进行分类}
+\label{figure:ch06-鸢尾花}
+\end{figure}
+
+每个观测值有 $4$ 个变量，分别代表萼片长度、萼片宽度、花瓣长度和花瓣宽度的测量值。对于这个示例，我们只考虑萼片长度和萼片宽度。给定这 $150$ 个观测值作为训练数据，我们的目标是将新的测试点，如\cref{figure:ch06-鸢尾花}中的叉号所示，归于其中一类。我们观察到叉号靠近几个红点，因此我们可能假设它属于红色类别。然而，叉号的附近也有一些绿点，所以我们也可能认为它属于绿色类别。而它属于蓝色类别的可能性似乎较小。我们的直觉是，叉号的类别应该更可能由训练集中较为靠近的点决定，而不是由更远的点决定，这个直觉是合理的。
+
+将这个直觉转为学习算法的一种非常简单的方法是将输入空间划分为规则的单元，如\cref{figure:ch06-网格分类}所示。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.46\textwidth]{ch06-fig6-2-grid.png}
+\caption{解决分类问题的一种简单方法的示意图。该方法将输入空间划分为规则的单元，新测试点的类别被推断为同一单元内训练点最多的类别。正如我们很快将看到的，这种方法存在一些严重的缺陷}
+\label{figure:ch06-网格分类}
+\end{figure}
+
+当我们得到一个测试点并希望预测其类别时，可以首先确定它属于哪个单元，然后找到所有落在同一单元内的训练点。测试点的类别被推断为同一单元内训练点数量最多的那一类（各类别如果训练点的数量相同，则随机推断）。我们可以将其视为一个基函数模型，其中每个单元有一个基函数 $\phi_j(\boldsymbol{x})$，如果 $\boldsymbol{x}$ 位于单元外部，则返回零，否则返回所在单元内的训练点的主要类别。该模型的输出由所有基函数的输出之和给出。
+
+\begin{example}[ 网格分类器]\label{example:ch06-网格分类器}
+把输入空间 $\mathbb{R}^{D}$ 按边长 $h$ 划分为规则网格，每个单元对应基函数
+\begin{align}
+\phi_{\boldsymbol{m}}(\boldsymbol{x})=
+\begin{cases}
+c_{\boldsymbol{m}}, & \boldsymbol{x}\text{ 落在第 }\boldsymbol{m}\text{ 个单元内},\\
+0, & \text{其他},
+\end{cases}
+\label{align:ch06-网格基函数}
+\end{align}
+其中 $c_{\boldsymbol{m}}$ 是该单元内训练点最多的类别。把 $\mathbb{R}^{D}$ 中边长为 $L$ 的立方体划分为规则单元，所需单元数为 $(L/h)^{D}$。
+\end{example}
+
+这种朴素的方法存在许多问题，当我们考虑将其扩展到具有更多输入变量的分类问题，即考虑更高维度的输入空间时，其中一个很严重的问题将变得更加明显。\cref{figure:ch06-维度诅咒}说明了这个问题的起源。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.62\textwidth]{ch06-fig6-3-curse.png}
+\caption{维度诅咒的示意图。这里展示了单元数量如何随空间维度 $D$ 的增大呈指数级增长。简便起见，图中仅展示了 $D=3$ 时的部分单元}
+\label{figure:ch06-维度诅咒}
+\end{figure}
+
+它表明如果我们将输入空间划分为规则的单元，那么这样的单元数量将随空间维度的增大呈指数级增长。呈指数级增长的单元数量带来的挑战是，我们需要指数级数量的训练数据来确保单元不是空的。我们已经在\cref{figure:ch06-网格分类}中看到，一些单元不包含任何训练点。因此，这些单元中的测试点将得不到分类。显然，我们无法在具有较多变量的输入空间中应用这种技术。这种方法对多项式回归示例和鸢尾花数据分类示例而言都是困难的，因为基函数的选择没有考虑要解决的问题。为了避免维度诅咒，我们需要在选择基函数时更加精细（参见\cref{subsection:ch06-数据依赖的基函数}）。
+
+\begin{proposition}[网格单元数的指数增长]\label{proposition:ch06-网格单元数}
+设输入空间为 $\mathbb{R}^{D}$ 中的单位立方体 $[0,1]^{D}$，用边长 $h$ 的规则网格划分，则所需单元数为 $h^{-D}$。若希望每个单元平均至少含有一个训练点、且训练点数为 $N$，则必须 $N\geqslant h^{-D}$，即 $N$ 必须随 $D$ 呈指数增长。
+\end{proposition}
+
+\begin{proof}
+（重构新增）每个坐标轴被分成 $1/h$ 段，$D$ 个坐标轴的独立选择给出 $h^{-D}$ 个单元。若每个单元至少含一个训练点，则 $N\geqslant h^{-D}$。取 $h<1$ 固定，$h^{-D}=e^{-D\ln h}$ 随 $D$ 指数增长；例如 $h=0.1$、$D=10$ 时已需 $10^{10}$ 个训练点。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch06-网格单元数; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{proposition:ch06-网格单元数}给出了维度诅咒最朴素的定量形式，但它也提示了出路：真正起作用的不是数据空间的维度 $D$，而是数据实际占据的自由度。如果数据位于一个 $d$ 维流形上（$d\ll D$），那么把单元建在流形上而非整个空间上，所需单元数只随 $d$ 指数增长。这正是\cref{subsection:ch06-数据流形}与\cref{subsection:ch06-数据依赖的基函数}的出发点。
+\end{remark}
+
+\subsection{高维空间}\label{subsection:ch06-高维空间}
+
+首先，我们将更细致地观察高维空间的性质。在高维空间中，我们平日在三维空间中形成的几何直觉可能会严重地失效。举个简单的例子，考虑 $D$ 维空间中一个半径 $r=1$ 的超球体，我们想知道介于半径 $r=1-\varepsilon$ 和 $r=1$ 之间的超球体体积的占比是多少。我们注意到，半径为 $r$ 的 $D$ 维超球体的体积 $V_D(r)$ 必须按 $r^{D}$ 缩放，因此有
+
+\begin{align}
+V_D(r)=K_Dr^{D},
+\label{align:ch06-超球体体积}
+\end{align}
+
+其中常数 $K_D$ 仅取决于 $D$。这个问题的答案由下式给出（见\cref{exercise:ch06-01}）：
+
+\begin{align}
+\frac{V_D(1)-V_D(1-\varepsilon)}{V_D(1)}=1-(1-\varepsilon)^{D}.
+\label{align:ch06-薄壳体积占比}
+\end{align}
+
+\begin{proposition}[高维超球体的薄壳效应]\label{proposition:ch06-超球体薄壳}
+设 $V_D(r)=K_Dr^{D}$ 为 $D$ 维超球体体积，则半径介于 $r=1-\varepsilon$ 与 $r=1$ 之间的薄壳占总体积的比例为 $1-(1-\varepsilon)^{D}$。对固定的 $\varepsilon\in(0,1)$，当 $D\to\infty$ 时该比例单调递增地趋于 $1$。
+\end{proposition}
+
+\begin{proof}
+（重构新增）由\eqref{align:ch06-超球体体积}，$V_D(1-\varepsilon)=K_D(1-\varepsilon)^{D}$，故
+\begin{align}
+\frac{V_D(1)-V_D(1-\varepsilon)}{V_D(1)}
+=\frac{K_D-K_D(1-\varepsilon)^{D}}{K_D}=1-(1-\varepsilon)^{D}.
+\end{align}
+因为 $0<1-\varepsilon<1$，序列 $(1-\varepsilon)^{D}$ 关于 $D$ 单调递减且趋于 $0$，所以比例 $1-(1-\varepsilon)^{D}$ 单调递增地趋于 $1$。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch06-超球体薄壳; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）这个结论常被概括为“高维球的体积几乎全部集中在表面附近”。它的实践含义是：在高维空间中，\emph{体积}与\emph{概率质量}的直觉不再一致，均匀分布于球内的点几乎必然落在薄壳里。对机器学习而言，这意味着基于“局部邻域”的方法在高维下会失效：任何有限半径的邻域都只能覆盖极少的数据点。
+\end{remark}
+
+\cref{figure:ch06-超球体壳层}显示了不同维度 $D$ 取值下体积占比关于 $\varepsilon$ 的函数。可以看到，对于较大的 $D$ 值，即使 $\varepsilon$ 值较小，这个占比也倾向于 $1$。因此，我们有了一个重要的发现：在高维空间中，超球体的大部分体积集中在靠近表面的薄壳中！
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.44\textwidth]{ch06-fig6-4-shell.png}
+\caption{不同维度 $D$ 取值下，半径 $r=1$ 的超球体内，半径介于 $r=1-\varepsilon$ 和 $r=1$ 之间的超球体体积占比}
+\label{figure:ch06-超球体壳层}
+\end{figure}
+
+接下来，我们考虑高维空间中 Gauss 分布的行为，作为与机器学习直接相关的另一个示例。如果我们从笛卡儿坐标变换到极坐标，然后积分消去方向变量，则可以得到密度 $p(r)$ 的表达式，它是一个关于从原点出发的半径为 $r$ 的函数（见\cref{exercise:ch06-03}）。因此，$p(r)\delta r$ 是位于半径 $r$ 处的厚度为 $\delta r$ 的薄壳内的概率质量。在不同维度 $D$ 取值下，将这个分布绘制在\cref{figure:ch06-Gauss径向密度}中。可以看到，对于较大的 $D$ 值，Gauss 分布的大部分概率质量位于特定半径的薄壳内。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.46\textwidth]{ch06-fig6-5-radial.png}
+\caption{不同维度 $D$ 取值下，关于半径为 $r$ 的 Gauss 分布的概率密度图。在高维空间中，Gauss 分布的大部分概率质量位于特定半径的薄壳内}
+\label{figure:ch06-Gauss径向密度}
+\end{figure}
+
+\begin{proposition}[高维 Gauss 的径向集中]\label{proposition:ch06-高维Gauss薄壳}
+设 $\boldsymbol{x}\sim\mathcal{N}(\boldsymbol{0},\sigma^{2}\boldsymbol{I})$ 取值于 $\mathbb{R}^{D}$，$r=\|\boldsymbol{x}\|$，则径向密度为
+\begin{align}
+p(r)=\frac{S_Dr^{D-1}}{(2\pi\sigma^{2})^{D/2}}\exp\!\left(-\frac{r^{2}}{2\sigma^{2}}\right),
+\label{align:ch06-高维Gauss径向密度}
+\end{align}
+其中 $S_D$ 是 $\mathbb{R}^{D}$ 中单位超球体的表面积。当 $D$ 较大时，$p(r)$ 在 $r\approx\sqrt{D}\sigma$ 处取得唯一最大值，且概率质量集中在该半径附近厚度为 $\mathcal{O}(\sigma)$ 的薄壳内。
+\end{proposition}
+
+\begin{proof}
+（重构新增）把 Gauss 密度在极坐标下积分掉方向变量即得\eqref{align:ch06-高维Gauss径向密度}（详细推导见\cref{exercise:ch06-03}）。为求驻点，对 $\ln p(r)$ 求导：
+\begin{align*}
+\frac{\mathrm{d}}{\mathrm{d}r}\ln p(r)=\frac{D-1}{r}-\frac{r}{\sigma^{2}},
+\end{align*}
+令其为零得 $r^{2}=(D-1)\sigma^{2}$，故驻点为 $\hat r=\sqrt{D-1}\,\sigma\approx\sqrt{D}\sigma$；又因二阶导数在 $r>0$ 上为负，$\hat r$ 是唯一最大值点。在 $\hat r$ 附近作二阶展开可得 $p(\hat r+\varepsilon)\approx p(\hat r)\exp\{-3\varepsilon^{2}/(2\sigma^{2})\}$，即密度在尺度 $\sigma$ 上指数衰减，故概率质量集中在半径 $\hat r$ 附近厚度为 $\mathcal{O}(\sigma)$ 的薄壳内。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch06-高维Gauss薄壳; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{proposition:ch06-高维Gauss薄壳}与\cref{proposition:ch06-超球体薄壳}是同一现象的两个侧面：前者说的是\emph{体积}集中在表面，后者说的是\emph{概率质量}集中在某个半径。二者并不矛盾——Gauss 密度在原点最高，但原点附近的体积元 $S_Dr^{D-1}\mathrm{d}r$ 在 $r$ 很小时几乎为零，两者相乘的峰值因此被推到 $r\approx\sqrt{D}\sigma$ 处。这提醒我们：在高维空间中，“密度最大的点”与“最可能出现的半径”是两个不同的概念。
+\end{remark}
+
+在本书中，我们广泛使用了涉及单个或两个变量的例子，因为这样特别容易图形化地展示这些空间。然而，读者应该注意，不是所有在低维空间中获得的直觉都可以推广到高维空间中。
+
+最后，虽然我们讨论了维度诅咒，但在高维空间中建模也具有优势。考虑\cref{figure:ch06-高维线性可分}所示的数据集，其中的每个数据点由一对值 $(x_1,x_2)$ 组成。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.72\textwidth]{ch06-fig6-6-separable.png}
+\caption{二维数据集 $(x_1,x_2)$ 的示意图。其中，使用绿色和红色圆圈表示的两类数据点可以被线性决策面分开，如图 (a) 所示。然而，如果仅考虑变量 $x_1$，则类不再可分，如图 (b) 所示}
+\label{figure:ch06-高维线性可分}
+\end{figure}
+
+我们看到这个数据集是线性可分的，但是当我们仅观察 $x_1$ 的值时，发现类有严重的重叠。因此，在更高维的空间中，分类问题解决起来要容易得多。
+
+\begin{example}[ 升维使问题线性可分]\label{example:ch06-高维可分性}
+设两类点分别位于直线 $x_2=x_1$ 的两侧，则它们在 $\mathbb{R}^{2}$ 中线性可分；但把它们投影到 $x_1$ 轴上后，两类的取值范围完全重叠，一维空间中没有阈值能把它们分开。若再增加一个特征 $x_1x_2$，则在同一维数更高的空间中仍可保持线性可分。
+\end{example}
+
+\subsection{数据流形}\label{subsection:ch06-数据流形}
+
+在多项式回归模型和基于网格的分类器（见\cref{figure:ch06-网格分类}）中，我们看到随着维度的增加，基函数的数量迅速增长，导致这些方法甚至不适用于涉及几十个变量的应用，更不用说常常出现的涉及数百万输入的应用了，比如图像处理。问题在于，基函数是提前固定的，不依赖于数据，甚至不依赖于正在解决的特定问题。我们需要找到一种方法来创建能够针对特定应用加以调整的基函数。
+
+虽然维度诅咒确实为机器学习应用带来了严重问题，但这并不妨碍我们找到适用于高维空间的有效技术。这背后的一个原因是，真实数据通常会被限制在具有较低有效维度的数据空间区域内。考虑\cref{figure:ch06-手写数字}中的图像。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.42\textwidth]{ch06-fig6-7-digits.png}
+\caption{手写数字图像的示例。在这些图像中，数字在图像内的位置以及它们的朝向有所不同。这些图像存在于高维图像空间中的一个非线性三维流形上}
+\label{figure:ch06-手写数字}
+\end{figure}
+
+其中的每幅图像都是高维空间中的一个点，其维度由像素数决定。因为对象可以在图像内不同的垂直和水平位置以不同的朝向出现，所以图像之间有三个可变自由度。一组图像将大致处在高维空间中的一个三维\textbf{流形}（manifold）上。由于对象位置或方向与像素强度之间存在复杂关系，这个流形是高度非线性的。
+
+\begin{definition}[数据流形]\label{definition:ch06-数据流形}
+设数据空间为 $\mathbb{R}^{D}$。若存在整数 $d\ll D$ 与映射 $\boldsymbol{g}:\mathbb{R}^{d}\to\mathbb{R}^{D}$，使得（至少局部地）每个数据点都可写成 $\boldsymbol{x}=\boldsymbol{g}(\boldsymbol{z})$，其中 $\boldsymbol{z}\in\mathbb{R}^{d}$，则称数据位于一个 $d$ 维\textbf{流形}（manifold）上，$d$ 称为该流形的\textbf{内在维度}（intrinsic dimension），$\boldsymbol{z}$ 称为\emph{流形坐标}。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch06-数据流形; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{definition:ch06-数据流形}的关键在于区分\emph{外在维度} $D$（像素数、采样点数）与\emph{内在维度} $d$（真正的自由度）。手写数字的例子中 $D$ 可以是 $10^{4}$ 量级而 $d=3$（水平位置、垂直位置、朝向）。流形假设并不要求数据严格落在流形上，只要求它集中在流形附近；实际数据总带有噪声，因此更准确的说法是“数据分布集中在低维流形的一个管状邻域内”。
+\end{remark}
+
+实际上，像素数量是图像生成过程的人为产物，因为像素数量是对连续世界的测量方式。以更高的分辨率捕获相同的图像会增加数据空间的维度 $D$，但并不改变图像仍然存在于三维流形上这一事实。如果我们能将局部化的基函数与数据流形相关联，而不是与整个高维数据空间相关联，则所需的基函数数量将随着流形的维度呈指数级增长，而不是随着数据空间的维度呈指数级增长。由于流形的维度通常比数据空间的维度低得多，这将是一个巨大的改进。实际上，神经网络学习了一组适应于数据流形的基函数。此外，对于特定的应用，并不是流形内的所有方向都是重要的。例如，如果我们只希望确定\cref{figure:ch06-手写数字}中对象的朝向而不是位置，那么在流形上将只有一个而不是三个相关的自由度。神经网络还能够学习流形上的哪些朝向与预测想要的输出是相关的。
+
+另一种看到真实数据被限制在低维流形上的方式是考虑随机图像生成任务。\cref{figure:ch06-自然与随机图像}展示了自然图像的示例以及相同分辨率的合成图像的示例。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.78\textwidth]{ch06-fig6-8-natural.png}
+\caption{第 $1$ 行展示了 $64\times64$ 像素大小的自然图像的示例，第 $2$ 行展示了相同大小的随机生成图像（即合成图像）的示例。第 $2$ 行图像是通过从包含所有可能像素颜色的均匀概率分布中采样像素值得到的}
+\label{figure:ch06-自然与随机图像}
+\end{figure}
+
+这些合成图像是通过在每个像素独立随机地从均匀分布中采样红色、绿色和蓝色强度得到的。可以看到，没有任何一幅合成图像看起来像自然图像。原因是这些合成图像缺乏自然图像所展示的像素之间的强相关性。例如，自然图像与合成图像相比，两个相邻像素具有相同或非常相似的颜色的概率要高得多。\cref{figure:ch06-自然与随机图像}中的每幅图像对应于高维空间中的一个点，然而自然图像只覆盖了这个空间的一少部分。
+
+\subsection{数据依赖的基函数}\label{subsection:ch06-数据依赖的基函数}
+
+我们已经看到，独立于所解决问题而选择的简单基函数在高维空间中可能具有严重的局限性。如果我们想在这种情况下使用基函数，那么一种方法是使用专家知识手工设计针对每个应用的特定基函数。多年来，这是机器学习中的主流方法。基函数通常称为\textbf{特征}，是通过结合领域知识和试错法而确定的。这种方法取得了一定的成功，但是数据驱动的方法替代了它。在数据驱动的方法中，基函数是从训练数据中学习得来的。正如我们将在后面的章节中所看到的，领域知识在现代机器学习中仍然发挥作用，但是更多地体现在设计网络架构的定性层面上，以此来建模适当的\textbf{归纳偏置}（inductive bias）。
+
+由于高维空间中的数据可能被限制在低维流形上，因此我们不需要基函数密集地填充整个输入空间，而是可以使用与数据流形本身相关的基函数。一种做法是将每个训练集中的数据点都与一个基函数相关联，这确保了基函数自动适应于底层的数据流形。这种模型的一个例子是\textbf{径向基函数}（radial basis function）（Broomhead and Lowe，1988），其性质是每个基函数仅依赖于到中心向量的径向距离（通常是欧氏距离）。如果基中心选择为输入数据值 $\{\boldsymbol{x}_n\}$，那么对于每个数据点都有一个基函数 $\phi_n(\boldsymbol{x})$，它将建模整个数据流形。径向基函数的一个典型选择是
+
+\begin{align}
+\phi_n(\boldsymbol{x})=\exp\!\left(-\frac{\|\boldsymbol{x}-\boldsymbol{x}_n\|^{2}}{s^{2}}\right),
+\label{align:ch06-径向基函数}
+\end{align}
+
+其中 $s$ 是控制基函数宽度的参数。
+
+\begin{definition}[径向基函数]\label{definition:ch06-径向基函数}
+设 $\{\boldsymbol{x}_n\}_{n=1}^{N}\subset\mathbb{R}^{D}$ 为训练输入，$s>0$ 为宽度参数。称\eqref{align:ch06-径向基函数}定义的 $\phi_n(\boldsymbol{x})$ 为以 $\boldsymbol{x}_n$ 为中心的\textbf{径向基函数}（radial basis function, RBF）：它的取值只依赖于 $\boldsymbol{x}$ 到中心 $\boldsymbol{x}_n$ 的欧氏距离 $\|\boldsymbol{x}-\boldsymbol{x}_n\|$。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch06-径向基函数; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{definition:ch06-径向基函数}把“基函数应随数据分布走”这一想法落实为最直接的构造：每个训练点放一个基函数。它的优点是不需要先验地选择基函数形状，缺点是基函数个数等于训练点个数 $N$，且每个测试点的预测需要计算 $N$ 个指数函数——计算量为 $\mathcal{O}(ND)$。更重要的是，当 $N$ 很大时，模型参数与样本数同阶，必须配合正则化才能避免过拟合。这正是支持向量机试图解决的问题。
+\end{remark}
+
+尽管可以很快建立起这样的模型，但这种技术的一个主要问题是，它对于大型数据集来说计算较为困难。此外，这样的模型还需要经过仔细的正则化以避免严重的过拟合问题。
+
+有一种相关的方法，叫作\textbf{支持向量机}（Support Vector Machine, SVM）（Vapnik，1995；Schölkopf and Smola，2002；Bishop，2006），它通过再次定义以每个训练数据点为中心的基函数，在训练过程中自动选择这些基函数的一个子集。因此，最终模型中有效基函数的数量通常远少于训练点的数量，尽管它通常仍然相对较大，并且会随训练集大小的增加而增大。支持向量机不产生概率化的输出，因此无法自然地泛化到多类情况。像径向基函数和支持向量机这样的方法已被深度神经网络取代，后者在有效利用非常大的数据集方面要好得多。此外，正如我们稍后将看到的，神经网络能够学习深度层次化（hierarchical）的表示，这对于在更复杂的应用中实现高预测准确性至关重要。
+
+\begin{definition}[支持向量机]\label{definition:ch06-支持向量机}
+称如下分类器为\textbf{支持向量机}（SVM）：它以核函数 $k(\boldsymbol{x},\boldsymbol{x}_n)$（等价地，以每个训练点为中心的基函数）展开决策函数
+\begin{align}
+y(\boldsymbol{x})=\sum_{n\in\mathcal{S}}\alpha_n t_n k(\boldsymbol{x},\boldsymbol{x}_n)+b,
+\label{align:ch06-支持向量机}
+\end{align}
+其中 $t_n\in\{-1,+1\}$ 为类标签，$\mathcal{S}$ 是训练过程中自动选出的训练点子集（支持向量），$\alpha_n>0$。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch06-支持向量机; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）与\cref{definition:ch06-径向基函数}相比，\cref{definition:ch06-支持向量机}的基函数集合仍然以训练点为中心，但只有一部分系数 $\alpha_n$ 非零，这就是“自动选择子集”的含义。SVM 的判别式只给出类别（或到超平面的距离），不给出 $p(\mathcal{C}_k\mid\boldsymbol{x})$，因此难以直接用于需要概率输出的下游任务，也不能像 softmax 那样自然地给出多类后验——这两点是它被深度网络取代的重要原因之一。
+\end{remark}
 
 \end{document}

@@ -1,151 +1,187 @@
 \documentclass[../../main.tex]{subfiles}
+
 \graphicspath{{../../image/}{../../figure/}}
+
 \begin{document}
 
 \section{非线性潜变量模型}\label{section:ch16-非线性潜变量模型}
 
-到目前为止，在本章中，我们关注的是基于从潜空间到数据空间的线性变换的潜变量模型。自然地，我们会问：是否可以利用深度神经网络的灵活性来表示更复杂的变换，同时利用深度神经网络的学习能力让得到的分布适配于一个数据集？
-
-考虑一个简单的向量变量 $\bm{z}$ 上的分布，例如高斯分布：
+到目前为止，在本章中，我们关注的是基于从潜空间到数据空间的线性变换的潜变量模型。自然地，我们会问：是否可以利用深度神经网络的灵活性来表示更复杂的变换，同时利用深度神经网络的学习能力让得到的分布适配于一个数据集？考虑一个简单的向量变量 $\bm{z}$ 上的分布，例如 Gauss 分布：
 \begin{align}
-p(\bm{z})=\mathcal{N}(\bm{z}|\bm{0},\bm{I})
-\label{align:ch16-nl-prior}
+  p_z(\bm{z})=\mathcal{N}(\bm{z}|\bm{0},\bm{I}).
+  \label{align:ch16-非线性先验}
 \end{align}
 
-假设我们使用一个由深度神经网络给出的函数 $\bm{x}=\bm{g}(\bm{z},\bm{w})$ 来变换 $\bm{z}$，其中 $\bm{w}$ 代表权重和偏置。$\bm{z}$ 上的分布与神经网络的结合定义了 $\bm{x}$ 上的分布。从这样的模型中采样是直截了当的，因为我们可以从 $p(\bm{z})$ 中生成样本，然后使用神经网络函数对每个样本进行变换，以获得对应的 $\bm{x}$ 的样本。这是一个高效的过程，因为它不涉及迭代。
+假设我们使用一个由深度神经网络给出的函数 $\bm{x}=\bm{g}(\bm{z},\bm{w})$ 来变换 $\bm{z}$，其中 $\bm{w}$ 代表权重和偏置。$\bm{z}$ 上的分布与神经网络的结合定义了 $\bm{x}$ 上的分布。从这样的模型中采样是直截了当的，因为我们可以从 $p_z(\bm{z})$ 中生成样本，然后使用神经网络函数对每个样本进行变换，以获得对应的 $\bm{x}$ 的样本。这是一个高效的过程，因为它不涉及迭代。
 
 \subsection{非线性流形}\label{subsection:ch16-非线性流形}
 
-要求潜空间和数据空间具有相同的维度是一个重大的限制。考虑这样一种情况：$\bm{z}$ 的维度是 $M$，$\bm{x}$ 的维度是 $D$，其中 $M<D$。在这种情况下，$\bm{x}$ 上的分布局限于维度为 $M$ 的流形或子空间。许多机器学习应用中都出现了低维流形，例如在模拟自然图像的分布时。非线性潜变量模型（nonlinear latent variable model）在建模此类数据时可能非常有用，因为它们表达了强烈的归纳偏置，即数据并不"填满"数据空间，而是被限制在一个流形上，尽管这个流形的形状和维度通常是未知的。
+要求潜空间和数据空间具有相同的维度是一个重大的限制。考虑这样一种情况：$\bm{z}$ 的维度是 $M$，$\bm{x}$ 的维度是 $D$，其中 $M<D$。在这种情况下，$\bm{x}$ 上的分布局限于维度为 $M$ 的流形或子空间，如\cref{figure:ch16-潜空间到数据空间}所示。许多机器学习应用中都出现了低维流形，例如在模拟自然图像的分布时。非线性潜变量模型（nonlinear latent variable model）在建模此类数据时可能非常有用，因为它们表达了强烈的归纳偏置，即数据并不“填满”数据空间，而是被限制在一个流形上，尽管这个流形的形状和维度通常是未知的。
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.62\textwidth]{ch16-fig16.11-latent-manifold.png}
+  \caption{使用一个带有参数向量 $\bm{w}$ 的神经网络所代表的非线性函数 $\bm{x}=\bm{g}(\bm{z},\bm{w})$，演示从二维潜空间 $\bm{z}=(z_1,z_2)$ 到三维数据空间 $\bm{x}=(x_1,x_2,x_3)$ 的一个映射}
+  \label{figure:ch16-潜空间到数据空间}
+\end{figure}
 
 为了从数据中学习 $\bm{g}(\bm{z},\bm{w})$，考虑如何计算似然函数 $p(\bm{x}|\bm{w})$。$\bm{x}$ 上的分布由密度的变量变换公式给出：
 \begin{align}
-p(\bm{x})=p(\bm{z}(\bm{x}))\,|\det \bm{J}(\bm{x})|
-\label{align:ch16-change-var}
+  p_x(\bm{x})=p_z(\bm{z}(\bm{x}))\left|\det\bm{J}(\bm{x})\right|,
+  \label{align:ch16-变量变换}
 \end{align}
-其中 $\bm{J}$ 是偏导数的雅可比矩阵。
+其中 $\bm{J}$ 是偏导数的Jacobi矩阵，其元素由下式给出：
+\begin{align}
+  J_{ij}(\bm{x})=\frac{\partial z_i}{\partial x_j}.
+  \label{align:ch16-Jacobi}
+\end{align}
 
-要计算式\eqref{align:ch16-change-var}右侧的分布 $p(\bm{z}(\bm{x}))$（对于给定的数据向量 $\bm{x}$）和同一点的雅可比矩阵，我们需要使用神经网络函数的逆函数 $\bm{z}=\bm{g}^{-1}(\bm{x},\bm{w})$。对于大多数神经网络来说，这个逆函数将不是良好定义的。例如，神经网络可能实现一种多对一的函数关系，在这种情况下，不同的输入值会被映射到相同的输出值，变量变换公式并不能给出良好定义的密度。此外，如果潜空间的维度与数据空间的维度不同，那么变换将是不可逆的。
+要计算\eqref{align:ch16-变量变换}右侧的分布 $p_z(\bm{z}(\bm{x}))$（对于给定的数据向量 $\bm{x}$）和\eqref{align:ch16-Jacobi}中同一 $\bm{x}$ 值的Jacobi矩阵，我们需要使用神经网络函数的逆函数 $\bm{z}=\bm{g}^{-1}(\bm{x},\bm{w})$。对于大多数神经网络来说，这个逆函数将不是良好定义的。例如，神经网络可能实现一种多对一的函数关系，在这种情况下，不同的输入值会被映射到相同的输出值，变量变换公式并不能给出良好定义的密度。此外，如果潜空间的维度与数据空间的维度不同，那么变换将是不可逆的。
 
-解决这个问题的一种方法是限制函数 $\bm{g}(\bm{z},\bm{w})$ 是可逆的，这要求 $\bm{z}$ 和 $\bm{x}$ 具有相同的维度。我们将在介绍标准化流（normalizing flow）的技术时更详细地探索这种方法。
+解决这个问题的一种方法是限制函数 $\bm{g}(\bm{z},\bm{w})$ 是可逆的，这要求 $\bm{z}$ 和 $\bm{x}$ 具有相同的维度。我们将在介绍标准化流（normalizing flow）的技术时更详细地探索这种方法（参见\cref{chapter:ch18-标准化流}）。
+
+\begin{proposition}[流形上的分布是奇异的]\label{proposition:ch16-流形奇异}
+设 $\bm{g}:\mathbb{R}^{M}\rightarrow\mathbb{R}^{D}$ 是连续可微映射，$M<D$，且潜变量 $\bm{z}$ 的分布有密度。若取无噪声的确定性变换 $\bm{x}=\bm{g}(\bm{z})$，则 $\bm{x}$ 的分布关于 $\mathbb{R}^{D}$ 上的 Lebesgue 测度是奇异的：不存在密度函数 $p_x(\bm{x})$ 使得 $\bm{x}$ 的分布等于 $p_x$ 的积分。因此\eqref{align:ch16-变量变换}在 $M<D$ 时不能作为密度的定义式。
+\end{proposition}
+
+\begin{proof}（重构新增）
+$\bm{g}$ 在 $\mathbb{R}^{M}$ 的每个紧集上 Lipschitz，故 $\bm{g}(\mathbb{R}^{M})$ 可表为可数个紧集之并的像，而每个这样的像的 Hausdorff 维数不超过 $M$，从而 $\mathbb{R}^{D}$ 中的 Lebesgue 测度为零。形式地，对任意 $\varepsilon>0$，可用可数个边长之和任意小的立方体覆盖 $\bm{g}(\mathbb{R}^{M})$，故其 Lebesgue 测度为零。于是
+\begin{align*}
+  P\left(\bm{x}\in\bm{g}(\mathbb{R}^{M})\right)=1,\qquad \left|\bm{g}(\mathbb{R}^{M})\right|_{D}=0 .
+\end{align*}
+若存在密度 $p_x$ 表示该分布，则 $1=\int_{\bm{g}(\mathbb{R}^{M})}p_x(\bm{x})\mathrm{d}\bm{x}=0$，矛盾。故不存在这样的密度。
+
+另一方面，\eqref{align:ch16-变量变换}中的 $\det\bm{J}(\bm{x})$ 要求 $\bm{J}$ 是方阵，即 $\bm{z}$ 与 $\bm{x}$ 同维；当 $M<D$ 时 $\bm{J}(\bm{x})$ 是 $M\times D$ 的长方阵，行列式没有定义，\eqref{align:ch16-变量变换}本身无法写成一个数。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch16-流形奇异; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+这个命题解释了为什么“纯流形模型”无法直接用最大似然训练：数据在 $\mathbb{R}^{D}$ 中占据一个零测集，似然要么无定义，要么在流形外处处为零、在流形上无界，基于梯度的优化得不到有用的信号。原文所说的“这个框架将零概率密度赋予那些不完全位于流形上的任何数据向量”正是这一现象的非正式表述。
+
+条件的作用：结论依赖 $M<D$ 与 $\bm{g}$ 的正则性（连续可微已足够）。若 $M=D$ 且 $\bm{g}$ 可逆、Jacobi处处非奇异，则\eqref{align:ch16-变量变换}成立并给出 $\mathbb{R}^{D}$ 上的合法密度，这正是标准化流所要求的结构（见\cref{chapter:ch18-标准化流}）。解决办法有两个方向：其一，保持 $M<D$ 但显式加入噪声，使边缘分布在所有方向上都有正的密度（这正是\eqref{align:ch16-非线性条件}的做法）；其二，令 $M=D$ 并约束 $\bm{g}$ 可逆。
+\end{remark}
+
+然而，这个框架将零概率密度赋予那些不完全位于流形上的任何数据向量，这对基于梯度的学习算法是一个问题，因为对于真实的数据集，似然函数在每一个数据点都将为零，并且对于小的 $\bm{w}$ 变化将保持不变。为了解决这个问题，我们使用之前用于解决回归和分类问题的策略，定义了整个数据空间上的条件分布，其参数由神经网络的输出决定。例如，如果 $\bm{x}$ 是连续变量的一个向量，则可以选择条件分布为 Gauss 分布：
+\begin{align}
+  p(\bm{x}|\bm{z},\bm{w})=\mathcal{N}\left(\bm{x}\left|\bm{g}(\bm{z},\bm{w}),\sigma^2\bm{I}\right.\right),
+  \label{align:ch16-非线性条件}
+\end{align}
+其中神经网络 $\bm{g}(\bm{z},\bm{w})$ 的输出单元激活函数是线性的，并且 $\bm{g}\in\mathbb{R}^{D}$。生成式模型由 $\bm{z}$ 上的潜变量分布和 $\bm{x}$ 上的条件分布指定，并且可以用\cref{figure:ch16-非线性图模型}所示的简单图模型来表示。
+
+\begin{definition}[非线性潜变量模型]\label{definition:ch16-非线性潜变量模型}
+设 $\bm{z}$ 是 $M$ 维连续潜变量，$\bm{g}(\cdot,\bm{w})$ 是由深度神经网络定义的、从潜空间到数据空间的非线性函数，$\bm{w}$ 为网络参数。若
+\begin{align*}
+  p(\bm{z})=p_z(\bm{z}),\qquad
+  p(\bm{x}|\bm{z},\bm{w})=\mathcal{N}\left(\bm{x}\left|\bm{g}(\bm{z},\bm{w}),\sigma^2\bm{I}\right.\right),
+\end{align*}
+则称该模型为非线性潜变量模型（nonlinear latent variable model）。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch16-非线性潜变量模型; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+非线性潜变量模型把\cref{section:ch16-概率潜变量}的线性映射 $\bm{W}\bm{z}+\bm{\mu}$ 换成神经网络 $\bm{g}(\bm{z},\bm{w})$，从而允许潜空间到数据空间的映射弯曲：如\cref{figure:ch16-潜空间到数据空间}所示，二维潜空间中的平面区域被映成三维空间中的一张曲面，数据沿曲面分布而不是填满整个空间。这就是“低维流形”这一归纳偏置的来源。
+
+条件方面：条件协方差取 $\sigma^2\bm{I}$ 有两个作用——它使边缘密度在整个 $\mathbb{R}^{D}$ 上为正（于是似然处处有定义，回避了\cref{proposition:ch16-流形奇异}的奇异问题），并且它是各向同性的，因而不引入额外的方向偏好；$\sigma^2$ 同时充当“流形厚度”的尺度。若把 $\sigma^2$ 取得很小，模型会逼近真正的流形模型，但似然会变得非常尖锐（见\cref{subsection:ch16-非线性似然函数}的讨论）。
+\end{remark}
+
+注意，从这个分布中独立抽取样本不仅简单而且效率高。首先使用标准方法从 Gauss 分布[\eqref{align:ch16-非线性先验}]中抽取一个样本。然后将这个值作为神经网络的输入，得到输出值 $\bm{g}(\bm{z},\bm{w})$。最后从均值为 $\bm{g}(\bm{z},\bm{w})$、协方差为 $\sigma^2\bm{I}$ 的 Gauss 分布中抽取一个样本[\eqref{align:ch16-非线性条件}]。重复上述过程以生成多个独立样本。
 
 \begin{figure}[htbp]
-\centering
-\includegraphics[width=0.85\textwidth]{ch16-fig16.13-nonlinear-lvm.png}
-\caption{一个涉及一维潜空间和二维数据空间的非线性潜变量模型的示意图。(a)~潜空间中的先验分布由零均值、单位方差的高斯分布给出；(b)~最左侧的三个图显示了不同 $\bm{z}$ 值下的高斯条件分布 $p(\bm{x}|\bm{z})$ 的示例，最右侧的图显示了边缘分布 $p(\bm{x})$ 的示例。定义条件分布均值的非线性函数 $\bm{g}(\bm{z})$ 由 $g_1(z)=\sin(z)$ 和 $g_2(z)=\cos(z)$ 给出，条件分布的标准差由 $\sigma=0.3$ 给出。}
-\label{fig:ch16-nonlinear-lvm}
+  \centering
+  \includegraphics[width=0.16\textwidth]{ch16-fig16.12-generative-graph.png}
+  \caption{由\eqref{align:ch16-非线性先验}和\eqref{align:ch16-非线性条件}定义的联合分布 $p(\bm{x},\bm{z})=p(\bm{x}|\bm{z})p(\bm{z})$ 的图模型}
+  \label{figure:ch16-非线性图模型}
 \end{figure}
 
-我们可以用一个涉及一维潜空间和二维数据空间的简单例子来说明这一点，如\cref{fig:ch16-nonlinear-lvm}所示。潜变量分布 $p(\bm{z})$ 与条件分布 $p(\bm{x}|\bm{z})$ 的组合定义了数据空间上的边缘分布：
+潜变量分布 $p(\bm{z})$ 与条件分布 $p(\bm{x}|\bm{z})$ 的组合定义了数据空间上的边缘分布：
 \begin{align}
-p(\bm{x})=\int p(\bm{z})p(\bm{x}|\bm{z})\,\mathrm{d}\bm{z}.
-\label{align:ch16-nl-marginal}
+  p(\bm{x})=\int p(\bm{z})p(\bm{x}|\bm{z})\,\mathrm{d}\bm{z}.
+  \label{align:ch16-非线性边缘}
 \end{align}
 
-其中神经网络 $\bm{g}(\bm{z},\bm{w})$ 的输出单元激活函数是线性的。生成式模型由 $\bm{z}$ 上的潜变量分布和 $\bm{x}$ 上的条件分布指定：
-\begin{align}
-p(\bm{x}|\bm{z},\bm{w})=\mathcal{N}(\bm{x}|\bm{g}(\bm{z},\bm{w}),\sigma^2\bm{I}).
-\label{align:ch16-nl-conditional}
-\end{align}
+我们可以用一个涉及一维潜空间和二维数据空间的简单例子来说明这一点，见\cref{figure:ch16-非线性潜变量示意}。
 
-注意，从这个分布中独立抽取样本不仅简单而且效率高。首先使用标准方法从高斯分布中抽取一个样本，然后将这个值作为神经网络的输入，得到输出值 $\bm{g}(\bm{z},\bm{w})$。最后从均值为 $\bm{g}(\bm{z},\bm{w})$、协方差为 $\sigma^2\bm{I}$ 的高斯分布中抽取一个样本。
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.95\textwidth]{ch16-fig16.13-nonlinear-lvm.png}
+  \caption{一个涉及一维潜空间和二维数据空间的非线性潜变量模型的示意图。(a) 潜空间中的先验分布由零均值、单位方差的Gauss分布给出。(b) 最左侧的三个图显示了不同 $z$ 值下的 Gauss 条件分布 $p(\bm{x}|z)$ 的示例，最右侧的图显示了边缘分布 $p(\bm{x})$ 的示例。定义条件分布均值的非线性函数 $\bm{g}(z)$ 由 $g_1(z)=\sin(z)$ 和 $g_2(z)=\cos(z)$ 给出，条件分布的标准差由 $\sigma=0.3$ 给出 [经 Prince (2020) 授权使用]}
+  \label{figure:ch16-非线性潜变量示意}
+\end{figure}
 
-\subsection{似然函数}\label{subsection:ch16-似然函数}
+\begin{example}[ 一维潜空间与圆周流形]\label{example:ch16-圆周流形}
+在\cref{figure:ch16-非线性潜变量示意}的例子中，$M=1$、$D=2$，$p(z)=\mathcal{N}(z|0,1)$，条件分布均值为
+\begin{align*}
+  \bm{g}(z)=\begin{bmatrix}\sin z\\ \cos z\end{bmatrix},\qquad \sigma=0.3 .
+\end{align*}
+由于 $\|\bm{g}(z)\|=1$ 对一切 $z$ 成立，$\bm{g}$ 的像是以原点为圆心、半径为 $1$ 的圆周；当 $\sigma\rightarrow0$ 时，边缘分布 $p(\bm{x})$ 集中在这条圆周上，$z$ 到 $z+2\pi$ 的平移给出同一个点，因此该映射是无穷多对一的，不存在全局逆。由\cref{proposition:ch16-流形奇异}，无噪声时 $\bm{x}$ 的分布关于平面 Lebesgue 测度奇异；$\sigma=0.3$ 的噪声把圆周“加粗”成一条环带，边缘密度才有定义，且其等高线沿环带方向比沿径向平缓得多。
+\end{example}
+
+\subsection{似然函数}\label{subsection:ch16-非线性似然函数}
 
 我们已经看到从这个非线性潜变量模型中抽取样本是很容易的。假设我们希望通过最大化似然函数来拟合观测到的数据集。可以通过对 $\bm{z}$ 进行积分并使用概率的加和法则和乘积法则来得到似然值：
 \begin{align}
-p(\bm{x}|\bm{w})=\int p(\bm{x}|\bm{z},\bm{w})p(\bm{z})\,\mathrm{d}\bm{z}.
-\label{align:ch16-nl-likelihood}
+  p(\bm{x}|\bm{w})&=\int p(\bm{x}|\bm{z},\bm{w})p(\bm{z})\,\mathrm{d}\bm{z}\nonumber\\
+  &=\int\mathcal{N}\left(\bm{x}\left|\bm{g}(\bm{z},\bm{w}),\sigma^2\bm{I}\right.\right)\mathcal{N}(\bm{z}|\bm{0},\bm{I})\,\mathrm{d}\bm{z}.
+  \label{align:ch16-非线性似然}
 \end{align}
 
-尽管积分内部的两个分布都是高斯分布，但由神经网络定义的高度非线性函数 $\bm{g}(\bm{z},\bm{w})$ 却使得积分在解析上是不可处理的。一种计算似然函数的方法是从潜空间分布 $p(\bm{z})$ 中抽取 $K$ 个样本，并用这些样本来近似式\eqref{align:ch16-nl-likelihood}，从而得到
+尽管积分内部的两个分布都是 Gauss 分布，但由神经网络定义的高度非线性函数 $\bm{g}(\bm{z},\bm{w})$ 却使得积分在解析上是不可处理的。一种计算似然函数的方法是从潜空间分布中抽取样本，并用这些样本来近似\eqref{align:ch16-非线性似然}，从而得到
 \begin{align}
-p(\bm{x}|\bm{w})\approx\frac{1}{K}\sum_{k=1}^{K}p(\bm{x}|\bm{z}^{(k)},\bm{w}),\qquad \bm{z}^{(k)}\sim p(\bm{z})
-\label{align:ch16-mc-likelihood}
+  p(\bm{x}|\bm{w})\approx\frac{1}{K}\sum_{i=1}^{K}p(\bm{x}|\bm{z}_i,\bm{w}),
+  \label{align:ch16-蒙特卡洛似然}
 \end{align}
+其中 $\bm{z}_i\sim p(\bm{z})$。这将 $\bm{z}$ 的分布表示为具有固定混合系数 $1/K$ 的 Gauss 混合分布，当样本数量趋于无穷时，该方法给出了真实的似然函数。然而，实际训练中所需的 $K$ 值通常会大得不切实际。为什么会这样？请考虑\cref{figure:ch16-三个手写数字}所示的三个手写数字图像，并假设该图的 (a) 代表我们希望计算似然函数的向量 $\bm{x}$。如果一个训练好的模型生成了该图的 (b)，我们会认为这是一个比较差的模型，因为这个图像并不是数字“2”的一个很好的表示，所以应该被赋予一个更低的似然值。相反，该图的 (c) 是通过将 (a) 中的数字向下和向右移动 $0.5$ 个像素获得的，是数字“2”的一个很好的表示，因此应该被赋予一个更高的似然值。由于是 Gauss 分布，似然函数与网络输出和数据向量 $\bm{x}$ 之间负平方距离的指数成正比。如果方差参数 $\sigma^2$ 设置得足够小，使得 (b) 具有低似然值，那么 (c) 就会有更低的似然值。即使模型在生成数字方面做得很好，我们也必须抽取极大量的 $\bm{z}$ 样本，才能找到一个足够接近 (a) 的数字图像。因此，我们需要寻求更精细的技术来训练非线性潜变量模型，这些技术可以服务于实际应用。在概述这些技术之前，我们先简要讨论一些关于离散数据空间的考虑。
 
-这将 $\bm{z}$ 的分布表示为具有固定混合系数 $1/K$ 的高斯混合分布。当样本数量趋于无穷时，该方法给出了真实的似然函数。然而，实际训练中所需的 $K$ 值通常会大得不切实际。
-
-为什么会这样？考虑三个手写数字图像的例子。假设图~(a)~代表我们希望计算似然函数的向量 $\bm{x}$。如果一个训练好的模型生成了图~(b)，我们会认为这是一个比较差的模型，因为这个图像并不是数字"2"的一个很好的表示，所以应该被赋予一个更低的似然值。相反，图~(c)~是通过将图~(a)~中的数字向下和向右移动 $0.5$ 个像素获得的，是数字"2"的一个很好的表示，因此应该被赋予一个更高的似然值。由于是高斯分布，似然函数与网络输出和数据向量 $\bm{x}$ 之间负平方距离的指数成正比。如果方差参数 $\sigma^2$ 设置得足够小，使得图~(b)~具有低似然值，那么图~(c)~就会有更低的似然值。即使模型在生成数字方面做得很好，我们也必须抽取极大量的 $\bm{z}$ 样本，才能找到一个足够接近图~(a)~的样本。
-
-然而，这个框架将零概率密度赋予那些不完全位于流形上的任何数据向量，这对基于梯度的学习算法是一个问题，因为对于真实的数据集，似然函数在每一个数据点都将为零，并且对于小的 $\bm{w}$ 变化将保持不变。为了解决这个问题，我们使用之前用于解决回归和分类问题的策略，定义了整个数据空间上的条件分布，其参数由神经网络的输出决定。例如，如果 $\bm{x}$ 是连续变量的一个向量，则可以选择条件分布为高斯分布。
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.55\textwidth]{ch16-fig16.14-sampling-digits.png}
+  \caption{三个手写数字图像，旨在说明为什么从潜空间采样以计算似然函数需要大量的样本。(a) 原始图像；(b) 损坏的图像，其中部分笔画被移除；(c) 将原始图像向下和向右各移动 $0.5$ 个像素的结果。尽管 (c) 在外观上更接近 (a)，但 (b) 在似然性方面更接近 (a) [经 Doersch (2016) 授权使用]}
+  \label{figure:ch16-三个手写数字}
+\end{figure}
 
 \subsection{离散数据}\label{subsection:ch16-离散数据}
 
 如果观测到的数据集包含独立的二进制变量，则可以使用以下形式的条件分布：
 \begin{align}
-p(\bm{x}|\bm{z},\bm{w})=\prod_{i=1}^{D}\mu_i(\bm{z},\bm{w})^{x_i}(1-\mu_i(\bm{z},\bm{w}))^{1-x_i}
-\label{align:ch16-binary-conditional}
+  p(\bm{x}|\bm{z},\bm{w})=\prod_{i=1}^{D}g_i(\bm{z},\bm{w})^{x_i}\left(1-g_i(\bm{z},\bm{w})\right)^{1-x_i},
+  \label{align:ch16-二值条件}
 \end{align}
-其中 $\mu_i(\bm{z},\bm{w})=\sigma(a_i(\bm{z},\bm{w}))$ 是输出单元 $i$ 的激活值，激活函数 $\sigma(\cdot)$ 由逻辑斯谛~sigmoid~函数给出，$a_i(\bm{z},\bm{w})$ 是输出单元 $i$ 的预激活值。类似地，对于独热编码（one-hot encoded）的分类变量，可以使用多项式分布：
+其中 $g_i(\bm{z},\bm{w})=\sigma(a_i(\bm{z},\bm{w}))$ 是输出单元 $i$ 的激活值，激活函数 $\sigma(\cdot)$ 由逻辑斯谛 sigmoid 函数给出，$a_i(\bm{z},\bm{w})$ 是输出单元 $i$ 的预激活值。类似地，对于独热编码（one-hot encoded）的分类变量，可以使用多项式分布：
 \begin{align}
-p(\bm{x}|\bm{z},\bm{w})=\prod_{i=1}^{D}\operatorname{softmax}(\bm{a}(\bm{z},\bm{w}))^{x_i}
-\label{align:ch16-categorical-conditional}
+  p(\bm{x}|\bm{z},\bm{w})=\prod_{i=1}^{D}g_i(\bm{z},\bm{w})^{x_i},
+  \label{align:ch16-多项条件}
+\end{align}
+其中，softmax 激活函数为
+\begin{align}
+  g_i(\bm{z},\bm{w})=\frac{\exp\left(a_i(\bm{z},\bm{w})\right)}{\sum_{j}\exp\left(a_j(\bm{z},\bm{w})\right)}.
+  \label{align:ch16-softmax}
 \end{align}
 
 我们还可以通过构造相关条件分布的乘积来考虑离散变量和连续变量的组合。
 
-在实际应用中，连续变量通常以离散值表示，例如在图像中，红色、绿色和蓝色通道的强度可能取自~8~位二进制数字所能表示的数值集 $\{0,\cdots,255\}$。当我们采用基于深度神经网络的高度灵活模型时，这可能会导致一个问题：如果密度坍塌到一个或多个离散值上，似然函数就有可能变为零，导致异常解。这个问题可以通过使用一种称为去量化（dequantization）的技术来解决，该技术涉及向变量添加噪声，这些噪声在连续离散值之间的区域内通常是均匀分布的。训练集的去量化就是用随机抽取的样本替换每个观测值，这些样本来自与特定离散值相关联的连续分布。采用这种方法，模型找到异常解的可能性就会降低。
+在实际应用中，连续变量通常以离散值表示，例如在图像中，红色、绿色和蓝色通道的强度可能取自 8 位二进制数字所能表示的数值集 $\{0,\cdots,255\}$。当我们采用基于深度神经网络的高度灵活模型时，这可能会导致一个问题：如果密度坍塌到一个或多个离散值上，似然函数就有可能变为零，导致异常解。这个问题可以通过使用一种称为去量化（dequantization）的技术来解决，该技术涉及向变量添加噪声，这些噪声在连续离散值之间的区域内通常是均匀分布的，如\cref{figure:ch16-去量化}所示。训练集的去量化就是用随机抽取的样本替换每个观测值，这些样本来自与特定离散值相关联的连续分布。采用这种方法，模型找到异常解的可能性就会降低。
 
-\subsection{构建生成式模型的四种方法}\label{subsection:ch16-四种生成模型}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.45\textwidth]{ch16-fig16.15-dequantization.png}
+  \caption{去量化的示意图。(a) 单个变量上的离散分布；(b) 相关的去量化连续分布}
+  \label{figure:ch16-去量化}
+\end{figure}
 
-我们已经看到，基于深度神经网络的非线性潜变量模型提供了一个高度灵活的框架来构建生成式模型。由于神经网络变换的普适性，这些模型原则上能够以高精度近似任何期望的分布。此外，一旦训练好，这些模型还可以使用一种高效、非迭代的过程从分布中生成样本。然而，我们也面临着一些与训练此类模型相关的挑战，迫切需要找到比线性模型更复杂的方法。业内已经提出了不少方法，每种方法都有自身的优势和局限性，它们大致可以分为以下四种：
+\subsection{构建生成式模型的 4 种方法}\label{subsection:ch16-四种生成模型}
 
+我们已经看到，基于深度神经网络的非线性潜变量模型提供了一个高度灵活的框架来构建生成式模型。由于神经网络变换的普适性，这些模型原则上能够以高精度近似任何期望的分布。此外，一旦训练好，这些模型还可以使用一种高效、非迭代的过程从分布中生成样本。然而，我们也面临着一些与训练此类模型相关的挑战，迫切需要找到比线性模型更复杂的方法。业内已经提出了不少方法，每种方法都有自身的优势和局限性，它们大致可以分为以下 4 种。
 \begin{enumerate}
-\item 基于生成对抗网络（Generative Adversarial Network, GAN）（见第~17~章）放宽"网络映射必须是可逆的"这一要求，允许潜空间的维度低于数据空间的维度。这里也放弃了似然函数的概念，引入了第二个神经网络，其功能是为生成网络提供训练信号。由于缺乏明确定义的似然函数，训练过程可能不稳定，但一旦训练完成，就很容易从模型中生成样本，并且所得结果的质量也高。
-
-\item 变分自编码器（Variational AutoEncoder, VAE）（见第~19~章）也使用了第二个神经网络，其作用是近似潜变量的后验分布，从而允许计算似然函数的近似值。与~GAN~相比，其能使训练更为稳健，而且能直接从训练好的模型中采样，但是要获得高质量的结果可能更困难。
-
-\item 在标准化流（normalizing flow）（见第~18~章）中，将潜空间的维度设置为等于数据空间的维度，然后修改神经网络，使其变得可逆。"网络必须是可逆的"这一要求限制了其函数形式，但也使得无须近似就能计算似然函数，而且能进行高效采样。
-
-\item 扩散模型（diffusion model）（见第~20~章）使用一个网络学习如何通过一系列去噪步骤将先验分布的样本转换为数据分布的样本。这在许多应用中带来了先进的性能，缺点是由于多次经历网络的去噪过程，采样成本可能较高。
+  \item 基于生成对抗网络（Generative Adversarial Network, GAN）（见\cref{chapter:ch17-生成对抗网络}）放宽“网络映射必须是可逆的”这一要求，允许潜空间的维度低于数据空间的维度。这里也放弃了似然函数的概念，引入了第二个神经网络，其功能是为生成网络提供训练信号。由于缺乏明确定义的似然函数，训练过程可能不稳定，但一旦训练完成，就很容易从模型中生成样本，并且所得结果的质量也高。
+  \item 变分自编码器（Variational AutoEncoder, VAE）（见\cref{chapter:ch19-自编码器}）也使用了第二个神经网络，其作用是近似潜变量的后验分布，从而允许计算似然函数的近似值。与 GAN 相比，其能使训练更为稳健，而且能直接从训练好的模型中采样，但是要获得高质量的结果可能更困难。
+  \item 在标准化流（normalizing flow）（见\cref{chapter:ch18-标准化流}）中，将潜空间的维度设置为等于数据空间的维度，然后修改神经网络，使其变得可逆。“网络必须是可逆的”这一要求限制了其函数形式，但也使得无须近似就能计算似然函数，而且能进行高效采样。
+  \item 扩散模型（diffusion model）（见\cref{chapter:ch20-扩散模型}）使用一个网络学习如何通过一系列去噪步骤将先验分布的样本转换为数据分布的样本。这在许多应用中带来了先进的性能，缺点是由于多次经历网络的去噪过程，采样成本可能较高。
 \end{enumerate}
 
-\section*{习题}\label{section:ch16-习题}
-\addcontentsline{toc}{section}{习题}
+\begin{remark}（重构新增）
+这 4 种方法可以按“如何绕开\cref{proposition:ch16-流形奇异}造成的困难”来统一理解。若坚持 $M<D$，就必须处理边缘似然中的积分：GAN 干脆放弃似然、改用判别网络提供信号；VAE 用一个近似后验把积分化为可算的下界；若坚持精确似然，则必须让映射可逆，于是取 $M=D$ 并约束网络结构，这就是标准化流；扩散模型则换了一个思路，不去近似一次性的映射，而是把生成分解为许多个小的去噪步骤，每一步都是可逆的 Gaussian 扰动。四者的取舍可以归纳为：精确似然（流）、近似似然（VAE）、无似然（GAN）、多步可逆变换（扩散）。
 
-\textbf{16.1}（$\star\star$）使用归纳法证明，将数据投影到 $M$ 维子空间以最大化投影数据的方差所定义的线性投影是由数据协方差矩阵 $\bm{S}$ 的 $M$ 个特征向量定义的，对应于 $M$ 个最大特征值。
-
-\textbf{16.2}（$\star\star$）证明在满足正交性质[式\eqref{align:ch16-orthonormal}]的情况下，PCA~误差度量 $J$[由式\eqref{align:ch16-recon-error}给出]的最小值是在 $\bm{u}_j$ 为数据协方差矩阵 $\bm{S}$ 的特征向量时获得的。
-
-\textbf{16.3}（$\star$）假设式\eqref{align:ch16-highdim-back}定义的特征向量 $\bm{v}$ 具有单位长度，验证这些特征向量已归一化至单位长度。
-
-\textbf{16.4}（$\star$）假设在概率~PCA~模型中将零均值、单位协方差的潜空间分布[式\eqref{align:ch16-prior-z}]替换为一般形式的高斯分布 $\mathcal{N}(\bm{z}|\bm{m},\bm{\Sigma})$。通过重新定义模型的参数，证明这种替换会使得任意有效的 $\bm{m}$ 和 $\bm{\Sigma}$ 都无法改变观测变量边缘分布 $p(\bm{x})$ 的形式。
-
-\textbf{16.6}（$\star\star$）利用一般高斯分布的均值和协方差公式，推导概率~PCA~模型中边缘分布 $p(\bm{x})$ 的结果[式\eqref{align:ch16-marginal-gauss}]。
-
-\textbf{16.7}（$\star$）绘制~16.2~节描述的概率~PCA~模型的有向图，并将观测变量 $\bm{x}$ 的各个组成部分明确显示为单独的节点。验证概率~PCA~模型具有与朴素贝叶斯模型相同的独立结构。
-
-\textbf{16.8}（$\star\star$）利用线性--高斯模型的结果，证明概率~PCA~模型的后验分布 $p(\bm{z}|\bm{x})$ 可以由式\eqref{align:ch16-post-mean}给出。
-
-\textbf{16.9}（$\star$）验证对概率~PCA~模型的对数似然函数[式\eqref{align:ch16-ppca-nll2}]关于参数 $\bm{\mu}$ 进行最大化会得到结果 $\bm{\mu}=\bar{\bm{x}}$，其中 $\bar{\bm{x}}$ 是数据向量的均值。
-
-\textbf{16.10}（$\star\star$）通过计算对数似然函数对参数 $\bm{\mu}$ 的二阶导数，证明驻点 $\bm{\mu}=\bar{\bm{x}}$ 代表唯一的最大值。
-
-\textbf{16.11}（$\star\star$）证明当 $\sigma^2\rightarrow 0$ 时，概率~PCA~模型的后验均值相当于对主子空间的正交投影，这与传统~PCA~模型的结果一致。
-
-\textbf{16.12}（$\star\star$）对于 $\sigma^2>0$，证明概率~PCA~模型中的后验均值会相对于正交投影向原点移动。
-
-\textbf{16.13}（$\star\star$）证明在概率~PCA~下，根据传统~PCA~的最小二乘投影成本，数据点的最优重建由式\eqref{align:ch16-recon-ppca}给出。
-
-\textbf{16.14}（$\star$）概率~PCA~模型中协方差矩阵的独立参数数量由式\eqref{align:ch16-cov-c}给出。证明对于 $M=D-1$，独立参数的数量与一般高斯分布中的相同；而对于 $M=0$，独立参数的数量与各向同性协方差高斯分布相同。
-
-\textbf{16.15}（$\star$）推导出\cref{subsection:ch16-因子分析}描述的因子分析模型中独立参数数量的计算表达式。
-
-\textbf{16.16}（$\star\star$）证明\cref{subsection:ch16-因子分析}描述的因子分析模型不随潜空间坐标旋转而变化。
-
-\textbf{16.17}（$\star\star$）考虑一个线性--高斯潜变量模型，它具有潜空间分布 $p(\bm{z})=\mathcal{N}(\bm{z}|\bm{0},\bm{I})$ 和观测变量的条件分布 $p(\bm{x}|\bm{z})=\mathcal{N}(\bm{x}|\bm{W}\bm{z}+\bm{\mu},\bm{\Psi})$。对数据变量进行非奇异线性变换 $\bm{x}\rightarrow\bm{A}\bm{x}$，其中 $\bm{A}$ 是一个 $D\times D$ 矩阵。证明在两种情况下模型的形式得以保留：(i) $\bm{A}$ 是对角矩阵且 $\bm{\Psi}$ 也是对角矩阵（对应于因子分析）；(ii) $\bm{A}$ 是正交矩阵且 $\bm{\Psi}$ 与单位矩阵成比例（对应于概率~PCA）。
-
-\textbf{16.18}（$\star$）验证连续潜变量模型对数似然函数可以写成两项之和[式\eqref{align:ch16-elbo}]，这两项分别由式\eqref{align:ch16-elbo-def}和式\eqref{align:ch16-kl}定义。
-
-\textbf{16.19}（$\star$）证明对于一组独立同分布数据，证据下界（ELBO）可以采用式\eqref{align:ch16-elbo-iid}的形式。
-
-\textbf{16.21}（$\star\star$）通过最大化式\eqref{align:ch16-q-ppca}给出的完整数据对数似然函数的期望来推导概率~PCA~模型的~M~步骤方程[式\eqref{align:ch16-m-step-w}]和[式\eqref{align:ch16-m-step-sigma}]。
-
-\textbf{16.22}（$\star\star\star$）概率~PCA~的一个优点是，它可以应用于某些值缺失的数据集，前提是这些值是随机缺失的。在这种情况下，推导出最大化概率~PCA~模型似然函数的~EM~算法。
-
-\textbf{16.25}（$\star\star$）给出因子分析模型的完整数据对数似然函数的期望的表达式，从而导出相应的~M~步骤方程[式\eqref{align:ch16-fa-m-w}]和[式\eqref{align:ch16-fa-m-psi}]。
-
-\textbf{16.26}（$\star\star$）通过考虑二阶导数，证明\cref{subsection:ch16-因子分析}讨论的因子分析模型的对数似然函数相对于参数 $\bm{\mu}$ 的唯一驻点是由式\eqref{align:ch16-mean}定义的样本均值给出的。此外，证明这个驻点是一个最大值。
+这一分类不是数学定理，而是对建模策略的归纳，因此不必逐条验证条件；它的用处在于给出选择模型的判据：若训练稳定性优先，VAE 或流更合适；若样本质量优先且可以承受不稳定，GAN 更合适；若追求当前最好的生成质量且能接受采样开销，扩散模型更合适。
+\end{remark}
 
 \end{document}

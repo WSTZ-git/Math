@@ -1,0 +1,177 @@
+% !TeX program = xelatex
+% ==========================================================================
+%  本科毕业论文
+%  题目：常微分方程初值问题的算法与应用
+%  副题：IMEX 格式在 Burgers 方程上的耦合刚性稳定性
+% ==========================================================================
+\documentclass[UTF8,fontset=none,12pt,oneside,openany]{ctexbook}
+
+% ---------- 页面与字体 ----------
+\usepackage[a4paper,top=2.6cm,bottom=2.6cm,left=3.0cm,right=2.6cm,
+            headheight=15pt,footskip=1.0cm]{geometry}
+% 优先使用 Noto CJK；若系统未安装，则自动回退到 TeX Live 自带的 Fandol。
+\IfFontExistsTF{Noto Serif CJK SC}
+  {%
+    \setCJKmainfont{Noto Serif CJK SC}[AutoFakeBold=2.0,AutoFakeSlant=0.2]
+    \setCJKsansfont{Noto Sans CJK SC}[AutoFakeBold=2.0]
+    \setCJKmonofont{Noto Sans Mono CJK SC}
+  }
+  {%
+    \setCJKmainfont{FandolSong-Regular.otf}[BoldFont=FandolHei-Regular.otf,ItalicFont=FandolKai-Regular.otf]
+    \setCJKsansfont{FandolHei-Regular.otf}
+    \setCJKmonofont{FandolSong-Regular.otf}
+  }
+\setmainfont{TeX Gyre Termes}
+\usepackage{unicode-math}
+\setmathfont{TeX Gyre Termes Math}
+
+% ---------- 数学与图表 ----------
+\usepackage{amsmath,amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs,multirow,array,tabularx,threeparttable}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage[most]{tcolorbox}
+\usepackage{listings}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{fancyhdr}
+
+% ---------- 参考文献 ----------
+\usepackage[backend=biber,style=gb7714-2015]{biblatex}
+\addbibresource{refs.bib}
+
+% ---------- 超链接 ----------
+\usepackage[colorlinks=true,
+            linkcolor=blue!55!black,
+            citecolor=green!45!black,
+            urlcolor=blue!65!black,
+            bookmarksnumbered=true]{hyperref}
+
+\hypersetup{
+  pdftitle={常微分方程初值问题的算法与应用},
+  pdfsubject={IMEX 格式在 Burgers 方程上的耦合刚性稳定性分析},
+  pdfauthor={邹文杰},
+  pdfkeywords={常微分方程初值问题, IMEX 格式, Burgers 方程, 耦合刚性, 稳定性函数, Jin-Xin 松弛},
+  pdfcreator={XeLaTeX},
+}
+
+% ---------- 版式参数 ----------
+\linespread{1.45}
+\setlength{\parindent}{2em}
+\setlength{\parskip}{0.15em}
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{2}
+\allowdisplaybreaks
+\numberwithin{equation}{chapter}
+
+\ctexset{
+  chapter = {
+    name = {第,章},
+    number = \chinese{chapter},
+    beforeskip = 1.2\baselineskip,
+    afterskip = 1.4\baselineskip,
+  },
+  section = {format = \Large\bfseries\sffamily},
+  subsection = {format = \large\bfseries\sffamily},
+  subsubsection = {format = \normalsize\bfseries\sffamily},
+}
+
+% ---------- 页眉页脚 ----------
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\sffamily\nouppercase{\leftmark}}
+\fancyhead[R]{\small\sffamily 常微分方程初值问题的算法与应用}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% ---------- 图表标题 ----------
+\captionsetup{font=small,labelfont=bf,labelsep=quad}
+\captionsetup[table]{position=top,skip=6pt}
+\captionsetup[figure]{skip=6pt}
+\graphicspath{{figures/}}
+
+% ---------- 定理环境 ----------
+\theoremstyle{plain}
+\newtheorem{theorem}{定理}[chapter]
+\newtheorem{lemma}[theorem]{引理}
+\newtheorem{proposition}[theorem]{命题}
+\newtheorem{corollary}[theorem]{推论}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{定义}
+\newtheorem{example}[theorem]{例}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{注}
+\renewcommand{\proofname}{证明}
+
+% ---------- 常用记号 ----------
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\bU}{{\mathbf{U}}}
+\newcommand{\bA}{{\mathbf{A}}}
+\newcommand{\bC}{{\mathbf{C}}}
+\newcommand{\bD}{{\mathbf{D}}}
+\newcommand{\bF}{{\mathbf{F}}}
+\newcommand{\bI}{{\mathbf{I}}}
+\newcommand{\bM}{{\mathbf{M}}}
+\newcommand{\bL}{{\mathbf{L}}}
+\newcommand{\bJ}{{\mathbf{J}}}
+\newcommand{\bx}{{\boldsymbol{x}}}
+\newcommand{\sgn}{\operatorname{sgn}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\ee}{\mathrm{e}}
+\newcommand{\ii}{\mathrm{i}}
+\newcommand{\CFL}{\mathrm{CFL}}
+
+% ---------- 代码样式 ----------
+\lstset{
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue!70!black}\bfseries,
+  commentstyle=\color{green!40!black},
+  stringstyle=\color{red!55!black},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  frame=single,
+  rulecolor=\color{gray!45},
+  breaklines=true,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  captionpos=b,
+}
+
+% ==========================================================================
+\begin{document}
+
+\input{frontmatter}
+
+\frontmatter
+\pagestyle{plain}
+
+\input{front/abstract}
+
+\tableofcontents
+\cleardoublepage
+\pagestyle{fancy}
+
+\mainmatter
+\pagestyle{fancy}
+
+\input{chapters/ch1}
+\input{chapters/ch2}
+\input{chapters/ch3}
+\input{chapters/ch4}
+\input{chapters/ch5}
+\input{chapters/ch6}
+\input{chapters/ch7}
+
+\appendix
+\input{chapters/appendix}
+
+\backmatter
+\printbibliography[heading=bibintoc,title={参考文献}]
+
+\input{chapters/acknowledgements}
+
+\end{document}

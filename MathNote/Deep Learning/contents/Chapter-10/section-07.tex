@@ -1,0 +1,89 @@
+\documentclass[../../main.tex]{subfiles}
+
+\graphicspath{{../../image/}{../../figure/}}
+
+\begin{document}
+
+\section{习题}\label{section:ch10-习题}
+
+\begin{exercise}[$\star$]\label{exercise:ch10-01}
+考虑一个固定的权重向量 $\mathbf{w}$，证明使得标量积 $\mathbf{w}^{\mathsf{T}}\mathbf{x}$ 最大化的输入向量 $\mathbf{x}$，在约束 $\|\mathbf{x}\|^2$ 为常数时，满足 $\mathbf{x}=\alpha\mathbf{w}$，其中 $\alpha$ 为某个标量。这通过使用 Lagrange 乘子法最容易完成（参见\hyperref[chapter:appC-Lagrange乘子]{附录\ref*{chapter:appC-Lagrange乘子}}）。
+\end{exercise}
+
+\begin{exercise}[$\star\star$]\label{exercise:ch10-02}
+考虑一个具有一维输入数组和一维特征图的卷积网络层。如\cref{figure:ch10-一维卷积}所示，其中输入数组的维度为 5，滤波器宽度为 3，步幅为 1。通过写出权重矩阵，证明该层可以表示为全连接层的一个特例，其中缺失的连接用 $0$ 替换，共享参数用重复元素表示，忽略任何偏置参数。
+\end{exercise}
+
+\begin{exercise}[$\star$]\label{exercise:ch10-03}
+显式计算在以下 $4\times4$ 输入矩阵上应用 $2\times2$ 滤波器的卷积输出：
+\begin{align}
+  \begin{bmatrix} 2 & 5 & 3 & 0\\ 0 & 6 & 0 & -4\\ -1 & -3 & 0 & 2\\ 5 & 0 & 0 & 3 \end{bmatrix}
+  *
+  \begin{bmatrix} -2 & 0\\ 4 & 6 \end{bmatrix}
+  =
+  \begin{bmatrix} ? & ? & ?\\ ? & ? & ?\\ ? & ? & ? \end{bmatrix}.
+  \label{align:ch10-习题卷积}
+\end{align}
+\end{exercise}
+
+\begin{exercise}[$\star\star$]\label{exercise:ch10-04}
+如果图像 $I$ 有 $J\times K$ 个像素，而滤波器 $K$ 有 $L\times M$ 个元素，写出\eqref{align:ch10-二维卷积}中两个求和的极限。在数学文献中，\eqref{align:ch10-二维卷积}所示的操作称为互相关，卷积则由下式定义：
+\begin{align}
+  C(j,k)=\sum_{l}\sum_{m}I(j-l,\,k-m)K(l,m).
+  \label{align:ch10-数学卷积}
+\end{align}
+写出\eqref{align:ch10-数学卷积}中求和的极限。证明\eqref{align:ch10-数学卷积}可以写成如下等价的“翻转”形式：
+\begin{align}
+  C(j,k)=\sum_{l}\sum_{m}I(j+l,\,k+m)K(L-1-l,\,M-1-m),
+  \label{align:ch10-翻转卷积}
+\end{align}
+并同样写出\eqref{align:ch10-翻转卷积}中求和的极限。
+\end{exercise}
+
+\begin{exercise}[$\star$]\label{exercise:ch10-05}
+在数学中，对连续变量 $x$ 进行卷积的定义如下：
+\begin{align}
+  F(x)=\int_{-\infty}^{\infty}G(y)\,k(x-y)\,\mathrm{d}y,
+  \label{align:ch10-连续卷积}
+\end{align}
+其中 $k(x-y)$ 是核函数。通过对该积分进行离散近似，解释由\eqref{align:ch10-数学卷积}定义的 CNN 中卷积层与它的关系。
+\end{exercise}
+
+\begin{exercise}[$\star$]\label{exercise:ch10-06}
+考虑一个大小为 $J\times K$ 的图像，在所有边上都填充额外的 $P$ 个像素，然后使用大小为 $M\times M$ 的卷积核进行卷积，其中 $M$ 是一个奇数。证明如果我们选择 $P=(M-1)/2$，则得到的特征图大小为 $J\times K$，即特征图与原始图像大小相同。
+\end{exercise}
+
+\begin{exercise}[$\star$]\label{exercise:ch10-07}
+证明如果对大小为 $M\times M$ 的卷积核与大小为 $J\times K$ 的图像进行卷积，且填充深度为 $P$，步幅为 $S$，则得到的特征图维度由\eqref{align:ch10-跨步卷积输出尺寸}给出。
+\end{exercise}
+
+\begin{exercise}[$\star\star$]\label{exercise:ch10-08}
+对于\cref{figure:ch10-VGG16架构}中显示的 VGG-16 模型中的每一层，计算包括偏置在内的权重数量（即连接数）和独立可学习参数的数量。证实网络中可学习参数的总数约为 $1.38$ 亿。
+\end{exercise}
+
+\begin{exercise}[$\star\star$]\label{exercise:ch10-09}
+考虑形为\eqref{align:ch10-二维卷积}的卷积，并假设卷积核是可分离的，则对于某些函数 $F(\cdot)$ 和 $G(\cdot)$，有
+\begin{align}
+  K(l,m)=F(l)\,G(m).
+  \label{align:ch10-可分离核}
+\end{align}
+证明可以不采用单个二维卷积，而是使用两个一维卷积计算得到相同的结果，从而显著提高效率。
+\end{exercise}
+
+\begin{exercise}[$\star$]\label{exercise:ch10-10}
+DeepDream 的更新过程涉及将用于反向传播的损失变量 $\delta$ 设置为所选层中节点的预激活值，然后将损失反向传播到输入层以得到图像像素的梯度向量。证明这可以看作函数式\eqref{align:ch10-DeepDream目标}关于图像 $I$ 的像素进行梯度优化的过程。
+\end{exercise}
+
+\begin{exercise}[$\star\star$]\label{exercise:ch10-11}
+当设计一个神经网络来检测图像中 $C$ 个不同类别的对象时，我们可以使用一个“$C+1$ 中之一”形式的类别标签，即每个对象类别使用一个变量，另一个变量表示“背景”类别（不包含任何定义对象类别的输入图像区域）。网络将输出一个长度为 $(C+1)$ 的概率向量。也可以使用单个二元变量来表示对象存在与否，然后使用一个单独的“$C$ 中之一”向量来表示对象类别。在这种情况下，网络将输出单个表示对象存在可能性的概率和一组独立的类别标签概率。写出这两组概率之间的关系。
+\end{exercise}
+
+\begin{exercise}[$\star\star$]\label{exercise:ch10-12}
+计算\cref{figure:ch10-简单卷积网络}中的卷积网络进行一次前向传递所需的计算步骤数量，忽略偏置以及激活函数的计算。同样，计算通过\cref{figure:ch10-扩展网络}中的扩展网络进行一次前向传递所需的计算步骤数量。最后，计算在 $8\times8$ 图像上重复应用\cref{figure:ch10-简单卷积网络}中的卷积网络 9 次与应用\cref{figure:ch10-扩展网络}中的扩展网络 1 次所需的计算步骤数量之比。这个比值隐含了使用卷积实现滑动窗口技术所带来的效率提升。
+\end{exercise}
+
+\begin{exercise}[$\star\star$]\label{exercise:ch10-13}
+使用一维向量来说明为什么有时候上采样卷积称为转置卷积。考虑一维跨步卷积层，输入具有 4 个单元，激活值为向量 $(x_1,x_2,x_3,x_4)$，用 0 填充后得到 $(0,x_1,x_2,x_3,x_4,0)$，滤波器的值为 $(w_1,w_2,w_3)$。假设步幅为 2，写出输出层的一维激活向量。将这个输出用矩阵 $\mathbf{A}$ 乘以向量 $(0,x_1,x_2,x_3,x_4,0)$ 的形式表示。考虑上采样卷积，其中输入层具有激活值 $(z_1,z_2)$，滤波器的值为 $(w_1,w_2,w_3)$，输出步幅为 2。假设重叠的滤波器值被求和，并且激活函数仅是恒等函数，写出 6 维输出向量。证明这可以表示为使用转置矩阵 $\mathbf{A}^{\mathsf{T}}$ 的矩阵乘法。
+\end{exercise}
+
+\end{document}

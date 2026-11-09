@@ -1,98 +1,210 @@
 \documentclass[../../main.tex]{subfiles}
+
 \graphicspath{{../../image/}{../../figure/}}
+
 \begin{document}
 
 \section{模型平均}\label{section:ch09-模型平均}
 
-如果我们训练了几个不同模型来解决相同问题，而不是尝试选择单一最佳模型，那么通常可以通过平均单个模型所做预测来提高泛化能力。这种模型整合方式有时称为\textbf{委员会}或\textbf{集成}（ensemble）。对于产生概率输出的模型，预测分布是每个模型预测的平均值：
+如果我们训练了几个不同的模型来解决相同的问题，而不是尝试选择单一的最佳模型，那么我们通常可以通过平均单个模型所做的预测来提高泛化能力。这种模型整合方式有时称为\textbf{委员会}或\textbf{集成}（ensemble）。对于产生概率输出的模型，预测分布是每个模型预测的平均值：
 \begin{align}
-p(t\mid \mathbf{x}) = \frac{1}{L}\sum_{l=1}^{L} p_l(t\mid \mathbf{x}),
-\label{align:ch09-ensemble}
+p(y\mid\boldsymbol{x})=\frac{1}{L}\sum_{l=1}^{L}p_{l}(y\mid\boldsymbol{x}),
+\label{align:ch09-集成预测}
 \end{align}
-其中 $p_l(t\mid \mathbf{x})$ 是模型 $l$ 的输出，$L$ 是模型总数。
+其中 $p_{l}(y\mid\boldsymbol{x})$ 是模型 $l$ 的输出，$L$ 是模型的总数。
 
-这种平均过程的动机源于偏差和方差之间权衡。回想图~4.7：当使用正弦数据训练多个多项式，然后对得到的函数进行平均时，方差项产生的贡献几乎会被抵消，从而提升预测性能（参见~4.3~节）。当然在实践中只有一个数据集，因此必须找到一种方法，以便在集成模型（一些旨在解决相同问题的模型集合）内部不同模型之间引入可变性。
+\begin{definition}[集成与委员会]\label{definition:ch09-集成}
+设 $L$ 个模型 $p_{l}(y\mid\boldsymbol{x})$（$l=1,\cdots,L$）针对同一预测任务训练。若以\eqref{align:ch09-集成预测}的算术平均作为组合模型的预测分布，则称该组合为\textbf{集成}（ensemble）或\textbf{委员会}（committee），每个 $p_{l}$ 称为一个\textbf{基模型}（base model）或\textbf{成员}（member）。
+\end{definition}
 
-可以使用\textbf{自助}（bootstrap）数据集，其中多个数据集创建过程如下。假设原始数据集由 $N$ 个数据点 $\mathbf{X}=\{\mathbf{x}_1,\cdots,\mathbf{x}_N\}$ 组成。可以通过从 $\mathbf{X}$ 中有放回地抽样 $N$ 个数据点来创建新数据集 $\mathbf{X}_B$，这样 $\mathbf{X}$ 中一些数据点可能在 $\mathbf{X}_B$ 中出现多次，而 $\mathbf{X}$ 中其他数据点则可能不包含在 $\mathbf{X}_B$ 中。这个过程可以重复 $L$ 次，从而生成 $L$ 个大小为 $N$ 的数据集，其中每个数据集都是通过从原始数据集 $\mathbf{X}$ 中采样得到。每个数据集可以用来训练一个模型，并对得到的模型预测进行平均。这个过程称为\textbf{自助聚合}（bootstrap aggregation）或\textbf{袋装}（bagging）~\citep{Breiman1996}。
+% SUPPLEMENT: parent=definition:ch09-集成; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{definition:ch09-集成}只规定了“如何组合”，没有规定“成员从何而来”；不同的成员生成方式对应不同的集成方法（袋装、不同架构、不同初始化、dropout 等）。平均预测之所以有用，是因为各成员的误差中有一部分相互抵消：若误差完全独立，平均后的期望平方误差按 $1/L$ 缩小（见\cref{theorem:ch09-集成误差}）；若误差高度相关，收益就小得多。这也说明集成的代价：训练 $L$ 个模型并使它们“足够不同”需要额外的计算与设计，而成员越相似，收益越接近零。
+\end{remark}
+
+这种平均过程的动机源于偏差和方差之间的权衡。回想一下前面关于偏差--方差的示意图（参见\cref{section:ch04-偏差方差权衡}），当我们使用正弦数据训练多个多项式，然后对得到的函数进行平均时，方差项产生的贡献几乎会被抵消，从而提升预测性能。当然，在实践中，我们只有一个数据集，因此我们必须找到一种方法，以便在集成模型（一些旨在解决相同问题的模型的集合）内部的不同模型之间引入可变性。我们可以使用\textbf{自助}（bootstrap）数据集，其中多个数据集的创建过程如下。假设我们的原始数据集由 $N$ 个数据点 $\boldsymbol{X}=\{\boldsymbol{x}_{1},\cdots,\boldsymbol{x}_{N}\}$ 组成。我们可以通过从 $\boldsymbol{X}$ 中有放回地抽样 $N$ 个数据点来创建一个新的数据集 $\boldsymbol{X}_{B}$，这样 $\boldsymbol{X}$ 中的一些数据点可能在 $\boldsymbol{X}_{B}$ 中出现多次，而 $\boldsymbol{X}$ 中的其他数据点则可能不包含在 $\boldsymbol{X}_{B}$ 中。这个过程可以重复 $L$ 次，从而生成 $L$ 个大小为 $N$ 的数据集，其中的每个数据集都是通过从原始数据集 $\boldsymbol{X}$ 中采样得到的。每个数据集可以用来训练一个模型，并对得到的模型的预测进行平均。
+
+\begin{definition}[自助聚合与袋装]\label{definition:ch09-自助聚合}
+设原始数据集为 $\boldsymbol{X}=\{\boldsymbol{x}_{1},\cdots,\boldsymbol{x}_{N}\}$。从 $\boldsymbol{X}$ 中有放回地独立抽取 $N$ 个样本，得到的多重集 $\boldsymbol{X}_{B}$ 称为\textbf{自助样本}（bootstrap sample）。重复 $L$ 次得到 $\boldsymbol{X}_{B_{1}},\cdots,\boldsymbol{X}_{B_{L}}$，分别训练模型并对预测取平均，称这一过程为\textbf{自助聚合}（bootstrap aggregation）或\textbf{袋装}（bagging）（Breiman，1996）。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch09-自助聚合; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{definition:ch09-自助聚合}的要点是“有放回”：每个自助样本平均包含原数据中约 $1-1/e\approx63.2\%$ 的不同样本点，其余约 $36.8\%$ 的点被遗漏。这些被遗漏的点构成所谓的袋外（out-of-bag）样本，可用于估计泛化误差而无需单独的验证集。袋装主要降低方差，对偏差几乎没有影响，因此它最适合高方差、低偏差的基模型（如深决策树）；对本身偏差很大的模型（如线性回归），袋装的收益有限。成员之间的相关性来自共享的训练数据，这是袋装收益通常小于 $1/L$ 的原因。
+\end{remark}
 
 形成集成模型的另一种方法是使用原始数据集训练多个具有不同架构的模型。
 
-我们可以通过考虑一个仅涉及输入向量 $\mathbf{x}$ 和单输出变量 $y$ 的回归问题来分析集成预测的好处。假设我们有一组训练好的模型 $y_1(\mathbf{x}),\cdots,y_L(\mathbf{x})$，构造由下式给出的集成模型预测：
+我们可以通过考虑一个仅涉及输入向量 $\boldsymbol{x}$ 和单输出变量 $y$ 的回归问题来分析集成预测的好处。假设我们有一组训练好的模型 $y_{1}(\boldsymbol{x}),\cdots,y_{M}(\boldsymbol{x})$，构造由下式给出的集成模型预测：
 \begin{align}
-y_{\mathrm{ens}}(\mathbf{x}) = \frac{1}{L}\sum_{l=1}^{L} y_l(\mathbf{x}).
-\label{align:ch09-ens-pred}
+y_{\mathrm{COM}}(\boldsymbol{x})=\frac{1}{M}\sum_{m=1}^{M}y_{m}(\boldsymbol{x}).
+\label{align:ch09-回归集成}
 \end{align}
-
-如果试图预测的真实函数由 $h(\mathbf{x})$ 给出，那么每个模型输出都可以写成真实值加上一个误差的形式：
+如果我们试图预测的真实函数由 $h(\boldsymbol{x})$ 给出，那么每个模型的输出都可以写成真实值加上一个误差的形式：
 \begin{align}
-y_l(\mathbf{x}) = h(\mathbf{x})+\epsilon_l(\mathbf{x}).
-\label{align:ch09-ens-error}
+y_{m}(\boldsymbol{x})=h(\boldsymbol{x})+\varepsilon_{m}(\boldsymbol{x}).
+\label{align:ch09-模型误差}
 \end{align}
-
 平均平方和误差则采用以下形式：
 \begin{align}
-\mathbb{E}_{\mathbf{x}}\!\left[\{y_l(\mathbf{x})-h(\mathbf{x})\}^2\right] = \mathbb{E}_{\mathbf{x}}[\epsilon_l(\mathbf{x})^2],
-\label{align:ch09-ens-mse}
+\mathbb{E}_{\boldsymbol{x}}\!\left[\{y_{m}(\boldsymbol{x})-h(\boldsymbol{x})\}^{2}\right]=\mathbb{E}_{\boldsymbol{x}}[\varepsilon_{m}(\boldsymbol{x})^{2}],
+\label{align:ch09-平方误差}
 \end{align}
-其中 $\mathbb{E}_{\mathbf{x}}[\cdot]$ 表示关于输入向量 $\mathbf{x}$ 分布的期望。因此集合中模型分别预测产生的平均误差为
+其中 $\mathbb{E}_{\boldsymbol{x}}[\cdot]$ 表示关于输入向量 $\boldsymbol{x}$ 的分布的期望。因此，集合中模型分别预测产生的平均误差为
 \begin{align}
-\mathbb{E}_{\mathrm{avg}} = \frac{1}{L}\sum_{l=1}^{L}\mathbb{E}_{\mathbf{x}}[\epsilon_l(\mathbf{x})^2].
-\label{align:ch09-ens-avg}
+E_{\mathrm{AV}}=\frac{1}{M}\sum_{m=1}^{M}\mathbb{E}_{\boldsymbol{x}}[\varepsilon_{m}(\boldsymbol{x})^{2}].
+\label{align:ch09-平均误差}
 \end{align}
-
-类似地，来自集成模型~\eqref{align:ch09-ens-pred}~的期望误差由下式给出：
+类似地，来自集成模型\eqref{align:ch09-回归集成}的期望误差由下式给出：
 \begin{align}
-\mathbb{E}_{\mathrm{ens}} = \mathbb{E}_{\mathbf{x}}\!\left[\left(\frac{1}{L}\sum_{l=1}^{L}\epsilon_l(\mathbf{x})\right)^2\right].
-\label{align:ch09-ens-expected}
+E_{\mathrm{COM}}&=\mathbb{E}_{\boldsymbol{x}}\!\left[\left\{\frac{1}{M}\sum_{m=1}^{M}y_{m}(\boldsymbol{x})-h(\boldsymbol{x})\right\}^{2}\right]\nonumber\\
+&=\mathbb{E}_{\boldsymbol{x}}\!\left[\left\{\frac{1}{M}\sum_{m=1}^{M}\varepsilon_{m}(\boldsymbol{x})\right\}^{2}\right].
+\label{align:ch09-集成误差}
 \end{align}
-
-如果假设误差均值为零且不相关，则有
+如果我们假设误差均值为零且不相关，则有
 \begin{align}
-\mathbb{E}_{\mathbf{x}}[\epsilon_l(\mathbf{x})] = 0,
-\label{align:ch09-ens-meanzero}
+\mathbb{E}_{\boldsymbol{x}}[\varepsilon_{m}(\boldsymbol{x})]=0,
+\label{align:ch09-零均值}
 \end{align}
 \begin{align}
-\mathbb{E}_{\mathbf{x}}[\epsilon_m(\mathbf{x})\epsilon_l(\mathbf{x})] = 0, \quad m\neq l.
-\label{align:ch09-ens-uncorr}
+\mathbb{E}_{\boldsymbol{x}}[\varepsilon_{m}(\boldsymbol{x})\varepsilon_{l}(\boldsymbol{x})]=0,\qquad m\neq l.
+\label{align:ch09-不相关}
 \end{align}
 
-于是可以得到（见习题~9.14）：
+\begin{theorem}[集成误差的分解]\label{theorem:ch09-集成误差}
+在\eqref{align:ch09-回归集成}至\eqref{align:ch09-不相关}的记号与假设下，集成的期望误差与成员的平均误差满足
 \begin{align}
-\mathbb{E}_{\mathrm{ens}} = \frac{1}{L}\mathbb{E}_{\mathrm{avg}}.
-\label{align:ch09-ens-result}
+E_{\mathrm{COM}}=\frac{1}{M}E_{\mathrm{AV}}.
+\label{align:ch09-集成误差结果}
 \end{align}
+\end{theorem}
 
-这个结果表明，只需要对 $L$ 个不同版本模型进行平均，就可以将模型平均误差降低到原来 $1/L$。遗憾的是它依赖于一个关键假设，即各个模型造成的误差是不相关的。在实践中误差通常高度相关，总体误差减小通常要小得多。然而可以证明，预期的集成模型误差不会超过集合中模型的预期误差，因此
+\begin{proof}
+（重构新增）由\eqref{align:ch09-集成误差}，
+\begin{align*}
+E_{\mathrm{COM}}=\mathbb{E}_{\boldsymbol{x}}\!\left[\left(\frac{1}{M}\sum_{m=1}^{M}\varepsilon_{m}\right)^{2}\right]=\frac{1}{M^{2}}\sum_{m=1}^{M}\sum_{l=1}^{M}\mathbb{E}_{\boldsymbol{x}}[\varepsilon_{m}\varepsilon_{l}].
+\end{align*}
+把双重和拆成对角项与非对角项。对角项 $m=l$ 共 $M$ 个，每个为 $\mathbb{E}_{\boldsymbol{x}}[\varepsilon_{m}^{2}]$；非对角项 $m\neq l$ 由\eqref{align:ch09-不相关}全为零。于是
+\begin{align*}
+E_{\mathrm{COM}}=\frac{1}{M^{2}}\sum_{m=1}^{M}\mathbb{E}_{\boldsymbol{x}}[\varepsilon_{m}^{2}]=\frac{1}{M}\cdot\frac{1}{M}\sum_{m=1}^{M}\mathbb{E}_{\boldsymbol{x}}[\varepsilon_{m}^{2}]=\frac{1}{M}E_{\mathrm{AV}}.
+\end{align*}
+其中最后一个等号用了\eqref{align:ch09-平均误差}；\eqref{align:ch09-零均值}在推导中未直接使用；它保证 $\mathbb{E}[y_{m}]=h$，从而在把 $y_{m}$ 写成 $h+\varepsilon_{m}$ 时交叉项的期望为零。在本推导中，由于 $h$ 与 $\boldsymbol{x}$ 无关且 $\frac{1}{M}\sum_{m}1=1$，该交叉项也自动消失。
+\end{proof}
+
+% SUPPLEMENT: parent=theorem:ch09-集成误差; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）本节前段用 $L$ 表示模型数，回归分析部分改用 $M$，二者含义相同。\cref{theorem:ch09-集成误差}给出了集成收益的“理想上限”：只有当成员误差两两不相关时，平均才能把期望误差降到 $1/M$。现实中成员共享训练数据与模型结构，误差正相关，收益远小于 $1/M$；这也解释了为什么集成方法要刻意制造多样性（不同的数据子集、初始化、架构或超参数）。定理的另一个含义是：集成不改变偏差项（各成员误差的均值仍可含系统性偏差），它主要缩小方差。因此不能用集成来挽救一个系统性偏差过大的模型；若所有成员都以同样的方式错，平均之后仍然错。
+\end{remark}
+
+这个结果表明，只需要对 $M$ 个不同版本的模型进行平均，就可以将模型的平均误差降低到原来的 $M$ 分之一。遗憾的是，它依赖于一个关键假设，即各个模型造成的误差是不相关的。在实践中，误差通常是高度相关的，总体误差的减小通常要小得多。然而可以证明，预期的集成模型误差不会超过集合中模型的预期误差，因此
+\begin{align*}
+E_{\mathrm{COM}}\leqslant E_{\mathrm{AV}}.
+\end{align*}
+
+\begin{proposition}[集成误差的 Jensen 上界]\label{proposition:ch09-集成上界}
+对任意 $M\geqslant1$ 与任意平方可积的误差 $\varepsilon_{1},\cdots,\varepsilon_{M}$，\eqref{align:ch09-集成误差}与\eqref{align:ch09-平均误差}给出的 $E_{\mathrm{COM}}$ 与 $E_{\mathrm{AV}}$ 满足 $E_{\mathrm{COM}}\leqslant E_{\mathrm{AV}}$，无需误差不相关或均值为零的假设。
+\end{proposition}
+
+\begin{proof}
+（重构新增）令 $Z=\frac{1}{M}\sum_{m=1}^{M}\varepsilon_{m}(\boldsymbol{x})$。由凸函数 $f(z)=z^{2}$ 的 Jensen 不等式，
+\begin{align*}
+E_{\mathrm{COM}}=\mathbb{E}_{\boldsymbol{x}}[Z^{2}]\leqslant\mathbb{E}_{\boldsymbol{x}}\!\left[\frac{1}{M}\sum_{m=1}^{M}\varepsilon_{m}^{2}\right]=\frac{1}{M}\sum_{m=1}^{M}\mathbb{E}_{\boldsymbol{x}}[\varepsilon_{m}^{2}]=E_{\mathrm{AV}},
+\end{align*}
+其中第一个不等号就是 $(\mathbb{E}Z)^{2}\leqslant\mathbb{E}[Z^{2}]$ 的加权形式，即 $\bigl(\frac{1}{M}\sum\varepsilon_{m}\bigr)^{2}\leqslant\frac{1}{M}\sum\varepsilon_{m}^{2}$ 对每个 $\boldsymbol{x}$ 逐点成立后再取期望。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch09-集成上界; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{proposition:ch09-集成上界}说明“平均不会比成员更差”是一个只依赖凸性的普遍事实，与误差是否独立无关。它与\cref{theorem:ch09-集成误差}的区别在于：后者给出 $1/M$ 的定量缩小，但需要不相关假设；前者只给不等式，却在任意相关结构下成立。上界通常不紧：当所有 $\varepsilon_{m}$ 完全相同时，$E_{\mathrm{COM}}=E_{\mathrm{AV}}$，平均没有任何收益。因此实际集成设计的目标不是“平均”本身，而是让成员误差尽量去相关，使实际值接近 $1/M$ 的理想值。
+\end{remark}
+
+另一种称为\textbf{提升}（boosting）（Freund and Schapire，1996）的模型组合方法，将多个“基”分类器组合起来，产生了一种性能明显优于任何基分类器的集成模型。即使基分类器的表现只比随机好一点点，提升也可以给出好的结果。提升方法和前面讨论的集成模型方法（如袋装）的主要区别在于：基分类器是按顺序训练的，且每个基分类器都是使用数据集的加权形式进行训练的，其中与每个数据点相关的权重系数取决于前一个分类器的性能。特别是，被其中一个基分类器误分类的点，在训练序列中的下一个分类器时，会被赋予更大的权重。一旦所有分类器都训练完毕，就可以对它们的预测通过加权多数投票方式进行整合（见\cref{exercise:ch09-15}）。
+
+在实践中，所有模型组合方法的主要缺点是必须训练多个模型，然后必须对所有模型的预测进行评估，因而增加了训练和推理的计算开销，开销的大小取决于具体的应用场景。
+
+\subsection{dropout}\label{subsection:ch09-dropout}
+
+\textbf{dropout}（Srivastava et al.，2014）是一种使用广泛且非常有效的正则化形式，它可以视为一种在不需要单独训练多个模型的情况下，对指数级数量规模的模型隐式地进行模型平均的方法。它具有广泛的适用性，并且计算开销低。
+
+\begin{definition}[dropout]\label{definition:ch09-dropout}
+设网络有 $M$ 个非输出节点。对每个训练数据点与每个非输出节点，独立地抽取掩码 $R_{i}\in\{0,1\}$，其中 $R_{i}\sim\mathrm{Bernoulli}(p)$，并把节点 $i$ 的输出乘以 $R_{i}$（等价于删除该节点及其全部连接）。称这种在训练时随机剪枝网络、并以保留概率 $p$ 控制剪枝强度的正则化方法为 \textbf{dropout}。$p$ 称为\textbf{保留概率}（keep probability）。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch09-dropout; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{definition:ch09-dropout}中的随机性只出现在训练阶段；测试阶段通常使用完整网络并做相应的缩放（见\cref{proposition:ch09-dropout缩放}）。保留概率 $p$ 是每个节点独立的，因此一次前向传播对应 $2^{M}$ 个可能剪枝网络中的一个；训练过程相当于在这个指数级模型集合上共享参数地做随机优化。这也解释了为什么 dropout 训练时梯度噪声大、需要更多迭代：每步只在一个随机子网络上计算梯度，而参数要同时服务于所有子网络。$p$ 的选择是一个偏差--方差权衡：$p$ 太小（剪枝太多）会使网络欠拟合，$p$ 太大则正则化效果减弱；隐藏节点常用 $p=0.5$，输入节点常用 $p=0.8$。
+\end{remark}
+
+dropout 的核心思想是在训练过程中随机删除网络中的节点，包括它们之间的连接。每当一个新的数据点进入网络，模型就会随机选择一些节点并忽略它们。\cref{figure:ch09-dropout}展示了一个简单的神经网络以及两个通过忽略节点子集剪枝网络的例子。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\textwidth]{ch09-fig9-17-dropout.png}
+\caption{一个简单的神经网络以及两个通过忽略节点子集剪枝网络的例子（其中忽略了一个随机的节点子集）}
+\label{figure:ch09-dropout}
+\end{figure}
+
+dropout 可以同时应用于隐藏节点和输入节点，但不能应用于输出节点，这相当于将被删节点的输出设置为零。它可以通过定义一个掩码向量 $\boldsymbol{R}_{i}\in\{0,1\}$ 来实现：对于数据点 $n$，该掩码将被乘以非输出节点 $i$，其值以概率 $p$ 设置为 $1$。对于隐藏节点，$p=0.5$ 很有效；而对于输入节点，通常使 $p=0.8$。
+
+在训练过程中，当每个数据点进入网络时，就会创建一个新的掩码，并在该剪枝网络上应用前向和后向传播步骤来创建误差函数梯度，然后用于更新权重，例如采用随机梯度下降法。如果数据点被分组成多个小批次，则对梯度在每个小批次（参见\cref{subsection:ch07-小批量方法}）中的数据点上进行平均后，再应用权重更新。对于具有 $M$ 个非输出节点的网络，有 $2^{M}$ 个剪枝网络，因此在训练期间只会考虑这些网络中的一少部分。这与传统的集成方法不同，在传统的集成方法中，集成中的每个网络都是独立训练至收敛的。它们之间的另一个区别是，指数级数量规模的网络隐式地用 dropout 进行训练，它们不是独立的，而是与完整网络共享它们的参数值，因此剪枝网络间的参数也是彼此共享的。需要注意的是，使用 dropout 训练后，单个参数更新包含较大噪声，因此训练可能需要花费更长的时间。此外，由于误差函数本身是有噪声的，仅通过在训练过程中减小误差函数，很难确保优化算法正常工作。
+
+一旦训练完成，原则上就可以通过应用集成规则［\eqref{align:ch09-集成预测}］来进行预测，这种情况下的集成规则如下：
 \begin{align}
-\mathbb{E}_{\mathrm{ens}} \le \mathbb{E}_{\mathrm{avg}}.
-\label{align:ch09-ens-bound}
+p(y\mid\boldsymbol{x})=\sum_{R}p(R)\,p(y\mid\boldsymbol{x},R),
+\label{align:ch09-dropout集成}
 \end{align}
+其中，求和是在掩码的指数级空间上进行的，$p(y\mid\boldsymbol{x},R)$ 是来自具有掩码 $R$ 的网络的预测分布。因为这种求和难以处理，所以可以通过对少量掩码进行采样来近似。在实践中，只需要 10 或 20 个掩码就足以获得良好的结果。这一过程称为蒙特卡洛 dropout。
 
-另一种称为\textbf{提升}（boosting）~\citep{FreundSchapire1996}的模型组合方法，将多个"基"分类器组合起来，产生一种性能明显优于任何基分类器的集成模型。即使基分类器表现只比随机好一点点，提升也可以给出好结果。提升方法和前面讨论的集成模型方法（如袋装）的主要区别在于：基分类器是按顺序训练的，且每个基分类器都是使用数据集的加权形式进行训练的，其中与每个数据点相关的权重系数取决于前一个分类器的性能。特别是被其中一个基分类器误分类的点，在训练序列中下一个分类器时会被赋予更大权重。一旦所有分类器都训练完毕，就可以对它们预测通过加权多数投票方式进行整合（见习题~9.15）。
+一种更简单的方法是在不掩盖训练好的网络的节点的情况下进行预测，并重新缩放网络中的权重，使每个节点在测试期间的预期输入与训练期间的输入大致相同，以补偿在训练中会忽略一部分节点的事实。因此，如果一个节点在训练期间以概率 $p$ 的形式存在，那么在测试期间，在使用网络进行预测之前，需要对来自该节点的输出权重乘以 $p$。
 
-在实践中所有模型组合方法的主要缺点是必须训练多个模型，然后必须对所有模型预测进行评估，因而增加了训练和推理计算开销，开销大小取决于具体应用场景。
+\begin{proposition}[dropout 的测试时缩放]\label{proposition:ch09-dropout缩放}
+考虑一个节点，其输出为 $h$，并以权重 $w$ 连接到下一层。设训练时该节点以概率 $p$ 保留，即下一层收到的输入为 $Rwh$，其中 $R\sim\mathrm{Bernoulli}(p)$。则在测试时把权重改为 $w'=pw$ 并关闭随机掩码，下一层收到的输入期望与训练时相同，即
+\begin{align*}
+\mathbb{E}[Rwh]=w'h=pwh.
+\end{align*}
+因此，按保留概率 $p$ 缩放输出权重（等价地，缩放节点输出）可以补偿训练时的随机丢弃。
+\end{proposition}
 
-\subsection{Dropout}\label{section:ch09-dropout}
+\begin{proof}
+（重构新增）由 $R$ 的分布，$\mathbb{E}[R]=p$，故 $\mathbb{E}[Rwh]=pwh$。而使用缩放权重 $w'=pw$ 且不丢弃时，下一层收到 $w'h=pwh$，与训练时的期望相同。若一个节点以多条边连接到下一层，则对每条边的权重同时乘 $p$，由线性性，所有输入的期望之和保持不变。
+\end{proof}
 
-\textbf{Dropout}~\citep{Srivastava2014}是一种使用广泛且非常有效的正则化形式，它可以视为一种在不需要单独训练多个模型的情况下，对指数级数量规模模型隐式地进行模型平均的方法。它具有广泛适用性，并且计算开销低。
+% SUPPLEMENT: parent=proposition:ch09-dropout缩放; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{proposition:ch09-dropout缩放}只保证一阶矩（期望）匹配，不保证方差匹配：训练时下一层输入是随机变量 $Rwh$，其方差为 $p(1-p)w^{2}h^{2}$；测试时输入是确定值 $pwh$，方差为零。因此这种缩放是一种近似，而不是精确的集成。它也解释了为什么测试时不能直接使用未缩放的权重：那样下一层输入的期望会变成 $p$ 倍，导致激活值整体偏小、逐层累积后分布严重偏移。缩放的实现有两种等价写法：训练时把保留节点的输出除以 $p$（inverted dropout），测试时保持不变；或训练时不动、测试时把权重乘 $p$。现代框架通常采用前者，因为它把缩放放在训练阶段、测试阶段无额外操作。
+\end{remark}
 
-dropout 核心思想是在训练过程中随机删除网络中的节点，包括它们之间的连接。每当一个新数据点进入网络，模型就会随机选择一些节点并忽略它们。dropout 可以同时应用于隐藏节点和输入节点，但不能应用于输出节点，这相当于将被删节点输出设置为零。它可以通过定义一个掩码向量 $R_i\in\{0,1\}$ 来实现：对于数据点 $n$，该掩码将被乘以非输出节点 $i$，其值以概率 $p$ 设置为 $1$。对于隐藏节点 $p=0.5$ 很有效；而对于输入节点，通常使 $p=0.8$。
+\begin{proposition}[dropout 的期望误差]\label{proposition:ch09-dropout期望}
+考虑线性模型 $y_{k}=\sum_{i=1}^{D}w_{ki}x_{i}$ 与平方和误差
+\begin{align*}
+E(\boldsymbol{w})=\sum_{n=1}^{N}\sum_{k=1}^{K}\left\{t_{nk}-\sum_{i=1}^{D}w_{ki}R_{ni}x_{ni}\right\}^{2},
+\end{align*}
+其中 $R_{ni}\sim\mathrm{Bernoulli}(\rho)$ 相互独立。则
+\begin{align*}
+\mathbb{E}[E(\boldsymbol{w})]
+=\sum_{n=1}^{N}\sum_{k=1}^{K}\left\{t_{nk}-\rho\sum_{i=1}^{D}w_{ki}x_{ni}\right\}^{2}
++\rho(1-\rho)\sum_{n=1}^{N}\sum_{k=1}^{K}\sum_{i=1}^{D}w_{ki}^{2}x_{ni}^{2}.
+\end{align*}
+即 dropout 的期望误差是一个带输入依赖二次正则项的平方和误差：第 $i$ 个输入方向上的有效正则化系数为 $\rho(1-\rho)\sum_{n}x_{ni}^{2}$。
+\end{proposition}
 
-在训练过程中，当每个数据点进入网络时就会创建一个新掩码，并在该剪枝网络上应用前向和后向传播步骤来创建误差函数梯度，然后用于更新权重，例如采用随机梯度下降法。如果数据点被分组成多个小批次，则对梯度在每个小批次（参见~7.2.4~小节）中的数据点上进行平均后，再应用权重更新。对于具有 $M$ 个非输出节点的网络，有 $2^M$ 个剪枝网络，因此在训练期间只会考虑这些网络中的一少部分。这与传统集成方法不同：在传统集成方法中集成中的每个网络都是独立训练至收敛的。它们之间另一个区别是，指数级数量规模的网络隐式地用 dropout 进行训练，它们不是独立的，而是与完整网络共享它们的参数值，因此剪枝网络间参数也是彼此共享的。
+\begin{proof}
+（重构新增）令 $\mu_{nk}=\sum_{i}w_{ki}x_{ni}$、$A_{nk}=t_{nk}-\rho\mu_{nk}$、$B_{nk}=\sum_{i}w_{ki}(R_{ni}-\rho)x_{ni}$。则
+\begin{align*}
+t_{nk}-\sum_{i}w_{ki}R_{ni}x_{ni}=A_{nk}-B_{nk},\qquad \mathbb{E}[B_{nk}]=0.
+\end{align*}
+由 $\mathbb{E}[(R_{ni}-\rho)(R_{nj}-\rho)]=\delta_{ij}\rho(1-\rho)$（$i=j$ 时 $\mathbb{E}[R_{ni}^{2}]=\rho$，$i\neq j$ 时由独立性得 $\rho^{2}$，故差为 $\delta_{ij}\rho(1-\rho)$），
+\begin{align*}
+\mathbb{E}[B_{nk}^{2}]=\sum_{i}\sum_{j}w_{ki}w_{kj}x_{ni}x_{nj}\,\mathbb{E}[(R_{ni}-\rho)(R_{nj}-\rho)]
+=\rho(1-\rho)\sum_{i}w_{ki}^{2}x_{ni}^{2}.
+\end{align*}
+于是
+\begin{align*}
+\mathbb{E}\left[(A_{nk}-B_{nk})^{2}\right]=A_{nk}^{2}+\mathbb{E}[B_{nk}^{2}],
+\end{align*}
+对 $n,k$ 求和即得所证。
+\end{proof}
 
-需要注意的是，使用 dropout 训练后，单个参数更新包含较大噪声，因此训练可能需要花费更长时间。此外由于误差函数本身是有噪声的，仅通过在训练过程中减小误差函数很难确保优化算法正常工作。
+% SUPPLEMENT: parent=proposition:ch09-dropout期望; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{proposition:ch09-dropout期望}说明 dropout 不是“无正则化的随机模型平均”，而是在期望意义下等价于一个二次正则化问题：正则项按输入分量的平方和 $\sum_n x_{ni}^{2}$ 加权，因此输入尺度大的方向受到更强的收缩。这也解释了为什么 dropout 对输入特征尺度敏感：若某些输入的数值范围远大于其他输入，它们对应的权重会被更重地惩罚。把 $R_{ni}$ 的独立性换成相关性会改变交叉项的系数，从而改变有效正则化强度；这是 dropout 与一般集成在理论上的主要差别。
+\end{remark}
 
-一旦训练完成，原则上就可以通过应用集成规则~\eqref{align:ch09-ensemble}~来进行预测，这种情况下的集成规则如下：
-\begin{align}
-p(t\mid \mathbf{x}) = \sum_R p(R)\,p(t\mid \mathbf{x},R),
-\label{align:ch09-dropout-ensemble}
-\end{align}
-其中求和是在掩码的指数级空间上进行的，$p(t\mid \mathbf{x},R)$ 是来自具有掩码 $R$ 的网络的预测分布。因为这种求和难以处理，所以可以通过对少量掩码进行采样来近似。在实践中只需要~10~或~20~个掩码就足以获得良好结果。这一过程称为蒙特卡洛 dropout。
+应用 dropout 的另一种动机来自 Bayes 学派。在按照 Bayes 学派的观点处理问题时，我们将通过对所有的 $2^{M}$ 个网络模型进行平均来预测，其中的每个网络模型都由其后验概率加权（参见\cref{section:ch02-Bayes概率}）。这样做的计算成本很高，无论是在评估后验概率的训练期间，还是在计算加权预测的测试期间。dropout 通过给每个可能的模型赋予相同的权重来近似这个模型平均。
 
-一种更简单方法是在不掩盖训练好的网络节点情况下进行预测，并重新缩放网络中权重，使每个节点在测试期间的预期输入与训练期间输入大致相同，以补偿在训练中会忽略一部分节点的事实。因此如果一个节点在训练期间以概率 $p$ 的形式存在，那么在测试期间在使用网络进行预测之前，需要对来自该节点的输出权重乘以 $p$。
-
-应用 dropout 的另一种动机来自贝叶斯学派。在按照贝叶斯学派观点处理问题时，我们将通过对所有 $2^M$ 个网络模型进行平均来预测，其中每个网络模型都由其后验概率加权（参见~2.6~节）。这样做计算成本很高，无论是在评估后验概率的训练期间，还是在计算加权预测的测试期间。dropout 通过给每个可能模型赋予相同权重来近似这个模型平均。
-
-dropout 具有良好表现背后的更深层次原因，在于 dropout 在减少过拟合方面发挥了重要作用。在一个标准神经网络中，参数可以调整为错误适应单个数据点，其隐藏节点被过度特化：给定其他节点输出，每个节点会调整其权重以最小化误差，导致节点以一种可能无法泛化到新数据的方式共同调整参数。使用 dropout，每个节点不能依赖其他特定节点存在，而必须在广泛场景下做出有用贡献，从而减少共同调整和特化。对于使用最小二乘法训练的简单线性回归模型，dropout 正则化等价于二次正则化的一种修改形式（见习题~9.18）。
+dropout 具有良好表现背后的更深层次原因，在于 dropout 在减少过拟合方面发挥了重要作用。在一个标准的神经网络中，参数可以调整为错误适应单个数据点，其隐藏节点被过度特化。给定其他节点的输出，每个节点会调整其权重以最小化误差，导致节点以一种可能无法泛化到新数据的方式共同调整参数。使用 dropout，每个节点不能依赖其他特定节点的存在，而必须在广泛的场景下做出有用的贡献，从而减少共同调整和特化。对于使用最小二乘法训练的简单线性回归模型，dropout 正则化等价于二次正则化的一种修改形式（见\cref{exercise:ch09-18}）。
 
 \end{document}

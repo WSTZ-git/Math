@@ -1,101 +1,268 @@
 \documentclass[../../main.tex]{subfiles}
+
 \graphicspath{{../../image/}{../../figure/}}
+
 \begin{document}
 
 \section{错误平面}\label{section:ch07-错误平面}
 
-与前面讨论的回归模型和分类模型一样，我们通过优化误差函数来选择网络参数。我们的任务是基于一组训练数据，为网络参数（权重和偏置）寻找合适设置。在第~6~章中我们看到，神经网络是一类非常宽泛且灵活的函数，原则上可以使用足够多隐藏单元以高精度逼近所期望函数；此外深度网络能编码对应于层次化表示的归纳偏置。本章中，我们为便于后续讨论，首先把这些参数统一表示为向量 $\mathbf{w}$，并基于预先选定的误差函数 $E(\mathbf{w})$ 来优化 $\mathbf{w}$。
+在模型训练过程中，我们的目标是为神经网络中的权重和偏置参数确定合适的取值，从而使其能对新的输入数据做出有效的预测。为了便于后续的讨论，我们首先将这些参数统一表示为一个向量 $\mathbf{w}$，并基于预先选定的误差函数 $E(\mathbf{w})$ 来优化 $\mathbf{w}$。为了直观地理解这一优化过程，我们可以建立起误差函数的几何图像，即将其视为一个位于“权重空间”之上的曲面，如\cref{figure:ch07-误差曲面}所示。
 
-为了直观理解这一优化过程，可以建立误差函数的几何图像：将其视为一个位于"权重空间"之上的曲面。首先注意，如果在权重空间中从 $\mathbf{w}$ 向 $\mathbf{w}+\delta\mathbf{w}$ 迈出一小步，那么误差函数变化由下式给出：
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.52\textwidth]{ch07-fig7-1-error-surface.png}
+\caption{误差函数 $E(\mathbf{w})$ 的几何视图，它可以视为一个坐落在权重空间上方的表面。点 $\mathbf{w}_A$ 是一个局部极小值点，而点 $\mathbf{w}_B$ 是全局最小值点，因此有 $E(\mathbf{w}_A)>E(\mathbf{w}_B)$。在任意点 $\mathbf{w}_C$，误差曲面的局部梯度由 $\nabla E$ 给出。}
+\label{figure:ch07-误差曲面}
+\end{figure}
+
+首先注意，如果我们在权重空间中从 $\mathbf{w}$ 向 $\mathbf{w}+\delta\mathbf{w}$ 迈出一小步，那么误差函数的变化由下式给出：
 \begin{align}
 \delta E \approx \delta\mathbf{w}^{\mathsf T}\nabla E(\mathbf{w}),
-\label{align:ch07-firstorder}
+\label{align:ch07-一阶变分}
 \end{align}
-其中 $\nabla E(\mathbf{w})$ 指向误差函数增长率最大的方向。$\mathbf{w}$ 是一个局部极小值点，而 $\mathbf{w}^{\ast}$ 是全局最小值点，因此有 $E(\mathbf{w}^{\ast})<E(\mathbf{w})$。在任意点 $\mathbf{w}$ 处，误差曲面的局部梯度由 $\nabla E$ 给出。我们可以朝着 $-\nabla E(\mathbf{w})$ 的方向迈出一小步，从而进一步减小误差。只要 $E(\mathbf{w})$ 是 $\mathbf{w}$ 的平滑连续函数，它的最小值就会出现在权重空间中梯度为零的点处，即
+其中 $\nabla E(\mathbf{w})$ 指向误差函数增长率最大的方向。只要 $E(\mathbf{w})$ 是 $\mathbf{w}$ 的平滑连续函数，它的最小值就会出现在权重空间中梯度为零的点处，即
 \begin{align}
-\nabla E(\mathbf{w})=\mathbf{0}.
-\label{align:ch07-stationary}
-\end{align}
-
-梯度为零的点称为\textbf{驻点}（stationary point，参见~7.1.1~小节），驻点可进一步分类为极小点、极大点和鞍点。
-
-我们需要找到这样一个向量 $\mathbf{w}$ 使 $E(\mathbf{w})$ 取最小值。然而误差函数通常对权重和偏置参数高度非线性地依赖，因此权重空间中能使梯度为零（或数值非常小）的点有很多。实际上对于任意局部极小值点，权重空间中通常存在其他等效的局部极小值点。例如在图~\ref{fig:ch06-mlp}~所示具有 $M$ 个隐藏单元的两层网络中，每个点都是 $M!\times 2^M$ 个等效点集合中的一员（参见~6.2.4~小节）。
-
-不仅如此，权重空间中还可能存在多个本质上并不等效的驻点，尤其是多个非等效的局部极小值点。在整个权重空间 $\mathbf{w}$ 中，对应于误差函数最小取值的那个极小值点称为\textbf{全局最小值点}（global minimum），其他所有对应于相对较高误差函数值的极小值点则称为\textbf{局部极小值点}（local minima）。深度网络的误差曲面形态可能极为复杂，人们曾认为基于梯度的优化方法可能陷入性能欠佳的局部极小值区域；然而在实践中，大型网络模型在各种不同初始条件下通常都能收敛到性能相近的解（见~9.3.2~节）。
-
-\subsection{局部二次近似}\label{section:ch07-局部二次近似}
-
-可以通过对误差函数进行局部二次近似来深入理解优化问题及各种优化技术。在权重空间中某点 $\hat{\mathbf{w}}$ 周围对 $E(\mathbf{w})$ 做泰勒展开：
-\begin{align}
-E(\mathbf{w}) = E(\hat{\mathbf{w}}) + (\mathbf{w}-\hat{\mathbf{w}})^{\mathsf T}\mathbf{b} + \frac{1}{2}(\mathbf{w}-\hat{\mathbf{w}})^{\mathsf T}\mathbf{H}(\mathbf{w}-\hat{\mathbf{w}}),
-\label{align:ch07-taylor}
-\end{align}
-其中省略了三阶及更高阶项。这里 $\mathbf{b}$ 定义为我们在 $\hat{\mathbf{w}}$ 处评估的 $E$ 的梯度：
-\begin{align}
-\mathbf{b} = \nabla E(\hat{\mathbf{w}}),
-\label{align:ch07-b}
-\end{align}
-\textbf{黑塞矩阵}（Hessian）定义为相应的二阶导数矩阵：
-\begin{align}
-\mathbf{H}(\mathbf{w}) = \nabla\nabla E(\mathbf{w}).
-\label{align:ch07-hessian}
+\nabla E(\mathbf{w}) = \mathbf{0}.
+\label{align:ch07-驻点条件}
 \end{align}
 
-如果网络中总共有 $W$ 个权重和偏置，那么 $\mathbf{w}$ 和 $\mathbf{b}$ 的长度为 $W$，$\mathbf{H}$ 的维度为 $W\times W$。根据~\eqref{align:ch07-taylor}，对应的局部梯度近似由下式给出：
+我们可以朝着 $-\nabla E(\mathbf{w})$ 的方向迈出一小步，从而进一步减小误差。梯度为零的点称为驻点（stationary point，参见\cref{subsection:ch07-局部二次近似}），驻点可以进一步分为极小点、极大点和鞍点。
+
+\begin{definition}[驻点]\label{definition:ch07-驻点}
+设 $E(\mathbf{w})$ 是权重向量 $\mathbf{w}\in\mathbb{R}^{W}$ 的平滑连续函数。若 $\mathbf{w}$ 满足\eqref{align:ch07-驻点条件}，则称 $\mathbf{w}$ 为误差函数 $E$ 的一个\textbf{驻点}（stationary point）。驻点可进一步分为极小点、极大点和鞍点。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch07-驻点; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+\eqref{align:ch07-驻点条件}之所以能刻画极小值点的候选位置，是因为若 $\nabla E(\mathbf{w})\neq\mathbf{0}$，则沿 $-\nabla E(\mathbf{w})$ 方向作足够小的移动必使 $E$ 严格减小，$\mathbf{w}$ 便不可能是极小值点；反过来，梯度为零只是一阶必要条件，它把极小点、极大点和鞍点放进同一个候选集合，必须借助二阶信息才能区分。定义中“平滑连续”的要求不可省略：若 $E$ 只在有限个点处不可微（例如由 ReLU 单元构成的分段线性网络），最小值也可能出现在梯度不存在或梯度不连续的折点上，此时\eqref{align:ch07-驻点条件}不再适用。深度网络的误差函数通常只在局部意义下满足光滑性假设，本章借助二次近似得到的结论都应理解为光滑区域内部的局部结论。
+\end{remark}
+
+我们需要找到这样一个向量 $\mathbf{w}$，使得 $E(\mathbf{w})$ 取最小值。然而，误差函数通常对权重和偏置参数有高度非线性的依赖关系，因此权重空间中能使梯度为零（或数值非常小）的点有很多。实际上，对于任意局部极小值点，权重空间中通常还会存在其他等效的局部极小值点。例如，在\cref{subsection:ch06-权重空间的对称性}所讨论的、具有 $M$ 个隐藏单元的两层网络中，每个点都是 $M!\times 2^{M}$ 个等效点集合中的一员。
+
+\begin{definition}[全局最小值点与局部极小值点]\label{definition:ch07-全局与局部极小}
+在整个权重空间 $\mathbf{w}$ 中，对应于误差函数最小取值的那个极小值点称为\textbf{全局最小值点}（global minimum），而其他所有对应于相对较高误差函数值的极小值点则称为\textbf{局部极小值点}（local minima）。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch07-全局与局部极小; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+这个定义把“最小”分成两种强度：全局最小值点要求 $E$ 在整个权重空间上取到最小值，局部极小值点只要求在一个邻域内不被超越。定义隐含了一个存在性前提：全局最小值点未必存在，例如 $E(\mathbf{w})=e^{w_1}$ 在 $\mathbb{R}^{W}$ 上下方有界却取不到最小值，此时只能讨论下确界；深度网络的误差函数一般下方有界，但最小值是否取到并无先验保证。另一要点是“等效”：由于网络输出对隐藏单元的置换和符号翻转不变（见\cref{subsection:ch06-权重空间的对称性}），一个局部极小值点会连带 $M!\times 2^{M}$ 个函数等价的点，它们不是彼此独立的解，因此比较不同极小值时应按网络所表示的函数而非按参数向量计数。
+\end{remark}
+
+不仅如此，权重空间中还可能存在多个本质上并不等效的驻点，尤其是多个非等效的局部极小值点。深度神经网络模型的误差曲面形态可能极为复杂，人们曾认为基于梯度的优化方法可能会陷入性能欠佳的局部极小值区域。然而，在实践中，大型神经网络模型在各种不同的初始条件下通常都能够收敛到性能相近的解（见\cref{subsection:ch09-双重下降}）。
+
+\subsection{局部二次近似}\label{subsection:ch07-局部二次近似}
+
+我们可以通过考虑对误差函数进行局部二次近似来深入理解优化问题以及各种优化技术。在权重空间中某点 $\hat{\mathbf{w}}$ 的周围对 $E(\mathbf{w})$ 进行 Taylor 展开，得到
 \begin{align}
-\nabla E(\mathbf{w}) = \mathbf{b} + \mathbf{H}(\mathbf{w}-\hat{\mathbf{w}}).
-\label{align:ch07-gradapprox}
+E(\mathbf{w}) \approx E(\hat{\mathbf{w}})+(\mathbf{w}-\hat{\mathbf{w}})^{\mathsf T}\mathbf{b}+\frac{1}{2}(\mathbf{w}-\hat{\mathbf{w}})^{\mathsf T}\mathbf{H}(\mathbf{w}-\hat{\mathbf{w}}),
+\label{align:ch07-Taylor展开}
+\end{align}
+其中省略了三阶及更高阶的项。这里的 $\mathbf{b}$ 定义为我们在 $\hat{\mathbf{w}}$ 处评估的 $E$ 的梯度：
+\begin{align}
+\mathbf{b} \triangleq \left.\nabla E(\mathbf{w})\right|_{\mathbf{w}=\hat{\mathbf{w}}}.
+\label{align:ch07-梯度向量}
+\end{align}
+
+\begin{definition}[黑塞矩阵]\label{definition:ch07-黑塞矩阵}
+设 $E(\mathbf{w})$ 二阶连续可微，则称二阶导数矩阵
+\begin{align}
+\mathbf{H}(\hat{\mathbf{w}}) = \left.\nabla\nabla E(\mathbf{w})\right|_{\mathbf{w}=\hat{\mathbf{w}}}
+\label{align:ch07-黑塞矩阵}
+\end{align}
+为 $E$ 在 $\hat{\mathbf{w}}$ 处的\textbf{黑塞矩阵}（Hessian）。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch07-黑塞矩阵; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+一阶导数只给出斜率，二阶导数则给出曲率；黑塞矩阵把“沿各个方向弯曲得多快”编码成一个矩阵，从而把\eqref{align:ch07-Taylor展开}变成一个可以完全对角化的二次型。定义要求 $E$ 二阶连续可微，此时 $\mathbf{H}$ 对称（混合偏导数可交换），独立的元素个数为 $W(W+1)/2$；若只假设二阶可微而不要求连续性，对称性可能失效。矩阵规模由可学习参数总数 $W$ 决定，深度网络中 $W$ 可达 $10^{6}$ 以上，显式构造和存储 $\mathbf{H}$ 都不可行，因此实际算法只通过“黑塞矩阵—向量乘积”使用它的作用。几何上，$\mathbf{H}$ 在极小值点附近正定、在极大值点附近负定、在鞍点处不定，在平坦方向上奇异，这几种情形正是本章后续收敛性分析的分类依据。
+\end{remark}
+
+如果网络中总共有 $W$ 个权重和偏置，那么 $\mathbf{w}$ 和 $\mathbf{b}$ 的长度为 $W$，$\mathbf{H}$ 的维度为 $W\times W$。根据\eqref{align:ch07-Taylor展开}，对应的局部梯度近似由下式给出：
+\begin{align}
+\nabla E(\mathbf{w}) = \mathbf{b}+\mathbf{H}(\mathbf{w}-\hat{\mathbf{w}}).
+\label{align:ch07-梯度近似}
 \end{align}
 对于足够接近 $\hat{\mathbf{w}}$ 的点 $\mathbf{w}$，这些表达式将给出误差及其梯度的合理近似。
 
-考虑围绕误差函数最小值点 $\mathbf{w}^{\ast}$ 进行局部二次近似这一特定情况。在这种情况下，因为在 $\mathbf{w}^{\ast}$ 处 $\nabla E=\mathbf{0}$，所以没有线性项，~\eqref{align:ch07-taylor}~变为
+考虑一种特定情况，即围绕一个误差函数最小值点 $\mathbf{w}^{\ast}$ 进行局部二次近似。在这种情况下，因为在点 $\mathbf{w}^{\ast}$ 处 $\nabla E=\mathbf{0}$，所以没有线性项，\eqref{align:ch07-Taylor展开}变为
 \begin{align}
-E(\mathbf{w}) = E(\mathbf{w}^{\ast}) + \frac{1}{2}(\mathbf{w}-\mathbf{w}^{\ast})^{\mathsf T}\mathbf{H}(\mathbf{w}-\mathbf{w}^{\ast}),
-\label{align:ch07-quadratic-at-min}
+E(\mathbf{w}) = E(\mathbf{w}^{\ast})+\frac{1}{2}(\mathbf{w}-\mathbf{w}^{\ast})^{\mathsf T}\mathbf{H}(\mathbf{w}-\mathbf{w}^{\ast}),
+\label{align:ch07-极小点展开}
 \end{align}
-其中黑塞矩阵 $\mathbf{H}$ 在点 $\mathbf{w}^{\ast}$ 处求得。为从几何角度解释这一点，考虑黑塞矩阵的特征方程：
+其中黑塞矩阵 $\mathbf{H}$ 在点 $\mathbf{w}^{\ast}$ 处求得。为了从几何角度解释这一点，考虑黑塞矩阵的特征方程：
 \begin{align}
-\mathbf{H}\mathbf{u}_i = \lambda_i \mathbf{u}_i,
-\label{align:ch07-eigen}
+\mathbf{H}\mathbf{u}_i = \lambda_i\mathbf{u}_i,
+\label{align:ch07-特征方程}
 \end{align}
-其中特征向量 $\mathbf{u}_i$ 形成一组完备正交规范集（参见附录~A），所以有
+其中特征向量 $\mathbf{u}_i$ 形成一组完整的正交规范集（参见\cref{section:appA-特征向量}），所以有
 \begin{align}
 \mathbf{u}_i^{\mathsf T}\mathbf{u}_j = \delta_{ij}.
-\label{align:ch07-eigenorth}
+\label{align:ch07-正交规范}
 \end{align}
 
-这可以视为坐标系变换：原点平移到 $\mathbf{w}^{\ast}$，轴与特征向量对齐。写
+将 $(\mathbf{w}-\mathbf{w}^{\ast})$ 展开为特征向量线性组合的形式：
 \begin{align}
-\mathbf{w}-\mathbf{w}^{\ast} = \sum_i \alpha_i \mathbf{u}_i.
-\label{align:ch07-expansion}
+\mathbf{w}-\mathbf{w}^{\ast} = \sum_i \alpha_i\mathbf{u}_i.
+\label{align:ch07-特征展开}
 \end{align}
-将~\eqref{align:ch07-expansion}~代入~\eqref{align:ch07-quadratic-at-min}~并使用~\eqref{align:ch07-eigen}~和~\eqref{align:ch07-eigenorth}，误差函数可写成如下形式（见习题~7.1）：
-\begin{align}
-E(\mathbf{w}) = E(\mathbf{w}^{\ast}) + \frac{1}{2}\sum_i \lambda_i \alpha_i^2.
-\label{align:ch07-quadratic-diag}
-\end{align}
+这可以视为坐标系的变换，原点被平移到点 $\mathbf{w}^{\ast}$，轴与特征向量对齐（见\cref{section:appA-特征向量}）。这是通过一个正交矩阵进行的，它的列由 $\mathbf{u}_1,\cdots,\mathbf{u}_W$ 组成。将\eqref{align:ch07-特征展开}代入\eqref{align:ch07-极小点展开}并使用\eqref{align:ch07-特征方程}和\eqref{align:ch07-正交规范}，误差函数可以写成如下形式（见\cref{exercise:ch07-01}）。
 
-假设对所有 $i\neq j$ 设置 $\alpha_j=0$，然后变化 $\alpha_i$，这相当于把 $\mathbf{w}$ 沿着 $\mathbf{u}_i$ 方向移动、远离 $\mathbf{w}^{\ast}$。从~\eqref{align:ch07-quadratic-diag}~可见：若对应特征值 $\lambda_i>0$，则误差函数值会增大；反之误差函数值将减小。如果所有特征值都是正的，则 $\mathbf{w}^{\ast}$ 对应误差函数的局部极小值；如果所有特征值都是负的，则 $\mathbf{w}^{\ast}$ 对应局部最大值；如果特征值有正有负，则 $\mathbf{w}^{\ast}$ 表示一个\textbf{鞍点}（saddle point）。
-
-如果对所有 $\mathbf{v}$ 有
+\begin{proposition}[特征向量坐标下的误差函数]\label{proposition:ch07-特征分解}
+设 $E(\mathbf{w})$ 在 $\mathbf{w}^{\ast}$ 处由二次函数\eqref{align:ch07-极小点展开}精确给出，$\mathbf{H}$ 的特征值为 $\lambda_i$、对应的正交规范特征向量为 $\mathbf{u}_i$，并设 $\mathbf{w}-\mathbf{w}^{\ast}=\sum_i\alpha_i\mathbf{u}_i$。则
 \begin{align}
-\mathbf{v}^{\mathsf T}\mathbf{H}\mathbf{v}>0,
-\label{align:ch07-posdef}
+E(\mathbf{w}) = E(\mathbf{w}^{\ast})+\frac{1}{2}\sum_i\lambda_i\alpha_i^{2}.
+\label{align:ch07-对角化}
 \end{align}
-则称黑塞矩阵 $\mathbf{H}$ 为\textbf{正定矩阵}（positive definite）。因为特征向量 $\mathbf{u}_i$ 形成完备集，任意向量 $\mathbf{v}$ 可以写成
-\begin{align}
-\mathbf{v} = \sum_i c_i \mathbf{u}_i,
-\label{align:ch07-vexpand}
-\end{align}
-由~\eqref{align:ch07-eigen}~和~\eqref{align:ch07-eigenorth}~有
-\begin{align}
-\mathbf{v}^{\mathsf T}\mathbf{H}\mathbf{v} = \sum_i c_i^2 \lambda_i.
-\label{align:ch07-posdef-calc}
-\end{align}
-从而如果所有特征值都是正的，$\mathbf{H}$ 将是正定矩阵（见习题~7.2）。因此，$\mathbf{w}^{\ast}$ 是局部极小值的充分必要条件是：误差函数的梯度在 $\mathbf{w}^{\ast}$ 处为零，并且在 $\mathbf{w}^{\ast}$ 处评估的黑塞矩阵是正定矩阵（见习题~7.3）。
+\end{proposition}
+\begin{proof}（重构新增）
+由\eqref{align:ch07-特征展开}与\eqref{align:ch07-特征方程}，
+\begin{align*}
+(\mathbf{w}-\mathbf{w}^{\ast})^{\mathsf T}\mathbf{H}(\mathbf{w}-\mathbf{w}^{\ast})
+&= \Bigl(\sum_i\alpha_i\mathbf{u}_i\Bigr)^{\mathsf T}\mathbf{H}\Bigl(\sum_j\alpha_j\mathbf{u}_j\Bigr)\\
+&= \sum_i\sum_j\alpha_i\alpha_j\,\mathbf{u}_i^{\mathsf T}\mathbf{H}\mathbf{u}_j\\
+&= \sum_i\sum_j\alpha_i\alpha_j\lambda_j\,\mathbf{u}_i^{\mathsf T}\mathbf{u}_j.
+\end{align*}
+再由正交规范性\eqref{align:ch07-正交规范}，$\mathbf{u}_i^{\mathsf T}\mathbf{u}_j=\delta_{ij}$，故上式等于 $\sum_i\lambda_i\alpha_i^{2}$。代入\eqref{align:ch07-极小点展开}即得\eqref{align:ch07-对角化}。
+\end{proof}
 
-在新的坐标系中，基向量由特征向量 $\mathbf{u}_i$ 给出，恒定误差 $E(\mathbf{w})$ 的等高线变为轴对齐的椭圆，以 $\mathbf{w}^{\ast}$ 为中心。椭圆的轴与黑塞矩阵的特征向量 $\mathbf{u}_i$ 对齐，轴的长度则与相应特征值 $\lambda_i$ 的平方根成反比（见习题~7.6）。
+% SUPPLEMENT: parent=proposition:ch07-特征分解; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+这个命题把耦合的二次型化为 $W$ 个独立的一元二次函数之和：在特征向量坐标下，沿 $\mathbf{u}_i$ 方向的运动只改变 $\alpha_i$，不同方向互不干扰，这一点是后续收敛性分析能够逐个方向讨论的前提。结论依赖三个条件。其一，$\mathbf{H}$ 为实对称矩阵，从而特征值全为实数且特征向量可选取为正交规范基（\cref{section:appA-特征向量}）。其二，$\mathbf{w}^{\ast}$ 是驻点，因此展开式没有线性项；若 $\mathbf{w}^{\ast}$ 不是驻点，对角化后每个方向还会残留一次项，极小点位置随之平移，这正是 Newton 法要处理的形态。其三，$\mathbf{u}_i$ 取为单位向量，于是 $\sum_i\alpha_i^{2}=\|\mathbf{w}-\mathbf{w}^{\ast}\|^{2}$，\cref{proposition:ch07-驻点分类}的证明要用到这个等式。
+\end{remark}
 
-对于神经网络这种具有复杂结构的误差函数，试图找到方程 $\nabla E(\mathbf{w})=\mathbf{0}$ 的解析解是不现实的，因此需要借助迭代式数值优化方法。
+假设对于所有的 $i\neq j$，设置 $\alpha_i=0$，然后变化 $\alpha_j$，这相当于把 $\mathbf{w}$ 沿着 $\mathbf{u}_j$ 方向移动，远离 $\mathbf{w}^{\ast}$。由\eqref{align:ch07-对角化}可以直接读出驻点的类型与特征值符号之间的关系。
+
+\begin{proposition}[驻点类型与特征值符号]\label{proposition:ch07-驻点分类}
+在\cref{proposition:ch07-特征分解}的设定下，设全部特征值非零，则：
+\begin{enumerate}
+\item 若所有 $\lambda_i>0$，则 $\mathbf{w}^{\ast}$ 是 $E$ 的严格局部极小值点；
+\item 若所有 $\lambda_i<0$，则 $\mathbf{w}^{\ast}$ 是 $E$ 的严格局部极大值点；
+\item 若特征值有正有负，则 $\mathbf{w}^{\ast}$ 是一个\textbf{鞍点}（saddle point）。
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+记 $\lambda_{\min}=\min_i\lambda_i$，$\lambda_{\max}=\max_i\lambda_i$。由\eqref{align:ch07-对角化}及正交规范性，
+\begin{align*}
+E(\mathbf{w})-E(\mathbf{w}^{\ast})=\frac{1}{2}\sum_i\lambda_i\alpha_i^{2},\qquad
+\|\mathbf{w}-\mathbf{w}^{\ast}\|^{2}=\sum_i\alpha_i^{2}.
+\end{align*}
+（1）若所有 $\lambda_i>0$，则对 $\mathbf{w}\neq\mathbf{w}^{\ast}$ 有 $\sum_i\lambda_i\alpha_i^{2}\geqslant\lambda_{\min}\sum_i\alpha_i^{2}=\lambda_{\min}\|\mathbf{w}-\mathbf{w}^{\ast}\|^{2}>0$，故 $E(\mathbf{w})>E(\mathbf{w}^{\ast})$，即 $\mathbf{w}^{\ast}$ 是严格局部极小值点。
+
+（2）若所有 $\lambda_i<0$，同理 $\sum_i\lambda_i\alpha_i^{2}\leqslant\lambda_{\max}\|\mathbf{w}-\mathbf{w}^{\ast}\|^{2}<0$，故 $E(\mathbf{w})<E(\mathbf{w}^{\ast})$，即 $\mathbf{w}^{\ast}$ 是严格局部极大值点。
+
+（3）设 $\lambda_p>0$、$\lambda_q<0$。取 $\mathbf{w}=\mathbf{w}^{\ast}+t\,\mathbf{u}_p$（即 $\alpha_p=t$，其余 $\alpha_i=0$），则 $E(\mathbf{w})-E(\mathbf{w}^{\ast})=\frac{1}{2}\lambda_pt^{2}>0$ 对一切 $t\neq0$ 成立；再取 $\mathbf{w}=\mathbf{w}^{\ast}+t\,\mathbf{u}_q$，则 $E(\mathbf{w})-E(\mathbf{w}^{\ast})=\frac{1}{2}\lambda_qt^{2}<0$ 对一切 $t\neq0$ 成立。因此 $\mathbf{w}^{\ast}$ 的任意邻域内既有函数值大于 $E(\mathbf{w}^{\ast})$ 的点，也有函数值小于 $E(\mathbf{w}^{\ast})$ 的点，$\mathbf{w}^{\ast}$ 是鞍点。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch07-驻点分类; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+该结论的适用范围是二次模型\eqref{align:ch07-极小点展开}本身：在二次模型中，特征值的符号完全决定几何形态。对一般光滑函数，只要所有特征值非零，同样的分类可由带余项的 Taylor 定理证明（参见\cref{theorem:ch07-二阶条件}）；一旦出现零特征值，二次项在该方向上消失，形态由三阶及更高阶项决定，此时不能只凭二次近似下结论。两个典型例子说明了这一边界：$E(x)=x^{3}$ 在 $0$ 处梯度与二阶导数同时为零，却既非极小也非极大；$E(x)=x^{4}$ 在 $0$ 处是严格局部极小，相应的黑塞矩阵为零矩阵，并不正定。这也说明“黑塞矩阵正定”是局部极小的充分条件而非普遍的必要条件。
+\end{remark}
+
+\begin{definition}[正定矩阵]\label{definition:ch07-正定矩阵}
+如果对于所有的非零向量 $\mathbf{v}$ 有
+\begin{align}
+\mathbf{v}^{\mathsf T}\mathbf{H}\mathbf{v} > 0,
+\label{align:ch07-正定二次型}
+\end{align}
+则称黑塞矩阵 $\mathbf{H}$ 为\textbf{正定矩阵}（positive definite）。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch07-正定矩阵; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+正定性刻画的是“沿任意非零方向都向上弯曲”：只有当二次型在所有方向上严格为正时，\eqref{align:ch07-极小点展开}中的二次项才能压制任意方向上的高阶余项。定义中必须排除 $\mathbf{v}=\mathbf{0}$，因为 $\mathbf{v}^{\mathsf T}\mathbf{H}\mathbf{v}$ 在原点恒为零，若不排除就无矩阵能满足严格不等式。对一般方阵应把 $\mathbf{H}$ 换为其对称部分 $(\mathbf{H}+\mathbf{H}^{\mathsf T})/2$，因为 $\mathbf{v}^{\mathsf T}\mathbf{H}\mathbf{v}$ 只依赖对称部分；本章的 $\mathbf{H}$ 由二阶偏导数构成，本身对称，故不必额外处理。把“$>0$”放宽为“$\geqslant0$”得到半正定矩阵，它对应“某些方向上一阶不弯曲”的退化情形，此时二次近似无法判定极小性（参见\cref{theorem:ch07-二阶条件}的注记）。
+\end{remark}
+
+因为特征向量 $\mathbf{u}_i$ 形成一个完整的集合，所以任意向量 $\mathbf{v}$ 可以写成
+\begin{align}
+\mathbf{v} = \sum_i c_i\mathbf{u}_i,
+\label{align:ch07-向量展开}
+\end{align}
+且 $\mathbf{v}\neq\mathbf{0}$ 当且仅当某个 $c_i\neq0$。由\eqref{align:ch07-特征方程}和\eqref{align:ch07-正交规范}，有
+\begin{align}
+\mathbf{v}^{\mathsf T}\mathbf{H}\mathbf{v} = \sum_i c_i^{2}\lambda_i.
+\label{align:ch07-正定二次型展开}
+\end{align}
+由此可以得到正定性的特征值判据。
+
+\begin{proposition}[正定性的特征值判据]\label{proposition:ch07-正定判据}
+设 $\mathbf{H}$ 为实对称矩阵，其特征值为 $\lambda_i$、对应的正交规范特征向量为 $\mathbf{u}_i$。则 $\mathbf{H}$ 正定当且仅当所有特征值 $\lambda_i$ 都是正的。
+\end{proposition}
+\begin{proof}（重构新增）
+由\eqref{align:ch07-向量展开}与\eqref{align:ch07-正定二次型展开}，$\mathbf{v}^{\mathsf T}\mathbf{H}\mathbf{v}=\sum_ic_i^{2}\lambda_i$。
+（必要性）设 $\mathbf{H}$ 正定。若某个 $\lambda_k\leqslant0$，取 $\mathbf{v}=\mathbf{u}_k\neq\mathbf{0}$，则\eqref{align:ch07-正定二次型展开}给出 $\mathbf{v}^{\mathsf T}\mathbf{H}\mathbf{v}=\lambda_k\leqslant0$，与\eqref{align:ch07-正定二次型}矛盾。故所有 $\lambda_i>0$。
+
+（充分性）设所有 $\lambda_i>0$。对任意 $\mathbf{v}\neq\mathbf{0}$，由\eqref{align:ch07-正定二次型展开}及 $\sum_ic_i^{2}=\|\mathbf{v}\|^{2}>0$，
+\begin{align*}
+\mathbf{v}^{\mathsf T}\mathbf{H}\mathbf{v} = \sum_i c_i^{2}\lambda_i \geqslant \lambda_{\min}\sum_i c_i^{2} = \lambda_{\min}\|\mathbf{v}\|^{2} > 0,
+\end{align*}
+其中 $\lambda_{\min}=\min_i\lambda_i>0$。故 $\mathbf{H}$ 正定。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch07-正定判据; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+这个判据把“对一切非零 $\mathbf{v}$ 成立的不等式”化归为“有限个数的符号检验”，是本章后面反复使用的工具。证明的两个方向各有一个关键点：必要性方向只需沿单个特征向量 $\mathbf{u}_k$ 取 $\mathbf{v}$，这说明正定性是逐方向的要求，任何一个方向上的非正曲率都会破坏它；充分性方向则用到正交规范基下 $\sum_ic_i^{2}=\|\mathbf{v}\|^{2}$，从而可以用最小特征值给出统一的下界。条件“$\mathbf{H}$ 实对称”不可省：非对称矩阵的特征值可能为复数，判据失去意义；此时应先对称化。判据对半正定性有平行版本：$\mathbf{H}$ 半正定当且仅当所有 $\lambda_i\geqslant0$。
+\end{remark}
+
+由此可以得到局部极小值的二阶判别条件。
+
+\begin{theorem}[局部极小值的二阶条件]\label{theorem:ch07-二阶条件}
+设 $E:\mathbb{R}^{W}\to\mathbb{R}$ 在 $\mathbf{w}^{\ast}$ 的某邻域内二阶连续可微，$\nabla E(\mathbf{w}^{\ast})=\mathbf{0}$，并记 $\mathbf{H}=\nabla\nabla E(\mathbf{w}^{\ast})$。则：
+\begin{enumerate}
+\item 若 $\mathbf{H}$ 正定，则 $\mathbf{w}^{\ast}$ 是 $E$ 的严格局部极小值点；
+\item 若 $\mathbf{w}^{\ast}$ 是 $E$ 的局部极小值点且 $\mathbf{H}$ 非奇异，则 $\mathbf{H}$ 正定。
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+（重构新增）（1）由带余项的 Taylor 公式，对 $\mathbf{v}\to\mathbf{0}$ 有
+\begin{align*}
+E(\mathbf{w}^{\ast}+\mathbf{v}) = E(\mathbf{w}^{\ast})+\frac{1}{2}\mathbf{v}^{\mathsf T}\mathbf{H}\mathbf{v}+o(\|\mathbf{v}\|^{2}).
+\end{align*}
+$\mathbf{H}$ 正定，故存在 $\lambda_{\min}>0$ 使 $\mathbf{v}^{\mathsf T}\mathbf{H}\mathbf{v}\geqslant\lambda_{\min}\|\mathbf{v}\|^{2}$，于是
+\begin{align*}
+E(\mathbf{w}^{\ast}+\mathbf{v})-E(\mathbf{w}^{\ast}) \geqslant \frac{\lambda_{\min}}{2}\|\mathbf{v}\|^{2}+o(\|\mathbf{v}\|^{2}) > 0
+\end{align*}
+对一切充分小的 $\mathbf{v}\neq\mathbf{0}$ 成立，故 $\mathbf{w}^{\ast}$ 是严格局部极小值点。
+
+（2）设 $\mathbf{w}^{\ast}$ 是局部极小值点。若存在特征值 $\lambda<0$，取对应的单位特征向量 $\mathbf{u}$，则由 Taylor 公式
+\begin{align*}
+E(\mathbf{w}^{\ast}+t\mathbf{u}) = E(\mathbf{w}^{\ast})+\frac{1}{2}\lambda t^{2}+o(t^{2}) < E(\mathbf{w}^{\ast})
+\end{align*}
+对一切充分小的 $t\neq0$ 成立，与局部极小性矛盾；故不存在负特征值。又因 $\mathbf{H}$ 非奇异，零不是特征值，故全部特征值都为正。由\cref{proposition:ch07-正定判据}，$\mathbf{H}$ 正定。
+\end{proof}
+
+% SUPPLEMENT: parent=theorem:ch07-二阶条件; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+逐项来看条件的作用：$\nabla E(\mathbf{w}^{\ast})=\mathbf{0}$ 使一阶项消失，否则 $\mathbf{w}^{\ast}$ 沿梯度反方向还可下降；二阶连续可微保证余项可写成 $o(\|\mathbf{v}\|^{2})$，从而二次项在 $\|\mathbf{v}\|$ 足够小时占优；$\mathbf{H}$ 正定则保证二次项本身严格为正。第（2）款必须附加“$\mathbf{H}$ 非奇异”，原书把“梯度为零且黑塞矩阵正定”径直表述为充分必要条件，这一说法在二次模型\eqref{align:ch07-极小点展开}内成立，但对一般光滑函数并不成立：$E(x)=x^{4}$ 在 $x=0$ 处是严格局部极小，而 $E''(0)=0$，黑塞矩阵为零矩阵，既非正定也非负定。出现零特征值时，该方向上的形态由三阶及更高阶项决定，需要另行分析；深度网络中大量“平坦”极小值正是这种退化情形，这也是不能仅凭黑塞矩阵判定所有极小值的原因。
+\end{remark}
+
+在新的坐标系中，基向量由特征向量 $\mathbf{u}_i$ 给出，恒定误差 $E(\mathbf{w})$ 的等高线是轴对齐的椭圆，以 $\mathbf{w}^{\ast}$ 为中心，如\cref{figure:ch07-等高线椭圆}所示（见\cref{exercise:ch07-06}）。
+
+\begin{proposition}[恒定误差等高线的椭圆结构]\label{proposition:ch07-等高线椭圆}
+设 $E$ 由\eqref{align:ch07-极小点展开}给出且 $\mathbf{H}$ 正定，特征值为 $\lambda_i$、对应的正交规范特征向量为 $\mathbf{u}_i$。则对每个 $c>E(\mathbf{w}^{\ast})$，水平集 $\{\mathbf{w}:E(\mathbf{w})=c\}$ 是以 $\mathbf{w}^{\ast}$ 为中心、各轴沿 $\mathbf{u}_i$ 方向、半轴长为
+\begin{align}
+r_i = \sqrt{\frac{2\bigl(c-E(\mathbf{w}^{\ast})\bigr)}{\lambda_i}}
+\label{align:ch07-半轴长}
+\end{align}
+的椭圆。
+\end{proposition}
+\begin{proof}（重构新增）
+由\eqref{align:ch07-对角化}，$E(\mathbf{w})=c$ 等价于 $\sum_i\lambda_i\alpha_i^{2}=2(c-E(\mathbf{w}^{\ast}))$。令
+\begin{align*}
+\beta_i = \alpha_i\sqrt{\frac{\lambda_i}{2(c-E(\mathbf{w}^{\ast}))}},
+\end{align*}
+则方程化为 $\sum_i\beta_i^{2}=1$，即 $\beta$ 空间中的单位球面。由 $\mathbf{w}-\mathbf{w}^{\ast}=\sum_i\alpha_i\mathbf{u}_i$ 与 $\alpha_i=\beta_i r_i$ 可知，该水平集是单位球面在正交变换 $\{\mathbf{u}_i\}$ 下、再沿各轴按 $r_i$ 伸缩所得的像，因而是以 $\mathbf{w}^{\ast}$ 为中心、轴沿 $\mathbf{u}_i$、半轴长为 $r_i$ 的椭圆。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch07-等高线椭圆; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+半轴长\eqref{align:ch07-半轴长}表明：曲率大的方向（$\lambda_i$ 大）等高线挤得紧、半轴短，曲率小的方向等高线拉得长。当 $\lambda_{\max}/\lambda_{\min}\gg1$ 时，椭圆极度狭长，形成\cref{section:ch07-收敛}所分析的“山谷”几何，比值 $\lambda_{\max}/\lambda_{\min}$ 也因此成为衡量优化难度的指标。结论依赖 $\mathbf{H}$ 正定（否则左端不是正定二次型，水平集可能是双曲面而非椭圆）以及 $c>E(\mathbf{w}^{\ast})$（否则水平集为空集；$c=E(\mathbf{w}^{\ast})$ 时退化为单点 $\mathbf{w}^{\ast}$）。若某些特征值相等，对应半轴等长，椭圆在相应子空间内退化为圆。
+\end{remark}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.55\textwidth]{ch07-fig7-2-contours.png}
+\caption{在局部极小值 $\mathbf{w}^{\ast}$ 的邻域内，误差函数可以被二次函数近似。恒定误差的等高线变为椭圆形，其轴与黑塞矩阵的特征向量 $\mathbf{u}_i$ 对齐，长度则与相应特征值 $\lambda_i$ 的平方根成反比。}
+\label{figure:ch07-等高线椭圆}
+\end{figure}
 
 \end{document}

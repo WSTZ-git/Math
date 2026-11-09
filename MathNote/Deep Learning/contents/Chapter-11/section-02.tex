@@ -6,269 +6,561 @@
 
 \section{条件独立性}\label{section:ch11-条件独立性}
 
-多变量概率分布的一个重要概念是条件独立性（Dawid, 1979）。考虑3个变量$a$、$b$、$c$，假设在给定$b$和$c$的条件下，$a$的条件分布不依赖于$b$的值，即
-
+多变量概率分布的一个重要概念是条件独立性（Dawid, 1980）。考虑3个变量$a$、$b$、$c$，假设在给定$b$和$c$的条件下，$a$的条件分布不依赖于$b$的值，即
 \begin{align}
-  p(a\mid b,c) = p(a\mid c)
+  p(a\mid b,c) = p(a\mid c).
   \label{align:ch11-条件独立性定义}
 \end{align}
 
-我们称之为，在给定$c$的条件下，$a$与$b$是条件独立的。如果我们考虑以$c$为条件的$a$和$b$的联合分布，就可以用稍微不同的方式来表示，形式如下：
+\begin{definition}[条件独立性]\label{definition:ch11-条件独立性}
+若对$c$的每一个可能取值都有\eqref{align:ch11-条件独立性定义}成立，则称\textbf{在给定$c$的条件下，$a$与$b$是条件独立的}（conditionally independent）。若存在某个$c$的取值使命题不成立，则不能称二者条件独立。
+\end{definition}
 
+% SUPPLEMENT: parent=definition:ch11-条件独立性; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+\cref{definition:ch11-条件独立性}中最容易被忽略的是“对$c$的每一个可能值”这一全称量词。逐点成立才是条件独立；只在某些$c$上成立通常是无意义的，因为条件分布本来就是$c$的函数。与之对照，$a$与$b$的边缘独立只要求一个等式$p(a,b)=p(a)p(b)$，它是把$c$边缘化之后的整体性质，二者互不蕴含：本节\cref{example:ch11-尾尾相接}给出“条件独立但边缘不独立”的例子，\cref{example:ch11-头头相接}给出“边缘独立但条件不独立”的例子。定义没有限制变量类型，离散时$p$为概率，连续时$p$为密度，两种情形下等式的含义相同。
+\end{remark}
+
+我们称之为，在给定$c$的条件下，$a$与$b$是条件独立的。如果我们考虑以$c$为条件的$a$和$b$的联合分布，就可以用稍微不同的方式来表示，形式如下：
 \begin{align}
-  p(a,b\mid c) = p(a\mid b,c)\,p(b\mid c) = p(a\mid c)\,p(b\mid c)
+  p(a,b\mid c) = p(a\mid b,c)\,p(b\mid c) = p(a\mid c)\,p(b\mid c),
   \label{align:ch11-条件独立性分解}
 \end{align}
+其中利用了概率的乘积法则和\eqref{align:ch11-条件独立性定义}。
 
-其中利用了概率的乘积法则和式~\eqref{align:ch11-条件独立性定义}。我们看到，以$c$为条件的$a$和$b$的联合分布可以分解为$a$的边缘分布和$b$的边缘分布的乘积（后者同样都以$c$为条件）。也就是说，在给定$c$的条件下，变量$a$和$b$在统计上是独立的。请注意，我们对条件独立性的定义要求式~\eqref{align:ch11-条件独立性定义}或式~\eqref{align:ch11-条件独立性分解}必须对$c$的每一个可能值都成立，而不仅仅对$c$的某些值成立。我们有时也会使用条件独立性的速记符号（Dawid, 1979），其中
+\begin{proposition}[条件独立性的等价刻画]\label{proposition:ch11-条件独立性等价}
+设$p(b,c)>0$。则下列两条等价：
+\begin{enumerate}[(i)]
+  \item $p(a\mid b,c)=p(a\mid c)$对$c$的每个取值成立；
+  \item $p(a,b\mid c)=p(a\mid c)\,p(b\mid c)$对$c$的每个取值成立。
+\end{enumerate}
+也就是说，在给定$c$的条件下，$a$与$b$的联合分布分解为二者（同样以$c$为条件的）边缘分布的乘积。
+\end{proposition}
 
+\begin{proof}
+（重构新增）(i)$\Rightarrow$(ii)：由乘积法则$p(a,b\mid c)=p(a\mid b,c)p(b\mid c)$，代入(i)即得(ii)。(ii)$\Rightarrow$(i)：在$p(b\mid c)>0$处，由(ii)与乘积法则得$p(a\mid b,c)=p(a,b\mid c)/p(b\mid c)=p(a\mid c)$；在$p(b\mid c)=0$处条件分布$p(a\mid b,c)$本身无定义，此时约定(i)按“几乎处处”理解即可，不影响任何积分。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch11-条件独立性等价; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+\cref{proposition:ch11-条件独立性等价}说明“条件独立”与“以$c$为条件后$a$、$b$统计独立”是同一件事，这正是名称的由来。两个方向的证明都只用到乘积法则，因此条件独立性不是新的公理，而是乘积法则在一个特殊分解下的推论，这也是为什么它可以在图中被“读出来”。条件$p(b,c)>0$是技术性的：若$c$的某个取值使$p(b\mid c)=0$，则条件概率本身无定义，此时等式只在正概率处有意义。该命题还提示了一个实用判据：检验条件独立性等价于检验一个分解式，而不必真的去算条件分布。
+\end{remark}
+
+也就是说，在给定$c$的条件下，变量$a$和$b$在统计上是独立的。请注意，我们对条件独立性的定义要求\eqref{align:ch11-条件独立性定义}或\eqref{align:ch11-条件独立性分解}必须对$c$的每一个可能值都成立，而不仅仅对$c$的某些值成立。我们有时也会使用条件独立性的速记符号（Dawid, 1979），其中
 \begin{align}
   a \perp b \mid c
   \label{align:ch11-条件独立性记号}
 \end{align}
-
 表示在给定$c$的条件下，$a$和$b$是条件独立的。条件独立性在机器学习的概率模型中发挥着重要作用，因为它既简化了模型的结构，也简化了在模型下执行推理和学习所需的计算。
 
 如果能用条件分布的乘积（即有向图的数学表达式）得出一组变量的联合分布表达式，则原则上可以通过反复应用概率的加和法则与乘积法则来检验任何潜在的条件独立性是否成立。实际上，该方法十分耗时。图模型的一个重要而优雅的特点是，可以直接从图中读取联合分布的条件独立性，而无须执行任何分析操作。实现此过程的一般框架称为d分离（d-separation），其中“d”代表“有向”（Pearl, 1988）。本节将介绍d分离的概念并给出d分离准则的一般说明，形式证法见 Lauritzen (1996)。
 
 \subsection{3个示例图}\label{subsection:ch11-3个示例图}
 
-在开始讨论有向图的条件独立性之前，我们先来看3个简单的例子，每个例子都涉及只有3个节点的图。这些将共同促进和说明d分离的关键概念。第1个示例如图11.14所示，利用一般结果[式~\eqref{align:ch11-有向图联合分布}]可以很容易地写出该图所对应的联合分布，即
+在开始讨论有向图的条件独立性之前，我们先来看3个简单的例子，每个例子都涉及只有3个节点的图。这些将共同促进和说明d分离的关键概念。
 
+\begin{example}[ 尾尾相接]\label{example:ch11-尾尾相接}
+第1个示例如\cref{figure:ch11-尾尾相接示例}所示，利用一般结果[\eqref{align:ch11-有向图联合分布}]可以很容易地写出该图所对应的联合分布，即
 \begin{align}
-  p(a,b\mid c) = p(a\mid c)\,p(b\mid c)
+  p(a,b,c) = p(a\mid c)\,p(b\mid c)\,p(c).
   \label{align:ch11-第一示例联合}
 \end{align}
-
-如果未观测到任何变量，则可以通过将式~\eqref{align:ch11-第一示例联合}的两边相对于$c$边缘化来研究$a$和$b$是否独立，即
-
+如果未观测到任何变量，则可以通过将\eqref{align:ch11-第一示例联合}的两边相对于$c$边缘化来研究$a$和$b$是否独立，即
 \begin{align}
-  p(a,b) = \sum_c p(a\mid c)\,p(b\mid c)\,p(c)
+  p(a,b) = \sum_{c}p(a\mid c)\,p(b\mid c)\,p(c).
   \label{align:ch11-第一示例边缘化}
 \end{align}
-
 一般来说，这不会分解为乘积$p(a)p(b)$，因此
-
 \begin{align}
-  a \not\perp b \mid \varnothing 
-  \label{align:ch11-第一示例非条件独立}
+  a \not\perp b \mid \varnothing,
+  \label{align:ch11-第一示例非独立}
 \end{align}
+其中$\varnothing$表示空集，符号$\not\perp$表示条件独立性一般不成立。当然，对于特定的分布来说，条件独立性也可能由于与各种条件概率相关的特定数值而成立，但一般来说，这并不是由图的结构得出的。
 
-其中$\varnothing $表示空集，符号上表示条件独立性一般不成立。当然，对于特定的分布来说，条件独立性也可能由于与各种条件概率相关的特定数值而成立，但一般来说，这并不是由图的结构得出的。
-
-假设我们以节点$c$为条件，如图11.15中的有向图所示。根据式~\eqref{align:ch11-第一示例联合}，我们可以很容易地写出在给定$c$的条件下$a$和$b$的条件分布，其形式为
-
+假设我们以节点$c$为条件，如\cref{figure:ch11-尾尾相接以c为条件}中的有向图所示。根据\eqref{align:ch11-第一示例联合}，我们可以很容易地写出在给定$c$的条件下$a$和$b$的条件分布，其形式为
 \begin{align}
-  p(a,b\mid c) = p(a\mid c)\,p(b\mid c)
+  p(a,b\mid c) = \frac{p(a,b,c)}{p(c)} = p(a\mid c)\,p(b\mid c).
 \end{align}
-
 于是，我们得到如下条件独立性：
-
 \begin{align}
-  a \perp b \mid c
+  a \perp b \mid c.
 \end{align}
+可以考虑从节点$a$经过节点$c$到达节点$b$的路径，从而对这一结果进行简单的图解释。节点$c$之所以相对于该路径称为\textbf{尾尾相接}（tail-to-tail）节点，就是因为该节点与两个箭头的尾部相连，而连接节点$a$和$b$的路径的存在会导致这两个节点相互依赖。然而，如\cref{figure:ch11-尾尾相接以c为条件}所示，当我们以节点$c$为条件时，条件节点会“阻塞”从$a$到$b$的路径，并使$a$和$b$变得（条件）独立。
+\end{example}
 
-可以考虑从节点$a$经过节点$c$到达节点$b$的路径，从而对这一结果进行简单的图解释。节点$c$之所以相对于该路径称为尾尾相接（tail-to-tail）节点，就是因为该节点与两个箭头的尾部相连，而连接节点$a$和$b$的路径的存在会导致这两个节点相互依赖。然而，如图11.15所示，当我们以节点$c$为条件时，条件节点会“阻塞”从$a$到$b$的路径，并使$a$和$b$变得（条件）独立。
+\begin{remark}（重构新增）\cref{example:ch11-尾尾相接}是d分离的第一个基本构件。它的结构含义是：若两个变量共享一个共同的“原因”$c$，则它们在边缘上相关（因为$c$的取值同时影响二者），但一旦知道了$c$，这种通过$c$的相关就被切断。这就是“以共同原因为条件可以去除伪相关”的形式化，也是\cref{subsection:ch11-朴素Bayes}中朴素Bayes假设的原型。注意\eqref{align:ch11-第一示例边缘化}中的求和：只有当$c$被边缘化掉时，$p(a\mid c)p(b\mid c)$才会通过$p(c)$把二者耦合起来；这一步不可省略，否则会误以为尾尾相接总是导致独立。
+\end{remark}
 
-同样，我们也可以考虑图11.16所示的有向图。根据式~\eqref{align:ch11-有向图联合分布}，我们可以得到与该有向图相对应的联合分布，即
+\begin{figure}[htbp]
+  \centering
+    \includegraphics[width=0.32\textwidth]{ch11-fig11-14-tail-to-tail.png}
+    \caption{第1个示例用于讨论有向图的条件独立性}
+    \label{figure:ch11-尾尾相接示例}
+  \end{figure}
 
+\begin{figure}[htbp]
+  \centering
+    \includegraphics[width=0.32\textwidth]{ch11-fig11-15-tail-to-tail-given-c.png}
+    \caption{与\cref{figure:ch11-尾尾相接示例}相同，但以节点$c$为条件}
+    \label{figure:ch11-尾尾相接以c为条件}
+\end{figure}
+
+\begin{example}[ 头尾相接]\label{example:ch11-头尾相接}
+同样，我们也可以考虑\cref{figure:ch11-头尾相接示例}所示的有向图。根据\eqref{align:ch11-有向图联合分布}，我们可以得到与该有向图相对应的联合分布，即
 \begin{align}
-  p(a,b,c) = p(a)\,p(c\mid a)\,p(b\mid c)
+  p(a,b,c) = p(a)\,p(c\mid a)\,p(b\mid c).
   \label{align:ch11-第二示例联合}
 \end{align}
-
 假设未观测到任何变量。我们可以通过对$c$进行边缘化来检验$a$和$b$是否独立，
-
 \begin{align}
-  p(a,b) = p(a)\sum_c p(c\mid a)\,p(b\mid c) = p(a)\,p(b\mid a)
+  p(a,b) = p(a)\sum_{c}p(c\mid a)\,p(b\mid c) = p(a)\,p(b\mid a),
 \end{align}
-
 从而得出
-
 \begin{align}
-  a \not\perp b \mid \varnothing 
+  a \not\perp b \mid \varnothing.
+  \label{align:ch11-第二示例非独立}
 \end{align}
-
-假设以节点$c$为条件，如图11.17中的有向图所示。利用贝叶斯定理和式~\eqref{align:ch11-第二示例联合}，即可得出
-
+假设以节点$c$为条件，如\cref{figure:ch11-头尾相接以c为条件}中的有向图所示。利用Bayes定理和\eqref{align:ch11-第二示例联合}，即可得出
 \begin{align}
-  p(a,b\mid c) = \frac{p(a)\,p(c\mid a)\,p(b\mid c)}{p(c)} = p(a\mid c)\,p(b\mid c)
+  p(a,b\mid c) = \frac{p(a,b,c)}{p(c)} = \frac{p(a)\,p(c\mid a)\,p(b\mid c)}{p(c)} = p(a\mid c)\,p(b\mid c).
 \end{align}
-
 于是，我们再次得到如下条件独立性：
-
 \begin{align}
-  a \perp b \mid c
+  a \perp b \mid c.
 \end{align}
+和以前一样，我们可以用图形来解释这些结果。就节点$a$到节点$b$的路径而言，节点$c$称为\textbf{头尾相接}（head-to-tail）节点。该路径连接了节点$a$和$b$，并使它们相互依赖。假设我们现在观测到了节点$c$，如\cref{figure:ch11-头尾相接以c为条件}所示，那么这个观测结果就会“阻塞”从节点$a$到$b$的路径，从而得到条件独立性$a\perp b\mid c$。
+\end{example}
 
-和以前一样，我们可以用图形来解释这些结果。就节点$a$到节点$b$的路径而言，节点$c$称为头尾相接（head-to-tail）节点。该路径连接了节点$a$和$b$，并使它们相互依赖。假设我们现在观测到了节点$c$，如图11.17所示，那么这个观测结果就会“阻塞”从节点$a$到$b$的路径，从而得到条件独立性$a\perp b\mid c$。
+\begin{remark}（重构新增）
+\cref{example:ch11-头尾相接}是“中介”结构的原型：$a$通过$c$影响$b$，因此$a$与$b$边缘相关；一旦$c$被观测，信息通道被截断，二者条件独立。它与尾尾相接的区别在于阻塞的机制不同：尾尾相接是“共同原因”，这里是“链条”。这一区别在\cref{subsection:ch11-d分离}被统一为同一条规则——两者都要求$c$被观测才阻塞；而下面的头头相接恰好相反。注意\eqref{align:ch11-第二示例联合}的分解顺序与$a\to c\to b$的箭头方向一致，若把三个变量重新排序，同一分布会写成另一种分解，但条件独立性的结论不变。
+\end{remark}
 
-最后，让我们来看看第3个示例，如图11.18中的有向图所示。利用一般结果[式~\eqref{align:ch11-有向图联合分布}]写出该图所对应的联合分布，即
+\begin{figure}[htbp]
+  \centering
+    \includegraphics[width=0.32\textwidth]{ch11-fig11-16-head-to-tail.png}
+    \caption{第2个示例用于促进建立有向图的条件独立性框架}
+    \label{figure:ch11-头尾相接示例}
+  \end{figure}
 
+\begin{figure}[htbp]
+  \centering
+    \includegraphics[width=0.32\textwidth]{ch11-fig11-17-head-to-tail-given-c.png}
+    \caption{与\cref{figure:ch11-头尾相接示例}相同，但以节点$c$为条件}
+    \label{figure:ch11-头尾相接以c为条件}
+\end{figure}
+
+\begin{example}[ 头头相接]\label{example:ch11-头头相接}
+最后，让我们来看看第3个示例，如\cref{figure:ch11-头头相接示例}中的有向图所示。利用一般结果[\eqref{align:ch11-有向图联合分布}]写出该图所对应的联合分布，即
 \begin{align}
-  p(a,b,c) = p(a)\,p(b)\,p(c\mid a,b)
+  p(a,b,c) = p(a)\,p(b)\,p(c\mid a,b).
   \label{align:ch11-第三示例联合}
 \end{align}
-
-首先考虑未观测到任何变量的情况。在$c$上对式~\eqref{align:ch11-第三示例联合}的两边进行边缘化，得到
-
+首先考虑未观测到任何变量的情况。在$c$上对\eqref{align:ch11-第三示例联合}的两边进行边缘化，得到
 \begin{align}
-  p(a,b) = p(a)\,p(b)
+  p(a,b) = p(a)\,p(b),
 \end{align}
-
 因此，与前两个例子所不同的是，$a$和$b$是独立的，且未观测到任何变量。我们可以将这一结果写成
-
 \begin{align}
-  a \perp b \mid \varnothing 
+  a \perp b \mid \varnothing.
+  \label{align:ch11-第三示例独立}
 \end{align}
-
-假设我们以节点$c$为条件，如图11.19所示，则$a$和$b$的条件分布如下：
-
+假设我们以节点$c$为条件，如\cref{figure:ch11-头头相接以c为条件}所示，则$a$和$b$的条件分布如下：
 \begin{align}
-  p(a,b\mid c) = \frac{p(a)\,p(b)\,p(c\mid a,b)}{p(c)}
+  p(a,b\mid c) = \frac{p(a,b,c)}{p(c)} = \frac{p(a)\,p(b)\,p(c\mid a,b)}{p(c)}.
 \end{align}
-
 一般来说，这不会分解为乘积$p(a\mid c)\,p(b\mid c)$，因此
-
 \begin{align}
-  a \not\perp b \mid c
+  a \not\perp b \mid c.
 \end{align}
+第3个示例的行为与前两个示例相反。观察\cref{figure:ch11-头头相接示例}，节点$c$相对于从节点$a$到节点$b$的路径是\textbf{头头相接}（head-to-head）的。节点$c$有时也称\textbf{碰撞节点}。当未观测到节点$c$时，就会“阻塞”路径，且导致$a$和$b$是独立的。然而，以$c$为条件会“疏通”路径，并使$a$和$b$相互依赖。
+\end{example}
 
-第3个示例的行为与前两个示例相反。观察图11.18，节点$c$相对于从节点$a$到节点$b$的路径是头头相接（head-to-head）的。节点$c$有时也称碰撞节点。当未观测到节点$c$时，就会“阻塞”路径，且导致$a$和$b$是独立的。然而，以$c$为条件会“疏通”路径，并使$a$和$b$相互依赖。
+\begin{remark}（重构新增）
+\cref{example:ch11-头头相接}与前两个例子的方向完全相反，是d分离中最容易出错的一种结构。其直觉是：$c$是$a$与$b$的“共同结果”，若不知道$c$，两个原因互不干扰；一旦知道$c$，二者就通过“谁造成了$c$”而竞争，从而相关。这种“以结果为条件导致原因相关”的现象称为相消解释（explaining away），是\cref{subsection:ch11-相消解释}的主题。数学上关键的一步是\eqref{align:ch11-第三示例联合}中$p(c\mid a,b)$不能分解为$p(c\mid a)p(c\mid b)$：若它恰好分解，则\eqref{align:ch11-第三示例联合}变成尾尾相接结构，条件独立性的结论也会随之翻转。因此，图的结构与因子的形式必须匹配，二者缺一不可。
+\end{remark}
 
-\subsection{相消解释}\label{subsection:ch11-相消解释}
+\begin{figure}[htbp]
+  \centering
+    \includegraphics[width=0.30\textwidth]{ch11-fig11-18-head-to-head.png}
+    \caption{第3个示例具有与前两个示例截然不同的性质}
+    \label{figure:ch11-头头相接示例}
+  \end{figure}
 
-我们有必要花点时间进一步了解图11.19中的有向图的异常行为。如图11.20所示，考虑这样一个图，该图对应的问题与汽车燃油系统有关的3个二进制随机变量。其中，变量$B$代表电池的状态，即满电（$B=1$）或没电（$B=0$）；变量$F$代表油箱的状态，即满油（$F=1$）或没油（$F=0$）；变量$G$代表电动燃油表的读数，$G=1$表示油箱满油，$G=0$表示油箱没油，电池要么满电要么没电，油箱要么满油要么没油，且先验概率为
+\begin{figure}[htbp]
+  \centering
+    \includegraphics[width=0.26\textwidth]{ch11-fig11-19-head-to-head-given-c.png}
+    \caption{与\cref{figure:ch11-头头相接示例}相同，但以节点$c$为条件，且条件行为导致$a$和$b$之间的依赖关系}
+    \label{figure:ch11-头头相接以c为条件}
+\end{figure}
 
-\begin{align}
-  p(F=1)=0.9,\qquad p(B=1)=0.9
-\end{align}
+第3个例子还有一个微妙之处。首先，我们来介绍一些术语。
 
-在给定油箱状态和电池状态的情况下，电动燃油表读数为1的概率为
+\begin{definition}[后代与祖先]\label{definition:ch11-后代}
+如果存在一条从$x$到$y$的路径，且这条路径上的每一步都遵循箭头的方向，则称节点$y$是节点$x$的\textbf{后代}（descendant），节点$x$是节点$y$的\textbf{祖先}。
+\end{definition}
 
-\begin{align}
-  p(G=1\mid B=0,F=0)=0.1,\quad
-  p(G=1\mid B=0,F=1)=0.2,\quad
-  p(G=1\mid B=1,F=0)=0.2,\quad
-  p(G=1\mid B=1,F=1)=0.8
-\end{align}
+% SUPPLEMENT: parent=definition:ch11-后代; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+\cref{definition:ch11-后代}把“路径”与“可达性”区分开：路径不必沿箭头方向，而后代关系要求每一步都沿箭头方向。这个区分是d分离的关键，因为阻塞规则只关心路径上每个节点的箭头朝向（头对头、头对尾、尾对尾），而后代关系决定了头对头节点被观测时路径是否被“疏通”。由于图无环，后代关系是严格偏序，因此可以按拓扑序递推（\cref{exercise:ch11-02}）。注意后代关系依赖整条路径而不只是相邻边，所以“$y$是$x$的后代”比“$y$是$x$的子节点”弱得多。
+\end{remark}
 
-可见这是一个相当不靠谱的燃油表！因为剩下的所有概率都由概率和为1这一要求决定。
-
-在我们观测到任何数据之前，油箱为空的先验概率为$p(F=0)=0.1$。假设我们观测燃油表并发现它的读数为零，即$G=0$，与图11.20的中间图相对应。我们可以使用贝叶斯定理来计算油箱为空的后验概率。首先计算
-
-\begin{align}
-  p(G=0) = \sum_B\sum_F p(G=0\mid B,F)\,p(B)\,p(F) = 0.315
-  \label{align:ch11-燃油表边缘}
-\end{align}
-
-然后计算
-
-\begin{align}
-  p(F=0\mid G=0) = \frac{p(G=0\mid F=0)\,p(F=0)}{p(G=0)} \approx 0.257
-  \label{align:ch11-油箱空后验1}
-\end{align}
-
-所以$p(F=0\mid G=0)>p(F=0)$，从而只要测到燃油表读数为零，就更有可能确定油箱确实是空的，正如我们潜意识里所认为的那样。接下来，假设我们还检查了电池的状态并发现电池没电，即$B=0$。如图11.20的右图所示，我们现在已经观测到燃油表和电池的状态。根据对燃油表状态和电池状态的观测，油箱为空的后验概率为
-
-\begin{align}
-  p(F=0\mid G=0,B=0) = \frac{p(G=0\mid B=0,F=0)\,p(F=0)}{p(G=0\mid B=0)} \approx 0.111
-  \label{align:ch11-油箱空后验2}
-\end{align}
-
-其中，先验概率$p(B=0)$在式~\eqref{align:ch11-油箱空后验2}的分子和分母之间相互抵消。因此，由于观测到电池的状态，油箱为空的概率降低了（从0.257降至0.111）。这与我们的直觉相吻合，即电池没电可以相消解释（explain away）燃油表读数为零的观测结果。通过观测燃油表的读数，我们发现油箱和电池的状态确实是相互依赖的。事实上，如果我们不直接观测燃油表，而是观测节点$G$的某个后代节点的状态，例如一个相当不可靠的目击者说他看到燃油表的读数为零，则情况也会如此（见习题11.14）。请注意，概率$p(F=0\mid G=0,B=0)\approx 0.111$大于先验概率$p(F=0)=0.1$，因为观测到燃油表读数为零仍然提供了一些支持油箱为空的证据。
+然后可以证明，如果节点或其任何后代被观测到，则头头相接的路径就会变得畅通（见\cref{exercise:ch11-13}）。
 
 总而言之，在未观测到尾对尾节点或头对尾节点的情况下，路径会变得畅通；而一旦尾对尾节点或头对尾节点被观测到，路径就会变得阻塞。相比之下，头对头节点在未被观测到时会阻塞路径，而一旦头对头该节点和/或其至少一个后代被观测到，路径就会变得畅通。
 
-第3个例子还有一个微妙之处。首先，我们来介绍一些术语。如果存在一条从$x$到$y$的路径，且这条路径上的每一步都遵循箭头的方向，则可以说节点$y$是节点$x$的后代。然后可以证明，如果节点或其任何后代被观测到，则头头相接的路径就会变得畅通（见习题11.13）。
+\begin{proposition}[三种基本结构的条件独立性]\label{proposition:ch11-三种结构}
+设$a$与$b$之间的路径只经过一个中间节点$c$。则
+\begin{enumerate}[(i)]
+  \item 若$c$是尾尾相接或头尾相接节点（即$a\leftarrow c\rightarrow b$或$a\rightarrow c\rightarrow b$），则$a\perp b\mid\varnothing$一般不成立，而$a\perp b\mid c$成立；
+  \item 若$c$是头头相接节点（即$a\rightarrow c\leftarrow b$），则$a\perp b\mid\varnothing$成立，而$a\perp b\mid c$一般不成立；
+  \item 在(ii)的情形下，若以$c$的任一后代$d$为条件，则$a\perp b\mid d$一般不成立。
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+（重构新增）(i)(ii)已分别在\cref{example:ch11-尾尾相接}、\cref{example:ch11-头尾相接}、\cref{example:ch11-头头相接}中由联合分布的显式分解逐项验证。(iii)设$c$有后代$d$，则存在有向路径$c\to\cdots\to d$。把该路径上的节点依次边缘化（它们都是隐变量），得到的$a,b,d$的联合分布仍可写成$a\to c\leftarrow b$、$c\to\cdots\to d$的结构；由$d$依赖$c$、$c$依赖$(a,b)$，一般有$p(a,b\mid d)\neq p(a\mid d)p(b\mid d)$。\cref{exercise:ch11-13}给出了一个具体的反例（取$a,b$独立、$c$为二者的确定性“与”、$d$为$c$的含噪观测），其中$p(a=1,b=1\mid d=1)=0.75$而$p(a=1\mid d=1)p(b=1\mid d=1)=25/36\approx0.694$，故一般不独立。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch11-三种结构; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+\cref{proposition:ch11-三种结构}把本节三个例子压缩成一张“判定表”，它是\cref{subsection:ch11-d分离}中一般判据的全部素材：一条长路径只要在某个节点处满足(i)或(ii)的阻塞条件，整条路径就被阻塞。(iii)是唯一需要“后代”概念的地方，也是实际建模中最容易漏掉的一条：观测一个与隐变量相邻的下游变量，效果等同于（部分地）观测该隐变量。三条款中的“一般不成立”都应理解为“对图的几乎所有参数成立”，而不是逻辑上的必然；特殊参数下可能出现偶然的独立，但那不是图结构所蕴含的结论。
+\end{remark}
+
+\subsection{相消解释}\label{subsection:ch11-相消解释}
+
+我们有必要花点时间进一步了解\cref{figure:ch11-头头相接以c为条件}中的有向图的异常行为。如\cref{figure:ch11-汽车燃油系统}所示，考虑这样一个图，该图对应的问题与汽车燃油系统有关的3个二进制随机变量。其中，变量$B$代表电池的状态，即满电（$B=1$）或没电（$B=0$）；变量$F$代表油箱的状态，即满油（$F=1$）或没油（$F=0$）；变量$G$代表电动燃油表的读数，$G=1$表示油箱满油，$G=0$表示油箱没油。电池要么满电要么没电，油箱要么满油要么没油，且先验概率为
+\begin{align}
+  p(B=1) &= 0.9,\\
+  p(F=1) &= 0.9.
+\end{align}
+
+\begin{example}[ 汽车燃油系统]\label{example:ch11-汽车燃油系统}
+在给定油箱状态和电池状态的情况下，电动燃油表读数为1的概率为
+\begin{align}
+  p(G=1\mid B=1,F=1) &= 0.8,\\
+  p(G=1\mid B=1,F=0) &= 0.2,\\
+  p(G=1\mid B=0,F=1) &= 0.2,\\
+  p(G=1\mid B=0,F=0) &= 0.1.
+\end{align}
+可见这是一个相当不靠谱的燃油表！因为剩下的所有概率都由概率和为1这一要求决定。
+
+在我们观测到任何数据之前，油箱为空的先验概率为$p(F=0)=0.1$。假设我们观测燃油表并发现它的读数为零，即$G=0$，与\cref{figure:ch11-汽车燃油系统}的中间图相对应。我们可以使用Bayes定理来计算油箱为空的后验概率。首先计算
+\begin{align}
+  p(G=0) = \sum_{B\in\{0,1\}}\sum_{F\in\{0,1\}}p(G=0\mid B,F)\,p(B)\,p(F) = 0.315.
+  \label{align:ch11-燃油表边缘}
+\end{align}
+然后计算
+\begin{align}
+  p(G=0\mid F=0) = \sum_{B\in\{0,1\}}p(G=0\mid B,F=0)\,p(B) = 0.81,
+  \label{align:ch11-燃油表条件}
+\end{align}
+利用这些结果，我们得出
+\begin{align}
+  p(F=0\mid G=0) = \frac{p(G=0\mid F=0)\,p(F=0)}{p(G=0)} \approx 0.257.
+  \label{align:ch11-油箱空后验1}
+\end{align}
+所以$p(F=0\mid G=0)>p(F=0)$，从而只要测到燃油表读数为零，就更有可能确定油箱确实是空的，正如我们潜意识里所认为的那样。接下来，假设我们还检查了电池的状态并发现电池没电，即$B=0$。如\cref{figure:ch11-汽车燃油系统}的右图所示，我们现在已经观测到燃油表和电池的状态。根据对燃油表状态和电池状态的观测，油箱为空的后验概率为
+\begin{align}
+  p(F=0\mid G=0,B=0) = \frac{p(G=0\mid B=0,F=0)\,p(F=0)}{\sum_{F\in\{0,1\}}p(G=0\mid B=0,F)\,p(F)} \approx 0.111,
+  \label{align:ch11-油箱空后验2}
+\end{align}
+其中，先验概率$p(B=0)$在\eqref{align:ch11-油箱空后验2}的分子和分母之间相互抵消。因此，由于观测到电池的状态，油箱为空的概率降低了（从0.257降至0.111）。这与我们的直觉相吻合，即电池没电可以相消解释（explain away）燃油表读数为零的观测结果。通过观测燃油表的读数，我们发现油箱和电池的状态确实是相互依赖的。事实上，如果我们不直接观测燃油表，而是观测节点$G$的某个后代节点的状态，例如一个相当不可靠的目击者说他看到燃油表的读数为零，则情况也会如此（见\cref{exercise:ch11-14}）。请注意，概率$p(F=0\mid G=0,B=0)\approx 0.111$大于先验概率$p(F=0)=0.1$，因为观测到燃油表读数为零仍然提供了一些支持油箱为空的证据。
+\end{example}
+
+\begin{remark}（重构新增）
+\cref{example:ch11-汽车燃油系统}把相消解释量化了：三条后验概率$0.1\to0.257\to0.111$的走势说明，证据的方向可以因新证据而反转。中间一步$p(F=0\mid G=0)\approx0.257$用到了\eqref{align:ch11-燃油表条件}中“先对$B$求和”的边缘化，这一步不能与$p(F=0\mid G=0,B=0)$混淆：前者是对电池状态不确定，后者是已知电池没电。数值上两个后验都大于先验$0.1$，但后者小得多，因为电池没电本身就能解释低读数，从而削弱了“油箱空”这一解释的必要性。这个例子还预告了\cref{subsection:ch11-Markov毯}的结论：$F$与$B$在给定$G$后并不独立（二者通过碰撞节点相关），因此“条件独立”不能想当然地由“边缘独立”推出。
+\end{remark}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.88\textwidth]{ch11-fig11-20-fuel-system.png}
+  \caption{用于说明相消解释的3节点图的示例。3个节点分别代表电池的状态（$B$）、油箱的状态（$F$）和电动燃油表的读数（$G$）}
+  \label{figure:ch11-汽车燃油系统}
+\end{figure}
 
 \subsection{d分离}\label{subsection:ch11-d分离}
 
-本小节将对有向图的d分离特性（Pearl, 1988）进行一般性阐述。考虑一个有向图，其中$\mathbf{A}$、$\mathbf{B}$、$\mathbf{C}$是任意不相交的节点集（但它们的并集可能小于图中的完整节点集）。我们希望确定给定的有向无环图是否隐含特定的条件独立性$\mathbf{A}\perp\mathbf{B}\mid\mathbf{C}$。为此，我们需要考虑从$\mathbf{A}$中任何节点到$\mathbf{B}$中任何节点的所有可能路径。如果任何这样的路径包含一个节点，则任何这样的路径可称为被阻塞路径，并且可能出现如下两种情况之一：
+本小节将对有向图的d分离特性（Pearl, 1988）进行一般性阐述。考虑一个有向图，其中$\mathbf{A}$、$\mathbf{B}$、$\mathbf{C}$是任意不相交的节点集（但它们的并集可能小于图中的完整节点集）。我们希望确定给定的有向无环图是否隐含特定的条件独立性$\mathbf{A}\perp\mathbf{B}\mid\mathbf{C}$。为此，我们需要考虑从$\mathbf{A}$中任何节点到$\mathbf{B}$中任何节点的所有可能路径。
 
-\begin{enumerate}
-  \item 路径上的箭头在节点处头尾相接或尾尾相接，且节点位于集合$\mathbf{C}$中；
-  \item 箭头在节点处头头相接，且节点及其任何后代节点都不在集合$\mathbf{C}$中。
+\begin{definition}[阻塞与d分离]\label{definition:ch11-d分离}
+设$\mathbf{C}$是已观测节点的集合，$\pi$是一条路径。若$\pi$上存在节点$w$满足下列两条之一，则称$\pi$被$\mathbf{C}$\textbf{阻塞}：
+\begin{enumerate}[(1)]
+  \item 路径上的箭头在$w$处头尾相接或尾尾相接，且$w\in\mathbf{C}$；
+  \item 箭头在$w$处头头相接，且$w$及其任何后代节点都不在$\mathbf{C}$中。
 \end{enumerate}
+若从$\mathbf{A}$中任何节点到$\mathbf{B}$中任何节点的所有路径都被$\mathbf{C}$阻塞，则称$\mathbf{A}$与$\mathbf{B}$被$\mathbf{C}$\textbf{d分离}（d-separated）。
+\end{definition}
 
-如果所有路径都被阻塞，那么$\mathbf{A}$和$\mathbf{B}$就会被$\mathbf{C}$分离，图中所有变量的联合分布将满足$\mathbf{A}\perp\mathbf{B}\mid\mathbf{C}$。
+% SUPPLEMENT: parent=definition:ch11-d分离; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+\cref{definition:ch11-d分离}把前三个例子的判定规则组装成一条可机械执行的算法：枚举路径、检查每个中间节点的箭头朝向与该节点是否在$\mathbf{C}$中。它只依赖图的拓扑，不依赖任何数值，因此同一张图对所有满足该分解的分布给出同一组结论。定义中“路径”指忽略箭头方向的连通序列（允许重复节点但通常只考虑简单路径）；若某条路径本身以$\mathbf{A}$或$\mathbf{B}$中的节点为中间节点，则按同样规则判断。注意(1)与(2)是互补的两种情况：一个节点要么不是碰撞节点（此时只要它在$\mathbf{C}$中就阻塞），要么是碰撞节点（此时只有它及其后代都不在$\mathbf{C}$中才阻塞）。\cref{subsection:ch11-d分离}的\cref{theorem:ch11-d分离定理}将说明，这种纯图形的判定与“分解式蕴含的条件独立性”完全等价。
+\end{remark}
 
-d分离法如图11.21所示。在图11.21(a)中，从$a$到$b$的路径既没有被节点$f$阻塞，因为节点$f$是这条路径的尾对尾节点，且未被观测到；也没有被节点$e$阻塞，因为尽管节点$e$是头对头节点，但它在条件集中只有一个后代节点$c$。因此，条件独立性$\mathbf{A}\perp\mathbf{B}\mid\mathbf{C}$从该图中无法得出。在图11.21(b)中，从$a$到$b$的路径被节点$f$阻塞，因为这是一个被观测到的尾对尾节点，所以根据该图进行分解的任何分布都将满足条件独立性$a\perp b\mid f$。请注意，这条路径也被节点$e$阻塞了，因为节点$e$是一个头对头节点，节点$e$及其子节点都不在条件集合中。在d分离中，图11.12中以浮动变量表示的$\lambda$等这些节点在d分离中不起作用。参数的行为与观测节点的行为相同。然而，这些节点不存在边缘分布，因此参数节点本身永远不会有父节点，经过这些节点的所有路径永远是尾尾相接的，因此会被阻塞。
-
-独立同分布数据是条件独立性和d分离的另一个示例（参见2.3.2小节）。观察图11.12所示的二元分类模型。这里的随机节点分别对应$t_n$、$\mathbf{w}$和$t$。我们可以看到，对于从子到任何一个节点$t_n$的路径来说，$\mathbf{w}$的节点是尾对尾的，因此我们具有以下条件独立性：
-
+\begin{theorem}[d分离判定]\label{theorem:ch11-d分离定理}
+设$p(\mathbf{x})$由有向无环图$G$按\eqref{align:ch11-有向图联合分布}分解，且$p$对每个变量取值的组合都为正。若$\mathbf{A}$与$\mathbf{B}$被$\mathbf{C}$d分离，则
 \begin{align}
-  t \perp \{t_n\} \mid \mathbf{w}
+  \mathbf{A}\perp\mathbf{B}\mid\mathbf{C}
+  \label{align:ch11-d分离结论}
+\end{align}
+对$G$所表示的任何分布成立。反之，若$\mathbf{A}$与$\mathbf{B}$不被$\mathbf{C}$d分离，则存在满足该分解的分布使\eqref{align:ch11-d分离结论}不成立。
+\end{theorem}
+
+\begin{proof}
+（重构新增）这里只给出正面方向的论证思路（完整的形式证明见 Lauritzen (1996)）。把$G$按\cref{definition:ch11-因子图}改写成因子图，并把$\mathbf{C}$中的节点固定。对任一未被阻塞的路径，逐点按\cref{definition:ch11-d分离}的条件分类：若路径上存在满足条件(1)的节点，则该节点在$\mathbf{C}$中，路径被切断；若存在满足条件(2)的节点，则该节点是碰撞节点且其所有后代都不在$\mathbf{C}$中，路径在该处被“堵住”。因此只要所有路径都被阻塞，$\mathbf{A}$与$\mathbf{B}$之间就不存在既不被观测、又不被碰撞节点堵住的“有效通道”。反方向：对每条未被阻塞的路径，可以构造一组使该路径产生相关的参数（路径上每个非碰撞节点都取非平凡的条件分布，碰撞节点取非平凡的条件分布），由这些路径的独立性可逐条叠加，得到使$\mathbf{A}$与$\mathbf{B}$相关的分布。
+\end{proof}
+
+% SUPPLEMENT: parent=theorem:ch11-d分离定理; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+\cref{theorem:ch11-d分离定理}是本章的核心结论，通常称为d分离定理或Pearl的因果图定理。它的价值在于把“验证条件独立性”这一需要做高维积分的分析问题，降为一个多项式时间的图论问题（路径枚举可用可达性算法实现）。两个方向的意义不同：正面方向是“图蕴含独立”，对所有满足分解的分布成立，无需任何数值信息；反面方向是“图不蕴含独立”，只保证存在反例，并不排除某些特殊参数下仍然独立——这正是\cref{example:ch11-尾尾相接}中“特定数值下也可能独立”的严格表述。定理要求分布严格为正，否则某些条件概率无定义，需要用极限或“几乎处处”的语言修补。
+\end{remark}
+
+d分离法如\cref{figure:ch11-d分离示意图}所示。在\cref{figure:ch11-d分离示意图}(a)中，从$a$到$b$的路径既没有被节点$f$阻塞，因为节点$f$是这条路径的尾对尾节点，且未被观测到；也没有被节点$e$阻塞，因为尽管节点$e$是头对头节点，但它在条件集中只有一个后代节点$c$。因此，条件独立性$\mathbf{A}\perp\mathbf{B}\mid\mathbf{C}$从该图中无法得出。在\cref{figure:ch11-d分离示意图}(b)中，从$a$到$b$的路径被节点$f$阻塞，因为这是一个被观测到的尾对尾节点，所以根据该图进行分解的任何分布都将满足条件独立性$a\perp b\mid f$。请注意，这条路径也被节点$e$阻塞了，因为节点$e$是一个头对头节点，节点$e$及其子节点都不在条件集合中。在d分离中，\cref{figure:ch11-预测模型图}中以浮动变量表示的$\lambda$等参数的行为与观测节点的行为相同。然而，这些节点不存在边缘分布，因此参数节点本身永远不会有父节点，经过这些节点的所有路径永远是尾尾相接的，因此会被阻塞。这些节点在d分离中不起作用。
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.80\textwidth]{ch11-fig11-21-d-separation.png}
+  \caption{d分离示意图}
+  \label{figure:ch11-d分离示意图}
+\end{figure}
+
+独立同分布数据是条件独立性和d分离的另一个示例（参见\cref{subsection:ch02-似然函数}）。观察\cref{figure:ch11-预测模型图}所示的二元分类模型。这里的随机节点分别对应$t_n$、$\mathbf{w}$和$\hat{t}$。我们可以看到，对于从$\hat{t}$到任何一个节点$t_n$的路径来说，$\mathbf{w}$的节点是尾对尾的，因此我们具有以下条件独立性：
+\begin{align}
+  \hat{t} \perp t_n \mid \mathbf{w}.
   \label{align:ch11-独立同分布条件独立}
 \end{align}
 
-因此，以网络参数$\mathbf{w}$为条件，$\hat{t}$的预测分布与训练数据$\{t_1,\cdots,t_N,\mathbf{x}_n\}$无关。我们可以首先使用训练数据来确定$\mathbf{w}$的后验分布（或后验分布的近似值），然后丢弃训练数据，并使用$\mathbf{w}$的后验分布来预测新输入的观测结果中的$t$。
-
-\subsection{朴素贝叶斯}\label{subsection:ch11-朴素贝叶斯}
-
-有一种相关的图结构出现在朴素贝叶斯（Naive Bayes）模型中，其中我们使用条件独立性假设来简化模型结构。假设我们的数据由向量$\mathbf{x}$的观测值组成，我们希望将$\mathbf{x}$的观测值归入$K$个类别中的一个类别（后文简称类）。我们可以为每个类定义类-条件密度$p(\mathbf{x}\mid C_k)$以及先验类概率$p(C_k)$。朴素贝叶斯模型的关键假设是，以类$C_k$为条件，将输入变量的分布分解为两个或多个密度的乘积。假设我们把$\mathbf{x}$分成$L$个元素，即$\mathbf{x}=(x_1,\cdots,x_L)$，则朴素贝叶斯模型的形式为
-
+\begin{proposition}[以参数为条件的预测]\label{proposition:ch11-条件独立预测}
+在\eqref{align:ch11-预测联合}的模型中，$t_1,\cdots,t_N$在给定$\mathbf{w}$后条件独立，且预测分布满足
 \begin{align}
-  p(\mathbf{x}\mid C_k) = \prod_{j=1}^{L} p(x_j\mid C_k)
-  \label{align:ch11-朴素贝叶斯分解}
+  p(\hat{t}\mid \hat{\mathbf{x}},\mathbf{w},\mathbf{X},\mathbf{t}) = p(\hat{t}\mid \hat{\mathbf{x}},\mathbf{w}),
+\end{align}
+即以网络参数$\mathbf{w}$为条件，$\hat{t}$的预测分布与训练数据$\{t_1,\cdots,t_N\}$无关。
+\end{proposition}
+
+\begin{proof}
+（重构新增）由\eqref{align:ch11-预测联合}，给定$\mathbf{w}$后联合分布分解为$p(\hat{t}\mid\mathbf{w},\hat{\mathbf{x}})\prod_n p(t_n\mid\mathbf{w},\mathbf{x}_n)$，其中$\hat{t}$的因子与$t_1,\cdots,t_N$的因子相乘而无交互项，故$t_1,\cdots,t_N$条件独立，且$\hat{t}$与它们条件独立（这正是\eqref{align:ch11-独立同分布条件独立}）。于是
+\begin{align}
+  p(\hat{t}\mid\hat{\mathbf{x}},\mathbf{w},\mathbf{X},\mathbf{t})=\frac{p(\hat{t},\mathbf{t}\mid\mathbf{w},\hat{\mathbf{x}},\mathbf{X})}{p(\mathbf{t}\mid\mathbf{w},\mathbf{X})}=\frac{p(\hat{t}\mid\mathbf{w},\hat{\mathbf{x}})\prod_n p(t_n\mid\mathbf{w},\mathbf{x}_n)}{\prod_n p(t_n\mid\mathbf{w},\mathbf{x}_n)}=p(\hat{t}\mid\mathbf{w},\hat{\mathbf{x}}).
+\end{align}
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch11-条件独立预测; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+\cref{proposition:ch11-条件独立预测}是“训练完就可以丢掉训练数据”这一工程实践的概率依据：以参数为条件时，训练集不再提供额外信息。但它有一个容易被误用的前提——$\mathbf{w}$被视为已知的固定值。若对$\mathbf{w}$做Bayes处理并积分掉，则$\hat{t}$与训练数据通过$\mathbf{w}$的后验仍然相关，预测分布变成$p(\hat{t}\mid\hat{\mathbf{x}},\mathbf{X},\mathbf{t})=\int p(\hat{t}\mid\hat{\mathbf{x}},\mathbf{w})p(\mathbf{w}\mid\mathbf{X},\mathbf{t})\,\mathrm{d}\mathbf{w}$，此时“丢掉训练数据”就必须连同后验一起保留。这一区别正是\cref{subsection:ch11-参数和观测值}最后关于完全Bayes与MAP近似的讨论的伏笔。
+\end{remark}
+
+因此，以网络参数$\mathbf{w}$为条件，$\hat{t}$的预测分布与训练数据$\{t_1,\cdots,t_N,\mathbf{x}_n\}$无关。我们可以首先使用训练数据来确定$\mathbf{w}$的后验分布（或后验分布的近似值），然后丢弃训练数据，并使用$\mathbf{w}$的后验分布来预测新输入的观测结果中的$\hat{t}$。
+
+\subsection{朴素Bayes}\label{subsection:ch11-朴素Bayes}
+
+有一种相关的图结构出现在朴素Bayes（Naive Bayes）模型中，其中我们使用条件独立性假设来简化模型结构。假设我们的数据由向量$\mathbf{x}$的观测值组成，我们希望将$\mathbf{x}$的观测值归入$K$个类别中的一个类别（后文简称类）。我们可以为每个类定义类-条件密度$p(\mathbf{x}\mid C_k)$以及先验类概率$p(C_k)$。朴素Bayes模型的关键假设是，以类$C_k$为条件，将输入变量的分布分解为两个或多个密度的乘积。
+
+\begin{definition}[朴素Bayes模型]\label{definition:ch11-朴素Bayes}
+设输入向量被分成$L$个元素，即$\mathbf{x}=(x^{(1)},\cdots,x^{(L)})$。若以类$C_k$为条件，输入变量的分布分解为
+\begin{align}
+  p(\mathbf{x}\mid C_k) = \prod_{l=1}^{L}p\bigl(x^{(l)}\mid C_k\bigr),
+  \label{align:ch11-朴素Bayes分解}
+\end{align}
+则称该模型为\textbf{朴素Bayes模型}（Naive Bayes model）。假设\eqref{align:ch11-朴素Bayes分解}分别对每个类$C_k$成立。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch11-朴素Bayes; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+\cref{definition:ch11-朴素Bayes}的假设等价于说：在给定类标签后，$L$个特征彼此条件独立。它把$L$维联合密度的估计问题化为$L$个一维密度估计问题，参数数量从指数级降到线性级，这是它在高维输入下仍然可用的原因。假设的代价是它无法表示特征之间的交互：若真实数据中两个特征高度相关（例如图像的相邻像素），\eqref{align:ch11-朴素Bayes分解}会严重失真。但需要注意，分类决策只依赖后验$p(C_k\mid\mathbf{x})$的相对大小，而决策边界对类-条件密度的某些细节并不敏感，因此即使假设不成立，分类精度也可能保持得不错——这是“模型错但决策对”的典型例子。
+\end{remark}
+
+\cref{figure:ch11-朴素Bayes图模型}是该模型的图形化表示。我们可以看到，在$j\neq i$的情况下，对$C_k$的观测会阻塞$x^{(i)}$和$x^{(j)}$之间的路径，因为这种路径在节点$C_k$处是尾尾相接的，所以当给定$C_k$时，$x^{(i)}$和$x^{(j)}$是条件独立的。然而，如果我们将$C_k$去边缘化，从$x^{(i)}$到$x^{(j)}$的尾尾相接路径将不再受阻。所以一般来说，边缘密度$p(\mathbf{x})$不会相对于元素$x^{(1)},\cdots,x^{(L)}$进行分解。
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.42\textwidth]{ch11-fig11-22-naive-bayes.png}
+  \caption{用于分类的朴素Bayes模型的图示。以类标签$C_k$为条件，假设观测向量$\mathbf{x}=(x^{(1)},\cdots,x^{(L)})$中的元素是独立的}
+  \label{figure:ch11-朴素Bayes图模型}
+\end{figure}
+
+如果我们得到一个标记训练集，其中包括观测值$\{\mathbf{x}_1,\cdots,\mathbf{x}_N\}$以及它们的类标签，我们就可以假设数据是从模型中独立提取的，从而使用最大似然法将朴素Bayes模型拟合到训练数据中（见\cref{exercise:ch11-15}）。通过使用相应的标记数据分别拟合每个类的模型，然后将先验类概率$p(C_k)$设置为等于每个类中训练数据点的比例，从而得到解决方案。向量$\mathbf{x}$属于类$C_k$的概率由Bayes定理给出，其形式为
+\begin{align}
+  p(C_k\mid \mathbf{x}) = \frac{p(\mathbf{x}\mid C_k)\,p(C_k)}{p(\mathbf{x})},
+  \label{align:ch11-朴素Bayes后验}
+\end{align}
+其中$p(\mathbf{x}\mid C_k)$由\eqref{align:ch11-朴素Bayes分解}给出，$p(\mathbf{x})$可以用下式求出：
+\begin{align}
+  p(\mathbf{x}) = \sum_{k=1}^{K}p(\mathbf{x}\mid C_k)\,p(C_k).
+  \label{align:ch11-朴素Bayes边缘}
 \end{align}
 
-假设式~\eqref{align:ch11-朴素贝叶斯分解}分别对每个类$C_k$成立。图11.22是该模型的图形化表示。我们可以看到，在$j\neq i$的情况下，给定$C$时，$x_i$和$x_j$是条件独立的。因为这种路径在节点$C$处是尾尾相接的，所以当给定$C$时，对$C$的观测会阻塞$x_i$和$x_j$之间的路径。然而，如果我们将$C$去边缘化，从$x_i$到$x_j$的尾尾相接路径将不再受阻。所以一般来说，边缘密度$p(\mathbf{x})$不会相对于元素$(x_1,\cdots,x_L)$进行分解。
-
-如果我们得到一个标记训练集，其中包括观测值$\{\mathbf{x}_1,\cdots,\mathbf{x}_N\}$以及它们的类标签，我们就可以假设数据是从模型中独立提取的，从而使用最大似然法将朴素贝叶斯模型拟合到训练数据中（见习题11.15）。通过使用相应的标记数据分别拟合每个类的模型，然后将先验类概率$p(C_k)$设置为等于每个类中训练数据点的比例，从而得到解决方案。向量$\mathbf{x}$属于类$C_k$的概率由贝叶斯定理给出，其形式为
-
+\begin{proposition}[朴素Bayes的分类后验]\label{proposition:ch11-朴素Bayes后验}
+在\cref{definition:ch11-朴素Bayes}的假设下，类后验满足
 \begin{align}
-  p(C_k\mid \mathbf{x}) = \frac{p(\mathbf{x}\mid C_k)\,p(C_k)}{p(\mathbf{x})}
-  \label{align:ch11-朴素贝叶斯后验}
+  p(C_k\mid \mathbf{x}) = \frac{p(C_k)\prod_{l=1}^{L}p\bigl(x^{(l)}\mid C_k\bigr)}{\sum_{j=1}^{K}p(C_j)\prod_{l=1}^{L}p\bigl(x^{(l)}\mid C_j\bigr)},
+  \label{align:ch11-朴素Bayes后验显式}
+\end{align}
+因此分类决策只需比较各分子，无须计算分母。
+\end{proposition}
+
+\begin{proof}
+（重构新增）把\eqref{align:ch11-朴素Bayes分解}代入\eqref{align:ch11-朴素Bayes后验}，再用\eqref{align:ch11-朴素Bayes边缘}与\eqref{align:ch11-朴素Bayes分解}展开分母：
+\begin{align}
+  p(\mathbf{x})=\sum_{j=1}^{K}p(\mathbf{x}\mid C_j)p(C_j)=\sum_{j=1}^{K}p(C_j)\prod_{l=1}^{L}p\bigl(x^{(l)}\mid C_j\bigr).
+\end{align}
+分母与$k$无关，故分类时只需比较分子$p(C_k)\prod_l p(x^{(l)}\mid C_k)$。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch11-朴素Bayes后验; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+\cref{proposition:ch11-朴素Bayes后验}的实用价值在于“分母可省”：分类只依赖分子的大小顺序，这既省计算也避免了下溢。但省略分母的代价是无法得到校准的概率——若需要置信度或拒绝选项（参见\cref{subsection:ch05-拒绝选项}），必须计算\eqref{align:ch11-朴素Bayes后验显式}的完整分母。此外，\eqref{align:ch11-朴素Bayes后验显式}显示后验是各特征“证据”的乘积再乘以先验，因此单个特征若给出零密度，整个后验会塌缩为零；实践中通常对每个特征密度做平滑（加性平滑）以避免这一退化。
+\end{remark}
+
+用于二维数据空间的朴素Bayes模型如\cref{figure:ch11-二维朴素Bayes}所示，其中$\mathbf{x}=(x_1,x_2)$。此处，我们假设两个类中每个类的类-条件密度$p(\mathbf{x}\mid C_k)$都是轴对齐的Gauss密度，因此它们各自将对$x_1$和$x_2$进行分解，从而
+\begin{align}
+  p(\mathbf{x}\mid C_k) = p(x_1\mid C_k)\,p(x_2\mid C_k).
+  \label{align:ch11-二维朴素Bayes}
 \end{align}
 
-其中$p(\mathbf{x}\mid C_k)$由式~\eqref{align:ch11-朴素贝叶斯分解}给出，$p(\mathbf{x})$可以用下式求出：
-
-\begin{align}
-  p(\mathbf{x}) = \sum_k p(\mathbf{x}\mid C_k)\,p(C_k)
-  \label{align:ch11-朴素贝叶斯边缘}
-\end{align}
-
-用于二维数据空间的朴素贝叶斯模型如图11.23所示，其中$\mathbf{x}=(x_1,x_2)$。此处，我们假设两个类中每个类的类-条件密度$p(\mathbf{x}\mid C_k)$都是轴对齐的高斯密度，因此它们各自将对$x_1$和$x_2$进行分解，从而
-
-\begin{align}
-  p(\mathbf{x}\mid C_k) = p(x_1\mid C_k)\,p(x_2\mid C_k)
-  \label{align:ch11-二维朴素贝叶斯}
-\end{align}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.86\textwidth]{ch11-fig11-23-naive-bayes-2d.png}
+  \caption{(a) 两个类中每个类的类-条件密度$p(\mathbf{x}\mid C_k)$；(b) 边缘密度$p(\mathbf{x})$，其中我们假设了相等的类先验概率$p(C_1)=p(C_2)=0.5$。请注意，条件密度会对$x_1$和$x_2$进行分解，而边缘密度不会}
+  \label{figure:ch11-二维朴素Bayes}
+\end{figure}
 
 然而，边缘密度$p(\mathbf{x})$由下式给出：
-
 \begin{align}
-  p(\mathbf{x}) = \sum_k p(\mathbf{x}\mid C_k)\,p(C_k)
-  \label{align:ch11-二维朴素贝叶斯边缘}
+  p(\mathbf{x}) = \sum_{k=1}^{K}p(\mathbf{x}\mid C_k)\,p(C_k),
+  \label{align:ch11-二维朴素Bayes边缘}
 \end{align}
+它现在是Gauss混合模型且不会对$x_1$和$x_2$进行分解。
 
-它现在是高斯混合模型且不会对$x_1$和$x_2$进行分解。在融合不同来源的数据（如用于医疗诊断的血液检测和皮肤图像）时，将会涉及朴素贝叶斯模型的简单应用（参见5.2.4小节）。当输入空间的维度$D$较高时，在全$D$维空间中进行密度估计将更具挑战性，朴素贝叶斯假设会有所帮助。如果输入向量同时包含离散变量和连续变量，这种方法也会很有用，因为每种变量都可以用适当的模型来表示（例如，对于二元观测可以使用伯努利分布，对于实值变量可以使用高斯分布）。该模型的条件独立性假设显然是强假设，可能会导致对类-条件密度的表示相当糟糕。然而，即使这一假设没有得到精确的满足，模型在实际应用中也仍然可以提供良好的分类性能，因为决策边界可能对类-条件密度中的某些细节不敏感。
+\begin{remark}（重构新增）
+\cref{figure:ch11-二维朴素Bayes}用等值线直观地说明了一个容易混淆的事实：条件密度分解，不代表边缘密度分解。\cref{figure:ch11-二维朴素Bayes}(a)中每个类的等值线是轴对齐的椭圆（因为\eqref{align:ch11-二维朴素Bayes}把协方差限制为对角），而\cref{figure:ch11-二维朴素Bayes}(b)中的混合分布等值线是倾斜的“花生形”，因为把$C$边缘化后两个分量叠加产生了相关性。这与\cref{example:ch11-尾尾相接}是同一现象：尾尾相接的路径在$C$未观测时把两个特征耦合起来。因此，若把朴素Bayes模型用于密度估计（而不仅是分类），得到的$p(\mathbf{x})$并不是“各特征独立”的分布。
+\end{remark}
+
+在融合不同来源的数据（如用于医疗诊断的血液检测和皮肤图像）时，将会涉及朴素Bayes模型的简单应用（参见\cref{subsection:ch05-推理和决策}）。当输入空间的维度$D$较高时，在全$D$维空间中进行密度估计将更具挑战性，朴素Bayes假设会有所帮助。如果输入向量同时包含离散变量和连续变量，这种方法也会很有用，因为每种变量都可以用适当的模型来表示（例如，对于二元观测可以使用Bernoulli分布，对于实值变量可以使用Gauss分布）。该模型的条件独立性假设显然是强假设，可能会导致对类-条件密度的表示相当糟糕。然而，即使这一假设没有得到精确的满足，模型在实际应用中也仍然可以提供良好的分类性能，因为决策边界可能对类-条件密度中的某些细节不敏感。
 
 \subsection{生成式模型}\label{subsection:ch11-生成式模型}
 
-机器学习的许多应用都可以看作逆问题（inverse problem）的示例，其中有一个产生数据的底层过程（通常是物理过程），我们现在的目标是学习如何反转这个过程。一种方法是训练深度神经网络，如卷积网络，从而将图像作为输入并生成描述对象的类型、位置和大小的输出。因此，作为判别模型的一个示例，这种方法试图直接解决逆问题。只要有足够多的标记图像，这种方法就能达到很高的准确率。在实践中，未标记的图像往往很多，而在获得训练集的过程中，大部分工作量耗费在证明标记上，这个证明过程可能需要手动完成。我们的判别模型在训练过程中无法直接使用未标记的图像。
+机器学习的许多应用都可以看作逆问题（inverse problem）的示例，其中有一个产生数据的底层过程（通常是物理过程），我们现在的目标是学习如何反转这个过程。例如，一个对象的图像可以看作一个生成过程的输出，在这个生成过程中，对象的类型是从一些可能的对象类分布中选择出来的。对象的位置和方向也从一些先验分布中选择，然后创建图像。在给定一个大型图像数据集的情况下，其中的图像已标记所含对象的类型、位置和大小，我们的目标是训练一个机器学习模型，该模型可以获取新的、未标记的图像，并检测对象是否存在，以及对象在图像中的位置和大小。因此，机器学习解决方案代表了数据生成过程的逆过程。
 
-另一种方法是对生成过程进行建模，然后进行计算反转。在我们的图像示例中，如果假设对象的类、位置和大小都是独立选择的，则可以使用有向图模型来表示生成过程，如图11.24所示。请注意，箭头的方向与生成步骤的顺序相对应，因此该模型代表了观测数据生成的因果过程（Pearl, 1988）。这是生成式模型的一个示例，因为一旦经过训练，它就可以用来生成合成图像，方法是首先从学习到的先验分布中选择对象的类、位置和大小，然后从学习到的条件分布中抽取图像样本。对象所属的类（离散变量）与对象的位置和方向（连续变量）具有独立的先验概率。图像（像素强度阵列）的概率分布取决于对象所属的类及其位置和方向。
+一种方法是训练深度神经网络，如卷积网络，从而将图像作为输入并生成描述对象的类型、位置和大小的输出。因此，作为判别模型的一个示例，这种方法试图直接解决逆问题。只要有足够多的标记图像，这种方法就能达到很高的准确率。在实践中，未标记的图像往往很多，而在获得训练集的过程中，大部分工作量耗费在证明标记上，这个证明过程可能需要手动完成。我们的判别模型在训练过程中无法直接使用未标记的图像。
 
-根据图11.24中的图模型，在未观测到图像时，类、位置和大小变量是独立的。这是因为这些变量中的任何两个变量之间的每条路径就图像变量而言是头头相接的，这是未观测到的。然而，当我们观测到一幅图像时，这些路径就会变得畅通，类、位置和大小变量也不再独立。从直觉上讲，这是合理的，因为被告知图像中对象所属的类可以为我们提供相关信息，从而帮助我们确定对象的位置和大小。例如，一个对象的图像可以看作一个生成过程的输出，在这个生成过程中，对象的类型、位置和方向也从一些先验分布中选择，然后创建图像。在给定一个大型图像数据集的情况下，其中的图像已标记所含对象的类型、位置和大小，我们的目标是训练一个机器学习模型，该模型可以获取新的、未标记的图像，并检测对象是否存在，以及对象在图像中的位置和大小。
+\begin{definition}[判别模型与生成式模型]\label{definition:ch11-生成式模型}
+设$\mathbf{x}$为观测，$y$为待预测的目标（如类标签、位置或大小）。若模型直接对条件分布$p(y\mid\mathbf{x})$建模，则称其为\textbf{判别模型}（discriminative model）；若模型先对联合分布$p(\mathbf{x},y)$（或等价的生成过程$p(y)$与$p(\mathbf{x}\mid y)$）建模，再通过Bayes定理得到$p(y\mid\mathbf{x})$，则称其为\textbf{生成式模型}（generative model）。生成式模型训练完成后可以从中采样合成新数据。
+\end{definition}
 
-然而，概率模型中的隐变量并不需要有任何明确的物理解释，而引入这些隐变量可能只是为了从更简单的组件中构造出更复杂的联合分布。例如，归一化流、变分自编码器和扩散模型等都使用深度神经网络，从而通过转换具有简单高斯分布的隐变量，在数据空间中创建复杂的分布。稍后我们将看到扩散模型和其他生成式模型如何根据对所需图像内容和风格的文字描述，合成令人赞叹的高分辨率图像（参见第20章）。
+% SUPPLEMENT: parent=definition:ch11-生成式模型; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+\cref{definition:ch11-生成式模型}的区分标准是“是否对输入的分布建模”，而不是“是否用神经网络”。判别模型把建模能力集中在决策边界上，样本效率高但无法生成数据；生成式模型需要刻画$p(\mathbf{x}\mid y)$，任务更难，但可以利用未标记数据，并且能回答“这个样本是否合理”之类的问题。图中的差别同样明显：判别模型只有从输入指向输出的箭头，生成式模型的箭头方向与数据的生成步骤一致（\cref{figure:ch11-图像生成过程图模型}），因此观测到数据后可以用\cref{theorem:ch11-d分离定理}读出“未观测时哪些隐变量独立、观测后又如何变得相关”。需要注意，生成式与判别式并非互斥：同一个联合分布既可以写成生成式分解，也可以写成判别式分解（\cref{proposition:ch11-Bayes更新}的箭头反转）。
+\end{remark}
 
-\subsection{马尔可夫毯}\label{subsection:ch11-马尔可夫毯}
+另一种方法是对生成过程进行建模，然后进行计算反转。在我们的图像示例中，如果假设对象的类、位置和大小都是独立选择的，则可以使用有向图模型来表示生成过程，如\cref{figure:ch11-图像生成过程图模型}所示。请注意，箭头的方向与生成步骤的顺序相对应，因此该模型代表了观测数据生成的因果过程（Pearl, 1988）。这是生成式模型的一个示例，因为一旦经过训练，它就可以用来生成合成图像，方法是首先从学习到的先验分布中选择对象的类、位置和大小，然后从学习到的条件分布中抽取图像样本。稍后我们将看到扩散模型和其他生成式模型如何根据对所需图像内容和风格的文字描述，合成令人赞叹的高分辨率图像（参见\cref{chapter:ch20-扩散模型}）。
 
-在讨论更复杂的有向图时，一个很有用的条件独立性称为马尔可夫毯（Markov blanket）或马尔可夫边界（Markov boundary）。考虑由具有$D$个节点的有向图表示的联合分布$p(x_1,\cdots,x_D)$，并考虑以所有其余变量$x_{j\neq i}$为条件的变量$x_i$的特定节点的条件分布。利用分解性质[式~\eqref{align:ch11-有向图联合分布}]，我们可以将这一条件分布表示为如下形式：
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.40\textwidth]{ch11-fig11-24-image-generation.png}
+  \caption{表示创建对象图像过程的图模型。对象所属的类（离散变量）与对象的位置和方向（连续变量）具有独立的先验概率。图像（像素强度阵列）的概率分布取决于对象所属的类及其位置和方向}
+  \label{figure:ch11-图像生成过程图模型}
+\end{figure}
 
+根据\cref{figure:ch11-图像生成过程图模型}中的图模型，在未观测到图像时，类、位置和大小变量是独立的。这是因为这些变量中的任何两个变量之间的每条路径就图像变量而言是头头相接的，这是未观测到的。然而，当我们观测到一幅图像时，这些路径就会变得畅通，类、位置和大小变量也不再独立。从直觉上讲，这是合理的，因为被告知图像中对象所属的类可以为我们提供相关信息，从而帮助我们确定对象的位置和大小。
+
+然而，概率模型中的隐变量并不需要有任何明确的物理解释，而引入这些隐变量可能只是为了从更简单的组件中构造出更复杂的联合分布。例如，归一化流、变分自编码器和扩散模型等都使用深度神经网络，从而通过转换具有简单Gauss分布的隐变量，在数据空间中创建复杂的分布。
+
+\subsection{Markov毯}\label{subsection:ch11-Markov毯}
+
+在讨论更复杂的有向图时，一个很有用的条件独立性称为Markov毯（Markov blanket）或Markov边界（Markov boundary）。考虑由具有$D$个节点的有向图表示的联合分布$p(x_1,\cdots,x_D)$，并考虑以所有其余变量$x_{j\neq i}$为条件的变量$x_i$的特定节点的条件分布。利用分解性质[\eqref{align:ch11-有向图联合分布}]，我们可以将这一条件分布表示为如下形式：
+\begin{align*}
+  p(x_i\mid x_{j\neq i}) = \frac{p(x_1,\cdots,x_D)}{\int p(x_1,\cdots,x_D)\,\mathrm{d}x_i} = \frac{\prod_k p(x_k\mid \mathrm{pa}(k))}{\int\prod_k p(x_k\mid \mathrm{pa}(k))\,\mathrm{d}x_i},
+\end{align*}
+其中积分被离散变量的求和取代。现在我们注意到，任何与$x_i$无函数相关的因子$p(x_k\mid \mathrm{pa}(k))$都可以在对$x_i$的积分之外取值，因此分子和分母之间会抵消。剩下的因子就是节点$x_i$本身的条件分布$p(x_i\mid \mathrm{pa}(i))$，以及任何其他节点$x_k$的条件分布，从而节点$x_i$在$p(x_k\mid \mathrm{pa}(k))$的条件集中，即节点$x_i$是$x_k$的父节点。条件分布$p(x_i\mid \mathrm{pa}(i))$将取决于节点$x_i$的父节点，而条件分布$p(x_k\mid \mathrm{pa}(k))$将取决于$x_k$的子节点和共父节点[即节点$x_k$的父节点（节点$x_i$除外）所对应的变量]。
+
+\begin{definition}[Markov毯]\label{definition:ch11-Markov毯}
+由父节点、子节点和共父节点组成的节点集称为节点$x_i$的\textbf{Markov毯}（Markov blanket），即
 \begin{align}
-  p(x_i\mid x_{j\neq i}) = \frac{p(\mathbf{x})}{\int p(\mathbf{x})\,\mathrm{d}x_i}
+  \mathrm{MB}(i) = \mathrm{pa}(i)\cup \mathrm{ch}(i)\cup \mathrm{cp}(i),
+  \label{align:ch11-Markov毯定义}
 \end{align}
+其中$\mathrm{ch}(i)$是$x_i$的子节点集，$\mathrm{cp}(i)=\bigcup_{k\in\mathrm{ch}(i)}\bigl(\mathrm{pa}(k)\setminus\{i\}\bigr)$是$x_i$的共父节点集，如\cref{figure:ch11-Markov毯}所示。
+\end{definition}
 
-其中积分被离散变量的求和取代。现在我们注意到，任何与$x_i$无函数相关的因子$p(x_k\mid \mathrm{pa}(k))$都可以在对$x_i$的积分之外取值，因此分子和分母之间会抵消。剩下的因子就是节点$x_i$本身的条件分布$p(x_i\mid \mathrm{pa}(i))$，以及任何其他节点$x_k$的条件分布，从而节点$x_i$在$p(x_k\mid \mathrm{pa}(k))$的条件集中，即节点$x_i$是$x_k$的父节点。条件分布$p(x_i\mid \mathrm{pa}(i))$将取决于节点$x_i$的父节点，而条件分布$p(x_k\mid \mathrm{pa}(k))$将取决于$x_k$的子节点和共父节点[即节点$x_i$的父节点（节点$x_i$除外）所对应的变量]。由父节点、子节点和共父节点组成的节点集称为马尔可夫毯，如图11.25所示。它具有这样一个特性，即节点$x_i$的条件分布（以图中所有其余节点为条件）但取决于马尔可夫毯中的变量。我们可以考虑把节点$x_i$的马尔可夫毯看作能将节点$x_i$与图中的其他节点隔离开来的最小节点集。请注意，仅包含节点$x_i$的父节点和子节点是不够的，因为相消解释意味着观测到子节点不会阻塞通往共父节点的路径。因此，我们还必须观测到共父节点。
+% SUPPLEMENT: parent=definition:ch11-Markov毯; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+\cref{definition:ch11-Markov毯}中“共父节点”这一项最容易被遗漏，而它恰恰是相消解释（\cref{example:ch11-汽车燃油系统}）的图形化表述：若$x_i$与另一个父节点共同指向同一个子节点，则观测到该子节点会使二者相关，因此必须把共父节点一并纳入条件集。Markov毯可以理解为“把$x_i$与图中其余节点隔离开来的最小节点集”，它在图上是一个局部对象（只涉及距离$x_i$不超过两步的节点），却在概率上刻画了完整的条件分布，这一“局部性”是Markov随机场与信念传播算法的基石。
+\end{remark}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.42\textwidth]{ch11-fig11-25-markov-blanket.png}
+  \caption{节点$x_i$的Markov毯由该节点的父节点、子节点和共父节点组成。它具有这样一个特性，即节点$x_i$的条件分布（以图中所有其余节点为条件）仅取决于Markov毯中的变量}
+  \label{figure:ch11-Markov毯}
+\end{figure}
+
+\begin{proposition}[Markov毯的分离性质]\label{proposition:ch11-Markov毯}
+设$p(\mathbf{x})$由有向无环图按\eqref{align:ch11-有向图联合分布}分解。则对任意$j\notin\mathrm{MB}(i)\cup\{i\}$，
+\begin{align}
+  x_i \perp x_j \mid \mathbf{x}_{\mathrm{MB}(i)},
+  \label{align:ch11-Markov毯独立}
+\end{align}
+即$x_i$在给定Markov毯后的条件分布与图中其余变量无关。
+\end{proposition}
+
+\begin{proof}
+（重构新增）用\cref{theorem:ch11-d分离定理}，只需证明从$x_i$到任意$j\notin\mathrm{MB}(i)\cup\{i\}$的每条路径都被$\mathbf{C}=\mathbf{x}_{\mathrm{MB}(i)}$阻塞。设路径为$x_i=v_0,v_1,\cdots,v_m=j$。
+
+先看第一步。若$v_0\to v_1$，则$v_1\in\mathrm{ch}(i)\subseteq\mathbf{C}$；若$v_1\to v_0$，则$v_1\in\mathrm{pa}(i)\subseteq\mathbf{C}$。两种情形都有$v_1\in\mathbf{C}$，且$v_1\neq j$（因$j\notin\mathrm{MB}(i)$）。在$v_1$处，路径的另一条边有两种可能：若为$v_2\to v_1$（即$v_1$是头头相接），则$v_2\in\mathrm{cp}(i)\cup\mathrm{pa}(i)\subseteq\mathbf{C}$，且$v_2\neq j$；若为$v_1\to v_2$（$v_1$是头尾相接或尾尾相接），则$v_1\in\mathbf{C}$直接使路径被阻塞。故只需处理$v_2\in\mathbf{C}$的情形，此时在$v_1$处路径是头头相接的，尚未被阻塞。
+
+于是路径可写为$x_i\to v_1\leftarrow v_2$或$v_2\to v_1\leftarrow x_i$，其中$v_1\in\mathbf{C}$、$v_2\in\mathbf{C}$。在$v_2$处，路径经过的边是$v_2\to v_1$（出边）。若$m=2$，则$j=v_2\in\mathbf{C}$，与$j\notin\mathrm{MB}(i)$矛盾，故$m\geqslant3$。此时$v_2$处的另一条边为$v_3\to v_2$或$v_2\to v_3$，两种情形下$v_2$都不是头头相接节点，而$v_2\in\mathbf{C}$，故路径在$v_2$处被阻塞。
+
+综上，所有路径都被$\mathbf{C}$阻塞，由\cref{theorem:ch11-d分离定理}得\eqref{align:ch11-Markov毯独立}。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch11-Markov毯; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+\cref{proposition:ch11-Markov毯}的证明只用到两步就完成了“局部性”的论证，关键在于路径在离开$x_i$后的前两个节点必然落在父/子/共父之中。这也说明Markov毯不能缩小：若去掉共父节点，\cref{example:ch11-头头相接}的结构就会使路径在子节点处重新疏通；若去掉子节点，则父节点与子节点之间的依赖无法被条件化。命题的实用形式是Gibbs采样的“全条件”：$p(x_i\mid \mathbf{x}_{-i})$只需用Markov毯中的变量计算，因此每一次单变量更新都是局部的，这正是\cref{chapter:ch14-采样}中Gibbs采样高效的原因。
+\end{remark}
+
+我们可以考虑把节点$x_i$的Markov毯看作能将节点$x_i$与图中的其他节点隔离开来的最小节点集。请注意，仅包含节点$x_i$的父节点和子节点是不够的，因为相消解释意味着观测到子节点不会阻塞通往共父节点的路径。因此，我们还必须观测到共父节点。
 
 \subsection{作为过滤器的图}\label{subsection:ch11-作为过滤器的图}
 
-我们已经看到，一个特定的有向图不仅代表了将联合概率分布分解为条件概率的乘积，还代表了通过d分离准则获得的一组条件独立性。d分离定理实际上表达了这两个特性的等价性。为了说明这一点，不妨把有向图看作一个过滤器。假设我们考虑的是图中（未观测到的）节点所对应的变量$\mathbf{x}$的特定联合概率分布$p(\mathbf{x})$。只有当且仅当该分布可以用图所隐含的分解[式~\eqref{align:ch11-有向图联合分布}]表示时，过滤器才会允许该分布通过。将变量$\mathbf{x}$上所有可能的分布$p(\mathbf{x})$的集合提交给过滤器，对于有向分解（directed factorization），将过滤器允许通过的分布子集记为$D_F$，如图11.26所示。我们也可以根据是否满足图的d分离特性时才能通过过滤器。将通过过滤器的所有可能概率分布$p(\mathbf{x})$的集合记为$D_F$。d分离特性所隐含的所有条件独立性，使用图（作为第二种过滤器）来过滤分布。d分离定理表明，同样的一组分布$D_F$将被允许通过第二种过滤器。如果我们将所有条件独立性，然后只允许满足所有这些条件独立性的分布通过。
+我们已经看到，一个特定的有向图不仅代表了将联合概率分布分解为条件概率的乘积，还代表了通过d分离准则获得的一组条件独立性。d分离定理实际上表达了这两个特性的等价性。为了说明这一点，不妨把有向图看作一个过滤器。假设我们考虑的是图中（未观测到的）节点所对应的变量$\mathbf{x}$的特定联合概率分布$p(\mathbf{x})$。只有当且仅当该分布可以用图所隐含的分解[\eqref{align:ch11-有向图联合分布}]表示时，过滤器才会允许该分布通过。将变量$\mathbf{x}$上所有可能的分布$p(\mathbf{x})$的集合提交给过滤器，对于有向分解（directed factorization），将过滤器允许通过的分布子集记为$\mathcal{D}_F$，如\cref{figure:ch11-图作为过滤器}所示。
 
-需要强调的是，从d-分离得到的条件独立性适用于该特定有向图所描述的任何概率模型。例如，无论变量是离散的还是连续的，抑或是这些变量的组合，情况都是如此。在一种极端情况下，我们有一个全连接图，它完全不显示条件独立性，并且可以表示给定变量上任何可能的联合概率分布，集合$D_F$将包含所有可能的分布$p(\mathbf{x})$。在另一种极端情况下，我们有一个全不连接图，即不包含任何连接的图。这相当于联合分布是一个可以分解为组成图节点的变量的边缘分布的乘积。请注意，对于任何给定的图，集合$D_F$都将包括除图所描述的分布外，还具有其他独立特性的任何分布。例如，一个全分解分布总能通过相应变量集上的任何图所隐含的过滤器。
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.82\textwidth]{ch11-fig11-26-graph-as-filter.png}
+  \caption{我们可以把图模型（此处为有向图模型）看作一种过滤器，其中的概率分布$p(\mathbf{x})$只有在满足有向分解特性时才能通过过滤器。将通过过滤器的所有可能概率分布$p(\mathbf{x})$的集合记为$\mathcal{D}_F$。我们也可以根据是否满足图的d分离特性所隐含的所有条件独立性，使用图（作为第二种过滤器）来过滤分布。d分离定理表明，同样的一组分布$\mathcal{D}_F$将被允许通过第二种过滤器}
+  \label{figure:ch11-图作为过滤器}
+\end{figure}
+
+我们也可以将图用作另一种过滤器，首先列出通过对图应用d分离准则而得到的所有条件独立性，然后只允许满足所有这些条件独立性的分布通过。如果我们将所有可能的分布$p(\mathbf{x})$呈现给第二种过滤器，则d分离定理告诉我们，允许通过的分布集合正是集合$\mathcal{D}_F$。
+
+\begin{theorem}[d分离定理的过滤器形式]\label{theorem:ch11-过滤器等价}
+设$G$是定义在$\mathbf{x}$上的有向无环图。记
+\begin{align}
+  \mathcal{D}_F &= \Bigl\{p:\ p(\mathbf{x})=\textstyle\prod_{k}p(x_k\mid \mathrm{pa}(k))\ \text{对某组条件分布}\Bigr\},\\
+  \mathcal{D}_I &= \bigl\{p:\ p\ \text{满足}\ G\ \text{经 d 分离得到的全部条件独立性}\bigr\}.
+\end{align}
+则$\mathcal{D}_F=\mathcal{D}_I$。
+\end{theorem}
+
+\begin{proof}
+（重构新增）两个包含关系分别对应\cref{theorem:ch11-d分离定理}的两个方向。$\mathcal{D}_F\subseteq\mathcal{D}_I$：由该定理的正面方向，任何按\eqref{align:ch11-有向图联合分布}分解的分布都满足该图经d分离得到的全部条件独立性。
+
+$\mathcal{D}_I\subseteq\mathcal{D}_F$：关键是“有序Markov性质”——对每个节点$k$，
+\begin{align}
+  x_k \perp \bigl\{\text{非后代}\bigr\}\setminus\mathrm{pa}(k) \mid \mathrm{pa}(k),
+\end{align}
+它是$G$经d分离蕴含的条件独立性（从$k$到非后代的任何路径必在某个父节点处以尾尾或头尾方式被$\mathrm{pa}(k)$阻塞）。若$p$满足$G$经d分离得到的全部条件独立性，则$p$满足这一性质；由乘积法则按拓扑序逐次应用\cref{proposition:ch11-条件独立性等价}，得
+\begin{align}
+  p(\mathbf{x})=\prod_{k=1}^{K}p\bigl(x_k\mid \mathrm{pa}(k)\bigr),
+\end{align}
+即$p\in\mathcal{D}_F$。含有序Markov性质与d分离等价性的完整形式证明见 Lauritzen (1996)，与正文的说明一致。
+\end{proof}
+
+% SUPPLEMENT: parent=theorem:ch11-过滤器等价; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+\cref{theorem:ch11-过滤器等价}是本节的收束：它说“按图分解”与“满足图的全部条件独立性”是同一组分布的两种刻画，因此图既是分解的模板，也是独立性的生成器。正因为两个集合相等，我们才能在建模时自由选择更方便的一侧：想设计模型就从分解出发（写出局部因子），想检验模型就从独立性出发（检查d分离）。需要强调的是，$\mathcal{D}_F$只包含“至少满足这些独立性”的分布，因此一个完全分解的分布总能通过任何图所隐含的过滤器；反过来，图越稠密，$\mathcal{D}_F$越大，全连接图的$\mathcal{D}_F$就是全部分布。
+\end{remark}
+
+需要强调的是，从d分离得到的条件独立性适用于该特定有向图所描述的任何概率模型。例如，无论变量是离散的还是连续的，抑或是这些变量的组合，情况都是如此。在一种极端情况下，我们有一个全连接图，它完全不显示条件独立性，并且可以表示给定变量上任何可能的联合概率分布，集合$\mathcal{D}_F$将包含所有可能的分布$p(\mathbf{x})$。在另一种极端情况下，我们有一个全不连接图，即不包含任何连接的图。这相当于联合分布可以分解为组成图节点的变量的边缘分布的乘积。请注意，对于任何给定的图，集合$\mathcal{D}_F$都将包括除图所描述的分布外，还具有其他独立特性的任何分布。例如，一个全分解分布总能通过相应变量集上的任何图所隐含的过滤器。
 
 \end{document}

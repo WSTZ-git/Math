@@ -1,0 +1,86 @@
+\documentclass[../../main.tex]{subfiles}
+
+\graphicspath{{../../image/}{../../figure/}}
+
+\begin{document}
+
+\section{习题}\label{section:ch13-习题}
+
+\begin{exercise}[$\star$]\label{exercise:ch13-01}
+证明：对应于\cref{figure:ch13-邻接矩阵例子}中两种节点排序选择的置换 $(A,B,C,D,E)\rightarrow(C,E,A,D,B)$，可以表示为\eqref{align:ch13-邻接矩阵置换}定义的形式，其中置换矩阵由\eqref{align:ch13-置换矩阵例子}给出。
+\end{exercise}
+
+\begin{exercise}[$\star\star$]\label{exercise:ch13-02}
+证明：对应于\cref{figure:ch13-邻接矩阵例子}中两种节点排序选择的图 $\mathcal{G}$ 中与每个节点相连的边数可以由矩阵 $\bm{A}^2$ 中相应的对角元素给出，其中 $\bm{A}$ 是邻接矩阵。
+\end{exercise}
+
+\begin{exercise}[$\star$]\label{exercise:ch13-03}
+由下式给出的邻接矩阵，画出其对应的图：
+\begin{align}
+\bm{A}=\begin{pmatrix}0&1&1&0&1\\1&0&1&1&1\\1&1&0&1&0\\0&1&1&0&0\\1&1&0&0&0\end{pmatrix}.
+\label{align:ch13-习题邻接矩阵}
+\end{align}
+\end{exercise}
+
+\begin{exercise}[$\star\star$]\label{exercise:ch13-04}
+证明在数据矩阵 $\bm{X}$ 前乘以\eqref{align:ch13-置换矩阵一般形式}定义的置换矩阵 $\bm{P}$ 的效果是创建一个新的数据矩阵 $\widetilde{\bm{X}}$［由\eqref{align:ch13-数据矩阵置换}给出］，其行已根据置换函数 $\pi(\cdot)$ 进行置换。
+\end{exercise}
+
+\begin{exercise}[$\star\star$]\label{exercise:ch13-05}
+证明转换后的邻接矩阵 $\widetilde{\bm{A}}$，它由\eqref{align:ch13-邻接矩阵置换}定义，其中 $\bm{P}$ 由\eqref{align:ch13-置换矩阵一般形式}定义，使得新矩阵的行和列都根据置换函数 $\pi(\cdot)$ 相对于原始邻接矩阵 $\bm{A}$ 进行置换。
+\end{exercise}
+
+\begin{exercise}[$\star\star$]\label{exercise:ch13-06}
+将\eqref{align:ch13-更新算子}所示的更新方程写成使用矩阵的图级别方程。为了保持符号简洁，省略层索引 $l$。为此，首先将节点嵌入向量 $\bm{h}_n^{(l)}$ 收集到一个矩阵 $\bm{H}$ 中，其中的行 $n$ 由 $\bm{h}_n^{\mathsf T}$ 给出。然后证明下式
+\begin{align}
+\bm{z}_n=\sum_{m\in\mathcal{N}(n)}\bm{h}_m
+\label{align:ch13-习题聚合}
+\end{align}
+给出的邻域聚合向量 $\bm{z}_n$ 可以以矩阵形式写成 $\bm{Z}=\bm{A}\bm{H}$，$\bm{Z}$ 是一个 $N\times D$ 大小的矩阵，其中的行 $n$ 由 $\bm{z}_n^{\mathsf T}$ 给出，$\bm{A}$ 是邻接矩阵。最后证明\eqref{align:ch13-更新算子}中非线性激活函数的参数可以以矩阵形式写成
+\begin{align}
+\bm{A}\bm{H}\bm{W}_{\mathrm{neigh}}+\bm{H}\bm{W}_{\mathrm{self}}+\bm{1}_D\bm{b}^{\mathsf T},
+\label{align:ch13-习题矩阵形式}
+\end{align}
+其中 $\bm{1}_D$ 是一个 $D$ 维的列向量，其中的所有元素都是 $1$。
+\end{exercise}
+
+\begin{remark}（重构新增）
+上面的推导与题面\eqref{align:ch13-习题矩阵形式}有两处记号差异，这里说明清楚，以免读者误以为推导有误。\par
+其一是转置。\eqref{align:ch13-更新算子}中权重以“左乘列向量”的形式出现（$\bm{W}_{\mathrm{self}}\bm{h}_n$），而把 $N$ 个节点堆成 $\bm{H}$ 之后，同一个线性映射必须写成右乘 $\bm{W}^{\mathsf T}$，否则维数不匹配。题面\eqref{align:ch13-习题矩阵形式}省略了转置，含义是：其中的 $\bm{W}_{\mathrm{self}}$、$\bm{W}_{\mathrm{neigh}}$ 取\eqref{align:ch13-更新算子}中矩阵的转置（等价地，把 $\bm{h}_n$ 当作行向量处理）。这不是数学错误，而是两套约定的混用；实现时只需固定一套。\par
+其二是维数。$\bm{A}\bm{H}\bm{W}_{\mathrm{neigh}}$ 与 $\bm{H}\bm{W}_{\mathrm{self}}$ 都是 $N\times D'$ 矩阵，而 $\bm{b}^{\mathsf T}$ 是 $1\times D'$ 的行向量，故左乘的全 $1$ 向量必须是 $N$ 维（即 $\bm{1}_N$）才能得到 $N\times D'$ 的矩阵；题面说“$\bm{1}_D$ 是一个 $D$ 维的列向量”相应地应理解为 $N$ 维，其中 $N$ 是节点数。若坚持用 $D$ 维向量，则该乘积为 $D\times D'$，与其余两项无法相加。\par
+除这两处约定外，题面的结论是正确的：把逐节点更新写成矩阵形式后，一层消息传递的计算代价是一次稀疏矩阵乘法加两次稠密矩阵乘法，与节点数成线性关系，这正是图神经网络能用于大规模图的根本原因。
+\end{remark}
+
+\begin{exercise}[$\star\star$]\label{exercise:ch13-07}
+利用深度图卷积网络第 $l$ 层的等变性［\eqref{align:ch13-层等变性}］和节点变量的置换性质［\eqref{align:ch13-数据矩阵置换}］，证明\eqref{align:ch13-层叠}定义的完整深度图卷积网络也是等变的。
+\end{exercise}
+
+\begin{exercise}[$\star\star$]\label{exercise:ch13-08}
+证明在\eqref{align:ch13-注意力聚合}定义的聚合函数中［注意力权重由\eqref{align:ch13-MLP注意力}给出］，该聚合函数在图中节点重新排序下是等变的。
+\end{exercise}
+
+\begin{exercise}[$\star$]\label{exercise:ch13-09}
+证明一个图注意力网络（其中图是全连接的，即每对节点之间都有一条边），等同于标准的 Transformer 架构。
+\end{exercise}
+
+\begin{exercise}[$\star\star$]\label{exercise:ch13-10}
+当坐标系统被平移时，对坐标系统定义的物体的位置向量使用
+\begin{align}
+\bm{r}'=\bm{r}+\bm{c}
+\label{align:ch13-习题平移}
+\end{align}
+进行转换，其中 $\bm{c}$ 是描述平移的固定向量。类似地，如果坐标系统发生旋转和/或镜像反射，则对坐标系统定义的物体的位置向量使用
+\begin{align}
+\bm{r}'=\bm{R}\bm{r}
+\label{align:ch13-习题旋转}
+\end{align}
+进行转换，其中 $\bm{R}$ 是一个正交矩阵，它的逆由其转置给出，所以
+\begin{align}
+\bm{R}\bm{R}^{\mathsf T}=\bm{R}^{\mathsf T}\bm{R}=\bm{I}.
+\label{align:ch13-习题正交}
+\end{align}
+\enlargethispage{2\baselineskip}
+利用这些属性，证明在平移、旋转和反射下，消息传递方程［\eqref{align:ch13-几何边更新}、\eqref{align:ch13-几何聚合}和\eqref{align:ch13-几何节点更新}］是不变的，并且\eqref{align:ch13-几何坐标更新}给出的坐标嵌入向量是等变的。
+\end{exercise}
+
+\end{document}

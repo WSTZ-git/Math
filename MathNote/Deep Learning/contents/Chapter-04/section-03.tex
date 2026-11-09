@@ -1,4 +1,4 @@
-﻿\documentclass[../../main.tex]{subfiles}
+\documentclass[../../main.tex]{subfiles}
 
 \graphicspath{{../../image/}{../../figure/}}
 
@@ -6,73 +6,117 @@
 
 \section{偏差-方差权衡}\label{section:ch04-偏差方差权衡}
 
-到目前为止，在对回归问题的线性模型进行讨论时，我们假设基函数的形式和数量都是给定的（参见\cref{section:ch01-多项式拟合}）。我们还看到，如果使用非常有限的数据集训练复杂模型，使用最大似然估计可能会导致严重的过拟合问题。然而，通过限制基函数的数量来避免过拟合有一个副作用，就是限制了模型捕捉数据中有趣和重要趋势的灵活性。正则化项可以控制包含大量参数的模型的过拟合问题，但这又引出了如何确定合适的正则化系数$\lambda$的问题。我们可以从频率学派的视角讨论模型复杂性的问题，称为偏差-方差（bias-variance）权衡。
+到目前为止，在对回归问题的线性模型进行讨论时，我们假设基函数的形式和数量都是给定的（参见\cref{section:ch01-一个教学示例}）。我们还看到，如果使用非常有限的数据集训练复杂模型，使用最大似然估计可能会导致严重的过拟合问题。然而，通过限制基函数的数量来避免过拟合有一个副作用，就是限制了模型捕捉数据中有趣和重要趋势的灵活性。尽管正则化项可以控制包含大量参数的模型的过拟合问题，但这又引出了如何确定合适的正则化系数$\lambda$的问题。同时关于权重向量$\boldsymbol{w}$和正则化系数$\lambda$最小化正则化误差函数显然是不正确的，因为这会导致未正则化的解，即$\lambda=0$。
 
-如果用参数向量$\boldsymbol{w}$控制的函数对$h(\boldsymbol{x})$进行建模，那么从贝叶斯学派的视角来看，模型中的不确定性可以通过$\boldsymbol{w}$上的后验分布来表示。但是频率学派会基于数据集$\mathcal{D}$对$\boldsymbol{w}$进行点估计，并试图通过思想实验来解释该估计的不确定性。假设我们有大量的数据集，每个数据集的大小为$N$且都独立地从分布$p(t\mid\boldsymbol{x})$中产生。对于任何给定的数据集$\mathcal{D}$，都可以通过算法得到预测函数$f(\boldsymbol{x};\mathcal{D})$。
+我们可以从频率学派的视角讨论模型复杂性的问题，称为偏差-方差（bias-variance）权衡。虽然我们将在线性基函数模型的背景下介绍这个概念，因为在该背景下可以使用简单的例子很容易地说明这些想法，但我们的讨论具有非常广泛的适用性。过拟合确实是最大似然的缺点，但是当我们在Bayes设定中边缘化参数时，则不会出现这种情况（Bishop, 2006）。
 
-在讨论回归问题的决策理论时（参见\cref{section:ch04-决策理论}），一旦知道条件分布$p(t\mid\boldsymbol{x})$，每个损失函数都会得到对应的最优预测。一个普遍的选择是平方损失函数，其最优预测由条件期望给出：
+在讨论回归问题的决策理论时（参见\cref{section:ch04-决策理论}），我们考虑了各种损失函数。一旦知道条件分布$p(t\mid\boldsymbol{x})$，每个损失函数就都会得到对应的最优预测。一个普遍的选择是平方损失函数，其最优预测由条件期望给出，用$h(\boldsymbol{x})$表示。
 
 \begin{align}
   h(\boldsymbol{x})=\mathbb{E}[t\mid\boldsymbol{x}]=\int t\,p(t\mid\boldsymbol{x})\,\mathrm{d}t
   \label{align:ch04-回归函数h}
 \end{align}
 
-平方损失的期望可以写成
+平方损失的期望可以写成如下形式：
 
 \begin{align}
-  \mathbb{E}[L]=\int\{f(\boldsymbol{x})-h(\boldsymbol{x})\}^{2}p(\boldsymbol{x})\,\mathrm{d}\boldsymbol{x}+\iint\{h(\boldsymbol{x})-t\}^{2}p(\boldsymbol{x},t)\,\mathrm{d}\boldsymbol{x}\,\mathrm{d}t
+  \mathbb{E}[L]=\int\{f(\boldsymbol{x})-h(\boldsymbol{x})\}^2p(\boldsymbol{x})\,\mathrm{d}\boldsymbol{x}+\iint\{h(\boldsymbol{x})-t\}^2p(\boldsymbol{x},t)\,\mathrm{d}\boldsymbol{x}\,\mathrm{d}t
   \label{align:ch04-期望损失分解}
 \end{align}
 
-右侧的第二项来自数据上的固有噪声，与$f(\boldsymbol{x})$无关，它代表了期望损失的最小值。右侧的第一项取决于如何选择函数$f(\boldsymbol{x})$，因为这一项是非负的，所以能达到的最小值是$0$。
+前面我们曾提到，与$f(\boldsymbol{x})$无关的\eqref{align:ch04-期望损失分解}右侧的第二项来自数据上的固有噪声，代表了期望损失的最小值。\eqref{align:ch04-期望损失分解}右侧的第一项取决于如何选择函数$f(\boldsymbol{x})$。我们将寻找一个$f(\boldsymbol{x})$来最小化这一项。因为这一项是非负的，所以能达到的最小值是$0$。如果有无限的数据供应（和无限的计算资源），则原则上可以找到任何准确度下的回归函数$h(\boldsymbol{x})$，它可以代表$f(\boldsymbol{x})$的最优选择。然而在实践中，数据集$\mathcal{D}$只包含$N$个有限的数据点，因此我们无法精确地知道回归函数$h(\boldsymbol{x})$。
 
-式\eqref{align:ch04-期望损失分解}右侧第一项的被积函数，在一个特定的数据集$\mathcal{D}$上为$\{f(\boldsymbol{x};\mathcal{D})-h(\boldsymbol{x})\}^{2}$。由于它的值依赖于特定的数据集$\mathcal{D}$，我们取其在数据集上的期望。在花括号内加减$\mathbb{E}_{\mathcal{D}}[f(\boldsymbol{x};\mathcal{D})]$，然后展开，可以得到
+如果使用参数向量$\boldsymbol{w}$控制的函数对$h(\boldsymbol{x})$进行建模，那么从Bayes学派的视角来看，模型中的不确定性可以通过$\boldsymbol{w}$上的后验分布来表示。但是频率学派会基于数据集$\mathcal{D}$对$\boldsymbol{w}$进行点估计，并试图通过以下思想实验（thought experiment）来解释该估计的不确定性。假设我们有大量的数据集，每个数据集的大小为$N$且都独立地从分布$p(t\mid\boldsymbol{x})$中产生。对于任何给定的数据集$\mathcal{D}$，都可以通过我们的算法得到预测函数$f(\boldsymbol{x};\mathcal{D})$。集合中的不同数据集将给出不同的函数以及平方损失值。一个特定学习算法的性能，可以通过对它在集合中每个数据集上的性能表现取平均值来评估。
 
+\begin{theorem}[偏差-方差分解]\label{theorem:ch04-偏差方差分解}
+设训练集$\mathcal{D}$的大小为$N$，其中的数据点独立地取自分布$p(t\mid\boldsymbol{x})$，$f(\boldsymbol{x};\mathcal{D})$表示在$\mathcal{D}$上训练得到的预测函数，$h(\boldsymbol{x})=\mathbb{E}[t\mid\boldsymbol{x}]$为\eqref{align:ch04-回归函数h}给出的回归函数。若所涉及的各积分均绝对收敛，则平方损失的期望可以分解为
 \begin{align}
-  \mathbb{E}_{\mathcal{D}}\bigl[\{f(\boldsymbol{x};\mathcal{D})-h(\boldsymbol{x})\}^{2}\bigr]
-  =\left\{\mathbb{E}_{\mathcal{D}}[f(\boldsymbol{x};\mathcal{D})]-h(\boldsymbol{x})\right\}^{2}
-  +\mathbb{E}_{\mathcal{D}}\bigl[\{f(\boldsymbol{x};\mathcal{D})-\mathbb{E}_{\mathcal{D}}[f(\boldsymbol{x};\mathcal{D})]\}^{2}\bigr]
-  \label{align:ch04-偏差方差分解}
-\end{align}
-
-因此期望损失可以分解为三项之和：
-
-\begin{align}
-  \mathbb{E}[L]=\text{平方偏差}+\text{方差}+\text{噪声}
+  \text{期望损失}=\text{平方偏差}+\text{方差}+\text{噪声},
   \label{align:ch04-偏差方差噪声}
 \end{align}
-
 其中
-
 \begin{align}
-  \text{平方偏差}=\int\left\{\mathbb{E}_{\mathcal{D}}[f(\boldsymbol{x};\mathcal{D})]-h(\boldsymbol{x})\right\}^{2}p(\boldsymbol{x})\,\mathrm{d}\boldsymbol{x}
-  \label{align:ch04-平方偏差}
-\end{align}
-
-\begin{align}
-  \text{方差}=\int\mathbb{E}_{\mathcal{D}}\bigl[\{f(\boldsymbol{x};\mathcal{D})-\mathbb{E}_{\mathcal{D}}[f(\boldsymbol{x};\mathcal{D})]\}^{2}\bigr]p(\boldsymbol{x})\,\mathrm{d}\boldsymbol{x}
-  \label{align:ch04-方差}
-\end{align}
-
-\begin{align}
-  \text{噪声}=\iint\{h(\boldsymbol{x})-t\}^{2}p(\boldsymbol{x},t)\,\mathrm{d}\boldsymbol{x}\,\mathrm{d}t
+  \text{平方偏差}&=\int\bigl\{\mathbb{E}_{\mathcal{D}}[f(\boldsymbol{x};\mathcal{D})]-h(\boldsymbol{x})\bigr\}^2p(\boldsymbol{x})\,\mathrm{d}\boldsymbol{x},
+  \label{align:ch04-平方偏差}\\
+  \text{方差}&=\int\mathbb{E}_{\mathcal{D}}\bigl[\{f(\boldsymbol{x};\mathcal{D})-\mathbb{E}_{\mathcal{D}}[f(\boldsymbol{x};\mathcal{D})]\}^2\bigr]p(\boldsymbol{x})\,\mathrm{d}\boldsymbol{x},
+  \label{align:ch04-方差}\\
+  \text{噪声}&=\iint\{h(\boldsymbol{x})-t\}^2p(\boldsymbol{x},t)\,\mathrm{d}\boldsymbol{x}\,\mathrm{d}t.
   \label{align:ch04-不可约噪声}
 \end{align}
+\end{theorem}
 
-第一项称为平方偏差，表示所有数据集上的平均预测与期望回归函数的差异程度。第二项称为方差，衡量函数$f(\boldsymbol{x};\mathcal{D})$对被选的特定数据集的敏感程度。
+\begin{proof}
+（重构新增）由\cref{proposition:ch04-期望损失分解}，\eqref{align:ch04-期望损失分解}已经把$\mathbb{E}[L]$写成两项之和，其中第二项恰为\eqref{align:ch04-不可约噪声}右端的积分，它不含$f$。因此只需处理第一项。
 
-我们的目标是最小化期望损失，它已被分解为平方偏差项、方差项和常数噪声项的和。偏差和方差之间存在权衡：非常灵活的模型具有低偏差和高方差，而相对稳定的模型具有高偏差和低方差。具有最优预测能力的模型能够在偏差和方差之间达到最佳平衡。
+第一步，写出单个数据集上的被积函数。\eqref{align:ch04-期望损失分解}右侧第一项的被积函数，在一个特定的数据集$\mathcal{D}$上具有以下形式：
+\begin{align}
+  \{f(\boldsymbol{x};\mathcal{D})-h(\boldsymbol{x})\}^2
+  \label{align:ch04-偏差方差被积函数}
+\end{align}
 
-我们可以用第~1~章介绍过的正弦数据集来说明。独立生成$L=100$个数据集，每个数据集包含$N=25$个数据点，数据点由正弦曲线$h(x)=\sin(2\pi x)$产生。对每个数据集拟合一个包含$M=24$个高斯基函数和一个常数偏置基函数的模型（共$25$个参数），通过最小化正则化误差函数得到预测函数。较小的$\lambda$值允许模型对每个单独数据集上的噪声进行微调，从而导致较大的方差；相反，较大的$\lambda$值会使权重参数向$0$靠近，从而导致较大的偏差。
+第二步，在花括号内加减$\mathbb{E}_{\mathcal{D}}[f(\boldsymbol{x};\mathcal{D})]$并展开。为简洁起见记$\bar{f}(\boldsymbol{x})\triangleq\mathbb{E}_{\mathcal{D}}[f(\boldsymbol{x};\mathcal{D})]$，则
+\begin{align}
+  \{f(\boldsymbol{x};\mathcal{D})-h(\boldsymbol{x})\}^2
+  &=\bigl\{f(\boldsymbol{x};\mathcal{D})-\bar{f}(\boldsymbol{x})+\bar{f}(\boldsymbol{x})-h(\boldsymbol{x})\bigr\}^2\nonumber\\
+  &=\bigl\{f(\boldsymbol{x};\mathcal{D})-\bar{f}(\boldsymbol{x})\bigr\}^2
+  +\bigl\{\bar{f}(\boldsymbol{x})-h(\boldsymbol{x})\bigr\}^2\nonumber\\
+  &\quad+2\bigl\{f(\boldsymbol{x};\mathcal{D})-\bar{f}(\boldsymbol{x})\bigr\}\bigl\{\bar{f}(\boldsymbol{x})-h(\boldsymbol{x})\bigr\}.
+  \label{align:ch04-偏差方差展开}
+\end{align}
 
-\begin{figure}[ht]
+第三步，对$\mathcal{D}$取期望。由于$\bar{f}(\boldsymbol{x})$与$h(\boldsymbol{x})$都不依赖$\mathcal{D}$，第二项在取期望后不变；第一项的期望按定义就是方差的被积函数；交叉项则消失，因为
+\begin{align*}
+  \mathbb{E}_{\mathcal{D}}\bigl[f(\boldsymbol{x};\mathcal{D})-\bar{f}(\boldsymbol{x})\bigr]
+  =\mathbb{E}_{\mathcal{D}}\bigl[f(\boldsymbol{x};\mathcal{D})\bigr]-\bar{f}(\boldsymbol{x})=0
+\end{align*}
+而$\{\bar{f}(\boldsymbol{x})-h(\boldsymbol{x})\}$关于$\mathcal{D}$是常数。于是
+\begin{align}
+  \mathbb{E}_{\mathcal{D}}\bigl[\{f(\boldsymbol{x};\mathcal{D})-h(\boldsymbol{x})\}^2\bigr]
+  &=\bigl\{\mathbb{E}_{\mathcal{D}}[f(\boldsymbol{x};\mathcal{D})]-h(\boldsymbol{x})\bigr\}^2
+  +\mathbb{E}_{\mathcal{D}}\bigl[\{f(\boldsymbol{x};\mathcal{D})-\mathbb{E}_{\mathcal{D}}[f(\boldsymbol{x};\mathcal{D})]\}^2\bigr].
+  \label{align:ch04-偏差方差分解式}
+\end{align}
+
+第四步，对$\boldsymbol{x}$积分并代回\eqref{align:ch04-期望损失分解}。在绝对收敛的假设下$\mathbb{E}_{\mathcal{D}}$与$\int(\cdot)p(\boldsymbol{x})\,\mathrm{d}\boldsymbol{x}$可以交换次序，于是
+\begin{align*}
+  &\int\mathbb{E}_{\mathcal{D}}\bigl[\{f(\boldsymbol{x};\mathcal{D})-h(\boldsymbol{x})\}^2\bigr]p(\boldsymbol{x})\,\mathrm{d}\boldsymbol{x}\\
+  &\quad=\int\{\bar{f}(\boldsymbol{x})-h(\boldsymbol{x})\}^2p(\boldsymbol{x})\,\mathrm{d}\boldsymbol{x}
+  +\int\mathbb{E}_{\mathcal{D}}\bigl[\{f(\boldsymbol{x};\mathcal{D})-\bar{f}(\boldsymbol{x})\}^2\bigr]p(\boldsymbol{x})\,\mathrm{d}\boldsymbol{x}.
+\end{align*}
+把它与\eqref{align:ch04-期望损失分解}的第二项（即\eqref{align:ch04-不可约噪声}）相加，即得\eqref{align:ch04-偏差方差噪声}与\eqref{align:ch04-平方偏差}--\eqref{align:ch04-不可约噪声}。
+\end{proof}
+
+% SUPPLEMENT: parent=theorem:ch04-偏差方差分解; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+\cref{theorem:ch04-偏差方差分解}把期望损失拆成三个来源不同的部分，每一项的含义如下。
+
+\emph{平方偏差}\eqref{align:ch04-平方偏差}衡量“平均模型”与真实回归函数$h$的差距：它把$\mathcal{D}$的所有可能取值上的$f$先平均，再与$h$比较，因此刻画的是模型族的\emph{系统性}误差。若模型族足够丰富，存在某个$f$等于$h$，则平方偏差可降为零。
+
+\emph{方差}\eqref{align:ch04-方差}衡量$f(\boldsymbol{x};\mathcal{D})$随训练集$\mathcal{D}$的\emph{波动}：它只关心各个$f$相对其均值$\bar{f}$偏离多少，而不管$\bar{f}$是否等于$h$。高方差的模型对数据的微小扰动极为敏感，这正是过拟合的表现。
+
+\emph{噪声}\eqref{align:ch04-不可约噪声}与$f$无关，是数据本身的内在随机性；任何预测函数都无法把它降低，它是期望损失的下界。
+
+三项之间的关系构成本节的核心权衡：模型越灵活，平方偏差越小而方差越大；模型越保守，方差越小而平方偏差越大。$\lambda$（或基函数的个数$M$）正是控制这一权衡的旋钮，见\cref{example:ch04-正弦数据集}。
+
+关于条件，需要说明三点。第一，“数据点独立地取自$p(t\mid\boldsymbol{x})$”这一假设使\eqref{align:ch04-方差}中的期望有定义：没有它，就不存在“大量独立数据集”这一思想实验。第二，各积分绝对收敛的假设保证第三步中期望与积分的交换合法；若$f$的二阶矩不存在，则\eqref{align:ch04-偏差方差噪声}的两端可能同时为$+\infty$。第三，本分解建立在“对数据集求平均”之上，而实际只观测到一个$\mathcal{D}$，因此它解释损失的\emph{结构}，并不能被直接计算；见本节末尾的讨论。
+\end{remark}
+
+我们的目标是最小化期望损失，我们已经将其分解为平方偏差项、方差项和常数噪声项的和。偏差和方差之间存在权衡：非常灵活的模型具有低偏差和高方差，而相对稳定的模型具有高偏差和低方差。具有最优预测能力的模型能够在偏差和方差之间达到最佳平衡。这可以用前面介绍过的正弦数据集来说明（参见\cref{section:ch01-一个教学示例}）。
+
+\begin{example}[ 正弦数据集上的偏差与方差]\label{example:ch04-正弦数据集}
+独立生成$L=100$个数据集，每个数据集包含$N=25$个数据点，数据点由正弦曲线$h(x)=\sin(2\pi x)$产生。数据集的索引是$l=1,\cdots,L$，其中$L=100$。对于每个数据集$\mathcal{D}^{(l)}$，拟合一个包含$M=24$个Gauss基函数和一个常数“偏差”基函数的模型，总共$25$个参数。如\cref{figure:ch04-偏差方差示例}所示，通过最小化正则化误差函数\eqref{align:ch04-正则化总误差}，可以得到预测函数$f^{(l)}(x)$。
+\end{example}
+
+\begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.7\textwidth]{ch04-fig4-7-bias-variance.png}
-  \caption{使用正弦数据展示模型复杂度上偏差和方差的依赖关系，模型复杂度由正则化参数$\lambda$控制。$L=100$个数据集，每个含$N=25$个数据点，模型含$24$个高斯基函数及一个偏置基函数。左列：$100$次拟合中的$20$次随$\ln\lambda$变化的结果；右列：$100$次拟合的平均结果（粗曲线）与正弦目标函数（细曲线）。从上到下$\ln\lambda=3$（高偏差、低方差）、$\ln\lambda=1$（折中）、$\ln\lambda=-3$（低偏差、高方差）。}
+  \includegraphics[width=0.68\textwidth]{ch04-fig4-7-bias-variance.png}
+  \caption{使用\cref{section:ch01-一个教学示例}的正弦数据集展示模型复杂度对偏差和方差的依赖关系，模型复杂度由正则化参数$\lambda$控制。这里有$L=100$个数据集，每个数据集有$N=25$个数据点，模型中有$24$个Gauss基函数，因此包括偏差参数在内的参数总数为$M=25$。左列显示了模型拟合结果随$\ln\lambda$变化的结果（为了清晰起见，只显示了$100$次拟合中的$20$次）。右列显示了$100$次拟合的平均结果（红色曲线）以及生成数据集的正弦函数（绿色曲线）}
   \label{figure:ch04-偏差方差示例}
 \end{figure}
 
-平均预测用下式估计：
+\cref{figure:ch04-偏差方差示例}的最上面一行对应的正则化系数$\lambda$很大，即方差很低（因为左图中的红色曲线彼此之间相似），但偏差很高（因为右图中的两条曲线差异很大）。相反，在$\lambda$较小的最下面一行，方差较高（表现为左图中红色曲线之间的高变异性），但偏差较低（表现为平均模型与原始正弦函数之间拟合良好）。我们发现复杂模型（$M=25$）多次拟合平均后的结果对回归函数的拟合效果非常好，这说明平均确实颇有裨益。虽然是关于参数的后验分布的平均，而不是关于多个数据集的平均，但是多个解的加权平均是Bayes方法的核心。
+
+我们还可以定量地检查这个示例中的偏差-方差权衡。平均预测是用下式估计的：
 
 \begin{align}
   \bar{f}(x)=\frac{1}{L}\sum_{l=1}^{L}f^{(l)}(x)
@@ -82,15 +126,24 @@
 而平方偏差和方差则由下式给出：
 
 \begin{align}
-  \text{平方偏差}=\frac{1}{L}\sum_{l=1}^{L}\{\bar{f}(x)-h(x)\}^{2}
+  \text{平方偏差}=\frac{1}{N}\sum_{n=1}^{N}\bigl\{\bar{f}(x_n)-h(x_n)\bigr\}^2
   \label{align:ch04-数值平方偏差}
 \end{align}
 
 \begin{align}
-  \text{方差}=\frac{1}{L}\sum_{l=1}^{L}\{f^{(l)}(x)-\bar{f}(x)\}^{2}
+  \text{方差}=\frac{1}{N}\sum_{n=1}^{N}\frac{1}{L}\sum_{l=1}^{L}\bigl\{f^{(l)}(x_n)-\bar{f}(x_n)\bigr\}^2
   \label{align:ch04-数值方差}
 \end{align}
 
-偏差-方差分解的实际价值是有限的，因为它基于数据集集合的平均，而实际上我们只有单个观测数据集。如果有大量给定大小的独立训练集，更好的方法是将它们组合成单个更大的训练集，从而降低给定复杂度模型的过拟合风险。但尽管如此，偏差-方差分解仍经常提供对模型复杂性问题的有用洞察。
+其中，由分布$p(x)$加权的对$x$的积分，可通过该分布产生的数据点的有限和来近似。\cref{figure:ch04-偏差方差曲线}给出了这些量在不同$\ln\lambda$取值时的曲线。可以看到，较小的$\lambda$值允许模型对每个单独数据集上的噪声进行微调，从而导致较大的方差。相反，较大的$\lambda$值会使权重参数向$0$靠近，从而导致较大的偏差。
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.62\textwidth]{ch04-fig4-8-bias-variance-curves.png}
+  \caption{根据\cref{figure:ch04-偏差方差示例}所示的结果，绘制的平方偏差、方差以及它们的和的示意图。图中还显示了测试数据集大小为$1000$个数据点时的平均测试集误差。平方偏差$+$方差的最小值出现在$\ln\lambda=0.43$附近，接近于在测试数据上给出最小误差的值}
+  \label{figure:ch04-偏差方差曲线}
+\end{figure}
+
+偏差-方差分解的实际价值是有限的，因为它基于数据集的集合的平均，而实际上我们只有单个观测数据集。如果我们有大量给定大小的独立训练集，则更好的方法是将它们组合成单个更大的训练集，从而降低给定复杂度模型的过拟合风险。但尽管如此，偏差-方差分解仍经常提供对模型复杂性问题的有用洞察。虽然我们在本章中只是从回归问题的角度介绍了它，但其底层逻辑具有广泛的适用性。
 
 \end{document}

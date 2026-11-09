@@ -1,155 +1,398 @@
 \documentclass[../../main.tex]{subfiles}
+
 \graphicspath{{../../image/}{../../figure/}}
+
 \begin{document}
 
 \section{收敛}\label{section:ch07-收敛}
 
-在实际应用梯度下降算法时，需要谨慎选择学习率 $\eta$ 的值。考虑图~7.3~所示情形：这是一个假想二维权重空间中的简化误差曲面，该曲面的曲率在不同方向上存在显著差异，形成一个狭长的"山谷"结构。对误差曲面上大多数点而言，批量梯度下降算法计算出的局部负梯度 $-\nabla E$（与该点等高线垂直）并不直接指向最小值点。直观上我们可能认为增大学习率 $\eta$ 应能让算法在权重空间中迈出更大步伐，从而更快收敛到最小值；然而如果一味加大步长，权重更新会在山谷两侧来回震荡，当 $\eta$ 超过某个阈值时这种震荡甚至会变得越来越剧烈，导致算法无法收敛。为避免这种发散振荡，学习率 $\eta$ 必须设定得足够小，那么沿着山谷方向向最小值靠近的速度又可能变得非常缓慢。在这种情况下，梯度下降需要经过多次小步迭代才能逐渐逼近最小值，导致整体优化效率非常低下。
+在实际应用梯度下降算法时，我们需要谨慎地选择参数学习率 $\eta$ 的值。考虑\cref{figure:ch07-山谷}所示的情形：这是一个假想的二维权重空间中的简化误差曲面，该曲面的曲率在不同方向上存在显著差异，形成了一个狭长的“山谷”结构。对误差曲面上的大多数点来说，批量梯度下降算法计算出的局部梯度向量（与该点的等高线垂直）并不直接指向最小值点。直观上我们可能会认为增大学习率 $\eta$ 应该能让算法在权重空间中迈开更大的步伐，从而更快地收敛到最小值。然而，如果一味地加大步长，权重更新会在山谷两侧来回震荡，当 $\eta$ 超过某个阈值时，这种震荡甚至会变得越来越剧烈，导致算法无法收敛。为了避免这种发散的振荡，学习率 $\eta$ 必须设定得足够小，那么，沿着山谷方向向最小值靠近的速度又可能会变得非常缓慢。在这种情况下，梯度下降算法需要经过相当多次的小步迭代才能逐渐逼近最小值，导致整体的优化效率非常低下。
 
-\subsection{收敛性分析}\label{section:ch07-收敛性分析}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.42\textwidth]{ch07-fig7-3-valley.png}
+\caption{步长固定的梯度下降的示意图，这种梯度下降通常用于在不同方向上曲率大不相同的误差函数。误差表面 $E$ 形如一个“山谷”，如椭圆所示。注意，对于权重空间中的大多数点来说，局部负梯度 $-\nabla E$ 并不指向误差函数的最小值。因此，梯度下降的连续步骤可能会在“山谷”中来回振荡，导致沿“山谷”向最小值前进得非常缓慢。向量 $\mathbf{u}_1$ 和 $\mathbf{u}_2$ 是黑塞矩阵的特征向量。}
+\label{figure:ch07-山谷}
+\end{figure}
 
-通过考虑误差函数在最小值附近的二次近似，可以深入了解该问题的本质。根据~\eqref{align:ch07-quadratic-at-min}、\eqref{align:ch07-eigen}~和~\eqref{align:ch07-expansion}，在这种近似中误差函数梯度可以写为
+通过考虑误差函数在最小值附近的二次近似，我们可以深入了解这个问题的本质（参见\cref{subsection:ch07-局部二次近似}）。根据\eqref{align:ch07-极小点展开}、\eqref{align:ch07-特征方程}和\eqref{align:ch07-特征展开}，在这种近似中，误差函数的梯度可以写为
 \begin{align}
-\nabla E = \sum_i \lambda_i \alpha_i \mathbf{u}_i.
-\label{align:ch07-grad-diag}
+\nabla E = \sum_i \alpha_i\lambda_i\mathbf{u}_i.
+\label{align:ch07-梯度展开}
+\end{align}
+再次使用\eqref{align:ch07-特征展开}，我们可以将权重向量的变化表示为对应系数 $\alpha_i$ 的变化：
+\begin{align}
+\Delta\mathbf{w} = \sum_i \Delta\alpha_i\mathbf{u}_i.
+\label{align:ch07-权重变化}
+\end{align}
+结合\eqref{align:ch07-梯度展开}、\eqref{align:ch07-权重变化}与梯度下降公式\eqref{align:ch07-批量梯度下降}，并利用黑塞矩阵特征向量的正交性关系\eqref{align:ch07-正交规范}，可以得到梯度下降算法每次迭代步中 $\alpha_i$ 的变化量表达式：
+\begin{align}
+\Delta\alpha_i = -\eta\lambda_i\alpha_i.
+\label{align:ch07-alpha变化}
+\end{align}
+由此可以直接推导出（见\cref{exercise:ch07-10}）如下收敛性结论。
+
+\begin{theorem}[二次近似下的线性收敛]\label{theorem:ch07-线性收敛}
+设 $E(\mathbf{w})$ 由\eqref{align:ch07-极小点展开}精确给出，其中 $\mathbf{H}$ 正定，特征值为 $0<\lambda_{\min}=\lambda_1\leqslant\cdots\leqslant\lambda_W=\lambda_{\max}$，对应的正交规范特征向量为 $\mathbf{u}_i$，并设 $E$ 的极小值点为 $\mathbf{w}^{\ast}$。若按梯度下降\eqref{align:ch07-批量梯度下降}从任意初值 $\mathbf{w}^{(0)}$ 出发迭代，则对每个 $i$，
+\begin{align}
+\alpha_i^{(\tau)} = (1-\eta\lambda_i)\,\alpha_i^{(\tau-1)},
+\label{align:ch07-alpha更新}
+\end{align}
+从而经过总共 $T$ 步之后
+\begin{align}
+\alpha_i^{(T)} = (1-\eta\lambda_i)^{T}\alpha_i^{(0)}.
+\label{align:ch07-alpha-T}
+\end{align}
+并且 $\mathbf{w}^{(T)}\to\mathbf{w}^{\ast}$ 对一切初值成立，当且仅当学习率满足
+\begin{align}
+0<\eta<\frac{2}{\lambda_{\max}}.
+\label{align:ch07-学习率上界}
+\end{align}
+此时收敛是线性的，收缩因子为 $\rho(\eta)=\max_i|1-\eta\lambda_i|$。
+\end{theorem}
+\begin{proof}
+由\eqref{align:ch07-alpha变化}，$\alpha_i$ 在第 $\tau$ 步的新旧取值满足
+\begin{align*}
+\alpha_i^{(\tau)} = \alpha_i^{(\tau-1)}+\Delta\alpha_i = (1-\eta\lambda_i)\,\alpha_i^{(\tau-1)},
+\end{align*}
+即\eqref{align:ch07-alpha更新}；反复代入 $T$ 次即得\eqref{align:ch07-alpha-T}。
+
+其次说明 $\alpha_i$ 的几何含义。在\eqref{align:ch07-特征展开}两端左乘 $\mathbf{u}_i^{\mathsf T}$ 并用正交规范性\eqref{align:ch07-正交规范}，得
+\begin{align*}
+\mathbf{u}_i^{\mathsf T}(\mathbf{w}-\mathbf{w}^{\ast}) = \alpha_i,
+\end{align*}
+即 $\alpha_i$ 是 $\mathbf{w}-\mathbf{w}^{\ast}$ 在 $\mathbf{u}_i$ 方向上的分量，可解释为沿着方向 $\mathbf{u}_i$ 到极小值点的“距离”。
+
+于是
+\begin{align*}
+\|\mathbf{w}^{(T)}-\mathbf{w}^{\ast}\|^{2} = \sum_i\bigl(\alpha_i^{(T)}\bigr)^{2} = \sum_i(1-\eta\lambda_i)^{2T}\bigl(\alpha_i^{(0)}\bigr)^{2}.
+\end{align*}
+因此 $\mathbf{w}^{(T)}\to\mathbf{w}^{\ast}$ 当且仅当每个分量都趋于零，即 $|1-\eta\lambda_i|<1$ 对所有 $i$ 成立。由于 $\lambda_i>0$，不等式 $|1-\eta\lambda_i|<1$ 等价于 $-1<1-\eta\lambda_i<1$，亦即 $0<\eta\lambda_i<2$，或 $0<\eta<2/\lambda_i$；该条件对全部 $i$ 成立当且仅当 $0<\eta<2/\lambda_{\max}$。最后，由上式还得到
+\begin{align*}
+\|\mathbf{w}^{(T)}-\mathbf{w}^{\ast}\| \leqslant \rho(\eta)^{T}\,\|\mathbf{w}^{(0)}-\mathbf{w}^{\ast}\|,
+\end{align*}
+其中 $\rho(\eta)=\max_i|1-\eta\lambda_i|$，即误差按几何级数衰减，故为线性收敛。
+\end{proof}
+
+% SUPPLEMENT: parent=theorem:ch07-线性收敛; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+这个定理把“学习率必须与曲率匹配”变成了一个可计算的判据。逐条看条件：$\mathbf{H}$ 正定保证所有 $\lambda_i>0$，从而 $2/\lambda_i>0$、上界有意义；若某个 $\lambda_i\leqslant0$，则 $\mathbf{w}^{\ast}$ 不是极小值点，梯度下降没有理由向其收敛。$|1-\eta\lambda_i|<1$ 允许因子取负值，此时 $\alpha_i$ 在极小值两侧振荡但振幅逐次减半式衰减；一旦 $\eta>2/\lambda_i$，因子绝对值大于 1，该分量发散，这正是\cref{figure:ch07-山谷}中山谷两侧振荡越来越剧烈的定量解释。定理给出的只是二次模型下的局部结论：对一般非线性误差函数，只有在 $\mathbf{w}^{\ast}$ 的足够小邻域内二次近似才有效，因此它描述的是“进入收敛域之后”的行为，而不保证从任意远处出发都能到达该邻域。最后，最优学习率并不是 $2/\lambda_{\max}$：使 $\rho(\eta)$ 最小的是 $\eta^{\ast}=2/(\lambda_{\max}+\lambda_{\min})$，此时 $\rho=(1-\eta^{\ast}\lambda_{\min})=(1-\eta^{\ast}\lambda_{\max})$ 的绝对值都等于 $(\kappa-1)/(\kappa+1)$，其中 $\kappa=\lambda_{\max}/\lambda_{\min}$（见\cref{definition:ch07-条件数}）。原书只讨论了 $\eta$ 取最大允许值这一端点，因为它直接显示了最慢方向上的困难。
+\end{remark}
+
+由\eqref{align:ch07-学习率上界}可以看到，学习率的上界由最大特征值决定，而实际的收敛速度却由收缩最慢的方向决定。虽然允许 $1-\eta\lambda_i$ 为负（这会产生 $\alpha_i$ 的振荡值），但只要所有因子的绝对值都小于 1，振荡仍会衰减；一旦某个因子越过 $-1$，对应的分量就会发散。于是 $\eta$ 的值需要限制为 $\eta<2/\lambda_{\max}$，其中 $\lambda_{\max}$ 是最大的特征值。然而，收敛速度主要由最小的特征值控制，因此当 $\eta$ 设定为最大允许值时，沿着对应于最小特征值方向的收敛（\cref{figure:ch07-山谷}中椭圆的长轴）由下式控制：
+\begin{align}
+1-\frac{2\lambda_{\min}}{\lambda_{\max}},
+\label{align:ch07-最慢因子}
+\end{align}
+其中 $\lambda_{\min}$ 是最小的特征值。
+
+\begin{definition}[条件数]\label{definition:ch07-条件数}
+设 $\mathbf{H}$ 正定，其最大、最小特征值分别为 $\lambda_{\max}$ 与 $\lambda_{\min}$，则称比值
+\begin{align}
+\kappa = \frac{\lambda_{\max}}{\lambda_{\min}}
+\label{align:ch07-条件数}
+\end{align}
+为黑塞矩阵 $\mathbf{H}$ 的\textbf{条件数}（condition number）。$\kappa$ 的倒数 $\lambda_{\min}/\lambda_{\max}$ 越接近 $1$，各方向曲率越接近；$\kappa$ 越大，各方向曲率差异越悬殊。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch07-条件数; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+条件数衡量的是误差曲面在不同方向上“被压扁”的程度，它不依赖坐标系的旋转与平移，因而是误差曲面本身的几何不变量。它之所以成为优化难度的指标，是因为梯度下降对各特征方向的收缩因子 $|1-\eta\lambda_i|$ 不可能同时接近零：为了不让最大特征值方向发散，必须取 $\eta<2/\lambda_{\max}$，于是最小特征值方向的因子至少是 $1-2\lambda_{\min}/\lambda_{\max}=1-2/\kappa$，当 $\kappa=10^{4}$ 时该因子约为 $0.9998$，需要上万步才能把对应分量缩小一个数量级。更精确地说，达到精度 $\varepsilon$ 所需迭代次数约为 $\frac{\kappa}{2}\ln(1/\varepsilon)$，即与条件数成正比。这个结论解释了为什么输入归一化（\cref{subsection:ch07-数据归一化}）与动量法、Adam 等算法（\cref{subsection:ch07-动量}）在实践中如此重要：它们或者直接减小 $\kappa$，或者改变迭代对 $\kappa$ 的依赖方式。
+\end{remark}
+
+\begin{corollary}[最慢方向的收敛速度]\label{corollary:ch07-最慢方向}
+在\cref{theorem:ch07-线性收敛}的设定下，当 $\eta=2/\lambda_{\max}$ 时，沿 $\mathbf{u}_{\min}$ 方向的收缩因子为\eqref{align:ch07-最慢因子}，即 $1-2/\kappa$。因此 $\kappa$ 越大，向极小值收敛越慢。
+\end{corollary}
+\begin{proof}
+把 $\eta=2/\lambda_{\max}$ 代入\eqref{align:ch07-alpha更新}，对 $\lambda_i=\lambda_{\min}$ 得
+\begin{align*}
+1-\eta\lambda_{\min} = 1-\frac{2\lambda_{\min}}{\lambda_{\max}} = 1-\frac{2}{\kappa},
+\end{align*}
+即\eqref{align:ch07-最慢因子}；由\cref{definition:ch07-条件数}，$\lambda_{\min}/\lambda_{\max}=1/\kappa$。该因子随 $\kappa$ 增大而增大并趋于 $1$，故收敛速度随 $\kappa$ 增大而减慢。
+\end{proof}
+
+% SUPPLEMENT: parent=corollary:ch07-最慢方向; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+这个推论给出的正是“狭长山谷”的代价：$\kappa$ 越大，沿长轴方向每步只能把距离缩短 $2/\kappa$ 的比例，而梯度下降又必须沿长轴走完大部分路程。需要强调的是，$\eta=2/\lambda_{\max}$ 是允许区间的端点，此时沿 $\mathbf{u}_{\max}$ 方向的因子恰为 $-1$，该分量不衰减而持续振荡，因此实践中不会真的取到这个端点，只会取略小的值；推论的意义在于给出端点的极限行为，说明为什么单纯调小学习率无法解决病态问题。若把\cref{theorem:ch07-线性收敛}之后的注记中给出的最优学习率 $\eta^{\ast}=2/(\lambda_{\max}+\lambda_{\min})$ 代回，收缩因子为 $(\kappa-1)/(\kappa+1)\approx1-2/\kappa$，与\eqref{align:ch07-最慢因子}同阶，这从另一侧面说明条件数造成的困难不能靠“选对学习率”消除。
+\end{remark}
+
+\subsection{动量}\label{subsection:ch07-动量}
+
+解决特征值差异悬殊问题的一种简单技巧是，在梯度下降公式中引入动量（momentum）项。这实际上相当于给权重向量在权重空间中的运动增加了惯性，从而缓解了\cref{figure:ch07-山谷}中所示的振荡现象。
+
+\begin{definition}[动量]\label{definition:ch07-动量}
+引入动量项后的梯度下降更新公式为
+\begin{align}
+\Delta\mathbf{w}^{(\tau-1)} = -\eta\,\nabla E\bigl(\mathbf{w}^{(\tau-1)}\bigr)+\mu\,\Delta\mathbf{w}^{(\tau-2)},
+\label{align:ch07-动量更新}
+\end{align}
+其中 $\mu$ 称为\textbf{动量参数}（momentum parameter），权重向量仍按\eqref{align:ch07-迭代规则}更新。这种迭代方法称为\textbf{动量法}（momentum）。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch07-动量; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+\eqref{align:ch07-动量更新}把上一步的更新量按比例 $\mu$ 保留下来，于是每一步的位移都带有“历史速度”的记忆：在梯度方向持续一致的区域，历次更新相互叠加，等效步长被放大；在梯度方向反复改变的区域，历次更新相互抵消，等效步长被压缩。这正是“惯性”的数学含义，也解释了为什么动量法能在不增大 $\eta$ 的前提下加快沿山谷方向的推进。条件方面，$\mu$ 必须满足 $|\mu|<1$，否则历史项会被无限放大（见\cref{proposition:ch07-动量有效学习率}）；$\mu=0$ 时\eqref{align:ch07-动量更新}退化为普通梯度下降。$\mu$ 与 $\eta$ 不能独立调节：由\eqref{align:ch07-动量展开}可见真正起作用的是组合 $\eta/(1-\mu)$，因此增大 $\mu$ 与增大 $\eta$ 在低曲率方向上效果相似，但在高曲率方向上二者截然不同。
+\end{remark}
+
+为了理解动量项的作用，我们首先考虑权重向量在误差曲面上曲率相对较小的区域中的运动情况，如\cref{figure:ch07-低曲率收敛}所示。如果我们近似地认为梯度在该区域内保持不变，那么我们可以对\eqref{align:ch07-动量更新}进行多次迭代，并将由此产生的一系列权重更新值累加起来，得到
+\begin{align}
+\Delta\mathbf{w} = -\eta\,\nabla E\,\{1+\mu+\mu^{2}+\cdots\} = -\frac{\eta}{1-\mu}\,\nabla E.
+\label{align:ch07-动量展开}
 \end{align}
 
-再次使用~\eqref{align:ch07-expansion}，可以将权重向量的变化表示为对应系数 $\alpha_i$ 的变化：
+\begin{proposition}[动量法的有效学习率]\label{proposition:ch07-动量有效学习率}
+设在迭代过程中梯度保持为常向量 $\mathbf{g}=\nabla E$，且 $|\mu|<1$。则从任意初始更新量出发，按\eqref{align:ch07-动量更新}产生的更新量收敛于
 \begin{align}
-\Delta\mathbf{w} = \sum_i \Delta\alpha_i \mathbf{u}_i.
-\label{align:ch07-deltaw-diag}
+\Delta\mathbf{w} = -\frac{\eta}{1-\mu}\,\mathbf{g},
+\label{align:ch07-有效学习率}
 \end{align}
+即动量项把学习率由 $\eta$ 放大为 $\eta/(1-\mu)$。
+\end{proposition}
+\begin{proof}
+记 $\boldsymbol{\delta}_k=\Delta\mathbf{w}^{(k)}$。由\eqref{align:ch07-动量更新}，$\boldsymbol{\delta}_k=-\eta\mathbf{g}+\mu\boldsymbol{\delta}_{k-1}$。反复代入得
+\begin{align*}
+\boldsymbol{\delta}_k = -\eta\mathbf{g}\sum_{j=0}^{k-1}\mu^{j}+\mu^{k}\boldsymbol{\delta}_0.
+\end{align*}
+当 $|\mu|<1$ 时 $\mu^{k}\to0$，且几何级数 $\sum_{j=0}^{\infty}\mu^{j}=1/(1-\mu)$ 收敛，故
+\begin{align*}
+\boldsymbol{\delta}_k \longrightarrow -\eta\mathbf{g}\cdot\frac{1}{1-\mu} = -\frac{\eta}{1-\mu}\mathbf{g},
+\end{align*}
+即\eqref{align:ch07-有效学习率}。
+\end{proof}
 
-结合~\eqref{align:ch07-grad-diag}、~\eqref{align:ch07-deltaw-diag}~与梯度下降公式~\eqref{align:ch07-batchgd}，并利用黑塞矩阵特征向量的正交性关系~\eqref{align:ch07-eigenorth}，可以推导出每次迭代步中 $\alpha_i$ 的变化量：
+% SUPPLEMENT: parent=proposition:ch07-动量有效学习率; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+结论依赖两个条件。“梯度在迭代期间保持不变”是一个局部化的假设：只有在曲率很低、梯度随位置变化很慢的区域，连续若干步的梯度才近似相同，因此\eqref{align:ch07-有效学习率}描述的是低曲率区域的行为，而不是全局结论。“$|\mu|<1$”则是级数收敛的充要条件，$\mu\to1$ 时有效学习率趋于无穷，必然发散。由此可以看出动量法与单纯增大学习率的区别：在低曲率区域二者都等价于把步长乘以 $1/(1-\mu)$，但在高曲率区域，梯度方向逐步反转，\eqref{align:ch07-动量更新}中的历史项相互抵消，等效学习率回落到接近 $\eta$，因此不会像增大 $\eta$ 那样立刻触发\eqref{align:ch07-学习率上界}所禁止的振荡。原书据此把 $\mu$ 的取值范围取为 $0\leqslant\mu\leqslant1$，实践中常用值为 $\mu=0.9$，对应约 $10$ 倍的有效步长放大。
+\end{remark}
+
+可以看到，添加动量项能有效将学习率从 $\eta$ 提高到 $\eta/(1-\mu)$。在曲率较低的表面上，使用固定学习率的梯度下降会导致逐渐变小的步长，对应于线性收敛；在这种情况下，添加动量项的效果类似于提高学习率，向误差函数谷底的收敛更快。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.62\textwidth]{ch07-fig7-4-linear-convergence.png}
+\caption{在一个曲率较低的表面上，使用固定学习率的梯度下降会导致逐渐变小的步长，对应于线性收敛。在这种情况下，添加动量项的效果类似于提高学习率。}
+\label{figure:ch07-低曲率收敛}
+\end{figure}
+
+相反，在误差曲面有较高曲率的区域，如果不加动量项，梯度下降会出现振荡现象，如\cref{figure:ch07-振荡}所示。在这种情况下，动量项的连续贡献将会趋于相互抵消，使得有效的学习率接近于 $\eta$。因此，动量项能够加速模型向最小值点收敛的速度，同时又避免了发散的振荡。\cref{figure:ch07-动量效果}对动量项的作用进行了示意性的说明。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.45\textwidth]{ch07-fig7-5-oscillation.png}
+\caption{在梯度下降的连续步骤呈振荡性的情况下，动量项对学习率 $\eta$ 的有效值影响不大。}
+\label{figure:ch07-振荡}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.45\textwidth]{ch07-fig7-6-momentum-effect.png}
+\caption{在梯度下降算法中添加动量项的效果，与\cref{figure:ch07-山谷}中未改进的梯度下降相比，向误差函数的谷底的收敛更快。}
+\label{figure:ch07-动量效果}
+\end{figure}
+
+尽管引入动量项可以改善梯度下降算法的性能，但它也引入了一个新的参数 $\mu$，它的值需要与学习率参数 $\eta$ 一起进行合理的选择。从\eqref{align:ch07-动量展开}可以看出，$\mu$ 的取值范围应为 $0\leqslant\mu\leqslant1$。实践中常用的值是 $\mu=0.9$。
+
+研究者提出了称作 Nesterov 动量的动量改进版方法，可以进一步加速模型的收敛（Nesterov, 2004; Sutskever et al., 2013）。在传统的带动量项的随机梯度下降算法中，我们首先计算当前位置的梯度，然后利用该梯度与前一步的动量项的加权组合来确定当前的更新步长。而在 Nesterov 方法中，这两步的顺序被交换。具体来说，我们首先基于前一步的动量项进行一次预更新，然后在这个预更新后的位置计算梯度，并利用该梯度来确定最终的更新步长。
+
+\begin{definition}[Nesterov 动量]\label{definition:ch07-Nesterov动量}
+设 $\mu$ 为动量参数，$\eta$ 为学习率，则称如下更新规则为\textbf{Nesterov 动量}（Nesterov momentum）：
 \begin{align}
-\alpha_i^{(\tau)} = (1-\eta\lambda_i)\,\alpha_i^{(\tau-1)}.
-\label{align:ch07-alpha-update}
+\Delta\mathbf{w}^{(\tau-1)} = -\eta\,\nabla E\Bigl(\mathbf{w}^{(\tau-1)}+\mu\,\Delta\mathbf{w}^{(\tau-2)}\Bigr)+\mu\,\Delta\mathbf{w}^{(\tau-2)}.
+\label{align:ch07-Nesterov}
 \end{align}
+\end{definition}
 
-定义 $\alpha_i$ 和 $\alpha_i^{(\tau)}$ 分别代表权重更新前后的值。利用特征向量正交性关系~\eqref{align:ch07-eigenorth}~和式~\eqref{align:ch07-expansion}，有
+% SUPPLEMENT: parent=definition:ch07-Nesterov动量; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+与\eqref{align:ch07-动量更新}相比，\eqref{align:ch07-Nesterov}把梯度取在“预更新位置” $\mathbf{w}^{(\tau-1)}+\mu\Delta\mathbf{w}^{(\tau-2)}$ 而不是当前位置，因此它用未来的梯度修正当前的更新，具有“前瞻”效果：当动量项把参数带向一个即将上升的方向时，预更新位置上的梯度会提前给出反向的修正，从而抑制过冲。条件方面，预更新位置必须仍落在二次近似有效的邻域内，否则前瞻失去意义；$\mu$ 同样需满足 $0\leqslant\mu<1$。$|\mu\delta|$ 较小时，$\nabla E(\mathbf{w}+\mu\boldsymbol{\delta})\approx\nabla E(\mathbf{w})+\mu\mathbf{H}\boldsymbol{\delta}$，代回\eqref{align:ch07-Nesterov}可见它与\eqref{align:ch07-动量更新}的差别是 $O(\mu^{2})$ 的高阶项，这解释了为什么在小学习率、小动量下二者近似等价（见\cref{exercise:ch07-11}），而这种差别在高曲率方向上恰恰提供了额外的阻尼。
+\end{remark}
+
+对于批量梯度下降算法，Nesterov 动量通常能够提高收敛速度，然而在随机梯度下降的场景下，其加速效果可能并不明显。
+
+\begin{center}
+\setlength{\fboxsep}{7pt}%
+\fbox{\begin{minipage}{0.8\textwidth}
+\centering\textbf{算法 7.3\quad 带有动量的随机梯度下降}\par
+\vspace{5pt}
+\begin{flushleft}
+\textbf{Input:} 由 $n\in\{1,\cdots,N\}$ 索引的数据点构成的训练集\\
+\hspace*{1.5em}批量规模 $B$\\
+\hspace*{1.5em}每个小批量的误差函数 $E_{n:n+B-1}(\mathbf{w})$\\
+\hspace*{1.5em}学习率参数 $\eta$\\
+\hspace*{1.5em}动量参数 $\mu$\\
+\hspace*{1.5em}初始权重向量 $\mathbf{w}$\\
+\textbf{Output:} 最终的权重向量 $\mathbf{w}$\\
+$n\leftarrow 1$\\
+$\Delta\mathbf{w}\leftarrow 0$\\
+\textbf{repeat}\\
+\hspace*{1.5em}$\Delta\mathbf{w}\leftarrow-\eta\nabla E_{n:n+B-1}(\mathbf{w})+\mu\Delta\mathbf{w}$ \quad // 计算将要更新的动量项\\
+\hspace*{1.5em}$\mathbf{w}\leftarrow\mathbf{w}+\Delta\mathbf{w}$ \quad // 更新权重向量\\
+\hspace*{1.5em}$n\leftarrow n+B$\\
+\hspace*{1.5em}\textbf{if} $n>N$ \textbf{then}\\
+\hspace*{3em}打乱数据\\
+\hspace*{3em}$n\leftarrow 1$\\
+\hspace*{1.5em}\textbf{end if}\\
+\textbf{until} 收敛\\
+\textbf{return} $\mathbf{w}$
+\end{flushleft}
+\end{minipage}}
+\end{center}
+
+\subsection{学习率调度}\label{subsection:ch07-学习率调度}
+
+在随机梯度下降学习算法\eqref{align:ch07-随机梯度下降}中，我们需要确定学习率 $\eta$ 的值。如果 $\eta$ 值过小，那么学习过程将异常缓慢（参见\cref{section:ch07-收敛}中的收敛性分析）；如果 $\eta$ 值设置过大，则可能导致算法不稳定。尽管一定程度的振荡是可以接受的，但这种振荡不应导致发散现象。
+
+在实际应用中，我们通常在训练初期使用较大的 $\eta$ 值，然后随着迭代的进行逐渐减小学习率，即让学习率成为迭代步数 $\tau$ 的函数。
+
+\begin{definition}[学习率调度]\label{definition:ch07-学习率调度}
+若把学习率取为迭代步数 $\tau$ 的函数 $\eta^{(\tau)}$，并按
 \begin{align}
-\mathbf{u}_i^{\mathsf T}(\mathbf{w}-\mathbf{w}^{(\tau)}) = \alpha_i^{(\tau)}.
-\label{align:ch07-alpha-dist}
+\mathbf{w}^{(\tau)} = \mathbf{w}^{(\tau-1)}-\eta^{(\tau-1)}\,\nabla E_n\bigl(\mathbf{w}^{(\tau-1)}\bigr)
+\label{align:ch07-学习率调度}
 \end{align}
+更新权重，则称这种安排为\textbf{学习率调度}（learning rate schedule）。
+\end{definition}
 
-因此 $\alpha_i$ 可以解释为沿着方向 $\mathbf{u}_i$ 到最小值的距离。从~\eqref{align:ch07-alpha-update}~可见，这些距离独立地演化，每一步中沿着 $\mathbf{u}_i$ 方向的距离乘以因子 $(1-\eta\lambda_i)$。经过总共 $T$ 步之后有
-\begin{align}
-\alpha_i^{(T)} = (1-\eta\lambda_i)^{T}\,\alpha_i^{(0)}.
-\label{align:ch07-alpha-t}
-\end{align}
-
-由此可见，只要满足 $|1-\eta\lambda_i|<1$，当 $T\to\infty$ 时 $\alpha_i^{(T)}\to 0$，~\eqref{align:ch07-alpha-dist}~表明 $\mathbf{w}\to\mathbf{w}^{\ast}$，因此权重向量已经收敛到误差函数最小值。
-
-注意~\eqref{align:ch07-alpha-t}~证明了梯度下降在最小值附近区域能够带来\textbf{线性收敛}。同样要收敛到驻点，则要求所有 $\lambda_i$ 都是正的，这反过来意味着驻点确实是最小值。通过提高学习率 $\eta$，可以使因子 $(1-\eta\lambda_i)$ 更小，进而提高收敛速度；然而 $\eta$ 的设定有一个限制：虽然允许 $(1-\eta\lambda_i)$ 为负（这会产生 $\alpha_i$ 的振荡值），但必须确保 $|1-\eta\lambda_i|<1$，否则 $\alpha_i$ 值会发散。于是 $\eta$ 的值需要限制为 $\eta<2/\lambda_{\max}$，其中 $\lambda_{\max}$ 是最大特征值。然而收敛速度主要由最小特征值控制，因此当 $\eta$ 设定为最大允许值时，沿着对应于最小特征值方向的收敛（图~7.3~中椭圆长轴）将由下式控制：
-\begin{align}
-\alpha_{\min}^{(T)} = (1-\eta\lambda_{\min})^{T}\,\alpha_{\min}^{(0)},
-\end{align}
-其中 $\lambda_{\min}$ 是最小特征值。如果 $\lambda_{\max}/\lambda_{\min}$ 的比值（其倒数为黑塞矩阵的条件数）非常小，即图~7.3~中椭圆形误差等高线的高度将被拉长，那么向最小值收敛的速度将极其缓慢。
-
-\subsection{动量}\label{section:ch07-动量}
-
-解决特征值差异悬殊问题的一种简单技巧是在梯度下降公式中引入\textbf{动量}（momentum）项。这实际上相当于给权重向量在权重空间中的运动增加了惯性，从而缓解了图~7.3~中所示的振荡现象。引入动量项后的梯度下降更新公式为：
-\begin{align}
-\Delta\mathbf{w}^{(\tau-1)} = -\eta\,\nabla E(\mathbf{w}^{(\tau-1)}) + \mu\,\Delta\mathbf{w}^{(\tau-2)},
-\label{align:ch07-momentum}
-\end{align}
-其中 $\mu$ 称为动量参数，然后使用~\eqref{align:ch07-iter}~更新权重向量。
-
-为理解动量项作用，首先考虑权重向量在误差曲面上曲率相对较小区域中的运动情况。如果近似认为梯度在该区域内保持不变，那么可以对~\eqref{align:ch07-momentum}~进行多次迭代，并将由此产生的一系列权重更新值累加起来：
-\begin{align}
-\Delta\mathbf{w} = -\eta\,\nabla E\,(1+\mu+\mu^2+\cdots) = -\frac{\eta}{1-\mu}\,\nabla E.
-\label{align:ch07-momentum-effect}
-\end{align}
-
-可以看到，添加动量项能有效将学习率从 $\eta$ 提高到 $\eta/(1-\mu)$。在曲率较低表面上，使用固定学习率的梯度下降会导致逐渐变小的步长，对应于线性收敛；这种情况下添加动量项的效果类似于提高学习率，向误差函数谷底的收敛更快。
-
-相反，在误差曲面有较高曲率区域，如果不加动量项，梯度下降会出现振荡现象。在这种情况下，动量项的连续贡献将趋于相互抵消，使得有效学习率接近于 $\eta$。因此动量项能够加速模型向最小值点收敛，同时又避免了发散的振荡。
-
-尽管引入动量项可以改善梯度下降性能，但它也引入了一个新参数 $\mu$，其值需要与学习率参数 $\eta$ 一起合理选择。从~\eqref{align:ch07-momentum-effect}~可以看出，$\mu$ 的取值范围应为 $0\le\mu\le 1$。实践中常用值是 $\mu=0.9$。
-
-研究者提出了称作\textbf{Nesterov 动量}的动量改进方法，可以进一步加速模型收敛~\citep{Nesterov2004,Sutskever2013}。在传统带动量项的随机梯度下降中，我们首先计算当前位置的梯度，然后利用该梯度与前一步动量项的加权组合来确定当前更新步长。而在 Nesterov 方法中这两步顺序被交换：具体来说，我们首先基于前一步动量项进行一次预更新，然后在这个预更新后的位置计算梯度，并利用该梯度来确定最终更新步长，其更新公式如下：
-\begin{align}
-\Delta\mathbf{w}^{(\tau-1)} = -\eta\,\nabla E\!\left(\mathbf{w}^{(\tau-1)}+\mu\,\Delta\mathbf{w}^{(\tau-2)}\right) + \mu\,\Delta\mathbf{w}^{(\tau-2)}.
-\label{align:ch07-nesterov}
-\end{align}
-
-对于批量梯度下降算法，Nesterov 动量通常能够提高收敛速度；然而在随机梯度下降场景下，其加速效果可能并不明显。
-
-\subsection{学习率调度}\label{section:ch07-学习率调度}
-
-在随机梯度下降学习算法~\eqref{align:ch07-sgd}~中，需要确定学习率 $\eta$ 的值。如果 $\eta$ 值过小，学习过程将异常缓慢（参见~7.3.1~小节）；如果 $\eta$ 值过大，则可能导致算法不稳定。尽管一定程度的振荡是可以接受的，但这种振荡不应导致发散现象。
-
-在实际应用中，通常在训练初期使用较大的 $\eta$ 值，然后随着迭代进行逐渐减小学习率，即让学习率成为迭代步数 $\tau$ 的函数：
-\begin{align}
-\mathbf{w}^{(\tau)} = \mathbf{w}^{(\tau-1)} - \eta^{(\tau-1)}\,\nabla E_n(\mathbf{w}^{(\tau-1)}).
-\label{align:ch07-schedule}
-\end{align}
+% SUPPLEMENT: parent=definition:ch07-学习率调度; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+学习率调度针对的是\cref{theorem:ch07-线性收敛}所刻画的矛盾：训练初期参数离极小值较远，误差曲面在大尺度上较为平滑，较大的 $\eta$ 有助于快速下降；接近极小值时局部曲率变大，\eqref{align:ch07-学习率上界}要求 $\eta$ 变小，否则迭代会在极小值附近持续振荡而无法进一步降低误差。把 $\eta$ 写成 $\tau$ 的递减函数，相当于让算法随时间自动“退火”。条件方面，调度必须保证 $\eta^{(\tau)}$ 始终为正且最终趋于零；若衰减过快，参数会在到达极小值之前就“冻结”，若衰减过慢则无法消除随机梯度带来的噪声。需要强调，调度只改变步长而不改变梯度方向，因此它不能克服条件数造成的病态，只能缓解收敛后期的振荡。
+\end{remark}
 
 学习率衰减的例子包括线性衰减、幂律衰减和指数衰减，公式依次如下：
 \begin{align}
-\eta^{(\tau)} = \left(1-\frac{\tau}{K}\right)\eta_0 + \frac{\tau}{K}\eta_K, \qquad \tau\le K,
-\label{align:ch07-linear-schedule}
+\eta^{(\tau)} = \Bigl(1-\frac{\tau}{K}\Bigr)\eta^{(0)}+\frac{\tau}{K}\eta^{(K)},\qquad \tau\leqslant K,
+\label{align:ch07-线性衰减}
 \end{align}
 \begin{align}
-\eta^{(\tau)} = \eta_0\,(1+\tau/s)^{-c},
-\label{align:ch07-poly-schedule}
+\eta^{(\tau)} = \eta^{(0)}\Bigl(1+\frac{\tau}{s}\Bigr)^{c},
+\label{align:ch07-幂律衰减}
 \end{align}
 \begin{align}
-\eta^{(\tau)} = \eta_0\,c^{\tau}.
-\label{align:ch07-exp-schedule}
+\eta^{(\tau)} = \eta^{(0)}c^{\tau/s}.
+\label{align:ch07-指数衰减}
 \end{align}
 
-在~\eqref{align:ch07-linear-schedule}~中，$\eta$ 的值在 $K$ 步内线性减小，之后保持为 $\eta_K$。超参数 $\eta_0$、$\eta_K$、$K$、$s$ 和 $c$ 的最优值通常需要借助经验才能找到。在实践中，监督学习曲线（learning curve）——即误差函数随梯度下降迭代过程的变化情况——对调整学习率衰减策略很有好处。
+\begin{remark}（重构新增）
+三式的适用场景不同。线性衰减\eqref{align:ch07-线性衰减}在 $K$ 步内把学习率从 $\eta^{(0)}$ 线性降到 $\eta^{(K)}$ 并在此后保持不变，参数少、行为可预测，适合训练轮次固定的场景。幂律衰减\eqref{align:ch07-幂律衰减}与指数衰减\eqref{align:ch07-指数衰减}都是无终点的渐近衰减：前者按多项式速率下降，后者按几何速率下降。要使三者确实起到“衰减”作用，参数的取值范围必须相应受限：\eqref{align:ch07-线性衰减}要求 $\eta^{(K)}\leqslant\eta^{(0)}$ 且 $\tau\leqslant K$；\eqref{align:ch07-指数衰减}要求 $0<c<1$；而\eqref{align:ch07-幂律衰减}作为衰减策略应取负指数，即 $c<0$（等价地写成 $(1+\tau/s)^{-c}$、$c>0$）。原书此处把指数印作正的 $c$，若照字面取 $c>0$，学习率将随迭代增大而非减小，与“衰减”的名称相反；这里忠实保留原印刷形式，读者在实际使用时必须按上述符号约定取值。
+\end{remark}
 
-\subsection{AdaGrad、RMSProp 与 Adam 算法}\label{section:ch07-adam}
+在\eqref{align:ch07-线性衰减}中，$\eta$ 的值在 $K$ 步内线性减小，之后保持为 $\eta^{(K)}$。超参数 $\eta^{(0)}$、$\eta^{(K)}$、$K$、$s$ 和 $c$ 的最优值通常需要借助经验才能找到。在实践中，监督学习曲线（learning curve），即误差函数随梯度下降迭代过程的变化情况，对调整学习率衰减策略很有好处，可以确保误差函数以恰当的速率减小。
 
-前文阐述了最优学习率取决于误差曲面在局部的曲率，并且这种曲率会随参数空间中方向不同而变化。这就启发了一系列针对网络中各个参数采用不同学习率的优化算法。这些学习率的值在训练过程中会自动进行调整。
+\subsection{AdaGrad、RMSProp 与 Adam 算法}\label{subsection:ch07-自适应学习率}
 
-\textbf{AdaGrad} 是"自适应梯度"（adaptive gradient）的缩写~\citep{DuchiHazanSinger2011}，其算法核心思想是随着时间推移不断减小每个参数的学习率，而减小幅度则取决于该参数对应的所有历史梯度值的平方和。因此与较大曲率相关联的参数，其对应学习率会下降得更快。具体来说其更新规则如下：
+前文阐述了最优学习率取决于误差曲面在局部的曲率，并且这种曲率会随着参数空间中方向的不同而发生变化。这就启发了一系列针对网络中各个参数采用不同学习率的优化算法。这些学习率的值在训练过程中会自动进行调整。我们在本小节介绍几个应用最为广泛的算法。然而，需要注意的是，这种直观理解实际上仅在主曲率方向与参数空间坐标轴对齐的情况下才真正适用，这对应于黑塞矩阵局部为对角矩阵的情形，尽管在实际应用中这种情况不太可能发生，但这几个算法仍然被广泛使用并发挥作用。
+
+AdaGrad 是“自适应梯度”（adaptive gradient）的缩写，其算法核心思想是随着时间的推移不断减小每个参数的学习率，而减小的幅度则取决于该参数对应的所有历史梯度值的平方和（Duchi, Hazan, and Singer, 2011）。因此，与较大曲率相关联的参数，其对应的学习率会下降得更快。
+
+\needspace{14\baselineskip}
+\begin{definition}[AdaGrad]\label{definition:ch07-AdaGrad}
+设 $\eta$ 为学习率，$\delta$ 为稳定化常数，$E(\mathbf{w})$ 为当前小批量的误差函数，并记 $r_i^{(0)}=0$。\textbf{AdaGrad} 算法的更新规则为
 \begin{align}
-r_i^{(\tau)} = r_i^{(\tau-1)} + g_i^2, \qquad g_i = -\frac{\partial E}{\partial w_i},
+r_i^{(\tau)} = r_i^{(\tau-1)}+\Bigl(\frac{\partial E(\mathbf{w})}{\partial w_i}\Bigr)^{2},
 \label{align:ch07-adagrad}
 \end{align}
 \begin{align}
-w_i^{(\tau)} = w_i^{(\tau-1)} - \frac{\eta}{\sqrt{r_i^{(\tau)}+\delta}}\,g_i,
-\label{align:ch07-adagrad-update}
+w_i^{(\tau)} = w_i^{(\tau-1)}-\frac{\eta}{\sqrt{r_i^{(\tau)}+\delta}}\,\frac{\partial E(\mathbf{w})}{\partial w_i}.
+\label{align:ch07-adagrad更新}
 \end{align}
-其中 $\eta$ 是学习率，$\delta$ 是一个小常数（比如 $10^{-6}$），旨在确保 $r_i$ 接近零时的数值稳定性。$E(\mathbf{w})$ 是特定小批量的误差函数，~\eqref{align:ch07-adagrad-update}~是标准随机梯度下降公式，但学习率针对每个参数进行了调整。该算法初始值是 $r_i^{(0)}=0$。
+\end{definition}
 
-AdaGrad 算法的缺点是它从训练一开始就累积平方梯度，因此相关的权重更新可能变得非常小，这可能在训练后期大大减缓训练进度。
+% SUPPLEMENT: parent=definition:ch07-AdaGrad; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+AdaGrad 用累积平方梯度 $r_i$ 为每个参数单独缩放步长：历史梯度一直很大的参数（对应高曲率方向）$r_i$ 增长快，其有效学习率 $\eta/\sqrt{r_i+\delta}$ 迅速变小；历史梯度一直很小的参数则保持较大的步长。这相当于用 $\sqrt{r_i}$ 近似该方向曲率的量级，从而在没有显式计算黑塞矩阵的情况下实现了“按曲率缩放步长”的效果，缓解了条件数造成的困难。常数 $\delta$ 的作用是避免 $r_i\to0$ 时除以零，原书取 $\delta=10^{-8}$ 量级。定义中“$E(\mathbf{w})$ 是特定小批量的误差函数”这一条很重要：$r_i$ 累积的是随机梯度的平方，因此它具有随批量规模变化的噪声，批量越小噪声越大。AdaGrad 的固有缺陷也来自这里：$r_i$ 单调不减，故有效学习率单调下降，训练后期步长会变得过小，即使尚未到达极小值也难以继续前进。
+\end{remark}
 
-\textbf{RMSProp} 算法背后的思想是均方根传播（root mean square propagation），使用梯度平方的指数加权平均来替代 AdaGrad 中的简单累加~\citep{Hinton2012}，更新规则如下：
+其中 $\eta$ 是学习率，$\delta$ 是一个小的常数（比如 $10^{-8}$），旨在确保 $r_i$ 接近零时的数值稳定性。该算法的初始值是 $r_i^{(0)}=0$。$E(\mathbf{w})$ 是特定小批量的误差函数，\eqref{align:ch07-adagrad更新}是标准的随机梯度下降公式，但学习率针对每个参数进行了调整。AdaGrad 算法的缺点是，它从训练一开始就累积平方梯度，因此相关的权重更新可能变得非常小，这可能会在后期大大减缓训练进度。
+
+RMSProp 算法背后的思想是均方根传播（root mean square propagation），使用梯度平方的指数加权平均来替代 AdaGrad 中的简单累加（Hinton, 2012）。
+
+\begin{definition}[RMSProp]\label{definition:ch07-RMSProp}
+设 $\eta$ 为学习率，$\delta$ 为稳定化常数，$0<\beta<1$ 为衰减率。\textbf{RMSProp} 算法的更新规则为
 \begin{align}
-r_i^{(\tau)} = \beta\,r_i^{(\tau-1)} + (1-\beta)\,g_i^2,
+r_i^{(\tau)} = \beta\,r_i^{(\tau-1)}+(1-\beta)\Bigl(\frac{\partial E(\mathbf{w})}{\partial w_i}\Bigr)^{2},
 \label{align:ch07-rmsprop}
 \end{align}
 \begin{align}
-w_i^{(\tau)} = w_i^{(\tau-1)} - \frac{\eta}{\sqrt{r_i^{(\tau)}+\delta}}\,g_i,
-\label{align:ch07-rmsprop-update}
+w_i^{(\tau)} = w_i^{(\tau-1)}-\frac{\eta}{\sqrt{r_i^{(\tau)}+\delta}}\,\frac{\partial E(\mathbf{w})}{\partial w_i}.
+\label{align:ch07-rmsprop更新}
 \end{align}
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch07-RMSProp; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+RMSProp 把 AdaGrad 的累加换成指数加权平均，从而只“记住”最近约 $1/(1-\beta)$ 步的梯度平方：旧信息按 $\beta$ 的幂次衰减，$r_i$ 不再单调增长，有效学习率也就不会无限减小，这正好修补了 AdaGrad 后期停滞的缺陷。参数 $\beta$ 控制记忆长度，原书给出的典型值为 $\beta=0.9$，对应约 $10$ 步的有效窗口；$\beta$ 越接近 $1$，估计越平滑但对曲率变化的响应越慢。条件 $0<\beta<1$ 保证权重 $(1-\beta)\beta^{k}$ 构成一个总和为 $1$ 的几何分布，从而 $r_i$ 是梯度平方的加权平均而非无界累积。与 AdaGrad 相同，$\delta$ 只起数值稳定作用，不影响算法的渐近行为。
+\end{remark}
+
 其中 $0<\beta<1$，典型值为 $\beta=0.9$。
 
-\textbf{Adam} 优化算法~\citep{KingmaBa2014}的名字来源于"自适应矩估计"（adaptive moments）。它是 RMSProp 算法与动量法的结合，为每个参数分别维护一个动量项。其更新规则基于梯度及其平方的指数加权移动平均，具体形式为：
-\begin{align}
-s_i^{(\tau)} = \beta_1\,s_i^{(\tau-1)} + (1-\beta_1)\,g_i,
-\label{align:ch07-adam-m}
-\end{align}
-\begin{align}
-r_i^{(\tau)} = \beta_2\,r_i^{(\tau-1)} + (1-\beta_2)\,g_i^2,
-\label{align:ch07-adam-v}
-\end{align}
-\begin{align}
-\hat{s}_i = \frac{s_i^{(\tau)}}{1-\beta_1^{\tau}}, \qquad
-\hat{r}_i = \frac{r_i^{(\tau)}}{1-\beta_2^{\tau}},
-\label{align:ch07-adam-hat}
-\end{align}
-\begin{align}
-w_i^{(\tau)} = w_i^{(\tau-1)} - \frac{\eta}{\sqrt{\hat{r}_i}+\delta}\,\hat{s}_i.
-\label{align:ch07-adam-update}
-\end{align}
+Adam 优化算法（Kingma and Ba, 2014）的名字来源于“自适应矩估计”（adaptive moments）。它是 RMSProp 算法与动量法的结合，为每个参数分别维护一个动量项。
 
-这里的系数 $1/(1-\beta_1^{\tau})$ 和 $1/(1-\beta_2^{\tau})$ 纠正了初始设置 $s_i^{(0)}$ 和 $r_i^{(0)}$ 为零引入的偏差（见习题~7.12）。由于 $\beta\le 1$ 且随 $\tau$ 变大偏差趋于零，因此实践中有时会省略这种偏差修正。权重参数典型值为 $\beta_1=0.9$ 和 $\beta_2=0.99$。Adam 算法是深度学习应用中最常用的学习算法。
+\needspace{10\baselineskip}
+\begin{definition}[Adam]\label{definition:ch07-Adam}
+设 $\eta$ 为学习率，$\delta$ 为稳定化常数，$0<\beta_1,\beta_2<1$ 为衰减率，并记 $s_i^{(0)}=r_i^{(0)}=0$。\textbf{Adam} 算法对梯度及其平方分别作指数加权移动平均：
+\begin{align}
+s_i^{(\tau)} = \beta_1\,s_i^{(\tau-1)}+(1-\beta_1)\,\frac{\partial E(\mathbf{w})}{\partial w_i},
+\label{align:ch07-adam一阶矩}
+\end{align}
+\begin{align}
+r_i^{(\tau)} = \beta_2\,r_i^{(\tau-1)}+(1-\beta_2)\Bigl(\frac{\partial E(\mathbf{w})}{\partial w_i}\Bigr)^{2},
+\label{align:ch07-adam二阶矩}
+\end{align}
+并作偏差修正
+\begin{align}
+\hat{s}_i^{(\tau)} = \frac{s_i^{(\tau)}}{1-\beta_1^{\tau}},\qquad
+\hat{r}_i^{(\tau)} = \frac{r_i^{(\tau)}}{1-\beta_2^{\tau}},
+\label{align:ch07-adam偏差修正}
+\end{align}
+然后按
+\begin{align}
+w_i^{(\tau)} = w_i^{(\tau-1)}-\eta\,\frac{\hat{s}_i^{(\tau)}}{\sqrt{\hat{r}_i^{(\tau)}}+\delta}
+\label{align:ch07-adam更新}
+\end{align}
+更新权重。权重参数的典型值为 $\beta_1=0.9$、$\beta_2=0.99$。
+\end{definition}
 
-需要注意的是，这种直观理解实际上仅在主曲率方向与参数空间坐标轴对齐的情况下才真正适用，这对应于黑塞矩阵局部为对角矩阵的情形，尽管在实际应用中这种情况不太可能发生。但这几个算法仍然被广泛使用并发挥作用。
+% SUPPLEMENT: parent=definition:ch07-Adam; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+Adam 可以看作“带一阶动量的 RMSProp”：$s_i$ 提供梯度的平滑方向（对应动量），$r_i$ 提供逐参数的尺度（对应 RMSProp 的曲率估计），二者相除使更新量对梯度的整体缩放不敏感。偏差修正\eqref{align:ch07-adam偏差修正}针对的是零初值：若 $s_i^{(0)}=0$，则 $s_i^{(\tau)}=(1-\beta_1)\sum_{k=1}^{\tau}\beta_1^{\tau-k}g_i^{(k)}$，其期望是真实梯度的 $(1-\beta_1^{\tau})$ 倍，因此除以 $1-\beta_1^{\tau}$ 才能得到无偏估计（见\cref{exercise:ch07-12}）。由于 $\beta_1^{\tau}\to0$，这个因子在若干步之后趋于 $1$，所以实践中有时省略修正，但在训练最初几十步内不修正会使步长系统性偏小。需要再次强调本节开头的限制：AdaGrad、RMSProp 与 Adam 的“按曲率缩放”直观只在黑塞矩阵近似对角、主曲率方向与坐标轴对齐时严格成立；一般情形下它们仍是启发式方法，其有效性来自逐参数自适应尺度对病态条件的缓解，而非精确的曲率估计。
+\end{remark}
+
+这里的系数 $1/(1-\beta_1^{\tau})$ 和 $1/(1-\beta_2^{\tau})$ 纠正了初始设置 $s_i^{(0)}$ 和 $r_i^{(0)}$ 为零引入的偏差（见\cref{exercise:ch07-12}）。请注意，由于 $\beta_i<1$ 且随着 $\tau$ 变大，偏差趋于零，因此我们在实践中有时会省略这种偏差修正。权重参数的典型值为 $\beta_1=0.9$ 和 $\beta_2=0.99$。Adam 算法是深度学习应用中最常用的学习算法。
+
+\begin{center}
+\setlength{\fboxsep}{7pt}%
+\fbox{\begin{minipage}{0.82\textwidth}
+\centering\textbf{算法 7.4\quad Adam 算法}\par
+\vspace{5pt}
+\begin{flushleft}
+\textbf{Input:} 由 $n\in\{1,\cdots,N\}$ 索引的数据点构成的训练集\\
+\hspace*{1.5em}批量规模 $B$\\
+\hspace*{1.5em}每个小批量的误差函数 $E_{n:n+B-1}(\mathbf{w})$\\
+\hspace*{1.5em}学习率参数 $\eta$\\
+\hspace*{1.5em}衰减参数 $\beta_1$ 与 $\beta_2$\\
+\hspace*{1.5em}稳定化参数 $\delta$\\
+\textbf{Output:} 最终的权重向量 $\mathbf{w}$\\
+$n\leftarrow 1$\\
+$\mathbf{s}\leftarrow\mathbf{0}$\\
+$\mathbf{r}\leftarrow\mathbf{0}$\\
+\textbf{repeat}\\
+\hspace*{1.5em}从 $\mathcal{D}$ 中随机选取一个小批量\\
+\hspace*{1.5em}$\mathbf{g}\leftarrow-\nabla E_{n:n+B-1}(\mathbf{w})$ \quad // 计算梯度向量\\
+\hspace*{1.5em}$\mathbf{s}\leftarrow\beta_1\mathbf{s}+(1-\beta_1)\mathbf{g}$\\
+\hspace*{1.5em}$\mathbf{r}\leftarrow\beta_2\mathbf{r}+(1-\beta_2)\mathbf{g}\odot\mathbf{g}$ \quad // 逐元素相乘\\
+\hspace*{1.5em}$\hat{\mathbf{s}}\leftarrow\mathbf{s}/(1-\beta_1^{\tau})$ \quad // 偏差校正\\
+\hspace*{1.5em}$\hat{\mathbf{r}}\leftarrow\mathbf{r}/(1-\beta_2^{\tau})$ \quad // 偏差校正\\
+\hspace*{1.5em}$\Delta\mathbf{w}\leftarrow-\eta\,\hat{\mathbf{s}}/(\sqrt{\hat{\mathbf{r}}}+\delta)$ \quad // 逐元素操作\\
+\hspace*{1.5em}$\mathbf{w}\leftarrow\mathbf{w}+\Delta\mathbf{w}$ \quad // 更新权重向量\\
+\hspace*{1.5em}$n\leftarrow n+B$\\
+\hspace*{1.5em}\textbf{if} $n+B>N$ \textbf{then}\\
+\hspace*{3em}打乱数据\\
+\hspace*{3em}$n\leftarrow 1$\\
+\hspace*{1.5em}\textbf{end if}\\
+\textbf{until} 收敛\\
+\textbf{return} $\mathbf{w}$
+\end{flushleft}
+\end{minipage}}
+\end{center}
 
 \end{document}

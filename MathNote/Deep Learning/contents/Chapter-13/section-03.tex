@@ -1,5 +1,7 @@
 \documentclass[../../main.tex]{subfiles}
+
 \graphicspath{{../../image/}{../../figure/}}
+
 \begin{document}
 
 \section{通用图网络}\label{section:ch13-通用图网络}
@@ -8,117 +10,170 @@
 
 \subsection{图注意力网络}\label{subsection:ch13-图注意力网络}
 
-注意力机制在作为~Transformer~架构的基础时展现出强大的能力（参见~12.1~节）。在图神经网络中，注意力机制可以用于构建一种能够整合来自邻居节点信息的聚合函数。在这种机制中，传入的消息会根据注意力系数 $A_{nm}$ 加权，从而得到
+注意力机制在作为 Transformer 架构的基础时展现出强大的能力（参见\cref{section:ch12-注意力}）。在图神经网络中，注意力机制可以用于构建一种能够整合来自邻居节点信息的聚合函数。
+
+\begin{definition}[图注意力网络]\label{definition:ch13-图注意力网络}
+传入的消息根据注意力系数 $A_{nm}$ 加权，从而得到
 \begin{align}
-\bm{z}_n^{(l)}=\operatorname{Aggregate}\!\left(\{\bm{h}_m^{(l)}:m\in\mathcal{N}(n)\}\right)=\sum_{m\in\mathcal{N}(n)}A_{nm}\,\bm{h}_m^{(l)}
-\label{align:ch13-attn-agg}
+\bm{z}_n^{(l)}=\operatorname{Aggregate}\!\left(\{\bm{h}_m^{(l)}:m\in\mathcal{N}(n)\}\right)=\sum_{m\in\mathcal{N}(n)}A_{nm}\,\bm{h}_m^{(l)},
+\label{align:ch13-注意力聚合}
 \end{align}
 其中，注意力系数满足
 \begin{align}
-A_{nm}&\geq 0
-\label{align:ch13-attn-nonneg}\\
+A_{nm}&\geqslant 0
+\label{align:ch13-注意力非负}\\
 \sum_{m\in\mathcal{N}(n)}A_{nm}&=1.
-\label{align:ch13-attn-norm}
+\label{align:ch13-注意力归一}
 \end{align}
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch13-图注意力网络; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+\eqref{align:ch13-注意力非负}与\eqref{align:ch13-注意力归一}两条约束的作用不同：非负性使\eqref{align:ch13-注意力聚合}成为邻居嵌入的一个凸组合，因而聚合结果不会超出邻居嵌入的凸包，数值上不会因为正负抵消而失控；归一化使聚合量的尺度与邻居个数无关，避免了\eqref{align:ch13-求和聚合}中“度数越大、量级越大”的问题。两条合起来，$A_{nm}$ 可以被读作“节点 $n$ 把多少注意力分给邻居 $m$”的分配比例。\par
+与\eqref{align:ch13-平均聚合}的固定权重 $1/|\mathcal{N}(n)|$ 相比，注意力权重是数据相关的：它由当前的嵌入计算得到，因此同一张图上不同样本、不同层的权重都可以不同。这正是原书所说的归纳偏置——某些相邻节点比其他节点更重要，而重要性由数据决定。\par
+代价是计算量与存储量：每一条边都要算一个注意力系数，稠密图上这是 $O(N^2)$ 的量。此外，\eqref{align:ch13-注意力归一}的分母只对邻居求和，因此孤立节点的分母为 $0$，实际实现中需要补自环或特殊处理。
+\end{remark}
 
 这种网络称为图注意力网络（graph attention network）（Veličković et al., 2017），它可以捕获一种归纳偏置，该归纳偏置表明在确定最佳更新的过程中，某些相邻节点比其他节点更重要，而这种重要性取决于数据本身。
 
-构建注意力系数的方法有很多种，但通常都会使用~softmax~函数。例如，我们可以使用双线性形式
+构建注意力系数的方法有很多种，但通常都会使用 softmax 函数。
+
+\begin{definition}[注意力系数]\label{definition:ch13-注意力系数}
+例如，我们可以使用双线性形式
 \begin{align}
-A_{nm}=\frac{\exp\!\left(\bm{h}_n^{\mathsf T}\bm{W}\bm{h}_m\right)}{\sum_{m'\in\mathcal{N}(n)}\exp\!\left(\bm{h}_n^{\mathsf T}\bm{W}\bm{h}_{m'}\right)}
-\label{align:ch13-attn-bilinear}
+A_{nm}=\frac{\exp\!\left(\bm{h}_n^{\mathsf T}\bm{W}\bm{h}_m\right)}{\sum_{m'\in\mathcal{N}(n)}\exp\!\left(\bm{h}_n^{\mathsf T}\bm{W}\bm{h}_{m'}\right)},
+\label{align:ch13-双线性注意力}
 \end{align}
 其中 $\bm{W}$ 是一个 $D\times D$ 的可学习参数矩阵。一种更通用的选择是使用神经网络组合边的两个端点的节点的嵌入向量：
 \begin{align}
-A_{nm}=\frac{\exp\!\left\{\operatorname{MLP}(\bm{h}_n,\bm{h}_m)\right\}}{\sum_{m'\in\mathcal{N}(n)}\exp\!\left\{\operatorname{MLP}(\bm{h}_n,\bm{h}_{m'})\right\}}
-\label{align:ch13-attn-mlp}
+A_{nm}=\frac{\exp\!\left\{\operatorname{MLP}(\bm{h}_n,\bm{h}_m)\right\}}{\sum_{m'\in\mathcal{N}(n)}\exp\!\left\{\operatorname{MLP}(\bm{h}_n,\bm{h}_{m'})\right\}},
+\label{align:ch13-MLP注意力}
 \end{align}
-其中~MLP~具有单个的连续输出变量，并且当输入向量交换时，这个输出变量的值不变。只要~MLP~在网络中的所有节点之间是共享的（见习题~13.8），这个聚合函数就会在节点重新排序下保持等变性。
+其中 MLP 具有单个的连续输出变量，并且当输入向量交换时，这个输出变量的值不变。只要 MLP 在网络中的所有节点之间是共享的（见\cref{exercise:ch13-08}），这个聚合函数就会在节点重新排序下保持等变性。
+\end{definition}
 
-图注意力网络可以通过引入多头注意力机制来进行扩展，在这个机制中，我们可以定义 $H$ 组不同的注意力权重 $A_{nm}^{(h)}$，$h=1,\cdots,H$。每个注意力头都使用上面描述的机制之一进行计算，并且具有自己的独立参数（参见~12.1.6~节）。然后在聚合步骤中使用拼接和线性投影将它们组合起来。需要注意的是，对于全连接网络，多头图注意力网络就变成标准的~Transformer~编码器（见习题~13.9）。
+% SUPPLEMENT: parent=definition:ch13-注意力系数; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+\eqref{align:ch13-双线性注意力}与\eqref{align:ch13-MLP注意力}都是“先算得分、再在邻域上做 softmax”的两步结构，区别只在得分函数。双线性形式的得分是 $\bm{h}_n^{\mathsf T}\bm{W}\bm{h}_m$，它对 $\bm{W}$ 线性，因而训练稳定、参数量只有 $D^2$；MLP 形式的得分是任意可学的标量函数，表达力更强但需要更多数据。\par
+两条公式都自动满足\eqref{align:ch13-注意力非负}（指数函数为正）与\eqref{align:ch13-注意力归一}（softmax 分母的定义），因此定义中那两条约束不是额外假设，而是构造方式的直接结果。\par
+定义中对 MLP 提出了一个不显眼但关键的要求：交换两个输入向量时输出不变。若 MLP 不对称，则 $A_{nm}\neq A_{mn}$，聚合将依赖“谁是被更新的节点”，这在无向图上没有意义，也会破坏等变性。双线性形式 $\bm{h}_n^{\mathsf T}\bm{W}\bm{h}_m$ 只有在 $\bm{W}$ 对称时才满足这一要求；原书未强调这一点，实现时若 $\bm{W}$ 取一般矩阵，得到的是有向注意力。
+\end{remark}
+
+\begin{proposition}[图注意力聚合的置换等变性]\label{proposition:ch13-图注意力等变性}
+设注意力系数由\eqref{align:ch13-MLP注意力}给出，其中 MLP 在所有节点间共享且对两个输入向量对称，$\bm{P}$ 为任意置换矩阵。则按\eqref{align:ch13-注意力聚合}定义的聚合算子满足
+\begin{align*}
+\operatorname{Aggregate}\left(\{\bm{P}\bm{h}_m:m\in\mathcal{N}(n)\}\right)=\bm{P}\operatorname{Aggregate}\left(\{\bm{h}_m:m\in\mathcal{N}(n)\}\right),
+\end{align*}
+即该聚合函数在节点重新排序下是等变的。
+\end{proposition}
+
+\begin{proof}（重构新增）
+记 $\widetilde{\bm{h}}_m=\bm{h}_{\pi^{-1}(m)}$，则按\eqref{align:ch13-MLP注意力}，重排后的注意力系数为
+\begin{align*}
+\widetilde{A}_{nm}&=\frac{\exp\{\operatorname{MLP}(\widetilde{\bm{h}}_n,\widetilde{\bm{h}}_m)\}}{\sum_{m'\in\widetilde{\mathcal{N}}(n)}\exp\{\operatorname{MLP}(\widetilde{\bm{h}}_n,\widetilde{\bm{h}}_{m'})\}}\\
+&=\frac{\exp\{\operatorname{MLP}(\bm{h}_{\pi^{-1}(n)},\bm{h}_{\pi^{-1}(m)})\}}{\sum_{m'\in\widetilde{\mathcal{N}}(n)}\exp\{\operatorname{MLP}(\bm{h}_{\pi^{-1}(n)},\bm{h}_{\pi^{-1}(m')})\}},
+\end{align*}
+把分母中的求和变量换成 $m''=\pi^{-1}(m')$，则 $m''$ 遍历 $\mathcal{N}(\pi^{-1}(n))$，分母恰为 $\sum_{m''\in\mathcal{N}(\pi^{-1}(n))}\exp\{\operatorname{MLP}(\bm{h}_{\pi^{-1}(n)},\bm{h}_{m''})\}$，故 $\widetilde{A}_{nm}=A_{\pi^{-1}(n)\pi^{-1}(m)}$。这里用到 MLP 在所有节点间共享（分子分母中的 MLP 是同一个函数）这一事实。于是
+\begin{align*}
+\widetilde{\bm{z}}_n&=\sum_{m\in\widetilde{\mathcal{N}}(n)}\widetilde{A}_{nm}\widetilde{\bm{h}}_m=\sum_{m\in\widetilde{\mathcal{N}}(n)}A_{\pi^{-1}(n)\pi^{-1}(m)}\bm{h}_{\pi^{-1}(m)}\\
+&=\sum_{m''\in\mathcal{N}(\pi^{-1}(n))}A_{\pi^{-1}(n)m''}\bm{h}_{m''}=\bm{z}_{\pi^{-1}(n)},
+\end{align*}
+第二个等号是重指标 $m''=\pi^{-1}(m)$。这恰是 $\widetilde{\bm{z}}=\bm{P}\bm{z}$，即聚合算子与置换矩阵可交换。证毕。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch13-图注意力等变性; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+证明中真正用到对称性的地方只有一处：把 $\widetilde{A}_{nm}$ 的分子写成 $\operatorname{MLP}(\bm{h}_{\pi^{-1}(n)},\bm{h}_{\pi^{-1}(m)})$ 时，两个参数的位置必须与原式一致。若 MLP 不对称，重排会让“查询向量”与“键向量”的角色互换，$A_{nm}$ 与 $A_{mn}$ 不再相等，聚合结果依赖于节点编号的方向，等变性随之失效。\par
+命题没有断言 $\bm{z}_n$ 对邻居的置换不变——它不是不变的，而是等变的：重排节点后，第 $n$ 个分量变成原来的第 $\pi^{-1}(n)$ 个分量。这正是\eqref{align:ch13-置换等变性}要求的行为。\par
+把本命题与\cref{theorem:ch13-图网络等变性}结合可知，用注意力聚合替换求和聚合不会破坏整个网络的等变性，因此图注意力网络可以任意堆叠。原书把这一验证留作\cref{exercise:ch13-08}，这里给出完整论证以便后续引用。
+\end{remark}
+
+\begin{definition}[多头图注意力]\label{definition:ch13-多头图注意力}
+图注意力网络可以通过引入多头注意力机制来进行扩展，在这个机制中，可以定义 $H$ 组不同的注意力权重 $A_{nm}^{(h)}$，$h=1,\cdots,H$。每个注意力头都使用上面描述的机制之一进行计算，并且具有自己的独立参数（参见\cref{subsection:ch12-多头注意力}）。然后在聚合步骤中使用拼接和线性投影将它们组合起来。需要注意的是，对于全连接网络，多头图注意力网络就变成标准的 Transformer 编码器（见\cref{exercise:ch13-09}）。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch13-多头图注意力; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+多头的意义在于让不同的头关注邻域中不同的关系模式：一个头可能按化学键类型分配注意力，另一个头可能按原子距离分配，最后的拼接与线性投影把这些视角合并。这与卷积网络中一层使用多个滤波器完全平行。\par
+每个头必须有自己独立的参数集，否则 $H$ 个头会退化为同一个头，只是把结果重复了 $H$ 次。拼接使输出维数变为 $H$ 倍（当每个头输出 $D/H$ 维时恰好回到 $D$ 维），线性投影则负责把拼接结果映射回所需的维数并混合各头的信息。\par
+“全连接图上多头图注意力即 Transformer 编码器”这一断言的确切含义与证明见\cref{exercise:ch13-09}：在完全图上邻居集合就是除自身外的全部节点，softmax 注意力与 Transformer 的自注意力在形式上一致，差别只在是否包含自身以及缩放因子的写法。
+\end{remark}
 
 \subsection{边嵌入}\label{subsection:ch13-边嵌入}
 
-前面讨论的图神经网络使用的嵌入向量都与节点相关联。我们已经看到一些网络也具有与边相关联的数据。即使不存在与边相关联的观测值，我们也仍然可以维护和更新基于边的隐藏变量，这些变量可以为图神经网络学习的内部表示做出贡献。
+前面讨论的图神经网络使用的嵌入向量都与节点相关联。我们已经看到一些网络也具有与边相关联的数据。即使不存在与边相关联的观测值，我们也仍然可以维护和更新基于边的隐藏变量，这些变量可以为图神经网络学习的内部表示做出贡献。除了由 $\bm{h}_n^{(l)}$ 给出的节点嵌入，我们还引入了边嵌入 $\bm{e}_{nm}^{(l)}$。
 
-除了由 $\bm{h}_n^{(l)}$ 给出的节点嵌入，我们还引入了边嵌入 $\bm{e}_{nm}^{(l)}$。然后我们可以使用以下形式定义一般的消息传递方程：
+\begin{definition}[带边嵌入的消息传递]\label{definition:ch13-边嵌入消息传递}
+使用边嵌入 $\bm{e}_{nm}^{(l)}$，可以用以下形式定义一般的消息传递方程：
 \begin{align}
 \bm{e}_{nm}^{(l+1)}&=\operatorname{Update}_{\mathrm{edge}}\!\left(\bm{e}_{nm}^{(l)},\bm{h}_n^{(l)},\bm{h}_m^{(l)}\right)
-\label{align:ch13-edge-update}\\
+\label{align:ch13-边更新}\\
 \bm{z}_n^{(l+1)}&=\operatorname{Aggregate}_{\mathrm{node}}\!\left(\{\bm{e}_{nm}^{(l+1)}:m\in\mathcal{N}(n)\}\right)
-\label{align:ch13-edge-agg}\\
+\label{align:ch13-边聚合}\\
 \bm{h}_n^{(l+1)}&=\operatorname{Update}_{\mathrm{node}}\!\left(\bm{h}_n^{(l)},\bm{z}_n^{(l+1)}\right).
-\label{align:ch13-edge-node-update}
+\label{align:ch13-边节点更新}
 \end{align}
-
 最终层学习到的边嵌入 $\bm{e}_{nm}^{(l)}$ 可以直接用来预测与边相关的内容。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch13-边嵌入消息传递; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+这三式相对\eqref{align:ch13-聚合定义}与\eqref{align:ch13-更新定义}的推广在于多了一层“边”：消息不再直接取邻居的节点嵌入，而是先由两端节点的嵌入生成一个边向量，再从边向量聚合到节点。这样做的收益是表示能力的提升——边向量可以编码“这两个节点之间的关系类型”，而仅用节点嵌入的求和无法区分“同一条消息来自不同类型的边”。\par
+三式的执行顺序不能随意交换：\eqref{align:ch13-边聚合}用的是 $\bm{e}_{nm}^{(l+1)}$ 而不是 $\bm{e}_{nm}^{(l)}$，即先更新边、再聚合边、最后更新节点。若改成先聚合旧边再更新边，则本层的节点更新用不到本层的边信息，表达力下降。\par
+$\bm{e}_{nm}$ 的下标是有序对 $(n,m)$，但无向图中 $(n,m)$ 与 $(m,n)$ 是同一条边，因此实现时必须保证 $\bm{e}_{nm}=\bm{e}_{mn}$，否则等变性会被破坏。原书写成 $\bm{e}_{nm}$ 是记号上的简化。
+\end{remark}
 
 \subsection{图嵌入}\label{subsection:ch13-图嵌入}
 
-除了节点嵌入和边嵌入，我们还可以维护和更新与整个图相关的嵌入向量 $\bm{g}^{(l)}$。将所有这些方面结合在一起，我们便能够为图结构化应用定义更通用的一组消息传递函数，以及更丰富的学习表示集合。具体来说，我们可以定义如下消息传递方程（Battaglia et al., 2018）：
+除了节点嵌入和边嵌入，我们还可以维护和更新与整个图相关的嵌入向量 $\bm{g}^{(l)}$。将所有这些方面结合在一起，我们便能够为图结构化应用定义更通用的一组消息传递函数，以及更丰富的学习表示集合。
+
+\begin{definition}[通用图网络的消息传递方程]\label{definition:ch13-通用消息传递}
+具体来说，可以定义如下消息传递方程（Battaglia et al., 2018）：
 \begin{align}
 \bm{e}_{nm}^{(l+1)}&=\operatorname{Update}_{\mathrm{edge}}\!\left(\bm{e}_{nm}^{(l)},\bm{h}_n^{(l)},\bm{h}_m^{(l)},\bm{g}^{(l)}\right)
-\label{align:ch13-edge-update-g}\\
+\label{align:ch13-通用边更新}\\
 \bm{z}_n^{(l+1)}&=\operatorname{Aggregate}_{\mathrm{node}}\!\left(\{\bm{e}_{nm}^{(l+1)}:m\in\mathcal{N}(n)\}\right)
-\label{align:ch13-edge-agg-g}\\
+\label{align:ch13-通用边聚合}\\
 \bm{h}_n^{(l+1)}&=\operatorname{Update}_{\mathrm{node}}\!\left(\bm{h}_n^{(l)},\bm{z}_n^{(l+1)},\bm{g}^{(l)}\right)
-\label{align:ch13-node-update-g}\\
+\label{align:ch13-通用节点更新}\\
 \bm{g}^{(l+1)}&=\operatorname{Update}_{\mathrm{graph}}\!\left(\bm{g}^{(l)},\{\bm{h}_n^{(l+1)}:n\in\mathcal{V}\},\{\bm{e}_{nm}^{(l+1)}:(n,m)\in\mathcal{E}\}\right).
-\label{align:ch13-graph-update}
+\label{align:ch13-通用图更新}
 \end{align}
+\end{definition}
 
-这些消息传递方程首先更新边嵌入向量 $\bm{e}_{nm}^{(l+1)}$，该操作是基于边嵌入向量的先前状态，每条边连接的节点的嵌入向量，以及图级嵌入向量 $\bm{g}^{(l)}$ 进行的，参见式\eqref{align:ch13-edge-update-g}。然后将这些更新的边嵌入向量在连接到每个节点的每条边上进行聚合，参见式\eqref{align:ch13-edge-agg-g}。接下来转而利用当前节点的嵌入向量和图级嵌入向量更新节点嵌入向量 $\bm{h}_n^{(l+1)}$，参见式\eqref{align:ch13-node-update-g}。最后基于图中所有节点和所有边的信息，以及从前一层获得的图级嵌入向量，更新当前层的图级嵌入向量。\cref{fig:ch13-msg-update}演示了上述过程，算法~13.2~对图消息传递更新做了总结。
+% SUPPLEMENT: parent=definition:ch13-通用消息传递; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+这四式把“节点—边—图”三个层次的变量放进同一个更新回路，是本章最一般的消息传递形式；前面所有的模型都是它的特例：去掉 $\bm{g}$ 与边变量就回到\eqref{align:ch13-聚合定义}，保留边变量但去掉 $\bm{g}$ 就回到\eqref{align:ch13-边更新}。理解这一点比记住四式更重要——它说明这些模型之间的差别只是“哪些变量参与更新”，而不是彼此无关的四种算法。\par
+四个更新函数的输入各不相同，这决定了信息流的顺序：边只知道两端节点与全局状态，节点知道自身、邻域聚合与全局状态，全局变量则能看到全部节点与全部边。因此 $\bm{g}$ 是唯一“全局可见”的变量，它承担把远距离信息压缩传递的角色；这也是为什么原书在讨论过度平滑时提到的“超级节点”与 $\bm{g}$ 有相似的作用。\par
+\eqref{align:ch13-通用图更新}的输入是集合 $\{\bm{h}_n^{(l+1)}\}$ 与 $\{\bm{e}_{nm}^{(l+1)}\}$，因此 $\operatorname{Update}_{\mathrm{graph}}$ 必须是置换不变的，否则整个网络的图级表示会依赖节点编号。这一点是\eqref{align:ch13-图级读出}中求和要求的同一件事，只是发生在每一层而不是只在最后一层。
+\end{remark}
+
+这些消息传递方程首先更新边嵌入向量 $\bm{e}_{nm}^{(l+1)}$，该操作是基于边嵌入向量的先前状态，每条边连接的节点的嵌入向量，以及图级嵌入向量 $\bm{g}^{(l)}$ 进行的，参见\eqref{align:ch13-通用边更新}。然后将这些更新的边嵌入向量在连接到每个节点的每条边上进行聚合，参见\eqref{align:ch13-通用边聚合}。接下来转而利用当前节点的嵌入向量和图级嵌入向量更新节点嵌入向量 $\bm{h}_n^{(l+1)}$，参见\eqref{align:ch13-通用节点更新}。最后基于图中所有节点和所有边的信息，以及从前一层获得的图级嵌入向量，更新当前层的图级嵌入向量。\cref{figure:ch13-消息传递更新}演示了上述过程，算法 13.2 对图消息传递更新做了总结。
 
 \begin{figure}[htbp]
-\centering
-\includegraphics[width=0.9\textwidth]{ch13-fig13.5-msg-update.png}
-\caption{式\eqref{align:ch13-edge-update-g}～式\eqref{align:ch13-graph-update}定义的图消息传递更新的示意图，展示了~(a)~边更新、(b)~节点更新，以及~(c)~全局图更新。在每种情况下，正在更新的变量用红色显示，而那些对该更新有贡献的变量则用蓝色显示。}
-\label{fig:ch13-msg-update}
+  \centering
+  \includegraphics[width=0.95\textwidth]{ch13-fig13.5-msg-update.png}
+  \caption{\eqref{align:ch13-通用边更新}～\eqref{align:ch13-通用图更新}定义的图消息传递更新的示意图，展示了 (a) 边更新、(b) 节点更新，以及 (c) 全局图更新。在每种情况下，正在更新的变量用红色显示，而那些对该更新有贡献的变量则用蓝色显示}
+  \label{figure:ch13-消息传递更新}
 \end{figure}
 
-\subsection{过度平滑}\label{subsection:ch13-过度平滑}
-
-某些图神经网络会出现的一个显著问题，就是所谓的过度平滑（over-smoothing），在多次迭代地进行消息传递后，节点嵌入向量变得彼此非常相似，这实际上限制了网络的深度。缓解这个问题的一种方法是引入残差连接（见~9.5~节）。例如，我们可以修改更新运算符[式\eqref{align:ch13-node-update-g}]：
-\begin{align}
-\bm{h}_n^{(l+1)}=\operatorname{Update}_{\mathrm{node}}\!\left(\bm{h}_n^{(l)},\bm{z}_n^{(l+1)},\bm{g}^{(l)}\right)+\bm{h}_n^{(l)}.
-\label{align:ch13-residual}
-\end{align}
-
-减少过度平滑的另一种方法是让输出层不仅从网络的最后一个卷积层获取信息，也从所有先前层获取信息。这可以通过拼接先前层的表示来完成：
-\begin{align}
-\bm{y}_n=f\!\left(\bm{h}_n^{(1)}\oplus\bm{h}_n^{(2)}\oplus\cdots\oplus\bm{h}_n^{(L)}\right)
-\label{align:ch13-jump}
-\end{align}
-其中 $\bm{a}\oplus\bm{b}$ 表示对向量 $\bm{a}$ 和 $\bm{b}$ 进行拼接。这种方法的一个变体是使用最大池化（max pooling）而不是拼接来组合向量。在这种情况下，输出向量的每个元素由前几层中所有对应嵌入向量的元素的最大值决定。
-
-\subsection{正则化}\label{subsection:ch13-正则化}
-
-标准的正则化技术可以用于图神经网络（参见第~9~章），包括将惩罚项（例如参数值的平方和）添加到损失函数中。此外，一些专门针对图神经网络开发的正则化方法也已经出现。
-
-图神经网络已经采用权重共享来实现置换的等变性和不变性，但通常它们在每层都有独立的参数。然而，权重和偏置也可以跨层共享，以减少独立参数的数量。
-
-在图神经网络的背景下进行~dropout~指的是在训练期间省略图节点的随机子集，对于每次前向传播则选择新的随机子集。这同样适用于图中的边，即在训练过程中，随机移除或掩盖邻接矩阵中的部分元素。
-
-\subsection{几何深度学习}\label{subsection:ch13-几何深度学习}
-
-在设计针对图结构数据的深度学习模型时，我们已经看到排列对称性是一个至关重要的因素。它作为一种归纳偏置的形式，在大幅减少数据需求的同时也提高了预测性能。在与空间属性相关的图神经网络应用中，如图形网格、流体流动模拟或分子结构，我们还可以在网络架构中构建额外的等变性和不变性。
-
-例如，考虑预测分子属性的任务。当探索候选药物的空间时，分子可以表示为一个列表，其中包括给定类型的原子（碳原子、氢原子、氮原子等）以及每个原子的空间坐标（表示为三维的列向量）。我们可以为每个原子 $n$ 在每一层 $l$ 引入一个相关的嵌入向量，表示为 $\bm{r}_n^{(l)}$，并且这些向量可以用已知的原子坐标进行初始化。然而，这些向量的元素值取决于坐标系统的任意选择，而分子的属性则不依赖于它。例如，如果分子在三维空间中旋转或相对于坐标系统原点移动到新位置，或者如果坐标系统本身反射得到分子的镜像版本，那么分子的溶解度保持不变。因此，分子的属性也应该在这样的变换下保持不变。
-
-通过仔细选择更新操作和聚合操作的函数形式（Satorras, Hoogeboom, and Welling, 2021），新的嵌入向量 $\bm{r}_n^{(l)}$ 可以纳入图神经网络的更新方程[式\eqref{align:ch13-edge-update}～式\eqref{align:ch13-edge-node-update}]中，以实现所需的对称性：
-\begin{align}
-\bm{e}_{nm}^{(l+1)}&=\operatorname{Update}_{\mathrm{edge}}\!\left(\bm{e}_{nm}^{(l)},\bm{h}_n^{(l)},\bm{h}_m^{(l)},\|\bm{r}_n^{(l)}-\bm{r}_m^{(l)}\|^2\right)
-\label{align:ch13-geo-edge}\\
-\bm{r}_n^{(l+1)}&=\bm{r}_n^{(l)}+C\sum_{(n,m)\in\mathcal{E}}\!\left(\bm{r}_n^{(l)}-\bm{r}_m^{(l)}\right)\phi\!\left(\bm{e}_{nm}^{(l+1)}\right)
-\label{align:ch13-geo-coord}\\
-\bm{z}_n^{(l+1)}&=\operatorname{Aggregate}_{\mathrm{node}}\!\left(\{\bm{e}_{nm}^{(l+1)}:m\in\mathcal{N}(n)\}\right)
-\label{align:ch13-geo-agg}\\
-\bm{h}_n^{(l+1)}&=\operatorname{Update}_{\mathrm{node}}\!\left(\bm{h}_n^{(l)},\bm{z}_n^{(l+1)}\right).
-\label{align:ch13-geo-node}
-\end{align}
-
-注意，$\|\bm{r}_n^{(l)}-\bm{r}_m^{(l)}\|^2$ 表示坐标 $\bm{r}_n^{(l)}$ 和 $\bm{r}_m^{(l)}$ 之间的平方距离，它并不依赖于平移、旋转或反射。同样，坐标 $\bm{r}_n^{(l)}$ 可以通过相对差异 $(\bm{r}_n^{(l)}-\bm{r}_m^{(l)})$ 的线性组合进行更新。这里的 $\phi(\bm{e}_{nm}^{(l+1)})$ 是边嵌入的一般标量函数，由神经网络表示，系数 $C$ 通常设置为求和项数目的倒数。因此在这种变换下，消息传递方程[式\eqref{align:ch13-geo-edge}、式\eqref{align:ch13-geo-agg}和式\eqref{align:ch13-geo-node}]是不变的，而式\eqref{align:ch13-geo-coord}给出的坐标嵌入是等变的（见习题~13.10）。
-
-我们已经看到了结构化数据中许多对称性的例子，从图像中物体的平移和图中节点顺序的排列，到三维空间中分子的旋转和平移。将这些对称性捕获在深度神经网络的结构中是一种强大的归纳偏置形式，也是进行丰富的几何深度学习（geometric deep learning）研究的基础（Bronstein et al., 2017; Bronstein et al., 2021）。
+\begin{center}
+\fbox{\begin{minipage}{0.9\textwidth}
+\small
+\textbf{算法 13.2：图消息传递更新}\par\smallskip
+\textbf{输入：}无向图 $\mathcal{G}=(\mathcal{V},\mathcal{E})$；初始节点嵌入 $\{\bm{h}_n^{(0)}\}$；初始边嵌入 $\{\bm{e}_{nm}^{(0)}\}$；初始图嵌入 $\bm{g}^{(0)}$\par
+\textbf{输出：}最终节点嵌入 $\{\bm{h}_n^{(L)}\}$；最终边嵌入 $\{\bm{e}_{nm}^{(L)}\}$；最终图嵌入 $\bm{g}^{(L)}$\par
+\smallskip
+\hrule\smallskip
+\emph{// 迭代地进行消息传递}\\
+\textbf{for} $l\in\{0,\cdots,L-1\}$ \textbf{do}\\
+\hspace*{2em}$\bm{e}_{nm}^{(l+1)}\leftarrow\operatorname{Update}_{\mathrm{edge}}\left(\bm{e}_{nm}^{(l)},\bm{h}_n^{(l)},\bm{h}_m^{(l)},\bm{g}^{(l)}\right)$\\
+\hspace*{2em}$\bm{z}_n^{(l+1)}\leftarrow\operatorname{Aggregate}_{\mathrm{node}}\left(\{\bm{e}_{nm}^{(l+1)}:m\in\mathcal{N}(n)\}\right)$\\
+\hspace*{2em}$\bm{h}_n^{(l+1)}\leftarrow\operatorname{Update}_{\mathrm{node}}\left(\bm{h}_n^{(l)},\bm{z}_n^{(l+1)},\bm{g}^{(l)}\right)$\\
+\hspace*{2em}$\bm{g}^{(l+1)}\leftarrow\operatorname{Update}_{\mathrm{graph}}\left(\bm{g}^{(l)},\{\bm{h}_n^{(l+1)}\},\{\bm{e}_{nm}^{(l+1)}\}\right)$\\
+\textbf{end for}\\
+\textbf{return} $\{\bm{h}_n^{(L)}\},\{\bm{e}_{nm}^{(L)}\},\bm{g}^{(L)}$
+\end{minipage}}
+\end{center}
 
 \end{document}

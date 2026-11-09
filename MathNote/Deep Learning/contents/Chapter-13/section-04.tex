@@ -1,57 +1,136 @@
 \documentclass[../../main.tex]{subfiles}
+
 \graphicspath{{../../image/}{../../figure/}}
+
 \begin{document}
 
-\section*{习题}\label{section:ch13-习题}
-\addcontentsline{toc}{section}{习题}
+\subsection{过度平滑}\label{subsection:ch13-过度平滑}
 
-\textbf{13.1}（$\star$）证明：对应于\cref{fig:ch13-adjacency}中两种节点排序选择的置换 $(A,B,C,D,E)\rightarrow(C,E,A,D,B)$，可以表示为式\eqref{align:ch13-a-perm}定义的形式，其中置换矩阵由式\eqref{align:ch13-perm-matrix}给出。
+某些图神经网络会出现的一个显著问题，就是所谓的过度平滑（over-smoothing）。
 
-\textbf{13.2}（$\star\star$）证明：对应于\cref{fig:ch13-adjacency}中两种节点排序选择的图 $\mathcal{G}$ 中与每个节点相连的边数可以由矩阵 $\bm{A}^2$ 中相应的对角元素给出，其中 $\bm{A}$ 是邻接矩阵。
+\begin{definition}[过度平滑]\label{definition:ch13-过度平滑}
+在多次迭代地进行消息传递后，节点嵌入向量变得彼此非常相似，这实际上限制了网络的深度。这种现象称为过度平滑（over-smoothing）。
+\end{definition}
 
-\textbf{13.3}（$\star$）由下式给出的邻接矩阵，画出其对应的图：
+% SUPPLEMENT: parent=definition:ch13-过度平滑; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+过度平滑的机制可以从\eqref{align:ch13-层等变性}中读出：每一层都把节点表示向其邻域的平均值推进一次，反复作用相当于对邻接算子做幂迭代，其极限由该算子的最大特征值对应的特征向量决定。对于连通的非二部图，这个极限使所有节点的表示趋于同一个向量，于是节点之间不再可区分，节点分类的判别信息随之消失。\par
+因此“层数不能太深”不是训练技巧问题，而是算子本身的性质：堆叠 $L$ 层等价于把感受野扩大到 $L$ 跳，当 $L$ 接近图的直径时，所有节点的感受野几乎覆盖整张图，表示自然趋同。图越小、越稠密，过度平滑出现得越早。\par
+定义中“彼此非常相似”需要一个度量才有确切含义，常用的量是相邻节点表示之差的范数或表示矩阵的秩。原书没有给出定量刻画，本注记也不引入新的定理，只指出这是本章余下两种缓解手段（残差连接与多层读出）所针对的现象。
+\end{remark}
+
+缓解这个问题的一种方法是引入残差连接（见\cref{section:ch09-残差连接}）。例如，我们可以修改更新运算符［\eqref{align:ch13-通用节点更新}］。
+
+\begin{definition}[残差式更新算子]\label{definition:ch13-残差更新}
+修改后的更新算子为
 \begin{align}
-\bm{A}=\begin{pmatrix}0&1&1&0&1\\1&0&1&1&1\\1&1&0&1&0\\0&1&1&0&0\\1&1&0&0&0\end{pmatrix}.
-\label{align:ch13-ex-a}
+\bm{h}_n^{(l+1)}=\operatorname{Update}_{\mathrm{node}}\!\left(\bm{h}_n^{(l)},\bm{z}_n^{(l+1)},\bm{g}^{(l)}\right)+\bm{h}_n^{(l)}.
+\label{align:ch13-残差}
 \end{align}
+\end{definition}
 
-\textbf{13.4}（$\star\star$）证明在数据矩阵 $\bm{X}$ 前乘以式\eqref{align:ch13-perm-general}定义的置换矩阵 $\bm{P}$ 的效果是创建一个新的数据矩阵 $\widetilde{\bm{X}}$[由式\eqref{align:ch13-x-perm}给出]，其行已根据置换函数 $\pi(\cdot)$ 进行置换。
+% SUPPLEMENT: parent=definition:ch13-残差更新; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+\eqref{align:ch13-残差}只加了一项 $\bm{h}_n^{(l)}$，但它改变了整个迭代的定性行为：无残差时第 $l+1$ 层的表示完全由邻域聚合决定，节点自身的历史信息只能通过 $\bm{h}_n^{(l)}$ 这一个入口间接保留；有残差时，恒等映射成为默认路径，网络需要“学习”的只是对恒等的修正量。这与\cref{section:ch09-残差连接}中残差连接使深层网络可训练的理由相同。\par
+从过度平滑的角度看，残差项使每一层的表示至少保留上一层的全部信息，因此即使聚合项把节点推向邻域平均，表示也不会在有限层内被完全抹平。但它只是缓解而不是根治：若残差权重固定为 $1$，聚合项的累积影响仍会随层数增长。\par
+\eqref{align:ch13-残差}要求 $\bm{h}_n^{(l)}$ 与 $\bm{h}_n^{(l+1)}$ 的维数相同，因此带残差的层不能改变嵌入维数，这一点在设计与\eqref{align:ch13-更新算子}配合的网络结构时必须核对。
+\end{remark}
 
-\textbf{13.5}（$\star\star$）证明转换后的邻接矩阵 $\widetilde{\bm{A}}$，它由式\eqref{align:ch13-a-perm}定义，其中 $\bm{P}$ 由式\eqref{align:ch13-perm-general}定义，使得新矩阵的行和列都根据置换函数 $\pi(\cdot)$ 相对于原始邻接矩阵 $\bm{A}$ 进行置换。
+减少过度平滑的另一种方法是让输出层不仅从网络的最后一个卷积层获取信息，也从所有先前层获取信息。
 
-\textbf{13.6}（$\star\star$）将式\eqref{align:ch13-update-mlp}所示的更新方程写成使用矩阵的图级别方程。为了保持符号简洁，省略层索引 $l$。为此，首先将节点嵌入向量 $\bm{h}_n^{(l)}$ 收集到一个矩阵 $\bm{H}$ 中，其行 $n$ 由 $\bm{h}_n^{\mathsf T}$ 给出。然后证明下式
+\begin{definition}[跳跃连接读出]\label{definition:ch13-跳跃连接读出}
+这可以通过拼接先前层的表示来完成：
 \begin{align}
-\bm{Z}=\bm{A}\bm{H}
-\label{align:ch13-ex-z}
+\bm{y}_n=f\!\left(\bm{h}_n^{(1)}\oplus\bm{h}_n^{(2)}\oplus\cdots\oplus\bm{h}_n^{(L)}\right),
+\label{align:ch13-拼接读出}
 \end{align}
-给出的邻域聚合向量 $\bm{z}_n$ 可以以矩阵形式写成 $\bm{Z}=\bm{A}\bm{H}$，$\bm{Z}$ 是一个 $N\times D$ 大小的矩阵，其中的行 $n$ 由 $\bm{z}_n^{\mathsf T}$ 给出。最后证明式\eqref{align:ch13-update-mlp}中非线性激活函数的参数可以以矩阵形式写成
-\begin{align}
-\bm{H}^{(l+1)}=f\!\left(\bm{H}\bm{W}_{\mathrm{self}}^{\mathsf T}+\bm{A}\bm{H}\bm{W}_{\mathrm{neigh}}^{\mathsf T}+\bm{1}\bm{b}^{\mathsf T}\right)
-\label{align:ch13-ex-mat}
-\end{align}
-其中 $\bm{1}$ 是一个 $D$ 维的列向量，其中的所有元素都是 $1$。
+其中 $\bm{a}\oplus\bm{b}$ 表示对向量 $\bm{a}$ 和 $\bm{b}$ 进行拼接。这种方法的一个变体是使用最大池化（max pooling）而不是拼接来组合向量。在这种情况下，输出向量的每个元素由前几层中所有对应嵌入向量的元素的最大值决定。
+\end{definition}
 
-\textbf{13.7}（$\star\star$）利用深度图卷积网络第 $l$ 层的等变性[式\eqref{align:ch13-layer-equiv}]和节点变量的置换性质[式\eqref{align:ch13-x-perm}]，证明式\eqref{align:ch13-layers}定义的完整深度图卷积网络也是等变的。
+% SUPPLEMENT: parent=definition:ch13-跳跃连接读出; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+\eqref{align:ch13-拼接读出}把“用哪一层的表示”这个选择交给下游的分类器：浅层的表示保留了更多局部、区分性的信息，深层的表示融合了更大范围的结构，拼接后两者都可用。这相当于在深度方向上做了一次“多尺度”读取，而不必赌某一层最好。\par
+拼接与最大池化的差别在于是否保留层身份：拼接后各层的分量位置固定，$f$ 可以针对不同层学不同的权重；最大池化则逐元素取最大，输出维数不变，但各层信息被混合，无法再区分某个分量来自哪一层。前者参数量随 $L$ 线性增长，后者不增长。\par
+与\eqref{align:ch13-残差}一样，这种做法的代价是存储：需要保留所有中间层的表示，训练时的显存占用随层数线性增长。
+\end{remark}
 
-\textbf{13.8}（$\star\star$）证明在式\eqref{align:ch13-attn-agg}定义的聚合函数中[注意力权重由式\eqref{align:ch13-attn-mlp}给出]，该聚合函数在图中节点重新排序下是等变的。
+\subsection{正则化}\label{subsection:ch13-正则化}
 
-\textbf{13.9}（$\star$）证明一个图注意力网络（其中图是全连接的，即每对节点之间都有一条边），等同于标准的~Transformer~架构。
+标准的正则化技术可以用于图神经网络（参见\cref{chapter:ch09-正则化}），包括将惩罚项（例如参数值的平方和）添加到损失函数中。此外，一些专门针对图神经网络开发的正则化方法也已经出现。
 
-\textbf{13.10}（$\star\star$）当坐标系统被平移时，对坐标系统定义的物体的位置向量使用
+图神经网络已经采用权重共享来实现置换的等变性和不变性，但通常它们在每层都有独立的参数。然而，权重和偏置也可以跨层共享，以减少独立参数的数量。
+
+\begin{definition}[图神经网络中的 dropout]\label{definition:ch13-图dropout}
+在图神经网络的背景下进行 dropout 指的是在训练期间省略图节点的随机子集，对于每次前向传播则选择新的随机子集。这同样适用于图中的边，即在训练过程中，随机移除或掩盖邻接矩阵中的部分元素。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch13-图dropout; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+图上的 dropout 与全连接网络中的 dropout 形似而神不同。全连接网络中 dropout 随机丢弃的是单元，作用在特征维上；这里丢弃的是节点或边，作用在图的索引集上。丢弃一个节点等于同时删除它的全部特征与它的所有关联边，因此一次 dropout 会改变图的拓扑，而不只是屏蔽某些特征分量。\par
+这种做法的正则化效果来自两个方面：一是它迫使模型在缺失部分邻居的情况下仍能给出正确预测，从而对噪声边与缺失节点稳健；二是它相当于对图结构做数据增强，缓解了“一张图只有一个样本”的窘境。\par
+需要小心的是，丢弃节点会改变归一化因子。若使用\eqref{align:ch13-图卷积聚合}的对称归一化，度 $d_n$ 在训练与推理时不一致，必须在实现中对保留的边重新归一化，否则训练与推理的尺度不匹配。
+\end{remark}
+
+\subsection{几何深度学习}\label{subsection:ch13-几何深度学习}
+
+在设计针对图结构数据的深度学习模型时，我们已经看到排列对称性是一个至关重要的因素。它作为一种归纳偏置的形式，在大幅减少数据需求的同时也提高了预测性能。在与空间属性相关的图神经网络应用中，如图形网格、流体流动模拟或分子结构，我们还可以在网络架构中构建额外的等变性和不变性。
+
+例如，考虑预测分子属性的任务。当探索候选药物的空间时，分子可以表示为一个列表，其中包括给定类型的原子（碳原子、氢原子、氮原子等）以及每个原子的空间坐标（表示为三维的列向量）。我们可以为每个原子 $n$ 在每一层 $l$ 引入一个相关的嵌入向量，表示为 $\bm{r}_n^{(l)}$，并且这些向量可以用已知的原子坐标进行初始化。然而，这些向量的元素值取决于坐标系统的任意选择，而分子的属性则不依赖于它。例如，如果分子在三维空间中旋转或相对于坐标系统原点移动到新位置，或者如果坐标系统本身反射得到分子的镜像版本，那么分子的溶解度保持不变。因此，分子的属性也应该在这样的变换下保持不变。
+
+通过仔细选择更新操作和聚合操作的函数形式（Satorras, Hoogeboom, and Welling, 2021），新的嵌入向量 $\bm{r}_n^{(l)}$ 可以纳入图神经网络的更新方程［\eqref{align:ch13-边更新}～\eqref{align:ch13-边节点更新}］中，以实现所需的对称性。
+
+\begin{definition}[等变消息传递]\label{definition:ch13-等变消息传递}
+引入坐标嵌入 $\bm{r}_n^{(l)}$ 后的消息传递方程为
 \begin{align}
-\bm{r}'=\bm{r}+\bm{c}
-\label{align:ch13-ex-trans}
+\bm{e}_{nm}^{(l+1)}&=\operatorname{Update}_{\mathrm{edge}}\!\left(\bm{e}_{nm}^{(l)},\bm{h}_n^{(l)},\bm{h}_m^{(l)},\|\bm{r}_n^{(l)}-\bm{r}_m^{(l)}\|^2\right)
+\label{align:ch13-几何边更新}\\
+\bm{r}_n^{(l+1)}&=\bm{r}_n^{(l)}+C\sum_{(n,m)\in\mathcal{E}}\!\left(\bm{r}_n^{(l)}-\bm{r}_m^{(l)}\right)\phi\!\left(\bm{e}_{nm}^{(l+1)}\right)
+\label{align:ch13-几何坐标更新}\\
+\bm{z}_n^{(l+1)}&=\operatorname{Aggregate}_{\mathrm{node}}\!\left(\{\bm{e}_{nm}^{(l+1)}:m\in\mathcal{N}(n)\}\right)
+\label{align:ch13-几何聚合}\\
+\bm{h}_n^{(l+1)}&=\operatorname{Update}_{\mathrm{node}}\!\left(\bm{h}_n^{(l)},\bm{z}_n^{(l+1)}\right).
+\label{align:ch13-几何节点更新}
 \end{align}
-进行转换，其中 $\bm{c}$ 是描述平移的固定向量。类似地，如果坐标系统发生旋转和/或镜像反射，则对坐标系统定义的物体的位置向量使用
-\begin{align}
-\bm{r}'=\bm{R}\bm{r}
-\label{align:ch13-ex-rot}
-\end{align}
-进行转换，其中 $\bm{R}$ 是一个正交矩阵，它的逆由其转置给出，所以
-\begin{align}
-\bm{R}\bm{R}^{\mathsf T}=\bm{R}^{\mathsf T}\bm{R}=\bm{I}.
-\label{align:ch13-ex-orth}
-\end{align}
-利用这些属性，证明在平移、旋转和反射下，消息传递方程[式\eqref{align:ch13-geo-edge}、式\eqref{align:ch13-geo-agg}和式\eqref{align:ch13-geo-node}]是不变的，并且式\eqref{align:ch13-geo-coord}给出的坐标嵌入向量是等变的。
+其中 $\phi(\bm{e}_{nm}^{(l+1)})$ 是边嵌入的一般标量函数，由神经网络表示，系数 $C$ 通常设置为求和项数目的倒数。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch13-等变消息传递; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+这四式是\eqref{align:ch13-边更新}～\eqref{align:ch13-边节点更新}的对称化版本，改动集中在两处：边更新多了一个输入 $\|\bm{r}_n^{(l)}-\bm{r}_m^{(l)}\|^2$，节点多了一个坐标变量 $\bm{r}_n^{(l)}$ 并把它按\eqref{align:ch13-几何坐标更新}更新。两处改动都是为了让坐标只以“相对量”的形式进入计算。\par
+把坐标嵌入与节点特征嵌入分开处理是一个关键设计：$\bm{h}_n$ 是标量型的语义特征（原子类型等），要求不变；$\bm{r}_n$ 是几何量（位置），要求等变。若把二者混在同一个向量里，就无法对它们施加不同的变换规则。\par
+系数 $C$ 取求和项数目的倒数，是为了让坐标更新量的量级不随邻居个数增长；$\phi$ 输出标量则保证 $(\bm{r}_n-\bm{r}_m)\phi$ 仍是与 $\bm{r}$ 同型的向量，可以相加。
+\end{remark}
+
+注意，$\|\bm{r}_n^{(l)}-\bm{r}_m^{(l)}\|^2$ 表示坐标 $\bm{r}_n^{(l)}$ 和 $\bm{r}_m^{(l)}$ 之间的平方距离，它并不依赖于平移、旋转或反射。同样，坐标 $\bm{r}_n^{(l)}$ 可以通过相对差异 $(\bm{r}_n^{(l)}-\bm{r}_m^{(l)})$ 的线性组合进行更新。因此在这种变换下，消息传递方程［\eqref{align:ch13-几何边更新}、\eqref{align:ch13-几何聚合}和\eqref{align:ch13-几何节点更新}］是不变的，而\eqref{align:ch13-几何坐标更新}给出的坐标嵌入是等变的（见\cref{exercise:ch13-10}）。
+
+\begin{proposition}[几何消息传递的平移—旋转不变性与坐标等变性]\label{proposition:ch13-几何等变性}
+设坐标系统作平移与正交变换，即对每个节点 $n$ 有 $\bm{r}_n'=\bm{R}\bm{r}_n+\bm{c}$，其中 $\bm{c}\in\mathbb{R}^3$ 固定，$\bm{R}$ 满足 $\bm{R}\bm{R}^{\mathsf T}=\bm{R}^{\mathsf T}\bm{R}=\bm{I}$。设第 $l$ 层的坐标满足 $\bm{r}_n'^{(l)}=\bm{R}\bm{r}_n^{(l)}+\bm{c}$，且 $(\bm{e}^{(l)},\bm{h}^{(l)})$ 在该变换下保持不变。则按\eqref{align:ch13-几何边更新}～\eqref{align:ch13-几何节点更新}计算得到的第 $l+1$ 层满足：$\bm{e}_{nm}'^{(l+1)}=\bm{e}_{nm}^{(l+1)}$、$\bm{h}_n'^{(l+1)}=\bm{h}_n^{(l+1)}$（不变性），以及 $\bm{r}_n'^{(l+1)}=\bm{R}\bm{r}_n^{(l+1)}+\bm{c}$（等变性）。
+\end{proposition}
+
+\begin{proof}（重构新增）
+先看边更新。由 $\bm{R}^{\mathsf T}\bm{R}=\bm{I}$，
+\begin{align*}
+\|\bm{r}_n'^{(l)}-\bm{r}_m'^{(l)}\|^2&=\|(\bm{R}\bm{r}_n^{(l)}+\bm{c})-(\bm{R}\bm{r}_m^{(l)}+\bm{c})\|^2=\|\bm{R}(\bm{r}_n^{(l)}-\bm{r}_m^{(l)})\|^2\\
+&=(\bm{r}_n^{(l)}-\bm{r}_m^{(l)})^{\mathsf T}\bm{R}^{\mathsf T}\bm{R}(\bm{r}_n^{(l)}-\bm{r}_m^{(l)})=\|\bm{r}_n^{(l)}-\bm{r}_m^{(l)}\|^2,
+\end{align*}
+其中平移向量 $\bm{c}$ 在相减时抵消，正交性 $\bm{R}^{\mathsf T}\bm{R}=\bm{I}$ 使长度不变。于是\eqref{align:ch13-几何边更新}的四个输入中有三个不变、第四个（平方距离）也不变，故 $\bm{e}_{nm}'^{(l+1)}=\bm{e}_{nm}^{(l+1)}$。
+再看坐标更新。由于 $\phi$ 作用在不变的边嵌入上，$\phi(\bm{e}_{nm}'^{(l+1)})=\phi(\bm{e}_{nm}^{(l+1)})$；又 $\bm{r}_n'^{(l)}-\bm{r}_m'^{(l)}=\bm{R}(\bm{r}_n^{(l)}-\bm{r}_m^{(l)})$，代入\eqref{align:ch13-几何坐标更新}得
+\begin{align*}
+\bm{r}_n'^{(l+1)}&=\bm{R}\bm{r}_n^{(l)}+\bm{c}+C\sum_{(n,m)\in\mathcal{E}}\bm{R}\left(\bm{r}_n^{(l)}-\bm{r}_m^{(l)}\right)\phi\!\left(\bm{e}_{nm}^{(l+1)}\right)\\
+&=\bm{R}\left[\bm{r}_n^{(l)}+C\sum_{(n,m)\in\mathcal{E}}\left(\bm{r}_n^{(l)}-\bm{r}_m^{(l)}\right)\phi\!\left(\bm{e}_{nm}^{(l+1)}\right)\right]+\bm{c}=\bm{R}\bm{r}_n^{(l+1)}+\bm{c},
+\end{align*}
+第二个等号只是把 $\bm{R}$ 与 $\bm{c}$ 提到求和号外（$\bm{R}$ 与 $n,m$ 无关），这正是等变性。\par
+最后看节点更新。$\bm{z}_n'^{(l+1)}$ 由\eqref{align:ch13-几何聚合}对不变的 $\bm{e}_{nm}'^{(l+1)}$ 聚合得到，故 $\bm{z}_n'^{(l+1)}=\bm{z}_n^{(l+1)}$；再由\eqref{align:ch13-几何节点更新}，其两个输入 $\bm{h}_n^{(l)}$ 与 $\bm{z}_n^{(l+1)}$ 都不变，故 $\bm{h}_n'^{(l+1)}=\bm{h}_n^{(l+1)}$。对层数归纳即得全部结论。证毕。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch13-几何等变性; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+证明的关键只有两个等式：平移在相减时抵消，正交矩阵保持内积。这两条恰好刻画了“坐标系统的改变不应影响物理量”这一直觉，也说明为什么\eqref{align:ch13-几何边更新}必须用平方距离而不是坐标本身——若把 $\bm{r}_n^{(l)}$ 直接送进边更新，平移会改变结果，不变性立即失效。\par
+$\bm{R}$ 只要求正交，不要求 $\det\bm{R}=1$，因此镜像反射（$\det\bm{R}=-1$）也被包含在内，这与原书“旋转和/或镜像反射”的说法一致。如果分子属性本身是手性的（例如旋光性），那么反射下的不变性假设就不成立，此时需要把 $\det\bm{R}$ 作为一个额外的输入或改用只对 $\mathrm{SO}(3)$ 不变的设计。\par
+命题的归纳起点是 $\bm{r}_n^{(0)}$ 由已知原子坐标初始化，因此初值满足 $\bm{r}_n'^{(0)}=\bm{R}\bm{r}_n^{(0)}+\bm{c}$；若坐标是从数据中学出来的，这个前提需要另行验证。\par
+原书把这一验证留作\cref{exercise:ch13-10}，本命题与证明是与之配套的完整版本，二者结论一致。
+\end{remark}
+
+我们已经看到了结构化数据中许多对称性的例子，从图像中物体的平移和图中节点顺序的排列，到三维空间中分子的旋转和平移。将这些对称性捕获在深度神经网络的结构中是一种强大的归纳偏置形式，也是进行丰富的几何深度学习（geometric deep learning）研究的基础（Bronstein et al., 2017; Bronstein et al., 2021）。
 
 \end{document}

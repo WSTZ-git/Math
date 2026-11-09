@@ -4,57 +4,245 @@
 
 \begin{document}
 
-\section{贝叶斯概率}\label{section:ch02-贝叶斯概率}
+\section{Bayes 概率}\label{section:ch02-Bayes概率}
 
-在\cref{subsection:ch02-贝叶斯定理}中，我们介绍了贝叶斯定理。现在我们从更一般的角度来讨论贝叶斯概率（Bayesian probability）。
+在探讨\cref{figure:ch02-弯曲硬币}中的弯曲硬币示例时，我们以随机、可重复事件的频率介绍了概率的概念，例如硬币落地时凹面朝上的概率，称为概率的经典（classical）或频率学派（frequentist）解释。我们还介绍了更通用的 Bayes（Bayesian）观点，即概率提供了对不确定性的量化。在这种情况下，我们所说的不确定性是指硬币的凹面是正面还是反面。
 
-频率学派的观点认为，概率是事件发生的长期频率。而贝叶斯学派则认为，概率是对不确定性的度量。这种观点更普遍，频率学派的概率只是贝叶斯观点下的一种特殊情况。
+使用概率来表示不确定性是不可避免的，而非临时选择，因为我们需要尊重常识并做出理性和连贯的推断。例如，Cox（1946）指出，如果用数值来表示信念的程度，那么通过一组编码了信念等常识性质的简单公理，就可以唯一地导出一组操作信念程度的法则，这些法则等同于概率的加和法则和乘积法则。因此，将这些量称为（Bayes）概率是自然的。
+
+对于之前假设的弯曲硬币，在没有更多信息的情况下，我们假设硬币凹面为正面的概率是 $0.5$。如果现在得知了几次抛硬币的结果，那么在直觉上，这似乎应该能提供一些信息来帮助我们判断硬币凹面是否为正面。例如，假设我们看到硬币多次抛掷后反面朝上的次数远多于正面朝上的次数。考虑到硬币更有可能凹面朝上，这为凹面更有可能是反面提供了证据。事实上，这种直觉是正确的，而且进一步讲，我们可以使用概率法则来量化这一点（见\cref{exercise:ch02-40}）。现在，Bayes 定理有了新的意义，因为我们可以通过结合抛掷硬币提供的数据，将凹面是正面的先验概率转换为后验概率。而且这个过程是迭代式的，这意味着当进一步结合抛掷硬币的数据时，之前的后验概率就成了新的先验概率。
+
+Bayes 观点的一个方面是，先验知识的引入是自然的。例如，假设一个看起来正常的硬币被抛掷 $3$ 次，并且每次的结果都是正面朝上。最大似然估计给出抛掷后硬币正面朝上的概率是 $1$（参见\cref{subsection:ch03-二项分布}），这表明未来所有的抛掷结果都会是正面朝上！相比之下，Bayes 方法只要有任合理性的先验，就不会给出如此极端的结论。
 
 \subsection{模型参数}\label{subsection:ch02-模型参数}
 
-在机器学习中，我们通常有一个模型，它由一些参数$\mathbf{w}$控制。我们的目标是从数据中学习这些参数。
+Bayes 视角为机器学习的多个方面提供了有价值的见解，我们可以使用正弦曲线回归的例子（参见\cref{section:ch01-一个教学示例}）来进行说明。这里用 $\mathcal{D}$ 表示训练数据集。我们在线性回归的问题中看到了可以使用最大似然（maximum likelihood）来选择参数，其中 $\mathbf{w}$ 被估计为能使似然函数 $p(\mathcal{D}\mid\mathbf{w})$ 最大化的值。这相当于选择 $\mathbf{w}$ 值，使得观察到数据集的概率最大化。在机器学习文献中，似然函数的负对数称为误差函数（error function）。因为似然函数的负对数是一个单调递减的函数，所以最大化似然等同于最小化误差。这样便确定了参数的值，用 $\mathbf{w}_{\mathrm{ML}}$ 表示，用来对新数据进行预测。
 
-在频率学派的方法中，参数$\mathbf{w}$被认为是固定的未知量，而数据$\mathcal{D}$是从某个分布中随机抽取的。我们通过最大化似然函数$p(\mathcal{D} \mid \mathbf{w})$来确定参数$\mathbf{w}$。
+\begin{definition}[误差函数]\label{definition:ch02-误差函数}
+称似然函数的负对数 $-\ln p(\mathcal{D}\mid\mathbf{w})$ 为\textbf{误差函数}（error function）。由于 $-\ln$ 是单调递减的，最小化误差函数与最大化似然函数等价。
+\end{definition}
 
-而在贝叶斯方法中，参数$\mathbf{w}$本身被认为是随机变量。我们对参数$\mathbf{w}$有一个先验分布$p(\mathbf{w})$，然后通过观测数据$\mathcal{D}$来更新我们对参数的认识，得到后验分布$p(\mathbf{w} \mid \mathcal{D})$。
+% SUPPLEMENT: parent=definition:ch02-误差函数; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+把“最大化似然”改写成“最小化误差”，好处是使优化问题符合“损失越小越好”的习惯，并使后面的正则化项可以自然地加到误差函数上（见\eqref{align:ch02-map误差}）。\cref{section:ch02-Gauss分布}中的平方和误差\eqref{align:ch02-平方和误差}正是 Gauss 噪声下负对数似然的常数倍。
 
-根据贝叶斯定理：
+“单调递减”只是等价性的依据，不能推出两者的数值相等：误差函数的值与似然的极大值并不相同，因此不能把误差函数当作概率使用。此外，误差函数的定义依赖数据 $\mathcal{D}$，换一组数据就得到另一个函数。
+\end{remark}
+
+可以看到，不同训练数据集的选择（例如包含不同数量的数据点）会产生不同的 $\mathbf{w}_{\mathrm{ML}}$ 解。从 Bayes 视角来看，也可以使用概率论的工具来描述模型参数中的这种不确定性。我们可以在观测数据之前以先验概率分布 $p(\mathbf{w})$ 的形式融入对 $\mathbf{w}$ 的假设。观测到训练数据集 $\mathcal{D}$ 的概率可通过似然函数 $p(\mathcal{D}\mid\mathbf{w})$ 来表示，Bayes 定理在这里的形式如下：
 
 \begin{align}
-  p(\mathbf{w} \mid \mathcal{D}) = \frac{p(\mathcal{D} \mid \mathbf{w}) p(\mathbf{w})}{p(\mathcal{D})}
-  \label{align:ch02-贝叶斯参数}
+  p(\mathbf{w}\mid\mathcal{D}) = \frac{p(\mathcal{D}\mid\mathbf{w})\,p(\mathbf{w})}{p(\mathcal{D})}
+  \label{align:ch02-参数后验}
 \end{align}
 
-其中$p(\mathcal{D} \mid \mathbf{w})$是似然函数，$p(\mathbf{w})$是先验分布，分母$p(\mathcal{D})$是证据（evidence），用于归一化。
+\begin{theorem}[参数形式的 Bayes 定理]\label{theorem:ch02-参数Bayes}
+设 $\mathbf{w}$ 为模型参数，$\mathcal{D}$ 为观测数据，$p(\mathcal{D})>0$，则参数的后验分布由\eqref{align:ch02-参数后验}给出，即
+\begin{align*}
+  p(\mathbf{w}\mid\mathcal{D}) = \frac{p(\mathcal{D}\mid\mathbf{w})\,p(\mathbf{w})}{p(\mathcal{D})} ,
+\end{align*}
+其中 $p(\mathbf{w})$ 是先验分布，$p(\mathcal{D}\mid\mathbf{w})$ 是似然函数，$p(\mathcal{D})$ 是证据（evidence）。
+\end{theorem}
+
+\begin{proof}
+把\cref{theorem:ch02-Bayes定理}中的 $X$、$Y$ 分别取为 $\mathcal{D}$ 与 $\mathbf{w}$，即得\eqref{align:ch02-Bayes定理}在参数情形下的形式\eqref{align:ch02-参数后验}。条件 $p(\mathcal{D})>0$ 保证分母不为零。
+\end{proof}
+
+% SUPPLEMENT: parent=theorem:ch02-参数Bayes; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+这条定理把 Bayes 定理从“随机变量”搬到了“参数”上：参数不再是固定的未知数，而是带有分布的随机量，于是“推断参数”就变成了“计算后验分布”。这一步是 Bayes 学派与频率学派的分水岭。
+
+条件 $p(\mathcal{D})>0$ 不可省，它是分母；在实践中 $p(\mathcal{D})$ 往往难以计算，但它与 $\mathbf{w}$ 无关，因此在求后验的众数或比较不同 $\mathbf{w}$ 时可以直接略去（见\eqref{align:ch02-后验正比}）。
+\end{remark}
+
+这使得我们能够在观测到 $\mathcal{D}$ 之后，以后验概率 $p(\mathbf{w}\mid\mathcal{D})$ 的形式评估 $\mathbf{w}$ 的不确定性。
+
+需要强调的是，量 $p(\mathcal{D}\mid\mathbf{w})$ 在被看作参数向量 $\mathbf{w}$ 的函数时，称为似然函数。它表达了对于不同的 $\mathbf{w}$ 值，观测到训练数据集 $\mathcal{D}$ 的可能性有多大。注意，似然函数 $p(\mathcal{D}\mid\mathbf{w})$ 不是 $\mathbf{w}$ 上的概率分布，其对 $\mathbf{w}$ 的积分不（一定）等于 $1$。
+
+有了似然的定义，我们可以将 Bayes 定理表述为
+
+\begin{align}
+  \text{后验} \propto \text{似然} \times \text{先验}
+  \label{align:ch02-后验正比}
+\end{align}
+
+\begin{proposition}[后验正比于似然乘先验]\label{proposition:ch02-后验正比}
+在\cref{theorem:ch02-参数Bayes}的条件下，后验分布与“似然乘先验”只相差一个与 $\mathbf{w}$ 无关的常数，即\eqref{align:ch02-后验正比}。
+\end{proposition}
+
+\begin{proof}
+\eqref{align:ch02-参数后验}右端的分母 $p(\mathcal{D})$ 不依赖于 $\mathbf{w}$，故
+\begin{align*}
+  p(\mathbf{w}\mid\mathcal{D}) = \frac{1}{p(\mathcal{D})}\cdot p(\mathcal{D}\mid\mathbf{w})p(\mathbf{w}) \propto p(\mathcal{D}\mid\mathbf{w})p(\mathbf{w}) .
+\end{align*}
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch02-后验正比; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+\eqref{align:ch02-后验正比}是全部 Bayes 推断的工作形式：我们只需写出“似然 × 先验”，不必计算分母，就能确定后验的形状；需要归一化时再除以它的积分。这也解释了为什么\eqref{align:ch02-参数后验}中的证据在实践中常被省略。
+
+“$\propto$”是对 $\mathbf{w}$ 而言的，不能理解为对数据也成立；此外，比例常数依赖于 $\mathcal{D}$，因此在比较不同数据集的后验时不能随意略去。
+\end{remark}
+
+其中所有这些量都被看作关于 $\mathbf{w}$ 的函数。\eqref{align:ch02-参数后验}中的分母是归一化常数，其确保了\eqref{align:ch02-参数后验}左侧的后验分布是一个有效的概率密度并且积分为 $1$。实际上，通过对\eqref{align:ch02-参数后验}的两边关于 $\mathbf{w}$ 进行积分，就可以用先验分布和似然函数表示 Bayes 定理中的分母：
+
+\begin{align}
+  p(\mathcal{D}) = \int p(\mathcal{D}\mid\mathbf{w})\,p(\mathbf{w})\,\mathrm{d}\mathbf{w}
+  \label{align:ch02-证据}
+\end{align}
+
+\begin{proposition}[证据的边缘化表示]\label{proposition:ch02-证据}
+设 $\mathbf{w}$ 为连续参数，则 Bayes 定理中的分母（证据）由\eqref{align:ch02-证据}给出。
+\end{proposition}
+
+\begin{proof}
+对\eqref{align:ch02-参数后验}两边关于 $\mathbf{w}$ 积分。左端为 $\int p(\mathbf{w}\mid\mathcal{D})\,\mathrm{d}\mathbf{w}=1$（后验是密度），右端的分母可提出积分号外：
+\begin{align*}
+  1 = \frac{1}{p(\mathcal{D})}\int p(\mathcal{D}\mid\mathbf{w})\,p(\mathbf{w})\,\mathrm{d}\mathbf{w} ,
+\end{align*}
+两边乘以 $p(\mathcal{D})$ 即得\eqref{align:ch02-证据}。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch02-证据; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+\eqref{align:ch02-证据}说明证据就是“在所有可能的参数值上对似然加权平均”，权重是先验。它因此可以解释为模型对数据的\textbf{边缘似然}：模型越能预测数据，证据越大。这一解释是\cref{subsection:ch02-Bayes机器学习}中“Bayes 方法自动惩罚复杂度”的根据。
+
+积分的可行性依赖参数维数：\eqref{align:ch02-证据}是一个 $M$ 维积分（$M$ 为 $\mathbf{w}$ 的维数），一般没有解析形式，这正是\cref{subsection:ch02-Bayes机器学习}所说的计算困难。
+\end{remark}
+
+在 Bayes 和频率学派范式中，似然函数 $p(\mathcal{D}\mid\mathbf{w})$ 发挥着核心作用。然而，这两种学派使用它的方式有根本的不同。在频率学派的设定中，$\mathbf{w}$ 是一个固定的参数，其值由某种形式的“估计器”确定，并且这个估计的误差界限（至少在概念上）是通过考虑可能的训练数据集 $\mathcal{D}$ 的分布来确定的。相反，从 Bayes 视角来看，只有一个训练数据集 $\mathcal{D}$（即实际观测到的那个数据集），并且参数中的不确定性可通过 $\mathbf{w}$ 上的概率分布来表示。
 
 \subsection{正则化}\label{subsection:ch02-正则化}
 
-在\cref{subsection:ch01-正则化}中，我们引入了正则化项来控制过拟合。现在我们可以从贝叶斯的角度来理解正则化。
-
-如果我们选择一个均值为零的高斯先验分布$p(\mathbf{w})$，那么后验分布的对数为
+我们可以从 Bayes 视角来深入理解用于减少过拟合的正则化技术（该技术在正弦曲线回归示例中使用过）（参见\cref{subsection:ch01-正则化}）。我们不再通过最大化关于 $\mathbf{w}$ 的似然函数来选择模型参数，而是最大化后验概率［见\eqref{align:ch02-参数后验}］。这种技术称为最大后验（maximum a posteriori）估计，简称 MAP 估计。同样，也可以最小化后验概率的负对数。对\eqref{align:ch02-参数后验}的两边取负对数，则有
 
 \begin{align}
-  \ln p(\mathbf{w} \mid \mathcal{D}) = \ln p(\mathcal{D} \mid \mathbf{w}) + \ln p(\mathbf{w}) + \text{常数}
-  \label{align:ch02-后验对数}
+  -\ln p(\mathbf{w}\mid\mathcal{D}) = -\ln p(\mathcal{D}\mid\mathbf{w}) - \ln p(\mathbf{w}) + \ln p(\mathcal{D})
+  \label{align:ch02-负对数后验}
 \end{align}
 
-最大化后验分布等价于最大化似然函数加上先验的对数。如果先验是高斯的，那么$\ln p(\mathbf{w})$项就对应于二次正则化项。
+\begin{definition}[最大后验估计]\label{definition:ch02-map}
+称使后验概率取最大值的参数值
+\begin{align*}
+  \mathbf{w}_{\mathrm{MAP}} = \arg\max_{\mathbf{w}} p(\mathbf{w}\mid\mathcal{D})
+\end{align*}
+为参数 $\mathbf{w}$ 的\textbf{最大后验估计}（maximum a posteriori estimate），简称 \textbf{MAP} 估计；等价地，它是使负对数后验 $-\ln p(\mathbf{w}\mid\mathcal{D})$ 取最小值的点。
+\end{definition}
 
-因此，正则化可以被解释为在参数空间中加入了先验知识，即我们倾向于较小的参数值。
+% SUPPLEMENT: parent=definition:ch02-map; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+MAP 估计介于最大似然与完全 Bayes 之间：它像 Bayes 方法一样引入先验，但最终仍只给出一个点，而不给出整个后验分布。因此它没有解决“参数不确定性”的问题，只把先验当作一种偏好写进了目标函数。
 
-\subsection{贝叶斯机器学习}\label{subsection:ch02-贝叶斯机器学习}
+定义中的“等价地”依赖 $-\ln$ 严格单调；但要注意 MAP 估计不是后验均值，二者在后验不对称时不同，而且 MAP 会随参数化方式改变（见\cref{proposition:ch02-密度众数依赖变量}）。
+\end{remark}
 
-在贝叶斯机器学习中，我们不只是找到参数的一个点估计，而是计算参数的完整后验分布。这使得我们可以量化预测的不确定性。
-
-对于新的输入$x$，我们的预测分布为
+\eqref{align:ch02-负对数后验}右侧的第一项是常见的对数似然；第三项因为不依赖于 $\mathbf{w}$，所以可以省略；第二项是一个 $\mathbf{w}$ 的函数，它在这里被加进对数似然中，可以当作一种形式的正则化。为了使这一点更明确，我们假设 $\mathbf{w}$ 内的每个元素独立且服从均值为 $0$、方差为 $s^{2}$ 的 Gauss 分布，则先验分布 $p(\mathbf{w})$ 可表示为一系列分布的乘积，即
 
 \begin{align}
-  p(t \mid x, \mathcal{D}) = \int p(t \mid x, \mathbf{w}) p(\mathbf{w} \mid \mathcal{D}) \,\mathrm{d}\mathbf{w}
-  \label{align:ch02-贝叶斯预测}
+  p(\mathbf{w}\mid s) = \prod_{i=0}^{M}\mathcal{N}(w_i\mid0,s^{2}) = \prod_{i=0}^{M}\frac{1}{\sqrt{2\pi s^{2}}}\exp\left(-\frac{w_i^{2}}{2s^{2}}\right)
+  \label{align:ch02-Gauss先验}
 \end{align}
 
-这个积分考虑了所有可能的参数值，根据它们的后验概率进行加权。
+\begin{definition}[各向同性 Gauss 先验]\label{definition:ch02-Gauss先验}
+若参数向量的每个分量 $w_i$ 相互独立且都服从 $\mathcal{N}(0,s^{2})$，则称 $\mathbf{w}$ 的先验分布为\textbf{各向同性 Gauss 先验}，它由\eqref{align:ch02-Gauss先验}给出。
+\end{definition}
 
-贝叶斯方法的一个主要优点是它自然地处理了模型复杂度的问题，不需要显式的模型选择过程。然而，后验分布的计算通常是困难的，需要近似方法。
+% SUPPLEMENT: parent=definition:ch02-Gauss先验; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+选择 Gauss 先验的动机有两条：一是它把“参数应当接近零”这一偏好表达为对 $|w_i|$ 的二次惩罚，二是它在数学上使后验可以解析处理（Gauss 先验与 Gauss 似然共轭）。这两点正是\eqref{align:ch02-负对数后验}第二项能化成 $w_i^{2}$ 之和的原因。
+
+条件“各分量独立、均值 $0$、方差相同”都是可放松的建模选择：若均值非零，二次项的中心随之平移；若各分量方差不同，则得到加权（广义）权重衰减；若改用 Laplace 先验，对应的惩罚是 $|w_i|$ 而非 $w_i^{2}$。$s^{2}>0$ 不可省，否则先验退化为 $\delta$ 函数。
+\end{remark}
+
+代入\eqref{align:ch02-负对数后验}，可得
+
+\begin{align}
+  -\ln p(\mathbf{w}\mid\mathcal{D}) = -\ln p(\mathcal{D}\mid\mathbf{w}) + \frac{1}{2s^{2}}\sum_{i=0}^{M}w_i^{2} + \text{const}
+  \label{align:ch02-负对数后验展开}
+\end{align}
+
+\begin{proposition}[负对数后验的分解]\label{proposition:ch02-负对数后验分解}
+在\eqref{align:ch02-Gauss先验}的先验下，\eqref{align:ch02-负对数后验展开}成立，即负对数后验等于负对数似然加上参数的二次惩罚，再加一个与 $\mathbf{w}$ 无关的常数。
+\end{proposition}
+
+\begin{proof}
+把\eqref{align:ch02-Gauss先验}代入 $-\ln p(\mathbf{w})$：
+\begin{align*}
+  -\ln p(\mathbf{w}\mid s) = -\sum_{i=0}^{M}\ln\mathcal{N}(w_i\mid0,s^{2})
+  = \sum_{i=0}^{M}\left(\frac{1}{2}\ln(2\pi s^{2}) + \frac{w_i^{2}}{2s^{2}}\right)
+  = \frac{1}{2s^{2}}\sum_{i=0}^{M}w_i^{2} + \text{const} ,
+\end{align*}
+其中常数项 $\frac{M+1}{2}\ln(2\pi s^{2})$ 与 $\mathbf{w}$ 无关。把它代入\eqref{align:ch02-负对数后验}，并注意 $\ln p(\mathcal{D})$ 也与 $\mathbf{w}$ 无关，即得\eqref{align:ch02-负对数后验展开}。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch02-负对数后验分解; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+这条分解是“正则化 = 先验”的定量表述：$-\ln p(\mathbf{w})$ 就是正则项，其系数 $1/(2s^{2})$ 由先验的方差决定——先验越窄（$s^{2}$ 越小），惩罚越重，解越接近零。反之，$s^{2}\to\infty$ 时惩罚消失，MAP 退化为最大似然。
+
+“const”虽然不影响最优点，但它影响后验的归一化；在比较不同模型的证据时不能随意丢弃。此外，该分解只对 Gauss 先验成立，换用其他先验时正则项的形式也随之改变。
+\end{remark}
+
+如果考虑线性回归模型的特定情况，其对数似然由\eqref{align:ch02-回归对数似然}给出，则可以看到最大化后验分布等价于最小化如下函数（见\cref{exercise:ch02-41}）：
+
+\begin{align}
+  E(\mathbf{w}) = \frac{1}{2\sigma^{2}}\sum_{n=1}^{N}\big\{y(x_n,\mathbf{w})-t_n\big\}^{2} + \frac{1}{2s^{2}}\mathbf{w}^{\mathsf{T}}\mathbf{w}
+  \label{align:ch02-map误差}
+\end{align}
+
+\begin{proposition}[MAP 估计等价于正则化平方和]\label{proposition:ch02-map正则化}
+设似然由\eqref{align:ch02-回归对数似然}给出、先验由\eqref{align:ch02-Gauss先验}给出，则关于 $\mathbf{w}$ 最大化后验等价于关于 $\mathbf{w}$ 最小化\eqref{align:ch02-map误差}。
+\end{proposition}
+
+\begin{proof}
+把\eqref{align:ch02-回归对数似然}与\eqref{align:ch02-负对数后验展开}合并，并乘以正的常数 $2\sigma^{2}$（不改变最小值点）：
+\begin{align*}
+  -2\sigma^{2}\ln p(\mathbf{w}\mid\mathcal{D})
+  = \sum_{n=1}^{N}\big\{y(x_n,\mathbf{w})-t_n\big\}^{2} + \frac{\sigma^{2}}{s^{2}}\mathbf{w}^{\mathsf{T}}\mathbf{w} + \text{const} .
+\end{align*}
+这里用到 $\sum_{i=0}^{M}w_i^{2}=\mathbf{w}^{\mathsf{T}}\mathbf{w}$。上式右端与\eqref{align:ch02-map误差}只相差正的常数因子 $2\sigma^{2}$，故最小化点相同。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch02-map正则化; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+这条结果把\cref{section:ch01-一个教学示例}中“为了抑制过拟合而人为添加”的二次正则项解释成了先验的产物，其中的正则化系数 $\lambda=\sigma^{2}/s^{2}$ 不再是需要凭经验调节的超参数，而由噪声方差与先验方差之比确定。
+
+条件“Gauss 似然 + Gauss 先验”同时不可省：若噪声不是 Gauss，第一项就不是平方和；若先验不是 Gauss，第二项就不是二次型。\eqref{align:ch02-map误差}与\eqref{align:ch01-正则化误差}形式一致，差别只在于系数是否被显式写出。
+\end{remark}
+
+这正是我们之前遇到的正则化的平方和误差函数的形式［见\eqref{align:ch01-正则化误差}］。
+
+\subsection{Bayes 机器学习}\label{subsection:ch02-Bayes机器学习}
+
+我们从 Bayes 视角说明了使用正则化的动机，并推导出了正则化项的具体形式。然而，单独使用 Bayes 定理并不构成真正的 Bayes 机器学习方法，因为它仍然是为 $\mathbf{w}$ 寻找单一解而没有考虑 $\mathbf{w}$ 值的不确定性。假设我们有训练数据集 $\mathcal{D}$，目标是预测给定新的输入值 $x$ 时的目标变量 $t$。此刻我们就会对给定 $x$ 和 $\mathcal{D}$ 时 $t$ 的分布感兴趣。根据概率的加和法则和乘积法则，有
+
+\begin{align}
+  p(t\mid x,\mathcal{D}) = \int p(t\mid x,\mathbf{w})\,p(\mathbf{w}\mid\mathcal{D})\,\mathrm{d}\mathbf{w}
+  \label{align:ch02-Bayes预测}
+\end{align}
+
+\begin{proposition}[Bayes 预测分布]\label{proposition:ch02-Bayes预测}
+设 $p(t\mid x,\mathbf{w})$ 为给定参数的预测分布，$p(\mathbf{w}\mid\mathcal{D})$ 为参数后验，则给定 $x$ 与 $\mathcal{D}$ 时 $t$ 的预测分布由\eqref{align:ch02-Bayes预测}给出。
+\end{proposition}
+
+\begin{proof}
+由乘积法则，$p(t,\mathbf{w}\mid x,\mathcal{D})=p(t\mid x,\mathbf{w})\,p(\mathbf{w}\mid\mathcal{D})$（给定 $\mathbf{w}$ 后 $t$ 与 $\mathcal{D}$ 条件独立）。再对 $\mathbf{w}$ 施用加和法则（连续情形为积分）即把 $\mathbf{w}$ 边缘化：
+\begin{align*}
+  p(t\mid x,\mathcal{D}) = \int p(t,\mathbf{w}\mid x,\mathcal{D})\,\mathrm{d}\mathbf{w}
+  = \int p(t\mid x,\mathbf{w})\,p(\mathbf{w}\mid\mathcal{D})\,\mathrm{d}\mathbf{w} .
+\end{align*}
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch02-Bayes预测; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+\eqref{align:ch02-Bayes预测}与\eqref{align:ch02-回归预测分布}的差别在于：后者把 $\mathbf{w}$ 固定为 $\mathbf{w}_{\mathrm{ML}}$，前者则对全部 $\mathbf{w}$ 按后验加权平均。因此\eqref{align:ch02-Bayes预测}同时包含了噪声带来的偶然不确定性与参数不确定性带来的认知不确定性。
+
+条件“给定 $\mathbf{w}$ 后 $t$ 与 $\mathcal{D}$ 条件独立”不可省，否则被积函数不能写成两项之积。这个积分一般没有解析解，维数等于参数个数，正是下段所说的计算困难所在。
+\end{remark}
+
+可以看到，通过对 $p(t\mid x,\mathbf{w})$ 按照所有可能的 $\mathbf{w}$ 值进行加权平均可以获得预测，其中加权函数由后验概率分布 $p(\mathbf{w}\mid\mathcal{D})$ 给出。相比其他方法，Bayes 方法的重要不同之处在于对参数空间做了积分。而传统的频率学派使用的方法是通过优化损失函数（如正则化平方和）来获得参数的点估计。
+
+这种面向机器学习的完全 Bayes 处理方法给我们提供了一些强大的见解。例如，我们在多项式回归中遇到的过拟合问题（参见\cref{section:ch01-一个教学示例}），就是使用最大似然导致的，而在使用 Bayes 方法对参数进行边缘化时不会出现该问题。同样，我们可能有多个潜在的模型用于解决给定问题，比如回归示例中不同阶数的多项式。最大似然方法简单地选择能够给出最高数据概率的模型，但这倾向于选择越来越复杂的模型，从而导致过拟合。完全 Bayes 方法涉及对所有可能的模型进行平均，每个模型的贡献由其后验概率加权（参见\cref{section:ch09-模型平均}）。另外，通常，中等复杂度的模型这种概率最高；非常简单的模型（如低阶多项式）概率较低，因为它们无法很好地拟合数据；而非常复杂的模型（如阶数非常高的多项式）概率也较低，因为 Bayes 方法对参数的积分自动且优雅地惩罚了复杂度。关于应用于机器学习的 Bayes 方法的全面概述，包括神经网络，参见 Bishop（2006）。
+
+遗憾的是，Bayes 框架有一个主要的缺点——涉及对参数空间的积分，这在\eqref{align:ch02-Bayes预测}中显而易见。现代深度学习模型可以有数百万甚至数十亿的参数，即使是对这种积分的简单近似通常也不可行。实际上，若给定有限的计算预算和大量的训练数据，通常最好使用最大似然技术，一般还需要增加一种或多种形式的正则化到一个大型神经网络中，而不是对一个规模小得多的模型应用 Bayes 方法。
 
 \end{document}

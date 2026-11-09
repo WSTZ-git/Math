@@ -6,263 +6,544 @@
 
 \section{注意力}\label{section:ch12-注意力}
 
-Transformer是深度学习领域最重要的进展之一。基于一种称为注意力（attention）的处理概念，Transformer能使网络对不同的输入赋予不同的权重，而这些加权系数本身又取决于输入值，从而捕捉到与序列数据和其他形式数据相关的强大归纳偏差。这类模型之所以叫Transformer，是因为它们能将某个表示空间中的一组向量变换成某个新空间中具有相同维度的相应向量的集合。变换旨在使新空间具有更丰富的内部表示，该表示更适合解决下游任务。对于Transformer而言，其输入可以是非结构化的向量集、有序序列或其他更一般的表示形式，从而使Transformer具有广泛的适用性。
+作为 Transformer 的核心概念，注意力最初是作为机器翻译领域递归神经网络（参见\cref{subsection:ch12-递归神经网络}）的增强版而开发的（Bahdanau, Cho, and Bengio, 2014）。不过，Vaswani et al. (2017) 后来证明，如果去除递归结构，转而只专注于注意力机制，就能显著提高性能。如今，在几乎所有应用中，基于注意力的 Transformer 已完全取代递归神经网络。
 
-Transformer最初是在自然语言处理（Natural Language Processing, NLP）领域引入的，这里的“自然”语言指的是像英语或汉语这样的语言，它大大超越了之前基于递归神经网络（Recurrent Neural Network, RNN）的那些最先进的方法。随后，人们发现Transformer在许多其他领域也取得了优异成果。例如，视觉Transformer在图像处理任务中的表现往往优于卷积神经网络（Convolutional Neural Network, CNN），而结合文本、图像、音频和视频等多种类型数据的多模态Transformer则是最强大的深度学习模型之一。
-
-Transformer的一大优势在于迁移学习效果显著，所以Transformer可以在大量数据上进行训练，然后通过某种形式的微调，将经过训练的模型应用于众多下游任务。一个大规模模型随后可以进行调整以解决多个不同的任务，它就是所谓的基础模型（foundation model）。此外，Transformer可以使用无标签数据以自监督的方式进行训练（foundation model）。此外，Transformer可以使用无标签数据以自监督的方式进行训练，这对语言模型尤其有效，因为Transformer可以利用来自互联网和其他来源的海量文本。缩放假设（scaling hypothesis）认为，只要扩大模型的规模（以可学习参数的数量来衡量），并在相应的大规模数据集上进行训练，即使不改变架构，也能显著提高性能。此外，Transformer特别适用于大规模并行处理硬件，如图形处理单元（Graphics Processing Unit, GPU），从而能在合理的时间内训练出拥有万亿（$10^{12}$）规模参数的超大型神经网络语言模型。这些模型具有非凡的能力，并展现出被描述为通用人工智能早期迹象的涌现特性（Bubeck et al., 2023）。
-
-对于初学者来说，Transformer架构可能看起来很复杂，甚至让人望而却步，因为它涉及多个不同组件的协同工作，其中各种设计构思可能看起来很随意。因此，本章将逐步全面地介绍Transformer背后的所有关键思想，并提供清晰的直观认识以引出各种元素的设计。在介绍完Transformer架构后，我们将重点介绍自然语言处理，并在最后探讨其他应用领域。
-
-\subsection{Transformer处理}\label{subsection:ch12-Transformer处理}
-
-虽然注意力具有非常广泛的适用性，但我们仍将以自然语言为例引出注意力的应用。请看如下两个句子：
+虽然注意力具有非常广泛的适用性，但我们仍将以自然语言为例引出注意力的应用。请看如下两个句子。
 
 \begin{quote}
   I swam across the river to get to the other bank.\\
   I walked across the road to get cash from the bank.
 \end{quote}
 
-“bank”一词在这两个句子中具有不同的含义。不过，这只能通过查看句子中其他词提供的上下文才能发现。我们还看到，在决定“bank”如何翻译时，有些词发挥着尤为重要的作用。在第1个句子中，“swam”和“river”两个词最能说明“bank”指的是河边；而在第2个句子中，“cash”一词最能说明“bank”指的是金融机构。我们发现，为了对“bank”进行适当的翻译，处理这样一个句子的神经网络应该关注（换句话说，更依赖于）句子中其余部分的特定词。注意力的概念如图12.1所示。
-
-作为Transformer的核心概念，注意力最初是作为机器翻译领域递归神经网络（参见12.2.5小节）的增强版而开发的（Bahdanau, Cho, and Bengio, 2014）。不过，Vaswani et al. (2017) 后来证明，如果去除递归结构，转而只专注于注意力机制，就能显著提高性能。如今，在几乎所有应用中，基于注意力的Transformer已完全取代递归神经网络。
-
-在讨论自然语言处理时，我们将了解如何使用词嵌入（word embedding）将词投射到嵌入空间中的向量。这些向量可用作后续神经网络处理的输入。这些词嵌入可以捕捉到基本的语义属性，例如，将具有相似含义的词映射到嵌入空间中的邻近位置。这种嵌入的一个特点是，给定的词总是被映射到同一个嵌入向量。Transformer可以视为一种更丰富的嵌入形式，其中一个给定向量被映射到一个依赖序列中其他向量的位置。因此，上述示例中代表“bank”的向量可以映射到两个不同句子的新嵌入空间中的不同位置。例如，在第1个句子中，变换后的表示可能会将“bank”在嵌入空间中靠近“water”；而在第2个句子中，变换后的表示可能会将“bank”放在靠近“money”的位置。
-
-下面我们以蛋白质建模为例来说明注意力的重要性。我们可以把蛋白质看作由分子单元（称为氨基酸）组成的一维序列。一个蛋白质可能由数百或数千个这样的分子单元组成，每个分子单元由22种可能性中的一种给定。在活细胞中，蛋白质折叠成三维结构，一维序列中互相远离的氨基酸可以在三维空间中变得接近，从而产生相互作用。Transformer模型允许这些互相远离的氨基酸相互“关注”，从而大大提高了三维结构建模的准确性（Vig et al., 2020）。
-
-在清楚地了解Transformer的工作原理之前，我们必须准确地使用符号。我们将按照标准惯例，将数据向量组合成一个$N\times D$维的矩阵$\mathbf{X}$，其中第$n$行是token向量$\mathbf{x}_n$，$n=1,\cdots,N$，如图12.3所示。请注意，该矩阵代表一组输入token，而在大多数应用中，我们需要一个包含多组token的数据集，例如每个词都是由一个token表示的独立文本段落。
-
-Transformer的输入数据是一组$D$维向量$\{\mathbf{x}_n\}$，其中$n=1,\cdots,N$。我们将这些数据向量称为token，一个token可能对应句子中的一个词、图像中的一个小块或者蛋白质中的一个氨基酸。token中的元素$x_{ni}$称为特征。稍后我们将了解如何为自然语言数据和图像构建这些token向量。Transformer的一个强大特性是，我们无须设计新的网络架构来处理不同类型的数据，而只需要将数据变量组合成一组联合token即可。
-
-Transformer的基本构件是一个函数，用于将数据矩阵作为输入并创建一个具有相同维度的变换矩阵$\bar{\mathbf{X}}$作为输出。我们可以写下该函数，形式如下：
-
-\begin{align}
-  \bar{\mathbf{X}} = \mathrm{TransformerLayer}[\mathbf{X}]
-  \label{align:ch12-Transformer层}
-\end{align}
-
-其中$\bar{\mathbf{X}}$的第$n$行代表变换后的数据向量$\bar{\mathbf{x}}_n$。然后，我们可以连续叠加多个Transformer层来构建能够学习丰富内部表示的深度网络。每个Transformer层都有自己的权重和偏置，可以通过梯度下降法使用适当的损失函数进行学习，这将在本章后续部分（参见12.3节）详细讨论。Transformer层本身包含两个阶段。在实现注意力机制的第一阶段，将数据矩阵各列中不同token向量的相应特征混合在一起；第二阶段则独立作用于每一行，并对每个token向量中的特征进行变换。
-
-\subsection{注意力系数}\label{subsection:ch12-注意力系数}
-
-假设嵌入空间中有一组输入token $\mathbf{x}_1,\cdots,\mathbf{x}_N$，我们希望将它们映射到另一组具有相同数量token但位于一个新嵌入空间的$\mathbf{y}_1,\cdots,\mathbf{y}_N$，这一新的嵌入空间能捕捉到更丰富的语义结构。考虑一个特定的输出向量$\mathbf{y}_n$。$\mathbf{y}_n$的值不仅取决于相应的输入向量$\mathbf{x}_n$，还取决于集合中所有其他的输入向量。凭借注意力，对于那些在确定$\mathbf{y}_n$的修正表示中发挥特别重要作用的输入向量$\mathbf{x}_m$来说，这种依赖性应该更强。实现这一目标的简单方法是将每个输出向量$\mathbf{y}_n$定义为输入向量$\mathbf{x}_1,\cdots,\mathbf{x}_N$与加权系数$a_{nm}$的线性组合：
-
-\begin{align}
-  \mathbf{y}_n = \sum_{m=1}^{N} a_{nm}\,\mathbf{x}_m
-  \label{align:ch12-注意力加权}
-\end{align}
-
-其中，$a_{nm}$称为注意力权重（attention weight），又称注意力系数或权重系数。对于对输出$\mathbf{y}_n$影响较小的输入token，注意力系数应接近于零；而对于对输出$\mathbf{y}_n$影响最大的输入token，注意力系数应最大。因此，我们限制注意力系数为非负值，以避免出现一个注意力系数变大为正值，而另一个注意力系数补偿变小为负值的情况。我们还希望确保如果一个输出对某一特定输入给予更多注意力，则应该以减少对其他输入的注意力为代价，因此我们限制注意力系数的总和为1：加权系数必须满足以下两个约束条件：
-
-\begin{align}
-  a_{nm} \geq 0
-  \label{align:ch12-系数非负}
-\end{align}
-
-\begin{align}
-  \sum_{m=1}^{N} a_{nm} = 1
-  \label{align:ch12-系数归一}
-\end{align}
-
-这意味着每个注意力系数都在$0\leq a_{nm}\leq 1$的范围内，因此这些注意力系数定义了一个“单位分解”（见习题12.1）。在$a_{nm}=1$且当$n=m$时$a_{nm}=0$的特殊情况下，由于$\mathbf{y}_n=\mathbf{x}_n$，输入向量在变换后保持不变。一般来说，输出向量$\mathbf{y}_n$是输入向量的混合体，其中一些输入向量的权重系数高于其他输入向量。
-
-请注意，我们为每个输出向量$\mathbf{y}_n$设置了一组不同的系数，而约束条件[式~\eqref{align:ch12-系数非负}和式~\eqref{align:ch12-系数归一}]分别适用于每个$n$值。这些系数取决于输入数据，后续我们将展示如何计算它们。
-
-\subsection{自注意力}\label{subsection:ch12-自注意力}
-
-接下来的问题是如何确定权重系数$a_{nm}$。在展开详细讨论之前，我们不妨先了解一下信息检索领域的一些术语。以通过线上电影流媒体服务选择观看哪部电影为例。一种方法是将每部电影与一系列属性关联起来，这些属性描述了电影的类型（喜剧、动作片等）、主演姓名、片长等。用户可以通过目录搜索找到自己喜欢看的电影。我们可以将每部电影的属性编码成一个称为键（key）的向量，从而将该过程自动化。相应的电影文件本身叫作值（value）。同样，用户也可以为所需属性提供自己的个人值向量，我们称之为查询（query）。然后，线上电影流媒体服务可以将查询向量与所有键向量作比较，从而找出最佳匹配，并以值文件的形式将相应的电影发送给用户。用用户所“关注”的特定电影，其键向量最匹配于用户的查询向量。这可以视为硬注意力（hard attention）的一种形式，其会返回一个单一值向量。对于Transformer，我们可以将其泛化到软注意力（soft attention）中，即使用连续变量来度量查询和键之间的匹配程度，然后使用这些变量来权衡值向量对输出的影响。这也将确保Transformer函数是可微分的，从而可以通过梯度下降法进行训练。
-
-参照信息检索的方法，我们可以将每个输入$\mathbf{x}_n$视为一个值向量，用来创建输出token。我们还可以直接使用$\mathbf{x}_n$作为输入token $n$的键向量。这就好比用电影本身来概括电影的特点。最后，我们可以使用$\mathbf{x}_n$作为输出$\mathbf{y}_n$的查询向量，然后将其与每个键向量作比较。要想知道$\mathbf{x}_n$代表的token与$\mathbf{x}_m$代表的token有多大的相似度，我们需要计算出这些向量的相似度。度量向量相似度的一种简单方法是求它们的点积$\mathbf{x}_n^{\mathsf{T}}\mathbf{x}_m$。为了施加约束条件[式~\eqref{align:ch12-系数非负}和式~\eqref{align:ch12-系数归一}]，使用softmax函数变换点积（参见5.3节），以定义权重系数$a_{nm}$：
-
-\begin{align}
-  a_{nm} = \frac{\exp\left(\mathbf{x}_n^{\mathsf{T}}\mathbf{x}_m\right)}{\sum_{m'=1}^{N}\exp\left(\mathbf{x}_n^{\mathsf{T}}\mathbf{x}_{m'}\right)}
-  \label{align:ch12-点积注意力系数}
-\end{align}
-
-请注意，在这种情况下，softmax函数不存在概率解释，它只是用来对注意力权重进行适当的归一化。
-
-因此，总的来说，每个输入向量$\mathbf{x}_m$都是通过形式为式~\eqref{align:ch12-注意力加权}的输入向量线性组合而转换为相应的输出向量$\mathbf{y}_n$的，其中应用于输入向量$\mathbf{x}_m$的权重系数$a_{nm}$由softmax函数给出[式~\eqref{align:ch12-点积注意力系数}]，该softmax函数是根据输入$n$的查询向量$\mathbf{x}_n$与输入$m$相关的键向量$\mathbf{x}_m$之间的点积$\mathbf{x}_n^{\mathsf{T}}\mathbf{x}_m$进行定义的。请注意，如果所有输入向量都是正交的，那么每个输出向量都等于相应的输入向量，从而在$m=1,\cdots,N$的情况下，$\mathbf{y}_m=\mathbf{x}_m$（见习题12.3）。
-
-我们可以使用数据矩阵$\mathbf{X}$和类似的$N\times D$输出矩阵$\mathbf{Y}$（其行由$\mathbf{y}_m$给出）将式~\eqref{align:ch12-注意力加权}用矩阵符号写出：
-
-\begin{align}
-  \mathbf{Y} = \mathrm{Softmax}\left[\mathbf{X}\mathbf{X}^{\mathsf{T}}\right]\mathbf{X}
-  \label{align:ch12-点积自注意力矩阵}
-\end{align}
-
-其中，$\mathrm{Softmax}[\cdot]$是一个算子，作用是取矩阵$\mathbf{L}$中每个元素的指数，然后将每一行独立归一化，使它们的和为1。这个过程叫作自注意力（self-attention），因为我们使用相同的序列来确定查询、键和值。在后续内容中，我们还会遇到这种注意力的变体。此外，由于查询向量和键向量之间的相似度度量是由点积给出的，因此这个过程又叫作点积自注意力（dot-product self-attention）。
-
-\subsection{网络参数}\label{subsection:ch12-网络参数}
-
-目前，由于没有可调整的参数，从输入向量$\mathbf{x}_n$到输出向量$\mathbf{y}_n$的变换是固定的，且不具备从数据中学习的能力。此外，token向量$\mathbf{x}_n$的每个特征值在确定注意力系数时发挥相同的作用，而我们希望网络在确定token相似度时能够灵活地将注意力更多地集中在某些特征上。通过定义由原始向量的线性变换给出的修正特征向量，我们可以解决这两个问题：
-
-\begin{align}
-  \tilde{\mathbf{X}} = \mathbf{X}\mathbf{U}
-  \label{align:ch12-特征线性变换}
-\end{align}
-
-其中$\mathbf{U}$是可学习权重参数的$D\times D$矩阵，类似于标准神经网络中的“层”，从而得到一个修正后的变换，其形式为
-
-\begin{align}
-  \mathbf{Y} = \mathrm{Softmax}\left[\tilde{\mathbf{X}}\tilde{\mathbf{X}}^{\mathsf{T}}\right]\tilde{\mathbf{X}}
-  \label{align:ch12-可学习点积注意力}
-\end{align}
-
-虽然这种方法更灵活，但它有一个特性，即如下矩阵是对称的：
-
-\begin{align}
-  \tilde{\mathbf{X}}\tilde{\mathbf{X}}^{\mathsf{T}} = \mathbf{X}\mathbf{U}\mathbf{U}^{\mathsf{T}}\mathbf{X}^{\mathsf{T}}
-\end{align}
-
-虽然softmax函数意味着得到的注意力权重矩阵本身并不对称，但我们可以通过允许查询和键具有独立参数来创建一个更加灵活的模型。然而，式~\eqref{align:ch12-可学习点积注意力}使用相同的参数矩阵$\mathbf{U}$来定义值向量和注意力系数，这似乎又是一个不受欢迎的限制。此外，注意力权重矩阵本身并不对称，因为我们可能会认为“斧头”与“工具”的关联性很强，因为每一把斧头都是一个工具；而“工具”与“斧头”的关联性很弱，因为除了斧头，还有许多其他种类的工具。而我们希望注意力机制支持明显的不对称。
-
-通过定义单独的查询矩阵、键矩阵和值矩阵，并让每个矩阵都有自己独立的线性变换，我们可以克服这些限制：
-
-\begin{align}
-  \mathbf{Q} = \mathbf{X}\mathbf{W}^{(Q)}
-  \label{align:ch12-查询矩阵}
-\end{align}
-
-\begin{align}
-  \mathbf{K} = \mathbf{X}\mathbf{W}^{(K)}
-  \label{align:ch12-键矩阵}
-\end{align}
-
-\begin{align}
-  \mathbf{V} = \mathbf{X}\mathbf{W}^{(V)}
-  \label{align:ch12-值矩阵}
-\end{align}
-
-其中，权重矩阵$\mathbf{W}^{(Q)}$、$\mathbf{W}^{(K)}$和$\mathbf{W}^{(V)}$表示在训练最终的Transformer架构时将学习到的参数。矩阵$\mathbf{W}^{(K)}$的维度为$D\times D_k$，其中$D_k$是键向量的长度。矩阵$\mathbf{W}^{(Q)}$的维度为$D\times D_k$必须与矩阵$\mathbf{K}$的维度相同，因为只有这样才能在查询向量和键向量之间形成点积。为此，可以设置$D_q=D_k$。同样，$\mathbf{W}^{(V)}$是一个维度为$D\times D_v$的矩阵，其中$D_v$是输出向量的长度。如果设置$D_v=D$，使输出表示和输入表示具有相同的维度，则有助于加入残差连接，我们稍后将对此进行讨论。此外，如果每个层的维度相同，则多个Transformer层可以叠加在一起（参见12.1.7小节）。通过对式~\eqref{align:ch12-可学习点积注意力}进行泛化，我们可以得到
-
-\begin{align}
-  \mathbf{Y} = \mathrm{Softmax}\left[\mathbf{Q}\mathbf{K}^{\mathsf{T}}\right]\mathbf{V}
-  \label{align:ch12-通用注意力}
-\end{align}
-
-其中矩阵$\mathbf{Q}\mathbf{K}^{\mathsf{T}}$的维度为$N\times N$，且矩阵$\mathbf{Y}$的维度为$N\times D_v$。矩阵$\mathbf{Q}\mathbf{K}^{\mathsf{T}}$的计算如图12.4所示，而矩阵$\mathbf{Y}$的计算如图12.5所示。
-
-实际上，我们还可以在这些线性变换中加入偏置参数。不过，偏置参数也可以包含在权重矩阵中，就像我们对标准神经网络所做的那样（参见6.2.1小节），方法是在数据矩阵$\mathbf{X}$中增加一列1，然后在权重矩阵中增加额外一行参数来表示偏置。自此，我们将把偏置参数视为隐参数，以免混淆符号。
-
-\subsection{缩放自注意力}\label{subsection:ch12-缩放自注意力}
-
-我们还可以对自注意力层进行最后一次改进。回想一下，当输入量较大时，softmax函数的梯度会呈指数减小，就像tanh函数或逻辑斯谛sigmoid函数一样。为了避免出现这种情况，我们可以在应用softmax函数之前重新缩放查询向量和键向量的点积。为了得到合适的缩放结果，请注意，如果查询向量和键向量的元素都是均值为0且方差为单位方差的独立随机数，则点积的方差就是$D_k$（见习题12.4）。因此，我们使用$D_k$的平方根所给出的标准差对softmax的参数进行归一化处理，从而注意力层的输出形式为
-
-\begin{align}
-  \mathrm{Attention}(\mathbf{Q},\mathbf{K},\mathbf{V}) = \mathrm{Softmax}\left[\frac{\mathbf{Q}\mathbf{K}^{\mathsf{T}}}{\sqrt{D_k}}\right]\mathbf{V}
-  \label{align:ch12-缩放点积注意力}
-\end{align}
-
-这就是所谓的缩放点积自注意力（scaled dot-product self-attention），也是自注意力神经网络层的最终形式。这一层的结构如图12.6所示，算法过程见算法12.1。
-
-\subsection{多头注意力}\label{subsection:ch12-多头注意力}
-
-注意力层允许输出向量关注输入向量的依赖数据模式，称作注意力头（attention head）。然而，可能同时存在多种相关的注意力模式。例如，在自然语言中，有些注意力模式可能与时态有关，而另一些注意力模式则可能与词汇有关。使用单一注意力头会导致这些效应的平均化。对此，我们可以并行使用多个注意力头。这些注意力头由结构相同的单个注意力头的副本组成，具有独立的可学习参数，用于控制查询矩阵、键矩阵和值矩阵的计算。这类似于在卷积网络的每一层中使用多个不同的过滤器。
-
-假设我们有$H$个注意力头，以$h=1,\cdots,H$进行编号，形式为
-
-\begin{align}
-  \mathbf{H}_h = \mathrm{Attention}(\mathbf{Q}_h,\mathbf{K}_h,\mathbf{V}_h)
-  \label{align:ch12-单头注意力}
-\end{align}
-
-其中$\mathrm{Attention}(\cdot,\cdot,\cdot)$由式~\eqref{align:ch12-缩放点积注意力}给出，使用如下方法为每个注意力头定义单独的查询矩阵、键矩阵和值矩阵：
-
-\begin{align}
-  \mathbf{Q}_h = \mathbf{X}\mathbf{W}_h^{(Q)},\qquad
-  \mathbf{K}_h = \mathbf{X}\mathbf{W}_h^{(K)},\qquad
-  \mathbf{V}_h = \mathbf{X}\mathbf{W}_h^{(V)}
-  \label{align:ch12-多头QKV}
-\end{align}
-
-首先将各个注意力头合并成一个单一矩阵，然后使用矩阵$\mathbf{W}^{(O)}$对结果进行线性变换，从而得到一个合并输出，形式为
-
-\begin{align}
-  \mathbf{Y}(\mathbf{X}) = \mathrm{Concat}\left[\mathbf{H}_1,\cdots,\mathbf{H}_H\right]\mathbf{W}^{(O)}
-  \label{align:ch12-多头注意力合并}
-\end{align}
-
-多头注意力网络的结构如图12.7所示，算法过程见算法12.2。
-
-每个矩阵$\mathbf{H}_h$的维度为$N\times D_v$，因此合并矩阵的维度为$N\times HD_v$。在使用维度为$HD_v\times D$的线性矩阵$\mathbf{W}^{(O)}$进行变换后，最终得到维度为$N\times D$的输出矩阵$\mathbf{Y}$，它与原始输入矩阵$\mathbf{X}$的维度相同。矩阵$\mathbf{W}^{(O)}$的元素是在训练阶段与查询矩阵、键矩阵和值矩阵一起学习的。通常情况下，$D_v$选择为与$D/H$相等，从而使得到的合并矩阵的维度为$N\times D$。图12.8展示了多头注意力层的信息流。
-
-请注意，前文给出的多头注意力表述与研究文献中使用的表述相同，我们在每个注意力头的$\mathbf{W}^{(V)}$矩阵与输出矩阵$\mathbf{W}^{(O)}$的连续乘法中包含了一些冗余。在消除这些冗余后，多头自注意力层就可以写成每个注意力头的贡献之和（见习题12.5）。
-
-\subsection{Transformer层}\label{subsection:ch12-Transformer层}
-
-多头自注意力构成了Transformer网络的核心架构元素。我们知道，神经网络从深度结构中获益匪浅，因此我们希望将多个自注意力层堆叠在一起。为了提高训练效率，我们可以引入绕过多头结构的残差连接（参见9.5节）。为此，我们要求输出维度与输入维度相同（参见7.4.3小节）。然后进行层归一化（layer normalization）（Ba, Kiros, and Hinton, 2016），从而提高训练效率。由此产生的变换可以写成
-
-\begin{align}
-  \mathbf{Z} = \mathrm{LayerNorm}\left[\mathbf{Y}(\mathbf{X}) + \mathbf{X}\right]
-  \label{align:ch12-注意力残差LN}
-\end{align}
-
-其中$\mathbf{Y}$由式~\eqref{align:ch12-多头注意力合并}定义。有时，层归一化会被预归一化取代，即层归一化在多头注意力之前而不是之后进行，因为这可以带来更有效的优化。在这种情况下，我们得出
-
-\begin{align}
-  \mathbf{Z} = \mathbf{Y}(\mathbf{X}') + \mathbf{X},\qquad \text{其中}\quad \mathbf{X}' = \mathrm{LayerNorm}\left[\mathbf{X}\right]
-  \label{align:ch12-预归一化注意力}
-\end{align}
-
-此外，这些值向量是输入向量的线性函数，因此我们可以看到，注意力层的输出受限于输入的线性组合。非线性通过注意力权重引入，因此输出将通过softmax函数非线性地依赖于输入，但输出向量仍然受限于输入向量所跨的子空间，这限制了注意力层的表达能力。我们可以使用一个标准的非线性神经网络（有$D$个输入和$D$个输出）对每一层的输出进行后处理，用$\mathrm{MLP}[\cdot]$表示“多层感知机”，从而提高Transformer的灵活性。例如，这可能包括一个具有ReLU隐藏单元的两层全连接网络。当我们这样做时，需要保持Transformer处理不同长度序列的能力。为此，我们需要对每个输出向量（与$\mathbf{Z}$的行相对应）应用相同的共享网络。同样，也可以通过使用残差连接来改进该神经网络层。它还包括层归一化，从而Transformer层的最终输出形式为
-
-\begin{align}
-  \mathbf{X}' = \mathrm{LayerNorm}\left[\mathrm{MLP}[\mathbf{Z}] + \mathbf{Z}\right]
-  \label{align:ch12-FFN残差LN}
-\end{align}
-
-在这种情况下，Transformer层的最终输出形式为
-
-\begin{align}
-  \mathbf{X}' = \mathrm{MLP}[\mathbf{Z}'] + \mathbf{Z},\qquad \text{其中}\quad \mathbf{Z}' = \mathrm{LayerNorm}\left[\mathbf{Z}\right]
-  \label{align:ch12-预归一化FFN}
-\end{align}
-
-这就产生了Transformer层的整体架构，如图12.9所示，算法过程见算法12.3。
+“bank”一词在这两个句子中具有不同的含义。不过，这只能通过查看句子中其他词提供的上下文才能发现。我们还看到，在决定“bank”如何翻译时，有些词发挥着尤为重要的作用。在第 1 个句子中，“swam”和“river”两个词最能说明“bank”指的是河边；而在第 2 个句子中，“cash”一词最能说明“bank”指的是金融机构。我们发现，为了对“bank”进行适当的翻译，处理这样一个句子的神经网络应该关注（换句话说，更依赖于）句子中其余部分的特定词。注意力的概念如\cref{figure:ch12-注意力示意图}所示。
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.45\textwidth]{ch12-fig346-transformer-layer.png}
-  \caption{Transformer层的整体架构。此处“MLP”代表多层感知机，“add \& norm”则代表残差连接和随后的层归一化。}
+  \includegraphics[width=0.95\textwidth]{ch12-fig12-1-attention-bank.png}
+  \caption{“bank”一词的解释受“river”和“swam”影响的注意力示意图，每条线的粗细表示受影响的程度。}
+  \label{figure:ch12-注意力示意图}
+\end{figure}
+
+此外，我们还发现，哪些位置应获得更多注意力取决于输入序列本身：在第 1 个句子中，重要的是第 2 和第 5 个词；而在第 2 个句子中，重要的是第 8 个词。在标准神经网络中，不同的输入对输出产生的不同程度的影响，由输入值乘以相应的权重系数来决定。然而，一旦神经网络经过训练，这些权重及相关输入就会固定下来。相比之下，注意力使用的加权因子的值取决于具体的输入数据。在自然语言上经过训练的一个 Transformer 网络的注意力权重示例见\cref{figure:ch12-注意力权重示例}。
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.95\textwidth]{ch12-fig12-2-attention-weights.png}
+  \caption{习得的注意力权重示例[经 Vaswani 等人授权使用]。}
+  \label{figure:ch12-注意力权重示例}
+\end{figure}
+
+在讨论自然语言处理时，我们将了解如何使用词嵌入（word embedding）将词映射到嵌入空间中的向量。这些向量可用作后续神经网络处理的输入。这些词嵌入可以捕捉到基本的语义属性，例如，将具有相似含义的词映射到嵌入空间中的邻近位置。这种嵌入的一个特点是，给定的词总是被映射到同一个嵌入向量。
+
+Transformer 可以视为一种更丰富的嵌入形式，其中一个给定向量被映射到一个依赖序列中其他向量的位置。因此，上述示例中代表“bank”的向量可以映射到两个不同句子的新嵌入空间中的不同位置。例如，在第 1 个句子中，变换后的表示可能会使“bank”在嵌入空间中靠近“water”；而在第 2 个句子中，变换后的表示可能会将“bank”放在靠近“money”的位置。
+
+下面我们以蛋白质建模为例来说明注意力的重要性。我们可以把蛋白质看作由分子单元（称为氨基酸）组成的一维序列。一个蛋白质可能由数百或数千个这样的分子单元组成，每个分子单元由 22 种可能性中的一种给定。在活细胞中，蛋白质折叠成三维结构，一维序列中互相远离的氨基酸可以在三维空间中变得接近，从而产生相互作用。Transformer 模型允许这些互相远离的氨基酸相互“关注”，从而大大提高了三维结构建模的准确性（Vig et al., 2020）。
+
+\subsection{Transformer 处理}\label{subsection:ch12-Transformer处理}
+
+Transformer 的输入数据是一组 $D$ 维向量 $\{\mathbf{x}_n\}$，其中 $n=1,\cdots,N$。我们将这些数据向量称为 token，一个 token 可能对应句子中的一个词、图像中的一个小块或者蛋白质中的一个氨基酸。token 中的元素 $x_{ni}$ 称为特征。稍后我们将了解如何为自然语言数据和图像构建这些 token 向量。Transformer 的一个强大特性是，我们无须设计新的网络架构来处理不同类型的数据，而只需要将数据变量组合成一组联合 token 即可。
+
+在清楚地了解 Transformer 的工作原理之前，我们必须准确地使用符号。我们将按照标准惯例，将数据向量组合成一个 $N\times D$ 维的矩阵 $\mathbf{X}$，其中第 $n$ 行是 token 向量 $\mathbf{x}_n^{\mathsf{T}}$，$n=1,\cdots,N$，如\cref{figure:ch12-数据矩阵}所示。请注意，该矩阵代表一组输入 token，而在大多数应用中，我们需要一个包含多组 token 的数据集，例如每个词都是由一个 token 表示的独立文本段落。
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.3\textwidth]{ch12-fig12-3-data-matrix.png}
+  \caption{$N\times D$ 维的数据矩阵 $\mathbf{X}$ 的结构，其中第 $n$ 行代表转置后的数据向量 $\mathbf{x}_n^{\mathsf{T}}$。}
+  \label{figure:ch12-数据矩阵}
+\end{figure}
+
+Transformer 的基本构件是一个函数，用于将数据矩阵作为输入并创建一个具有相同维度的变换矩阵 $\bar{\mathbf{X}}$ 作为输出。我们可以写下该函数，形式如下：
+\begin{align}
+\bar{\mathbf{X}}=\mathrm{TransformerLayer}[\mathbf{X}]
+\label{align:ch12-Transformer层}
+\end{align}
+
+然后，我们可以连续叠加多个 Transformer 层来构建能够学习丰富内部表示的深度网络。每个 Transformer 层都有自己的权重和偏置，可以通过梯度下降法使用适当的损失函数进行学习，这将在本章后续部分（参见\cref{section:ch12-Transformer语言模型}）详细讨论。
+
+Transformer 层本身包含两个阶段。在实现注意力机制的第一阶段，将数据矩阵各列中不同 token 向量的相应特征混合在一起；第二阶段则独立作用于每一行，并对每个 token 向量中的特征进行变换。下面让我们先来看看注意力机制。
+
+\subsection{注意力系数}\label{subsection:ch12-注意力系数}
+
+假设嵌入空间中有一组输入 token $\mathbf{x}_1,\cdots,\mathbf{x}_N$，我们希望将它们映射到另一组具有相同数量 token 但位于一个新嵌入空间的 $\mathbf{y}_1,\cdots,\mathbf{y}_N$，这一新的嵌入空间能捕捉到更丰富的语义结构。考虑一个特定的输出向量 $\mathbf{y}_n$。$\mathbf{y}_n$ 的值不仅取决于相应的输入向量 $\mathbf{x}_n$，还取决于集合中所有其他的输入向量。凭借注意力，对于那些在确定 $\mathbf{y}_n$ 的修正表示中发挥特别重要作用的输入向量 $\mathbf{x}_m$ 来说，这种依赖性应该更强。实现这一目标的简单方法是将每个输出向量 $\mathbf{y}_n$ 定义为输入向量 $\mathbf{x}_1,\cdots,\mathbf{x}_N$ 与加权系数 $a_{nm}$ 的线性组合：
+\begin{align}
+\mathbf{y}_n=\sum_{m=1}^{N}a_{nm}\mathbf{x}_m
+\label{align:ch12-注意力加权}
+\end{align}
+
+\begin{definition}[注意力权重]\label{definition:ch12-注意力权重}
+设 $\mathbf{x}_1,\cdots,\mathbf{x}_N\in\mathbb{R}^{D}$ 为一组输入 token，$\mathbf{y}_1,\cdots,\mathbf{y}_N$ 为对应的输出 token。若每个输出向量按\eqref{align:ch12-注意力加权}写成输入向量的线性组合，则系数 $a_{nm}$ 称为\textbf{注意力权重}（attention weight），又称注意力系数或权重系数；它同时满足非负性
+\begin{align}
+a_{nm}\geqslant0
+\label{align:ch12-系数非负}
+\end{align}
+与归一性
+\begin{align}
+\sum_{m=1}^{N}a_{nm}=1
+\label{align:ch12-系数归一}
+\end{align}
+其中 $n,m=1,\cdots,N$。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch12-注意力权重; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+注意力的动机是让“哪些输入重要”由数据本身决定，而不是像标准神经网络那样在训练后把权重固定下来。为此，\eqref{align:ch12-注意力加权}把输出写成输入的线性组合，把“重要性”完全交给系数 $a_{nm}$：对 $\mathbf{y}_n$ 影响小的 token 取 $a_{nm}\approx0$，影响大的 token 取较大的 $a_{nm}$。两条约束各有明确作用。非负性\eqref{align:ch12-系数非负}排除了“一个大正系数被另一个大负系数抵消”的情形——否则系数大小不再能直接读作重要程度，而且 $\mathbf{y}_n$ 可能落在输入向量凸包之外，与“加权平均”的直观解释不符。归一性\eqref{align:ch12-系数归一}则把注意力变成一种“预算分配”：给某个输入更多注意力，必然以减少对其他输入的注意力为代价，从而使 $a_{nm}$ 的量级在所有 $n$ 之间可比。两条约束合起来等价于说：$\mathbf{y}_n$ 是输入 token 的一个凸组合，系数构成所谓的“单位分解”。这里 $N$ 与 $D$ 都不受限制，系数矩阵 $\mathbf{A}=[a_{nm}]$ 的每一行各自归一化，不同输出位置使用互不相同的系数集合。
+\end{remark}
+
+这意味着每个注意力系数都在 $0\leqslant a_{nm}\leqslant1$ 的范围内，因此这些注意力系数定义了一个“单位分解”（见\cref{exercise:ch12-01}）。在 $a_{nn}=1$ 且当 $n\neq m$ 时 $a_{nm}=0$ 的特殊情况下，由于 $\mathbf{y}_n=\mathbf{x}_n$，输入向量在变换后保持不变。一般来说，输出向量 $\mathbf{y}_n$ 是输入向量的混合体，其中一些输入向量的权重系数高于其他输入向量。
+
+\begin{proposition}[注意力系数构成单位分解]\label{proposition:ch12-单位分解}
+设 $a_{nm}$ 满足\eqref{align:ch12-系数非负}与\eqref{align:ch12-系数归一}，并按\eqref{align:ch12-注意力加权}定义 $\mathbf{y}_n$。则对每个 $n$ 有 $0\leqslant a_{nm}\leqslant1$（$m=1,\cdots,N$），且 $\mathbf{y}_n$ 落在输入向量的凸包之内；特别地，若 $a_{nn}=1$ 而 $n\neq m$ 时 $a_{nm}=0$，则 $\mathbf{y}_n=\mathbf{x}_n$。
+\end{proposition}
+
+\begin{proof}
+由非负性 $a_{nm}\geqslant0$ 与归一性 $\sum_{m=1}^{N}a_{nm}=1$ 立即得到 $a_{nm}\leqslant\sum_{m'=1}^{N}a_{nm'}=1$。凸包是包含全部 $\mathbf{x}_m$ 的最小凸集，而 $\mathbf{y}_n$ 恰是这些点的系数非负、总和为 $1$ 的线性组合，故 $\mathbf{y}_n$ 属于凸包。若 $a_{nn}=1$ 且 $n\neq m$ 时 $a_{nm}=0$，则\eqref{align:ch12-注意力加权}中只有 $m=n$ 一项非零，于是 $\mathbf{y}_n=\mathbf{x}_n$。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch12-单位分解; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+该命题把两条看似技术性的约束翻译成几何语言：注意力层的每个输出都是输入点集的凸组合，因此输出永远不会“跑出”输入所张成的区域。这正是后面残差连接与层归一化能够稳定训练的前提之一——注意力的输出与输入同量级。需要强调，$a_{nm}\in[0,1]$ 只是两条约束的推论，不是额外假设；而 $\mathbf{y}_n=\mathbf{x}_n$ 的“恒等”情形要求整行为单位向量，而不是仅仅 $a_{nn}$ 较大：只要 $a_{nn}<1$，输出就严格混合了其他 token 的信息，这正是下面自注意力要刻画的现象。
+\end{remark}
+
+请注意，我们为每个输出向量 $\mathbf{y}_n$ 设置了一组不同的系数，而约束条件[\eqref{align:ch12-系数非负}和\eqref{align:ch12-系数归一}]分别适用于每个 $n$ 值。这些系数取决于输入数据，后续我们将展示如何计算它们。
+
+\subsection{自注意力}\label{subsection:ch12-自注意力}
+
+接下来的问题是如何确定权重系数 $a_{nm}$。在展开详细讨论之前，我们不妨先了解一下信息检索领域的一些术语。以通过线上电影流媒体服务选择观看哪部电影为例。一种方法是将每部电影与一系列属性关联起来，这些属性描述了电影的类型（喜剧、动作片等）、主演姓名、片长等。用户可以通过目录搜索找到自己喜欢看的电影。我们可以将每部电影的属性编码成一个称为键（key）的向量，从而将该过程自动化。相应的电影文件本身叫作值（value）。同样，用户也可以为所需属性提供自己的个人值向量，我们称之为查询（query）。然后，线上电影流媒体服务可以将查询向量与所有键向量作比较，从而找出最佳匹配，并以值文件的形式将相应的电影发送给用户。用户所“关注”的特定电影，其键向量最匹配于用户的查询向量。这可以视为硬注意力（hard attention）的一种形式，其会返回一个单一值向量。对于 Transformer，我们可以将其泛化到软注意力（soft attention）中，即使用连续变量来度量查询和键之间的匹配程度，然后使用这些变量来权衡值向量对输出的影响。这也将确保 Transformer 函数是可微分的，从而可以通过梯度下降法进行训练。
+
+参照信息检索的方法，我们可以将每个输入 $\mathbf{x}_n$ 视为一个值向量，用来创建输出 token。我们还可以直接使用 $\mathbf{x}_n$ 作为输入 token $n$ 的键向量。这就好比用电影本身来概括电影的特点。最后，我们可以使用 $\mathbf{x}_n$ 作为输出 $\mathbf{y}_n$ 的查询向量，然后将其与每个键向量作比较。要想知道 $\mathbf{x}_n$ 代表的 token 与 $\mathbf{x}_m$ 代表的 token 有多大的相似度，我们需要计算出这些向量的相似度。度量向量相似度的一种简单方法是求它们的点积 $\mathbf{x}_n^{\mathsf{T}}\mathbf{x}_m$。为了施加约束条件[\eqref{align:ch12-系数非负}和\eqref{align:ch12-系数归一}]，使用 softmax 函数变换点积（参见\cref{section:ch05-生成分类器}），以定义权重系数 $a_{nm}$：
+\begin{align}
+a_{nm}=\frac{\exp\left(\mathbf{x}_n^{\mathsf{T}}\mathbf{x}_m\right)}{\sum_{m'=1}^{N}\exp\left(\mathbf{x}_n^{\mathsf{T}}\mathbf{x}_{m'}\right)}
+\label{align:ch12-点积注意力系数}
+\end{align}
+
+\begin{definition}[点积自注意力]\label{definition:ch12-点积自注意力}
+设数据矩阵 $\mathbf{X}\in\mathbb{R}^{N\times D}$ 的第 $n$ 行为 $\mathbf{x}_n^{\mathsf{T}}$。若以 $a_{nm}$ 按\eqref{align:ch12-点积注意力系数}由输入向量自身的点积给出，并按\eqref{align:ch12-注意力加权}构造输出，则称该变换为\textbf{自注意力}（self-attention）；由于相似度由点积给出，又称\textbf{点积自注意力}（dot-product self-attention）。用矩阵记号可写为
+\begin{align}
+\mathbf{Y}=\mathrm{Softmax}\left[\mathbf{X}\mathbf{X}^{\mathsf{T}}\right]\mathbf{X}
+\label{align:ch12-点积自注意力矩阵}
+\end{align}
+其中 $\mathrm{Softmax}[\cdot]$ 是逐行作用的算子：先对矩阵 $\mathbf{L}$ 中每个元素取指数，再将每一行独立归一化使其和为 $1$。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch12-点积自注意力; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+定义中“查询、键、值三者都取自同一个序列”是自注意力区别于一般注意力的关键：序列既是信息来源，也是查询来源，因此每个 token 的输出都依赖于同序列中其他 token 的表示。这种“用自己检索自己”的做法使模型无须递归结构就能刻画长距离依赖——两个相距很远的 token 在一次矩阵乘法中直接相连，路径长度为 $1$，而递归神经网络需要经过中间所有时间步。之所以用 softmax 而不是线性归一化，是因为指数函数把点积的相对大小转化为权重的相对大小，并且严格为正，从而保证\eqref{align:ch12-系数非负}与\eqref{align:ch12-系数归一}同时成立（见\cref{proposition:ch12-softmax归一}）；同时 softmax 可微，使整个层可以用梯度下降训练。这里 softmax 没有概率解释，它只是归一化注意力权重的工具。另外，$N\times N$ 的注意力矩阵随序列长度平方增长，这一点在\cref{subsection:ch12-计算复杂性}中会以计算复杂度的形式重现。
+\end{remark}
+
+请注意，在这种情况下，softmax 函数不存在概率解释，它只是用来对注意力权重进行适当的归一化。
+
+\begin{proposition}[softmax 权重的归一性]\label{proposition:ch12-softmax归一}
+对任意 $\mathbf{x}_1,\cdots,\mathbf{x}_N$，由\eqref{align:ch12-点积注意力系数}定义的 $a_{nm}$ 满足 $a_{nm}>0$ 与 $\sum_{m=1}^{N}a_{nm}=1$，从而\eqref{align:ch12-注意力加权}的 $\mathbf{y}_n$ 是输入向量的严格凸组合。
+\end{proposition}
+
+\begin{proof}
+指数函数取值恒正，故分子 $\exp(\mathbf{x}_n^{\mathsf{T}}\mathbf{x}_m)>0$，分母是 $N$ 个正数之和，因而 $a_{nm}>0$。把分子对 $m$ 求和即得分母，故 $\sum_{m=1}^{N}a_{nm}=1$。非负性已由严格正性得到，于是\cref{proposition:ch12-单位分解}的条件全部满足，$\mathbf{y}_n$ 为严格凸组合。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch12-softmax归一; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+该命题说明\eqref{align:ch12-点积注意力系数}自动满足注意力系数的两条约束，因而不需要任何额外的投影或截断。它同时解释了 softmax 的“软化”作用：当某个点积明显大于其余点积时，对应权重趋近于 $1$，注意力接近硬注意力的“检索”行为；当所有点积相近时，权重接近均匀分布 $1/N$，输出接近所有输入的平均。这两个极端分别对应“精确匹配”和“无偏好平均”，中间的连续过渡由点积的尺度控制——这也是下一小节要引入 $1/\sqrt{D_k}$ 缩放的原因。
+\end{remark}
+
+因此，总的来说，每个输入向量 $\mathbf{x}_m$ 都是通过形式为\eqref{align:ch12-注意力加权}的输入向量线性组合而转换为相应的输出向量 $\mathbf{y}_n$ 的，其中应用于输入向量 $\mathbf{x}_m$ 的权重系数 $a_{nm}$ 由 softmax 函数给出[\eqref{align:ch12-点积注意力系数}]，该 softmax 函数是根据输入 $n$ 的查询向量 $\mathbf{x}_n$ 与输入 $m$ 相关的键向量 $\mathbf{x}_m$ 之间的点积 $\mathbf{x}_n^{\mathsf{T}}\mathbf{x}_m$ 进行定义的。请注意，如果所有输入向量都是正交的，那么每个输出向量都等于相应的输入向量，从而在 $m=1,\cdots,N$ 的情况下，$\mathbf{y}_m=\mathbf{x}_m$（见\cref{exercise:ch12-03}）。
+
+\begin{remark}（重构新增）
+这里“正交即恒等”的说法需要精确化。由\eqref{align:ch12-点积注意力系数}，正交性只使非对角点积为零，而对角点积仍为 $\|\mathbf{x}_n\|^{2}>0$，故 $a_{nn}=e^{\|\mathbf{x}_n\|^{2}}\big/\left(e^{\|\mathbf{x}_n\|^{2}}+N-1\right)<1$，输出实际上是 $\mathbf{x}_n$ 与其余向量均值的凸组合，只有当事先对输入作归一化并使 $\|\mathbf{x}_n\|$ 很大（或注意力温度趋于零）时，$\mathbf{y}_n$ 才趋于 $\mathbf{x}_n$。严格的反例与可证的修正版本见\cref{exercise:ch12-03}的解答。保留这一讨论的意义在于：真实模型中注意力权重很少接近 one-hot，输出总是“部分混合”的，这正是注意力聚合上下文信息的方式。
+\end{remark}
+
+我们可以使用数据矩阵 $\mathbf{X}$ 和类似的 $N\times D$ 输出矩阵 $\mathbf{Y}$（其行由 $\mathbf{y}_m$ 给出）将\eqref{align:ch12-注意力加权}用矩阵符号写出，即\eqref{align:ch12-点积自注意力矩阵}。
+
+其中，$\mathrm{Softmax}[\mathbf{L}]$ 是一个算子，作用是取矩阵 $\mathbf{L}$ 中每个元素的指数，然后将每一行独立归一化，使它们的和为 $1$。自此，为了清晰易懂，我们将讨论的重点放在矩阵符号上。
+
+这个过程叫作自注意力（self-attention），因为我们使用相同的序列来确定查询、键和值。在后续内容中，我们还会遇到这种注意力的变体。此外，由于查询向量和键向量之间的相似度度量是由点积给出的，因此这个过程又叫作点积自注意力（dot-product self-attention）。
+
+\subsection{网络参数}\label{subsection:ch12-网络参数}
+
+目前，由于没有可调整的参数，从输入向量 $\mathbf{x}_n$ 到输出向量 $\mathbf{y}_n$ 的变换是固定的，且不具备从数据中学习的能力。此外，token 向量 $\mathbf{x}_n$ 的每个特征值在确定注意力系数时发挥相同的作用，而我们希望网络在确定 token 相似度时能够灵活地将注意力更多地集中在某些特征上。通过定义由原始向量（形式如下）的线性变换给出的修正特征向量，我们可以解决这两个问题：
+\begin{align}
+\tilde{\mathbf{X}}=\mathbf{X}\mathbf{U}
+\label{align:ch12-特征线性变换}
+\end{align}
+
+其中 $\mathbf{U}$ 是可学习权重参数的 $D\times D$ 矩阵，类似于标准神经网络中的“层”，从而得到一个修正后的变换，其形式为
+\begin{align}
+\mathbf{Y}=\mathrm{Softmax}\left[\mathbf{X}\mathbf{U}\mathbf{U}^{\mathsf{T}}\mathbf{X}^{\mathsf{T}}\right]\mathbf{X}\mathbf{U}
+\label{align:ch12-可学习点积注意力}
+\end{align}
+
+虽然这种方法更灵活，但它有一个特性，即如下矩阵是对称的：
+\begin{align}
+\mathbf{X}\mathbf{U}\mathbf{U}^{\mathsf{T}}\mathbf{X}^{\mathsf{T}}
+\label{align:ch12-对称注意力矩阵}
+\end{align}
+
+而希望注意力机制支持明显的不对称。例如，我们可能会认为“斧头”与“工具”的关联性很强，因为每一把斧头都是一个工具；而“工具”与“斧头”的关联性很弱，因为除了斧头，还有许多其他种类的工具。虽然 softmax 函数意味着得到的注意力权重矩阵本身并不对称，但我们可以通过允许查询和键具有独立参数来创建一个更加灵活的网络。此外，\eqref{align:ch12-可学习点积注意力}使用相同的参数矩阵 $\mathbf{U}$ 来定义值向量和注意力系数，这似乎又是一个不受欢迎的限制。
+
+通过定义单独的查询矩阵、键矩阵和值矩阵，并让每个矩阵都有自己独立的线性变换，我们可以克服这些限制：
+\begin{align}
+\mathbf{Q}=\mathbf{X}\mathbf{W}^{(q)}
+\label{align:ch12-查询矩阵}
+\end{align}
+\begin{align}
+\mathbf{K}=\mathbf{X}\mathbf{W}^{(k)}
+\label{align:ch12-键矩阵}
+\end{align}
+\begin{align}
+\mathbf{V}=\mathbf{X}\mathbf{W}^{(v)}
+\label{align:ch12-值矩阵}
+\end{align}
+
+其中，权重矩阵 $\mathbf{W}^{(q)}$、$\mathbf{W}^{(k)}$ 和 $\mathbf{W}^{(v)}$ 表示在训练最终的 Transformer 架构时将学习到的参数。矩阵 $\mathbf{W}^{(k)}$ 的维度为 $D\times D_k$，其中 $D_k$ 是键向量的长度。矩阵 $\mathbf{W}^{(q)}$ 的维度 $D\times D_q$ 必须与矩阵 $\mathbf{W}^{(k)}$ 的维度相同，因为只有这样才能在查询向量和键向量之间形成点积。为此，可以设置 $D_k=D$。同样，$\mathbf{W}^{(v)}$ 是一个维度为 $D\times D_v$ 的矩阵，其中 $D_v$ 是输出向量的长度。如果设置 $D_v=D$，使输出表示和输入表示具有相同的维度，则有助于加入残差连接，我们稍后将对此进行讨论。此外，如果每个层的维度相同，则多个 Transformer 层可以叠加在一起（参见\cref{subsection:ch12-Transformer层}）。通过对\eqref{align:ch12-点积自注意力矩阵}进行泛化，我们可以得到
+\begin{align}
+\mathbf{Y}=\mathrm{Softmax}\left[\mathbf{Q}\mathbf{K}^{\mathsf{T}}\right]\mathbf{V}
+\label{align:ch12-通用注意力}
+\end{align}
+
+\begin{definition}[查询、键与值]\label{definition:ch12-查询键值}
+设 $\mathbf{X}\in\mathbb{R}^{N\times D}$ 为数据矩阵，$\mathbf{W}^{(q)}\in\mathbb{R}^{D\times D_q}$、$\mathbf{W}^{(k)}\in\mathbb{R}^{D\times D_k}$、$\mathbf{W}^{(v)}\in\mathbb{R}^{D\times D_v}$ 为可学习的权重矩阵，且 $D_q=D_k$。称
+\begin{align}
+\mathbf{Q}=\mathbf{X}\mathbf{W}^{(q)},\qquad
+\mathbf{K}=\mathbf{X}\mathbf{W}^{(k)},\qquad
+\mathbf{V}=\mathbf{X}\mathbf{W}^{(v)}
+\label{align:ch12-查询键值定义}
+\end{align}
+分别为\textbf{查询矩阵}、\textbf{键矩阵}与\textbf{值矩阵}；它们的第 $n$ 行分别是第 $n$ 个 token 的查询向量、键向量与值向量。由它们按\eqref{align:ch12-通用注意力}给出的映射称为（单头）注意力层的输出。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch12-查询键值; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+把“查询、键、值”拆成三个独立线性变换，是为了让模型能够学习“用什么去检索”“被检索的东西如何被表示”“检索到之后取回什么”这三件事，而不像\eqref{align:ch12-可学习点积注意力}那样被迫用同一个 $\mathbf{U}$ 兼任。若三者共用参数，注意力矩阵 $\mathbf{X}\mathbf{U}\mathbf{U}^{\mathsf{T}}\mathbf{X}^{\mathsf{T}}$ 天然对称，模型就无法表示“斧头依赖工具、工具不依赖斧头”这类单向关联；三个独立矩阵打破了这一对称性。条件 $D_q=D_k$ 是点积 $\mathbf{Q}\mathbf{K}^{\mathsf{T}}$ 有意义的前提：查询向量与键向量必须等长才能逐分量相乘求和；而 $D_v$ 可以自由选择，选 $D_v=D$ 只是为了让输出与输入同维，从而能够相加形成残差连接——这是\cref{subsection:ch12-Transformer层}的需要，而非注意力本身的要求。最后要注意，$N\times D$ 的输入经线性变换后仍按 token 逐行处理，参数在所有 token 之间共享，这正是后面复杂度分析中参数量只有 $O(D^2)$ 的原因。
+\end{remark}
+
+其中矩阵 $\mathbf{Q}\mathbf{K}^{\mathsf{T}}$ 的维度为 $N\times N$，且矩阵 $\mathbf{Y}$ 的维度为 $N\times D_v$。矩阵 $\mathbf{Q}\mathbf{K}^{\mathsf{T}}$ 的计算如\cref{figure:ch12-查询键矩阵乘积}所示，而矩阵 $\mathbf{Y}$ 的计算如\cref{figure:ch12-注意力输出计算}所示。
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.85\textwidth]{ch12-fig12-4-qk.png}
+  \caption{决定 Transformer 中注意力系数的矩阵 $\mathbf{Q}\mathbf{K}^{\mathsf{T}}$ 的计算示意图。分别通过\eqref{align:ch12-查询矩阵}和\eqref{align:ch12-键矩阵}对输入 $\mathbf{X}$ 进行变换，得到查询矩阵 $\mathbf{Q}$ 和键矩阵 $\mathbf{K}$，然后将它们相乘。}
+  \label{figure:ch12-查询键矩阵乘积}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.68\textwidth]{ch12-fig12-5-y.png}
+  \caption{在给定查询矩阵 $\mathbf{Q}$、键矩阵 $\mathbf{K}$ 和值矩阵 $\mathbf{V}$ 的情况下计算注意力层输出的示意图。输出矩阵 $\mathbf{Y}$ 中突出显示位置的条目分别由 $\mathrm{Softmax}[\mathbf{Q}\mathbf{K}^{\mathsf{T}}]$ 和 $\mathbf{V}$ 矩阵中突出显示位置的行和列的点积得出。}
+  \label{figure:ch12-注意力输出计算}
+\end{figure}
+
+实际上，我们还可以在这些线性变换中加入偏置参数。不过，偏置参数也可以包含在权重矩阵中，就像我们对标准神经网络所做的那样（参见\cref{subsection:ch06-参数矩阵}），方法是在数据矩阵 $\mathbf{X}$ 中增加一列 1，然后在权重矩阵中增加额外一行参数来表示偏置。自此，我们将把偏置参数视为隐参数，以免混淆符号。
+
+与传统的神经网络相比，信号路径的激活值之间存在乘法关系。标准的神经网络会将激活值乘以固定权重，而这里的激活值则被乘以依赖数据的注意力系数。这意味着如果选择特定的输入向量，其中一个注意力系数接近于零，那么产生的信号路径将忽略相应的输入信号，因此不会对网络输出产生任何影响。相比之下，如果一个标准的神经网络学会了忽略某个特定的输入或隐藏单元变量，那么该神经网络就会对所有输入向量都这样做。
+
+\subsection{缩放自注意力}\label{subsection:ch12-缩放自注意力}
+
+我们还可以对自注意力层进行最后一次改进。回想一下，当输入量较大时，softmax 函数的梯度会呈指数减小，就像 tanh 函数或逻辑斯谛 sigmoid 函数一样。为了避免出现这种情况，我们可以在应用 softmax 函数之前重新缩放查询向量和键向量的乘积。为了得到合适的缩放结果，请注意，如果查询向量和键向量的元素都是均值为 0 且方差为单位方差的独立随机数，则点积的方差就是 $D_k$（见\cref{exercise:ch12-04}）。因此，我们使用 $D_k$ 的平方根所给出的标准差对 Softmax 的参数进行归一化处理，从而注意力层的输出形式为
+\begin{align}
+\mathrm{Attention}(\mathbf{Q},\mathbf{K},\mathbf{V})=\mathrm{Softmax}\left[\frac{\mathbf{Q}\mathbf{K}^{\mathsf{T}}}{\sqrt{D_k}}\right]\mathbf{V}
+\label{align:ch12-缩放点积注意力}
+\end{align}
+
+这就是所谓的缩放点积自注意力（scaled dot-product self-attention），也是自注意力神经网络层的最终形式。这一层的结构如\cref{figure:ch12-缩放点积注意力层}所示，算法过程见下面的算法 12.1。
+
+\begin{proposition}[缩放点积注意力的输出形式]\label{proposition:ch12-缩放点积注意力}
+设 $\mathbf{Q}=\mathbf{X}\mathbf{W}^{(q)}$、$\mathbf{K}=\mathbf{X}\mathbf{W}^{(k)}$、$\mathbf{V}=\mathbf{X}\mathbf{W}^{(v)}$ 如\eqref{align:ch12-查询键值定义}，$D_q=D_k$。则按\eqref{align:ch12-缩放点积注意力}定义的注意力层输出与\eqref{align:ch12-通用注意力}的差别仅在于 softmax 的自变量被除以常数 $\sqrt{D_k}$：对每个 $n$，其输出 $\mathbf{y}_n$ 仍是 $\mathbf{v}_1,\cdots,\mathbf{v}_N$ 的凸组合，权重为
+\begin{align}
+a_{nm}=\frac{\exp\left(\mathbf{q}_n^{\mathsf{T}}\mathbf{k}_m/\sqrt{D_k}\right)}{\sum_{m'=1}^{N}\exp\left(\mathbf{q}_n^{\mathsf{T}}\mathbf{k}_{m'}/\sqrt{D_k}\right)}.
+\label{align:ch12-缩放注意力权重}
+\end{align}
+\end{proposition}
+
+\begin{proof}
+记 $\mathbf{S}=\mathbf{Q}\mathbf{K}^{\mathsf{T}}$，其 $(n,m)$ 元为 $s_{nm}=\mathbf{q}_n^{\mathsf{T}}\mathbf{k}_m$。\eqref{align:ch12-缩放点积注意力}中 softmax 的自变量为 $s_{nm}/\sqrt{D_k}$，按 $\mathrm{Softmax}[\cdot]$ 的逐行定义即得\eqref{align:ch12-缩放注意力权重}，其分母为正且分子恒正，故 $a_{nm}>0$、$\sum_m a_{nm}=1$。又 $\mathbf{Y}$ 的第 $n$ 行为 $\sum_m a_{nm}\mathbf{v}_m$，即 $\mathbf{v}_m$ 的凸组合。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch12-缩放点积注意力; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+缩放的目的是把 softmax 的自变量重新标准化到“单位量级”。若 $\mathbf{q}_n$ 与 $\mathbf{k}_m$ 各分量独立、均值 $0$、方差 $1$，则点积 $s_{nm}$ 是 $D_k$ 个独立同分布项之和，其均值为 $0$、方差为 $D_k$；$D_k$ 越大，$s_{nm}$ 的典型绝对值越大，softmax 越接近“赢者通吃”的硬选择，其Jacobi矩阵随之退化，梯度几乎为零。除以标准差 $\sqrt{D_k}$ 后自变量方差回到 $1$，无论 $D_k$ 取多大，softmax 都工作在梯度良好的区间。这一改动不改变输出的凸组合结构，只改变权重的尖锐程度，因此\cref{proposition:ch12-softmax归一}的结论原样保留。还要注意，缩放常数由 $D_k$ 而非 $D$ 决定，因为决定点积量级的是键向量的长度。
+\end{remark}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.42\textwidth]{ch12-fig12-6-attention-layer.png}
+  \caption{缩放点积自注意力神经网络层中的信息流。此处“mat mul”表示矩阵乘法，而“scale”指的是使用 $\sqrt{D_k}$ 对 Softmax 的参数进行归一化处理。该结构构成了一个单一注意力“头”。}
+  \label{figure:ch12-缩放点积注意力层}
+\end{figure}
+
+\begin{center}
+\setlength{\fboxsep}{7pt}%
+\fbox{\begin{minipage}{0.86\textwidth}
+\centering\textbf{算法 12.1\quad 缩放点积自注意力}\par
+\vspace{5pt}
+\begin{flushleft}
+\textbf{Input:} 一组 token $\mathbf{X}\in\mathbb{R}^{N\times D}:\{\mathbf{x}_1,\cdots,\mathbf{x}_N\}$\\
+\hspace*{1.5em}权重矩阵 $\{\mathbf{W}^{(q)},\mathbf{W}^{(k)}\}\in\mathbb{R}^{D\times D_k}$ 与 $\mathbf{W}^{(v)}\in\mathbb{R}^{D\times D_v}$\\
+\textbf{Output:} $\mathrm{Attention}(\mathbf{Q},\mathbf{K},\mathbf{V})\in\mathbb{R}^{N\times D}:\{\mathbf{y}_1,\cdots,\mathbf{y}_N\}$\\
+$\mathbf{Q}=\mathbf{X}\mathbf{W}^{(q)}$ \quad // 计算查询矩阵 $\mathbf{Q}\in\mathbb{R}^{N\times D_k}$\\
+$\mathbf{K}=\mathbf{X}\mathbf{W}^{(k)}$ \quad // 计算键矩阵 $\mathbf{K}\in\mathbb{R}^{N\times D_k}$\\
+$\mathbf{V}=\mathbf{X}\mathbf{W}^{(v)}$ \quad // 计算值矩阵 $\mathbf{V}\in\mathbb{R}^{N\times D_v}$\\
+\textbf{return} $\mathrm{Attention}(\mathbf{Q},\mathbf{K},\mathbf{V})=\mathrm{Softmax}\left[\dfrac{\mathbf{Q}\mathbf{K}^{\mathsf{T}}}{\sqrt{D_k}}\right]\mathbf{V}$
+\end{flushleft}
+\end{minipage}}
+\end{center}
+
+\subsection{多头注意力}\label{subsection:ch12-多头注意力}
+
+注意力层允许输出向量关注输入向量的依赖数据模式，称作注意力头（attention head）。然而，可能同时存在多种相关的注意力模式。例如，在自然语言中，有些注意力模式可能与时态有关，而另一些注意力模式则可能与词汇有关。使用单一注意力头会导致这些效应的平均化。对此，我们可以并行使用多个注意力头。这些注意力头由结构相同的单个注意力头的副本组成，具有独立的学习参数，用于控制查询矩阵、键矩阵和值矩阵的计算。这类似于在卷积网络的每一层中使用多个不同的过滤器。
+
+假设我们有 $H$ 个注意力头，以 $h=1,\cdots,H$ 进行编号，形式为
+\begin{align}
+\mathbf{H}_h=\mathrm{Attention}(\mathbf{Q}_h,\mathbf{K}_h,\mathbf{V}_h)
+\label{align:ch12-单头注意力}
+\end{align}
+
+其中 $\mathrm{Attention}(\cdot,\cdot,\cdot)$ 由\eqref{align:ch12-缩放点积注意力}给出，使用如下方法为每个注意力头定义单独的查询矩阵、键矩阵和值矩阵：
+\begin{align}
+\mathbf{Q}_h=\mathbf{X}\mathbf{W}_h^{(q)},\qquad
+\mathbf{K}_h=\mathbf{X}\mathbf{W}_h^{(k)},\qquad
+\mathbf{V}_h=\mathbf{X}\mathbf{W}_h^{(v)}
+\label{align:ch12-多头QKV}
+\end{align}
+
+首先将各个注意力头合并成一个单一矩阵，然后使用矩阵 $\mathbf{W}^{(o)}$ 对结果进行线性变换，从而得到一个合并输出，形式为
+\begin{align}
+\mathbf{Y}(\mathbf{X})=\mathrm{Concat}\left[\mathbf{H}_1,\cdots,\mathbf{H}_H\right]\mathbf{W}^{(o)}
+\label{align:ch12-多头注意力合并}
+\end{align}
+
+\begin{definition}[多头注意力]\label{definition:ch12-多头注意力}
+设 $H$ 为正整数，对每个 $h=1,\cdots,H$ 取独立的参数 $\mathbf{W}_h^{(q)},\mathbf{W}_h^{(k)}\in\mathbb{R}^{D\times D_k}$ 与 $\mathbf{W}_h^{(v)}\in\mathbb{R}^{D\times D_v}$，按\eqref{align:ch12-单头注意力}与\eqref{align:ch12-多头QKV}计算各头的输出 $\mathbf{H}_h$。把 $\mathbf{H}_1,\cdots,\mathbf{H}_H$ 按列拼接得到 $N\times HD_v$ 的矩阵，再右乘 $\mathbf{W}^{(o)}\in\mathbb{R}^{HD_v\times D}$，所得\eqref{align:ch12-多头注意力合并}称为\textbf{多头注意力}（multi-head attention）。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch12-多头注意力; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+多头的动机是“分工”：不同的头可以用不同的线性投影去捕捉不同类型的依赖（例如一个头跟踪时态、另一个头跟踪词性），而单一头只能给出这些模式的加权平均，无法同时精确表达。因为每个头都有自己的一套 $\mathbf{W}_h^{(q)},\mathbf{W}_h^{(k)},\mathbf{W}_h^{(v)}$，头与头之间不共享参数，所以它们学到的是互不相同的注意力矩阵。拼接后的维度为 $HD_v$，再由 $\mathbf{W}^{(o)}$ 映射回 $D$ 维，这一“先拼后投”的结构保证了输出维度与输入维度一致，从而多头注意力可以像单头一样嵌入残差连接。通常取 $D_v=D/H$，于是拼接矩阵的维度恰为 $N\times D$，总参数量与单头情形保持同一量级——这也是多头并不显著增加计算量的原因。$\mathbf{W}^{(o)}$ 与各头的参数一起在训练中学习，它不是固定的平均算子。
+\end{remark}
+
+多头注意力网络的结构如\cref{figure:ch12-多头注意力结构}所示，算法过程见下面的算法 12.2。
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.62\textwidth]{ch12-fig12-7-multihead.png}
+  \caption{多头注意力网络的结构。每个注意力头都包含\cref{figure:ch12-缩放点积注意力层}所示的结构，并有自己的键、查询和值参数。将各个注意力头的输出合并起来，然后线性投射回输入数据维度。}
+  \label{figure:ch12-多头注意力结构}
+\end{figure}
+
+\begin{center}
+\setlength{\fboxsep}{7pt}%
+\fbox{\begin{minipage}{0.9\textwidth}
+\centering\textbf{算法 12.2\quad 多头注意力}\par
+\vspace{5pt}
+\begin{flushleft}
+\textbf{Input:} 一组 token $\mathbf{X}\in\mathbb{R}^{N\times D}:\{\mathbf{x}_1,\cdots,\mathbf{x}_N\}$\\
+\hspace*{1.5em}查询权重矩阵 $\{\mathbf{W}_1^{(q)},\cdots,\mathbf{W}_H^{(q)}\}\in\mathbb{R}^{D\times D}$\\
+\hspace*{1.5em}键权重矩阵 $\{\mathbf{W}_1^{(k)},\cdots,\mathbf{W}_H^{(k)}\}\in\mathbb{R}^{D\times D}$\\
+\hspace*{1.5em}值权重矩阵 $\{\mathbf{W}_1^{(v)},\cdots,\mathbf{W}_H^{(v)}\}\in\mathbb{R}^{D\times D_v}$\\
+\hspace*{1.5em}输出权重矩阵 $\mathbf{W}^{(o)}\in\mathbb{R}^{HD_v\times D}$\\
+\textbf{Output:} $\mathbf{Y}\in\mathbb{R}^{N\times D}:\{\mathbf{y}_1,\cdots,\mathbf{y}_N\}$\\
+// 为每个注意力头计算自注意力（参见算法 12.1）\\
+\textbf{for} $h=1,\cdots,H$ \textbf{do}\\
+\hspace*{1.5em}$\mathbf{Q}_h=\mathbf{X}\mathbf{W}_h^{(q)}$, $\mathbf{K}_h=\mathbf{X}\mathbf{W}_h^{(k)}$, $\mathbf{V}_h=\mathbf{X}\mathbf{W}_h^{(v)}$\\
+\hspace*{1.5em}$\mathbf{H}_h=\mathrm{Attention}(\mathbf{Q}_h,\mathbf{K}_h,\mathbf{V}_h)$ \quad // $\mathbf{H}_h\in\mathbb{R}^{N\times D_v}$\\
+\textbf{end for}\\
+$\mathbf{H}=\mathrm{Concat}\left[\mathbf{H}_1,\cdots,\mathbf{H}_H\right]$ \quad // 合并注意力头\\
+\textbf{return} $\mathbf{Y}(\mathbf{X})=\mathbf{H}\mathbf{W}^{(o)}$
+\end{flushleft}
+\end{minipage}}
+\end{center}
+
+每个矩阵 $\mathbf{H}_h$ 的维度为 $N\times D_v$，因此合并矩阵的维度为 $N\times HD_v$。在使用维度为 $HD_v\times D$ 的线性矩阵 $\mathbf{W}^{(o)}$ 进行变换后，最终得到维度为 $N\times D$ 的输出矩阵 $\mathbf{Y}$，它与原始输入矩阵 $\mathbf{X}$ 的维度相同。矩阵 $\mathbf{W}^{(o)}$ 的元素是在训练阶段与查询矩阵、键矩阵和值矩阵一起学习的。通常情况下，$D_v$ 选择为与 $D/H$ 相等，从而使得到的合并矩阵的维度为 $N\times D$。\cref{figure:ch12-多头注意力信息流}展示了多头注意力层的信息流。
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.68\textwidth]{ch12-fig12-8-multihead-flow.png}
+  \caption{多头注意力层的信息流。}
+  \label{figure:ch12-多头注意力信息流}
+\end{figure}
+
+请注意，前文给出的多头注意力表述与研究文献中使用的表述相同，我们在每个注意力头的 $\mathbf{W}^{(v)}$ 矩阵与输出矩阵 $\mathbf{W}^{(o)}$ 的连续乘法中包含了一些冗余。在消除这些冗余后，多头自注意力层就可以写成每个注意力头的贡献之和（见\cref{exercise:ch12-05}）。
+
+\subsection{Transformer 层}\label{subsection:ch12-Transformer层}
+
+多头自注意力构成了 Transformer 网络的核心架构元素。我们知道，神经网络从深度结构中获益匪浅，因此我们希望将多个自注意力层堆叠在一起。为了提高训练效率，我们可以引入绕过多头结构的残差连接（参见\cref{section:ch09-残差连接}）。为此，我们要求输出维度与输入维度相同（参见\cref{subsection:ch07-层归一化}）。然后进行层归一化（layer normalization）（Ba, Kiros, and Hinton, 2016），从而提高训练效率。由此产生的变换可以写成
+\begin{align}
+\mathbf{Z}=\mathrm{LayerNorm}\left[\mathbf{Y}(\mathbf{X})+\mathbf{X}\right]
+\label{align:ch12-注意力残差LN}
+\end{align}
+
+其中 $\mathbf{Y}$ 由\eqref{align:ch12-多头注意力合并}定义。有时，层归一化会被预归一化取代，即层归一化在多头注意力之前而不是之后进行，因为这可以带来更有效的优化。在这种情况下，我们得出
+\begin{align}
+\mathbf{Z}=\mathbf{Y}(\mathbf{X}')+\mathbf{X},\qquad \text{其中}\quad \mathbf{X}'=\mathrm{LayerNorm}\left[\mathbf{X}\right]
+\label{align:ch12-预归一化注意力}
+\end{align}
+
+在所有情况下，$\mathbf{Z}$ 的维度都与输入矩阵 $\mathbf{X}$ 的维度相同。
+
+我们已经看到，注意力机制创建了值向量的线性组合，然后用它产生输出向量。此外，这些值向量是输入向量的线性函数，因此我们可以看到，注意力层的输出受限于输入的线性组合。非线性通过注意力权重引入，因此输出将通过 softmax 函数非线性地依赖于输入，但输出向量仍然受限于输入向量所跨的子空间，这限制了注意力层的表达能力。我们可以使用一个标准的非线性神经网络（有 $D$ 个输入和 $D$ 个输出）对每一层的输出进行后处理，用 $\mathrm{MLP}[\cdot]$ 表示“多层感知机”，从而提高 Transformer 的灵活性。例如，这可能包括一个具有 ReLU 隐藏单元的两层全连接网络。当我们这样做时，需要保持 Transformer 处理不同长度序列的能力。为此，我们需要对每个输出向量（与 $\mathbf{Z}$ 的行相对应）应用相同的共享网络。同样，也可以通过使用残差连接来改进该神经网络层。它还包括层归一化，从而 Transformer 层的最终输出形式为
+\begin{align}
+\tilde{\mathbf{X}}=\mathrm{LayerNorm}\left[\mathrm{MLP}[\mathbf{Z}]+\mathbf{Z}\right]
+\label{align:ch12-FFN残差LN}
+\end{align}
+
+这就产生了 Transformer 层的整体架构，如\cref{figure:ch12-Transformer层架构}所示，算法过程见下面的算法 12.3。同样，我们也可以使用预归一化，在这种情况下，Transformer 层的最终输出形式为
+\begin{align}
+\tilde{\mathbf{X}}=\mathrm{MLP}[\mathbf{Z}']+\mathbf{Z},\qquad \text{其中}\quad \mathbf{Z}'=\mathrm{LayerNorm}\left[\mathbf{Z}\right]
+\label{align:ch12-预归一化FFN}
+\end{align}
+
+\begin{definition}[Transformer 层]\label{definition:ch12-Transformer层}
+设 $\mathbf{X}\in\mathbb{R}^{N\times D}$，$\mathbf{Y}$ 为\eqref{align:ch12-多头注意力合并}给出的多头自注意力输出，$\mathrm{MLP}[\cdot]$ 为逐行作用、参数在各 token 间共享的多层感知机。由\eqref{align:ch12-注意力残差LN}与\eqref{align:ch12-FFN残差LN}（或预归一化形式\eqref{align:ch12-预归一化注意力}与\eqref{align:ch12-预归一化FFN}）复合而成的映射 $\mathbf{X}\mapsto\tilde{\mathbf{X}}$ 称为一个\textbf{Transformer 层}。多个这样的层首尾相接即构成 Transformer 网络，层与层之间不共享权重与偏置。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch12-Transformer层; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+Transformer 层由两个子层组成，动机与条件都很明确。第一，残差连接 $\mathbf{Y}(\mathbf{X})+\mathbf{X}$ 要求 $\mathbf{Y}$ 与 $\mathbf{X}$ 同维，这正是前面要求 $D_v=D$ 的理由；残差路径使梯度可以直接回传，也让位置信息在层间传递时不被淹没。第二，层归一化在特征维度上对每个 token 独立地做标准化，因此与序列长度无关，可以在不同长度的序列上使用，这正是它优于依赖批统计量的批量归一化之处。第三，注意力只做输入的线性组合加 softmax 加权，单靠它无法表示特征之间的非线性交互；逐行共享的 MLP 补上了这一表达能力，而“逐行共享”又保证了输出不依赖序列长度、参数不随 $N$ 增长。预归一化把 LayerNorm 移到子层之前，使残差路径上完全没有归一化算子，梯度可以无损地沿残差路径回传，因此深层模型更容易优化；两种形式的输出维度都与 $\mathbf{X}$ 相同，故可任意互换而不破坏堆叠。
+\end{remark}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.4\textwidth]{ch12-fig346-transformer-layer.png}
+  \caption{Transformer 层的整体架构。此处“MLP”代表多层感知机，“add \& norm”则代表残差连接和随后的层归一化。}
   \label{figure:ch12-Transformer层架构}
-\end{figure}同样，我们也可以使用预归一化。在典型的Transformer模型中，有多个这样的层叠加在一起。虽然不同层之间不共享权重和偏置，但各层通常具有相同的结构。
+\end{figure}
+
+\begin{center}
+\setlength{\fboxsep}{7pt}%
+\fbox{\begin{minipage}{0.86\textwidth}
+\centering\textbf{算法 12.3\quad Transformer 层}\par
+\vspace{5pt}
+\begin{flushleft}
+\textbf{Input:} 一组 token $\mathbf{X}\in\mathbb{R}^{N\times D}:\{\mathbf{x}_1,\cdots,\mathbf{x}_N\}$\\
+\hspace*{1.5em}多头自注意力层参数\\
+\hspace*{1.5em}前馈网络参数\\
+\textbf{Output:} $\tilde{\mathbf{X}}\in\mathbb{R}^{N\times D}:\{\tilde{\mathbf{x}}_1,\cdots,\tilde{\mathbf{x}}_N\}$\\
+$\mathbf{Z}=\mathrm{LayerNorm}\left[\mathbf{Y}(\mathbf{X})+\mathbf{X}\right]$ \quad // $\mathbf{Y}(\mathbf{X})$ 由算法 12.2 给出\\
+$\tilde{\mathbf{X}}=\mathrm{LayerNorm}\left[\mathrm{MLP}[\mathbf{Z}]+\mathbf{Z}\right]$ \quad // 共享网络\\
+\textbf{return} $\tilde{\mathbf{X}}$
+\end{flushleft}
+\end{minipage}}
+\end{center}
+
+在典型的 Transformer 模型中，有多个这样的层叠加在一起。虽然不同层之间不共享权重和偏置，但各层通常具有相同的结构。
 
 \subsection{计算复杂性}\label{subsection:ch12-计算复杂性}
 
-到目前为止我们所讨论的注意力层包含一个向量集（其中有$N$个向量，每个向量的长度为$D$），我们将它映射到了另一个具有相同维度的向量集（其中也有$N$个向量）。因此，输入和输出的总维度均为$ND$。如果我们使用标准的全连接神经网络将输入值映射到输出值，就会有$O(N^2 D^2)$个独立参数。同样，计算通过这样一个网络进行一次前向传递的成本也是$O(N^2 D^2)$。
+到目前为止我们所讨论的注意力层包含一个向量集（其中有 $N$ 个向量，每个向量的长度为 $D$），我们将它映射到了另一个具有相同维度的向量集（其中也有 $N$ 个向量）。因此，输入和输出的总维度均为 $ND$。如果我们使用标准的全连接神经网络将输入值映射到输出值，就会有 $O(N^2D^2)$ 个独立参数。同样，计算通过这样一个网络进行一次前向传递的成本也是 $O(N^2D^2)$。
 
-在注意力层中，矩阵$\mathbf{W}^{(Q)}$、$\mathbf{W}^{(K)}$和$\mathbf{W}^{(V)}$在输入token之间共享，因此独立参数的数量为$O(D^2)$，这里假设$D_q\approx D_v=D$。由于有$N$个输入token，在自注意力层中计算点积的步骤数为$O(N^2 D)$。我们可以把自注意力层看作一个稀疏矩阵，其中的参数在矩阵的特定块之间共享。随后的神经网络层（它有$D$个输入和$D$个输出）的成本为$O(D^2)$。由于它在token之间共享，其复杂度与$N$成线性关系，因此这一层的总成本为$O(ND^2)$。
+在注意力层中，矩阵 $\mathbf{W}^{(q)}$、$\mathbf{W}^{(k)}$ 和 $\mathbf{W}^{(v)}$ 在输入 token 之间共享，因此独立参数的数量为 $O(D^2)$，这里假设 $D_k\approx D_v\approx D$。由于有 $N$ 个输入 token，在自注意力层中计算点积的步骤数为 $O(N^2D)$。我们可以把自注意力层看作一个稀疏矩阵，其中的参数在矩阵的特定块之间共享。随后的神经网络层（它有 $D$ 个输入和 $D$ 个输出）的成本为 $O(D^2)$。由于它在 token 之间共享，其复杂度与 $N$ 成线性关系，因此这一层的总成本为 $O(ND^2)$。
 
-根据$N$和$D$的相对大小，Transformer层或多层感知机层有可能支配计算成本。与全连接网络相比，Transformer层的计算效率更高。Transformer架构的许多变体已被提出（Lin et al., 2021; Phuong and Hutter, 2022），包括旨在提高效率的修正版（Tay et al., 2020）。
+\begin{proposition}[Transformer 层的计算复杂度]\label{proposition:ch12-计算复杂度}
+设序列长度为 $N$、模型维度为 $D$，且 $D_k\approx D_v\approx D$。则单头自注意力层的参数量为 $O(D^2)$、计算量为 $O(N^2D)$；逐行共享的两层 MLP（$D$ 个输入、$D$ 个输出）的参数量与计算量均为 $O(D^2)$ 与 $O(ND^2)$；整个 Transformer 层的计算量为 $O(N^2D+ND^2)$，参数量为 $O(D^2)$。相比之下，把 $ND$ 维输入映射到 $ND$ 维输出的全连接网络需要 $O(N^2D^2)$ 个参数与同阶的计算量。
+\end{proposition}
+
+\begin{proof}
+单个 $\mathbf{W}^{(q)}$ 有 $D\times D_k$ 个元素，三个投影矩阵合计 $O(D^2)$ 个参数，且与 $N$ 无关。计算 $\mathbf{Q},\mathbf{K},\mathbf{V}$ 各需 $O(ND^2)$ 次乘法；计算 $\mathbf{Q}\mathbf{K}^{\mathsf{T}}$ 需对 $N^2$ 个元素各做长度为 $D$ 的点积，共 $O(N^2D)$；softmax 逐行处理 $N\times N$ 个元素，为 $O(N^2)$；右乘 $\mathbf{V}$ 再需 $O(N^2D)$。故注意力部分为 $O(N^2D+ND^2)$。MLP 对每个 token 做固定的 $O(D^2)$ 运算，$N$ 个 token 合计 $O(ND^2)$，因参数共享其参数量与 $N$ 无关，为 $O(D^2)$。两者相加即得 $O(N^2D+ND^2)$。而全连接层有 $ND$ 个输入与 $ND$ 个输出，权重矩阵为 $ND\times ND$，故参数量与计算量均为 $O(N^2D^2)$。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch12-计算复杂度; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+这个对比说明了 Transformer 效率优势的确切来源：参数共享。全连接层要为每一对（输入位置，输出位置）单独学习权重，参数量随 $N^2$ 爆炸；注意力层只用一套 $O(D^2)$ 的投影，位置之间的交互由数据决定的内积完成。代价是注意力部分仍随 $N^2$ 增长，因此长序列时 $O(N^2D)$ 项会主导——这正是后续各种稀疏化、低秩近似与线性注意力变体的出发点。两项的相对大小由 $N$ 与 $D$ 的比值决定：当 $N\ll D$ 时 MLP 项 $O(ND^2)$ 占优，当 $N\gg D$ 时注意力项 $O(N^2D)$ 占优。此外，注意力层的计算可以按 token 完全并行，而递归神经网络必须逐步串行，这一硬件友好性才是“效率更高”在实际训练中的主要体现，复杂度本身只说明渐近阶。
+\end{remark}
+
+根据 $N$ 和 $D$ 的相对大小，Transformer 层或多层感知机层有可能支配计算成本。与全连接网络相比，Transformer 层的计算效率更高。Transformer 架构的许多变体已被提出（Lin et al., 2021; Phuong and Hutter, 2022），包括旨在提高效率的修正版（Tay et al., 2020）。
 
 \subsection{位置编码}\label{subsection:ch12-位置编码}
 
-在Transformer架构中，矩阵$\mathbf{W}^{(Q)}$、$\mathbf{W}^{(K)}$和$\mathbf{W}^{(V)}$由输入的所有token共用。同样，紧随其后的神经网络（前馈神经网络）也由输入的所有token共用。因此，Transformer具有这样的特性，即对输入token（也就是$\mathbf{X}$的行）进行排序会导致输出矩阵$\bar{\mathbf{X}}$的行也被排序。换句话说，Transformer在输入排列方面是等变化的（equivariant）。网络架构中的参数共享有利于Transformer的大规模并行处理，也使网络能够像学习短距离依赖关系一样有效地学习远距离依赖关系。然而，当我们考虑序列数据（如自然语言中的词）时，不依赖token顺序就成了一个主要的限制，因为Transformer学习到的表示法将与输入token的顺序无关。句子“The food was bad, not good at all”和“The food was good, not bad at all”包含相同的token，但由于token的排序不同，这两个句子的含义也截然不同。显然，token顺序对于包括自然语言处理在内的大多数顺序处理任务至关重要，因此我们需要找到一种方法来将有关token顺序的信息注入网络。
+在 Transformer 架构中，矩阵 $\mathbf{W}^{(q)}$、$\mathbf{W}^{(k)}$ 和 $\mathbf{W}^{(v)}$ 由输入的所有 token 共用。同样，紧随其后的神经网络（前馈神经网络）也由输入的所有 token 共用。因此，Transformer 具有这样的特性，即对输入 token（也就是 $\mathbf{X}$ 的行）进行排序会导致输出矩阵 $\bar{\mathbf{X}}$ 的行也被排序。换句话说，Transformer 在输入排列方面是等变化的（equivariant）。网络架构中的参数共享有利于 Transformer 的大规模并行处理，也使网络能够像学习短距离依赖关系一样有效地学习远距离依赖关系。然而，当我们考虑序列数据（如自然语言中的词）时，不依赖 token 顺序就成了一个主要的限制，因为 Transformer 学习到的表示法将与输入 token 的顺序无关。句子“The food was bad, not good at all”和“The food was good, not bad at all”包含相同的 token，但由于 token 的排序不同，这两个句子的含义也截然不同。显然，token 顺序对于包括自然语言处理在内的大多数顺序处理任务至关重要，因此我们需要找到一种方法来将有关 token 顺序的信息注入网络。
 
-由于想要保留精心构建的注意力层的强大特性，因此我们希望在数据中对token顺序进行编码，而不是在网络架构中表示token顺序。为此，我们将构建一个与每个输入位置$n$相关的位置编码向量$\mathbf{r}_n$，然后将其与相关输入token的嵌入向量$\mathbf{x}_n$结合起来。增加所有后续注意力空间的维度，进而显著增加计算成本。相反，我们可以简单地将位置向量加到token向量上，从而得出
+\begin{proposition}[Transformer 层的排列等变性]\label{proposition:ch12-排列等变}
+设 $\mathbf{P}\in\mathbb{R}^{N\times N}$ 为置换矩阵。若 Transformer 层不含位置编码，则对任意输入 $\mathbf{X}$ 有 $\mathrm{TL}[\mathbf{P}\mathbf{X}]=\mathbf{P}\,\mathrm{TL}[\mathbf{X}]$，即输出随输入的 token 排列同步置换。
+\end{proposition}
 
+\begin{proof}
+置换成 $\mathbf{PX}$ 后，$\mathbf{Q},\mathbf{K},\mathbf{V}$ 分别变为 $\mathbf{PQ},\mathbf{PK},\mathbf{PV}$。注意力矩阵变为 $(\mathbf{PQ})(\mathbf{PK})^{\mathsf{T}}=\mathbf{P}\mathbf{Q}\mathbf{K}^{\mathsf{T}}\mathbf{P}^{\mathsf{T}}$，逐行 softmax 与左乘 $\mathbf{P}$ 可交换，故注意力输出为 $\mathbf{P}\,\mathrm{Softmax}[\mathbf{Q}\mathbf{K}^{\mathsf{T}}]\,\mathbf{P}^{\mathsf{T}}\mathbf{PV}=\mathbf{P}\mathbf{Y}$。残差与层归一化都是逐行运算，与左乘置换矩阵可交换；MLP 亦逐行作用，故 $\mathrm{MLP}[\mathbf{P}\mathbf{Z}]=\mathbf{P}\,\mathrm{MLP}[\mathbf{Z}]$。逐层归纳即得结论。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch12-排列等变; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+等变性既是优点也是限制。作为优点，它意味着注意力对“任意两个 token 之间的关系”建模，与它们相距多远无关，因此长距离依赖与短距离依赖被同等对待——这是 Transformer 相对递归神经网络的根本改进。作为限制，它也意味着模型对词序完全无知：把“狗咬人”与“人咬狗”的 token 集合原样输入，输出只是同样被置换的两组表示，模型无法区分二者。解决方式不是修改架构（那会破坏等变性带来的参数共享与并行性），而是在数据上注入位置信息，使原本相同的 token 表示在不同位置取不同的值，从而打破等变性。命题的条件“不含位置编码”是本质的：一旦加上依赖位置的向量，$\mathbf{P}\mathbf{X}$ 与 $\mathbf{X}$ 的位置编码不再对应，等变性即被有意破坏。
+\end{remark}
+
+由于想要保留精心构建的注意力层的强大特性，因此我们希望在数据中对 token 顺序进行编码，而不是在网络架构中表示 token 顺序。为此，我们将构建一个与每个输入位置 $n$ 相关的位置编码向量 $\mathbf{r}_n$，然后将其与相关输入 token 的嵌入向量 $\mathbf{x}_n$ 结合起来。一种显而易见的方法是将这些向量合并起来，但这会增加输入空间的维度，进而增加所有后续注意力空间的维度，从而显著增加计算成本。相反，我们可以简单地将位置向量加到 token 向量上，从而得出
 \begin{align}
-  \tilde{\mathbf{x}}_n = \mathbf{x}_n + \mathbf{r}_n
-  \label{align:ch12-位置编码相加}
+\tilde{\mathbf{x}}_n=\mathbf{x}_n+\mathbf{r}_n
+\label{align:ch12-位置编码相加}
 \end{align}
 
-这就要求位置编码向量的维度与token嵌入向量的维度相同。
+这就要求位置编码向量的维度与 token 嵌入向量的维度相同。
 
-接下来的任务是构建嵌入向量$\mathbf{r}_n$。一种简单的方法是为每个位置关联一个整数。但这样做的问题是，数值的大小会无限制地增加，因此可能会严重破坏嵌入向量。此外，对于比训练时所用输入序列更长的新输入序列，它可能无法很好地泛化，因为这些输入序列涉及的编码值将超出训练时所用编码值的范围。我们也可以为序列中的每个token分配一个介于0和1之间的数字，从而保持表示法的有界性。然而，这种表示法对于特定位置并不是唯一的，因为它取决于整个序列的长度。
+初看起来，在 token 向量上添加位置信息会破坏输入向量，使得网络的任务变得更加难以完成。不过，从两个随机选择的不相关向量在高维空间中几乎是正交的这一现象中，我们可以了解到这一方法为什么能够很好地发挥作用，这表明网络能够相对独立地处理 token 的身份信息和位置信息。另外，请注意，由于 Transformer 中的层与层之间都有残差连接，因此位置信息从一层转到下一层的过程中不会丢失。此外，Transformer 中的线性处理层能使合并表示法与加法表示法具有相似的特性。
 
-理想的位置编码应该为每个位置提供唯一的表示，其应该是有界的，能泛化为较长的序列，且应该有一致的方法来表示任意两个输入向量之间的步数，而不管它们的绝对位置如何，因为token的相对位置往往比绝对位置更重要。位置编码的方法有很多 (Dutker, Schmitt, and Sch\"utze, 2021)。在此，我们介绍一种由Vaswani et al. (2017)引入的基于正弦函数的技术。对于给定的位置$n$，相关的编码向量具有组件$r_{ni}$，其计算公式为
+\begin{definition}[位置编码]\label{definition:ch12-位置编码}
+设第 $n$ 个 token 的嵌入向量为 $\mathbf{x}_n\in\mathbb{R}^{D}$。若对每个位置 $n$ 指定向量 $\mathbf{r}_n\in\mathbb{R}^{D}$，并按\eqref{align:ch12-位置编码相加}把 $\mathbf{r}_n$ 加到 $\mathbf{x}_n$ 上再送入 Transformer，则称 $\mathbf{r}_n$ 为\textbf{位置编码}（positional encoding）：其元素由固定公式给出的称为正弦位置编码，其元素作为可学习参数在训练中确定的称为习得的位置编码。
+\end{definition}
 
+% SUPPLEMENT: parent=definition:ch12-位置编码; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+把位置信息“加”到词向量上而不是“拼接”，首先是为了不改变模型维度：拼接会使输入维度变为 $D+D'$，后续所有权重矩阵都要随之增大，计算成本上升；相加则保持 $D$ 不变。相加之所以可行，依赖高维空间的一个几何事实：随机选取的两个无关向量内积近似为零，因此 $\mathbf{x}_n$ 与 $\mathbf{r}_n$ 在 $D$ 较大时近似正交，网络可以分别从投影中读出“是哪个 token”与“在哪个位置”，而不会严重相互干扰。残差连接保证位置信息不会在多层堆叠中被逐层稀释，线性层则使加法形式与拼接形式在表达能力上接近（线性映射对拼接的分块作用等价于分别作用于两部分再相加）。需要注意，位置编码不是注意力权重的一部分，它只改变输入表示；因此它不破坏\cref{proposition:ch12-排列等变}以外的任何性质，却有意破坏了排列等变性本身。
+\end{remark}
+
+接下来的任务是构建嵌入向量 $\mathbf{r}_n$。一种简单的方法是为每个位置关联一个整数。但这样做的问题是，数值的大小会无限制地增加，因此可能会严重破坏嵌入向量。此外，对于比训练时所用输入序列更长的新输入序列，它可能无法很好地泛化，因为这些输入序列涉及的编码值将超出训练时所用编码值的范围。我们也可以为序列中的每个 token 分配一个介于 0 和 1 之间的数字，从而保持表示法的有界性。然而，这种表示法对于特定位置并不是唯一的，因为它取决于整个序列的长度。
+
+理想的位置编码应该为每个位置提供唯一的表示，其应该是有界的，能泛化为较长的序列，且应该有一致的方法来表示任意两个输入向量之间的步数，而不管它们的绝对位置如何，因为 token 的相对位置往往比绝对位置更重要。
+
+位置编码的方法有很多（Duffer, Schmitt, and Schütze, 2021）。在此，我们介绍一种由 Vaswani et al. (2017) 引入的基于正弦函数的技术。对于给定的位置 $n$，相关位置的编码向量具有组件 $r_{ni}$，其计算公式为
 \begin{align}
-  r_{n,\,2i} = \sin\left(\frac{n}{10000^{2i/D}}\right),\qquad
-  r_{n,\,2i+1} = \cos\left(\frac{n}{10000^{2i/D}}\right)
-  \label{align:ch12-正弦位置编码}
+r_{ni}=
+\begin{cases}
+\sin\left(\dfrac{n}{L^{i/D}}\right), & \text{当 }i\text{ 是偶数时},\\[2mm]
+\cos\left(\dfrac{n}{L^{(i-1)/D}}\right), & \text{当 }i\text{ 是奇数时},
+\end{cases}
+\label{align:ch12-正弦位置编码}
 \end{align}
+其中 $L$ 为常数尺度。
 
-当$i$是偶数时取第一式，当$i$是奇数时取第二式。这种编码的特点是，向量$\mathbf{r}_n$的元素都位于$(-1,1)$范围内。这不禁让人联想到二进制数的表示方法，最低阶位高频率地交替出现，而随后的位则以逐渐降低的频率交替出现。如图12.10(a)所示，嵌入向量$\mathbf{r}_n$的元素由一系列波长逐渐增大的正弦和余弦函数给出。
+如\cref{figure:ch12-位置编码}(a) 所示，嵌入向量 $\mathbf{r}_n$ 的元素由一系列波长逐渐增大的正弦和余弦函数给出。
 
-式~\eqref{align:ch12-正弦位置编码}给出的正弦表示法有一个很好的特性，即对于任何固定偏移$k$，位置$n+k$处的编码可以表示为位置$n$处编码的线性组合，其中系数不取决于绝对位置，而只取决于$k$值（见习题12.10）。因此，网络应该能够学会关注相对位置。请注意，这一特性要求编码同时使用正弦和余弦函数。不过，对于式~\eqref{align:ch12-正弦位置编码}来说，向量元素是连续变量而非二进制变量。位置编码向量的热图说明见图12.10(b)。
+这种编码的特点是，向量 $\mathbf{r}_n$ 的元素都位于 $(-1,1)$ 范围内。这不禁让人联想到二进制数的表示方法，最低阶位高频率地交替出现，而随后的位则以逐渐降低的频率交替出现：
 
-另一种常用的位置表示方法是使用习得的位置编码。这是通过在每个token位置设置一个权重向量来实现的，该权重向量可在训练过程中与模型的其他参数共同学习，从而避免使用人工表示法。由于token位置之间不共享参数，因此token在排列时不再是不变的，而这正是位置编码的目的。不过，这种方法并不符合前述对较长的输入序列进行泛化的标准，因为训练过程中没有出现过的位置编码未经训练。因此，当输入序列的长度在训练和推理过程中都相对固定时，这种方法通常最适用。
+\begin{center}
+\begin{tabular}{rcccc}
+1: & 0 & 0 & 0 & 1\\
+2: & 0 & 0 & 1 & 0\\
+3: & 0 & 0 & 1 & 1\\
+4: & 0 & 1 & 0 & 0\\
+5: & 0 & 1 & 0 & 1\\
+6: & 0 & 1 & 1 & 0\\
+7: & 0 & 1 & 1 & 1\\
+8: & 1 & 0 & 0 & 0\\
+9: & 1 & 0 & 0 & 1
+\end{tabular}
+\end{center}
+
+不过，对于\eqref{align:ch12-正弦位置编码}来说，向量元素是连续变量而非二进制变量。位置编码向量的热图说明见\cref{figure:ch12-位置编码}(b)。
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.95\textwidth]{ch12-fig12-10-positional-encoding.png}
+  \caption{由\eqref{align:ch12-正弦位置编码}定义并用于构建位置编码向量的函数示意图。(a) 图中横轴表示嵌入向量 $\mathbf{r}_n$ 的不同组件，纵轴表示序列中的位置。位置 $n$ 和位置 $m$ 的向量元素值均由相应的正弦和余弦曲线与水平灰线的交点表示。(b) 由\eqref{align:ch12-正弦位置编码}定义且对于前 $N=200$ 个位置、$L=30$ 的位置编码向量的热图说明，其中维度为 $D=100$。}
+  \label{figure:ch12-位置编码}
+\end{figure}
+
+\eqref{align:ch12-正弦位置编码}给出的正弦表示法有一个很好的特性，即对于任何固定偏移 $k$，位置 $n+k$ 处的编码可以表示为位置 $n$ 处编码的线性组合，其中系数不取决于绝对位置，而只取决于 $k$ 值（见\cref{exercise:ch12-10}）。因此，网络应该能够学会关注相对位置。请注意，这一特性要求编码同时使用正弦和余弦函数。
+
+\begin{proposition}[正弦位置编码的平移线性性]\label{proposition:ch12-位置编码平移}
+按\eqref{align:ch12-正弦位置编码}定义 $r_{ni}$，并记 $\mathbf{r}_n=(r_{n1},\cdots,r_{nD})$。则对任意固定整数 $k$ 与任意 $n$，存在只依赖 $k$（而不依赖 $n$）的矩阵 $\mathbf{M}_k$，使得 $\mathbf{r}_{n+k}=\mathbf{M}_k\mathbf{r}_n$。
+\end{proposition}
+
+\begin{proof}
+考察\eqref{align:ch12-正弦位置编码}中以 $\omega_i\triangleq L^{-i/D}$（奇数 $i$ 时为 $L^{-(i-1)/D}$）为角频率的一对分量。由和角公式，对同一角频率 $\omega$ 有
+\begin{align*}
+\sin\left((n+k)\omega\right)&=\cos(k\omega)\sin(n\omega)+\sin(k\omega)\cos(n\omega),\\
+\cos\left((n+k)\omega\right)&=\cos(k\omega)\cos(n\omega)-\sin(k\omega)\sin(n\omega),
+\end{align*}
+即位置 $n+k$ 处的正弦、余弦分量是位置 $n$ 处同频率的正弦、余弦分量的线性组合，系数 $\cos(k\omega)$、$\sin(k\omega)$ 只依赖 $k$ 与 $\omega$，不依赖 $n$。由于每个分量只与同频率的分量耦合，把这些 $2\times2$ 的块按分量排列拼成分块对角矩阵，即得只依赖 $k$ 的 $\mathbf{M}_k$ 满足 $\mathbf{r}_{n+k}=\mathbf{M}_k\mathbf{r}_n$。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch12-位置编码平移; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+该命题说明正弦位置编码把“相对位移”编码进了表示：注意力层是线性的（softmax 之前的部分），若它能学会用 $\mathbf{M}_k$ 作用于查询或键，就能识别“相距 $k$ 步”这一关系，而不必为每个绝对位置单独记忆参数，因此对训练时未见过的更长序列也能泛化。证明中同时使用正弦与余弦是关键：只有两者成对出现时，和角公式才能给出封闭的线性关系；若只保留正弦，$\sin((n+k)\omega)$ 还依赖于 $\cos(n\omega)$，无法写成单个分量的线性组合。这也解释了为什么编码的相邻维度要成对取正弦与余弦、且共享同一角频率。注意该性质是“表示层面”的：它保证存在这样的线性变换，但不保证网络一定学到它。
+\end{remark}
+
+另一种常用的位置表示方法是使用习得的位置编码。这是通过在每个 token 位置设置一个权重向量来实现的，该权重向量可在训练过程中与模型的其他参数共同学习，从而避免使用人工表示法。由于 token 位置之间不共享参数，因此 token 在排列时不再是不变的，而这正是位置编码的目的。不过，这种方法并不符合前述对较长的输入序列进行泛化的标准，因为训练过程中没有出现过的位置编码未经训练。因此，当输入序列的长度在训练和推理过程中都相对固定时，这种方法通常最适用。
 
 \end{document}

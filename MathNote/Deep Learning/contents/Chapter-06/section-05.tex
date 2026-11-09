@@ -1,123 +1,320 @@
 \documentclass[../../main.tex]{subfiles}
+
 \graphicspath{{../../image/}{../../figure/}}
+
 \begin{document}
 
 \section{混合密度网络}\label{section:ch06-混合密度网络}
 
-到目前为止，我们已经讨论了输出表示简单概率分布的神经网络，包括连续变量的高斯分布以及离散变量的二元分布。在本章最后一节，我们将展示神经网络如何通过将网络输出视为更复杂分布（如高斯混合分布）的参数来表示更一般的条件概率。通过这种方式定义关联的误差函数和相应输出单元激活函数，我们称此类网络为\textbf{混合密度网络}（mixture density network）。
+到目前为止，我们已经讨论了输出表示简单概率分布的神经网络，包括连续变量的 Gauss 分布以及离散变量的二元分布。在本章的最后一节，我们将展示神经网络如何通过将网络的输出视为更复杂分布（如 Gauss 混合分布）的参数来表示更一般的条件概率，我们称此类网络为\textbf{混合密度网络}（mixture density network），你将看到如何定义关联的误差函数和相应的输出单元激活函数。
 
-\subsection{机器人运动学示例}\label{section:ch06-机器人运动学示例}
+\subsection{机器人运动学示例}\label{subsection:ch06-机器人运动学示例}
 
-监督学习的目标是建模条件分布 $p(t\mid \mathbf{x})$。对于许多简单回归问题，选择高斯分布较为常见；然而实际机器学习问题往往具有明显非高斯分布特征。例如在分布可能是多模态的\textbf{逆问题}（inverse problem）中，高斯假设可能导致非常糟糕的预测。
+监督学习的目的是建模条件分布 $p(\boldsymbol{t}\mid\boldsymbol{x})$。对于许多简单的回归问题，选择 Gauss 分布较为常见。然而，实际的机器学习问题往往具有明显的非 Gauss 分布特征。例如，在分布可能是多模态的\textbf{逆问题}（inverse problem）中，Gauss 假设可能导致非常糟糕的预测。
 
-作为逆问题的简单说明，考虑机械臂的运动学（图~6.16）。\textbf{正问题}（forward problem）涉及在给定关节角度时找到末端执行器位置，并具有唯一解；然而在实践中，我们希望将末端执行器移动到特定位置，为此必须设置适当的关节角度。我们需要求解一个逆问题，如图~6.16~所示，该问题有两个解（见习题~6.16），对应于"肘部向上"和"肘部向下"两种配置。
+\begin{definition}[正问题与逆问题]\label{definition:ch06-逆问题}
+设物理过程由映射 $\boldsymbol{g}:\boldsymbol{\theta}\mapsto\boldsymbol{x}$ 描述。由参数 $\boldsymbol{\theta}$（如关节角）计算输出 $\boldsymbol{x}$（如末端执行器位置）的问题称为\textbf{正问题}（forward problem）；反过来，由观测 $\boldsymbol{x}$ 推断 $\boldsymbol{\theta}$ 的问题称为\textbf{逆问题}（inverse problem）。当 $\boldsymbol{g}$ 不是单射时，逆问题的解不唯一。
+\end{definition}
 
-正问题通常对应于物理系统中的因果关系，通常具有唯一解——例如人体中特定症状可能由特定疾病引起。然而在机器学习中，我们通常需要求解逆问题，例如在给定一组症状情况下预测疾病。如果正问题涉及多对一映射，则逆问题将具有许多解：例如多种不同疾病可能导致相同症状。
+% SUPPLEMENT: parent=definition:ch06-逆问题; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{definition:ch06-逆问题}中点明的关系是本节全部动机的来源：正问题通常由因果律给出、且往往一对一；逆问题则把多个原因映射到同一观测，因此其条件分布天然是多峰的。若强行用单峰的 Gauss 模型拟合逆问题，模型只能给出各峰之间的“平均值”，而这个值往往不对应任何一个真实解。注意“多对一”是逆问题多峰性的充分条件而非必要条件：即使 $\boldsymbol{g}$ 是单射，观测噪声也会使后验出现多个模式。
+\end{remark}
 
-在机器人运动学示例中，运动学由几何方程定义，其多模态性显而易见。但在许多机器学习问题中，多模态的存在可能不太明显，特别是涉及高维空间的问题。出于教学目的，下面考虑一个简单小问题，其多模态可以很容易可视化。该问题数据通过在区间 $(0,1)$ 上均匀采样变量 $x$ 产生，得到一组值 $\{x_n\}$；通过计算函数 $x+0.3\sin(2\pi x)$，然后添加在区间 $(-0.1,0.1)$ 上均匀采样得到的噪声，得到相应目标值。
+作为逆问题的简单说明，如\cref{figure:ch06-机械臂}所示，考虑机械臂的运动学。正问题涉及在给定关节角度的情况下找到末端执行器的位置，并具有唯一解。然而在实践中，我们希望将末端执行器移动到特定位置。为此，我们必须设置适当的关节角度。我们需要求解一个逆问题，如\cref{figure:ch06-机械臂}所示，该问题有两个解（见\cref{exercise:ch06-16}）。
 
-图~6.17~左图展示了正问题数据集，红色曲线显示了通过最小化平方和误差函数拟合两层神经网络的结果（该网络具有~6~个隐藏单元和一个线性输出单元）。最小二乘对应于高斯假设下的最大似然：它对正问题是一个很好的模型，但对高度非高斯的逆问题却是一个很差的模型。图~6.17~右图显示了通过交换 $x$ 和 $t$ 角色得到的逆问题——再次通过最小化平方和误差函数训练同样的网络，由于数据的多模态性，网络对数据的拟合效果较差。
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.62\textwidth]{ch06-fig6-16-robot.png}
+\caption{(a) 一种双连杆机械臂，其中末端执行器的笛卡儿坐标 $(x_1,x_2)$ 由两个关节角 $\theta_1$ 和 $\theta_2$ 以及臂的（固定）长度 $L_1$ 和 $L_2$ 唯一确定。这称为机械臂的正运动学。(b) 在实践中，我们必须找到能够产生所需末端执行器位置的关节角度。这种逆运动学（inverse kinematics）问题有两个对应于“肘部向上”和“肘部向下”的解决方案}
+\label{figure:ch06-机械臂}
+\end{figure}
 
-\subsection{条件混合分布}\label{section:ch06-条件混合分布}
+正问题通常对应于物理系统中的因果关系，并且通常具有唯一解。例如，人体的特定症状可能是由于存在特定疾病引起的。然而，在机器学习中，我们通常需要求解一个逆问题，例如尝试在给定一组症状的情况下预测疾病的存在。如果正问题涉及多对一映射，则逆问题将具有许多解。例如，多种不同疾病可能导致相同的症状。
 
-我们想要找到建模条件概率分布的一般框架。这可以通过使用专为建模 $p(t\mid \mathbf{x})$ 设计的混合模型来实现，其中混合系数和分量密度都是输入向量 $\mathbf{x}$ 的灵活函数，从而得到\textbf{混合密度网络}（mixture density network）。对于任何给定 $\mathbf{x}$ 值，混合模型为建模任意条件密度函数 $p(t\mid \mathbf{x})$ 提供一般形式；如果有足够灵活的网络，我们就有了一个可以近似任意条件概率分布的框架。
+在机器人运动学示例中，运动学由几何方程定义，其多模态性显而易见。然而，在许多机器学习问题中，多模态的存在可能不太明显，特别是涉及高维空间的问题。然而，出于教学的目的，下面考虑一个简单的小问题，其可以很容易实现多模态可视化。该问题的数据是通过在区间 $(0,1)$ 上均匀采样变量 $x$ 而产生的，我们得到一组值 $\{x_n\}$。通过计算函数 $x_n+0.3\sin(2\pi x_n)$，然后添加在区间 $(-0.1,0.1)$ 上均匀采样时产生的噪声，得到相应的目标值 $t_n$。\cref{figure:ch06-逆问题数据}显示了正问题和逆问题的数据集，以及通过最小化平方和误差函数得到的两层神经网络的结果，该网络具有 $6$ 个隐藏单元和一个线性输出单元。最小二乘法对应于 Gauss 假设下的最大似然。可以看到，它对于正问题是一个很好的模型，但它对于高度非 Gauss 性的逆问题却是一个很差的模型。
 
-在这里我们显式地为高斯分量设计模型如下：
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.80\textwidth]{ch06-fig6-17-inverse.png}
+\caption{左图展示了一个简单的正问题的数据集，其中红色曲线显示了通过最小化平方和误差函数来拟合两层神经网络的结果。如右图所示，通过交换 $x$ 和 $t$ 的角色得到相应的逆问题。在这里，再次通过最小化平方和误差函数训练同样的网络，由于数据集的多模态性，网络对数据的拟合效果较差}
+\label{figure:ch06-逆问题数据}
+\end{figure}
+
+\begin{example}[ 多模态的条件分布]\label{example:ch06-多模态数据}
+设正问题的数据由 $t=x+0.3\sin(2\pi x)+\varepsilon$ 生成，其中 $x\sim\mathcal{U}(0,1)$、$\varepsilon\sim\mathcal{U}(-0.1,0.1)$。逆问题把 $t$ 视为输入、$x$ 视为目标，此时对同一个 $t$ 往往存在多个 $x$ 与之对应，条件分布 $p(x\mid t)$ 因而具有多个峰；最小二乘拟合只能给出这些峰之间的平滑曲线。
+\end{example}
+
+\subsection{条件混合分布}\label{subsection:ch06-条件混合分布}
+
+我们想要找到建模条件概率分布的一般框架。这可以通过使用专为建模 $p(\boldsymbol{t}\mid\boldsymbol{x})$ 设计的混合模型来实现，其中混合系数和分量密度都是输入向量 $\boldsymbol{x}$ 的灵活函数，从而得到\textbf{混合密度网络}（mixture density network）。对于任何给定的 $\boldsymbol{x}$ 值，混合模型为建模任意条件密度函数 $p(\boldsymbol{t}\mid\boldsymbol{x})$ 提供了一般形式。如果有一个足够灵活的网络，我们就有了一个可以近似任意条件概率分布的框架。
+
+在这里，我们显式地为 Gauss 分量设计模型如下：
+
 \begin{align}
-p(t\mid \mathbf{x}) = \sum_{k=1}^{K}\pi_k(\mathbf{x})\,\mathcal{N}\!\left(t\,\middle|\,\mu_k(\mathbf{x}),\sigma_k^{2}(\mathbf{x})\right).
-\label{align:ch06-mdn}
+p(\boldsymbol{t}\mid\boldsymbol{x})=\sum_{k=1}^{K}\pi_k(\boldsymbol{x})\,\mathcal{N}\bigl(\boldsymbol{t}\,\big|\,\boldsymbol{\mu}_k(\boldsymbol{x}),\sigma_k^{2}(\boldsymbol{x})\bigr).
+\label{align:ch06-混合密度模型}
 \end{align}
 
-除了高斯分布，还可以为分量使用其他分布：例如如果目标变量是二元变量而非连续变量，则可以使用伯努利分布。虽然这里使用各向同性协方差，但也可以通过使用 Cholesky 因式分解表示协方差来使混合密度网络支持一般协方差矩阵~\citep{Williams1996}。即使使用各向同性分量，由于混合分布的影响，条件分布 $p(t\mid \mathbf{x})$ 也不具备对 $t$ 各分量的可分解性（与标准平方和回归模型不同）。
+\begin{definition}[混合密度网络]\label{definition:ch06-混合密度网络}
+若条件密度由\eqref{align:ch06-混合密度模型}给出，其中混合系数 $\pi_k(\boldsymbol{x})$、分量均值 $\boldsymbol{\mu}_k(\boldsymbol{x})$ 与分量方差 $\sigma_k^{2}(\boldsymbol{x})$ 全部由以 $\boldsymbol{x}$ 为输入、以 $\boldsymbol{w}$ 为参数的同一个神经网络输出，则称该模型为\textbf{混合密度网络}（mixture density network, MDN）。
+\end{definition}
 
-令混合模型的各个参数——即混合系数 $\pi_k(\mathbf{x})$、均值 $\mu_k(\mathbf{x})$ 和方差 $\sigma_k^{2}(\mathbf{x})$——由以 $\mathbf{x}$ 为输入的神经网络的输出决定。混合密度网络结构如图~6.18~所示。混合密度网络与混合专家模型密切相关~\citep{Jacobs1991}：主要区别在于混合专家模型对自身每个分量模型都有独立参数，而在混合密度网络中，我们使用相同的函数来预测所有分量密度的参数和混合系数，于是非线性隐藏单元在依赖于输入的函数之间是共享的。
+% SUPPLEMENT: parent=definition:ch06-混合密度网络; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{definition:ch06-混合密度网络}与普通回归网络的区别不在于网络结构，而在于\emph{输出的解释}：普通网络输出 $L$ 个数并解释为条件均值，MDN 输出 $L+2K$ 个数并解释为 $K$ 个 Gauss 分量的参数。因此 MDN 的误差函数不是人为选定的平方和，而是\eqref{align:ch06-混合密度模型}的负对数似然；这也意味着训练 MDN 会自动地同时学习“有几个模式”“每个模式在哪里”“每个模式有多宽”。
+\end{remark}
 
-如果混合模型~\eqref{align:ch06-mdn}~中有 $K$ 个分量，并且 $t$ 有 $L$ 个分量，则网络将具有：$K$ 个输出单元预激活（用 $a_k^{\pi}$ 表示）用于确定混合系数 $\pi_k(\mathbf{x})$；$K$ 个输出（用 $a_k^{\sigma}$ 表示）用于确定高斯标准差 $\sigma_k(\mathbf{x})$；$K\times L$ 个用 $a_{kj}^{\mu}$ 表示的输出用于确定高斯均值分量 $\mu_{k,j}(\mathbf{x})$。网络输出总数由 $L+2K$ 给出，这与具有 $L$ 个输出、用于预测目标变量条件均值的网络不同。例如图~6.18~中的神经网络可以是具有 S 形 tanh 隐藏单元的两层网络。
+这是一个\textbf{异方差}（heteroscedastic）模型的示例，数据上的噪声方差是输入向量 $\boldsymbol{x}$ 的函数。除了 Gauss 分布，我们还可以为分量使用其他分布。例如，如果目标变量是二元变量而不是连续变量，则可以使用Bernoulli分布。虽然这里使用了各向同性协方差，但也可以通过使用 Cholesky 因式分解表示协方差来使混合密度网络支持一般的协方差矩阵（Williams，1996）。即使使用各向同性的分量，由于混合分布的影响，条件分布 $p(\boldsymbol{t}\mid\boldsymbol{x})$ 也不具备对于 $\boldsymbol{t}$ 各分量的可分解性（与标准平方和回归模型不同）。
 
-混合系数必须满足下列约束：
+\begin{remark}（重构新增）异方差性在这里是“免费”得到的：$\sigma_k(\boldsymbol{x})$ 是网络的输出，因此模型可以自动学到“在某些 $\boldsymbol{x}$ 处数据很嘈杂、在另一些处很干净”。这与标准最小二乘回归形成鲜明对比——后者隐含假设噪声方差处处相同（同方差），若数据实际异方差，最小二乘会给所有样本相同的权重，从而在高噪声区域产生系统性偏差。
+\end{remark}
+
+令混合模型的各个参数，即混合系数 $\pi_k(\boldsymbol{x})$、均值 $\boldsymbol{\mu}_k(\boldsymbol{x})$ 和方差 $\sigma_k^{2}(\boldsymbol{x})$，由以 $\boldsymbol{x}$ 为输入的神经网络的输出决定。混合密度网络的结构如\cref{figure:ch06-混合密度网络}所示。混合密度网络与混合专家模型密切相关（Jacobs et al.，1991）。它们的主要区别在于，混合专家模型对自身的每个分量模型都有独立的参数；而在混合密度网络中，我们使用相同的函数来预测所有分量密度的参数和混合系数，于是，非线性隐藏单元在依赖于输入的函数之间共享。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.58\textwidth]{ch06-fig6-18-mdn.png}
+\caption{混合密度网络可以通过考虑 $t$ 分布的参数化混合模型来表示一般条件概率密度 $p(t\mid\boldsymbol{x})$，其参数由以 $\boldsymbol{x}$ 为输入向量的神经网络的输出确定}
+\label{figure:ch06-混合密度网络}
+\end{figure}
+
+例如，\cref{figure:ch06-混合密度网络}中的神经网络可以是具有 S 形 tanh 隐藏单元的两层网络。如果混合模型\eqref{align:ch06-混合密度模型}中有 $K$ 个分量，并且 $\boldsymbol{t}$ 有 $L$ 个分量，则网络将具有 $K$ 个输出单元预激活，这些输出单元用 $a_k^{\pi}$ 表示，用于确定混合系数 $\pi_k(\boldsymbol{x})$，用 $a_k^{\sigma}$ 表示的 $K$ 个输出用于确定 Gauss 标准差 $\sigma_k(\boldsymbol{x})$，$K\times L$ 个用 $a_{kj}^{\mu}$ 表示的输出则用于确定 Gauss 均值 $\boldsymbol{\mu}_k(\boldsymbol{x})$ 的分量 $\mu_{kj}(\boldsymbol{x})$。网络输出的总数由 $L+2K$ 给出，这与具有 $L$ 个输出的用来预测目标变量条件均值的网络不同。
+
+混合系数必须满足下列约束条件：
+
 \begin{align}
-\sum_{k=1}^{K}\pi_k(\mathbf{x})=1, \qquad 0\le \pi_k(\mathbf{x})\le 1,
-\label{align:ch06-pi-constraint}
+\sum_{k=1}^{K}\pi_k(\boldsymbol{x})=1,\qquad 0\leqslant\pi_k(\boldsymbol{x})\leqslant1,
+\label{align:ch06-混合系数约束}
 \end{align}
+
 这可以使用一组 softmax 输出来实现：
+
 \begin{align}
-\pi_k(\mathbf{x}) = \frac{\exp(a_k^{\pi})}{\sum_{j=1}^{K}\exp(a_j^{\pi})}.
-\label{align:ch06-pi-softmax}
+\pi_k(\boldsymbol{x})=\frac{\exp\bigl(a_k^{\pi}\bigr)}{\sum_{j=1}^{K}\exp\bigl(a_j^{\pi}\bigr)}.
+\label{align:ch06-混合系数softmax}
 \end{align}
 
-同样，方差必须满足 $\sigma_k^{2}(\mathbf{x})\ge 0$，因而 $\sigma_k(\mathbf{x})$ 可以使用相应网络预激活的指数来表示：
+同样，方差必须满足 $\sigma_k^{2}(\boldsymbol{x})\geqslant0$，因而 $\sigma_k(\boldsymbol{x})$ 可以使用下列相应网络预激活的指数来表示：
+
 \begin{align}
-\sigma_k(\mathbf{x}) = \exp(a_k^{\sigma}).
-\label{align:ch06-sigma-exp}
+\sigma_k(\boldsymbol{x})=\exp\bigl(a_k^{\sigma}\bigr).
+\label{align:ch06-分量标准差}
 \end{align}
 
-最后由于均值 $\mu_k(\mathbf{x})$ 具有实分量，可以用网络输出直接表示：
+最后，由于均值 $\boldsymbol{\mu}_k(\boldsymbol{x})$ 具有实分量，因此可以用网络输出直接表示：
+
 \begin{align}
-\mu_{k,j}(\mathbf{x}) = a_{kj}^{\mu},
-\label{align:ch06-mu-linear}
+\mu_{kj}(\boldsymbol{x})=a_{kj}^{\mu},
+\label{align:ch06-分量均值}
 \end{align}
+
 其中输出单元激活函数由恒等式 $f(a)=a$ 给出。
 
-\subsection{梯度优化}\label{section:ch06-梯度优化}
+\begin{definition}[MDN 的输出参数化]\label{definition:ch06-MDN参数化}
+称\eqref{align:ch06-混合系数softmax}、\eqref{align:ch06-分量标准差}与\eqref{align:ch06-分量均值}为混合密度网络的\textbf{输出参数化}：混合系数经 softmax 保证\eqref{align:ch06-混合系数约束}，标准差经指数变换保证非负，均值经恒等变换保持无约束。
+\end{definition}
 
-混合密度网络的可学习参数包括神经网络中的权重和偏置向量 $\mathbf{w}$，它可以通过最大似然来确定，也可以等价地通过最小化定义为似然负对数的误差函数来确定。对于彼此独立的数据，误差函数采用以下形式（其中显式给出了关于 $\mathbf{w}$ 的依赖）：
+% SUPPLEMENT: parent=definition:ch06-MDN参数化; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）三种变换的选择不是任意的，而是与各参数的取值域一一对应：$\pi_k$ 位于概率单纯形上，故用 softmax；$\sigma_k>0$，故用指数（也可以用以 softplus 代替指数，数值上更稳定）；$\mu_{kj}\in\mathbb{R}$，故用恒等。需要注意的是，指数变换虽然保证了非负，却在 $a_k^{\sigma}$ 很大时使 $\sigma_k$ 增长极快，容易造成数值溢出，因此实现中通常对 $a_k^{\sigma}$ 做截断或改用 softplus。
+\end{remark}
+
+混合密度网络的可学习参数包括神经网络中的权重和偏置向量 $\boldsymbol{w}$，它可以通过最大似然来确定，也可以等价地通过最小化定义为似然负对数的误差函数来确定。对于彼此独立的数据，误差函数采用以下形式：
+
 \begin{align}
-E(\mathbf{w}) = -\sum_{n=1}^{N}\ln\!\left\{\sum_{k=1}^{K}\pi_k(\mathbf{x}_n,\mathbf{w})\,\mathcal{N}\!\left(t_n\,\middle|\,\mu_k(\mathbf{x}_n,\mathbf{w}),\sigma_k^{2}(\mathbf{x}_n,\mathbf{w})\right)\right\}.
-\label{align:ch06-mdn-nll}
+E(\boldsymbol{w})=-\sum_{n=1}^{N}\ln\left\{\sum_{k=1}^{K}\pi_k(\boldsymbol{x}_n,\boldsymbol{w})\,\mathcal{N}\bigl(\boldsymbol{t}_n\,\big|\,\boldsymbol{\mu}_k(\boldsymbol{x}_n,\boldsymbol{w}),\sigma_k^{2}(\boldsymbol{x}_n,\boldsymbol{w})\bigr)\right\},
+\label{align:ch06-混合密度误差}
 \end{align}
 
-为了最小化误差函数，需要计算误差 $E(\mathbf{w})$ 关于参数 $\mathbf{w}$ 的导数。稍后我们将看到如何自动计算这些导数（参见第~8~章）。然而显式地为输出单元预激活的误差导数导出合适表达式是有帮助的，因为这强调了这些量的概率解释。由于误差函数~\eqref{align:ch06-mdn-nll}~由一些项的和组成，其中每项对应一个训练数据点，因此可以考虑特定输入向量 $\mathbf{x}_n$ 与相关目标向量 $t_n$ 的导数；总误差 $E$ 的导数通过对所有数据点求和获得，每个数据点自身的梯度也可以直接用于基于梯度的优化算法（参见第~7~章）。
+其中，我们显式地给出了有关 $\boldsymbol{w}$ 的依赖关系。
+
+\begin{proposition}[MDN 的误差函数]\label{proposition:ch06-MDN误差}
+在\cref{definition:ch06-混合密度网络}与样本独立假设下，负对数似然为\eqref{align:ch06-混合密度误差}。该误差函数是 $\boldsymbol{w}$ 的非凸函数，且其梯度可以逐样本分解为 $\nabla E(\boldsymbol{w})=\sum_{n=1}^{N}\nabla E_n(\boldsymbol{w})$，其中 $E_n=-\ln p(\boldsymbol{t}_n\mid\boldsymbol{x}_n,\boldsymbol{w})$。
+\end{proposition}
+
+\begin{proof}
+（重构新增）由独立性，$p(\{\boldsymbol{t}_n\}\mid\{\boldsymbol{x}_n\},\boldsymbol{w})=\prod_{n}p(\boldsymbol{t}_n\mid\boldsymbol{x}_n,\boldsymbol{w})$，取负对数即得\eqref{align:ch06-混合密度误差}。非凸性来自 $\boldsymbol{\mu}_k$ 与 $\sigma_k$ 对 $\boldsymbol{w}$ 的非线性依赖以及 $\ln\sum_k$ 的结构。梯度分解由求导的线性性直接得到。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch06-MDN误差; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\eqref{align:ch06-混合密度误差}中的对数是“对求和取对数”，这与\cref{proposition:ch06-二分类交叉熵}中对乘积取对数不同：它不能拆成每个分量的损失之和，因此 MDN 无法像普通分类那样逐分量独立优化。这一结构还带来一个著名的病态：当某个分量的方差趋于零且恰好覆盖一个样本时，似然可以趋于无穷、损失趋于 $-\infty$。实践中通过给 $\sigma_k$ 设下界或加入正则项来避免这种退化。
+\end{remark}
+
+\subsection{梯度优化}\label{subsection:ch06-梯度优化}
+
+为了最小化误差函数，需要计算误差 $E(\boldsymbol{w})$ 关于分量 $\boldsymbol{w}$ 的导数。稍后我们将看到如何自动计算这些导数（参见\cref{section:ch08-梯度计算}）。然而，显式地为输出单元预激活的误差导数导出合适的表达式是很有帮助的，因为这强调了这些量的概率解释。由于误差函数\eqref{align:ch06-混合密度误差}由一些项的和组成，其中每一项对应一个训练数据点，因此我们可以考虑特定输入向量 $\boldsymbol{x}_n$ 与相关目标向量 $\boldsymbol{t}_n$ 的导数。总误差 $E$ 的导数是通过对所有数据点求和而获得的，每个数据点自身的梯度也可以直接用于基于梯度的优化算法（参见\cref{section:ch07-错误平面}）。
 
 引入以下变量将有助于推导：
-\begin{align}
-\gamma_{nk} = \frac{\pi_k(\mathbf{x}_n)\,\mathcal{N}\!\left(t_n\,\middle|\,\mu_k(\mathbf{x}_n),\sigma_k^{2}(\mathbf{x}_n)\right)}{\sum_{j=1}^{K}\pi_j(\mathbf{x}_n)\,\mathcal{N}\!\left(t_n\,\middle|\,\mu_j(\mathbf{x}_n),\sigma_j^{2}(\mathbf{x}_n)\right)},
-\label{align:ch06-gamma}
-\end{align}
-其中 $\mathcal{N}_k$ 表示 $\mathcal{N}(t_n\mid \mu_k(\mathbf{x}_n),\sigma_k^{2}(\mathbf{x}_n))$。这些量可被自然解释为混合分布分量的后验概率，其中混合系数 $\pi_k(\mathbf{x})$ 可以视为与 $\mathbf{x}$ 相关的先验概率（见习题~6.17）。
 
-关于控制混合系数的网络输出预激活 $a_k^{\pi}$ 的误差函数导数由下式给出（参见习题~6.18）：
 \begin{align}
-\frac{\partial E_n}{\partial a_k^{\pi}} = \pi_k(\mathbf{x}_n) - \gamma_{nk}.
-\label{align:ch06-mdn-deriv-pi}
+\gamma_{nk}=\gamma_k(\boldsymbol{t}_n\mid\boldsymbol{x}_n)=\frac{\pi_k\mathcal{N}_{nk}}{\sum_{l=1}^{K}\pi_l\mathcal{N}_{nl}},
+\label{align:ch06-分量后验}
 \end{align}
 
-类似地，关于控制分量均值的网络输出预激活 $a_{kj}^{\mu}$ 的误差函数导数由下式给出（见习题~6.19）：
+其中 $\mathcal{N}_{nk}$ 表示 $\mathcal{N}\bigl(\boldsymbol{t}_n\,\big|\,\boldsymbol{\mu}_k(\boldsymbol{x}_n),\sigma_k^{2}(\boldsymbol{x}_n)\bigr)$。这些量可被自然地解释为混合分布分量的后验概率，其中混合系数 $\pi_k(\boldsymbol{x})$ 可以视为与 $\boldsymbol{x}$ 相关的先验概率（见\cref{exercise:ch06-17}）。
+
+\begin{definition}[分量后验概率]\label{definition:ch06-分量后验}
+称\eqref{align:ch06-分量后验}定义的 $\gamma_{nk}$ 为第 $k$ 个混合分量对第 $n$ 个样本的\textbf{后验概率}（responsibility），它满足 $\gamma_{nk}\geqslant0$ 且 $\sum_{k=1}^{K}\gamma_{nk}=1$。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch06-分量后验; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{definition:ch06-分量后验}是 EM 算法中“责任度”的同一定义：$\gamma_{nk}$ 度量“第 $n$ 个观测由第 $k$ 个分量生成”的后验概率。它与先验 $\pi_k$ 的关系正是 Bayes 公式：后验正比于“先验与似然”的乘积。注意 $\gamma_{nk}$ 依赖于 $\boldsymbol{x}_n$（通过 $\pi_k(\boldsymbol{x}_n)$ 与 $\mu_k(\boldsymbol{x}_n)$）而不依赖于 $\boldsymbol{t}$ 之外的标签，这正是 MDN 把“软分配”内嵌进网络的方式。
+\end{remark}
+
+关于控制混合系数的网络输出预激活的误差函数的导数由下式给出（参见\cref{exercise:ch06-18}）：
+
 \begin{align}
-\frac{\partial E_n}{\partial a_{kj}^{\mu}} = \gamma_{nk}\frac{\mu_{k,j}(\mathbf{x}_n)-t_{n,j}}{\sigma_k^{2}(\mathbf{x}_n)}.
-\label{align:ch06-mdn-deriv-mu}
+\frac{\partial E_n}{\partial a_k^{\pi}}=\pi_k-\gamma_{nk}.
+\label{align:ch06-混合系数导数}
 \end{align}
 
-最后，关于控制分量方差的网络输出预激活 $a_k^{\sigma}$ 的误差函数导数由下式给出（见习题~6.20）：
+\begin{proposition}[混合系数预激活的导数]\label{proposition:ch06-混合系数导数}
+在\eqref{align:ch06-混合系数softmax}的参数化下，\eqref{align:ch06-混合系数导数}成立。
+\end{proposition}
+
+\begin{proof}
+（重构新增）记 $S_n=\sum_{j}\pi_j\mathcal{N}_{nj}$，则 $E_n=-\ln S_n$。由 softmax 的Jacobi $\partial\pi_j/\partial a_k^{\pi}=\pi_j(\delta_{jk}-\pi_k)$，
 \begin{align}
-\frac{\partial E_n}{\partial a_k^{\sigma}} = \gamma_{nk}\left\{\frac{\|\mathbf{t}_n-\boldsymbol{\mu}_k(\mathbf{x}_n)\|^2}{\sigma_k^{2}(\mathbf{x}_n)}-1\right\}.
-\label{align:ch06-mdn-deriv-sigma}
+\frac{\partial E_n}{\partial a_k^{\pi}}
+&=-\frac{1}{S_n}\sum_{j}\mathcal{N}_{nj}\frac{\partial\pi_j}{\partial a_k^{\pi}}
+=-\frac{1}{S_n}\sum_{j}\mathcal{N}_{nj}\pi_j(\delta_{jk}-\pi_k)\nonumber\\
+&=-\frac{\pi_k\mathcal{N}_{nk}}{S_n}+\pi_k\frac{\sum_j\pi_j\mathcal{N}_{nj}}{S_n}
+=-\gamma_{nk}+\pi_k .
+\end{align}
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch06-混合系数导数; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\eqref{align:ch06-混合系数导数}有非常直观的解释：$\pi_k$ 是模型\emph{先验}地给第 $k$ 个分量的权重，$\gamma_{nk}$ 是看到数据后\emph{后验}地分配给它的权重，二者的差就是“应当增大还是减小该分量的混合系数”。当某分量对某样本解释得比先验预期更好时 $\gamma_{nk}>\pi_k$，梯度为负，梯度下降会增大 $\pi_k$。
+\end{remark}
+
+类似地，关于控制分量均值的网络输出预激活的误差函数的导数由下式给出（见\cref{exercise:ch06-19}）：
+
+\begin{align}
+\frac{\partial E_n}{\partial a_{kj}^{\mu}}=\gamma_{nk}\frac{\mu_{kj}(\boldsymbol{x}_n)-t_{nj}}{\sigma_k^{2}(\boldsymbol{x}_n)}.
+\label{align:ch06-均值导数}
 \end{align}
 
-\subsection{预测分布}\label{section:ch06-预测分布}
+\begin{proposition}[分量均值预激活的导数]\label{proposition:ch06-均值导数}
+在\eqref{align:ch06-分量均值}的参数化下，\eqref{align:ch06-均值导数}成立，其中 $j=1,\cdots,L$ 是目标向量的分量指标。
+\end{proposition}
 
-混合密度网络训练好后，给定任意输入向量值，就可以预测目标数据的条件密度函数。就预测输出向量值的问题而言，该条件密度表示对数据生成器的完整描述。从这个密度函数中，我们可以计算出不同应用可能关注的更具体量。其中最简单的一个量是平均值，它对应于目标数据的条件平均：
+\begin{proof}
+（重构新增）由 $E_n=-\ln S_n$ 与 $\mu_{kj}=a_{kj}^{\mu}$，
 \begin{align}
-\mathbb{E}[t\mid \mathbf{x}] = \int t\,p(t\mid \mathbf{x})\,dt = \sum_{k=1}^{K}\pi_k(\mathbf{x})\,\mu_k(\mathbf{x}).
-\label{align:ch06-mdn-condmean}
+\frac{\partial E_n}{\partial a_{kj}^{\mu}}=-\frac{\pi_k}{S_n}\frac{\partial\mathcal{N}_{nk}}{\partial\mu_{kj}}.
+\end{align}
+对 Gauss 分量取对数再求导：$\ln\mathcal{N}_{nk}=-\frac{L}{2}\ln(2\pi)-\sum_{j}\ln\sigma_k-\frac{1}{2\sigma_k^{2}}\sum_{j}(t_{nj}-\mu_{kj})^{2}$，故 $\partial\ln\mathcal{N}_{nk}/\partial\mu_{kj}=(t_{nj}-\mu_{kj})/\sigma_k^{2}$，即 $\partial\mathcal{N}_{nk}/\partial\mu_{kj}=\mathcal{N}_{nk}(t_{nj}-\mu_{kj})/\sigma_k^{2}$。代入并利用 $\gamma_{nk}=\pi_k\mathcal{N}_{nk}/S_n$ 得
+\begin{align}
+\frac{\partial E_n}{\partial a_{kj}^{\mu}}
+=-\gamma_{nk}\frac{t_{nj}-\mu_{kj}}{\sigma_k^{2}}
+=\gamma_{nk}\frac{\mu_{kj}-t_{nj}}{\sigma_k^{2}}.
+\end{align}
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch06-均值导数; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\eqref{align:ch06-均值导数}与普通回归的残差形式 $y-t$ 完全平行，只是每个样本的残差被后验概率 $\gamma_{nk}$ 加权、并被方差 $\sigma_k^{2}$ 归一化：方差越小的分量对残差越敏感。需要说明的是，印刷本此处下标写作 $\mu_{kl}-t_{nl}$；由于该式是对分量指标 $j$ 求导、且 $t_{nj}$ 与 $\mu_{kj}$ 必须逐分量对应，本重构统一记为 $\mu_{kj}-t_{nj}$。
+\end{remark}
+
+最后，关于控制分量方差的网络输出预激活的误差函数的导数由下式给出（见\cref{exercise:ch06-20}）：
+
+\begin{align}
+\frac{\partial E_n}{\partial a_k^{\sigma}}=\gamma_{nk}\left\{L-\frac{\|\boldsymbol{t}_n-\boldsymbol{\mu}_k\|^{2}}{\sigma_k^{2}}\right\}.
+\label{align:ch06-方差导数}
 \end{align}
 
-由于使用最小二乘法训练的标准网络会近似条件均值，因此我们看到混合密度网络可以作为一个特例再现传统最小二乘结果。当然正如我们已经指出的，对于多峰分布，条件均值的值是有限的。
+\begin{proposition}[分量方差预激活的导数]\label{proposition:ch06-方差导数}
+在\eqref{align:ch06-分量标准差}的参数化下，\eqref{align:ch06-方差导数}成立，其中 $L$ 是目标向量的维数。
+\end{proposition}
 
-我们可以类似地评估关于条件均值密度函数的方差（见习题~6.21）：
+\begin{proof}
+（重构新增）由 $\sigma_k=\exp(a_k^{\sigma})$ 得 $\partial\sigma_k/\partial a_k^{\sigma}=\sigma_k$。又
 \begin{align}
-\mathbb{V}[t\mid \mathbf{x}] = \mathbb{E}[\|t-\mathbb{E}[t\mid \mathbf{x}]\|^2\mid \mathbf{x}],
-\label{align:ch06-mdn-condvar-def}
+\ln\mathcal{N}_{nk}=-\frac{L}{2}\ln(2\pi)-L\ln\sigma_k-\frac{\|\boldsymbol{t}_n-\boldsymbol{\mu}_k\|^{2}}{2\sigma_k^{2}},
 \end{align}
+对 $\sigma_k$ 求导得 $\partial\ln\mathcal{N}_{nk}/\partial\sigma_k=-L/\sigma_k+\|\boldsymbol{t}_n-\boldsymbol{\mu}_k\|^{2}/\sigma_k^{3}$。于是
+\begin{align}
+\frac{\partial E_n}{\partial a_k^{\sigma}}
+=-\gamma_{nk}\frac{\partial\ln\mathcal{N}_{nk}}{\partial\sigma_k}\frac{\partial\sigma_k}{\partial a_k^{\sigma}}
+=-\gamma_{nk}\left(-\frac{L}{\sigma_k}+\frac{\|\boldsymbol{t}_n-\boldsymbol{\mu}_k\|^{2}}{\sigma_k^{3}}\right)\sigma_k
+=\gamma_{nk}\left\{L-\frac{\|\boldsymbol{t}_n-\boldsymbol{\mu}_k\|^{2}}{\sigma_k^{2}}\right\}.
+\end{align}
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch06-方差导数; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\eqref{align:ch06-方差导数}中括号内的两项相互竞争：$L$ 使方差增大（熵项，防止分量过窄），$\|\boldsymbol{t}_n-\boldsymbol{\mu}_k\|^{2}/\sigma_k^{2}$ 使方差减小（拟合项，使分量覆盖样本）。平衡点是 $\sigma_k^{2}=\|\boldsymbol{t}_n-\boldsymbol{\mu}_k\|^{2}/L$，即该分量的残差均方。这一形式与\cref{proposition:ch06-噪声方差估计}完全一致，说明 MDN 的方差学习是普通噪声方差估计的“逐分量、逐样本”版本。
+\end{remark}
+
+\subsection{预测分布}\label{subsection:ch06-预测分布}
+
+让我们回到\cref{figure:ch06-逆问题数据}所示的逆问题示例来说明混合密度网络的使用方法。\cref{figure:ch06-混合密度结果}显示了混合系数 $\pi_k(\boldsymbol{x})$、均值 $\boldsymbol{\mu}_k(\boldsymbol{x})$ 和对应于 $p(\boldsymbol{t}\mid\boldsymbol{x})$ 的条件密度等值线。神经网络的输出，即混合模型中的参数，必然是输入变量的连续单值函数。然而，我们从\cref{figure:ch06-混合密度结果}(c) 中可以看到，该模型能够通过调制混合分量 $\pi_k(\boldsymbol{x})$ 的振幅来产生条件密度，该密度对 $x$ 的某些值是单峰的，而对其他值是三峰的。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.76\textwidth]{ch06-fig6-19-mdn-results.png}
+\caption{(a) 在根据同一逆问题数据训练的混合密度网络中，将 $3$ 种混合分量的混合系数 $\pi_k(\boldsymbol{x})$ 作为 $x$ 的函数。该模型有 $3$ 个 Gauss 分量，并使用一个两层神经网络，该网络有 $5$ 个 S 形 tanh 隐藏单元和 $9$ 个输出（分别对应于 Gauss 分量的 $3$ 个均值、$3$ 个方差以及 $3$ 个混合系数）。在 $x$ 取小值或大值的情况下，目标数据的条件概率密度是单峰的，只有一个 Gauss 分量的先验概率很高；而在 $x$ 取中间值时，条件概率密度是三峰的，$3$ 个混合系数具有差不多的值。(b) 为混合系数使用相同颜色方案绘制的均值 $\mu_k(\boldsymbol{x})$。(c) 为相同的混合密度网络绘制目标数据的条件概率密度等值线。(d) 用红点表示的条件概率密度的近似条件众数图}
+\label{figure:ch06-混合密度结果}
+\end{figure}
+
+混合密度网络训练好后，给定任意输入向量值，就可以预测目标数据的条件密度函数。就预测输出向量值的问题而言，该条件密度表示对数据生成器的完整描述。从这个密度函数中，我们可以计算出不同应用可能关注的更具体的量。其中最简单的一个量是平均值，它对应于目标数据的条件平均值，由下式给出：
+
+\begin{align}
+\mathbb{E}[\boldsymbol{t}\mid\boldsymbol{x}]=\int\boldsymbol{t}\,p(\boldsymbol{t}\mid\boldsymbol{x})\,\mathrm{d}\boldsymbol{t}=\sum_{k=1}^{K}\pi_k(\boldsymbol{x})\,\boldsymbol{\mu}_k(\boldsymbol{x}).
+\label{align:ch06-条件均值}
+\end{align}
+
+\begin{proposition}[条件均值]\label{proposition:ch06-条件均值}
+设 $p(\boldsymbol{t}\mid\boldsymbol{x})$ 由\eqref{align:ch06-混合密度模型}给出，则条件均值为\eqref{align:ch06-条件均值}。
+\end{proposition}
+
+\begin{proof}
+（重构新增）由积分的线性性与 Gauss 分布的归一化，
+\begin{align}
+\int\boldsymbol{t}\sum_{k}\pi_k\mathcal{N}\bigl(\boldsymbol{t}\mid\boldsymbol{\mu}_k,\sigma_k^{2}\bigr)\mathrm{d}\boldsymbol{t}
+=\sum_{k}\pi_k\int\boldsymbol{t}\,\mathcal{N}\bigl(\boldsymbol{t}\mid\boldsymbol{\mu}_k,\sigma_k^{2}\bigr)\mathrm{d}\boldsymbol{t}
+=\sum_{k}\pi_k\boldsymbol{\mu}_k,
+\end{align}
+其中用到 $\int\boldsymbol{t}\,\mathcal{N}(\boldsymbol{t}\mid\boldsymbol{\mu}_k,\sigma_k^{2})\mathrm{d}\boldsymbol{t}=\boldsymbol{\mu}_k$。注意 $\pi_k$ 与 $\boldsymbol{\mu}_k$ 都依赖于 $\boldsymbol{x}$，但它们对 $\boldsymbol{t}$ 的积分而言是常数。
+\end{proof}
+
+由于使用最小二乘法训练的标准网络会近似条件均值，因此我们看到混合密度网络可以作为一个特例再现传统的最小二乘结果。当然，正如我们已经指出的，对于多峰分布，条件均值的值是有限的。
+
+% SUPPLEMENT: parent=proposition:ch06-条件均值; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\eqref{align:ch06-条件均值}说明 MDN 并不排斥最小二乘，而是把它包含为 $K=1$、$\sigma$ 为常数时的特例。这也提供了检验 MDN 实现是否正确的一个简单方法：把 $K$ 设为 $1$ 并固定 $\sigma$，训练结果应当与普通回归网络一致。对多峰分布而言，条件均值落在两个峰之间、可能对应概率极低的位置，这正是\cref{figure:ch06-机械臂}(b) 中“两种解的平均值不是解”的情形。
+\end{remark}
+
+我们可以类似地评估关于条件均值密度函数的方差（见\cref{exercise:ch06-21}）：
+
+\begin{align}
+s^{2}(\boldsymbol{x})=\mathbb{E}\Bigl[\bigl\|\boldsymbol{t}-\mathbb{E}[\boldsymbol{t}\mid\boldsymbol{x}]\bigr\|^{2}\,\Big|\,\boldsymbol{x}\Bigr],
+\label{align:ch06-条件方差定义}
+\end{align}
+
 展开后为
+
 \begin{align}
-\mathbb{V}[t\mid \mathbf{x}] = \sum_{k=1}^{K}\pi_k(\mathbf{x})\left\{\sigma_k^{2}(\mathbf{x})+\|\boldsymbol{\mu}_k(\mathbf{x})-\mathbb{E}[t\mid \mathbf{x}]\|^2\right\}.
-\label{align:ch06-mdn-condvar}
+s^{2}(\boldsymbol{x})=\sum_{k=1}^{K}\pi_k(\boldsymbol{x})\left\{\sigma_k^{2}(\boldsymbol{x})+\Bigl\|\boldsymbol{\mu}_k(\boldsymbol{x})-\sum_{i=1}^{K}\pi_i(\boldsymbol{x})\boldsymbol{\mu}_i(\boldsymbol{x})\Bigr\|^{2}\right\}.
+\label{align:ch06-条件方差}
 \end{align}
 
-这里用到了~\eqref{align:ch06-mdn}~和~\eqref{align:ch06-mdn-condmean}。该结果比相应的最小二乘结果更普遍，因为方差是关于 $\mathbf{x}$ 的函数。这是一个\textbf{异方差}（heteroscedastic）模型的示例：数据上的噪声方差是输入向量 $\mathbf{x}$ 的函数。
+\begin{proposition}[条件方差分解]\label{proposition:ch06-条件方差}
+设 $p(\boldsymbol{t}\mid\boldsymbol{x})$ 由\eqref{align:ch06-混合密度模型}给出，则\eqref{align:ch06-条件方差定义}的方差可分解为\eqref{align:ch06-条件方差}，即“分量内方差”与“分量间方差”之和。
+\end{proposition}
 
-让我们回到图~6.17~所示的逆问题示例来说明混合密度网络的使用方法。图~6.19~显示了混合系数 $\pi_k(\mathbf{x})$、均值 $\mu_k(\mathbf{x})$ 和对应于 $p(t\mid \mathbf{x})$ 的条件密度等值线。神经网络的输出（即混合模型中的参数）必然是输入变量的连续单值函数；然而从图~6.19(c)~可以看到，该模型能够通过调制混合分量 $\pi_k(\mathbf{x})$ 的振幅来产生条件密度，该密度对 $x$ 的某些值是单峰的，而对其他值是三峰的。该模型有~3~个高斯分量，并使用一个两层神经网络，该网络有~5~个 S 形 tanh 隐藏单元和~9~个输出（分别对应于~3~个高斯分量的均值、~3~个方差以及~3~个混合系数）。在 $x$ 取小值或大值时，目标数据条件概率密度是单峰的，只有一个高斯分量先验概率很高；而在 $x$ 取中间值时，条件概率密度是三峰的，~3~个混合系数具有差不多的值。
+\begin{proof}
+（重构新增）记 $\boldsymbol{m}=\mathbb{E}[\boldsymbol{t}\mid\boldsymbol{x}]=\sum_i\pi_i\boldsymbol{\mu}_i$。由全期望公式与各分量的协方差 $\sigma_k^{2}\boldsymbol{I}$，
+\begin{align}
+\mathbb{E}\bigl[\|\boldsymbol{t}-\boldsymbol{m}\|^{2}\mid\boldsymbol{x}\bigr]
+&=\sum_{k}\pi_k\,\mathbb{E}\bigl[\|\boldsymbol{t}-\boldsymbol{m}\|^{2}\mid\boldsymbol{x},k\bigr]\nonumber\\
+&=\sum_{k}\pi_k\Bigl(\mathbb{E}\bigl[\|\boldsymbol{t}-\boldsymbol{\mu}_k\|^{2}\mid\boldsymbol{x},k\bigr]+\|\boldsymbol{\mu}_k-\boldsymbol{m}\|^{2}\Bigr)\nonumber\\
+&=\sum_{k}\pi_k\Bigl(\sigma_k^{2}+\|\boldsymbol{\mu}_k-\boldsymbol{m}\|^{2}\Bigr),
+\end{align}
+其中第二行用到恒等式 $\mathbb{E}\|\boldsymbol{t}-\boldsymbol{m}\|^{2}=\mathbb{E}\|\boldsymbol{t}-\boldsymbol{\mu}_k\|^{2}+\|\boldsymbol{\mu}_k-\boldsymbol{m}\|^{2}$（交叉项期望为零），第三行用到各向同性 Gauss 的协方差为 $\sigma_k^{2}\boldsymbol{I}$。把 $\boldsymbol{m}=\sum_i\pi_i\boldsymbol{\mu}_i$ 代入即得\eqref{align:ch06-条件方差}。
+\end{proof}
 
-我们已经看到，对于多峰分布，条件均值给出了较差的数据表示。例如在图~6.16~所示简单机械臂控制中，我们需要从两种可能关节角度设置中选择一种来获得所需末端执行器位置，但两种解的平均值本身并不是一个解。在这种情况下，条件众数可能更有价值。由于混合密度网络的条件众数没有简单解析解，因此需要进行数值迭代。一种简单替代方法是在每个 $x$ 值处取最可能分量（即混合系数最大的分量）的平均值。这一做法已在图~6.19(d)~所示示例数据集上给出。
+这里用到了\eqref{align:ch06-混合密度模型}和\eqref{align:ch06-条件均值}。该结果比相应的最小二乘结果更普遍，因为方差是关于 $\boldsymbol{x}$ 的函数。
+
+% SUPPLEMENT: parent=proposition:ch06-条件方差; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\eqref{align:ch06-条件方差}是典型的“全方差公式”：总方差 = 分量内方差的加权平均 + 分量均值之间的离散程度。第二项在单峰时为零，在多峰时可以非常大——这提醒我们，多峰分布的“方差”往往由峰间距离主导，而不能用单个 Gauss 的 $\sigma^{2}$ 解释。因此在逆问题中报告条件方差时，应同时报告各分量的均值与混合系数，否则会严重误导。
+\end{remark}
+
+我们已经看到，对于多峰分布，条件均值给出了较差的数据表示。例如，在\cref{figure:ch06-机械臂}所示的简单机械臂的控制中，我们需要从两种可能的关节角度设置中选择一种来获得所需的末端执行器位置，但两种解的平均值本身并不是一个解。在这种情况下，条件众数可能更有价值。由于混合密度网络的条件众数没有简单的解析解，因此进行数值迭代是必要的。一种简单的替代方法是在每个 $\boldsymbol{x}$ 值处取最可能的分量（即混合系数最大的分量）的平均值。这一做法已在\cref{figure:ch06-混合密度结果}(d) 所示的示例数据集上给出。
 
 \end{document}

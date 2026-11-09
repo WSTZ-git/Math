@@ -1,120 +1,206 @@
 \documentclass[../../main.tex]{subfiles}
+
 \graphicspath{{../../image/}{../../figure/}}
+
 \begin{document}
 
 \section{耦合流}\label{section:ch18-耦合流}
 
-本章将讨论训练非线性潜变量模型的 $4$ 种方法中的第 $2$ 种方法（参见 16.4.4 小节），它通过限制神经网络模型的形式，在确保能够从训练好的模型中易于采样的前提下，无须近似即可计算似然函数。假设我们定义了一个分布 $p_z(z)$（有时也称\textbf{基础分布}（base distribution）），这个分布定义在潜变量 $z$ 上，以及一个由深度神经网络给出的非线性函数 $x=f(z,w)$，该函数要将潜空间转换成数据空间。假设 $p_z(z)$ 是一个简单的分布，比如高斯分布，那么从这样的模型中抽样就很容易，因为每一个潜样本 $z\sim p_z(z)$ 只需要通过神经网络就可以生成对应的数据样本 $x=f(z,w)$。
-
-为了计算这个模型的似然函数，我们需要知道数据空间分布，而它依赖于神经网络函数的逆函数，记为 $z=g(x,w)$，并且满足 $z=g(f(z,w),w)$。这要求对于每一个 $w$ 值，函数 $f(z,w)$ 和 $g(x,w)$ 都是可逆的，也称为\textbf{双射}（bijective），即每个 $x$ 值都对应唯一的 $z$ 值，反之亦然。然后我们可以使用变量变换公式来计算数据密度（参见 2.4 节）：
-\begin{align}
-p_x(x\mid w)=p_z\big(g(x,w)\big)\,|\det J(x)|
-\label{align:ch18-change-var}
-\end{align}
-其中 $J(x)$ 是偏导数的雅可比矩阵，其元素由 $J_{ij}=\partial z_i/\partial x_j$ 给出。式~\eqref{align:ch18-change-var} 中的 $|\cdot|$ 表示模或绝对值。尽管确定性映射意味着任何给定的数据值 $x$ 都对应一个唯一的 $z$ 值，$z$ 值因此不再不确定，但我们仍继续将 $z$ 称为``潜变量''。
-
-考虑一个训练集 $\mathcal{D}=\{x_1,\cdots,x_N\}$，它由独立数据点组成，根据式~\eqref{align:ch18-change-var} 得到的对数似然函数为
-\begin{align}
-\ln p(\mathcal{D}\mid w)=\sum_{n=1}^{N}\ln p_z\big(g(x_n,w)\big)+\sum_{n=1}^{N}\ln|\det J(x_n)|
-\label{align:ch18-loglik}
-\end{align}
-要求可逆映射的一个结果是潜空间的维度必须与数据空间的维度相同，这可能导致像图像这样的高维数据会需要很大的模型。另外，评估 $D\times D$ 矩阵的行列式的成本通常是 $\mathcal{O}(D^3)$，所以我们需要对模型施加一些额外的限制，以便更高效地计算雅可比行列式。
-
-我们的目标是使用似然函数来训练神经网络。为了能够建模各种各样的分布，我们希望转换函数 $x=f(z,w)$ 高度灵活，因而使用了深度神经网络架构。如果能够保证网络的每一层都是可逆的，那么整个函数就是可逆的（见习题 18.2）。考虑三个连续的转换，其中的每个转换对应于一个层，形式如下：
-\begin{align}
-x=f_1(f_2(f_3(z)))
-\label{align:ch18-three-layers}
-\end{align}
-逆函数为
-\begin{align}
-z=g_3(g_2(g_1(x)))
-\label{align:ch18-inv-layers}
-\end{align}
-其中 $g_1,g_2,g_3$ 分别是 $f_1,f_2,f_3$ 的逆函数。此外，可以使用微积分链式规则计算每个单独层的雅可比行列式，这种分层结构的雅可比行列式也很容易得到。式~\eqref{align:ch18-inv-layers} 的右侧为三个矩阵的乘积，而乘积的行列式是行列式的乘积。因此，整体雅可比矩阵的对数行列式将是每层对应对数行列式之和（参见附录~A）。
-
-这种对灵活分布进行建模的方法称为\textbf{标准化流}（normalizing flow），因为通过一系列映射来转换概率分布的过程在某种程度上类似于流体的流动。此外，逆映射的效果是将复杂的数据分布转换成标准化形式，通常是高斯分布。我们将讨论实践中经常使用的两个主要类型的标准化流的核心概念：耦合流（coupling flow）和自回归流（autoregressive flow）。此外，我们还将介绍使用神经微分方程定义可逆映射的方法，并引入连续流（continuous flow）这一概念。
-
-\subsection{实值 NVP}\label{subsection:ch18-realnvp}
-
 我们的目标是设计一个单一的可逆函数层，这样就可以将许多这样的层组合在一起，从而定义一类高度灵活的可逆函数。首先考虑以下形式的线性变换：
 \begin{align}
-x=az+b
-\label{align:ch18-linear}
+  \bm{x}=a\bm{z}+\bm{b},\label{align:ch18-线性变换}
 \end{align}
 这个变换很容易求逆，得到
 \begin{align}
-z=(x-b)/a
-\label{align:ch18-linear-inv}
-\end{align}
-然而，线性变换在组合下是封闭的，这意味着一系列线性变换等同于一个整体的线性变换（见习题 3.6）。因为，高斯分布的线性变换结果还是高斯分布。所以即使我们有许多这样的线性变换``层''，我们也只能得到一个高斯分布。问题在于我们能否保持线性变换的可逆性，同时允许额外的灵活性，从而使得最终结果可以是非高斯分布。
-
-解决这个问题的一种方法是使用一个叫作\textbf{实值 NVP}（real-valued non-volume-preserving, RealNVP）（Dinh, Krueger, and Bengio, 2014; Dinh, Sohl-Dickstein, and Bengio, 2016）的标准化流模型。这里的 NVP 代表非体积保持（non-volume-preserving）。其思想是将潜变量向量 $z$ 划分为两部分，$z=(z_A,z_B)$，如果 $z$ 的维度为 $D$ 且 $z_A$ 的维度为 $d$，则 $z_B$ 的维度为 $D-d$。我们可以类似地划分输出向量，$x=(x_A,x_B)$，其中 $x_A$ 的维度为 $d$，$x_B$ 的维度为 $D-d$。对于输出向量的第一部分，我们简单地复制输入
-\begin{align}
-x_A=z_A
-\label{align:ch18-xa}
-\end{align}
-输出向量的第二部分经历了一个线性变换，但这个线性变换中的系数由 $z_A$ 的非线性函数给出：
-\begin{align}
-x_B=\exp\big(s(z_A,w)\big)\odot z_B+b(z_A,w)
-\label{align:ch18-coupling}
-\end{align}
-其中 $s(z_A,w)$ 和 $b(z_A,w)$ 是神经网络的实值输出，指数函数确保了乘法项是非负的。这里的 $\odot$ 表示哈达玛积（Hadamard product），即对两个向量进行逐元素相乘。在式~\eqref{align:ch18-coupling} 中，指数也是逐元素计算的。
-
-由于使用了神经网络函数，$x_B$ 的值可以是 $z_A$ 的一个非常灵活的函数。尽管如此，整体的变换仍然很容易逆推。给定 $x=(x_A,x_B)$ 的值，首先计算
-\begin{align}
-z_A=x_A
-\label{align:ch18-za}
-\end{align}
-然后计算 $s(z_A,w)$ 和 $b(z_A,w)$，最后使用下式计算 $z_B$：
-\begin{align}
-z_B=\exp\big(-s(z_A,w)\big)\odot\big(x_B-b(z_A,w)\big)
-\label{align:ch18-inv-coupling}
+  \bm{z}=\frac{1}{a}(\bm{x}-\bm{b}).\label{align:ch18-线性逆}
 \end{align}
 
-整体变换如图~\ref{fig:ch18-nvp-layer} 所示。注意，单个神经网络函数，如 $s(z_A,w)$ 和 $b(z_A,w)$，并不要求是可逆的。
+然而，线性变换在组合下是封闭的，这意味着一系列线性变换等同于一个整体的线性变换（见\cref{exercise:ch03-06}）。因为 Gauss 分布的线性变换结果还是 Gauss 分布。所以即使我们有许多这样的线性变换“层”，我们也只能得到一个 Gauss 分布。问题在于我们能否保持线性变换的可逆性，同时允许额外的灵活性，从而使得最终结果可以是非 Gauss 分布。
+
+\begin{proposition}[线性层的复合]\label{proposition:ch18-线性层复合}
+设 $a,a'\neq0$ 为实数，$\bm{b},\bm{b}'$ 为 $D$ 维向量。若 $\bm{x}=a\bm{z}+\bm{b}$ 且 $\bm{z}=a'\bm{u}+\bm{b}'$，则 $\bm{x}=aa'\bm{u}+(a\bm{b}'+\bm{b})$，仍是一个可逆的线性变换。若进一步 $\bm{z}\sim\mathcal{N}(\bm{m},\bm{\Sigma})$，则 $\bm{x}\sim\mathcal{N}(a\bm{m}+\bm{b},a^{2}\bm{\Sigma})$，仍是 Gauss 分布。
+\end{proposition}
+
+\begin{proof}（重构新增）
+第一个断言由直接代入得到：
+\begin{align*}
+  \bm{x}=a(a'\bm{u}+\bm{b}')+\bm{b}=aa'\bm{u}+(a\bm{b}'+\bm{b}),
+\end{align*}
+因为 $a,a'\neq0$，故 $aa'\neq0$，该线性变换仍可逆，逆变换即由上式解出 $\bm{u}$。
+
+第二个断言用特征函数验证。设 $\bm{z}$ 的特征函数为 $\varphi_{\bm{z}}(\bm{t})=\exp\left(\mathrm{i}\bm{t}^{\mathsf T}\bm{m}-\tfrac{1}{2}\bm{t}^{\mathsf T}\bm{\Sigma}\bm{t}\right)$，则
+\begin{align*}
+  \varphi_{\bm{x}}(\bm{t})=\mathbb{E}\left[\mathrm{e}^{\mathrm{i}\bm{t}^{\mathsf T}(a\bm{z}+\bm{b})}\right]=\mathrm{e}^{\mathrm{i}\bm{t}^{\mathsf T}\bm{b}}\varphi_{\bm{z}}(a\bm{t})=\exp\left(\mathrm{i}\bm{t}^{\mathsf T}(a\bm{m}+\bm{b})-\tfrac{1}{2}\bm{t}^{\mathsf T}(a^{2}\bm{\Sigma})\bm{t}\right),
+\end{align*}
+这正是均值为 $a\bm{m}+\bm{b}$、协方差为 $a^{2}\bm{\Sigma}$ 的 Gauss 分布的特征函数，由特征函数的唯一性即得结论。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch18-线性层复合; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+这个命题解释了为什么单靠线性层无法构造灵活的生成模型：线性变换的复合仍是线性变换，而 Gauss 分布在仿射变换下保持不变，所以无论堆多少层，结果分布仍是 Gauss 分布。若要得到非 Gauss 分布，就必须引入非线性，同时又不破坏可逆性——这正是下一段耦合层出场的原因。
+
+条件方面：$a\neq0$ 保证可逆（$a=0$ 时映射把整个空间压成一点，不可逆，行列式为零，密度退化）；命题对 $\bm{\Sigma}$ 无正定性要求，只要求它是合法的协方差矩阵，$a^{2}\bm{\Sigma}$ 自动对称半正定。第二个断言依赖 $a$ 为不随分量变化的常数；若换成一般的可逆矩阵 $\bm{A}$，结论仍成立，协方差变为 $\bm{A}\bm{\Sigma}\bm{A}^{\mathsf T}$，而 Jacobian 行列式因子变成 $|\det\bm{A}|$。
+\end{remark}
+
+解决这个问题的一种方法是使用一个叫作实值 NVP（real-valued non-volume-preserving, RealNVP）（Dinh, Krueger, and Bengio, 2014; Dinh, Sohl-Dickstein, and Bengio, 2016）的标准化流模型。这里的 NVP 代表非体积保持（non-volume-preserving）。
+
+\begin{definition}[实值 NVP 耦合层]\label{definition:ch18-耦合层}
+设潜变量向量 $\bm{z}$ 被划分为两部分 $\bm{z}=(\bm{z}_A,\bm{z}_B)$：若 $\bm{z}$ 的维度为 $D$ 且 $\bm{z}_A$ 的维度为 $d$，则 $\bm{z}_B$ 的维度为 $D-d$。类似地划分输出向量 $\bm{x}=(\bm{x}_A,\bm{x}_B)$，其中 $\bm{x}_A$ 的维度为 $d$，$\bm{x}_B$ 的维度为 $D-d$。对于输出向量的第一部分，我们简单地复制输入
+\begin{align}
+  \bm{x}_A=\bm{z}_A,\label{align:ch18-耦合恒等}
+\end{align}
+输出向量的第二部分经历了一个线性变换，但这个线性变换中的系数由 $\bm{z}_A$ 的非线性函数给出：
+\begin{align}
+  \bm{x}_B=\exp\big(\bm{s}(\bm{z}_A,\bm{w})\big)\odot\bm{z}_B+\bm{b}(\bm{z}_A,\bm{w}),\label{align:ch18-耦合层}
+\end{align}
+其中 $\bm{s}(\bm{z}_A,\bm{w})$ 和 $\bm{b}(\bm{z}_A,\bm{w})$ 是神经网络的实值输出，指数函数确保了乘法项是非负的；$\odot$ 表示 Hadamard 积（Hadamard product），即对两个向量进行逐元素相乘，\eqref{align:ch18-耦合层}中的指数也是逐元素计算的。称由\eqref{align:ch18-耦合恒等}与\eqref{align:ch18-耦合层}定义的层为\textbf{实值 NVP 耦合层}。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch18-耦合层; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+动机：\cref{proposition:ch18-线性层复合}说明线性层堆叠不产生任何新的分布形状。耦合层保留线性层“容易求逆”的优点，但把缩放系数与平移量换成 $\bm{z}_A$ 的任意非线性函数（由神经网络给出），于是 $\bm{x}_B$ 可以是 $\bm{z}_A$ 的非常灵活的形变，而 $\bm{z}_A$ 这一半原样保留。这一“分而治之”的结构使得逆映射仍然显式可写（见\cref{proposition:ch18-耦合层逆}）。
+
+逐项条件：$\bm{z}_A$ 与 $\bm{x}_A$ 的维数必须相同（都是 $d$），否则\eqref{align:ch18-耦合恒等}无从写起；$0\leqslant d\leqslant D$，而 $d=0$ 或 $d=D$ 时该层退化为恒等映射、失去作用，故实际取 $1\leqslant d\leqslant D-1$。$\bm{s}$ 与 $\bm{b}$ 可以是任意函数，不需要可逆，甚至不需要连续；指数函数的作用只是把乘性因子约束为正，从而 $\bm{x}_B$ 关于 $\bm{z}_B$ 的变换是保向的、单调的，保证逆存在。$\bm{w}$ 是网络的参数向量。
+
+“非体积保持”这个名字说的正是行列式不为 $1$：由\cref{proposition:ch18-耦合层行列式}，该层的体积缩放因子是 $\exp\left(\sum_i s_i\right)$，一般不等于 $1$，故称非体积保持。
+\end{remark}
+
+注意我们在两个网络函数中展示了相同的向量 $\bm{w}$。在实践中，它们可能实现为具有不同参数的独立网络，或者一种具有两套输出的网络。
+
+由于使用了神经网络函数，$\bm{x}_B$ 的值可以是 $\bm{z}_A$ 的一个非常灵活的函数。尽管如此，整体的变换仍然很容易逆推。给定 $\bm{x}=(\bm{x}_A,\bm{x}_B)$ 的值，首先计算
+\begin{align}
+  \bm{z}_A=\bm{x}_A,\label{align:ch18-耦合逆恒等}
+\end{align}
+
+\begin{proposition}[耦合层的逆]\label{proposition:ch18-耦合层逆}
+设耦合层由\eqref{align:ch18-耦合恒等}与\eqref{align:ch18-耦合层}给出。则对任意 $\bm{x}=(\bm{x}_A,\bm{x}_B)$，先由\eqref{align:ch18-耦合逆恒等}得到 $\bm{z}_A$，再计算 $\bm{s}(\bm{z}_A,\bm{w})$ 和 $\bm{b}(\bm{z}_A,\bm{w})$，最后使用下式计算 $\bm{z}_B$：
+\begin{align}
+  \bm{z}_B=\exp\big(-\bm{s}(\bm{z}_A,\bm{w})\big)\odot\big(\bm{x}_B-\bm{b}(\bm{z}_A,\bm{w})\big),\label{align:ch18-耦合逆}
+\end{align}
+就得到唯一的原像 $\bm{z}=(\bm{z}_A,\bm{z}_B)$，即\eqref{align:ch18-耦合逆恒等}与\eqref{align:ch18-耦合逆}给出该耦合层的逆映射。
+\end{proposition}
+
+\begin{proof}（重构新增）
+由\eqref{align:ch18-耦合恒等}，$\bm{z}_A=\bm{x}_A$ 是被迫的，且 $\bm{z}_A$ 一旦确定，$\bm{s}(\bm{z}_A,\bm{w})$ 与 $\bm{b}(\bm{z}_A,\bm{w})$ 就完全确定（它们不依赖 $\bm{z}_B$）。把\eqref{align:ch18-耦合逆}代回\eqref{align:ch18-耦合层}：
+\begin{align*}
+  \exp(\bm{s})\odot\bm{z}_B+\bm{b}
+  =\exp(\bm{s})\odot\left[\exp(-\bm{s})\odot(\bm{x}_B-\bm{b})\right]+\bm{b}
+  =(\bm{x}_B-\bm{b})+\bm{b}=\bm{x}_B,
+\end{align*}
+其中用到 Hadamard 积的逐元素结合律与 $\exp(\bm{s})\odot\exp(-\bm{s})=\bm{1}$。反向代入（把\eqref{align:ch18-耦合层}代入\eqref{align:ch18-耦合逆}）同样还原出 $\bm{z}_B$。故两式互为逆映射；唯一性来自\eqref{align:ch18-耦合逆}的显式性：给定 $\bm{x}$ 后每一步都没有选择余地。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch18-耦合层逆; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+这个命题是耦合流全部实用价值的来源：正向（采样方向）与逆向（似然方向）都只需一次神经网络求值加逐元素运算，没有任何迭代或数值求解，代价与普通前馈网络同阶。注意逆映射只用到 $\bm{s}$ 与 $\bm{b}$ 本身，从不要求这两个网络可逆——这是耦合结构的关键技巧：把一个 $D$ 维的可逆性问题化归为两个任意函数的求值问题。
+
+条件方面：\eqref{align:ch18-耦合逆}只用到 $\exp(-\bm{s})$ 的逐元素乘法与减法，对 $\bm{s},\bm{b}$ 没有额外要求，因此结论对任意 $\bm{s},\bm{b}$ 都成立；实际使用中取神经网络只是为了灵活性。若把\eqref{align:ch18-耦合层}中的 $\exp(\bm{s})$ 换成任意逐元素正值函数，逆的公式相应改为除以该函数，结论不变。
+
+一个值得注意的细节：$\bm{x}_A=\bm{z}_A$ 意味着这一半坐标在变换中完全没有改变，因此单层耦合层的表达能力有限——这正是要引入“第二层、交换两个部分的角色”的原因。
+\end{remark}
+
+整体变换如\cref{figure:ch18-nvp层}所示。注意，单个神经网络函数，如 $\bm{s}(\bm{z}_A,\bm{w})$ 和 $\bm{b}(\bm{z}_A,\bm{w})$，并不要求是可逆的。
 
 \begin{figure}[htbp]
-\centering
-\includegraphics[width=0.75\textwidth]{ch18-fig498-nvp-layer.png}
-\caption{实值 NVP 标准化流模型的单层结构。在这里，网络 NN1 计算函数 $\exp\{s(z_A,w)\}$，而网络 NN2 计算函数 $b(z_A,w)$。}
-\label{fig:ch18-nvp-layer}
+  \centering
+  \includegraphics[width=0.72\textwidth]{ch18-fig498-nvp-layer.png}
+  \caption{实值 NVP 标准化流模型的单层结构。在这里，网络 NN1 计算函数 $\exp\{\bm{s}(\bm{z}_A,\bm{w})\}$，而网络 NN2 计算函数 $\bm{b}(\bm{z}_A,\bm{w})$。输出向量由\eqref{align:ch18-耦合恒等}和\eqref{align:ch18-耦合层}定义}
+  \label{figure:ch18-nvp层}
 \end{figure}
 
-考虑对式~\eqref{align:ch18-change-var} 定义的雅可比矩阵及其行列式进行计算。可以将该雅可比矩阵分成块，对应于 $z$ 和 $x$ 的划分，得到
-\begin{align}
-J=\begin{pmatrix}
-\dfrac{\partial z_A}{\partial x_A} & \dfrac{\partial z_A}{\partial x_B}\\[4pt]
-\dfrac{\partial z_B}{\partial x_A} & \dfrac{\partial z_B}{\partial x_B}
-\end{pmatrix}
-\label{align:ch18-block-jacobian}
-\end{align}
-其中，左上角的块对应于 $z_A$ 关于 $x_A$ 的导数，根据式~\eqref{align:ch18-za}，结果为 $d\times d$ 的单位矩阵。右上角的块对应于 $z_A$ 关于 $x_B$ 的导数，根据式~\eqref{align:ch18-za}，结果为 $0$。左下角的块对应于 $z_B$ 关于 $x_A$ 的导数，根据式~\eqref{align:ch18-inv-coupling}，这是关于神经网络函数的复杂表达式。最后，右下角的块对应于 $z_B$ 关于 $x_B$ 的导数，根据式~\eqref{align:ch18-inv-coupling}，这些导数由一个对角矩阵表示，其对角元素是 $\exp(-s(z_A,w))$。因此我们看到该雅可比矩阵是一个下三角块矩阵，其行列式只是沿主对角线元素的乘积，而不依赖于左下角的块中的复杂表达式。
+考虑对\eqref{align:ch18-Jacobian元素}定义的 Jacobian 矩阵及其行列式进行计算。可以将该 Jacobian 矩阵分成块，对应于 $\bm{z}$ 和 $\bm{x}$ 的划分。
 
-因此，雅可比行列式可以简单地由 $\exp(s(z_A,w))$ 中元素的乘积给出。这种方法的一个明显局限是，$z_A$ 的值没有因变换而改变。这可以通过添加另一层来轻松解决，其中 $z_A$ 和 $z_B$ 的角色被颠倒过来，如图~\ref{fig:ch18-two-layer} 所示。这种双层结构可以重复多次，从而能构建一类非常灵活的生成式模型。
+\begin{proposition}[耦合层 Jacobian 的行列式]\label{proposition:ch18-耦合层行列式}
+设耦合层由\eqref{align:ch18-耦合恒等}与\eqref{align:ch18-耦合层}给出，$\bm{J}(\bm{x})=\partial\bm{z}/\partial\bm{x}$ 为\eqref{align:ch18-Jacobian元素}所定义的 Jacobian 矩阵。则按 $\bm{z}=(\bm{z}_A,\bm{z}_B)$、$\bm{x}=(\bm{x}_A,\bm{x}_B)$ 的划分，
+\begin{align}
+  \bm{J}=\begin{bmatrix}\bm{I}_d & \bm{0}\\[2pt] \dfrac{\partial\bm{z}_B}{\partial\bm{x}_A} & \operatorname{diag}\big(\exp(-\bm{s})\big)\end{bmatrix},
+  \label{align:ch18-耦合Jacobian}
+\end{align}
+其中 $\bm{I}_d$ 是 $d\times d$ 单位矩阵，$\bm{0}$ 是 $d\times(D-d)$ 零矩阵，$\operatorname{diag}\big(\exp(-\bm{s})\big)$ 是以 $\exp(-s_i(\bm{z}_A,\bm{w}))$ 为对角元的 $(D-d)\times(D-d)$ 对角矩阵。因此 $\bm{J}$ 是下三角块矩阵，其行列式只由主对角线上的元素决定：
+\begin{align}
+  \det\bm{J}(\bm{x})=\prod_{i=1}^{D-d}\exp\big(-s_i(\bm{z}_A,\bm{w})\big)=\exp\left(-\sum_{i=1}^{D-d}s_i(\bm{z}_A,\bm{w})\right).\label{align:ch18-耦合行列式}
+\end{align}
+\end{proposition}
+
+\begin{proof}（重构新增）
+逐块计算偏导数。左上角的块对应于 $\bm{z}_A$ 关于 $\bm{x}_A$ 的导数，根据\eqref{align:ch18-耦合逆恒等}，$\bm{z}_A=\bm{x}_A$，故该块为 $d\times d$ 的单位矩阵 $\bm{I}_d$。右上角的块对应于 $\bm{z}_A$ 关于 $\bm{x}_B$ 的导数，根据\eqref{align:ch18-耦合逆恒等}，$\bm{z}_A$ 与 $\bm{x}_B$ 无关，结果为 $\bm{0}$。
+
+左下角的块对应于 $\bm{z}_B$ 关于 $\bm{x}_A$ 的导数，根据\eqref{align:ch18-耦合逆}，这是关于神经网络函数的复杂表达式：$\bm{s}$ 与 $\bm{b}$ 都通过 $\bm{z}_A=\bm{x}_A$ 依赖 $\bm{x}_A$，求导时要用链式法则，其结果不需要显式写出。
+
+最后，右下角的块对应于 $\bm{z}_B$ 关于 $\bm{x}_B$ 的导数。根据\eqref{align:ch18-耦合逆}，在固定 $\bm{z}_A=\bm{x}_A$ 时，
+\begin{align*}
+  \frac{\partial(\bm{z}_B)_i}{\partial(\bm{x}_B)_j}=\exp\big(-s_i(\bm{z}_A,\bm{w})\big)\delta_{ij},
+\end{align*}
+即这些导数由一个对角矩阵表示，其对角元素是 $\exp\big(-s_i(\bm{z}_A,\bm{w})\big)$。于是 $\bm{J}$ 具有\eqref{align:ch18-耦合Jacobian}的形状，按 $d\times d$ 分块是下三角矩阵，这意味着其中所有主对角线以上的块元素都是零（参见\hyperref[chapter:appA-线性代数]{附录\ref*{chapter:appA-线性代数}}）。对于这样的分块三角矩阵，其行列式只是沿主对角线各块行列式的乘积（按行做消去的过程不改变行列式，可把左下角的块消成零），故
+\begin{align*}
+  \det\bm{J}=\det(\bm{I}_d)\cdot\det\Big(\operatorname{diag}\big(\exp(-\bm{s})\big)\Big)=1\cdot\prod_{i=1}^{D-d}\exp\big(-s_i(\bm{z}_A,\bm{w})\big),
+\end{align*}
+而不依赖于左下角的块中的复杂表达式，即得\eqref{align:ch18-耦合行列式}。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch18-耦合层行列式; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+这条结论是耦合流能够实用的根本原因：计算 $D\times D$ 一般矩阵的行列式需要 $\mathcal{O}(D^{3})$，而\eqref{align:ch18-耦合行列式}只需把 $D-d$ 个指数相加，代价是 $\mathcal{O}(D)$；同时左下角那个“关于神经网络函数的复杂表达式”根本不必计算，因为它不影响行列式。更一般地，只要每层的 Jacobian 是三角矩阵，整层的对数行列式就是对角元对数之和，这正是\cref{proposition:ch18-分层流}所要求的“每层便宜”。
+
+条件方面：结论只用到\eqref{align:ch18-耦合逆}的逐元素结构，对 $\bm{s}$ 没有任何限制；$\exp(-s_i)$ 恒正，故 $\det\bm{J}\neq0$ 自动成立，与\cref{proposition:ch18-变量变换}的非奇异要求相容。这也说明耦合层的可逆性是结构性的，而非数值性的：不需要求解线性方程组，也不会出现病态。
+
+注意\eqref{align:ch18-耦合行列式}给出的是 $\partial\bm{z}/\partial\bm{x}$ 的行列式。若改用正向映射的 Jacobian $\partial\bm{x}/\partial\bm{z}$，由\cref{exercise:ch18-01}知二者互为倒数，其行列式为 $\exp\left(\sum_i s_i\right)$。两者互为倒数（指数相差一个符号），代入\eqref{align:ch18-change-var}时必须用前者。
+\end{remark}
+
+因此，Jacobian 行列式可以简单地由 $\exp\big(\bm{s}(\bm{z}_A,\bm{w})\big)$ 中元素的乘积给出。
+
+\begin{remark}（重构新增，原文问题说明）
+上面这句译文忠实保留了原文，但按字面它与\eqref{align:ch18-耦合Jacobian}、\eqref{align:ch18-耦合行列式}不一致，需要说明清楚。原文前一句还说“其对角元素是 $s(\bm{z}_A,\bm{w})$”，而\eqref{align:ch18-耦合Jacobian}中右下角块的对角元实际是 $\exp(-s_i)$，并非 $s_i$ 本身。
+
+准确的对应关系是
+\begin{align*}
+  \det\frac{\partial\bm{z}}{\partial\bm{x}}=\prod_{i}\exp(-s_i)=\exp\left(-\sum_i s_i\right),\qquad
+  \det\frac{\partial\bm{x}}{\partial\bm{z}}=\prod_{i}\exp(s_i)=\exp\left(\sum_i s_i\right),
+\end{align*}
+二者互为倒数（\cref{exercise:ch18-01}）。原文“由 $\exp(\bm{s})$ 中元素的乘积给出”说的其实是正向 Jacobian $\partial\bm{x}/\partial\bm{z}$ 的行列式；而对密度公式\eqref{align:ch18-change-var}而言必须取 $\partial\bm{z}/\partial\bm{x}$ 的绝对值，即 $\exp\left(-\sum_i s_i\right)$。这不是文字游戏：若误把 $\exp\left(+\sum_i s_i\right)$ 当作 $|\det\bm{J}|$，算出的密度会相差一个因子 $\exp\left(2\sum_i s_i\right)$，似然也就错了。本书后文（例如“每一项本身就是形式为 $-s_i(\bm{x},\bm{w})$ 的项之和”）用的正是负号，与\eqref{align:ch18-耦合行列式}一致。
+\end{remark}
+
+这种方法的一个明显局限是，$\bm{z}_A$ 的值没有因变换而改变。这可以通过添加另一层来轻松解决，其中 $\bm{z}_A$ 和 $\bm{z}_B$ 的角色被颠倒过来，如\cref{figure:ch18-双层结构}所示。这种双层结构可以重复多次，从而能构建一类非常灵活的生成式模型。
 
 \begin{figure}[htbp]
-\centering
-\includegraphics[width=0.85\textwidth]{ch18-fig499-two-layer.png}
-\caption{通过组合两个图~\ref{fig:ch18-nvp-layer} 所示的层，我们得到了一个更加灵活但仍然可逆的非线性层。其中的每个子块都是可逆的，并且拥有容易计算的雅可比矩阵，因此整个双层结构也具有相同的特性。}
-\label{fig:ch18-two-layer}
+  \centering
+  \includegraphics[width=0.86\textwidth]{ch18-fig499-two-layer.png}
+  \caption{通过组合两个\cref{figure:ch18-nvp层}所示的层，我们得到了一个更加灵活但仍然可逆的非线性层。其中的每个子层都是可逆的，并且拥有容易计算的 Jacobian 矩阵，因此整个双层结构也具有相同的特性}
+  \label{figure:ch18-双层结构}
 \end{figure}
 
-实值 NVP 模型属于一类使用广泛的标准化流，称为\textbf{耦合流}（coupling flows）。在耦合流中，线性变换 [式~\eqref{align:ch18-coupling}] 被如下更一般的形式替换：
+整个训练过程包括创建数据点的一些小批量，在这些小批量中，每个数据点对对数似然函数的贡献可从\eqref{align:ch18-对数似然展开}中获得。对于形式为 $\mathcal{N}(\bm{z}\mid\bm{0},\bm{I})$ 的潜在分布，对数密度就是 $-\|\bm{z}\|^{2}/2$ 加一个加法常数。逆变换 $\bm{z}=\bm{g}(\bm{x})$ 可以使用一系列形式为\eqref{align:ch18-耦合逆}的逆变换计算得出。同样，Jacobian 行列式的对数由每层的对数行列式之和给出，其中的每一项本身就是形式为 $-s_i(\bm{x},\bm{w})$ 的项之和。对数似然的梯度可以通过自动微分评估，并且网络参数可以通过随机梯度下降来更新。
+
+实值 NVP 模型属于一类使用广泛的标准化流，称为\textbf{耦合流}（coupling flows）。
+
+\begin{definition}[耦合流]\label{definition:ch18-耦合流}
+在耦合流中，\eqref{align:ch18-耦合层}中的线性变换被如下更一般的形式替换：
 \begin{align}
-x_B=h\big(z_B,g(z_A,w)\big)
-\label{align:ch18-general-coupling}
+  \bm{x}_B=\bm{h}\big(\bm{z}_B,\bm{g}(\bm{z}_A,\bm{w})\big),\label{align:ch18-一般耦合}
 \end{align}
-其中 $h(z_B,g)$ 是 $z_B$ 的函数，对于任何给定的 $g$ 值，它都可以高效地逆推，称为\textbf{耦合函数}（coupling function）。$g(z_A,w)$ 称为\textbf{条件函数}（conditioner），通常用神经网络来表示。
+其中 $\bm{h}(\bm{z}_B,\bm{g})$ 是 $\bm{z}_B$ 的函数，对于任何给定的 $\bm{g}$ 值，它都可以高效地逆推，称为\textbf{耦合函数}（coupling function）；$\bm{g}(\bm{z}_A,\bm{w})$ 称为\textbf{条件函数}（conditioner），通常用神经网络来表示。
+\end{definition}
 
-整个训练过程包括创建数据点的一些小批量，在这些小批量中，每个数据点对对数似然函数的贡献可从式~\eqref{align:ch18-loglik} 中获得。对于形式为 $\mathcal{N}(z\mid 0,I)$ 的潜分布，对数密度就是 $-\|z\|^2/2$ 加一个加法常数。逆变换 $z=g(x)$ 可以使用一系列形式为式~\eqref{align:ch18-inv-coupling} 的逆变换计算得出。同样，雅可比行列式的对数由每层的对数行列式之和给出，其中的每一项本身就是形式为 $-s_i(x,w)$ 的项之和。
+% SUPPLEMENT: parent=definition:ch18-耦合流; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）
+\eqref{align:ch18-一般耦合}把\eqref{align:ch18-耦合层}中的“缩放加平移”抽象成任意的、对第二个变量可高效求逆的 $\bm{h}$。这样做的动机是：行列式的结论并不依赖 $\bm{h}$ 是线性形式，只要 $\bm{h}(\cdot,\bm{g})$ 对每个固定的 $\bm{g}$ 是 $\bm{z}_B$ 的一一映射，且其 Jacobian 关于 $\bm{z}_B$ 是三角（在逐元素情形下就是对角）结构，整层的对数行列式仍可廉价计算；而 $\bm{h}$ 取得越一般，模型的表达力越强。
 
-我们可以使用一个简单的数据集来说明实值 NVP 标准化流，这个数据集有时称为``双月''数据集，如图~\ref{fig:ch18-two-moons} 所示。在这里，一个二维高斯分布通过使用两个连续的层被转换成一个更复杂的分布，其中每一层都对输入数据的两个维度交替进行耦合变换。
+条件方面：$\bm{h}(\cdot,\bm{g})$ 必须对每个 $\bm{g}$ 可逆（否则整层不可逆）；$\bm{g}(\bm{z}_A,\bm{w})$ 可以是任意函数，不需要可逆——它只提供“条件”，不参与 $\bm{z}_B$ 方向的可逆性。当 $\bm{h}(\bm{z}_B,\bm{g})=\exp(\bm{g})\odot\bm{z}_B+\bm{c}$ 时，耦合流退化为实值 NVP；当 $\bm{h}$ 取逐元素的单调递增函数时，得到所谓“单调耦合流”。这两类都保持“三角 Jacobian”这一关键性质。
+
+与自回归流的关系值得记住：若把\eqref{align:ch18-一般耦合}中的“划分成两组”改为“逐坐标条件化”，就得到\cref{section:ch18-自回归流}的自回归流。
+\end{remark}
+
+我们可以使用一个简单的数据集来说明实值 NVP 标准化流，这个数据集有时称为“双月”数据集，如\cref{figure:ch18-双月数据集}所示。
+
+\begin{example}[ 双月数据集]\label{example:ch18-双月数据集}
+取二维潜空间（$D=2$）与标准 Gauss 基础分布 $\mathcal{N}(\bm{z}\mid\bm{0},\bm{I})$，用两个连续的耦合层复合：第一层取 $d=1$，令 $\bm{z}_A$ 为水平轴分量、$\bm{z}_B$ 为垂直轴分量，于是 $\bm{x}_A=\bm{z}_A$ 保持水平轴不变，而 $\bm{x}_B$ 只对垂直轴施加由水平轴决定的缩放与平移；第二层交换两个分量的角色，只对水平轴施加由垂直轴决定的变换。于是每一层都只改变一个坐标，两层交替之后两个坐标都被非线性地重排。把基础分布的大批样本依次通过这两层，就得到\cref{figure:ch18-双月数据集}中从 (a) 到 (e) 的演化，最终样本分布逼近 (f) 所示的训练集形状。整条路径上每一步都是可逆的，故同样可以把数据点逆向送回潜空间并精确计算其对数密度。
+\end{example}
 
 \begin{figure}[htbp]
-\centering
-\includegraphics[width=0.9\textwidth]{ch18-fig500-two-moons.png}
-\caption{在实值 NVP 标准化流模型中，通过交替地对不同维度应用变换，可以将基础的高斯分布逐步转换为更复杂的数据分布：(a) 基础的高斯分布；(b) 垂直轴变换后的分布；(c) 水平轴变换后的分布；(d) 第二次垂直轴变换后的分布；(e) 第二次水平轴变换后的分布；最终得到与训练集相匹配的复杂形状，即所谓的``双月''数据集。}
-\label{fig:ch18-two-moons}
+  \centering
+  \includegraphics[width=0.42\textwidth]{ch18-fig500-two-moons.png}
+  \caption{在实值 NVP 标准化流模型中，通过交替地对不同维度应用变换，可以将基础的 Gauss 分布逐步转换为更复杂的数据分布。(a) 基础的 Gauss 分布：初始的二维 Gauss 分布通常均值为零且协方差矩阵为单位矩阵，表示潜变量空间中的点。(b) 垂直轴变换后的分布：第一层变换只对垂直轴应用耦合函数和条件函数，并保持水平轴不变。(c) 水平轴变换后的分布：第二层变换只对水平轴进行变换，并利用前一变换的输出作为输入，而不改变垂直轴。(d) 第二次垂直轴变换后的分布：经过前两次变换后，再次对垂直轴进行变换，进一步增加分布的复杂性。(e) 第二次水平轴变换后的分布：最后再次对水平轴进行变换，以此类推，可以通过持续地交替进行多层变换来获得越来越复杂的数据分布。(f) 模型训练用的数据集：最终，这些连续的变换会将基础的 Gauss 分布转换成与训练集相匹配的复杂形状，也就是所谓的“双月”数据集}
+  \label{figure:ch18-双月数据集}
 \end{figure}
 
 \end{document}

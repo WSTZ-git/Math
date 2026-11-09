@@ -1,80 +1,206 @@
 \documentclass[../../main.tex]{subfiles}
+
 \graphicspath{{../../image/}{../../figure/}}
+
 \begin{document}
 
 \section{参数共享}\label{section:ch09-参数共享}
 
-正则化项，如 $L_2$ 正则化项 $\|\mathbf{w}\|^2$，通过促使权重接近于零从而减少过拟合。另一种降低网络复杂度的方法是对权值施加硬约束：将权重分组，要求每组内所有权重共享相同值，其中共享值是从数据中学习得到的。这称为\textbf{权重共享}（weight sharing），又称\textbf{参数共享}（parameter sharing）或\textbf{参数捆绑}（parameter tying）。这意味着自由度数量少于网络中连接数量，通常是一种将归纳偏置编码到网络中的方法，从而表达一些已知不变性。评估此类网络误差函数的梯度可以通过稍微修改反向传播来完成（见习题~9.7），虽然在实践中这是通过自动微分隐式处理的。
+正则化项，如 $L_{2}$ 正则化项 $\|\boldsymbol{w}\|^{2}$，通过促使权值接近于零，从而减少过拟合。另一种降低网络复杂度的方法是对权值施加硬约束。该方法将权重分组，要求每组内的所有权重共享相同的值，其中共享的值是从数据中学习得到的。
 
-我们讨论卷积神经网络（参见第~10~章）时将广泛使用参数共享。然而参数共享只适用于可以预先指定约束形式的特定问题。
+\begin{definition}[权重共享]\label{definition:ch09-权重共享}
+设参数向量被划分为若干互不相交的组 $\{\mathcal{W}_{k}\}$。若对每个 $k$ 及所有 $i,j\in\mathcal{W}_{k}$ 都强制 $w_{i}=w_{j}$，则称这些权重\textbf{共享}（weight sharing），又称\textbf{参数共享}（parameter sharing）或\textbf{参数捆绑}（parameter tying）。每个等价类中的公共值才是独立可学习参数，模型的自由度数量等于等价类的个数而非连接数。
+\end{definition}
 
-\subsection{软权重共享}\label{section:ch09-软权重共享}
+% SUPPLEMENT: parent=definition:ch09-权重共享; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{definition:ch09-权重共享}与\cref{definition:ch09-权重衰减}的区别是“硬约束”与“软惩罚”：前者把参数空间限制在一个线性子空间上，后者只是把解往原点拉。硬约束的优势是它精确表达了已知的不变性，不需要调节惩罚强度；代价是约束形式必须事先给定，模型无法从数据中学习“哪些权重应该相等”。卷积网络是这一思想的典型：同一个卷积核在图像的所有位置重复使用，自由度从“位置 $\times$ 通道”降为“通道”，从而把平移等变性写进架构（参见\cref{chapter:ch10-卷积网络}）。实现上，共享权重的梯度不是某一副本的梯度，而是所有副本梯度之和（见\cref{exercise:ch09-07}）；这一点在自动微分框架中由计算图自动处理。
+\end{remark}
 
-Nowlan 和 Hinton（1992）并未使用强制模型参数集相等的硬约束，而是引入了一种称为\textbf{软权重共享}（soft weight sharing）的形式，其中正则化项促使权重组具有相似值。权重的分组、每组平均权值以及组内权值的传播都是作为学习过程的一部分来确定的。
+这意味着自由度的数量少于网络中连接的数量。通常，这是一种将归纳偏置编码到网络中的方法，从而表达一些已知不变性。评估此类网络误差函数的梯度可以通过稍微修改反向传播来完成（见\cref{exercise:ch09-07}），虽然在实践中这是通过自动微分隐式处理的。我们讨论卷积神经网络（参见\cref{chapter:ch10-卷积网络}）时，将广泛使用参数共享。然而，参数共享只适用于可以预先指定约束形式的特定问题。
 
-前面曾提到，式~\eqref{align:ch09-weight-decay}~中简单权重衰减正则化项可以看作权重高斯先验分布的负对数。这促使所有权重都收敛到 $0$。但可以通过考虑高斯混合概率分布来促使权重形成几个组，而非仅仅一个组。高斯分量均值 $\mu_j$ 和方差 $\sigma_j^2$，以及混合系数 $\pi_j$，则视为学习过程中需要确定的可调参数（参见~3.2.9~小节）。这样就有了如下概率密度形式：
+\subsection{软权重共享}\label{subsection:ch09-软权重共享}
+
+Nowlan 和 Hinton（1992）并未使用强制模型参数集相等的硬约束，而是引入了一种称为\textbf{软权重共享}（soft weight sharing）的形式，其中正则化项促使权重组具有相似的值。此外，权重的分组、每组的平均权值以及组内权值的传播都是作为学习过程的一部分来确定的。
+
+\begin{definition}[软权重共享]\label{definition:ch09-软权重共享}
+设每个权重 $w_{i}$ 独立地服从同一个 $K$ 分量 Gauss 混合先验
+\begin{align*}
+p(w_{i})=\sum_{j=1}^{K}\pi_{j}\,\mathcal{N}\!\left(w_{i}\mid\mu_{j},\sigma_{j}^{2}\right),
+\end{align*}
+其中混合系数 $\pi_{j}$、分量均值 $\mu_{j}$ 与方差 $\sigma_{j}^{2}$ 都是可学习参数。称以该先验的负对数作为正则化项、从而促使权重组具有相似值（而非强制相等）的训练方式为\textbf{软权重共享}（soft weight sharing）。
+\end{definition}
+
+% SUPPLEMENT: parent=definition:ch09-软权重共享; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{definition:ch09-软权重共享}把“分组”从离散的、事先指定的约束变成连续的、由数据推断的聚类：若某个 $w_{i}$ 的后验几乎只落在第 $j$ 个分量上，它就相当于被“分配”到第 $j$ 组，并以 $\mu_{j}$ 为中心被收缩；若后验在多个分量间分摊，则它同时受到多个中心的拉扯。与硬共享相比，软共享允许组内方差不等于零，也允许一个权重在训练过程中改变所属的组，因此更灵活；代价是多了约 $3K$ 个超参数（$\pi_{j},\mu_{j},\sigma_{j}$），并且目标函数关于这些参数不再凸，可能收敛到不同的局部解。$K$ 的选择本身是一个模型选择问题：$K$ 太小退化为单峰先验，$K$ 太大则容易把噪声也拟合成“组”。
+\end{remark}
+
+前面曾提到，\eqref{align:ch09-正则化误差}中的简单权重衰减正则化项可以看作权重 Gauss 先验分布的负对数。这促使所有的权重都收敛到 $0$。但我们可以通过考虑 Gauss 混合概率分布来促使权重形成几个组，而非仅仅一个组。Gauss 分量的均值 $\mu_{j}$ 和方差 $\sigma_{j}^{2}$，以及混合系数 $\pi_{j}$，则视为学习过程中需要确定的可调参数（参见\cref{subsection:ch03-Gauss混合}）。这样我们就有了如下概率密度形式：
 \begin{align}
-p(\mathbf{w}) = \sum_{j=1}^{K}\pi_j\,\mathcal{N}\!\left(\mathbf{w}\,\middle|\,\mu_j,\sigma_j^2\right).
-\label{align:ch09-softmix}
+p(\boldsymbol{w})=\prod_{i}\left\{\sum_{j=1}^{K}\pi_{j}\,\mathcal{N}\!\left(w_{i}\mid\mu_{j},\sigma_{j}^{2}\right)\right\}.
+\label{align:ch09-Gauss混合先验}
 \end{align}
 
-对式~\eqref{align:ch09-softmix}~右侧取负对数就会得到如下形式的正则化函数：
-\begin{align}
-\Omega(\mathbf{w}) = -\ln\!\left\{\sum_{j=1}^{K}\pi_j\,\mathcal{N}\!\left(\mathbf{w}\,\middle|\,\mu_j,\sigma_j^2\right)\right\},
-\label{align:ch09-softmix-reg}
-\end{align}
-其中 $K$ 是高斯分量数量。
+\begin{definition}[权重的 Gauss 混合先验]\label{definition:ch09-Gauss混合先验}
+称由\eqref{align:ch09-Gauss混合先验}给出的、关于各分量独立同分布的权重先验为\textbf{权重的 Gauss 混合先验}（Gaussian mixture prior），其中 $K$ 为分量数，$\pi_{j}$ 为混合系数，$\mu_{j}$ 与 $\sigma_{j}^{2}$ 分别为第 $j$ 个分量的均值与方差。
+\end{definition}
 
+% SUPPLEMENT: parent=definition:ch09-Gauss混合先验; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{definition:ch09-Gauss混合先验}中的“独立同分布”是相对于各权重下标 $i$ 而言的：给定混合参数后，各 $w_{i}$ 条件独立。这个假设使似然可以写成乘积，从而负对数变成对 $i$ 的求和，计算与实现都很简单。但它也意味着先验不知道权重的空间位置或层归属；若希望不同层使用不同的混合参数，应把 $i$ 的求和分组，得到分层的混合先验。另一个要点是：混合模型的对数似然不是凸的，且存在“分量塌缩”的退化解（某个分量只拟合一个权重、方差趋于零），实践中需要对方差设下界或使用最大似然的重参数化来避免。
+\end{remark}
+
+其中 $K$ 是 Gauss 分量的数量。对\eqref{align:ch09-Gauss混合先验}的右侧取负对数就会得到如下形式的正则化函数：
+\begin{align}
+\Omega(\boldsymbol{w})=-\sum_{i}\ln\left\{\sum_{j=1}^{K}\pi_{j}\,\mathcal{N}\!\left(w_{i}\mid\mu_{j},\sigma_{j}^{2}\right)\right\}.
+\label{align:ch09-软共享正则}
+\end{align}
 总误差函数由下式给出：
 \begin{align}
-\widetilde{E}(\mathbf{w}) = E(\mathbf{w}) + \lambda\Omega(\mathbf{w}),
-\label{align:ch09-softmix-total}
+\widetilde{E}(\boldsymbol{w})=E(\boldsymbol{w})+\lambda\Omega(\boldsymbol{w}),
+\label{align:ch09-软共享总误差}
 \end{align}
 其中 $\lambda$ 为正则化系数。
 
-该误差关于混合模型的权重 $\mathbf{w}$ 和参数 $\{\pi_j,\mu_j,\sigma_j\}$ 被联合最小化。这可以使用梯度下降来完成，但需要我们计算 $\Omega(\mathbf{w})$ 对所有可学习参数的导数。为此我们将 $\{\pi_j\}$ 视为已经生成权值的每个分量的先验概率，并引入相应后验概率。后验概率由贝叶斯定理给出（见习题~9.8）。
+该误差关于混合模型的权重 $w_{i}$ 和参数 $\{\pi_{j},\mu_{j},\sigma_{j}\}$ 被联合最小化。这可以使用梯度下降来完成，但需要我们计算 $\Omega(\boldsymbol{w})$ 对所有可学习参数的导数。为此，我们将 $\{\pi_{j}\}$ 视为已经生成权值的每个分量的先验概率，并引入相应的后验概率。后验概率由 Bayes 定理给出（见\cref{exercise:ch09-08}）。
 
-总误差函数关于权重的导数由下式给出（见习题~9.9）：
+\begin{proposition}[软权重共享的后验概率]\label{proposition:ch09-软共享后验}
+在\eqref{align:ch09-Gauss混合先验}的模型中，把 $\pi_{j}$ 视为分量 $j$ 的先验概率 $p(j)$。则给定权重 $w_{i}$ 时分量 $j$ 的后验概率为
 \begin{align}
-\frac{\partial \widetilde{E}}{\partial w_i} = \frac{\partial E}{\partial w_i} + \lambda\sum_j r_{ij}\frac{w_i-\mu_j}{\sigma_j^2},
-\label{align:ch09-softmix-wgrad}
+\gamma_{j}(w_{i})=p(j\mid w_{i})=\frac{\pi_{j}\,\mathcal{N}\!\left(w_{i}\mid\mu_{j},\sigma_{j}^{2}\right)}{\sum_{k}\pi_{k}\,\mathcal{N}\!\left(w_{i}\mid\mu_{k},\sigma_{k}^{2}\right)}.
+\label{align:ch09-后验概率}
 \end{align}
-其中权重系数由每个权重的分量 $j$ 生成的后验概率给出。
+并且对每个 $i$ 有 $\sum_{j}\gamma_{j}(w_{i})=1$。
+\end{proposition}
 
-关于高斯分布中心的误差导数也很容易计算得出（见习题~9.10）：
+\begin{proof}
+（重构新增）由 Bayes 定理，
+\begin{align*}
+p(j\mid w_{i})=\frac{p(w_{i}\mid j)p(j)}{p(w_{i})}=\frac{\mathcal{N}(w_{i}\mid\mu_{j},\sigma_{j}^{2})\,\pi_{j}}{\sum_{k}\mathcal{N}(w_{i}\mid\mu_{k},\sigma_{k}^{2})\,\pi_{k}},
+\end{align*}
+其中分母是全概率公式给出的边缘密度 $p(w_{i})$。这正是\eqref{align:ch09-后验概率}。对 $j$ 求和时分子之和等于分母，故 $\sum_{j}\gamma_{j}(w_{i})=1$。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch09-软共享后验; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{proposition:ch09-软共享后验}中的 $\gamma_{j}(w_{i})$ 就是混合模型中的“责任度”（responsibility）：它衡量第 $j$ 个分量对权重 $w_{i}$ 的解释占多大比例。与硬分配不同，$\gamma_{j}(w_{i})$ 是 $[0,1]$ 中的连续值，因此一个权重可以同时“属于”多个组，只是权重不同。这个量在后续梯度中反复出现：\eqref{align:ch09-权重梯度}中的拉力以 $\gamma_{j}(w_{i})$ 加权，\eqref{align:ch09-混合系数梯度}则让 $\pi_{j}$ 趋向于 $\gamma_{j}$ 的平均值。责任度依赖当前参数，因此每步梯度下降都要重新计算它；这正是 EM 算法与梯度下降在这里的联系。
+\end{remark}
+
+总误差函数关于权重的导数由下式给出（见\cref{exercise:ch09-09}）。
+
+\begin{proposition}[软权重共享的梯度]\label{proposition:ch09-软共享梯度}
+在\eqref{align:ch09-Gauss混合先验}至\eqref{align:ch09-软共享总误差}的记号下，记 $\gamma_{j}(w_{i})$ 由\eqref{align:ch09-后验概率}给出。则
 \begin{align}
-\frac{\partial \widetilde{E}}{\partial \mu_j} = \lambda\sum_i r_{ij}\frac{\mu_j-w_i}{\sigma_j^2}.
-\label{align:ch09-softmix-mugrad}
+\frac{\partial\widetilde{E}}{\partial w_{i}}=\frac{\partial E}{\partial w_{i}}+\lambda\sum_{j}\gamma_{j}(w_{i})\frac{w_{i}-\mu_{j}}{\sigma_{j}^{2}},
+\label{align:ch09-权重梯度}
 \end{align}
-
-这个过程会驱使 $\mu_j$ 趋向于相应中心 $\mu_j$ 周围权重偏差平方的加权平均值，其中权重系数由每个权重的分量 $j$ 生成的后验概率给出。
-
-为确保方差 $\sigma_j^2$ 为正，引入下式定义的新变量 $\xi_j$：
 \begin{align}
-\sigma_j^2 = \exp(\xi_j),
-\label{align:ch09-softmix-sig}
+\frac{\partial\widetilde{E}}{\partial\mu_{j}}=\lambda\sum_{i}\gamma_{j}(w_{i})\frac{\mu_{j}-w_{i}}{\sigma_{j}^{2}}.
+\label{align:ch09-均值梯度}
 \end{align}
-并且对 $\xi_j$ 进行无约束最小化。相关导数为（见习题~9.11）：
+为处理方差的正性约束，引入新变量 $\xi_{j}$ 使
 \begin{align}
-\frac{\partial \widetilde{E}}{\partial \xi_j} = \lambda\sum_i r_{ij}\!\left(\frac{(w_i-\mu_j)^2}{\sigma_j^2}-1\right).
-\label{align:ch09-softmix-xigrad}
+\sigma_{j}^{2}=\exp(\xi_{j}),
+\label{align:ch09-方差参数化}
 \end{align}
-
-关于混合系数 $\pi_j$ 的导数，需要考虑如下约束条件：
+并对 $\xi_{j}$ 作无约束最小化。相应的导数为
 \begin{align}
-0\le \pi_j\le 1, \qquad \sum_j\pi_j=1,
-\label{align:ch09-pi-constraint}
+\frac{\partial\widetilde{E}}{\partial\xi_{j}}=\frac{\lambda}{2}\sum_{i}\gamma_{j}(w_{i})\left(1-\frac{(w_{i}-\mu_{j})^{2}}{\sigma_{j}^{2}}\right).
+\label{align:ch09-方差参数梯度}
 \end{align}
-这些约束源于对 $\pi_j$ 作为先验概率的解释。可以通过使用 softmax 函数，将混合系数表示为一组辅助变量 $\eta_j$ 来实现对它的约束。然后采用以下形式正则化误差函数关于 $\eta_j$ 的导数（见习题~9.12）：
+\end{proposition}
+
+\begin{proof}
+（重构新增）记 $S_{i}=\sum_{k}\pi_{k}\mathcal{N}(w_{i}\mid\mu_{k},\sigma_{k}^{2})$，则 $\Omega=-\sum_{i}\ln S_{i}$，且 $\pi_{j}\mathcal{N}(w_{i}\mid\mu_{j},\sigma_{j}^{2})/S_{i}=\gamma_{j}(w_{i})$。
+
+先证\eqref{align:ch09-权重梯度}。由
+\begin{align*}
+\frac{\partial}{\partial w_{i}}\mathcal{N}(w_{i}\mid\mu_{j},\sigma_{j}^{2})=-\frac{w_{i}-\mu_{j}}{\sigma_{j}^{2}}\mathcal{N}(w_{i}\mid\mu_{j},\sigma_{j}^{2}),
+\end{align*}
+得
+\begin{align*}
+\frac{\partial\Omega}{\partial w_{i}}=-\frac{1}{S_{i}}\sum_{j}\pi_{j}\left(-\frac{w_{i}-\mu_{j}}{\sigma_{j}^{2}}\right)\mathcal{N}(w_{i}\mid\mu_{j},\sigma_{j}^{2})=\sum_{j}\gamma_{j}(w_{i})\frac{w_{i}-\mu_{j}}{\sigma_{j}^{2}}.
+\end{align*}
+乘以 $\lambda$ 并与 $\partial E/\partial w_{i}$ 相加即得\eqref{align:ch09-权重梯度}。
+
+再证\eqref{align:ch09-均值梯度}。由
+\begin{align*}
+\frac{\partial}{\partial\mu_{j}}\mathcal{N}(w_{i}\mid\mu_{j},\sigma_{j}^{2})=\frac{w_{i}-\mu_{j}}{\sigma_{j}^{2}}\mathcal{N}(w_{i}\mid\mu_{j},\sigma_{j}^{2}),
+\end{align*}
+得
+\begin{align*}
+\frac{\partial\Omega}{\partial\mu_{j}}=-\sum_{i}\frac{1}{S_{i}}\pi_{j}\frac{w_{i}-\mu_{j}}{\sigma_{j}^{2}}\mathcal{N}(w_{i}\mid\mu_{j},\sigma_{j}^{2})=-\sum_{i}\gamma_{j}(w_{i})\frac{w_{i}-\mu_{j}}{\sigma_{j}^{2}}=\sum_{i}\gamma_{j}(w_{i})\frac{\mu_{j}-w_{i}}{\sigma_{j}^{2}},
+\end{align*}
+乘以 $\lambda$ 即得\eqref{align:ch09-均值梯度}。
+
+最后证\eqref{align:ch09-方差参数梯度}。由 $\sigma_{j}^{2}=e^{\xi_{j}}$，
+\begin{align*}
+\ln\mathcal{N}(w_{i}\mid\mu_{j},\sigma_{j}^{2})=-\frac{1}{2}\ln(2\pi)-\frac{1}{2}\xi_{j}-\frac{(w_{i}-\mu_{j})^{2}}{2e^{\xi_{j}}}.
+\end{align*}
+对 $\xi_{j}$ 求导得
+\begin{align*}
+\frac{\partial}{\partial\xi_{j}}\ln\mathcal{N}(w_{i}\mid\mu_{j},\sigma_{j}^{2})=-\frac{1}{2}+\frac{(w_{i}-\mu_{j})^{2}}{2\sigma_{j}^{2}}=\frac{1}{2}\left(\frac{(w_{i}-\mu_{j})^{2}}{\sigma_{j}^{2}}-1\right).
+\end{align*}
+于是
+\begin{align*}
+\frac{\partial\Omega}{\partial\xi_{j}}=-\sum_{i}\gamma_{j}(w_{i})\frac{\partial}{\partial\xi_{j}}\ln\mathcal{N}(w_{i}\mid\mu_{j},\sigma_{j}^{2})=\frac{1}{2}\sum_{i}\gamma_{j}(w_{i})\left(1-\frac{(w_{i}-\mu_{j})^{2}}{\sigma_{j}^{2}}\right),
+\end{align*}
+乘以 $\lambda$ 即得\eqref{align:ch09-方差参数梯度}。
+\end{proof}
+
+% SUPPLEMENT: parent=proposition:ch09-软共享梯度; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{proposition:ch09-软共享梯度}的四个公式可以统一读成“以责任度为权重的加权矩估计”：\eqref{align:ch09-权重梯度}把每个 $w_{i}$ 拉向第 $j$ 个中心，拉力与 $\gamma_{j}(w_{i})$ 成正比、与方差 $\sigma_{j}^{2}$ 成反比；\eqref{align:ch09-均值梯度}让 $\mu_{j}$ 移向被分配到该分量的权重的加权平均；\eqref{align:ch09-方差参数梯度}让 $\sigma_{j}^{2}$ 移向 $(w_{i}-\mu_{j})^{2}$ 的加权平均。取 $\xi_{j}=\ln\sigma_{j}^{2}$ 而不是直接优化 $\sigma_{j}^{2}$，是为了把正性约束变成无约束问题，同时使梯度在 $\sigma_{j}^{2}\to0$ 时仍保持有限。注意这些公式只给出驻点条件，不保证全局最优；混合模型的对数似然非凸，初值对结果影响很大。
+\end{remark}
+
+因此，正则化项的作用是将每个权值拉向第 $j$ 个 Gauss 分布的中心，其力度与给定权重的 Gauss 分布的后验概率成正比。这正是我们想要的结果。
+
+关于 Gauss 分布中心的误差导数也很容易计算得出（见\cref{exercise:ch09-10}），即\eqref{align:ch09-均值梯度}。这个过程会驱使 $\mu_{j}$ 趋向于相应中心 $\mu_{j}$ 周围的权重偏差平方的加权平均值，其中权重系数由每个权重的分量 $j$ 生成的后验概率给出。
+
+为了确保方差 $\sigma_{j}^{2}$ 为正，我们引入\eqref{align:ch09-方差参数化}定义的新变量 $\xi_{j}$，并且对 $\xi_{j}$ 进行无约束最小化。相关导数为\eqref{align:ch09-方差参数梯度}（见\cref{exercise:ch09-11}）。
+
+关于混合系数 $\pi_{j}$ 的导数，我们需要考虑如下约束条件：
 \begin{align}
-\frac{\partial \widetilde{E}}{\partial \eta_j} = \lambda\pi_j(1-r_j(\mathbf{w})).
-\label{align:ch09-softmix-etagrad}
+\sum_{j}\pi_{j}=1,\qquad 0\leqslant\pi_{j}\leqslant1.
+\label{align:ch09-混合系数约束}
+\end{align}
+这些约束条件源于对 $\pi_{j}$ 作为先验概率的解释。我们可以通过使用下式给出的 softmax 函数，将混合系数表示为一组辅助变量 $\eta_{j}$ 来实现对它的约束：
+\begin{align}
+\pi_{j}=\frac{\exp(\eta_{j})}{\sum_{k}\exp(\eta_{k})}.
+\label{align:ch09-softmax混合系数}
 \end{align}
 
-可以看到 $\pi_j$ 将趋向于混合分量 $j$ 的平均后验概率。
+\begin{proposition}[混合系数的梯度]\label{proposition:ch09-混合系数梯度}
+在\eqref{align:ch09-混合系数约束}与\eqref{align:ch09-softmax混合系数}下，记 $\gamma_{j}(w_{i})$ 由\eqref{align:ch09-后验概率}给出，则总误差函数关于辅助变量 $\eta_{j}$ 的导数为
+\begin{align}
+\frac{\partial\widetilde{E}}{\partial\eta_{j}}=\lambda\sum_{i}\left(\pi_{j}-\gamma_{j}(w_{i})\right).
+\label{align:ch09-混合系数梯度}
+\end{align}
+并且 $\pi_{j}$ 将趋向于混合分量 $j$ 的平均后验概率 $\frac{1}{M}\sum_{i}\gamma_{j}(w_{i})$。
+\end{proposition}
 
-因此正则化项的作用是将每个权值拉向第 $j$ 个高斯分布中心，其力度与给定权重的高斯分布后验概率成正比。这正是我们想要的结果。
+\begin{proof}
+（重构新增）先求 softmax 的导数。由 $\pi_{j}=e^{\eta_{j}}/\sum_{k}e^{\eta_{k}}$，
+\begin{align*}
+\frac{\partial\pi_{k}}{\partial\eta_{j}}=\frac{\delta_{kj}e^{\eta_{j}}\sum_{l}e^{\eta_{l}}-e^{\eta_{k}}e^{\eta_{j}}}{\left(\sum_{l}e^{\eta_{l}}\right)^{2}}=\delta_{kj}\pi_{j}-\pi_{j}\pi_{k}.
+\end{align*}
+再求 $\Omega$ 对 $\pi_{k}$ 的导数。由 $\Omega=-\sum_{i}\ln S_{i}$、$S_{i}=\sum_{l}\pi_{l}\mathcal{N}_{il}$，
+\begin{align*}
+\frac{\partial\Omega}{\partial\pi_{k}}=-\sum_{i}\frac{\mathcal{N}_{ik}}{S_{i}}=-\sum_{i}\frac{\gamma_{k}(w_{i})}{\pi_{k}}.
+\end{align*}
+由链式法则及 $\sum_{k}\gamma_{k}(w_{i})=1$，
+\begin{align*}
+\frac{\partial\widetilde{E}}{\partial\eta_{j}}
+&=\lambda\sum_{k}\frac{\partial\Omega}{\partial\pi_{k}}\frac{\partial\pi_{k}}{\partial\eta_{j}}
+=\lambda\sum_{i}\sum_{k}\left(-\frac{\gamma_{k}(w_{i})}{\pi_{k}}\right)\left(\delta_{kj}\pi_{j}-\pi_{j}\pi_{k}\right)\\
+&=\lambda\sum_{i}\left(-\gamma_{j}(w_{i})+\pi_{j}\sum_{k}\gamma_{k}(w_{i})\right)
+=\lambda\sum_{i}\left(\pi_{j}-\gamma_{j}(w_{i})\right).
+\end{align*}
+这正是\eqref{align:ch09-混合系数梯度}。令其为零得 $\pi_{j}=\frac{1}{M}\sum_{i}\gamma_{j}(w_{i})$（$M$ 为权重总数），即 $\pi_{j}$ 的驻点是责任度的平均值。
+\end{proof}
 
-软权重共享的另一种应用~\citep{LasserreBishopMinka2006}介绍了一种原则性方法：将生成式模型无监督训练与相应判别模型有监督训练相结合。这在有大量未标记数据而标记数据短缺的情况下是有用的。生成式模型优势在于所有数据都可以用来确定模型参数，而判别模型只有标记数据直接为其提供参数。当存在模型设定误差时，也就是当模型没能准确描述所生成数据真实分布时（通常情况下是这样），判别模型具备更好泛化能力。通过引入两个模型参数的软捆绑，得到一个良定的生成式和判别式混合方法，从而可以鲁棒地对模型设定误差进行建模。此外还能够从对模型在未标记数据上进行训练中受益。
+% SUPPLEMENT: parent=proposition:ch09-混合系数梯度; kind=motivation; location=紧随其后的 remark（重构新增）
+\begin{remark}（重构新增）\cref{proposition:ch09-混合系数梯度}表明混合系数的学习规则与 EM 的 M 步完全一致：$\pi_{j}$ 更新为平均责任度。把 $\pi_{j}$ 参数化为 softmax 而不是直接约束，好处是梯度无约束、自动满足 $\pi_{j}\in(0,1)$ 且和为 $1$；代价是参数化不可识别——给所有 $\eta_{j}$ 同时加常数不改变 $\pi_{j}$，因此 Hessian 至少有一个零特征值，优化时需固定一个参考分量或使用带正则的 softmax。责任度 $\gamma_{j}(w_{i})$ 同时出现在权重、均值、方差和混合系数的梯度中，这解释了为什么软权重共享是一个“自洽”的聚类过程：参数更新改变责任度，责任度又反过来改变参数更新。
+\end{remark}
+
+可以看到，$\pi_{j}$ 将趋向于混合分量 $j$ 的平均后验概率。
+
+软权重共享的另一种应用（Lasserre，Bishop and Minka，2006）介绍了一种原则性方法：将生成式模型的无监督训练与相应判别模型的有监督训练相结合。这在有大量未标记数据而标记数据短缺的情况下是有用的。生成式模型的优势在于，所有的数据都可以用来确定模型参数，而判别模型只有标记数据直接为其提供参数。当存在模型设定误差时，也就是当模型没能准确描述所生成数据的真实分布时（通常情况下是这样），判别模型具备更好的泛化能力。通过引入两个模型参数的软捆绑，我们得到了一个良定的生成式和判别式的混合方法，从而可以鲁棒地对模型设定误差进行建模。此外，还能够从对模型在未标记数据上进行训练中受益。
 
 \end{document}
